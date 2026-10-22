@@ -1,0 +1,32 @@
+name: Nexus release integrity
+on:
+  push:
+    branches: [main, 'release/**']
+  pull_request:
+    branches: [main]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate modular HTML references and JavaScript syntax
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const cp=require('child_process');
+          const html=fs.readFileSync('index.html','utf8');
+          const refs=[...html.matchAll(/(?:src|href)=["'](assets\/[^"']+)["']/g)].map(m=>m[1]);
+          if(refs.length===0) {
+            console.log('Legacy single-file release: modular checks deferred');
+            process.exit(0);
+          }
+          for(const p of refs){
+            if(!fs.existsSync(p)) throw new Error('Missing referenced asset: '+p);
+            if(p.endsWith('.js')) cp.execFileSync(process.execPath,['--check',p],{stdio:'inherit'});
+          }
+          console.log('Validated '+refs.length+' modular asset references.');
+          NODE
