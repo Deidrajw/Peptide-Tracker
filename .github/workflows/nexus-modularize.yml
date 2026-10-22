@@ -1,0 +1,59 @@
+name: Prepare modular Nexus staging
+on:
+  push:
+    branches: ['release/nexus-modular-current-main']
+    paths: ['.github/workflows/nexus-modularize.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  modularize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install JavaScript parser
+        run: npm install --no-save --no-package-lock acorn@8
+      - name: Split legacy HTML into ordered executable assets
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs'), acorn=require('acorn');
+          const html=fs.readFileSync('index.html','utf8');
+          const scriptMatches=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].filter(m=>!(/\bsrc\s*=/.test(m[0].slice(0,m[0].indexOf('>')))));
+          if(scriptMatches.length!==1) throw Error('Expected precisely one inline app script, found '+scriptMatches.length);
+          const js=scriptMatches[0][1];
+          const ast=acorn.parse(js,{ecmaVersion:'latest',sourceType:'script',allowReturnOutsideFunction:true});
+          const cutPoints=[0,...ast.body.slice(1).map(n=>n.start),js.length];
+          let chunks=[],start=0;
+          for(let i=1;i<cutPoints.length;i++){
+            const end=cutPoints[i];
+            if(end-start>155000 && i>1) {
+              const previous=cutPoints[i-1];
+              if(previous>start){chunks.push(js.slice(start,previous));start=previous;}
+            }
+          }
+          if(start<js.length)chunks.push(js.slice(start));
+          if(chunks.join('')!==js)throw Error('Lossy JS split');
+          if(chunks.some(x=>x.length>350000))throw Error('Oversized indivisible JS statement');
+          fs.mkdirSync('assets/js',{recursive:true});
+          fs.mkdirSync('assets/css',{recursive:true});
+          chunks.forEach((chunk,i)=>fs.writeFileSync('assets/js/'+String(i+1).padStart(2,'0')+'-nexus.js',chunk));
+          let css='',updated=html.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi,(_,body)=>{css+='\n'+body;return '';});
+          fs.writeFileSync('assets/css/nexus.css',css);
+          updated=updated.replace(scriptMatches[0][0],chunks.map((_,i)=>'<script src="assets/js/'+String(i+1).padStart(2,'0')+'-nexus.js"></script>').join('\n'));
+          updated=updated.replace('</head>','<link rel="stylesheet" href="assets/css/nexus.css">\n</head>');
+          fs.writeFileSync('index.html',updated);
+          console.log('Split '+js.length+' JS characters into '+chunks.length+' files; CSS '+css.length);
+          NODE
+          for f in assets/js/*.js; do node --check "$f"; done
+      - name: Commit staging assets
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html assets
+          git diff --cached --quiet || (git commit -m "build(nexus): modularize repository baseline on staging" && git push)
