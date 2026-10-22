@@ -1,0 +1,51 @@
+name: Nexus functional smoke audit
+on:
+  push:
+    branches: ['test/nexus-functional-audit-20261022']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser tools
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Run local Nexus smoke audit
+        run: |
+          python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+            const errors=[];
+            page.on('pageerror',e=>errors.push(e.message));
+            await page.goto('http://127.0.0.1:8777/',{waitUntil:'domcontentloaded'});
+            await page.waitForTimeout(1200);
+            const functions=await page.evaluate(()=>({dose:typeof doseModal,checkin:typeof dailyModal,picker:typeof todayLogDosePicker,close:typeof closeModal}));
+            console.log('Nexus functions',functions);
+            if(Object.values(functions).some(v=>v!=='function'))throw Error('Expected Nexus functions missing');
+            if(errors.length)throw Error('Startup JavaScript errors: '+errors.join(' | '));
+            await page.evaluate(()=>todayLogDosePicker());
+            await page.waitForTimeout(250);
+            const continueBtn=page.locator('#today-dose-single');
+            const count=await continueBtn.count();
+            console.log('Continue button count',count);
+            if(count){
+              const style=await continueBtn.evaluate(el=>{const c=getComputedStyle(el),r=el.getBoundingClientRect();return {visibility:c.visibility,display:c.display,color:c.color,background:c.backgroundColor,width:r.width,height:r.height}});
+              console.log('Continue button computed style',style);
+              if(style.visibility==='hidden'||style.display==='none'||style.width<30||style.height<20)throw Error('Continue button not visible');
+            }
+            await page.evaluate(()=>{if(typeof closeModal==='function')closeModal()});
+            console.log('Nexus browser smoke passed');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
