@@ -353,6 +353,37 @@
 .nx-log-update+.nx-log-update{border-top:1px solid var(--border-sub)}
 @media(max-width:400px){.nx-log-entry{gap:8px}.nx-log-day-body{padding:0 9px 10px}.nx-log-day-header{padding:13px 12px 10px}}
 
+
+/* v0.2.3.5 — Logs: preview-inspired compact editorial cards */
+.nx-log-quick-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:20px}
+.nx-log-quick-actions button{min-width:0!important;flex:unset!important;min-height:43px;padding:8px 3px!important;border-radius:12px!important;font-size:clamp(9px,2.6vw,12px)!important;white-space:nowrap}
+.nx-log-day{margin-bottom:12px;border-radius:17px;border:1px solid var(--border-sub);background:var(--surface-1,var(--surface));box-shadow:0 4px 18px rgba(15,10,35,.035);overflow:hidden}
+.nx-log-day-header{padding:16px 17px 9px;align-items:baseline}
+.nx-log-day-title{font-size:14px;letter-spacing:-.2px;font-weight:750;gap:8px}
+.nx-log-day-count{font-size:10px;font-weight:550;opacity:.85}
+.nx-log-day-body{padding:0 12px 11px}
+.nx-log-entry{padding:9px 5px;gap:10px;align-items:center;min-height:46px}
+.nx-log-entry+.nx-log-entry{margin-top:3px}
+.nx-log-entry-icon{width:34px;height:34px;flex-basis:34px;border-radius:11px;font-size:16px;background:var(--surface-2);border:1px solid var(--border-sub)}
+.nx-log-entry-content{line-height:1.42;font-size:12px;color:var(--t2)}
+.nx-log-entry-content>span,.nx-log-entry-content>div{max-width:100%}
+.nx-log-entry-content .pill{display:inline-flex;align-items:center;max-width:100%;padding:4px 8px!important;margin:2px 0;font-size:10px!important;line-height:1.2;white-space:normal;border-radius:9px!important}
+.nx-log-entry-actions{gap:4px;align-self:center}
+.nx-log-entry-actions button{min-height:32px;min-width:32px;border-radius:9px!important;font-size:11px!important}
+.nx-log-entry-actions button:first-child{background:var(--surface-2);padding:5px 9px!important}
+.nx-log-entry-actions button:last-child{font-size:14px!important;opacity:.8}
+.nx-log-updates{margin:7px 4px 1px;border-radius:11px;border:1px solid var(--border-sub);background:var(--surface-2)}
+.nx-log-updates summary{min-height:40px;font-weight:600;padding:10px 12px}
+.nx-log-updates-content{padding:3px 12px 12px}
+.nx-log-update{padding:8px 0}
+.nx-log-today{font-size:9px;padding:3px 8px}
+[data-theme="light"] .nx-log-day{background:#FFFFFF!important;border-color:#E6E3F0!important;box-shadow:0 4px 16px rgba(49,36,80,.045)}
+[data-theme="light"] .nx-log-entry-icon{background:#F2EFF9;border-color:#ECE7F4}
+[data-theme="light"] .nx-log-entry-actions button:first-child{background:#F7F5FB;border-color:#E5E0F0!important;color:#514968!important}
+[data-theme="light"] .nx-log-entry-content .pill{background:#F6F4FA!important;border-color:#E8E3F0!important;color:#625A78!important}
+[data-theme="light"] .nx-log-updates{background:#F8F7FC;border-color:#E8E3F0}
+@media(max-width:390px){.nx-log-day-header{padding:14px 13px 8px}.nx-log-day-body{padding:0 9px 9px}.nx-log-entry{gap:8px}.nx-log-entry-icon{width:31px;height:31px;flex-basis:31px}.nx-log-quick-actions{gap:5px}}
+
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -12120,7 +12151,7 @@ function logsView() {
 
       ${l?dataRow(
         mood?mood.emoji:"🔘", mood?mood.color:"var(--t3)",
-        `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Check-in</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
           <span style="font-size:13px;font-weight:600;color:${mood?mood.color:"var(--t2)"}">${mood?mood.label:"—"}</span>
           ${l.compound?`<span style="font-size:10px;color:var(--t4)">· ${esc(l.compound)}</span>`:""}
           ${updates.length?`<span class="pill" style="background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;font-size:10px">＋${updates.length}</span>`:""}
@@ -12134,22 +12165,22 @@ function logsView() {
       ):""}
 
       ${wt?dataRow("⚖","#8AB4FF",
-        `<span style="font-size:13px;font-weight:600;color:#8AB4FF">${esc(wt.weight)} ${state.settings.weightUnit}</span>${wt.notes?` <span style="font-size:11px;color:var(--t4);font-style:italic">"${esc(wt.notes)}"</span>`:""}`,
+        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Weight</div><span style="font-size:13px;font-weight:650;color:#8AB4FF">${esc(wt.weight)} ${state.settings.weightUnit}</span>${wt.notes?` <span style="font-size:11px;color:var(--t4);font-style:italic">"${esc(wt.notes)}"</span>`:""}`,
         editBtnHtml("editweight",wt.id), delBtnHtml("delweight",wt.id)
       ):""}
 
       ${meas?dataRow("📏","#FF9CC8",
-        `<div style="display:flex;gap:12px;flex-wrap:wrap">${MEASURES.filter(([k])=>meas[k]).map(([k,l,col])=>`<span style="font-size:12px;color:${col}">${l}: <b>${esc(meas[k])}</b> ${state.settings.measureUnit}</span>`).join("")}</div>${meas.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(meas.notes)}"</div>`:""}`,
+        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Measurements</div><div style="display:flex;gap:12px;flex-wrap:wrap">${MEASURES.filter(([k])=>meas[k]).map(([k,l,col])=>`<span style="font-size:12px;color:${col}">${l}: <b>${esc(meas[k])}</b> ${state.settings.measureUnit}</span>`).join("")}</div>${meas.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(meas.notes)}"</div>`:""}`,
         editBtnHtml("editmeasure",meas.id), delBtnHtml("delmeasure",meas.id)
       ):""}
 
       ${macro?dataRow("🍽","#F9C87D",
-        `<div style="display:flex;gap:10px;flex-wrap:wrap">${[["Calories",macro.calories,"kcal","#F9C87D"],["Protein",macro.protein,"g","#C8FF9C"],["Carbs",macro.carbs,"g","#9CC8FF"],["Fat",macro.fat,"g","#FFB84D"]].filter(([,v])=>v).map(([n,v,u,c])=>`<span style="font-size:12px;color:${c}">${n}: <b>${esc(v)}</b> ${u}</span>`).join("")}</div>${macro.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(macro.notes)}"</div>`:""}`,
+        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Nutrition</div><div style="display:flex;gap:10px;flex-wrap:wrap">${[["Calories",macro.calories,"kcal","#F9C87D"],["Protein",macro.protein,"g","#C8FF9C"],["Carbs",macro.carbs,"g","#9CC8FF"],["Fat",macro.fat,"g","#FFB84D"]].filter(([,v])=>v).map(([n,v,u,c])=>`<span style="font-size:12px;color:${c}">${n}: <b>${esc(v)}</b> ${u}</span>`).join("")}</div>${macro.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(macro.notes)}"</div>`:""}`,
         editBtnHtml("editmacro",macro.id), delBtnHtml("delmacro",macro.id)
       ):""}
 
       ${supp?.taken?.length?dataRow("💊","#C8FF9C",
-        `<div style="display:flex;gap:6px;flex-wrap:wrap">${supp.taken.map(s=>`<span class="pill" style="background:#C8FF9C18;color:#C8FF9C;border:1px solid #C8FF9C33;font-size:11px">${esc(s)}</span>`).join("")}</div>`,
+        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Supplements</div><div style="display:flex;gap:6px;flex-wrap:wrap">${supp.taken.map(s=>`<span class="pill" style="background:#C8FF9C18;color:#C8FF9C;border:1px solid #C8FF9C33;font-size:11px">${esc(s)}</span>`).join("")}</div>`,
         `<button class="edit-supp-log" data-date="${dk}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`,
         `<button class="del-supp-log" data-date="${dk}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`
       ):""}
