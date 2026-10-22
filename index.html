@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nexus">
 <meta name="theme-color" content="#080808">
-<title>Nexus</title>
+<title>Nexus · v0.6.8-beta</title>
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23080808'/%3E%3Crect x='70' y='38' width='12' height='104' rx='6' fill='%237DF9C0' transform='rotate(45 90 90)'/%3E%3Ccircle cx='90' cy='90' r='30' fill='none' stroke='%23C9A0FF' stroke-width='8'/%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
@@ -1003,6 +1003,207 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-body-records-list button{min-width:35px;min-height:35px;color:var(--t3)}
 .nx-body-panel-note{font-size:11px;color:var(--t3);line-height:1.55;margin:12px 0 0}
 .nx-md-tile-foot{line-height:1.5}
+
+/* Nexus 0.5.3: concise health + compound browser */
+.nx-library{border:1px solid var(--border-sub);background:var(--surface);border-radius:18px;padding:16px;margin:12px 0}.nx-library-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.nx-library-head h3{font-size:17px;color:var(--t1);margin:0}.nx-library-search{width:100%;min-height:44px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t1);padding:10px 12px;font:inherit;box-sizing:border-box;margin:0 0 12px}.nx-library-list{display:grid;gap:6px;max-height:410px;overflow-y:auto;overscroll-behavior:contain}.nx-library-item{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;gap:12px;padding:12px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t1);cursor:pointer;font:inherit}.nx-library-item.is-active{border-color:var(--accent);background:var(--surface)}.nx-library-meta{font-size:11px;color:var(--t4);margin-top:3px}.nx-library-empty{font-size:12px;color:var(--t4);padding:14px}.nx-library-back{border:1px solid var(--border-sub);border-radius:9px;background:var(--surface-2);color:var(--t2);padding:8px 12px;font:inherit;cursor:pointer}.nx-health-manage{display:flex;justify-content:flex-end;margin:0 0 12px}.nx-health-manage button{border:1px solid var(--border-sub);background:var(--surface);color:var(--t3);padding:9px 12px;border-radius:10px;font:inherit;font-size:12px;cursor:pointer}
+
+/* v0.5.4: navigation and contextual reports */
+.nx-direct-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0 0 17px}
+.nx-direct-nav button{min-width:0;min-height:48px;padding:9px 3px;border-radius:11px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t3);font-size:12px;font-weight:600;cursor:pointer}
+.nx-direct-nav button[aria-selected="true"]{background:rgba(167,139,250,.15);border-color:#A78BFA;color:var(--t1)}
+.nx-today-quick{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 16px}
+.nx-today-quick button{border:1px solid var(--border-sub);background:var(--surface-2);border-radius:12px;padding:12px;text-align:left;color:var(--t1);font-weight:650;font-size:13px;min-height:58px;cursor:pointer}
+.nx-today-quick button small{display:block;color:var(--t4);font-weight:400;font-size:11px;margin-top:4px}
+.nx-report-row{border:1px solid var(--border-sub);border-radius:12px;padding:12px;margin-bottom:9px;background:var(--surface-2)}
+.nx-report-row strong{color:var(--t1);font-size:14px}.nx-report-row p{color:var(--t3);font-size:12px;margin:6px 0;line-height:1.5}
+.nx-report-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+.nx-report-toolbar button{padding:8px 12px;border-radius:10px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t2);cursor:pointer}
+.nx-report-toolbar button[aria-pressed="true"]{border-color:#A78BFA;background:rgba(167,139,250,.14);color:var(--t1)}
+.nx-report-records{margin-top:8px;max-height:240px;overflow:auto;color:var(--t3);font-size:12px}
+.nx-report-records div{padding:6px 0;border-top:1px solid var(--border-sub)}
+.nx-learn-quick{border:1px solid var(--border-sub);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--surface-2)}
+.nx-learn-quick button{border:1px solid #A78BFA;border-radius:9px;background:rgba(167,139,250,.13);color:var(--t1);padding:9px 12px;font-size:13px;font-weight:650;cursor:pointer}
+@media(max-width:370px){.nx-direct-nav{gap:4px}.nx-direct-nav button{font-size:11px}}
+
+/* v0.5.7: shared UI tokens for the quick access / contextual controls */
+:root{--nx-action-accent:#A78BFA;--nx-touch-min:44px;--nx-control-radius:12px}
+.nx-qa button,.nx-usage-panel button,#nx-shopping-from-stash{min-height:var(--nx-touch-min);touch-action:manipulation}
+.nx-qa-tile{border-radius:var(--nx-control-radius);text-align:left}
+.nx-qa button:focus-visible,.nx-usage-panel button:focus-visible,#nx-shopping-from-stash:focus-visible{outline:3px solid var(--nx-action-accent);outline-offset:3px}
+@media(max-width:380px){.nx-qa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nx-qa-copy strong{overflow-wrap:anywhere}}
+
+/* v0.5.8: shared Today accordion rhythm and aligned shopping rows */
+.nexus-today-details{margin:14px 0 12px;border-color:var(--border-sub);border-radius:16px}
+.nexus-today-details>summary{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;gap:12px;min-height:74px;padding:13px 14px;outline-offset:-3px}
+.nexus-today-details-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.nexus-today-details-title{font-size:15px;line-height:1.3;font-weight:700;white-space:normal}
+.nexus-today-details-meta{font-size:12px;line-height:1.45;text-align:left;flex:none;overflow-wrap:anywhere}
+.nexus-today-details-chevron,.nexus-week-quiet .nexus-quiet-chevron{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;color:var(--t4);flex-shrink:0;transition:transform .2s}
+.nexus-today-details[open] .nexus-today-details-chevron{transform:rotate(180deg)}
+.nexus-today-details>summary:focus-visible,.nexus-week-quiet .nexus-quiet-toggle:focus-visible{outline:2px solid #C5A4F5;outline-offset:-3px;border-radius:12px}
+.nexus-week-quiet{padding:0 14px!important;margin:12px 0 14px!important}
+.nexus-week-quiet .nexus-quiet-header{padding:0;min-height:0;display:block}
+.nexus-week-quiet .nexus-quiet-toggle{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;gap:12px;text-align:left;width:100%;min-height:74px;padding:13px 0;background:none;border:0;color:var(--t1);cursor:pointer}
+.nexus-week-quiet .nexus-quiet-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.nexus-week-quiet .nexus-quiet-copy h3{font-size:15px;line-height:1.3;font-weight:700;margin:0}
+.nexus-week-quiet .nexus-quiet-copy p{font-size:12px;line-height:1.45;color:var(--t4);margin:0}
+.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron{transform:rotate(180deg)}
+.nx-shopping-row{display:grid;grid-template-columns:90px minmax(0,1fr) 44px;align-items:center;column-gap:10px;min-height:62px;padding:9px 0;border-bottom:1px solid var(--border-sub)}
+.nx-shopping-row:last-child{border-bottom:0}
+.nx-shopping-category{font-size:12px;color:var(--t4);min-width:0;overflow-wrap:anywhere}
+.nx-shopping-main{min-width:0}
+.nx-shopping-name{font-size:13px;line-height:1.45;color:var(--t1);overflow-wrap:anywhere}
+.nx-shopping-qty{font-size:11px;color:var(--t4);white-space:nowrap}
+.nx-shopping-goal{font-size:11px;color:var(--t4);margin-top:3px;overflow-wrap:anywhere}
+.nx-shopping-row .manage-plan-btn{width:44px!important;height:44px!important;min-width:44px!important;justify-self:end;font-size:19px}
+@media(max-width:360px){.nx-shopping-row{grid-template-columns:76px minmax(0,1fr) 44px;column-gap:7px}.nx-shopping-category{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.nexus-week-quiet .nexus-quiet-chevron,.nexus-today-details-chevron{transition:none}}
+
+
+/* v0.6.0: Today compound-card hierarchy and tap targets */
+.nx-compound-card{border-radius:14px!important;overflow:hidden}
+.nx-compound-header{min-height:64px;outline-offset:3px}
+.nx-compound-chevron{color:var(--t4);display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:0 0 32px;border:1px solid var(--border-sub);border-radius:9px;font-size:19px}
+.nx-compound-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid var(--border-sub)}
+.nx-compound-actions button{min-height:44px;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:650;line-height:1.2;white-space:normal;cursor:pointer}
+.nx-compound-primary{background:var(--nx-compound-accent,#A78BFA);color:#171421;flex:1.3 1 115px;border:1px solid transparent}
+.nx-compound-secondary{background:var(--surface-2);color:var(--t2);border:1px solid var(--border);flex:1 1 100px}
+.nx-compound-header:focus-visible,.nx-compound-actions button:focus-visible{outline:3px solid #A78BFA;outline-offset:3px}
+@media(max-width:390px){.nx-compound-actions{gap:6px}.nx-compound-actions button{padding:9px 8px;font-size:11.5px;flex-basis:90px}}
+
+
+/* v0.6.1: unified disclosure glyphs and redesigned compact dose cards */
+.nx-compound-card{padding:16px!important;border-radius:17px!important;background:var(--surface)!important;border:1px solid var(--border-sub)!important}
+.nx-compound-header{min-height:0!important}
+.nx-compound-card .nx-card-top{display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:10px;align-items:start}
+.nx-compound-card .nx-card-title{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.nx-compound-card .nx-card-title strong{font-size:15px;line-height:1.4;color:var(--t1);overflow-wrap:anywhere}
+.nx-compound-card .nx-card-frequency{font-size:12px;color:var(--t4);margin-top:4px}
+.nx-compound-card .nx-card-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.nx-compound-card .nx-card-fact-label{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--t5);margin-bottom:4px}
+.nx-compound-card .nx-card-fact-value{font-size:12.5px;font-weight:600;color:var(--t2);overflow-wrap:anywhere}
+.nx-compound-card .nx-compound-actions{margin-top:15px;padding-top:13px}
+.nx-compound-chevron{width:30px!important;height:30px!important;flex:0 0 30px!important;border:0!important;background:var(--surface-2);border-radius:8px!important;font-size:0!important}
+.nx-compound-chevron:after,.nexus-quiet-chevron:after{content:'';display:block;width:8px;height:8px;border-right:1.8px solid currentColor;border-bottom:1.8px solid currentColor;transform:translateY(-2px) rotate(45deg);margin:auto}
+.nexus-quiet-chevron{font-size:0!important;display:inline-flex!important;align-items:center;justify-content:center;min-width:30px;min-height:30px}
+.nexus-quiet-details[open] .nexus-quiet-chevron:after{transform:translateY(2px) rotate(225deg)}
+.nx-compound-card .nx-card-status{font-size:11px;font-weight:650;border-radius:999px;padding:4px 8px;background:var(--surface-2);color:var(--t2);border:1px solid var(--border-sub)}
+@media(max-width:360px){.nx-compound-card .nx-card-facts{gap:8px}.nx-compound-card .nx-card-title strong{font-size:14px}}
+
+/* v0.6.2 shared disclosure language: same stroke, direction and alignment */
+:root{--nx-chevron-size:8px}
+.nx-compound-chevron:after,.nexus-quiet-chevron:after,
+.nexus-screen-protocols .nexus-protocol-archive>summary:after,
+.nx-kit-details>summary:after,.nx2-page--trends .nx-compound-details>summary:after,
+.nx-pe-records>summary:after,.nx-body-records>summary:after,.nx-tools summary:after{
+ content:""!important;display:inline-block!important;box-sizing:border-box!important;
+ width:var(--nx-chevron-size)!important;height:var(--nx-chevron-size)!important;
+ border-right:2px solid currentColor!important;border-bottom:2px solid currentColor!important;
+ transform:rotate(45deg)!important;vertical-align:middle!important;flex-shrink:0!important;
+ font-size:0!important;line-height:0!important;transition:transform .18s ease!important;
+}
+.nexus-screen-protocols .nexus-protocol-archive[open]>summary:after,
+.nx-kit-details[open]>summary:after,.nx2-page--trends .nx-compound-details[open]>summary:after,
+.nx-pe-records[open]>summary:after,.nx-body-records[open]>summary:after,
+.nx-tools[open] summary:after,.nexus-quiet-details[open] .nexus-quiet-chevron:after{
+ content:""!important;transform:rotate(225deg)!important;
+}
+.nx-compound-card .nx-card-top{align-items:center!important}
+.nx-compound-card .nx-card-title{align-items:center!important}
+.nx-compound-card .nx-compound-chevron{color:var(--t3)!important;display:grid!important;place-items:center!important}
+.nx-compound-card .nx-card-facts{padding-top:2px}
+/* Logging sheet: readable grouped fields and accessible mobile inputs without changing logic */
+.modal:has(#dose) .field-label,.modal:has(#sprays) .field-label{font-size:11px!important;letter-spacing:.6px!important;font-weight:700!important;color:var(--t3)!important;margin-bottom:7px!important}
+.modal:has(#dose) .inp,.modal:has(#sprays) .inp{min-height:44px;font-size:16px!important;border-radius:11px!important}
+.modal:has(#dose) button,.modal:has(#sprays) button{min-height:36px}
+@media(max-width:430px){.nx-compound-card .nx-compound-actions{gap:7px!important}.nx-compound-card .nx-compound-actions button{min-height:42px!important}.modal:has(#dose) input[type=datetime-local]{min-width:0!important}}
+
+/* v0.6.3: Today disclosures — intentionally matching independent cards.
+   Overrides older flat-row treatments without changing event handlers. */
+.nexus-today-details,
+.nexus-week-card.nexus-week-quiet {
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  margin:12px 0!important;
+  padding:0!important;
+  border:1px solid var(--border-sub)!important;
+  border-radius:16px!important;
+  background:var(--surface)!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+.nexus-today-details>summary,
+.nexus-week-quiet .nexus-quiet-toggle {
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 36px!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:100%!important;
+  min-height:76px!important;
+  padding:14px 16px!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  cursor:pointer!important;
+  text-align:left!important;
+}
+.nexus-today-details-copy,
+.nexus-week-quiet .nexus-quiet-copy {gap:5px!important;min-width:0!important}
+.nexus-today-details-chevron,
+.nexus-week-quiet .nexus-quiet-chevron {
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  justify-self:end!important;
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  margin:0!important;
+  font-size:0!important;
+  line-height:0!important;
+  color:var(--t3)!important;
+  transform:none!important;
+  transition:none!important;
+}
+.nexus-today-details-chevron::after,
+.nexus-week-quiet .nexus-quiet-chevron::after {
+  content:""!important;
+  display:block!important;
+  width:10px!important;
+  height:10px!important;
+  border:0!important;
+  border-right:2px solid currentColor!important;
+  border-bottom:2px solid currentColor!important;
+  transform:translateY(-2px) rotate(45deg)!important;
+  transition:transform .18s ease!important;
+}
+.nexus-today-details[open] .nexus-today-details-chevron,
+.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron {transform:none!important}
+.nexus-today-details[open] .nexus-today-details-chevron::after,
+.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron::after {
+  transform:translateY(3px) rotate(225deg)!important;
+}
+.nexus-today-details-body,
+.nexus-week-quiet #nexus-week-expanded {padding:0 16px 16px!important}
+.nexus-today-details[open]>summary,
+.nexus-week-quiet:has(.nexus-quiet-toggle[aria-expanded="true"]) .nexus-quiet-toggle {
+  border-bottom:1px solid var(--border-sub)!important;
+}
+@media(max-width:390px){
+  .nexus-today-details>summary,
+  .nexus-week-quiet .nexus-quiet-toggle {padding:13px 14px!important;gap:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .nexus-today-details-chevron::after,
+  .nexus-week-quiet .nexus-quiet-chevron::after {transition:none!important}
+}
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -1012,7 +1213,226 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .cal-day{min-width:0;min-height:42px}
 .cal-day:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
 </style>
-</head>
+<style>
+/* Nexus v0.5.3 — page hierarchy and type system */
+.nx-page-intro{margin:0 0 17px}.nx-page-intro h1{margin-bottom:5px}.nx-page-intro p{font-size:13px;line-height:1.5;color:var(--t4);margin:0}
+.nx-kicker{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--t4);font-weight:700;margin:0 0 8px}
+.nx-panel{background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;padding:16px;margin-bottom:13px}
+.nx-panel-title{font-size:16px;font-weight:700;color:var(--t1);margin:0 0 5px}
+.nx-muted{font-size:13px;line-height:1.5;color:var(--t4)}
+.nx-two-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--surface-2);border-radius:13px;margin-bottom:12px}
+.nx-two-tabs button{border:0;border-radius:10px;min-height:44px;background:transparent;color:var(--t4);font-size:14px;font-weight:650}
+.nx-two-tabs button[aria-selected="true"]{background:var(--surface);color:var(--t1);box-shadow:0 1px 5px #0001}
+.nx-tools{margin:0 0 15px;border:1px solid var(--border-sub);border-radius:13px;overflow:hidden}
+.nx-tools summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:11px 14px;color:var(--t3);font-size:13px;font-weight:650}
+.nx-tools summary::-webkit-details-marker{display:none}.nx-tools summary:after{content:'⌄';font-size:17px;color:var(--t4)}.nx-tools[open] summary:after{content:'⌃'}
+.nx-tool-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:0 10px 10px}
+.nx-tool-buttons button{border:1px solid var(--border-sub);background:var(--surface-2);border-radius:9px;min-height:42px;font-size:13px;color:var(--t3);font-weight:600}
+.nx-tool-buttons button[aria-selected="true"]{border-color:var(--accent);color:var(--t1);background:var(--surface-3)}
+.nx-profile-hero{display:flex;align-items:center;gap:14px}.nx-profile-avatar{width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;background:var(--surface-3);color:var(--t1);font-size:20px;font-weight:700;overflow:hidden}
+.nx-plan-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 15px}.nx-plan-summary>div{background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:12px 10px}.nx-plan-summary strong{display:block;font-size:21px;color:var(--t1)}.nx-plan-summary span{font-size:11px;color:var(--t4)}
+.nx-plan-item{background:var(--surface);border:1px solid var(--border-sub);border-radius:13px;padding:13px 14px;margin-bottom:9px}.nx-plan-item-title{font-size:14px;font-weight:650;color:var(--t1)}.nx-plan-item-sub{font-size:12px;color:var(--t4);line-height:1.5;margin-top:3px}
+.nx-plan-item details{margin-top:9px}.nx-plan-item details summary{font-size:12px;color:var(--t3);cursor:pointer;min-height:28px;padding-top:5px}
+.nx-plan-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface-2);padding:4px;border-radius:12px;margin-bottom:14px}.nx-plan-nav button{min-height:44px;font-size:13px;font-weight:650;border:0;border-radius:9px;background:transparent;color:var(--t4)}.nx-plan-nav button[aria-selected="true"]{background:var(--surface);color:var(--t1)}
+@media(max-width:390px){.nx-plan-summary>div{padding:10px 7px}.nx-plan-summary span{font-size:10px}}
+</style>
+<style>
+.nx-qa{margin:15px 0 18px}.nx-qa-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.nx-qa-head h2{font-size:17px;line-height:1.3;font-weight:650;margin:3px 0 0;color:var(--t1)}.nx-qa-eyebrow{font-size:11px;letter-spacing:.9px;color:var(--t4)}#nx-qa-customize{min-height:44px;padding:8px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t2);font-size:12px;background:var(--surface-2)}.nx-qa-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nx-qa-tile{min-height:75px;display:flex;align-items:center;text-align:left;gap:11px;padding:13px 11px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;color:var(--t1)}.nx-qa-icon{width:30px;flex:0 0 30px;font-size:21px;color:#A78BFA;text-align:center}.nx-qa-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.nx-qa-copy strong{font-size:13px;font-weight:650;line-height:1.25}.nx-qa-copy small{font-size:11px;color:var(--t4);line-height:1.25}.nx-qa-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.nx-qa-picker label{display:flex;align-items:center;gap:9px;min-height:48px;border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--t2);font-size:13px}.nx-qa-picker input{accent-color:#A78BFA;width:18px;height:18px}.nx-qa-tile:focus-visible,#nx-qa-customize:focus-visible,.nx-qa-picker input:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}@media(max-width:350px){.nx-qa-tile{padding:10px 8px;gap:7px}.nx-qa-copy strong{font-size:12px}}@media(prefers-reduced-motion:reduce){.nx-qa *{animation:none!important;transition:none!important}}
+</style>
+<style id="nx-056-style">.nx-usage-panel button:focus-visible,#nx-shopping-from-stash:focus-visible{outline:3px solid #A78BFA;outline-offset:3px}.nx-usage-panel input:focus-visible{outline:3px solid #A78BFA;outline-offset:3px}@media(prefers-reduced-motion:reduce){.nx-usage-panel *{scroll-behavior:auto!important;transition:none!important}}</style>
+<style id="nexus-v064-today-cards">
+/* Single canonical layout for the two Today disclosure cards. */
+.nexus-screen-home .nexus-today-details,
+.nexus-screen-home .nexus-week-card.nexus-week-quiet,
+.nexus-today-details,
+.nexus-week-card.nexus-week-quiet {
+  box-sizing:border-box!important;
+  width:100%!important;
+  margin:12px 0!important;
+  padding:0!important;
+  border:1px solid var(--border)!important;
+  border-radius:16px!important;
+  background:var(--surface)!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+.nexus-today-details>summary,
+.nexus-week-quiet .nexus-quiet-toggle {
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 40px!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:100%!important;
+  min-height:76px!important;
+  padding:15px 16px!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  text-align:left!important;
+  cursor:pointer!important;
+  list-style:none!important;
+  color:var(--t1)!important;
+}
+.nexus-today-details>summary::-webkit-details-marker{display:none!important}
+.nexus-today-details-copy,
+.nexus-week-quiet .nexus-quiet-copy {
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  gap:5px!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+.nexus-today-details-title,
+.nexus-week-quiet .nexus-quiet-copy h3 {
+  font-size:16px!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+  letter-spacing:-.02em!important;
+  margin:0!important;
+  color:var(--t1)!important;
+}
+.nexus-today-details-meta,
+.nexus-week-quiet .nexus-quiet-copy p {
+  display:block!important;
+  font-size:12px!important;
+  font-weight:400!important;
+  line-height:1.45!important;
+  color:var(--t4)!important;
+  text-align:left!important;
+  margin:0!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+.nexus-today-details-chevron,
+.nexus-week-quiet .nexus-quiet-chevron {
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  justify-self:center!important;
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  margin:0!important;
+  font-size:0!important;
+  line-height:0!important;
+  color:var(--t4)!important;
+  transition:transform .2s ease!important;
+}
+.nexus-today-details-chevron::after,
+.nexus-week-quiet .nexus-quiet-chevron::after {
+  content:""!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  width:11px!important;
+  height:11px!important;
+  border-right:2px solid currentColor!important;
+  border-bottom:2px solid currentColor!important;
+  border-top:0!important;
+  border-left:0!important;
+  transform:translateY(-2px) rotate(45deg)!important;
+}
+.nexus-today-details[open] .nexus-today-details-chevron,
+.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron{
+  transform:rotate(180deg)!important;
+}
+.nexus-week-quiet .nexus-quiet-header{
+  display:block!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+}
+.nexus-today-details-body,
+.nexus-week-quiet #nexus-week-expanded{
+  box-sizing:border-box!important;
+  padding:14px 16px 16px!important;
+  border-top:1px solid var(--border-sub)!important;
+}
+.nexus-today-details>summary:focus-visible,
+.nexus-week-quiet .nexus-quiet-toggle:focus-visible {
+  outline:2px solid #A78BFA!important;
+  outline-offset:-3px!important;
+  border-radius:14px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .nexus-today-details-chevron,.nexus-week-quiet .nexus-quiet-chevron{transition:none!important}
+}
+</style>
+<style id="nexus-v065-compound-disclosure">
+/* Consistent Today card disclosure: one stable chevron, no competing X. */
+.compound-collapse-btn,.nx-compound-chevron{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;flex:0 0 40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;border:1px solid var(--border-sub)!important;border-radius:10px!important;background:var(--surface-2)!important;color:var(--t4)!important;font-size:0!important;line-height:0!important;padding:0!important;margin:0!important}
+.compound-collapse-btn::after,.nx-compound-chevron::after{content:"";display:block;width:10px;height:10px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);box-sizing:border-box}
+.compound-collapse-btn::after{transform:translateY(2px) rotate(225deg)}
+.nx-compound-remove-row{display:flex;justify-content:flex-end;margin-top:14px;padding-top:10px;border-top:1px solid var(--border-sub)}
+.nx-compound-remove-row .archivepep{min-height:40px!important;padding:8px 12px!important;font-size:11px!important;color:var(--t4)!important;background:transparent!important;border:1px solid var(--border-sub)!important;border-radius:9px!important}
+</style>
+<style id="nexus-v066-compound-chevron-alignment">
+/* Fix 30px grid track squeezing a 40px disclosure control beyond the compact card padding.
+   Match the expanded card's 40px chevron and 16px right inset. */
+.nx-compound-card .nx-card-top{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 40px!important;
+  align-items:center!important;
+  column-gap:10px!important;
+}
+.nx-compound-card .nx-compound-chevron{
+  position:static!important;
+  box-sizing:border-box!important;
+  justify-self:end!important;
+  align-self:center!important;
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  max-width:40px!important;
+  margin:0!important;
+  transform:none!important;
+}
+.compound-collapse-btn{
+  position:static!important;
+  box-sizing:border-box!important;
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  margin:0!important;
+  transform:none!important;
+}
+</style>
+<style id="nexus-v067-pixel-stable-chevron">
+/* Identical 40px anchor inside both 16px-padded compound card headers. */
+.nx-compound-card .nx-card-top{display:block!important;position:relative!important;min-height:40px!important;padding-right:52px!important}
+.nx-compound-card .nx-compound-chevron{position:absolute!important;top:0!important;right:0!important;width:40px!important;height:40px!important;margin:0!important}
+.nx-expanded-compound-head{position:relative!important;min-height:40px!important;padding-right:52px!important}
+.nx-expanded-compound-head>.compound-collapse-btn{position:absolute!important;top:0!important;right:0!important;width:40px!important;height:40px!important;min-width:40px!important;margin:0!important}
+</style>
+<style id="nexus-v068-dose-form">
+/* Dose entry: coherent hierarchy, larger touch targets, responsive source selectors. */
+.nx-dose-form .nx-dose-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.nx-dose-form .nx-dose-kicker{font-size:10px;letter-spacing:1.5px;font-weight:700;color:var(--t4);text-transform:uppercase;margin-bottom:5px}
+.nx-dose-form .nx-dose-title{font-size:19px;font-weight:750;line-height:1.3;letter-spacing:-.025em;color:var(--t1);overflow-wrap:anywhere}
+.nx-dose-form .nx-dose-subtitle{font-size:11px;color:var(--t4);margin-top:5px}
+.nx-dose-form .nx-dose-close{display:grid;place-items:center;width:40px;height:40px;min-width:40px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--t3);font-size:18px}
+.nx-dose-form .nx-dose-section{border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2);padding:16px;margin-bottom:12px;min-width:0}
+.nx-dose-form .nx-dose-section-title{font-size:13px;font-weight:750;color:var(--t1);margin:0 0 4px}
+.nx-dose-form .nx-dose-section-desc{font-size:11px;line-height:1.5;color:var(--t4);margin:0 0 14px}
+.nx-dose-form .field-label{display:block;font-size:11px!important;letter-spacing:.055em!important;font-weight:700!important;color:var(--t3)!important;margin-bottom:7px!important}
+.nx-dose-form .inp{box-sizing:border-box;width:100%;min-height:44px!important;border-radius:10px!important;font-size:14px!important}
+.nx-dose-form input[type=datetime-local]{min-width:0}
+.nx-dose-form .src-opt,.nx-dose-form .kit-opt{min-height:40px!important;line-height:1.35!important;text-align:left}
+.nx-dose-form #date-now{min-height:44px}
+.nx-dose-form #toggle-multi{min-height:36px;padding:5px 0!important;text-align:left}
+.nx-dose-form #sym{min-height:32px}
+.nx-dose-form #notes{min-height:84px!important}
+.nx-dose-form .nx-dose-footer{position:sticky;bottom:-1px;z-index:3;background:var(--surface);padding:12px 0 max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--border-sub);margin-top:12px}
+.nx-dose-form #save{min-height:48px;font-weight:750;letter-spacing:.025em}
+.nx-dose-form .nx-dose-review-note{font-size:10.5px;color:var(--t4);line-height:1.5;margin-bottom:9px}
+@media(max-width:380px){.nx-dose-form .nx-dose-section{padding:12px}.nx-dose-form .nx-dose-title{font-size:17px}}
+</style>\n</head>
 <body>
 <div id="app"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#7DF9C0" class="mono">LOADING…</div></div>
 <div id="demo-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:#F9C87D;color:#000;font-size:11px;font-weight:700;text-align:center;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top));letter-spacing:1px">🧪 DEVELOPER DEMO MODE — Sample Data Active &nbsp;<button onclick="demoPickerModal()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Change</button>&nbsp;<button onclick="exitDemoMode()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Exit</button></div>
@@ -6430,11 +6850,17 @@ function doseModal(name, existing, occTime) {
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
 
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">${isEdit?"EDIT DOSE":"LOG DOSE"} — ${esc(name.toUpperCase())}${occLabel}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-dose-form">
+    <div class="nx-dose-head">
+      <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
+      <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
+      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div></div>
+      <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     ${!isEdit&&recent.length?`<div class="hint" style="margin-bottom:12px">Recent sites: ${recent.map(esc).join(" → ")} · suggested next: ${esc(suggestedSite)}</div>`:""}
+    <section class="nx-dose-section" aria-label="Dose source">
+      <div class="nx-dose-section-title">Dose source</div>
+      <p class="nx-dose-section-desc">Select the prepared dose or vial used for this entry.</p>
     ${preparedBatches.length?`<div id="source-picker" style="margin-bottom:14px">
       <label class="field-label">SOURCE</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
@@ -6448,6 +6874,10 @@ function doseModal(name, existing, occTime) {
         ${eligibleSources.map(({kit,vial})=>`<button class="kit-opt" data-kit="${kit.id}" style="padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${selectedKitId===kit.id?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">${esc(kit.vialMg||"?")}${c.unit}/vial · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)}${c.unit} left</button>`).join("")}
       </div>
     </div>
+    </section>
+    <section class="nx-dose-section" aria-label="Administration details">
+      <div class="nx-dose-section-title">Administration details</div>
+      <p class="nx-dose-section-desc">Review the amount, date and administration site.</p>
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
@@ -6466,10 +6896,19 @@ function doseModal(name, existing, occTime) {
     ${!isEdit ? `<button id="toggle-multi" style="background:transparent;border:none;padding:0;font-size:11px;color:var(--t4);margin-bottom:14px">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    </section>
+    <section class="nx-dose-section" aria-label="Observations">
+      <div class="nx-dose-section-title">Observations</div>
+      <p class="nx-dose-section-desc">Optional symptoms and notes associated with this entry.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(f.notes||"")}</textarea>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:13px;color:var(--t3)"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> This dose is an escalation</label>
-    <button id="save" class="btn-primary" style="background:${c.color}">${isEdit?"SAVE CHANGES":"CONFIRM LOG"}</button>
+    </section>
+    <div class="nx-dose-footer">
+      <div class="nx-dose-review-note">Confirm the date, recorded amount, units and source before saving.</div>
+      <button id="save" class="btn-primary" style="background:${c.color}">${isEdit?"SAVE CHANGES":"CONFIRM LOG"}</button>
+    </div>
+    </div>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
@@ -9771,6 +10210,7 @@ function insightsFeed() {
 }
 
 async function aminoSend(input) {
+  if (/what changed|recent check.ins|compare (my )?(last|recent|check.ins)/i.test(String(input||""))) { nxCheckinComparison(14); return; }
   if (!state._aminoMsgs) state._aminoMsgs = [];
   state._aminoMsgs.push({role:"user", content:input});
   if (!state.settings.recentNexusQuestions) state.settings.recentNexusQuestions=[];
@@ -9976,7 +10416,7 @@ function journalView() {
 }
 
 function aminoView() {
-  const aminoSub = state._aminoSub || "chat";
+  const aminoSub = state._aminoSub === "insights" ? "chat" : (state._aminoSub || "chat");
   const msgs = state._aminoMsgs||[];
   const apiKey = state.settings.nexusApiKey||"";
   const subBtn = (id, label, icon) => `<button id="as-${id}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 2px;border-radius:9px;font-size:10.5px;font-weight:600;background:${aminoSub===id?"var(--surface-3)":"transparent"};border:1px solid ${aminoSub===id?"var(--border)":"transparent"};color:${aminoSub===id?"var(--t1)":"var(--t4)"}"><span style="font-size:14px;line-height:1">${icon}</span><span style="line-height:1;white-space:nowrap">${label}</span></button>`;
@@ -9985,9 +10425,9 @@ function aminoView() {
     {
       content = `<div id="amino-chat" style="height:54vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:10px">
         ${msgs.length===0?`<div style="text-align:center;padding:20px 0">
-          <div style="font-size:26px;margin-bottom:8px">🤖</div>
-          <div style="font-size:13px;color:var(--t2);margin-bottom:4px">Hi ${esc(state.profile.name||"there")}!</div>
-          <div style="font-size:11px;color:var(--t4);margin-bottom:12px">I answer from your own data first. Try asking:</div>
+          
+          <div style="font-size:17px;font-weight:700;color:var(--t1);margin-bottom:6px">What would you like to explore?</div>
+          <div class="nx-muted" style="margin-bottom:15px">Start with a question about your recorded information.</div>
           <div style="display:flex;flex-direction:column;gap:10px;text-align:left">
             ${nexusSuggestions().map(g=>`<div>
               <div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin-bottom:5px">${esc(g.label.toUpperCase())}</div>
@@ -10025,10 +10465,14 @@ function aminoView() {
     else if (state._guideOpen != null) content = guideDetail(state._guideOpen);
     else content = learnContent();
   }
-  return `<h1 class="serif greet">Nexus</h1>
-  <div style="display:flex;gap:5px;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:12px">
-    ${subBtn("chat","Chat","🤖")}${subBtn("insights","Insights","✨")}${subBtn("journal","Journal","🔍")}${subBtn("learn","Learn","📚")}${subBtn("explore","Explore","🗺️")}
-  </div>
+  return `<div class="nx-page-intro"><h1 class="serif greet">Nexus</h1><p>Ask questions about your records or explore descriptive insights.</p></div>
+  <nav class="nx-direct-nav" aria-label="Nexus navigation">
+    <button id="as-chat" aria-selected="${aminoSub==="chat"}">Ask</button>
+    <button id="as-journal" aria-selected="${aminoSub==="journal"}">Journal</button>
+    <button id="as-learn" aria-selected="${aminoSub==="learn"}">Learn</button>
+    <button id="as-explore" aria-selected="${aminoSub==="explore"}">Explore</button>
+  </nav>
+  ${aminoSub==="chat"?`<button type="button" id="nx-ask-changes" class="nx-report-shortcut" style="margin:10px 0;padding:10px 14px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t1);border-radius:11px;width:100%;text-align:left;font-size:13px">What changed in my recent check-ins? →</button>`:""}
   ${content}`;
 }
 
@@ -11741,7 +12185,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
         <div style="width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0"></div>
         <span style="font-size:14px;font-weight:600;color:var(--t2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
         ${statusBadge("⏸ Paused","warning")}
-        <span style="color:var(--t5);font-size:14px;flex-shrink:0;min-width:24px;min-height:24px;display:flex;align-items:center;justify-content:center">⌄</span>
+        <span class="nx-compound-chevron" aria-hidden="true"></span>
       </div>
       <button class="resumepep" data-name="${esc(name)}" style="width:100%;min-height:36px;margin-top:8px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;font-size:11px;font-weight:600">▶ Resume</button>
     </div>`;
@@ -11759,7 +12203,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   let attentionLabel = null;
   if (trough) attentionLabel = "Winding Down";
   else if (siteWarn) attentionLabel = "Site rotation";
-  else if (escalation && escalation.signal==="may_be_ready") attentionLabel = "Escalation ready";
+  else if (escalation && escalation.signal==="may_be_ready") attentionLabel = "Protocol review";
 
   // Via scheduleLabel (phase-aware) rather than re-deriving from the top-level fields — this
   // line used to read data.scheduleDays directly, which is why Placenta said "Daily" while
@@ -11773,24 +12217,26 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   const statusLine = (statusPrefix[doseStatus.status]||"") + doseStatus.label;
   const statusColor = statusColors[doseStatus.status] || "var(--t4)";
 
-  return `<div class="card" style="padding:14px 16px;margin-bottom:8px;border-color:${isUpNext?statusColor+"66":c.color+"22"};${isUpNext?`box-shadow:0 0 0 1px ${statusColor}33`:""}">
-    <div class="compound-compact-tap" data-name="${esc(name)}" data-view="${esc(view)}" style="cursor:pointer">
-      ${isUpNext?`<div class="mono" style="font-size:8.5px;color:${statusColor};letter-spacing:1.5px;margin-bottom:5px;padding-left:17px">▸ UP NEXT</div>`:""}
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;min-height:22px">
-        <div style="width:7px;height:7px;border-radius:50%;background:${c.color};flex-shrink:0;box-shadow:0 0 6px ${c.color}"></div>
-        <span style="font-size:14px;font-weight:600;color:var(--t1);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
-        <span style="color:var(--t5);font-size:14px;flex-shrink:0;min-width:24px;min-height:24px;display:flex;align-items:center;justify-content:center">⌄</span>
+  const nextDateLabel = doseStatus.nextDueStr ? fmtShort(doseStatus.nextDueStr) : (doseStatus.status==="taken_today" ? "Completed today" : "Not scheduled");
+  const lastDateLabel = last ? fmtShort(dayKey(new Date(last.date).getTime())) : "No recorded dose";
+  const dueBadge = doseStatus.status==="overdue" ? "Overdue" : doseStatus.status==="taken_today" ? "Logged" : doseStatus.status==="due_now" || doseStatus.status==="due_later_today" ? "Due today" : doseStatus.status==="rescheduled" ? "Rescheduled" : doseStatus.status==="skipped" ? "Skipped" : "Upcoming";
+  return `<div class="card nx-compound-card" style="margin-bottom:9px;${isUpNext?`box-shadow:0 0 0 1px ${statusColor}33`:""}">
+    <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-label="Expand ${esc(name)} details" style="cursor:pointer">
+      <div class="nx-card-top"><div>
+        <div class="nx-card-title"><strong>${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
+        <div class="nx-card-frequency">${esc(freqLabel)}</div>
+      </div><span class="nx-compound-chevron" aria-hidden="true"></span></div>
+      <div class="nx-card-facts">
+        <div><div class="nx-card-fact-label">Last recorded</div><div class="nx-card-fact-value">${esc(lastDateLabel)}${doseAmount?` · ${doseAmount}`:""}</div></div>
+        <div><div class="nx-card-fact-label">Next scheduled</div><div class="nx-card-fact-value">${esc(nextDateLabel)}</div></div>
       </div>
-      <div style="font-size:11.5px;color:var(--t4);margin-bottom:3px;padding-left:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${doseAmount}${doseAmount?" · ":""}${esc(freqLabel)}</div>
-      <div style="display:flex;align-items:center;gap:8px;padding-left:17px">
-        <span style="font-size:12px;color:${statusColor};font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1;min-width:0">${esc(statusLine)}</span>
-        ${attentionLabel?`<span style="font-size:9.5px;color:var(--t5);flex-shrink:0;white-space:nowrap">· ${esc(attentionLabel)}</span>`:""}
-      </div>
+      ${attentionLabel?`<div style="font-size:11px;color:var(--t4);margin-top:9px">${esc(attentionLabel)}</div>`:""}
     </div>
-    ${doseStatus.showLogBtn?`<div style="display:flex;gap:6px;margin-top:10px">
-      <button class="logdose" data-name="${esc(name)}" style="flex:2;min-height:44px;background:${c.color};color:#000;border-radius:9px;font-size:12px;font-weight:700;letter-spacing:0.5px">+ LOG DOSE</button>
-      ${(data.doses||[]).length?`<button class="quicklogdose" data-name="${esc(name)}" title="Log now using last dose amount and rotation-suggested site" style="flex:1;min-height:44px;background:transparent;border:1px solid ${c.color}55;color:${c.color};border-radius:9px;font-size:11px;font-weight:600">⚡ Quick</button>`:""}
-    </div>`:""}
+    <div class="nx-compound-actions">
+      ${doseStatus.showLogBtn?`<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`:""}
+      ${doseStatus.nextDueStr && !["taken_today","skipped"].includes(doseStatus.status)?`<button class="rescheduledose nx-compound-secondary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}">Reschedule</button>`:""}
+      <button class="nx-open-compound-history nx-compound-secondary" data-name="${esc(name)}" data-view="${esc(view)}" aria-label="Open ${esc(name)} dose history">History</button>
+    </div>
   </div>`;
 }
 
@@ -11980,12 +12426,11 @@ function peptideCardHTML(name, data, opts={}) {
   // ── Paused card ───────────────────────────────────────────────────────────────
   if (status === "paused") {
     return `<div class="card" style="border-color:#F9C87D33;opacity:0.85">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
         <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name.toUpperCase())}</span>
         ${statusBadge("⏸ Paused", "warning")}
-        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">⌃</button>`:""}
-        <button class="archivepep" data-name="${esc(name)}" aria-label="Archive ${esc(name)}" title="Remove from tracker" style="min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:16px;padding:2px 6px;border-radius:6px;border:1px solid var(--border)">✕</button>
+        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0"></button>`:""}
       </div>
       <div style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:12px">
         ${data.pausedAt?`Paused ${fmtDate(data.pausedAt)}`:""}${data.pauseNote?` · <span style="font-style:italic">${esc(data.pauseNote)}</span>`:""}
@@ -11998,6 +12443,7 @@ function peptideCardHTML(name, data, opts={}) {
       <div class="histbox" data-name="${esc(name)}" style="display:none;margin-top:14px;border-top:1px solid var(--border-sub);padding-top:12px">
         ${doses.slice(0,6).map(d=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface-2)"><div style="width:2px;align-self:stretch;background:#F9C87D33;border-radius:2px"></div><div style="flex:1;min-width:0"><span style="font-size:12px;color:var(--t3)">${fmtDT(d.date)}</span>${d.sprayCount?` <span style="color:#F9C87D">${esc(d.sprayCount)} spray${d.sprayCount===1?"":"s"}</span> <span style="color:var(--t5);font-size:11px">(${esc(d.dose)} ${c.unit})</span>`:d.dose?` <span style="color:#F9C87D">${esc(d.dose)} ${c.unit}</span>`:""}</div></div>`).join("")}
       </div>
+      <div class="nx-compound-remove-row"><button class="archivepep" data-name="${esc(name)}" aria-label="Remove ${esc(name)} from Today">Remove from Today</button></div>
     </div>`;
   }
 
@@ -12039,12 +12485,11 @@ function peptideCardHTML(name, data, opts={}) {
     od?statusBadge("Overdue", "danger"):"",
   ].filter(Boolean).join("");
   return `<div class="card" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
+    <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
       <span class="mono" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name.toUpperCase())}</span>
       <button class="compound-intel-btn" data-name="${esc(name)}" style="color:${c.color};font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid ${c.color}33;background:${c.color}10;flex-shrink:0">Intel ›</button>
-      ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0">⌃</button>`:""}
-      <button class="archivepep" data-name="${esc(name)}" aria-label="Remove ${esc(name)} from Home" title="Remove from Home" style="min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:16px;padding:2px 6px;border-radius:6px;border:1px solid var(--border-sub);flex-shrink:0">✕</button>
+      ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0"></button>`:""}
     </div>
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
     ${doseStatus.recentSkip?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px;padding-left:18px">✕ Skipped ${esc(fmtDate(doseStatus.recentSkip.date))}${doseStatus.recentSkip.reason?` · ${esc(doseStatus.recentSkip.reason)}`:""} <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.recentSkip.date)}" style="color:var(--t4);text-decoration:underline;background:none;border:none;font-size:11px;padding:0;margin-left:4px">Undo</button></div>`:""}
@@ -12092,6 +12537,7 @@ function peptideCardHTML(name, data, opts={}) {
     ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D">🔄 <b>Rotate your site</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
     ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0">📈 <b>Escalation check:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
+    <div class="nx-compound-remove-row"><button class="archivepep" data-name="${esc(name)}" aria-label="Remove ${esc(name)} from Today">Remove from Today</button></div>
     <div class="morebox" data-name="${esc(name)}" style="display:none;margin-top:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
       <button class="histtoggle" data-name="${esc(name)}" title="Dose history" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">⏱ History <span style="color:var(--t5);font-weight:400">(${doses.length})</span></button>
       <button class="ics-export" data-name="${esc(name)}" title="Add to calendar" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">📅 Add to Calendar</button>
@@ -12843,6 +13289,7 @@ function learnContent() {
   const sub = state._learnSub || "guides";
   const subBtn = (id,l) => `<button id="ls-${id}" class="${sub===id?"on":""}">${l}</button>`;
   let html = `<div class="seg" style="margin:0 0 18px">${subBtn("guides","Guides")}${subBtn("discover","Discover")}${subBtn("mixing","Stacking")}${subBtn("calc","Dose Calc")}</div>`;
+  if(sub!=="calc") html += `<div class="nx-learn-quick"><div style="font-weight:650;color:var(--t1);margin-bottom:7px">Quick tool</div><button type="button" id="nx-learn-calc">Dose calculator →</button><p style="font-size:11px;color:var(--t4);margin:8px 0 0">Concentration and volume conversions only; not a clinical dose verification.</p></div>`;
   if (sub === "mixing") { return html+mixingChartView(); }
   if (sub === "calc")    { return html+reconCalcView(); }
   if (sub === "discover") {
@@ -13677,7 +14124,7 @@ function trendsView() {
   <nav class="nx-trends-jump" aria-label="Explore trends sections">
     <button class="nx-trends-go" data-key="weight">Body metrics</button>
     <button class="nx-trends-go" data-key="healthlog">Health</button>
-    ${Object.entries(aps).filter(([,p])=>(p.doses||[]).length>0).slice(0,6).map(([name])=>`<button class="nx-trends-go" data-key="${esc(name)}">${esc(name)}</button>`).join("")}
+    <button class="nx-trends-library-jump" type="button">Compounds</button>
   </nav>
   <div class="nx-trends-section-caption">Body &amp; health</div>`;
 
@@ -13709,7 +14156,7 @@ function trendsView() {
   // Health Log accordion
   const healthLogCount = state.activityLogs.filter(a=>a.restingHR||a.hrv||a.avgHeartRate||a.basalCalories||a.exerciseMinutes||a.standHours).length;
   html+=accordionHdr("healthlog","Health Log","#FF9CC8",healthLogCount?healthLogCount+" days":null);
-  html+=accordionBody("healthlog","#FF9CC8",nxHealthImportContext()+healthLogSection());
+  html+=accordionBody("healthlog","#FF9CC8",`<div class="nx-health-manage"><button type="button" id="nx-health-manage">Manage imported health data ↗</button></div>`+healthLogSection());
   html+=`<div style="margin-bottom:10px"></div>`;
 
   // Exploratory comparisons belong to Trends, not to an individual compound.
@@ -13720,8 +14167,16 @@ function trendsView() {
 
   // Per-compound sections
   const startedPeps=Object.entries(aps).filter(([,d])=>(d.doses||[]).length>0);
-  if(startedPeps.length) html+=`<div class="nx-trends-section-caption">Compound history</div>`;
+  if(startedPeps.length) {
+    const names=startedPeps.map(([name,data])=>({name,count:(data.doses||[]).length,last:[...(data.doses||[])].sort((a,b)=>safeDate(b.date)-safeDate(a.date))[0]?.date}));
+    const selected=state._nxHistorySelected;
+    html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length} compounds</span></div>
+      <input id="nx-library-search" class="nx-library-search" type="search" placeholder="Search compounds…" aria-label="Search compound history" value="${esc(state._nxHistoryQuery||'')}">
+      <div id="nx-library-list" class="nx-library-list">${names.map(item=>`<button type="button" class="nx-library-item ${selected===item.name?'is-active':''}" data-nx-compound="${esc(item.name)}"><span><strong>${esc(item.name)}</strong><span class="nx-library-meta" style="display:block">${item.count} logged doses · ${item.last?`Last ${esc(fmtShort(item.last))}`:'No date'}</span></span><span aria-hidden="true">›</span></button>`).join('')}</div></section>`;
+    if(selected&&names.some(n=>n.name===selected)) html+=`<div class="nx-library-head"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Selected history</span></div>`;
+  }
   startedPeps.forEach(([name,data])=>{
+    if(name!==state._nxHistorySelected) return;
     const c=cfg(name), doses=data.doses||[];
     const chronological=[...doses].sort((a,b)=>safeDate(a.date)-safeDate(b.date));
     const last=chronological[chronological.length-1];
@@ -15784,6 +16239,7 @@ function stashView() {
   }
 
   html+=`<button id="addvial" style="width:100%;padding:12px;border-radius:12px;background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;font-size:13px;font-weight:600">+ Add Kit</button>`;
+  html += `<div style="margin:18px 0 6px;padding:15px;border-radius:14px;background:var(--surface);border:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><strong style="font-size:14px;color:var(--t1)">Need to replenish?</strong><p style="font-size:12px;color:var(--t3);margin:5px 0 0">Your shopping list is linked here for convenience.</p></div><button type="button" id="nx-shopping-from-stash" style="min-height:44px;padding:10px 15px;border-radius:10px;background:#A78BFA20;border:1px solid #A78BFA66;color:var(--t1);font-size:13px;font-weight:600">Open shopping list →</button></div>`;
   return html;
 }
 
@@ -16812,6 +17268,101 @@ function onboardingChecklistCard() {
   </div>`;
 }
 
+
+// v0.5.4 — same-day entry point and evidence-first contextual comparison.
+
+// v0.5.5 — Local-first, customizable navigation. No health data in usage events.
+const NX_QUICK_TOOLS=[
+  {id:"calc",label:"Dose calculator",hint:"Conversion tool",icon:"▦"},
+  {id:"changes",label:"What's changed?",hint:"Compare check-ins",icon:"↗"},
+  {id:"stash",label:"Inventory",hint:"Stock & kits",icon:"▤"},
+  {id:"supplies",label:"Supplies",hint:"Manage stock",icon:"▣"},
+  {id:"history",label:"Compound history",hint:"Recorded doses",icon:"◷"},
+  {id:"learn",label:"Learn",hint:"Guides & tools",icon:"◇"},
+  {id:"journal",label:"Journal",hint:"Your entries",icon:"▤"},
+  {id:"plans",label:"Plans",hint:"Goals & research",icon:"◎"}
+];
+function nxQuickIds(){
+  const ids=state.settings?.nxQuickAccess;
+  const defaults=["calc","changes","stash","history"];
+  return Array.isArray(ids)?ids.filter((id,i)=>NX_QUICK_TOOLS.some(t=>t.id===id)&&ids.indexOf(id)===i).slice(0,4):defaults;
+}
+function nxQuickAccessView(){
+  const selected=nxQuickIds();
+  return `<section class="nx-qa" aria-label="Customizable quick access"><div class="nx-qa-head"><div><div class="nx-qa-eyebrow">YOUR SHORTCUTS</div><h2>Quick access</h2></div><button type="button" id="nx-qa-customize" aria-label="Customize quick access">Customize</button></div><div class="nx-qa-grid">${selected.map(id=>{const t=NX_QUICK_TOOLS.find(x=>x.id===id);return `<button type="button" class="nx-qa-tile" data-nx-quick="${t.id}" aria-label="Open ${t.label}"><span class="nx-qa-icon" aria-hidden="true">${t.icon}</span><span class="nx-qa-copy"><strong>${t.label}</strong><small>${t.hint}</small></span></button>`}).join("")}</div></section>`;
+}
+function nxUsageEvent(feature){
+  // Deliberately track only feature IDs and aggregate counts, never dates, doses, symptoms or personal values.
+  if(_demoActive||state.settings?.nxUsageEnabled!==true)return;
+  const allowed=new Set(NX_QUICK_TOOLS.map(t=>t.id));if(!allowed.has(feature))return;
+  const usage=state.settings.nxUsageCounts||{};
+  usage[feature]=Math.min(999999,(Number(usage[feature])||0)+1);
+  state.settings.nxUsageCounts=usage;saveState();
+}
+function nxQuickGo(id){
+  nxUsageEvent(id);
+  if(id==="calc")return nxOpenCalculator();
+  if(id==="changes")return nxCheckinComparison(14);
+  if(id==="stash"||id==="supplies"){tab="stash";state._stashSub=id==="supplies"?"equipment":"kits";render();window.scrollTo(0,0);return;}
+  if(id==="history"){tab="trends";state._trendsOpen={...(state._trendsOpen||{}),compound:true};render();window.scrollTo(0,0);requestAnimationFrame(()=>{const el=document.querySelector("#nx-compound-library");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});});return;}
+  if(id==="learn"||id==="journal"){tab="amino";state._aminoSub=id;render();window.scrollTo(0,0);return;}
+  if(id==="plans"){tab="plans";render();window.scrollTo(0,0);}
+}
+function nxQuickCustomize(){
+  const selected=new Set(nxQuickIds());
+  const m=openModal(`<h2 style="font-size:19px;color:var(--t1);margin:0 0 8px">Customize quick access</h2><p style="font-size:13px;color:var(--t3);margin-bottom:15px">Choose up to four shortcuts. Log Dose and New Check-in remain on Today.</p><div class="nx-qa-picker">${NX_QUICK_TOOLS.map(t=>`<label><input type="checkbox" value="${t.id}" ${selected.has(t.id)?"checked":""}/><span>${t.label}</span></label>`).join("")}</div><p id="nx-qa-error" role="status" style="font-size:12px;color:var(--t3);min-height:18px"></p><button type="button" id="nx-qa-save" class="btn-primary" style="width:100%;min-height:44px">Save shortcuts</button>`,"#A78BFA");
+  if(!m)return;
+  const boxes=[...m.querySelectorAll('.nx-qa-picker input')];
+  boxes.forEach(b=>b.addEventListener('change',()=>{
+    const chosen=boxes.filter(x=>x.checked);
+    if(chosen.length>4){b.checked=false;m.querySelector('#nx-qa-error').textContent='You can choose up to four shortcuts.';}
+    else m.querySelector('#nx-qa-error').textContent='';
+  }));
+  m.querySelector('#nx-qa-save').onclick=()=>{
+    state.settings.nxQuickAccess=boxes.filter(x=>x.checked).map(x=>x.value);
+    saveState();closeModal();render();
+  };
+}
+
+function nxOpenCalculator(){
+  // Reuse the original calculator renderer and wiring; do not duplicate calculations.
+  const previousTab=tab;
+  state._aminoSub="learn";state._learnSub="calc";
+  state._guideOpen=null;state._discoverOpen=null;
+  tab="amino";
+  render();
+  window.scrollTo(0,0);
+}
+function nxCheckinComparison(days=14){
+  const end=new Date();end.setHours(23,59,59,999);
+  const start=new Date(end.getTime()-days*86400000);start.setHours(0,0,0,0);
+  const priorStart=new Date(start.getTime()-days*86400000);
+  const logs=(state.dailyLogs||[]).filter(l=>l&&l.date&&Number.isFinite(new Date(l.date).getTime()));
+  const inWindow=(l,a,b)=>{const t=new Date(l.date).getTime();return t>=a.getTime()&&t<b.getTime()};
+  const recent=logs.filter(l=>inWindow(l,start,new Date(end.getTime()+1)));
+  const previous=logs.filter(l=>inWindow(l,priorStart,start));
+  const uniqueDays=arr=>new Set(arr.map(l=>dayKey(l.date))).size;
+  const symDays=arr=>new Set(arr.filter(l=>Array.isArray(l.symptoms)&&l.symptoms.length).map(l=>dayKey(l.date))).size;
+  const moodValues=arr=>arr.map(l=>Number(l.mood)).filter(v=>Number.isFinite(v)&&v>0);
+  const mean=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;
+  const currentDays=uniqueDays(recent),previousDays=uniqueDays(previous);
+  const fmt=v=>v==null?"Not enough ratings":v.toFixed(1)+" / 5";
+  const rate=(n,d)=>d?Math.round(n/d*100)+"% of logged days":"Not available";
+  const recordList=(arr)=>arr.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(l=>`<div><b>${esc(dayKey(l.date))}</b> · Mood: ${Number(l.mood)>0?esc(String(l.mood))+"/5":"not recorded"} · Symptoms: ${Array.isArray(l.symptoms)&&l.symptoms.length?esc(l.symptoms.map(s=>typeof s==="string"?s:s.name||"Unspecified").join(", ")):"none listed"}</div>`).join("")||"<div>No check-ins recorded in this period.</div>";
+  const thin=currentDays<3||previousDays<3;
+  const m=openModal(`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="font-size:21px;margin:0;color:var(--t1)">Check-in changes</h2><button id="nx-report-close" class="btn-ghost" type="button">Close</button></div>
+    <p style="color:var(--t3);font-size:13px;line-height:1.5">Compare two equal-length periods using your saved check-ins. No missing day is assumed symptom-free.</p>
+    <div class="nx-report-toolbar">${[7,14,30].map(d=>`<button type="button" data-nx-report-days="${d}" aria-pressed="${d===days}">${d} days</button>`).join("")}</div>
+    <div class="nx-report-row"><strong>Record coverage</strong><p>Recent: ${currentDays} of ${days} days · Previous: ${previousDays} of ${days} days</p>${thin?`<p>Limited comparable data: interpret changes cautiously.</p>`:""}</div>
+    <div class="nx-report-row"><strong>Symptom reporting</strong><p>Recent: ${symDays(recent)} days (${rate(symDays(recent),currentDays)}) · Previous: ${symDays(previous)} days (${rate(symDays(previous),previousDays)})</p><p>This reflects symptoms listed in check-ins, not a diagnosis or proof of improvement.</p></div>
+    <div class="nx-report-row"><strong>Recorded mood</strong><p>Recent: ${fmt(mean(moodValues(recent)))} · Previous: ${fmt(mean(moodValues(previous)))}</p><p>Only check-ins with a recorded mood rating contribute.</p></div>
+    <details class="nx-report-row"><summary style="cursor:pointer;font-weight:650;color:var(--t1)">Inspect recent check-ins (${recent.length})</summary><div class="nx-report-records">${recordList(recent)}</div></details>
+    <details class="nx-report-row"><summary style="cursor:pointer;font-weight:650;color:var(--t1)">Inspect previous check-ins (${previous.length})</summary><div class="nx-report-records">${recordList(previous)}</div></details>
+    <p style="color:var(--t4);font-size:11px;line-height:1.5">Descriptive comparison only. Differences may reflect reporting frequency, missing data, or other factors. No causal claims are made.</p>`,"#A78BFA");
+  m.querySelector('#nx-report-close').onclick=closeModal;
+  m.querySelectorAll('[data-nx-report-days]').forEach(b=>b.onclick=()=>nxCheckinComparison(Number(b.dataset.nxReportDays)));
+}
+
 function homeView() {
   const now=new Date(), hr=now.getHours();
   const greeting=hr<12?"Good morning":hr<18?"Good afternoon":"Good evening";
@@ -16856,6 +17407,7 @@ function homeView() {
     
   </section>`;
   html+=`<div class="nexus-today-actions nexus-today-actions-b4"><button type="button" id="today-log-dose" class="nexus-today-action-primary">＋ Log dose</button><button type="button" class="qa-daily nexus-today-action-secondary">＋ New check-in</button></div>`;
+  html+=nxQuickAccessView();
   const hasWeightThisWeek = state.weightLogs.some(w=>{ const d=safeDate(w.date); return d>=weekStart; });
   const hasMeasureThisWeek = state.measurementLogs.some(m=>{ const d=safeDate(m.date); return d>=weekStart; });
 
@@ -16982,8 +17534,7 @@ function homeView() {
   // persist across app restarts, and never auto-expands on its own.
   const weekExpanded = !!state._weekExpanded;
   const thisWeekCardHtml=`<section class="nexus-week-card nexus-week-quiet" aria-label="Weekly progress">
-    <div class="nexus-quiet-header"><div><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} due today` : ``}</p></div>
-      <button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span aria-hidden="true">${weekExpanded?"⌃":"⌄"}</span></button></div>
+    <div class="nexus-quiet-header"><button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span class="nexus-quiet-copy"><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} due today` : ``}</p></span><span class="nexus-quiet-chevron" aria-hidden="true">⌄</span></button></div>
     <div id="nexus-week-expanded" ${weekExpanded?"":"hidden"}>
       <div class="nexus-week-expanded-top"><span>${weekRangeLabel}</span><button type="button" id="opendigest" class="nexus-text-action">Full report →</button></div>
       <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Due today</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
@@ -17011,7 +17562,7 @@ function homeView() {
   else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
   html += todayAttentionHtml; // contextual alerts appear after the schedule, not between progress and schedule
-  html+=`<details class="nexus-today-details"><summary><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">Check-in · Weight · Nutrition · Supplements</span><span class="nexus-today-details-chevron" aria-hidden="true">⌄</span></summary><div class="nexus-today-details-body"><div class="nexus-today-tracking-content"><div class="nexus-today-tracking-actions"><button type="button" class="qa-more nexus-today-action-secondary" aria-label="Log weight, measurements, nutrition or supplements">＋ Other logs</button></div><div class="nexus-today-eyebrow" style="margin-bottom:12px">TODAY’S LOGS</div><div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:120px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">CHECK-IN</div>${mood?`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">${mood.emoji}</span><div><div style="font-size:13px;color:var(--t2)">${mood.label}</div>${todayLog.compound?`<div style="font-size:10px;color:var(--t4)">re: ${esc(todayLog.compound)}</div>`:""}${(todayLog.updates||[]).length?`<button class="opentodaysheet" data-id="${todayLog.id}" style="font-size:10px;color:#A78BFA;background:#A78BFA18;border:1px solid #A78BFA44;border-radius:10px;padding:2px 8px;margin-top:2px">＋${(todayLog.updates||[]).length} update${(todayLog.updates||[]).length===1?"":"s"}</button>`:""}<button class="editdaily" data-id="${todayLog.id}" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border);border-radius:10px;padding:2px 8px;margin-top:2px;margin-left:4px">✏ Edit</button></div></div>`:`<button class="qa-daily" style="background:transparent;border:1px dashed var(--border);border-radius:8px;padding:7px 12px;font-size:11px;color:var(--t4);width:100%">+ Log today</button>`}</div>${todayWeight?`<div style="flex:1;min-width:80px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">WEIGHT</div><div style="font-size:18px;font-weight:700;color:#8AB4FF">${esc(todayWeight.weight)}<span style="font-size:12px;font-weight:400"> ${state.settings.weightUnit}</span></div></div>`:""}</div>${todayMacro&&todayMacro.calories?`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">${[["🍽",todayMacro.calories+" kcal","#F9C87D"],["P:",todayMacro.protein+"g","#C8FF9C"],["C:",todayMacro.carbs+"g","#9CC8FF"],["F:",todayMacro.fat+"g","#FFB84D"]].filter(([,v])=>v&&v!=="g"&&v!=="kcal").map(([l,v,c])=>`<span style="font-size:11px;color:${c}">${l} ${v}</span>`).join("")}</div>`:""}
+  html+=`<details class="nexus-today-details"><summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">Check-in · Weight · Nutrition · Supplements</span></span><span class="nexus-today-details-chevron" aria-hidden="true">⌄</span></summary><div class="nexus-today-details-body"><div class="nexus-today-tracking-content"><div class="nexus-today-tracking-actions"><button type="button" class="qa-more nexus-today-action-secondary" aria-label="Log weight, measurements, nutrition or supplements">＋ Other logs</button></div><div class="nexus-today-eyebrow" style="margin-bottom:12px">TODAY’S LOGS</div><div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:120px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">CHECK-IN</div>${mood?`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">${mood.emoji}</span><div><div style="font-size:13px;color:var(--t2)">${mood.label}</div>${todayLog.compound?`<div style="font-size:10px;color:var(--t4)">re: ${esc(todayLog.compound)}</div>`:""}${(todayLog.updates||[]).length?`<button class="opentodaysheet" data-id="${todayLog.id}" style="font-size:10px;color:#A78BFA;background:#A78BFA18;border:1px solid #A78BFA44;border-radius:10px;padding:2px 8px;margin-top:2px">＋${(todayLog.updates||[]).length} update${(todayLog.updates||[]).length===1?"":"s"}</button>`:""}<button class="editdaily" data-id="${todayLog.id}" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border);border-radius:10px;padding:2px 8px;margin-top:2px;margin-left:4px">✏ Edit</button></div></div>`:`<button class="qa-daily" style="background:transparent;border:1px dashed var(--border);border-radius:8px;padding:7px 12px;font-size:11px;color:var(--t4);width:100%">+ Log today</button>`}</div>${todayWeight?`<div style="flex:1;min-width:80px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">WEIGHT</div><div style="font-size:18px;font-weight:700;color:#8AB4FF">${esc(todayWeight.weight)}<span style="font-size:12px;font-weight:400"> ${state.settings.weightUnit}</span></div></div>`:""}</div>${todayMacro&&todayMacro.calories?`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">${[["🍽",todayMacro.calories+" kcal","#F9C87D"],["P:",todayMacro.protein+"g","#C8FF9C"],["C:",todayMacro.carbs+"g","#9CC8FF"],["F:",todayMacro.fat+"g","#FFB84D"]].filter(([,v])=>v&&v!=="g"&&v!=="kcal").map(([l,v,c])=>`<span style="font-size:11px;color:${c}">${l} ${v}</span>`).join("")}</div>`:""}
 ${todaySupp?.taken?.length
   ?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub);display:flex;align-items:center;gap:8px">
       <span style="font-size:11px;color:#C8FF9C;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">💊 ${todaySupp.taken.join(" · ")}</span>
@@ -17117,56 +17668,20 @@ function renderProfileSubNav(active) {
 
 // ── PROFILE tab: identity, stats, goals, protocol notes, timeline ──────────
 function renderProfileTabContent() {
-  const p = state.profile;
-  const unit = state.settings.weightUnit, munit = state.settings.measureUnit;
-  const aps = allPeptides();
-  const allDoses = Object.values(aps).flatMap(d=>d.doses||[]);
-  const daysTracked = state.dailyLogs.length ? Math.ceil((Date.now()-new Date([...state.dailyLogs].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date).getTime())/86400000) : 0;
-  const startDays = p.startDate ? Math.ceil((Date.now()-new Date(p.startDate).getTime())/86400000) : null;
-  const logDays = new Set(state.dailyLogs.map(l=>dayKey(l.date)));
-  let streak=0; const today=new Date();
-  for(let i=0;i<365;i++){ const d=new Date(today); d.setDate(d.getDate()-i); if(logDays.has(dayKey(d.toISOString()))){ streak++; }else{ if(i>0)break; } }
-
-  const currentW = state.weightLogs.length ? parseFloat([...state.weightLogs].sort((a,b)=>new Date(b.date)-new Date(a.date))[0].weight) : null;
-  const startW   = state.weightLogs.length ? parseFloat([...state.weightLogs].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].weight) : null;
-  const goalW    = p.goalWeight ? parseFloat(p.goalWeight) : null;
-  const wPct = (startW&&goalW&&currentW) ? Math.max(0,Math.min(100,Math.round((startW-currentW)/(startW-goalW)*100))) : null;
-
-  const latestM = state.measurementLogs.length ? [...state.measurementLogs].sort((a,b)=>new Date(b.date)-new Date(a.date))[0] : null;
-  const firstM  = state.measurementLogs.length ? [...state.measurementLogs].sort((a,b)=>new Date(a.date)-new Date(b.date))[0] : null;
-
-  const statCard = (label,val,sub) => `<div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--t2);line-height:1">${val}</div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-top:4px">${label}</div>${sub?`<div style="font-size:10px;color:var(--t4);margin-top:2px">${sub}</div>`:""}</div>`;
-  const bar = (val,col,label,current,goal,unit2) => {
-    if(val==null) return "";
-    return `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--t3)">${label}</span><span style="font-size:11px;color:${col}">${current} → ${goal} ${unit2}</span></div><div style="height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${val}%;background:${col};border-radius:4px;transition:width 0.6s"></div></div><div style="font-size:10px;color:var(--t4);margin-top:3px">${val}% to goal</div></div>`;
-  };
-
-  return `<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:16px">
-    <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#7DF9C0,#C9A0FF);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#000;flex-shrink:0;overflow:hidden">${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(p.name||"?")[0].toUpperCase()}</div>
-    <div style="flex:1"><div style="font-size:18px;color:var(--t1);font-weight:600">${esc(p.name||"—")}</div>${startDays?`<div style="font-size:12px;color:var(--t4);margin-top:2px">Day ${startDays} of protocol</div>`:p.startDate?`<div style="font-size:12px;color:var(--t4)">Started ${fmtDate(p.startDate)}</div>`:"<div style='font-size:11px;color:var(--t5)'>Set a start date below</div>"}</div>
-    <button id="editprofile" style="background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Edit</button>
-  </div>
-
-  <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR JOURNEY</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-    ${statCard("DOSES LOGGED",allDoses.length)}
-    ${statCard("CHECK-INS",state.dailyLogs.length)}
-    ${statCard("COMPOUNDS TRACKED",Object.keys(aps).length)}
-    ${statCard("DAYS TRACKING",daysTracked||"—")}
-  </div>
-  <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:20px">
-    ${statCard("LOG STREAK",streak?streak+"d":"—",streak?"consecutive days":"")}
-  </div>
-
-  ${(goalW||p.goalWaist||p.goalHips||p.goalGlute)?`<div class="card" style="border-color:#7DF9C022;margin-bottom:16px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:14px">GOAL PROGRESS</div>
-    ${bar(wPct,"#8AB4FF","Weight",currentW?currentW+" "+unit:"—",goalW+" "+unit,"")}
-    ${MEASURES.map(([k,l,col])=>{const gk="goal"+k[0].toUpperCase()+k.slice(1); const goal=parseFloat(p[gk]||0); const curr=latestM?parseFloat(latestM[k]||0):null; const first=firstM?parseFloat(firstM[k]||0):null; if(!goal||!curr||!first||Math.abs(first-goal)<0.01) return ""; const pct=Math.max(0,Math.min(100,Math.round((first-curr)/(first-goal)*100))); return bar(pct,col,l,curr,goal,munit); }).join("")}
-  </div>`:
-  `<div style="background:var(--surface);border:1px dashed var(--border);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--t4);margin-bottom:8px">No goals set yet</div><button id="editprofile2" style="background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600">+ Set Goals</button></div>`}
-
-  ${p.protocolNotes?`<div class="card" style="margin-bottom:16px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">PROTOCOL NOTES</div><div style="font-size:13px;color:var(--t3);line-height:1.6;white-space:pre-wrap">${esc(p.protocolNotes)}</div></div>`:""}
-
-  ${protocolTimeline()}`;
+  const p=state.profile||{};
+  const goalNames=[p.goalWeight?"Weight":null,p.goalWaist?"Waist":null,p.goalHips?"Hips":null,p.goalGlute?"Glute":null].filter(Boolean);
+  return `<div class="nx-page-intro"><p>Your personal details and preferences. Progress and activity history live in Trends.</p></div>
+  <section class="nx-panel nx-profile-hero">
+    <div class="nx-profile-avatar">${p.avatar?`<img src="${p.avatar}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc((p.name||"?").charAt(0).toUpperCase())}</div>
+    <div style="flex:1;min-width:0"><div style="font-size:18px;font-weight:700;color:var(--t1)">${esc(p.name||"My profile")}</div><div class="nx-muted">${p.startDate?`Tracking since ${fmtDate(p.startDate)}`:"Add your personal details"}</div></div>
+    <button id="editprofile" style="background:var(--surface-3);border:1px solid var(--border-sub);color:var(--t1);border-radius:10px;padding:10px 14px;min-height:44px;font-size:13px;font-weight:650">Edit</button>
+  </section>
+  <section class="nx-panel"><div class="nx-kicker">Your goals</div><div class="nx-panel-title">Personal targets</div>
+    <p class="nx-muted" style="margin:0 0 12px">${goalNames.length?`${goalNames.length} target${goalNames.length===1?"":"s"} configured: ${goalNames.join(", ")}. View changes and trends in Body Progress.`:"No personal targets set yet. Add them in your profile."}</p>
+    <button id="editprofile2" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;min-height:42px;padding:9px 13px;color:var(--t1);font-size:13px;font-weight:650">${goalNames.length?"Edit targets":"Set targets"}</button>
+  </section>
+  ${p.protocolNotes?`<section class="nx-panel"><details><summary style="font-size:14px;font-weight:650;color:var(--t1);cursor:pointer">Protocol notes</summary><div class="nx-muted" style="white-space:pre-wrap;margin-top:10px">${esc(p.protocolNotes)}</div></details></section>`:""}
+  <section class="nx-panel"><div class="nx-panel-title">Your tracking journey</div><p class="nx-muted" style="margin:0 0 10px">Past protocols and milestones are available on demand.</p><details><summary style="cursor:pointer;font-size:13px;font-weight:650;color:var(--t3);min-height:35px">Show timeline</summary><div style="margin-top:12px">${protocolTimeline()}</div></details></section>`;
 }
 
 // ── SETTINGS tab: iOS-style navigable row list ──────────────────────────────
@@ -17176,6 +17691,38 @@ const NX_SETTINGS_ICON_PATHS={'reminders':'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7
 function nxSettingsIcon(key){
   return `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NX_SETTINGS_ICON_PATHS[key]||NX_SETTINGS_ICON_PATHS.appupdates}</svg>`;
 }
+
+
+// Nexus v0.5.6: local-only, opt-in shortcut analytics settings.
+function nxUsageSettingsView(){
+ const enabled=state.settings.nxUsageEnabled===true;
+ const counts=state.settings.nxUsageCounts||{};
+ const rows=NX_QUICK_TOOLS.map(t=>({label:t.label,count:Math.max(0,Number(counts[t.id])||0)})).sort((a,b)=>b.count-a.count);
+ const total=rows.reduce((n,r)=>n+r.count,0);
+ return `<section class="nx-usage-panel" aria-label="Shortcut usage preferences">
+ <p style="font-size:14px;line-height:1.55;color:var(--t3)">Optional, on-device counters for Quick Access shortcuts only. No health values, dates, or external analytics are collected. Counts do not represent usage from other navigation paths.</p>
+ <label style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:1px solid var(--border-sub);border-radius:14px;font-size:14px;color:var(--t1)"><input type="checkbox" id="nx-usage-toggle" ${enabled?'checked':''} style="width:22px;height:22px;accent-color:#A78BFA"/><span><strong>Track shortcut opens</strong><small style="display:block;color:var(--t3);font-size:12px;margin-top:3px">${enabled?'Enabled':'Disabled'} · off by default</small></span></label>
+ <h3 style="font-size:17px;margin:22px 0 6px;color:var(--t1)">Shortcut activity</h3>
+ <p style="font-size:12px;color:var(--t3);margin-bottom:12px">${total} recorded opens${enabled?'':' · tracking paused'}</p>
+ ${rows.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 3px;border-bottom:1px solid var(--border-sub);font-size:14px"><span style="color:var(--t1)">${esc(r.label)}</span><strong style="color:var(--t3);font-variant-numeric:tabular-nums">${r.count}</strong></div>`).join('')}
+ <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px"><button type="button" id="nx-usage-export" class="btn-primary" style="min-height:44px;padding:10px 16px">Export counts</button><button type="button" id="nx-usage-reset" style="min-height:44px;padding:10px 16px;border:1px solid var(--border-sub);border-radius:10px;color:var(--t1);background:var(--surface)">Reset counts</button></div>
+ <p role="status" id="nx-usage-status" style="font-size:12px;color:var(--t3);margin-top:10px"></p>
+ </section>`;
+}
+function nxUsageDownload(){
+ const data={format:'nexus-shortcut-counts-v1',scope:'quick-access-only',counts:state.settings.nxUsageCounts||{}};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nexus-shortcut-counts.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.addEventListener('change',e=>{if(e.target?.id==='nx-usage-toggle'){
+ state.settings.nxUsageEnabled=!!e.target.checked;saveState();render();
+}});
+document.addEventListener('click',e=>{
+ const btn=e.target.closest?.('#nx-usage-export,#nx-usage-reset,#nx-shopping-from-stash');if(!btn)return;
+ if(btn.id==='nx-usage-export'){nxUsageDownload();return;}
+ if(btn.id==='nx-usage-reset'){if(!confirm('Reset all locally recorded shortcut counts?'))return;state.settings.nxUsageCounts={};saveState();render();return;}
+ if(btn.id==='nx-shopping-from-stash'){tab='plans';state._plansSub='shopping';render();window.scrollTo(0,0);}
+});
 
 function renderSettingsTabContent() {
   const unseenReleases = CHANGELOG.filter(c=>c.version>(state.settings.lastSeenChangelog||0));
@@ -17202,6 +17749,7 @@ function renderSettingsTabContent() {
     ${row("health","🍎","Health & Data")}
     ${row("backup","💾","Backup & Restore")}
     ${row("datamanagement","⚠️","Data Management")}
+    ${row("usage","📊","Shortcut Activity",state.settings.nxUsageEnabled===true?"On":"Off")}
     ${sectionLabel("DEVELOPER")}
     ${row("developer","🧪","Developer Options",isDemoMode()?"Demo Active":null,isDemoMode()?"#F9C87D":null)}
   `;
@@ -17209,7 +17757,7 @@ function renderSettingsTabContent() {
 
 function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
-  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", datamanagement:"Data Management", developer:"Developer Options"};
+  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button id="settings-detail-back" style="color:var(--t4);font-size:20px;padding:2px 8px;background:transparent;border:none">‹</button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
@@ -17218,9 +17766,10 @@ function renderSettingsDetailScreen(key) {
   if (key==="reminders") content = renderRemindersDetail();
   else if (key==="phasereminders") content = renderPhaseRemindersDetail();
   else if (key==="units") content = renderUnitsDetail();
-  else if (key==="health") content = renderHealthDataDetail();
+  else if (key==="health") content = nxHealthImportContext() + renderHealthDataDetail();
   else if (key==="backup") content = renderBackupDetail();
   else if (key==="datamanagement") content = renderDataManagementDetail();
+  else if (key==="usage") content = nxUsageSettingsView();
   else if (key==="developer") content = renderDeveloperDetail();
   return backBtn + content;
 }
@@ -18617,14 +19166,14 @@ function plansView() {
   if(!state.plans) state.plans={goals:[],research:[],shopping:[]};
   const {goals,research,shopping}=state.plans;
   const sub=state._plansSub||"goals";
-  const subBtn=(k,label,count)=>`<button class="plans-sub" data-sub="${k}" style="flex:1;padding:6px 2px;border-radius:8px;font-size:11px;font-weight:600;background:${sub===k?"var(--surface-3)":"transparent"};color:${sub===k?"var(--t1)":"var(--t4)"};border:none">${label}${count?` <span style="color:#7DF9C0;font-size:9px">${count}</span>`:""}</button>`;
+  const subBtn=(k,label,count)=>`<button class="plans-sub" data-sub="${k}" aria-selected="${sub===k}">${label}${count?` <span style="color:#7DF9C0;font-size:9px">${count}</span>`:""}</button>`;
   // removed protocols sub-tab — protocols now live exclusively in the Protocol tab
   const statusPill=(s,map)=>{const[col,label]=(map[s])||["var(--t4)",s];return statusBadge(label,col);};
   const goalStatus={active:["#7DF9C0","Active"],planned:["#8AB4FF","Planned"],paused:["#F9C87D","Paused"],completed:["#A78BFA","Completed"]};
   const resStatus={researching:["#F9C87D","Researching"],considering:["#8AB4FF","Considering"],planned:["#7DF9C0","Planned"],"not now":["var(--t4)","Not now"]};
   const protoStatus={idea:["var(--t4)","Idea"],researching:["#F9C87D","Researching"],planned:["#8AB4FF","Planned"],ready:["#7DF9C0","Ready"]};
   const shopStatus={needed:["#F9C87D","Needed"],ordered:["#8AB4FF","Ordered"],received:["#7DF9C0","Received"]};
-  const shopCat={compound:"💊",supply:"🧪",equipment:"🔧"};
+  const shopCat={compound:"Compound",supply:"Supply",equipment:"Equipment"};
   const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:30px;height:30px;min-width:30px;border-radius:8px">⋯</button>`;
   let content="";
 
@@ -18632,11 +19181,11 @@ function plansView() {
     const active=goals.filter(g=>!g.status||g.status==="active");
     const other=goals.filter(g=>g.status&&g.status!=="active");
     content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
-    ${active.map(g=>`<div class="card" style="border-color:#7DF9C022;margin-bottom:10px">
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--t1)">${esc(g.name)}</div><div style="font-size:11px;color:var(--t4)">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
-      ${g.compounds?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${g.compounds.map(c=>`<span class="compound-intel-btn pill" data-name="${esc(c)}" style="background:#A78BFA18;color:#A78BFA;border-color:#A78BFA33;cursor:pointer">${esc(c)}</span>`).join("")}</div>`:""}
-      ${g.metrics?`<div style="font-size:11px;color:var(--t3)">📊 ${esc(g.metrics)}</div>`:""}
-      ${g.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">${esc(g.notes)}</div>`:""}
+    ${active.map(g=>`<div class="nx-plan-item">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
+      ${(g.compounds?.length||g.metrics||g.notes)?`<details><summary>View details</summary>${g.compounds?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${g.compounds.map(c=>`<span class="compound-intel-btn pill" data-name="${esc(c)}" style="background:#A78BFA18;color:#A78BFA;border-color:#A78BFA33;cursor:pointer">${esc(c)}</span>`).join("")}</div>`:""}
+      ${g.metrics?`<div class="nx-muted">${esc(g.metrics)}</div>`:""}
+      ${g.notes?`<div class="nx-muted" style="margin-top:6px">${esc(g.notes)}</div>`:""}</details>`:""}
     </div>`).join("")}
     ${other.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:12px 0 6px">OTHER GOALS</div>${other.map(g=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t2)">${esc(g.name)}</div><div style="font-size:10px;color:var(--t4)">${esc(g.category||"")}</div></div>${statusPill(g.status,goalStatus)}${manageBtn("goal",g.id)}</div>`).join("")}`:""}
     <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
@@ -18644,7 +19193,7 @@ function plansView() {
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
     ${research.map(r=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:12px;padding:12px 14px;margin-bottom:8px">
       <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${esc(r.compound)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${statusPill(r.status||"researching",resStatus)}<button class="compound-intel-btn" data-name="${esc(r.compound)}" style="font-size:10px;color:#A78BFA;border:1px solid #A78BFA33;border-radius:5px;padding:2px 7px;background:#A78BFA10">Intel ›</button>${manageBtn("research",r.id)}</div>
-      ${r.reason?`<div style="font-size:11px;color:var(--t3)">💡 ${esc(r.reason)}</div>`:""}
+      ${r.reason?`<div class="nx-muted">${esc(r.reason)}</div>`:""}
       ${r.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">${esc(r.notes)}</div>`:""}
     </div>`).join("")}
     <button id="add-research" class="btn-primary" style="width:100%;margin-top:10px;background:#F9C87D;color:#000">＋ Add to Research Queue</button>`;
@@ -18652,9 +19201,9 @@ function plansView() {
     const needed=shopping.filter(s=>!s.status||s.status==="needed");
     const ordered=shopping.filter(s=>s.status==="ordered");
     const received=shopping.filter(s=>s.status==="received");
-    const row=s=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--surface-3)">
-      <span style="font-size:14px;flex-shrink:0">${shopCat[s.category]||"📦"}</span>
-      <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t1)">${esc(s.item)}${s.qty?` <span style="color:var(--t4);font-size:10px">×${esc(s.qty)}</span>`:""}</div>${s.goal?`<div style="font-size:10px;color:var(--t4)">${esc(s.goal)}</div>`:""}</div>
+    const row=s=>`<div class="nx-shopping-row">
+      <span class="nx-shopping-category">${shopCat[s.category]||"Item"}</span>
+      <div class="nx-shopping-main"><div class="nx-shopping-name">${esc(s.item)}${s.qty?` <span class="nx-shopping-qty">×${esc(s.qty)}</span>`:""}</div>${s.goal?`<div class="nx-shopping-goal">${esc(s.goal)}</div>`:""}</div>
       ${manageBtn("shopping",s.id)}
     </div>`;
     const grp=(label,col,items)=>items.length?`<div class="mono" style="font-size:9px;color:${col};letter-spacing:1.5px;margin-bottom:4px;margin-top:10px">${label}</div><div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:0 12px">${items.map(row).join("")}</div>`:"";
@@ -18663,14 +19212,13 @@ function plansView() {
     <button id="add-shopping" class="btn-primary" style="width:100%;margin-top:12px;background:var(--surface-3);color:var(--t1);border:1px solid var(--border)">＋ Add Item</button>`;
   }
 
-  return `<h1 class="serif greet">Goals & Plans</h1>
-  <div style="display:flex;gap:3px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:14px">
+  return `<div class="nx-page-intro"><h1 class="serif greet">Plans</h1><p>Track your goals, research queue, and shopping needs.</p></div>
+  <div class="nx-plan-summary"><div><strong>${goals.filter(g=>!g.status||g.status==="active").length}</strong><span>Active goals</span></div><div><strong>${research.length}</strong><span>Research items</span></div><div><strong>${shopping.filter(s=>!s.status||s.status==="needed").length}</strong><span>To purchase</span></div></div>
+  <nav class="nx-plan-nav" aria-label="Plans sections">
     ${subBtn("goals","Goals",goals.filter(g=>!g.status||g.status==="active").length||"")}
     ${subBtn("research","Research",research.length||"")}
     ${subBtn("shopping","Shopping",shopping.filter(s=>!s.status||s.status==="needed").length||"")}
-  </div>
-  <div style="font-size:11px;color:var(--t4);margin-bottom:10px">Protocols live in the <button onclick="tab='protocols';render();window.scrollTo(0,0)" style="color:#A78BFA;background:none;border:none;font-size:11px;text-decoration:underline;cursor:pointer">Protocol tab</button> — status-managed from Draft through Completed.</div>
-  </div>${content}`;
+  </nav>${content}`;
 }
 
 function goalModal(existing) {
@@ -18953,6 +19501,7 @@ function wireBody() {
   const pbk=$("#profile-back"); if(pbk) pbk.onclick=()=>{ const ret=state._profileReturn||"home"; state._profileReturn=null; tab=ret; render(); window.scrollTo(0,0); };
   // amino sub-tabs
   const asc=$("#as-chat"); if(asc) asc.onclick=()=>{state._aminoSub="chat";renderBody();};
+  const nxAskChanges=$("#nx-ask-changes");if(nxAskChanges)nxAskChanges.onclick=()=>nxCheckinComparison(14);
   const asi2=$("#as-insights"); if(asi2) asi2.onclick=()=>{state._aminoSub="insights";renderBody();};
   const ase=$("#as-explore"); if(ase) ase.onclick=()=>{state._aminoSub="explore";renderBody();};
   const asl=$("#as-learn"); if(asl) asl.onclick=()=>{state._aminoSub="learn";renderBody();};
@@ -19234,6 +19783,11 @@ function wireBody() {
   document.querySelectorAll(".plan-del").forEach(b=>b.onclick=()=>{const {type,id}=b.dataset,label=type==="goal"?"goal":type==="research"?"research item":"shopping item";confirmAction(`Delete this ${label}?`,()=>{if(!state.plans)return;const key=type==="goal"?"goals":type==="research"?"research":"shopping";state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));saveState();renderBody();});});
   document.querySelectorAll(".qa-weight").forEach(b=>b.onclick=()=>weightModal());
   const qd=$("#today-log-dose"); if(qd) qd.onclick=()=>todayLogDosePicker();
+  const nxCustomize=$("#nx-qa-customize");if(nxCustomize)nxCustomize.onclick=nxQuickCustomize;
+  document.querySelectorAll("[data-nx-quick]").forEach(b=>b.onclick=()=>nxQuickGo(b.dataset.nxQuick));
+
+  const nxChanges=$("#nx-today-changes"); if(nxChanges)nxChanges.onclick=()=>nxCheckinComparison(14);
+  const nxLearnCalc=$("#nx-learn-calc"); if(nxLearnCalc)nxLearnCalc.onclick=nxOpenCalculator;
   const qc=$("#qa-combo"); if(qc) qc.onclick=()=>comboDoseModal();
   const restoreAlerts=$("#restore-dismissed-alerts"); if(restoreAlerts) restoreAlerts.onclick=()=>{
     const count=Object.keys(state.settings.dismissedReminders||{}).length;
@@ -19506,6 +20060,19 @@ function wireBody() {
   const preserveScroll = (fn) => { const y = window.scrollY; fn(); requestAnimationFrame(()=>window.scrollTo(0,y)); };
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
   document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
+  // History is a direct action: expand and reveal records in one tap, without the ellipsis.
+  document.querySelectorAll(".nx-open-compound-history").forEach(el=>el.onclick=()=>preserveScroll(()=>{
+    if (!(state._todayExpandedCompounds instanceof Set)) state._todayExpandedCompounds = new Set();
+    const name=el.dataset.name, view=el.dataset.view||"active";
+    state._todayExpandedCompounds.add(view+"::"+name);
+    render();
+    const historyToggle=Array.from(document.querySelectorAll(".histtoggle")).find(b=>b.dataset.name===name);
+    if(historyToggle){
+      const box=Array.from(document.querySelectorAll(".histbox")).find(b=>b.dataset.name===name);
+      if(box && box.style.display==="none") historyToggle.click();
+      if(box) box.scrollIntoView({block:"nearest",behavior:"smooth"});
+    }
+  }));
   document.querySelectorAll(".compound-compact-tap").forEach(el=>el.onclick=()=>preserveScroll(()=>{
     if (!(state._todayExpandedCompounds instanceof Set)) state._todayExpandedCompounds = new Set();
     const n = el.dataset.name, v = el.dataset.view||"active";
@@ -19659,6 +20226,26 @@ function wireBody() {
   if(nxPatternButton)nxPatternButton.onclick=nxPatternExplorer;
   const nxTimingButton=document.getElementById("nx-open-symptom-timing");
   if(nxTimingButton)nxTimingButton.onclick=nxSymptomTimingExplorer;
+  const nxManageHealth=document.getElementById("nx-health-manage");
+  if(nxManageHealth)nxManageHealth.onclick=()=>{state._settingsDetail="health";state._profileTab="settings";state._profileReturn="trends";tab="profile";render();window.scrollTo(0,0);};
+  const nxLibraryJump=document.querySelector(".nx-trends-library-jump");
+  if(nxLibraryJump)nxLibraryJump.onclick=()=>document.getElementById("nx-compound-library")?.scrollIntoView({behavior:"smooth",block:"start"});
+  const nxLibrarySearch=document.getElementById("nx-library-search");
+  if(nxLibrarySearch){
+    nxLibrarySearch.oninput=()=>{
+      state._nxHistoryQuery=nxLibrarySearch.value;
+      const q=nxLibrarySearch.value.trim().toLocaleLowerCase();
+      let shown=0;
+      document.querySelectorAll(".nx-library-item").forEach(b=>{const match=b.dataset.nxCompound.toLocaleLowerCase().includes(q);b.hidden=!match;if(match)shown++;});
+      const empty=document.getElementById("nx-library-empty");if(empty)empty.remove();
+      if(!shown)document.getElementById("nx-library-list")?.insertAdjacentHTML("beforeend",'<div class="nx-library-empty" id="nx-library-empty">No matching compounds.</div>');
+    };
+    nxLibrarySearch.dispatchEvent(new Event("input"));
+  }
+  document.querySelectorAll(".nx-library-item").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});});
+  const nxLibraryBack=document.getElementById("nx-library-back");
+  if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});};
+
   document.querySelectorAll(".nx-trends-go").forEach(b=>b.onclick=()=>{
     const key=b.dataset.key;
     const ns={...(state._trendsOpen||{})};
