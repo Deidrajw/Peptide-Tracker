@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nexus">
@@ -170,6 +170,173 @@
   .sheet-row .sub { font-size:11px; color:var(--t4); font-weight:400; margin-top:2px; }
   .sheet-row.danger { background:#ff7c7c0d; border-color:#ff7c7c33; color:#ff7c7c; }
   .sheet-row:last-child { margin-bottom:0; }
+
+/* Respect accessibility motion settings and visible keyboard focus. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+:focus-visible { outline: 3px solid #7DF9C0; outline-offset: 3px; }
+
+/* Phase 2A: mobile-first navigation and accessible secondary sheet */
+.nexus-tabbar-v2 { justify-content:space-around; padding:8px 6px calc(8px + env(safe-area-inset-bottom)); }
+.nexus-tabbar-v2 button { flex:1; min-width:0; min-height:48px; padding:5px 2px; gap:4px; font-size:11px; cursor:pointer; }
+.nexus-tabbar-v2 button span { white-space:nowrap; }
+.nexus-tabbar-v2 button:focus-visible,.nexus-more-sheet button:focus-visible { outline:2px solid var(--tabbar-act);outline-offset:2px; }
+.nexus-more-backdrop { position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:200;display:flex;align-items:flex-end;justify-content:center; }
+.nexus-more-sheet { width:100%;max-width:560px;background:var(--tabbar-bg);color:var(--t1);border-radius:22px 22px 0 0;padding:12px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -8px 40px #0005;max-height:85dvh;overflow-y:auto; }
+.nexus-more-handle {width:38px;height:5px;border-radius:99px;background:var(--tabbar-bdr);margin:0 auto 20px;}
+.nexus-more-heading {display:flex;justify-content:space-between;align-items:center;font-size:21px;}
+.nexus-more-close {min-width:44px;min-height:44px;font-size:18px;color:inherit;}
+.nexus-more-sheet p {color:var(--t3);font-size:13px;margin:0 0 14px;}
+.nexus-more-item {width:100%;min-height:62px;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:10px 4px;border-top:1px solid var(--tabbar-bdr);color:inherit;}
+.nexus-more-item span:first-child {display:flex;flex-direction:column;gap:4px;}
+.nexus-more-item strong {font-size:15px;font-weight:600;}
+.nexus-more-item small {font-size:12px;color:var(--t3);}
+.nexus-more-item > span:last-child {font-size:25px;color:var(--t3);}
+@media (prefers-reduced-motion:reduce) {.nexus-tabbar-v2 button {transition:none;}}
+
+/* Phase 2B: Today presentation layer. Does not alter stored data or calculations. */
+.nexus-today-hero{background:linear-gradient(140deg,var(--surface-2),var(--surface-3));border:1px solid var(--border);border-radius:18px;padding:18px 18px 15px;margin:12px 0 14px;box-shadow:0 5px 22px #0000000b}
+.nexus-today-eyebrow{font-size:10px;letter-spacing:1.4px;color:var(--t4);font-weight:700;margin-bottom:11px}
+.nexus-today-hero-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.nexus-today-big{font-size:clamp(20px,6vw,28px);line-height:1.2;letter-spacing:-.6px;font-weight:750;color:var(--t1)}
+.nexus-today-big span{font-size:.7em;color:var(--t3);font-weight:550}
+.nexus-today-sub{color:var(--t3);font-size:12px;margin-top:5px}
+.nexus-today-pending{border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:7px 10px;white-space:nowrap;font-size:11px;color:var(--t2)}
+.nexus-today-track{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:15px}
+.nexus-today-track>div{height:100%;background:#a78bfa;border-radius:999px;transition:width .25s ease}
+.nexus-today-jump{display:inline-block;margin-top:12px;padding:7px 0;min-height:44px;line-height:30px;font-size:12px;font-weight:650;color:var(--t2);text-decoration:none}
+.nexus-today-section-label{font-size:10px;font-weight:700;letter-spacing:1.25px;color:var(--t4);padding:12px 0 9px;scroll-margin-top:18px}
+@media(prefers-reduced-motion:reduce){.nexus-today-track>div{transition:none}}
+@media(max-width:360px){.nexus-today-hero{padding:14px}.nexus-today-pending{font-size:10px;padding:6px 8px}}
+
+
+/* Phase 2B-1 — cohesive Today experience; presentation only. */
+.nexus-today-hero{border-radius:20px;background:linear-gradient(145deg,var(--surface-2),var(--surface-3));margin-bottom:12px}
+.nexus-today-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 18px}
+.nexus-today-action-primary,.nexus-today-action-secondary{min-height:46px;border-radius:13px;font-size:13px;font-weight:650;padding:10px 15px;cursor:pointer}
+.nexus-today-action-primary{background:#A78BFA;color:#18121f;border:1px solid #A78BFA}
+.nexus-today-action-secondary{background:var(--surface-2);color:var(--t2);border:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.nexus-today-section-label{font-family:inherit;font-size:17px;font-weight:700;letter-spacing:-.25px;color:var(--t1);padding:7px 0 12px}
+.nexus-today-view-nav{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+.nexus-today-view-nav::-webkit-scrollbar{display:none}
+.nexus-today-view-nav .hv-nav{white-space:nowrap;min-height:44px!important}
+.nexus-today-details{margin:18px 0 14px;border:1px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden}
+.nexus-today-details>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:62px;padding:12px 16px}
+.nexus-today-details>summary::-webkit-details-marker{display:none}
+.nexus-today-details-title{font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap}
+.nexus-today-details-meta{font-size:11px;color:var(--t4);flex:1;text-align:right;line-height:1.4}
+.nexus-today-details-chevron{font-size:17px;color:var(--t4);transition:transform .2s}
+.nexus-today-details[open] .nexus-today-details-chevron{transform:rotate(180deg)}
+.nexus-today-details-body{padding:0 15px 15px;border-top:1px solid var(--border-sub)}
+.nexus-today-tracking-content{padding-top:14px}
+.nexus-today-onboarding{margin:0 0 14px;border:1px solid var(--border-sub);border-radius:12px;padding:0 12px}
+.nexus-today-onboarding>summary{cursor:pointer;padding:12px 0;color:var(--t3);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.nexus-today-onboarding .card{margin-top:0!important}
+@media(max-width:390px){.nexus-today-details>summary{flex-wrap:wrap}.nexus-today-details-meta{font-size:10px}.nexus-today-action-secondary{padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){.nexus-today-details-chevron{transition:none}}
+
+/* Phase 2B-2: Today secondary content — same hierarchy as the new daily overview */
+.nexus-week-card,.nexus-lookahead{background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;padding:17px 16px;margin:18px 0 14px;overflow:hidden}
+.nexus-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.nexus-section-head h3{font-size:17px;line-height:1.25;font-weight:700;letter-spacing:-.3px;color:var(--t1);margin:3px 0 0}
+.nexus-section-kicker{font-size:9px;font-weight:700;letter-spacing:1.6px;color:var(--t5)}
+.nexus-text-action{background:none;border:0;color:#B99BEA;font-size:12px;font-weight:650;padding:9px 0 9px 9px;min-height:44px;white-space:nowrap;cursor:pointer}
+.nexus-week-range{display:block;font-size:11px;color:var(--t4);margin-top:4px}
+.nexus-week-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nexus-week-metrics>div{border:1px solid var(--border-sub);background:var(--surface-2);border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.nexus-week-metrics strong{font-size:23px;font-weight:750;color:var(--t1);font-variant-numeric:tabular-nums;line-height:1}
+.nexus-week-metrics span{font-size:10px;color:var(--t4)}
+.nexus-week-footnote,.nexus-lookahead-note{font-size:11px;color:var(--t5);margin:10px 0 0}
+.nexus-week-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;background:transparent;border:0;border-top:1px solid var(--border-sub);padding:14px 0 0;margin-top:14px;text-align:left;color:var(--t3);font-size:12px;min-height:44px;cursor:pointer}
+.nexus-lookahead-list{border-top:1px solid var(--border-sub)}
+.nexus-lookahead-row{width:100%;min-height:54px;display:flex;align-items:center;gap:12px;background:none;border:0;border-bottom:1px solid var(--border-sub);padding:10px 0;text-align:left;cursor:pointer}
+.nexus-lookahead-date{font-size:11px;color:var(--t4);min-width:82px;flex-shrink:0}
+.nexus-lookahead-name{font-size:13px;font-weight:550;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nexus-lookahead-arrow{color:var(--t5);font-size:20px}
+.nexus-week-card button:focus-visible,.nexus-lookahead button:focus-visible{outline:2px solid #C5A4F5;outline-offset:3px;border-radius:5px}
+@media(max-width:360px){.nexus-week-card,.nexus-lookahead{padding:14px 12px}.nexus-week-metrics>div{padding:10px 7px}.nexus-lookahead-date{min-width:70px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.nexus-week-card *,.nexus-lookahead *{transition:none!important;animation:none!important}}
+
+/* Phase 2B-3 — Progressive disclosure: quiet secondary sections, unchanged underlying data. */
+.nexus-today-hero{padding:17px 18px!important;margin-bottom:10px!important}
+.nexus-today-hero .nexus-today-eyebrow{margin-bottom:8px}
+.nexus-today-actions{display:flex!important;justify-content:flex-start;margin:0 0 18px!important}
+.nexus-today-action-primary{min-height:44px!important;padding:9px 16px!important}
+.nexus-today-tracking-actions{display:flex;justify-content:flex-start;margin:0 0 14px}
+.nexus-today-tracking-actions .nexus-today-action-secondary{min-height:42px}
+.nexus-week-card.nexus-week-quiet,.nexus-lookahead.nexus-quiet-details{background:transparent;border:0;border-top:1px solid var(--border-sub);border-radius:0;padding:0;margin:0;box-shadow:none}
+.nexus-week-quiet .nexus-quiet-header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:74px;padding:14px 3px}
+.nexus-quiet-header h3,.nexus-quiet-details summary strong{font-size:14px;font-weight:700;color:var(--t1);margin:0}
+.nexus-quiet-header p,.nexus-quiet-details summary small{font-size:12px;color:var(--t4);margin:5px 0 0;line-height:1.5;display:block}
+.nexus-quiet-toggle{min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t3);font-size:18px;cursor:pointer}
+.nexus-week-quiet #nexus-week-expanded{padding:0 2px 16px}
+.nexus-week-expanded-top,.nexus-quiet-expanded-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--t4);font-size:11px}
+.nexus-week-expanded-top .nexus-text-action{min-height:40px}
+.nexus-week-quiet .nexus-week-metrics{margin:8px 0 14px}
+.nexus-quiet-details summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;min-height:74px;padding:14px 3px;cursor:pointer}
+.nexus-quiet-details summary::-webkit-details-marker{display:none}
+.nexus-quiet-chevron{min-width:44px;min-height:44px;display:grid;place-items:center;color:var(--t3);font-size:18px;transition:transform .2s}
+.nexus-quiet-details[open] .nexus-quiet-chevron{transform:rotate(180deg)}
+.nexus-quiet-expanded{padding:0 2px 12px}
+.nexus-quiet-expanded-footer{padding:4px 0}
+.nexus-today-details{background:transparent!important;border:0!important;border-top:1px solid var(--border-sub)!important;border-radius:0!important;margin:0!important}
+.nexus-today-details>summary{padding:13px 3px!important;min-height:74px!important}
+.nexus-today-details-body{padding:0 3px 15px!important}
+.nexus-today-onboarding{background:transparent;border-color:var(--border-sub)}
+@media(prefers-reduced-motion:reduce){.nexus-quiet-chevron{transition:none}}
+
+
+/* Phase 2B-5: match quick action alignment */
+.nexus-today-actions-b4 .nexus-today-action-secondary{display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;gap:0!important}
+/* Phase 2C-1: scoped visual hierarchy for Protocol and Stash; no inventory/dose logic changes */
+.nexus-screen-protocols>.greet,.nexus-screen-stash>.greet{margin-bottom:18px!important;letter-spacing:-.025em}
+.nexus-screen-protocols .proto-sub,.nexus-screen-stash .stash-sub-btn{min-height:42px!important;display:inline-flex;align-items:center;justify-content:center;line-height:1.25}
+.nexus-screen-protocols #new-protocol{min-height:46px!important;border-radius:12px!important;font-weight:650!important;margin-bottom:22px!important}
+.nexus-screen-protocols .nexus-protocol-archive{border-top:1px solid var(--border-sub);margin-top:16px;padding-top:12px}
+.nexus-screen-protocols .nexus-protocol-archive>summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--t2);font-size:13px;font-weight:600}
+.nexus-screen-protocols .nexus-protocol-archive>summary::-webkit-details-marker{display:none}
+.nexus-screen-protocols .nexus-protocol-archive>summary:after{content:'⌄';font-size:18px;color:var(--t4)}
+.nexus-screen-protocols .nexus-protocol-archive[open]>summary:after{transform:rotate(180deg)}
+.nexus-screen-stash .stash-sub-btn{flex:1;min-width:0}
+.nexus-screen-stash button{touch-action:manipulation}
+.nexus-screen-protocols button:focus-visible,.nexus-screen-stash button:focus-visible,.nexus-protocol-archive>summary:focus-visible{outline:3px solid #A78BFA!important;outline-offset:3px}
+@media(max-width:390px){.nexus-screen-stash .stash-sub-btn{font-size:12px!important;padding:9px 6px!important}}
+/* Phase 2B-4: focused Today actions and contextual, manageable alerts */
+.nexus-today-actions-b4{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px!important;margin-bottom:16px!important}
+.nexus-today-actions-b4 button{min-height:46px!important;width:100%;font-size:13px!important;padding:10px 8px!important;white-space:normal}
+.nexus-today-actions-b4 .nexus-today-action-secondary{background:var(--surface-2)!important;border:1px solid var(--border-sub)!important;color:var(--t2)!important;border-radius:10px!important}
+.nexus-dismissed-alerts{margin:-4px 0 12px;text-align:right}
+.nexus-dismissed-alerts button{border:0;background:transparent;color:var(--t4);font-size:11px;padding:7px 4px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:350px){.nexus-today-actions-b4{grid-template-columns:1fr}}
+
+/* Phase 2C-2: progressive disclosure for Protocol cards */
+.nexus-protocol-card{padding:15px!important;border-radius:16px!important}
+.nexus-protocol-card-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.nexus-protocol-card .manage-proto-btn{min-width:38px;min-height:38px}
+.nexus-protocol-summary{font-size:12px;line-height:1.5;color:var(--t2);overflow-wrap:anywhere}
+.nexus-protocol-muted{font-size:11px;line-height:1.45;color:var(--t4);margin-top:3px}
+.nexus-protocol-meta{font-size:11px;line-height:1.5;color:var(--t4);margin-top:5px}
+.nexus-protocol-section-label{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;margin:18px 0 9px}
+.nexus-protocol-details{border-top:1px solid var(--border-sub);margin-top:12px}
+.nexus-protocol-details>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:42px;color:var(--t2);font-size:12px;font-weight:600}
+.nexus-protocol-details>summary::-webkit-details-marker{display:none}
+.nexus-protocol-details[open]>summary span{transform:rotate(180deg)}
+.nexus-protocol-details>summary span{transition:transform .18s ease}
+.nexus-protocol-details-body{padding:4px 0 6px}
+.nexus-protocol-timeline{background:var(--surface-2);border-radius:10px;padding:10px;margin-bottom:9px}
+.nexus-protocol-compound{padding:7px 0;border-bottom:1px solid var(--border-sub)}
+.nexus-protocol-compound:last-child{border-bottom:0}
+.nexus-protocol-start{display:flex;align-items:center;gap:10px;border-radius:10px;background:#7DF9C00D;border:1px solid #7DF9C02B;padding:11px;margin-top:10px}
+@media(prefers-reduced-motion:reduce){.nexus-protocol-details>summary span{transition:none}}
+</style>
+<style id="nexus-phase2c3-calendar">
+.nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
+.nexus-cal-legend{margin-bottom:10px;color:var(--t3);font-size:11px}
+.nexus-cal-legend summary{cursor:pointer;padding:7px 0}
+.nexus-cal-hint{color:var(--t4);font-size:12px;padding:16px 4px;text-align:center}
+.cal-day{min-width:0;min-height:42px}
+.cal-day:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -208,9 +375,31 @@ let _demoActive = false;
 
 function isDemoMode() { return _demoActive; }
 
+// Safety foundation: retain the original browser data before this build writes/migrates it.
+// The backup is local to this browser, created once, and never contains demo data.
+const PRE_UPGRADE_BACKUP_KEY = STORE_KEY + "-pre-upgrade-backup-20261021";
+function preserveOriginalState() {
+  try {
+    if (localStorage.getItem(PRE_UPGRADE_BACKUP_KEY) !== null) return;
+    const original = localStorage.getItem(STORE_KEY);
+    if (original !== null) localStorage.setItem(PRE_UPGRADE_BACKUP_KEY, original);
+  } catch (e) { console.error("Unable to preserve pre-upgrade state", e); showSaveWarning(); }
+}
+let _saveWarningShown = false;
+function showSaveWarning() {
+  if (_saveWarningShown) return;
+  _saveWarningShown = true;
+  const warning = document.createElement('div');
+  warning.id = 'nexus-storage-warning';
+  warning.setAttribute('role', 'alert');
+  warning.style.cssText = 'position:fixed;z-index:99999;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));padding:14px 16px;border-radius:12px;background:#702626;color:#fff;box-shadow:0 6px 25px #0007;font:600 14px/1.5 system-ui,sans-serif';
+  warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
+  document.body.appendChild(warning);
+}
 function saveState() {
   if(_demoActive) return; // never write demo data to localStorage
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) { console.error(e); }
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e) { console.error('Nexus save failed', e); showSaveWarning(); }
 }
 
 function enterDemoMode(scenario) {
@@ -548,6 +737,13 @@ function demoPickerModal() {
     </div>
     ${isDemoMode()?`<button id="exit-demo" style="width:100%;padding:10px;border-radius:10px;background:#ff4d4d18;border:1px solid #ff4d4d44;color:#ff4d4d;font-weight:600">Exit Demo Mode — Restore Real Data</button>`:""}
   `,"#F9C87D");
+  m.querySelectorAll(".cal-edit-recorded-dose").forEach(button=>button.addEventListener("click",()=>{
+    const name=button.dataset.name, id=Number(button.dataset.id);
+    const record=(allPeptides()[name]?.doses||[]).find(d=>Number(d.id)===id);
+    if(!record) { alert("This log could not be found. Please refresh and try again."); return; }
+    closeModal();
+    doseModal(name,record);
+  }));
   m.querySelector("#x").onclick=closeModal;
   m.querySelectorAll(".demo-scenario").forEach(b=>b.onclick=()=>{closeModal();enterDemoMode(b.dataset.s);});
   const ex=m.querySelector("#exit-demo"); if(ex) ex.onclick=()=>{closeModal();exitDemoMode();};
@@ -4737,6 +4933,26 @@ window.addEventListener("unhandledrejection", (e) => {
   showErrorBanner(`Unhandled promise rejection: ${(e.reason&&e.reason.message)||e.reason}\n${(e.reason&&e.reason.stack)||""}`);
 });
 
+// One clear logging entry point. Existing individual dose modal and combo modal remain authoritative.
+function todayLogDosePicker() {
+  const names=Object.entries(allPeptides()).filter(([,d])=>(d.status||"active")==="active").map(([n])=>n);
+  const m=openModal(`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px"><div><div class="mono" style="font-size:11px;letter-spacing:1px;color:var(--t4)">TODAY</div><h2 style="font-size:20px;color:var(--t1);margin:3px 0">Log a dose</h2></div><button type="button" id="x" aria-label="Close" style="font-size:20px;color:var(--t3)">✕</button></div>
+    <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Choose a compound or log multiple compounds together.</p>
+    ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary" style="width:100%;min-height:44px;margin-bottom:10px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
+    ${names.length>=2 ? `<button type="button" id="today-dose-combo" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t1);background:var(--surface-2);font-weight:600">Log combo dose →</button>` : ""}
+  `,"#A78BFA");
+  m.querySelector("#x").onclick=closeModal;
+  const single=m.querySelector("#today-dose-single");
+  if(single) single.onclick=()=>{
+    const index=m.querySelector("#today-dose-compound").value;
+    if(index==="") {m.querySelector("#today-dose-compound").focus();return;}
+    const name=names[Number(index)];if(!name)return;
+    closeModal();doseModal(name);
+  };
+  const combo=m.querySelector("#today-dose-combo");
+  if(combo) combo.onclick=()=>{closeModal();comboDoseModal();};
+}
+
 // Snooze — non-critical items only (Needs Attention grouped items). Never offered on
 // urgent dose-due/overdue cards, so a real safety-relevant alert can't be silently
 // hidden indefinitely.
@@ -4747,9 +4963,17 @@ function snoozeModal(id) {
       <span class="mono" style="font-size:13px;letter-spacing:1.5px">REMIND ME</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
+    <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Remind me later, or dismiss this informational alert. This does not delete any records or change your schedule.</p>
     ${opts.map(([label,days])=>`<button class="snooze-opt" data-days="${days}" style="width:100%;text-align:left;padding:12px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t2);font-size:13px;margin-bottom:8px">${label}</button>`).join("")}
+    <button type="button" id="dismiss-reminder" style="width:100%;min-height:44px;text-align:left;padding:12px 14px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--t2);font-size:13px">Dismiss this alert</button>
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
+  m.querySelector("#dismiss-reminder").onclick=()=>{
+    if(!state.settings.dismissedReminders) state.settings.dismissedReminders={};
+    state.settings.dismissedReminders[id]=Date.now();
+    saveState();closeModal();render();
+    showUndoToast("Alert dismissed",()=>{delete state.settings.dismissedReminders[id];saveState();render();});
+  };
   m.querySelectorAll(".snooze-opt").forEach(b=>b.onclick=()=>{
     if (!state.settings.snoozedReminders) state.settings.snoozedReminders={};
     state.settings.snoozedReminders[id] = Date.now() + (+b.dataset.days)*86400000;
@@ -9138,7 +9362,7 @@ function adherenceCalendar() {
   const aps = allPeptides();
   const allDoses = Object.entries(aps).flatMap(([n,p])=>(p.doses||[]).map(d=>({...d,pep:n,color:cfg(n).color})));
   const scheduledDays = new Set();
-  Object.entries(aps).filter(([,d])=>(d.doses||[]).length).forEach(([n,d])=>{
+  Object.entries(aps).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").forEach(([n,d])=>{
     const sorted=[...d.doses].sort((a,b)=>new Date(a.date)-new Date(b.date));
     sorted.forEach(dose=>scheduledDays.add(dayKey(dose.date)));
     let next=new Date(addDays(sorted[sorted.length-1].date,d.scheduleDays));
@@ -10891,18 +11115,15 @@ function getUpcomingEvents(started, limit) {
 }
 
 function renderUpcomingPreview(started) {
-  const events = getUpcomingEvents(started, 4);
+  const events = getUpcomingEvents(started, 3);
   if (!events.length) return "";
-  return `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:16px 0 8px">UPCOMING</div>
-  <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;overflow:hidden;margin-bottom:8px">
-    ${events.map((e,i)=>`<div class="upcoming-row" data-name="${esc(e.name)}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:44px;${i<events.length-1?"border-bottom:1px solid var(--border-sub)":""};cursor:pointer">
-      <span style="font-size:11px;color:var(--t4);width:42px;flex-shrink:0">${esc(fmtShort(e.date))}</span>
-      <span style="font-size:13px;color:var(--t2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.name)}</span>
-      <span style="font-size:11px;color:var(--t4);flex-shrink:0">${e.dose?esc(e.dose)+" "+esc(e.unit):""}</span>
-      <span style="color:var(--t5);font-size:13px;flex-shrink:0">›</span>
-    </div>`).join("")}
-  </div>
-  <button id="view-upcoming" style="width:100%;text-align:center;padding:8px;font-size:12px;color:#A78BFA;background:transparent;border:none;min-height:36px;margin-bottom:4px">View upcoming →</button>`;
+  const dateLabel = date => new Date(date + "T12:00:00").toLocaleDateString("en-CA",{weekday:"short",month:"short",day:"numeric"});
+  const summary = `${dateLabel(events[0].date)} · ${esc(events[0].name)}${events.length>1?` · +${events.length-1} more`:""}`;
+  return `<details class="nexus-lookahead nexus-quiet-details" aria-label="Coming up next">
+    <summary><span><strong>Coming up</strong><small>${summary}</small></span><span class="nexus-quiet-chevron" aria-hidden="true">⌄</span></summary>
+    <div class="nexus-quiet-expanded"><div class="nexus-lookahead-list">${events.map(e=>`<button type="button" class="upcoming-row nexus-lookahead-row" data-name="${esc(e.name)}" aria-label="View ${esc(e.name)} scheduled ${dateLabel(e.date)}"><span class="nexus-lookahead-date">${dateLabel(e.date)}</span><span class="nexus-lookahead-name">${esc(e.name)}</span><span class="nexus-lookahead-arrow" aria-hidden="true">›</span></button>`).join("")}</div>
+      <div class="nexus-quiet-expanded-footer"><span>Planned, not logged</span><button type="button" id="view-upcoming" class="nexus-text-action">See all →</button></div></div>
+  </details>`;
 }
 
 function renderSinceLastVisit() {
@@ -10958,7 +11179,7 @@ function renderTodayCompoundSection(started) {
     if (!nextDate) return sum;
     return sum + getDayOccurrences(d, nextDate).filter(s=>["overdue","due_now","due_later_today","upcoming"].includes(s.status)).length;
   }, 0);
-  let out = `<div style="font-size:11px;color:var(--t4);margin-bottom:12px">${occurrenceCount} action${occurrenceCount===1?"":"s"} today${completed.length?` · ${completed.length} completed`:""} · ${started.length} active</div>`;
+  let out = ``;
   // Prepared-syringe match — purely a convenience surfaced ON TOP of whatever's already
   // due; it never changes due/overdue status itself. The protocol schedule alone decides
   // that (per the canonical occurrence engine above) — a prepared syringe existing is
@@ -11648,6 +11869,24 @@ function dayDetailModal(dateIso) {
   const gradableI = instances.filter(s=>s.status!=="paused");
   const totalI=gradableI.length, completedI=gradableI.filter(s=>s.status==="taken").length;
 
+  // Actual recorded doses are separate from planned occurrences. This also surfaces
+  // off-schedule historical logs and preserves their original record identifiers.
+  const recordedDoses=Object.entries(aps).flatMap(([name,data])=>(data.doses||[])
+    .filter(d=>dayKey(d.date)===k)
+    .map(d=>({name,dose:d,color:cfg(name).color,unit:d.unit||cfg(name).unit})))
+    .sort((a,b)=>new Date(a.dose.date)-new Date(b.dose.date));
+  const loggedDoseRows=recordedDoses.length?`<section class="cal-actual-logs" aria-label="Recorded dose logs" style="margin:16px 0 10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <span class="mono" style="font-size:10px;letter-spacing:1px;color:var(--t3)">LOGGED DOSES</span>
+      <span style="font-size:11px;color:var(--t4)">${recordedDoses.length} recorded</span>
+    </div>
+    ${recordedDoses.map(({name,dose,color,unit})=>`<button type="button" class="cal-edit-recorded-dose" data-name="${esc(name)}" data-id="${dose.id}" aria-label="View or edit recorded dose for ${esc(name)}" style="width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 8px;border:0;border-bottom:1px solid var(--border-sub);background:transparent;color:var(--t2);min-height:54px">
+      <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span>
+      <span style="flex:1;min-width:0"><strong style="display:block;font-size:13px;font-weight:600">${esc(name)}</strong><span style="display:block;font-size:11px;color:var(--t4);margin-top:3px">${esc(String(dose.dose??'—'))} ${esc(unit)} · ${label12(timeKeyOf(dose.date))}</span></span>
+      <span style="font-size:11px;color:var(--t3)">View / edit ›</span>
+    </button>`).join("")}
+  </section>`:`<div style="margin:14px 0;font-size:12px;color:var(--t4)">No doses recorded for this date.</div>`;
+
   const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${label.toUpperCase()}</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
     ${totalI?`<div style="margin:12px 0 8px">
@@ -11674,6 +11913,7 @@ function dayDetailModal(dateIso) {
         </div>`;
       }).join("")}
     </div>`:""}
+    ${loggedDoseRows}
     ${mood?`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--surface-2)"><span style="font-size:24px">${mood.emoji}</span><div><div style="font-size:13px;color:var(--t2)">${mood.label}</div>${dayLog.compound?`<div style="font-size:11px;color:var(--t4)">re: ${esc(dayLog.compound)}</div>`:""}</div></div>`:""}
     ${dayLog&&dayLog.symptoms&&dayLog.symptoms.length?`<div style="padding:10px 0;border-bottom:1px solid var(--surface-2)"><div style="display:flex;gap:5px;flex-wrap:wrap">${dayLog.symptoms.map(s=>`<span class="pill" style="background:rgba(255,255,255,.05);color:var(--t3);border:1px solid #2e2e2e">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div></div>`:""}
     ${dayLog&&dayLog.notes?`<div style="padding:8px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--t3);font-style:italic">${esc(dayLog.notes)}</div>`:""}
@@ -14096,8 +14336,8 @@ function stashView() {
   const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn" data-sub="${id}"`, padding:"9px"});
   let html = `<h1 class="serif greet">Stash</h1>
   <div style="display:flex;gap:6px;margin-bottom:16px">
-    ${stashSubBtn("kits","💊 Compound Kits")}
-    ${stashSubBtn("equipment","🧪 Supplies")}
+    ${stashSubBtn("kits","Compound kits")}
+    ${stashSubBtn("equipment","Supplies")}
   </div>
 `;
 
@@ -15566,10 +15806,27 @@ function homeView() {
   const paused=Object.entries(aps).filter(e=>isPaused(e));
   let html=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div></div>`;
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
-  html+=`<div style="display:flex;gap:8px;margin-bottom:14px">
-    <button class="qa-daily" style="flex:1;padding:12px;border-radius:12px;background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px">＋ Check-in</button>
-    <button class="qa-more icon-btn" style="width:44px;height:44px;min-width:44px;border-radius:12px" aria-label="Log weight, measurements, macros, or supplements" title="More">⋯</button>
-  </div>`;
+  // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
+  // Never infer completion from inventory, and never change any schedule or dose record.
+  const todaySlots = started.flatMap(([name, record]) => {
+    if (!isCompoundRelevantToday(getDoseStatus(name, record))) return [];
+    return getDayOccurrences(record, today).filter(slot => slot.status !== "paused");
+  });
+  const scheduledCount = todaySlots.length;
+  const takenCount = todaySlots.filter(slot => slot.status === "taken").length;
+  const pendingCount = todaySlots.filter(slot => ["overdue", "due_now", "due_later_today", "upcoming"].includes(slot.status)).length;
+  const progressPct = scheduledCount ? Math.round(takenCount / scheduledCount * 100) : 0;
+  html += `<section class="nexus-today-hero" aria-label="Today's scheduled dose overview">
+    <div class="nexus-today-eyebrow">TODAY</div>
+    <div class="nexus-today-hero-row">
+      <div><div class="nexus-today-big">${scheduledCount ? `${takenCount} <span>of ${scheduledCount}</span>` : `No scheduled doses`}</div>
+        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div>
+      
+    </div>
+    ${scheduledCount ? `<div class="nexus-today-track" role="progressbar" aria-label="Scheduled doses logged" aria-valuemin="0" aria-valuemax="${scheduledCount}" aria-valuenow="${takenCount}"><div style="width:${progressPct}%"></div></div>` : ``}
+    
+  </section>`;
+  html+=`<div class="nexus-today-actions nexus-today-actions-b4"><button type="button" id="today-log-dose" class="nexus-today-action-primary">＋ Log dose</button><button type="button" class="qa-daily nexus-today-action-secondary">＋ New check-in</button></div>`;
   const hasWeightThisWeek = state.weightLogs.some(w=>{ const d=safeDate(w.date); return d>=weekStart; });
   const hasMeasureThisWeek = state.measurementLogs.some(m=>{ const d=safeDate(m.date); return d>=weekStart; });
 
@@ -15579,76 +15836,9 @@ function homeView() {
   if(!hasWeightThisWeek) softNudges.push({icon:"⚖️",color:"#8AB4FF",title:"No weigh-in this week",detail:"Weekly weight helps track your body recomposition trend.",btnClass:"qa-weight",btnLabel:"Log now"});
   if(!hasMeasureThisWeek&&state.measurementLogs.length>0) softNudges.push({icon:"📏",color:"#FF9CC8",title:"No measurements this week",detail:"Monthly is fine — weekly shows the recomp shift faster.",btnClass:"qa-measure",btnLabel:"Log now"});
 
-  html+=`<div class="card" style="border-color:#1e2a1e;margin-bottom:14px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:12px">TODAY</div><div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:120px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">CHECK-IN</div>${mood?`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">${mood.emoji}</span><div><div style="font-size:13px;color:var(--t2)">${mood.label}</div>${todayLog.compound?`<div style="font-size:10px;color:var(--t4)">re: ${esc(todayLog.compound)}</div>`:""}${(todayLog.updates||[]).length?`<button class="opentodaysheet" data-id="${todayLog.id}" style="font-size:10px;color:#A78BFA;background:#A78BFA18;border:1px solid #A78BFA44;border-radius:10px;padding:2px 8px;margin-top:2px">＋${(todayLog.updates||[]).length} update${(todayLog.updates||[]).length===1?"":"s"}</button>`:""}<button class="editdaily" data-id="${todayLog.id}" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border);border-radius:10px;padding:2px 8px;margin-top:2px;margin-left:4px">✏ Edit</button></div></div>`:`<button class="qa-daily" style="background:transparent;border:1px dashed var(--border);border-radius:8px;padding:7px 12px;font-size:11px;color:var(--t4);width:100%">+ Log today</button>`}</div>${todayWeight?`<div style="flex:1;min-width:80px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">WEIGHT</div><div style="font-size:18px;font-weight:700;color:#8AB4FF">${esc(todayWeight.weight)}<span style="font-size:12px;font-weight:400"> ${state.settings.weightUnit}</span></div></div>`:""}</div>${todayMacro&&todayMacro.calories?`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">${[["🍽",todayMacro.calories+" kcal","#F9C87D"],["P:",todayMacro.protein+"g","#C8FF9C"],["C:",todayMacro.carbs+"g","#9CC8FF"],["F:",todayMacro.fat+"g","#FFB84D"]].filter(([,v])=>v&&v!=="g"&&v!=="kcal").map(([l,v,c])=>`<span style="font-size:11px;color:${c}">${l} ${v}</span>`).join("")}</div>`:""}
-${todaySupp?.taken?.length
-  ?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub);display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:#C8FF9C;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">💊 ${todaySupp.taken.join(" · ")}</span>
-      <button class="qa-supp" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border-sub);border-radius:6px;padding:2px 8px;flex-shrink:0">Edit</button>
-    </div>`
-  :(state.settings.supplements||[]).length
-    ?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)"><button class="qa-supp" style="font-size:11px;color:var(--t5);background:transparent;border:none;padding:0">+ Log supplements</button></div>`
-    :""}
-${(()=>{
-  // TODAY'S DOSES — rebuilt at the individual dose-INSTANCE level, not one row per
-  // compound. Every compound relevant today (via the same canonical
-  // isCompoundRelevantToday()/getDoseStatus() used everywhere else) is expanded into its
-  // actual scheduled occurrences for today via getDayOccurrences() — the same function
-  // that already powers the expanded card's TODAY'S DOSES strip, Nexus Chat, and
-  // adherence. A multi-dose compound with one dose taken and one pending therefore
-  // produces TWO independent instance rows — one lands in Completed, one in Up Next —
-  // rather than the whole compound being treated as "done" or "not done."
-  const today3 = localDate();
-  const label12 = t=>{const [h,m]=t.split(":").map(Number); const ap=h>=12?"PM":"AM"; const h12=h%12||12; return `${h12}:${String(m).padStart(2,"0")} ${ap}`;};
-  const upNext = [], completed = [];
-  started.forEach(([n,d])=>{
-    const ds3 = getDoseStatus(n,d);
-    if (!isCompoundRelevantToday(ds3)) return; // not part of today at all — not due, not touched today
-    const c2 = cfg(n);
-    // Paused slots carry no obligation — excluded before anything else so they can't
-    // inflate "X of Y taken" or fall through into the pending/upcoming bucket below (which
-    // would otherwise show a Log button for a dose that was never actually due).
-    const daySlots = getDayOccurrences(d, today3).filter(s=>s.status!=="paused");
-    const total = daySlots.length;
-    const completedCount = daySlots.filter(s=>s.status==="taken").length;
-    daySlots.forEach(s=>{
-      if (s.status==="taken") {
-        completed.push({ n, c2, sortKey: new Date(s.dose.date).getTime(), node: `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border-sub);opacity:0.75">
-          <span style="color:#7DF9C0;font-size:12px;flex-shrink:0">✓</span>
-          <div style="flex:1;min-width:0"><span style="font-size:12px;font-weight:600;color:var(--t3)">${esc(n)}</span><span style="font-size:11px;color:var(--t5);margin-left:6px">${s.dose.dose?esc(s.dose.dose)+" "+c2.unit+" · ":""}${label12(timeKeyOf(s.dose.date))}</span></div>
-        </div>` });
-      } else if (s.status==="skipped" || s.status==="moved" || s.status==="missed") {
-        const missedLabel = s.status==="skipped"?"Skipped":s.status==="moved"?"Moved":"Missed";
-        completed.push({ n, c2, sortKey: total>1 ? new Date(slotDateTime(today3,s.time)).getTime() : 0, node: `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border-sub);opacity:0.6">
-          <span style="color:var(--t5);font-size:12px;flex-shrink:0">${s.status==="skipped"?"⊘":s.status==="moved"?"↺":"✗"}</span>
-          <div style="flex:1;min-width:0"><span style="font-size:12px;font-weight:600;color:var(--t4)">${esc(n)}</span><span style="font-size:11px;color:var(--t5);margin-left:6px">${esc(missedLabel)}${total>1?" · "+label12(s.time):""}</span></div>
-        </div>` });
-      } else {
-        // pending: due_now / overdue / due_later_today / upcoming
-        const isOverdue = s.status==="overdue", isDueNow = s.status==="due_now";
-        const col = isOverdue?"#FF7C7C":isDueNow?"#F9C87D":"var(--t3)";
-        const priority = isOverdue?0:isDueNow?1:2;
-        const progressPrefix = total>1 ? `${completedCount} of ${total} taken · ` : "";
-        const statusText = isOverdue ? "overdue" : isDueNow ? "due now" : `Next ${label12(s.time)}`;
-        upNext.push({ n, c2, priority, sortKey: timeToMinutes(s.time), node: `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--border-sub);${isOverdue?"background:#FF7C7C0a":""}">
-          <div style="width:6px;height:6px;border-radius:50%;background:${c2.color};flex-shrink:0"></div>
-          <div style="flex:1;min-width:0"><span style="font-size:12px;font-weight:600;color:var(--t2)">${esc(n)}</span><span style="font-size:11px;color:${col};margin-left:6px;font-weight:${isOverdue?700:400}">${progressPrefix}${statusText}</span></div>
-          <button class="logdose" data-name="${esc(n)}" data-occ-time="${esc(s.dateTime)}" style="font-size:10px;color:${c2.color};background:${c2.color}18;border:1px solid ${c2.color}44;border-radius:6px;padding:2px 8px;flex-shrink:0">Log</button>
-        </div>` });
-      }
-    });
-  });
-  // Priority: overdue → due now → upcoming (chronological). Completed sorted by actual time taken.
-  upNext.sort((a,b)=> a.priority-b.priority || a.sortKey-b.sortKey);
-  completed.sort((a,b)=> a.sortKey-b.sortKey);
-  if (!upNext.length && !completed.length) return "";
-  return `<div style="margin-top:8px">
-    ${upNext.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:10px 0 2px">UP NEXT</div>${upNext.map(r=>r.node).join("")}`:""}
-    ${completed.length?`<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:14px 0 2px">COMPLETED</div>${completed.map(r=>r.node).join("")}`:""}
-  </div>`;
-})()}
-</div>`;
   // GETTING STARTED CHECKLIST
-  html += onboardingChecklistCard();
+  const onboardingHtml = onboardingChecklistCard();
+  if (onboardingHtml) html += `<details class="nexus-today-onboarding"><summary>Getting started <span aria-hidden="true">⌄</span></summary>${onboardingHtml}</details>`;
 
   // REMINDERS FEED — split urgent (priority 0-1) vs grouped (priority 2+)
   const reminders=buildReminders();
@@ -15663,10 +15853,11 @@ ${(()=>{
   const snoozed = state.settings.snoozedReminders||{};
   const nowMs = Date.now();
   const notSnoozed = (id) => !(snoozed[id] && snoozed[id] > nowMs);
+  const dismissedReminders = state.settings.dismissedReminders || {};
   const groupedItems=[
     ...softRems.map(r=>({id:r.id,icon:r.icon,color:r.color,title:r.title,detail:r.detail,action:r.action,actionLabel:r.actionLabel,isRem:true,isInfo:r.type==="pattern"})),
     ...softNudges.map(n=>({...n,id:"nudge_"+n.title}))
-  ].filter(item=>notSnoozed(item.id));
+  ].filter(item=>notSnoozed(item.id) && !dismissedReminders[item.id]);
   // Split into two buckets using data that already distinguishes them — reminder type
   // "pattern" (a detected behavioral pattern, purely informational) vs everything else
   // (expiring/low supply, phase windows, missed check-ins — all worth acting on). This
@@ -15681,7 +15872,7 @@ ${(()=>{
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t1)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.actionLabel?`<div style="font-size:10px;color:${item.color};background:${item.color}18;border:1px solid ${item.color}33;border-radius:6px;padding:3px 7px;white-space:nowrap;flex-shrink:0">${esc(item.actionLabel)}</div>`:""}
         </div>
-        <button class="snooze-item" data-id="${esc(item.id)}" title="Snooze" aria-label="Snooze this reminder" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⏰</button>
+        <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`
     :`<div style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--surface-2);border-bottom:${idx<total-1?"1px solid var(--surface)":"none"}">
         <div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0">
@@ -15689,7 +15880,7 @@ ${(()=>{
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t2)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.btnClass?`<button class="${item.btnClass}" style="background:${item.color}18;border:1px solid ${item.color}44;color:${item.color};border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;flex-shrink:0">${item.btnLabel}</button>`:""}
         </div>
-        <button class="snooze-item" data-id="${esc(item.id)}" title="Snooze" aria-label="Snooze this reminder" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⏰</button>
+        <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`;
   const renderGroup = (items, icon, label) => items.length ? `<details class="app-detail" style="margin-bottom:14px" ${items.length<=1?"open":""}>
       <summary>
@@ -15702,8 +15893,8 @@ ${(()=>{
         ${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}
       </div>
     </details>` : "";
-  html += renderGroup(needsAttnItems, "🔔", "Needs Attention");
-  html += renderGroup(forYouItems, "✨", "For You");
+  const dismissedCount=Object.keys(dismissedReminders).length;
+  const todayAttentionHtml = renderGroup(needsAttnItems, "🔔", "Needs attention") + renderGroup(forYouItems, "✨", "For you") + (dismissedCount ? `<div class="nexus-dismissed-alerts"><button type="button" id="restore-dismissed-alerts">Manage dismissed alerts (${dismissedCount})</button></div>` : "");
 
   // THIS WEEK — merged schedule strip + summary
   // (dosingTimeline now embedded in Today card above)
@@ -15761,41 +15952,48 @@ ${(()=>{
   // something that needs to be visible every time. Session-only preference: doesn't
   // persist across app restarts, and never auto-expands on its own.
   const weekExpanded = !!state._weekExpanded;
-  const thisWeekCardHtml=`<div class="card" style="border-color:${scoreColor}33;margin-bottom:14px;padding:0;overflow:hidden">
-    <div style="padding:14px 16px 12px;${weekExpanded?"border-bottom:1px solid var(--border-sub)":""}">
-      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px">
-        <span style="font-size:14px;font-weight:700;color:var(--t1)">This Week</span>
-        <span style="font-size:11px;color:var(--t4)">${weekRangeLabel}</span>
-        ${score!==null?`<span style="margin-left:auto;font-size:13px;font-weight:700;color:${scoreColor}">${score}<span style="font-size:9px;font-weight:500;color:var(--t5)">/100</span></span><span style="font-size:10px;color:${scoreColor}">${scoreLabel}</span>`:`<span style="margin-left:auto;font-size:11px;color:var(--t4)">${scoreLabel}</span>`}
-      </div>
-      <button id="week-toggle" style="display:flex;align-items:center;gap:6px;margin-top:6px;background:transparent;border:none;padding:0;font-size:12px;color:var(--t3)">
-        <span style="line-height:1.8">${statsLine}</span>
-        <span style="font-size:10px;color:var(--t5);margin-left:auto">${weekExpanded?"▲":"▼"}</span>
-      </button>
+  const thisWeekCardHtml=`<section class="nexus-week-card nexus-week-quiet" aria-label="Weekly progress">
+    <div class="nexus-quiet-header"><div><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} due today` : ``}</p></div>
+      <button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span aria-hidden="true">${weekExpanded?"⌃":"⌄"}</span></button></div>
+    <div id="nexus-week-expanded" ${weekExpanded?"":"hidden"}>
+      <div class="nexus-week-expanded-top"><span>${weekRangeLabel}</span><button type="button" id="opendigest" class="nexus-text-action">Full report →</button></div>
+      <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Due today</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
+      ${wkSkipped>0?`<p class="nexus-week-footnote">${wkSkipped} skipped this week</p>`:""}
+      ${weekExpanded?weekScheduleStrip():""}
     </div>
-    ${weekExpanded?weekScheduleStrip():""}
-    <div style="padding:10px 16px;border-top:1px solid var(--border-sub);display:flex;justify-content:flex-end">
-      <button id="opendigest" style="background:transparent;border:1px solid var(--border-sub);border-radius:8px;padding:6px 14px;font-size:11px;color:var(--t3)">📋 Full report</button>
-    </div>
-  </div>`;
+  </section>`;
   // PRIMARY NAV — Today/Active/Upcoming/All. Today is the default: what needs attention
   // right now, not every active compound regardless of relevance.
   const homeViewKey = state._homeView || "today";
   const navBtn = (key,label,count) => `<button class="hv-nav" data-view="${key}" style="flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:600;background:${homeViewKey===key?"var(--surface-3)":"transparent"};border:1px solid ${homeViewKey===key?"var(--border)":"var(--border-sub)"};color:${homeViewKey===key?"var(--t1)":"var(--t4)"};min-height:36px">${label}${count?` ${count}`:""}</button>`;
-  html+=`<div style="display:flex;gap:5px;margin-bottom:8px">
+  html+=`<div id="nexus-today-schedule" class="nexus-today-section-label">Your schedule</div>`;
+  html+=`<div class="nexus-today-view-nav">
     ${navBtn("today","Today")}
     ${navBtn("active","Active",started.length||"")}
     ${navBtn("upcoming","Upcoming")}
     ${navBtn("all","All")}
     <button id="add-custom-compound" title="Add custom compound" style="min-width:44px;min-height:36px;padding:8px 10px;border-radius:9px;background:transparent;border:1px solid var(--border-sub);color:var(--t3);font-size:16px;flex-shrink:0">＋</button>
   </div>`;
-  if(Object.keys(aps).length>=2) html+=`<button id="qa-combo" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:9px;background:transparent;border:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600;margin-bottom:14px">💉 Log Combo Dose</button>`;
+  // Combo logging is now a visible option inside Today’s Log dose action.
   // COMPOUND CARDS — every view routes through the SAME compact-card component
   // (renderCompoundCardCompact), so there's one place that fixes/breaks, not several.
   if (homeViewKey==="today") html += renderSinceLastVisit() + renderTodayCompoundSection(started);
   else if (homeViewKey==="active") html += renderActiveFullView(started);
   else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
+  html += todayAttentionHtml; // contextual alerts appear after the schedule, not between progress and schedule
+  html+=`<details class="nexus-today-details"><summary><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">Check-in · Weight · Nutrition · Supplements</span><span class="nexus-today-details-chevron" aria-hidden="true">⌄</span></summary><div class="nexus-today-details-body"><div class="nexus-today-tracking-content"><div class="nexus-today-tracking-actions"><button type="button" class="qa-more nexus-today-action-secondary" aria-label="Log weight, measurements, nutrition or supplements">＋ Other logs</button></div><div class="nexus-today-eyebrow" style="margin-bottom:12px">TODAY’S LOGS</div><div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:120px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">CHECK-IN</div>${mood?`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">${mood.emoji}</span><div><div style="font-size:13px;color:var(--t2)">${mood.label}</div>${todayLog.compound?`<div style="font-size:10px;color:var(--t4)">re: ${esc(todayLog.compound)}</div>`:""}${(todayLog.updates||[]).length?`<button class="opentodaysheet" data-id="${todayLog.id}" style="font-size:10px;color:#A78BFA;background:#A78BFA18;border:1px solid #A78BFA44;border-radius:10px;padding:2px 8px;margin-top:2px">＋${(todayLog.updates||[]).length} update${(todayLog.updates||[]).length===1?"":"s"}</button>`:""}<button class="editdaily" data-id="${todayLog.id}" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border);border-radius:10px;padding:2px 8px;margin-top:2px;margin-left:4px">✏ Edit</button></div></div>`:`<button class="qa-daily" style="background:transparent;border:1px dashed var(--border);border-radius:8px;padding:7px 12px;font-size:11px;color:var(--t4);width:100%">+ Log today</button>`}</div>${todayWeight?`<div style="flex:1;min-width:80px"><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:5px">WEIGHT</div><div style="font-size:18px;font-weight:700;color:#8AB4FF">${esc(todayWeight.weight)}<span style="font-size:12px;font-weight:400"> ${state.settings.weightUnit}</span></div></div>`:""}</div>${todayMacro&&todayMacro.calories?`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">${[["🍽",todayMacro.calories+" kcal","#F9C87D"],["P:",todayMacro.protein+"g","#C8FF9C"],["C:",todayMacro.carbs+"g","#9CC8FF"],["F:",todayMacro.fat+"g","#FFB84D"]].filter(([,v])=>v&&v!=="g"&&v!=="kcal").map(([l,v,c])=>`<span style="font-size:11px;color:${c}">${l} ${v}</span>`).join("")}</div>`:""}
+${todaySupp?.taken?.length
+  ?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub);display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:#C8FF9C;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">💊 ${todaySupp.taken.join(" · ")}</span>
+      <button class="qa-supp" style="font-size:10px;color:var(--t4);background:transparent;border:1px solid var(--border-sub);border-radius:6px;padding:2px 8px;flex-shrink:0">Edit</button>
+    </div>`
+  :(state.settings.supplements||[]).length
+    ?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)"><button class="qa-supp" style="font-size:11px;color:var(--t5);background:transparent;border:none;padding:0">+ Log supplements</button></div>`
+    :""}
+
+</div></div></details>`;
+
   // This Week recedes below the actual compound/dose list — it's a secondary weekly
   // summary, not the thing Today exists to answer.
   html += thisWeekCardHtml;
@@ -16467,6 +16665,7 @@ function importData(e) {
 
 // ─── Profile modal ────────────────────────────────────────────────────────────
 const ICONS = {
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',
   home:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1"/>',
   weekly:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
   trends:'<path d="M3 17l6-6 4 4 7-7M14 8h6v6"/>',
@@ -17260,13 +17459,11 @@ function recordPastPauseModal(protoId) {
 }
 
 function protocolsView() {
-  const sub = state._protoSub||"protocols";
+  const sub = "protocols";
   const subBtn=(k,l)=>`<button class="proto-sub" data-sub="${k}" style="flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:600;background:${sub===k?"var(--surface-3)":"transparent"};color:${sub===k?"var(--t1)":"var(--t4)"};border:none">${l}</button>`;
 
   if(sub==="calendar") return `<h1 class="serif greet">Protocol</h1>
-  <div style="display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:14px">
-    ${subBtn("protocols","Protocols")}${subBtn("calendar","📅 Calendar")}
-  </div>${protocolCalendarView()}`;
+${protocolCalendarView()}`;
 
   const protos = state.protocols||[];
   const STATUS_CFG = {
@@ -17317,36 +17514,38 @@ function protocolsView() {
     const sc = STATUS_CFG[p.status] || STATUS_CFG.draft;
     const needsFirstDose = p.status === "active" && !hasDoses(p);
     const fc = (p.compounds||[])[0]?.name;
-    return `<div class="card" style="border-color:${sc.color}33;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+    const compounds = p.compounds||[];
+    const names = compounds.map(c=>c.name).filter(Boolean);
+    const shortNames = names.slice(0,2).map(esc).join(" · ") + (names.length>2 ? ` · +${names.length-2} more` : "");
+    return `<div class="card nexus-protocol-card" style="border-color:${sc.color}33;margin-bottom:10px">
+      <div class="nexus-protocol-card-head">
         <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600;color:var(--t1)">${esc(p.name)}</div>
-          ${p.goal?`<div style="font-size:10px;color:var(--t4)">${esc(p.goal)}</div>`:""}
+          <div style="font-size:14px;font-weight:650;color:var(--t1)">${esc(p.name)}</div>
+          ${p.goal?`<div class="nexus-protocol-muted">${esc(p.goal)}</div>`:""}
         </div>
         ${statusBadge(sc.label, sc.color)}
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol">⋯</button>
       </div>
-      <div style="background:var(--surface-2);border-radius:8px;padding:8px;margin-bottom:8px">${miniGantt(p)}</div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-        <span style="font-size:11px;color:var(--t4)">Start: ${fmtDate(p.startDate)}</span>
-        <span style="font-size:11px;color:var(--t4)">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</span>
-      </div>
-      <div style="margin-bottom:${needsFirstDose?8:0}px">${(p.compounds||[]).map(c=>`<div style="margin-bottom:6px">
-        <span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>
-        ${compoundDetailRow(p, c)}
-      </div>`).join("")}</div>
-      ${needsFirstDose&&fc?`<div style="background:#7DF9C012;border:1px solid #7DF9C033;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px">
-        <div style="flex:1">
-          <div style="font-size:12px;font-weight:600;color:#7DF9C0">Protocol is live — log your first dose to begin</div>
-          <div style="font-size:10px;color:var(--t4);margin-top:2px">Tracking, insights, and supply forecasts activate once you start.</div>
+      <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
+      <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"}${p.startDate?` · Started ${fmtDate(p.startDate)}`:""}</div>
+      <details class="nexus-protocol-details">
+        <summary>View schedule &amp; phases <span aria-hidden="true">⌄</span></summary>
+        <div class="nexus-protocol-details-body">
+          <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
+          <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
+          ${compounds.map(c=>`<div class="nexus-protocol-compound"><span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>${compoundDetailRow(p,c)}</div>`).join("")}
         </div>
-        <button class="proto-log-first" data-name="${esc(fc)}" style="padding:7px 12px;border-radius:8px;background:#7DF9C0;color:#000;font-size:12px;font-weight:700;flex-shrink:0">+ Log Dose</button>
+      </details>
+      ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
+        <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#7DF9C0">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
+        <button class="proto-log-first" data-name="${esc(fc)}" style="padding:9px 12px;border-radius:8px;background:#7DF9C0;color:#000;font-size:12px;font-weight:700;flex-shrink:0">+ Log dose</button>
       </div>`:""}
-      ${(p.status==="draft"||p.status==="planned")?`<button class="proto-activate" data-id="${p.id}" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;background:#A78BFA;color:#fff;font-size:12px;font-weight:700">▶ Activate</button>`:""}
+      ${(p.status==="draft"||p.status==="planned")?`<button class="proto-activate" data-id="${p.id}" style="width:100%;margin-top:10px;padding:10px;border-radius:9px;background:#A78BFA;color:#fff;font-size:12px;font-weight:700">▶ Activate</button>`:""}
     </div>`;
   };
-  const section=(title,color,cards)=>cards.length?`<div class="mono" style="font-size:9px;color:${color};letter-spacing:1.5px;margin-bottom:8px">${title}</div>${cards.map(protoCard).join("")}`:"";
-  return `<h1 class="serif greet">Protocol</h1><div style="display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:14px">${subBtn("protocols","Protocols")}${subBtn("calendar","📅 Calendar")}</div><button id="new-protocol" class="btn-primary" style="background:#A78BFA;margin-bottom:16px">+ Create Protocol</button>${!live.length&&!planned.length&&!drafts.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${section("COMPLETED","var(--t5)",done)}`;
+
+  const section=(title,color,cards)=>cards.length?`<div class="nexus-protocol-section-label" style="color:${color}">${title} <span style="opacity:.7">${cards.length}</span></div>${cards.map(protoCard).join("")}`:"";
+  return `<h1 class="serif greet">Protocol</h1><div style="display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:14px">${subBtn("protocols","Protocols")}${subBtn("calendar","Calendar")}</div><button id="new-protocol" class="btn-primary" style="background:#A78BFA;margin-bottom:16px">+ Create Protocol</button>${!live.length&&!planned.length&&!drafts.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
 
 }
 
@@ -17543,6 +17742,7 @@ function renderBody() {
   const app=$("#app"); let inner="";
   if(tab==="home")    inner=homeView();
   else if(tab==="trends") inner=trendsView();
+  else if(tab==="calendar") inner=`<h1 class="serif greet">Calendar</h1>${protocolCalendarView()}`;
   else if(tab==="stash")  inner=stashView();
   else if(tab==="plans")  inner=plansView();
   else if(tab==="protocols") inner=protocolsView();
@@ -17560,7 +17760,7 @@ function renderBody() {
     ?`<img src="${state.profile.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`
     :`<span style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7DF9C0,#C9A0FF);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0">${(state.profile.name||"?")[0].toUpperCase()}</span>`}
   <span style="color:var(--t3)">Profile</span>${hasUnseenUpdate?`<span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#A78BFA;border:1.5px solid var(--bg)"></span>`:""}</button><button id="theme-toggle" title="Toggle light/dark">${themeIcon}</button></div>`;
-  app.innerHTML = `<div id="body">${profileBtn}${inner}</div>`;
+  app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${profileBtn}${inner}</div>`;
   wireBody();
 }
 
@@ -17621,20 +17821,61 @@ function enableReminders() {
 function disableReminders() {
   state.settings.remindersEnabled=false; saveState(); render();
 }
+// Phase 2A: five primary destinations, with secondary destinations retained in More.
+// The existing screen renderers and application state are unchanged.
 function renderTabbar() {
-  const old = document.querySelector(".tabbar"); if(old) old.remove();
-  const nav = document.createElement("nav");
-  nav.className = "tabbar";
-  const tabs=[["home","Today"],["trends","Trends"],["protocols","Protocol"],["stash","Stash"],["plans","Plans"],["amino","Nexus"]];
-  tabs.forEach(([id,l])=>{
-    const b = document.createElement("button");
-    b.dataset.tab = id;
-    if(tab===id) b.className = "active";
-    b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[id]||""}</svg>${l}`;
-    b.onclick = ()=>{ tab=id; state._guideOpen=null; state._discoverOpen=null; state._compoundIntel=null; state._intelReturn=null; state._profileReturn=null; render(); window.scrollTo(0,0); };
-    nav.appendChild(b);
+  document.querySelector('.tabbar')?.remove();
+  document.querySelector('#nexus-more-panel')?.remove();
+  const nav = document.createElement('nav');
+  nav.className = 'tabbar nexus-tabbar-v2';
+  nav.setAttribute('aria-label', 'Primary navigation');
+  const moreTabs = ['trends','plans','amino','profile'];
+  const tabs = [['home','Today'],['calendar','Calendar'],['protocols','Protocol'],['stash','Stash'],['more','More']];
+  const goTo = (id) => {
+    tab=id;
+    state._guideOpen=null; state._discoverOpen=null;
+    state._compoundIntel=null; state._intelReturn=null;
+    state._profileReturn=null;
+    render(); window.scrollTo(0,0);
+  };
+  tabs.forEach(([id,label]) => {
+    const button = document.createElement('button');
+    button.type='button'; button.dataset.tab=id;
+    const selected = tab===id || (id==='more' && moreTabs.includes(tab));
+    if(selected) button.className='active';
+    button.setAttribute('aria-label',label);
+    if(selected) button.setAttribute('aria-current','page');
+    const path=id==='more' ? '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>' : (ICONS[id]||'');
+    button.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg><span>${label}</span>`;
+    button.onclick=()=>id==='more' ? showNexusMorePanel(goTo) : goTo(id);
+    nav.appendChild(button);
   });
   document.body.appendChild(nav);
+}
+function showNexusMorePanel(goTo) {
+  document.querySelector('#nexus-more-panel')?.remove();
+  const backdrop=document.createElement('div');
+  backdrop.id='nexus-more-panel'; backdrop.className='nexus-more-backdrop';
+  const sheet=document.createElement('section');
+  sheet.className='nexus-more-sheet'; sheet.setAttribute('role','dialog');
+  sheet.setAttribute('aria-modal','true'); sheet.setAttribute('aria-label','More destinations');
+  sheet.innerHTML=`<div class="nexus-more-handle" aria-hidden="true"></div><div class="nexus-more-heading"><strong>More</strong><button type="button" aria-label="Close menu" class="nexus-more-close">✕</button></div><p>Explore additional Nexus tools</p><div class="nexus-more-items"></div>`;
+  const close=()=>{backdrop.remove();document.removeEventListener('keydown',onKey);};
+  const onKey=(e)=>{if(e.key==='Escape')close();};
+  document.addEventListener('keydown',onKey);
+  backdrop.onclick=(e)=>{if(e.target===backdrop)close();};
+  sheet.querySelector('.nexus-more-close').onclick=close;
+  [['trends','Trends','History and analytics'],['plans','Plans','Schedules and planning'],['amino','Nexus','AI assistant and insights'],['profile','Profile & Settings','Preferences and account']].forEach(([id,label,detail])=>{
+    const item=document.createElement('button'); item.type='button'; item.className='nexus-more-item';
+    const title=document.createElement('strong');title.textContent=label;
+    const desc=document.createElement('small');desc.textContent=detail;
+    const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
+    const texts=document.createElement('span');texts.append(title,desc);item.append(texts,arrow);
+    item.onclick=()=>{close();goTo(id);};
+    sheet.querySelector('.nexus-more-items').appendChild(item);
+  });
+  backdrop.appendChild(sheet);document.body.appendChild(backdrop);
+  sheet.querySelector('.nexus-more-close').focus();
 }
 
 function render() {
@@ -17885,6 +18126,7 @@ function wireBody() {
   const calPausedToggle = document.getElementById("cal-show-paused");
   if(calPausedToggle) calPausedToggle.onchange = () => { state._calShowPaused=calPausedToggle.checked; renderBody(); };
   document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
     const date=b.dataset.date;
     const evs=[];
     const aps2=allPeptides();
@@ -17892,7 +18134,7 @@ function wireBody() {
     // labels Placenta AM vs PM as separate instances, and surfaces a rescheduled MOTS-c
     // occurrence on its actual EFFECTIVE date rather than only where it was originally
     // logged.
-    Object.entries(aps2).filter(([,d])=>(d.doses||[]).length).forEach(([name,d])=>{
+    Object.entries(aps2).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").forEach(([name,d])=>{
       const slots = getDayOccurrences(d, date).filter(slot => state._calShowPaused || slot.status !== "paused");
       const multi = slots.length>1;
       slots.forEach((s,i)=>{
@@ -17901,9 +18143,8 @@ function wireBody() {
         if (s.status==="taken") evs.push({icon:"✓",text:`${label} — Taken${s.dose.dose?` · ${s.dose.dose}${unit}`:""}${s.dose.site?" · "+s.dose.site:""}`});
         else if (s.status==="skipped") evs.push({icon:"⊘",text:`${label} — Skipped`});
         else if (s.status==="moved") evs.push({icon:"↺",text:`${label} — Moved to another day`});
-        else if (s.status==="paused") evs.push({icon:"⏸",text:`${label} — Paused (not due)`});
         else if (s.status==="overdue") evs.push({icon:"✗",text:`${label} — Overdue (was due ${s.time})`});
-        else evs.push({icon:"○",text:`${label} — ${date>=localDate()?"Due":"Planned"} ${s.time}`});
+        else evs.push({icon:"○",text:`${label} — ${date>=localDate()?"Scheduled":"Scheduled · not logged"} ${s.time}`});
       });
     });
     state.dailyLogs.filter(l=>dayKey(l.date)===date).forEach(l=>{const syms=(l.symptoms||[]).map(s=>typeof s==="string"?s:s.name);evs.push({icon:"📋",text:`Check-in · Mood ${l.mood||"-"}${syms.length?" · "+syms.slice(0,3).join(", "):""}${l.notes?" · "+l.notes:""}`});});
@@ -17911,6 +18152,10 @@ function wireBody() {
     (state.measurementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>evs.push({icon:"📏",text:`Measurement${l.waist?" · Waist: "+l.waist:""}${l.hips?" · Hips: "+l.hips:""}`}));
     const detail=document.getElementById("cal-day-detail");
     if(detail) detail.innerHTML=evs.length?`<div class="card" style="border-color:#A78BFA22"><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">${fmtDate(date)}</div>${evs.map(e=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--surface-2)"><span>${e.icon}</span><span style="font-size:12px;color:var(--t2)">${esc(e.text)}</span></div>`).join("")}</div>`:"";});
+  if(tab==="calendar" && state._protoCalSub!=="logs") {
+    const todayButton=document.querySelector(`.cal-day[data-date="${localDate()}"]`);
+    if(todayButton) todayButton.click();
+  }
   document.querySelectorAll(".proto-edit").forEach(b=>b.onclick=()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
     if(p) protocolBuilderModal(p);
@@ -17937,7 +18182,12 @@ function wireBody() {
   });
   document.querySelectorAll(".plan-del").forEach(b=>b.onclick=()=>{const {type,id}=b.dataset,label=type==="goal"?"goal":type==="research"?"research item":"shopping item";confirmAction(`Delete this ${label}?`,()=>{if(!state.plans)return;const key=type==="goal"?"goals":type==="research"?"research":"shopping";state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));saveState();renderBody();});});
   document.querySelectorAll(".qa-weight").forEach(b=>b.onclick=()=>weightModal());
+  const qd=$("#today-log-dose"); if(qd) qd.onclick=()=>todayLogDosePicker();
   const qc=$("#qa-combo"); if(qc) qc.onclick=()=>comboDoseModal();
+  const restoreAlerts=$("#restore-dismissed-alerts"); if(restoreAlerts) restoreAlerts.onclick=()=>{
+    const count=Object.keys(state.settings.dismissedReminders||{}).length;
+    confirmAction(`Restore ${count} dismissed alert${count===1?"":"s"}?`,()=>{state.settings.dismissedReminders={};saveState();render();});
+  };
   document.querySelectorAll(".qa-measure").forEach(b=>b.onclick=()=>measureModal());
   document.querySelectorAll(".qa-macro").forEach(b=>b.onclick=()=>macroModal());
   // dose logging
@@ -18635,6 +18885,7 @@ sinceLastVisitSummary = computeSinceLastVisit();
 // could silently break by running early. This is what actually eliminates the two-model
 // coexistence for good, rather than leaving every kit to migrate lazily whenever
 // something first happens to touch it.
+preserveOriginalState();
 migrateToInventoryV2();
 saveState();
 if(!state.profile.onboardingDone){render();showOnboarding();}
