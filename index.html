@@ -384,6 +384,29 @@
 [data-theme="light"] .nx-log-updates{background:#F8F7FC;border-color:#E8E3F0}
 @media(max-width:390px){.nx-log-day-header{padding:14px 13px 8px}.nx-log-day-body{padding:0 9px 9px}.nx-log-entry{gap:8px}.nx-log-entry-icon{width:31px;height:31px;flex-basis:31px}.nx-log-quick-actions{gap:5px}}
 
+
+/* v0.2.3.6 — Lavender Atelier navigation, logs, and stash */
+.nx-log-add-wrap{margin:0 0 16px;position:relative}
+.nx-add-log-btn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:13px 16px;border:1px solid var(--border-sub);border-radius:13px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;cursor:pointer}
+.nx-add-log-btn span{font-size:16px;color:var(--t4)}
+.nx-add-log-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px;margin-top:7px;border:1px solid var(--border-sub);border-radius:13px;background:var(--surface-1)}
+.nx-add-log-menu[hidden]{display:none!important}
+.nx-add-log-menu button{padding:11px 9px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t2);font-size:12px;text-align:left;cursor:pointer}
+.nx-add-log-menu button:last-child{grid-column:span 2}
+.nx-cal-segment{display:flex!important;gap:4px!important;padding:4px!important;border-radius:14px!important;background:var(--surface-2)!important;border:1px solid var(--border-sub)!important;margin-bottom:17px!important}
+.nx-cal-segment button{flex:1!important;min-height:40px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:var(--t4)!important;font-size:13px!important;font-weight:600!important;cursor:pointer}
+.nx-cal-segment button.on{background:var(--surface-3)!important;color:var(--t1)!important;box-shadow:0 1px 5px #00000010!important}
+.nx-stash-hero{padding:15px 16px;border:1px solid var(--border-sub);background:var(--surface-2);border-radius:16px;margin:0 0 14px}
+.nx-stash-hero-title{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t4);margin-bottom:9px;font-weight:700}
+.nx-stash-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nx-stash-stat{background:var(--surface-1);border:1px solid var(--border-sub);border-radius:11px;padding:10px 9px}
+.nx-stash-stat strong{display:block;color:var(--t1);font-size:22px;line-height:1.1;margin-bottom:5px}
+.nx-stash-stat span{font-size:10px;color:var(--t4)}
+.nx-stash-stat.attention strong{color:#A47AC6}
+.nx-stash-invested{margin-top:10px;color:var(--t4);font-size:10px}
+.nx-stash-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:17px}
+.nx-stash-actions button{min-width:0;padding:12px 5px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:600}
+
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -12114,14 +12137,11 @@ function logsView() {
   ]);
   const sortedDates = [...allDates].sort((a,b)=>b.localeCompare(a));
 
-  return `<div class="nx-log-quick-actions">
-    <button class="qa-daily" style="flex:1;min-width:100px;padding:9px;border-radius:10px;background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;font-size:12px;font-weight:600">＋ Check-in</button>
-    <button class="qa-weight" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#8AB4FF18;border:1px solid #8AB4FF44;color:#8AB4FF;font-size:12px;font-weight:600">⚖ Weight</button>
-    <button class="qa-measure" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#FF9CC818;border:1px solid #FF9CC844;color:#FF9CC8;font-size:12px;font-weight:600">📏 Measure</button>
-    <button class="qa-macro" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;font-size:12px;font-weight:600">🍽 Macros</button>
-    <button class="qa-supp" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#C8FF9C18;border:1px solid #C8FF9C44;color:#C8FF9C;font-size:12px;font-weight:600">💊 Supps</button>
-  </div>
-  ${!sortedDates.length?`<div style="color:var(--t4);font-size:13px;text-align:center;padding:40px 0">No logs yet. Tap a button above to start.</div>`:""}
+  return `<div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">＋ Add log <span aria-hidden="true">⌄</span></button>
+  <div id="nx-add-log-menu" class="nx-add-log-menu" hidden>
+    <button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Macros</button><button class="qa-supp" type="button">Supplements</button>
+  </div></div>
+  ${!sortedDates.length?`<div style="color:var(--t4);font-size:13px;text-align:center;padding:40px 0">No logs yet. Choose Add log to start.</div>`:""}
   ${sortedDates.map(dk=>{
     const l    = state.dailyLogs.find(x=>dayKey(x.date)===dk);
     const wt   = state.weightLogs.find(x=>dayKey(x.date)===dk);
@@ -14410,16 +14430,15 @@ function stashView() {
   const activeCount = allStatuses.filter(st=>st.statusKey!=="stored"&&st.statusKey!=="done").length;
   const storedCount = allStatuses.filter(st=>st.statusKey==="stored").length;
   const attentionCount = allStatuses.filter(st=>st.needsAttention).length;
-  html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-    <div style="font-size:13px;color:var(--t2)"><b style="color:var(--t1)">${activeCount}</b> active · <b style="color:var(--t1)">${storedCount}</b> stored${attentionCount?` · <b style="color:#F9C87D">${attentionCount}</b> need attention`:""}</div>
-    <div style="font-size:11px;color:var(--t5)">${totalCost?totalCost.toLocaleString("en-CA",{minimumFractionDigits:0,maximumFractionDigits:0})+" "+currency+" invested":""}</div>
-  </div>`;
+  html += `<section class="nx-stash-hero" aria-label="Inventory overview"><div class="nx-stash-hero-title">Inventory overview</div><div class="nx-stash-stats">
+    <div class="nx-stash-stat"><strong>${activeCount}</strong><span>Active</span></div>
+    <div class="nx-stash-stat"><strong>${storedCount}</strong><span>Stored</span></div>
+    <div class="nx-stash-stat attention"><strong>${attentionCount}</strong><span>Needs attention</span></div>
+  </div>${totalCost?`<div class="nx-stash-invested">${totalCost.toLocaleString("en-CA",{minimumFractionDigits:0,maximumFractionDigits:0})} ${currency} total invested</div>`:""}</section>`;
 
   // ── Quick Actions ─────────────────────────────────────────────────────────
-  html += `<div style="display:flex;gap:8px;margin-bottom:16px">
-    <button id="qa-addkit" style="flex:1;padding:10px 6px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t2);font-size:12px;font-weight:600">＋ Add Kit</button>
-    <button id="qa-prepare" style="flex:1;padding:10px 6px;border-radius:10px;background:#A78BFA18;border:1px solid #A78BFA44;color:#A78BFA;font-size:12px;font-weight:600">💉 Prepare</button>
-    <button id="qa-planner" style="flex:1;padding:10px 6px;border-radius:10px;background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;font-size:12px;font-weight:600">📊 Planner</button>
+  html += `<div class="nx-stash-actions">
+    <button id="qa-addkit">＋ Add kit</button><button id="qa-prepare">Prepare</button><button id="qa-planner">Planner</button>
   </div>`;
 
   // ── Prepared (conditional) ───────────────────────────────────────────────
@@ -17289,7 +17308,7 @@ function getMonthInstances(year, month) {
 
 function protocolCalendarView() {
   const calSub = state._protoCalSub||"month";
-  const subBar=`<div class="seg" style="margin-bottom:14px">
+  const subBar=`<div class="seg nx-cal-segment" style="margin-bottom:14px">
     <button id="pcal-month" class="${calSub==="month"?"on":""}" onclick="">Month</button>
     <button id="pcal-logs" class="${calSub==="logs"?"on":""}" onclick="">Logs</button>
   </div>`;
@@ -17520,8 +17539,6 @@ function protocolsView() {
   const sub = "protocols";
   const subBtn=(k,l)=>`<button class="proto-sub" data-sub="${k}" style="flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:600;background:${sub===k?"var(--surface-3)":"transparent"};color:${sub===k?"var(--t1)":"var(--t4)"};border:none">${l}</button>`;
 
-  if(sub==="calendar") return `<h1 class="serif greet">Protocol</h1>
-${protocolCalendarView()}`;
 
   const protos = state.protocols||[];
   const STATUS_CFG = {
@@ -18140,6 +18157,13 @@ function wireBody() {
     if(el) el.onclick=()=>confirmAction("⚠️ "+msg+" This cannot be undone.",()=>{fn();saveState();render();});
   });
   // quick log
+  const nxAddLogToggle=document.getElementById("nx-add-log-toggle");
+  if(nxAddLogToggle) nxAddLogToggle.onclick=()=>{
+    const menu=document.getElementById("nx-add-log-menu");
+    if(!menu)return;
+    menu.hidden=!menu.hidden;
+    nxAddLogToggle.setAttribute("aria-expanded",String(!menu.hidden));
+  };
   document.querySelectorAll(".qa-daily").forEach(b=>b.onclick=()=>dailyModal());
   document.querySelectorAll(".qa-more").forEach(b=>b.onclick=()=>moreLogSheet());
   document.querySelectorAll(".ics-export").forEach(b=>b.onclick=()=>exportICSWithTimePicker(b.dataset.name));
