@@ -794,6 +794,215 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
  .nx2-page *,.nx2-dose-modal *{scroll-behavior:auto!important}
 }
 
+
+/* Nexus 0.4.1 — Trends workspace redesign */
+.nx-trends-intro{margin:4px 0 16px}
+.nx-trends-eyebrow{font-size:10px;font-weight:750;letter-spacing:.13em;color:var(--nx-lavender-strong,#A78BFA);text-transform:uppercase}
+.nx-trends-intro h1{margin:5px 0 5px!important}
+.nx-trends-intro p{margin:0;font-size:12px;color:var(--t3);line-height:1.55}
+.nx-trends-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 16px}
+.nx-trends-stat{padding:14px;background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;min-width:0}
+.nx-trends-stat-label{font-size:10px;letter-spacing:.03em;color:var(--t3);margin-bottom:5px}
+.nx-trends-stat-value{font-size:19px;font-weight:750;line-height:1.2;color:var(--t1);overflow-wrap:anywhere}
+.nx-trends-stat-foot{font-size:10px;color:var(--t4);margin-top:6px;line-height:1.45}
+.nx-trends-jump{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 0 14px;margin-bottom:8px}
+.nx-trends-jump::-webkit-scrollbar{display:none}
+.nx-trends-jump button{white-space:nowrap;flex:0 0 auto;min-height:38px;border-radius:999px;
+ padding:7px 13px;background:var(--surface);border:1px solid var(--border-sub);color:var(--t2);font-size:11px;font-weight:650}
+.nx-trends-jump button:focus-visible{outline:2px solid var(--nx-lavender-strong,#A78BFA);outline-offset:2px}
+.nx-trends-section-caption{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:750;color:var(--t4);margin:14px 0 9px}
+.nx2-page--trends .app-acc{border-radius:15px!important;overflow:hidden;margin-bottom:9px!important}
+.nx2-page--trends .app-acc>.tacc{min-height:54px!important;padding:13px 14px!important}
+.nx2-page--trends .app-acc-body{padding:15px!important}
+.nx2-page--trends .app-sub-acc{border-radius:12px!important;overflow:hidden;margin-bottom:8px}
+.nx2-page--trends .app-sub-acc>.tacc{min-height:44px!important}
+.nx2-page--trends .chart-tap{border-radius:12px;overflow:hidden;max-width:100%}
+.nx2-page--trends .seg{background:var(--surface-3);border-radius:12px;padding:4px}
+.nx2-page--trends .seg button{min-height:40px;border-radius:9px}
+.nx-trends-context{font-size:11px;color:var(--t3);line-height:1.55;margin:10px 0 12px}
+.nx-trends-expand-hint{font-size:11px;color:var(--t4);margin:8px 0}
+@media(min-width:560px){.nx-trends-summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+
+/* Nexus 0.4.2 — Adaptive compound Trends cards */
+.nx2-page--trends .nx-compound-card{border:1px solid var(--border-sub);background:var(--surface);border-radius:19px;overflow:hidden;margin:0 0 13px}
+.nx2-page--trends .nx-compound-top{display:flex;gap:10px;align-items:center;padding:15px 15px 12px;min-width:0}
+.nx2-page--trends .nx-compound-mark{height:34px;width:4px;border-radius:5px;flex:none}
+.nx2-page--trends .nx-compound-title{font-size:15px;font-weight:750;color:var(--t1);line-height:1.25;overflow-wrap:anywhere}
+.nx2-page--trends .nx-compound-meta{font-size:11px;color:var(--t4);margin-top:4px}
+.nx2-page--trends .nx-compound-intel{border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t2);padding:10px 12px;min-height:44px;font-size:11px;font-weight:700;flex:none}
+.nx2-page--trends .nx-compound-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:0 15px 14px}
+.nx2-page--trends .nx-compound-fact{background:var(--surface-2);border-radius:11px;padding:10px 8px;min-width:0}
+.nx2-page--trends .nx-compound-fact b{display:block;font-size:14px;color:var(--t1);overflow-wrap:anywhere}
+.nx2-page--trends .nx-compound-fact span{display:block;font-size:10px;color:var(--t4);margin-top:3px}
+.nx2-page--trends .nx-compound-main{padding:15px;border-top:1px solid var(--border-sub)}
+.nx2-page--trends .nx-compound-heading{font-size:13px;font-weight:750;color:var(--t1);margin:0 0 4px}
+.nx2-page--trends .nx-compound-desc{font-size:11px;line-height:1.5;color:var(--t3);margin:0 0 12px}
+.nx2-page--trends .nx-compound-main svg{max-width:100%}
+.nx2-page--trends .nx-compound-details{border-top:1px solid var(--border-sub)}
+.nx2-page--trends .nx-compound-details>summary{list-style:none;cursor:pointer;padding:14px 15px;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--t2);font-size:12px;font-weight:700}
+.nx2-page--trends .nx-compound-details>summary::-webkit-details-marker{display:none}
+.nx2-page--trends .nx-compound-details>summary:after{content:'⌄';font-size:18px;color:var(--t4);transition:transform .15s}
+.nx2-page--trends .nx-compound-details[open]>summary:after{transform:rotate(180deg)}
+.nx2-page--trends .nx-compound-details-body{padding:0 15px 15px}
+.nx2-page--trends .nx-compound-details .app-sub-acc{margin:7px 0!important}
+.nx2-page--trends .nx-compound-caption{font-size:10px;color:var(--t4);line-height:1.5;padding:7px 0}
+.nx2-page--trends .nx-compound-status{display:inline-flex;font-size:10px;font-weight:700;color:var(--t3);border:1px solid var(--border-sub);border-radius:999px;padding:4px 8px}
+@media(max-width:360px){.nx2-page--trends .nx-compound-facts{gap:5px}.nx2-page--trends .nx-compound-fact{padding:9px 6px}.nx2-page--trends .nx-compound-fact b{font-size:12px}}
+
+
+/* Nexus 0.4.4 — Evidence-aware chart styling */
+.nx-dose-chart{width:100%;height:auto;display:block;overflow:visible}
+.nx-chart-block{background:var(--surface);border:1px solid var(--border-sub);border-radius:14px;padding:12px 10px 9px;margin:8px 0}
+.nx-chart-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;color:var(--t3);font-weight:600;padding:0 4px}
+.nx-chart-note{font-size:10px;line-height:1.55;color:var(--t4);padding:5px 4px 0}
+.nx-chart-empty{padding:16px;text-align:center;color:var(--t4);font-size:12px}
+.nx-sym-observed{padding:10px 12px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface);font-size:11px;line-height:1.5;color:var(--t3);margin-bottom:12px}
+.nx-model-warning{border-left:3px solid var(--nx-lavender-strong,#A78BFA);padding:9px 11px;background:var(--surface);color:var(--t3);font-size:11px;line-height:1.55;border-radius:0 10px 10px 0;margin-bottom:12px}
+.nx2-page--trends svg text{font-family:system-ui,-apple-system,sans-serif}
+
+/* Nexus v0.4.5 — read-only chart detail */
+.nx-trends-open-detail{margin:7px 0 0;min-height:42px;width:100%;border:1px solid var(--border-sub);
+ border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:700}
+.nx-trends-open-detail:focus-visible,.nx-trends-detail-modal button:focus-visible{
+ outline:2px solid var(--nx-lavender-strong,#A78BFA);outline-offset:2px}
+.nx-trends-detail-modal{max-width:610px!important}
+.nx-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.nx-detail-head h2{font-size:22px;margin:4px 0;color:var(--t1)}
+.nx-detail-head p{font-size:12px;color:var(--t3);line-height:1.5;margin:0}
+.nx-detail-head button{min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t2)}
+.nx-detail-filter{display:flex;gap:5px;background:var(--surface-2);padding:4px;border-radius:12px;margin-bottom:14px}
+.nx-detail-filter button{flex:1;min-width:0;min-height:42px;padding:6px 3px;border:0;border-radius:9px;background:transparent;color:var(--t3);font-size:11px;font-weight:700}
+.nx-detail-filter button[aria-pressed="true"]{background:var(--surface);color:var(--t1);box-shadow:0 2px 8px #00000010}
+.nx-detail-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nx-detail-counts>div{background:var(--surface-2);padding:11px 9px;border-radius:12px;min-width:0}
+.nx-detail-counts span,.nx-detail-counts small{display:block;color:var(--t4);font-size:10px;line-height:1.4}
+.nx-detail-counts strong{display:block;color:var(--t1);font-size:23px;margin:5px 0}
+.nx-detail-caution{margin:13px 0;padding:10px 12px;background:var(--surface-2);border-radius:12px;color:var(--t3);font-size:11px;line-height:1.6}
+.nx-detail-subtitle{font-size:12px;font-weight:750;color:var(--t1);display:flex;justify-content:space-between;gap:8px;margin:17px 0 9px}
+.nx-detail-subtitle span{font-size:10px;font-weight:500;color:var(--t4)}
+.nx-detail-rows{border:1px solid var(--border-sub);border-radius:12px;max-height:300px;overflow:auto;overscroll-behavior:contain}
+.nx-detail-row{display:grid;grid-template-columns:95px minmax(0,1fr);gap:10px;padding:11px 12px;border-bottom:1px solid var(--border-sub)}
+.nx-detail-row:last-child{border-bottom:0}
+.nx-detail-row time{font-size:11px;color:var(--t3)}
+.nx-detail-row b{font-size:12px;color:var(--t1);font-weight:700;display:block;overflow-wrap:anywhere}
+.nx-detail-row small{font-size:10px;color:var(--t4);display:block;margin-top:3px}
+@media(max-width:380px){.nx-detail-counts{gap:5px}.nx-detail-counts>div{padding:9px 6px}.nx-detail-counts strong{font-size:20px}.nx-detail-row{grid-template-columns:78px minmax(0,1fr)}}
+
+/* 0.4.6 Pattern Explorer */
+.nx-pe-entry{padding:16px;margin:10px 0 18px;border:1px solid var(--border-sub);background:var(--surface);border-radius:18px}
+.nx-pe-entry h3{font-size:16px;color:var(--t1);margin:0 0 5px}
+.nx-pe-entry p{font-size:12px;color:var(--t3);margin:0 0 12px;line-height:1.55}
+.nx-pe-entry button{min-height:44px;width:100%;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font-weight:700;font-size:12px}
+.nx-pe-heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+.nx-pe-heading h2{font-size:22px;margin:5px 0;color:var(--t1)}
+.nx-pe-heading p{font-size:12px;line-height:1.5;color:var(--t3);margin:0}
+.nx-pe-heading button{min-width:44px;height:44px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t2);border-radius:12px}
+.nx-pe-modal{max-width:620px!important}
+.nx-pe-modal .field-label{display:block;margin:13px 0 6px}
+.nx-pe-modal .inp{width:100%;min-height:44px;font-size:16px}
+.nx-pe-caution{margin:15px 0;padding:11px 12px;border-left:3px solid var(--nx-lavender-strong,#A78BFA);background:var(--surface-2);border-radius:0 10px 10px 0;color:var(--t3);font-size:11px;line-height:1.55}
+.nx-pe-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.nx-pe-stats>div{background:var(--surface-2);border-radius:13px;padding:12px;min-width:0}
+.nx-pe-stats small{display:block;font-size:10px;line-height:1.5;color:var(--t3)}
+.nx-pe-stats strong{font-size:24px;color:var(--t1);display:block;margin:5px 0}
+.nx-pe-status{font-size:12px;line-height:1.55;color:var(--t2);padding:12px;margin-top:10px;border:1px solid var(--border-sub);border-radius:12px}
+
+/* 0.4.7 symptom timing explorer */
+.nx-pe-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.nx-pe-actions button{padding:10px;min-height:48px;line-height:1.4}
+.nx-st-chart{display:flex;gap:5px;align-items:flex-end;overflow-x:auto;min-height:172px;padding:16px 6px 7px;margin-top:12px;background:var(--surface-2);border-radius:12px}
+.nx-st-bar{flex:1;min-width:29px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--t3);font-size:9px}
+.nx-st-bar span{white-space:nowrap;font-size:9px}
+.nx-st-bar small{font-size:10px}
+.nx-st-track{height:108px;width:100%;max-width:26px;display:flex;align-items:flex-end;background:var(--border-sub);border-radius:5px 5px 0 0;overflow:hidden}
+.nx-st-track>div{width:100%;border-radius:5px 5px 0 0}
+
+/* Nexus v0.4.8 — Pattern Explorer evidence-first visual hierarchy */
+.nx-pe-modal .nx-pe-heading{padding-bottom:12px;border-bottom:1px solid var(--border-sub)}
+.nx-pe-modal .nx-pe-heading h2{letter-spacing:-.5px}
+.nx-pe-modal .nx-pe-heading p{max-width:440px}
+.nx-pe-modal .nx-pe-caution{margin:10px 0 12px}
+.nx-pe-eyebrow{font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:var(--t3);margin:18px 0 8px}
+.nx-pe-summary{background:var(--surface-2);border:1px solid var(--border-sub);border-radius:16px;padding:14px;margin-top:14px}
+.nx-pe-summary-head{display:flex;align-items:center;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px}
+.nx-pe-summary-head strong{font-size:14px;color:var(--t1)}
+.nx-pe-evidence{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border-sub);background:var(--surface);border-radius:99px;padding:5px 9px;font-size:10px;color:var(--t2);font-weight:750}
+.nx-pe-summary p{margin:0;color:var(--t2);font-size:12px;line-height:1.65}
+.nx-pe-summary .nx-pe-muted{margin-top:8px;color:var(--t3);font-size:11px}
+.nx-pe-stats>div{border:1px solid var(--border-sub)}
+.nx-pe-records{border:1px solid var(--border-sub);border-radius:14px;margin-top:14px;overflow:hidden;background:var(--surface)}
+.nx-pe-records>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:49px;padding:12px 13px;color:var(--t1);font-size:12px;font-weight:750}
+.nx-pe-records>summary::-webkit-details-marker{display:none}
+.nx-pe-records>summary:after{content:"⌄";font-size:17px;color:var(--t3)}
+.nx-pe-records[open]>summary:after{content:"⌃"}
+.nx-pe-records>summary span{color:var(--t3);font-weight:500;font-size:10px}
+.nx-pe-records .nx-detail-rows{border:0;border-top:1px solid var(--border-sub);border-radius:0}
+.nx-pe-records .nx-chart-empty{border-top:1px solid var(--border-sub)}
+.nx-pe-records:focus-within{outline:1px solid var(--border-sub)}
+.nx-pe-disclaimer{font-size:11px;line-height:1.55;color:var(--t3);margin:11px 1px}
+.nx-pe-actions button{transition:background .15s ease}
+.nx-pe-actions button:focus-visible,.nx-pe-records>summary:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
+@media(max-width:390px){.nx-pe-actions{grid-template-columns:1fr}.nx-pe-stats strong{font-size:21px}}
+
+/* 0.4.9 Body Progress and Apple Health import transparency */
+.nx-body-summary{margin:12px 0 16px}.nx-body-summary>p{font-size:11px;color:var(--t3);line-height:1.6;margin:8px 0 0}
+.nx-body-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.nx-body-stat{padding:13px;border:1px solid var(--border-sub);background:var(--surface-2);border-radius:14px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.nx-body-stat small{font-size:10px;color:var(--t3)}.nx-body-stat strong{font-size:22px;letter-spacing:-.6px;color:var(--t1)}.nx-body-stat strong em{font-size:11px;font-weight:500;font-style:normal;color:var(--t3)}
+.nx-body-stat span{font-size:11px;line-height:1.5;color:var(--t2)}
+.nx-health-source{padding:14px;margin:12px 0 15px;border:1px solid var(--border-sub);border-radius:15px;background:var(--surface-2)}
+.nx-health-source strong{font-size:14px;color:var(--t1)}.nx-health-source p{font-size:11px;line-height:1.65;color:var(--t3);margin:7px 0 12px}
+.nx-health-source-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:7px;font-size:11px;font-weight:600;color:var(--t2);border-top:1px solid var(--border-sub);padding-top:10px}
+.nx-health-source small{display:block;color:var(--t3);margin-top:8px;line-height:1.5}
+.nx-measure-window{font-size:11px;color:var(--t3);line-height:1.6;margin:8px 0}
+@media(max-width:420px){.nx-body-stat-grid{grid-template-columns:1fr}.nx-body-stat strong{font-size:20px}}
+/* Nexus v0.5.0 measurement dashboard */
+.nx-md{margin-top:20px;padding-top:17px;border-top:1px solid var(--border-sub)}
+.nx-md-top,.nx-md-detail-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}
+.nx-md-eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:800;color:var(--t3);margin-bottom:5px}
+.nx-md-top h3{font-size:19px;letter-spacing:-.5px;margin:0;color:var(--t1)}
+.nx-md-top p{font-size:11px;line-height:1.5;color:var(--t3);margin:5px 0 0}
+.nx-md-count{font-size:10px;color:var(--t3);white-space:nowrap}
+.nx-md-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.nx-md-tile{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;min-height:111px;padding:12px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;color:var(--t1);cursor:pointer;min-width:0}
+.nx-md-tile.is-selected{border-color:var(--accent,#A78BFA);box-shadow:0 0 0 1px var(--accent,#A78BFA);background:var(--surface)}
+.nx-md-label{font-size:11px;color:var(--t3);font-weight:700}
+.nx-md-tile strong{font-size:20px;line-height:1.15;letter-spacing:-.4px}
+.nx-md-tile strong small{font-size:10px;color:var(--t3);font-weight:500}
+.nx-md-tile-foot{font-size:10px;line-height:1.4;color:var(--t3)}
+.nx-md-detail{background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;padding:16px;margin-top:13px}
+.nx-md-detail h4{font-size:17px;margin:0;color:var(--t1)}
+.nx-md-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.nx-md-metrics>div{background:var(--surface-2);border-radius:11px;padding:11px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.nx-md-metrics small,.nx-md-metrics span{font-size:10px;color:var(--t3);line-height:1.4}
+.nx-md-metrics strong{font-size:15px;color:var(--t1);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nx-md-chart{margin:14px 0 8px}.nx-md-svg{width:100%;height:auto;display:block}.nx-md-empty{padding:25px 12px;text-align:center;font-size:12px;color:var(--t3);background:var(--surface-2);border-radius:12px}
+.nx-md-history{border-top:1px solid var(--border-sub);margin-top:12px}.nx-md-history summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:center;min-height:48px;font-size:12px;color:var(--t1);font-weight:700}.nx-md-history summary span{color:var(--t3);font-size:10px;font-weight:400}
+.nx-md-history-list>div{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border-sub);font-size:12px}.nx-md-history-list time{color:var(--t3)}.nx-md-history-list strong{color:var(--t1)}
+.nx-md-footnote{font-size:10px;line-height:1.5;color:var(--t3);margin:12px 0 0}
+.nx-md-tile:focus-visible,.nx-md-history summary:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
+@media(max-width:500px){.nx-md-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.nx-md-metrics{grid-template-columns:1fr 1fr}.nx-md-metrics>div:last-child{grid-column:span 2}.nx-md-top{flex-wrap:wrap}}
+
+/* 0.5.1 Body Progress hierarchy */
+.nx-body-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:var(--surface);border:1px solid var(--border-sub);border-radius:14px;margin:0 0 14px}
+.nx-body-tab{min-height:44px;padding:10px 12px;border-radius:10px;color:var(--t3);font-weight:650;font-size:13px;background:transparent;border:1px solid transparent}
+.nx-body-tab.is-active{background:var(--surface-2);border-color:var(--border-sub);color:var(--t1)}
+.nx-body-tab:focus-visible,.nx-md-tile:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
+.nx-body-panel-head{display:flex;justify-content:space-between;gap:10px;align-items:start;margin:6px 0 12px}
+.nx-body-panel-head h3{font-size:17px;color:var(--t1);margin:2px 0 3px}
+.nx-body-panel-head p{font-size:11px;color:var(--t3);margin:0;line-height:1.5}
+.nx-body-records{border:1px solid var(--border-sub);border-radius:12px;margin:12px 0;overflow:hidden}
+.nx-body-records>summary{cursor:pointer;list-style:none;min-height:44px;padding:12px;font-size:12px;font-weight:650;color:var(--t2)}
+.nx-body-records>summary::-webkit-details-marker{display:none}
+.nx-body-records>summary:after{content:'⌄';float:right;color:var(--t3)}
+.nx-body-records[open]>summary:after{content:'⌃'}
+.nx-body-records-list{padding:4px 12px 10px;border-top:1px solid var(--border-sub)}
+.nx-body-records-list>div{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:38px;font-size:12px;border-bottom:1px solid var(--border-sub)}
+.nx-body-records-list>div:last-child{border-bottom:0}
+.nx-body-records-list button{min-width:35px;min-height:35px;color:var(--t3)}
+.nx-body-panel-note{font-size:11px;color:var(--t3);line-height:1.55;margin:12px 0 0}
+.nx-md-tile-foot{line-height:1.5}
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -10750,29 +10959,46 @@ function measureChart(logs, unit, expanded) {
   <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">${present.map(([k,l,col])=>{const pts=s.filter(x=>x[k]!=null&&x[k]!=="");const ch=(parseFloat(pts[pts.length-1][k])-parseFloat(pts[0][k])).toFixed(1);return `<div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:3px;background:${col};border-radius:2px;display:inline-block"></span><span style="font-size:11px;color:var(--t3)">${l} <b style="color:${ch<=0?"#7DF9C0":"#ff9c5c"}">${ch>0?"+":""}${ch} ${unit}</b></span></div>`;}).join("")}</div>`;
 }
 function escalationChart(doses, c) {
-  const e=doses.filter(d=>d.dose).sort((a,b)=>new Date(a.date)-new Date(b.date));
-  if(!e.length) return `<div style="color:var(--t4);font-size:12px;text-align:center;padding:12px 0">No doses logged yet.</div>`;
-  const ys=e.map(d=>parseFloat(d.dose));
-  const minY=Math.min(...ys),maxY=Math.max(...ys),rY=(maxY-minY)||1;
-  const W=480,H=90,pad=18,topPad=16;
-  const px=i=>e.length>1?pad+(i/(e.length-1))*(W-pad*2):W/2;
-  const py=v=>topPad+(1-(v-minY)/rY)*(H-topPad-pad);
-  // Step path (not a diagonal line) — a dose change is an abrupt jump, not a gradual ramp,
-  // so the chart shape should say that: flat while the dose is flat, a clean vertical step
-  // exactly when it changes. This also scales gracefully — width stays fixed no matter how
-  // many doses accumulate, unlike a bar per dose.
-  let path=`M ${px(0)} ${py(ys[0])}`;
-  for(let i=1;i<e.length;i++) path+=` L ${px(i)} ${py(ys[i-1])} L ${px(i)} ${py(ys[i])}`;
-  // Only mark points worth calling out: the first dose, the most recent, and genuine
-  // escalations — not every single dose.
-  const keyPoints = e.map((d,i)=>({
-    i, v:ys[i], date:d.date,
-    key: i===0 || i===e.length-1 || d.escalation || (i>0&&ys[i]!==ys[i-1])
-  })).filter(p=>p.key);
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
-    <path d="${path}" fill="none" stroke="${c.color}" stroke-width="2" stroke-linejoin="round"/>
-    ${keyPoints.map(p=>`<circle cx="${px(p.i)}" cy="${py(p.v)}" r="3" fill="${c.color}"/><text x="${px(p.i)}" y="${py(p.v)-7}" text-anchor="middle" fill="${c.color}" font-size="9" font-family="monospace">${esc(String(p.v))}</text>`).join("")}
-  </svg>`;
+  // Each x coordinate represents elapsed calendar time, not an equally spaced dose number.
+  const e=(doses||[]).filter(d=>d.date&&Number.isFinite(Number(d.dose))&&Number(d.dose)>=0)
+    .slice().sort((a,b)=>safeDate(a.date)-safeDate(b.date));
+  if(!e.length)return `<div class="nx-chart-empty">No dated doses recorded yet.</div>`;
+  const values=e.map(d=>Number(d.dose));
+  const dates=e.map(d=>safeDate(d.date).getTime());
+  const W=520,H=182,L=43,R=16,T=19,B=37;
+  const minT=Math.min(...dates),maxT=Math.max(...dates),spanT=Math.max(86400000,maxT-minT);
+  const minV=Math.min(0,...values),maxV=Math.max(...values);
+  const yMax=maxV>0?maxV*1.18:1;
+  const x=t=>L+(t-minT)/spanT*(W-L-R);
+  const y=v=>T+(1-(v-minV)/(yMax-minV))*(H-T-B);
+  const color=c.color||'#A78BFA';
+  let path=`M ${x(dates[0]).toFixed(1)} ${y(values[0]).toFixed(1)}`;
+  for(let i=1;i<e.length;i++)path+=` L ${x(dates[i]).toFixed(1)} ${y(values[i-1]).toFixed(1)} L ${x(dates[i]).toFixed(1)} ${y(values[i]).toFixed(1)}`;
+  const dateFmt=t=>new Date(t).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+  const ticks=[0,0.5,1].map(f=>{
+    const v=minV+(yMax-minV)*f, yy=y(v);
+    return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border-sub)" stroke-width="1"/>
+    <text x="${L-7}" y="${yy+3}" text-anchor="end" fill="var(--t4)" font-size="10">${Number(v.toFixed(2))}</text>`;
+  }).join('');
+  const lastIndex=e.length-1;
+  const dots=e.map((d,i)=>{
+    const change=i>0&&values[i]!==values[i-1];
+    if(!change&&i!==0&&i!==lastIndex)return '';
+    const title=`${dateFmt(dates[i])}: ${values[i]} ${c.unit||''}${change?' (dose changed)':''}`;
+    return `<circle cx="${x(dates[i])}" cy="${y(values[i])}" r="${change?5:3.5}" fill="${color}" stroke="var(--surface)" stroke-width="2"><title>${esc(title)}</title></circle>`;
+  }).join('');
+  const firstDate=dateFmt(minT),lastDate=dateFmt(maxT);
+  const changeCount=values.reduce((n,v,i)=>n+(i>0&&v!==values[i-1]?1:0),0);
+  return `<div class="nx-chart-block">
+    <div class="nx-chart-meta"><span>Recorded dose · ${esc(c.unit||'units')}</span><span>${e.length} entries · ${changeCount} changes</span></div>
+    <svg role="img" aria-label="Recorded doses by calendar date from ${esc(firstDate)} to ${esc(lastDate)}. ${e.length} doses and ${changeCount} dose changes." viewBox="0 0 ${W} ${H}" class="nx-dose-chart">
+      ${ticks}<path d="${path}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${dots}
+      <text x="${L}" y="${H-12}" fill="var(--t4)" font-size="11">${esc(firstDate)}</text>
+      <text x="${W-R}" y="${H-12}" fill="var(--t4)" text-anchor="end" font-size="11">${esc(lastDate)}</text>
+    </svg>
+    <div class="nx-chart-note">Horizontal distance represents elapsed time. Vertical steps mark changes in logged dose, not changes in blood concentration. Tap a marked point for its recorded date and amount where supported.</div>
+  </div>`;
 }
 function supplementCorrelation(compoundName, doses, suppLogs, dailyLogs) {
   if(!suppLogs.length || !dailyLogs.length) return "";
@@ -12064,8 +12290,8 @@ function sideEffectsSection(name, doses) {
   };
   const bars = entries.map(([sym,n])=>{
     const pct = Math.round(n/totalLogs*100);
-    const timing = timingLabel(sym);
-    const phaseInfo = phaseLabel(sym);
+    const timing = "";
+    const phaseInfo = "";
     return `<div style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;margin-bottom:3px">
         <span style="font-size:12px;color:var(--t2)">${esc(sym)}</span>
@@ -12112,9 +12338,10 @@ function sideEffectsSection(name, doses) {
   }
 
   return tfBar
+    + `<div class="nx-sym-observed">Observed symptom reports in this window. ${totalLogs} distinct dated log day${totalLogs===1?"":"s"} with dose or check-in records; counts may include multiple reports on one day. These are not incidence rates or evidence of causation.</div>`
     + bars
     + (catLine?`<div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--surface-2)">${catLine}</div>`:"")
-    + (insights.length?`<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">${insights.slice(0,3).map(i=>`<div style="padding:8px 10px;background:${c.color}10;border:1px solid ${c.color}33;border-radius:8px;font-size:11px;color:var(--t2)">💡 ${i}</div>`).join("")}</div>`:"")
+
     + `<div style="font-size:10px;color:var(--t4);margin-top:8px">From dose logs + check-ins tagged to ${esc(name)}.</div>`;
 }
 
@@ -13085,7 +13312,7 @@ function accumulationSection(name, data, c) {
   const EFFECTIVE_LOW = 0.55, EFFECTIVE_HIGH = 0.9;
   const rangeStatus = currentLevel/ssPeakAbs < EFFECTIVE_LOW ? "below" : currentLevel/ssPeakAbs > EFFECTIVE_HIGH ? "peak" : "effective";
   const rangeColor = rangeStatus==="below" ? "#8AB4FF" : rangeStatus==="peak" ? c.color : "#7DF9C0";
-  const rangeLabel = rangeStatus==="below" ? "Building Up" : rangeStatus==="peak" ? "Near Peak" : "Effective Range";
+  const rangeLabel = rangeStatus==="below" ? "Lower modeled level" : rangeStatus==="peak" ? "Higher modeled level" : "Intermediate modeled level";
 
   // Timeframe selector
   const TF_DAYS={"2w":14,"1m":30,"3m":90,"all":null};
@@ -13194,7 +13421,7 @@ function accumulationSection(name, data, c) {
 function healthLogSection() {
   // Only daily aggregate logs — exclude workout sessions (isWorkout flag)
   const allLogs = [...state.activityLogs]
-    .filter(a=>!a.isWorkout&&(a.restingHR||a.hrv||a.avgHeartRate||a.walkingHR||a.basalCalories||a.exerciseMinutes||a.standHours||a.standMinutes||a.distanceKm||a.activeCalories))
+    .filter(a=>!a.isWorkout&&(["restingHR","hrv","avgHeartRate","walkingHR","basalCalories","exerciseMinutes","standHours","standMinutes","distanceKm","activeCalories","steps"].some(k=>a[k]!=null)))
     .sort((a,b)=>dayKey(b.date).localeCompare(dayKey(a.date)));
 
   if (!allLogs.length) return `<div style="color:var(--t4);font-size:12px;line-height:1.6;text-align:center;padding:20px 0">
@@ -13328,8 +13555,7 @@ function healthLogSection() {
     ${rhrArr.length>=3||hrvArr.length>=3?`<div style="font-size:11px;color:var(--t4);line-height:1.6;margin-bottom:12px">
       ${rhrArr.length>=3?`RHR avg ${Math.round(avg(rhrArr))} bpm over ${logs.length} days. `:""}
       ${hrvArr.length>=3?`HRV avg ${+(avg(hrvArr)).toFixed(1)} ms. `:""}
-      ${rhrArr.length>=4&&avg(rhrArr.slice(0,Math.floor(rhrArr.length/2)))>avg(rhrArr.slice(Math.floor(rhrArr.length/2)))+4?"<span style='color:#7DF9C0'>RHR trending down — recovery improving.</span>":""}
-      ${rhrArr.length>=4&&avg(rhrArr.slice(0,Math.floor(rhrArr.length/2)))<avg(rhrArr.slice(Math.floor(rhrArr.length/2)))-4?"<span style='color:#F9C87D'>RHR trending up — watch for fatigue or illness.</span>":""}
+      <span style="color:var(--t3)">These are descriptive averages from imported records; changes alone do not establish recovery, illness, or treatment effects.</span>
     </div>`:""}
     <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--border-sub)">
       <table style="width:100%;border-collapse:collapse;font-size:11px">
@@ -13340,6 +13566,71 @@ function healthLogSection() {
     ${logs.length>90?`<div style="font-size:10px;color:var(--t5);text-align:center;margin-top:8px">Showing most recent 90 days · ${logs.length} total</div>`:""}
     <div style="font-size:10px;color:var(--t5);margin-top:10px;line-height:1.5">🟢 Highlighted rows: HRV above avg. 🔴 Rows: RHR elevated or HRV below avg. Reflects imported data only.</div>
     ${workoutSummary}`;
+}
+
+
+function nxMeasurementDashboard(logs, unit, period, selected) {
+  const days={"1M":30,"3M":90,"6M":180};
+  const cutoff=days[period]?Date.now()-days[period]*86400000:-Infinity;
+  const valid=logs.filter(x=>x.date&&Number.isFinite(new Date(x.date).getTime())&&new Date(x.date).getTime()>=cutoff).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const keys=MEASURES;
+  const key=keys.some(([k])=>k===selected)?selected:keys[0][0];
+  const entries=valid.filter(x=>x[key]!==null&&x[key]!==undefined&&x[key]!==""&&Number.isFinite(Number(x[key])));
+  const latest=entries.at(-1),previous=entries.at(-2),first=entries[0];
+  const fmt=n=>Number(n).toFixed(1);
+  const diff=(a,b,metric=key)=>{if(!a||!b)return '—';const n=Number(a[metric])-Number(b[metric]);return `${n>0?'+':n<0?'−':''}${Math.abs(n).toFixed(1)} ${unit}`};
+  const selectedLabel=keys.find(([k])=>k===key)?.[1]||key;
+  const chart=()=>{
+    if(entries.length<2)return `<div class="nx-md-empty">Add another ${esc(selectedLabel.toLowerCase())} entry to see a trend.</div>`;
+    const W=560,H=190,L=32,R=18,T=17,B=30;
+    const xvals=entries.map(x=>new Date(x.date).getTime()),yvals=entries.map(x=>Number(x[key]));
+    const minX=Math.min(...xvals),maxX=Math.max(...xvals),minY=Math.min(...yvals),maxY=Math.max(...yvals),padY=Math.max((maxY-minY)*.2,.3);
+    const x=t=>L+(t-minX)/((maxX-minX)||1)*(W-L-R);
+    const y=n=>T+(1-(n-(minY-padY))/((maxY-minY+2*padY)||1))*(H-T-B);
+    const points=entries.map(e=>`${x(new Date(e.date).getTime()).toFixed(1)},${y(Number(e[key])).toFixed(1)}`);
+    return `<svg class="nx-md-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(selectedLabel)} measurement history, ${entries.length} entries plotted by actual date"><line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="var(--border-sub)"/><polyline fill="none" stroke="var(--accent,#A78BFA)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${points.join(' ')}"/>${entries.map((e,i)=>`<circle cx="${x(new Date(e.date).getTime())}" cy="${y(Number(e[key]))}" r="4" fill="var(--accent,#A78BFA)"><title>${esc(fmtDate(e.date))}: ${fmt(e[key])} ${esc(unit)}</title></circle>`).join('')}<text x="${L}" y="${H-7}" font-size="11" fill="var(--t3)">${esc(fmtShort(entries[0].date))}</text><text x="${W-R}" y="${H-7}" font-size="11" fill="var(--t3)" text-anchor="end">${esc(fmtShort(latest.date))}</text></svg>`;
+  };
+  return `<section class="nx-md" aria-label="Body measurements dashboard">
+    <div class="nx-md-top"><div><div class="nx-md-eyebrow">BODY PROGRESS</div><h3>Measurements</h3><p>Choose an area to view its recorded history.</p></div><span class="nx-md-count">${valid.length} measurement sessions</span></div>
+    <div class="nx-md-tiles" role="group" aria-label="Select measurement">${keys.map(([k,label])=>{
+      const a=valid.filter(x=>x[k]!==null&&x[k]!==undefined&&x[k]!==""&&Number.isFinite(Number(x[k]))),last=a.at(-1),prev=a.at(-2);
+      return `<button type="button" class="nx-md-tile ${k===key?'is-selected':''}" data-nx-measure="${esc(k)}" aria-pressed="${k===key}"><span class="nx-md-label">${esc(label)}</span><strong>${last?fmt(last[k]):'—'}<small>${last?' '+esc(unit):''}</small></strong><span class="nx-md-tile-foot">${last&&prev?`${diff(last,prev,k)} vs previous`:last?'1 recorded entry':'No entries in period'}</span><span class="nx-md-tile-date">${last?esc(fmtShort(last.date)):'No date'}</span></button>`;
+    }).join('')}</div>
+    <div class="nx-md-detail"><div class="nx-md-detail-heading"><div><div class="nx-md-eyebrow">SELECTED MEASUREMENT</div><h4>${esc(selectedLabel)}</h4></div><span class="nx-md-count">${entries.length} entries</span></div>
+    <div class="nx-md-metrics"><div><small>Latest recorded</small><strong>${latest?fmt(latest[key])+' '+esc(unit):'—'}</strong><span>${latest?esc(fmtDate(latest.date)):'No entries'}</span></div><div><small>Since previous</small><strong>${diff(latest,previous)}</strong><span>${previous?esc(fmtDate(previous.date)):'Need 2 entries'}</span></div><div><small>Within selected period</small><strong>${diff(latest,first&&first!==latest?first:null)}</strong><span>${entries.length>1?'First to latest recorded':'Need 2 entries'}</span></div></div>
+    <div class="nx-md-chart">${chart()}</div>
+    <details class="nx-md-history"><summary>View ${esc(selectedLabel.toLowerCase())} history <span>${entries.length} entries</span></summary><div class="nx-md-history-list">${entries.length?entries.slice().reverse().map(e=>`<div><time>${esc(fmtDate(e.date))}</time><strong>${fmt(e[key])} ${esc(unit)}</strong></div>`).join(''):'<p>No measurements recorded in this period.</p>'}</div></details>
+    <p class="nx-md-footnote">Changes compare recorded values, not estimated body composition. Missing entries are not interpolated.</p></div></section>`;
+}
+
+function nxWeightPeriodSummary(logs,unit,period) {
+  const days={"1M":30,"3M":90,"6M":180};
+  const cutoff=days[period]?Date.now()-days[period]*86400000:-Infinity;
+  const rows=logs.filter(x=>x.date&&Number.isFinite(new Date(x.date).getTime())&&new Date(x.date).getTime()>=cutoff&&x.weight!==""&&x.weight!=null&&Number.isFinite(Number(x.weight))).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(!rows.length)return `<div class="nx-md-empty">No weight entries in this period.</div>`;
+  const first=Number(rows[0].weight),last=Number(rows[rows.length-1].weight),delta=last-first;
+  return `<div class="nx-body-summary"><div class="nx-body-stat-grid"><div class="nx-body-stat"><small>Latest recorded weight</small><strong>${last.toFixed(1)} <em>${esc(unit)}</em></strong><span>${esc(fmtDate(rows[rows.length-1].date))}</span></div><div class="nx-body-stat"><small>Change within period</small><strong>${rows.length<2?'—':`${delta>0?'+':''}${delta.toFixed(1)} ${esc(unit)}`}</strong><span>${rows.length<2?'Need 2 entries':`${rows.length} entries · first ${esc(fmtShort(rows[0].date))}`}</span></div></div></div>`;
+}
+function nxBodySummary(weightLogs, measurementLogs, unit, munit, period) {
+  const days={"1M":30,"3M":90,"6M":180};
+  const cutoff=days[period]?Date.now()-days[period]*86400000:-Infinity;
+  const within=arr=>arr.filter(x=>x.date&&Number.isFinite(new Date(x.date).getTime())&&new Date(x.date).getTime()>=cutoff).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const weights=within(weightLogs).filter(x=>Number.isFinite(Number(x.weight))&&x.weight!=="");
+  const waist=within(measurementLogs).filter(x=>x.waist!==""&&x.waist!=null&&Number.isFinite(Number(x.waist)));
+  const summary=(items,key,u)=>{
+    if(!items.length)return `<div class="nx-body-stat"><small>${key==='weight'?'Weight':'Waist'}</small><strong>—</strong><span>No records in this period</span></div>`;
+    const first=Number(items[0][key]),last=Number(items[items.length-1][key]);
+    const change=items.length>1?`${last-first>0?'+':''}${(last-first).toFixed(1)} ${esc(u)} since ${esc(fmtShort(items[0].date))}`:'One observation · no change calculated';
+    return `<div class="nx-body-stat"><small>${key==='weight'?'Weight':'Waist'} · latest</small><strong>${last.toFixed(1)} <em>${esc(u)}</em></strong><span>${change}</span><small>${items.length} entries · latest ${esc(fmtShort(items[items.length-1].date))}</small></div>`;
+  };
+  return `<div class="nx-body-summary"><div class="nx-pe-eyebrow">Selected-period overview</div><div class="nx-body-stat-grid">${summary(weights,'weight',unit)}${summary(waist,'waist',munit)}</div><p>Changes compare the earliest and latest recorded values within this selected period. Missing days are not interpolated.</p></div>`;
+}
+function nxHealthImportContext() {
+  const all=(state.activityLogs||[]).filter(a=>!a.isWorkout&&a.date);
+  const imported=all.filter(a=>a.importBatchId||a.importedAt||a.source||a.importSource);
+  const dates=[...new Set(all.map(a=>dayKey(a.date)))].sort();
+  const sourceNames=[...new Set(imported.map(a=>String(a.importSource||a.source||'Imported file')))].slice(0,4);
+  return `<section class="nx-health-source"><div class="nx-pe-eyebrow">Data source & coverage</div><strong>Apple Health file imports</strong><p>Health Log currently uses your imported records. Automatic HealthKit syncing is not connected. Imported days are observations, not proof that every metric was captured.</p><div class="nx-health-source-row"><span>${dates.length} recorded calendar days</span><span>${dates.length?`${esc(fmtShort(dates[0]))} – ${esc(fmtShort(dates[dates.length-1]))}`:'No imported dates'}</span></div>${sourceNames.length?`<small>Source labels in records: ${esc(sourceNames.join(', '))}</small>`:''}</section>`;
 }
 
 function trendsView() {
@@ -13362,58 +13653,127 @@ function trendsView() {
   };
   const accordionBody=(key,color,inner)=>`${open[key]?`<div class="app-acc-body" style="background:var(--surface-2);padding:18px">${inner}</div>`:""}</div>`;
 
-  let html=`<h1 class="serif greet">Trends</h1><div class="hint" style="margin-bottom:18px">Tap any section to expand.</div>`;
+  // The summary uses actual stored records, never fixed demonstration metrics.
+  const weightSorted=[...state.weightLogs].filter(w=>Number.isFinite(Number(w.weight))).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const firstWeight=weightSorted[0], lastWeight=weightSorted[weightSorted.length-1];
+  const delta=weightSorted.length>1?Number(lastWeight.weight)-Number(firstWeight.weight):null;
+  const signedDelta=delta===null?"—":`${delta>0?"+":""}${delta.toFixed(1)} ${esc(unit)}`;
+  const latestWeight=lastWeight?`${esc(lastWeight.weight)} ${esc(unit)}`:"—";
+  const doseCount=Object.values(aps).reduce((sum,p)=>sum+(p.doses||[]).length,0);
+  const trackedCount=Object.values(aps).filter(p=>(p.doses||[]).length).length;
+  const activityCount=(state.activityLogs||[]).filter(a=>a.restingHR||a.hrv||a.avgHeartRate||a.basalCalories||a.exerciseMinutes||a.standHours).length;
+  const summaryStat=(label,value,foot)=>`<div class="nx-trends-stat"><div class="nx-trends-stat-label">${label}</div><div class="nx-trends-stat-value">${value}</div><div class="nx-trends-stat-foot">${foot}</div></div>`;
+  let html=`<div class="nx-trends-intro">
+    <div class="nx-trends-eyebrow">Your data, over time</div>
+    <h1 class="serif greet">Trends</h1>
+    <p>Explore your recorded measurements, health activity, and compound history. Summaries reflect logged data, not medical conclusions.</p>
+  </div>
+  <div class="nx-trends-summary" aria-label="Recorded trends overview">
+    ${summaryStat("Latest weight",latestWeight,lastWeight?fmtDate(lastWeight.date):"No weight entries")}
+    ${summaryStat("Weight change",signedDelta,delta===null?"Add 2+ entries to compare":"First to latest recorded entry")}
+    ${summaryStat("Logged doses",String(doseCount),`${trackedCount} compound${trackedCount===1?"":"s"} with history`)}
+    ${summaryStat("Health days",String(activityCount),"Days with recorded health metrics")}
+  </div>
+  <nav class="nx-trends-jump" aria-label="Explore trends sections">
+    <button class="nx-trends-go" data-key="weight">Body metrics</button>
+    <button class="nx-trends-go" data-key="healthlog">Health</button>
+    ${Object.entries(aps).filter(([,p])=>(p.doses||[]).length>0).slice(0,6).map(([name])=>`<button class="nx-trends-go" data-key="${esc(name)}">${esc(name)}</button>`).join("")}
+  </nav>
+  <div class="nx-trends-section-caption">Body &amp; health</div>`;
 
-  // Weight & measurements
-  html+=accordionHdr("weight","Weight & Measurements","#8AB4FF",state.weightLogs.length?state.weightLogs.length+" entries":null);
+  // Body Progress — one shared range control, two focused views.
+  const bodyTab=state._nxBodyTab==="measurements"?"measurements":"weight";
+  const rangeDays={"1M":30,"3M":90,"6M":180};
+  const bodyCutoff=rangeDays[period]?Date.now()-rangeDays[period]*86400000:-Infinity;
+  const periodWeights=(state.weightLogs||[]).filter(w=>w.date&&Number.isFinite(new Date(w.date).getTime())&&new Date(w.date).getTime()>=bodyCutoff&&w.weight!==""&&w.weight!=null&&Number.isFinite(Number(w.weight))).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const weightHistory=periodWeights.length?`<details class="nx-body-records"><summary>Inspect weight records · ${periodWeights.length} entries</summary><div class="nx-body-records-list">${periodWeights.map(w=>`<div><time>${esc(fmtDate(w.date))}</time><span>${esc(w.weight)} ${esc(unit)}</span><button type="button" class="delweight" data-id="${esc(w.id)}" aria-label="Delete weight entry dated ${esc(fmtDate(w.date))}">×</button></div>`).join("")}</div></details>`:"";
+  html+=accordionHdr("weight","Body Progress","#8AB4FF",state.weightLogs.length+state.measurementLogs.length?"Weight & measurements":null);
   html+=accordionBody("weight","#8AB4FF",`
-    <div class="seg" style="margin-bottom:14px" id="wperiod">
+    <div class="nx-body-tabs" role="group" aria-label="Body Progress view">
+      <button type="button" class="nx-body-tab ${bodyTab==="weight"?"is-active":""}" data-nx-body-tab="weight" aria-pressed="${bodyTab==="weight"}">Weight</button>
+      <button type="button" class="nx-body-tab ${bodyTab==="measurements"?"is-active":""}" data-nx-body-tab="measurements" aria-pressed="${bodyTab==="measurements"}">Measurements</button>
+    </div>
+    <div class="seg" style="margin-bottom:14px" id="wperiod" aria-label="Body Progress date range">
       ${["1M","3M","6M","all"].map(p=>`<button id="wp-${p}" class="${period===p?"on":""}">${p==="all"?"All":p}</button>`).join("")}
     </div>
-    <div class="chart-tap" data-kind="weight" data-period="${period}" style="cursor:pointer">${weightChart(state.weightLogs,unit,period)}</div>
-    ${state.weightLogs.length>=2?`<div style="text-align:right;font-size:9px;color:var(--t5);margin-top:-4px;margin-bottom:8px">⤢ tap chart to expand</div>`:""}
-    ${state.weightLogs.length?`<div style="margin-top:10px;border-top:1px solid var(--border-sub);padding-top:10px">${[...state.weightLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6).map(w=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:var(--t3)"><span>${fmtDate(w.date)}</span><span style="color:#8AB4FF">${esc(w.weight)} ${unit}</span><button class="delweight" data-id="${w.id}" style="color:var(--t5)">✕</button></div>`).join("")}</div>`:""}
-    <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:18px 0 12px">BODY MEASUREMENTS</div>
-    <div class="chart-tap" data-kind="measure" style="cursor:pointer">${measureChart(state.measurementLogs,munit)}</div>
-    ${state.measurementLogs.length>=2?`<div style="text-align:right;font-size:9px;color:var(--t5);margin-top:2px">⤢ tap chart to expand</div>`:""}
-    <div class="hint" style="margin-top:8px">On a triple-agonist while recomping, the scale lies — waist & glute are the honest signals.</div>
-    ${state.measurementLogs.length?`<div style="margin-top:10px;border-top:1px solid var(--border-sub);padding-top:10px">${[...state.measurementLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5).map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;color:var(--t3)"><span>${fmtShort(m.date)}</span><span style="color:var(--t2)">${MEASURES.filter(([k])=>m[k]).map(([k,l])=>l[0]+" "+esc(m[k])).join("  ")}</span><button class="delmeasure" data-id="${m.id}" style="color:var(--t5)">✕</button></div>`).join("")}</div>`:""}
-    ${recompSection(state.weightLogs, state.measurementLogs, unit, munit)}
-    ${adherenceCalendar()}
+    ${bodyTab==="weight"?`
+      <div class="nx-body-panel-head"><div><div class="nx-md-eyebrow">BODY PROGRESS</div><h3>Weight</h3><p>Recorded weigh-ins in the selected period</p></div></div>
+      ${nxWeightPeriodSummary(state.weightLogs,unit,period)}
+      <div class="chart-tap" data-kind="weight" data-period="${period}" style="cursor:pointer" role="button" tabindex="0" aria-label="Inspect weight chart">${weightChart(state.weightLogs,unit,period)}</div>
+      ${weightHistory}
+      <p class="nx-body-panel-note">All changes reflect recorded measurements within this period. Missing days are not estimated.</p>
+    `:`${nxMeasurementDashboard(state.measurementLogs,munit,period,state._nxSelectedMeasure||"waist")}`}
   `);
   html+=`<div style="margin-bottom:10px"></div>`;
 
   // Health Log accordion
   const healthLogCount = state.activityLogs.filter(a=>a.restingHR||a.hrv||a.avgHeartRate||a.basalCalories||a.exerciseMinutes||a.standHours).length;
   html+=accordionHdr("healthlog","Health Log","#FF9CC8",healthLogCount?healthLogCount+" days":null);
-  html+=accordionBody("healthlog","#FF9CC8",healthLogSection());
+  html+=accordionBody("healthlog","#FF9CC8",nxHealthImportContext()+healthLogSection());
   html+=`<div style="margin-bottom:10px"></div>`;
+
+  // Exploratory comparisons belong to Trends, not to an individual compound.
+  html+=`<section class="nx-pe-entry" aria-label="Pattern Explorer"><div class="nx-trends-eyebrow">Optional exploration</div>
+    <h3>Pattern Explorer</h3><p>Explore supplement check-ins or symptom timing using exact dated records and clear data-coverage limits.</p>
+    <div class="nx-pe-actions"><button type="button" id="nx-open-pattern">Supplement patterns →</button>
+    <button type="button" id="nx-open-symptom-timing">Symptom timing →</button></div></section>`;
 
   // Per-compound sections
   const startedPeps=Object.entries(aps).filter(([,d])=>(d.doses||[]).length>0);
+  if(startedPeps.length) html+=`<div class="nx-trends-section-caption">Compound history</div>`;
   startedPeps.forEach(([name,data])=>{
-    const c=cfg(name); const doses=data.doses||[];
-    const sortedDoses=[...doses].sort((a,b)=>new Date(a.date)-new Date(b.date));
-    const firstDoseDate=sortedDoses.length?sortedDoses[0].date:null;
-    const pDays=firstDoseDate?Math.floor(daysSince(firstDoseDate)):null;
-    const badge=doses.length?(doses.length+" doses"+(pDays!==null?" · "+pDays+"d":"")):null;
-    html+=accordionHdr(name,name,c.color,badge,true);
-    const subKey = k=>name+"_"+k;
-    const subOpen = k=>{ const explicit=(state._trendsOpen||{})[subKey(k)]; if(explicit!==undefined)return explicit; return k==="pk"||k==="hist"||k==="trough"; };
-    const subHdr = (k,label)=>`<div class="app-sub-acc" style="border:1px solid ${subOpen(k)?c.color+"33":"var(--border-sub)"};background:var(--surface-2)"><button class="tacc" data-key="${subKey(k)}" aria-expanded="${!!subOpen(k)}" aria-label="${esc(label)} — ${subOpen(k)?"expanded":"collapsed"}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 14px;background:transparent"><span style="font-size:12.5px;font-weight:600;color:${subOpen(k)?c.color:"var(--t3)"}">${label}</span><span style="color:${subOpen(k)?c.color:"var(--t5)"};font-size:16px">${subOpen(k)?"∧":"∨"}</span></button>`;
-    const subBody = (k,content)=>`${subOpen(k)?`<div class="app-sub-body" style="background:var(--surface-2);padding:14px">${content}</div>`:""}</div>`;
-    html+=accordionBody(name,c.color,`
-      ${c.phases?subHdr("pk","Plasma Activity")+subBody("pk",pkCurveFull(name,data)):""}
-      ${c.halfLifeDays&&(c.halfLifeDays/data.scheduleDays)>0.3?subHdr("acc","Accumulation")+subBody("acc",accumulationSection(name,data,c)):""}
-      ${escalationCard(name,data)?subHdr("esc","Escalation Readiness")+subBody("esc",escalationCard(name,data)):""}
-      ${subHdr("hist","Dose History")+subBody("hist",escalationChart(doses,c)+`<div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">${[["TOTAL",doses.length],["ESCALATIONS",doses.filter(d=>d.escalation).length],["MAX",doses.length?Math.max(...doses.map(d=>parseFloat(d.dose)||0))+" "+c.unit:"—"]].map(([l,v])=>`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div style="font-size:14px;color:var(--t2);font-weight:600">${v}</div></div>`).join("")}</div>`)}
-      ${c.troughDay?subHdr("trough","Trough Analysis")+subBody("trough",troughHTML(analyzeTrough(state.dailyLogs,doses,c.returnSymptoms),data.scheduleDays,c.color,c.troughDay)):""}
-      ${subHdr("sites","Injection Sites")+subBody("sites",siteTrackerSection(name,doses))}
-      ${subHdr("syms","Symptom Frequency")+subBody("syms",sideEffectsSection(name,doses))}
-      ${subHdr("activity","Activity Overlay")+subBody("activity",activityChart(state.activityLogs,doses,c.color))}
-      ${(state.supplementLogs||[]).length?subHdr("suppcorr","Supplement Correlation")+subBody("suppcorr",supplementCorrelation(name,doses,state.supplementLogs||[],state.dailyLogs)):""}
-    `);
-    html+=`<div style="margin-bottom:10px"></div>`;
+    const c=cfg(name), doses=data.doses||[];
+    const chronological=[...doses].sort((a,b)=>safeDate(a.date)-safeDate(b.date));
+    const last=chronological[chronological.length-1];
+    const first=chronological[0];
+    const validDoses=chronological.filter(d=>Number.isFinite(Number(d.dose)));
+    const schedule=Number(data.scheduleDays||c.defaultSchedule||c.scheduleDays);
+    const halfLife=Number(c.halfLifeDays);
+    const modeled=Number.isFinite(halfLife)&&halfLife>0&&Number.isFinite(schedule)&&schedule>0&&validDoses.length>=3;
+    const showAccumulation=modeled&&halfLife/schedule>0.3;
+    const isInjection=chronological.some(d=>d.site)||/inject|subcut|intramuscular|\bsc\b|\bim\b/i.test(String(data.route||data.method||c.route||c.method||''));
+    const siteRecorded=chronological.some(d=>d.site);
+    const loggedSymptoms=(state.dailyLogs||[]).filter(d=>Array.isArray(d.symptoms)&&d.symptoms.length>0);
+    const enoughObservations=loggedSymptoms.length>=3;
+    const overlappingSupp=(state.supplementLogs||[]).filter(s=>s.date&&first&&safeDate(s.date)>=safeDate(first.date));
+    const showSupp=overlappingSupp.length>=5&&enoughObservations;
+    const subKey=k=>name+'_'+k;
+    const subOpen=k=>!!(state._trendsOpen||{})[subKey(k)];
+    const subHdr=(k,label)=>`<div class="app-sub-acc" style="border:1px solid var(--border-sub);background:var(--surface-2)"><button class="tacc" data-key="${esc(subKey(k))}" aria-expanded="${subOpen(k)}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;background:transparent"><span style="font-size:12px;font-weight:650;color:var(--t2)">${label}</span><span style="color:var(--t4)">${subOpen(k)?'∧':'∨'}</span></button>`;
+    const subBody=(k,content)=>`${subOpen(k)?`<div class="app-sub-body" style="padding:12px">${content}</div>`:''}</div>`;
+    const sub=(k,label,content)=>subHdr(k,label)+subBody(k,content);
+    const fact=(value,label)=>`<div class="nx-compound-fact"><b>${value}</b><span>${label}</span></div>`;
+    const unitText=esc(c.unit||'');
+    const latest=last&&last.dose!=null?`${esc(last.dose)} ${unitText}`:'—';
+    const latestDate=last?fmtShort(last.date):'—';
+    const changes=chronological.reduce((n,d,i)=>i>0&&Number(d.dose)!==Number(chronological[i-1].dose)?n+1:n,0);
+    const nameId=esc(name);
+    html+=`<article class="nx-compound-card" aria-label="${nameId} recorded trends">
+      <div class="nx-compound-top"><div class="nx-compound-mark" style="background:${c.color}"></div>
+        <div style="flex:1;min-width:0"><div class="nx-compound-title">${nameId}</div><div class="nx-compound-meta">${doses.length} logged dose${doses.length===1?'':'s'} · Last logged ${latestDate}</div></div>
+        <button class="nx-compound-intel compound-intel-btn" data-name="${nameId}" aria-label="Open ${nameId} compound information">Details ›</button>
+      </div>
+      <div class="nx-compound-facts">${fact(String(doses.length),'Logged doses')}${fact(latest,'Latest dose')}${fact(String(changes),'Dose changes')}</div>
+      <div class="nx-compound-main">
+        <div class="nx-compound-heading">Dose history</div>
+        <div class="nx-compound-desc">Recorded dose amounts, in entry order. Step changes reflect logged amounts—not a modeled drug concentration.</div>
+        ${escalationChart(doses,c)}
+        <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records &amp; compare periods →</button>
+        <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
+      </div>
+      <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
+        ${enoughObservations?`<button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="symptom">Explore symptom records &amp; compare periods →</button>`+sub('syms','Recorded symptom frequency',sideEffectsSection(name,doses)):`<div class="nx-compound-caption">Symptom comparisons are hidden until at least three dated symptom observations are recorded. This does not establish causation.</div>`}
+        ${siteRecorded?sub('sites','Recorded injection sites',siteTrackerSection(name,doses)):''}
+        ${!siteRecorded&&isInjection?`<div class="nx-compound-caption">No injection sites have been recorded for this compound.</div>`:''}
+        ${changes?`<div class="nx-compound-caption">${changes} recorded dose amount change${changes===1?'':'s'}. This history does not indicate whether a change is appropriate or safe.</div>`:''}
+      </div></details>
+      <details class="nx-compound-details"><summary>Models &amp; explorations <span class="nx-compound-status">Optional</span></summary><div class="nx-compound-details-body">
+        <div class="nx-compound-caption">These are estimates or exploratory comparisons, not measurements of blood concentration or recommendations to change doses.</div>
+        ${modeled&&c.phases?sub('pk','Estimated plasma activity',`<div class="nx-model-warning">Illustrative exposure model based on configured half-life and logged doses. Not measured plasma concentration, a therapeutic range, or a dosing recommendation.</div>${pkCurveFull(name,data)}`):''}
+        ${showAccumulation?sub('acc','Estimated accumulation',`<div class="nx-model-warning">Simplified repeat-dose model. Its percentages and ranges are mathematical comparisons, not verified effective or safe concentrations.</div>${accumulationSection(name,data,c)}`):''}
+        ${!(modeled&&c.phases)&&!showAccumulation?`<div class="nx-compound-caption">No supported advanced models are available from the current records and configuration. Explore symptom timing separately in Pattern Explorer.</div>`:''}
+      </div></details>
+    </article>`;
   });
   if(!startedPeps.length) html+=`<div style="color:var(--t4);font-size:13px;text-align:center;padding:30px 0">Log your first dose to start seeing compound trends.</div>`;
   return html;
@@ -13824,6 +14184,207 @@ function cyclePlannerModal() {
 
 // Tap-to-expand: same chart function, rendered taller for closer inspection — no separate
 // chart implementation to maintain, just a bigger canvas via the existing `expanded` param.
+
+// Trends record explorer: read-only, evidence-first; no modifications to app state.
+
+
+
+function nxEvidencePanel(title, status, headline, detail) {
+  return `<section class="nx-pe-summary" aria-label="Evidence summary">
+    <div class="nx-pe-summary-head"><strong>${esc(title)}</strong><span class="nx-pe-evidence">${esc(status)}</span></div>
+    <p>${esc(headline)}</p><p class="nx-pe-muted">${esc(detail)}</p>
+  </section>`;
+}
+
+function nxSymptomTimingExplorer() {
+  const compounds=Object.entries(allPeptides()).filter(([,d])=>(d.doses||[]).some(x=>x.date));
+  const m=openModal(`<div class="nx-pe-heading"><div><div class="nx-trends-eyebrow">Trends / Pattern Explorer</div>
+    <h2>Symptom Timing</h2><p>Explore check-ins by elapsed day after a recorded dose, without interpreting drug levels or dose readiness.</p></div>
+    <button type="button" id="nx-st-close" aria-label="Close Symptom Timing">×</button></div>
+    <label class="field-label" for="nx-st-compound">Compound</label>
+    <select class="inp" id="nx-st-compound">${compounds.length?compounds.map(([n])=>`<option value="${esc(n)}">${esc(n)}</option>`).join(''):'<option value="">No recorded doses</option>'}</select>
+    <label class="field-label" for="nx-st-symptom">Symptom</label>
+    <select class="inp" id="nx-st-symptom"></select>
+    <label class="field-label" for="nx-st-window">Observation window</label>
+    <select class="inp" id="nx-st-window"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="180">Last 180 days</option><option value="all">All dates</option></select>
+    <div id="nx-st-result" aria-live="polite"></div>
+    <button type="button" class="btn-primary" id="nx-st-done" style="width:100%;margin-top:15px">Done</button>`);
+  m.classList.add('nx-pe-modal');
+  m.querySelector('#nx-st-close').onclick=closeModal;
+  m.querySelector('#nx-st-done').onclick=closeModal;
+  const symptoms=(state.dailyLogs||[]).flatMap(l=>Array.isArray(l.symptoms)?l.symptoms:[])
+    .map(v=>typeof v==='string'?v:(v&&v.name)||'').filter(Boolean);
+  const unique=[...new Set(symptoms)].sort((a,b)=>a.localeCompare(b));
+  m.querySelector('#nx-st-symptom').innerHTML='<option value="">All recorded symptoms</option>'+unique.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  const redraw=()=>{
+    const name=m.querySelector('#nx-st-compound').value;
+    const selected=m.querySelector('#nx-st-symptom').value;
+    const window=m.querySelector('#nx-st-window').value;
+    const cutoff=window==='all'?-Infinity:Date.now()-Number(window)*86400000;
+    const doses=((allPeptides()[name]||{}).doses||[]).filter(d=>d.date&&Number.isFinite(safeDate(d.date).getTime()))
+      .slice().sort((a,b)=>safeDate(a.date)-safeDate(b.date));
+    const logs=(state.dailyLogs||[]).filter(l=>l.date&&Number.isFinite(safeDate(l.date).getTime()))
+      .filter(l=>safeDate(l.date).getTime()>=cutoff);
+    const bins=Array.from({length:15},(_,day)=>({day,checkins:new Set(),symptomDays:new Set(),reports:0,cycles:new Set()}));
+    const details=[];
+    logs.forEach(l=>{
+      const when=safeDate(l.date).getTime();
+      let idx=-1;
+      for(let i=0;i<doses.length;i++){if(safeDate(doses[i].date).getTime()<=when)idx=i;else break;}
+      if(idx<0)return;
+      const delta=(when-safeDate(doses[idx].date).getTime())/86400000;
+      const day=Math.floor(delta);
+      if(day<0||day>14)return;
+      const bin=bins[day], key=dayKey(l.date), syms=(l.symptoms||[])
+        .map(v=>typeof v==='string'?v:(v&&v.name)||'').filter(Boolean);
+      const matched=selected?syms.filter(s=>s===selected):syms;
+      bin.checkins.add(key);bin.cycles.add(idx);
+      if(matched.length){bin.symptomDays.add(key);bin.reports+=matched.length;}
+      details.push({date:l.date,day,cycle:idx,matched,checkin:true});
+    });
+    const days=bins.reduce((n,b)=>n+b.checkins.size,0);
+    const cycles=new Set(bins.flatMap(b=>[...b.cycles])).size;
+    const supported=cycles>=3&&days>=6;
+    const result=m.querySelector('#nx-st-result');
+    const visible=bins.filter(b=>b.checkins.size);
+    const max=Math.max(1,...visible.map(b=>b.symptomDays.size/b.checkins.size));
+    const timingStatus=!doses.length?'No dose records':!days?'No matching check-ins':!supported?'Limited records':'Descriptive timing';
+    const timingHeadline=!doses.length?'No dated doses are available for this compound.'
+      :!days?'No check-ins could be assigned to the 14 days after a recorded dose in this window.'
+      :!supported?`Found ${days} check-in-day positions across ${cycles} recorded dose cycles. The timing chart needs at least 6 check-in-day positions and 3 observed cycles.`
+      :`Found ${days} check-in-day positions across ${cycles} observed dose cycles. Explore the chart below to see which elapsed days have recorded symptoms.`;
+    const timingSummary=nxEvidencePanel('What the records show',timingStatus,timingHeadline,
+      'Timing is relative to logged doses. It does not measure blood concentrations or show when a compound is wearing off.');
+    result.innerHTML=timingSummary+`<div class="nx-pe-eyebrow">Observation coverage</div><div class="nx-pe-caution">Days are measured from the last logged dose. A check-in without a symptom is not proof that no symptom occurred. Records may overlap with other compounds. No pharmacological trough or dosing guidance is inferred.</div>
+      <div class="nx-pe-stats"><div><small>Check-in days</small><strong>${days}</strong><small>days assigned to a dose interval</small></div>
+      <div><small>Observed dose cycles</small><strong>${cycles}</strong><small>distinct preceding dose entries</small></div></div>
+      ${supported&&visible.length?`<div class="nx-pe-eyebrow">Timing by elapsed day</div><div class="nx-st-chart" role="img" aria-label="Observed symptom days by elapsed day after dose.">${visible.map(b=>{
+        const rate=b.symptomDays.size/b.checkins.size;
+        return `<div class="nx-st-bar"><span>${b.symptomDays.size}/${b.checkins.size}</span><div class="nx-st-track"><div style="height:${Math.max(2,Math.round(rate/max*100))}%;background:var(--accent,#A78BFA)"></div></div><small>D${b.day}</small></div>`;
+      }).join('')}</div><div class="nx-chart-note">Labels show symptom-report days / check-in days. Bars describe the recorded proportion for each elapsed day, not the probability of a symptom.</div>`:''}
+      <details class="nx-pe-records"><summary>Inspect underlying check-ins <span>${details.length} entries · latest 60 shown</span></summary>
+      ${details.length?`<div class="nx-detail-rows">${details.sort((a,b)=>safeDate(b.date)-safeDate(a.date)).slice(0,60).map(d=>`<div class="nx-detail-row"><time>${esc(fmtDate(d.date))}</time><div><b>Day ${d.day} after dose</b><small>${d.matched.length?esc(d.matched.join(', ')):'No matching symptom recorded'}</small></div></div>`).join('')}</div>`:'<div class="nx-chart-empty">No dated check-ins fall within 14 days after a logged dose.</div>'}
+      </details><div class="nx-pe-disclaimer">Missing check-ins are excluded, not treated as symptom-free days. Incomplete logging and overlapping compounds may distort patterns.</div>`;
+  };
+  ['#nx-st-compound','#nx-st-symptom','#nx-st-window'].forEach(id=>m.querySelector(id).onchange=redraw);
+  redraw();
+}
+
+function nxPatternExplorer() {
+  const suppLogs=(state.supplementLogs||[]).filter(l=>l.date&&Array.isArray(l.taken));
+  const daily=(state.dailyLogs||[]).filter(l=>l.date);
+  const names=[...new Set(suppLogs.flatMap(l=>l.taken.map(String)))].sort();
+  const m=openModal(`<div class="nx-pe-heading"><div><div class="nx-trends-eyebrow">Trends / Explorations</div><h2>Pattern Explorer</h2>
+    <p>Compare logged supplement use with recorded symptom reports. This is descriptive, not causal.</p></div>
+    <button id="nx-pe-close" type="button" aria-label="Close Pattern Explorer">×</button></div>
+    <label class="field-label" for="nx-pe-supp">Supplement</label>
+    <select id="nx-pe-supp" class="inp">${names.length?names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join(""):'<option value="">No supplements recorded</option>'}</select>
+    <label class="field-label" for="nx-pe-window">Observation window</label>
+    <select id="nx-pe-window" class="inp"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="180">Last 180 days</option><option value="all">All recorded dates</option></select>
+    <div id="nx-pe-results" aria-live="polite"></div>
+    <button type="button" class="btn-primary" id="nx-pe-done" style="width:100%;margin-top:14px">Done</button>`);
+  m.classList.add('nx-pe-modal');
+  m.querySelector('#nx-pe-close').onclick=closeModal;
+  m.querySelector('#nx-pe-done').onclick=closeModal;
+  const redraw=()=>{
+    const selected=m.querySelector('#nx-pe-supp').value,range=m.querySelector('#nx-pe-window').value;
+    const start=range==='all'?-Infinity:Date.now()-Number(range)*86400000;
+    // Only compare days where a supplement check-in exists. Missing logs are unknown, not "not taken".
+    const days=new Map();
+    suppLogs.forEach(l=>{
+      const dt=safeDate(l.date).getTime();if(!Number.isFinite(dt)||dt<start)return;
+      const k=dayKey(l.date);
+      if(!days.has(k))days.set(k,{date:l.date,taken:new Set(),reports:[],logged:true});
+      l.taken.forEach(n=>days.get(k).taken.add(String(n)));
+    });
+    daily.forEach(l=>{
+      const k=dayKey(l.date),d=days.get(k);if(!d)return;
+      (l.symptoms||[]).forEach(sym=>d.reports.push(typeof sym==='string'?sym:String(sym?.name||'Unspecified')));
+    });
+    const rows=[...days.values()].sort((a,b)=>safeDate(b.date)-safeDate(a.date));
+    const withRows=rows.filter(d=>d.taken.has(selected)),withoutRows=rows.filter(d=>!d.taken.has(selected));
+    const count=arr=>arr.reduce((n,d)=>n+d.reports.length,0);
+    const overlap=rows.length, sufficient=withRows.length>=5&&withoutRows.length>=5;
+    const el=m.querySelector('#nx-pe-results');
+    const status=!selected?'No selection':!overlap?'No overlapping records':!sufficient?'Limited records':'Descriptive comparison';
+    const headline=!selected?'Select a supplement to inspect its check-ins.'
+      :!overlap?'No explicit supplement check-ins were recorded during this period.'
+      :!sufficient?`There are ${withRows.length} marked-taken days and ${withoutRows.length} not-marked-taken days. Both groups need at least five recorded check-in days for a numerical comparison.`
+      :`Across recorded check-ins, there were ${(count(withRows)/withRows.length).toFixed(2)} symptom reports per day when marked taken and ${(count(withoutRows)/withoutRows.length).toFixed(2)} when not marked taken.`;
+    const summary=nxEvidencePanel('What the records show',status,headline,
+      'These groups are based on supplement check-ins only. Differences can reflect incomplete logging, other compounds, or unrelated changes.');
+    el.innerHTML=summary+`<div class="nx-pe-eyebrow">Record coverage</div><div class="nx-pe-caution">A missing supplement entry is not treated as a day without supplementation. Only days with an explicit supplement check-in are included. Symptoms may be incompletely logged, and other factors can explain differences.</div>
+      <div class="nx-pe-stats">
+        <div><small>Supplement logged</small><strong>${withRows.length}</strong><small>check-in days · ${count(withRows)} symptom reports</small></div>
+        <div><small>Not marked taken</small><strong>${withoutRows.length}</strong><small>check-in days · ${count(withoutRows)} symptom reports</small></div>
+      </div>
+      <details class="nx-pe-records"><summary>Inspect recorded check-in days <span>${overlap} total · latest 60 shown</span></summary>
+      ${rows.length?`<div class="nx-detail-rows">${rows.slice(0,60).map(d=>`<div class="nx-detail-row"><time>${esc(fmtDate(d.date))}</time><div><b>${d.taken.has(selected)?'Marked taken':'Not marked taken'}</b><small>${d.reports.length?`${d.reports.length} recorded symptom report${d.reports.length===1?'':'s'}: ${esc(d.reports.join(', '))}`:'No symptoms recorded in matching daily logs'}</small></div></div>`).join('')}</div>`:'<div class="nx-chart-empty">No overlapping supplement check-in dates for this window.</div>'}
+      </details><div class="nx-pe-disclaimer">Descriptive records only · Not a correlation test, a treatment effect, or evidence of causation.</div>`;
+  };
+  m.querySelector('#nx-pe-supp').onchange=redraw;
+  m.querySelector('#nx-pe-window').onchange=redraw;
+  redraw();
+}
+
+function nxTrendsDetail(name, kind="dose") {
+  const compound=allPeptides()[name]; if(!compound)return;
+  const c=cfg(name), all=(compound.doses||[]).filter(d=>d.date&&Number.isFinite(safeDate(d.date).getTime()))
+    .slice().sort((a,b)=>safeDate(b.date)-safeDate(a.date));
+  const now=Date.now();
+  const m=openModal(`<div class="nx-detail-head">
+    <div><div class="nx-trends-eyebrow">Recorded evidence</div>
+    <h2>${esc(name)}</h2><p>${kind==="symptom"?"Symptom reports":"Dose history"} · Exact entries and period comparison</p></div>
+    <button id="nx-detail-close" aria-label="Close chart details">✕</button></div>
+    <div class="nx-detail-filter" role="group" aria-label="Select observation period">
+    ${[["30","30 days"],["90","90 days"],["180","180 days"],["all","All"]].map(([v,l])=>`<button type="button" data-range="${v}" aria-pressed="${v==="90"}">${l}</button>`).join("")}</div>
+    <div id="nx-detail-body" aria-live="polite"></div>
+    <button id="nx-detail-done" class="btn-primary" style="width:100%;margin-top:14px">Done</button>
+  `,c.color||"#A78BFA");
+  m.classList.add("nx-trends-detail-modal");
+  m.querySelector("#nx-detail-close").onclick=closeModal;
+  m.querySelector("#nx-detail-done").onclick=closeModal;
+  let range="90";
+  const getStart=(days)=>days==="all"?-Infinity:now-Number(days)*86400000;
+  const inRange=(d,low,high)=>{const t=safeDate(d.date).getTime();return t>=low&&t<high;};
+  const symName=s=>typeof s==="string"?s:(s&&s.name)||"Unspecified";
+  const observed=(low,high)=>{
+    const logs=(state.dailyLogs||[]).filter(l=>l.compound===name&&l.date&&inRange(l,low,high));
+    const doses=all.filter(d=>inRange(d,low,high));
+    const reports=[...logs.flatMap(l=>(l.symptoms||[]).map(s=>({date:l.date,name:symName(s)}))),
+      ...doses.flatMap(d=>(d.symptoms||[]).map(s=>({date:d.date,name:symName(s)})))];
+    const days=new Set([...logs,...doses].map(x=>dayKey(x.date)));
+    return {logs,doses,reports,days:days.size};
+  };
+  const show=()=>{
+    m.querySelectorAll("[data-range]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.range===range)));
+    const start=getStart(range), width=range==="all"?null:Number(range)*86400000;
+    const current=observed(start,now+86400000);
+    const previous=width===null?null:observed(start-width,start);
+    const count=(x)=>kind==="dose"?x.doses.length:x.reports.length;
+    const n=count(current), p=previous?count(previous):null;
+    const label=kind==="dose"?"doses":"symptom reports";
+    const rows=kind==="dose"?current.doses.map(d=>({date:d.date,detail:`${d.dose} ${c.unit||""}`,note:d.site?`Site: ${d.site}`:"Recorded dose"}))
+      :current.reports.map(r=>({date:r.date,detail:r.name,note:"Recorded symptom report"})).sort((a,b)=>safeDate(b.date)-safeDate(a.date));
+    const safeRows=rows.slice(0,80);
+    m.querySelector("#nx-detail-body").innerHTML=`
+      <div class="nx-detail-counts">
+        <div><span>Selected period</span><strong>${n}</strong><small>${label}</small></div>
+        <div><span>Previous equal period</span><strong>${p===null?"—":p}</strong><small>${p===null?"All-time view":label}</small></div>
+        <div><span>Observed days</span><strong>${current.days}</strong><small>days with dose or check-in records</small></div>
+      </div>
+      <div class="nx-detail-caution">Comparisons are counts of records, not normalized rates. Missing entries and differences in logging frequency can affect comparisons. A symptom report does not establish causation.</div>
+      <div class="nx-detail-subtitle">Exact recorded entries <span>${rows.length}${rows.length>80?" · first 80 shown":""}</span></div>
+      ${safeRows.length?`<div class="nx-detail-rows">${safeRows.map(r=>`<div class="nx-detail-row">
+        <time>${esc(fmtDate(r.date))}</time><div><b>${esc(r.detail)}</b><small>${esc(r.note)}</small></div>
+      </div>`).join("")}</div>`:`<div class="nx-chart-empty">No ${label} in this period.</div>`}
+      ${kind==="dose"&&current.doses.length>1?`<div class="nx-detail-subtitle">Recorded dose timeline</div>${escalationChart(current.doses,c)}`:""}
+      <div class="nx-chart-note">All values are from saved records. This view does not calculate treatment effects, safety, or dosing readiness.</div>`;
+  };
+  m.querySelectorAll("[data-range]").forEach(b=>b.onclick=()=>{range=b.dataset.range;show();});
+  show();
+}
+
 function chartDetailModal(kind, period) {
   let title, color, body;
   if (kind==="weight") {
@@ -13831,7 +14392,9 @@ function chartDetailModal(kind, period) {
     body = weightChart(state.weightLogs, state.settings.weightUnit, period||"all", true);
   } else if (kind==="measure") {
     title="BODY MEASUREMENTS"; color="#C9A0FF";
-    body = measureChart(state.measurementLogs, state.settings.measureUnit, true);
+    const cutoffDays={"1M":30,"3M":90,"6M":180}[period];
+    const measurements=cutoffDays?state.measurementLogs.filter(x=>x.date&&new Date(x.date).getTime()>=Date.now()-cutoffDays*86400000):state.measurementLogs;
+    body = measureChart(measurements, state.settings.measureUnit, true);
   } else return;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -19073,12 +19636,60 @@ function wireBody() {
   const wn=$("#wp-next"); if(wn)wn.onclick=()=>{if((state._weekOff||0)<0){state._weekOff=(state._weekOff||0)+1;render();}};
   for(const period of["1M","3M","6M","all"]) { const b=document.getElementById("wp-"+period); if(b)b.onclick=()=>{state._weightPeriod=period;renderBody();}; }
   for(const period of["1M","3M","6M","all"]) { const b=document.getElementById("hp-"+period); if(b)b.onclick=()=>{state._healthPeriod=period;renderBody();}; }
+  document.querySelectorAll('[data-nx-body-tab]').forEach(b=>b.onclick=()=>{
+    state._nxBodyTab=b.dataset.nxBodyTab;
+    renderBody();
+  });
+  const nxMeasureRoot=document.querySelector('.nx-md');
+  if(nxMeasureRoot)nxMeasureRoot.onclick=e=>{
+    const btn=e.target.closest('[data-nx-measure]');
+    if(!btn)return;
+    state._nxSelectedMeasure=btn.dataset.nxMeasure;
+    nxMeasureRoot.outerHTML=nxMeasurementDashboard(state.measurementLogs,state.settings.measureUnit,state._weightPeriod||"all",state._nxSelectedMeasure);
+    const nextRoot=document.querySelector('.nx-md');
+    if(nextRoot)nextRoot.onclick=nxMeasureRoot.onclick;
+  };
   document.querySelectorAll(".chart-tap").forEach(el=>el.onclick=()=>chartDetailModal(el.dataset.kind, el.dataset.period));
+  document.querySelectorAll(".nx-trends-open-detail").forEach(b=>b.onclick=()=>nxTrendsDetail(b.dataset.name,b.dataset.kind));
   // calendar day taps + tooltips
   document.querySelectorAll(".calday").forEach(b=>b.onclick=()=>dayDetailModal(b.dataset.date));
   wireCalTips();
   // trends accordion
-  document.querySelectorAll(".tacc").forEach(b=>b.onclick=()=>{ const ns={...(state._trendsOpen||{})}; ns[b.dataset.key]=!ns[b.dataset.key]; state._trendsOpen=ns; renderBody(); });
+  const nxPatternButton=document.getElementById("nx-open-pattern");
+  if(nxPatternButton)nxPatternButton.onclick=nxPatternExplorer;
+  const nxTimingButton=document.getElementById("nx-open-symptom-timing");
+  if(nxTimingButton)nxTimingButton.onclick=nxSymptomTimingExplorer;
+  document.querySelectorAll(".nx-trends-go").forEach(b=>b.onclick=()=>{
+    const key=b.dataset.key;
+    const ns={...(state._trendsOpen||{})};
+    ns[key]=true;state._trendsOpen=ns;
+    renderBody();
+    const target=[...document.querySelectorAll(".app-acc>.tacc")].find(x=>x.dataset.key===key);
+    target?.scrollIntoView({behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches?"auto":"smooth",block:"start"});
+    target?.focus({preventScroll:true});
+  });
+  document.querySelectorAll(".tacc").forEach(b=>b.onclick=()=>{
+    // Preserve native <details> ancestors while rebuilding nested chart content.
+    // Otherwise the first click opens the sub-chart but closes its parent.
+    const parentDetails=[...document.querySelectorAll(".nx-compound-card")].map(card=>({
+      name:card.getAttribute("aria-label"),
+      open:[...card.querySelectorAll(":scope > details.nx-compound-details")].map(d=>d.open)
+    }));
+    const scrollYBefore=window.scrollY;
+    const focusKey=b.dataset.key;
+    const ns={...(state._trendsOpen||{})};
+    ns[focusKey]=!ns[focusKey];
+    state._trendsOpen=ns;
+    renderBody();
+    document.querySelectorAll(".nx-compound-card").forEach(card=>{
+      const saved=parentDetails.find(p=>p.name===card.getAttribute("aria-label"));
+      if(!saved)return;
+      [...card.querySelectorAll(":scope > details.nx-compound-details")].forEach((d,i)=>{d.open=!!saved.open[i];});
+    });
+    window.scrollTo({top:scrollYBefore,behavior:"instant"});
+    const focused=[...document.querySelectorAll(".tacc")].find(x=>x.dataset.key===focusKey);
+    focused?.focus({preventScroll:true});
+  });
   document.querySelectorAll(".insights-tab").forEach(b=>b.onclick=()=>{ state._insightsCompound = b.dataset.compound || null; renderBody(); });
   document.querySelectorAll(".why-date-btn").forEach(b=>b.onclick=()=>whyDateModal(b.dataset.date));
   document.querySelectorAll(".phaseinfo").forEach(b=>b.onclick=()=>{
