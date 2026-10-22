@@ -1576,3 +1576,27 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-dose-form #alloc-panel #alloc-add-kit,.nx-dose-form #alloc-panel #alloc-open-new{min-height:46px!important;font-size:13px!important}
 .nx-allocation-help{font-size:11px!important;line-height:1.55!important;color:var(--t3)!important;margin:12px 0!important}
 @media(max-width:370px){.nx-allocation-summary{grid-template-columns:1fr 1fr}.nx-dose-form #alloc-rows>.nx-alloc-row{grid-template-columns:minmax(0,1fr) minmax(65px,1fr) 44px 44px;gap:4px!important;padding:6px!important}.nx-allocation-metric{padding:8px 6px}}
+
+
+/* Nexus mobile UX audit: compact symptoms and safe, non-overlapping action areas.
+   Presentation only; do not change event wiring or saved data. */
+.nx-sym-row{min-width:0}
+.nx-sym-row .nx-sym-name{min-width:0;overflow-wrap:anywhere}
+.nx-sym-int{max-width:100%}
+.nx-sym-level{touch-action:manipulation}
+.nx-checkin-sheet .nx-unified-body,
+.modal.nx2-dose-modal .nx-dose-scroll{scroll-padding-bottom:20px}
+.nx-checkin-sheet .nx-unified-footer,
+.modal.nx2-dose-modal .nx-dose-footer{
+  padding-bottom:max(12px, env(safe-area-inset-bottom, 0px))!important;
+}
+.nx-checkin-sheet .nx-unified-footer button,
+.modal.nx2-dose-modal .nx-dose-footer button{min-height:44px}
+@media(max-width:360px){
+  .nx-sym-row{flex-wrap:wrap;row-gap:2px}
+  .nx-sym-row .nx-sym-name{flex-basis:100%}
+  .nx-sym-row .nx-sym-int{margin-left:28px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nx-sym-picker *, .nx-checkin-sheet * {scroll-behavior:auto!important}
+}
