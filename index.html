@@ -329,6 +329,30 @@
 .nexus-protocol-compound:last-child{border-bottom:0}
 .nexus-protocol-start{display:flex;align-items:center;gap:10px;border-radius:10px;background:#7DF9C00D;border:1px solid #7DF9C02B;padding:11px;margin-top:10px}
 @media(prefers-reduced-motion:reduce){.nexus-protocol-details>summary span{transition:none}}
+
+/* Nexus v0.2.3.4 — cleaner Calendar > Logs day cards */
+.nx-log-quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.nx-log-day{margin:0 0 14px;border:1px solid var(--border);background:var(--surface-1,var(--surface-2));border-radius:16px;overflow:hidden}
+.nx-log-day-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px 11px}
+.nx-log-day-title{font-size:14px;font-weight:650;color:var(--t1);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.nx-log-today{font-size:10px;font-weight:600;color:#D8B5E7;background:#A78BFA19;padding:3px 7px;border-radius:99px}
+.nx-log-day-count{font-size:11px;color:var(--t4);white-space:nowrap}
+.nx-log-day-body{padding:0 12px 10px}
+.nx-log-entry{display:flex;align-items:flex-start;gap:11px;padding:12px 5px;border-radius:10px}
+.nx-log-entry+.nx-log-entry{margin-top:2px}
+.nx-log-entry-icon{display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;background:var(--surface-2);border-radius:9px;font-size:14px}
+.nx-log-entry-content{flex:1;min-width:0;line-height:1.55}
+.nx-log-entry-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.nx-log-entry-actions button{min-height:30px;min-width:30px}
+.nx-log-updates{margin:5px 4px 0;background:var(--surface-2);border-radius:10px;overflow:hidden}
+.nx-log-updates summary{cursor:pointer;list-style:none;padding:11px 12px;color:var(--t3);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.nx-log-updates summary::-webkit-details-marker{display:none}
+.nx-log-updates[open] summary span{transform:rotate(180deg)}
+.nx-log-updates-content{padding:2px 12px 12px}
+.nx-log-update{display:flex;gap:9px;align-items:flex-start;padding:9px 0}
+.nx-log-update+.nx-log-update{border-top:1px solid var(--border-sub)}
+@media(max-width:400px){.nx-log-entry{gap:8px}.nx-log-day-body{padding:0 9px 10px}.nx-log-day-header{padding:13px 12px 10px}}
+
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -12049,7 +12073,6 @@ function monthView() {
 }
 
 function logsView() {
-  const sorted=[...state.dailyLogs].sort((a,b)=>new Date(b.date)-new Date(a.date));
   // Collect all dates that have ANY data (not just check-ins)
   const allDates = new Set([
     ...state.dailyLogs.map(l=>dayKey(l.date)),
@@ -12060,7 +12083,7 @@ function logsView() {
   ]);
   const sortedDates = [...allDates].sort((a,b)=>b.localeCompare(a));
 
-  return `<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+  return `<div class="nx-log-quick-actions">
     <button class="qa-daily" style="flex:1;min-width:100px;padding:9px;border-radius:10px;background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;font-size:12px;font-weight:600">＋ Check-in</button>
     <button class="qa-weight" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#8AB4FF18;border:1px solid #8AB4FF44;color:#8AB4FF;font-size:12px;font-weight:600">⚖ Weight</button>
     <button class="qa-measure" style="flex:1;min-width:80px;padding:9px;border-radius:10px;background:#FF9CC818;border:1px solid #FF9CC844;color:#FF9CC8;font-size:12px;font-weight:600">📏 Measure</button>
@@ -12079,16 +12102,21 @@ function logsView() {
     const isToday = dk===localDate();
     const dateLabel = fmtDate(dk);
     const dataRow = (icon,color,content,editBtn,delBtn) =>
-      `<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-sub)">
-        <span style="font-size:14px;flex-shrink:0;margin-top:1px">${icon}</span>
-        <div style="flex:1;min-width:0">${content}</div>
-        <div style="display:flex;gap:4px;flex-shrink:0">${editBtn}${delBtn}</div>
+      `<div class="nx-log-entry">
+        <span class="nx-log-entry-icon" aria-hidden="true">${icon}</span>
+        <div class="nx-log-entry-content">${content}</div>
+        <div class="nx-log-entry-actions">${editBtn}${delBtn}</div>
       </div>`;
     const editBtnHtml = (cls,id) => `<button class="${cls}" data-id="${id}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`;
     const delBtnHtml  = (cls,id) => `<button class="${cls}" data-id="${id}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`;
 
-    return `<div class="card" style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:10px">${dateLabel}</div>
+    const entryCount=[!!l,!!wt,!!meas,!!macro,!!(supp?.taken?.length)].filter(Boolean).length;
+    return `<article class="nx-log-day">
+      <div class="nx-log-day-header">
+        <div class="nx-log-day-title">${dateLabel}${isToday?`<span class="nx-log-today">Today</span>`:""}</div>
+        <span class="nx-log-day-count">${entryCount} ${entryCount===1?"entry":"entries"}</span>
+      </div>
+      <div class="nx-log-day-body">
 
       ${l?dataRow(
         mood?mood.emoji:"🔘", mood?mood.color:"var(--t3)",
@@ -12126,11 +12154,9 @@ function logsView() {
         `<button class="del-supp-log" data-date="${dk}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`
       ):""}
 
-      ${updates.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">
-        <div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:2px;margin-bottom:8px">UPDATES</div>
-        ${updates.map(u=>`<div style="display:flex;gap:10px;margin-bottom:6px">
-          <div style="display:flex;flex-direction:column;align-items:center;padding-top:2px"><div style="width:6px;height:6px;border-radius:50%;background:#A78BFA;flex-shrink:0"></div><div style="width:1px;flex:1;background:var(--border-sub)"></div></div>
-          <div style="flex:1;padding-bottom:4px">
+      ${updates.length?`<details class="nx-log-updates"><summary>${updates.length} check-in ${updates.length===1?"update":"updates"} <span aria-hidden="true">⌄</span></summary><div class="nx-log-updates-content">
+        ${updates.map(u=>`<div class="nx-log-update">
+          <div style="flex:1;min-width:0">
             <div style="font-size:10px;color:#A78BFA;margin-bottom:4px">${new Date(u.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"})}</div>
             ${u.symptoms&&u.symptoms.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px">${u.symptoms.map(s=>`<span class="pill" style="background:var(--surface-2);color:var(--t3);border:1px solid var(--border);font-size:10px">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div>`:""}
             ${u.notes?`<div style="font-size:11px;color:var(--t3);font-style:italic">"${esc(u.notes)}"</div>`:""}
@@ -12139,8 +12165,9 @@ function logsView() {
           <button class="del-update" data-uid="${u.id}" data-lid="${l&&l.id}" style="color:var(--t5);font-size:13px;align-self:flex-start">✕</button>
         </div>`).join("")}
         ${isToday?`<button class="opentodaysheet" data-id="${l&&l.id}" style="width:100%;font-size:11px;color:#A78BFA;padding:5px 12px;border-radius:7px;background:#A78BFA18;border:1px solid #A78BFA44;margin-top:4px">＋ Add update</button>`:""}
-      </div>`:""}
-    </div>`;
+      </div></details>`:""}
+      </div>
+    </article>`;
   }).join("")}`;
 }
 
