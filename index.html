@@ -321,14 +321,15 @@
 .nexus-protocol-details{border-top:1px solid var(--border-sub);margin-top:12px}
 .nexus-protocol-details>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:42px;color:var(--t2);font-size:12px;font-weight:600}
 .nexus-protocol-details>summary::-webkit-details-marker{display:none}
-.nexus-protocol-details[open]>summary span{transform:rotate(180deg)}
-.nexus-protocol-details>summary span{transition:transform .18s ease}
+.nexus-protocol-details[open]>summary .nx-proto-chevron{transform:rotate(180deg)}
+.nexus-protocol-details>summary span:not(.nx-proto-chevron){transform:none!important;}
+.nexus-protocol-details>summary .nx-proto-chevron{display:inline-block;transition:transform .18s ease;transform-origin:center}
 .nexus-protocol-details-body{padding:4px 0 6px}
 .nexus-protocol-timeline{background:var(--surface-2);border-radius:10px;padding:10px;margin-bottom:9px}
 .nexus-protocol-compound{padding:7px 0;border-bottom:1px solid var(--border-sub)}
 .nexus-protocol-compound:last-child{border-bottom:0}
 .nexus-protocol-start{display:flex;align-items:center;gap:10px;border-radius:10px;background:#7DF9C00D;border:1px solid #7DF9C02B;padding:11px;margin-top:10px}
-@media(prefers-reduced-motion:reduce){.nexus-protocol-details>summary span{transition:none}}
+@media(prefers-reduced-motion:reduce){.nexus-protocol-details>summary .nx-proto-chevron{transition:none}}
 
 /* Nexus v0.2.3.4 — cleaner Calendar > Logs day cards */
 .nx-log-quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
@@ -406,6 +407,392 @@
 .nx-stash-invested{margin-top:10px;color:var(--t4);font-size:10px}
 .nx-stash-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:17px}
 .nx-stash-actions button{min-width:0;padding:12px 5px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:600}
+
+
+/* Nexus 0.2.3.8 — Lavender Atelier inventory cards. Presentation-only. */
+.nx-kit-card{background:var(--surface-1)!important;border:1px solid var(--border-sub)!important;border-radius:18px!important;box-shadow:0 3px 16px rgba(70,46,102,.055);padding:17px!important;overflow:hidden}
+.nx-kit-heading{margin-bottom:14px!important}
+.nx-kit-heading>span:nth-child(2){font-size:16px!important;letter-spacing:-.35px!important;font-weight:700!important}
+.nx-kit-heading>div:first-child{width:7px!important;height:24px!important;border-radius:6px!important}
+.nx-kit-quantity{margin:6px 0 11px!important}
+.nx-kit-quantity>span:first-child{font-size:32px!important;letter-spacing:-1px!important;font-variant-numeric:tabular-nums}
+.nx-kit-meter{height:6px!important;border-radius:8px!important;margin-bottom:11px!important}
+.nx-kit-actions{margin-top:14px!important;gap:8px!important}
+.nx-kit-actions button{min-height:42px!important;border-radius:11px!important;font-size:12px!important;letter-spacing:0!important;font-family:inherit!important}
+.nx-kit-actions button:first-child{background:var(--surface-2)!important;color:var(--t1)!important;border-color:var(--border-sub)!important}
+.nx-kit-details{border-top:1px solid var(--border-sub);padding-top:12px;margin-top:16px!important}
+.nx-kit-details>summary{font-size:12px!important;font-weight:650!important;color:var(--t3)!important;display:flex;justify-content:space-between;align-items:center;min-height:30px}
+.nx-kit-details>summary::after{content:'⌄';font-size:19px;line-height:1;transition:transform .15s}
+.nx-kit-details[open]>summary::after{transform:rotate(180deg)}
+.nx-stash-hero{background:var(--surface-1);border-radius:18px;padding:17px}
+.nx-stash-stat{background:var(--surface-2);border:0;border-radius:12px}
+.nx-stash-actions button{background:var(--surface-1);border-radius:12px;min-height:44px}
+@media(max-width:390px){.nx-kit-card{padding:14px!important}.nx-kit-heading>span:nth-child(2){font-size:14px!important}.nx-kit-actions button{font-size:11px!important}}
+
+/* Nexus v0.2.3.9-beta — Lavender Atelier Protocol refinement */
+.nexus-screen-protocols #new-protocol.nx-proto-create{
+  width:auto!important;max-width:100%!important;min-height:44px!important;
+  padding:10px 17px!important;margin:0 0 19px!important;border-radius:12px!important;
+  font-family:inherit!important;font-size:13px!important;font-weight:650!important;
+  letter-spacing:0!important;background:#A78BFA!important;color:#fff!important;
+  box-shadow:none!important;
+}
+.nexus-screen-protocols .nx-proto-create span{font-size:19px;line-height:0;vertical-align:-1px;margin-right:5px}
+.nexus-screen-protocols .nexus-protocol-card{
+  padding:16px!important;margin-bottom:10px!important;border-radius:17px!important;
+  background:var(--surface-1)!important;border:1px solid var(--border-sub)!important;
+  box-shadow:0 3px 16px rgba(70,46,102,.045)!important;
+}
+.nexus-screen-protocols .nexus-protocol-card-head{margin-bottom:6px!important;gap:7px!important}
+.nexus-screen-protocols .nx-proto-title{
+  font-size:15px!important;line-height:1.35!important;font-weight:700!important;
+  letter-spacing:-.025em;color:var(--t1);overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nexus-protocol-summary{font-size:12px!important;line-height:1.45!important}
+.nexus-screen-protocols .nexus-protocol-meta{font-size:11px!important;margin-top:3px!important}
+.nexus-screen-protocols .nexus-protocol-card .manage-proto-btn{
+  width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;
+  border-radius:11px!important;font-family:inherit!important;
+}
+.nexus-screen-protocols .nexus-protocol-details{
+  margin-top:9px!important;border-top:0!important;
+  background:var(--surface-2)!important;border-radius:11px!important;
+}
+.nexus-screen-protocols .nexus-protocol-details>summary{
+  padding:0 12px!important;min-height:42px!important;font-size:12px!important;
+  border:0!important;gap:8px!important;
+}
+.nexus-screen-protocols .nexus-protocol-details>summary .nx-proto-chevron{
+  margin-left:auto!important;font-size:17px!important;
+}
+.nexus-screen-protocols .nexus-protocol-details-body{padding:0 12px 12px!important}
+.nexus-screen-protocols .nexus-protocol-section-label{margin:16px 0 8px!important;letter-spacing:.085em!important}
+@media(max-width:390px){
+ .nexus-screen-protocols .nexus-protocol-card{padding:13px!important}
+ .nexus-screen-protocols .nx-proto-title{font-size:14px!important}
+}
+
+
+/* Nexus v0.2.3.11 — Lavender Atelier form and modal consistency */
+.modal-bg{background:rgba(22,16,35,.58)!important;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.modal{box-sizing:border-box!important;width:100%;max-height:min(92dvh,920px)!important;overscroll-behavior:contain;padding:22px 20px calc(24px + env(safe-area-inset-bottom))!important;scroll-padding-bottom:130px;border-radius:22px 22px 0 0!important;box-shadow:0 -12px 48px rgba(22,14,45,.15)!important}
+@media(min-width:561px){.modal{border-radius:20px!important;max-height:min(90dvh,850px)!important}}
+.modal .field-label{font-family:inherit!important;font-size:11px!important;letter-spacing:.02em!important;text-transform:none!important;font-weight:650!important;margin:0 0 7px!important;line-height:1.4!important}
+.modal .inp,.modal input.inp,.modal select.inp,.modal textarea.inp{font-family:inherit!important;min-height:44px!important;font-size:16px!important;line-height:1.4!important;border-radius:12px!important;padding:11px 12px!important;transition:border-color .18s,box-shadow .18s!important}
+.modal textarea.inp{min-height:90px!important;resize:vertical}
+.modal .inp:focus-visible,.modal input:focus-visible,.modal select:focus-visible,.modal textarea:focus-visible{outline:2px solid rgba(151,117,211,.45)!important;outline-offset:1px!important;border-color:#A78BFA!important}
+.modal button{font-family:inherit!important;min-height:40px;touch-action:manipulation}
+.modal .btn-primary{min-height:46px!important;font-family:inherit!important;font-weight:700!important;letter-spacing:0!important;border-radius:12px!important}
+.modal .seg button{min-height:42px!important;border-radius:10px!important}
+.modal :is(input,select,textarea,button){max-width:100%;box-sizing:border-box}
+.modal :is(h2,h3){line-height:1.25;letter-spacing:-.025em}
+@media(max-width:390px){.modal{padding-left:16px!important;padding-right:16px!important}}
+@media(prefers-reduced-motion:reduce){.modal{animation:none!important;transition:none!important}}
+
+
+/* Nexus v0.2.3.12-beta — Today + Settings Lavender Atelier */
+.nexus-screen-home .nexus-today-view-nav{
+ display:flex!important;gap:4px!important;background:var(--surface-2)!important;
+ border:1px solid var(--border-sub)!important;border-radius:14px!important;
+ padding:4px!important;margin:9px 0 15px!important;
+}
+.nexus-screen-home .nexus-today-view-nav .hv-nav{
+ border:0!important;min-width:0!important;border-radius:10px!important;
+ font-size:12px!important;min-height:39px!important;padding:8px 3px!important;
+ box-shadow:none!important;white-space:nowrap!important;
+}
+.nexus-screen-home .nexus-today-view-nav .hv-nav[aria-pressed="true"]{
+ background:var(--surface)!important;box-shadow:0 1px 5px #00000012!important;
+ color:var(--t1)!important;
+}
+.nexus-screen-home #add-custom-compound{
+ border:0!important;border-radius:10px!important;background:var(--surface)!important;
+ min-width:40px!important;min-height:39px!important;font-size:19px!important;
+}
+.nexus-screen-home .nexus-today-details{
+ border-radius:16px!important;overflow:hidden;
+}
+.nexus-screen-home .nexus-today-section-label{
+ letter-spacing:-.01em!important;font-weight:650!important;
+}
+.nexus-screen-profile .settings-row{
+ border-bottom:1px solid var(--border-sub)!important;
+ padding:13px 10px!important;border-radius:10px!important;
+ transition:background .15s ease;
+}
+.nexus-screen-profile .settings-row:active{background:var(--surface-2)!important}
+.nexus-screen-profile .settings-row .nx-settings-icon{
+ width:35px;height:35px;display:flex;align-items:center;justify-content:center;
+ flex-shrink:0;border-radius:10px;background:var(--surface-2);color:#9875C9;
+}
+.nexus-screen-profile .settings-row .nx-settings-chevron{
+ color:var(--t4);width:15px;height:15px;flex-shrink:0;
+}
+#theme-toggle{min-width:40px!important;min-height:40px!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;border-radius:12px!important}
+#theme-toggle svg{width:19px;height:19px;display:block}
+@media(max-width:360px){
+ .nexus-screen-home .nexus-today-view-nav .hv-nav{font-size:11px!important}
+ .nexus-screen-home #add-custom-compound{min-width:36px!important}
+}
+@media(prefers-reduced-motion:reduce){.nexus-screen-profile .settings-row{transition:none}}
+
+
+/* Nexus v0.2.3.13-beta — whole-app visual consistency pass.
+   Scoped presentation-only refinements; existing JS/data untouched. */
+:root{--nx-tap-min:44px;--nx-focus:#A78BFA}
+:is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(button,[role="button"],summary){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(button,[role="button"],summary,input,select,textarea):focus-visible{
+ outline:2px solid var(--nx-focus)!important;outline-offset:3px!important
+}
+:is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(input,textarea,select){max-width:100%;box-sizing:border-box}
+:is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(h1,h2,h3){text-wrap:balance;overflow-wrap:break-word}
+:is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(p,.nexus-protocol-summary,.nexus-protocol-muted){overflow-wrap:anywhere}
+.nexus-screen-stash .stash-sub-btn,
+.nexus-screen-protocols .manage-proto-btn,
+.nexus-screen-home .nexus-today-actions-b4 button{min-height:var(--nx-tap-min)!important}
+.nexus-screen-profile .settings-row{min-height:var(--nx-tap-min);box-sizing:border-box}
+.nexus-screen-protocols .nexus-protocol-card,
+.nexus-screen-stash .nexus-stash-kit-card{min-width:0}
+.nexus-screen-protocols .nexus-protocol-details>summary{
+ min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.nexus-screen-protocols .nexus-protocol-details>summary span:not(.nx-proto-chevron){
+ transform:none!important;rotate:none!important;writing-mode:horizontal-tb!important
+}
+.nexus-screen-protocols .nexus-protocol-details[open]>summary .nx-proto-chevron{
+ transform:rotate(180deg)
+}
+@media(max-width:380px){
+ .nexus-screen-protocols .nexus-protocol-card{padding:12px!important}
+ .nexus-screen-stash .stash-sub-btn{white-space:normal;line-height:1.25}
+}
+@media(prefers-reduced-motion:reduce){
+ :is(.nexus-screen-home,.nexus-screen-protocols,.nexus-screen-stash,.nexus-screen-profile)
+ :is(button,summary,.settings-row){animation:none!important;transition:none!important}
+}
+
+
+/* Nexus v0.2.3.14 — Lavender Atelier visual system refresh.
+   Unified palettes, quiet surfaces, readable type, and restrained emphasis. */
+:root{
+ --bg:#171421;--bg-deep:#100E18;
+ --surface:#221D2E;--surface-1:#221D2E;
+ --surface-2:#2D273A;--surface-3:#383046;
+ --border:#4B405B;--border-sub:#393044;
+ --t1:#F8F4FC;--t2:#D5CADF;--t3:#B1A3C1;
+ --t4:#9787AA;--t5:#7F708E;
+ --modal-bg:#231D2F;--modal-border:#493D58;
+ --seg-active:#413550;--seg-border:#493D58;
+ --input-bg:#2B2438;--pill-bg:rgba(190,166,221,.12);
+ --tabbar-bg:rgba(25,20,34,.96);--tabbar-bdr:#41364F;
+ --tabbar-txt:#B0A0C0;--tabbar-act:#D5B5FF;
+ --nx-lavender:#B99AE7;--nx-lavender-strong:#A88BDB;
+ --nx-card-shadow:0 5px 22px rgba(5,3,15,.13);
+ color-scheme:dark;
+}
+[data-theme="light"]{
+ --bg:#F7F5FC;--bg-deep:#F0ECF7;
+ --surface:#FFFFFF;--surface-1:#FFFFFF;
+ --surface-2:#F5F1FA;--surface-3:#EBE5F3;
+ --border:#DCD3E8;--border-sub:#EAE4F1;
+ --t1:#30263F;--t2:#534663;--t3:#6F617F;
+ --t4:#81738E;--t5:#9387A0;
+ --modal-bg:#FFFFFF;--modal-border:#E7DEEE;
+ --seg-active:#FFFFFF;--seg-border:#E7DFEE;
+ --input-bg:#FBFAFE;--pill-bg:#F3EEF9;
+ --shadow:rgba(74,52,104,.10);
+ --tabbar-bg:rgba(250,248,253,.96);--tabbar-bdr:#E9E3F0;
+ --tabbar-txt:#796D86;--tabbar-act:#7554AC;
+ --nx-lavender:#A78BFA;--nx-lavender-strong:#7957BA;
+ --nx-card-shadow:0 4px 18px rgba(67,45,92,.045);
+ color-scheme:light;
+}
+body{line-height:1.45;letter-spacing:-.005em}
+.card,.nx-log-day,.nx-kit-card,.nexus-screen-protocols .nexus-protocol-card{
+ box-shadow:var(--nx-card-shadow)!important;
+ border-color:var(--border-sub)!important;
+}
+.card{border-radius:17px;padding:17px;margin-bottom:12px}
+.btn-primary{font-family:inherit!important;letter-spacing:0!important;font-weight:700!important;
+ border-radius:12px!important;min-height:46px}
+.field-label{font-family:inherit!important;letter-spacing:.025em!important;font-size:11px!important;font-weight:650!important}
+.inp{border-color:var(--border-sub)!important;background:var(--input-bg)!important;border-radius:12px!important}
+.inp:focus{border-color:var(--nx-lavender-strong)!important;box-shadow:0 0 0 3px rgba(167,139,250,.12)}
+.tabbar{border-top-color:var(--tabbar-bdr)!important}
+.tabbar button{min-height:48px;min-width:54px;padding:6px 9px;font-weight:550}
+.tabbar button.active{font-weight:700}
+.nx-cal-segment button.on{background:var(--seg-active)!important;
+ box-shadow:0 1px 5px rgba(55,32,80,.09)!important}
+.nx-add-log-btn,.nx-stash-actions button,.nx-kit-actions button{
+ border-color:var(--border-sub)!important}
+.nx-add-log-btn{background:var(--surface)!important}
+.nx-stash-hero{background:var(--surface)!important;border-color:var(--border-sub)!important}
+.nx-stash-stat{background:var(--surface-2)!important}
+.nexus-screen-protocols #new-protocol.nx-proto-create{
+ background:#9270D2!important;color:#fff!important;
+}
+.nexus-screen-protocols .nexus-protocol-details{background:var(--surface-2)!important}
+.nexus-screen-profile .settings-row .nx-settings-icon{
+ background:var(--surface-2)!important;color:var(--nx-lavender-strong)!important
+}
+[data-theme="light"] .nx-log-day,[data-theme="light"] .nx-kit-card{
+ background:#fff!important;border-color:#EAE4F1!important
+}
+[data-theme="light"] .modal-bg{background:rgba(43,28,63,.35)!important}
+@media(max-width:390px){#app{padding-left:13px;padding-right:13px}
+ .card{padding:14px}
+ .tabbar button{min-width:0;flex:1;padding-left:3px;padding-right:3px}
+}
+@media(prefers-reduced-motion:reduce){body,.card,.inp{transition:none!important}}
+
+
+/* Nexus 0.3.0 — Atelier Unified: one visual layer across the full product */
+:root{
+ --nx-space-1:4px;--nx-space-2:8px;--nx-space-3:12px;
+ --nx-space-4:16px;--nx-space-5:20px;--nx-space-6:24px;
+ --nx-radius-sm:10px;--nx-radius-md:14px;--nx-radius-lg:18px;
+ --nx-radius-xl:22px;--nx-touch:44px;
+ --nx-ring:rgba(167,139,250,.24);
+ --nx-muted:var(--t3);--nx-ink:var(--t1);
+ --nx-canvas:var(--bg);--nx-panel:var(--surface);
+ --nx-subtle:var(--surface-2);--nx-stroke:var(--border-sub);
+}
+html{scroll-padding-top:16px}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ -webkit-font-smoothing:antialiased;line-height:1.5}
+#app{max-width:700px;margin-inline:auto;min-width:0}
+#app *{box-sizing:border-box}
+#app :is(h1,h2,h3){letter-spacing:-.025em;line-height:1.2;overflow-wrap:break-word}
+#app :is(p,.hint,.muted){line-height:1.5}
+#app :is(button,input,select,textarea){font-family:inherit}
+#app :is(button,[role="button"],summary){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#app :is(button,[role="button"],input,select,textarea,summary):focus-visible,
+.tabbar button:focus-visible,.modal :is(button,input,textarea,select):focus-visible{
+ outline:2px solid var(--nx-lavender-strong,#A78BFA)!important;
+ outline-offset:2px!important;box-shadow:0 0 0 5px var(--nx-ring)!important
+}
+#app :is(input,select,textarea){min-width:0;max-width:100%;font-size:16px}
+#app textarea{resize:vertical;min-height:88px}
+#app :is(.card,.nx-kit-card,.nx-log-day,.nexus-protocol-card){
+ background:var(--surface);border:1px solid var(--border-sub);
+ border-radius:var(--nx-radius-lg);
+}
+#app .card{padding:var(--nx-space-4);margin-bottom:var(--nx-space-3)}
+#app :is(.btn-primary,.btn-secondary,.btn-ghost){
+ min-height:var(--nx-touch);border-radius:var(--nx-radius-md);
+ font-weight:650;letter-spacing:0;transition:background-color .15s,border-color .15s;
+}
+#app :is(.inp,input[type="text"],input[type="number"],input[type="date"],input[type="time"],select,textarea){
+ border-radius:var(--nx-radius-sm);scroll-margin-bottom:100px
+}
+#app :is(.field-label,label){overflow-wrap:break-word}
+#app :is(.nexus-protocol-details>summary,.settings-row){min-height:var(--nx-touch)}
+#app :is(.nexus-protocol-card,.nx-kit-card,.nx-log-day){min-width:0;overflow-wrap:anywhere}
+#app .nexus-protocol-details>summary span:not(.nx-proto-chevron){
+ transform:none!important;rotate:none!important
+}
+.tabbar.nexus-tabbar-v2{padding-bottom:max(6px,env(safe-area-inset-bottom));
+ background:var(--tabbar-bg);border-top:1px solid var(--tabbar-bdr);
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.tabbar.nexus-tabbar-v2 button{min-height:52px;min-width:0;flex:1;gap:4px}
+.tabbar.nexus-tabbar-v2 button.active{color:var(--tabbar-act)}
+.nexus-more-sheet{border-radius:22px 22px 0 0;max-height:min(82dvh,750px);
+ overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(18px,env(safe-area-inset-bottom))}
+.modal-bg{overscroll-behavior:contain}
+.modal{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+.modal :is(input,select,textarea){font-size:16px!important}
+.modal :is(button,[role="button"]){touch-action:manipulation}
+[data-theme="light"] #app :is(.card,.nx-kit-card,.nx-log-day,.nexus-protocol-card){
+ box-shadow:0 3px 16px rgba(63,43,91,.045)}
+[data-theme="dark"] #app :is(.card,.nx-kit-card,.nx-log-day,.nexus-protocol-card){
+ box-shadow:0 4px 20px rgba(0,0,0,.10)}
+.nx-a11y-skip{position:fixed;top:-80px;left:12px;z-index:100000;
+ background:var(--surface);color:var(--t1);padding:10px 16px;
+ border:2px solid var(--nx-lavender-strong,#A78BFA);border-radius:12px}
+.nx-a11y-skip:focus{top:12px}
+.nx-product-note{font-size:11px;color:var(--t4)}
+@media(max-width:390px){
+ #app{padding-left:12px!important;padding-right:12px!important}
+ #app .card{padding:13px!important}
+ .tabbar.nexus-tabbar-v2 button{font-size:10px;padding-inline:2px}
+ .modal{max-width:calc(100vw - 16px);margin-inline:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;
+ transition-duration:.01ms!important}
+}
+
+
+/* Nexus 0.4.0 — Whole-product Lavender Atelier 2.0.
+   All screens use shared visual rules; no stored data shape is changed. */
+:root{
+ --nx2-radius:16px;--nx2-gap:12px;--nx2-control:44px;
+ --nx2-line:var(--border-sub);--nx2-panel:var(--surface);
+ --nx2-muted:var(--t3);--nx2-accent:var(--nx-lavender-strong,#9474D1);
+}
+.nx2-page{min-width:0;max-width:100%;padding-bottom:6px}
+.nx2-page :is(h1,h2,h3){letter-spacing:-.025em;line-height:1.25}
+.nx2-page :is(.card,.nx-log-day,.nx-kit-card,.nexus-protocol-card){
+ border-radius:var(--nx2-radius)!important;border-color:var(--nx2-line)!important;
+}
+.nx2-page :is(button,[role="button"],summary){touch-action:manipulation}
+.nx2-page :is(input,select,textarea){max-width:100%;min-width:0}
+.nx2-page :is(.hint,.muted,p){overflow-wrap:anywhere}
+.nx2-page :is(.plans-sub,.profile-subtab){min-height:44px!important;
+ font-family:inherit!important;letter-spacing:0!important}
+.nx2-page :is(.plans-sub,.profile-subtab):focus-visible{
+ outline:2px solid var(--nx2-accent)!important;outline-offset:2px!important}
+.nx2-page--trends :is(.card,details){scroll-margin-top:16px}
+.nx2-page--trends :is(canvas,svg){max-width:100%}
+.nx2-page--trends :is(button,[role="button"]){max-width:100%}
+.nx2-page--plans .plans-sub{padding:10px 5px!important;border-radius:11px!important}
+.nx2-page--plans .card{margin-bottom:12px}
+.nx2-page--amino #amino-chat{
+ min-height:220px;height:min(54dvh,560px)!important;
+ overscroll-behavior:contain;scrollbar-width:thin}
+.nx2-page--amino :is(textarea,input){font-size:16px!important}
+.nx2-page--profile .profile-subtab{padding:10px 4px!important}
+.nx2-page--profile .settings-row{border-radius:10px!important;
+ min-height:52px!important;display:flex!important}
+.nx2-page--profile .settings-row:focus-visible{outline:2px solid var(--nx2-accent)!important}
+.nx2-page--profile .settings-row .nx-settings-icon{
+ min-width:36px;min-height:36px;border-radius:11px}
+.nx2-page--home :is(.hv-nav,.nexus-today-view-nav button){min-height:44px!important}
+.nx2-page--calendar :is(.nx-cal-segment button,.nx-add-log-btn){min-height:44px!important}
+.nx2-page--protocols .nexus-protocol-details>summary{
+ min-height:44px!important;cursor:pointer}
+.nx2-page--protocols .nexus-protocol-details>summary span:not(.nx-proto-chevron){
+ transform:none!important;rotate:none!important}
+.nx2-page--stash :is(.stash-sub-btn,.nx-kit-actions button){min-height:44px!important}
+.nx2-dose-modal{--nx2-modal-gap:14px}
+.nx2-dose-modal .field-label{
+ display:block!important;margin:12px 0 6px!important;
+ font-size:11px!important;letter-spacing:.035em!important;
+ font-weight:700!important;color:var(--t2)!important}
+.nx2-dose-modal :is(.inp,input,select,textarea){font-size:16px!important;
+ min-height:44px;border-radius:11px!important}
+.nx2-dose-modal input[type="checkbox"]{min-height:auto}
+.nx2-dose-modal :is(.src-opt,.kit-opt,#date-now){
+ min-height:44px!important;line-height:1.35!important}
+.nx2-dose-modal :is(button,[role="button"]){touch-action:manipulation}
+.nx2-dose-modal #date{min-width:0!important}
+.nx2-dose-modal :is(#x,#date-now){min-width:44px!important}
+.nx2-dose-modal :is(input,select,textarea):focus-visible{
+ outline:2px solid var(--nx2-accent)!important;outline-offset:2px!important}
+@media(max-width:390px){
+ .nx2-page--plans .plans-sub{font-size:10.5px!important}
+ .nx2-page--profile .profile-subtab{font-size:12px!important}
+ .nx2-dose-modal #date{font-size:14px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .nx2-page *,.nx2-dose-modal *{scroll-behavior:auto!important}
+}
 
 </style>
 <style id="nexus-phase2c3-calendar">
@@ -4974,13 +5361,14 @@ const $ = sel => document.querySelector(sel);
 let modalEl = null;
 function openModal(innerHTML, color="#7DF9C0") {
   closeModal();
-  modalEl = h(`<div class="modal-bg"><div class="modal" style="border-color:${color}33;box-shadow:0 0 40px ${color}22"></div></div>`);
+  modalEl = h(`<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true" tabindex="-1" style="border-color:${color}33;box-shadow:0 0 40px ${color}22"></div></div>`);
   modalEl.querySelector(".modal").innerHTML = innerHTML;
   modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal(); });
   document.body.appendChild(modalEl);
   return modalEl.querySelector(".modal");
 }
 function closeModal() { if (modalEl) { modalEl.remove(); modalEl = null; } }
+document.addEventListener("keydown", e => { if(e.key === "Escape" && modalEl) closeModal(); });
 
 // ─── Global error surfacing ─────────────────────────────────────────────────────
 // Diagnostic net, not a fix: on iOS PWA there's no console to read. If any uncaught
@@ -6105,6 +6493,7 @@ function doseModal(name, existing, occTime) {
       const plannedMg = plan.reduce((a,st)=>a+st.mg,0);
       if (rows.length && allocationOverdrawsDose(plannedMg, neededMg)) {
         showErrorBanner(`These sources take ${mgToUnit(plannedMg, c.unit)}${c.unit} out of your vial, but this dose is only ${doseAmtStr}${c.unit} — nothing was saved. Change the amount on the source row so it matches the dose. (Recording a loss? Use Log Outflow.)`);
+  m?.classList?.add("nx2-dose-modal");
         return;
       }
       const realAllocations = [];
@@ -14112,7 +14501,7 @@ function equipmentView() {
         <span style="font-size:13px;color:var(--t4)">/ ${item.unitSize} ${item.unitOfMeasure}</span>
       </div>
       <div style="font-size:11.5px;color:var(--t4);margin-bottom:6px">${remaining%1===0?remaining:remaining.toFixed(1)} ${item.unitOfMeasure} remaining in current ${item.unitLabel}</div>
-      <div style="height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin-bottom:8px">
+      <div class="nx-kit-meter" style="height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin-bottom:8px">
         <div style="height:100%;width:${pct}%;background:${st.color};border-radius:5px"></div>
       </div>
       ${isBacWater&&activeUnit.openedDate?`<div style="font-size:11px;color:${statusKey==="expired"||statusKey==="expiring"?st.color:"var(--t4)"};margin-bottom:6px">Opened ${fmtDate(activeUnit.openedDate)} · ${daysOpen}d open · use-by ${fmtDate(useByDate)} (${daysUntilUseBy>=0?daysUntilUseBy+"d left":Math.abs(daysUntilUseBy)+"d past"})</div>`:""}
@@ -14123,8 +14512,8 @@ function equipmentView() {
       <button class="supply-activate-next" data-id="${item.id}" style="width:100%;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Open a ${item.unitLabel}</button>
       `:`<div style="font-size:13px;color:var(--t4);margin-bottom:12px">All ${item.unitLabel}s used up.</div>`}
 
-      <details style="margin-top:8px">
-        <summary style="font-size:11.5px;color:var(--t4);cursor:pointer;list-style:none">▸ Details</summary>
+      <details class="nx-kit-details" style="margin-top:8px">
+        <summary style="font-size:11.5px;color:var(--t4);cursor:pointer;list-style:none">Details</summary>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">AVAILABLE</div><div style="font-size:13px;font-weight:600;color:var(--t2)">${(activeUnit?1:0)+sealedCount}</div></div>
@@ -14445,7 +14834,7 @@ function stashView() {
   const readyPrepared = (state.preparedDoses||[]).filter(pd=>(pd.remainingCount||0)>0);
   if (readyPrepared.length) {
     html += `<button id="open-prepared-list" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#A78BFA0d;border:1px solid #A78BFA33;margin-bottom:14px">
-      <span style="font-size:13px;color:#A78BFA;font-weight:600">💉 Prepared · ${readyPrepared.length} ${readyPrepared.length===1?"syringe":"syringes"} ready</span>
+      <span style="font-size:13px;color:#A78BFA;font-weight:600">Prepared · ${readyPrepared.length} ${readyPrepared.length===1?"syringe":"syringes"} ready</span>
       <span style="color:#A78BFA">›</span>
     </button>`;
   }
@@ -14587,9 +14976,9 @@ function stashView() {
     // vial's reconstitution (leaving a finished vial behind in history) correctly still
     // says "Open New Vial," never "First."
     let action = null;
-    if (s.kitStatus==="done") action = {label:"↩ Reopen", cls:"reopenkit"};
-    else if (!currentReconDate && everOpenedVials.length===0) action = {label:"🧪 Open First Vial", cls:"opennewvial"};
-    else action = {label:"🧪 Open New Vial", cls:"opennewvial"};
+    if (s.kitStatus==="done") action = {label:"Reopen kit", cls:"reopenkit"};
+    else if (!currentReconDate && everOpenedVials.length===0) action = {label:"Open first vial", cls:"opennewvial"};
+    else action = {label:"Open new vial", cls:"opennewvial"};
     const actionUrgent = statusKey==="empty"||statusKey==="low"||statusKey==="expiring";
 
     // Headline number: current vial if one exists, otherwise the unopened kit's total
@@ -14602,8 +14991,8 @@ function stashView() {
     if (expLabel) secondaryBits.push(expLabel);
     if (!currentReconDate && sealed>0) secondaryBits.push(`${sealed} vial${sealed===1?"":"s"} sealed`);
 
-    return `<div class="card" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
+    return `<div class="card nx-kit-card" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
+      <div class="nx-kit-heading" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
         <div style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:0.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)}</span>
         ${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}
@@ -14611,7 +15000,7 @@ function stashView() {
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
       ${headlineMg!==null?`
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
+      <div class="nx-kit-quantity" style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
         <span style="font-size:30px;font-weight:800;color:var(--t1);line-height:1">${headlineMg.toFixed(headlineMg%1===0?0:1)}</span>
         <span style="font-size:14px;color:var(--t4)">/ ${headlineOf} mg</span>
       </div>
@@ -14620,9 +15009,9 @@ function stashView() {
       </div>
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.join(" · ")}</div>`:""}
       `:`<div style="font-size:13px;color:var(--t4);margin-bottom:12px">No vial reconstituted yet${isFrozenUnopened&&s.storageLocation?` · ${({freezer:"❄️ frozen",fridge:"🧊 fridge",room_temp:"📦 room temp",unknown:""})[s.storageLocation]||""}`:""}</div>`}
-      ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">💉 ${pc} prepared dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
+      ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
-      ${action||s.reconDate?`<div style="display:flex;gap:8px;margin-bottom:4px">
+      ${action||s.reconDate?`<div class="nx-kit-actions" style="display:flex;gap:8px;margin-bottom:4px">
         ${action?`<button class="${action.cls}" data-id="${s.id}" style="flex:${s.reconDate?"1.3":"1"};padding:10px;border-radius:10px;background:${actionUrgent?c.color+"15":"transparent"};border:1px solid ${actionUrgent?c.color+"44":"var(--border)"};color:${actionUrgent?c.color:"var(--t3)"};font-size:13px;font-weight:600">${action.label}</button>`:""}
         ${s.reconDate?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses" style="flex:1;padding:10px;border-radius:10px;border:1px solid #A78BFA44;color:#A78BFA;font-size:13px;font-weight:600">Prepare</button>`:""}
         <button class="manage-kit-btn icon-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit">⋯</button>
@@ -16042,7 +16431,7 @@ function homeView() {
   // PRIMARY NAV — Today/Active/Upcoming/All. Today is the default: what needs attention
   // right now, not every active compound regardless of relevance.
   const homeViewKey = state._homeView || "today";
-  const navBtn = (key,label,count) => `<button class="hv-nav" data-view="${key}" style="flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:600;background:${homeViewKey===key?"var(--surface-3)":"transparent"};border:1px solid ${homeViewKey===key?"var(--border)":"var(--border-sub)"};color:${homeViewKey===key?"var(--t1)":"var(--t4)"};min-height:36px">${label}${count?` ${count}`:""}</button>`;
+  const navBtn = (key,label,count) => `<button class="hv-nav" data-view="${key}" aria-pressed="${homeViewKey===key}" style="flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:600;background:${homeViewKey===key?"var(--surface-3)":"transparent"};border:1px solid ${homeViewKey===key?"var(--border)":"var(--border-sub)"};color:${homeViewKey===key?"var(--t1)":"var(--t4)"};min-height:36px">${label}${count?` ${count}`:""}</button>`;
   html+=`<div id="nexus-today-schedule" class="nexus-today-section-label">Your schedule</div>`;
   html+=`<div class="nexus-today-view-nav">
     ${navBtn("today","Today")}
@@ -16218,16 +16607,23 @@ function renderProfileTabContent() {
 }
 
 // ── SETTINGS tab: iOS-style navigable row list ──────────────────────────────
+
+// Lavender Atelier: shared minimalist Settings icon paths, no emoji glyph dependency.
+const NX_SETTINGS_ICON_PATHS={'reminders':'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>','phasereminders':'<path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/>','appupdates':'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h7"/>','units':'<path d="M4 19h16M5 16l11-11 3 3-11 11H5z"/>','onboarding':'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/>','health':'<path d="M12 21s-9-5.8-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.2-9 12-9 12z"/><path d="M7 12h3l2-3 2 6 2-3h2"/>','backup':'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v6h8V3M8 17h8"/>','datamanagement':'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>','developer':'<path d="M8 3h8M10 3v7L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-6-9V3M8 17h8"/>'};
+function nxSettingsIcon(key){
+  return `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NX_SETTINGS_ICON_PATHS[key]||NX_SETTINGS_ICON_PATHS.appupdates}</svg>`;
+}
+
 function renderSettingsTabContent() {
   const unseenReleases = CHANGELOG.filter(c=>c.version>(state.settings.lastSeenChangelog||0));
   const hasNewUpdate = unseenReleases.length>0;
 
   const row = (key,icon,label,rightText,rightColor,badge) => `<button class="settings-row" data-detail="${key}" style="width:100%;display:flex;align-items:center;gap:12px;padding:13px 6px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);text-align:left;min-height:44px">
-    <span style="font-size:16px;width:20px;text-align:center;flex-shrink:0">${icon}</span>
+    <span class="nx-settings-icon">${nxSettingsIcon(key)}</span>
     <span style="flex:1;font-size:14px;color:var(--t1)">${label}</span>
     ${badge?`<span style="background:#A78BFA22;color:#A78BFA;font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0">${badge}</span>`:""}
     ${rightText?`<span style="font-size:12px;color:${rightColor||"var(--t4)"};flex-shrink:0">${rightText}</span>`:""}
-    <span style="color:var(--t5);font-size:15px;flex-shrink:0">›</span>
+    <svg class="nx-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
   </button>`;
   const sectionLabel = (t) => `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:18px 0 2px;padding:0 6px">${t}</div>`;
 
@@ -17536,8 +17932,6 @@ function recordPastPauseModal(protoId) {
 }
 
 function protocolsView() {
-  const sub = "protocols";
-  const subBtn=(k,l)=>`<button class="proto-sub" data-sub="${k}" style="flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:600;background:${sub===k?"var(--surface-3)":"transparent"};color:${sub===k?"var(--t1)":"var(--t4)"};border:none">${l}</button>`;
 
 
   const protos = state.protocols||[];
@@ -17595,7 +17989,7 @@ function protocolsView() {
     return `<div class="card nexus-protocol-card" style="border-color:${sc.color}33;margin-bottom:10px">
       <div class="nexus-protocol-card-head">
         <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:650;color:var(--t1)">${esc(p.name)}</div>
+          <div class="nx-proto-title">${esc(p.name)}</div>
           ${p.goal?`<div class="nexus-protocol-muted">${esc(p.goal)}</div>`:""}
         </div>
         ${statusBadge(sc.label, sc.color)}
@@ -17604,7 +17998,7 @@ function protocolsView() {
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
       <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"}${p.startDate?` · Started ${fmtDate(p.startDate)}`:""}</div>
       <details class="nexus-protocol-details">
-        <summary>View schedule &amp; phases <span aria-hidden="true">⌄</span></summary>
+        <summary><span>Schedule &amp; phases</span><span class="nx-proto-chevron" aria-hidden="true">⌄</span></summary>
         <div class="nexus-protocol-details-body">
           <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
           <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
@@ -17620,7 +18014,7 @@ function protocolsView() {
   };
 
   const section=(title,color,cards)=>cards.length?`<div class="nexus-protocol-section-label" style="color:${color}">${title} <span style="opacity:.7">${cards.length}</span></div>${cards.map(protoCard).join("")}`:"";
-  return `<h1 class="serif greet">Protocol</h1><div style="display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:14px">${subBtn("protocols","Protocols")}${subBtn("calendar","Calendar")}</div><button id="new-protocol" class="btn-primary" style="background:#A78BFA;margin-bottom:16px">+ Create Protocol</button>${!live.length&&!planned.length&&!drafts.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
+  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${!live.length&&!planned.length&&!drafts.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
 
 }
 
@@ -17828,7 +18222,12 @@ function renderBody() {
     else if (state._discoverOpen!=null) inner = discoverDetail(state._discoverOpen);
     else inner = `<h1 class="serif greet">Learn</h1>${learnContent()}`;
   }
-  const themeIcon = document.documentElement.dataset.theme==="light"?"🌙":"☀️";
+  // Product-wide screen boundary: shared design and accessible content region.
+  const nx2Screen = ['home','trends','calendar','stash','plans','protocols','profile','amino','learn'].includes(tab)?tab:'other';
+  inner = `<section class="nx2-page nx2-page--${nx2Screen}" aria-label="${({home:'Today',trends:'Trends',calendar:'Calendar',stash:'Stash',plans:'Plans',protocols:'Protocols',profile:'Profile and settings',amino:'Nexus',learn:'Learn'})[nx2Screen]||'Nexus'}">${inner}</section>`;
+  const themeIcon = document.documentElement.dataset.theme==="light"
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   const hasUnseenUpdate = CURRENT_CHANGELOG_VERSION > (state.settings.lastSeenChangelog||0);
   const profileBtn = tab==="profile" ? "" : `<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px"><button id="profile-btn" style="position:relative;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:20px;padding:4px 12px 4px 4px;font-size:12px;display:flex;align-items:center;gap:6px">
   ${state.profile.avatar
@@ -17899,6 +18298,13 @@ function disableReminders() {
 // Phase 2A: five primary destinations, with secondary destinations retained in More.
 // The existing screen renderers and application state are unchanged.
 function renderTabbar() {
+  // Keyboard users can bypass the persistent navigation and reach the current screen.
+  if(!document.querySelector('.nx-a11y-skip')){
+    const skip=document.createElement('a');
+    skip.className='nx-a11y-skip';skip.href='#app';skip.textContent='Skip to app content';
+    document.body.prepend(skip);
+  }
+  document.getElementById('app')?.setAttribute('tabindex','-1');
   document.querySelector('.tabbar')?.remove();
   document.querySelector('#nexus-more-panel')?.remove();
   const nav = document.createElement('nav');
@@ -17919,6 +18325,7 @@ function renderTabbar() {
     const selected = tab===id || (id==='more' && moreTabs.includes(tab));
     if(selected) button.className='active';
     button.setAttribute('aria-label',label);
+    button.setAttribute('aria-pressed',selected?'true':'false');
     if(selected) button.setAttribute('aria-current','page');
     const path=id==='more' ? '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>' : (ICONS[id]||'');
     button.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg><span>${label}</span>`;
@@ -18200,7 +18607,6 @@ function wireBody() {
     doseModal(b.dataset.name);
   });
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
-  document.querySelectorAll(".proto-sub").forEach(b=>b.onclick=()=>{state._protoSub=b.dataset.sub;renderBody();});
   const pcm=$("#pcal-month"); if(pcm) pcm.onclick=()=>{state._protoCalSub="month";renderBody();};
   const pcl=$("#pcal-logs"); if(pcl) pcl.onclick=()=>{state._protoCalSub="logs";renderBody();};
   const cp=$("#cal-prev"); if(cp) cp.onclick=()=>{state._calOff=(state._calOff||0)-1;renderBody();};
