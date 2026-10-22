@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nexus">
 <meta name="theme-color" content="#080808">
-<title>Nexus · v0.6.8-beta</title>
+<title>Nexus · v0.7.8-beta</title>
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23080808'/%3E%3Crect x='70' y='38' width='12' height='104' rx='6' fill='%237DF9C0' transform='rotate(45 90 90)'/%3E%3Ccircle cx='90' cy='90' r='30' fill='none' stroke='%23C9A0FF' stroke-width='8'/%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
@@ -1204,6 +1204,22 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
   .nexus-today-details-chevron::after,
   .nexus-week-quiet .nexus-quiet-chevron::after {transition:none!important}
 }
+
+/* v0.7.8 — Shortfall resolution: explicit steps, clear actions, mobile-first layout */
+.nx-dose-form #alloc-panel .nx-allocation-card{padding:15px!important;background:var(--surface-2)!important;border:1px solid var(--border)!important}
+.nx-shortfall-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);margin-bottom:6px}
+.nx-shortfall-intro{font-size:12px;color:var(--t3);line-height:1.55;margin:5px 0 10px}
+.nx-shortfall-progress{height:7px;background:var(--surface-3);border-radius:30px;overflow:hidden;margin:12px 0 5px}
+.nx-shortfall-progress>div{background:#7DF9C0;height:100%;border-radius:30px;transition:width .16s ease}
+.nx-shortfall-status{font-size:12px;line-height:1.5;color:var(--t2);padding:9px 11px;background:var(--surface);border:1px solid var(--border-sub);border-radius:9px;margin:8px 0 12px}
+.nx-shortfall-step{font-size:11px;text-transform:uppercase;font-weight:750;letter-spacing:.08em;color:var(--t4);margin:13px 0 7px}
+.nx-dose-form #alloc-rows>.nx-alloc-row{grid-template-columns:minmax(0,1fr) minmax(74px,94px) 46px 46px!important}
+.nx-dose-form #alloc-panel .nx-allocation-help{font-size:11px!important;margin:10px 0!important;line-height:1.55!important}
+.nx-dose-form #alloc-panel #alloc-open-new{background:var(--surface-3)!important;border:1px solid var(--border)!important;color:var(--t1)!important;font-weight:750!important;min-height:48px!important}
+.nx-dose-form #alloc-panel #alloc-add-kit{background:var(--surface)!important}
+@media(max-width:380px){.nx-dose-form #alloc-panel .nx-allocation-summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.nx-dose-form #alloc-panel .nx-allocation-metric{padding:8px 5px}.nx-dose-form #alloc-panel .nx-allocation-metric strong{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.nx-shortfall-progress>div{transition:none}}
+
 </style>
 <style id="nexus-phase2c3-calendar">
 .nexus-cal-selected{outline:2px solid #A78BFA!important;outline-offset:1px;background:color-mix(in srgb,#A78BFA 16%,var(--surface-2))!important}
@@ -1432,7 +1448,148 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-dose-form #save{min-height:48px;font-weight:750;letter-spacing:.025em}
 .nx-dose-form .nx-dose-review-note{font-size:10.5px;color:var(--t4);line-height:1.5;margin-bottom:9px}
 @media(max-width:380px){.nx-dose-form .nx-dose-section{padding:12px}.nx-dose-form .nx-dose-title{font-size:17px}}
-</style>\n</head>
+.nx-dose-form .nx-dose-source-readout{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--border-sub);color:var(--t2)}
+.nx-dose-form .nx-dose-source-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;background:#7DF9C0;flex:none}
+.nx-dose-form .nx-dose-source-readout strong{display:block;font-size:12px;font-weight:700;line-height:1.5}
+.nx-dose-form .nx-dose-source-readout small{display:block;margin-top:3px;font-size:11px;line-height:1.45;color:var(--t3)}
+</style>\n
+<style id="nexus-v070-dose-layout">
+/* v0.7.0 — isolated dose logging UI refinements; no data or inventory logic changes. */
+.modal.nx-dose-picker #today-dose-single{display:block!important;width:100%!important;min-height:48px!important;margin:14px 0 10px!important;border:1px solid #A78BFA!important;border-radius:12px!important;background:#A78BFA!important;color:#211630!important;font-weight:750!important;font-size:14px!important;opacity:1!important;visibility:visible!important;box-shadow:none!important;-webkit-text-fill-color:#211630!important}
+.modal.nx-dose-picker #today-dose-single:focus-visible{outline:3px solid #C4B5FD!important;outline-offset:3px!important}
+.modal.nx2-dose-modal{display:flex!important;flex-direction:column!important;overflow:hidden!important;height:min(88dvh,880px)!important;max-height:min(88dvh,880px)!important;padding:0!important;scroll-padding-bottom:0!important}
+.modal.nx2-dose-modal .nx-dose-form{display:flex;flex:1;flex-direction:column;min-height:0;overflow:hidden}
+.modal.nx2-dose-modal .nx-dose-scroll{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:22px 20px 20px;scroll-padding-bottom:24px}
+.modal.nx2-dose-modal .nx-dose-footer{flex:none;position:relative!important;bottom:auto!important;z-index:4;margin:0!important;background:var(--modal-bg)!important;padding:12px 20px calc(14px + env(safe-area-inset-bottom))!important;border-top:1px solid var(--border-sub);box-shadow:0 -6px 18px rgba(20,12,40,.05)}
+.modal.nx2-dose-modal .nx-dose-review-note{margin-bottom:7px;line-height:1.35}
+.modal.nx2-dose-modal .nx-dose-section{padding:14px;margin-bottom:10px}
+.modal.nx2-dose-modal .nx-dose-section-desc{margin-bottom:10px}
+.modal.nx2-dose-modal .nx-dose-optional{padding:0!important;overflow:visible}
+.modal.nx2-dose-modal .nx-dose-optional>summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;padding:14px;list-style:none;color:var(--t1);font-size:13px;font-weight:750;min-height:48px;box-sizing:border-box}
+.modal.nx2-dose-modal .nx-dose-optional>summary::-webkit-details-marker{display:none}
+.modal.nx2-dose-modal .nx-dose-optional>summary:after{content:'+';font-size:20px;color:var(--t3);font-weight:400}
+.modal.nx2-dose-modal .nx-dose-optional[open]>summary:after{content:'−'}
+.modal.nx2-dose-modal .nx-dose-optional>summary:focus-visible{outline:2px solid #A78BFA;outline-offset:-3px;border-radius:12px}
+.modal.nx2-dose-modal .nx-dose-optional-body{padding:0 14px 14px}
+.modal.nx2-dose-modal .nx-dose-optional-body>.nx-dose-section-desc{margin:0 0 8px}
+@media(max-width:380px){.modal.nx2-dose-modal .nx-dose-scroll{padding:16px 14px}.modal.nx2-dose-modal .nx-dose-footer{padding-left:14px!important;padding-right:14px!important}}
+</style>
+
+<style id="nexus-v071-sheet-system">
+/* v0.7.1: shared sheet geometry and accessibility. No changes to record handlers. */
+:root{--nx-sheet-radius:22px;--nx-sheet-mobile-max:calc(100dvh - max(12px,env(safe-area-inset-top)));--nx-sheet-control:44px}
+.modal-bg,.nexus-more-backdrop{padding:0!important;align-items:flex-end!important;overscroll-behavior:contain}
+.modal-bg>.modal{box-sizing:border-box!important;width:100%!important;max-width:560px!important;max-height:var(--nx-sheet-mobile-max)!important;border-radius:var(--nx-sheet-radius) var(--nx-sheet-radius) 0 0!important;margin:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
+.modal-bg>.modal :is(input,select,textarea){font-size:16px!important}
+.modal-bg>.modal :is(button,[role="button"],summary){touch-action:manipulation}
+.modal-bg>.modal button:focus-visible,.nexus-more-sheet button:focus-visible{outline:2px solid #A78BFA!important;outline-offset:2px!important}
+.modal-bg>.modal :is(input,select,textarea){min-width:0;max-width:100%}
+.modal-bg>.modal :is(h2,h3){overflow-wrap:anywhere}
+.nexus-more-backdrop>.nexus-more-sheet{box-sizing:border-box;width:100%;max-width:560px;max-height:var(--nx-sheet-mobile-max)!important;border-radius:var(--nx-sheet-radius) var(--nx-sheet-radius) 0 0!important;margin:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
+/* Specialized dose entry has its own scroll region and a stationary action dock. */
+.modal-bg>.modal.nx2-dose-modal{height:min(88dvh,880px)!important;max-height:min(88dvh,880px)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important}
+.modal.nx2-dose-modal .nx-dose-form{flex:1;min-height:0;overflow:hidden}
+.modal.nx2-dose-modal .nx-dose-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scroll-padding-bottom:24px}
+.modal.nx2-dose-modal .nx-dose-footer{flex:none;position:relative!important;bottom:auto!important;box-sizing:border-box;background:var(--modal-bg)!important;border-top:1px solid var(--border)!important;margin:0!important;padding-bottom:calc(14px + env(safe-area-inset-bottom))!important}
+@media(min-width:561px){.modal-bg,.nexus-more-backdrop{align-items:center!important;padding:16px!important}.modal-bg>.modal,.nexus-more-backdrop>.nexus-more-sheet{max-height:min(88dvh,880px)!important;border-radius:20px!important}.modal-bg>.modal.nx2-dose-modal{height:min(88dvh,880px)!important}}
+@media(max-width:390px){.modal-bg>.modal{padding-left:16px!important;padding-right:16px!important}.modal-bg>.modal.nx2-dose-modal{padding:0!important}}
+@media(prefers-reduced-motion:reduce){.modal-bg>.modal,.nexus-more-sheet{scroll-behavior:auto!important}}
+</style>
+<style id="nexus-v072-sheet-layout">
+/* v0.7.2: structural shell for legacy modals; data and workflow JS unchanged */
+.modal-bg>.modal.nx-sheet.nx-structured{display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)))!important}
+.nx-structured>.nx-unified-header{flex:0 0 auto;display:flex;justify-content:center;align-items:center;min-height:24px;padding:8px 16px 3px;background:var(--surface,#fff)}
+.nx-unified-grip{width:35px;height:4px;border-radius:4px;background:var(--border,#aaa);opacity:.7}
+.nx-structured>.nx-unified-body{min-height:0;flex:1 1 auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 20px 18px;scrollbar-gutter:stable}
+.nx-structured>.nx-unified-footer{flex:0 0 auto;display:flex;gap:10px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:var(--surface,#fff);border-top:1px solid var(--border,#ddd);box-shadow:0 -8px 18px rgba(0,0,0,.05)}
+.nx-structured>.nx-unified-footer>button,.nx-structured>.nx-unified-footer>div{min-width:0;flex:1}
+.nx-structured>.nx-unified-footer button{min-height:44px}
+@media(max-width:480px){.nx-structured>.nx-unified-body{padding:8px 16px 18px}.nx-structured>.nx-unified-footer{padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){.nx-structured *{scroll-behavior:auto!important}}
+</style>
+<style id="nexus-v073-sheet-refinement">
+/* Progressive sheet refinement: retains legacy event handlers and data behavior. */
+.modal-bg>.modal.nx-structured>.nx-unified-header{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-height:30px;padding:7px 16px 4px;background:var(--modal-bg,var(--surface));border-bottom:1px solid var(--border-sub,var(--border))}
+.nx-structured>.nx-unified-header>.nx-unified-grip{display:block;align-self:center;flex-shrink:0}
+.nx-structured>.nx-unified-header>.nx-sheet-title-row{width:100%;margin-bottom:0!important;min-width:0;flex-shrink:0}
+.nx-structured>.nx-unified-header>.nx-sheet-title-row #x{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation}
+.nx-structured>.nx-unified-body{scroll-padding-bottom:18px;overflow-anchor:none}
+.nx-structured>.nx-unified-footer{background:var(--modal-bg,var(--surface));z-index:2}
+.nx-structured :is(input,select,textarea,button):focus-visible{outline:2px solid var(--accent-purple,#A78BFA);outline-offset:2px}
+@media(max-width:480px){.modal-bg>.modal.nx-structured{max-height:min(calc(100dvh - env(safe-area-inset-top) - 8px),var(--nx-visible-height,100dvh))!important}.nx-structured>.nx-unified-header{padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){.nx-structured>.nx-unified-body{scroll-behavior:auto!important}}
+</style>
+<style id="nexus-v074-checkin">
+/* Check-in-specific sheet refinements; uses existing shared modal infrastructure. */
+.nx-checkin-sheet>.nx-unified-body{padding-bottom:22px!important}
+.nx-checkin-sheet>.nx-unified-footer{display:flex;align-items:stretch;gap:9px;padding-top:12px!important}
+.nx-checkin-sheet>.nx-unified-footer>button{flex:1;min-height:48px;margin:0!important;display:flex!important;justify-content:center;align-items:center;gap:7px;line-height:1.3;text-align:center;border-radius:11px}
+.nx-checkin-sheet>.nx-unified-footer>button:not(.btn-primary){border:1px solid var(--border);color:var(--t2);background:var(--surface-2)}
+.nx-checkin-sheet .nx-checkin-symptoms{border:1px solid var(--border-sub);border-radius:12px;margin:0 0 14px;overflow:hidden}
+.nx-checkin-sheet .nx-checkin-symptoms>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none;padding:13px 12px;min-height:44px;cursor:pointer;font-size:12px;font-weight:650;color:var(--t2);background:var(--surface-2)}
+.nx-checkin-sheet .nx-checkin-symptoms>summary::-webkit-details-marker{display:none}
+.nx-checkin-sheet .nx-checkin-symptoms>summary:after{content:'⌄';font-size:17px;color:var(--t4);transition:transform .15s}
+.nx-checkin-sheet .nx-checkin-symptoms[open]>summary:after{transform:rotate(180deg)}
+.nx-checkin-sheet .nx-checkin-symptoms>div{padding:10px 10px 12px}
+.nx-checkin-sheet .nx-checkin-symptoms .symcat-toggle{min-height:44px;text-align:left}
+.nx-checkin-sheet .moodbtn{min-height:56px}
+.nx-checkin-sheet .nx-checkin-inline-label{font-size:10px;color:var(--t4);margin-bottom:9px}
+@media(max-width:390px){.nx-checkin-sheet>.nx-unified-footer{gap:7px}.nx-checkin-sheet>.nx-unified-footer>button{font-size:12px!important;padding:12px 8px!important}}
+@media(prefers-reduced-motion:reduce){.nx-checkin-sheet .nx-checkin-symptoms>summary:after{transition:none}}
+</style>
+<style id="nx-075-compact-tags">
+.nx-compact-tagging{border:1px solid var(--border-sub);border-radius:12px;overflow:hidden;margin:4px 0 12px;background:var(--surface-2)}
+.nx-compact-tagging-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;padding:12px 12px 0;font-size:11px;letter-spacing:.5px;color:var(--t2)}
+.nx-compact-tagging-head span,.nx-compact-tagging-hint{font-size:11px;color:var(--t4);letter-spacing:0}
+.nx-compact-tagging-hint{margin:4px 12px 10px}
+.nx-compact-tagging-item+.nx-compact-tagging-item{border-top:1px solid var(--border-sub)}
+.nx-tag-sym-row,.nx-notes-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;gap:10px;padding:11px 12px;background:transparent;border:0;color:var(--t1);cursor:pointer;min-height:48px}
+.nx-tag-sym-main,.nx-notes-toggle>span:first-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nx-tag-sym-main strong,.nx-notes-toggle strong{font-size:12px;font-weight:650}
+.nx-tag-sym-main small,.nx-notes-toggle small{font-size:11px;color:var(--t4);overflow-wrap:anywhere}
+.nx-tag-options{display:flex;flex-wrap:wrap;gap:7px;padding:1px 12px 12px}
+.nx-tag-options .tag-pill{font-size:11px;font-weight:600;border:1px solid var(--border-sub);border-radius:999px;padding:8px 11px;min-height:36px;cursor:pointer}
+.nx-note-list{display:grid;gap:10px;padding:0 12px 12px}
+.nx-note-label{display:grid;gap:5px;font-size:11px;color:var(--t3)}
+.nx-note-list textarea{min-height:55px;resize:vertical;font-size:13px}
+.nx-compact-tagging button:focus-visible{outline:3px solid #A78BFA;outline-offset:-3px}
+</style>
+<style id="nx-076-symptom-selector">
+.nx-sym-picker{display:grid;gap:8px}.nx-sym-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-sub)}
+.nx-sym-tab{border:0;border-radius:9px;background:transparent;color:var(--t3);padding:11px 5px;font-size:12px;font-weight:650;min-height:42px;cursor:pointer}
+.nx-sym-tab[aria-pressed="true"]{background:#A78BFA24;color:var(--t1);box-shadow:inset 0 0 0 1px #A78BFA88}
+.nx-sym-key{display:flex;flex-wrap:wrap;gap:5px 10px;align-items:center;justify-content:space-between;color:var(--t2);font-size:11px;font-weight:650;padding:3px 2px}.nx-sym-key span{font-weight:400;color:var(--t3)}
+.nx-sym-list{display:grid;gap:0;border:1px solid var(--border-sub);border-radius:11px;overflow:hidden;margin-bottom:7px}
+.nx-sym-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 8px;min-height:48px;background:var(--surface-2)}.nx-sym-row+.nx-sym-row{border-top:1px solid var(--border-sub)}
+.nx-sym-name{display:flex;align-items:center;gap:8px;text-align:left;border:0!important;border-radius:7px!important;background:transparent!important;color:var(--t2)!important;font-size:12px!important;min-height:38px;padding:5px 3px!important;flex:1;min-width:0;cursor:pointer}
+.nx-sym-name[aria-pressed="true"]{color:var(--t1)!important;font-weight:650}.nx-sym-check{display:grid;place-items:center;width:20px;height:20px;border:1px solid var(--border);border-radius:6px;flex-shrink:0;font-size:12px;color:var(--t3)}.nx-sym-name[aria-pressed="true"] .nx-sym-check{background:#A78BFA30;border-color:#A78BFA;color:#C4B5FD}
+.nx-sym-int{display:flex;align-items:center;gap:4px;flex-shrink:0}.nx-sym-level{width:32px;min-width:32px;height:34px;border-radius:8px;border:1px solid var(--border-sub);background:var(--surface-3);font-weight:700;font-size:12px;color:var(--t3);cursor:pointer}.nx-sym-level.is-active{background:#A78BFA30;border-color:#A78BFA;color:var(--t1)}
+.nx-sym-search-label{display:grid;gap:6px;color:var(--t3);font-size:11px}.nx-sym-search{width:100%!important;min-height:42px}.nx-sym-empty{color:var(--t3);padding:14px 10px;font-size:12px}.nx-sym-picker button:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.nx-sym-picker .symcat-toggle{min-height:44px}.nx-sym-picker [hidden]{display:none!important}
+@media(max-width:360px){.nx-sym-row{padding:4px 5px}.nx-sym-name{font-size:11px!important}.nx-sym-int{gap:2px}.nx-sym-level{width:28px;min-width:28px;height:33px}}
+</style>
+
+<style id="nexus-v077-dose-scroll-and-allocation">
+/* Dedicated dose sheet must have exactly one scrollport; iOS Safari touch/keyboard. */
+.modal-bg > .modal.nx2-dose-modal {height: min(92dvh, var(--nx-visible-height, 92dvh)) !important;max-height: min(92dvh,var(--nx-visible-height, 92dvh)) !important;display:flex!important;flex-direction:column!important;overflow:hidden!important;touch-action:pan-y!important;}
+.modal.nx2-dose-modal > .nx-dose-form {display:flex!important;flex-direction:column!important;min-height:0!important;flex:1 1 0%!important;overflow:hidden!important;}
+.modal.nx2-dose-modal .nx-dose-scroll {display:block!important;flex:1 1 0%!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:scroll!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain;touch-action:pan-y!important;}
+.modal.nx2-dose-modal .nx-dose-footer {flex:0 0 auto!important;min-height:0!important;}
+/* Responsive inventory shortfall: full-size touch controls and legible summaries. */
+.nx-dose-form #alloc-panel .nx-allocation-card{padding:14px!important;border-radius:13px!important;}
+.nx-allocation-heading{font-size:13px;font-weight:750;color:#F9C87D;margin-bottom:5px}
+.nx-allocation-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 15px}
+.nx-allocation-metric{border:1px solid var(--border-sub);background:var(--surface);border-radius:9px;padding:9px 7px;min-width:0}
+.nx-allocation-metric small{display:block;font-size:10px;color:var(--t4);line-height:1.4;margin-bottom:5px}
+.nx-allocation-metric strong{display:block;font-size:12px;color:var(--t1);overflow-wrap:anywhere}
+.nx-dose-form #alloc-rows>.nx-alloc-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(66px,86px) 46px 46px;gap:6px!important;align-items:center!important;margin-bottom:10px!important;padding:9px!important;background:var(--surface);border:1px solid var(--border-sub);border-radius:10px}
+.nx-dose-form #alloc-rows .alloc-mg-input{width:100%!important;min-height:44px!important;height:44px!important;font-size:16px!important}
+.nx-dose-form #alloc-rows .alloc-draw,.nx-dose-form #alloc-rows .alloc-remove{min-width:44px!important;min-height:44px!important;font-size:11px!important;border-radius:8px!important;padding:7px!important}
+.nx-dose-form #alloc-panel #alloc-add-kit,.nx-dose-form #alloc-panel #alloc-open-new{min-height:46px!important;font-size:13px!important}
+.nx-allocation-help{font-size:11px!important;line-height:1.55!important;color:var(--t3)!important;margin:12px 0!important}
+@media(max-width:370px){.nx-allocation-summary{grid-template-columns:1fr 1fr}.nx-dose-form #alloc-rows>.nx-alloc-row{grid-template-columns:minmax(0,1fr) minmax(65px,1fr) 44px 44px;gap:4px!important;padding:6px!important}.nx-allocation-metric{padding:8px 6px}}
+</style>
+</head>
 <body>
 <div id="app"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#7DF9C0" class="mono">LOADING…</div></div>
 <div id="demo-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:#F9C87D;color:#000;font-size:11px;font-weight:700;text-align:center;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top));letter-spacing:1px">🧪 DEVELOPER DEMO MODE — Sample Data Active &nbsp;<button onclick="demoPickerModal()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Change</button>&nbsp;<button onclick="exitDemoMode()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Exit</button></div>
@@ -5986,18 +6143,103 @@ const uid = () => Date.now() + Math.floor(Math.random()*100000);
 function h(html) { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
 const $ = sel => document.querySelector(sel);
 
+
+/* Safe structural adapter: existing selectors and event handlers continue targeting descendants. */
+function applyNexusSheetStructure(modal) {
+  if (!modal || modal.classList.contains('nx2-dose-modal') || modal.querySelector(':scope > .nx-dose-form') || modal.classList.contains('nx-structured')) return;
+  const originalNodes = Array.from(modal.childNodes);
+  const content = document.createElement('div'); content.className = 'nx-unified-body';
+  const heading = document.createElement('div'); heading.className = 'nx-unified-header';
+  heading.setAttribute('aria-hidden','true');
+  heading.innerHTML = '<span class="nx-unified-grip"></span>';
+  originalNodes.forEach(node => content.appendChild(node));
+  modal.appendChild(heading); modal.appendChild(content);
+  // Only move an unambiguous trailing row of buttons. Confirmation modals and
+  // specialized dose sheets maintain their own action layout intentionally.
+  const last = content.lastElementChild;
+  const candidate = last && last.tagName === 'DIV' && last.children.length >= 2 && last.children.length <= 3 &&
+    Array.from(last.children).every(el => el.tagName === 'BUTTON') &&
+    !last.querySelector('input,textarea,select') &&
+    !last.hasAttribute('id');
+  if (candidate && !modal.querySelector('.nx-dose-footer')) {
+    const footer = document.createElement('div'); footer.className = 'nx-unified-footer';
+    while (last.firstChild) footer.appendChild(last.firstChild);
+    last.remove(); modal.appendChild(footer);
+  }
+  modal.classList.add('nx-structured');
+  const label = content.querySelector('h1,h2,h3,[class="modal-title"]');
+  if(label && !label.id) label.id = 'nx-modal-label-' + (++window.nexusSheetLabelCounter);
+  if(label) modal.setAttribute('aria-labelledby',label.id);
+}
+window.nexusSheetLabelCounter = 0;
+
+
+/* v0.7.3: recognize existing legacy close/title rows, never clone button nodes. */
+function refineNexusSheet(modal) {
+  if (!modal || !modal.classList.contains('nx-structured')) return;
+  const header=modal.querySelector(':scope > .nx-unified-header');
+  const body=modal.querySelector(':scope > .nx-unified-body');
+  if (!header || !body) return;
+  const top=body.firstElementChild;
+  // Migrate only a simple top row: a single close #x button and a title-like
+  // element, with no editable fields or nested form actions.
+  if (top && top.tagName==='DIV' && top.children.length>=2 && top.children.length<=3 &&
+      top.querySelector(':scope > #x') &&
+      top.querySelectorAll('button').length===1 &&
+      !top.querySelector('input,select,textarea,form') &&
+      /display\s*:\s*flex/i.test(top.getAttribute('style')||'')) {
+    top.classList.add('nx-sheet-title-row');
+    header.appendChild(top); // node identity and #x onclick remain intact
+  }
+  // Keep a single tab stop for native dialogs, preserve the previously active
+  // element so focus can be restored when closed.
+  if (!modal.hasAttribute('aria-label') && !modal.hasAttribute('aria-labelledby')) {
+    const titleRow=header.querySelector('.nx-sheet-title-row');
+    const textNode=titleRow && Array.from(titleRow.children).find(el=>el.id!=='x');
+    const title=textNode && textNode.textContent.trim();
+    if(title) modal.setAttribute('aria-label',title.slice(0,120));
+  }
+  // If the header already contains the close control, provide an immediate
+  // close target without adding another button.
+}
+function nexusVisibleSheetHeight() {
+  const viewport=window.visualViewport;
+  if (!viewport) return;
+  document.documentElement.style.setProperty('--nx-visible-height',Math.max(240,viewport.height-8)+'px');
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize',nexusVisibleSheetHeight,{passive:true});
+  nexusVisibleSheetHeight();
+}
+
 // ─── Modal system ──────────────────────────────────────────────────────────────
 let modalEl = null;
+let nexusPriorFocus = null;
 function openModal(innerHTML, color="#7DF9C0") {
   closeModal();
+  nexusPriorFocus = document.activeElement;
   modalEl = h(`<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true" tabindex="-1" style="border-color:${color}33;box-shadow:0 0 40px ${color}22"></div></div>`);
   modalEl.querySelector(".modal").innerHTML = innerHTML;
-  modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal(); });
+  modalEl.querySelector(".modal").classList.add("nx-sheet");
+  if (modalEl.querySelector(".modal > .nx-dose-form")) modalEl.querySelector(".modal").classList.add("nx2-dose-modal");
+  modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal("backdrop"); });
   document.body.appendChild(modalEl);
+  applyNexusSheetStructure(modalEl.querySelector(".modal"));
+  refineNexusSheet(modalEl.querySelector(".modal"));
   return modalEl.querySelector(".modal");
 }
-function closeModal() { if (modalEl) { modalEl.remove(); modalEl = null; } }
-document.addEventListener("keydown", e => { if(e.key === "Escape" && modalEl) closeModal(); });
+function closeModal(reason) {
+  if (!modalEl) return;
+  // A user dismissal of a nested Draw sheet must take the same recovery path as its X button.
+  // Programmatic closes (successful draw, reconciliation and explicit cancel) never trigger it.
+  const dismissed = reason === "backdrop" || reason === "escape";
+  const onDismiss = dismissed ? modalEl._nexusOnUserDismiss : null;
+  const prior=nexusPriorFocus;
+  modalEl.remove(); modalEl=null; nexusPriorFocus=null;
+  if (prior && prior.isConnected && typeof prior.focus === "function") try { prior.focus({preventScroll:true}); } catch(e) {}
+  if (typeof onDismiss === "function") onDismiss();
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape" && modalEl) { e.preventDefault(); closeModal("escape"); } });
 
 // ─── Global error surfacing ─────────────────────────────────────────────────────
 // Diagnostic net, not a fix: on iOS PWA there's no console to read. If any uncaught
@@ -6036,6 +6278,7 @@ function todayLogDosePicker() {
     ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary" style="width:100%;min-height:44px;margin-bottom:10px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
     ${names.length>=2 ? `<button type="button" id="today-dose-combo" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t1);background:var(--surface-2);font-weight:600">Log combo dose →</button>` : ""}
   `,"#A78BFA");
+  m.classList.add("nx-dose-picker");
   m.querySelector("#x").onclick=closeModal;
   const single=m.querySelector("#today-dose-single");
   if(single) single.onclick=()=>{
@@ -6104,19 +6347,19 @@ function symptomPickerHTML(selected, color) {
   const isOpen = key => !!state._symPickerOpen[key];
 
   const chipRow = (syms, groupColor) => `
-    <div style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 2px 2px">
+    <div class="nx-sym-list">
       ${syms.map(sym => {
         const sel = selected.find(s=>s.name===sym);
         const c = groupColor||color;
-        return `<div style="display:flex;flex-direction:column;gap:4px">
-          <button data-sym="${esc(sym)}" class="symbtn" style="padding:5px 11px;border-radius:99px;font-size:11px;background:${sel?c+"22":"transparent"};border:1px solid ${sel?c:"#333"};color:${sel?c:"#777"}">${esc(sym)}</button>
-          <div class="symint" data-sym="${esc(sym)}" style="display:${sel?"flex":"none"};gap:3px;justify-content:center">
-            ${[1,2,3].map(i=>`<button data-int="${i}" style="width:22px;height:22px;border-radius:50%;background:${sel&&sel.intensity>=i?c:"var(--border)"};border:none;cursor:pointer;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:${sel&&sel.intensity>=i?"#fff":"transparent"}"></div></button>`).join("")}
-          </div>
+        const level = sel ? Math.min(3,Math.max(1,+sel.intensity||2)) : 0;
+        return `<div class="nx-sym-row" data-nx-sym-name="${esc(sym)}" style="--nx-sym-accent:${c}">
+          <button type="button" data-sym="${esc(sym)}" aria-pressed="${!!sel}" class="symbtn nx-sym-name"><span class="nx-sym-check" aria-hidden="true">${sel?'✓':'+'}</span><span>${esc(sym)}</span></button>
+          ${sel?`<div class="symint nx-sym-int" data-sym="${esc(sym)}" role="group" aria-label="${esc(sym)} intensity">
+            ${[1,2,3].map(i=>`<button type="button" data-int="${i}" class="nx-sym-level ${level===i?'is-active':''}" aria-label="${esc(sym)} intensity ${i} of 3" aria-pressed="${level===i}">${i}</button>`).join('')}
+          </div>`:''}
         </div>`;
-      }).join("")}
+      }).join('')}
     </div>`;
-
   const renderGroup = (key, groupLabel, syms, groupColor) => {
     const selCount = syms.filter(sym=>selected.find(s=>s.name===sym)).length;
     // selected symptoms first within the category
@@ -6136,23 +6379,33 @@ function symptomPickerHTML(selected, color) {
   };
 
   const customSyms = state.settings.customSymptoms||[];
-  let html = "";
-  // Recently used — last 5 distinct symptoms logged, most recent first. Reuses the same
-  // chipRow()/symbtn tap handling as every other group, just pre-filtered so the person
-  // doesn't have to re-open the same category every time for their common symptoms.
+  const view = state._symPickerView || "recent";
   const recentSyms = [];
   [...state.dailyLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(l=>{
-    (l.symptoms||[]).forEach(s=>{ const nm=typeof s==="string"?s:s.name; if(nm && !recentSyms.includes(nm)) recentSyms.push(nm); });
+    (l.symptoms||[]).forEach(s=>{const nm=typeof s==="string"?s:s.name;if(nm&&!recentSyms.includes(nm))recentSyms.push(nm);});
   });
-  if (recentSyms.length) {
-    html += `<div style="margin-bottom:6px;border:1px solid var(--border-sub);border-radius:10px;overflow:hidden">
-      <div style="padding:10px 12px 0"><span class="mono" style="font-size:10px;color:var(--t3);letter-spacing:1px">RECENTLY USED</span></div>
-      ${chipRow(recentSyms.slice(0,5), null)}
-    </div>`;
+  // Keep every currently selected symptom reachable, even if not in the recent history.
+  const selectedNames=selected.map(s=>s.name);
+  const recentList=[...new Set([...selectedNames,...recentSyms.slice(0,8)])];
+  const allEntries=[...new Set([...Object.values(SYMPTOM_GROUPS).flat(),...customSyms.map(c=>c.name),...compoundGroups.flatMap(g=>g.symptoms),...selectedNames])];
+  let html=`<div class="nx-sym-picker" aria-label="Symptom selector">
+    <div class="nx-sym-tabs" role="group" aria-label="Browse symptoms">
+      ${[["recent","Recent"],["all","All"],["compound","Compound"]].map(([v,label])=>`<button type="button" class="nx-sym-tab" data-view="${v}" aria-pressed="${view===v}">${label}</button>`).join('')}
+    </div>
+    <div class="nx-sym-key">Intensity <span>1 Mild · 2 Moderate · 3 Severe</span></div>`;
+  if(view==="recent"){
+    html+=recentList.length?chipRow(recentList,null):`<p class="nx-sym-empty">No recently used symptoms. Choose All to browse.</p>`;
+  } else if(view==="compound"){
+    html+=compoundGroups.length?compoundGroups.map(g=>renderGroup("cmp_"+g.label,g.label+" — specific",g.symptoms,g.color)).join(''):`<p class="nx-sym-empty">No active compounds with suggested symptoms. Browse All.</p>`;
+  } else {
+    html+=`<label class="nx-sym-search-label">Search symptoms<input type="search" class="nx-sym-search inp" placeholder="Search symptoms…" autocomplete="off" aria-label="Search symptoms"></label>`;
+    html+=`<div class="nx-sym-search-results" hidden></div>`;
+    html+=Object.entries(SYMPTOM_GROUPS).map(([group,syms])=>renderGroup("grp_"+group,group,syms,group==="⚠ Red Flag Reaction"?"#FF7C7C":null)).join('');
+    if(customSyms.length)html+=renderGroup("custom","Custom",customSyms.map(c=>c.name),"#C9A0FF");
+    // All available symptoms power the search without affecting persisted state.
+    html+=`<template class="nx-sym-search-data">${esc(JSON.stringify(allEntries))}</template>`;
   }
-  if(compoundGroups.length) html += compoundGroups.map(g=>renderGroup("cmp_"+g.label,`${g.label} — specific`, g.symptoms, g.color)).join("");
-  html += Object.entries(SYMPTOM_GROUPS).map(([group,syms])=>renderGroup("grp_"+group,group,syms,group==="⚠ Red Flag Reaction"?"#FF7C7C":null)).join("");
-  if(customSyms.length) html += renderGroup("custom","Custom", customSyms.map(c=>c.name), "#C9A0FF");
+  html+=`</div>`;
   // Red flag warning if any red flag symptom is selected
   const hasRedFlag = selected.some(s=>RED_FLAG_SYMPTOMS.has(s.name));
   if(hasRedFlag) html = `<div style="background:#FF7C7C18;border:1px solid #FF7C7C55;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:11px;color:#FF7C7C;line-height:1.6">⚠️ Some reaction symptoms can be serious. Consider urgent medical advice if symptoms are severe, spreading, or involve breathing, swelling, fever, or faintness.</div>` + html;
@@ -6160,6 +6413,39 @@ function symptomPickerHTML(selected, color) {
   return html;
 }
 function wireSymptomPicker(container, selected, color, onUpdate) {
+  container.querySelectorAll(".nx-sym-tab").forEach(btn=>btn.onclick=()=>{
+    state._symPickerView=btn.dataset.view;
+    refresh();
+  });
+  const search=container.querySelector(".nx-sym-search");
+  if(search)search.oninput=()=>{
+    const q=search.value.trim().toLocaleLowerCase();
+    const groups=[...container.querySelectorAll(".symcat-toggle")].map(btn=>btn.parentElement);
+    const results=container.querySelector(".nx-sym-search-results");
+    groups.forEach(el=>el.hidden=!!q);
+    if(!q){results.hidden=true;results.innerHTML="";return;}
+    const source=container.querySelector(".nx-sym-search-data");
+    let names=[];
+    try{names=JSON.parse(source.textContent)}catch(e){}
+    const matches=names.filter(n=>n.toLocaleLowerCase().includes(q)).slice(0,35);
+    results.hidden=false;
+    results.innerHTML=matches.length?`<div class="nx-sym-list">${matches.map(n=>{
+      const item=selected.find(s=>s.name===n);
+      const level=item?Math.max(1,Math.min(3,+item.intensity||2)):0;
+      return `<div class="nx-sym-row"><button type="button" class="symbtn nx-sym-name" data-sym="${esc(n)}" aria-pressed="${!!item}"><span class="nx-sym-check">${item?'✓':'+'}</span><span>${esc(n)}</span></button>${item?`<div class="symint nx-sym-int" data-sym="${esc(n)}">${[1,2,3].map(i=>`<button type="button" data-int="${i}" class="nx-sym-level ${level===i?'is-active':''}" aria-label="${esc(n)} intensity ${i} of 3" aria-pressed="${level===i}">${i}</button>`).join('')}</div>`:''}</div>`;
+    }).join('')}</div>`:`<p class="nx-sym-empty">No matching symptoms.</p>`;
+    // These results are transient: re-bind the same selected array and handlers.
+    results.querySelectorAll(".symbtn").forEach(b=>b.onclick=()=>{
+      const i=selected.findIndex(x=>x.name===b.dataset.sym);
+      if(i>=0)selected.splice(i,1);else selected.push({name:b.dataset.sym,intensity:2});
+      const previous=q;refresh();const newSearch=container.querySelector(".nx-sym-search");if(newSearch){newSearch.value=previous;newSearch.dispatchEvent(new Event('input'));newSearch.focus();}
+    });
+    results.querySelectorAll(".symint button").forEach(b=>b.onclick=()=>{
+      const s=selected.find(x=>x.name===b.closest('.symint').dataset.sym);
+      if(s)s.intensity=+b.dataset.int;
+      const previous=q;refresh();const newSearch=container.querySelector(".nx-sym-search");if(newSearch){newSearch.value=previous;newSearch.dispatchEvent(new Event('input'));newSearch.focus();}
+    });
+  };
   container.querySelectorAll(".symcat-toggle").forEach(btn=>{
     btn.onclick = () => { const k=btn.dataset.key; state._symPickerOpen[k]=!state._symPickerOpen[k]; refresh(); };
   });
@@ -6683,7 +6969,7 @@ function allocationOverdrawsDose(plannedMg, neededMg) {
   // + 1e-9: 0.17 - 0.12 is 0.05000000000000002 in floating point, which must still count as "exactly the allowance".
   return plannedMg - neededMg > Math.max(0.05, neededMg * 0.25) + 1e-9;
 }
-function drawFromVialModal(kit, vial, targetAmount, onComplete) {
+function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
   const c = cfg(kit.name);
   // Work entirely in the compound's own NATIVE unit throughout this function — targetAmount
   // and whatever the person types are already native-unit (matching every other input in
@@ -6711,9 +6997,24 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete) {
     </div>
     <div id="draw-step-2" style="display:none"></div>
   `, c.color);
-  m.querySelector("#x").onclick = closeModal;
+  // v0.8.0: Escape/backdrop must behave exactly like the Draw X-button.
+  // Do not reconcile or decrement inventory from these dismissal paths.
+  if (modalEl) modalEl._nexusOnUserDismiss = () => {
+    if (typeof onCancel === "function") onCancel();
+  };
+  m.querySelector("#x").onclick = () => {
+    closeModal();
+    // A canceled draw must return to the unfinished dose/prepare entry.
+    // Do not reconcile inventory or mark the source row completed.
+    if (typeof onCancel === "function") onCancel();
+  };
   m.querySelector("#draw-confirm").onclick = () => {
-    const actual = parseFloat(m.querySelector("#draw-actual").value)||0;
+    const rawActual = m.querySelector("#draw-actual").value.trim();
+    const actual = Number(rawActual);
+    if (!rawActual || !Number.isFinite(actual) || actual < 0) {
+      showErrorBanner("Enter a valid non-negative amount actually drawn before continuing.");
+      return;
+    }
     // This field is in the compound's own unit (mg, mcg…), NOT pen or syringe units. A number from a
     // pen's dial — "39 units left" — typed here used to read as "more than the vial holds", which
     // emptied the vial and locked the row to the whole thing. Refuse it instead.
@@ -6851,6 +7152,7 @@ function doseModal(name, existing, occTime) {
 
   const m = openModal(`
     <div class="nx-dose-form">
+    <div class="nx-dose-scroll">
     <div class="nx-dose-head">
       <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
       <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
@@ -6860,7 +7162,16 @@ function doseModal(name, existing, occTime) {
     ${!isEdit&&recent.length?`<div class="hint" style="margin-bottom:12px">Recent sites: ${recent.map(esc).join(" → ")} · suggested next: ${esc(suggestedSite)}</div>`:""}
     <section class="nx-dose-section" aria-label="Dose source">
       <div class="nx-dose-section-title">Dose source</div>
-      <p class="nx-dose-section-desc">Select the prepared dose or vial used for this entry.</p>
+      <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Select the prepared dose or vial used for this entry."}</p>
+    ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
+      <span class="nx-dose-source-dot" aria-hidden="true"></span>
+      <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
+        ? "No open vial linked. Logging this dose will not deduct inventory."
+        : eligibleSources.length===1
+          ? `Open ${esc(eligibleSources[0].kit.vialMg||"?")}${esc(c.unit)} vial · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)}${esc(c.unit)} remaining`
+          : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
+    </div>` : ""}
+    ${isEdit ? `<div class="nx-dose-source-readout"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>Existing dose record</strong><small>Original source information stays linked to this dose.</small></div></div>` : ""}
     ${preparedBatches.length?`<div id="source-picker" style="margin-bottom:14px">
       <label class="field-label">SOURCE</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
@@ -6897,19 +7208,24 @@ function doseModal(name, existing, occTime) {
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
     </section>
-    <section class="nx-dose-section" aria-label="Observations">
-      <div class="nx-dose-section-title">Observations</div>
-      <p class="nx-dose-section-desc">Optional symptoms and notes associated with this entry.</p>
+    <details class="nx-dose-section nx-dose-optional" aria-label="Observations"${isEdit ? " open" : ""}>
+      <summary>Observations <span style="font-size:11px;color:var(--t3);font-weight:500;margin-left:auto">Optional</span></summary>
+      <div class="nx-dose-optional-body">
+      <p class="nx-dose-section-desc">Symptoms and notes associated with this entry.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(f.notes||"")}</textarea>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:13px;color:var(--t3)"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> This dose is an escalation</label>
-    </section>
+      </div>
+    </details>
+    </div><!-- scrollable dose form -->
     <div class="nx-dose-footer">
       <div class="nx-dose-review-note">Confirm the date, recorded amount, units and source before saving.</div>
       <button id="save" class="btn-primary" style="background:${c.color}">${isEdit?"SAVE CHANGES":"CONFIRM LOG"}</button>
     </div>
     </div>
   `, c.color);
+  // Apply the existing responsive/accessible dose modal rules to EVERY normal entry.
+  m.classList.add("nx2-dose-modal");
   m.querySelector("#x").onclick = closeModal;
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
   m.querySelectorAll(".src-opt").forEach(b=>b.onclick=()=>{
@@ -6970,10 +7286,17 @@ function doseModal(name, existing, occTime) {
     const fmt = (mg) => mgToUnit(mg, c.unit).toFixed(2);
 
     panel.innerHTML = `
-      <div style="background:${shortBy>0.001?"#F9C87D11":"var(--surface-2)"};border:1px solid ${shortBy>0.001?"#F9C87D33":"var(--border-sub)"};border-radius:10px;padding:12px 14px">
-        ${shortBy>0.001?`<div style="font-size:12px;font-weight:600;color:#F9C87D;margin-bottom:2px">Not enough in current vial</div>
-        <div style="font-size:11px;color:var(--t4);margin-bottom:10px">Dose needed: ${fmt(neededMg)}${c.unit} · Current vial: ${fmt(akRemaining)}${c.unit} · Remaining needed: ${fmt(shortBy)}${c.unit}</div>`
+      <div class="nx-allocation-card" style="background:${shortBy>0.001?"#F9C87D11":"var(--surface-2)"};border:1px solid ${shortBy>0.001?"#F9C87D33":"var(--border-sub)"};border-radius:10px;padding:12px 14px">
+        ${shortBy>0.001?`<div class="nx-shortfall-eyebrow">Inventory resolution</div><div class="nx-allocation-heading" role="status">Not enough in current vial</div><p class="nx-shortfall-intro">Review your dose allocation below. You can use another available vial or open a sealed vial without losing this entry.</p>
+        <div class="nx-allocation-summary" aria-label="Vial availability">
+          <div class="nx-allocation-metric"><small>Dose needed</small><strong>${fmt(neededMg)} ${c.unit}</strong></div>
+          <div class="nx-allocation-metric"><small>Open vial</small><strong>${fmt(akRemaining)} ${c.unit}</strong></div>
+          <div class="nx-allocation-metric"><small>Short by</small><strong style="color:#F9C87D">${fmt(shortBy)} ${c.unit}</strong></div>
+        </div>`
         : `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Sources for this dose</div>`}
+        <div class="nx-shortfall-step">Step 1 · Allocate the dose</div>
+        <div class="nx-shortfall-progress" role="progressbar" aria-label="Dose amount allocated" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0)))}"><div style="width:${Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0))}%"></div></div>
+        <div class="nx-shortfall-status" aria-live="polite">${remaining>0.01?`${fmt(remaining)} ${c.unit} still needs a source.`:remaining < -0.01?`Allocation exceeds the requested dose by ${fmt(Math.abs(remaining))} ${c.unit}.`:`✓ Allocation matches the requested dose.`}</div>
         <div id="alloc-rows">
           ${rows.map((r,i)=>{
             const kit = state.supplies.find(s=>s.id===r.kitId);
@@ -6981,7 +7304,7 @@ function doseModal(name, existing, occTime) {
             const kitFinished = kit && !kit.activeKit && !!r.finished;
             const kitLabel = kit ? (kitFinished?"Finished vial":kit.activeKit?"Current vial":kit.reconDate?"Open vial":"Vial") : "Vial";
             const kitHasStock = kit && !kitFinished && getKitRemainingMg(kit)>0.001;
-            return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            return `<div class="nx-alloc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
@@ -6991,19 +7314,20 @@ function doseModal(name, existing, occTime) {
             </div>`;
           }).join("")}
         </div>
-        <div style="font-size:9px;color:var(--t5);margin-bottom:6px">"Draw" asks how much you actually got from that vial — if it's less than expected, Nexus asks what happened to the rest before marking it finished. The remainder of the dose comes from another vial, but it's still saved as ONE dose.</div>
+        <div class="nx-allocation-help">Use <strong>Draw</strong> to confirm what you actually obtained from each vial. If the draw is short, Nexus will ask you to reconcile the difference. Multiple sources still create <strong>one dose record</strong>.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">
           <span style="font-size:11px;color:var(--t4)">Total: <b style="color:${Math.abs(remaining)<0.01?"#7DF9C0":"var(--t2)"}">${fmt(totalAllocated)}${c.unit}</b> / ${fmt(neededMg)}${c.unit}</span>
           ${Math.abs(remaining)<0.01?`<span style="font-size:11px;color:#7DF9C0">✓ Matches dose</span>`:remaining>0?`<span style="font-size:11px;color:#F9C87D">${fmt(remaining)}${c.unit} still needed</span>`:`<span style="font-size:11px;color:#FF7C7C">${fmt(Math.abs(remaining))}${c.unit} over</span>`}
         </div>
+        ${remaining>0.01 ? `<div class="nx-shortfall-step">Step 2 · Resolve the remaining amount</div>` : ""}
         ${remaining>0.01 ? (
           otherKitsWithStock().filter(k=>!rows.some(r=>r.kitId===k.id)).length
-            ? `<button id="alloc-add-kit" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">+ Add another vial</button>`
+            ? `<button id="alloc-add-kit" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">+ Use another open vial</button>`
             : (totalCapacity + 0.01 < neededMg
                 ? `<div style="margin-top:10px;font-size:11px;color:#FF7C7C">Only ${fmt(totalCapacity)}${c.unit} total usable inventory exists for ${esc(name)} — open a new vial to cover the remaining ${fmt(neededMg-totalCapacity)}${c.unit}.</div>`
                 : "")
         ) : ""}
-        <button id="alloc-open-new" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">🧪 Open New Vial</button>
+        <button id="alloc-open-new" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">+ Open a sealed vial</button>
       </div>`;
 
     panel.querySelectorAll(".alloc-mg-input").forEach(inp=>inp.oninput=()=>{ rows[+inp.dataset.i].mg = doseToMg(inp.value, c.unit); debouncedRenderAllocPanel(); });
@@ -7027,7 +7351,7 @@ function doseModal(name, existing, occTime) {
         r.mg = actualMg; r.vialId = vial.id; r.finished = true;
         state._pendingDoseDraft.rows = rows.map(r2=>({...r2}));
         doseModal(name);
-      });
+      }, () => doseModal(name));
     });
     const addKitBtn = panel.querySelector("#alloc-add-kit");
     if (addKitBtn) addKitBtn.onclick = () => {
@@ -7141,7 +7465,6 @@ function doseModal(name, existing, occTime) {
       const plannedMg = plan.reduce((a,st)=>a+st.mg,0);
       if (rows.length && allocationOverdrawsDose(plannedMg, neededMg)) {
         showErrorBanner(`These sources take ${mgToUnit(plannedMg, c.unit)}${c.unit} out of your vial, but this dose is only ${doseAmtStr}${c.unit} — nothing was saved. Change the amount on the source row so it matches the dose. (Recording a loss? Use Log Outflow.)`);
-  m?.classList?.add("nx2-dose-modal");
         return;
       }
       const realAllocations = [];
@@ -7757,7 +8080,7 @@ function prepareDosesModal(name) {
         r.mg = actualMg; r.vialId = vial.id; r.finished = true;
         state._pendingPrepareDraft.rows = rows.map(r2=>({...r2}));
         prepareDosesModal(name);
-      });
+      }, () => prepareDosesModal(name));
     });
     const addKitBtn = panel.querySelector("#palloc-add-kit");
     if (addKitBtn) addKitBtn.onclick = () => {
@@ -8076,6 +8399,20 @@ function quickLogDose(name, occTime) {
   });
 }
 
+
+/* v0.7.4 check-in sheet: move existing action buttons, not clones, so
+   previously registered listeners / selectors / data semantics stay intact. */
+function nexusConfigureCheckinSheet(modal, actionIds) {
+  if(!modal || !modal.classList.contains('nx-structured')) return;
+  modal.classList.add('nx-checkin-sheet');
+  const body=modal.querySelector(':scope > .nx-unified-body');
+  if(!body) return;
+  let footer=modal.querySelector(':scope > .nx-unified-footer');
+  if(!footer){ footer=document.createElement('div');footer.className='nx-unified-footer';modal.appendChild(footer); }
+  actionIds.forEach(id=>{const btn=modal.querySelector('#'+id); if(btn && !footer.contains(btn))footer.appendChild(btn);});
+  if(!footer.children.length)footer.remove();
+}
+
 // ─── Daily check-in modal ────────────────────────────────────────────────────
 function todayLogSheet(log) {
   const mood = MOODS.find(m=>m.v===log.mood);
@@ -8117,6 +8454,7 @@ function todayLogSheet(log) {
 
     <button id="editlog" style="width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--t4);font-size:12px">Edit primary check-in</button>
   `, "#A78BFA");
+  nexusConfigureCheckinSheet(m, ["addupdate","editlog"]);
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#addupdate").onclick = () => { closeModal(); addUpdateModal(log); };
   m.querySelector("#editlog").onclick  = () => { closeModal(); dailyModal(log); };
@@ -8145,12 +8483,12 @@ function addUpdateModal(log) {
     <div style="font-size:12px;color:var(--t4);margin-bottom:16px">Adding to today's check-in · captures a specific moment</div>
     <label class="field-label">TIME</label>
     <input id="utime" type="time" class="inp" value="${timeStr}" style="margin-bottom:14px">
-    <label class="field-label">SYMPTOMS RIGHT NOW</label>
-    <div id="sym" style="margin-bottom:14px"></div>
+    <details class="nx-checkin-symptoms" open><summary><span>Symptoms right now · Optional</span></summary><div id="sym"></div></details>
     <label class="field-label">NOTE</label>
     <textarea id="notes" class="inp" placeholder="e.g. nausea started after dinner, appetite spiked…" style="min-height:50px;resize:vertical;margin-bottom:18px"></textarea>
     <button id="save" class="btn-primary" style="background:#A78BFA">SAVE UPDATE</button>
   `, "#A78BFA");
+  nexusConfigureCheckinSheet(m, ["save"]);
   m.querySelector("#x").onclick = closeModal;
   const sym=m.querySelector("#sym"); sym.innerHTML=symptomPickerHTML(f.symptoms,"#A78BFA"); wireSymptomPicker(sym,f.symptoms,"#A78BFA");
   m.querySelector("#save").onclick = () => {
@@ -8174,10 +8512,11 @@ function editUpdateModal(log, update) {
     </div>
     <div style="font-size:11px;color:var(--t4);margin-bottom:12px">Update time</div>
     <input type="time" id="utime" class="inp" value="${timeStr}" style="width:100%;margin-bottom:14px">
-    <div id="sym" style="margin-bottom:10px"></div>
+    <details class="nx-checkin-symptoms" open><summary><span>Symptoms · Optional</span></summary><div id="sym"></div></details>
     <textarea id="notes" class="inp" placeholder="Notes…" style="min-height:50px;resize:vertical;margin-bottom:18px">${esc(update.notes||"")}</textarea>
     <button id="save" class="btn-primary" style="background:#A78BFA">SAVE CHANGES</button>
   `,"#A78BFA");
+  nexusConfigureCheckinSheet(m, ["save"]);
   m.querySelector("#x").onclick=closeModal;
   const sym=m.querySelector("#sym"); sym.innerHTML=symptomPickerHTML(syms,"#A78BFA"); wireSymptomPicker(sym,syms,"#A78BFA");
   m.querySelector("#save").onclick=()=>{
@@ -8212,7 +8551,7 @@ function dailyModal(existing, prefillDate) {
       ${MOODS.map(mo=>`<button data-v="${mo.v}" class="moodbtn" style="flex:1;padding:9px 0;border-radius:10px;background:${f.mood===mo.v?mo.color+"22":"transparent"};border:1px solid ${f.mood===mo.v?mo.color:"var(--border)"};display:flex;flex-direction:column;align-items:center;gap:3px">
         <span style="font-size:20px">${mo.emoji}</span><span style="font-size:8.5px;color:${f.mood===mo.v?mo.color:"#666"}">${mo.label}</span></button>`).join("")}
     </div>
-    <label class="field-label">HOW ARE SYMPTOMS TODAY?</label><div id="sym" style="margin-bottom:14px"></div>
+    <details class="nx-checkin-symptoms" ${f.symptoms.length?"open":""}><summary><span>Symptoms <span id="nx-sym-count" style="color:var(--t4);font-weight:400">${f.symptoms.length?`· ${f.symptoms.length} selected`:"· Optional"}</span></span></summary><div id="sym"></div></details>
     <div id="compound-tag-section"></div>
     <div id="compound-notes-section"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
@@ -8223,8 +8562,9 @@ function dailyModal(existing, prefillDate) {
     </div>`:""}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
+  nexusConfigureCheckinSheet(m, ["save"]);
   m.querySelector("#x").onclick = closeModal;
-  const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, color); wireSymptomPicker(sym, f.symptoms, color, ()=>renderCompoundSections());
+  const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, color); wireSymptomPicker(sym, f.symptoms, color, ()=>{renderCompoundSections(); const c=m.querySelector("#nx-sym-count");if(c)c.textContent=f.symptoms.length?`· ${f.symptoms.length} selected`:"· Optional";});
   m.querySelectorAll(".moodbtn").forEach(b => b.onclick = () => {
     f.mood = +b.dataset.v; color = MOODS.find(x=>x.v===f.mood).color;
     m.querySelectorAll(".moodbtn").forEach(bb => { const mo=MOODS.find(x=>x.v==bb.dataset.v); const on=+bb.dataset.v===f.mood; bb.style.background=on?mo.color+"22":"transparent"; bb.style.border=`1px solid ${on?mo.color:"var(--border)"}`; bb.lastElementChild.style.color=on?mo.color:"#666"; });
@@ -8240,50 +8580,55 @@ function dailyModal(existing, prefillDate) {
   const allCompounds = [...new Set([..._activeProtoNames,..._dosedNames])].filter(Boolean).sort();
   const tagOptions=["Not sure","General",...allCompounds];
 
+  // Compact tagging editor: only one symptom expands at a time.
+  // The existing symptomTags/compoundNotes objects remain the source of truth.
+  let nxActiveSymptom = null;
+  let nxNotesOpen = false;
   function renderCompoundSections(){
-    // Compound symptom tagging — only show if symptoms selected
     const tagSection=m.querySelector("#compound-tag-section");
     const notesSection=m.querySelector("#compound-notes-section");
     if(!tagSection||!notesSection) return;
-    if(f.symptoms.length===0){tagSection.innerHTML="";notesSection.innerHTML="";return;}
-    // Symptom tagging
-    tagSection.innerHTML=`<label class="field-label" style="margin-top:4px">LINK SYMPTOMS TO COMPOUNDS</label>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px">
-        ${f.symptoms.map(s=>{
-          const tags=f.symptomTags[s.name]||[];
-          return `<div style="padding:8px 10px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:9px">
-            <div style="font-size:12px;color:var(--t2);margin-bottom:6px">${esc(s.name)}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px">
-              ${tagOptions.map(c=>{
-                const on=tags.includes(c);
-                return `<button class="tag-pill" data-sym="${esc(s.name)}" data-compound="${esc(c)}"
-                  style="padding:3px 9px;border-radius:99px;font-size:10px;font-weight:600;
-                  background:${on?"#A78BFA22":"transparent"};border:1px solid ${on?"#A78BFA":"var(--border-sub)"};color:${on?"#A78BFA":"var(--t5)"}">${esc(c)}</button>`;
-              }).join("")}
-            </div>
-          </div>`;
-        }).join("")}
-      </div>`;
-    // Compound-specific notes — show for compounds that are tagged
-    const taggedCompounds=[...new Set(Object.values(f.symptomTags).flat().filter(c=>c!=="Not sure"&&c!=="General"))];
-    if(taggedCompounds.length){
-      notesSection.innerHTML=`<label class="field-label">COMPOUND NOTES <span style="color:var(--t4);font-weight:400">(optional)</span></label>
-        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-          ${taggedCompounds.map(c=>`<div style="display:flex;flex-direction:column;gap:4px">
-            <span style="font-size:10px;color:var(--t4);letter-spacing:0.5px">${esc(c)}</span>
-            <textarea class="inp compound-note" data-compound="${esc(c)}" placeholder="Notes for ${esc(c)}…" style="min-height:44px;resize:vertical;font-size:12px">${esc(f.compoundNotes[c]||"")}</textarea>
-          </div>`).join("")}
+    const selectedNames=new Set(f.symptoms.map(s=>s.name));
+    if(nxActiveSymptom&&!selectedNames.has(nxActiveSymptom)) nxActiveSymptom=null;
+    if(!f.symptoms.length){tagSection.innerHTML="";notesSection.innerHTML="";return;}
+    const tagSummary = tags => tags.length ? tags.join(", ") : "Not linked";
+    tagSection.innerHTML=`<section class="nx-compact-tagging" aria-label="Link symptoms to compounds">
+      <div class="nx-compact-tagging-head"><strong>COMPOUND LINKS</strong><span>Optional · ${f.symptoms.length} symptoms</span></div>
+      <p class="nx-compact-tagging-hint">Select a symptom to manage its compound links.</p>
+      <div class="nx-compact-tagging-list">${f.symptoms.map(s=>{
+        const tags=f.symptomTags[s.name]||[];
+        const open=nxActiveSymptom===s.name;
+        return `<div class="nx-compact-tagging-item">
+          <button type="button" class="nx-tag-sym-row" data-sym="${esc(s.name)}" aria-expanded="${open}" aria-label="${esc(s.name)}: ${esc(tagSummary(tags))}">
+            <span class="nx-tag-sym-main"><strong>${esc(s.name)}</strong><small>${esc(tagSummary(tags))}</small></span><span aria-hidden="true">${open?'⌃':'⌄'}</span>
+          </button>
+          ${open?`<div class="nx-tag-options" aria-label="Compounds for ${esc(s.name)}">
+            ${tagOptions.map(c=>{const on=tags.includes(c);return `<button type="button" class="tag-pill" data-sym="${esc(s.name)}" data-compound="${esc(c)}" aria-pressed="${on}" style="background:${on?'#A78BFA22':'transparent'};border-color:${on?'#A78BFA':'var(--border-sub)'};color:${on?'#A78BFA':'var(--t2)'}">${esc(c)}</button>`}).join("")}
+          </div>`:""}
         </div>`;
-    } else { notesSection.innerHTML=""; }
-    // Wire tag pills
-    tagSection.querySelectorAll(".tag-pill").forEach(btn=>btn.onclick=()=>{
-      const sym=btn.dataset.sym, cmp=btn.dataset.compound;
-      if(!f.symptomTags[sym]) f.symptomTags[sym]=[];
-      const idx=f.symptomTags[sym].indexOf(cmp);
-      if(idx>=0) f.symptomTags[sym].splice(idx,1); else f.symptomTags[sym].push(cmp);
+      }).join("")}</div></section>`;
+    const visibleLinks = [...new Set(f.symptoms.flatMap(s=>f.symptomTags[s.name]||[]).filter(c=>c!=="Not sure"&&c!=="General"))];
+    // Preserve pre-existing compound notes for editing, but only show notes for
+    // relevant compounds. Unsaved note text lives in f.compoundNotes on input.
+    const noteCompounds=[...new Set([...visibleLinks,...Object.keys(f.compoundNotes).filter(c=>(f.compoundNotes[c]||"").trim())])];
+    notesSection.innerHTML=noteCompounds.length?`<section class="nx-compact-tagging nx-compound-notes">
+      <button type="button" class="nx-notes-toggle" id="nx-toggle-compound-notes" aria-expanded="${nxNotesOpen}">
+        <span><strong>COMPOUND NOTES</strong><small>${noteCompounds.length} compound${noteCompounds.length===1?'':'s'} · Optional</small></span><span aria-hidden="true">${nxNotesOpen?'⌃':'⌄'}</span>
+      </button>${nxNotesOpen?`<div class="nx-note-list">${noteCompounds.map(c=>`<label class="nx-note-label">${esc(c)}<textarea class="inp compound-note" data-compound="${esc(c)}" placeholder="Notes for ${esc(c)}…" rows="2">${esc(f.compoundNotes[c]||"")}</textarea></label>`).join("")}</div>`:""}
+    </section>`:"";
+    tagSection.querySelectorAll(".nx-tag-sym-row").forEach(btn=>btn.onclick=()=>{
+      nxActiveSymptom=nxActiveSymptom===btn.dataset.sym?null:btn.dataset.sym;
       renderCompoundSections();
     });
-    // Wire compound note textareas
+    tagSection.querySelectorAll(".tag-pill").forEach(btn=>btn.onclick=()=>{
+      const sym=btn.dataset.sym,cmp=btn.dataset.compound;
+      if(!f.symptomTags[sym]) f.symptomTags[sym]=[];
+      const index=f.symptomTags[sym].indexOf(cmp);
+      if(index>=0)f.symptomTags[sym].splice(index,1);else f.symptomTags[sym].push(cmp);
+      renderCompoundSections();
+    });
+    const notesToggle=notesSection.querySelector("#nx-toggle-compound-notes");
+    if(notesToggle)notesToggle.onclick=()=>{nxNotesOpen=!nxNotesOpen;renderCompoundSections();};
     notesSection.querySelectorAll(".compound-note").forEach(ta=>ta.oninput=()=>{f.compoundNotes[ta.dataset.compound]=ta.value;});
   }
   renderCompoundSections();
