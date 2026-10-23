@@ -2146,24 +2146,20 @@ function symptomPickerHTML(selected, color) {
   const selectedNames=selected.map(s=>s.name);
   const recentList=[...new Set([...selectedNames,...recentSyms.slice(0,8)])];
   const allEntries=[...new Set([...Object.values(SYMPTOM_GROUPS).flat(),...customSyms.map(c=>c.name),...compoundGroups.flatMap(g=>g.symptoms),...selectedNames])];
+  const selectedRowHTML = selected.map(item => {
+    const level=Math.max(1,Math.min(3,+item.intensity||2));
+    return `<div class="nx-sym-selected-item" style="padding:10px 0;border-bottom:1px solid var(--border-sub)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><strong style="font-size:13px;color:var(--t1)">${esc(item.name)}</strong><button type="button" class="nx-sym-remove" data-sym="${esc(item.name)}" aria-label="Remove ${esc(item.name)}" style="min-width:44px;min-height:44px;color:var(--t2)">×</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:12px;color:var(--t3)">Intensity</span><div class="symint nx-sym-int" data-sym="${esc(item.name)}" role="group" aria-label="${esc(item.name)} intensity">${[1,2,3].map(i=>`<button type="button" data-int="${i}" class="nx-sym-level ${level===i?"is-active":""}" aria-label="${esc(item.name)} intensity ${i} of 3" aria-pressed="${level===i}">${i}</button>`).join("")}</div></div>
+    </div>`;
+  }).join("");
   let html=`<div class="nx-sym-picker" aria-label="Symptom selector">
-    <div class="nx-sym-tabs" role="group" aria-label="Browse symptoms">
-      ${[["recent","Recent"],["all","All"],["compound","Compound"]].map(([v,label])=>`<button type="button" class="nx-sym-tab" data-view="${v}" aria-pressed="${view===v}">${label}</button>`).join('')}
-    </div>
-    <div class="nx-sym-key">Intensity <span>1 Mild · 2 Moderate · 3 Severe</span></div>`;
-  if(view==="recent"){
-    html+=recentList.length?chipRow(recentList,null):`<p class="nx-sym-empty">No recently used symptoms. Choose All to browse.</p>`;
-  } else if(view==="compound"){
-    html+=compoundGroups.length?compoundGroups.map(g=>renderGroup("cmp_"+g.label,g.label+" — specific",g.symptoms,g.color)).join(''):`<p class="nx-sym-empty">No active compounds with suggested symptoms. Browse All.</p>`;
-  } else {
-    html+=`<label class="nx-sym-search-label">Search symptoms<input type="search" class="nx-sym-search inp" placeholder="Search symptoms…" autocomplete="off" aria-label="Search symptoms"></label>`;
-    html+=`<div class="nx-sym-search-results" hidden></div>`;
-    html+=Object.entries(SYMPTOM_GROUPS).map(([group,syms])=>renderGroup("grp_"+group,group,syms,group==="⚠ Red Flag Reaction"?"#FF7C7C":null)).join('');
-    if(customSyms.length)html+=renderGroup("custom","Custom",customSyms.map(c=>c.name),"#C9A0FF");
-    // All available symptoms power the search without affecting persisted state.
-    html+=`<template class="nx-sym-search-data">${esc(JSON.stringify(allEntries))}</template>`;
-  }
-  html+=`</div>`;
+    <label class="nx-sym-search-label">Search symptoms<input type="search" class="nx-sym-search inp" placeholder="Search symptoms…" autocomplete="off" aria-label="Search symptoms"></label>
+    <button type="button" class="nx-sym-browse-toggle" aria-expanded="${!!state._symPickerBrowseOpen}" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);font-size:13px;text-align:left"><span>Browse all symptoms</span><span aria-hidden="true" style="font-size:22px">⌄</span></button>
+    <div class="nx-sym-search-results" hidden style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border-sub);border-radius:11px;margin:8px 0"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-top:14px">Selected symptoms (${selected.length})</div>
+    <div class="nx-sym-selected-list">${selectedRowHTML||`<p class="nx-sym-empty">No symptoms selected</p>`}</div>
+    <template class="nx-sym-search-data">${esc(JSON.stringify(allEntries))}</template>`;  html+=`</div>`;
   // Red flag warning if any red flag symptom is selected
   const hasRedFlag = selected.some(s=>RED_FLAG_SYMPTOMS.has(s.name));
   if(hasRedFlag) html = `<div style="background:#FF7C7C18;border:1px solid #FF7C7C55;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:11px;color:#FF7C7C;line-height:1.6">⚠️ Some reaction symptoms can be serious. Consider urgent medical advice if symptoms are severe, spreading, or involve breathing, swelling, fever, or faintness.</div>` + html;
@@ -2171,39 +2167,23 @@ function symptomPickerHTML(selected, color) {
   return html;
 }
 function wireSymptomPicker(container, selected, color, onUpdate) {
-  container.querySelectorAll(".nx-sym-tab").forEach(btn=>btn.onclick=()=>{
-    state._symPickerView=btn.dataset.view;
-    refresh();
-  });
   const search=container.querySelector(".nx-sym-search");
-  if(search)search.oninput=()=>{
-    const q=search.value.trim().toLocaleLowerCase();
-    const groups=[...container.querySelectorAll(".symcat-toggle")].map(btn=>btn.parentElement);
-    const results=container.querySelector(".nx-sym-search-results");
-    groups.forEach(el=>el.hidden=!!q);
-    if(!q){results.hidden=true;results.innerHTML="";return;}
-    const source=container.querySelector(".nx-sym-search-data");
-    let names=[];
-    try{names=JSON.parse(source.textContent)}catch(e){}
-    const matches=names.filter(n=>n.toLocaleLowerCase().includes(q)).slice(0,35);
-    results.hidden=false;
-    results.innerHTML=matches.length?`<div class="nx-sym-list">${matches.map(n=>{
-      const item=selected.find(s=>s.name===n);
-      const level=item?Math.max(1,Math.min(3,+item.intensity||2)):0;
-      return `<div class="nx-sym-row"><button type="button" class="symbtn nx-sym-name" data-sym="${esc(n)}" aria-pressed="${!!item}"><span class="nx-sym-check">${item?'✓':'+'}</span><span>${esc(n)}</span></button>${item?`<div class="symint nx-sym-int" data-sym="${esc(n)}">${[1,2,3].map(i=>`<button type="button" data-int="${i}" class="nx-sym-level ${level===i?'is-active':''}" aria-label="${esc(n)} intensity ${i} of 3" aria-pressed="${level===i}">${i}</button>`).join('')}</div>`:''}</div>`;
-    }).join('')}</div>`:`<p class="nx-sym-empty">No matching symptoms.</p>`;
-    // These results are transient: re-bind the same selected array and handlers.
-    results.querySelectorAll(".symbtn").forEach(b=>b.onclick=()=>{
-      const i=selected.findIndex(x=>x.name===b.dataset.sym);
-      if(i>=0)selected.splice(i,1);else selected.push({name:b.dataset.sym,intensity:2});
-      const previous=q;refresh();const newSearch=container.querySelector(".nx-sym-search");if(newSearch){newSearch.value=previous;newSearch.dispatchEvent(new Event('input'));newSearch.focus();}
-    });
-    results.querySelectorAll(".symint button").forEach(b=>b.onclick=()=>{
-      const s=selected.find(x=>x.name===b.closest('.symint').dataset.sym);
-      if(s)s.intensity=+b.dataset.int;
-      const previous=q;refresh();const newSearch=container.querySelector(".nx-sym-search");if(newSearch){newSearch.value=previous;newSearch.dispatchEvent(new Event('input'));newSearch.focus();}
-    });
+  const toggle=container.querySelector(".nx-sym-browse-toggle");
+  const results=container.querySelector(".nx-sym-search-results");
+  const source=container.querySelector(".nx-sym-search-data");
+  let names=[];try{names=JSON.parse(source.textContent)}catch(e){}
+  const draw=()=>{
+    const query=search.value.trim().toLocaleLowerCase();
+    const visible=!!state._symPickerBrowseOpen||!!query;
+    results.hidden=!visible;results.style.display=visible?"block":"none";toggle.setAttribute("aria-expanded",String(visible));
+    const matches=names.filter(n=>n.toLocaleLowerCase().includes(query));
+    results.innerHTML=matches.length?matches.map(n=>`<button type="button" class="nx-sym-add" data-sym="${esc(n)}" aria-pressed="${selected.some(x=>x.name===n)}" style="width:100%;min-height:44px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;text-align:left;border-bottom:1px solid var(--border-sub);color:var(--t1);font-size:13px"><span>${esc(n)}</span><span aria-hidden="true">${selected.some(x=>x.name===n)?"✓":"+"}</span></button>`).join(""):`<p class="nx-sym-empty">No matching symptoms</p>`;
+    results.querySelectorAll(".nx-sym-add").forEach(btn=>btn.onclick=()=>{const idx=selected.findIndex(x=>x.name===btn.dataset.sym);if(idx>=0)selected.splice(idx,1);else selected.push({name:btn.dataset.sym,intensity:2});refresh(search.value);});
   };
+  toggle.onclick=()=>{state._symPickerBrowseOpen=!state._symPickerBrowseOpen;draw();};
+  search.oninput=()=>{state._symPickerBrowseOpen=true;draw();};
+  container.querySelectorAll(".nx-sym-remove").forEach(btn=>btn.onclick=()=>{const idx=selected.findIndex(x=>x.name===btn.dataset.sym);if(idx>=0)selected.splice(idx,1);refresh(search.value);});
+  draw();
   container.querySelectorAll(".symcat-toggle").forEach(btn=>{
     btn.onclick = () => { const k=btn.dataset.key; state._symPickerOpen[k]=!state._symPickerOpen[k]; refresh(); };
   });
@@ -2251,7 +2231,7 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
     };
     form.querySelector("#cs-name-inline").focus();
   };
-  function refresh() { container.innerHTML = symptomPickerHTML(selected, color); wireSymptomPicker(container, selected, color, onUpdate); if(onUpdate) onUpdate(); }
+  function refresh(query="") { container.innerHTML = symptomPickerHTML(selected, color); wireSymptomPicker(container, selected, color, onUpdate); const input=container.querySelector(".nx-sym-search");if(input&&query){input.value=query;input.dispatchEvent(new Event("input"));} if(onUpdate) onUpdate(); }
 }
 
 // ─── Dose modal ───────────────────────────────────────────────────────────────
