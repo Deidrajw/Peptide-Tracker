@@ -2076,7 +2076,14 @@ function dailyModal(existing, prefillDate) {
     };
   });
   m.querySelector("#save").onclick = () => {
-    f.date=m.querySelector("#date").value; f.notes=m.querySelector("#notes").value;
+    const chosenDate=m.querySelector("#date").value;
+    if(!chosenDate || Number.isNaN(new Date(chosenDate+"T12:00:00").getTime())) {
+      alert("Choose a valid check-in date before saving."); return;
+    }
+    if(state.dailyLogs.some(x=>x.id!==f.id && dayKey(x.date)===chosenDate)) {
+      alert("A check-in already exists on this date. Open it to edit instead."); return;
+    }
+    f.date=chosenDate; f.notes=m.querySelector("#notes").value;
     f.symptomTags = f.symptomTags||{}; f.compoundNotes = f.compoundNotes||{};
     state.dailyLogs = state.dailyLogs.filter(x=>x.id!==f.id); state.dailyLogs.push(f);
     // Also save supplement selection if any chips were shown
