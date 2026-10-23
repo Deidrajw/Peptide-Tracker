@@ -68,7 +68,7 @@ try {
         // implies WCAG AA. Transparent backgrounds are not accepted for this CTA check.
         const contrastCheck = await page.evaluate(()=>{
           const c = value => {
-            const vals=String(value).match(/[\\d.]+/g)?.slice(0,3).map(Number)||[];
+            const vals=String(value).match(/[0-9.]+/g)?.slice(0,3).map(Number)||[];
             return vals.length===3?vals:null;
           };
           const l = v => v.map(n=>{const x=n/255;return x<=0.04045?x/12.92:Math.pow((x+0.055)/1.055,2.4);}).reduce((a,x,i)=>a+x*[0.2126,0.7152,0.0722][i],0);
@@ -83,7 +83,7 @@ try {
         if(await customTrigger.count()){
           await customTrigger.click();
           const addContrast=await page.locator('.modal #cs-save').evaluate(el=>{
-            const nums=s=>String(s).match(/[\\d.]+/g).slice(0,3).map(Number);
+            const nums=s=>String(s).match(/[0-9.]+/g).slice(0,3).map(Number);
             const lum=col=>nums(col).map(v=>{v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4)}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
             const s=getComputedStyle(el),a=lum(s.color),b=lum(s.backgroundColor);
             return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
@@ -97,7 +97,7 @@ try {
           if(await ring.count()){
             await ring.focus();
             const focus=await ring.evaluate(el=>({color:getComputedStyle(el).outlineColor,style:getComputedStyle(el).outlineStyle,width:getComputedStyle(el).outlineWidth}));
-            if(focus.style==='none'||parseFloat(focus.width)<2||!/rgb\\(91, 63, 168\\)/.test(focus.color))throw Error('Light-mode accessible focus outline missing: '+JSON.stringify(focus));
+            if(focus.style==='none'||parseFloat(focus.width)<2||!focus.color.includes('91, 63, 168'))throw Error('Light-mode accessible focus outline missing: '+JSON.stringify(focus));
           }
         }
         const modalMetrics = await page.locator('.modal').evaluate(el=>({w:el.getBoundingClientRect().width,sw:el.scrollWidth,cw:el.clientWidth}));
