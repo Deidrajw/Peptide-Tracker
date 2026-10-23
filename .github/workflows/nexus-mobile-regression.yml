@@ -48,6 +48,25 @@ jobs:
                 if(style.display==='none'||style.visibility==='hidden'||style.w<40||style.h<40)throw Error('Continue button invisible at '+width);
               }
               await page.evaluate(()=>closeModal());
+              // Calendar navigation regression: a fresh visit resets both subview and month.
+              await page.locator('[data-tab="calendar"]').last().click();
+              await page.waitForTimeout(100);
+              let calState=await page.evaluate(()=>({sub:state._protoCalSub||'month',off:state._calOff||0,monthButton:!!document.querySelector('#pcal-month')}));
+              if(calState.sub!=='month'||calState.off!==0||!calState.monthButton) throw Error('Calendar did not open on current month: '+JSON.stringify(calState));
+              await page.locator('#pcal-logs').click();
+              if((await page.evaluate(()=>state._protoCalSub))!=='logs')throw Error('Logs tab failed to open');
+              await page.locator('[data-tab="home"]').last().click();
+              await page.locator('[data-tab="calendar"]').last().click();
+              calState=await page.evaluate(()=>({sub:state._protoCalSub,off:state._calOff||0}));
+              if(calState.sub!=='month'||calState.off!==0)throw Error('Calendar retained Logs across navigation: '+JSON.stringify(calState));
+              await page.locator('#cal-prev').click();
+              await page.locator('#cal-prev').click();
+              if((await page.evaluate(()=>state._calOff))!==-2)throw Error('Previous month control failed');
+              await page.locator('[data-tab="home"]').last().click();
+              await page.locator('[data-tab="calendar"]').last().click();
+              calState=await page.evaluate(()=>({sub:state._protoCalSub,off:state._calOff||0}));
+              if(calState.sub!=='month'||calState.off!==0)throw Error('Calendar retained old month: '+JSON.stringify(calState));
+              console.log('Calendar reset passed at',width);
               if(errors.length)throw Error('Page errors '+width+': '+errors.join(' | '));
               await page.close();
             }
