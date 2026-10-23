@@ -2066,6 +2066,22 @@ function dailyModal(existing, prefillDate) {
   const suppDate2 = f.date || localDate();
   const existingSupp2 = state.supplementLogs.find(l=>dayKey(l.date)===suppDate2);
   const suppTaken2 = new Set(existingSupp2?.taken||[]);
+  let suppSelectionTouched = false;
+  const suppDateInput=m.querySelector("#date");
+  if(suppDateInput) suppDateInput.addEventListener("change",()=>{
+    const targetDate=suppDateInput.value;
+    const targetLog=state.supplementLogs.find(l=>dayKey(l.date)===targetDate);
+    suppTaken2.clear();
+    (targetLog?.taken||[]).forEach(n=>suppTaken2.add(n));
+    suppSelectionTouched=false;
+    suppChips.forEach(b=>{
+      const on=suppTaken2.has(b.dataset.name);
+      b.style.background=on?"#C8FF9C22":"transparent";
+      b.style.borderColor=on?"#C8FF9C":"var(--border)";
+      b.style.color=on?"#C8FF9C":"var(--t4)";
+      b.setAttribute("aria-pressed",String(on));
+    });
+  });
   suppChips.forEach(b=>{
     const n=b.dataset.name;
     if(suppTaken2.has(n)){ b.style.background="#C8FF9C22"; b.style.borderColor="#C8FF9C"; b.style.color="#C8FF9C"; }
