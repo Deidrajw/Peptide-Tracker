@@ -2097,7 +2097,7 @@ function dailyModal(existing, prefillDate) {
     f.symptomTags = f.symptomTags||{}; f.compoundNotes = f.compoundNotes||{};
     state.dailyLogs = state.dailyLogs.filter(x=>x.id!==f.id); state.dailyLogs.push(f);
     // Also save supplement selection if any chips were shown
-    if(suppChips.length){
+    if(suppSearch && (suppSelectionTouched || !state.supplementLogs.some(l=>dayKey(l.date)===f.date))){
       state.supplementLogs=(state.supplementLogs||[]).filter(l=>dayKey(l.date)!==f.date);
       if(suppTaken2.size) state.supplementLogs.push({id:uid(),date:f.date,taken:[...suppTaken2]});
     }
