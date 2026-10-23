@@ -92,3 +92,13 @@ body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym
 .nx-sym-search-results[role="listbox"]{background:var(--surface);max-height:224px;overflow-y:auto;overscroll-behavior:contain}
 .nx-sym-search-results[role="listbox"][hidden]{display:none!important}
 .nx-sym-search-results .nx-sym-add:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
+
+/* v0.9.2 grouped symptoms: compact sections in a single scrollable combobox. */
+.nx-sym-group + .nx-sym-group{border-top:1px solid var(--border-sub)}
+.nx-sym-group-toggle{width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:9px 13px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:700}
+.nx-sym-group-toggle small{font-size:11px;color:var(--t3);margin-left:auto;margin-right:22px}
+.nx-sym-group-toggle::after{content:"";width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.nx-sym-group-toggle[aria-expanded="true"]::after{transform:translateY(2px) rotate(225deg)}
+.nx-sym-group .nx-sym-add{width:100%;min-height:44px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;text-align:left;color:var(--t1);font-size:13px;border-bottom:1px solid var(--border-sub)}
+.nx-sym-group .nx-sym-add[aria-selected="true"]{background:var(--surface-2)}
+.nx-sym-group .nx-sym-add:focus-visible,.nx-sym-group-toggle:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
