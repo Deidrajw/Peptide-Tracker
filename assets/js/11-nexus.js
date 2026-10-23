@@ -1698,6 +1698,12 @@ function renderTabbar() {
   const moreTabs = ['trends','plans','amino','profile'];
   const tabs = [['home','Today'],['calendar','Calendar'],['protocols','Protocol'],['stash','Stash'],['more','More']];
   const goTo = (id) => {
+    // A fresh Calendar visit always opens the current month's calendar,
+    // not the previously selected Logs tab or an old month offset.
+    if (id === 'calendar') {
+      state._protoCalSub = 'month';
+      state._calOff = 0;
+    }
     tab=id;
     state._guideOpen=null; state._discoverOpen=null;
     state._compoundIntel=null; state._intelReturn=null;
