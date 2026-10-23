@@ -1986,7 +1986,7 @@ function dailyModal(existing, prefillDate) {
     ${(state.settings.supplements||[]).length?`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span aria-hidden="true" style="font-size:20px">⌄</span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`:""}
+    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`:""}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2027,7 +2027,7 @@ function dailyModal(existing, prefillDate) {
         const open=nxActiveSymptom===s.name;
         return `<div class="nx-compact-tagging-item">
           <button type="button" class="nx-tag-sym-row" data-sym="${esc(s.name)}" aria-expanded="${open}" aria-label="${esc(s.name)}: ${esc(tagSummary(tags))}">
-            <span class="nx-tag-sym-main"><strong>${esc(s.name)}</strong><small>${esc(tagSummary(tags))}</small></span><span aria-hidden="true">${open?'⌃':'⌄'}</span>
+            <span class="nx-tag-sym-main"><strong>${esc(s.name)}</strong><small>${esc(tagSummary(tags))}</small></span><span class="nx-chevron-slot" aria-hidden="true"></span>
           </button>
           ${open?`<div class="nx-tag-options" aria-label="Compounds for ${esc(s.name)}">
             ${tagOptions.map(c=>{const on=tags.includes(c);return `<button type="button" class="tag-pill" data-sym="${esc(s.name)}" data-compound="${esc(c)}" aria-pressed="${on}" style="background:${on?'#A78BFA22':'transparent'};border-color:${on?'#A78BFA':'var(--border-sub)'};color:${on?'#A78BFA':'var(--t2)'}">${esc(c)}</button>`}).join("")}
@@ -2040,7 +2040,7 @@ function dailyModal(existing, prefillDate) {
     const noteCompounds=[...new Set([...visibleLinks,...Object.keys(f.compoundNotes).filter(c=>(f.compoundNotes[c]||"").trim())])];
     notesSection.innerHTML=noteCompounds.length?`<section class="nx-compact-tagging nx-compound-notes">
       <button type="button" class="nx-notes-toggle" id="nx-toggle-compound-notes" aria-expanded="${nxNotesOpen}">
-        <span><strong>COMPOUND NOTES</strong><small>${noteCompounds.length} compound${noteCompounds.length===1?'':'s'} · Optional</small></span><span aria-hidden="true">${nxNotesOpen?'⌃':'⌄'}</span>
+        <span><strong>COMPOUND NOTES</strong><small>${noteCompounds.length} compound${noteCompounds.length===1?'':'s'} · Optional</small></span><span class="nx-chevron-slot" aria-hidden="true"></span>
       </button>${nxNotesOpen?`<div class="nx-note-list">${noteCompounds.map(c=>`<label class="nx-note-label">${esc(c)}<textarea class="inp compound-note" data-compound="${esc(c)}" placeholder="Notes for ${esc(c)}…" rows="2">${esc(f.compoundNotes[c]||"")}</textarea></label>`).join("")}</div>`:""}
     </section>`:"";
     tagSection.querySelectorAll(".nx-tag-sym-row").forEach(btn=>btn.onclick=()=>{
@@ -2134,7 +2134,7 @@ function supplementModal(prefillDate) {
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
     
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px;line-height:1">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>
-    <button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600;margin:8px 0"><span id="supp-selected-count">Selected today (0)</span><span aria-hidden="true" style="font-size:20px">⌄</span></button><div id="supp-selected" style="margin-bottom:12px" hidden></div>
+    <button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600;margin:8px 0"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-selected" style="margin-bottom:12px" hidden></div>
     <button id="suppsave" class="btn-primary" style="background:#C8FF9C;color:#1A1728">Save supplements</button>`,"#C8FF9C");
   const modal=document.querySelector(".modal");
   modal.querySelector("#x").onclick=closeModal;
