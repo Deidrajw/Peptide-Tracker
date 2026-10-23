@@ -52,3 +52,8 @@
 - Automated checks: release + browser workflow 39988223654 SUCCESS, mobile form regression 39988223703 SUCCESS; run belongs to PR branch SHA 9336139. No physical iPhone retest yet.
 - No planned production data migrations.
 - GitHub Pages for merge commit: UNVERIFIED. Do not mark deployed solely from merge.
+
+### v0.9.2-beta — CODED, PR/TEST/DEPLOY pending
+- Baseline main a82017daad493dbbff9920ad66788ddb5c5d61de. Branch release/grouped-symptom-picker-20261023.
+- Compact grouped selector returns recent, compound-specific, general and custom category headings within combobox. Search, multi-select, intensity and historical records retained; avoids deep nested card borders.
+- Affected: Daily Check-In symptom selector and shared picker. Data impact: none intended. Test/live artifact and deployment: not yet verified.
