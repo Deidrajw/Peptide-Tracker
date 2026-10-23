@@ -73,7 +73,7 @@ function trendsView() {
     // without it, a long compound name would overflow instead of truncating, and push
     // badge/Intel/chevron out of alignment (the original bug).
     const labelSpan=`<span style="font-size:14px;font-weight:600;color:${open[key]?"var(--t1)":"var(--t2)"};flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(label)}</span>`;
-    const chevron=`<span style="color:${open[key]?color:"var(--t5)"};font-size:18px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:20px;height:22px;line-height:1">${open[key]?"∧":"∨"}</span>`;
+    const chevron=`<span class="nx-chevron-slot" aria-hidden="true"></span>`;
     // Fixed width (not content-driven) so Intel/chevron sit in the same column on every row,
     // regardless of whether dose count is 1 or 3 digits.
     const badgeSpan=badge?`<span style="background:${color}18;color:${color};border:1px solid ${color}33;font-size:10px;font-family:'DM Mono',monospace;font-weight:500;border-radius:99px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;height:22px;min-width:${showIntel?"98px":"auto"};padding:0 10px;line-height:1;box-sizing:border-box;white-space:nowrap">${badge}</span>`:"";
