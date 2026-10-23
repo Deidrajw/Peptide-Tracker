@@ -35,17 +35,25 @@ try {
         for(const sel of ['.nx-checkin-symptoms','#supp-toggle','#supp-selected-toggle','#supp-chips','#supp-selected']){
           if (!(await page.locator(sel).count())) throw Error(kind+' '+width+' Check-In missing '+sel);
         }
+        const combo=page.locator('#nx-sym-combobox');
+        await combo.focus();
+        await page.waitForTimeout(60);
+        if (!(await page.locator('.nx-sym-add').count())) throw Error('Symptom browse list empty in '+kind+' '+width);
+        await combo.fill('Constipation');
+        await page.waitForTimeout(60);
+        const hit=page.locator('.nx-sym-add').filter({hasText:'Constipation'}).first();
+        if (!(await hit.count())) throw Error('Constipation missing from symptom search');
+        await hit.click();
+        await page.waitForTimeout(80);
+        if (!(await page.locator('.nx-sym-selected-list').getByText('Constipation').count())) throw Error('Symptom selection not reflected');
         const modalMetrics = await page.locator('.modal').evaluate(el=>({w:el.getBoundingClientRect().width,sw:el.scrollWidth,cw:el.clientWidth}));
         if (modalMetrics.w>width+1 || modalMetrics.sw>modalMetrics.cw+3) throw Error('Check-In horizontal overflow '+JSON.stringify(modalMetrics));
         await page.screenshot({path:'dist/'+kind+'-'+theme+'-'+width+'-checkin.png'});
         await page.evaluate(()=>closeModal());
-        const tabs=await page.locator('[data-tab]').evaluateAll(els=>Array.from(new Set(els.map(el=>el.getAttribute('data-tab')).filter(Boolean))));
-        for(const tab of tabs.slice(0,8)){
-          const button=page.locator('[data-tab="'+tab+'"]').last();
-          if(await button.isVisible()) {
-            await button.click();
-            await page.waitForTimeout(90);
-          }
+        const tabs=await page.locator('.tabbar button').allTextContents();
+        for(let tabIndex=0;tabIndex<Math.min(5,tabs.length);tabIndex++){
+          await page.locator('.tabbar button').nth(tabIndex).click();
+          await page.waitForTimeout(90);
         }
         if (pageErrors.length) throw Error(kind+' '+theme+' '+width+' JavaScript exceptions: '+pageErrors.join(' | '));
         results.push({kind,theme,width,modalMetrics,tabs,status:'PASS'});
