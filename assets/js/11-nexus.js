@@ -280,11 +280,11 @@ function renderSupplementsTabContent() {
     <span style="font-size:15px;font-weight:700;color:var(--t1)">Supplements</span>
     <span style="font-size:12px;color:var(--t4)">${all.length} supplement${all.length===1?"":"s"}</span>
   </div>
-  ${all.length>5?`<input id="supp-search" class="inp" placeholder="Search supplements" value="${esc(state._supplementSearch||"")}" style="margin-bottom:12px">`:""}
+  ${all.length?`<input id="supp-search" class="inp" placeholder="Search supplements" value="${esc(state._supplementSearch||"")}" style="margin-bottom:12px" aria-label="Search supplements">`:""}
   <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;overflow:hidden;margin-bottom:14px">
     ${filtered.length?filtered.map((s,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:12px;min-height:44px;${i<filtered.length-1?"border-bottom:1px solid var(--border-sub)":""}">
       <span style="flex:1;font-size:13.5px;color:var(--t2)">${esc(s)}</span>
-      <button class="del-supp" data-name="${esc(s)}" style="color:var(--t5);font-size:14px;padding:4px 8px;min-height:32px">✕</button>
+      <button class="del-supp" data-name="${esc(s)}" aria-label="Remove ${esc(s)}" style="color:var(--t5);font-size:14px;padding:10px 12px;min-height:44px;min-width:44px">✕</button>
     </div>`).join(""):`<div style="text-align:center;padding:24px;color:var(--t5);font-size:12px">${q?"No matches":"No supplements added yet"}</div>`}
   </div>
   <div style="display:flex;gap:8px;margin-bottom:10px">
