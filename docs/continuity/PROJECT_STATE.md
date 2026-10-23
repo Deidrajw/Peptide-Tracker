@@ -80,3 +80,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Approved grouped symptom combobox implemented in assets/js/04-nexus.js; recently logged, active compound-specific, general named groups, custom and other selected symptoms. Search filters across groups; expand/collapse category state, multi-select and existing intensity controls. No schema change.
 - Added CSS in assets/css/nexus-disclosures.css, version changed to v0.9.2-beta. Release builder/test source updated. Full-app demo/LIVE ZIP/test results INCOMPLETE until workflow confirmed.
 - Next action: validate workflow and fix failures; merge PR only after CI pass, then verify Pages deployment and iPhone testing.
+
+### Category label and QA follow-up (2026-10-23)
+- UI labels refined to Retatrutide-specific (only for an active matching compound) and PMS & Cycle (existing Cycle / Hormonal symptom items). Underlying catalog, stored names, selected intensity and associations not altered.
+- Automated browser assertions added for Digestive, Energy & Sleep, PMS & Cycle headings; collapse/reopen behavior; Retatrutide-specific fictional fixture category; search and selected intensity. CI PENDING after follow-up commits.
+- **One concrete next action:** Review latest PR #21 mobile and full-app DEMO/LIVE build QA logs; correct failures, verify artifact completeness, then merge only if all checks pass and confirm Pages deployment.
