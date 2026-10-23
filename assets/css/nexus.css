@@ -1666,7 +1666,7 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
   margin-right:5px!important;opacity:.85!important;
   transition:transform .15s ease!important;
 }
-:where(#supp-toggle,#supp-selected-toggle,.nx-sym-browse-toggle)[aria-expanded="true"])::after,
+:where(#supp-toggle,#supp-selected-toggle,.nx-sym-browse-toggle)[aria-expanded="true"]::after,
 .nx-checkin-sheet .nx-checkin-symptoms[open]>summary::after{
   transform:translateY(3px) rotate(225deg)!important;
 }
