@@ -1,0 +1,55 @@
+name: Nexus mobile form regression
+on:
+  push:
+    branches: ['test/nexus-expanded-smoke-20261022']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Audit mobile forms
+        run: |
+          python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            for(const width of [320,390]){
+              const page=await browser.newPage({viewport:{width,height:780},isMobile:true,hasTouch:true});
+              const errors=[];page.on('pageerror',e=>errors.push(e.message));
+              await page.goto('http://127.0.0.1:8777/',{waitUntil:'domcontentloaded'});
+              await page.waitForTimeout(600);
+              await page.evaluate(()=>dailyModal());
+              await page.waitForTimeout(200);
+              const sheet=page.locator('.modal');
+              if(!(await sheet.isVisible()))throw Error('Check-In sheet did not open at '+width);
+              if(!(await page.locator('.nx-checkin-symptoms').count()))throw Error('Check-In symptoms missing at '+width);
+              const metrics=await sheet.evaluate(el=>({width:el.getBoundingClientRect().width,window:innerWidth,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}));
+              console.log('Check-In metrics',width,metrics);
+              if(metrics.width>width+1)throw Error('Check-In sheet wider than viewport');
+              await page.evaluate(()=>closeModal());
+              await page.evaluate(()=>todayLogDosePicker());
+              await page.waitForTimeout(100);
+              const btn=page.locator('#today-dose-single');
+              if(await btn.count()){
+                const style=await btn.evaluate(el=>{const c=getComputedStyle(el),r=el.getBoundingClientRect();return {display:c.display,visibility:c.visibility,w:r.width,h:r.height}});
+                if(style.display==='none'||style.visibility==='hidden'||style.w<40||style.h<40)throw Error('Continue button invisible at '+width);
+              }
+              await page.evaluate(()=>closeModal());
+              if(errors.length)throw Error('Page errors '+width+': '+errors.join(' | '));
+              await page.close();
+            }
+            await browser.close();
+            console.log('Mobile form regression tests passed');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
