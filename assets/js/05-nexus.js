@@ -1985,9 +1985,9 @@ function dailyModal(existing, prefillDate) {
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
     ${(state.settings.supplements||[]).length?`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
-    <div id="supp-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">
-      ${(state.settings.supplements||[]).map(s=>`<button class="supp-chip" data-name="${esc(s)}" style="padding:5px 12px;border-radius:20px;font-size:11px;background:transparent;border:1px solid var(--border);color:var(--t4)">${esc(s)}</button>`).join("")}
-    </div>`:""}
+    <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search  supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
+    <div id="supp-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+    <div id="supp-results" style="margin-bottom:18px"></div>`:""}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2061,35 +2061,29 @@ function dailyModal(existing, prefillDate) {
   }
   renderCompoundSections();
 
-  // Wire supplement chips in dailyModal
-  const suppChips = m.querySelectorAll(".supp-chip");
-  const suppDate2 = f.date || localDate();
-  const existingSupp2 = state.supplementLogs.find(l=>dayKey(l.date)===suppDate2);
-  const suppTaken2 = new Set(existingSupp2?.taken||[]);
-  let suppSelectionTouched = false;
+  // Search-first supplements: selections stay visible, results only appear while searching.
+  const suppDate2=f.date||localDate();
+  const suppTaken2=new Set(state.supplementLogs.find(l=>dayKey(l.date)===suppDate2)?.taken||[]);
+  let suppSelectionTouched=false;
+  const suppLibrary=state.settings.supplements||[];
+  const suppSearch=m.querySelector("#supp-search");
+  const suppSelected=m.querySelector("#supp-chips");
+  const suppResults=m.querySelector("#supp-results");
+  const renderSuppSearch=()=>{
+    if(!suppSearch) return;
+    suppSelected.innerHTML=[...suppTaken2].map(n=>`<button type="button" class="supp-remove" data-name="${esc(n)}" style="padding:8px 12px;margin:3px;border-radius:20px;background:#C8FF9C22;border:1px solid #C8FF9C;color:#C8FF9C">${esc(n)} ×</button>`).join("")||'<span style="font-size:12px;color:var(--t4)">None selected</span>';
+    suppSelected.querySelectorAll(".supp-remove").forEach(b=>b.onclick=()=>{suppTaken2.delete(b.dataset.name);suppSelectionTouched=true;renderSuppSearch();});
+    const q=suppSearch.value.trim().toLocaleLowerCase();
+    const matches=q?suppLibrary.filter(n=>n.toLocaleLowerCase().includes(q)&&!suppTaken2.has(n)).slice(0,8):[];
+    suppResults.innerHTML=matches.map(n=>`<button type="button" class="supp-add" data-name="${esc(n)}" style="display:block;width:100%;text-align:left;padding:11px 12px;min-height:44px;border-bottom:1px solid var(--border);color:var(--t1)">＋ ${esc(n)}</button>`).join("")||(q?'<span style="font-size:12px;color:var(--t4)">No matches</span>':'<span style="font-size:12px;color:var(--t4)">Type to find supplements. Your selections remain above.</span>');
+    suppResults.querySelectorAll(".supp-add").forEach(b=>b.onclick=()=>{suppTaken2.add(b.dataset.name);suppSelectionTouched=true;suppSearch.value="";renderSuppSearch();suppSearch.focus();});
+  };
+  if(suppSearch){suppSearch.oninput=renderSuppSearch;renderSuppSearch();}
   const suppDateInput=m.querySelector("#date");
-  if(suppDateInput) suppDateInput.addEventListener("change",()=>{
-    const targetDate=suppDateInput.value;
-    const targetLog=state.supplementLogs.find(l=>dayKey(l.date)===targetDate);
-    suppTaken2.clear();
-    (targetLog?.taken||[]).forEach(n=>suppTaken2.add(n));
-    suppSelectionTouched=false;
-    suppChips.forEach(b=>{
-      const on=suppTaken2.has(b.dataset.name);
-      b.style.background=on?"#C8FF9C22":"transparent";
-      b.style.borderColor=on?"#C8FF9C":"var(--border)";
-      b.style.color=on?"#C8FF9C":"var(--t4)";
-      b.setAttribute("aria-pressed",String(on));
-    });
-  });
-  suppChips.forEach(b=>{
-    const n=b.dataset.name;
-    if(suppTaken2.has(n)){ b.style.background="#C8FF9C22"; b.style.borderColor="#C8FF9C"; b.style.color="#C8FF9C"; }
-    b.onclick=()=>{
-      const on=suppTaken2.has(n);
-      if(on){suppTaken2.delete(n);b.style.background="transparent";b.style.borderColor="var(--border)";b.style.color="var(--t4)";}
-      else{suppTaken2.add(n);b.style.background="#C8FF9C22";b.style.borderColor="#C8FF9C";b.style.color="#C8FF9C";}
-    };
+  if(suppDateInput)suppDateInput.addEventListener("change",()=>{
+    const log=state.supplementLogs.find(l=>dayKey(l.date)===suppDateInput.value);
+    suppTaken2.clear();(log?.taken||[]).forEach(n=>suppTaken2.add(n));
+    suppSelectionTouched=false;renderSuppSearch();
   });
   m.querySelector("#save").onclick = () => {
     const chosenDate=m.querySelector("#date").value;
@@ -2125,21 +2119,26 @@ function supplementModal(prefillDate) {
     document.querySelector(".modal #goprofile").onclick=()=>{closeModal();tab="profile";render();window.scrollTo(0,0);};
     return;
   }
-  openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="mono" style="font-size:13px;color:#C8FF9C;letter-spacing:1.5px">💊 SUPPLEMENTS · ${fmtDate(today)}</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-    <div style="font-size:11px;color:var(--t4);margin-bottom:14px">Tap to toggle what you took today</div>
-    <div id="supp-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
-      ${supps.map(s=>{const on=taken.has(s);return`<button class="supp-tog" data-name="${esc(s)}" style="padding:8px 14px;border-radius:20px;font-size:12px;background:${on?"#C8FF9C22":"transparent"};border:1px solid ${on?"#C8FF9C":"var(--border)"};color:${on?"#C8FF9C":"var(--t4)"}">${esc(s)}</button>`;}).join("")}
-    </div>
-    <button id="suppsave" class="btn-primary" style="background:#C8FF9C;color:#1a1728">Save</button>`,"#C8FF9C");
-  document.querySelector(".modal #x").onclick=closeModal;
-  document.querySelectorAll(".modal .supp-tog").forEach(b=>b.onclick=()=>{
-    const n=b.dataset.name, on=taken.has(n);
-    if(on){taken.delete(n);b.style.background="transparent";b.style.borderColor="var(--border)";b.style.color="var(--t4)";}
-    else{taken.add(n);b.style.background="#C8FF9C22";b.style.borderColor="#C8FF9C";b.style.color="#C8FF9C";}
-  });
-  document.querySelector(".modal #suppsave").onclick=()=>{
+  openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">💊 Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
+    <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
+    <div id="supp-selected" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+    <div id="supp-results" style="margin-bottom:18px"></div>
+    <button id="suppsave" class="btn-primary" style="background:#C8FF9C;color:#1a1728">Save supplements</button>`,"#C8FF9C");
+  const modal=document.querySelector(".modal");
+  modal.querySelector("#x").onclick=closeModal;
+  const input=modal.querySelector("#supp-search"),selected=modal.querySelector("#supp-selected"),results=modal.querySelector("#supp-results");
+  const paint=()=>{
+    selected.innerHTML=[...taken].map(n=>`<button type="button" class="remove" data-name="${esc(n)}" style="padding:8px 12px;border:1px solid #C8FF9C;background:#C8FF9C22;color:#C8FF9C;border-radius:20px">${esc(n)} ×</button>`).join("")||'<span style="color:var(--t4);font-size:12px">None selected</span>';
+    selected.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{taken.delete(b.dataset.name);paint();});
+    const q=input.value.trim().toLocaleLowerCase();
+    const matches=q?supps.filter(n=>n.toLocaleLowerCase().includes(q)&&!taken.has(n)).slice(0,8):[];
+    results.innerHTML=matches.map(n=>`<button type="button" class="add" data-name="${esc(n)}" style="display:block;width:100%;min-height:44px;text-align:left;border-bottom:1px solid var(--border);padding:10px;color:var(--t1)">＋ ${esc(n)}</button>`).join("")||(q?'<span style="font-size:12px;color:var(--t4)">No matches</span>':'<span style="font-size:12px;color:var(--t4)">Search to add supplements</span>');
+    results.querySelectorAll(".add").forEach(b=>b.onclick=()=>{taken.add(b.dataset.name);input.value="";paint();input.focus();});
+  };
+  input.oninput=paint;paint();
+  modal.querySelector("#suppsave").onclick=()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
-    if(taken.size) state.supplementLogs.push({id:uid(),date:today,taken:[...taken]});
+    if(taken.size)state.supplementLogs.push({id:uid(),date:today,taken:[...taken]});
     saveState();closeModal();render();
   };
 }
