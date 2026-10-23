@@ -5,12 +5,12 @@
 **Documentation baseline:** 2026-10-23
 **Repository:** Deidrajw/Peptide-Tracker
 **Production:** https://deidrajw.github.io/Peptide-Tracker/
-**Last verified pre-documentation main SHA:** a4dcad6f9d8c1a8599945af5fcefcbbc66b07107
-**Last verified merged app PR:** #16 — Chevron Visual Consistency Audit
+**Latest verified main SHA at start of this release verification:** e58e6750a2ef000384c8d1084ffe22d5467a202d
+**Last merged application PR:** #18 — v0.9.1-beta Chevron Parity (source verified; deployment outcome not reverified)
 **Last verified Pages run:** https://github.com/Deidrajw/Peptide-Tracker/actions/runs/39973924397
 **Last conversational release label:** v0.9.0-beta
-**Metadata mismatch:** Production index.html reportedly still displays v0.7.8-beta (modular); reconcile via verified release.
-**Documentation setup:** New continuity files proposed via docs/nexus-continuity-bootstrap-20261023; verify PR/merge separately. This is not an app release.
+**Version metadata:** Latest main index.html declares v0.9.1-beta; GitHub Pages output still requires separate confirmation.
+**Documentation setup:** PR #17 merged and established the four continuity files.
 
 ## Architecture and safeguards
 - Existing root index.html, assets/css/nexus.css, and ordered assets/js/01-nexus.js through 12-nexus.js. Confirm against live main.
@@ -22,7 +22,7 @@
 - PR #16 improved Symptoms, Browse All Supplements, Selected Today and compound-symptom chevrons; it was not a complete visual audit.
 - Source audit in the 2026-10-23 conversation found different CSS and Unicode indicator patterns in Today, Protocol, kits/Stash, history, weight, settings, and Log Dose.
 - Normalize shared stroke, geometry, direction, alignment, 44–48px touch targets and light/dark states. Verify actual rendered UI at 320px and 390px. Do not count source inspection as browser testing.
-- Next planned app version v0.9.1-beta; PROPOSED ONLY, not implemented, tested, merged or deployed. Major new UI redesigns remain deferred until acceptance.
+- PR #18 has merged the v0.9.1-beta shared-chevron code. Rendered/browser verification and source-identical artifacts were still outstanding at the start of this validation branch. Major new UI redesigns remain deferred until acceptance.
 
 ## Completed behaviours to preserve
 - Calendar opens current local month, Month tab; compact cells keep real numeric weight and historical date details.
@@ -33,23 +33,22 @@
 
 ## Open bugs, risks, and other priorities
 1. Prior reconstructed full-app DEMO had a missing supplement DOM-node error in paintCheckinSupp (null.innerHTML). Patch existed, but full all-modal browser verification remains unproven. Build DEMO from exact release source and keep isolated fictional fixtures.
-2. Display version v0.7.8-beta vs conversational v0.9.0-beta. Verify canonical release numbering.
+2. v0.9.1-beta title corrected on main; verify deployed title and reconcile formal releases.
 3. Light/dark contrast, emoji-based general UI icons, nested accordion borders, white gutters, excess spacing.
 4. Broader Check-In, Supplements, Weight/Nutrition, Log Dose, date edge cases, inventory and history regression.
 5. Documentation must be kept current with actual PRs/commits/tests; do not copy unverified claims into releases.
 
-## Release artifact status for proposed v0.9.1-beta
-- Source code change: NOT STARTED / NOT VERIFIED.
-- In-chat conceptual chevron preview: shown Oct 23, not release UI.
-- Standalone complete full-app DEMO: INCOMPLETE.
-- Exact-source LIVE ZIP: INCOMPLETE.
-- Release notes: preliminary.
-- Interactive regression: preliminary checklist; affected real test results NOT TESTED.
-- Branch, PR, merged status, deployed Pages: NOT STARTED for app update.
-- Physical iPhone tests: NOT TESTED.
+## Release artifact status for v0.9.1-beta (verified 2026-10-23)
+- App shared-chevron implementation: MERGED through PR #18 at e58e675; browser visual acceptance NOT VERIFIED.
+- Packaging verification branch: `release/nexus-v091-validation-artifacts` based on e58e675; adds corrected builder, full-app isolated DEMO, root-index LIVE ZIP and 320/390 dark/light automated QA workflow. PR/CI outcome pending.
+- In-chat conceptual chevron preview: available in conversation; not release evidence.
+- Standalone complete full-app DEMO: BUILD CODED; artifact and end-to-end functionality INCOMPLETE until CI validation.
+- Exact-source LIVE ZIP: BUILD CODED; artifact INCOMPLETE until CI run.
+- Release notes and interactive regression checklist: in progress; no untested Pass assertions.
+- Pages deployment for PR #18: UNVERIFIED here. Physical iPhone tests: NOT TESTED.
 
 ## One concrete next action
-After merging the documentation-only PR, inspect latest main and all disclosures in CSS, HTML and JS; start the targeted v0.9.1-beta shared-chevron implementation on a separate app release branch. Update these files in that PR and complete every mandatory app release artifact before calling the release complete.
+Run the `Nexus v0.9.1 build and parity QA` workflow on `release/nexus-v091-validation-artifacts`, fix any failures, publish the validated FULL DEMO and LIVE ZIP, then merge only after review and verify GitHub Pages for the resulting main commit.
 
 ## Session handoff template
 - Timestamp and timezone:
