@@ -2147,8 +2147,8 @@ function symptomPickerHTML(selected, color) {
   const recentList=[...new Set([...selectedNames,...recentSyms.slice(0,8)])];
   const pickerGroups=[];
   if(recentList.length)pickerGroups.push({key:"recent",label:"Recently logged",items:recentList});
-  compoundGroups.forEach(g=>pickerGroups.push({key:"compound:"+g.label,label:g.label+" · Compound-specific",items:g.symptoms}));
-  Object.entries(SYMPTOM_GROUPS).forEach(([label,items])=>pickerGroups.push({key:"general:"+label,label,items}));
+  compoundGroups.forEach(g=>pickerGroups.push({key:"compound:"+g.label,label:g.label+"-specific",items:g.symptoms}));
+  Object.entries(SYMPTOM_GROUPS).forEach(([label,items])=>pickerGroups.push({key:"general:"+label,label:label==="Cycle / Hormonal"?"PMS & Cycle":label,items}));
   if(customSyms.length)pickerGroups.push({key:"custom",label:"Custom symptoms",items:customSyms.map(c=>c.name)});
   const others=selectedNames.filter(n=>!pickerGroups.some(g=>g.items.includes(n)));
   if(others.length)pickerGroups.push({key:"other",label:"Other recorded",items:others});
