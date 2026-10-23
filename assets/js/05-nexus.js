@@ -1986,8 +1986,7 @@ function dailyModal(existing, prefillDate) {
     ${(state.settings.supplements||[]).length?`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements"></div>
-    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:44px;text-align:left;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t2);margin-bottom:8px">Browse all supplements ▾</button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>`:""}
+    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span aria-hidden="true" style="font-size:20px">⌄</span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`:""}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2072,8 +2071,14 @@ function dailyModal(existing, prefillDate) {
   let suppDropdownOpen=false;
   const suppToggle=m.querySelector("#supp-toggle");
   if(suppToggle)suppToggle.onclick=()=>{suppDropdownOpen=!suppDropdownOpen;renderSuppSearch();};
+  let suppSelectedOpen=false;
+  const suppSelectedToggle=m.querySelector("#supp-selected-toggle");
+  if(suppSelectedToggle)suppSelectedToggle.onclick=()=>{suppSelectedOpen=!suppSelectedOpen;renderSuppSearch();};
   const renderSuppSearch=()=>{
     if(!suppSearch) return;
+    suppSelected.hidden=!suppSelectedOpen; suppSelected.style.display=suppSelectedOpen?"block":"none";
+    suppSelectedToggle.setAttribute("aria-expanded",String(suppSelectedOpen));
+    m.querySelector("#supp-selected-count").textContent="Selected today ("+suppTaken2.size+")";
     suppSelected.innerHTML=[...suppTaken2].map(n=>`<div style="display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:6px 10px;border-bottom:1px solid var(--border-sub);color:var(--t2);font-size:12px"><span>${esc(n)}</span><button type="button" aria-label="Remove ${esc(n)}" class="supp-remove" data-name="${esc(n)}" style="min-width:44px;min-height:36px;color:var(--t3)">×</button></div>`).join("")||'<span style="font-size:12px;color:var(--t4)">None selected</span>';
     suppSelected.querySelectorAll(".supp-remove").forEach(b=>b.onclick=()=>{suppTaken2.delete(b.dataset.name);suppSelectionTouched=true;renderSuppSearch();});
     const q=suppSearch.value.trim().toLocaleLowerCase();
