@@ -30,3 +30,13 @@
 - Explicit limitations and skipped tests:
 
 Physical iPhone tests must be attributed to a real device test, not inferred from automated browser results. Documentation-only changes do not count as app functional testing.
+
+## v0.9.1-beta validation execution entry (2026-10-23)
+- Github branch: `release/nexus-v091-validation-artifacts` created from merged application commit e58e675.
+- Source checks, browser render 320px/390px both themes, Check-In DOM and DEMO storage isolation: AUTOMATED WORKFLOW ADDED; results NOT TESTED until run evidence is reviewed.
+- Physical iPhone: NOT TESTED. Do not mark individual end-to-end dosing, inventory math, history persistence or keyboard scroll as passed from a smoke test.
+
+## Symptom combobox regression (2026-10-23)
+- User screenshot: `Constipation` returned no matching results and Browse All contained no choices in Daily Check-In.
+- Actual root cause: options JSON stored inside template.content, reader previously used template.textContent.
+- PR #19 adds automated DOM checks: open combobox with no query, assert choices; type Constipation, assert visible match; select and assert Selected symptoms. Status: NOT TESTED pending CI results; physical iPhone: FAIL on original LIVE screenshots, retest repaired version pending.

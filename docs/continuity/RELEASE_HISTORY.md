@@ -31,3 +31,16 @@
 - Automated/browser tests, 320px/390px dark/light, device testing (only if done):
 - GitHub Pages workflow and resulting SHA:
 - Known limitations and outstanding regressions:
+
+### v0.9.1-beta — IMPLEMENTED / MERGED, release artifacts under verification (2026-10-23)
+- Application baseline: PR #18 merge e58e6750a2ef000384c8d1084ffe22d5467a202d; index displays v0.9.1-beta.
+- Changes: shared CSS disclosure geometry; targeted glyph cleanup in Check-In, Symptoms, history and Stash; version title correction.
+- Screens: Today, Protocol, Check-In, Supplements, Stash/inventory and expandable history/trends.
+- Data impact/migrations: none intended; no storage key changes.
+- Packaging remediation in separate branch `release/nexus-v091-validation-artifacts`: standalone self-contained fictional-data full-app DEMO, source-identical LIVE ZIP and responsive/browser matrix. Artifacts currently INCOMPLETE pending CI.
+- Actual iPhone visual acceptance: NOT TESTED; deployment for this SHA NOT VERIFIED here.
+
+### PR #19 symptom combobox remediation — CODED, NOT DEPLOYED
+- Fixed empty catalog via template.content; unified search/browse into one scrollable combobox; current symptom logging values/intensity untouched.
+- Scoped CSS; extended 320px/390px light/dark browser checks for option display and Constipation selection. Data impact: none intended.
+- Remains open pending CI; physical iPhone and production deployment not verified.

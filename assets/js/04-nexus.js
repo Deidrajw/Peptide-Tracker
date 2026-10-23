@@ -2154,9 +2154,11 @@ function symptomPickerHTML(selected, color) {
     </div>`;
   }).join("");
   let html=`<div class="nx-sym-picker" aria-label="Symptom selector">
-    <label class="nx-sym-search-label">Search symptoms<input type="search" class="nx-sym-search inp" placeholder="Search symptoms…" autocomplete="off" aria-label="Search symptoms"></label>
-    <button type="button" class="nx-sym-browse-toggle" aria-expanded="${!!state._symPickerBrowseOpen}" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);font-size:13px;text-align:left"><span>Browse all symptoms</span><span aria-hidden="true" style="font-size:22px">⌄</span></button>
-    <div class="nx-sym-search-results" hidden style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border-sub);border-radius:11px;margin:8px 0"></div>
+    <label class="nx-sym-search-label" for="nx-sym-combobox">Symptoms</label>
+    <div class="nx-sym-combobox-wrap">
+      <input id="nx-sym-combobox" type="search" class="nx-sym-search inp" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-sym-options" placeholder="Choose or search symptoms…" autocomplete="off">
+    </div>
+    <div id="nx-sym-options" class="nx-sym-search-results" role="listbox" aria-label="Available symptoms" hidden style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border-sub);border-radius:11px;margin:8px 0"></div>
     <div style="font-size:12px;font-weight:700;color:var(--t2);margin-top:14px">Selected symptoms (${selected.length})</div>
     <div class="nx-sym-selected-list">${selectedRowHTML||`<p class="nx-sym-empty">No symptoms selected</p>`}</div>
     <template class="nx-sym-search-data">${esc(JSON.stringify(allEntries))}</template>`;  html+=`</div>`;
@@ -2168,20 +2170,39 @@ function symptomPickerHTML(selected, color) {
 }
 function wireSymptomPicker(container, selected, color, onUpdate) {
   const search=container.querySelector(".nx-sym-search");
-  const toggle=container.querySelector(".nx-sym-browse-toggle");
   const results=container.querySelector(".nx-sym-search-results");
   const source=container.querySelector(".nx-sym-search-data");
-  let names=[];try{names=JSON.parse(source.textContent)}catch(e){}
+  // HTMLTemplateElement owns its markup in .content, not in element.textContent.
+  let names=[];
+  try { names=JSON.parse(source.content.textContent||"[]"); }
+  catch(e) { console.error("Symptom catalog unavailable",e); }
   const draw=()=>{
     const query=search.value.trim().toLocaleLowerCase();
-    const visible=!!state._symPickerBrowseOpen||!!query;
-    results.hidden=!visible;results.style.display=visible?"block":"none";toggle.setAttribute("aria-expanded",String(visible));
+    const visible=!!state._symPickerBrowseOpen;
+    results.hidden=!visible;
+    results.style.display=visible?"block":"none";
+    search.setAttribute("aria-expanded",String(visible));
     const matches=names.filter(n=>n.toLocaleLowerCase().includes(query));
-    results.innerHTML=matches.length?matches.map(n=>`<button type="button" class="nx-sym-add" data-sym="${esc(n)}" aria-pressed="${selected.some(x=>x.name===n)}" style="width:100%;min-height:44px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;text-align:left;border-bottom:1px solid var(--border-sub);color:var(--t1);font-size:13px"><span>${esc(n)}</span><span aria-hidden="true">${selected.some(x=>x.name===n)?"✓":"+"}</span></button>`).join(""):`<p class="nx-sym-empty">No matching symptoms</p>`;
-    results.querySelectorAll(".nx-sym-add").forEach(btn=>btn.onclick=()=>{const idx=selected.findIndex(x=>x.name===btn.dataset.sym);if(idx>=0)selected.splice(idx,1);else selected.push({name:btn.dataset.sym,intensity:2});refresh(search.value);});
+    results.innerHTML=matches.length?matches.map(n=>`<button type="button" role="option" class="nx-sym-add" data-sym="${esc(n)}" aria-selected="${selected.some(x=>x.name===n)}" style="width:100%;min-height:44px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;text-align:left;border-bottom:1px solid var(--border-sub);color:var(--t1);font-size:13px"><span>${esc(n)}</span><span aria-hidden="true">${selected.some(x=>x.name===n)?"✓":"+"}</span></button>`).join(""):`<p class="nx-sym-empty">No matching symptoms</p>`;
+    results.querySelectorAll(".nx-sym-add").forEach(btn=>btn.onclick=()=>{
+      const idx=selected.findIndex(x=>x.name===btn.dataset.sym);
+      if(idx>=0)selected.splice(idx,1);
+      else selected.push({name:btn.dataset.sym,intensity:2});
+      refresh(search.value);
+    });
   };
-  toggle.onclick=()=>{state._symPickerBrowseOpen=!state._symPickerBrowseOpen;draw();};
+  search.onfocus=()=>{state._symPickerBrowseOpen=true;draw();};
+  search.onclick=()=>{state._symPickerBrowseOpen=true;draw();};
   search.oninput=()=>{state._symPickerBrowseOpen=true;draw();};
+  search.onkeydown=e=>{
+    if(e.key==="Escape"){state._symPickerBrowseOpen=false;draw();search.blur();}
+    if(e.key==="ArrowDown"){
+      state._symPickerBrowseOpen=true;draw();
+      const first=results.querySelector(".nx-sym-add");
+      if(first){e.preventDefault();first.focus();}
+    }
+  };
+  draw();
   container.querySelectorAll(".nx-sym-remove").forEach(btn=>btn.onclick=()=>{const idx=selected.findIndex(x=>x.name===btn.dataset.sym);if(idx>=0)selected.splice(idx,1);refresh(search.value);});
   draw();
   container.querySelectorAll(".symcat-toggle").forEach(btn=>{

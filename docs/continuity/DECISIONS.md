@@ -28,3 +28,8 @@
 - Previously completed behaviours to protect:
 - What (if anything) this supersedes:
 - Commit / PR / screenshots:
+
+## 2026-10-23 — v0.9.1 source-aligned build
+- **Status:** Application disclosure implementation merged in PR #18; packaging verification branch still unmerged.
+- **Decision:** Full DEMO must compile in-line HTML/CSS/all 12 JS modules from the same release checkout as the LIVE root-index ZIP. Fictional data is inserted immediately before the initial render and storage is replaced in memory, failing closed if isolation cannot be installed. No demo network writes.
+- **Rationale:** Earlier reconstructed demos omitted supplement DOM IDs and were inconsistent with LIVE. Preserve all real storage and existing logging workflows.

@@ -83,3 +83,12 @@ body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym
   body #app details>summary::after,body .modal details>summary::after,
   body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle)::after{transition:none!important}
 }
+
+/* Searchable symptom combobox: one discoverable trigger, no redundant Browse button. */
+.nx-sym-combobox-wrap{position:relative}
+.nx-sym-combobox-wrap::after{content:"";pointer-events:none;position:absolute;right:19px;top:calc(50% - 7px);width:9px;height:9px;border-right:2px solid var(--t3);border-bottom:2px solid var(--t3);transform:rotate(45deg)}
+.nx-sym-combobox-wrap:has(.nx-sym-search[aria-expanded="true"])::after{top:calc(50% - 2px);transform:rotate(225deg)}
+.nx-sym-combobox-wrap .nx-sym-search{min-height:48px;padding-right:46px}
+.nx-sym-search-results[role="listbox"]{background:var(--surface);max-height:224px;overflow-y:auto;overscroll-behavior:contain}
+.nx-sym-search-results[role="listbox"][hidden]{display:none!important}
+.nx-sym-search-results .nx-sym-add:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
