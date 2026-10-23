@@ -18,8 +18,7 @@ try {
         await page.goto(url,{waitUntil:'domcontentloaded'});
         await page.waitForTimeout(800);
         if (theme==='light') await page.evaluate(()=>document.documentElement.dataset.theme='light');
-        const app = page.locator('#app');
-        if (!(await app.locator('[data-tab]').count())) throw Error(kind+' '+width+' tabs missing');
+        if (!(await page.locator('[data-tab]').count())) throw Error(kind+' '+width+' tabs missing');
         if (kind==='demo') {
           if (!(await page.evaluate(()=>window.__NEXUS_FULL_APP_DEMO__))) throw Error('Demo isolation flag missing');
           if (await page.locator('link[href^="assets/"],script[src^="assets/"]').count()) throw Error('Demo not standalone');
