@@ -87,3 +87,5 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **One concrete next action:** Review latest PR #21 mobile and full-app DEMO/LIVE build QA logs; correct failures, verify artifact completeness, then merge only if all checks pass and confirm Pages deployment.
 
 - Picker sections now default collapsed so category headers remain scannable in the fixed-height dropdown; searching automatically reveals matches without requiring category expansion. In-session expand/collapse choices survive picker rerenders; no stored schema change. QA pending for this latest change.
+
+- Full-demo artifact review found fictional banner overlapping modal header and exposing Change/Exit controls. Build script now replaces banner with static fiction warning below modal z-index and offsets main content. Extra regression verifies no exit buttons. PR #21 CI must be rerun; LIVE data and source behavior unchanged.
