@@ -32,7 +32,7 @@ try {
         await page.evaluate(()=>dailyModal());
         await page.waitForTimeout(200);
         if (!(await page.locator('.modal').isVisible())) throw Error('Daily Check-In modal failed');
-        for(const sel of ['.nx-checkin-symptoms','#supp-toggle','#supp-selected-toggle','#supp-chips','#supp-selected']){
+        for(const sel of ['.nx-checkin-symptoms','#nx-sym-combobox','.nx-sym-search-results','.nx-sym-selected-list']){
           if (!(await page.locator(sel).count())) throw Error(kind+' '+width+' Check-In missing '+sel);
         }
         const combo=page.locator('#nx-sym-combobox');
