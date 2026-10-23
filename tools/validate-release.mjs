@@ -96,8 +96,12 @@ try {
           const ring=page.locator('.modal .nx-sym-group-toggle').first();
           if(await ring.count()){
             await ring.focus();
-            const focus=await ring.evaluate(el=>({color:getComputedStyle(el).outlineColor,style:getComputedStyle(el).outlineStyle,width:getComputedStyle(el).outlineWidth}));
-            if(focus.style==='none'||parseFloat(focus.width)<2||!focus.color.includes('91, 63, 168'))throw Error('Light-mode accessible focus outline missing: '+JSON.stringify(focus));
+            // Programmatic focus after a pointer action does not activate :focus-visible.
+            // Travel away and back using keyboard Tab to test the actual user pathway.
+            await page.keyboard.press('Shift+Tab');
+            await page.keyboard.press('Tab');
+            const focus=await ring.evaluate(el=>({color:getComputedStyle(el).outlineColor,style:getComputedStyle(el).outlineStyle,width:getComputedStyle(el).outlineWidth,visible:el.matches(':focus-visible')}));
+            if(!focus.visible||focus.style==='none'||parseFloat(focus.width)<2||!focus.color.includes('91, 63, 168'))throw Error('Keyboard focus-visible outline missing: '+JSON.stringify(focus));
           }
         }
         const modalMetrics = await page.locator('.modal').evaluate(el=>({w:el.getBoundingClientRect().width,sw:el.scrollWidth,cw:el.clientWidth}));
