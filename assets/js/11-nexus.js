@@ -1132,16 +1132,18 @@ function protocolCalendarView() {
     const pausedCount = slots.filter(s=>s.status==="paused").length;
     const mood=d.logs?.[0]?MOODS.find(m=>m.v===d.logs[0].mood):null;
     const wt=d.weight?.[0];
-    return `<button class="cal-day" data-date="${k}" aria-label="${k}: ${loggedCount} logged, ${upcomingCount} scheduled${showPaused?`, ${pausedCount} paused`:""}" style="aspect-ratio:1;border-radius:8px;background:${isToday?"#7DF9C00f":"var(--surface-2)"};border:1px solid ${isToday?"#7DF9C033":"var(--border-sub)"};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px;cursor:pointer">
-      <span style="font-size:10px;color:${isToday?"#7DF9C0":"var(--t4)"};font-weight:${isToday?"700":"400"}">${day}</span>
-      ${(loggedCount||upcomingCount||pausedCount)?`<div style="display:flex;align-items:center;gap:4px;min-height:7px">
-        ${loggedCount?`<span style="width:6px;height:6px;border-radius:50%;background:#A78BFA" title="Logged"></span>`:""}
-        ${upcomingCount?`<span style="width:11px;height:5px;border-radius:4px;background:var(--t4);opacity:.65" title="Scheduled"></span>`:""}
-        ${pausedCount?`<span style="width:6px;height:6px;border-radius:50%;border:1px solid var(--t5)" title="Paused"></span>`:""}
-      </div>`:""}
-      ${loggedCount?`<span style="font-size:8px;color:var(--t4)">${loggedCount} logged</span>`:""}
-      ${mood?`<span style="font-size:11px;line-height:1">${mood.emoji}</span>`:""}
-      ${wt?`<span style="font-size:7px;color:#8AB4FF">${parseFloat(wt.weight)}</span>`:""}
+    const weightNum = wt && Number.isFinite(Number(wt.weight)) ? Number(wt.weight) : null;
+    const weightLabel = weightNum === null ? '' : weightNum.toFixed(1);
+    const dayDescription = [loggedCount+' logged',upcomingCount+' scheduled',mood?'Check-in '+mood.label:'',weightLabel?'Weight '+weightLabel+' pounds':''].filter(Boolean).join(', ');
+    return `<button class="cal-day nx-cal-compact-day" data-date="${k}" aria-label="${k}: ${dayDescription}" ${isToday?'data-today="true"':''}>
+      <span class="nx-cal-day-number">${day}</span>
+      <span class="nx-cal-day-signals">
+        ${loggedCount?`<span class="nx-cal-log-count" title="${loggedCount} logged">${loggedCount}</span>`:''}
+        ${upcomingCount?`<span class="nx-cal-scheduled" title="${upcomingCount} scheduled"></span>`:''}
+        ${pausedCount?`<span class="nx-cal-paused" title="Paused"></span>`:''}
+        ${mood?`<span class="nx-cal-mood" title="Check-in: ${esc(mood.label)}">${mood.emoji}</span>`:''}
+      </span>
+      <span class="nx-cal-weight">${weightLabel || '&nbsp;'}</span>
     </button>`;
   };
 
