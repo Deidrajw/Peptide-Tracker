@@ -1,0 +1,33 @@
+# Nexus — Release History
+
+> Append-only history. Chat version labels may not correspond to GitHub releases. Verify PRs, SHA and Pages workflow before asserting deployed. Never rewrite earlier entries to hide errors.
+
+| PR / release | User-visible changes | Evidence/status known at 2026-10-23 handoff |
+|---|---|---|
+| #7 | Calendar current local month, Month tab fresh default | Historically merged; inspect PR for further detail |
+| #8 | Compact Calendar cells retain saved numeric weight and date details | Historically merged |
+| #9 | Check-In date validation and duplicate-date prevention | Historically merged |
+| #10 | Supplement date safety, deduplication, deletion confirmation and history protection | Historically merged |
+| #11 | Search-first supplement selector | Historically merged |
+| #12 | Today Check-In status with top-level Edit | Historically merged |
+| #13 | Scrollable searchable browseable multi-select Supplements in both entry points | Historically merged |
+| #14 | Selected Today count and supplement UI hierarchy; initial contrast changes | Historically merged, NOT a complete accessibility audit |
+| #15 / v0.8.9-beta | Searchable Symptoms, general/compound groups and intensity 1–3 | Reported merged and deployed in previous handoff |
+| #16 / v0.9.0-beta | Targeted chevrons in Symptoms and Supplements | Verified merged at a4dcad6f9d8c1a8599945af5fcefcbbc66b07107; Pages https://github.com/Deidrajw/Peptide-Tracker/actions/runs/39973924397 and mobile regression https://github.com/Deidrajw/Peptide-Tracker/actions/runs/39973926348 |
+| v0.9.1-beta | Proposed application-wide disclosure consistency, demo/source parity and metadata reconciliation | PROPOSED — NOT IMPLEMENTED OR DEPLOYED |
+
+## Documentation bootstrap — 2026-10-23
+- Creates docs/continuity/PROJECT_STATE.md, DECISIONS.md, RELEASE_HISTORY.md and REGRESSION.md in a documentation-only branch.
+- **No application source changes; no data migration; not an app version or deployment.** Verify PR, merge and eventual current main SHA separately.
+
+## Release entry template (append below)
+### vX.Y.Z — PROPOSED / CODED / TESTED / MERGED / DEPLOYED
+- Date and version metadata:
+- Baseline SHA → merged release SHA:
+- Branch / PR:
+- Features/fixes and affected screens:
+- Data impact and migrations (including none):
+- LIVE ZIP / complete DEMO parity and paths:
+- Automated/browser tests, 320px/390px dark/light, device testing (only if done):
+- GitHub Pages workflow and resulting SHA:
+- Known limitations and outstanding regressions:
