@@ -39,3 +39,8 @@
 - Data impact/migrations: none intended; no storage key changes.
 - Packaging remediation in separate branch `release/nexus-v091-validation-artifacts`: standalone self-contained fictional-data full-app DEMO, source-identical LIVE ZIP and responsive/browser matrix. Artifacts currently INCOMPLETE pending CI.
 - Actual iPhone visual acceptance: NOT TESTED; deployment for this SHA NOT VERIFIED here.
+
+### PR #19 symptom combobox remediation — CODED, NOT DEPLOYED
+- Fixed empty catalog via template.content; unified search/browse into one scrollable combobox; current symptom logging values/intensity untouched.
+- Scoped CSS; extended 320px/390px light/dark browser checks for option display and Constipation selection. Data impact: none intended.
+- Remains open pending CI; physical iPhone and production deployment not verified.
