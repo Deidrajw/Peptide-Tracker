@@ -48,7 +48,7 @@
 - Pages deployment for PR #18: UNVERIFIED here. Physical iPhone tests: NOT TESTED.
 
 ## One concrete next action
-Run the `Nexus v0.9.1 build and parity QA` workflow on `release/nexus-v091-validation-artifacts`, fix any failures, publish the validated FULL DEMO and LIVE ZIP, then merge only after review and verify GitHub Pages for the resulting main commit.
+Review PR #19's latest mobile/browser CI run, including Constipation browse/search selection and DEMO isolation; fix failures before merging and publishing artifacts. Verify deployment for the resulting main commit.
 
 ## Session handoff template
 - Timestamp and timezone:
@@ -60,3 +60,8 @@ Run the `Nexus v0.9.1 build and parity QA` workflow on `release/nexus-v091-valid
 - Release version, merge SHA, deployment evidence:
 - Blockers and unverified assumptions:
 - **One next action:**
+
+## New issue: empty symptom options (2026-10-23)
+- Real iPhone screenshot confirmed search for Constipation and Browse All returned `No matching symptoms`. Root cause discovered: `HTMLTemplateElement.textContent` was read rather than `template.content.textContent` in `wireSymptomPicker`, leaving catalog empty. Fix committed on PR #19 branch, NOT YET DEPLOYED.
+- Replaced separate Search + Browse All with a single searchable combobox that opens available options on focus, supports filtering and multiple selections with intensity controls; protected recorded symptom values. Browser QA added, outcome pending.
+- PR #19: https://github.com/Deidrajw/Peptide-Tracker/pull/19. Initial CI packaging succeeded but test had wrong navigation selector; corrected on branch. No confirmed pass yet.
