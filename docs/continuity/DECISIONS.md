@@ -37,3 +37,8 @@
 ## Grouped symptom picker — approved 2026-10-23
 - Status: APPROVED and CODED on release/grouped-symptom-picker-20261023, pending CI/deployment.
 - Keep one compact search/browse combobox containing headings for active-compound symptoms, general categories, recent and custom symptoms. Filter across categories; selected symptoms and 1–3 intensities remain visible below. Category placement is discovery, not proof of causality. No destructive record migration.
+
+## 2026-10-23 — Symptom category presentation
+- **Status:** approved implementation in PR #21, awaiting final CI/deployment evidence.
+- Keep original symptom catalog labels/record names and existing intensity 1–3 data. Surface Cycle / Hormonal as **PMS & Cycle** in the grouped combobox for clarity; show a dynamic **Retatrutide-specific** category for active Retatrutide (likewise for other supported compounds).
+- Preserve searchable browsing, section expand/collapse, custom symptoms, shared picker reuse and multiple selection without data migration. Search matches across categories; historical name associations remain unchanged.
