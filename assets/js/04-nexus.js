@@ -2188,13 +2188,13 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
     results.innerHTML=groups.map(group=>{
       const matches=group.items.filter(n=>n.toLocaleLowerCase().includes(query));
       if(!matches.length)return ""; count+=matches.length;
-      const closed=!query&&!!(state._symPickerCollapsed||{})[group.key];
+      const closed=!query&&((state._symPickerCollapsed||{})[group.key]??true);
       return `<section class="nx-sym-group"><button type="button" class="nx-sym-group-toggle" data-group="${esc(group.key)}" aria-expanded="${!closed}"><span>${esc(group.label)}</span><small>${matches.length}</small></button>${closed?"":matches.map(n=>`<button type="button" role="option" class="nx-sym-add" data-sym="${esc(n)}" aria-selected="${selected.some(x=>x.name===n)}"><span>${esc(n)}</span><span aria-hidden="true">${selected.some(x=>x.name===n)?"✓":"+"}</span></button>`).join("")}</section>`;
     }).join("");
     if(!count)results.innerHTML=`<p class="nx-sym-empty">No matching symptoms</p>`;
     results.querySelectorAll(".nx-sym-group-toggle").forEach(btn=>btn.onclick=()=>{
       state._symPickerCollapsed=state._symPickerCollapsed||{};
-      state._symPickerCollapsed[btn.dataset.group]=!state._symPickerCollapsed[btn.dataset.group];draw();
+      state._symPickerCollapsed[btn.dataset.group]=!((state._symPickerCollapsed[btn.dataset.group])??true);draw();
     });
     results.querySelectorAll(".nx-sym-add").forEach(btn=>btn.onclick=()=>{
       const i=selected.findIndex(x=>x.name===btn.dataset.sym);
