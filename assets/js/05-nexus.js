@@ -1985,8 +1985,8 @@ function dailyModal(existing, prefillDate) {
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
     ${(state.settings.supplements||[]).length?`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
-    <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search  supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <div id="supp-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+    <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
+    <div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements"></div>
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:44px;text-align:left;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t2);margin-bottom:8px">Browse all supplements ▾</button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>`:""}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
@@ -2079,7 +2079,7 @@ function dailyModal(existing, prefillDate) {
     const q=suppSearch.value.trim().toLocaleLowerCase();
     const matches=suppLibrary.filter(n=>n.toLocaleLowerCase().includes(q));
     const visible=suppDropdownOpen||!!q;
-    suppResults.hidden=!visible;
+    suppResults.hidden=!visible; suppResults.style.display=visible?"block":"none";
     suppToggle.setAttribute("aria-expanded",String(visible));
     suppResults.innerHTML=matches.map(n=>`<button type="button" class="supp-add" data-name="${esc(n)}" aria-pressed="${suppTaken2.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:11px 12px;min-height:44px;border-bottom:1px solid var(--border-sub);color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${suppTaken2.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
     suppResults.querySelectorAll(".supp-add").forEach(b=>b.onclick=()=>{if(suppTaken2.has(b.dataset.name))suppTaken2.delete(b.dataset.name);else suppTaken2.add(b.dataset.name);suppSelectionTouched=true;renderSuppSearch();});
@@ -2141,7 +2141,7 @@ function supplementModal(prefillDate) {
     selected.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{taken.delete(b.dataset.name);paint();});
     const q=input.value.trim().toLocaleLowerCase();
     const matches=supps.filter(n=>n.toLocaleLowerCase().includes(q));
-    const visible=dropdownOpen||!!q;results.hidden=!visible;toggle.setAttribute("aria-expanded",String(visible));
+    const visible=dropdownOpen||!!q;results.hidden=!visible;results.style.display=visible?"block":"none";toggle.setAttribute("aria-expanded",String(visible));
     results.innerHTML=matches.map(n=>`<button type="button" class="add" data-name="${esc(n)}" aria-pressed="${taken.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;text-align:left;border-bottom:1px solid var(--border-sub);padding:10px;color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${taken.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
     results.querySelectorAll(".add").forEach(b=>b.onclick=()=>{if(taken.has(b.dataset.name))taken.delete(b.dataset.name);else taken.add(b.dataset.name);paint();});
   };
