@@ -101,12 +101,18 @@ function wireBody() {
     const inp=document.getElementById("new-supp"); const v=(inp?.value||"").trim();
     if(!v) return;
     if(!state.settings.supplements) state.settings.supplements=[];
-    if(!state.settings.supplements.includes(v)) state.settings.supplements.push(v);
+    if(state.settings.supplements.some(s=>s.toLocaleLowerCase()===v.toLocaleLowerCase())){
+      alert("This supplement is already in your list."); return;
+    }
+    state.settings.supplements.push(v);
+    state.settings.supplements.sort((a,b)=>a.localeCompare(b));
     saveState(); renderBody();
   };
   const ni=document.getElementById("new-supp"); if(ni) ni.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("add-supp")?.click();}});
   document.querySelectorAll(".del-supp").forEach(b=>b.onclick=()=>{
-    state.settings.supplements=(state.settings.supplements||[]).filter(s=>s!==b.dataset.name);
+    const name=b.dataset.name;
+    if(!confirm("Remove "+name+" from your supplement list? Historical supplement logs will be preserved.")) return;
+    state.settings.supplements=(state.settings.supplements||[]).filter(s=>s!==name);
     saveState(); renderBody();
   });
   const er=$("#enablerem");  if(er) er.onclick=enableReminders;
