@@ -2127,17 +2127,17 @@ function symptomPickerHTML(selected, color) {
     });
     const open = isOpen(key);
     const c = groupColor||"var(--t3)";
-    return `<div style="margin-bottom:6px;border:1px solid var(--border-sub);border-radius:10px;overflow:hidden">
+    return `<div style="margin-bottom:8px;border:1px solid var(--border-sub);border-radius:12px;overflow:hidden;background:var(--surface)">
       <button class="symcat-toggle" data-key="${key}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${open?"var(--surface-2)":"transparent"}">
         <span class="mono" style="font-size:10px;color:${selCount?c:"var(--t3)"};letter-spacing:1px">${groupLabel.toUpperCase()}${selCount?` <span style="color:${c}">(${selCount} selected)</span>`:""}</span>
-        <span style="color:var(--t5);font-size:13px">${open?"▾":"▸"}</span>
+        <span style="color:var(--t5);font-size:22px;line-height:1">${open?"⌃":"⌄"}</span>
       </button>
       ${open?chipRow(ordered,groupColor):""}
     </div>`;
   };
 
   const customSyms = state.settings.customSymptoms||[];
-  const view = state._symPickerView || "recent";
+  const view = state._symPickerView || "all";
   const recentSyms = [];
   [...state.dailyLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(l=>{
     (l.symptoms||[]).forEach(s=>{const nm=typeof s==="string"?s:s.name;if(nm&&!recentSyms.includes(nm))recentSyms.push(nm);});
