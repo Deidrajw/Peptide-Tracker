@@ -40,3 +40,11 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - User screenshot: `Constipation` returned no matching results and Browse All contained no choices in Daily Check-In.
 - Actual root cause: options JSON stored inside template.content, reader previously used template.textContent.
 - PR #19 adds automated DOM checks: open combobox with no query, assert choices; type Constipation, assert visible match; select and assert Selected symptoms. Status: NOT TESTED pending CI results; physical iPhone: FAIL on original LIVE screenshots, retest repaired version pending.
+
+## v0.9.1-beta PR #19 completed automated evidence (2026-10-23)
+- Mobile regression on PR branch: PASS (GitHub Actions run 39988223703).
+- Source package, demo isolation check, required DOM, responsive browser checks 320/390 and both themes: PASS (run 39988223654).
+- Constipation search/browse/selected UI automation included in passing browser matrix.
+- Real iPhone originally failed (reported screenshot); fix on main not yet retested on physical device. Status: NOT TESTED after fix.
+- Full persistence/inventory functional suite: NOT TESTED; automation is a smoke/DOM matrix and cannot replace full end-to-end verification.
+- Post-merge GitHub Pages success: NOT VERIFIED.

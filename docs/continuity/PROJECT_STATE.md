@@ -65,3 +65,12 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Real iPhone screenshot confirmed search for Constipation and Browse All returned `No matching symptoms`. Root cause discovered: `HTMLTemplateElement.textContent` was read rather than `template.content.textContent` in `wireSymptomPicker`, leaving catalog empty. Fix committed on PR #19 branch, NOT YET DEPLOYED.
 - Replaced separate Search + Browse All with a single searchable combobox that opens available options on focus, supports filtering and multiple selections with intensity controls; protected recorded symptom values. Browser QA added, outcome pending.
 - PR #19: https://github.com/Deidrajw/Peptide-Tracker/pull/19. Initial CI packaging succeeded but test had wrong navigation selector; corrected on branch. No confirmed pass yet.
+
+## Post-merge verification — October 23, 2026
+- GitHub main merge SHA: `5b44b1e187b37059f7e63c399c8463f6e4782745` — PR #19 merged successfully.
+- Symptom combobox defect fixed in GitHub source: template.content reader now supplies available symptoms, single searchable/browseable combobox supports selection and intensity; physical iPhone retest NOT TESTED.
+- Automated PR branch QA: mobile workflow run 39988223703 SUCCESS; release artifact/browser workflow run 39988223654 SUCCESS (320/390, both themes, LIVE and DEMO smoke checks).
+- Build artifact: `Nexus-v0.9.1-beta-release` artifact ID 12516393327 (release run), contains LIVE ZIP, full-app standalone DEMO and manifest plus available browser evidence; artifact associated with PR SHA `9336139005c9b025afe71a25a9c05b932a346914`. Later branch changes were documentation only until merge.
+- **Pages post-merge deployment: NOT VERIFIED**; available GitHub connector only exposed PR-scoped commit workflow runs. Do not claim deployed.
+- Remaining tests: user iPhone combo browse/search/selection/intensity; comprehensive log/persistence/inventory functional regression beyond smoke coverage.
+- **One concrete next action:** Confirm GitHub Pages workflow for merge SHA 5b44b1e, then user-test Constipation search and Browse on iPhone; address any defects before full signoff.
