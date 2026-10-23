@@ -48,6 +48,13 @@ jobs:
                 if(style.display==='none'||style.visibility==='hidden'||style.w<40||style.h<40)throw Error('Continue button invisible at '+width);
               }
               await page.evaluate(()=>closeModal());
+              await page.locator('[data-tab="calendar"]').last().click();
+              await page.waitForTimeout(120);
+              const cells=page.locator('.nx-cal-compact-day');
+              if(await cells.count()<28)throw Error('Calendar month cells missing at '+width);
+              const cell=await cells.first().evaluate(el=>({h:el.getBoundingClientRect().height,weight:!!el.querySelector('.nx-cal-weight'),signals:!!el.querySelector('.nx-cal-day-signals'),overflow:el.scrollWidth>el.clientWidth+1}));
+              console.log('Calendar compact layout',width,cell);
+              if(!cell.weight||!cell.signals||cell.overflow||cell.h>95)throw Error('Calendar compact cell layout failed');
               if(errors.length)throw Error('Page errors '+width+': '+errors.join(' | '));
               await page.close();
             }
