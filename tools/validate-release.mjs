@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {chromium} from 'playwright';
 
-const demo = path.resolve('dist/Nexus_v0.9.1-beta_FULL_DEMO.html');
+const demo = path.resolve('dist/Nexus_v0.9.2-beta_FULL_DEMO.html');
 if (!fs.existsSync(demo)) throw Error('Build the full demo before testing it');
 const browser = await chromium.launch({headless:true, args:['--no-sandbox']});
 const results=[];
@@ -43,6 +43,7 @@ try {
         if (!(await page.locator('.nx-sym-add').count())) throw Error('Symptom browse list empty in '+kind+' '+width);
         await combo.fill('Constipation');
         await page.waitForTimeout(60);
+        if (!(await page.locator('.nx-sym-group-toggle').count())) throw Error('Symptom categories missing');
         const hit=page.locator('.nx-sym-add').filter({hasText:'Constipation'}).first();
         if (!(await hit.count())) throw Error('Constipation missing from symptom search');
         await hit.click();
@@ -64,5 +65,5 @@ try {
     }
   }
 } finally {await browser.close();}
-fs.writeFileSync('dist/Nexus_v0.9.1-beta_BROWSER_RESULTS.json',JSON.stringify(results,null,2));
+fs.writeFileSync('dist/Nexus_v0.9.2-beta_BROWSER_RESULTS.json',JSON.stringify(results,null,2));
 console.log('Browser matrix passed: '+results.length+' sessions covering live/demo, widths 320/390 and both themes');
