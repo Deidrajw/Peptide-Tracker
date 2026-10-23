@@ -1,0 +1,62 @@
+name: Nexus v0.9.1 build and parity QA
+on:
+  push:
+    branches: ['release/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax and source validation
+        shell: bash
+        run: |
+          set -e
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs; do node --check "$file"; done
+          test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
+          grep -q 'nexus-disclosures.css' index.html
+          grep -q 'v0.9.1-beta' index.html
+      - name: Build exact-source LIVE and offline full-app DEMO
+        run: node tools/build-release.mjs
+      - name: Validate artifacts and required files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile, pathlib
+          z=pathlib.Path('dist/Nexus_v0.9.1-beta_LIVE_GitHub.zip')
+          h=pathlib.Path('dist/Nexus_v0.9.1-beta_FULL_DEMO.html')
+          assert z.exists() and h.exists()
+          with zipfile.ZipFile(z) as a:
+              names=a.namelist()
+              assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names
+              assert sum(n.startswith('assets/js/') and n.endswith('-nexus.js') for n in names)==12
+          s=h.read_text()
+          assert 'buildDemoState("weight_loss")' in s
+          assert 'window.__NEXUS_FULL_APP_DEMO__' in s
+          assert '<script src="assets/js/' not in s
+          assert '<link rel="stylesheet" href="assets/css/' not in s
+          print('ZIP and standalone complete-source DEMO source validation PASS')
+          PY
+      - name: Browser QA at 320/390 and dark/light
+        shell: bash
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node tools/validate-release.mjs
+      - name: Upload demo, live ZIP, manifest and QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-v0.9.1-beta-release
+          path: dist/
+          if-no-files-found: warn
+          retention-days: 30
