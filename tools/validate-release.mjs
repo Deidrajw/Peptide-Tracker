@@ -20,6 +20,7 @@ try {
         if (!(await page.locator('[data-tab]').count())) throw Error(kind+' '+width+' tabs missing');
         if (kind==='demo') {
           if (!(await page.evaluate(()=>window.__NEXUS_FULL_APP_DEMO__))) throw Error('Demo isolation flag missing');
+          if (await page.locator('#demo-banner button').count()) throw Error('Standalone demo exposes mode exit controls');
           if (await page.locator('link[href^="assets/"],script[src^="assets/"]').count()) throw Error('Demo not standalone');
           // Confirm the storage is memory-only across reloads.
           await page.evaluate(()=>localStorage.setItem('__nx_isolation_test','should-never-persist'));
