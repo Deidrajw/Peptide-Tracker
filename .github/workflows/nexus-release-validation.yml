@@ -1,4 +1,4 @@
-name: Nexus v0.9.1 build and parity QA
+name: Nexus build and parity QA
 on:
   push:
     branches: ['release/**']
@@ -23,7 +23,8 @@ jobs:
           for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
-          grep -q 'v0.9.2-beta' index.html
+          grep -q 'nexus-contrast.css' index.html
+          grep -q 'v0.9.3-beta' index.html
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
@@ -31,12 +32,12 @@ jobs:
         run: |
           python3 - <<'PY'
           import zipfile, pathlib
-          z=pathlib.Path('dist/Nexus_v0.9.2-beta_LIVE_GitHub.zip')
-          h=pathlib.Path('dist/Nexus_v0.9.2-beta_FULL_DEMO.html')
+          z=pathlib.Path('dist/Nexus_v0.9.3-beta_LIVE_GitHub.zip')
+          h=pathlib.Path('dist/Nexus_v0.9.3-beta_FULL_DEMO.html')
           assert z.exists() and h.exists()
           with zipfile.ZipFile(z) as a:
               names=a.namelist()
-              assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names
+              assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names and 'assets/css/nexus-contrast.css' in names
               assert sum(n.startswith('assets/js/') and n.endswith('-nexus.js') for n in names)==12
           s=h.read_text()
           assert 'buildDemoState("weight_loss")' in s
@@ -56,7 +57,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Nexus-v0.9.2-beta-release
+          name: Nexus-v0.9.3-beta-release
           path: dist/
           if-no-files-found: warn
           retention-days: 30
