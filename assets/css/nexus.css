@@ -1629,3 +1629,10 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
  .nx-cal-mood{font-size:10px}
 }
 .nx-cal-compact-day:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+
+/* Nexus contrast pass: high-visibility controls in both themes. */
+.btn-primary { color: #1A1728; }
+[data-theme="light"] .btn-primary { color: #1A1728; }
+[data-theme="light"] .inp::placeholder { color: #625D7B; opacity: 1; }
+[data-theme="light"] button:focus-visible, [data-theme="light"] input:focus-visible { outline: 2px solid #51429B; outline-offset: 2px; }
+[data-theme="light"] .modal button[style*="background:#C8FF9C"], [data-theme="light"] .modal button[style*="background: #C8FF9C"] { color: #1A1728 !important; }
