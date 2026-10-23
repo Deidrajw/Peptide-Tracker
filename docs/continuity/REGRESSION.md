@@ -55,3 +55,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Group collapse/expand and selection persistence: NOT TESTED.
 - Real iPhone at 320/390 dark/light: NOT TESTED.
 - Full-app DEMO and LIVE ZIP: NOT TESTED until CI builds.
+
+## v0.9.2 symptom category user acceptance (2026-10-23)
+- Added automated checks for presence of Digestive, Energy & Sleep, PMS & Cycle, active Retatrutide-specific category in fictional DEMO, category expand/collapse, Constipation search, selection and intensity buttons.
+- Execute at 320px/390px, light and dark, standalone full-app DEMO and LIVE served source. Latest run evidence: PENDING; real iPhone: NOT TESTED; persistence/compound association deep tests: NOT TESTED.
