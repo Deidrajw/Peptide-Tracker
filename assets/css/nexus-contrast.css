@@ -1,0 +1,50 @@
+/* Nexus v0.9.3-beta — targeted WCAG AA legibility pass.
+   Preserve existing theme surfaces, mood colors, data/state and icon geometry.
+   Contrast targets: normal text >= 4.5:1; keyboard focus >= 3:1. */
+:root {
+  --nx-focus-accessible: #B99AE7;
+  --nx-secondary-readable: #B1A3C1;
+}
+[data-theme="light"] {
+  --nx-focus-accessible: #5B3FA8;
+  --nx-secondary-readable: #685779;
+}
+/* Some historic CTA markup forces WHITE foreground onto light lavender fills.
+   Exact solid background matches avoid affecting translucent chips and banners.
+   Dark ink gives >= 6.4:1 on #A78BFA and >= 8.3:1 on #C9A0FF. */
+button[style*="background:#A78BFA;"][style*="color:#fff"],
+button[style*="background:#C9A0FF;"][style*="color:#fff"],
+button[style*="background: #A78BFA;"][style*="color:#fff"],
+button[style*="background: #C9A0FF;"][style*="color:#fff"] {
+  color: #1A1728 !important;
+}
+/* Inline custom symptom Add button has a specific lavender/white contrast failure. */
+.modal #cs-save { color: #1A1728 !important; }
+/* Retain mood-colored Check-In CTA palette, but always use readable dark ink.
+   Mood fills range from light red to lime; the darkest has >5.7:1 contrast. */
+.modal.nx-checkin-sheet #save.btn-primary { color: #1A1728 !important; }
+/* Labels displayed as real text must not use faint decorative tones in light mode. */
+[data-theme="light"] .nx-checkin-sheet .nx-checkin-inline-label,
+[data-theme="light"] .nx-tag-sym-main small,
+[data-theme="light"] .nx-notes-toggle small {
+  color: var(--nx-secondary-readable) !important;
+}
+/* Some prior disclosure selectors forced a light lavender focus ring in both
+   themes; it is less than 3:1 against light backgrounds. */
+body #app details>summary:focus-visible,
+body .modal details>summary:focus-visible,
+body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle):focus-visible,
+body .modal .nx-sym-picker button:focus-visible,
+body .modal .nx-sym-group-toggle:focus-visible,
+body .modal .nx-sym-group .nx-sym-add:focus-visible {
+  outline: 2px solid var(--nx-focus-accessible) !important;
+  outline-offset: 2px;
+}
+/* Keep a clearly visible focus treatment on option input as well. */
+body .modal .nx-sym-search:focus-visible,
+body .modal .inp:focus-visible {
+  outline: 2px solid var(--nx-focus-accessible) !important;
+  outline-offset: 2px !important;
+}
+/* Don't replace selected symptom intensity styles, category hierarchy or
+   supplement choices; only strengthen low-contrast focus/legibility. */
