@@ -85,3 +85,5 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - UI labels refined to Retatrutide-specific (only for an active matching compound) and PMS & Cycle (existing Cycle / Hormonal symptom items). Underlying catalog, stored names, selected intensity and associations not altered.
 - Automated browser assertions added for Digestive, Energy & Sleep, PMS & Cycle headings; collapse/reopen behavior; Retatrutide-specific fictional fixture category; search and selected intensity. CI PENDING after follow-up commits.
 - **One concrete next action:** Review latest PR #21 mobile and full-app DEMO/LIVE build QA logs; correct failures, verify artifact completeness, then merge only if all checks pass and confirm Pages deployment.
+
+- Picker sections now default collapsed so category headers remain scannable in the fixed-height dropdown; searching automatically reveals matches without requiring category expansion. In-session expand/collapse choices survive picker rerenders; no stored schema change. QA pending for this latest change.
