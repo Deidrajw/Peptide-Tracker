@@ -1,7 +1,9 @@
 name: Nexus mobile form regression
 on:
   push:
-    branches: ['test/nexus-expanded-smoke-20261022']
+    branches: [main, 'release/**', 'test/**']
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
