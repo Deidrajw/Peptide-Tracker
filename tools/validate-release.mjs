@@ -35,6 +35,8 @@ try {
         for(const sel of ['.nx-checkin-symptoms','#nx-sym-combobox','.nx-sym-search-results','.nx-sym-selected-list']){
           if (!(await page.locator(sel).count())) throw Error(kind+' '+width+' Check-In missing '+sel);
         }
+        await page.locator('.nx-checkin-symptoms').evaluate(el=>{el.open=true;});
+        await page.waitForTimeout(50);
         const combo=page.locator('#nx-sym-combobox');
         await combo.focus();
         await page.waitForTimeout(60);
