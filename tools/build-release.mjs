@@ -2,76 +2,93 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const VERSION='v0.9.1-beta';
-const root=process.cwd();
-const dist=path.join(root,'dist');
-fs.mkdirSync(dist,{recursive:true});
-let source=fs.readFileSync('index.html','utf8');
-const jsFiles=Array.from({length:12},(_,i)=>'assets/js/'+String(i+1).padStart(2,'0')+'-nexus.js');
-const cssFiles=['assets/css/nexus.css','assets/css/nexus-disclosures.css'];
-const missing=[...jsFiles,...cssFiles].filter(p=>!fs.existsSync(p));
-if(missing.length)throw Error('Missing live source assets: '+missing.join(', '));
-const liveZip=path.join(dist,'Nexus_'+VERSION+'_LIVE_GitHub.zip');
-const demoHTML=path.join(dist,'Nexus_'+VERSION+'_FULL_DEMO.html');
+const VERSION = 'v0.9.1-beta';
+const DIST = 'dist';
+const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
+const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css'];
+const LIVE_FILES = ['index.html', ...CSS, ...JS];
+const missing = LIVE_FILES.filter(file => !fs.existsSync(file));
+if (missing.length) throw Error('Missing release files: ' + missing.join(', '));
+fs.mkdirSync(DIST, {recursive: true});
 
-const isolation=`(function(){
-  'use strict';
-  // A fresh in-memory storage environment. Neither existing LIVE keys nor user
-  // records can be read, imported or overwritten by this standalone demo.
-  const records=new Map();
-  const mock={
-    getItem:key=>records.has(String(key))?records.get(String(key)):null,
-    setItem:(key,value)=>{records.set(String(key),String(value));},
-    removeItem:key=>records.delete(String(key)),
-    clear:()=>records.clear(),
-    key:index=>Array.from(records.keys())[index]??null,
-    get length(){return records.size;}
-  };
-  try {
-    Object.defineProperty(window,'localStorage',{value:mock,configurable:false});
-    Object.defineProperty(window,'sessionStorage',{value:mock,configurable:false});
-  } catch(err) {document.documentElement.dataset.demoStorageError='true';throw Error('DEMO storage isolation failed: '+err);}
-  window.__NEXUS_FULL_APP_DEMO__=true;
-  window.fetch=()=>Promise.reject(new Error('Network disabled in standalone fictional-data DEMO'));
-})();`;
-
-let demo=source.replace(/<link rel="stylesheet" href="assets\\/css\\/nexus\\.css">\\s*<link rel="stylesheet" href="assets\\/css\\/nexus-disclosures\\.css">/,()=>{
- const css=cssFiles.map(p=>fs.readFileSync(p,'utf8').replace(/^@import\\s+url\\([^;]+;?/gm,'')).join('\\n');
- return '<style>\\n'+css.replace(/<\\/style/gi,'<\\\\/style')+'\\n</style>';
-});
-if(demo===source)throw Error('Stylesheet injection failed');
-const bootMarker='sinceLastVisitSummary = computeSinceLastVisit();';
-demo=demo.replace(/<script src="(assets\\/js\\/\\d\\d-nexus\\.js)"><\\/script>/g,(_original,filename)=>{
-  let code=fs.readFileSync(filename,'utf8');
-  if(filename.endsWith('12-nexus.js')){
-    if(!code.includes(bootMarker))throw Error('Demo boot insertion marker missing');
-    code=code.replace(bootMarker,`// Standalone full-app DEMO: fictional fixtures before the first render.
-_demoActive=true;
-state=buildDemoState("weight_loss");
-state.profile.onboardingDone=true;
-state.settings.lastSeenChangelog=CURRENT_CHANGELOG_VERSION;
-${bootMarker}`);
+const html = fs.readFileSync('index.html', 'utf8');
+const styles = CSS.map(file => fs.readFileSync(file, 'utf8')
+  .split('\n').filter(line => !line.trimStart().startsWith('@import')).join('\n')).join('\n');
+let demo = html;
+for (const file of CSS) {
+  const tag = '<link rel="stylesheet" href="' + file + '">';
+  if (!demo.includes(tag)) throw Error('Missing CSS tag: ' + file);
+  demo = demo.replace(tag, file === CSS[0] ? '<style>\n' + styles + '\n</style>' : '');
+}
+const boot = 'sinceLastVisitSummary = computeSinceLastVisit();';
+for (const file of JS) {
+  const tag = '<script src="' + file + '"></script>';
+  if (!demo.includes(tag)) throw Error('Missing script tag: ' + file);
+  let code = fs.readFileSync(file, 'utf8');
+  if (file === JS[JS.length - 1]) {
+    if (!code.includes(boot)) throw Error('DEMO bootstrap location not found');
+    code = code.replace(boot, [
+      '// FULL-APP DEMO: never use real saved data; insert fictional fixtures before render.',
+      '_demoActive = true;',
+      'state = buildDemoState("weight_loss");',
+      'state.profile.onboardingDone = true;',
+      'state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION;',
+      boot
+    ].join('\n'));
   }
-  return '<script>\\n'+code.replace(/<\\/script/gi,'<\\\\/script')+'\\n<\\/script>';
-});
-if(/<script src=/.test(demo))throw Error('Demo still loads external scripts');
-if(!demo.includes('buildDemoState("weight_loss")'))throw Error('Fictional dataset not injected');
-demo=demo.replace('<script>\\n"use strict";','<script>\\n"use strict";');
-demo=demo.replace('</head>','<meta name="robots" content="noindex,nofollow"><meta name="nexus-data-mode" content="fictional-isolated">\\n</head>');
-demo=demo.replace('<script>\\n"use strict";','<script>\\n"use strict";');
-demo=demo.replace('<script>\\n"use strict";', '<script>\\n"use strict";');
-const firstScript=demo.indexOf('<script>');
-if(firstScript<0)throw Error('No JS in compiled demo');
-demo=demo.slice(0,firstScript)+'<script>\\n'+isolation+'\\n<\\/script>\\n'+demo.slice(firstScript);
-demo=demo.replace(/(<div id="demo-banner"[^>]*>)[\\s\\S]*?(<\\/div>)/, (_all,start,end)=>
- start+'FULL-APP FICTIONAL DEMO — Offline and completely isolated from LIVE'+end);
-fs.writeFileSync(demoHTML,demo,'utf8');
-// ZIP must contain precisely the current checked-out LIVE source and its assets,
-// not the modified/fictional demo file.
-execFileSync('python3',['-c',`import zipfile,sys
-with zipfile.ZipFile(sys.argv[1],'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
- for p in sys.argv[2:]:z.write(p,p)`,liveZip,'index.html',...cssFiles,...jsFiles]);
-const manifest={version:VERSION,source:'GitHub checked-out commit',live_assets:['index.html',...cssFiles,...jsFiles],demo_file:path.basename(demoHTML),data_mode:'fictional-memory-only',real_data_sync:false};
-fs.writeFileSync(path.join(dist,'Nexus_'+VERSION+'_BUILD_MANIFEST.json'),JSON.stringify(manifest,null,2));
-console.log('LIVE ZIP',liveZip,fs.statSync(liveZip).size);
-console.log('FULL DEMO',demoHTML,fs.statSync(demoHTML).size);
+  // An inline closing script tag must not terminate the encompassing script block.
+  code = code.replace(/<\/script/gi, '<\\/script');
+  demo = demo.replace(tag, '<script>\n' + code + '\n</script>');
+}
+if (demo.includes('<script src=') || demo.includes('href="assets/css/'))
+  throw Error('Standalone demo still references relative script/style assets');
+
+const storageBootstrap = String.raw`(function(){
+  'use strict';
+  const records = new Map();
+  const memory = {
+    getItem: key => records.has(String(key)) ? records.get(String(key)) : null,
+    setItem: (key, value) => records.set(String(key), String(value)),
+    removeItem: key => records.delete(String(key)),
+    clear: () => records.clear(),
+    key: index => Array.from(records.keys())[index] ?? null,
+    get length(){ return records.size; }
+  };
+  // Fail closed if the browser refuses isolation; never fall back to LIVE storage.
+  Object.defineProperty(window, 'localStorage', {value: memory, configurable: false});
+  Object.defineProperty(window, 'sessionStorage', {value: memory, configurable: false});
+  if (window.localStorage !== memory || window.sessionStorage !== memory)
+    throw Error('Standalone DEMO storage isolation failed');
+  window.__NEXUS_FULL_APP_DEMO__ = true;
+  window.fetch = () => Promise.reject(new Error('Network disabled in fictional full-app demo'));
+  window.XMLHttpRequest = function(){ throw Error('Network disabled in fictional full-app demo'); };
+  if (navigator.sendBeacon) navigator.sendBeacon = () => false;
+})();`;
+const firstScript = demo.indexOf('<script>');
+if (firstScript < 0) throw Error('Could not locate DEMO script injection point');
+demo = demo.slice(0, firstScript) + '<script>\n' + storageBootstrap + '\n</script>\n' + demo.slice(firstScript);
+demo = demo.replace('</head>', '<meta name="robots" content="noindex,nofollow">\n<meta name="nexus-data-mode" content="fictional-isolated">\n</head>');
+// The banner is a visible safety distinction; all other screens are release-source identical.
+demo = demo.replace('style="display:none;position:fixed;top:0;', 'style="display:block;position:fixed;top:0;');
+demo = demo.replace('🧪 DEVELOPER DEMO MODE — Sample Data Active', 'FICTIONAL FULL-APP DEMO — No live data');
+const demoFile = path.join(DIST, 'Nexus_' + VERSION + '_FULL_DEMO.html');
+const liveFile = path.join(DIST, 'Nexus_' + VERSION + '_LIVE_GitHub.zip');
+fs.writeFileSync(demoFile, demo, 'utf8');
+execFileSync('python3', ['-c', [
+ 'import zipfile,sys',
+ "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
+ ' for name in sys.argv[2:]: z.write(name, name)'
+].join('\n'), liveFile, ...LIVE_FILES]);
+const manifest = {
+ version: VERSION,
+ source_commit: process.env.GITHUB_SHA || 'local-checkout-unverified',
+ live_files: LIVE_FILES,
+ live_zip: path.basename(liveFile),
+ standalone_demo: path.basename(demoFile),
+ demo_storage: 'ephemeral in-memory only',
+ demo_fixture: 'buildDemoState(weight_loss)',
+ demo_sync: 'disabled',
+ physical_iPhone_tested: false
+};
+fs.writeFileSync(path.join(DIST, 'Nexus_' + VERSION + '_BUILD_MANIFEST.json'), JSON.stringify(manifest, null, 2));
+console.log(JSON.stringify({demoFile, liveFile, manifest}, null, 2));
