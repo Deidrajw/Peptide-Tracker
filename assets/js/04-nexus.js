@@ -2128,7 +2128,7 @@ function symptomPickerHTML(selected, color) {
     const open = isOpen(key);
     const c = groupColor||"var(--t3)";
     return `<div style="margin-bottom:8px;border:1px solid var(--border-sub);border-radius:12px;overflow:hidden;background:var(--surface)">
-      <button class="symcat-toggle" data-key="${key}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${open?"var(--surface-2)":"transparent"}">
+      <button class="symcat-toggle" data-nx-open="${open}" aria-expanded="${open}" data-key="${key}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${open?"var(--surface-2)":"transparent"}">
         <span class="mono" style="font-size:10px;color:${selCount?c:"var(--t3)"};letter-spacing:1px">${groupLabel.toUpperCase()}${selCount?` <span style="color:${c}">(${selCount} selected)</span>`:""}</span>
         <span style="color:var(--t5);font-size:22px;line-height:1">${open?"⌃":"⌄"}</span>
       </button>
