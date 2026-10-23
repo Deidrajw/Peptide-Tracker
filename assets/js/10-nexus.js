@@ -123,10 +123,10 @@ function stashView() {
   html += `<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR KITS</div>
   <div style="display:flex;gap:8px;margin-bottom:16px">
     <button id="stash-filter-btn" style="flex:1;padding:9px 12px;border-radius:10px;background:${filter!=="all"?"var(--surface-3)":"var(--surface-2)"};border:1px solid ${filter!=="all"?"var(--t3)":"var(--border-sub)"};color:${filter!=="all"?"var(--t1)":"var(--t3)"};font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
-      <span>Filter: ${esc(FILTER_LABELS[filter])}</span><span style="color:var(--t5)">▾</span>
+      <span>Filter: ${esc(FILTER_LABELS[filter])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
     </button>
     <button id="stash-sort-btn" style="flex:1;padding:9px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sort: ${esc(SORT_LABELS[sort])}</span><span style="color:var(--t5);flex-shrink:0">▾</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sort: ${esc(SORT_LABELS[sort])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
     </button>
   </div>`;
 
