@@ -48,3 +48,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Real iPhone originally failed (reported screenshot); fix on main not yet retested on physical device. Status: NOT TESTED after fix.
 - Full persistence/inventory functional suite: NOT TESTED; automation is a smoke/DOM matrix and cannot replace full end-to-end verification.
 - Post-merge GitHub Pages success: NOT VERIFIED.
+
+## v0.9.2-beta pre-merge matrix
+- Grouped headings present: NOT TESTED.
+- Constipation search across group: NOT TESTED.
+- Group collapse/expand and selection persistence: NOT TESTED.
+- Real iPhone at 320/390 dark/light: NOT TESTED.
+- Full-app DEMO and LIVE ZIP: NOT TESTED until CI builds.
