@@ -17,7 +17,6 @@ try {
         const url = kind==='live' ? 'http://127.0.0.1:8777/' : 'file://' + demo;
         await page.goto(url,{waitUntil:'domcontentloaded'});
         await page.waitForTimeout(800);
-        if (theme==='light') await page.evaluate(()=>document.documentElement.dataset.theme='light');
         if (!(await page.locator('[data-tab]').count())) throw Error(kind+' '+width+' tabs missing');
         if (kind==='demo') {
           if (!(await page.evaluate(()=>window.__NEXUS_FULL_APP_DEMO__))) throw Error('Demo isolation flag missing');
@@ -29,6 +28,9 @@ try {
           const persisted = await page.evaluate(()=>localStorage.getItem('__nx_isolation_test'));
           if (persisted!==null) throw Error('DEMO storage persisted after reload');
         }
+        await page.evaluate(desired=>{document.documentElement.dataset.theme=desired},theme);
+        const appliedTheme=await page.evaluate(()=>document.documentElement.dataset.theme);
+        if (appliedTheme!==theme) throw Error('Theme test setup failed: '+kind+' '+width+' '+theme);
         await page.evaluate(()=>dailyModal());
         await page.waitForTimeout(200);
         if (!(await page.locator('.modal').isVisible())) throw Error('Daily Check-In modal failed');
