@@ -41,6 +41,16 @@ try {
         await combo.focus();
         await page.waitForTimeout(60);
         if (!(await page.locator('.nx-sym-add').count())) throw Error('Symptom browse list empty in '+kind+' '+width);
+        for(const heading of ['Digestive','Energy & Sleep','PMS & Cycle']){
+          if (!(await page.locator('.nx-sym-group-toggle').filter({hasText:heading}).count())) throw Error('Missing symptom section '+heading+' in '+kind);
+        }
+        const digestive=page.locator('.nx-sym-group').filter({has:page.locator('.nx-sym-group-toggle').filter({hasText:'Digestive'})}).first();
+        const heading=digestive.locator('.nx-sym-group-toggle');
+        await heading.click();
+        if ((await heading.getAttribute('aria-expanded'))!=='false' || (await digestive.locator('.nx-sym-add').count())>0) throw Error('Digestive collapse failed');
+        await heading.click();
+        if ((await heading.getAttribute('aria-expanded'))!=='true' || !(await digestive.locator('.nx-sym-add').count())) throw Error('Digestive expand failed');
+        if (kind==='demo' && !(await page.locator('.nx-sym-group-toggle').filter({hasText:'Retatrutide-specific'}).count())) throw Error('Retatrutide-specific category missing from fictional demo');
         await combo.fill('Constipation');
         await page.waitForTimeout(60);
         if (!(await page.locator('.nx-sym-group-toggle').count())) throw Error('Symptom categories missing');
@@ -49,6 +59,7 @@ try {
         await hit.click();
         await page.waitForTimeout(80);
         if (!(await page.locator('.nx-sym-selected-list').getByText('Constipation').count())) throw Error('Symptom selection not reflected');
+        if ((await page.locator('.nx-sym-selected-list .nx-sym-level').count())<3) throw Error('Selected symptom intensity controls missing');
         const modalMetrics = await page.locator('.modal').evaluate(el=>({w:el.getBoundingClientRect().width,sw:el.scrollWidth,cw:el.clientWidth}));
         if (modalMetrics.w>width+1 || modalMetrics.sw>modalMetrics.cw+3) throw Error('Check-In horizontal overflow '+JSON.stringify(modalMetrics));
         await page.screenshot({path:'dist/'+kind+'-'+theme+'-'+width+'-checkin.png'});
