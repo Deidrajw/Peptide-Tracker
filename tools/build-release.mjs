@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const VERSION = 'v0.9.1-beta';
+const VERSION = 'v0.9.2-beta';
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css'];
@@ -68,9 +68,15 @@ const firstScript = demo.indexOf('<script>');
 if (firstScript < 0) throw Error('Could not locate DEMO script injection point');
 demo = demo.slice(0, firstScript) + '<script>\n' + storageBootstrap + '\n</script>\n' + demo.slice(firstScript);
 demo = demo.replace('</head>', '<meta name="robots" content="noindex,nofollow">\n<meta name="nexus-data-mode" content="fictional-isolated">\n</head>');
-// The banner is a visible safety distinction; all other screens are release-source identical.
-demo = demo.replace('style="display:none;position:fixed;top:0;', 'style="display:block;position:fixed;top:0;');
-demo = demo.replace('🧪 DEVELOPER DEMO MODE — Sample Data Active', 'FICTIONAL FULL-APP DEMO — No live data');
+// Keep the fictional-data marker visible in the main app, without obscuring modals.
+// The standalone file must not expose Change/Exit buttons that can leave demo state.
+const bannerStart=demo.indexOf('<div id="demo-banner"');
+const bannerEnd=demo.indexOf('</div>',bannerStart);
+if(bannerStart<0||bannerEnd<0)throw Error('Expected demo banner missing');
+const safeBanner='<div id="demo-banner" style="display:block;position:fixed;top:0;left:0;right:0;z-index:60;background:#F9C87D;color:#000;font:700 11px sans-serif;text-align:center;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));letter-spacing:.4px">FICTIONAL FULL-APP DEMO — No live data</div>';
+demo=demo.slice(0,bannerStart)+safeBanner+demo.slice(bannerEnd+6);
+demo=demo.replace('</head>','<style>body{padding-top:calc(38px + env(safe-area-inset-top));}</style>\n</head>');
+if(demo.includes('onclick="exitDemoMode()"')||demo.includes('onclick="demoPickerModal()"'))throw Error('Standalone DEMO must not expose live-mode controls');
 const demoFile = path.join(DIST, 'Nexus_' + VERSION + '_FULL_DEMO.html');
 const liveFile = path.join(DIST, 'Nexus_' + VERSION + '_LIVE_GitHub.zip');
 fs.writeFileSync(demoFile, demo, 'utf8');
