@@ -74,3 +74,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **Pages post-merge deployment: NOT VERIFIED**; available GitHub connector only exposed PR-scoped commit workflow runs. Do not claim deployed.
 - Remaining tests: user iPhone combo browse/search/selection/intensity; comprehensive log/persistence/inventory functional regression beyond smoke coverage.
 - **One concrete next action:** Confirm GitHub Pages workflow for merge SHA 5b44b1e, then user-test Constipation search and Browse on iPhone; address any defects before full signoff.
+
+## v0.9.2-beta grouped symptoms (2026-10-23)
+- Baseline main: a82017daad493dbbff9920ad66788ddb5c5d61de. Working release branch: release/grouped-symptom-picker-20261023.
+- Approved grouped symptom combobox implemented in assets/js/04-nexus.js; recently logged, active compound-specific, general named groups, custom and other selected symptoms. Search filters across groups; expand/collapse category state, multi-select and existing intensity controls. No schema change.
+- Added CSS in assets/css/nexus-disclosures.css, version changed to v0.9.2-beta. Release builder/test source updated. Full-app demo/LIVE ZIP/test results INCOMPLETE until workflow confirmed.
+- Next action: validate workflow and fix failures; merge PR only after CI pass, then verify Pages deployment and iPhone testing.
