@@ -2145,7 +2145,7 @@ function symptomPickerHTML(selected, color) {
   // Keep every currently selected symptom reachable, even if not in the recent history.
   const selectedNames=selected.map(s=>s.name);
   const recentList=[...new Set([...selectedNames,...recentSyms.slice(0,8)])];
-  const allEntries=[...new Set([...Object.values(SYMPTOM_GROUPS).flat(),...customSyms.map(c=>c.name),...compoundGroups.flatMap(g=>g.symptoms),...selectedNames])];
+  const allEntries=[...new Set([...Object.values(SYMPTOM_GROUPS).flat(),...customSyms.map(c=>c.name),...compoundGroups.flatMap(g=>g.symptoms),...selectedNames])]; // grouped UI rollout
   const selectedRowHTML = selected.map(item => {
     const level=Math.max(1,Math.min(3,+item.intensity||2));
     return `<div class="nx-sym-selected-item" style="padding:10px 0;border-bottom:1px solid var(--border-sub)">
