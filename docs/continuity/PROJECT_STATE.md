@@ -98,3 +98,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **DEMO safeguard:** fictional-only sticky/fixed banner below modal z-index, cannot Exit fictional data; no live writes/sync. The demo and LIVE ZIP are build files, not substitute for verified Pages deployment.
 - **Known visual defect remaining:** light-theme Save Check-In text on yellow appears low-contrast in screenshot; broader light/dark contrast work remains. Do not treat these visual QA passes as full WCAG AA validation.
 - **One concrete next action:** Verify Pages deployment to merge commit `dea438e` in GitHub Actions/Pages, then real iPhone 320/390 user acceptance of grouped Symptoms and continue light-theme contrast fixes.
+
+## Active follow-up — v0.9.3-beta contrast and legibility (2026-10-23)
+- Baseline verified GitHub `main`: `6a19a76813aced836f7f9a8dc78400f8bd6d7b22` (PR #22 documentation merge; v0.9.2 application PR #21 at `dea438e63dd11fce263429e6ee47f32f6df24ea2`).
+- Branch `release/v0.9.3-contrast-legibility`; app update: new `assets/css/nexus-contrast.css`, referenced after disclosure styles, title v0.9.3-beta, build from all THREE CSS and 12 JS modules, updated mobile/browser QA.
+- Scoped WCAG fixes: bright lavender button foreground no longer white (white on #C9A0FF ~2.1:1, on #A78BFA ~2.7:1); light Check-In helper labels; accessible light-focus outlines; dark text on mood-colored Check-In Save. No JS business logic, data schemas, storage keys, medical content or inventory changes.
+- GitHub Pages verification of prior v0.9.2 and future v0.9.3 cannot yet be established via connector's PR-limited runs. Production LIVE ZIP and full-app DEMO from v0.9.3 **INCOMPLETE until GitHub CI and artifact review**; real iPhone NOT TESTED.
+- **ONE NEXT ACTION:** Review branch/PR v0.9.3 browser QA for computed CTA contrast >=4.5:1, focus contrast, DEMO/LIVE parity; repair any failures before merge, then independently verify Pages deployment.

@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const VERSION = 'v0.9.2-beta';
+const VERSION = 'v0.9.3-beta';
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
-const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css'];
+const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css'];
 const LIVE_FILES = ['index.html', ...CSS, ...JS];
 const missing = LIVE_FILES.filter(file => !fs.existsSync(file));
 if (missing.length) throw Error('Missing release files: ' + missing.join(', '));

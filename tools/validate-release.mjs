@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {chromium} from 'playwright';
 
-const demo = path.resolve('dist/Nexus_v0.9.2-beta_FULL_DEMO.html');
+const demo = path.resolve('dist/Nexus_v0.9.3-beta_FULL_DEMO.html');
 if (!fs.existsSync(demo)) throw Error('Build the full demo before testing it');
 const browser = await chromium.launch({headless:true, args:['--no-sandbox']});
 const results=[];
@@ -64,6 +64,46 @@ try {
         await page.waitForTimeout(80);
         if (!(await page.locator('.nx-sym-selected-list').getByText('Constipation').count())) throw Error('Symptom selection not reflected');
         if ((await page.locator('.nx-sym-selected-list .nx-sym-level').count())<3) throw Error('Selected symptom intensity controls missing');
+        // Actual computed foreground and background; do not assume declaration order
+        // implies WCAG AA. Transparent backgrounds are not accepted for this CTA check.
+        const contrastCheck = await page.evaluate(()=>{
+          const c = value => {
+            const vals=String(value).match(/[0-9.]+/g)?.slice(0,3).map(Number)||[];
+            return vals.length===3?vals:null;
+          };
+          const l = v => v.map(n=>{const x=n/255;return x<=0.04045?x/12.92:Math.pow((x+0.055)/1.055,2.4);}).reduce((a,x,i)=>a+x*[0.2126,0.7152,0.0722][i],0);
+          const ratio=(a,b)=>{const x=c(a),y=c(b);if(!x||!y)return null;const z=l(x),w=l(y);return (Math.max(z,w)+0.05)/(Math.min(z,w)+0.05)};
+          const el=document.querySelector('.modal #save.btn-primary');
+          if(!el)throw Error('Check-In CTA missing');
+          const style=getComputedStyle(el);
+          return {ratio:ratio(style.color,style.backgroundColor),color:style.color,background:style.backgroundColor};
+        });
+        if(!contrastCheck.ratio||contrastCheck.ratio<4.5)throw Error('Check-In CTA contrast below 4.5:1: '+JSON.stringify(contrastCheck));
+        const customTrigger=page.locator('.modal #add-custom-symptom');
+        if(await customTrigger.count()){
+          await customTrigger.click();
+          const addContrast=await page.locator('.modal #cs-save').evaluate(el=>{
+            const nums=s=>String(s).match(/[0-9.]+/g).slice(0,3).map(Number);
+            const lum=col=>nums(col).map(v=>{v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4)}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+            const s=getComputedStyle(el),a=lum(s.color),b=lum(s.backgroundColor);
+            return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+          });
+          if(addContrast<4.5)throw Error('Custom Add button contrast below 4.5:1: '+addContrast);
+          await page.locator('.modal #cs-cancel').click();
+        }
+        // Light-mode lavender outline must remain visible against light surfaces.
+        if(theme==='light'){
+          const ring=page.locator('.modal .nx-sym-group-toggle').first();
+          if(await ring.count()){
+            await ring.focus();
+            // Programmatic focus after a pointer action does not activate :focus-visible.
+            // Travel away and back using keyboard Tab to test the actual user pathway.
+            await page.keyboard.press('Shift+Tab');
+            await page.keyboard.press('Tab');
+            const focus=await ring.evaluate(el=>({color:getComputedStyle(el).outlineColor,style:getComputedStyle(el).outlineStyle,width:getComputedStyle(el).outlineWidth,visible:el.matches(':focus-visible')}));
+            if(!focus.visible||focus.style==='none'||parseFloat(focus.width)<2||!focus.color.includes('91, 63, 168'))throw Error('Keyboard focus-visible outline missing: '+JSON.stringify(focus));
+          }
+        }
         const modalMetrics = await page.locator('.modal').evaluate(el=>({w:el.getBoundingClientRect().width,sw:el.scrollWidth,cw:el.clientWidth}));
         if (modalMetrics.w>width+1 || modalMetrics.sw>modalMetrics.cw+3) throw Error('Check-In horizontal overflow '+JSON.stringify(modalMetrics));
         await page.screenshot({path:'dist/'+kind+'-'+theme+'-'+width+'-checkin.png'});
@@ -80,5 +120,5 @@ try {
     }
   }
 } finally {await browser.close();}
-fs.writeFileSync('dist/Nexus_v0.9.2-beta_BROWSER_RESULTS.json',JSON.stringify(results,null,2));
+fs.writeFileSync('dist/Nexus_v0.9.3-beta_BROWSER_RESULTS.json',JSON.stringify(results,null,2));
 console.log('Browser matrix passed: '+results.length+' sessions covering live/demo, widths 320/390 and both themes');
