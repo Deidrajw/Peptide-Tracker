@@ -1,0 +1,85 @@
+/* Nexus v0.9.1-beta — application-wide disclosure geometry.
+ * One CSS-drawn chevron (9px/2px stroke) inside a 20px alignment slot.
+ * Keep navigation chevrons (right-pointing) distinct from disclosure chevrons.
+ * No changes to data storage, event handlers, or dose math.
+ */
+:root { --nx-disclosure-size:9px; --nx-disclosure-stroke:2px; --nx-disclosure-ink:var(--t3); }
+#app details>summary, .modal details>summary, .nexus-more-sheet details>summary {
+  list-style:none; cursor:pointer; min-height:44px;
+  box-sizing:border-box;
+}
+#app details>summary::marker,.modal details>summary::marker,.nexus-more-sheet details>summary::marker {content:"";}
+#app details>summary::-webkit-details-marker,.modal details>summary::-webkit-details-marker,.nexus-more-sheet details>summary::-webkit-details-marker{display:none;}
+#app details>summary:not(.nx-no-chevron),.modal details>summary:not(.nx-no-chevron),.nexus-more-sheet details>summary:not(.nx-no-chevron) {
+  align-items:center;gap:12px;
+}
+/* The exact same glyph is used in Today, Check-In, dose entry, Trends,
+ * Protocol, Stash, planning, reference drawers and settings disclosures. */
+body #app details:not(.nx-no-chevron)>summary::after,
+body .modal details:not(.nx-no-chevron)>summary::after,
+body .nexus-more-sheet details:not(.nx-no-chevron)>summary::after,
+body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#stash-filter-btn,#stash-sort-btn)::after,
+body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn)::after,
+body #app :is(#supp-toggle,#supp-selected-toggle)::after {
+  content:""!important; box-sizing:border-box!important; display:block!important;
+  width:var(--nx-disclosure-size)!important; height:var(--nx-disclosure-size)!important;
+  flex:0 0 var(--nx-disclosure-size)!important;
+  border:0!important; border-right:var(--nx-disclosure-stroke) solid currentColor!important;
+  border-bottom:var(--nx-disclosure-stroke) solid currentColor!important;
+  border-radius:0!important; color:var(--nx-disclosure-ink)!important;
+  margin:0 5px 0 auto!important; opacity:1!important;
+  transform:translateY(-2px) rotate(45deg)!important;
+  transition:transform .16s ease!important;
+  pointer-events:none!important;
+}
+body #app details:not(.nx-no-chevron)[open]>summary::after,
+body .modal details:not(.nx-no-chevron)[open]>summary::after,
+body .nexus-more-sheet details:not(.nx-no-chevron)[open]>summary::after,
+body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
+body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
+body .modal .symcat-toggle[data-nx-open="true"]::after {
+  transform:translateY(3px) rotate(225deg)!important;
+}
+/* Disclosure rows must have a full touch target and predictable right inset. */
+body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn) {
+  min-height:48px!important; box-sizing:border-box!important;
+  align-items:center!important; text-align:left;
+}
+body :is(#app,.modal) :is(.nx-tag-sym-row,.nx-notes-toggle,.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle) {
+  display:flex!important;justify-content:space-between!important; gap:12px!important;
+}
+/* Hide only identified legacy decorative glyphs, not counters or captions. */
+.nx-chevron-slot{display:none!important}
+body :is(#app,.modal) :is(.symcat-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-sym-browse-toggle,#supp-toggle,#supp-selected-toggle,.nx-add-log-btn)>span[aria-hidden="true"]{display:none!important}
+/* Expanded Today/Protocol cards already have a purpose-built right-hand slot.
+ * Do not add a second pseudo chevron or a third grid column. */
+body #app :is(.nexus-today-details,.nexus-quiet-details,.nexus-lookahead,.nexus-protocol-details)>summary::after{content:none!important;display:none!important}
+body #app :is(.nexus-today-details-chevron,.nexus-quiet-chevron,.nx-proto-chevron,.nx-compound-chevron,.compound-collapse-btn)::after{
+  content:""!important; box-sizing:border-box!important;
+  display:block!important;width:var(--nx-disclosure-size)!important;height:var(--nx-disclosure-size)!important;
+  border:0!important;border-right:var(--nx-disclosure-stroke) solid currentColor!important;
+  border-bottom:var(--nx-disclosure-stroke) solid currentColor!important;
+  margin:auto!important;transform:translateY(-2px) rotate(45deg)!important;
+}
+body #app :is(.nexus-today-details-chevron,.nexus-quiet-chevron,.nx-proto-chevron) {
+  font-size:0!important;line-height:0!important;transform:none!important;
+  color:var(--nx-disclosure-ink)!important;
+}
+body #app .nexus-today-details[open] .nexus-today-details-chevron::after,
+body #app :is(.nexus-quiet-details,.nexus-lookahead)[open] .nexus-quiet-chevron::after,
+body #app .nexus-protocol-details[open] .nx-proto-chevron::after,
+body #app .nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron::after,
+body #app .compound-collapse-btn::after{transform:translateY(3px) rotate(225deg)!important}
+/* Older card rules rotate the entire container and distort its arrow. */
+body #app :is(.nexus-today-details[open] .nexus-today-details-chevron,.nexus-protocol-details[open] .nx-proto-chevron,.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron){transform:none!important}
+/* Manual disclosure icons in nested history/intro sections. */
+body #app :is(.nexus-today-onboarding,.nx-log-updates)>summary>span[aria-hidden="true"]{display:none!important}
+body #app :is(.nexus-today-onboarding,.nx-log-updates)>summary::after{display:block!important;content:""!important}
+body #app details>summary:focus-visible,body .modal details>summary:focus-visible,
+body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle):focus-visible{
+ outline:2px solid #A78BFA!important;outline-offset:-2px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  body #app details>summary::after,body .modal details>summary::after,
+  body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle)::after{transition:none!important}
+}
