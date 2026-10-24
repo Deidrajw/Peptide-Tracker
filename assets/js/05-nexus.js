@@ -3,7 +3,22 @@ function comboDoseModal() {
   // Combo dose is specifically "compounds drawn into one syringe and injected together"
   // (see the hint text below) — a nasal spray can't be drawn into that syringe, so it's
   // excluded here rather than left selectable with a site list that wouldn't apply to it.
-  const names = Object.keys(aps).filter(n=>aps[n]?.route!=="Nasal").sort();
+  // A blend's constituent is not an independently available syringe compound
+  // solely because it has a tracked library entry. Preserve names that have
+  // an actual non-blend kit, independent log, protocol, prepared source, or a
+  // previously saved standalone/combo selection (legacy recipes remain valid).
+  const blendConstituents = new Set((state.supplies||[]).filter(k=>k.isBlend)
+    .flatMap(k=>(k.composition||[]).map(part=>part.compound).filter(Boolean)));
+  const standaloneKits = new Set((state.supplies||[]).filter(k=>!k.isBlend).map(k=>k.name));
+  const independentlyUsed = new Set([
+    ...Object.entries(aps).filter(([,p])=>(p?.doses||[]).some(d=>d?.dose!=null)).map(([n])=>n),
+    ...(state.protocols||[]).flatMap(p=>(p.compounds||[]).map(c=>c.name)),
+    ...(state.preparedDoses||[]).flatMap(pd=>getSyringeComponents(pd).map(c=>c.compoundName)),
+    ...(state.comboPresets||[]).flatMap(p=>p.compounds||[]),
+    ...(state._comboSelected||[])
+  ]);
+  const names = Object.keys(aps).filter(n=>aps[n]?.route!=="Nasal" &&
+    (!blendConstituents.has(n)||standaloneKits.has(n)||independentlyUsed.has(n))).sort();
   if (!state._comboSelected) state._comboSelected = [];
   let sel = state._comboSelected.filter(n=>names.includes(n));
   state._comboSelected = [...sel];
@@ -34,7 +49,7 @@ function comboDoseModal() {
   // Selecting a favorite never deletes it: delete is a separate, named button.
   const presetChips = presets.map(p=>`<span style="display:inline-flex;align-items:stretch;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);overflow:hidden">
     <button type="button" class="combo-preset-chip" data-id="${esc(String(p.id))}" style="min-height:44px;padding:8px 12px;border:0;background:transparent;color:var(--t2);font-size:12px">${esc(p.name)}</button>
-    <button type="button" class="combo-preset-del" data-id="${esc(String(p.id))}" aria-label="Delete ${esc(p.name)} favorite" style="width:40px;min-height:44px;border:0;border-left:1px solid var(--border-sub);background:transparent;color:var(--t4)">×</button>
+    <button type="button" class="combo-preset-del" data-id="${esc(String(p.id))}" aria-label="Delete ${esc(p.name)} favourite" style="width:40px;min-height:44px;border:0;border-left:1px solid var(--border-sub);background:transparent;color:var(--t4)">×</button>
   </span>`).join("");
 
   const compoundToggles = () => names.map(n=>{
@@ -62,15 +77,18 @@ function comboDoseModal() {
     </div>
     <div class="hint" style="margin-bottom:14px">For compounds you draw into one syringe and inject together. Each still logs as its own dose behind the scenes — supply, schedule, and trends stay accurate per compound.</div>
     ${preparedSection}
-    ${presets.length?`<label class="field-label">FAVORITES</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${presetChips}</div>`:""}
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
-      <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
-      <span id="combo-selected-count" style="font-size:11px;color:var(--t4)">${sel.length} selected</span>
-    </div>
-    <input id="combo-search" class="inp" type="search" autocomplete="off" placeholder="Search ${names.length} compounds…" aria-controls="combo-choices" style="margin-bottom:8px;min-height:46px">
-    <div id="combo-choices" role="group" aria-label="Compound multi-select" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;margin-bottom:16px;padding:2px">
-      ${names.length?compoundToggles():`<div style="color:var(--t4);font-size:12px;padding:10px 0">No compounds tracked yet.</div>`}
-    </div>
+    ${presets.length?`<label class="field-label">FAVOURITES</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${presetChips}</div>`:""}
+    <section class="nx-combo-picker-panel" aria-label="Compounds in this syringe" style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:16px;background:var(--surface)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px">
+        <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
+        <span id="combo-selected-count" style="font-size:11px;color:var(--t4);white-space:nowrap">${sel.length} selected</span>
+      </div>
+      <input id="combo-search" class="inp" type="search" autocomplete="off" placeholder="Search ${names.length} compounds…" aria-controls="combo-choices" style="margin-bottom:8px;min-height:46px;width:100%">
+      <div id="combo-choices" role="group" aria-label="Compound multi-select" tabindex="0" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border-sub);border-radius:10px;padding:6px;background:var(--surface-2)">
+        ${names.length?compoundToggles():`<div style="color:var(--t4);font-size:12px;padding:10px 0">No standalone compounds available.</div>`}
+      </div>
+      <div style="font-size:11px;color:var(--t4);margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>Scroll for more compounds</span><span aria-hidden="true">↓</span></div>
+    </section>
     <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
       <label class="field-label">DOSE AMOUNTS</label><div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
     </div>
@@ -83,7 +101,7 @@ function comboDoseModal() {
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE (shared)</label><div id="combo-sym" style="margin-bottom:14px"></div>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
-      <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favorite</label>
+      <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
       <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
     </div>
     <button id="save" class="btn-primary" style="background:#A78BFA">LOG ${sel.length||""} DOSE${sel.length===1?"":"S"}</button>
@@ -132,7 +150,7 @@ function comboDoseModal() {
     });
     document.querySelectorAll(".combo-preset-del").forEach(x=>x.onclick=(e)=>{
       e.stopPropagation();
-      confirmAction("Remove this favorite combo?", ()=>{
+      confirmAction("Remove this favourite combo?", ()=>{
         state.comboPresets = presets.filter(p=>String(p.id)!==x.dataset.id);
         saveState(); closeModal(); comboDoseModal();
       });

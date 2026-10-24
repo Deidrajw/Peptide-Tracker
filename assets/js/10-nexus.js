@@ -1713,7 +1713,7 @@ function homeView() {
         <span style="font-size:14px">${icon}</span>
         <span style="font-size:12px;font-weight:600;color:var(--t2);flex:1">${label}</span>
         <span style="font-size:11px;color:var(--t4)">${items.length} item${items.length===1?"":"s"}</span>
-        <span style="font-size:12px;color:var(--t4)">›</span>
+        
       </summary>
       <div class="app-detail-body" style="padding:0;overflow:hidden">
         ${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}
