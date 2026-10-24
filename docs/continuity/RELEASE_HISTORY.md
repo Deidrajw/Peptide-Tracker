@@ -259,3 +259,6 @@
 
 ### 2026-10-24 — Today icon QA gate corrected
 - Full workflow 40127200163 FAILED at legacy `tools/validate-chevron-unification.mjs` assertion requiring a visible chevron on Daily tracking, contradicting user-approved explicit View tracking label. Earlier browser, data and Stash assertions passed before this point. Corrected automated expectations to assert the labeled Today disclosures have NO generated chevron; remaining generic Protocol/Stash chevron tests preserved. Re-run on new head required; do not mark release passed or merged until success.
+
+### Post-Today Stash header candidate — 2026-10-24
+- Applied previously approved and CI-validated PR #61 UI-only changes on latest Today release baseline main `44b04728` to avoid old PR merge conflicts. Candidate branch `release/stash-consistency-current-main`. Version title remains v0.9.15-beta until release bookkeeping; new branch CI/merge/deployment NOT YET VERIFIED, data migration none.
