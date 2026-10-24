@@ -375,6 +375,7 @@ function wireBody() {
   document.querySelectorAll(".proto-del").forEach(b=>b.onclick=()=>confirmAction("Delete this protocol?",()=>{state.protocols=(state.protocols||[]).filter(p=>String(p.id)!==String(b.dataset.id));saveState();renderBody();}));
   document.querySelectorAll(".plans-sub").forEach(b=>b.onclick=()=>{state._plansSub=b.dataset.sub;renderBody();});
   document.querySelectorAll(".manage-plan-btn").forEach(b=>b.onclick=()=>managePlanItemMenu(b.dataset.type, b.dataset.id));
+  document.querySelectorAll(".nx-open-goal").forEach(b=>b.onclick=()=>goalDetailModal(b.dataset.id));
   const ag=$("#add-goal"); if(ag) ag.onclick=()=>goalModal();
   const eag=$("#empty-add-goal"); if(eag) eag.onclick=()=>goalModal();
   const ar=$("#add-research"); if(ar) ar.onclick=()=>researchModal();
