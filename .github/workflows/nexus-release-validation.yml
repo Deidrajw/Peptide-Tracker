@@ -27,6 +27,9 @@ jobs:
           grep -q 'v0.9.6-beta' index.html
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
+      - name: Independently compare published Pages files with source (nonblocking, preserve failure evidence)
+        continue-on-error: true
+        run: python3 tools/verify-pages.py --attempts 5 --interval 8 --output dist/Nexus_PAGES_REMOTE_CHECK_PR.json
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
