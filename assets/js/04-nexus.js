@@ -1373,12 +1373,12 @@ function manageKitMenu(kitId) {
     '<button type="button" id="x" aria-label="Close kit actions" style="width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t2);font-size:20px">×</button></div>'+
     actions.map(group=>'<section style="margin:0 0 14px">'+
       '<div class="mono" style="font-size:10px;letter-spacing:1.2px;color:var(--t4);margin:0 0 8px 3px">'+group.label+'</div>'+
-      group.entries.map(item=>
+      (group.entries.length ? group.entries.map(item=>
         '<button type="button" class="nx-stash-action" data-action="'+item.id+'" style="width:100%;min-height:58px;border:0;background:transparent;padding:8px 4px;display:flex;align-items:center;gap:12px;text-align:left;border-radius:12px">'+
         icon(item)+'<span style="min-width:0;flex:1"><span style="display:block;font-size:13.5px;font-weight:650;color:'+(item.danger?'#ff8585':'var(--t1)')+'">'+item.name+'</span>'+
         '<span style="display:block;font-size:11px;line-height:1.4;margin-top:3px;color:var(--t4)">'+item.desc+'</span></span>'+
         '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t4);flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg></button>'
-      ).join('')+'</section>').join('')+
+      ).join('') : '<div class="nx-stash-empty-note" role="status" style="border-radius:12px;padding:12px 14px;background:var(--surface-2);color:var(--t3);font-size:12px;line-height:1.55"><strong style="display:block;color:var(--t2);font-size:12.5px;margin-bottom:3px">'+(isBlend&&!hasRecon?'No blend vial opened yet':'No vial actions available')+'</strong>'+(isBlend&&!hasRecon?'This kit has sealed inventory, but no blend vial has been opened or reconstituted. Vial-specific actions, including Log blend dose, become available after a vial is opened.':'There are no applicable actions for the current vial state.')+'</div>')+'</section>').join('')+
     '</div>', c.color);
   m.querySelector("#x").onclick=closeModal;
   const openDetails=()=>{
