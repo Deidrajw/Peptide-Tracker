@@ -173,3 +173,6 @@
 
 ### 2026-10-24 — Cloudflare primary hosting APPROVED, rollout gated
 - User confirmed Cloudflare Pages `https://nexuspeplog.pages.dev/` is connected to GitHub and explicitly chose it as Nexus's **primary hosting destination**. Keep `Deidrajw/Peptide-Tracker` as canonical source and GitHub Pages as fallback until parity and safe record migration. Approval of host direction does NOT approve destructive localStorage migration, overwriting saved data, or claiming deployment parity without evidence. Validate Cloudflare source files, HTTPS, PWA cache, app version and backup/restore from previous origin before cutover. Existing PR #40 measurement calculator stays separate and unmerged.
+
+### 2026-10-24 — v0.9.15 Plans merged, calculator release still gated
+- User requested Plans UI plus calculator-safety work and deployment. Plans-only PR #57 validated and merged at `471280ef`, preserving saved data and earlier Stash/Combo. Calculator changes require separate review because technical arithmetic success doesn't establish suitability of injectable recipe instructions, safe capacity-rounding behaviour or clinical/regulatory acceptability; PR #40 remains unmerged pending independent testing against current main. No implicit approval to bypass safety gates. Cloudflare-primary direction remains approved but public deployed commit not yet verified.
