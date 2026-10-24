@@ -203,3 +203,6 @@
 
 ### 2026-10-24 — A4 progress sources staged
 - Legacy goals remain supported. Optional progressModel supports numeric, subjective, milestones and exploratory (fallback). Numeric weight source is opt-in and reads weightLogs, not clones; goal/app units must match. Progress isn't proof of treatment effectiveness. Candidate only; results need tests and user physical iPhone acceptance.
+
+### 2026-10-24 — Goal symptom evidence (A5 candidate)
+- A personal Goal may opt in to one named existing Check-In symptom, matched exactly by symptom name. Show dated observations and any recorded intensity, not inferred effectiveness. Deselecting unlinks the evidence view without editing Check-In records. Journal linkage separately scoped after stable source identity audit.
