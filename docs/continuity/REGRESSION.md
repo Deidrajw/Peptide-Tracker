@@ -240,3 +240,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### Cloudflare primary host transition gates — NOT TESTED (2026-10-24)
 - Confirm Cloudflare Pages branch=main, no stale output directory, version and 16 application files match target GitHub SHA; verify theme/navigation, update lifecycle/cache, 320/390 iPhone Safari/PWA.
 - With disposable fictional data only, verify full backup export on old origin, controlled import on new origin, count/shape/date-specific Check-In, supplements, history, protocols, Stash/vials and Combo Dose intact, with no old-origin overwrite. Real user migration is NOT TESTED / not approved until separate explicit confirmation. GitHub Pages retained fallback. Calculator diagnostics pre-existing 40 FAIL/80 separate.
+
+### Icon integration candidate validation matrix — 2026-10-24
+- Uploaded image blobs verified present main: PASS. Index iOS/PNG references and builder packaging implemented: CODED, automated browser test NOT TESTED until CI. Required QA: exact 180/192/512 PNG MIME/size; iPhone Safari icon display and cache refresh; standalone DEMO in-memory isolation and inline icons; LIVE ZIP icons and paths; 320/390 both themes Check-In/Stash/Combo/Plans/vial; Cloudflare commit and asset parity. Physical iPhone NOT TESTED; calculator 40/80 known baseline separate.
