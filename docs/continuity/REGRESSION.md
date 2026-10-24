@@ -264,3 +264,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Release A Protocol filter required QA (candidate)
 - Not started shows draft/planned/active (ready) but does not rewrite their status; In progress/Paused/Completed/Archived exact; All restores every record; active first log, expand phase details, manage ellipsis, create/edit/delete, pause/resume, reminders and schedule no regressions. No-match state with Show all functional. Verify per theme and 320/390 on standalone full DEMO and live-source browser. Check-In single/date, Stash vial math, Log Dose drafts/allocation, Calendar, Plans links and calculator PR #67 separate. No test Pass claimed yet; real iPhone NOT TESTED.
+
+### 2026-10-24 — Protocol status filter A1 merge QA
+- GitHub workflow A1 head `c9d53c31`: build/parity `40139548045` PASS, mobile `40139548154` PASS, 20-file LIVE ZIP CRC and full/offline DEMO byte-parity PASS. No dedicated newly-added automated assertion for selecting each Protocol filter confirmed; physical iPhone and Cloudflare NOT TESTED. Baseline diagnostic remains calculator 40 FAIL/80, independent PR #67 held. Next Goal↔Protocol refs, preserve inactive/paused/completed status and old template goalId meaning.
