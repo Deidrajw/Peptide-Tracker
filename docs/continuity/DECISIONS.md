@@ -164,3 +164,6 @@
 
 ### 2026-10-24 — Plans hierarchy shipped v0.9.14
 - Passive status plus one 44px ellipsis in header, independent labelled Compound Intel action below in Research, and a single >=44px Goals detail disclosure. Preserve existing editor/delete actions and all linked plan records; do not duplicate Stash rework already delivered in v0.9.13. PR #55 merge `529f81ea`, public exact 16-file parity 40113805546. Real iPhone manual acceptance remains pending.
+
+### 2026-10-24 — targeted Plans icon cleanup approved, v0.9.15 candidate
+- User approved continuing narrowly from source-verified v0.9.14 and unresolved Issue #48. Normalize Research Intel right navigation arrow and manage ellipsis to inline outline SVG geometry, without reopening the approved Research/Goals/Shopping layout or changing Edit/Delete/Intel handlers. Keep 44px management targets; no storage mutations, Stash/Combo rewrites or calculator PR #40 changes. Approval for code iteration is not physical device signoff or authorization to bypass CI.
