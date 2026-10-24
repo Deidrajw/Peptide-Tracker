@@ -42,7 +42,7 @@ try{
   ensure(await page.locator('.nx-stash-action[data-action="delete"]').count()===1,'Blend missing delete');
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
-  ensure(await page.locator('#x').count()>=1,'Blend edit view did not open');
+  ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
   ensure(errors.length===0,'Browser exceptions '+errors.join('; '));
   results.push({width,theme,mode,status:'PASS',checks:['standard actions mapped','stored conditional','detail disclosure','blend safe routing','non-mutating open','touch targets']});
   await context.close();
