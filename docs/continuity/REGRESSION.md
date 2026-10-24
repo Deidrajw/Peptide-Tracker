@@ -258,3 +258,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Informational empty-state audit candidate — 2026-10-24
 - Required explicit tests: unopened blend with sealed stock => VIAL & INVENTORY has readable 'No blend vial opened yet' explanation without an enabled blend dose control; prepared/open blend => existing Log blend dose action and no placeholder; regular sealed compound => Open a vial/Add vials actions intact; completed/empty regular kit => appropriate explanatory state; nonempty categories unaffected. 320/390 both themes, VoiceOver role=status, menu scroll/close, no duplicate labels, Check-In/Calendar/Protocol/Stash and vial math protected. All new branch tests NOT TESTED until CI; real iPhone NOT TESTED.
+
+### 2026-10-24 — Stash unopened-blend empty-state final release evidence
+- Automated build/parity workflow `40129297166`: PASS, mobile form workflow `40129297186`: PASS on PR #65 head `fa8edd1c`. Package archives CRC passed, LIVE 20 entries, standalone DEMO byte-identical to offline index. No direct new dedicated assertion isolating empty blend menu text documented; specific device UX acceptance and Cloudflare file parity remain NOT TESTED. Preserve calculation and action logic; independent measurement calculator diagnostic remains separate and unresolved.
