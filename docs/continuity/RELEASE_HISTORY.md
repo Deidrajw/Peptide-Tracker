@@ -265,3 +265,6 @@
 
 ### Informational empty-state audit / Stash menu pilot — 2026-10-24 (candidate)
 - Branch `release/stash-empty-states-20261024` from main `62fae531` implements placeholder for zero eligible Kit actions menu entries, specifically unopened/unreconstituted blend; existing action buttons and safety guards unchanged. Broader cross-app source audit documented. LIVE/DEMO builds, CI, merge and Cloudflare deployment UNVERIFIED. Data impact none; no migration.
+
+### 2026-10-24 — v0.9.15-beta informational Stash empty-state, PR #65
+- Merge SHA `051f8203180e1aac486f93fc81841cd878f7c05f`. Explains empty VIAL & INVENTORY menu for unopened blend, no effect on kit quantities, log history, calculations, localStorage or action eligibility. Candidate build QA `40129297166` PASS, mobile `40129297186` PASS; verified 20-file LIVE ZIP, standalone FULL DEMO and offline ZIP parity from workflow artifact `12574596472`. GitHub main merged. Cloudflare exact-source deployment NOT VERIFIED; physical iPhone/VoiceOver NOT TESTED.
