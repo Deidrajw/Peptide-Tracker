@@ -247,3 +247,6 @@
 
 ### Cloudflare hosting decision — 2026-10-24 (not an application release)
 - User approved GitHub-connected Cloudflare Pages `https://nexuspeplog.pages.dev/` as future primary hosting; GitHub Pages retained as fallback. No code deployment/merge, changes to localStorage, version bump or migrations in this decision. Cloudflare published SHA, 16-file parity and user data restoration NOT VERIFIED. Existing v0.9.14-beta source remains latest confirmed main, PR #57 v0.9.15 candidate unmerged.
+
+### v0.9.15-beta — Plans SVG UI MERGED 2026-10-24
+- PR #57 merged as `471280ef5bca9a192c88b338282fe1687cac74a3`; `index.html` title verified v0.9.15-beta. Changes: Plans management text ellipses converted to outline three-dot SVG, Research Compound Intel text arrow to outline chevron; preserved Goals/Shopping, interaction handlers and ≥44px management targets. No record/schema, Stash, Combo, or calculator changes. Premerge QA release run 40116812156 SUCCESS (source package/full app isolated DEMO parity PASS, protected browser/QA including Plans 8/8); mobile run 40116812264 SUCCESS; artifact 12569500763. Public Cloudflare deploy/parity, GitHub Pages and real iPhone NOT VERIFIED. Clinical calculator PR #40 remains separate; known baseline 40 FAIL/80.
