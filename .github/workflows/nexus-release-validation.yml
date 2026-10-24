@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
@@ -54,6 +54,7 @@ jobs:
           python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
+          node tools/validate-protocol-design.mjs
       - name: Upload demo, live ZIP, manifest and QA evidence
         if: always()
         uses: actions/upload-artifact@v4
