@@ -74,3 +74,9 @@
 ## v0.9.5 — deduplicated query results shipped (2026-10-23)
 - PR #27 merged at `4addc72b8fdbb9906170d116af3f4a8183687e11`. When a query is present, a symptom appears once under preferred general category, then compound, custom, recent or other. Empty-query browsing retains all categories and their membership; selected symptoms/intensity and saved historical associations unchanged.
 - This is a user-interface discovery improvement, not an assertion of medical causality, not a catalog migration, and not a replacement for active-compound categories.
+
+## 2026-10-23 — Protocol card/new protocol picker design proposal
+- **Approval state: PROPOSED, NOT YET APPROVED for production merge.** User requested premium iPhone UX simplification of Retatrutide expanded cards, dense advisory panels, contextual ellipsis actions, emoji search icon in New Protocol Step 3, and inconsistent overflow menu glyphs.
+- Preview candidate retains collapsible card, status/time-to-next and Log Dose primary control; groups nonurgent interpretive insights in disclosure, keeps injection-site safety warning visible, organizes secondary history/calendar/schedule/colour/pause/remove actions under ellipsis and uses outline icons. Routes, records, dose calendar, settings and archive commands still use preexisting event handlers.
+- Addresses genuine 1/6 vs Step 3 header bug in New Protocol with live progress update; search field becomes proper outline SVG with separate placeholder text. Safety wording from source is not clinically validated; flag for later medical audit rather than inventing personalised dosing advice.
+- No data migrations or storage writes from design proposal; no prior behaviour intentionally removed. Final visual approval after interactive review required before merge.
