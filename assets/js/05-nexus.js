@@ -5,7 +5,8 @@ function comboDoseModal() {
   // excluded here rather than left selectable with a site list that wouldn't apply to it.
   const names = Object.keys(aps).filter(n=>aps[n]?.route!=="Nasal").sort();
   if (!state._comboSelected) state._comboSelected = [];
-  const sel = state._comboSelected.filter(n=>names.includes(n));
+  let sel = state._comboSelected.filter(n=>names.includes(n));
+  state._comboSelected = [...sel];
 
   // Prepared & Ready — actual prepared mixed syringes, distinct from favorites below.
   // A favorite is a reusable recipe for what to draw; a prepared syringe is a specific
@@ -32,7 +33,7 @@ function comboDoseModal() {
   const presets = state.comboPresets||[];
   const presetChips = presets.map(p=>`<button class="combo-preset-chip" data-id="${esc(String(p.id))}" style="font-size:11px;padding:6px 11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);white-space:nowrap;display:inline-flex;align-items:center;gap:5px">💉 ${esc(p.name)}<span class="combo-preset-del" data-id="${esc(String(p.id))}" style="color:var(--t5);margin-left:2px">✕</span></button>`).join("");
 
-  const compoundToggles = names.map(n=>{
+  const compoundToggles = () => names.map(n=>{
     const on = sel.includes(n);
     const c = cfg(n);
     return `<button class="combo-compound-toggle" data-n="${esc(n)}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:${on?c.color+"18":"var(--surface-2)"};border:1px solid ${on?c.color:"var(--border)"};margin-bottom:6px;text-align:left">
@@ -41,7 +42,7 @@ function comboDoseModal() {
     </button>`;
   }).join("");
 
-  const doseInputs = sel.map(n=>{
+  const doseInputs = () => sel.map(n=>{
     const c = cfg(n);
     const v = (state._comboDoses||{})[n]||"";
     return `<div style="margin-bottom:10px">
@@ -58,9 +59,17 @@ function comboDoseModal() {
     <div class="hint" style="margin-bottom:14px">For compounds you draw into one syringe and inject together. Each still logs as its own dose behind the scenes — supply, schedule, and trends stay accurate per compound.</div>
     ${preparedSection}
     ${presets.length?`<label class="field-label">FAVORITES</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${presetChips}</div>`:""}
-    <label class="field-label">COMPOUNDS IN THIS SYRINGE</label>
-    <div style="margin-bottom:16px">${names.length?compoundToggles:`<div style="color:var(--t4);font-size:12px;padding:10px 0">No compounds tracked yet.</div>`}</div>
-    ${sel.length?`<label class="field-label">DOSE AMOUNTS</label><div style="margin-bottom:6px">${doseInputs}</div>`:""}
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+      <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
+      <span id="combo-selected-count" style="font-size:11px;color:var(--t4)">${sel.length} selected</span>
+    </div>
+    <input id="combo-search" class="inp" type="search" autocomplete="off" placeholder="Search ${names.length} compounds…" aria-controls="combo-choices" style="margin-bottom:8px;min-height:46px">
+    <div id="combo-choices" role="group" aria-label="Compound multi-select" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;margin-bottom:16px;padding:2px">
+      ${names.length?compoundToggles():`<div style="color:var(--t4);font-size:12px;padding:10px 0">No compounds tracked yet.</div>`}
+    </div>
+    <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
+      <label class="field-label">DOSE AMOUNTS</label><div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
+    </div>
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input id="combo-date" type="datetime-local" class="inp" value="${esc(state._comboDate||localDatetime())}" style="flex:1">
@@ -69,8 +78,10 @@ function comboDoseModal() {
     <label class="field-label">INJECTION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px">${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE (shared)</label><div id="combo-sym" style="margin-bottom:14px"></div>
-    ${sel.length>=2?`<label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favorite</label>
-    <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. 'Morning stack'"></div>`:""}
+    <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
+      <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favorite</label>
+      <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
+    </div>
     <button id="save" class="btn-primary" style="background:#A78BFA">LOG ${sel.length||""} DOSE${sel.length===1?"":"S"}</button>
   `, "#A78BFA");
 
@@ -120,21 +131,51 @@ function comboDoseModal() {
   const comboDateNowBtn = document.querySelector("#combo-date-now");
   if (comboDateNowBtn) comboDateNowBtn.onclick = () => { document.querySelector("#combo-date").value = localDatetime(); };
 
-  try {
-    document.querySelectorAll(".combo-compound-toggle").forEach(btn=>btn.onclick=()=>{
-      // Preserve in-progress field values before re-render
-      state._comboDate = m.querySelector("#combo-date")?.value;
-      state._comboSite = m.querySelector("#combo-site")?.value;
-      state._comboNotes = m.querySelector("#combo-notes")?.value;
-      state._comboDoses = state._comboDoses||{};
-      document.querySelectorAll(".combo-dose-input").forEach(inp=>{ state._comboDoses[inp.dataset.n]=inp.value; });
-      const n = btn.dataset.n;
-      const idx = state._comboSelected.indexOf(n);
-      if (idx>=0) state._comboSelected.splice(idx,1); else state._comboSelected.push(n);
-      closeModal(); comboDoseModal();
+  // Search is available at every library size; the list itself never grows taller
+  // than 224px even with 50+ tracked compounds. Multi-select updates in place.
+  const comboList = m.querySelector("#combo-choices");
+  const comboSearch = m.querySelector("#combo-search");
+  const filterChoices = () => {
+    const q=comboSearch.value.trim().toLocaleLowerCase();
+    let visible=0;
+    comboList.querySelectorAll(".combo-compound-toggle").forEach(btn=>{
+      const show=btn.dataset.n.toLocaleLowerCase().includes(q);
+      btn.style.display=show?"flex":"none";
+      if(show)visible++;
     });
-  } catch(e) { showErrorBanner("comboDoseModal compound-toggle wiring: "+e.message); }
-
+    let empty=comboList.querySelector("#combo-no-matches");
+    if(!visible){if(!empty){empty=document.createElement("div");empty.id="combo-no-matches";empty.style.cssText="padding:12px;color:var(--t4);font-size:12px";empty.textContent="No matching compounds";comboList.appendChild(empty);}}
+    else if(empty)empty.remove();
+  };
+  comboSearch.oninput=filterChoices;
+  comboList.onclick=e=>{
+    const btn=e.target.closest(".combo-compound-toggle");
+    if(!btn)return;
+    // Only replace the selection and amount sections, never the whole modal.
+    // In-progress date, site, notes, symptoms, keyboard and scroll stay intact.
+    state._comboDoses=state._comboDoses||{};
+    m.querySelectorAll(".combo-dose-input").forEach(inp=>{state._comboDoses[inp.dataset.n]=inp.value;});
+    const n=btn.dataset.n;
+    sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];
+    state._comboSelected=[...sel];
+    const previousScroll=comboList.scrollTop;
+    comboList.innerHTML=compoundToggles();
+    filterChoices();
+    comboList.scrollTop=previousScroll;
+    m.querySelector("#combo-selected-count").textContent=sel.length+" selected";
+    m.querySelector("#combo-dose-section").style.display=sel.length?"":"none";
+    m.querySelector("#combo-dose-fields").innerHTML=doseInputs();
+    const fav=m.querySelector("#combo-fav-section");
+    fav.style.display=sel.length>=2?"":"none";
+    if(sel.length<2){m.querySelector("#combo-savefav").checked=false;m.querySelector("#combo-favname-wrap").style.display="none";}
+    m.querySelector("#save").textContent="LOG "+(sel.length||"")+" DOSE"+(sel.length===1?"":"S");
+  };
+  comboList.querySelectorAll(".combo-compound-toggle").forEach(btn=>{
+    btn.setAttribute("role","checkbox");btn.setAttribute("aria-checked",String(sel.includes(btn.dataset.n)));
+    btn.style.minHeight="44px";
+  });
+  const comboDateNowBtn = m.querySelector("#combo-date-now");
+  if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
   try {
     const favCheck = m.querySelector("#combo-savefav");
     if (favCheck) favCheck.onchange = () => { const w=m.querySelector("#combo-favname-wrap"); if(w) w.style.display = favCheck.checked ? "block" : "none"; };
