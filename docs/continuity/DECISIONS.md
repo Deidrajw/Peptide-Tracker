@@ -167,3 +167,6 @@
 
 ### 2026-10-24 — targeted Plans icon cleanup approved, v0.9.15 candidate
 - User approved continuing narrowly from source-verified v0.9.14 and unresolved Issue #48. Normalize Research Intel right navigation arrow and manage ellipsis to inline outline SVG geometry, without reopening the approved Research/Goals/Shopping layout or changing Edit/Delete/Intel handlers. Keep 44px management targets; no storage mutations, Stash/Combo rewrites or calculator PR #40 changes. Approval for code iteration is not physical device signoff or authorization to bypass CI.
+
+### 2026-10-24 — Cloudflare Pages added as potential host, migration NOT APPROVED
+- User supplied https://nexuspeplog.pages.dev/ as a new Cloudflare site. Keep GitHub `Deidrajw/Peptide-Tracker` source-of-truth and existing GitHub Pages production during verification. Proposed future primary Cloudflare hosting is NOT an approved domain switch. Browser storage is origin-scoped: GitHub Pages data will not follow to Cloudflare. Prioritize verified full backup, schema compatibility, integrity validation and user confirmation before any migration/overwrites. Preserve demo isolation and calculator PR #40 separation.
