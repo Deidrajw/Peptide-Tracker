@@ -265,3 +265,6 @@
 
 ### Informational empty-state audit / Stash menu pilot — 2026-10-24 (candidate)
 - Branch `release/stash-empty-states-20261024` from main `62fae531` implements placeholder for zero eligible Kit actions menu entries, specifically unopened/unreconstituted blend; existing action buttons and safety guards unchanged. Broader cross-app source audit documented. LIVE/DEMO builds, CI, merge and Cloudflare deployment UNVERIFIED. Data impact none; no migration.
+
+### Measurement Calculator guardrails — review-only candidate, 2026-10-24
+- Branch `review/calculator-safety-current-main-20261024` based main `051f8203`, cherry-picked calculator functions and candidate tests from historical review PR #40 to avoid older-code regression. No production deployment, no migrations. Candidate target correct U-100 display, negative and unsupported unit rejections, volume/capacity guard and one result renderer. QA and independent safety audit pending. Status REVIEW ONLY / HOLD MERGE.
