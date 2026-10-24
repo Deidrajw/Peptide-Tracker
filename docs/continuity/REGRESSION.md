@@ -240,3 +240,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### Cloudflare primary host transition gates — NOT TESTED (2026-10-24)
 - Confirm Cloudflare Pages branch=main, no stale output directory, version and 16 application files match target GitHub SHA; verify theme/navigation, update lifecycle/cache, 320/390 iPhone Safari/PWA.
 - With disposable fictional data only, verify full backup export on old origin, controlled import on new origin, count/shape/date-specific Check-In, supplements, history, protocols, Stash/vials and Combo Dose intact, with no old-origin overwrite. Real user migration is NOT TESTED / not approved until separate explicit confirmation. GitHub Pages retained fallback. Calculator diagnostics pre-existing 40 FAIL/80 separate.
+
+### v0.9.15 Plans postmerge record (2026-10-24)
+- PASS automated at PR head `848984a`: release Actions `40116812156` 320/390 light/dark LIVE-local/full isolated DEMO; Plans SVG actions 8/8, protected Check-In/Protocol/Stash/Combo/Log Dose and vial core; ZIP/DEMO build validation. Mobile `40116812264` SUCCESS. Merge main `471280ef` source title verified. NOT TESTED actual iPhone / Cloudflare postmerge 16-file byte parity / cache / data transfer; baseline calculator 40 FAIL/80 remains known separate.
