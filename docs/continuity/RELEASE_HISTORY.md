@@ -122,3 +122,7 @@
 - Final narrow-screen refinements to avoid Retatrutide title ellipsis, preserve horizontal ring+date summary at 320px and remove redundant emoji in status badge. No data/logic changes or migrations.
 - CI https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40056857750 PASS (build/live standalone full-app demo, 8 legacy visual, 8 functional Check-In and 8 Protocol candidate DOM workflows); mobile regression https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40056857769 PASS. Artifact ID `12545847021` has versioned HTML and ZIP (16 app source files), screenshots, manifests, JSON QA.
 - Approval and release remain **INCOMPLETE**: PR #31 OPEN; no main merge, no new Pages deployment, physical iPhone not tested. Card menu inline is an interim design, proposed upgrade to bottom action sheet requires approval and retesting.
+
+### v0.9.6-beta design preview packaging follow-up — CODED, QA PENDING (2026-10-23)
+- User reported browser opening problem with direct standalone full-app DEMO attachment. Existing 1,794,663-byte standalone complete HTML matched previously QA-passed GitHub release artifact. Added a second deliverable: extractable offline ZIP containing the same exact full-app isolated HTML as root `index.html` and a README. No app logic or production schema changes; PR #31 unmerged, deployment incomplete.
+- Browser and build/archive parity CI rerun pending. Preview does not require a user to rename or overwrite live `index.html`: extracted file is separate and should not be uploaded over the live app.
