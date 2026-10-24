@@ -270,3 +270,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Goal detail A3 candidate required regression
 - Open modal from active and other goals, switch three tabs, accessible close and 44px targets, accurate link-by-ID including duplicate names, renamed/deleted goals, missing metrics, missing protocols, and empty Activity; ensure no fabricated progress or writes. Check Plans ellipsis/edit/delete, Protocol builder associations, Check-In one/date, dose history, Stash, Calendar. Test LIVE + isolated full DEMO at 320/390 in both themes. All NEW tests NOT TESTED; physical iPhone NOT TESTED.
+
+### 2026-10-24 — A4 focused QA
+- New `validate-plans-hierarchy.mjs` assertions exercise saving numeric source lb with latest 185 vs baseline 200 target 180 => 75%; switch and save subjective 4/5, two milestones, exploratory; confirm weight log length and notes preserved in all 8 browser environments. Expected but NOT TESTED until CI. Additional unit mismatch, equal baseline/target, dates invalid/future and switching away/back require follow-up testing.
