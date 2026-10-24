@@ -158,3 +158,6 @@
 
 ### 2026-10-24 — v0.9.13 Stash expanded detail tabs SHIPPED
 - A standard kit should show essential inventory in the collapsed card; expanded secondary content must be clearly separated into Overview, Vials and History so vial breakdown, dated dose ledger and outflow records don't become three nested disclosure chevrons. Preserve all original record data, full vial actions, Edit/Reconstitute/Intel, forecasts, notes and outflow Edit/Undo. The top kit ellipsis is canonical management; remove redundant bottom Manage Kit link. Tabs are view-only, 44px+ and support arrows/Home/End. Blend-specific card stays unchanged rather than pretending to use standard-vial accounting. PR #53 merged `895d6bfd`; GitHub Pages 16/16 exact files run 40111254674 SUCCESS.
+
+### 2026-10-24 — Plans status/management/Intel hierarchy candidate (v0.9.14)
+- Preserve one primary management ellipsis (44px), passive status badge, Intel as independently labelled secondary action below the Research header, and 44px goal details disclosure. No research/goal/shopping record, link or handler deletion. This is a scoped implementation following #48 and previously released v0.9.13 Stash. Physical device acceptance and deployment pending; broad redesign not implied.
