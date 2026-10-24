@@ -243,3 +243,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Icon integration candidate validation matrix — 2026-10-24
 - Uploaded image blobs verified present main: PASS. Index iOS/PNG references and builder packaging implemented: CODED, automated browser test NOT TESTED until CI. Required QA: exact 180/192/512 PNG MIME/size; iPhone Safari icon display and cache refresh; standalone DEMO in-memory isolation and inline icons; LIVE ZIP icons and paths; 320/390 both themes Check-In/Stash/Combo/Plans/vial; Cloudflare commit and asset parity. Physical iPhone NOT TESTED; calculator 40/80 known baseline separate.
+
+### Stash header/Sort candidate — 2026-10-24
+- Required: Sort trigger arrow unclipped at 320 and 390px, both themes; label still opens original sort choices; single and blend kits have exactly one header ellipsis, no duplicate near lower actions; Stored toggle still works on regular kits; Manage context actions and all vial, prepare, dose, blend logging, details tab, history and inventory arithmetic protected. Initial results: NOT TESTED pending PR CI; physical iPhone NOT TESTED.

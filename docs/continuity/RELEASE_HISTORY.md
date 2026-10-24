@@ -250,3 +250,6 @@
 
 ### v0.9.15-beta icon integration candidate — 2026-10-24
 - User uploaded four approved PNGs to `main` commit before release branch. Candidate branch `release/nexus-icon-integration-v0915`: iPhone 180 and browser 192/512 references, updated LIVE/DEMO packaging. Intended data impact none. CI, merge and Cloudflare publication NOT YET VERIFIED. Prior Plans v0.9.15 merged separately; calculator PR #40 held.
+
+### Stash header/Sort candidate (post v0.9.15-beta) — 2026-10-24
+- Proposed UI-only release branch `release/v0916-stash-header-sort`: standardize management ellipsis placement for blend and single-compound kits and remove clipped Sort selector label. No saved data changes. Status: coded, awaiting CI; version label intentionally remains v0.9.15-beta until release metadata/test scripts can be version-bumped coherently. Not merged or deployed.

@@ -1695,3 +1695,11 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-plan-link-icon{width:16px;height:16px;display:block;flex:none;pointer-events:none}
 .nx-plan-head .manage-plan-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
 .nx-plan-intel .nx-plan-link-icon{margin-left:2px}
+
+/* v0.9.16 Stash — consistent kit/blend heading and reserved Sort chevron space. */
+#app #stash-sort-btn,#app #stash-filter-btn{min-width:0;gap:12px!important}
+#app #stash-sort-btn::after,#app #stash-filter-btn::after{flex-shrink:0!important;margin-left:auto!important;margin-right:4px!important}
+#app .nx-kit-heading-unified{display:flex!important;align-items:center!important;gap:9px!important;min-width:0}
+#app .nx-kit-heading-unified>span:nth-child(2){flex:1 1 auto!important;min-width:0!important}
+#app .nx-kit-heading-unified .nx-kit-header-manage{flex:0 0 44px!important;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid var(--border-sub)!important;border-radius:11px!important;background:var(--surface-2)!important;color:var(--t2)!important;font-size:22px!important;line-height:1!important}
+#app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:2px solid var(--accent,#A78BFA)!important;outline-offset:2px}

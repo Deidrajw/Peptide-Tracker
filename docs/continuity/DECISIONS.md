@@ -176,3 +176,6 @@
 
 ### 2026-10-24 — Icon integration source verified
 - Reuse user's exact approved images already uploaded to `main` rather than generate a substitute. iOS apple-touch-icon uses 180 PNG, browser/PWA-ready 192 and 512 PNG references; 1024 source kept for distribution. Full release source ZIP must contain icons, standalone DEMO embeds them. No record or calculator modification.
+
+### 2026-10-24 — Stash kit header approved
+- Compound and blend kits share title / Stored-or-attention status / top-right 44px management action. Stored is a state, not a reason to reposition ⋯. Regular kits retain Open vial / Prepare lower primary actions; blends retain their separate behaviors. Sort selection displays a shortened 'Attention' label while preserving the full option name inside the menu. Preserve all handlers and records.
