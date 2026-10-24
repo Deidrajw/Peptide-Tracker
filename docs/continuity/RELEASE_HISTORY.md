@@ -271,3 +271,6 @@
 
 ### Connected Goals Release A Protocol status filter — candidate 2026-10-24
 - On branch `release/connected-goals-a-protocol-filter`, after design PR #68 merge `7abdc7e1`, added UI filter chips and reset to Protocol view in JS 11/12. No saved data changes. CI/merge/Cloudflare/physical iPhone still UNVERIFIED; displayed version unchanged until real release. Goal association and progress are staged separately.
+
+### Connected Goals A2 explicit goal association — candidate 2026-10-24
+- Branch `release/connected-goals-a2-linking` from main `17182101` adds Protocol Builder Review personal-goal selector and protocol-card linked goal display via new optional `linkedGoalId`. Legacy template `goalId` unchanged. No migration, no data loss intended; normal protocol Save writes new optional reference. QA, merge, artifacts, Pages/Cloudflare remain UNVERIFIED.

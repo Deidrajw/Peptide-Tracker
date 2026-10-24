@@ -194,3 +194,6 @@
 
 ### 2026-10-24 — Protocol filter interaction (approved Release A part 1)
 - Filter selection is UI-only (`state._protocolStatusFilter`) and must not change actual protocol status, schedules, dose records or goal links. Not started includes draft/planned/ready-active; In progress includes `in_progress`; Paused and Completed each exact, Archived exposed separately for retrieval. Keep original lifecycle groups, management, confirmation and expandable schedule. Empty match provides Show all action; users can always return to all records.
+
+### 2026-10-24 — Stable optional personal Goal ↔ Protocol association
+- Preserve `protocol.goalId` as predefined purpose/template ID. Add separately named `protocol.linkedGoalId` for saved `state.plans.goals[].id`. Resolve goal names at render time so renaming updates label. If goal deleted/missing, do not link by name or silently relink; show 'Linked goal unavailable · edit to relink'. Link selection on Protocol Builder Review is optional, including None. Linking does not imply compound effectiveness, change dose/history, or create a goal record. Release A2 candidate only.
