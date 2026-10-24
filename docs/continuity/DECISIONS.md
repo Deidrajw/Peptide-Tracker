@@ -164,3 +164,6 @@
 
 ### 2026-10-24 — Plans hierarchy shipped v0.9.14
 - Passive status plus one 44px ellipsis in header, independent labelled Compound Intel action below in Research, and a single >=44px Goals detail disclosure. Preserve existing editor/delete actions and all linked plan records; do not duplicate Stash rework already delivered in v0.9.13. PR #55 merge `529f81ea`, public exact 16-file parity 40113805546. Real iPhone manual acceptance remains pending.
+
+### 2026-10-24 — Nexus app icon artwork APPROVED; installation blocked
+- Use user's approved full-bleed neon purple/blue/cyan interlocking prism artwork, no external blank gutters or secondary frame; deliver iPhone 180px and PWA 192/512 plus high-res 1024 source. Preserve original color/artwork rather than drawing a generic substitute. Do not modify localStorage or functional code. Hosting remains Cloudflare-primary after separate verified deployment. Binary assets not yet transferred to GitHub; do not mark deployed.
