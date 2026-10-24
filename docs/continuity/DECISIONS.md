@@ -99,3 +99,6 @@
 
 ## 2026-10-23 — deployment proof through PR-observable evidence
 - GitHub connector only returns pull-request-triggered Actions runs; introduce an actual public Pages 16-file source-hash check in PR CI with `continue-on-error` and JSON artifact, keeping Pages evidence separate from the local smoke test. This prevents claiming deployed when only a GitHub merge or offline self-test passed. Main-push parity workflow retained for future independent checks.
+
+## v0.9.6 Pages publication verification outcome — 2026-10-23
+- The Pages proof threshold was met: GitHub-hosted remote HTTPS 16-file full application byte parity, not simply an app title or Github PR merge. Run `40060285190`, artifact `12546599640`, `Nexus_PAGES_REMOTE_CHECK_PR.json` has `smoke_only:false`, `verified:true`, 16 matching files on first attempt. Because the QA/ops branches changed ONLY tests/workflows/docs, served app files match the previously merged v0.9.6 main application. Browser/device caches and actual iPhone UI acceptance remain distinct tests.
