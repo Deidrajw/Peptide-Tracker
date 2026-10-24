@@ -84,3 +84,23 @@ Web deploy watches existing root; native build does not write new persistent dat
 
 ## Baseline reconciliation (2026-10-23)
 - During the audit, PR #27 merged v0.9.5 into main at `4addc72b8fdbb9906170d116af3f4a8183687e11`. The medical review source files `03`, `08`, `10` and `11-nexus.js` were verified **blob-identical** between the original audit baseline and v0.9.5 main. The documentation-only planning branch was rebuilt on this newer main SHA without changing source code.
+
+## Proposed reframing: personal peptide and wellness journal (2026-10-23)
+**User intent:** Public App Store app, explicitly **not** a medical advice or clinical treatment product. This is a clarified product objective, not approval for implementation or feature removal. The app may still handle health-related data and must meet Apple privacy and safety rules.
+
+**Proposed truthful positioning:** “Nexus — Your Personal Peptide & Wellness Journal: organize routines, record self-reported entries, track supplies, and reflect on trends.” Do not promise disease diagnosis, therapeutic effect, dose optimization, clinical accuracy, or treatment guidance. App Store category cannot override actual functions, and disclaimers alone do not neutralize medical functionality.
+
+| Current area | Public iOS personal-tracker proposal | Protected record/data behaviour |
+|---|---|---|
+| Today / Check-In | Keep mood, symptoms, supplements, notes, self-reported log | Historical validation, intensity and associations unchanged |
+| Calendar | Keep personal history and self-set reminders | Date-local semantics, numerical records unchanged |
+| Protocol | Consider label “My Routines”; users enter their own dates/frequency, no default clinical escalation/suggested dose | Do not delete existing schedules; design transparent mapping |
+| Stash | Keep purchase counts, items, batch/recon date, user-entered inventory; separate from actionable injection math | Protect exact vial history and inventory deductions |
+| Log Dose | Keep entry as **user-reported past event**, not an instruction to draw/inject or increase a dose | Preserve single/multi-vial math for accounting; validate all numeric transformations independently |
+| Recon / syringe calculator | Exclude from **initial proposed public iOS edition** pending regulatory/legal and independent numerical safety clearance | **WEB preservation is not proof of safety**; independently address confirmed bugs through normal reviewed web release |
+| Protocol/compound encyclopedia | Replace dose/cycle/reconstitution instructions with personal tags, notes and content reviewed for truthful non-prescriptive claims | Keep original user-added compound names and notes |
+| AI / patterns | Restrict to neutral factual summaries of stored historical entries; no treatment optimization or causation assertions | Explicit consent before any external AI processing; keep existing entries |
+
+**Important:** Merely converting a prescriptive feature to user-entered inputs does not guarantee Apple §1.4.2 avoidance if software still calculates medication doses. No hidden modules toggled on after review. If Apple rejects the truthful reduced-scope release or considers it medical, appeal/review decision; no misrepresentation. Apple policies: https://developer.apple.com/app-store/review/guidelines/ §§1.4, 2.3, 4.2, 5.1. Health Canada examples: https://www.canada.ca/en/health-canada/services/drugs-health-products/medical-devices/application-information/guidance-documents/software-medical-device-guidance/examples.html
+
+**Next proposed design deliverable (pending user approval):** screen-by-screen compare WEB vs App Store iOS, render interactive fictional-data preview of any major UX modifications BEFORE approval; preserve web storage and all existing flows. No code changes in this proposal.
