@@ -203,3 +203,6 @@
 
 ### 2026-10-24 — A4 progress sources staged
 - Legacy goals remain supported. Optional progressModel supports numeric, subjective, milestones and exploratory (fallback). Numeric weight source is opt-in and reads weightLogs, not clones; goal/app units must match. Progress isn't proof of treatment effectiveness. Candidate only; results need tests and user physical iPhone acceptance.
+
+### 2026-10-24 — A4 flexible Goal models merged
+- Goal metrics use four models: numeric, subjective, milestones and exploratory. Existing free-text metrics and notes preserved. Numeric weight integration is explicit opt-in and read-only with exact compatible units and recorded dates; no automatic causality or goal completion. Preserve model-specific settings when switching types; do not duplicate source records.
