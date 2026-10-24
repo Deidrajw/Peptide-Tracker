@@ -249,3 +249,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### PR #62 extra chevron screenshot regression — 2026-10-24
 - Visual FAIL on pre-fix candidate (user screenshot): 'View tracking' still displayed chevron due to app-wide pseudo-element. Fixed CSS on branch, result NOT TESTED until rerun. Add computed-style assertion for `details.nexus-today-details.nx-today-text-disclosure > summary::after` (`display:none`, `content:none`) in LIVE and DEMO at 320/390 dark/light. Test native expand/collapse, keyboard/VoiceOver, Needs Attention chevron preserved; ensure Stash history and filter/sort chevrons are unaffected.
+
+### 2026-10-24 — Today icon QA gate corrected
+- Full workflow 40127200163 FAILED at legacy `tools/validate-chevron-unification.mjs` assertion requiring a visible chevron on Daily tracking, contradicting user-approved explicit View tracking label. Earlier browser, data and Stash assertions passed before this point. Corrected automated expectations to assert the labeled Today disclosures have NO generated chevron; remaining generic Protocol/Stash chevron tests preserved. Re-run on new head required; do not mark release passed or merged until success.
