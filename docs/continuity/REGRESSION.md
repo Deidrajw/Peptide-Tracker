@@ -225,3 +225,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS package integrity** 16-file root-index LIVE ZIP CRC, standalone complete fictional DEMO HTML byte-identical to offline DEMO ZIP index from Actions artifact 12565814124.
 - **PASS public source verification** GitHub Pages 16/16 bytes match merge SHA `895d6bfd`, run 40111254674; deployment 40111253972 and postmerge mobile 40111254716 SUCCESS.
 - **NOT TESTED** physical iPhone Safari/Home Screen, VoiceOver, actual private localStorage histories and long scroll/keyboard. **FAIL KNOWN SEPARATE** Measurement Calculator diagnostic 40/80, PR #40 still review only. Next protected UX audit: Plans action/status/Intel and disclosure hierarchy.
+
+### Candidate v0.9.14 Plans regressions — PENDING
+- New `tools/validate-plans-hierarchy.mjs`: Research header no Intel crowding, secondary Intel accessible, ellipsis 44px and existing Edit handler, Goal 44px detail expands, Shopping manage retained; eight local LIVE/full-isolated-DEMO 320/390 light/dark runs. Await CI evidence. Protected Stash v0.9.13 panels and v0.9.12 Combo, log, vial, Protocol and Check-In must continue passing. Physical iPhone NOT TESTED, preexisting calculator diagnostics 40 FAIL/80.
