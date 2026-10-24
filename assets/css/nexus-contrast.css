@@ -66,3 +66,103 @@ body .modal .moodbtn:focus-visible {
   outline: 2px solid var(--nx-focus-accessible) !important;
   outline-offset: 2px !important;
 }
+
+/* v0.9.6 design candidate: Protocol builder discovery and compound density.
+   Pure styling; no stored data/model changes. */
+#proto-builder-body .nx-proto-compound-search {
+  display:flex; align-items:center; gap:10px; min-height:48px;
+  background:var(--input-bg); border:1px solid var(--border);
+  border-radius:12px; padding:0 13px; margin-bottom:8px;
+  color:var(--t3);
+}
+#proto-builder-body .nx-proto-compound-search:focus-within {
+  border-color:var(--nx-focus-accessible);
+  box-shadow:0 0 0 1px var(--nx-focus-accessible);
+}
+#proto-builder-body .nx-proto-compound-search > svg {flex:0 0 19px}
+#proto-builder-body .nx-proto-compound-search #pb-csearch {
+  border:0!important; background:transparent!important;
+  outline:none!important; box-shadow:none!important;
+  font-size:14px!important; color:var(--t1); min-width:0;
+  padding:0!important; height:46px; flex:1; margin:0!important;
+}
+#proto-builder-body .nx-proto-stack-selected {min-height:52px; gap:10px!important}
+#proto-builder-body .nx-proto-stack-selected .pb-route {
+  min-height:40px; padding:5px 8px!important; font-size:12px!important;
+}
+#proto-builder-body .nx-proto-stack-selected .pb-crem {
+  min-height:44px; min-width:40px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+#proto-builder-body .pb-cadd {
+  min-height:44px; font-size:13px!important; padding:10px 12px!important;
+  line-height:1.35;
+}
+#proto-builder-body #pb-clist {max-height:220px!important;overscroll-behavior:contain}
+#proto-builder-body .pb-cadd > span {font-size:11px!important}
+#proto-builder-wrap #pb-next,
+#proto-builder-wrap #pb-activate,
+#proto-builder-wrap #pb-save-draft,
+#proto-builder-wrap #pb-prev {min-height:48px}
+#proto-builder-wrap #pb-next,
+#proto-builder-wrap #pb-activate {color:#1A1728!important}
+.nx-compound-insights {
+  background:var(--surface-2); border-radius:12px;
+  margin:0 0 12px; overflow:hidden;
+}
+.nx-compound-insights > summary {
+  display:flex; align-items:center; gap:9px; padding:10px 12px;
+  min-height:48px; cursor:pointer; list-style:none;
+}
+.nx-compound-insights > summary::-webkit-details-marker {display:none}
+.nx-insights-emblem {
+  width:20px; height:20px; border:1px solid var(--border);
+  border-radius:50%; display:grid; place-items:center;
+  font-size:12px; font-weight:700; color:var(--t2); flex-shrink:0;
+}
+.nx-insights-title {font-size:12px; font-weight:700; color:var(--t1)}
+.nx-insights-title span {font-size:11px; font-weight:500; color:var(--t3)}
+.nx-insights-preview {
+  margin-left:auto; font-size:11px; color:var(--t3);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.nx-insights-chevron {
+  margin-left:4px; width:9px; height:9px; flex:0 0 9px;
+  border-right:2px solid var(--t3); border-bottom:2px solid var(--t3);
+  transform:translateY(-2px) rotate(45deg);transition:transform .18s ease;
+}
+.nx-compound-insights[open] .nx-insights-chevron {
+  transform:translateY(2px) rotate(225deg);
+}
+.nx-compound-insights-body {
+  padding:10px 12px 2px; border-top:1px solid var(--border-sub);
+}
+.nx-compound-insights-body > div {line-height:1.55!important; font-size:12px!important}
+.nx-compound-menu-icon {flex-shrink:0;opacity:.86}
+.nx-compound-colour-label {display:flex;align-items:center;gap:10px}
+#app .morebox {
+  background:var(--surface-2)!important;
+  border:0!important; border-radius:12px!important;
+  box-shadow:none!important;
+  padding:4px 0 5px;
+  overflow:hidden;
+}
+#app .morebox > button {
+  min-height:48px!important; gap:11px!important;
+  font-size:13px!important; font-weight:550!important;
+  color:var(--t2)!important;
+}
+#app .morebox > div {min-height:48px!important}
+#app .morebox .pausepep {color:#B07E32!important}
+[data-theme="dark"] #app .morebox .pausepep {color:#F9C87D!important}
+#app .morebox .nx-menu-remove {
+  border-top:1px solid var(--border-sub)!important;
+  color:var(--t3)!important; background:transparent!important;
+}
+#app .morebox .nx-compound-menu-icon {width:18px;height:18px}
+#app .morebox .colorpick {min-height:34px;min-width:34px}
+@media(max-width:350px) {
+  .nx-insights-preview{display:none}
+  #proto-builder-body .nx-proto-stack-selected .pb-route {max-width:84px}
+}
+@media(prefers-reduced-motion:reduce){.nx-insights-chevron{transition:none}}
