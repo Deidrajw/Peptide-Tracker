@@ -255,3 +255,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Rebased Stash consistency candidate — 2026-10-24
 - Required: compound vs blend status/ellipsis header parity, exactly one ellipsis, kit action row no overflow, Sort chevron 320/390 light/dark no clipping, full sorting choices intact. Protected: Stored badge activation, kit management, reconstitution and Prepare, blended dose logging, histories, vial deductions, Check-In, Today chevron text-only release. New branch automated and physical iPhone results NOT TESTED; older PR #61 CI did pass but is not evidence for rebased head.
+
+### PR #63 final automated evidence — 2026-10-24
+- GitHub Actions full build 40128397997 PASS, mobile 40128397917 PASS on candidate `31acdb8e`. LIVE/DEMO 320/390 dark/light Stash action/card browser suites included. LIVE package ZIP 20 entries CRC PASS; standalone HTML DEMO byte-identical to offline zip index. Visual physical iPhone Stash Sort clipping, blend/compound header parity, voiceover Not Tested. Calculator diagnostic separately 40/80 FAIL (not clinical validation). Cloudflare live source parity NOT VERIFIED.
