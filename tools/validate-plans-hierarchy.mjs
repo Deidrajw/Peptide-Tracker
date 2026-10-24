@@ -42,7 +42,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.rating===4),'Subjective rating save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#g-progress-type').selectOption('milestones');
- await page.locator('#g-p-milestones').fill('One\\nTwo');
+ await page.locator('#g-p-milestones').fill(['One','Two'].join(String.fromCharCode(10)));
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.milestones.length===2),'Milestones save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
