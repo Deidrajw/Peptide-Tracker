@@ -34,7 +34,14 @@ jobs:
           import zipfile, pathlib
           z=pathlib.Path('dist/Nexus_v0.9.6-beta_LIVE_GitHub.zip')
           h=pathlib.Path('dist/Nexus_v0.9.6-beta_FULL_DEMO.html')
-          assert z.exists() and h.exists()
+          o=pathlib.Path('dist/Nexus_v0.9.6-beta_OFFLINE_FULL_DEMO_OPEN_ME.zip')
+          assert z.exists() and h.exists() and o.exists()
+          with zipfile.ZipFile(o) as preview:
+              assert preview.testzip() is None
+              assert preview.namelist()==['index.html','README_OPEN_FIRST.txt']
+              assert preview.read('index.html')==h.read_bytes()
+              assert b'FICTIONAL FULL-APP DEMO' in preview.read('index.html')
+              assert b'ChatGPT attachment viewer' in preview.read('README_OPEN_FIRST.txt')
           with zipfile.ZipFile(z) as a:
               names=a.namelist()
               assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names and 'assets/css/nexus-contrast.css' in names
@@ -44,7 +51,7 @@ jobs:
           assert 'window.__NEXUS_FULL_APP_DEMO__' in s
           assert '<script src="assets/js/' not in s
           assert '<link rel="stylesheet" href="assets/css/' not in s
-          print('ZIP and standalone complete-source DEMO source validation PASS')
+          print('ZIP and standalone complete-source DEMO including browser-openable package PASS')
           PY
       - name: Browser QA at 320/390 and dark/light
         shell: bash
