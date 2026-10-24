@@ -112,3 +112,6 @@
 ### 2026-10-24 — preserve concurrently merged iOS diagnostics across v0.9.7
 - Old PR #35 was based on obsolete `df5b1ab` and cannot merge without conflicts after #36/#37 iOS documentation/QA landed. Continue on a FRESH branch from `b382a978` and reapply only the proven Log Dose guard/test/version alignments, preserving `tools/audit-measurement-math.mjs` and measurement planning documentation verbatim except test-version reference.
 - Calculator diagnostics currently show 40/80 failures; neither this unrelated Log Dose confirmation fix nor generic "wellness" wording resolves them. Keep user data untouched, retain both calculators as documented but block claims of medical or App Store clearance.
+
+## v0.9.7 Log Dose guard shipped, iOS measurement audit explicitly separate (2026-10-24)
+- PR #38 merged `2a27f155e3b174bbfaa5347e5f785e8a8fcddadc` with only safe Log Dose under-allocation/invalid amount validation, version 0.9.7 source-aligned packaging and full form automated tests. Retained PR #36/#37's iOS measurement diagnostics untouched (40 PASS / 40 FAIL). The guard does not imply medical calculation or App Store compliance. No record migration.
