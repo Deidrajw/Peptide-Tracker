@@ -246,3 +246,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Today disclosure pilot — required regression
 - At 320/390 px and both themes: Coming up opens upcoming rows and See all; Daily tracking opens Check-in/Supplements/Weight/Nutrition and edit/log; This week toggles week details and preserves Full report, week strip and totals; alert Needs Attention retains one clear chevron; no duplicate pseudo chevron, label clipping, or lost accessible control; keyboard open/close; protected Stash/Calendar/Protocol/Combo Dose. Full browser CI pending, physical iPhone NOT TESTED, calculator diagnostic pre-existing failures separate.
+
+### PR #62 extra chevron screenshot regression — 2026-10-24
+- Visual FAIL on pre-fix candidate (user screenshot): 'View tracking' still displayed chevron due to app-wide pseudo-element. Fixed CSS on branch, result NOT TESTED until rerun. Add computed-style assertion for `details.nexus-today-details.nx-today-text-disclosure > summary::after` (`display:none`, `content:none`) in LIVE and DEMO at 320/390 dark/light. Test native expand/collapse, keyboard/VoiceOver, Needs Attention chevron preserved; ensure Stash history and filter/sort chevrons are unaffected.
