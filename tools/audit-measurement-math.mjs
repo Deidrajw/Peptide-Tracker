@@ -50,6 +50,42 @@ try {
         };
       } finally {state._recon=previous;}
     },theme);
+    // Verify the REAL live input event path, not only the first paint.
+    const liveUpdate=await page.evaluate(()=>{
+      const prev=state._recon;
+      const host=document.createElement('div');
+      host.id='nx-measure-live-test';
+      state._recon={vialMg:'10',bacMl:'2',dose:'1',unit:'mg',freq:'daily',syringe:'30u'};
+      host.innerHTML=reconCalcView();
+      document.body.appendChild(host);
+      try{
+        wireReconCalc();
+        const result=()=>host.querySelector('#rc-results')?.textContent||'';
+        const initial=result();
+        const amount=host.querySelector('#rc-dose');
+        amount.value='-1';
+        amount.dispatchEvent(new Event('input',{bubbles:true}));
+        const negative=result();
+        amount.value='1';
+        amount.dispatchEvent(new Event('input',{bubbles:true}));
+        const restored=result();
+        state._recon.unit='iu';
+        window._calcUpdateResult();
+        const unsupported=result();
+        state._recon.unit='mg';
+        state._recon.syringe='30u';
+        window._calcUpdateResult();
+        const s30=result();
+        state._recon.syringe='50u';
+        window._calcUpdateResult();
+        const s50=result();
+        return {initialRecipe:initial.includes('Your Recipe'),negativeRecipe:negative.includes('Your Recipe'),
+          restoredRecipe:restored.includes('Your Recipe'),iuRecipe:unsupported.includes('Your Recipe'),
+          thirtyValue:(s30.match(/([0-9.]+)\\s+units on your syringe/i)||[])[1],
+          fiftyValue:(s50.match(/([0-9.]+)\\s+units on your syringe/i)||[])[1],
+          focusedInputsPreserved:host.querySelector('#rc-dose')===amount};
+      }finally{host.remove();state._recon=prev;}
+    });
     const checks=[
       ['U-100 syringe size 30: displayed units must equal actual invariant scale',readings.u30.drawUnits!==null&&readings.u30.drawUnits===readings.u30.displayedUnits],
       ['U-100 syringe size 50: displayed units must equal actual invariant scale',readings.u50.drawUnits!==null&&readings.u50.drawUnits===readings.u50.displayedUnits],
@@ -60,16 +96,20 @@ try {
       ['Negative amounts must not produce a preparation recipe',!readings.negative.hasRecipe],
       ['Empty amount should not show a result',!readings.empty.hasRecipe],
       ['Zero denominator should not show a result',!readings.invalidVolume.hasRecipe],
+      ['Live editing rejects negative amount',liveUpdate.initialRecipe&&!liveUpdate.negativeRecipe],
+      ['Live editing restores valid display without deleting input',liveUpdate.restoredRecipe&&liveUpdate.focusedInputsPreserved],
+      ['Live changes reject unqualified IU recipe',!liveUpdate.iuRecipe],
+      ['Live syringe selection retains the same unit reading',liveUpdate.thirtyValue!==undefined&&liveUpdate.thirtyValue===liveUpdate.fiftyValue],
       ['No browser exceptions',pageErrors.length===0]
     ].map(([description,pass])=>({description,result:pass?'PASS':'FAIL'}));
     const failures=checks.filter(x=>x.result==='FAIL');
     countFail+=failures.length;
-    results.push({kind,width,theme,status:failures.length?'FAIL':'PASS',checks,readings,exceptions:pageErrors});
+    results.push({kind,width,theme,status:failures.length?'FAIL':'PASS',checks,readings,liveUpdate,exceptions:pageErrors});
     await ctx.close();
   }
 } finally {await browser.close();}
 const summary={
-  version:VERSION,source:'current unmodified application source',
+  version:VERSION,source:'UNMERGED safety-candidate branch source — NOT production',
   mode:'DIAGNOSTIC_NONBLOCKING_NOT_CLINICAL_CERTIFICATION',
   context:'synthetic examples; LIVE local server and standalone fully isolated DEMO; never production Pages',
   cases:results.length,assertions:results.reduce((a,r)=>a+r.checks.length,0),
