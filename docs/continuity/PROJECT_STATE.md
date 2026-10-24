@@ -408,3 +408,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-24 — Today icon QA gate corrected
 - Full workflow 40127200163 FAILED at legacy `tools/validate-chevron-unification.mjs` assertion requiring a visible chevron on Daily tracking, contradicting user-approved explicit View tracking label. Earlier browser, data and Stash assertions passed before this point. Corrected automated expectations to assert the labeled Today disclosures have NO generated chevron; remaining generic Protocol/Stash chevron tests preserved. Re-run on new head required; do not mark release passed or merged until success.
+
+### 2026-10-24 — Stash layout fix rebased on current main
+- Verified main at `44b0472859bde3a4da6fea6bf0603a18d8d948d1` following Today PR #62 merge. Prior approved Stash PR #61 CI PASS but merge conflicted with Today changes. Created `release/stash-consistency-current-main` from current main and reapplied only Stash `assets/js/10-nexus.js` and `assets/css/nexus.css` UI changes: consistent header ellipsis for ordinary/blend kits; Sort collapsed selection `Attention` and reserved chevron space. All inventory/Stored/dose handlers preserved; no storage changes.
+- Status CODED on new release branch, latest CI / PR / Cloudflare verification pending. Old PR #61 remains superseded but unmerged; calculator safety PR #40 held. Physical iPhone NOT TESTED.
+- **ONE CONCRETE NEXT ACTION:** Verify new branch CI and visual QA, merge updated Stash PR, independently verify Cloudflare deployed commit and iPhone screenshots.
