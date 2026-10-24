@@ -256,3 +256,6 @@
 
 ### PR #62 follow-up: Today disclosure text-only correction — 2026-10-24
 - User found extra `summary::after` chevron in Daily tracking candidate demo. Added scoped CSS override on branch; no JS business behavior, stored data or calculations changed. Previous PR #62 head had both workflows PASS, but new head requires fresh validation. Merge, publication and real iPhone acceptance UNVERIFIED.
+
+### 2026-10-24 — Today icon QA gate corrected
+- Full workflow 40127200163 FAILED at legacy `tools/validate-chevron-unification.mjs` assertion requiring a visible chevron on Daily tracking, contradicting user-approved explicit View tracking label. Earlier browser, data and Stash assertions passed before this point. Corrected automated expectations to assert the labeled Today disclosures have NO generated chevron; remaining generic Protocol/Stash chevron tests preserved. Re-run on new head required; do not mark release passed or merged until success.
