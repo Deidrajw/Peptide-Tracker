@@ -60,6 +60,14 @@ try {
         if (!(await page.locator('.nx-sym-group-toggle').count())) throw Error('Symptom categories missing');
         const hit=page.locator('.nx-sym-add').filter({hasText:'Constipation'}).first();
         if (!(await hit.count())) throw Error('Constipation missing from symptom search');
+        if((await page.locator('.nx-sym-add').filter({hasText:'Constipation'}).count())!==1)
+          throw Error('Constipation should appear once across search categories');
+        const ownerLabel=await hit.locator('xpath=ancestor::section[contains(@class,"nx-sym-group")]').locator('.nx-sym-group-toggle span').first().textContent();
+        if(ownerLabel.trim()!=='Digestive') throw Error('Constipation should be classified under Digestive in search, got '+ownerLabel);
+        await combo.fill('Nausea');
+        if((await page.locator('.nx-sym-add').filter({hasText:'Nausea'}).count())!==1)
+          throw Error('Nausea should appear once across search categories');
+        await combo.fill('Constipation');
         await hit.click();
         await page.waitForTimeout(80);
         if (!(await page.locator('.nx-sym-selected-list').getByText('Constipation').count())) throw Error('Symptom selection not reflected');
