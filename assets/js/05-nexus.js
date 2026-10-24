@@ -854,6 +854,10 @@ function doseModal(name, existing, occTime) {
 
   m.querySelector("#save").onclick = () => {
     const doseAmtStr = m.querySelector("#dose").value;
+    if (!doseAmtStr.trim() || !Number.isFinite(Number(doseAmtStr)) || Number(doseAmtStr) <= 0) {
+      showErrorBanner("Enter a valid amount greater than zero before confirming. Nothing was saved.");
+      return;
+    }
     const ak = activeKit();
     // Remember this choice for next time — the whole point of the picker above is that a
     // person doing this daily shouldn't have to re-pick every single time once they've
@@ -891,6 +895,12 @@ function doseModal(name, existing, occTime) {
         ? rows.filter(r=>(parseFloat(r.mg)||0)>0).map(r=>({kitId:r.kitId, vialId:r.vialId, mg:parseFloat(r.mg)||0, finished:!!r.finished}))
         : [{kitId:ak.id, mg:neededMg}];
       const plannedMg = plan.reduce((a,st)=>a+st.mg,0);
+      // Never save a dose larger than its confirmed source allocations.
+      // This must happen before changing vial remainingMg or the dose history.
+      if (rows.length && plannedMg + 0.01 < neededMg) {
+        showErrorBanner(`Only ${mgToUnit(plannedMg,c.unit).toFixed(2)}${c.unit} is allocated, but the entry says ${mgToUnit(neededMg,c.unit).toFixed(2)}${c.unit} — nothing was saved. Add another open vial or correct the amount before confirming.`);
+        return;
+      }
       if (rows.length && allocationOverdrawsDose(plannedMg, neededMg)) {
         showErrorBanner(`These sources take ${mgToUnit(plannedMg, c.unit)}${c.unit} out of your vial, but this dose is only ${doseAmtStr}${c.unit} — nothing was saved. Change the amount on the source row so it matches the dose. (Recording a loss? Use Log Outflow.)`);
         return;
