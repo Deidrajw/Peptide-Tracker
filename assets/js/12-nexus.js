@@ -394,7 +394,7 @@ function wireBody() {
   });
   document.querySelectorAll(".moremenu").forEach(b=>b.onclick=()=>{
     const box=document.querySelector(`.morebox[data-name="${CSS.escape(b.dataset.name)}"]`);
-    if(box){const open=box.style.display!=="none";box.style.display=open?"none":"block";b.style.color=open?"var(--t4)":"var(--t2)";}
+    if(box){const open=box.style.display!=="none";box.style.display=open?"none":"block";b.style.color=open?"var(--t4)":"var(--t2)";b.setAttribute("aria-expanded",String(!open));}
   });
   document.querySelectorAll(".tunerange").forEach(r=>r.oninput=()=>{
     const name=r.dataset.name; const days=parseFloat(r.value);
