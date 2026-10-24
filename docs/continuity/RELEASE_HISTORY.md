@@ -271,3 +271,6 @@
 
 ### Connected Goals Release A Protocol status filter — candidate 2026-10-24
 - On branch `release/connected-goals-a-protocol-filter`, after design PR #68 merge `7abdc7e1`, added UI filter chips and reset to Protocol view in JS 11/12. No saved data changes. CI/merge/Cloudflare/physical iPhone still UNVERIFIED; displayed version unchanged until real release. Goal association and progress are staged separately.
+
+### 2026-10-24 — v0.9.15-beta Protocol status filter A1, PR #69
+- Merged commit `17182101362c71c49b2911849582a96b560d0816`. Filter UI and no-match reset, JS 11/12, no storage migration. Build/parity `40139548045` PASS, mobile `40139548154` PASS. Workflow artifact `12578201190`: LIVE root index (20 entries) CRC PASS; FULL DEMO standalone and offline ZIP parity PASS. GitHub Pages pre-merge expected stale mismatch; after-merge Pages/Cloudflare exact-source publication UNVERIFIED. Physical iPhone NOT TESTED. Calculator separate known failures held.
