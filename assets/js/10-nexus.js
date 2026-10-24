@@ -408,7 +408,7 @@ function stashView() {
     const st = STATUS_META[statusKey] || STATUS_META.stored;
 
     return `<div class="card nx-kit-card nx-blend-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+      <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
         <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span>
         ${statusBadge(st.label, st.color)}
