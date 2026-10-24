@@ -216,3 +216,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS protected Combo 50 library, Check-In, Protocol, Log Dose 40, vial core 48, Stash Actions, Stash Cards and chevrons. Complete LIVE 16-file source ZIP CRC pass, full isolated DEMO and offline ZIP index exact equality artifact 12565752103.
 - PASS GitHub Pages exact 16/16 source match against merge 1253b2c2 run 40109401930; deployment 40109401334 and post-merge mobile 40109401939 SUCCESS.
 - NOT TESTED actual iPhone Safari, PWA cache, VoiceOver or user's live records. FAIL pre-existing Measurement Calculator 40/80 diagnostics. Next UX regression Stash nested detail reorganization preserving all vial history and actions.
+
+### v0.9.13-beta Stash detail panels QA — PENDING actual CI evidence
+- New `tools/validate-stash-panels.mjs` runs full fictional app LIVE-local and standalone isolated DEMO at 320px/390px light/dark, tests Overview/Vials/History accessible tabs, Home key, selected/hidden panel, visible source history, no nested vial/dose chevrons, 44px touch target, and `state.supplies` unchanged by view switching. Existing Stash Cards/Actions, 50+ Combo, blend-only picker, Log Dose 40, vial accounting 48, Check-In, Protocol and chevrons must PASS before merge. Physical iPhone NOT TESTED. Calculator diagnostic separate 40 FAIL of 80.

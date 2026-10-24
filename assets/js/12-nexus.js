@@ -758,6 +758,29 @@ function wireBody() {
   const tdk=$("#toggle-done-kits"); if(tdk) tdk.onclick=()=>{state._showDoneKits=!state._showDoneKits;renderBody();};
   document.querySelectorAll(".finishvial").forEach(b=>b.onclick=()=>finishVialModal(+b.dataset.id));
   document.querySelectorAll(".vial-actions-btn").forEach(b=>b.onclick=()=>vialActionsMenu(+b.dataset.kit, +b.dataset.vial));
+  // Stash detail tabs are presentation-only: never recalculate or save inventory.
+  document.querySelectorAll(".nx-stash-tabs").forEach(group=>{
+    const buttons=Array.from(group.querySelectorAll(".nx-stash-tab"));
+    const parent=group.parentElement;
+    const choose=btn=>{
+      const id=btn.dataset.panel;
+      buttons.forEach(b=>{
+        const active=b===btn;
+        b.setAttribute("aria-selected",active?"true":"false");
+        b.tabIndex=active?0:-1;
+      });
+      parent.querySelectorAll(":scope > .nx-stash-pane").forEach(p=>{p.hidden=p.dataset.pane!==id;});
+      btn.focus({preventScroll:true});
+    };
+    buttons.forEach((b,i)=>{
+      b.onclick=()=>choose(b);
+      b.onkeydown=e=>{
+        const move=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:null;
+        if(move!==null){e.preventDefault();choose(buttons[(i+move+buttons.length)%buttons.length]);}
+        else if(e.key==="Home"||e.key==="End"){e.preventDefault();choose(buttons[e.key==="Home"?0:buttons.length-1]);}
+      };
+    });
+  });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
   document.querySelectorAll(".markkitdone").forEach(b=>b.onclick=()=>markKitDoneModal(+b.dataset.id));
   document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=()=>{

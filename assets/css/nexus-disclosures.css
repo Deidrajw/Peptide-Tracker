@@ -102,3 +102,12 @@ body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym
 .nx-sym-group .nx-sym-add{width:100%;min-height:44px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;text-align:left;color:var(--t1);font-size:13px;border-bottom:1px solid var(--border-sub)}
 .nx-sym-group .nx-sym-add[aria-selected="true"]{background:var(--surface-2)}
 .nx-sym-group .nx-sym-add:focus-visible,.nx-sym-group-toggle:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
+
+/* v0.9.13: single-level expanded Stash details, without nested panels and clutter. */
+body #app .nx-stash-tab {border:0;background:transparent;color:var(--t4);cursor:pointer;}
+body #app .nx-stash-tab[aria-selected="true"] {background:var(--surface);color:var(--t1);box-shadow:0 1px 5px #00000012;}
+body #app .nx-stash-tab:focus-visible {outline:2px solid #A78BFA;outline-offset:2px;}
+body #app .nx-stash-pane[hidden] {display:none!important;}
+body #app .nx-stash-pane {min-width:0;padding:6px 0 2px;}
+body #app .nx-stash-pane details > summary {min-height:44px;display:flex;align-items:center;}
+body #app .nx-stash-tabs {min-width:0;}

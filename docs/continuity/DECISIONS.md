@@ -152,3 +152,6 @@
 
 ### 2026-10-24 — v0.9.12 Combo Dose and Today arrow SHIPPED
 - Ingredients only stored inside named blends are not independently offered in Combo Dose merely due to a tracked library entry. Separate standard inventory, independent history, protocol, prepared source, saved preset or selected draft remains eligible. No deletion or history rewrite. Label Favourites for Canadian display only; storage fields unchanged. Compound picker has bounded bordered scroll panel and affordance. Today Needs attention uses single CSS chevron without handwritten extra right arrow. Release PR #51 merge 1253b2c2; Pages source parity 40109401930 SUCCESS.
+
+### 2026-10-24 — Stash expanded standard-kit progressive disclosure design (IMPLEMENTED ON BRANCH, not deployed)
+- User-approved Issue #48 Stash density follow-up: expanded standard-kit card uses accessible Overview/Vials/History tabs rather than three simultaneously visible information stacks and nested chevrons. Always retain vial-level actions, dated dose history, forecast, notes, original Edit/Intel/Reconstitute/outflow edit+undo, and kit ellipsis. Removing duplicate Manage Kit link is not removal of underlying handler. No persistence changes or record/math changes; blend composition workflow preserved as-is. Tab-selection keyboard arrows/Home/End and 44px targets required.
