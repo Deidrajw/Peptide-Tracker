@@ -89,3 +89,10 @@
 - New `tools/validate-checkin.mjs` asserts fictional create/edit/notes/intensity/compound tag, date-specific supplements, date collision safety across both builds, dark/light and 320/390px. This is a new regression suite, NOT yet proven passed.
 - Affected page: Daily Check-In modal only, plus testing/build. Data impact: no model key changes, no migration, no production writes.
 - Mandatory DEMO HTML and source-identical LIVE ZIP: builder updated but files INCOMPLETE until CI. GitHub PR, merge, Pages deployment, real iPhone signoff and full-app deep regression: PENDING.
+
+### v0.9.4-beta — IMPLEMENTED / AUTOMATED TESTED / MERGED (2026-10-23)
+- GitHub app PR #25 merged `cab5cd8479fbfb537151c2db070a322ca7d01587` from baseline `56f2f4b7eda2fad201c801cafad72e19229afc5e`; title declares v0.9.4-beta.
+- UI: Daily Check-In mood options have 11px theme-visible text, >=52px target, ARIA selected feedback. No change to mood numeric values, date semantics, existing supplement/symptom data and vial math; migration none.
+- Full-app source-aligned DEMO and root-index LIVE ZIP in GitHub Actions artifact #12540338019; archived standalone HTML 1,784,233 bytes, LIVE ZIP 492,353 bytes, ZIP includes 3 CSS + 12 ordered JS. DEMO in-memory fixture isolation confirmed.
+- Branch CI success: https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40043524923 (8 display and 8 Check-In functional test matrices) and https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40043524934 (mobile forms). Tested synthetic Check-In create/edit, Retatrutide association, intensity, dated supplements, conflicting date protection; actual production records not touched.
+- Limitations: Pages deployment for this merge SHA not independently verified; physical iPhone real tests NOT TESTED; whole-app WCAG and vial-dose deep functional tests NOT TESTED. Release status MERGED, deployment INCOMPLETE.
