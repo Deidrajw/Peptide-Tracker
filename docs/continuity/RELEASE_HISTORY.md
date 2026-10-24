@@ -174,3 +174,6 @@
 ### v0.9.7-beta — LIVE PAGES VERIFIED (2026-10-24)
 - App PR #38 merged `2a27f155e3b174bbfaa5347e5f785e8a8fcddadc`. Postmerge docs PR #39 run `40062278673`, artifact #12547383562, `Nexus_PAGES_REMOTE_CHECK_PR.json`: HTTPS `smoke_only:false`, `verified:true`, 16 app source files byte-identical on first attempt, so v0.9.7 published code parity VERIFIED. PR #39 mobile `40062278638` PASS.
 - Real Log Dose underallocated/invalid input protection shipped, no history migrations; 40 end-to-end Log Dose cases, 48 vial-core cases and all existing display/Check-In/Protocol checks passed. Entire isolated DEMO HTML and browser ZIP, complete LIVE ZIP and release manifest delivered. Medical measurement math 40/80 failures, App Store requirements and physical iPhone remain incomplete.
+
+### v0.9.7 source — measurement safety candidate (UNMERGED, TESTS PENDING)
+- Candidate branch `safety/v098-measurement-calculator-candidate` from main `2da1001a`. Addresses diagnostic classes of U-100 size-related mislabel, arbitrary IU mass conversion and negative inputs in both initial and live-updating recon calculator paths. No published app release, version bump, data migration or user record mutations. No clinical or App Review certification. All mandatory release deliverables remain INCOMPLETE pending approved production implementation.
