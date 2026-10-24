@@ -125,8 +125,8 @@ function stashView() {
     <button id="stash-filter-btn" style="flex:1;padding:9px 12px;border-radius:10px;background:${filter!=="all"?"var(--surface-3)":"var(--surface-2)"};border:1px solid ${filter!=="all"?"var(--t3)":"var(--border-sub)"};color:${filter!=="all"?"var(--t1)":"var(--t3)"};font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
       <span>Filter: ${esc(FILTER_LABELS[filter])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
     </button>
-    <button id="stash-sort-btn" style="flex:1;padding:9px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sort: ${esc(SORT_LABELS[sort])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
+    <button id="stash-sort-btn" style="flex:1;min-width:0;padding:9px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
+      <span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sort: ${esc(sort==="attention"?"Attention":SORT_LABELS[sort])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
     </button>
   </div>`;
 
@@ -240,10 +240,11 @@ function stashView() {
     if (!currentReconDate && sealed>0) secondaryBits.push(`${sealed} vial${sealed===1?"":"s"} sealed`);
 
     return `<div class="card nx-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div class="nx-kit-heading" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
+      <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
         <div style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:0.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)}</span>
         ${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}
+         <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit">⋯</button>
       </div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
@@ -268,7 +269,7 @@ function stashView() {
       ${action||s.reconDate?`<div class="nx-kit-actions" style="display:flex;gap:8px;margin-bottom:4px">
         ${action?`<button class="${action.cls}" data-id="${s.id}" style="flex:${s.reconDate?"1.3":"1"};padding:10px;border-radius:10px;background:${actionUrgent?c.color+"15":"transparent"};border:1px solid ${actionUrgent?c.color+"44":"var(--border)"};color:${actionUrgent?c.color:"var(--t3)"};font-size:13px;font-weight:600">${action.label}</button>`:""}
         ${s.reconDate?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses" style="flex:1;padding:10px;border-radius:10px;border:1px solid #A78BFA44;color:#A78BFA;font-size:13px;font-weight:600">Prepare</button>`:""}
-        <button class="manage-kit-btn icon-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit">⋯</button>
+
       </div>`:""}
 
       <details style="margin-top:8px">
@@ -411,7 +412,7 @@ function stashView() {
         <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span>
         ${statusBadge(st.label, st.color)}
-        <button type="button" class="manage-kit-btn" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit" style="width:44px;height:44px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:20px;flex-shrink:0">⋯</button>
+        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit">⋯</button>
       </div>
       <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
         <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">BLEND INVENTORY REMAINING</div>
