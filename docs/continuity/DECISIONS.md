@@ -118,3 +118,6 @@
 
 ### 2026-10-24 — v0.9.7 remote Pages proof recorded
 - Unlike smoke, remote Actions run `40062278673` returned `verified:true, smoke_only:false` for public exact-byte 16/16 application source parity. This is strong proof that merged v0.9.7 app files were served publicly at check time; does not test a physical iPhone's cache, content semantics, medical compliance or native app availability. Existing measurement-math 40 FAIL/80 remains separate gate.
+
+## 2026-10-24 — one calculator renderer and strict numeric gating (CANDIDATE, NOT APPROVED FOR DEPLOYMENT)
+- Source audit found `reconCalcView` and separate live `wireReconCalc.updateResult` formulas could disagree. Candidate centralizes one result renderer. Positive, finite vial mass, user-entered final volume and requested numerical amount required; no universal IU→mg equivalence; U-100 units reflect volume rather than nominal syringe capacity and over-capacity is not rendered as a usable recipe. This is arithmetic consistency exploration only, not injection instruction validation. Existing two required calculators remain product requirements. No App Store §1.4.2 approval and no production shipping authorization; preserve existing user data and protected Log Dose flows.
