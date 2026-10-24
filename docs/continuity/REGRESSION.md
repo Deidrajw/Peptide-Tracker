@@ -107,3 +107,14 @@ The public iOS **syringe-unit** and **reconstitution/concentration** calculators
 | No directive claim | Product copy must not disguise an injectable draw recommendation as mere general-purpose math | NOT TESTED |
 | Review eligibility | Document outcome of Apple §1.4.2 informational guidance and legal/regulatory classification | NOT TESTED |
 | Web non-regression | No web storage, workflows, or calculated histories changed by iOS planning code | NOT TESTED (no application code edited) |
+
+
+## iOS Option 1 design preview tests — planned, not application QA (2026-10-23)
+| Preview case | Expected result | Status |
+|---|---|---|
+| Generic concentration UI | Fictional 10 mg / 2 mL renders 5 mg/mL | NOT TESTED in released app |
+| Generic U-100 scale UI | Fictional 0.20 mL displays 20 U-100 units for 30/50/100 capacity | NOT TESTED in released app |
+| Capacity warnings | If value exceeds selected capacity, display clear warning and no usable drawing guidance | NOT TESTED |
+| IU unit safety | Reject direct IU→mg without substance-specific validated factor | NOT TESTED |
+| Wording parity | Every existing Dose Calculator/guide entrypoint is accounted for in the planned labels; no renamed hidden functionality | NOT TESTED |
+| Web protection | Source, `peptide-tracker-html-v1`, Check-In, Log Dose, vial math and existing PWA/GitHub Pages untouched by design-only PR | SOURCE NOT MODIFIED; functional app regression NOT TESTED |
