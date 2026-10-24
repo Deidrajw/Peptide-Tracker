@@ -139,8 +139,6 @@ function comboDoseModal() {
     });
   } catch(e) { showErrorBanner("comboDoseModal preset wiring: "+e.message); }
 
-  const comboDateNowBtn = document.querySelector("#combo-date-now");
-  if (comboDateNowBtn) comboDateNowBtn.onclick = () => { document.querySelector("#combo-date").value = localDatetime(); };
 
   // Search is available at every library size; the list itself never grows taller
   // than 224px even with 50+ tracked compounds. Multi-select updates in place.
