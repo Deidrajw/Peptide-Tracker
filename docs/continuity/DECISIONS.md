@@ -102,3 +102,7 @@
 
 ## v0.9.6 Pages publication verification outcome — 2026-10-23
 - The Pages proof threshold was met: GitHub-hosted remote HTTPS 16-file full application byte parity, not simply an app title or Github PR merge. Run `40060285190`, artifact `12546599640`, `Nexus_PAGES_REMOTE_CHECK_PR.json` has `smoke_only:false`, `verified:true`, 16 matching files on first attempt. Because the QA/ops branches changed ONLY tests/workflows/docs, served app files match the previously merged v0.9.6 main application. Browser/device caches and actual iPhone UI acceptance remain distinct tests.
+
+## 2026-10-24 — real Log Dose modal regression before calculation changes
+- Protect existing recorded amounts, per-vial attributions, draft/confirmation and source selection with browser-driven tests on fictional isolated stores before any code fix. A partially sourced dose must not be saved silently. Sealed stock cannot be treated as drawable. Reapply an edited dose to original source rather than just updating the history number. Prepared administration must not re-deduct vial contents.
+- No approval for data migration or changes to dose formulas; any discovered flaw should be fixed minimally in confirmation validation, tested in eight environments, and documented separately from App Store medical content audit.
