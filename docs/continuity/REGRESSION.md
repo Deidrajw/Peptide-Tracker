@@ -255,3 +255,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Rebased Stash consistency candidate — 2026-10-24
 - Required: compound vs blend status/ellipsis header parity, exactly one ellipsis, kit action row no overflow, Sort chevron 320/390 light/dark no clipping, full sorting choices intact. Protected: Stored badge activation, kit management, reconstitution and Prepare, blended dose logging, histories, vial deductions, Check-In, Today chevron text-only release. New branch automated and physical iPhone results NOT TESTED; older PR #61 CI did pass but is not evidence for rebased head.
+
+### Informational empty-state audit candidate — 2026-10-24
+- Required explicit tests: unopened blend with sealed stock => VIAL & INVENTORY has readable 'No blend vial opened yet' explanation without an enabled blend dose control; prepared/open blend => existing Log blend dose action and no placeholder; regular sealed compound => Open a vial/Add vials actions intact; completed/empty regular kit => appropriate explanatory state; nonempty categories unaffected. 320/390 both themes, VoiceOver role=status, menu scroll/close, no duplicate labels, Check-In/Calendar/Protocol/Stash and vial math protected. All new branch tests NOT TESTED until CI; real iPhone NOT TESTED.
