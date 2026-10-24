@@ -247,3 +247,6 @@
 
 ### Cloudflare hosting decision — 2026-10-24 (not an application release)
 - User approved GitHub-connected Cloudflare Pages `https://nexuspeplog.pages.dev/` as future primary hosting; GitHub Pages retained as fallback. No code deployment/merge, changes to localStorage, version bump or migrations in this decision. Cloudflare published SHA, 16-file parity and user data restoration NOT VERIFIED. Existing v0.9.14-beta source remains latest confirmed main, PR #57 v0.9.15 candidate unmerged.
+
+### v0.9.15-beta icon integration candidate — 2026-10-24
+- User uploaded four approved PNGs to `main` commit before release branch. Candidate branch `release/nexus-icon-integration-v0915`: iPhone 180 and browser 192/512 references, updated LIVE/DEMO packaging. Intended data impact none. CI, merge and Cloudflare publication NOT YET VERIFIED. Prior Plans v0.9.15 merged separately; calculator PR #40 held.
