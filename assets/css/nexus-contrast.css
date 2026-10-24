@@ -166,3 +166,26 @@ body .modal .moodbtn:focus-visible {
   #proto-builder-body .nx-proto-stack-selected .pb-route {max-width:84px}
 }
 @media(prefers-reduced-motion:reduce){.nx-insights-chevron{transition:none}}
+
+/* 320px acceptance: avoid truncating the compound identity and wrapping the
+   next-dose summary beneath a 70px ring. Long names may still ellipsize. */
+@media (max-width: 350px) {
+  #app .nx-expanded-compound-head > span.mono {
+    font-size:12px!important;letter-spacing:.65px!important;
+  }
+  #app .nx-expanded-compound-head .compound-intel-btn {
+    font-size:10px!important;padding:7px 6px!important;
+  }
+  #app .nx-compound-timing-row {
+    flex-wrap:nowrap!important;gap:9px!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details {
+    min-width:0!important; gap:6px!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details > div:first-child {
+    gap:10px!important;flex-wrap:nowrap!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details > div:first-child > div {
+    min-width:0!important;
+  }
+}
