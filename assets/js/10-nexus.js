@@ -630,23 +630,31 @@ function mixingChartView() {
 
 function reconCalcView() {
   const r = state._recon || { vialMg:"", bacMl:"", dose:"", unit:"mg", freq:"daily", syringe:"100u" };
-  const vmg=parseFloat(r.vialMg)||0, bac=parseFloat(r.bacMl)||0;
-  const doseRaw=parseFloat(r.dose)||0;
-  const doseMg = r.unit==="mcg" ? doseRaw/1000 : r.unit==="iu" ? doseRaw*0.001 : doseRaw;
-  const conc = vmg&&bac ? vmg/bac : null;
-  const mlPerDose = conc&&doseMg ? doseMg/conc : null;
+  // Strictly positive user inputs only; never infer unknown IU potency as mass.
+  // A UI-only safety guard for the proposed Measurements & Preparation redesign:
+  // DO NOT generalize this to stored kit arithmetic or historical dose records.
+  const validPositive = v => v!=="" && v!=null && Number.isFinite(Number(v)) && Number(v)>0;
+  const vmg=validPositive(r.vialMg)?Number(r.vialMg):0;
+  const bac=validPositive(r.bacMl)?Number(r.bacMl):0;
+  const doseRaw=validPositive(r.dose)?Number(r.dose):0;
+  const qualifiedUnit=r.unit==="mg"||r.unit==="mcg";
+  const doseMg=qualifiedUnit ? (r.unit==="mcg" ? doseRaw/1000 : doseRaw) : null;
+  const conc=vmg>0 && bac>0 ? vmg/bac : null;
+  const mlPerDose=conc && doseMg>0 && Number.isFinite(doseMg/conc) ? doseMg/conc : null;
   // Syringe configs
   const SYRINGES = {"30u":{max:30,label:"30-unit (0.3 mL)",mlMax:0.3,isVol:false},"50u":{max:50,label:"50-unit (0.5 mL)",mlMax:0.5,isVol:false},"100u":{max:100,label:"100-unit (1 mL)",mlMax:1,isVol:false},"1mL":{max:100,label:"1 mL",mlMax:1,isVol:true},"3mL":{max:300,label:"3 mL",mlMax:3,isVol:true}};
   const syr = SYRINGES[r.syringe||"100u"];
   const unitsRaw = mlPerDose!=null ? mlPerDose*100 : null; // U-100 units
   const units = unitsRaw!=null ? Math.round(unitsRaw*10)/10 : null;
   // Volume syringes (1mL/3mL): use mL-based fill; insulin syringes: use unit-based fill
-  const syringeUnits = !syr.isVol&&unitsRaw!=null ? Math.round(unitsRaw/100*syr.max*10)/10 : null;
+  // U-100 markings are invariant across 30u, 50u and 100u syringe capacities.
+  const syringeUnits = !syr.isVol&&unitsRaw!=null ? Math.round(unitsRaw*10)/10 : null;
+  const withinCapacity=mlPerDose!==null && mlPerDose>0 && mlPerDose<=syr.mlMax+1e-9;
   const syringeMl = syr.isVol&&mlPerDose!=null ? mlPerDose : null;
   const fillPct = syr.isVol ? (syringeMl!=null?Math.min(100,(syringeMl/syr.mlMax)*100):0) : (syringeUnits!=null?Math.min(100,syringeUnits/syr.max*100):0);
   // Supply calculation
   const dosesPerDay = r.freq==="twice"?2:r.freq==="weekly"?1/7:1;
-  const totalDoses = vmg&&doseMg ? Math.floor(vmg/doseMg) : null;
+  const totalDoses = vmg>0&&doseMg>0&&Number.isFinite(vmg/doseMg) ? Math.floor(vmg/doseMg) : null;
   const durationDays = totalDoses&&dosesPerDay ? Math.round(totalDoses/dosesPerDay) : null;
   // Syringe SVG — volume syringes (1mL/3mL) use mL scale; insulin syringes use unit scale
   const W=280,BL=24,BR=252,BW=228,BY=28,BH=24;
@@ -699,7 +707,7 @@ function reconCalcView() {
       ${[["daily","Daily","1×/day"],["twice","Twice","2×/day"],["weekly","Weekly","1×/wk"]].map(([v,l,s])=>`<button data-id="freq" data-val="${v}" onclick="calcPillClick(this)" style="flex:1;padding:8px 6px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid ${(r.freq||"daily")===v?"#A78BFA":"var(--border-sub)"};background:${(r.freq||"daily")===v?"#A78BFA22":"transparent"};color:${(r.freq||"daily")===v?"#A78BFA":"var(--t4)"};display:flex;flex-direction:column;align-items:center;gap:2px">${l}<span style="font-size:10px;font-weight:400;opacity:0.7">${s}</span></button>`).join("")}
     </div>`)}
   </div>
-  <div id="rc-results">${mlPerDose!=null?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
+  <div id="rc-results">${mlPerDose!=null&&withinCapacity?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
     <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Your Recipe</div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
       <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
