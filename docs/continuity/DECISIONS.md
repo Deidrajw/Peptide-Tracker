@@ -80,3 +80,7 @@
 - Preview candidate retains collapsible card, status/time-to-next and Log Dose primary control; groups nonurgent interpretive insights in disclosure, keeps injection-site safety warning visible, organizes secondary history/calendar/schedule/colour/pause/remove actions under ellipsis and uses outline icons. Routes, records, dose calendar, settings and archive commands still use preexisting event handlers.
 - Addresses genuine 1/6 vs Step 3 header bug in New Protocol with live progress update; search field becomes proper outline SVG with separate placeholder text. Safety wording from source is not clinically validated; flag for later medical audit rather than inventing personalised dosing advice.
 - No data migrations or storage writes from design proposal; no prior behaviour intentionally removed. Final visual approval after interactive review required before merge.
+
+## v0.9.6 preview delivery — open-in-browser ZIP option (2026-10-23)
+- **Decision status: IMPLEMENTED on unmerged proposal branch, verification pending.** A ChatGPT attachment viewer may treat a self-contained HTML app as static preview and not execute scripts. Do not replace the complete app with a feature-only mockup. Ship full-app isolated HTML as-is AND an archive with byte-identical `index.html` and plain-text instructions; keep LIVE ZIP separate.
+- This does not constitute user approval for the revised compound-card, Insights, or bottom-sheet design; PR #31 still held for approval. No data migration/import/sync and no new production release.
