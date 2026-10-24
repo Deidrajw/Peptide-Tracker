@@ -280,3 +280,6 @@
 
 ### 2026-10-24 — A4 flexible progress modes candidate
 - Based on A3 main `223fea3c`, A4 branch adds progressModel editor, truthful Goal Overview and opt-in weight-history comparison, no record duplication or migration. Added browser matrix functional assertions; CI/merge/deployment unverified pending PR.
+
+### 2026-10-24 — A4 Connected Goals, PR #74 MERGED
+- Main merge SHA `6e0df4e70fc8355a9fb33daa241d12b8cf47e9bb`; display v0.9.15-beta. Four goal modes and optional read-only weight history. Browser/build `40144302334` PASS; mobile `40144302326` PASS. Artifact `12579514177`: 20-file LIVE ZIP CRC PASS, offline/standalone full DEMO byte parity PASS. Data impact additive Goal `progressModel`, no destructive migration. Public Cloudflare and Pages exact-commit serving UNVERIFIED; physical iPhone NOT TESTED.
