@@ -96,3 +96,6 @@
 ## 2026-10-23 — QA-only deployment and vial-safety safeguards
 - Production publication is considered VERIFIED only when live GitHub Pages HTML, 3 CSS and all 12 JS are byte-identical to the checked-out `main` app source; a PR merge, Pages URL or version title is inadequate alone. New GitHub Actions workflow records independent parity evidence on push; local smoke checks explicitly do not count as publication verification.
 - Protect inventory integrity via fictional, isolated browser tests for core v2 per-vial consumption, source selection, insufficient inventory, undo, prepared-dose unused balance and unit conversion. These tests do not justify changing any saved user data, reconstitution model or dosage calculations. Keep dose calculators and App Store medical audit separately gated.
+
+## 2026-10-23 — deployment proof through PR-observable evidence
+- GitHub connector only returns pull-request-triggered Actions runs; introduce an actual public Pages 16-file source-hash check in PR CI with `continue-on-error` and JSON artifact, keeping Pages evidence separate from the local smoke test. This prevents claiming deployed when only a GitHub merge or offline self-test passed. Main-push parity workflow retained for future independent checks.
