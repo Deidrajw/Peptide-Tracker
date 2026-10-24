@@ -161,3 +161,6 @@
 
 ### 2026-10-24 — Plans status/management/Intel hierarchy candidate (v0.9.14)
 - Preserve one primary management ellipsis (44px), passive status badge, Intel as independently labelled secondary action below the Research header, and 44px goal details disclosure. No research/goal/shopping record, link or handler deletion. This is a scoped implementation following #48 and previously released v0.9.13 Stash. Physical device acceptance and deployment pending; broad redesign not implied.
+
+### 2026-10-24 — Plans hierarchy shipped v0.9.14
+- Passive status plus one 44px ellipsis in header, independent labelled Compound Intel action below in Research, and a single >=44px Goals detail disclosure. Preserve existing editor/delete actions and all linked plan records; do not duplicate Stash rework already delivered in v0.9.13. PR #55 merge `529f81ea`, public exact 16-file parity 40113805546. Real iPhone manual acceptance remains pending.
