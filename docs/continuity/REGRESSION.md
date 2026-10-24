@@ -236,3 +236,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### v0.9.15-beta Plans outline icons — awaiting release QA (2026-10-24)
 - NOT TESTED yet: at 320/390, dark/light, LIVE-local and complete fictional isolated DEMO, management SVG visibly centered, 44px target, Edit/Delete action still opens; Compound Intel shows a single right navigation outline arrow and original navigation still works; Goals View details toggles and other-goal/shopping management retained. Re-run protected v0.9.13 Stash tabs/action/data nonmutation, v0.9.12 Combo 50+ & blend-only selection, Check-In, Protocol, Log Dose 40, vial core 48 and chevron suite. Validate exact-source 16-file LIVE ZIP and complete isolated full-app DEMO/offline HTML equality. Physical iPhone NOT TESTED. No synthetic Pass claims.
+
+### Cloudflare primary host transition gates — NOT TESTED (2026-10-24)
+- Confirm Cloudflare Pages branch=main, no stale output directory, version and 16 application files match target GitHub SHA; verify theme/navigation, update lifecycle/cache, 320/390 iPhone Safari/PWA.
+- With disposable fictional data only, verify full backup export on old origin, controlled import on new origin, count/shape/date-specific Check-In, supplements, history, protocols, Stash/vials and Combo Dose intact, with no old-origin overwrite. Real user migration is NOT TESTED / not approved until separate explicit confirmation. GitHub Pages retained fallback. Calculator diagnostics pre-existing 40 FAIL/80 separate.
