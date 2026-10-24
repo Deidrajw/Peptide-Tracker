@@ -81,7 +81,7 @@ function peptideCardHTML(name, data, opts={}) {
     isProtoPaused?statusBadge("⏸ Protocol Paused","warning"):"",
     isResting?statusBadge(`⏸ Rest phase${doseStatus.restWeek?` · wk ${doseStatus.restWeek}/${doseStatus.restTotalWeeks}`:""}`,"warning"):"",
     currentPh&&!trough&&!isProtoPaused?statusBadge(currentPh.label, currentPh.color):"",
-    trough?statusBadge("⚠ Winding Down", "#ff8c00"):"",
+    trough?statusBadge("Winding Down", "#ff8c00"):"",
     od?statusBadge("Overdue", "danger"):"",
   ].filter(Boolean).join("");
   return `<div class="card" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
@@ -93,7 +93,7 @@ function peptideCardHTML(name, data, opts={}) {
     </div>
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
     ${doseStatus.recentSkip?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px;padding-left:18px">✕ Skipped ${esc(fmtDate(doseStatus.recentSkip.date))}${doseStatus.recentSkip.reason?` · ${esc(doseStatus.recentSkip.reason)}`:""} <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.recentSkip.date)}" style="color:var(--t4);text-decoration:underline;background:none;border:none;font-size:11px;padding:0;margin-left:4px">Undo</button></div>`:""}
-    <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">${ring}<div style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:170px">
+    <div class="nx-compound-timing-row" style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">${ring}<div class="nx-compound-timing-details" style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:170px">
       <div style="display:flex;gap:20px;flex-wrap:wrap">${(()=>{const nextDueDisplay=doseStatus.nextDueStr?fmtShort(doseStatus.nextDueStr):doseStatus.nextDueMs?fmtShort(new Date(doseStatus.nextDueMs)):"—";return [["LAST",last?fmtShort(last.date):"—"],["NEXT",nextDueDisplay]]})().map(([l,v])=>`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div style="font-size:15px;color:var(--t2);font-weight:600;margin-top:2px">${v}</div></div>`).join("")}</div>
       <div style="font-size:11px;color:var(--t5)">${since!=null?(Math.round(since*10)/10)+"d since last dose":""}${doses.length?` · ${doses.length} dose${doses.length===1?"":"s"} logged`:""}${protocolDays!==null?` · ${protocolDays}d on protocol`:""}</div>
       ${(()=>{ const tv=getTimingVariance(data); if(!tv) return ""; const mag=Math.abs(tv.avgMinutes); const dir=tv.avgMinutes>0?"after":"before"; return mag<5 ? `<div style="font-size:10px;color:var(--t5)">Usually logged right around the planned time (${tv.sampleSize} doses)</div>` : `<div style="font-size:10px;color:var(--t5)">Usually logged ~${mag} min ${dir} the planned time (${tv.sampleSize} doses)</div>`; })()}
