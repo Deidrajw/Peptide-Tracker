@@ -70,3 +70,7 @@
 ## v0.9.5-beta — search results show each symptom once
 - Status: targeted implementation coded in release/v0.9.5-unique-symptom-search; tests and merge pending. No major redesign.
 - Preserve original named browse groups and their existing membership for users discovering symptoms by group. When a query is present only, the same symptom name appears once; priority general category, then active compound, custom, recent and other. Example: Digestive owns Constipation, even if Retatrutide-specific or Recently logged also contains it. This is UI grouping only, not a causal medical classification or change to saved records. Category expand/collapse, multi-select, custom terms and intensity remain intact.
+
+## v0.9.5 — deduplicated query results shipped (2026-10-23)
+- PR #27 merged at `4addc72b8fdbb9906170d116af3f4a8183687e11`. When a query is present, a symptom appears once under preferred general category, then compound, custom, recent or other. Empty-query browsing retains all categories and their membership; selected symptoms/intensity and saved historical associations unchanged.
+- This is a user-interface discovery improvement, not an assertion of medical causality, not a catalog migration, and not a replacement for active-compound categories.
