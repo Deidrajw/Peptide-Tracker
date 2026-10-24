@@ -274,3 +274,6 @@
 
 ### Connected Goals A2 explicit goal association — candidate 2026-10-24
 - Branch `release/connected-goals-a2-linking` from main `17182101` adds Protocol Builder Review personal-goal selector and protocol-card linked goal display via new optional `linkedGoalId`. Legacy template `goalId` unchanged. No migration, no data loss intended; normal protocol Save writes new optional reference. QA, merge, artifacts, Pages/Cloudflare remain UNVERIFIED.
+
+### Connected Goals A3 detail sheet — candidate 2026-10-24
+- On branch `release/connected-goals-a3-detail` from verified main `d25a5a36`, add read-only Goal Details Overview, Connections, Activity accessible through active and other goal cards. No data migration, no calculation changes, no deployment. CI and full release artifacts PENDING.
