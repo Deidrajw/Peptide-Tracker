@@ -409,19 +409,26 @@ function stashView() {
         ${statusBadge(st.label, st.color)}
         <button type="button" class="manage-kit-btn" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit" style="width:44px;height:44px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:20px;flex-shrink:0">⋯</button>
       </div>
-      ${currentReconDate?`
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
-        <span style="font-size:30px;font-weight:800;color:var(--t1);line-height:1">${vialRem.toFixed(vialRem%1===0?0:1)}</span>
-        <span style="font-size:14px;color:var(--t4)">/ ${s.vialMg} mg</span>
+      <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
+        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">BLEND INVENTORY REMAINING</div>
+        <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+          <span class="nx-kit-quantity" style="font-size:27px;font-weight:750;color:var(--t1);line-height:1.15">${Number.isFinite(kitRemMg)?kitRemMg.toFixed(kitRemMg%1===0?0:1):"—"}</span>
+          <span style="font-size:13px;color:var(--t4)">mg across this kit</span>
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-top:6px">${sealed ? sealed+" sealed" : "No sealed vials"}${currentReconDate?" · current vial open":""} · ${(s.composition||[]).length} components</div>
       </div>
-      <div style="height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${vialPct||0}%;background:${st.color};border-radius:5px"></div>
+      ${currentReconDate && vialRem!==null ? `<div class="nx-stash-open-progress" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--t3)">Current open blend vial</span>
+          <span style="font-size:12px;font-weight:650;color:var(--t2)">${vialRem.toFixed(vialRem%1===0?0:1)} / ${s.vialMg} mg</span>
+        </div>
+        ${vialPct!==null?`<div role="progressbar" aria-label="Open blend vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.max(0,Math.min(100,vialPct))}%;background:${st.color};border-radius:7px"></div></div>`:""}
       </div>
-      <button class="log-blend-dose" data-id="${s.id}" style="width:100%;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">🧬 Log Blend Dose</button>
-      `:`<div style="font-size:13px;color:var(--t4);margin-bottom:12px">No vial reconstituted yet</div>`}
+      <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Blend Dose</button>
+      ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No blend vial currently open</div>`}
 
       <details style="margin-top:${currentReconDate?"8":"2"}px">
-        <summary style="font-size:11.5px;color:var(--t4);cursor:pointer;list-style:none">▸ Details</summary>
+        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Composition & kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></summary>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
           <div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:6px">COMPOSITION PER VIAL (${s.vialMg}mg total)</div>
           <div style="margin-bottom:12px">${(s.composition||[]).map(c=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:3px 0"><span>${esc(c.compound)}</span><span>${c.mg}mg (${totalMg>0?Math.round(c.mg/totalMg*100):0}%)</span></div>`).join("")}</div>
