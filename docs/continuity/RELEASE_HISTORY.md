@@ -262,3 +262,6 @@
 
 ### Post-Today Stash header candidate — 2026-10-24
 - Applied previously approved and CI-validated PR #61 UI-only changes on latest Today release baseline main `44b04728` to avoid old PR merge conflicts. Candidate branch `release/stash-consistency-current-main`. Version title remains v0.9.15-beta until release bookkeeping; new branch CI/merge/deployment NOT YET VERIFIED, data migration none.
+
+### Informational empty-state audit / Stash menu pilot — 2026-10-24 (candidate)
+- Branch `release/stash-empty-states-20261024` from main `62fae531` implements placeholder for zero eligible Kit actions menu entries, specifically unopened/unreconstituted blend; existing action buttons and safety guards unchanged. Broader cross-app source audit documented. LIVE/DEMO builds, CI, merge and Cloudflare deployment UNVERIFIED. Data impact none; no migration.
