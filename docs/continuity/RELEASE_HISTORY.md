@@ -244,3 +244,6 @@
 ### v0.9.15-beta — CANDIDATE, not released (2026-10-24)
 - Baseline main `6645f375`; branch `release/v0915-plans-icon-coherence`; Plans management and Research Intel icons changed from font glyphs to consistent SVG outline controls; CSS preserves >=44px management hit area. Index candidate title v0.9.15-beta.
 - Affected: Plans Goals/Research/Shopping. Data impact: none intended; no saved records, Stash/Combo math, protocol or calculator changes. PR/CI/LIVE ZIP/full-app DEMO/merge/Pages deployment: INCOMPLETE until independently verified. Physical iPhone: NOT TESTED. Separate calculator #40 still hold.
+
+### Cloudflare hosting decision — 2026-10-24 (not an application release)
+- User approved GitHub-connected Cloudflare Pages `https://nexuspeplog.pages.dev/` as future primary hosting; GitHub Pages retained as fallback. No code deployment/merge, changes to localStorage, version bump or migrations in this decision. Cloudflare published SHA, 16-file parity and user data restoration NOT VERIFIED. Existing v0.9.14-beta source remains latest confirmed main, PR #57 v0.9.15 candidate unmerged.
