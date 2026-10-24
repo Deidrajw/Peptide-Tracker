@@ -267,3 +267,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Connected Goals A2 linkage candidate required checks
 - New protocol goal template selection still works when no saved goals. Personal goal selector optional; select, save draft/activate, reopen edit, change/clear link, refresh, rename source goal and see updated card; delete source goal leaves explicit unavailable reference not random match; duplicate goal names must not cross-link. No change to previous `goalId` template, paused/status/schedule, dose source/history, Stash vial math, Check-In date uniqueness. 320/390 light/dark LIVE/full isolated DEMO and 44px accessible picker. All newly scoped checks NOT TESTED until browser tests.
+
+### Goal detail A3 candidate required regression
+- Open modal from active and other goals, switch three tabs, accessible close and 44px targets, accurate link-by-ID including duplicate names, renamed/deleted goals, missing metrics, missing protocols, and empty Activity; ensure no fabricated progress or writes. Check Plans ellipsis/edit/delete, Protocol builder associations, Check-In one/date, dose history, Stash, Calendar. Test LIVE + isolated full DEMO at 320/390 in both themes. All NEW tests NOT TESTED; physical iPhone NOT TESTED.
