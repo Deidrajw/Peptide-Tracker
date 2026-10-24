@@ -51,6 +51,15 @@ try{
       wireBody();
     });
     const fixture=page.locator('#nx-proto-design-fixture');
+    if(width===320){
+      const titleMetrics=await fixture.locator('.nx-expanded-compound-head > span.mono').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
+      check(titleMetrics.scroll<=titleMetrics.client+1,'320px compound title still truncated: '+JSON.stringify(titleMetrics));
+      const timing=await fixture.locator('.nx-compound-timing-row').evaluate(el=>{
+        const a=el.firstElementChild?.getBoundingClientRect(),b=el.querySelector('.nx-compound-timing-details')?.getBoundingClientRect();
+        return {ringTop:a?.top||0,summaryTop:b?.top||0};
+      });
+      check(Math.abs(timing.ringTop-timing.summaryTop)<24,'320px ring and Last/Next wrapped: '+JSON.stringify(timing));
+    }
     const summary=fixture.locator('.nx-compound-insights summary');
     check(await summary.count()===1,'Timing insights missing from sample Retatrutide card');
     check((await fixture.locator('.nx-compound-insights').getAttribute('open'))===null,'Insights should default collapsed');
