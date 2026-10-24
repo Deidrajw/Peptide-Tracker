@@ -1310,35 +1310,112 @@ function vialActionsMenu(kitId, vialId) {
 // destinations, now reached through one ⋯ tap instead of four always-visible buttons — this
 // menu is the ONLY place that content moved to, nothing about what these actions do changed.
 function manageKitMenu(kitId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
+  const s = state.supplies.find(x => x.id === kitId);
+  if (!s) return;
   const c = cfg(s.name);
-  const currentReconDate = s.reconDate || null;
-  const canFinishVial = currentReconDate && s.activeKit && s.kitStatus!=="done";
-  const canLogOutflow = !!currentReconDate;
-  const isDone = s.kitStatus==="done";
-  const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:15px;font-weight:600;color:var(--t1)">Manage ${esc(s.name)}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
-    </div>
-    ${canFinishVial?`<button id="mk-finishvial" class="sheet-row">Finish this vial<div class="sub">Closes out just the currently active vial — the kit and any sealed backups stay available</div></button>`:""}
-    ${canFinishVial?`<button id="mk-addtoopen" class="sheet-row">Add to open vial<div class="sub">Pour a sealed vial's powder into the one that's already open, instead of opening a separate one</div></button>`:""}
-    <button id="mk-addvials" class="sheet-row">Add vials<div class="sub">Restocked — add more sealed vials to this same kit instead of creating a duplicate</div></button>
-    ${canLogOutflow?`<button id="mk-outflow" class="sheet-row">Log outflow<div class="sub">Record product that left this kit without being taken — wasted, gifted, or sent for testing</div></button>`:""}
-    ${isDone?`<div class="sheet-row" style="opacity:0.7;cursor:default">Already marked done${s.doneReason?` · ${esc(s.doneReason)}`:""}</div>`:`<button id="mk-finishkit" class="sheet-row">Finish this kit<div class="sub">Retires the whole kit as complete or discarded, logging any leftover as outflow</div></button>`}
-    <button id="mk-delete" class="sheet-row danger">Delete kit<div class="sub">Permanently removes this kit and its history — cannot be undone</div></button>
-  `, c.color);
-  m.querySelector("#x").onclick = closeModal;
-  const fv = m.querySelector("#mk-finishvial"); if (fv) fv.onclick = () => { closeModal(); finishVialModal(kitId); };
-  const ato = m.querySelector("#mk-addtoopen"); if (ato) ato.onclick = () => { closeModal(); addToOpenVialModal(kitId); };
-  m.querySelector("#mk-addvials").onclick = () => { closeModal(); addVialsModal(kitId); };
-  const lo = m.querySelector("#mk-outflow"); if (lo) lo.onclick = () => { closeModal(); logWasteModal(kitId); };
-  const fk = m.querySelector("#mk-finishkit"); if (fk) fk.onclick = () => { closeModal(); markKitDoneModal(kitId); };
-  m.querySelector("#mk-delete").onclick = () => { closeModal(); confirmAction("Delete this kit? This can't be undone.", () => {
-    const kit=state.supplies.find(x=>x.id===kitId);
-    if(kit){const othersExist=state.supplies.filter(x=>x.id!==kitId&&x.name===kit.name).length>0;if(!othersExist){if(state.peptides[kit.name])state.peptides[kit.name].status="archived";else if(state.customPeptides[kit.name])state.customPeptides[kit.name].status="archived";}}
-    state.supplies=state.supplies.filter(x=>x.id!==kitId);saveState();render();
-  }); };
+  const isBlend = !!s.isBlend;
+  const isDone = s.kitStatus === "done";
+  const hasOpen = !!s.reconDate && !!s.activeKit && !isDone;
+  const hasRecon = !!s.reconDate;
+  const sealed = getSealedVials(s).length;
+  // Never route blend kits through standard-vial functions: they have their own
+  // dose log, composition and reconstitution semantics.
+  const actions = [
+    {
+      label: "VIAL & INVENTORY",
+      entries: isBlend ? [
+        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Use the existing blend-specific dose workflow",icon:"◈"}] : [])
+      ] : [
+        ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
+        ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the existing preparation and stock-allocation flow",icon:"◌"}] : []),
+        ...(hasOpen ? [{id:"finish-vial",name:"Finish this vial",desc:"Keep sealed backup vials in the kit",icon:"✓"},{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
+        {id:"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
+        ...(hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
+      ]
+    },
+    {
+      label:"KIT & RECORDS",
+      entries: [
+        {id:"edit",name:"Edit kit",desc:isBlend?"Edit blend composition and metadata":"Change kit metadata without rewriting vial history",icon:"✎"},
+        {id:"details",name:"Kit details & history",desc:isBlend?"Composition and kit information":"Inventory, vial and dose history",icon:"▤"},
+        ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
+        ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
+      ]
+    },
+    {
+      label:"DANGER ZONE",
+      entries:[{id:"delete",name:"Delete kit",desc:"Permanent removal — confirmation required",icon:"×",danger:true}]
+    }
+  ];
+  // One consistent outline icon system for all kit actions; no emoji glyphs.
+  const iconPaths = {
+    "blend-dose":'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
+    open:'<path d="M12 5v14M5 12h14"/>',
+    prepare:'<path d="M4 11h16M7 7h10M8 15h8M10 3h4M9 19h6"/>',
+    "finish-vial":'<path d="m5 12 5 5L20 7"/>',
+    "add-to-open":'<path d="M12 4v16M4 12h16"/>',
+    restock:'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/><path d="M12 12v9M4 8l8 4 8-4"/>',
+    outflow:'<path d="M5 19 19 5M9 5h10v10"/>',
+    edit:'<path d="m4 20 4-1 11-11a2 2 0 0 0-3-3L5 16z"/>',
+    details:'<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h4"/>',
+    intel:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    reopen:'<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>',
+    "finish-kit":'<path d="m5 12 5 5L20 7"/>',
+    delete:'<path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v6M14 11v6"/>'
+  };
+  const icon = item => '<span aria-hidden="true" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:var(--surface-2);flex-shrink:0;color:'+(item.danger?'#ff8585':'var(--t2)')+'"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(iconPaths[item.id]||iconPaths.details)+'</svg></span>';
+  const m = openModal(
+    '<div class="nx-stash-sheet" data-kit="'+esc(String(kitId))+'">'+
+    '<div aria-hidden="true" style="width:34px;height:4px;border-radius:8px;background:var(--border);margin:0 auto 16px"></div>'+
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">'+
+    '<div style="flex:1;min-width:0"><div style="font-size:17px;font-weight:700;color:var(--t1)">Kit actions</div>'+
+    '<div style="font-size:12px;color:var(--t4);margin-top:4px">'+esc(s.name)+(isBlend?' · Blend':' · '+(hasOpen?'Open':isDone?'Finished':'Stored'))+'</div></div>'+
+    '<button type="button" id="x" aria-label="Close kit actions" style="width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t2);font-size:20px">×</button></div>'+
+    actions.map(group=>'<section style="margin:0 0 14px">'+
+      '<div class="mono" style="font-size:10px;letter-spacing:1.2px;color:var(--t4);margin:0 0 8px 3px">'+group.label+'</div>'+
+      group.entries.map(item=>
+        '<button type="button" class="nx-stash-action" data-action="'+item.id+'" style="width:100%;min-height:58px;border:0;background:transparent;padding:8px 4px;display:flex;align-items:center;gap:12px;text-align:left;border-radius:12px">'+
+        icon(item)+'<span style="min-width:0;flex:1"><span style="display:block;font-size:13.5px;font-weight:650;color:'+(item.danger?'#ff8585':'var(--t1)')+'">'+item.name+'</span>'+
+        '<span style="display:block;font-size:11px;line-height:1.4;margin-top:3px;color:var(--t4)">'+item.desc+'</span></span>'+
+        '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t4);flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg></button>'
+      ).join('')+'</section>').join('')+
+    '</div>', c.color);
+  m.querySelector("#x").onclick=closeModal;
+  const openDetails=()=>{
+    closeModal();
+    const card=Array.from(document.querySelectorAll(".nx-kit-card[data-kit-id]")).find(el=>el.dataset.kitId===String(kitId));
+    if(!card){showErrorBanner("Kit details are unavailable in this Stash view.");return;}
+    const details=card.querySelector("details");
+    if(details){details.open=true;card.scrollIntoView({block:"nearest",behavior:"smooth"});details.querySelector("summary")?.focus();}
+  };
+  m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=()=>{
+    const id=btn.dataset.action;
+    if(id==="details"){openDetails();return;}
+    closeModal();
+    if(id==="open") { if(!isBlend) openNewVialModal(kitId); }
+    else if(id==="blend-dose") logBlendDoseModal(kitId);
+    else if(id==="prepare") prepareDosesModal(s.name);
+    else if(id==="finish-vial") finishVialModal(kitId);
+    else if(id==="add-to-open") addToOpenVialModal(kitId);
+    else if(id==="restock") addVialsModal(kitId);
+    else if(id==="outflow") logWasteModal(kitId);
+    else if(id==="edit") { if(isBlend) addBlendKitModal(s); else supplyModal(s); }
+    else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
+    else if(id==="finish-kit") markKitDoneModal(kitId);
+    else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
+    else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",()=>{
+      const kit=state.supplies.find(x=>x.id===kitId);
+      if(kit){
+        const othersExist=state.supplies.some(x=>x.id!==kitId&&x.name===kit.name);
+        if(!othersExist){
+          if(state.peptides[kit.name])state.peptides[kit.name].status="archived";
+          else if(state.customPeptides[kit.name])state.customPeptides[kit.name].status="archived";
+        }
+      }
+      state.supplies=state.supplies.filter(x=>x.id!==kitId);
+      saveState();render();
+    });
+  });
 }
 
 // Restocking an existing kit — buying more of the same product later — previously had no
