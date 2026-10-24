@@ -1780,7 +1780,7 @@ function renderUpcomingPreview(started) {
   const dateLabel = date => new Date(date + "T12:00:00").toLocaleDateString("en-CA",{weekday:"short",month:"short",day:"numeric"});
   const summary = `${dateLabel(events[0].date)} · ${esc(events[0].name)}${events.length>1?` · +${events.length-1} more`:""}`;
   return `<details class="nexus-lookahead nexus-quiet-details" aria-label="Coming up next">
-    <summary><span><strong>Coming up</strong><small>${summary}</small></span><span class="nexus-quiet-chevron" aria-hidden="true">⌄</span></summary>
+    <summary><span><strong>Coming up</strong><small>${summary}</small></span></summary>
     <div class="nexus-quiet-expanded"><div class="nexus-lookahead-list">${events.map(e=>`<button type="button" class="upcoming-row nexus-lookahead-row" data-name="${esc(e.name)}" aria-label="View ${esc(e.name)} scheduled ${dateLabel(e.date)}"><span class="nexus-lookahead-date">${dateLabel(e.date)}</span><span class="nexus-lookahead-name">${esc(e.name)}</span><span class="nexus-lookahead-arrow" aria-hidden="true">›</span></button>`).join("")}</div>
       <div class="nexus-quiet-expanded-footer"><span>Planned, not logged</span><button type="button" id="view-upcoming" class="nexus-text-action">See all →</button></div></div>
   </details>`;
