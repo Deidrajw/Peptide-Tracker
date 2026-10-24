@@ -115,3 +115,6 @@
 
 ## v0.9.7 Log Dose guard shipped, iOS measurement audit explicitly separate (2026-10-24)
 - PR #38 merged `2a27f155e3b174bbfaa5347e5f785e8a8fcddadc` with only safe Log Dose under-allocation/invalid amount validation, version 0.9.7 source-aligned packaging and full form automated tests. Retained PR #36/#37's iOS measurement diagnostics untouched (40 PASS / 40 FAIL). The guard does not imply medical calculation or App Store compliance. No record migration.
+
+### 2026-10-24 — v0.9.7 remote Pages proof recorded
+- Unlike smoke, remote Actions run `40062278673` returned `verified:true, smoke_only:false` for public exact-byte 16/16 application source parity. This is strong proof that merged v0.9.7 app files were served publicly at check time; does not test a physical iPhone's cache, content semantics, medical compliance or native app availability. Existing measurement-math 40 FAIL/80 remains separate gate.
