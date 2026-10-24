@@ -650,6 +650,14 @@ function reconCalcView() {
   // U-100 markings are invariant across 30u, 50u and 100u syringe capacities.
   const syringeUnits = !syr.isVol&&unitsRaw!=null ? Math.round(unitsRaw*10)/10 : null;
   const withinCapacity=mlPerDose!==null && mlPerDose>0 && mlPerDose<=syr.mlMax+1e-9;
+  // Explanations remain visible even when recipe output is withheld.
+  const blockedReason = !qualifiedUnit
+    ? "IU requires a compound-specific definition; no general mass conversion is available."
+    : !(vmg>0&&bac>0&&doseRaw>0)
+      ? "Enter positive values for the three amount fields to view a calculation."
+      : !withinCapacity
+        ? "The calculated volume exceeds the selected device capacity. Verify the values and device."
+        : "";
   const syringeMl = syr.isVol&&mlPerDose!=null ? mlPerDose : null;
   const fillPct = syr.isVol ? (syringeMl!=null?Math.min(100,(syringeMl/syr.mlMax)*100):0) : (syringeUnits!=null?Math.min(100,syringeUnits/syr.max*100):0);
   // Supply calculation
@@ -687,7 +695,7 @@ function reconCalcView() {
     <div style="width:28px;height:28px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${n}</div>
     <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:8px">${title}</div>${body}</div>
   </div>`;
-  const pill=(val,cur,id)=>`<button data-id="${id}" data-val="${val}" onclick="calcPillClick(this)" style="padding:5px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid ${cur===val?"#A78BFA":"var(--border-sub)"};background:${cur===val?"#A78BFA22":"transparent"};color:${cur===val?"#A78BFA":"var(--t4)"}">${val}</button>`;
+  const pill=(val,cur,id)=>`<button data-id="${id}" data-val="${val}" onclick="calcPillClick(this)" style="min-height:44px;padding:10px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid ${cur===val?"#A78BFA":"var(--border-sub)"};background:${cur===val?"#A78BFA22":"transparent"};color:${cur===val?"#A78BFA":"var(--t4)"}">${val}</button>`;
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <button id="reconback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;width:32px;height:32px;font-size:18px">‹</button>
     <h1 class="serif" style="font-size:20px;margin:0;color:var(--t1);flex:1">Dose Calculator</h1>
@@ -706,8 +714,12 @@ function reconCalcView() {
     ${step(3,"How often?",`<div style="display:flex;gap:6px;flex-wrap:wrap">
       ${[["daily","Daily","1×/day"],["twice","Twice","2×/day"],["weekly","Weekly","1×/wk"]].map(([v,l,s])=>`<button data-id="freq" data-val="${v}" onclick="calcPillClick(this)" style="flex:1;padding:8px 6px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid ${(r.freq||"daily")===v?"#A78BFA":"var(--border-sub)"};background:${(r.freq||"daily")===v?"#A78BFA22":"transparent"};color:${(r.freq||"daily")===v?"#A78BFA":"var(--t4)"};display:flex;flex-direction:column;align-items:center;gap:2px">${l}<span style="font-size:10px;font-weight:400;opacity:0.7">${s}</span></button>`).join("")}
     </div>`)}
+    ${step(4,"Measurement device",`<div style="display:flex;gap:7px;flex-wrap:wrap">
+      ${Object.keys(SYRINGES).map(s=>pill(s,r.syringe||"100u","syringe")).join("")}
+    </div>
+    <div style="font-size:11px;color:var(--t4);margin-top:8px">${syr.label}</div>`)}
   </div>
-  <div id="rc-results">${mlPerDose!=null&&withinCapacity?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
+  <div id="rc-results" aria-live="polite">${mlPerDose!=null&&withinCapacity?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
     <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Your Recipe</div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
       <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
@@ -723,16 +735,16 @@ function reconCalcView() {
     <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;margin-bottom:12px">
       ${syringeSVG}
       <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">${syr.isVol?((syringeMl||0).toFixed(2)+"mL"):Math.round(syringeUnits||0)+" units"} on your syringe · ${(mlPerDose).toFixed(3)} mL</div>
-      <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px">
-        ${Object.keys(SYRINGES).map(s=>pill(s,r.syringe||"100u","syringe")).join("")}
-      </div>
-      <div style="text-align:center;font-size:10px;color:var(--t5);margin-top:4px">${syr.label}</div>
+      <div style="text-align:center;font-size:10px;color:var(--t5);margin-top:8px">Selected device: ${syr.label}</div>
     </div>
     <!-- Supply summary -->
     ${totalDoses!=null?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
       ${[["📅",r.freq==="twice"?"Twice daily":r.freq==="weekly"?"Weekly":"Daily","Frequency"],[(""+totalDoses)+" doses","","Doses"],[durationDays+"d","","Duration"]].map(([v,s,l])=>`<div style="background:var(--surface);border-radius:10px;padding:10px 6px"><div style="font-size:16px;font-weight:700;color:var(--t1)">${v}</div>${s?`<div style="font-size:10px;color:var(--t4)">${s}</div>`:""}${l?`<div style="font-size:9px;color:var(--t5);letter-spacing:1px;margin-top:2px">${l.toUpperCase()}</div>`:""}</div>`).join("")}
     </div>`:""}
-  </div>`:""}
+  </div>`:`<div id="rc-blocked" role="status" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:12px;padding:16px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:6px">Calculation unavailable</div>
+    <div style="font-size:12px;line-height:1.5;color:var(--t3)">${blockedReason}</div>
+  </div>`}
   </div>
   <div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:12px 14px">
     <div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin-bottom:8px">QUICK REFERENCE</div>
