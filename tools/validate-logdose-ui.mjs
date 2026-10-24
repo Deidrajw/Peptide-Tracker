@@ -74,13 +74,21 @@ try {
     // log a partial allocation or touch inventory.
     await seed(page,theme);
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9102,1.5),window.__fixtureKit(9103,5)]);
-    await openDose(page);await setDose(page,7);
+    await openDose(page);
+    // Invalid recorded amounts must not create inventory out of thin air.
+    for(const amount of [-1,0]){
+      await setDose(page,amount);await clickSave(page);
+      const invalid=await stateSnapshot(page);
+      ensure(invalid.entries.length===0 && invalid.kits[0].remaining[0]===1.5 &&
+        invalid.kits[1].remaining[0]===5,'Invalid amount '+amount+' was saved or changed inventory');
+    }
+    await setDose(page,7);
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-panel').innerText().then(x=>x.includes('Not enough in current vial')),'Shortfall UI not visible');
     let before=await stateSnapshot(page);await clickSave(page);let after=await stateSnapshot(page);
     ensure(after.entries.length===0,'UNDERALLOCATED_FORM_SAVED_PARTIAL_DOSE: 7 mg recorded despite only 6.5 mg open');
     ensure(JSON.stringify(after.kits)===JSON.stringify(before.kits),'Rejected entry altered source stock');
-    verified.push('insufficient open stock cannot log partial dose');
+    verified.push('insufficient open stock and invalid amounts cannot log partial dose');
 
     // C: Multi-vial UI allocation across explicit current sources and
     // one saved dose record, with correct allocation source IDs.
