@@ -70,18 +70,52 @@ try{
     check(await menu.locator('svg').count()===1,'Outline ellipsis missing');
     await menu.click();
     check((await menu.getAttribute('aria-expanded'))==='true','More menu accessibility state missing');
-    const box=fixture.locator('.morebox');
-    check(await box.isVisible(),'Contextual actions did not open');
+    const box=page.locator('body > .morebox.nx-compound-sheet-open');
+    check(await box.count()===1 && await box.isVisible(),'Sheet must portal to body and be visible');
+    check(await fixture.locator('.morebox').count()===0,'Sheet must not expand inside compound card');
+    check(await page.locator('.nx-compound-sheet-scrim').count()===1,'Bottom sheet scrim missing');
+    check(await box.getAttribute('role')==='dialog','Sheet role dialog missing');
+    check(await box.getAttribute('aria-modal')==='true','Sheet aria-modal missing');
+    check(await page.locator('#app').evaluate(el=>el.inert),'Underlying app not inert');
+    const sheetBounds=await box.boundingBox();
+    check(sheetBounds && sheetBounds.y > 180 && sheetBounds.y+sheetBounds.height <= 843,'Sheet not bottom-docked within viewport: '+JSON.stringify(sheetBounds));
+    check((await page.evaluate(()=>document.body.style.overflow))==='hidden','Body scroll not locked');
+    const hdr=box.locator('.nx-compound-sheet-heading strong');
+    check((await hdr.textContent()).trim()==='Retatrutide','Sheet title not compound-specific');
     for(const selector of ['.histtoggle','.ics-export','.tunetoggle','.colorpick','.resetcolor','.pausepep','.archivepep']){
       check(await box.locator(selector).count()===1,'Missing contextual action '+selector);
     }
     check(await box.locator('.nx-compound-menu-icon').count()>=5,'Missing outline menu icons');
     check(await fixture.locator('.nx-compound-remove-row .archivepep').count()===0,'Remove action still cluttering main compound card');
+    // Keyboard: Tab must remain in dialog and Escape restores the trigger.
+    await box.locator('.nx-compound-sheet-close').focus();
+    await page.keyboard.press('Shift+Tab');
+    check(await box.evaluate(el=>el.contains(document.activeElement)),'Keyboard escaped sheet focus trap');
+    await page.keyboard.press('Escape');
+    check(await page.locator('body > .nx-compound-sheet-scrim').count()===0,'Escape did not clear backdrop');
+    check(!(await page.locator('#app').evaluate(el=>el.inert)),'Escape did not restore app interaction');
+    check((await page.evaluate(()=>document.body.style.overflow))!=='hidden','Escape did not unlock scroll');
+    check((await menu.getAttribute('aria-expanded'))==='false','Escape did not restore ellipsis ARIA');
+    await menu.click();
+    await page.locator('.nx-compound-sheet-scrim').click({position:{x:8,y:8}});
+    check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'Backdrop did not dismiss menu');
+    await menu.click();
+    await page.locator('body > .morebox .histtoggle').click();
+    check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'History action did not dismiss sheet');
+    check(await fixture.locator('.histbox').isVisible(),'History action lost existing handler');
+    await menu.click();
+    await page.locator('body > .morebox .tunetoggle').click();
+    check(await fixture.locator('.tunebox').isVisible(),'Schedule settings action lost handler');
+    check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'Schedule action did not close sheet');
+    await menu.click();
+    check((await page.locator('body > .morebox .colorpick').count())===1,'Colour picker missing on repeat open');
+    await page.locator('body > .morebox .nx-compound-sheet-close').click();
+    check((await menu.getAttribute('aria-expanded'))==='false','Close button did not reset ARIA');
     const metrics=await fixture.evaluate(el=>({width:el.getBoundingClientRect().width,scroll:el.scrollWidth,client:el.clientWidth}));
     check(metrics.scroll<=metrics.client+3,'Compound card overflows horizontally: '+JSON.stringify(metrics));
     await page.screenshot({path:'dist/proto-design-'+kind+'-'+theme+'-'+width+'.png'});
     check(!errors.length,'Browser exception: '+errors.join('; '));
-    results.push({kind,theme,width,wizardProgress:'PASS',compoundSearch:'PASS',compoundAddRemove:'PASS',insights:'PASS',menuActions:'PASS',metrics});
+    results.push({kind,theme,width,wizardProgress:'PASS',compoundSearch:'PASS',compoundAddRemove:'PASS',insights:'PASS',menuActions:'PASS',sheetEscape:'PASS',sheetBackdrop:'PASS',existingHistorySchedule:'PASS',bodyScrollRestore:'PASS',metrics});
     await ctx.close();
    }
   }
