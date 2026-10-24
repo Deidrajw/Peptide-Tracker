@@ -200,3 +200,6 @@
 
 ### 2026-10-24 — Goal detail A3 minimal first implementation
 - Show Overview / Connections / Activity as read-only sheets sourced from existing `plans.goals` and `protocols[].linkedGoalId`. Do not invent progress percentages, journal histories or physiological insights. Show an informational empty Activity state until source-aware linking exists. Existing Goal edit, delete and source records unchanged. Candidate only until CI and physical validation.
+
+### 2026-10-24 — A4 progress sources staged
+- Legacy goals remain supported. Optional progressModel supports numeric, subjective, milestones and exploratory (fallback). Numeric weight source is opt-in and reads weightLogs, not clones; goal/app units must match. Progress isn't proof of treatment effectiveness. Candidate only; results need tests and user physical iPhone acceptance.
