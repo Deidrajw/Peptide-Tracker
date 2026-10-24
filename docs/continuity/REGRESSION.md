@@ -167,3 +167,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Measurement arithmetic diagnostic follow-up (TEST PENDING)
 - Baseline 40 PASS / 40 FAIL across 80 synthetic checks (LIVE source and full DEMO at 320/390 dark/light). Target specific conditions: 30u/50u/100u same displayed U-100 units, mg/mcg consistency, refuse unqualified IU recipe, refuse negative/zero inputs and over-capacity, keep focused input intact after live update. Need execute automated matrix before any Pass. Never infer this validates pharmaceutical preparation; physical iPhone/manual medical review remain NOT TESTED.
+
+### 2026-10-24 candidate arithmetic diagnostic: one test matcher fixed, final gate running
+- Initial candidate full browser CI `40063565596` PASS (mobile `40063565583` PASS): 80/80 initial-render arithmetic assertions on unmerged source, versus baseline 40 PASS/40 FAIL. Artifact #12548378196. This does not test clinical correctness.
+- Expanded branch run `40063842614` CI workflow SUCCESS but strengthened diagnostic reported **104 PASS / 8 FAIL of 112** across eight contexts. The eight failures all had undefined `thirtyValue`/`fiftyValue` due to an incorrectly doubled backslash `\\\\s` in the new test's regexp, not reported divergent values; live negative edit, restored edit, unsupported IU and input-node preservation assertions PASS. Corrected matcher on commit `01bfe80c`; follow-up `40064101738` plus mobile `40064101720` are IN PROGRESS. Until new JSON confirms it, do not claim 112 PASS.
+- Source is a review-only safety candidate; no rollout, no real medical-device clearance, no user iPhone test or saved data modifications. Need record follow-up result after CI; no merge without approval.
