@@ -6,7 +6,8 @@ const VERSION = 'v0.9.15-beta';
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css'];
-const LIVE_FILES = ['index.html', ...CSS, ...JS];
+const ICONS = ['assets/icons/nexus-icon-180.png', 'assets/icons/nexus-icon-192.png', 'assets/icons/nexus-icon-512.png', 'assets/icons/nexus-icon-1024.png'];
+const LIVE_FILES = ['index.html', ...CSS, ...JS, ...ICONS];
 const missing = LIVE_FILES.filter(file => !fs.existsSync(file));
 if (missing.length) throw Error('Missing release files: ' + missing.join(', '));
 fs.mkdirSync(DIST, {recursive: true});
@@ -43,6 +44,11 @@ for (const file of JS) {
 if (demo.includes('<script src=') || demo.includes('href="assets/css/'))
   throw Error('Standalone demo still references relative script/style assets');
 
+// Fully embed production icon pixels into the standalone full-app demo.
+for (const icon of ICONS) {
+  if (!demo.includes('"' + icon + '"')) continue;
+  demo = demo.replaceAll('"' + icon + '"', '"data:image/png;base64,' + fs.readFileSync(icon).toString('base64') + '"');
+}
 const storageBootstrap = String.raw`(function(){
   'use strict';
   const records = new Map();

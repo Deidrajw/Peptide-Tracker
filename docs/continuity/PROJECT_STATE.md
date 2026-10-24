@@ -388,3 +388,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Critical: browser origin changes (`deidrajw.github.io` → `nexuspeplog.pages.dev`) isolate localStorage `peptide-tracker-html-v1`; preserve the existing origin and require user backup/export, disposable fixture restore test, data audit and explicit migration consent before relying on Cloudflare for records. Do not automate overwrite or switch old links yet.
 - PR #57 remains separate v0.9.15 UI candidate; no deployment/write performed for Cloudflare.
 - **ONE CONCRETE NEXT ACTION:** Verify Cloudflare GitHub project configuration/build output and deployed commit against current main; then design and QA a non-destructive cross-origin backup/restore migration with user acceptance before routing production users to Cloudflare. Independently finish PR #57 CI gate.
+
+### 2026-10-24 — Neon prism icon integrated in release candidate
+- User manually uploaded exact approved 180/192/512/1024 PNGs to `main` (baseline `48595d7371fc8e8bcfd55920f7dbb91cc2b66494`); verified GitHub blobs at `assets/icons/`.
+- Dedicated branch `release/nexus-icon-integration-v0915` points `index.html` Apple touch icon and PNG favicon links to uploaded files; builder now packages all 4 icons in LIVE ZIP and embeds image data in isolated standalone FULL DEMO. No localStorage or functional changes.
+- Status: CODED/COMMITTED on release branch; QA, merge, Cloudflare deployment and physical iPhone acceptance INCOMPLETE until evidence. Old PR #58 draft remains superseded by main-upload-aware integration PR. Calculator PR #40 remains separate and held.
+- **ONE CONCRETE NEXT ACTION:** Confirm icon-integration PR mobile and build CI PASS and valid ZIP content, merge into main, independently verify Cloudflare serves correct image hashes; physically check iPhone Add to Home Screen cache.
