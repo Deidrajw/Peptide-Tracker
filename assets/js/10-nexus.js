@@ -237,7 +237,7 @@ function stashView() {
     if (expLabel) secondaryBits.push(expLabel);
     if (!currentReconDate && sealed>0) secondaryBits.push(`${sealed} vial${sealed===1?"":"s"} sealed`);
 
-    return `<div class="card nx-kit-card" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
+    return `<div class="card nx-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
       <div class="nx-kit-heading" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
         <div style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:0.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)}</span>
@@ -394,11 +394,12 @@ function stashView() {
     else if (sealed>0 || !s.activeKit) statusKey = "stored";
     const st = STATUS_META[statusKey] || STATUS_META.stored;
 
-    return `<div class="card" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
+    return `<div class="card nx-kit-card nx-blend-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
         <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
         <span style="font-size:16px;font-weight:700;color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span>
         ${statusBadge(st.label, st.color)}
+        <button type="button" class="manage-kit-btn" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit" style="width:44px;height:44px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:20px;flex-shrink:0">⋯</button>
       </div>
       ${currentReconDate?`
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
@@ -423,7 +424,7 @@ function stashView() {
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
             ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toFixed(2)} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
-            <button class="delsupply" data-id="${s.id}" aria-label="Delete ${esc(s.name)} kit" style="min-height:32px;color:var(--t5);font-size:13px;padding:4px 6px;border:1px dashed var(--border-sub);border-radius:6px">🗑 Delete</button>
+            <button class="manage-kit-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} blend kit" style="min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t3)">Manage blend</button>
           </div>
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4)">Reconstituted ${fmtDate(currentReconDate)}</div>`:""}
           ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:6px">${esc(s.notes)}</div>`:""}
