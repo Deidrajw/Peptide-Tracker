@@ -74,3 +74,9 @@
 ## v0.9.5 — deduplicated query results shipped (2026-10-23)
 - PR #27 merged at `4addc72b8fdbb9906170d116af3f4a8183687e11`. When a query is present, a symptom appears once under preferred general category, then compound, custom, recent or other. Empty-query browsing retains all categories and their membership; selected symptoms/intensity and saved historical associations unchanged.
 - This is a user-interface discovery improvement, not an assertion of medical causality, not a catalog migration, and not a replacement for active-compound categories.
+
+## Public iOS core calculation requirements (user-confirmed 2026-10-23)
+- **APPROVED PRODUCT REQUIREMENTS:** Both the syringe-unit calculator and reconstitution/concentration calculator are essential to public Nexus; retain their intended user value, rather than deleting them merely to simplify review.
+- **SUPERSEDES** the previously proposed exclusion from the initial iOS edition. No approval to conceal functionality from Apple, to keep inaccurate math, to call medication dose calculations “general purpose” when they are not, or to change production WEB code/data.
+- **PROPOSED UX (NOT APPROVED DESIGN):** a transparent “Measurements & Preparation” area in a personal wellness journal, retaining user-entered values and useful equations while clearly differentiating pure physical unit conversions from medication preparation/dose results. Wording is not an App Review exemption.
+- **BLOCKING GATE:** Determine App Review §1.4.2 requirements with legal/regulatory review, Apple pre-submission informational appointment, and potential eligible clinical/pharmacy/university partner or regulatory authorization. Test syringe capacities, IU conversion, boundary cases and exact draw math before any public shipping. See [IOS_APP_STORE_READINESS.md](./IOS_APP_STORE_READINESS.md).
