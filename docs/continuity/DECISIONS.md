@@ -106,3 +106,6 @@
 ## 2026-10-24 — real Log Dose modal regression before calculation changes
 - Protect existing recorded amounts, per-vial attributions, draft/confirmation and source selection with browser-driven tests on fictional isolated stores before any code fix. A partially sourced dose must not be saved silently. Sealed stock cannot be treated as drawable. Reapply an edited dose to original source rather than just updating the history number. Prepared administration must not re-deduct vial contents.
 - No approval for data migration or changes to dose formulas; any discovered flaw should be fixed minimally in confirmation validation, tested in eight environments, and documented separately from App Store medical content audit.
+
+### 2026-10-24 — Confirmed v0.9.7 safety guard, protected behavior
+- The previous dose confirmation allowed saving requested amount with a smaller sourced total; verified by actual browser regression. It is a data-integrity defect, not desired feature. Correct it with a non-destructive early guard and user-readable error, rejecting an under-allocated and a nonpositive dose before stock or history writes. Preserve existing source-selection workflow, partial draws/draft handoff, prepared dose semantics, all older records and vial accounting formulas. This is an approved-in-scope targeted integrity repair, not a schema migration.
