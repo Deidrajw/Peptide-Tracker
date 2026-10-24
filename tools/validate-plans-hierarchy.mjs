@@ -1,5 +1,5 @@
 import fs from 'node:fs'; import path from 'node:path'; import {chromium} from 'playwright';
-const VERSION='v0.9.14-beta',demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
+const VERSION='v0.9.15-beta',demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),results=[];const ensure=(x,msg)=>{if(!x)throw Error(msg)};
 try { for(const mode of ['live','demo'])for(const width of [320,390])for(const theme of ['light','dark']){
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -9,6 +9,8 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
  ensure(await page.locator('.nx-plan-head .manage-plan-btn').evaluate(e=>e.getBoundingClientRect().height)>=44,'Ellipsis touch target too small');
+ ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-plan-action-icon').count()===1,'Management outline SVG missing');
+ ensure(await page.locator('.nx-plan-intel svg.nx-plan-link-icon').count()===1,'Intel navigation outline SVG missing');
  await page.locator('.nx-plan-head .manage-plan-btn').click();
  ensure(await page.locator('#pm-edit').count()===1,'Manage existing editor missing');
  await page.locator('#x').click();
