@@ -270,3 +270,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Goal detail A3 candidate required regression
 - Open modal from active and other goals, switch three tabs, accessible close and 44px targets, accurate link-by-ID including duplicate names, renamed/deleted goals, missing metrics, missing protocols, and empty Activity; ensure no fabricated progress or writes. Check Plans ellipsis/edit/delete, Protocol builder associations, Check-In one/date, dose history, Stash, Calendar. Test LIVE + isolated full DEMO at 320/390 in both themes. All NEW tests NOT TESTED; physical iPhone NOT TESTED.
+
+### Connected Goals A4 progress models QA plan (NOT TESTED)
+- Legacy goals without progressModel still display and edit with original metrics, notes and status. Numeric missing/zero/negative baseline/target and decimals/unit; type switching; subjective blank or 1-5; multiline milestones and escaping; exploratory no progress percentage. Save/reopen and edit without altering linked Protocols, dose histories or Check-In logs. A3 cards have one View goal affordance, normal ellipsis and no redundant chevron. 320/390 light/dark and offline FULL DEMO data isolation required. All NEW tests NOT TESTED pending CI.
