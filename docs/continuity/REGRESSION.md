@@ -164,3 +164,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### v0.9.7 public Pages source parity — PASS on actual HTTPS (2026-10-24)
 - GitHub Actions `40062278673`, artifact `12547383562/Nexus_PAGES_REMOTE_CHECK_PR.json`, `verified:true`, `smoke_only:false`, exact 16 files served at `https://deidrajw.github.io/Peptide-Tracker/` match source v0.9.7 checkout. One attempt. GitHub app `main` merge `2a27f15`, docs-only source didn't change web-app bytes. Mobile `40062278638` PASS.
 - **Not Tested:** physical iPhone/PWA cached version, actual iOS keyboard, VoiceOver, full clinic review. **Failed known calculator diagnostics remain 40/80**, despite independent Log Dose UI 40/40 PASS.
+
+### Measurement arithmetic diagnostic follow-up (TEST PENDING)
+- Baseline 40 PASS / 40 FAIL across 80 synthetic checks (LIVE source and full DEMO at 320/390 dark/light). Target specific conditions: 30u/50u/100u same displayed U-100 units, mg/mcg consistency, refuse unqualified IU recipe, refuse negative/zero inputs and over-capacity, keep focused input intact after live update. Need execute automated matrix before any Pass. Never infer this validates pharmaceutical preparation; physical iPhone/manual medical review remain NOT TESTED.
