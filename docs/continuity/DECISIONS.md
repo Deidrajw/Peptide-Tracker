@@ -143,3 +143,6 @@
 
 ### 2026-10-24 — #48 disclosure chevron system, code in PR #49 (not released)
 - Prefer exactly one active chevron per expansion affordance; generic native summary uses standardized CSS pseudo-chevron. Remove authored supplementary SVG/text arrows on Today Coming up/Daily tracking, Protocol Schedule & phases, Stash nested Details/Vial/Dose history; This Week custom button uses one CSS icon. Never alter event handlers or saved records in icon-only work. Plans visual hierarchy and Stash info architecture require separate UX review; Combo Dose blend eligibility requires distinct data selection regression. Version PR #49 v0.9.11-beta, pending tests and deployment. Physical iPhone signoff separate.
+
+### 2026-10-24 — Chevron normalization v0.9.11 DEPLOYED
+- Approved Issue #48 first fix: native Today/Protocol/Stash disclosures use a single shared CSS-owned open/closed chevron. Removed old manually authored duplicate SVG/text arrows; This Week's custom non-native button keeps one CSS arrow. No event-handler or data-math changes. PR #49 merged `1ef9337f61a45b012c0d6da21fc35b92e38939c8`, exact Pages 16-file parity 40107472550. Combo selection, Stash nested content reorganization and Plans card hierarchy remain separate work.
