@@ -201,3 +201,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### v0.9.11 Chevron regression — PENDING verification
 - New browser test `tools/validate-chevron-unification.mjs`: eight fictional 320/390 × dark/light × LIVE local/isolated full DEMO scenarios, checking a single indicator on Today, Protocol, Stash native disclosure, minimum 44px controls and functional expansion. Await full CI evidence. Protected Stash card/actions, Check-In, Protocol, Log Dose, Combo and vial-core suites must also pass.
 - Physical iPhone/VoiceOver NOT TESTED. Preexisting separate clinical measurement calculator diagnostics remain 40 FAIL of 80. Do not mark this release deployed until source-parity proof.
+
+### v0.9.11-beta chevron release — verified October 24, 2026
+- **PASS automated:** Unified Chevron test 8/8 LIVE-local/isolated complete DEMO × widths 320/390 × light/dark, actual Today and Protocol expansion, one CSS indicator, minimum 44px and no authored arrows. Browser run `40107079456`. Protected general browser 8, Check-In 8, Protocol 8, vial-core 48, Log Dose UI 40, Combo picker 8, Stash Actions 8, Stash Cards 8 all PASS. Source artifact #12564833867: complete 16-file root LIVE ZIP and full-app isolated DEMO byte parity, CRC PASS.
+- **PASS deployed source:** Pages 16/16 identical to merge `1ef9337f` from run `40107472550`; deployment `40107472341` and mobile `40107472461` SUCCESS.
+- **NOT TESTED:** real iPhone Safari/PWA, actual user's localStorage, VoiceOver, physical safe-area/keyboard. **FAIL KNOWN SEPARATE:** calculator math diagnostic 40/80. Next regression: Combo Dose blend-only ingredient exclusion while retaining standalone tracked compounds and previous combo drafts/presets.
