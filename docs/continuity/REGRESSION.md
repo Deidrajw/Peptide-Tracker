@@ -90,3 +90,17 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## v0.9.5-beta — duplicate symptom search regression (planned)
 - NOT TESTED until passing CI evidence: with grouped dropdown open and a query, both Constipation and Nausea must show exactly one selectable row despite being in general, compound-specific and recent categories; Constipation appears under Digestive. With no query, sections remain discoverable and collapsed by default. On selection, intensity 1–3 and compound tagging still function. Verify 320px/390px, dark/light, LIVE and isolated complete full-app DEMO; maintain deep Check-In date/edit/supplement save test.
 - Physical iPhone NOT TESTED; complete dose/vial arithmetic and site-wide contrast NOT TESTED; GitHub Pages release deployment UNVERIFIED.
+
+## Planned public iOS medical and migration acceptance gates (2026-10-23)
+**All NOT TESTED.** Planning rows only; no app code changes or verified results in this audit.
+| New protected area | Required test | Status |
+|---|---|---|
+| Clinical unit math | Controlled IU cases and drug-specific IU conversion; reject unsupported unit conversion | NOT TESTED |
+| Syringe volume | 30u, 50u and 100u U-100 markings; volume math invariants and boundary checks | NOT TESTED |
+| Dose and reconstitution | Clinical reviewer sign-off for calculation claims, exact inputs/outputs, overflow and rounding | NOT TESTED |
+| App Store allowed functionality | Apple §§1.4.1/1.4.2 and Health Canada intended-use / legal-entity assessment documented | NOT TESTED |
+| Existing browser persistence | `peptide-tracker-html-v1` untouched by iOS code/build and independent WEB deployment | NOT TESTED |
+| Web-to-iOS data import | Explicit backup, preflight, destination snapshot, validated restore, rollback, double-import idempotence | NOT TESTED |
+| iOS app storage | Native persistence survives process termination/update; sensitive health data protection; browser/webview separation | NOT TESTED |
+| Real-device iOS | Keyboard, safe areas, offline, notifications, light/dark, accessibility, export/Files import | NOT TESTED |
+| Release parity | Normal web CI, full-app DEMO, LIVE ZIP and iOS artifact derive from declared source commit with isolated fixtures | NOT TESTED |
