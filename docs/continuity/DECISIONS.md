@@ -185,3 +185,6 @@
 
 ### 2026-10-24 — Consistent kit/blend Stash headers (approved)
 - Standard compound kits and blends show status plus a 44px contextual ellipsis in the same top-right header position. No redundant ellipsis in ordinary kit action row. Opening/Preparing/Log Blend Dose and kit management retain original handlers. Compact sort label `Attention` with full option preserved in menu, chevron assigned reserved width.
+
+### 2026-10-24 — Stash visuals released in GitHub main
+- The approved Stash header and compact sort decisions above were merged via PR #63 at `62fae531`, preserving stored kits and dose/vial histories. User acceptance on physical iPhone and Cloudflare published-file confirmation still outstanding.
