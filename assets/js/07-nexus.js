@@ -1631,7 +1631,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
       </div>
       <div style="display:flex;gap:8px">
         <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.skippedDate)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Undo Skip</button>
-        <button class="moremenu" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1">⋯</button>
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
       </div>
     </div>`;
   }
@@ -1644,7 +1644,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
       <div style="display:flex;gap:8px">
         <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid #A78BFA44;border-radius:9px;color:#A78BFA;font-size:11px;font-weight:600">↺ Reschedule again</button>
         <button class="skipdose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Skip / Miss</button>
-        <button class="moremenu" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1">⋯</button>
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
       </div>
     </div>`;
   }
@@ -1659,13 +1659,13 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
         ${isOverdue
           ? `<button class="resolveoverdue" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Resolve overdue</button>`
           : `<button class="skipdose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Skip / Miss</button>`}
-        <button class="moremenu" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1">⋯</button>
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
       </div>
     </div>`;
   }
   return `<div style="display:flex;gap:8px;align-items:stretch;margin-bottom:8px">
       <button class="logdose" data-name="${esc(name)}" style="flex:1;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px">+ LOG DOSE</button>
-      <button class="moremenu" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t4);font-size:16px;line-height:1">⋯</button>
+      <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
     </div>`;
 }
 
