@@ -188,3 +188,6 @@
 
 ### 2026-10-24 — Informational empty-state design principle (approved)
 - Empty areas must not look accidentally broken. Always explain what is absent and why, distinguish never-created from filtered/no-match/temporarily-unavailable/all-done/error and, where an existing safe path exists, provide contextual next-step guidance. Never invent actionable controls, imply sealed stock is unavailable, or label a blend as reconstituted when it isn't. Preserve non-empty layouts, vial/dose/kit state and confirmation flows. Avoid extra nested borders and dense illustration; concise title + one sentence within existing section. First implementation: empty Kit actions VIAL & INVENTORY group.
+
+### 2026-10-24 — Informational Stash menu empty state released
+- The empty-group explanation approved in PR #65 is in GitHub `main` at `051f8203`. Empty categories should communicate why actions are unavailable, preserving the underlying source/vial eligibility. No invented vial management action for blends.
