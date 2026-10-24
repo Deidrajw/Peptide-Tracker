@@ -173,3 +173,6 @@
 
 ### 2026-10-24 — Cloudflare primary hosting APPROVED, rollout gated
 - User confirmed Cloudflare Pages `https://nexuspeplog.pages.dev/` is connected to GitHub and explicitly chose it as Nexus's **primary hosting destination**. Keep `Deidrajw/Peptide-Tracker` as canonical source and GitHub Pages as fallback until parity and safe record migration. Approval of host direction does NOT approve destructive localStorage migration, overwriting saved data, or claiming deployment parity without evidence. Validate Cloudflare source files, HTTPS, PWA cache, app version and backup/restore from previous origin before cutover. Existing PR #40 measurement calculator stays separate and unmerged.
+
+### 2026-10-24 — Icon integration source verified
+- Reuse user's exact approved images already uploaded to `main` rather than generate a substitute. iOS apple-touch-icon uses 180 PNG, browser/PWA-ready 192 and 512 PNG references; 1024 source kept for distribution. Full release source ZIP must contain icons, standalone DEMO embeds them. No record or calculator modification.
