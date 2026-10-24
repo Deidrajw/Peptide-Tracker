@@ -126,3 +126,6 @@
 ### 2026-10-24 — Blocked calculation UX (REVIEW CANDIDATE, NOT APPROVED)
 - Proposal on unmerged PR #40: display a plain-language blocked status for missing/negative input, unsupported unqualified IU and over-capacity amount; keep 44px measurement-device options visible *outside* the conditional result so users can recover without Reset. No automatic unit conversion may treat arbitrary IU as mass. A fictional in-chat interaction previews this. This is **not** deployment consent, mathematical certification or medical-use approval.
 - Preserve all five main tabs, Check-In/Log Dose, historical dose values and the production localStorage key. Do not reclassify a drug dosage tool as App Store-compliant merely by changing copy or design. Keep the requested two measurements tools in the future design only with safety clearance.
+
+### 2026-10-24 — Review gate remains in force after synthetic PASS
+- Engineering evidence reached 152/152 synthetic checks on unmerged branch `138bcc6` (Actions `40064629152`), including recoverable blocked states; **this does not approve or certify drug preparation guidance**. Existing instructional copy, units-rounding assumptions and physical device suitability still need qualified review. Production v0.9.7 must not be overwritten merely because candidate ZIP is downloadable.
