@@ -167,3 +167,10 @@ Web deploy watches existing root; native build does not write new persistent dat
 - Next compliance step: present Apple with both screenshots and real end-to-end functionality, asking whether the medication-linked result falls within §1.4.2, and if so obtain qualifying organization/regulatory pathway before public submission. The measurement-oriented name is not a guarantee.
 
 **Next action:** Review illustrated conceptual in-chat prototype; then create numeric regression tests and make a feature-by-feature App Review consultation brief. **Current status: DESIGN PROPOSAL; no production code edits.**
+
+## Diagnostic result — actual synthetic browser execution (2026-10-24)
+- GitHub Actions PR #36 run `40061025452` on `a5861cb` completed 8 isolated environment cases and 80 checks: **40 PASS, 40 FAIL**.
+- Consistent FAIL across all 8: displayed U-100 syringe units on 30-unit and 50-unit options differ from the invariant unit measurement; changing capacity changes the displayed number; IU without a substance-specific validated IU↔mass factor generates a drug preparation recipe; a negative dose generates a recipe. Existing 100-unit, mcg/mg equivalence, blank/zero volume tests and JavaScript exception checks passed.
+- CI tooling itself can succeed while diagnostic assertions fail: reported FAILs are a **release safety blocker**, not an eligible dose-calculator result.
+- Existing v0.9.6 application and GitHub Pages are unchanged in this branch. Do not use the present draw/preparation results for injections; independently reviewed corrections and a qualified App Store §1.4.2 route are needed.
+- Tests and evidence: `tools/audit-measurement-math.mjs`, [run 40061025452](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40061025452), [artifact 12547685887](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40061025452/artifacts/12547685887). No clinical approval, no public iOS build.
