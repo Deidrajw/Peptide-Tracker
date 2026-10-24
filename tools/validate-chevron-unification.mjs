@@ -11,7 +11,7 @@ try {
   const pg=await ctx.newPage(),errors=[];
   pg.on("pageerror",e=>errors.push(e.message));
   await pg.goto(mode==="live"?"http://127.0.0.1:8777/":"file://"+demo,{waitUntil:"domcontentloaded"});
-  await pg.evaluate(t=>{state=buildDemoState("weight_loss");state.profile.onboardingDone=true;document.documentElement.dataset.theme=t;tab="today";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());},theme);
+  await pg.evaluate(t=>{state=buildDemoState("weight_loss");state.profile.onboardingDone=true;document.documentElement.dataset.theme=t;tab="home";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());},theme);
   const inspect=async sel=>{
     const el=pg.locator(sel).first();
     assert(await el.count()>0,"missing "+sel);
