@@ -81,8 +81,8 @@ try {
         const s50=result();
         return {initialRecipe:initial.includes('Your Recipe'),negativeRecipe:negative.includes('Your Recipe'),
           restoredRecipe:restored.includes('Your Recipe'),iuRecipe:unsupported.includes('Your Recipe'),
-          thirtyValue:(s30.match(/([0-9.]+)\\s+units on your syringe/i)||[])[1],
-          fiftyValue:(s50.match(/([0-9.]+)\\s+units on your syringe/i)||[])[1],
+          thirtyValue:(s30.match(/([0-9.]+)\s+units on your syringe/i)||[])[1],
+          fiftyValue:(s50.match(/([0-9.]+)\s+units on your syringe/i)||[])[1],
           focusedInputsPreserved:host.querySelector('#rc-dose')===amount};
       }finally{host.remove();state._recon=prev;}
     });
