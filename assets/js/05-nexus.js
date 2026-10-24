@@ -31,12 +31,16 @@ function comboDoseModal() {
   ` : "";
 
   const presets = state.comboPresets||[];
-  const presetChips = presets.map(p=>`<button class="combo-preset-chip" data-id="${esc(String(p.id))}" style="font-size:11px;padding:6px 11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);white-space:nowrap;display:inline-flex;align-items:center;gap:5px">💉 ${esc(p.name)}<span class="combo-preset-del" data-id="${esc(String(p.id))}" style="color:var(--t5);margin-left:2px">✕</span></button>`).join("");
+  // Selecting a favorite never deletes it: delete is a separate, named button.
+  const presetChips = presets.map(p=>`<span style="display:inline-flex;align-items:stretch;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);overflow:hidden">
+    <button type="button" class="combo-preset-chip" data-id="${esc(String(p.id))}" style="min-height:44px;padding:8px 12px;border:0;background:transparent;color:var(--t2);font-size:12px">${esc(p.name)}</button>
+    <button type="button" class="combo-preset-del" data-id="${esc(String(p.id))}" aria-label="Delete ${esc(p.name)} favorite" style="width:40px;min-height:44px;border:0;border-left:1px solid var(--border-sub);background:transparent;color:var(--t4)">×</button>
+  </span>`).join("");
 
   const compoundToggles = () => names.map(n=>{
     const on = sel.includes(n);
     const c = cfg(n);
-    return `<button class="combo-compound-toggle" data-n="${esc(n)}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:${on?c.color+"18":"var(--surface-2)"};border:1px solid ${on?c.color:"var(--border)"};margin-bottom:6px;text-align:left">
+    return `<button type="button" role="checkbox" aria-checked="${on}" class="combo-compound-toggle" data-n="${esc(n)}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:${on?c.color+"18":"var(--surface-2)"};border:1px solid ${on?c.color:"var(--border)"};margin-bottom:6px;text-align:left">
       <div style="width:16px;height:16px;border-radius:5px;border:2px solid ${on?c.color:"var(--t5)"};background:${on?c.color:"transparent"};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff">${on?"✓":""}</div>
       <span style="font-size:13px;color:var(--t2);font-weight:600">${esc(n)}</span>
     </button>`;
@@ -114,9 +118,16 @@ function comboDoseModal() {
   try {
     document.querySelectorAll(".combo-preset-chip").forEach(chip=>{
       chip.onclick = (e) => {
-        if (e.target.classList.contains("combo-preset-del")) return;
         const preset = presets.find(p=>String(p.id)===chip.dataset.id);
-        if (preset) { state._comboSelected = [...preset.compounds].filter(n=>names.includes(n)); closeModal(); comboDoseModal(); }
+        if (preset) {
+          state._comboDate = m.querySelector("#combo-date")?.value;
+          state._comboSite = m.querySelector("#combo-site")?.value;
+          state._comboNotes = m.querySelector("#combo-notes")?.value;
+          state._comboDoses = state._comboDoses || {};
+          m.querySelectorAll(".combo-dose-input").forEach(inp=>{state._comboDoses[inp.dataset.n]=inp.value;});
+          state._comboSelected = [...preset.compounds].filter(n=>names.includes(n));
+          closeModal(); comboDoseModal();
+        }
       };
     });
     document.querySelectorAll(".combo-preset-del").forEach(x=>x.onclick=(e)=>{
