@@ -922,6 +922,12 @@ function protocolBuilderModal(existing) {
       return prog+`
       <input id="pb-name" class="inp" placeholder="Protocol name *" value="${esc(proto.name)}" style="width:100%;margin-bottom:8px">
       <textarea id="pb-notes" class="inp" placeholder="Notes (optional)" style="width:100%;min-height:50px;resize:vertical;margin-bottom:12px">${esc(proto.notes||"")}</textarea>
+      <label for="pb-personal-goal" class="field-label">LINK A PERSONAL GOAL (OPTIONAL)</label>
+      <select id="pb-personal-goal" class="inp" style="width:100%;min-height:44px;margin-bottom:6px">
+        <option value="">No linked personal goal</option>
+        ${(state.plans?.goals||[]).map(g=>`<option value="${esc(String(g.id))}"${String(proto.linkedGoalId||"")===String(g.id)?" selected":""}>${esc(g.name)}</option>`).join("")}
+      </select>
+      <div class="nx-muted" style="font-size:11px;margin-bottom:14px">This links an existing goal for context. It doesn't change the protocol's purpose, dosing schedule or dose history.</div>
       <div style="background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px">
         <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">📊 PHASE TIMELINE</div>
         ${gantt||"<div style='color:var(--t5);font-size:11px'>No compounds added.</div>"}
@@ -945,6 +951,7 @@ function protocolBuilderModal(existing) {
     m.querySelector("#pb-next")?.addEventListener("click",()=>{step++;rebuildModal();});
     m.querySelector("#pb-save-draft")?.addEventListener("click",()=>saveProto("draft"));
     m.querySelector("#pb-activate")?.addEventListener("click",()=>saveProto("active"));
+    m.querySelector("#pb-personal-goal")?.addEventListener("change",ev=>{proto.linkedGoalId=ev.target.value||"";});
 
     m.querySelectorAll(".pb-goal").forEach(b=>b.onclick=()=>{proto.goalId=b.dataset.id;proto.goal=b.dataset.label;rebuildModal();});
     m.querySelectorAll(".pb-tmpl").forEach(b=>b.onclick=()=>{
@@ -1397,6 +1404,7 @@ function protocolsView() {
         <div style="flex:1;min-width:0">
           <div class="nx-proto-title">${esc(p.name)}</div>
           ${p.goal?`<div class="nexus-protocol-muted">${esc(p.goal)}</div>`:""}
+          ${p.linkedGoalId?(()=>{const g=(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId));return g?`<div class="nexus-protocol-muted">Goal: ${esc(g.name)}</div>`:`<div class="nexus-protocol-muted">Linked goal unavailable · edit to relink</div>`;})():""}
         </div>
         ${statusBadge(sc.label, sc.color)}
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol">⋯</button>
