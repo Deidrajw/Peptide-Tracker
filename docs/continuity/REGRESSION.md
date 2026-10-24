@@ -96,3 +96,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS: bundled `Nexus_v0.9.5-beta_CHECKIN_REGRESSION.json` has 8 cases covering fictional creation, edit, mood, symptom intensity 3, Retatrutide tags, dated supplements and date conflict protection. Historical values and real records were not touched.
 - PASS: https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40054902171 mobile form regression.
 - NOT TESTED: physical iPhone, actual Pages deployment, complete backup/restore, single/multi-vial deductions, insufficient inventory and full app WCAG AA. Next functional QA should target these deeper inventory/scheduling paths using isolated fixtures.
+
+## Required iOS calculation feature protection (2026-10-23)
+The public iOS **syringe-unit** and **reconstitution/concentration** calculators are now non-negotiable user requirements. Numeric validation must precede live iOS feature release and any public use claims. ALL listed items **NOT TESTED** as of this documentation-only planning update.
+| Protected calculation behaviour | Acceptance basis | Status |
+|---|---|---|
+| U-100 syringe calibration | A fixed volume has the same unit value across compatible 30/50/100-unit syringes; capacity warnings rather than scale changes | NOT TESTED |
+| Unit domains | Medication-specific IU↔mass conversion is forbidden without source-specific validated factors; mg/mcg/mL kept dimensionally sound | NOT TESTED |
+| Reconstitution math | Deterministic concentration tests, validation of unknown strength and volumes, round trips, underflow/overflow/rounding | NOT TESTED |
+| No directive claim | Product copy must not disguise an injectable draw recommendation as mere general-purpose math | NOT TESTED |
+| Review eligibility | Document outcome of Apple §1.4.2 informational guidance and legal/regulatory classification | NOT TESTED |
+| Web non-regression | No web storage, workflows, or calculated histories changed by iOS planning code | NOT TESTED (no application code edited) |
