@@ -77,6 +77,9 @@ try{
     check(await box.getAttribute('role')==='dialog','Sheet role dialog missing');
     check(await box.getAttribute('aria-modal')==='true','Sheet aria-modal missing');
     check(await page.locator('#app').evaluate(el=>el.inert),'Underlying app not inert');
+    // The drawer animates upward by 16px. Evaluate its final geometry, not a
+    // transient subframe before the entrance animation settles.
+    await box.evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{}))));
     const sheetBounds=await box.boundingBox();
     check(sheetBounds && sheetBounds.y > 180 && sheetBounds.y+sheetBounds.height <= 843,'Sheet not bottom-docked within viewport: '+JSON.stringify(sheetBounds));
     check((await page.evaluate(()=>document.body.style.overflow))==='hidden','Body scroll not locked');
