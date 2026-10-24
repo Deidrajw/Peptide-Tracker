@@ -130,3 +130,7 @@
 ### v0.9.6 design candidate — offline DEMO ZIP packaging verified (2026-10-23)
 - Still unmerged PR #31; no production changes. Source builder now emits both standalone full-app HTML and a separate ZIP containing **the exact same HTML** as root `index.html` with opening instructions, in addition to the complete independent LIVE ZIP. Designed for users whose chat attachment viewer cannot execute JavaScript.
 - Verified GitHub Actions run `40057610410` PASS (artifact `12545973188`, exact-byte ZIP parity, full UI + Check-In matrix), mobile forms `40057610653` PASS. User local browser opening is NOT TESTED; this is a reviewed candidate delivery artifact, not a deployed public preview.
+
+### v0.9.6 bottom action sheet — CODED, awaiting CI/merge evidence (2026-10-23)
+- Approved user interaction change to replace overflow inline menu with fixed iPhone bottom sheet and scrim, role dialog, focus trap, Escape/dismiss, swipe header, safe-area and scroll lock; History, Calendar, Schedule, Colour, Pause, Remove use existing handlers and no data changes. New protocol wizard search and compact Insights from pending PR #31 remain part of same candidate.
+- Separate research-backed clinical-content audit drafted in `docs/ios/MEDICAL_CONTENT_AUDIT.md`; no clinical text modified. Critical unresolved pre-App-Store issues include precise plasma predictions, weeks-at-dose escalation suggestion and Apple App Review guideline §1.4.2 for dose calculators. CI and final release artifacts pending; Pages and physical iPhone unverified.
