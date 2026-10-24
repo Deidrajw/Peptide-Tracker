@@ -273,7 +273,12 @@ function stashView() {
 
       <details style="margin-top:8px">
         <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Kit details & history</summary>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
+        <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
+          <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
+          <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="vials" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Vials</button>
+          <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="history" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">History</button>
+        </div>
+        <section class="nx-stash-pane" data-pane="overview" role="tabpanel">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
             ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
             <button class="editsupply" data-id="${s.id}" aria-label="Edit ${esc(s.name)} kit" style="min-height:36px;display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:6px;color:var(--t3);font-size:11px;padding:4px 10px">Edit</button>
@@ -287,7 +292,12 @@ function stashView() {
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">CONC</div><div style="font-size:12px;color:var(--t2)">${conc?conc.toFixed(2)+" mg/mL":"—"}</div></div>
           </div>
 
-          ${(()=>{
+          ${weeksRemaining!=null?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px">At current pace: ~${weeksRemaining.toFixed(1)} wks remaining, depleting around ${fmtDate(depletionDate)}</div>`:""}
+
+          ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-bottom:10px">${esc(s.notes)}</div>`:""}
+
+        </section>
+        <section class="nx-stash-pane" data-pane="vials" role="tabpanel" hidden>          ${(()=>{
             // Kit → individual physical vials, in that order — which vial is current,
             // what Nexus estimates is in each, and (once finished) why/how much was
             // used. This is now the ONE vial-history display — it replaced a second,
@@ -319,7 +329,8 @@ function stashView() {
             </details>`;
           })()}
 
-          ${(()=>{
+        </section>
+        <section class="nx-stash-pane" data-pane="history" role="tabpanel" hidden>          ${(()=>{
             const history = getKitDoseHistory(s);
             if (!history.length) return "";
             return `<details style="margin-bottom:10px">
@@ -345,8 +356,6 @@ function stashView() {
             </details>`;
           })()}
 
-          ${weeksRemaining!=null?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px">At current pace: ~${weeksRemaining.toFixed(1)} wks remaining, depleting around ${fmtDate(depletionDate)}</div>`:""}
-
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4);margin-bottom:8px">Reconstituted ${fmtDate(currentReconDate)}${reconCount>1?` · ${reconCount} vials opened total`:""}</div>
           ${wasteFromCurrent>0?`<button class="outflow-history-toggle" data-id="${s.id}" style="display:flex;align-items:center;gap:6px;width:100%;text-align:left;background:transparent;border:none;padding:0;margin-bottom:8px;font-size:10px;color:#ff7c7c">
             <span>${wasteFromCurrent.toFixed(1)}mg outflow · ${getKitActiveTransactions(s,currentReconDate).length} transaction${getKitActiveTransactions(s,currentReconDate).length===1?"":"s"}</span>
@@ -363,9 +372,7 @@ function stashView() {
             </div>`).join("")}
           </div>`:""}`:""}
 
-          ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-bottom:10px">${esc(s.notes)}</div>`:""}
-
-          <button class="manage-kit-btn" data-id="${s.id}" style="width:100%;text-align:center;font-size:11.5px;font-weight:600;color:var(--t4);background:transparent;border:1px solid var(--border-sub);border-radius:8px;padding:9px">⋯ Manage kit</button>
+        </section>
         </div>
       </details>
     </div>`;
