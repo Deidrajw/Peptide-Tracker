@@ -149,3 +149,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Audit branch re-based onto merged v0.9.5 main SHA `4addc72b8fdbb9906170d116af3f4a8183687e11`; independent source blobs `03`, `08`, `10`, `11` unchanged in that release.
 - Documentation-only PR #28: https://github.com/Deidrajw/Peptide-Tracker/pull/28 — **OPEN, NOT MERGED**. GitHub rejected merge attempt with HTTP 405 `Pull Request is not mergeable`; underlying reason and required checks unresolved. No app code or production deployment was modified by this audit.
 - **One concrete next GitHub action:** Inspect PR #28 mergeability/branch-protection checks, resolve the cause, and merge the documentation only after verification; reverify main and preserve v0.9.5 application code.
+
+### Public iOS app positioning proposal (2026-10-23)
+- User clarified desired positioning: **personal peptide/wellness tracker, not medical treatment/clinical advice app**, still publicly distributed through Apple's App Store.
+- Screen-by-screen iOS-only initial feature treatment is documented as **PROPOSED / awaiting preview and approval**, not implemented, in [IOS_APP_STORE_READINESS.md](./IOS_APP_STORE_READINESS.md). Continue to preserve web source, data and currently protected features. Any web calculator safety defect remains a separate safety-QA priority, not something solved by excluding it from iOS.
+- App Store category or “educational only” notice does not exempt dosage calculations or privacy obligations. Clinical/regulatory review and safe migration design still required.
+- **One next iOS action:** Prepare fictional-data side-by-side UX preview for a non-prescriptive personal journal iOS edition, identify exact feature omissions, and obtain user approval before touching application code.
