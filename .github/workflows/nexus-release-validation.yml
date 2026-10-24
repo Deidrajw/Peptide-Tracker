@@ -20,11 +20,11 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
-          grep -q 'v0.9.7-beta' index.html
+          grep -q 'v0.9.8-beta' index.html
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
       - name: Independently compare published Pages files with source (nonblocking, preserve failure evidence)
@@ -37,9 +37,9 @@ jobs:
         run: |
           python3 - <<'PY'
           import zipfile, pathlib
-          z=pathlib.Path('dist/Nexus_v0.9.7-beta_LIVE_GitHub.zip')
-          h=pathlib.Path('dist/Nexus_v0.9.7-beta_FULL_DEMO.html')
-          o=pathlib.Path('dist/Nexus_v0.9.7-beta_OFFLINE_FULL_DEMO_OPEN_ME.zip')
+          z=pathlib.Path('dist/Nexus_v0.9.8-beta_LIVE_GitHub.zip')
+          h=pathlib.Path('dist/Nexus_v0.9.8-beta_FULL_DEMO.html')
+          o=pathlib.Path('dist/Nexus_v0.9.8-beta_OFFLINE_FULL_DEMO_OPEN_ME.zip')
           assert z.exists() and h.exists() and o.exists()
           with zipfile.ZipFile(o) as preview:
               assert preview.testzip() is None
@@ -69,12 +69,13 @@ jobs:
           node tools/validate-protocol-design.mjs
           node tools/validate-vial-safety.mjs
           node tools/validate-logdose-ui.mjs
+          node tools/validate-combo-picker.mjs
           node tools/audit-measurement-math.mjs
       - name: Upload demo, live ZIP, manifest and QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Nexus-v0.9.7-beta-release
+          name: Nexus-v0.9.8-beta-release
           path: dist/
           if-no-files-found: warn
           retention-days: 30
