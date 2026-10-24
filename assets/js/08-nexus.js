@@ -124,7 +124,7 @@ function peptideCardHTML(name, data, opts={}) {
         }).join("")}
       </div>`;
     })() : ""}
-    ${nxInsightCount ? `<details class="nx-compound-insights"><summary aria-label="Show ${nxInsightCount} timing and dose review insights">
+    ${nxInsightCount ? `<details class="nx-compound-insights nx-no-chevron"><summary aria-label="Show ${nxInsightCount} timing and dose review insights">
       <span class="nx-insights-emblem" aria-hidden="true">i</span><span class="nx-insights-title">Insights <span>(${nxInsightCount})</span></span>
       <span class="nx-insights-preview">Timing and dose review</span><span class="nx-insights-chevron" aria-hidden="true"></span>
     </summary><div class="nx-compound-insights-body">` : ""}
