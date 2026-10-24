@@ -1,3 +1,16 @@
+// Shared outline icons for the contextual compound actions.
+// Purely visual: existing buttons retain all classes, data-name and event handlers.
+function nxCompoundMenuIcon(kind) {
+  const shapes = {
+    history:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',
+    settings:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="var(--surface-2)"/><circle cx="15" cy="12" r="2" fill="var(--surface-2)"/><circle cx="10" cy="18" r="2" fill="var(--surface-2)"/>',
+    palette:'<path d="M12 3a9 9 0 1 0 0 18c2 0 3-1 3-2.5 0-1-.7-1.5-.7-2.5 0-1.2 1-1.5 2.2-1.5H18A3 3 0 0 0 21 11a9 9 0 0 0-9-8Z"/><circle cx="7.5" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="7.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="7.5" r="1" fill="currentColor" stroke="none"/>',
+    pause:'<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
+    remove:'<path d="M5 12h14M12 5v14" transform="rotate(45 12 12)"/>'
+  };
+  return '<svg class="nx-compound-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[kind]||"")+'</svg>';
+}
 function peptideCardHTML(name, data, opts={}) {
   const c = cfg(name);
   const status = data.status || "active";
@@ -45,6 +58,11 @@ function peptideCardHTML(name, data, opts={}) {
   const sensitivityWindow = c.troughDay && since >= 3 && since < c.troughDay && left !== null && left > 0;
   const siteWarn = data.route!=="Nasal" ? siteRotationWarning(doses) : null; // lipohypertrophy is an injection-tissue risk, not applicable to nostril alternation
   const escalation = escalationReadiness(name, data);
+  // Informational timing notes share one low-noise disclosure; rotation safety
+  // stays visible as a separate alert. The original guidance text is retained.
+  const nxInsightCount = Number(!!(c.phases && currentPhase(c.phases, since||0) && !trough && !sensitivityWindow))
+    + Number(!!sensitivityWindow) + Number(!!trough)
+    + Number(!!(escalation && escalation.signal==="may_be_ready"));
   let ring = "";
   if (left !== null) {
     const cycleLen = doseStatus.cycleLengthDays || data.scheduleDays || 7;
@@ -106,6 +124,10 @@ function peptideCardHTML(name, data, opts={}) {
         }).join("")}
       </div>`;
     })() : ""}
+    ${nxInsightCount ? `<details class="nx-compound-insights"><summary aria-label="Show ${nxInsightCount} timing and dose review insights">
+      <span class="nx-insights-emblem" aria-hidden="true">i</span><span class="nx-insights-title">Insights <span>(${nxInsightCount})</span></span>
+      <span class="nx-insights-preview">Timing and dose review</span><span class="nx-insights-chevron" aria-hidden="true"></span>
+    </summary><div class="nx-compound-insights-body">` : ""}
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
       currentPh.id==="activation"  ? `⚡ Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
       currentPh.id==="rising"      ? `📈 Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
@@ -115,20 +137,22 @@ function peptideCardHTML(name, data, opts={}) {
     }</div>`:""}
     ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">💡 Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
     ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">📉 Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
-    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D">🔄 <b>Rotate your site</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
     ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0">📈 <b>Escalation check:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
+    ${nxInsightCount ? `</div></details>` : ""}
+    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D">🔄 <b>Rotate your site</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
-    <div class="nx-compound-remove-row"><button class="archivepep" data-name="${esc(name)}" aria-label="Remove ${esc(name)} from Today">Remove from Today</button></div>
+
     <div class="morebox" data-name="${esc(name)}" style="display:none;margin-top:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
-      <button class="histtoggle" data-name="${esc(name)}" title="Dose history" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">⏱ History <span style="color:var(--t5);font-weight:400">(${doses.length})</span></button>
-      <button class="ics-export" data-name="${esc(name)}" title="Add to calendar" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">📅 Add to Calendar</button>
-      <button class="tunetoggle" data-name="${esc(name)}" title="Schedule settings" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">⚙ Schedule Settings</button>
+      <button class="histtoggle" data-name="${esc(name)}" title="Dose history" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("history")}History <span style="color:var(--t5);font-weight:400">(${doses.length})</span></button>
+      <button class="ics-export" data-name="${esc(name)}" title="Add to calendar" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("calendar")}Add to Calendar</button>
+      <button class="tunetoggle" data-name="${esc(name)}" title="Schedule settings" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("settings")}Schedule Settings</button>
       <div style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border-bottom:1px solid var(--border-sub)">
-        <span style="flex:1;font-size:12px;color:var(--t3);font-weight:600">🎨 Colour</span>
+        <span class="nx-compound-colour-label" style="flex:1;font-size:12px;color:var(--t3);font-weight:600">${nxCompoundMenuIcon("palette")}Colour</span>
         <input type="color" class="colorpick" data-name="${esc(name)}" value="${c.color}" style="width:32px;height:26px;border:none;border-radius:6px;cursor:pointer;padding:2px;background:transparent">
         <button class="resetcolor" data-name="${esc(name)}" style="font-size:10px;color:var(--t4);border:1px solid var(--border);border-radius:6px;padding:3px 8px">Reset</button>
       </div>
-      <button class="pausepep" data-name="${esc(name)}" style="width:100%;text-align:left;min-height:44px;display:flex;align-items:center;padding:0 14px;background:transparent;border:none;color:#F9C87D;font-size:12px;font-weight:600">⏸ Pause protocol</button>
+      <button class="pausepep" data-name="${esc(name)}" style="width:100%;text-align:left;min-height:44px;display:flex;align-items:center;padding:0 14px;background:transparent;border:none;color:#F9C87D;font-size:12px;font-weight:600">${nxCompoundMenuIcon("pause")}Pause protocol</button>
+      <button class="archivepep nx-menu-remove" data-name="${esc(name)}" aria-label="Remove ${esc(name)} from Today" style="width:100%;text-align:left;min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("remove")}Remove from Today</button>
     </div>
     <div class="tunebox" data-name="${esc(name)}" style="display:none;margin-top:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
       <div style="margin-bottom:14px">
