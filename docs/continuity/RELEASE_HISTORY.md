@@ -268,3 +268,6 @@
 
 ### 2026-10-24 — Connected Goals product specification (design only)
 - `docs/design/CONNECTED_GOALS_SPEC.md` authored on design branch from main `051f8203`; maps approved Goal/Protocol/Check-In/Journal/Insights experience, staged releases, additive schema plan and regression gates. No code, migration, PR merge, app release or deployment implied. Status SPEC DRAFT.
+
+### Connected Goals Release A Protocol status filter — candidate 2026-10-24
+- On branch `release/connected-goals-a-protocol-filter`, after design PR #68 merge `7abdc7e1`, added UI filter chips and reset to Protocol view in JS 11/12. No saved data changes. CI/merge/Cloudflare/physical iPhone still UNVERIFIED; displayed version unchanged until real release. Goal association and progress are staged separately.
