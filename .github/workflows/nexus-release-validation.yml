@@ -24,7 +24,7 @@ jobs:
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
-          grep -q 'v0.9.5-beta' index.html
+          grep -q 'v0.9.6-beta' index.html
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
@@ -32,8 +32,8 @@ jobs:
         run: |
           python3 - <<'PY'
           import zipfile, pathlib
-          z=pathlib.Path('dist/Nexus_v0.9.5-beta_LIVE_GitHub.zip')
-          h=pathlib.Path('dist/Nexus_v0.9.5-beta_FULL_DEMO.html')
+          z=pathlib.Path('dist/Nexus_v0.9.6-beta_LIVE_GitHub.zip')
+          h=pathlib.Path('dist/Nexus_v0.9.6-beta_FULL_DEMO.html')
           assert z.exists() and h.exists()
           with zipfile.ZipFile(z) as a:
               names=a.namelist()
@@ -58,7 +58,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Nexus-v0.9.5-beta-release
+          name: Nexus-v0.9.6-beta-release
           path: dist/
           if-no-files-found: warn
           retention-days: 30
