@@ -54,6 +54,7 @@ try {
     ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
     ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
     await setDose(page,2);
+    await page.locator('.nx-dose-optional > summary').click();
     await page.locator('#notes').fill('Fictional day 1 note');
     await clickSave(page);
     let first=await stateSnapshot(page);
@@ -122,6 +123,7 @@ try {
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9107,1,1)]);
     await openDose(page);
     await setDose(page,3);
+    await page.locator('.nx-dose-optional > summary').click();
     await page.locator('#notes').fill('Retain this fictional draft');
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-open-new').count()===1,'Open sealed vial action missing');
