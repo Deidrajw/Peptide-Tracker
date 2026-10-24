@@ -394,3 +394,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Dedicated branch `release/nexus-icon-integration-v0915` points `index.html` Apple touch icon and PNG favicon links to uploaded files; builder now packages all 4 icons in LIVE ZIP and embeds image data in isolated standalone FULL DEMO. No localStorage or functional changes.
 - Status: CODED/COMMITTED on release branch; QA, merge, Cloudflare deployment and physical iPhone acceptance INCOMPLETE until evidence. Old PR #58 draft remains superseded by main-upload-aware integration PR. Calculator PR #40 remains separate and held.
 - **ONE CONCRETE NEXT ACTION:** Confirm icon-integration PR mobile and build CI PASS and valid ZIP content, merge into main, independently verify Cloudflare serves correct image hashes; physically check iPhone Add to Home Screen cache.
+
+### 2026-10-24 — Approved Stash header / Sort cleanup candidate
+- Baseline main `4a6f67588529f0a4da3191b64b94040e1be62095` (v0.9.15-beta). On branch `release/v0916-stash-header-sort`, use a unified 44px management ellipsis in the heading of standard and blend kit cards; remove redundant standard-kit ellipsis from bottom action row; reserve Sort chevron space and abbreviate only collapsed 'Needs Attention first' selection to 'Attention' (full menu wording unchanged).
+- Do not change status badge handlers, actions, vial data, storage or calculations. Candidate coded; CI / merge / deployment / physical iPhone review INCOMPLETE. Calculator PR #40 remains separate.
+- **ONE CONCRETE NEXT ACTION:** Review PR browser regression results at 320/390 dark/light, especially Stash actions and identical header geometry; merge only if green and verify Cloudflare.
