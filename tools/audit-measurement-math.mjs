@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 // with disposable fictional browser contexts. A red result is not papered
 // over as a pass, but does not block this documentation/QA-only branch.
 // Before shipping any iOS dose/measurement calculator, all cases must PASS.
-const VERSION = 'v0.9.7-beta';
+const VERSION = 'v0.9.8-beta';
 const demoFile = path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');
 if (!fs.existsSync(demoFile)) throw new Error('Required exact-source full-app DEMO not found');
 fs.mkdirSync('dist', {recursive:true});
