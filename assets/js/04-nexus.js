@@ -1324,8 +1324,7 @@ function manageKitMenu(kitId) {
     {
       label: "VIAL & INVENTORY",
       entries: isBlend ? [
-        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Use the existing blend-specific dose workflow",icon:"◈"}] : []),
-        {id:"restock",name:"Add vials",desc:"Record additional sealed vials in this kit",icon:"+"}
+        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Use the existing blend-specific dose workflow",icon:"◈"}] : [])
       ] : [
         ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
         ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the existing preparation and stock-allocation flow",icon:"◌"}] : []),
@@ -1340,7 +1339,7 @@ function manageKitMenu(kitId) {
         {id:"edit",name:"Edit kit",desc:isBlend?"Edit blend composition and metadata":"Change kit metadata without rewriting vial history",icon:"✎"},
         {id:"details",name:"Kit details & history",desc:isBlend?"Composition and kit information":"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
-        ...(isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
+        ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
       ]
     },
     {
