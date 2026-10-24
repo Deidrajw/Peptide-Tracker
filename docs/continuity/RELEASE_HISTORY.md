@@ -96,3 +96,8 @@
 - Full-app source-aligned DEMO and root-index LIVE ZIP in GitHub Actions artifact #12540338019; archived standalone HTML 1,784,233 bytes, LIVE ZIP 492,353 bytes, ZIP includes 3 CSS + 12 ordered JS. DEMO in-memory fixture isolation confirmed.
 - Branch CI success: https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40043524923 (8 display and 8 Check-In functional test matrices) and https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40043524934 (mobile forms). Tested synthetic Check-In create/edit, Retatrutide association, intensity, dated supplements, conflicting date protection; actual production records not touched.
 - Limitations: Pages deployment for this merge SHA not independently verified; physical iPhone real tests NOT TESTED; whole-app WCAG and vial-dose deep functional tests NOT TESTED. Release status MERGED, deployment INCOMPLETE.
+
+### v0.9.5-beta — PROPOSED/CODED, validation pending (2026-10-23)
+- Base `1af0cfddf3780b7f08524b3b1ede9e878d645bd9`, branch `release/v0.9.5-unique-symptom-search`.
+- Affects the shared Symptoms combobox: search dedupes names across overlapping Recent, Retatrutide-specific and Digestive/general categories and keeps each match under the general category when one exists. Browse with no query remains unchanged; selection values, history, intensity 1–3 and compound tags unchanged. No data migration.
+- Source-aligned complete standalone fictional-data DEMO HTML and root-index LIVE ZIP builder versions updated; browser test asserts Constipation/Nausea exactly one visible option, with Constipation classified Digestive, while all prior Save/Edit safety and main-tab regressions remain. Actual tests, CI artifacts, merge and Pages deployment INCOMPLETE pending evidence. Real iPhone untested.
