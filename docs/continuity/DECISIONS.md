@@ -118,3 +118,10 @@
 
 ### 2026-10-24 — v0.9.7 remote Pages proof recorded
 - Unlike smoke, remote Actions run `40062278673` returned `verified:true, smoke_only:false` for public exact-byte 16/16 application source parity. This is strong proof that merged v0.9.7 app files were served publicly at check time; does not test a physical iPhone's cache, content semantics, medical compliance or native app availability. Existing measurement-math 40 FAIL/80 remains separate gate.
+
+
+### 2026-10-24 — approve scoped implementation work after Stash/Combo audit (IN PROGRESS, NOT A FULL REDESIGN APPROVAL)
+- Following the proposed in-chat Stash/Add Kit/Combo audit, user said "let's continue". Implement the first discrete Combo Dose picker improvement without asserting approval for all visual designs. Search works at any library size, options remain in bounded scroll for 50+ tracked compounds, checked rows are at least 44px, and choosing compounds updates in place without discarding entered values. Favorite selection and deletion become separate targets. Keep prepared physical syringes distinct from reusable favorites; preserve existing real Log Dose/vial validations, date/site/notes, symptom selection and history. Add Kit/Stash hierarchy remains proposed until separately implemented and QA reviewed.
+
+### 2026-10-24 — Combo picker scoped interaction now implemented (PR #42, not a wholesale Stash redesign)
+- Evidence from source-specific [run 40067532927](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40067532927): search-first choice input always available regardless of compound count, bounded 224px browse list, in-place multi-select and amount updates avoid full sheet destruction; separate favorite select/delete; preserve prepared syringe path and underlying inventory/logging. Changes may merge only after final checks; no approval of unreviewed Stash/Add Kit designs or clinical dosage math. Physical iPhone/device sign-off and medical calculator remediation remain separate.
