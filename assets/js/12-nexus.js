@@ -74,7 +74,7 @@ function nxOpenCompoundSheet(trigger) {
   },{passive:true});
   // Bubble AFTER the pre-existing action click handlers. Keep colour picker
   // open until change/confirmation so its native iOS spectrum isn't interrupted.
-  sheet.addEventListener("click",function onAction(e){
+  sheet.onclick=e=>{
     const btn=e.target.closest("button");
     if(!btn||btn.closest(".nx-compound-sheet-header"))return;
     const scrollTo=btn.classList.contains("histtoggle")?".histbox":btn.classList.contains("tunetoggle")?".tunebox":null;
@@ -83,10 +83,10 @@ function nxOpenCompoundSheet(trigger) {
       const target=document.querySelector(`${scrollTo}[data-name="${CSS.escape(trigger.dataset.name)}"]`);
       if(target?.getClientRects().length)target.scrollIntoView({block:"nearest",behavior:"smooth"});
     });
-  },{once:false});
-  sheet.addEventListener("change",function onColor(e){
+  };
+  sheet.onchange=e=>{
     if(e.target.classList.contains("colorpick"))nxCloseCompoundSheet(false);
-  },{once:false});
+  };
   header.querySelector(".nx-compound-sheet-close").focus({preventScroll:true});
 }
 
