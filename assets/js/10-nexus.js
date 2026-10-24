@@ -304,9 +304,8 @@ function stashView() {
             // separate "reconstitution history" list that read reconHistory[] directly
             // and could silently drift out of sync with this one.
             if (!everOpenedVials.length) return "";
-            return `<details style="margin-bottom:10px">
-              <summary style="font-size:11px;color:var(--t4);cursor:pointer;list-style:none">${everOpenedVials.length} vial${everOpenedVials.length===1?"":"s"} opened — show breakdown</summary>
-              <div style="margin-top:8px;border-top:1px solid var(--border-sub);padding-top:8px">
+            return `<div class="nx-stash-record-list"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:8px">${everOpenedVials.length} opened vial${everOpenedVials.length===1?"":"s"}</div>
+              <div style="margin-top:8px">
                 ${[...everOpenedVials].reverse().map((v,vi)=>{
                   const rem = getVialRemainingMg(s, v);
                   const usedMgVal = (v.expectedMg!=null?v.expectedMg:s.vialMg||0) - rem;
@@ -326,16 +325,15 @@ function stashView() {
                   </div>`;
                 }).join("")}
               </div>
-            </details>`;
+            </div>`;
           })()}
 
         </section>
         <section class="nx-stash-pane" data-pane="history" role="tabpanel" hidden>          ${(()=>{
             const history = getKitDoseHistory(s);
             if (!history.length) return "";
-            return `<details style="margin-bottom:10px">
-              <summary style="font-size:11px;color:var(--t4);cursor:pointer;list-style:none">Dose History (${history.length})</summary>
-              <div style="margin-top:8px;border-top:1px solid var(--border-sub);padding-top:8px">
+            return `<div class="nx-stash-record-list"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:8px">${history.length} dose event${history.length===1?"":"s"}</div>
+              <div style="margin-top:8px">
                 ${history.map(ev=>{
                   const amtNative = mgToUnit(ev.amountMg, c.unit);
                   const amtLabel = ev.sprayCount ? `${ev.sprayCount} spray${ev.sprayCount===1?"":"s"} <span style="font-weight:400;color:var(--t5)">(${amtNative.toFixed(amtNative<1?2:1)}${c.unit})</span>` : `${amtNative.toFixed(amtNative<1?2:1)}${c.unit}`;
@@ -353,7 +351,7 @@ function stashView() {
                   </div>`;
                 }).join("")}
               </div>
-            </details>`;
+            </div>`;
           })()}
 
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4);margin-bottom:8px">Reconstituted ${fmtDate(currentReconDate)}${reconCount>1?` · ${reconCount} vials opened total`:""}</div>
@@ -373,7 +371,6 @@ function stashView() {
           </div>`:""}`:""}
 
         </section>
-        </div>
       </details>
     </div>`;
   };
