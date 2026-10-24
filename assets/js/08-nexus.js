@@ -60,9 +60,7 @@ function peptideCardHTML(name, data, opts={}) {
   const escalation = escalationReadiness(name, data);
   // Informational timing notes share one low-noise disclosure; rotation safety
   // stays visible as a separate alert. The original guidance text is retained.
-  const nxInsightCount = Number(!!(c.phases && currentPhase(c.phases, since||0) && !trough && !sensitivityWindow))
-    + Number(!!sensitivityWindow) + Number(!!trough)
-    + Number(!!(escalation && escalation.signal==="may_be_ready"));
+
   let ring = "";
   if (left !== null) {
     const cycleLen = doseStatus.cycleLengthDays || data.scheduleDays || 7;
@@ -74,6 +72,9 @@ function peptideCardHTML(name, data, opts={}) {
     ring = `<div style="position:relative;width:70px;height:70px;flex-shrink:0"><svg width="70" height="70" style="transform:rotate(-90deg)"><circle cx="35" cy="35" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="5"/><circle cx="35" cy="35" r="${r}" fill="none" stroke="${ringColor}" stroke-width="5" stroke-dasharray="${circ}" stroke-dashoffset="${circ*(od?0:pct)}" stroke-linecap="round"/></svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="mono" style="font-size:${ringFontSize}px;font-weight:700;color:${ringColor}">${ringVal}</span><span style="font-size:8px;color:var(--t4)">${od?"OVERDUE":"LEFT"}</span></div></div>`;
   }
   const currentPh = c.phases ? currentPhase(c.phases, since||0) : null;
+  const nxInsightCount = Number(!!(currentPh&&!trough&&!sensitivityWindow))
+    + Number(!!sensitivityWindow) + Number(!!trough)
+    + Number(!!(escalation && escalation.signal==="may_be_ready"));
   const isProtoPaused = doseStatus.status === "protocol_paused";
   const isResting = doseStatus.status === "resting";
   const badges = [
