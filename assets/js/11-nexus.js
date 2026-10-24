@@ -1484,7 +1484,7 @@ function goalDetailModal(goalId) {
        const latest=points[0],value=Number(latest.weight),range=pm.target-pm.baseline,ratio=range!==0?(value-pm.baseline)/range:null;
        const completion=ratio===null?'':ratio>=1?' Target reached or exceeded (confirm manually).':' '+Math.max(0,Math.min(100,Math.round(ratio*100)))+'% toward numerical target.';
        return header+'Latest recorded weight: '+el(value)+' '+el(pm.unit)+' on '+el(fmtDate(latest.date))+'.'+completion+' Based only on recorded measurements; protocol effects are not inferred.';
-     })():'Add a starting value and target to configure measurable progress.' )
+     })()
     :pm.type==="subjective"?(pm.rating?'Current self-rating: '+el(pm.rating)+' / 5. This is a personal observation, not an objective clinical measure.':'No rating recorded yet.')
     :pm.type==="milestones"?((pm.milestones||[]).length+' milestones planned. Completion tracking is planned for the next update.'):'Exploration and regular reflection; no automatic progress percentage.';
   const content=()=>active==="overview"
