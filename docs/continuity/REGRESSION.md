@@ -219,3 +219,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### v0.9.13-beta Stash detail panels QA — PENDING actual CI evidence
 - New `tools/validate-stash-panels.mjs` runs full fictional app LIVE-local and standalone isolated DEMO at 320px/390px light/dark, tests Overview/Vials/History accessible tabs, Home key, selected/hidden panel, visible source history, no nested vial/dose chevrons, 44px touch target, and `state.supplies` unchanged by view switching. Existing Stash Cards/Actions, 50+ Combo, blend-only picker, Log Dose 40, vial accounting 48, Check-In, Protocol and chevrons must PASS before merge. Physical iPhone NOT TESTED. Calculator diagnostic separate 40 FAIL of 80.
+
+### v0.9.13-beta verified Stash panels (October 24, 2026)
+- **PASS automated** release source CI 40110883172: 8/8 synthetic Stash panels at 320/390 dark/light local LIVE/entire isolated DEMO. Checks new Overview/Vials/History tab selection and hidden states, keyboard Home, 44px targets, no nested dose-history disclosure, no mutation of `state.supplies`, prior card figures and actions. Also protected Check-In, Protocol, Stash Cards/Actions, Combo search 50, blend ingredient eligibility, 40 Log Dose flows, 48 vial safety assertions and single chevrons PASS.
+- **PASS package integrity** 16-file root-index LIVE ZIP CRC, standalone complete fictional DEMO HTML byte-identical to offline DEMO ZIP index from Actions artifact 12565814124.
+- **PASS public source verification** GitHub Pages 16/16 bytes match merge SHA `895d6bfd`, run 40111254674; deployment 40111253972 and postmerge mobile 40111254716 SUCCESS.
+- **NOT TESTED** physical iPhone Safari/Home Screen, VoiceOver, actual private localStorage histories and long scroll/keyboard. **FAIL KNOWN SEPARATE** Measurement Calculator diagnostic 40/80, PR #40 still review only. Next protected UX audit: Plans action/status/Intel and disclosure hierarchy.
