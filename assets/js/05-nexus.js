@@ -854,6 +854,12 @@ function doseModal(name, existing, occTime) {
 
   m.querySelector("#save").onclick = () => {
     const doseAmtStr = m.querySelector("#dose").value;
+    // Guard before ANY prepared source count, vial or record mutation. Empty,
+    // negative and non-finite quantities are never valid administered doses.
+    if (!doseAmtStr.trim() || !Number.isFinite(Number(doseAmtStr)) || Number(doseAmtStr) <= 0) {
+      showErrorBanner("Enter a valid amount greater than zero before confirming. Nothing was saved.");
+      return;
+    }
     const ak = activeKit();
     // Remember this choice for next time — the whole point of the picker above is that a
     // person doing this daily shouldn't have to re-pick every single time once they've
