@@ -109,3 +109,6 @@
 
 ### 2026-10-24 — Confirmed v0.9.7 safety guard, protected behavior
 - The previous dose confirmation allowed saving requested amount with a smaller sourced total; verified by actual browser regression. It is a data-integrity defect, not desired feature. Correct it with a non-destructive early guard and user-readable error, rejecting an under-allocated and a nonpositive dose before stock or history writes. Preserve existing source-selection workflow, partial draws/draft handoff, prepared dose semantics, all older records and vial accounting formulas. This is an approved-in-scope targeted integrity repair, not a schema migration.
+
+### v0.9.7 confirmation guard acceptance evidence (2026-10-24)
+- v0.9.7 fix validated in run `40061288470`, 40 real-modal LIVE/full-DEMO flow cases; protects data by rejecting incomplete allocation and nonpositive amounts. No change to dosing guidance, compound calculation formulas or legacy saved records. This guard is permanent regression coverage in `tools/validate-logdose-ui.mjs`, and accompanies protected vial-core tests.
