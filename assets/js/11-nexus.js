@@ -1464,6 +1464,24 @@ function managePlanItemMenu(type, id) {
   }); };
 }
 
+function goalDetailModal(goalId) {
+  const g=(state.plans?.goals||[]).find(x=>String(x.id)===String(goalId));
+  if(!g)return;
+  const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
+  const el=(v)=>esc(String(v||""));
+  let active="overview";
+  const content=()=>active==="overview"
+    ? '<div class="nx-goal-detail-section"><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL CONTEXT</div><div style="font-size:13px;line-height:1.6;color:var(--t2)">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</div>'+(g.targetDate?'<div class="nx-muted" style="margin-top:10px">Target date: '+el(fmtDate(g.targetDate))+'</div>':'')+(g.notes?'<div class="nx-muted" style="margin-top:10px">'+el(g.notes)+'</div>':'')+'<div class="nx-muted" style="margin-top:12px">Progress tracking will appear here once a measurement or review method is configured. No progress is inferred from protocol activity alone.</div></div>'
+    :active==="connections"
+    ? '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">LINKED PROTOCOLS</div>'+(linked.length?linked.map(p=>'<div style="padding:12px 0;border-bottom:1px solid var(--border-sub)"><div style="font-size:13px;color:var(--t1);font-weight:650">'+el(p.name)+'</div><div class="nx-muted">'+el(p.status||'draft')+' · Linked by personal goal ID</div></div>').join(''):'<div class="nx-muted" role="status">No protocols linked yet. Edit a protocol and choose this goal in its Review step.</div>')+'<div class="nx-muted" style="margin-top:12px">Connections provide context, not evidence of treatment effectiveness.</div>'
+    : '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL ACTIVITY</div><div class="nx-muted" role="status">No goal-specific reviews recorded yet. Future updates will reference existing Check-In, Journal and measurement history without duplicating entries.</div>';
+  const modal=openModal('<div class="nx-goal-detail" style="padding-bottom:8px"><div style="display:flex;gap:10px;align-items:start;margin-bottom:14px"><div style="flex:1;min-width:0"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">GOAL DETAILS</div><div style="font-size:19px;font-weight:700;color:var(--t1);margin-top:4px">'+el(g.name)+'</div><div class="nx-muted">'+el(g.category||'Personal goal')+' · '+el(g.status||'active')+'</div></div><button id="nx-goal-detail-close" aria-label="Close goal details" style="min-height:44px;min-width:44px;border-radius:12px;color:var(--t2);background:var(--surface-2);border:1px solid var(--border)">×</button></div><div style="display:flex;gap:6px;margin-bottom:16px" role="tablist" aria-label="Goal details sections">'+['overview','connections','activity'].map(t=>'<button class="nx-goal-detail-tab" role="tab" data-tab="'+t+'" style="min-height:44px;flex:1;border-radius:10px;font-size:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t2)">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div><div id="nx-goal-detail-content" role="tabpanel"></div></div>','#A78BFA');
+  const paint=()=>{modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{const chosen=b.dataset.tab===active;b.setAttribute('aria-selected',chosen);b.style.background=chosen?'#A78BFA22':'var(--surface-2)';b.style.borderColor=chosen?'#A78BFA':'var(--border)';});modal.querySelector('#nx-goal-detail-content').innerHTML=content();};
+  modal.querySelector('#nx-goal-detail-close').onclick=closeModal;
+  modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>b.onclick=()=>{active=b.dataset.tab;paint();});
+  paint();
+}
+
 function plansView() {
   if(!state.plans) state.plans={goals:[],research:[],shopping:[]};
   const {goals,research,shopping}=state.plans;
@@ -1484,12 +1502,12 @@ function plansView() {
     const other=goals.filter(g=>g.status&&g.status!=="active");
     content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
     ${active.map(g=>`<div class="nx-plan-item">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="margin-top:5px;min-height:44px;padding:8px 0;color:#A78BFA;background:transparent;text-align:left;font-size:12px;font-weight:650">View goal details →</button><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
       ${(g.compounds?.length||g.metrics||g.notes)?`<details><summary>View details</summary>${g.compounds?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${g.compounds.map(c=>`<span class="compound-intel-btn pill" data-name="${esc(c)}" style="background:#A78BFA18;color:#A78BFA;border-color:#A78BFA33;cursor:pointer">${esc(c)}</span>`).join("")}</div>`:""}
       ${g.metrics?`<div class="nx-muted">${esc(g.metrics)}</div>`:""}
       ${g.notes?`<div class="nx-muted" style="margin-top:6px">${esc(g.notes)}</div>`:""}</details>`:""}
     </div>`).join("")}
-    ${other.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:12px 0 6px">OTHER GOALS</div>${other.map(g=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t2)">${esc(g.name)}</div><div style="font-size:10px;color:var(--t4)">${esc(g.category||"")}</div></div>${statusPill(g.status,goalStatus)}${manageBtn("goal",g.id)}</div>`).join("")}`:""}
+    ${other.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:12px 0 6px">OTHER GOALS</div>${other.map(g=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t2)">${esc(g.name)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="display:block;min-height:44px;padding:8px 0;color:#A78BFA;font-size:12px;background:transparent">View goal details →</button><div style="font-size:10px;color:var(--t4)">${esc(g.category||"")}</div></div>${statusPill(g.status,goalStatus)}${manageBtn("goal",g.id)}</div>`).join("")}`:""}
     <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
   } else if(sub==="research"){
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
