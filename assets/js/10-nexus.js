@@ -152,7 +152,8 @@ function stashView() {
     // real number once a kit is migrated.
     const activeVialForCard = getActiveVial(s);
     const vialRem = activeVialForCard ? getVialRemainingMg(s, activeVialForCard) : null;
-    const vialPct = s.vialMg>0 && vialRem!=null ? Math.round(vialRem/s.vialMg*100) : null;
+    const activeCapacityMg = activeVialForCard ? Number(activeVialForCard.vialMg||s.vialMg) : 0;
+    const vialPct = activeCapacityMg>0 && vialRem!=null ? Math.max(0,Math.min(100,Math.round(vialRem/activeCapacityMg*100))) : null;
     // Separate from vialRem above — how much has been logged as OUTFLOW (waste/gift/
     // testing) against the current vial specifically, for the toggle link further down.
     // Untouched by the vialRem fix; this was never part of the competing-formula problem.
@@ -227,10 +228,11 @@ function stashView() {
     else action = {label:"Open new vial", cls:"opennewvial"};
     const actionUrgent = statusKey==="empty"||statusKey==="low"||statusKey==="expiring";
 
-    // Headline number: current vial if one exists, otherwise the unopened kit's total
-    const headlineMg = currentReconDate ? vialRem : (s.vialMg>0 ? totalMg : null);
-    const headlineOf = currentReconDate ? s.vialMg : totalMg;
-    const headlinePct = currentReconDate ? vialPct : (totalMg>0 ? 100 : null);
+    // Owned stock includes sealed reserves; progress applies only to an actual open vial.
+    const displayKitMg = Number.isFinite(kitRemMg) ? kitRemMg : null;
+    const displayOpenMg = activeVialForCard && vialRem!=null ? vialRem : null;
+    const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
+    const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : ""].filter(Boolean).join(" · ") || "No available vials";
 
     const secondaryBits = [];
     if (shotsEst!=null) secondaryBits.push(`~${shotsEst} shots left`);
@@ -245,16 +247,22 @@ function stashView() {
       </div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
-      ${headlineMg!==null?`
-      <div class="nx-kit-quantity" style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
-        <span style="font-size:30px;font-weight:800;color:var(--t1);line-height:1">${headlineMg.toFixed(headlineMg%1===0?0:1)}</span>
-        <span style="font-size:14px;color:var(--t4)">/ ${headlineOf} mg</span>
+      <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
+        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">KIT INVENTORY REMAINING</div>
+        <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+          <span class="nx-kit-quantity" style="font-size:27px;font-weight:750;color:var(--t1);line-height:1.15">${displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1===0?0:1):"—"}</span>
+          <span style="font-size:13px;color:var(--t4)">mg across this kit</span>
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-top:6px">${kitInventoryLabel}</div>
       </div>
-      <div style="height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${headlinePct||0}%;background:${st.color};border-radius:5px;transition:width 0.5s"></div>
-      </div>
-      ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.join(" · ")}</div>`:""}
-      `:`<div style="font-size:13px;color:var(--t4);margin-bottom:12px">No vial reconstituted yet${isFrozenUnopened&&s.storageLocation?` · ${({freezer:"❄️ frozen",fridge:"🧊 fridge",room_temp:"📦 room temp",unknown:""})[s.storageLocation]||""}`:""}</div>`}
+      ${displayOpenMg!==null ? `<div class="nx-stash-open-progress" style="margin:0 0 12px">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--t3)">Current open vial</span>
+          <span style="font-size:12px;color:var(--t2);font-weight:650">${displayOpenMg.toFixed(displayOpenMg%1===0?0:1)} / ${activeCapacityMg} mg</span>
+        </div>
+        ${vialPct!==null?`<div role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${vialPct}%;background:${st.color};border-radius:7px"></div></div>`:""}
+      </div>` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No vial currently open${isFrozenUnopened&&s.storageLocation?" · "+esc(s.storageLocation.replace("_"," ")):""}</div>`}
+      ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
       ${action||s.reconDate?`<div class="nx-kit-actions" style="display:flex;gap:8px;margin-bottom:4px">
@@ -264,7 +272,7 @@ function stashView() {
       </div>`:""}
 
       <details style="margin-top:8px">
-        <summary style="font-size:11.5px;color:var(--t4);cursor:pointer;list-style:none">▸ Details</summary>
+        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Kit details & history <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></summary>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
             ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
