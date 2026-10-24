@@ -1347,7 +1347,23 @@ function manageKitMenu(kitId) {
       entries:[{id:"delete",name:"Delete kit",desc:"Permanent removal — confirmation required",icon:"×",danger:true}]
     }
   ];
-  const icon = item => '<span aria-hidden="true" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:var(--surface-2);font-size:18px;flex-shrink:0;color:'+(item.danger?'#ff8585':'var(--t2)')+'">'+item.icon+'</span>';
+  // One consistent outline icon system for all kit actions; no emoji glyphs.
+  const iconPaths = {
+    "blend-dose":'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
+    open:'<path d="M12 5v14M5 12h14"/>',
+    prepare:'<path d="M4 11h16M7 7h10M8 15h8M10 3h4M9 19h6"/>',
+    "finish-vial":'<path d="m5 12 5 5L20 7"/>',
+    "add-to-open":'<path d="M12 4v16M4 12h16"/>',
+    restock:'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/><path d="M12 12v9M4 8l8 4 8-4"/>',
+    outflow:'<path d="M5 19 19 5M9 5h10v10"/>',
+    edit:'<path d="m4 20 4-1 11-11a2 2 0 0 0-3-3L5 16z"/>',
+    details:'<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h4"/>',
+    intel:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    reopen:'<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>',
+    "finish-kit":'<path d="m5 12 5 5L20 7"/>',
+    delete:'<path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v6M14 11v6"/>'
+  };
+  const icon = item => '<span aria-hidden="true" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:var(--surface-2);flex-shrink:0;color:'+(item.danger?'#ff8585':'var(--t2)')+'"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(iconPaths[item.id]||iconPaths.details)+'</svg></span>';
   const m = openModal(
     '<div class="nx-stash-sheet" data-kit="'+esc(String(kitId))+'">'+
     '<div aria-hidden="true" style="width:34px;height:4px;border-radius:8px;background:var(--border);margin:0 auto 16px"></div>'+
