@@ -1976,7 +1976,7 @@ function dailyModal(existing, prefillDate) {
     <label class="field-label">DATE</label><input id="date" type="date" class="inp" value="${f.date}" style="margin-bottom:14px">
     <label class="field-label">MOOD TODAY</label>
     <div id="moods" style="display:flex;gap:6px;margin-bottom:14px">
-      ${MOODS.map(mo=>`<button data-v="${mo.v}" class="moodbtn" style="flex:1;padding:9px 0;border-radius:10px;background:${f.mood===mo.v?mo.color+"22":"transparent"};border:1px solid ${f.mood===mo.v?mo.color:"var(--border)"};display:flex;flex-direction:column;align-items:center;gap:3px">
+      ${MOODS.map(mo=>`<button data-v="${mo.v}" class="moodbtn" aria-label="${mo.label} mood" aria-pressed="${f.mood===mo.v}" style="flex:1;padding:9px 0;border-radius:10px;background:${f.mood===mo.v?mo.color+"22":"transparent"};border:1px solid ${f.mood===mo.v?mo.color:"var(--border)"};display:flex;flex-direction:column;align-items:center;gap:3px">
         <span style="font-size:20px">${mo.emoji}</span><span style="font-size:8.5px;color:${f.mood===mo.v?mo.color:"#666"}">${mo.label}</span></button>`).join("")}
     </div>
     <details class="nx-checkin-symptoms" ${f.symptoms.length?"open":""}><summary><span>Symptoms <span id="nx-sym-count" style="color:var(--t4);font-weight:400">${f.symptoms.length?`· ${f.symptoms.length} selected`:"· Optional"}</span></span></summary><div id="sym"></div></details>
@@ -1994,7 +1994,7 @@ function dailyModal(existing, prefillDate) {
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, color); wireSymptomPicker(sym, f.symptoms, color, ()=>{renderCompoundSections(); const c=m.querySelector("#nx-sym-count");if(c)c.textContent=f.symptoms.length?`· ${f.symptoms.length} selected`:"· Optional";});
   m.querySelectorAll(".moodbtn").forEach(b => b.onclick = () => {
     f.mood = +b.dataset.v; color = MOODS.find(x=>x.v===f.mood).color;
-    m.querySelectorAll(".moodbtn").forEach(bb => { const mo=MOODS.find(x=>x.v==bb.dataset.v); const on=+bb.dataset.v===f.mood; bb.style.background=on?mo.color+"22":"transparent"; bb.style.border=`1px solid ${on?mo.color:"var(--border)"}`; bb.lastElementChild.style.color=on?mo.color:"#666"; });
+    m.querySelectorAll(".moodbtn").forEach(bb => { const mo=MOODS.find(x=>x.v==bb.dataset.v); const on=+bb.dataset.v===f.mood; bb.style.background=on?mo.color+"22":"transparent"; bb.style.border=`1px solid ${on?mo.color:"var(--border)"}`; bb.lastElementChild.style.color=on?mo.color:"#666"; bb.setAttribute("aria-pressed",String(on)); });
     m.querySelector("#save").style.background = color;
   });
 

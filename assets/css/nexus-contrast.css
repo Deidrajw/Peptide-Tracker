@@ -48,3 +48,21 @@ body .modal .inp:focus-visible {
 }
 /* Don't replace selected symptom intensity styles, category hierarchy or
    supplement choices; only strengthen low-contrast focus/legibility. */
+
+/* v0.9.4 — Readable mood selector: previously unselected labels were
+   8.5px #666 (not legible against dark modal surfaces).
+   Preserve the colored borders and emotional emoji states. */
+body .modal .moodbtn {
+  min-height: 52px;
+  min-width: 0;
+}
+body .modal .moodbtn > span:last-child {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  color: var(--t1) !important;
+}
+body .modal .moodbtn:focus-visible {
+  outline: 2px solid var(--nx-focus-accessible) !important;
+  outline-offset: 2px !important;
+}

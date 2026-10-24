@@ -57,3 +57,8 @@
 ## 2026-10-23 — v0.9.3 contrast update merged
 - PR #23 merged `f2fef99de4ea8c7cf28b9ed677054ca712bb77b4`: selective accessible foreground for pale purple CTAs, helper label contrast in light mode, focus-visible indicators through actual keyboard navigation. No universal dark-ink override on neutral theme-background buttons. Application features and records unchanged.
 - Full WCAG-AA signoff and physical iPhone acceptance remain separate requirements; browser PASS on targeted elements does not certify entire app.
+
+## v0.9.4-beta — mood accessibility and protected check-in lifecycle
+- Status: targeted continuation coded on branch `release/v0.9.4-checkin-a11y-regression`; pending QA/merge/deployment.
+- Preserve mood integer values 1–5 and accent borders/emoji. Mood option labels require min 11px themed high-contrast ink and 52px target height. Selected control uses `aria-pressed`, updated for each change, without changing data format.
+- Use isolated fictional fixtures to verify create/Edit/no duplicate per date, notes/intensity/compound associations and date-specific supplements. No real user data migration or import.

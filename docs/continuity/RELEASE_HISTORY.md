@@ -82,3 +82,10 @@
 - Automated LIVE/full standalone DEMO browser validation PASS: https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40037977087, 8 combinations 320/390px dark/light; WCAG normal text contrast on tested Check-In/custom buttons; keyboard focus. Complete root-index LIVE ZIP/full-app isolated DEMO generated same release checkout, GitHub artifact 12538366105.
 - Existing mobile form regression PASS on same application source earlier branch SHA: https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40037868319. Later mobile rerun 40037977076 pending at last check (final change only browser QA test script).
 - Limitations: no actual iPhone tests, no complete history/dose/inventory full regression, no site-wide WCAG certification. Pages publication for merge SHA NOT VERIFIED; delivery status CODED/TESTED/MERGED, deployment INCOMPLETE.
+
+### v0.9.4-beta — IMPLEMENTED ON BRANCH / VALIDATION PENDING (2026-10-23)
+- Baseline `56f2f4b7eda2fad201c801cafad72e19229afc5e`; branch `release/v0.9.4-checkin-a11y-regression`.
+- Change: Check-In Mood 1–5 now exposes `aria-label`/`aria-pressed`, with readable >=11px text and 52px button targets. Release metadata/build/test set to v0.9.4.
+- New `tools/validate-checkin.mjs` asserts fictional create/edit/notes/intensity/compound tag, date-specific supplements, date collision safety across both builds, dark/light and 320/390px. This is a new regression suite, NOT yet proven passed.
+- Affected page: Daily Check-In modal only, plus testing/build. Data impact: no model key changes, no migration, no production writes.
+- Mandatory DEMO HTML and source-identical LIVE ZIP: builder updated but files INCOMPLETE until CI. GitHub PR, merge, Pages deployment, real iPhone signoff and full-app deep regression: PENDING.
