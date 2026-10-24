@@ -36,7 +36,9 @@ try {
           hasRecipe:main.includes('Your Recipe'),
           drawUnits:draw?Number(draw[1]):null,
           displayedUnits:onSyringe?Number(onSyringe[1]):null,
-          displayedText:main.slice(0,140).replace(/\s+/g,' ').trim()
+          displayedText:main.slice(0,140).replace(/\s+/g,' ').trim(),
+          blockReason:el.querySelector('#rc-blocked')?.textContent.trim()||'',
+          deviceChoices:el.querySelectorAll('[data-id="syringe"]').length
         };
       }
       try{
@@ -46,7 +48,8 @@ try {
           genericIU:probe('100u','iu','1000'),
           negative:probe('100u','mg','-1'),
           empty:probe('100u','mg','','10','2'),
-          invalidVolume:probe('100u','mg','1','10','0')
+          invalidVolume:probe('100u','mg','1','10','0'),
+          overCapacity:probe('30u','mg','2')
         };
       } finally {state._recon=previous;}
     },theme);
@@ -66,6 +69,7 @@ try {
         amount.value='-1';
         amount.dispatchEvent(new Event('input',{bubbles:true}));
         const negative=result();
+        const deviceChoicesAfterInvalid=host.querySelectorAll('[data-id="syringe"]').length;
         amount.value='1';
         amount.dispatchEvent(new Event('input',{bubbles:true}));
         const restored=result();
@@ -83,7 +87,7 @@ try {
           restoredRecipe:restored.includes('Your Recipe'),iuRecipe:unsupported.includes('Your Recipe'),
           thirtyValue:(s30.match(/([0-9.]+)\s+units on your syringe/i)||[])[1],
           fiftyValue:(s50.match(/([0-9.]+)\s+units on your syringe/i)||[])[1],
-          focusedInputsPreserved:host.querySelector('#rc-dose')===amount};
+          deviceChoicesAfterInvalid,focusedInputsPreserved:host.querySelector('#rc-dose')===amount};
       }finally{host.remove();state._recon=prev;}
     });
     const checks=[
@@ -96,6 +100,11 @@ try {
       ['Negative amounts must not produce a preparation recipe',!readings.negative.hasRecipe],
       ['Empty amount should not show a result',!readings.empty.hasRecipe],
       ['Zero denominator should not show a result',!readings.invalidVolume.hasRecipe],
+      ['Over-capacity result must not show a recipe',!readings.overCapacity.hasRecipe],
+      ['Over-capacity state names the problem and preserves device choices',readings.overCapacity.blockReason.includes('exceeds')&&readings.overCapacity.deviceChoices===5],
+      ['Unsupported IU has explanatory blocked state',readings.genericIU.blockReason.includes('IU')],
+      ['Negative amount has explanatory blocked state',readings.negative.blockReason.includes('positive')],
+      ['Live negative input retains device selection',liveUpdate.deviceChoicesAfterInvalid===5],
       ['Live editing rejects negative amount',liveUpdate.initialRecipe&&!liveUpdate.negativeRecipe],
       ['Live editing restores valid display without deleting input',liveUpdate.restoredRecipe&&liveUpdate.focusedInputsPreserved],
       ['Live changes reject unqualified IU recipe',!liveUpdate.iuRecipe],
