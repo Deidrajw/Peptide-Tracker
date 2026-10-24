@@ -2184,9 +2184,33 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
     const query=search.value.trim().toLocaleLowerCase(), visible=!!state._symPickerBrowseOpen;
     results.hidden=!visible; results.style.display=visible?"block":"none";
     search.setAttribute("aria-expanded",String(visible));
+    // A symptom can belong to Recently logged, a compound and a general category.
+    // Keep EVERY category and item in browse mode, but show each matching name once
+    // in search results. Prefer its stable general category, then active compound,
+    // then custom/recent, so e.g. Constipation appears under Digestive rather than
+    // three identical selectable rows. This is display-only: never mutate catalog,
+    // selected names, intensities or stored compound associations.
+    const owner=new Map();
+    if(query){
+      const priority=g=>g.key.startsWith("general:")?0:g.key.startsWith("compound:")?1:g.key==="custom"?2:g.key==="recent"?3:4;
+      [...groups].sort((a,b)=>priority(a)-priority(b)).forEach(g=>{
+        g.items.forEach(name=>{
+          const key=name.toLocaleLowerCase();
+          if(key.includes(query)&&!owner.has(key))owner.set(key,g.key);
+        });
+      });
+    }
     let count=0;
     results.innerHTML=groups.map(group=>{
-      const matches=group.items.filter(n=>n.toLocaleLowerCase().includes(query));
+      let matches=group.items.filter(n=>n.toLocaleLowerCase().includes(query));
+      if(query){
+        const seen=new Set();
+        matches=matches.filter(n=>{
+          const key=n.toLocaleLowerCase();
+          if(owner.get(key)!==group.key||seen.has(key))return false;
+          seen.add(key);return true;
+        });
+      }
       if(!matches.length)return ""; count+=matches.length;
       const closed=!query&&((state._symPickerCollapsed||{})[group.key]??true);
       return `<section class="nx-sym-group"><button type="button" class="nx-sym-group-toggle" data-group="${esc(group.key)}" aria-expanded="${!closed}"><span>${esc(group.label)}</span><small>${matches.length}</small></button>${closed?"":matches.map(n=>`<button type="button" role="option" class="nx-sym-add" data-sym="${esc(n)}" aria-selected="${selected.some(x=>x.name===n)}"><span>${esc(n)}</span><span aria-hidden="true">${selected.some(x=>x.name===n)?"✓":"+"}</span></button>`).join("")}</section>`;
