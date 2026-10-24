@@ -98,13 +98,13 @@ const readme = [
   'No live data, imports, sync or stored user records are used.',
   'The complete application is in one HTML file, using isolated fictional data.',
   'This is a design candidate; it does not replace the published Nexus app.'
-].join('\\n');
+].join('\n');
 execFileSync('python3', ['-c', [
   'import zipfile,sys',
   "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
   " z.write(sys.argv[2], 'index.html')",
   " z.writestr('README_OPEN_FIRST.txt', sys.argv[3])"
-].join('\\n'), offlineDemoZip, demoFile, readme]);
+].join('\n'), offlineDemoZip, demoFile, readme]);
 execFileSync('python3', ['-c', [
  'import zipfile,sys',
  "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
