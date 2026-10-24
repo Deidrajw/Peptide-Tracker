@@ -102,3 +102,9 @@
 
 ## v0.9.6 Pages publication verification outcome — 2026-10-23
 - The Pages proof threshold was met: GitHub-hosted remote HTTPS 16-file full application byte parity, not simply an app title or Github PR merge. Run `40060285190`, artifact `12546599640`, `Nexus_PAGES_REMOTE_CHECK_PR.json` has `smoke_only:false`, `verified:true`, 16 matching files on first attempt. Because the QA/ops branches changed ONLY tests/workflows/docs, served app files match the previously merged v0.9.6 main application. Browser/device caches and actual iPhone UI acceptance remain distinct tests.
+
+## iOS Measurements & Preparation — APPROVED visual direction (2026-10-24)
+- **User APPROVED** the two-tool in-chat design concept (Concentration Calculator and Syringe Unit Converter within “Measurements & Preparation”), consistent with Nexus premium iPhone design. Both remain **required features**, not omitted for App Store convenience.
+- **Design acceptance is NOT regulatory approval.** Apple guideline 1.4.2 may cover medication-linked concentration/syringe preparation arithmetic even with non-clinical product framing. Naming must reflect real functionality; independent medical and regulatory review remains mandatory.
+- Use user-entered, clearly labelled inputs, generic dimensional measurements, accurate capacity warnings, no preselected administration regimen and no direct treatment recommendation in generic UI. A separate gate applies to medication-specific preparation instructions. Preserve the original WEB app, inventory, schedules and every localStorage record.
+- **Implementation NOT YET APPROVED AS A WEB RELEASE:** first run synthetic numeric diagnostics and propose repairs for IU-to-mass, 30u/50u scale drift and negative inputs. Clinical review and Apple feasibility need separate evidence. Details in [IOS_APP_STORE_READINESS.md](./IOS_APP_STORE_READINESS.md).
