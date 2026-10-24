@@ -265,3 +265,6 @@
 
 ### Informational empty-state audit / Stash menu pilot — 2026-10-24 (candidate)
 - Branch `release/stash-empty-states-20261024` from main `62fae531` implements placeholder for zero eligible Kit actions menu entries, specifically unopened/unreconstituted blend; existing action buttons and safety guards unchanged. Broader cross-app source audit documented. LIVE/DEMO builds, CI, merge and Cloudflare deployment UNVERIFIED. Data impact none; no migration.
+
+### 2026-10-24 — Connected Goals product specification (design only)
+- `docs/design/CONNECTED_GOALS_SPEC.md` authored on design branch from main `051f8203`; maps approved Goal/Protocol/Check-In/Journal/Insights experience, staged releases, additive schema plan and regression gates. No code, migration, PR merge, app release or deployment implied. Status SPEC DRAFT.
