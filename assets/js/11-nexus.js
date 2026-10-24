@@ -1473,7 +1473,18 @@ function goalDetailModal(goalId) {
   const pm=g.progressModel||{type:"exploratory"};
   const modelLabel={numeric:"Measurable target",subjective:"Personal rating",milestones:"Milestones",exploratory:"Exploratory review"}[pm.type]||"Exploratory review";
   const modelSummary=()=>pm.type==="numeric"
-    ? (Number.isFinite(pm.baseline)&&Number.isFinite(pm.target)?'Starting '+el(pm.baseline)+' '+el(pm.unit)+' · Target '+el(pm.target)+' '+el(pm.unit)+'. Your measurement history will be connected in a later update.':'Add a starting value and target to configure measurable progress.')
+    ? (()=>{if(!Number.isFinite(pm.baseline)||!Number.isFinite(pm.target))return 'Add a starting value and target to configure measurable progress.';
+       const goalUnit=String(pm.unit||"").toLowerCase().trim(),appUnit=String(state.settings?.weightUnit||"lbs").toLowerCase().trim();
+       const comparable=(goalUnit==="lb"||goalUnit==="lbs")&&(appUnit==="lb"||appUnit==="lbs")||(goalUnit==="kg"&&appUnit==="kg");
+       const points=(state.weightLogs||[]).filter(w=>w.date&&Number.isFinite(Number(w.weight))&&Number(w.weight)>0).sort((a,b)=>new Date(b.date)-new Date(a.date));
+       const header='Starting '+el(pm.baseline)+' '+el(pm.unit)+' · Target '+el(pm.target)+' '+el(pm.unit)+'. ';
+       if(pm.source!=="weightLogs")return header+'No automatic measurement source selected.';
+       if(!comparable)return header+'Weight history not compared: goal unit and app weight unit do not match.';
+       if(!points.length)return header+'No weight records available yet.';
+       const latest=points[0],value=Number(latest.weight),range=pm.target-pm.baseline,ratio=range!==0?(value-pm.baseline)/range:null;
+       const completion=ratio===null?'':ratio>=1?' Target reached or exceeded (confirm manually).':' '+Math.max(0,Math.min(100,Math.round(ratio*100)))+'% toward numerical target.';
+       return header+'Latest recorded weight: '+el(value)+' '+el(pm.unit)+' on '+el(fmtDate(latest.date))+'.'+completion+' Based only on recorded measurements; protocol effects are not inferred.';
+     })():'Add a starting value and target to configure measurable progress.' )
     :pm.type==="subjective"?(pm.rating?'Current self-rating: '+el(pm.rating)+' / 5. This is a personal observation, not an objective clinical measure.':'No rating recorded yet.')
     :pm.type==="milestones"?((pm.milestones||[]).length+' milestones planned. Completion tracking is planned for the next update.'):'Exploration and regular reflection; no automatic progress percentage.';
   const content=()=>active==="overview"
@@ -1573,7 +1584,7 @@ function goalModal(existing) {
     const type=m.querySelector("#g-progress-type").value;
     const numberInput=(id,label,val,placeholder)=>'<label for="'+id+'" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">'+label+'</label><input id="'+id+'" class="inp" inputmode="decimal" type="number" step="any" placeholder="'+placeholder+'" value="'+esc(String(val??""))+'" style="width:100%;min-height:44px;margin-bottom:10px">';
     progressSettings.innerHTML=type==="numeric"
-      ? numberInput("g-p-baseline","Starting value",model.baseline,"e.g. 200")+numberInput("g-p-target","Target value",model.target,"e.g. 180")+'<label for="g-p-unit" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Unit or measurement</label><input id="g-p-unit" class="inp" value="'+esc(model.unit||"")+'" placeholder="e.g. lb, cm, hours" style="width:100%;min-height:44px">'
+      ? numberInput("g-p-baseline","Starting value",model.baseline,"e.g. 200")+numberInput("g-p-target","Target value",model.target,"e.g. 180")+'<label for="g-p-unit" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Unit or measurement</label><input id="g-p-unit" class="inp" value="'+esc(model.unit||"")+'" placeholder="e.g. lb, cm, hours" style="width:100%;min-height:44px">'+'<label for="g-p-source" style="display:block;font-size:11px;color:var(--t3);margin:10px 0 5px">Progress source</label><select id="g-p-source" class="inp" style="width:100%;min-height:44px"><option value="">Manual target only (no live value)</option><option value="weightLogs"'+(model.source==="weightLogs"?' selected':'')+'>Existing Nexus weight history</option></select><p class="nx-muted">Weight history can only be used when your goal unit matches the app weight unit.</p>'
       :type==="subjective"
       ? '<label for="g-p-rating" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Current self-rating (1–5)</label><select id="g-p-rating" class="inp" style="width:100%;min-height:44px">'+['','1','2','3','4','5'].map(v=>'<option value="'+v+'"'+(String(model.rating||"")===v?' selected':'')+'>'+(v||'Not rated yet')+'</option>').join('')+'</select><p class="nx-muted">Personal observations only. They do not measure biological function.</p>'
       :type==="milestones"
@@ -1590,7 +1601,7 @@ function goalModal(existing) {
     const val=id=>m.querySelector("#"+id)?.value?.trim()||"";
     const numeric=value=>value!==""&&Number.isFinite(Number(value))?Number(value):null;
     const progressModel=type==="numeric"
-      ? {type,baseline:numeric(val("g-p-baseline")),target:numeric(val("g-p-target")),unit:val("g-p-unit")}
+      ? {type,baseline:numeric(val("g-p-baseline")),target:numeric(val("g-p-target")),unit:val("g-p-unit"),source:val("g-p-source")}
       : type==="subjective"?{type,rating:numeric(val("g-p-rating"))}
       : type==="milestones"?{type,milestones:val("g-p-milestones").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,25)}
       : {type:"exploratory"};
