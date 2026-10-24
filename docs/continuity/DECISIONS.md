@@ -194,3 +194,6 @@
 
 ### 2026-10-24 — Protocol filter interaction (approved Release A part 1)
 - Filter selection is UI-only (`state._protocolStatusFilter`) and must not change actual protocol status, schedules, dose records or goal links. Not started includes draft/planned/ready-active; In progress includes `in_progress`; Paused and Completed each exact, Archived exposed separately for retrieval. Keep original lifecycle groups, management, confirmation and expandable schedule. Empty match provides Show all action; users can always return to all records.
+
+### 2026-10-24 — Protocol status filters A1 merged
+- Approved filter UX shipped to GitHub main in PR #69: All / Not started / In progress / Paused / Completed / Archived; status selection in memory only, no persistent record mutation from filter. Separate archived access retained. NEXT: stable user-goal links must not overload existing protocol goalId template semantics.
