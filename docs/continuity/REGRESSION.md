@@ -243,3 +243,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Icon integration candidate validation matrix — 2026-10-24
 - Uploaded image blobs verified present main: PASS. Index iOS/PNG references and builder packaging implemented: CODED, automated browser test NOT TESTED until CI. Required QA: exact 180/192/512 PNG MIME/size; iPhone Safari icon display and cache refresh; standalone DEMO in-memory isolation and inline icons; LIVE ZIP icons and paths; 320/390 both themes Check-In/Stash/Combo/Plans/vial; Cloudflare commit and asset parity. Physical iPhone NOT TESTED; calculator 40/80 known baseline separate.
+
+### Today disclosure pilot — required regression
+- At 320/390 px and both themes: Coming up opens upcoming rows and See all; Daily tracking opens Check-in/Supplements/Weight/Nutrition and edit/log; This week toggles week details and preserves Full report, week strip and totals; alert Needs Attention retains one clear chevron; no duplicate pseudo chevron, label clipping, or lost accessible control; keyboard open/close; protected Stash/Calendar/Protocol/Combo Dose. Full browser CI pending, physical iPhone NOT TESTED, calculator diagnostic pre-existing failures separate.
