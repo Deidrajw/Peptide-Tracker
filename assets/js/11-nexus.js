@@ -1391,7 +1391,7 @@ function protocolsView() {
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
       <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"}${p.startDate?` · Started ${fmtDate(p.startDate)}`:""}</div>
       <details class="nexus-protocol-details">
-        <summary><span>Schedule &amp; phases</span><span class="nx-proto-chevron" aria-hidden="true">⌄</span></summary>
+        <summary><span>Schedule &amp; phases</span></summary>
         <div class="nexus-protocol-details-body">
           <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
           <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
