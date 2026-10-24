@@ -1,0 +1,26 @@
+name: Nexus Pages deployment integrity
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-live-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Pages equals merged main source
+        run: python3 tools/verify-pages.py --attempts 26 --interval 15
+      - name: Publish exact-file evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-Pages-integrity-${{ github.sha }}
+          path: dist/Nexus_PAGES_SOURCE_PARITY.json
+          if-no-files-found: warn
+          retention-days: 30
