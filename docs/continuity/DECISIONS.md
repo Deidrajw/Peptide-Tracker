@@ -179,3 +179,6 @@
 
 ### 2026-10-24 — Approved disclosure hierarchy principle
 - Chevron reserved for a genuine expand/collapse affordance only when needed; repeated stacked chevrons on Today are distracting. Keep one meaningful indicator for grouped alerts (Needs Attention) while secondary disclosures Coming up, Daily tracking and This week expose labeled View schedule/View tracking/View details controls. Maintain ability to open content, keyboard semantics, touch target and history. Prefer explicit action labels, not unlabeled glyphs; never hide essential status behind disclosure. Pilot first; do not automatically propagate CSS to all pages before review.
+
+### 2026-10-24 — Disclosure icon audit decision
+- User approved precise correction: Daily tracking's explicit View tracking label must NOT also show pseudo-element chevron. Use a scoped selector with enough specificity to beat global `!important` disclosure rules. Design audit policy: explicit action labels use text only, unlabeled accordions one chevron, navigation conventional link/right arrow, contextual management ellipsis. Preserve keyboard/VoiceOver/44px touch access and underlying detail state. Apply remaining app surfaces by targeted follow-up, never blanket-hide all arrows.
