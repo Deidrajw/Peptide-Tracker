@@ -62,3 +62,7 @@
 - Status: targeted continuation coded on branch `release/v0.9.4-checkin-a11y-regression`; pending QA/merge/deployment.
 - Preserve mood integer values 1–5 and accent borders/emoji. Mood option labels require min 11px themed high-contrast ink and 52px target height. Selected control uses `aria-pressed`, updated for each change, without changing data format.
 - Use isolated fictional fixtures to verify create/Edit/no duplicate per date, notes/intensity/compound associations and date-specific supplements. No real user data migration or import.
+
+## v0.9.4-beta — implemented/merged follow-up
+- PR #25, GitHub merge `cab5cd8479fbfb537151c2db070a322ca7d01587`: mood UI accessibility only, with 11px labels, >=52px target heights, selected-state ARIA semantics; no schema/data changes.
+- Synthetic browser tests protect Check-In single record per date, edited mood/notes, intensity, compound links and supplement history. Browser PASS is separate from actual user iPhone testing.
