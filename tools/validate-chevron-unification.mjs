@@ -22,8 +22,26 @@ try {
     assert(info.height>=44,"small tap target "+sel);
     return el;
   };
-  await inspect(".nexus-today-details>summary");
-  await inspect(".nexus-lookahead>summary").catch(e=>{if(!String(e).includes("missing"))throw e;});
+  // Today deliberately uses a descriptive View tracking / View schedule label;
+  // these controls MUST NOT also have a generated chevron.
+  const inspectTextDisclosure=async(sel,label)=>{
+    const el=pg.locator(sel).first();
+    assert(await el.count()>0,"missing text disclosure "+sel);
+    const info=await el.evaluate(e=>({
+      after:getComputedStyle(e,"::after").content,
+      display:getComputedStyle(e,"::after").display,
+      text:e.textContent,
+      height:e.getBoundingClientRect().height
+    }));
+    assert(info.display==="none" || info.after==="none","redundant Today chevron "+sel);
+    assert(info.text.includes(label),"missing explicit label "+sel);
+    assert(info.height>=44,"small text disclosure target "+sel);
+  };
+  await inspectTextDisclosure(".nexus-today-details>summary","View tracking");
+  if(await pg.locator(".nexus-lookahead>summary").count())
+    await inspectTextDisclosure(".nexus-lookahead>summary","View schedule");
+  if(await pg.locator(".nexus-week-card .nexus-quiet-toggle").count())
+    await inspectTextDisclosure(".nexus-week-card .nexus-quiet-toggle","View details");
   const daily=pg.locator(".nexus-today-details").first();
   await daily.locator("summary").click();
   assert(await daily.evaluate(x=>x.open),"Today disclosure failed");
