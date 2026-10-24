@@ -1455,7 +1455,7 @@ function plansView() {
   const protoStatus={idea:["var(--t4)","Idea"],researching:["#F9C87D","Researching"],planned:["#8AB4FF","Planned"],ready:["#7DF9C0","Ready"]};
   const shopStatus={needed:["#F9C87D","Needed"],ordered:["#8AB4FF","Ordered"],received:["#7DF9C0","Received"]};
   const shopCat={compound:"Compound",supply:"Supply",equipment:"Equipment"};
-  const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:44px;height:44px;min-width:44px;border-radius:11px;flex:0 0 44px">⋯</button>`;
+  const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:44px;height:44px;min-width:44px;border-radius:11px;flex:0 0 44px"><svg class="nx-plan-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>`;
   let content="";
 
   if(sub==="goals"){
@@ -1474,7 +1474,7 @@ function plansView() {
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
     ${research.map(r=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:12px;padding:12px 14px;margin-bottom:8px">
       <div class="nx-plan-head"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${esc(r.compound)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${statusPill(r.status||"researching",resStatus)}${manageBtn("research",r.id)}</div>
-      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <span aria-hidden="true">→</span></button></div>${r.reason?`<div class="nx-muted">${esc(r.reason)}</div>`:""}
+      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>${r.reason?`<div class="nx-muted">${esc(r.reason)}</div>`:""}
       ${r.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">${esc(r.notes)}</div>`:""}
     </div>`).join("")}
     <button id="add-research" class="btn-primary" style="width:100%;margin-top:10px;background:#F9C87D;color:#000">＋ Add to Research Queue</button>`;

@@ -1689,3 +1689,9 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-plan-intel{min-height:44px;padding:9px 12px;display:inline-flex;align-items:center;gap:7px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer}
 .nx-plan-intel:focus-visible,.nx-plan-head .manage-plan-btn:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
 @media(max-width:360px){.nx-plan-head{gap:6px}.nx-plan-head .status-badge{font-size:10px}}
+
+/* v0.9.15 candidate: Plans icons use coherent, non-text SVG geometry. */
+.nx-plan-action-icon{width:20px;height:20px;display:block;flex:none;pointer-events:none}
+.nx-plan-link-icon{width:16px;height:16px;display:block;flex:none;pointer-events:none}
+.nx-plan-head .manage-plan-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+.nx-plan-intel .nx-plan-link-icon{margin-left:2px}

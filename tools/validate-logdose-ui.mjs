@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
-const VERSION='v0.9.14-beta';
+const VERSION='v0.9.15-beta';
 const demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');
 const results=[];
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
