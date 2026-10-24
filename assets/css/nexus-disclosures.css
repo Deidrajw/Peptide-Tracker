@@ -53,7 +53,7 @@ body :is(#app,.modal) :is(.nx-tag-sym-row,.nx-notes-toggle,.tacc,.symcat-toggle,
 body :is(#app,.modal) :is(.symcat-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-sym-browse-toggle,#supp-toggle,#supp-selected-toggle,.nx-add-log-btn)>span[aria-hidden="true"]{display:none!important}
 /* Expanded Today/Protocol cards already have a purpose-built right-hand slot.
  * Do not add a second pseudo chevron or a third grid column. */
-body #app :is(.nexus-today-details,.nexus-quiet-details,.nexus-lookahead,.nexus-protocol-details)>summary::after{content:none!important;display:none!important}
+/* Native disclosure indicators use the shared summary pseudo-element. */
 body #app :is(.nexus-today-details-chevron,.nexus-quiet-chevron,.nx-proto-chevron,.nx-compound-chevron,.compound-collapse-btn)::after{
   content:""!important; box-sizing:border-box!important;
   display:block!important;width:var(--nx-disclosure-size)!important;height:var(--nx-disclosure-size)!important;
