@@ -191,3 +191,6 @@
 
 ### 2026-10-24 — Connected Goals approved product direction
 - Goals are unified outcome-flexible progress hubs, **not** a duplicate logging system; support numeric, subjective, milestone and exploratory progress. Link to canonical Check-In/Journal/Protocol/Insights histories only via typed references with optional user control and visible provenance, never causal claims. Existing Goal/Protocol data preserved. Gentle optional in-app goal review prompt, not automatic blocking modal or promised native push; no auto-completion. Protocol user filters All/Not started/In progress/Paused/Completed group stored statuses without mutation. See `docs/design/CONNECTED_GOALS_SPEC.md` for UX, data/migration hazards and release phases. SPEC APPROVED DIRECTION; implementation NOT STARTED.
+
+### 2026-10-24 — Protocol filter interaction (approved Release A part 1)
+- Filter selection is UI-only (`state._protocolStatusFilter`) and must not change actual protocol status, schedules, dose records or goal links. Not started includes draft/planned/ready-active; In progress includes `in_progress`; Paused and Completed each exact, Archived exposed separately for retrieval. Keep original lifecycle groups, management, confirmation and expandable schedule. Empty match provides Show all action; users can always return to all records.

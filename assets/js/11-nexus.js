@@ -1339,10 +1339,23 @@ function protocolsView() {
   };
   const hasDoses=(p)=>(p.compounds||[]).some(c=>{const pd=state.peptides[c.name]||state.customPeptides[c.name];return pd?.doses?.length>0;});
   protos.forEach(p=>{if(p.status==="active"&&hasDoses(p))p.status="in_progress";});
-  const live=protos.filter(p=>["active","in_progress","paused"].includes(p.status));
-  const planned=protos.filter(p=>p.status==="planned");
+  const filter=state._protocolStatusFilter||"all";
+  const filterGroups={
+    all:()=>true,
+    not_started:p=>["draft","planned","active"].includes(p.status),
+    in_progress:p=>p.status==="in_progress",
+    paused:p=>p.status==="paused",
+    completed:p=>p.status==="completed",
+    archived:p=>p.status==="archived"
+  };
+  const matchesFilter=filterGroups[filter]||filterGroups.all;
+  const visibleProtos=protos.filter(matchesFilter);
+  const filters=[["all","All"],["not_started","Not started"],["in_progress","In progress"],["paused","Paused"],["completed","Completed"],["archived","Archived"]];
+  const filterBar='<div class="nx-protocol-filter-row" role="group" aria-label="Filter protocols by status" style="display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px;scrollbar-width:none">'+filters.map(([key,label])=>'<button type="button" class="nx-protocol-filter" data-status="'+key+'" aria-pressed="'+(filter===key)+'" style="min-height:44px;padding:9px 12px;white-space:nowrap;flex:0 0 auto;border-radius:999px;border:1px solid '+(filter===key?'#A78BFA':'var(--border)')+';background:'+(filter===key?'#A78BFA22':'var(--surface-2)')+';color:'+(filter===key?'#A78BFA':'var(--t3)')+';font-size:12px;font-weight:650">'+label+'</button>').join('')+'</div>';
+  const live=visibleProtos.filter(p=>["active","in_progress","paused"].includes(p.status));
+  const planned=visibleProtos.filter(p=>p.status==="planned");
   const drafts=protos.filter(p=>p.status==="draft");
-  const done=protos.filter(p=>["completed","archived"].includes(p.status));
+  const done=visibleProtos.filter(p=>["completed","archived"].includes(p.status));
   const miniGantt=(p)=>{const tw=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+(ph.durationWeeks||4),0))||8));return(p.compounds||[]).map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:tw}]).map((ph,pi)=>`<div class="phase-bar-seg" data-proto="${p.id}" data-comp="${esc(c.name)}" data-phase="${pi}" style="flex:${ph.durationWeeks||4};background:${ph.type==="dose"?"#A78BFA":"#333"};height:6px;border-radius:2px;cursor:pointer"></div>`).join("");return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:9px;color:var(--t5);width:55px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:1px">${bars}</div></div>`;}).join("");};
   const compoundPhaseStatus = getProtocolPhaseInfo; // kept as an alias — same calls below, same function now
   const to12h = (hhmm) => {
@@ -1407,7 +1420,7 @@ function protocolsView() {
   };
 
   const section=(title,color,cards)=>cards.length?`<div class="nexus-protocol-section-label" style="color:${color}">${title} <span style="opacity:.7">${cards.length}</span></div>${cards.map(protoCard).join("")}`:"";
-  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${!live.length&&!planned.length&&!drafts.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
+  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${filterBar}${!visibleProtos.length&&protos.length?`<div class="nx-protocol-empty-filter" role="status" style="padding:20px 10px;text-align:center;color:var(--t4);font-size:12px">No protocols match this status.<br><button type="button" id="nx-protocol-reset-filter" style="min-height:44px;margin-top:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">Show all protocols</button></div>`:""}${!live.length&&!planned.length&&!drafts.length&&!done.length&&!protos.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
 
 }
 

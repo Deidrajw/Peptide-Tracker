@@ -261,3 +261,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Connected Goals Release A planned checks — 2026-10-24
 - Protocol All/Not started(Draft/Planned/Ready)/In progress/Paused/Completed filter counts, empty filter message/reset, existing status/phase/activation/ellipsis/paused schedule unchanged. Saved Goal edit/rename/delete and protocols' legacy goalId template semantics preserved before explicit relinking. Check-In one-date and symptom association, Journal, Log Dose source/vial math, Stash, Calendar Month, Supplements and backups protected. Source+FULL DEMO 320/390 both themes, keyboard and VoiceOver. ALL NOT TESTED: specification only. Separate calculator numeric safety reviews remain blocked.
+
+### Release A Protocol filter required QA (candidate)
+- Not started shows draft/planned/active (ready) but does not rewrite their status; In progress/Paused/Completed/Archived exact; All restores every record; active first log, expand phase details, manage ellipsis, create/edit/delete, pause/resume, reminders and schedule no regressions. No-match state with Show all functional. Verify per theme and 320/390 on standalone full DEMO and live-source browser. Check-In single/date, Stash vial math, Log Dose drafts/allocation, Calendar, Plans links and calculator PR #67 separate. No test Pass claimed yet; real iPhone NOT TESTED.

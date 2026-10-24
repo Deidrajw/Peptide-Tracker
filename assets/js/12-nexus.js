@@ -303,6 +303,12 @@ function wireBody() {
       else if(type==="protocol"&&name){ state._compoundIntel=name; state._intelReturn={tab, _aminoSub:state._aminoSub, _learnSub:state._learnSub, _discoverOpen:state._discoverOpen}; render(); window.scrollTo(0,0); }
     };
   });
+  document.querySelectorAll(".nx-protocol-filter").forEach(btn=>btn.onclick=()=>{
+    state._protocolStatusFilter=btn.dataset.status;
+    renderBody();
+  });
+  const resetProtocolFilter=document.querySelector("#nx-protocol-reset-filter");
+  if(resetProtocolFilter) resetProtocolFilter.onclick=()=>{state._protocolStatusFilter="all";renderBody();};
   const np=$("#new-protocol"); if(np) np.onclick=()=>protocolBuilderModal();
   const esp=$("#empty-setup-protocol"); if(esp) esp.onclick=()=>{tab="protocols";render();window.scrollTo(0,0);};
   document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=()=>{
