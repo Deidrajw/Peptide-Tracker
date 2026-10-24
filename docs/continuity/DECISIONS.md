@@ -185,3 +185,6 @@
 
 ### 2026-10-24 — Consistent kit/blend Stash headers (approved)
 - Standard compound kits and blends show status plus a 44px contextual ellipsis in the same top-right header position. No redundant ellipsis in ordinary kit action row. Opening/Preparing/Log Blend Dose and kit management retain original handlers. Compact sort label `Attention` with full option preserved in menu, chevron assigned reserved width.
+
+### 2026-10-24 — Informational empty-state design principle (approved)
+- Empty areas must not look accidentally broken. Always explain what is absent and why, distinguish never-created from filtered/no-match/temporarily-unavailable/all-done/error and, where an existing safe path exists, provide contextual next-step guidance. Never invent actionable controls, imply sealed stock is unavailable, or label a blend as reconstituted when it isn't. Preserve non-empty layouts, vial/dose/kit state and confirmation flows. Avoid extra nested borders and dense illustration; concise title + one sentence within existing section. First implementation: empty Kit actions VIAL & INVENTORY group.
