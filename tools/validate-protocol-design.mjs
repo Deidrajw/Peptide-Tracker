@@ -82,6 +82,7 @@ try{
     await box.evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{}))));
     const sheetBounds=await box.boundingBox();
     check(sheetBounds && sheetBounds.y > 180 && sheetBounds.y+sheetBounds.height <= 843,'Sheet not bottom-docked within viewport: '+JSON.stringify(sheetBounds));
+    await page.screenshot({path:'dist/proto-open-sheet-'+kind+'-'+theme+'-'+width+'.png',fullPage:false});
     check((await page.evaluate(()=>document.body.style.overflow))==='hidden','Body scroll not locked');
     const hdr=box.locator('.nx-compound-sheet-heading strong');
     check((await hdr.textContent()).trim()==='Retatrutide','Sheet title not compound-specific');
