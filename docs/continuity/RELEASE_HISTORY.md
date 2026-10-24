@@ -277,3 +277,6 @@
 
 ### Connected Goals A3 detail sheet — candidate 2026-10-24
 - On branch `release/connected-goals-a3-detail` from verified main `d25a5a36`, add read-only Goal Details Overview, Connections, Activity accessible through active and other goal cards. No data migration, no calculation changes, no deployment. CI and full release artifacts PENDING.
+
+### 2026-10-24 — A4 flexible progress modes candidate
+- Based on A3 main `223fea3c`, A4 branch adds progressModel editor, truthful Goal Overview and opt-in weight-history comparison, no record duplication or migration. Added browser matrix functional assertions; CI/merge/deployment unverified pending PR.
