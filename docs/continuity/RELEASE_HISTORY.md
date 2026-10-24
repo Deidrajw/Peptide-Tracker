@@ -177,3 +177,10 @@
 
 ### v0.9.7 source — measurement safety candidate (UNMERGED, TESTS PENDING)
 - Candidate branch `safety/v098-measurement-calculator-candidate` from main `2da1001a`. Addresses diagnostic classes of U-100 size-related mislabel, arbitrary IU mass conversion and negative inputs in both initial and live-updating recon calculator paths. No published app release, version bump, data migration or user record mutations. No clinical or App Review certification. All mandatory release deliverables remain INCOMPLETE pending approved production implementation.
+
+
+### PR #40 measurement correction and blocked-state UX — REVIEW ONLY, NOT RELEASED (2026-10-24)
+- Baseline production: `main 2da1001a43812819266066159cb7f2d73746e3c1`, LIVE v0.9.7-beta publicly verified as source-identical 16/16 on run `40062278673`; branch `safety/v098-measurement-calculator-candidate` intentionally UNMERGED.
+- Initial renderer consolidation and stricter numerical guards passed 112/112 *synthetic* assertions on run `40064171083`; corresponding mobile run `40064171169` passed. Not clinically approved; baseline LIVE math diagnostic retains 40 failures of 80 cases.
+- Follow-up: 44px measurement-device controls always visible after blocked results, explicit invalid/IU/over-capacity status instead of empty panel, added 40 more synthetic checks (target **152**). New branch-head CI `40064629152` PENDING; latest mobile `40064629139` PASS at documentation time. Affected candidate screen: Dose Calculator within Measurements; other screens unchanged. No migrations or real storage writes.
+- Candidate full-app standalone isolated DEMO and root-index LIVE ZIP builder run on CI; final artifacts INCOMPLETE until latest test/parity evidence. A fictional interactive in-chat error-state concept exists. GitHub PR #40 OPEN, merge NOT AUTHORIZED, no Pages publication for candidate, real iPhone NOT TESTED, independent medical and platform reviews NOT COMPLETED.

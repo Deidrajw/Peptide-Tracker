@@ -121,3 +121,8 @@
 
 ## 2026-10-24 — one calculator renderer and strict numeric gating (CANDIDATE, NOT APPROVED FOR DEPLOYMENT)
 - Source audit found `reconCalcView` and separate live `wireReconCalc.updateResult` formulas could disagree. Candidate centralizes one result renderer. Positive, finite vial mass, user-entered final volume and requested numerical amount required; no universal IU→mg equivalence; U-100 units reflect volume rather than nominal syringe capacity and over-capacity is not rendered as a usable recipe. This is arithmetic consistency exploration only, not injection instruction validation. Existing two required calculators remain product requirements. No App Store §1.4.2 approval and no production shipping authorization; preserve existing user data and protected Log Dose flows.
+
+
+### 2026-10-24 — Blocked calculation UX (REVIEW CANDIDATE, NOT APPROVED)
+- Proposal on unmerged PR #40: display a plain-language blocked status for missing/negative input, unsupported unqualified IU and over-capacity amount; keep 44px measurement-device options visible *outside* the conditional result so users can recover without Reset. No automatic unit conversion may treat arbitrary IU as mass. A fictional in-chat interaction previews this. This is **not** deployment consent, mathematical certification or medical-use approval.
+- Preserve all five main tabs, Check-In/Log Dose, historical dose values and the production localStorage key. Do not reclassify a drug dosage tool as App Store-compliant merely by changing copy or design. Keep the requested two measurements tools in the future design only with safety clearance.
