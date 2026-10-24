@@ -182,3 +182,6 @@
 
 ### 2026-10-24 — Disclosure icon audit decision
 - User approved precise correction: Daily tracking's explicit View tracking label must NOT also show pseudo-element chevron. Use a scoped selector with enough specificity to beat global `!important` disclosure rules. Design audit policy: explicit action labels use text only, unlabeled accordions one chevron, navigation conventional link/right arrow, contextual management ellipsis. Preserve keyboard/VoiceOver/44px touch access and underlying detail state. Apply remaining app surfaces by targeted follow-up, never blanket-hide all arrows.
+
+### 2026-10-24 — Consistent kit/blend Stash headers (approved)
+- Standard compound kits and blends show status plus a 44px contextual ellipsis in the same top-right header position. No redundant ellipsis in ordinary kit action row. Opening/Preparing/Log Blend Dose and kit management retain original handlers. Compact sort label `Attention` with full option preserved in menu, chevron assigned reserved width.
