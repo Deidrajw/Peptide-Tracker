@@ -200,3 +200,6 @@
 
 ### 2026-10-24 — Goal detail A3 minimal first implementation
 - Show Overview / Connections / Activity as read-only sheets sourced from existing `plans.goals` and `protocols[].linkedGoalId`. Do not invent progress percentages, journal histories or physiological insights. Show an informational empty Activity state until source-aware linking exists. Existing Goal edit, delete and source records unchanged. Candidate only until CI and physical validation.
+
+### 2026-10-24 — Four flexible Goal progress modes staged for A4
+- Default old saved goals to `exploratory` at rendering/edit unless explicitly configured, without replacing free-text success `metrics`. Numeric supports baseline/target/unit but no computed progress until a real measurement series is linked. Subjective is 1–5 personal rating and cannot imply clinical effectiveness; milestones are user-entered named steps; exploratory uses reflections without fabricated percent. Existing goal associations, protocol histories and storage schema are left alone. Candidate, QA pending.
