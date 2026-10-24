@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {chromium} from 'playwright';
 
-const demo=path.resolve('dist/Nexus_v0.9.14-beta_FULL_DEMO.html');
+const demo=path.resolve('dist/Nexus_v0.9.15-beta_FULL_DEMO.html');
 const results=[];
 if(!fs.existsSync(demo))throw Error('Missing full app DEMO artifact');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
@@ -125,5 +125,5 @@ try{
   }
  }
 }finally{await browser.close()}
-fs.writeFileSync('dist/Nexus_v0.9.14-beta_PROTOCOL_DESIGN_QA.json',JSON.stringify(results,null,2));
+fs.writeFileSync('dist/Nexus_v0.9.15-beta_PROTOCOL_DESIGN_QA.json',JSON.stringify(results,null,2));
 console.log('Protocol design candidate passed '+results.length+' LIVE/DEMO light/dark 320/390 suites');
