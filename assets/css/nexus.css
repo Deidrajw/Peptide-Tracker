@@ -1695,3 +1695,24 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-seri
 .nx-plan-link-icon{width:16px;height:16px;display:block;flex:none;pointer-events:none}
 .nx-plan-head .manage-plan-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
 .nx-plan-intel .nx-plan-link-icon{margin-left:2px}
+
+/* Today disclosure hierarchy: quiet details use descriptive text, not repeated V symbols. */
+#app .nx-today-text-disclosure > summary::after,
+#app .nx-today-text-disclosure .nexus-quiet-toggle::after,
+#app .nx-today-text-disclosure .nexus-quiet-chevron {display:none!important;content:none!important}
+#app .nx-today-text-disclosure > summary,
+#app .nx-today-text-disclosure .nexus-quiet-toggle{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-width:0}
+#app .nx-today-text-disclosure > summary > span:first-child,
+#app .nx-today-text-disclosure .nexus-quiet-copy{flex:1 1 auto!important;min-width:0!important}
+#app .nx-today-disclosure-label{flex:0 0 auto;font-size:11px;font-weight:650;color:var(--t3);line-height:1.25;white-space:nowrap;text-align:right}
+#app .nx-today-text-disclosure[open] > summary .nx-today-disclosure-label{color:var(--t2)}
+@media(max-width:360px){#app .nx-today-disclosure-label{font-size:10px}}
+
+/* Explicit text disclosure wins over legacy shared chevrons: Today only. */
+body #app details.nexus-today-details.nx-today-text-disclosure > summary::after,
+body #app details.nexus-lookahead.nx-today-text-disclosure > summary::after {
+  content:none!important;display:none!important;border:0!important;
+}
+body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
+  content:none!important;display:none!important;border:0!important;
+}
