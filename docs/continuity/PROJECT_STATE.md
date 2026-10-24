@@ -113,3 +113,11 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Mobile form regression: PASS from prior app-identical branch revision https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40037868319. Latest rerun 40037977076 was still IN PROGRESS in package installation when merged; only code change between previous mobile pass and merged PR was browser QA harness. Do not claim latest mobile run passed without checking.
 - GitHub Pages deployment for merge SHA: NOT VERIFIED (connector offers PR-scoped workflow lookup only; live endpoint externally inaccessible in this session). Do not call this release fully deployed. Real physical iPhone tests: NOT TESTED. Broader WCAG/functional regression: INCOMPLETE.
 - **ONE NEXT ACTION:** Verify GitHub Pages publication and correct merge SHA for v0.9.3-beta through Actions, then test on real iPhone (both themes) and continue deeper contrast/a11y and saved-record regression without redesigning grouped Symptoms.
+
+## v0.9.4-beta — active Check-In accessibility and data-protection verification (2026-10-23)
+- Current verified baseline main `56f2f4b7eda2fad201c801cafad72e19229afc5e`. Prior v0.9.3 user-visible changes merged as PR #23 at `f2fef99de4ea8c7cf28b9ed677054ca712bb77b4`. Older headings above are historical, not latest state.
+- Branch `release/v0.9.4-checkin-a11y-regression`; scope: Check-In mood label size and contrast, 52px targets, `aria-pressed` and `aria-label` selection state. Same 1–5 mood values, colours and persisted records.
+- New `tools/validate-checkin.mjs` intended to test fictional Check-In creation, edit preserving symptom intensity and Retatrutide associations, supplement date-specific selection, and duplicate date protection for both LIVE served checkout and fully isolated full-app DEMO at 320/390px and light/dark.
+- GitHub Pages v0.9.3 source deployment UNVERIFIED because live endpoint and Pages API unavailable from this runtime; GitHub merge and source code are verified, Pages not.
+- Release artifacts, branch PR, CI results and physical iPhone testing: **INCOMPLETE/NOT TESTED** until independently verified.
+- **One next action:** Run new branch regression CI, fix failures without changing stored-state semantics, review LIVE ZIP/full-app isolated DEMO, merge on passed checks and recheck Pages.
