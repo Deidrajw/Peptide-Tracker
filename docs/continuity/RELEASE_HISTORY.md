@@ -145,3 +145,7 @@
 - No visible app release/version change: QA-only PR branch `qa/v096-pages-inventory-assurance` from `25ca6e7`, preserves the complete v0.9.6 app files and storage.
 - Added 16-file Pages deployment byte-parity verification workflow (run after main push), paired with local verifier self-test; added 8 × 6 synthetic inventory core assertions across LIVE/isolated DEMO, 320px/390px, light/dark. GitHub CI status, PR merge, Pages attestation, physical iPhone outcome PENDING. Full app DEMO + complete LIVE ZIP builder unaffected and required for QA artifact.
 - No data migrations and no production writes. App Store clinical-content and dosage calculator risk remain unresolved.
+
+### v0.9.6-beta QA assurance merged; Pages remote check pending (2026-10-23)
+- QA-only PR #33 merged to `main` at `89d5066251eaf49462e3128a17cf62fb3bc4bf32`. App source remains v0.9.6-beta, no UI, calculator, storage, schema or migration changes. Release/build/48 vial safety assertions PASS `40060006633`; mobile form PASS `40060006632`. Artifact `12547102223` contains complete isolated full-app DEMO, offline ZIP, full LIVE ZIP and JSON QA. Local Pages verifier smoke PASS only; remote Pages deployment unverified at merge.
+- Follow-up PR-observable live Pages checker coded in `ops/v096-pages-evidence-handoff` to record remote HTTP/16-file hash evidence; result pending. Physical iPhone and App Store medical review incomplete.
