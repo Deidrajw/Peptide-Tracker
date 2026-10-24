@@ -1455,7 +1455,7 @@ function plansView() {
   const protoStatus={idea:["var(--t4)","Idea"],researching:["#F9C87D","Researching"],planned:["#8AB4FF","Planned"],ready:["#7DF9C0","Ready"]};
   const shopStatus={needed:["#F9C87D","Needed"],ordered:["#8AB4FF","Ordered"],received:["#7DF9C0","Received"]};
   const shopCat={compound:"Compound",supply:"Supply",equipment:"Equipment"};
-  const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:30px;height:30px;min-width:30px;border-radius:8px">⋯</button>`;
+  const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:44px;height:44px;min-width:44px;border-radius:11px;flex:0 0 44px">⋯</button>`;
   let content="";
 
   if(sub==="goals"){
@@ -1463,7 +1463,7 @@ function plansView() {
     const other=goals.filter(g=>g.status&&g.status!=="active");
     content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
     ${active.map(g=>`<div class="nx-plan-item">
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${statusPill(g.status||"active",goalStatus)}${manageBtn("goal",g.id)}</div>
       ${(g.compounds?.length||g.metrics||g.notes)?`<details><summary>View details</summary>${g.compounds?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${g.compounds.map(c=>`<span class="compound-intel-btn pill" data-name="${esc(c)}" style="background:#A78BFA18;color:#A78BFA;border-color:#A78BFA33;cursor:pointer">${esc(c)}</span>`).join("")}</div>`:""}
       ${g.metrics?`<div class="nx-muted">${esc(g.metrics)}</div>`:""}
       ${g.notes?`<div class="nx-muted" style="margin-top:6px">${esc(g.notes)}</div>`:""}</details>`:""}
@@ -1473,8 +1473,8 @@ function plansView() {
   } else if(sub==="research"){
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
     ${research.map(r=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:12px;padding:12px 14px;margin-bottom:8px">
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${esc(r.compound)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${statusPill(r.status||"researching",resStatus)}<button class="compound-intel-btn" data-name="${esc(r.compound)}" style="font-size:10px;color:#A78BFA;border:1px solid #A78BFA33;border-radius:5px;padding:2px 7px;background:#A78BFA10">Intel ›</button>${manageBtn("research",r.id)}</div>
-      ${r.reason?`<div class="nx-muted">${esc(r.reason)}</div>`:""}
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${esc(r.compound)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${statusPill(r.status||"researching",resStatus)}${manageBtn("research",r.id)}</div>
+      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <span aria-hidden="true">→</span></button></div>${r.reason?`<div class="nx-muted">${esc(r.reason)}</div>`:""}
       ${r.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">${esc(r.notes)}</div>`:""}
     </div>`).join("")}
     <button id="add-research" class="btn-primary" style="width:100%;margin-top:10px;background:#F9C87D;color:#000">＋ Add to Research Queue</button>`;
