@@ -1606,7 +1606,7 @@ function goalModal(existing) {
       : type==="milestones"?{type,milestones:val("g-p-milestones").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,25)}
       : {type:"exploratory"};
     if(type==="numeric"&&((val("g-p-baseline")&&progressModel.baseline===null)||(val("g-p-target")&&progressModel.target===null))){return;}
-    const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value,progressModel};
+    const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value,progressModel:{...(g.progressModel||{}),...progressModel}};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.goals.findIndex(x=>x.id===g.id);idx>=0?state.plans.goals[idx]=updated:state.plans.goals.push(updated);
     saveState();closeModal();renderBody();
