@@ -144,3 +144,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **Parallel release preservation:** PR #27 (v0.9.5 unique Symptoms) merged at 4addc72b while iOS audit was in progress; separate planning branch `planning/ios-app-store-readiness-20261023` modifies documentation only, not production web/app code.
 - **iOS status:** AUDIT DOCUMENTED, not coded, clinically reviewed, tested, merged, submitted or approved; signed iOS builds and TestFlight NOT TESTED. Existing WEB next release action remains PR #27 QA/merge/deployment verification. Pages status for v0.9.4 continues UNVERIFIED, no deployment claim.
 - **One next iOS action:** Clinician/regulatory review of live calculator outputs and App Store §1.4.2 admissibility before creating native code or paying membership.
+
+### iOS audit PR handoff / merge blocker (2026-10-23)
+- Audit branch re-based onto merged v0.9.5 main SHA `4addc72b8fdbb9906170d116af3f4a8183687e11`; independent source blobs `03`, `08`, `10`, `11` unchanged in that release.
+- Documentation-only PR #28: https://github.com/Deidrajw/Peptide-Tracker/pull/28 — **OPEN, NOT MERGED**. GitHub rejected merge attempt with HTTP 405 `Pull Request is not mergeable`; underlying reason and required checks unresolved. No app code or production deployment was modified by this audit.
+- **One concrete next GitHub action:** Inspect PR #28 mergeability/branch-protection checks, resolve the cause, and merge the documentation only after verification; reverify main and preserve v0.9.5 application code.
