@@ -197,3 +197,6 @@
 
 ### 2026-10-24 — Stable optional personal Goal ↔ Protocol association
 - Preserve `protocol.goalId` as predefined purpose/template ID. Add separately named `protocol.linkedGoalId` for saved `state.plans.goals[].id`. Resolve goal names at render time so renaming updates label. If goal deleted/missing, do not link by name or silently relink; show 'Linked goal unavailable · edit to relink'. Link selection on Protocol Builder Review is optional, including None. Linking does not imply compound effectiveness, change dose/history, or create a goal record. Release A2 candidate only.
+
+### 2026-10-24 — Goal detail A3 minimal first implementation
+- Show Overview / Connections / Activity as read-only sheets sourced from existing `plans.goals` and `protocols[].linkedGoalId`. Do not invent progress percentages, journal histories or physiological insights. Show an informational empty Activity state until source-aware linking exists. Existing Goal edit, delete and source records unchanged. Candidate only until CI and physical validation.
