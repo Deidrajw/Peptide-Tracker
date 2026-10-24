@@ -176,3 +176,6 @@
 
 ### 2026-10-24 — Icon integration source verified
 - Reuse user's exact approved images already uploaded to `main` rather than generate a substitute. iOS apple-touch-icon uses 180 PNG, browser/PWA-ready 192 and 512 PNG references; 1024 source kept for distribution. Full release source ZIP must contain icons, standalone DEMO embeds them. No record or calculator modification.
+
+### 2026-10-24 — Approved disclosure hierarchy principle
+- Chevron reserved for a genuine expand/collapse affordance only when needed; repeated stacked chevrons on Today are distracting. Keep one meaningful indicator for grouped alerts (Needs Attention) while secondary disclosures Coming up, Daily tracking and This week expose labeled View schedule/View tracking/View details controls. Maintain ability to open content, keyboard semantics, touch target and history. Prefer explicit action labels, not unlabeled glyphs; never hide essential status behind disclosure. Pilot first; do not automatically propagate CSS to all pages before review.
