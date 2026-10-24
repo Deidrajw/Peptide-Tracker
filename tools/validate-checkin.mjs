@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {chromium} from 'playwright';
 
-const demo=path.resolve('dist/Nexus_v0.9.13-beta_FULL_DEMO.html');
+const demo=path.resolve('dist/Nexus_v0.9.14-beta_FULL_DEMO.html');
 if(!fs.existsSync(demo))throw Error('Build the source-aligned full DEMO first');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const results=[];
@@ -104,5 +104,5 @@ try{
     }
   }
 }finally{await browser.close()}
-fs.writeFileSync('dist/Nexus_v0.9.13-beta_CHECKIN_REGRESSION.json',JSON.stringify(results,null,2));
+fs.writeFileSync('dist/Nexus_v0.9.14-beta_CHECKIN_REGRESSION.json',JSON.stringify(results,null,2));
 console.log('Check-In complete data-integrity tests passed: '+results.length+' isolated LIVE/DEMO viewport/theme combinations');
