@@ -126,3 +126,7 @@
 ### v0.9.6-beta design preview packaging follow-up — CODED, QA PENDING (2026-10-23)
 - User reported browser opening problem with direct standalone full-app DEMO attachment. Existing 1,794,663-byte standalone complete HTML matched previously QA-passed GitHub release artifact. Added a second deliverable: extractable offline ZIP containing the same exact full-app isolated HTML as root `index.html` and a README. No app logic or production schema changes; PR #31 unmerged, deployment incomplete.
 - Browser and build/archive parity CI rerun pending. Preview does not require a user to rename or overwrite live `index.html`: extracted file is separate and should not be uploaded over the live app.
+
+### v0.9.6 design candidate — offline DEMO ZIP packaging verified (2026-10-23)
+- Still unmerged PR #31; no production changes. Source builder now emits both standalone full-app HTML and a separate ZIP containing **the exact same HTML** as root `index.html` with opening instructions, in addition to the complete independent LIVE ZIP. Designed for users whose chat attachment viewer cannot execute JavaScript.
+- Verified GitHub Actions run `40057610410` PASS (artifact `12545973188`, exact-byte ZIP parity, full UI + Check-In matrix), mobile forms `40057610653` PASS. User local browser opening is NOT TESTED; this is a reviewed candidate delivery artifact, not a deployed public preview.
