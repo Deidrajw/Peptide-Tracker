@@ -1470,8 +1470,25 @@ function goalDetailModal(goalId) {
   const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
   const el=(v)=>esc(String(v||""));
   let active="overview";
+  const pm=g.progressModel||{type:"exploratory"};
+  const modelLabel={numeric:"Measurable target",subjective:"Personal rating",milestones:"Milestones",exploratory:"Exploratory review"}[pm.type]||"Exploratory review";
+  const modelSummary=()=>pm.type==="numeric"
+    ? (()=>{if(!Number.isFinite(pm.baseline)||!Number.isFinite(pm.target))return 'Add a starting value and target to configure measurable progress.';
+       const goalUnit=String(pm.unit||"").toLowerCase().trim(),appUnit=String(state.settings?.weightUnit||"lbs").toLowerCase().trim();
+       const comparable=(goalUnit==="lb"||goalUnit==="lbs")&&(appUnit==="lb"||appUnit==="lbs")||(goalUnit==="kg"&&appUnit==="kg");
+       const points=(state.weightLogs||[]).filter(w=>w.date&&Number.isFinite(Number(w.weight))&&Number(w.weight)>0).sort((a,b)=>new Date(b.date)-new Date(a.date));
+       const header='Starting '+el(pm.baseline)+' '+el(pm.unit)+' · Target '+el(pm.target)+' '+el(pm.unit)+'. ';
+       if(pm.source!=="weightLogs")return header+'No automatic measurement source selected.';
+       if(!comparable)return header+'Weight history not compared: goal unit and app weight unit do not match.';
+       if(!points.length)return header+'No weight records available yet.';
+       const latest=points[0],value=Number(latest.weight),range=pm.target-pm.baseline,ratio=range!==0?(value-pm.baseline)/range:null;
+       const completion=ratio===null?'':ratio>=1?' Target reached or exceeded (confirm manually).':' '+Math.max(0,Math.min(100,Math.round(ratio*100)))+'% toward numerical target.';
+       return header+'Latest recorded weight: '+el(value)+' '+el(pm.unit)+' on '+el(fmtDate(latest.date))+'.'+completion+' Based only on recorded measurements; protocol effects are not inferred.';
+     })()
+    :pm.type==="subjective"?(pm.rating?'Current self-rating: '+el(pm.rating)+' / 5. This is a personal observation, not an objective clinical measure.':'No rating recorded yet.')
+    :pm.type==="milestones"?((pm.milestones||[]).length+' milestones planned. Completion tracking is planned for the next update.'):'Exploration and regular reflection; no automatic progress percentage.';
   const content=()=>active==="overview"
-    ? '<div class="nx-goal-detail-section"><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL CONTEXT</div><div style="font-size:13px;line-height:1.6;color:var(--t2)">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</div>'+(g.targetDate?'<div class="nx-muted" style="margin-top:10px">Target date: '+el(fmtDate(g.targetDate))+'</div>':'')+(g.notes?'<div class="nx-muted" style="margin-top:10px">'+el(g.notes)+'</div>':'')+'<div class="nx-muted" style="margin-top:12px">Progress tracking will appear here once a measurement or review method is configured. No progress is inferred from protocol activity alone.</div></div>'
+    ? '<div class="nx-goal-detail-section"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:7px">'+el(modelLabel)+'</div><div class="nx-muted" style="margin-bottom:14px">'+modelSummary()+'</div><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL CONTEXT</div><div style="font-size:13px;line-height:1.6;color:var(--t2)">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</div>'+(g.targetDate?'<div class="nx-muted" style="margin-top:10px">Target date: '+el(fmtDate(g.targetDate))+'</div>':'')+(g.notes?'<div class="nx-muted" style="margin-top:10px">'+el(g.notes)+'</div>':'')+'<div class="nx-muted" style="margin-top:12px">Progress tracking will appear here once a measurement or review method is configured. No progress is inferred from protocol activity alone.</div></div>'
     :active==="connections"
     ? '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">LINKED PROTOCOLS</div>'+(linked.length?linked.map(p=>'<div style="padding:12px 0;border-bottom:1px solid var(--border-sub)"><div style="font-size:13px;color:var(--t1);font-weight:650">'+el(p.name)+'</div><div class="nx-muted">'+el(p.status||'draft')+' · Linked by personal goal ID</div></div>').join(''):'<div class="nx-muted" role="status">No protocols linked yet. Edit a protocol and choose this goal in its Review step.</div>')+'<div class="nx-muted" style="margin-top:12px">Connections provide context, not evidence of treatment effectiveness.</div>'
     : '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL ACTIVITY</div><div class="nx-muted" role="status">No goal-specific reviews recorded yet. Future updates will reference existing Check-In, Journal and measurement history without duplicating entries.</div>';
@@ -1552,14 +1569,44 @@ function goalModal(existing) {
     <div style="font-size:11px;color:var(--t4);margin-bottom:6px">Compounds (tap to link)</div>
     <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${compNames.map(c=>`<button class="goal-comp" data-name="${esc(c)}" style="padding:4px 10px;border-radius:99px;font-size:11px;background:${selC.includes(c)?"#A78BFA22":"transparent"};border:1px solid ${selC.includes(c)?"#A78BFA":"var(--border)"};color:${selC.includes(c)?"#A78BFA":"var(--t4)"}">${esc(c)}</button>`).join("")}</div>
     <input id="g-metrics" class="inp" placeholder="Success metrics (e.g. pain level, weight, energy)" value="${esc(g.metrics||"")}" style="width:100%;margin-bottom:8px">
+    <div style="margin:12px 0 7px;font-size:12px;font-weight:650;color:var(--t2)">How will you recognize progress?</div>
+    <select id="g-progress-type" aria-label="Goal progress method" class="inp" style="width:100%;min-height:44px;margin-bottom:8px">
+      ${[["exploratory","Exploratory · reflection and review"],["numeric","Measurable · numbers and a target"],["subjective","Subjective · personal 1–5 rating"],["milestones","Milestones · steps completed"]].map(([v,t])=>`<option value="${v}"${(g.progressModel?.type||"exploratory")===v?" selected":""}>${t}</option>`).join("")}
+    </select>
+    <div id="g-progress-settings" style="padding:10px 0 12px"></div>
     <input id="g-target" class="inp" type="date" value="${g.targetDate||""}" style="width:100%;margin-bottom:8px">
     <textarea id="g-notes" class="inp" placeholder="Notes" style="width:100%;min-height:60px;resize:vertical;margin-bottom:14px">${esc(g.notes||"")}</textarea>
     <button id="g-save" class="btn-primary" style="background:#7DF9C0;color:#000">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
+
+  const model=g.progressModel||{};
+  const progressSettings=m.querySelector("#g-progress-settings");
+  const renderProgressSettings=()=>{
+    const type=m.querySelector("#g-progress-type").value;
+    const numberInput=(id,label,val,placeholder)=>'<label for="'+id+'" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">'+label+'</label><input id="'+id+'" class="inp" inputmode="decimal" type="number" step="any" placeholder="'+placeholder+'" value="'+esc(String(val??""))+'" style="width:100%;min-height:44px;margin-bottom:10px">';
+    progressSettings.innerHTML=type==="numeric"
+      ? numberInput("g-p-baseline","Starting value",model.baseline,"e.g. 200")+numberInput("g-p-target","Target value",model.target,"e.g. 180")+'<label for="g-p-unit" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Unit or measurement</label><input id="g-p-unit" class="inp" value="'+esc(model.unit||"")+'" placeholder="e.g. lb, cm, hours" style="width:100%;min-height:44px">'+'<label for="g-p-source" style="display:block;font-size:11px;color:var(--t3);margin:10px 0 5px">Progress source</label><select id="g-p-source" class="inp" style="width:100%;min-height:44px"><option value="">Manual target only (no live value)</option><option value="weightLogs"'+(model.source==="weightLogs"?' selected':'')+'>Existing Nexus weight history</option></select><p class="nx-muted">Weight history can only be used when your goal unit matches the app weight unit.</p>'
+      :type==="subjective"
+      ? '<label for="g-p-rating" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Current self-rating (1–5)</label><select id="g-p-rating" class="inp" style="width:100%;min-height:44px">'+['','1','2','3','4','5'].map(v=>'<option value="'+v+'"'+(String(model.rating||"")===v?' selected':'')+'>'+(v||'Not rated yet')+'</option>').join('')+'</select><p class="nx-muted">Personal observations only. They do not measure biological function.</p>'
+      :type==="milestones"
+      ? '<label for="g-p-milestones" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Milestones (one per line)</label><textarea id="g-p-milestones" class="inp" style="width:100%;min-height:75px" placeholder="e.g. Establish a routine">'+esc((model.milestones||[]).join("\n"))+'</textarea>'
+      : '<p class="nx-muted">Use your notes, reviews, and connected observations to explore progress. No artificial score is assigned.</p>';
+  };
+  m.querySelector("#g-progress-type").addEventListener("change",renderProgressSettings);
+  renderProgressSettings();
   m.querySelector("#x").onclick=closeModal;
   m.querySelectorAll(".goal-comp").forEach(b=>b.onclick=()=>{const n=b.dataset.name,i=selC.indexOf(n);i>=0?selC.splice(i,1):selC.push(n);refresh();});
   m.querySelector("#g-save").onclick=()=>{
     const name=(m.querySelector("#g-name").value||"").trim();if(!name)return;
-    const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value};
+    const type=m.querySelector("#g-progress-type").value;
+    const val=id=>m.querySelector("#"+id)?.value?.trim()||"";
+    const numeric=value=>value!==""&&Number.isFinite(Number(value))?Number(value):null;
+    const progressModel=type==="numeric"
+      ? {type,baseline:numeric(val("g-p-baseline")),target:numeric(val("g-p-target")),unit:val("g-p-unit"),source:val("g-p-source")}
+      : type==="subjective"?{type,rating:numeric(val("g-p-rating"))}
+      : type==="milestones"?{type,milestones:val("g-p-milestones").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,25)}
+      : {type:"exploratory"};
+    if(type==="numeric"&&((val("g-p-baseline")&&progressModel.baseline===null)||(val("g-p-target")&&progressModel.target===null))){return;}
+    const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value,progressModel};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.goals.findIndex(x=>x.id===g.id);idx>=0?state.plans.goals[idx]=updated:state.plans.goals.push(updated);
     saveState();closeModal();renderBody();

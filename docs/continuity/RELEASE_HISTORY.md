@@ -277,3 +277,6 @@
 
 ### Connected Goals A3 detail sheet — candidate 2026-10-24
 - On branch `release/connected-goals-a3-detail` from verified main `d25a5a36`, add read-only Goal Details Overview, Connections, Activity accessible through active and other goal cards. No data migration, no calculation changes, no deployment. CI and full release artifacts PENDING.
+
+### Connected Goals A4 progress-mode configuration — candidate 2026-10-24
+- Stacked candidate from A3: `progressModel` user input on goal editor and truthful model summary on read-only Goal detail; numerical/subjective/milestone/exploratory modes. No automatic weight/symptom imports and no synthetic clinical scores, no migration. Not merged/deployed; required tests pending.
