@@ -149,3 +149,7 @@
 ### v0.9.6-beta QA assurance merged; Pages remote check pending (2026-10-23)
 - QA-only PR #33 merged to `main` at `89d5066251eaf49462e3128a17cf62fb3bc4bf32`. App source remains v0.9.6-beta, no UI, calculator, storage, schema or migration changes. Release/build/48 vial safety assertions PASS `40060006633`; mobile form PASS `40060006632`. Artifact `12547102223` contains complete isolated full-app DEMO, offline ZIP, full LIVE ZIP and JSON QA. Local Pages verifier smoke PASS only; remote Pages deployment unverified at merge.
 - Follow-up PR-observable live Pages checker coded in `ops/v096-pages-evidence-handoff` to record remote HTTP/16-file hash evidence; result pending. Physical iPhone and App Store medical review incomplete.
+
+### v0.9.6-beta production Pages VERIFIED for app files — 2026-10-23
+- GitHub App PR #31 merged app `ddd38ee`; QA-only PR #33 merged `89d5066251eaf49462e3128a17cf62fb3bc4bf32`. Actual GitHub Pages remote HTTPS byte parity PASS for 16/16 source files: PR #34 workflow `40060285190`, evidence `12546599640/Nexus_PAGES_REMOTE_CHECK_PR.json`, first remote request pass, not local smoke. App source unchanged through both ops branches. No migrations, version change or protected-data writes.
+- Physical iPhone and native Safari colour picker, actual local home-screen cache, full dose-form inventory/draft workflow NOT TESTED. App Store medical-content and calculator compliance review still incomplete. Status v0.9.6 app code: MERGED, AUTOMATED TESTED, PAGES VERIFIED; real-device acceptance and medical review remain open.
