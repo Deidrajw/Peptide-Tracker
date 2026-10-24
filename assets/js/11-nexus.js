@@ -752,6 +752,8 @@ function protocolBuilderModal(existing) {
   const curStep = () => STEPS[step];
 
   function rebuildModal() {
+    const count = document.getElementById("proto-builder-count");
+    if(count) count.textContent = (step+1)+"/"+STEPS.length;
     const b = document.getElementById("proto-builder-body");
     if(b) b.innerHTML=buildStep();
     const nav=document.getElementById("proto-builder-nav");
@@ -800,10 +802,10 @@ function protocolBuilderModal(existing) {
     if(curStep()==="Stack") {
       const cx = stackComplexity(proto.compounds);
       const interactions = getInteractions(proto.compounds);
-      const selCards = proto.compounds.map((c,i)=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:8px;padding:9px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+      const selCards = proto.compounds.map((c,i)=>`<div class="nx-proto-stack-selected" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:8px;padding:9px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px">
         <div style="flex:1;font-size:13px;color:var(--t1)">${esc(c.name)}</div>
         <select class="pb-route" data-idx="${i}" style="font-size:11px;color:var(--t3);background:var(--surface-3);border:1px solid var(--border);border-radius:5px;padding:2px 6px">${ROUTES.map(r=>`<option${c.route===r?" selected":""}>${r}</option>`).join("")}</select>
-        <button class="pb-crem" data-idx="${i}" style="color:var(--t5);font-size:13px">✕</button>
+        <button class="pb-crem" data-idx="${i}" type="button" aria-label="Remove ${esc(c.name)}" style="color:var(--t5);font-size:13px">✕</button>
       </div>`).join("");
       return prog+
       (proto.compounds.length?`
@@ -811,7 +813,10 @@ function protocolBuilderModal(existing) {
         ${selCards}
         ${interactions.length?`<div style="margin-bottom:8px">${interactions.map(x=>`<div style="font-size:11px;padding:4px 0;color:${x.type==="synergy"?"#7DF9C0":"var(--t3)"}">
           ${x.type==="synergy"?"✦":"✓"} <b>${esc(x.a)} + ${esc(x.b)}</b> — ${esc(x.note)}</div>`).join("")}</div>`:""}`:"")
-      +`<input id="pb-csearch" class="inp" placeholder="🔍 Add compound…" style="width:100%;margin-bottom:6px">
+      +`<div class="nx-proto-compound-search">
+        <svg viewBox="0 0 24 24" width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.1 4.1"/></svg>
+        <input id="pb-csearch" type="search" class="inp" aria-label="Search compounds to add" placeholder="Search compounds…" autocomplete="off">
+      </div>
       <div id="pb-clist" style="max-height:150px;overflow-y:auto;border:1px solid var(--border-sub);border-radius:8px;background:var(--surface-2)">
         ${ALL_COMPOUNDS.slice(0,30).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">
           ${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}
@@ -1058,7 +1063,7 @@ function protocolBuilderModal(existing) {
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0">
       <button id="proto-builder-x" style="color:var(--t4);font-size:20px;padding:4px">✕</button>
       <span style="font-size:14px;font-weight:600;color:var(--t1)">${existing?"Edit Protocol":"New Protocol"}</span>
-      <span style="font-size:11px;color:#A78BFA">${step+1}/${STEPS.length}</span>
+      <span id="proto-builder-count" aria-live="polite" style="font-size:11px;color:#A78BFA">${step+1}/${STEPS.length}</span>
     </div>
     <div id="proto-builder-body" style="flex:1;overflow-y:auto;padding-bottom:8px">${buildStep()}</div>
     <div id="proto-builder-nav" style="flex-shrink:0;padding-top:8px">${buildNav()}</div>

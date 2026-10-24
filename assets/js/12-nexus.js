@@ -1,3 +1,95 @@
+// iPhone-style compound action sheet; keep the existing .morebox DOM/actions and
+// listeners intact, but portal it temporarily out of the scrolling compound card.
+let nxActiveCompoundSheet = null;
+function nxCloseCompoundSheet(restoreFocus=true) {
+  const active=nxActiveCompoundSheet;
+  if(!active) return;
+  nxActiveCompoundSheet=null;
+  document.removeEventListener("keydown",active.onKeydown,true);
+  active.scrim.remove();
+  active.header.remove();
+  active.sheet.classList.remove("nx-compound-sheet-open");
+  active.sheet.style.display="none";
+  active.sheet.removeAttribute("role");
+  active.sheet.removeAttribute("aria-modal");
+  active.sheet.removeAttribute("aria-label");
+  if(active.marker.parentNode)active.marker.replaceWith(active.sheet);
+  else active.sheet.remove();
+  document.body.style.overflow=active.previousOverflow;
+  const app=document.getElementById("app");
+  if(app)app.inert=false;
+  active.trigger.setAttribute("aria-expanded","false");
+  active.trigger.style.color="var(--t4)";
+  if(restoreFocus && active.trigger.isConnected)active.trigger.focus({preventScroll:true});
+}
+function nxOpenCompoundSheet(trigger) {
+  if(nxActiveCompoundSheet && nxActiveCompoundSheet.trigger===trigger) {
+    nxCloseCompoundSheet();
+    return;
+  }
+  nxCloseCompoundSheet(false);
+  const sheet=document.querySelector(`.morebox[data-name="${CSS.escape(trigger.dataset.name)}"]`);
+  if(!sheet)return;
+  const marker=document.createComment("compound sheet original position");
+  sheet.before(marker);
+  const scrim=document.createElement("div");
+  scrim.className="nx-compound-sheet-scrim";
+  scrim.setAttribute("aria-hidden","true");
+  document.body.appendChild(scrim);
+  const header=document.createElement("div");
+  header.className="nx-compound-sheet-header";
+  header.innerHTML='<span class="nx-sheet-drag-handle" aria-hidden="true"></span><div class="nx-compound-sheet-heading"><span class="nx-compound-sheet-kicker">COMPOUND ACTIONS</span><strong></strong></div><button type="button" class="nx-compound-sheet-close" aria-label="Close compound actions"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+  header.querySelector("strong").textContent=trigger.dataset.name;
+  sheet.prepend(header);
+  sheet.classList.add("nx-compound-sheet-open");
+  sheet.setAttribute("role","dialog");
+  sheet.setAttribute("aria-modal","true");
+  sheet.setAttribute("aria-label",trigger.dataset.name+" actions");
+  sheet.style.display="block";
+  document.body.appendChild(sheet);
+  const previousOverflow=document.body.style.overflow;
+  document.body.style.overflow="hidden";
+  const app=document.getElementById("app");
+  if(app)app.inert=true;
+  trigger.setAttribute("aria-expanded","true");
+  trigger.style.color="var(--t2)";
+  const onKeydown=e=>{
+    if(e.key==="Escape"){e.preventDefault();nxCloseCompoundSheet();return;}
+    if(e.key!=="Tab")return;
+    const focusables=Array.from(sheet.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href]')).filter(el=>el.getClientRects().length);
+    if(!focusables.length){e.preventDefault();sheet.focus();return;}
+    const first=focusables[0],last=focusables[focusables.length-1];
+    if(e.shiftKey && (document.activeElement===first || !sheet.contains(document.activeElement))){e.preventDefault();last.focus();}
+    else if(!e.shiftKey && (document.activeElement===last || !sheet.contains(document.activeElement))){e.preventDefault();first.focus();}
+  };
+  nxActiveCompoundSheet={sheet,trigger,marker,scrim,header,previousOverflow,onKeydown};
+  document.addEventListener("keydown",onKeydown,true);
+  scrim.onclick=()=>nxCloseCompoundSheet();
+  header.querySelector(".nx-compound-sheet-close").onclick=()=>nxCloseCompoundSheet();
+  let touchStartY=null;
+  header.addEventListener("touchstart",e=>{touchStartY=e.touches[0]?.clientY??null;},{passive:true});
+  header.addEventListener("touchend",e=>{
+    if(touchStartY!==null && (e.changedTouches[0]?.clientY??touchStartY)-touchStartY>75)nxCloseCompoundSheet();
+    touchStartY=null;
+  },{passive:true});
+  // Bubble AFTER the pre-existing action click handlers. Keep colour picker
+  // open until change/confirmation so its native iOS spectrum isn't interrupted.
+  sheet.onclick=e=>{
+    const btn=e.target.closest("button");
+    if(!btn||btn.closest(".nx-compound-sheet-header"))return;
+    const scrollTo=btn.classList.contains("histtoggle")?".histbox":btn.classList.contains("tunetoggle")?".tunebox":null;
+    nxCloseCompoundSheet(false);
+    if(scrollTo)requestAnimationFrame(()=>{
+      const target=document.querySelector(`${scrollTo}[data-name="${CSS.escape(trigger.dataset.name)}"]`);
+      if(target?.getClientRects().length)target.scrollIntoView({block:"nearest",behavior:"smooth"});
+    });
+  };
+  sheet.onchange=e=>{
+    if(e.target.classList.contains("colorpick"))nxCloseCompoundSheet(false);
+  };
+  header.querySelector(".nx-compound-sheet-close").focus({preventScroll:true});
+}
+
 function wireBody() {
   // nexus api key
   const nks=$("#nexus-key-save"); if(nks) nks.onclick=()=>{
@@ -392,10 +484,7 @@ function wireBody() {
     const box=document.querySelector(`.tunebox[data-name="${CSS.escape(b.dataset.name)}"]`);
     if(box) box.style.display=box.style.display==="none"?"block":"none";
   });
-  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=()=>{
-    const box=document.querySelector(`.morebox[data-name="${CSS.escape(b.dataset.name)}"]`);
-    if(box){const open=box.style.display!=="none";box.style.display=open?"none":"block";b.style.color=open?"var(--t4)":"var(--t2)";}
-  });
+  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=()=>nxOpenCompoundSheet(b));
   document.querySelectorAll(".tunerange").forEach(r=>r.oninput=()=>{
     const name=r.dataset.name; const days=parseFloat(r.value);
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const VERSION = 'v0.9.5-beta';
+const VERSION = 'v0.9.6-beta';
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css'];
@@ -80,6 +80,31 @@ if(demo.includes('onclick="exitDemoMode()"')||demo.includes('onclick="demoPicker
 const demoFile = path.join(DIST, 'Nexus_' + VERSION + '_FULL_DEMO.html');
 const liveFile = path.join(DIST, 'Nexus_' + VERSION + '_LIVE_GitHub.zip');
 fs.writeFileSync(demoFile, demo, 'utf8');
+// A standalone 1.8MB HTML file is often displayed as an inert attachment inside
+// messaging/document viewers rather than opened in a full JavaScript browser.
+// Ship the SAME isolated DEMO as index.html inside an easy-to-extract ZIP too.
+// This adds a delivery option, not a separate reconstructed app.
+const offlineDemoZip = path.join(DIST, 'Nexus_' + VERSION + '_OFFLINE_FULL_DEMO_OPEN_ME.zip');
+const readme = [
+  'NEXUS ' + VERSION + ' — COMPLETE FICTIONAL FULL-APP DEMO',
+  '',
+  '1. Download this ZIP file.',
+  '2. Extract it using your device’s normal unzip option.',
+  '3. Open index.html in Safari or Chrome.',
+  '',
+  'The ChatGPT attachment viewer and some Files/Quick Look previews do not',
+  'run standalone JavaScript apps. Download and open it in a browser instead.',
+  '',
+  'No live data, imports, sync or stored user records are used.',
+  'The complete application is in one HTML file, using isolated fictional data.',
+  'This is a design candidate; it does not replace the published Nexus app.'
+].join('\n');
+execFileSync('python3', ['-c', [
+  'import zipfile,sys',
+  "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
+  " z.write(sys.argv[2], 'index.html')",
+  " z.writestr('README_OPEN_FIRST.txt', sys.argv[3])"
+].join('\n'), offlineDemoZip, demoFile, readme]);
 execFileSync('python3', ['-c', [
  'import zipfile,sys',
  "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
@@ -91,10 +116,11 @@ const manifest = {
  live_files: LIVE_FILES,
  live_zip: path.basename(liveFile),
  standalone_demo: path.basename(demoFile),
+ offline_demo_zip: path.basename(offlineDemoZip),
  demo_storage: 'ephemeral in-memory only',
  demo_fixture: 'buildDemoState(weight_loss)',
  demo_sync: 'disabled',
  physical_iPhone_tested: false
 };
 fs.writeFileSync(path.join(DIST, 'Nexus_' + VERSION + '_BUILD_MANIFEST.json'), JSON.stringify(manifest, null, 2));
-console.log(JSON.stringify({demoFile, liveFile, manifest}, null, 2));
+console.log(JSON.stringify({demoFile, offlineDemoZip, liveFile, manifest}, null, 2));

@@ -66,3 +66,209 @@ body .modal .moodbtn:focus-visible {
   outline: 2px solid var(--nx-focus-accessible) !important;
   outline-offset: 2px !important;
 }
+
+/* v0.9.6 design candidate: Protocol builder discovery and compound density.
+   Pure styling; no stored data/model changes. */
+#proto-builder-body .nx-proto-compound-search {
+  display:flex; align-items:center; gap:10px; min-height:48px;
+  background:var(--input-bg); border:1px solid var(--border);
+  border-radius:12px; padding:0 13px; margin-bottom:8px;
+  color:var(--t3);
+}
+#proto-builder-body .nx-proto-compound-search:focus-within {
+  border-color:var(--nx-focus-accessible);
+  box-shadow:0 0 0 1px var(--nx-focus-accessible);
+}
+#proto-builder-body .nx-proto-compound-search > svg {flex:0 0 19px}
+#proto-builder-body .nx-proto-compound-search #pb-csearch {
+  border:0!important; background:transparent!important;
+  outline:none!important; box-shadow:none!important;
+  font-size:14px!important; color:var(--t1); min-width:0;
+  padding:0!important; height:46px; flex:1; margin:0!important;
+}
+#proto-builder-body .nx-proto-stack-selected {min-height:52px; gap:10px!important}
+#proto-builder-body .nx-proto-stack-selected .pb-route {
+  min-height:40px; padding:5px 8px!important; font-size:12px!important;
+}
+#proto-builder-body .nx-proto-stack-selected .pb-crem {
+  min-height:44px; min-width:40px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+#proto-builder-body .pb-cadd {
+  min-height:44px; font-size:13px!important; padding:10px 12px!important;
+  line-height:1.35;
+}
+#proto-builder-body #pb-clist {max-height:220px!important;overscroll-behavior:contain}
+#proto-builder-body .pb-cadd > span {font-size:11px!important}
+#proto-builder-wrap #pb-next,
+#proto-builder-wrap #pb-activate,
+#proto-builder-wrap #pb-save-draft,
+#proto-builder-wrap #pb-prev {min-height:48px}
+#proto-builder-wrap #pb-next,
+#proto-builder-wrap #pb-activate {color:#1A1728!important}
+.nx-compound-insights {
+  background:var(--surface-2); border-radius:12px;
+  margin:0 0 12px; overflow:hidden;
+}
+.nx-compound-insights > summary {
+  display:flex; align-items:center; gap:9px; padding:10px 12px;
+  min-height:48px; cursor:pointer; list-style:none;
+}
+.nx-compound-insights > summary::-webkit-details-marker {display:none}
+.nx-insights-emblem {
+  width:20px; height:20px; border:1px solid var(--border);
+  border-radius:50%; display:grid; place-items:center;
+  font-size:12px; font-weight:700; color:var(--t2); flex-shrink:0;
+}
+.nx-insights-title {font-size:12px; font-weight:700; color:var(--t1)}
+.nx-insights-title span {font-size:11px; font-weight:500; color:var(--t3)}
+.nx-insights-preview {
+  margin-left:auto; font-size:11px; color:var(--t3);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.nx-insights-chevron {
+  margin-left:4px; width:9px; height:9px; flex:0 0 9px;
+  border-right:2px solid var(--t3); border-bottom:2px solid var(--t3);
+  transform:translateY(-2px) rotate(45deg);transition:transform .18s ease;
+}
+.nx-compound-insights[open] .nx-insights-chevron {
+  transform:translateY(2px) rotate(225deg);
+}
+.nx-compound-insights-body {
+  padding:10px 12px 2px; border-top:1px solid var(--border-sub);
+}
+.nx-compound-insights-body > div {line-height:1.55!important; font-size:12px!important}
+.nx-compound-menu-icon {flex-shrink:0;opacity:.86}
+.nx-compound-colour-label {display:flex;align-items:center;gap:10px}
+#app .morebox {
+  background:var(--surface-2)!important;
+  border:0!important; border-radius:12px!important;
+  box-shadow:none!important;
+  padding:4px 0 5px;
+  overflow:hidden;
+}
+#app .morebox > button {
+  min-height:48px!important; gap:11px!important;
+  font-size:13px!important; font-weight:550!important;
+  color:var(--t2)!important;
+}
+#app .morebox > div {min-height:48px!important}
+#app .morebox .pausepep {color:#B07E32!important}
+[data-theme="dark"] #app .morebox .pausepep {color:#F9C87D!important}
+#app .morebox .nx-menu-remove {
+  border-top:1px solid var(--border-sub)!important;
+  color:var(--t3)!important; background:transparent!important;
+}
+#app .morebox .nx-compound-menu-icon {width:18px;height:18px}
+#app .morebox .colorpick {min-height:34px;min-width:34px}
+@media(max-width:350px) {
+  .nx-insights-preview{display:none}
+  #proto-builder-body .nx-proto-stack-selected .pb-route {max-width:84px}
+}
+@media(prefers-reduced-motion:reduce){.nx-insights-chevron{transition:none}}
+
+/* 320px acceptance: avoid truncating the compound identity and wrapping the
+   next-dose summary beneath a 70px ring. Long names may still ellipsize. */
+@media (max-width: 350px) {
+  #app .nx-expanded-compound-head > span.mono {
+    font-size:12px!important;letter-spacing:.65px!important;
+  }
+  #app .nx-expanded-compound-head .compound-intel-btn {
+    font-size:10px!important;padding:7px 6px!important;
+  }
+  #app .nx-compound-timing-row {
+    flex-wrap:nowrap!important;gap:9px!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details {
+    min-width:0!important; gap:6px!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details > div:first-child {
+    gap:10px!important;flex-wrap:nowrap!important;
+  }
+  #app .nx-compound-timing-row .nx-compound-timing-details > div:first-child > div {
+    min-width:0!important;
+  }
+}
+
+
+/* Native-feeling iPhone compound overflow bottom sheet. It is temporarily
+   portalled to body: the source card's layout never expands underneath it. */
+.nx-compound-sheet-scrim {
+  position:fixed;inset:0;z-index:10080;
+  background:rgba(8,7,15,.62);
+  -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+  touch-action:none;
+}
+body .morebox.nx-compound-sheet-open {
+  position:fixed!important;bottom:0!important;left:50%!important;right:auto!important;
+  transform:translateX(-50%)!important;z-index:10081!important;
+  display:block!important;width:min(100%,480px)!important;
+  max-height:min(82dvh,720px)!important;
+  padding:0 0 max(14px,env(safe-area-inset-bottom))!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch;
+  background:var(--surface)!important;
+  border:1px solid var(--border-sub)!important;border-bottom:0!important;
+  border-radius:24px 24px 0 0!important;
+  box-shadow:0 -22px 64px rgba(0,0,0,.28)!important;
+}
+body .morebox.nx-compound-sheet-open .nx-compound-sheet-header {
+  display:flex;align-items:center;gap:12px;min-height:78px;
+  position:sticky;top:0;z-index:2;
+  padding:24px 18px 10px;
+  background:var(--surface);border-bottom:1px solid var(--border-sub);
+  touch-action:pan-y;
+}
+.nx-sheet-drag-handle {
+  position:absolute;left:50%;top:9px;
+  transform:translateX(-50%);width:36px;height:5px;border-radius:99px;
+  background:var(--t5);opacity:.55;
+}
+.nx-compound-sheet-heading {
+  display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;
+}
+.nx-compound-sheet-kicker {
+  color:var(--t4);font-size:10px;font-weight:600;line-height:1.3;letter-spacing:1.15px;
+}
+.nx-compound-sheet-heading strong {
+  color:var(--t1);font-size:16px;letter-spacing:.15px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.nx-compound-sheet-close {
+  display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;
+  border:1px solid var(--border-sub);border-radius:12px;
+  color:var(--t2);background:var(--surface-2);
+}
+body .morebox.nx-compound-sheet-open > button {
+  display:flex;align-items:center;gap:12px;
+  padding:0 20px!important;min-height:54px!important;
+  width:100%;font-size:14px!important;
+  color:var(--t2)!important;text-align:left;
+  background:transparent;
+}
+body .morebox.nx-compound-sheet-open > div:not(.nx-compound-sheet-header) {
+  min-height:56px!important;padding:0 20px!important;
+}
+body .morebox.nx-compound-sheet-open .nx-compound-colour-label {
+  font-size:14px!important;
+}
+body .morebox.nx-compound-sheet-open .nx-compound-menu-icon {
+  height:20px!important;width:20px!important;
+}
+body .morebox.nx-compound-sheet-open .nx-menu-remove {
+  margin-top:8px;border-top:1px solid var(--border-sub)!important;
+}
+body .morebox.nx-compound-sheet-open .nx-compound-sheet-close:focus-visible,
+body .morebox.nx-compound-sheet-open button:focus-visible,
+body .morebox.nx-compound-sheet-open input:focus-visible {
+  outline:2px solid var(--nx-focus-accessible)!important;outline-offset:-2px;
+}
+@media(min-width:500px) {
+  body .morebox.nx-compound-sheet-open {bottom:16px!important;border-radius:22px!important;border-bottom:1px solid var(--border-sub)!important}
+}
+@media(prefers-reduced-motion:no-preference) {
+  .nx-compound-sheet-scrim{animation:nxSheetFade .15s ease-out both}
+  body .morebox.nx-compound-sheet-open{animation:nxSheetReveal .20s ease-out both}
+}
+@keyframes nxSheetFade{from{opacity:0}to{opacity:1}}
+@keyframes nxSheetReveal{from{opacity:.75;translate:0 16px}to{opacity:1;translate:0 0}}

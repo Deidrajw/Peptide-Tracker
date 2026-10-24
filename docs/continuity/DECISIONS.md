@@ -74,3 +74,17 @@
 ## v0.9.5 — deduplicated query results shipped (2026-10-23)
 - PR #27 merged at `4addc72b8fdbb9906170d116af3f4a8183687e11`. When a query is present, a symptom appears once under preferred general category, then compound, custom, recent or other. Empty-query browsing retains all categories and their membership; selected symptoms/intensity and saved historical associations unchanged.
 - This is a user-interface discovery improvement, not an assertion of medical causality, not a catalog migration, and not a replacement for active-compound categories.
+
+## 2026-10-23 — Protocol card/new protocol picker design proposal
+- **Approval state: PROPOSED, NOT YET APPROVED for production merge.** User requested premium iPhone UX simplification of Retatrutide expanded cards, dense advisory panels, contextual ellipsis actions, emoji search icon in New Protocol Step 3, and inconsistent overflow menu glyphs.
+- Preview candidate retains collapsible card, status/time-to-next and Log Dose primary control; groups nonurgent interpretive insights in disclosure, keeps injection-site safety warning visible, organizes secondary history/calendar/schedule/colour/pause/remove actions under ellipsis and uses outline icons. Routes, records, dose calendar, settings and archive commands still use preexisting event handlers.
+- Addresses genuine 1/6 vs Step 3 header bug in New Protocol with live progress update; search field becomes proper outline SVG with separate placeholder text. Safety wording from source is not clinically validated; flag for later medical audit rather than inventing personalised dosing advice.
+- No data migrations or storage writes from design proposal; no prior behaviour intentionally removed. Final visual approval after interactive review required before merge.
+
+## v0.9.6 preview delivery — open-in-browser ZIP option (2026-10-23)
+- **Decision status: IMPLEMENTED on unmerged proposal branch, verification pending.** A ChatGPT attachment viewer may treat a self-contained HTML app as static preview and not execute scripts. Do not replace the complete app with a feature-only mockup. Ship full-app isolated HTML as-is AND an archive with byte-identical `index.html` and plain-text instructions; keep LIVE ZIP separate.
+- This does not constitute user approval for the revised compound-card, Insights, or bottom-sheet design; PR #31 still held for approval. No data migration/import/sync and no new production release.
+
+## v0.9.6 compound action sheet — approved design, content review separate
+- The user approved a true iPhone-style bottom sheet in place of inline expansion, plus separate audit of timing/escalation claims. Implementation reuses the exact same six contextual buttons and event handlers, temporarily moves `.morebox` to body, blocks underlying interaction, restores DOM and scroll/focus on close. Header, handle, scrim and safe area should avoid pushing card below viewport. Close by x, scrim, Escape or swipe handle. Do not hide urgent injection warnings inside collapsed insights.
+- Approval is for visual action-sheet treatment, not medical treatment recommendations. Keep all timing/escalation text unchanged until separate clinical-content review; preserve syringe-unit/reconstitution calculators and no migrations. Findings and proposed safer copy recorded in `docs/ios/MEDICAL_CONTENT_AUDIT.md` for App Store risk review. Apple's dosage calculator rule is a separate gate.
