@@ -118,3 +118,7 @@
 
 ### 2026-10-24 — v0.9.7 remote Pages proof recorded
 - Unlike smoke, remote Actions run `40062278673` returned `verified:true, smoke_only:false` for public exact-byte 16/16 application source parity. This is strong proof that merged v0.9.7 app files were served publicly at check time; does not test a physical iPhone's cache, content semantics, medical compliance or native app availability. Existing measurement-math 40 FAIL/80 remains separate gate.
+
+
+## 2026-10-24 — Stash/Add Kit/Combo Dose hierarchy (PROPOSED)
+- User screenshots and current source audited in draft PR #41. In-chat fictional previews: search-first multi-select compound picker at 10/50 counts; Add Kit grouped fields + searchable compound; sealed/open/blend Stash card variants and progressive history. Approval pending; no app code merged. Preserve ready syringes versus favorites, saved inventory records, per-vial source math and single-record Check-In. Audit rationale `docs/ux/STASH_COMBO_UX_AUDIT_20261024.md`.

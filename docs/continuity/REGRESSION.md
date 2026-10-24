@@ -164,3 +164,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### v0.9.7 public Pages source parity — PASS on actual HTTPS (2026-10-24)
 - GitHub Actions `40062278673`, artifact `12547383562/Nexus_PAGES_REMOTE_CHECK_PR.json`, `verified:true`, `smoke_only:false`, exact 16 files served at `https://deidrajw.github.io/Peptide-Tracker/` match source v0.9.7 checkout. One attempt. GitHub app `main` merge `2a27f15`, docs-only source didn't change web-app bytes. Mobile `40062278638` PASS.
 - **Not Tested:** physical iPhone/PWA cached version, actual iOS keyboard, VoiceOver, full clinic review. **Failed known calculator diagnostics remain 40/80**, despite independent Log Dose UI 40/40 PASS.
+
+
+## 2026-10-24 — Stash/Add Kit/Combo UX proposal matrix (NOT TESTED)
+- Log Combo Dose: search/selection and 50-compound scroll/keyboard/focus; both favorites and prepared syringe paths; keep selected amounts/date/notes, actual inventory verification and shared administration metadata.
+- Add Kit: single-select library/custom search, existing-open conditional, safe vial count/amount validation, separate blend path, cost/storage metadata, edit retains historical vial records.
+- Stash: sealed standard and blend missing top-level vialMg, open/finished/low/expiring, per-vial history 0/1/24/100, source allocations, accurate canonical quantities, no misleading sealed 100%-consumption bar; chevrons, safe-area and responsive 320/390 dark/light. Design only — no tests passed for these proposals, user iPhone screenshots are observed symptoms, not an automated or device-test PASS.

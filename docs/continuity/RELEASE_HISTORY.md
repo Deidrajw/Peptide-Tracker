@@ -174,3 +174,8 @@
 ### v0.9.7-beta — LIVE PAGES VERIFIED (2026-10-24)
 - App PR #38 merged `2a27f155e3b174bbfaa5347e5f785e8a8fcddadc`. Postmerge docs PR #39 run `40062278673`, artifact #12547383562, `Nexus_PAGES_REMOTE_CHECK_PR.json`: HTTPS `smoke_only:false`, `verified:true`, 16 app source files byte-identical on first attempt, so v0.9.7 published code parity VERIFIED. PR #39 mobile `40062278638` PASS.
 - Real Log Dose underallocated/invalid input protection shipped, no history migrations; 40 end-to-end Log Dose cases, 48 vial-core cases and all existing display/Check-In/Protocol checks passed. Entire isolated DEMO HTML and browser ZIP, complete LIVE ZIP and release manifest delivered. Medical measurement math 40/80 failures, App Store requirements and physical iPhone remain incomplete.
+
+
+### 2026-10-24 — Stash/Combo/Add Kit UX research, PROPOSED ONLY
+- Baseline main `2da1001`, v0.9.7-beta remains LIVE unchanged. Draft design PR #41, `design/stash-combo-audit-20261024`, documents code findings and interactive fictional design previews. Affected proposed screens: Stash cards/history, Add Kit and Log Combo Dose. Data migration: none proposed.
+- No approved implementation, no application release artifacts, no real-browser/device tests for changed UI, no merge or new Pages deployment. FULL APP DEMO / LIVE ZIP for this proposed work INCOMPLETE. Existing calculator safety PR #40 stays independent and unmerged.
