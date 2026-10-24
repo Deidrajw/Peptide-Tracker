@@ -273,3 +273,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-24 — A4 focused QA
 - New `validate-plans-hierarchy.mjs` assertions exercise saving numeric source lb with latest 185 vs baseline 200 target 180 => 75%; switch and save subjective 4/5, two milestones, exploratory; confirm weight log length and notes preserved in all 8 browser environments. Expected but NOT TESTED until CI. Additional unit mismatch, equal baseline/target, dates invalid/future and switching away/back require follow-up testing.
+
+### 2026-10-24 — A4 outcome
+- A4 branch head `827b792a`: build/browser run `40144302334` SUCCESS, mobile `40144302326` SUCCESS. Plans QA produced 8 PASS environments (LIVE/DEMO 320/390 light/dark) including numeric latest weight fixture, subjective/milestones/exploratory saves and records preservation. Full ZIP integrity/parity PASS. Unit mismatch, zero-denominator and extra edge cases not independently enumerated in dedicated tests; real iPhone/Cloudflare NOT TESTED. Calculator known failures remain separate, PR #67 held.
