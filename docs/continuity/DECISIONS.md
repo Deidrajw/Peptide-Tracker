@@ -70,3 +70,10 @@
 ## v0.9.5-beta — search results show each symptom once
 - Status: targeted implementation coded in release/v0.9.5-unique-symptom-search; tests and merge pending. No major redesign.
 - Preserve original named browse groups and their existing membership for users discovering symptoms by group. When a query is present only, the same symptom name appears once; priority general category, then active compound, custom, recent and other. Example: Digestive owns Constipation, even if Retatrutide-specific or Recently logged also contains it. This is UI grouping only, not a causal medical classification or change to saved records. Category expand/collapse, multi-select, custom terms and intensity remain intact.
+
+## iOS public distribution intentions (2026-10-23)
+- **APPROVED OBJECTIVE:** Prepare Nexus for public Apple App Store release while preserving the web app as an independent live product. Source: user request 2026-10-23. This is a goal, **not** an approval to remove web features or release unreviewed medical calculation software.
+- **APPROVED CONSTRAINT:** No destructive overwrite or silent migration of production `localStorage`, backups, history, calculated doses or inventories. Web-to-iOS migration requires explicit consent, preflight validation, native backup and rollback.
+- **PROPOSED (not approved implementation):** Isolated Capacitor WKWebView/Xcode project consuming exact web release source; independent iOS and GitHub Pages pipelines. Do not convert the Pages root entrypoint or publish modified medical functionality until design, testing and compliance gates are met.
+- **PENDING LEGAL/CLINICAL REVIEW:** Drug dosage calculator eligibility under Apple §1.4.2, entity eligibility under §5.1.1(ix), Health Canada SaMD intended-use assessment and geography; medical professional review of existing math/research-compound guidance. No Apple eligibility claim or healthcare status determination made.
+- **PENDING USER APPROVAL:** For any App Store-specific screen changes/omissions, explicit side-by-side UX preview. Never conceal restricted functionality from Apple review or alter the web app to make App Store review easier.
