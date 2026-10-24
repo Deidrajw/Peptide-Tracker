@@ -264,3 +264,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Release A Protocol filter required QA (candidate)
 - Not started shows draft/planned/active (ready) but does not rewrite their status; In progress/Paused/Completed/Archived exact; All restores every record; active first log, expand phase details, manage ellipsis, create/edit/delete, pause/resume, reminders and schedule no regressions. No-match state with Show all functional. Verify per theme and 320/390 on standalone full DEMO and live-source browser. Check-In single/date, Stash vial math, Log Dose drafts/allocation, Calendar, Plans links and calculator PR #67 separate. No test Pass claimed yet; real iPhone NOT TESTED.
+
+### Connected Goals A2 linkage candidate required checks
+- New protocol goal template selection still works when no saved goals. Personal goal selector optional; select, save draft/activate, reopen edit, change/clear link, refresh, rename source goal and see updated card; delete source goal leaves explicit unavailable reference not random match; duplicate goal names must not cross-link. No change to previous `goalId` template, paused/status/schedule, dose source/history, Stash vial math, Check-In date uniqueness. 320/390 light/dark LIVE/full isolated DEMO and 44px accessible picker. All newly scoped checks NOT TESTED until browser tests.
