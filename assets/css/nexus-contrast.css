@@ -272,3 +272,21 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 }
 @keyframes nxSheetFade{from{opacity:0}to{opacity:1}}
 @keyframes nxSheetReveal{from{opacity:.75;translate:0 16px}to{opacity:1;translate:0 0}}
+
+/* Accessibility sweep: honor the iOS Reduce Motion preference across all screens.
+   Preserve visibility/state changes; remove decorative transitions and scrolling only. */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Ensure keyboard users can identify actionable elements even when local
+   component styles omit a focus state. Do not change pointer/touch focus. */
+:where(#app, .modal, .nexus-more-sheet) :is(button, a[href], input, select, textarea, summary, [role="button"]):focus-visible {
+  outline: 2px solid var(--nx-focus-accessible) !important;
+  outline-offset: 2px;
+}
