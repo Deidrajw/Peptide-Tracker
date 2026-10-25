@@ -1577,17 +1577,17 @@ function homeView() {
   const pendingCount = todaySlots.filter(slot => ["overdue", "due_now", "due_later_today", "upcoming"].includes(slot.status)).length;
   const progressPct = scheduledCount ? Math.round(takenCount / scheduledCount * 100) : 0;
   html += `<section class="nexus-today-hero" aria-label="Today's scheduled dose overview">
-    <div class="nexus-today-eyebrow">TODAY</div>
+    <div class="nexus-today-eyebrow"><span class="nx-hybrid-eyebrow-dot" aria-hidden="true"></span> TODAY <span class="nx-hybrid-eyebrow-side">DAILY SUMMARY</span></div>
     <div class="nexus-today-hero-row">
       <div><div class="nexus-today-big">${scheduledCount ? `${takenCount} <span>of ${scheduledCount}</span>` : `No scheduled doses`}</div>
-        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div>
+        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div><div class="nx-hybrid-hero-orbit" aria-hidden="true"><span class="nx-hybrid-orbit-core">${scheduledCount ? Math.round(progressPct) + "%" : "—"}</span></div></div>
       
     </div>
     ${scheduledCount ? `<div class="nexus-today-track" role="progressbar" aria-label="Scheduled doses logged" aria-valuemin="0" aria-valuemax="${scheduledCount}" aria-valuenow="${takenCount}"><div style="width:${progressPct}%"></div></div>` : ``}
     
   </section>`;
   html+=`<div class="nexus-today-actions nexus-today-actions-b4"><button type="button" id="today-log-dose" class="nexus-today-action-primary">＋ Log dose</button><button type="button" class="${todayLog?"editdaily":"qa-daily"} nexus-today-action-secondary" data-id="${todayLog?todayLog.id:""}">${todayLog?"Edit check-in":"＋ New check-in"}</button></div>`;
-  html+=`<section aria-label="Daily check-in status" style="margin:12px 0 18px;padding:16px;background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;display:flex;align-items:center;gap:12px"><span aria-hidden="true" style="font-size:24px;color:var(--t2)">${todayLog?"✓":"○"}</span><span style="flex:1;min-width:0"><strong style="font-size:14px;color:var(--t1)">Daily check-in</strong><span style="display:block;margin-top:4px;font-size:12px;color:var(--t3)">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed today"}</span></span><button type="button" class="${todayLog?"editdaily":"qa-daily"}" data-id="${todayLog?todayLog.id:""}" style="padding:10px 13px;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t2);font-size:12px">${todayLog?"Edit":"Check in"}</button></section>`;
+  html+=`<section aria-label="Daily check-in status" class="nx-hybrid-checkin"><span class="nx-hybrid-checkin-symbol" aria-hidden="true">${todayLog?"✓":"○"}</span><span style="flex:1;min-width:0"><strong style="font-size:14px;color:var(--t1)">Daily check-in</strong><span style="display:block;margin-top:4px;font-size:12px;color:var(--t3)">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed today"}</span></span><button type="button" class="${todayLog?"editdaily":"qa-daily"}" data-id="${todayLog?todayLog.id:""}" class="nx-hybrid-checkin-cta">${todayLog?"Edit":"Check in"}</button></section>`;
   html+=nxQuickAccessView();
   const hasWeightThisWeek = state.weightLogs.some(w=>{ const d=safeDate(w.date); return d>=weekStart; });
   const hasMeasureThisWeek = state.measurementLogs.some(m=>{ const d=safeDate(m.date); return d>=weekStart; });
