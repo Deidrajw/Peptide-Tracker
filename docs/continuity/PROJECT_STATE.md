@@ -685,3 +685,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Stash card action hierarchy Phase 2D (user-approved preview)
 - User approved replacing three equal kit-card actions with contextual Open/other applicable vial action plus Kit Details; Prepare Doses remains in pre-existing kit ellipsis action sheet (`manageKitMenu` in `assets/js/04-nexus.js`) and global Stash Prepare shortcut. Source `assets/js/10-nexus.js` commit `bba65429`; visual two-column CSS `assets/css/nexus-hybrid-preview.css` commit `ac9a4f27`. No dosing, kit or storage logic changed. Menu prepare eligibility is still existing hasRecon rule. No merge or deploy.
 - **ONE NEXT ACTION:** inspect latest source head full-app DEMO, verify menu Prepare and two-button layout at 320/390 both themes, review context action conditions, contrast and regression before asking for visual approval.
+
+
+### 2026-10-25 — Two-action QA regression correction
+- Source commit `ac9a4f27` build succeeded/mobile regression passed but browser run `40246509943` FAILED because trust UI test expected card-level `.preparedoses` button (which user requested removed). Preserved accounting assertions and changed test at `65cba791` to open existing `manageKitMenu` and verify its Prepare item. Do not call QA passed until new latest-head run finishes.
+- **ONE NEXT ACTION:** verify latest-head browser suite and full-app DEMO packaging, inspect 320/390 light/dark and test kit menu Prepare; resolve any failures before iPhone review. No merge/deploy.
