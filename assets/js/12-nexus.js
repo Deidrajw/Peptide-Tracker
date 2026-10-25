@@ -1141,11 +1141,32 @@ function showOnboarding() {
   const data={name:"",weightUnit:"lbs",measureUnit:"in",startWeight:"",goalWeight:"",goals:[],experience:"new"};
   const GOALS=[{id:"weight_loss",l:"📉 Weight Loss"},{id:"recovery",l:"🦴 Recovery"},{id:"longevity",l:"🧬 Longevity"},{id:"performance",l:"⚡ Performance"},{id:"hormonal",l:"🌸 Hormonal"},{id:"cognitive",l:"🧠 Cognitive"},{id:"skin_hair",l:"✨ Skin & Hair"},{id:"custom",l:"🔬 Custom"}];
   const STEPS=["Welcome","Goal","Stats","Done"];
+  let restoreCandidate=null;
+  function countsForBackup(v){return {compounds:Object.keys(v.peptides||{}).length,checkins:(v.dailyLogs||[]).length,protocols:(v.protocols||[]).length,kits:(v.supplies||[]).length};}
+  function safeRestore(){
+    if(!restoreCandidate) return;
+    const active=loadState();
+    const hasRecords=!!(active&&((active.dailyLogs||[]).length||(active.supplies||[]).length||(active.protocols||[]).length||Object.keys(active.peptides||{}).length));
+    if(hasRecords){alert("Existing Nexus records were detected. Restore is blocked during onboarding. Export your current data and use Settings → Backup & Restore to review your options.");return;}
+    if(!window.confirm("Restore this selected backup? This replaces the empty setup on this browser. Continue only if you recognize the file."))return;
+    try{
+      const currentRaw=localStorage.getItem(STORE_KEY);
+      const backupKey=STORE_KEY+"-before-onboarding-import";
+      if(currentRaw!==null){localStorage.setItem(backupKey,currentRaw);if(localStorage.getItem(backupKey)!==currentRaw)throw Error("Backup verification failed");}
+      const next=migrate(restoreCandidate);
+      if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
+      next.profile.onboardingDone=true;
+      const before=state;
+      try{state=next;saveState();const stored=localStorage.getItem(STORE_KEY);if(!stored||stored!==JSON.stringify(next))throw Error("Could not verify saved backup");}
+      catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
+      closeModal();render();
+    }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
+  }
   function buildNav(){return `<div style="display:flex;gap:8px;margin-top:12px">${step>0?`<button id="ob-back" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">← Back</button>`:`<button id="ob-skip" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);color:var(--t4);background:transparent;font-size:12px">Skip</button>`}${step<STEPS.length-1?`<button id="ob-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-weight:700">Next →</button>`:`<button id="ob-done" style="flex:1;padding:11px;border-radius:10px;background:#7DF9C0;color:#000;font-weight:700">Let's go →</button>`}</div>`;}
   function rebuild(){const b=document.getElementById("ob-body");if(b){b.innerHTML=buildOb();}const n=document.getElementById("ob-nav");if(n){n.innerHTML=buildNav();}wireOb();}
   function buildOb(){
     const prog=`<div style="display:flex;gap:3px;margin-bottom:16px">${STEPS.map((_,i)=>`<div style="flex:1;height:3px;border-radius:3px;background:${i<=step?"#A78BFA":"var(--border)"}"></div>`).join("")}</div>`;
-    if(step===0)return prog+`<div style="text-align:center;padding:8px 0 14px"><div style="font-size:32px;margin-bottom:8px">💉</div><h2 style="font-size:20px;color:var(--t1);margin-bottom:8px">Welcome to Nexus</h2><p style="font-size:13px;color:var(--t3);line-height:1.6;margin-bottom:14px">Plan protocols, track doses, manage inventory, and understand your patterns.</p></div><div style="font-size:12px;color:var(--t4);margin-bottom:5px">Your name</div><input id="ob-name" class="inp" placeholder="First name" value="${esc(data.name)}" style="width:100%;margin-bottom:10px"><div style="display:flex;gap:8px"><div style="flex:1"><div style="font-size:11px;color:var(--t4);margin-bottom:4px">Weight unit</div><div style="display:flex;gap:5px">${["lbs","kg"].map(u=>`<button class="ob-wu" data-u="${u}" style="flex:1;padding:7px;border-radius:8px;border:1px solid ${data.weightUnit===u?"#A78BFA":"var(--border)"};background:${data.weightUnit===u?"#A78BFA22":"transparent"};color:${data.weightUnit===u?"#A78BFA":"var(--t3)"};font-size:12px">${u}</button>`).join("")}</div></div><div style="flex:1"><div style="font-size:11px;color:var(--t4);margin-bottom:4px">Measure unit</div><div style="display:flex;gap:5px">${["in","cm"].map(u=>`<button class="ob-mu" data-u="${u}" style="flex:1;padding:7px;border-radius:8px;border:1px solid ${data.measureUnit===u?"#A78BFA":"var(--border)"};background:${data.measureUnit===u?"#A78BFA22":"transparent"};color:${data.measureUnit===u?"#A78BFA":"var(--t3)"};font-size:12px">${u}</button>`).join("")}</div></div></div>`;
+    if(step===0)return prog+`<div class="nx-ob-intro"><div class="nx-ob-icon" aria-hidden="true">✦</div><h2>Welcome to Nexus</h2><p>Track your routine, plan protocols, manage Stash inventory, and explore your recorded patterns.</p><div class="nx-ob-privacy"><strong>Stored in this browser</strong><p>Your records are kept in this browser’s local storage. Nexus does not automatically sync records across devices. Clearing browser data can erase them—export backups regularly.</p></div><div class="nx-ob-choice"><button type="button" id="ob-fresh" class="nx-ob-option">Start fresh <span>Set up a new tracker</span></button><button type="button" id="ob-restore" class="nx-ob-option">Restore Nexus backup <span>Choose an existing JSON export</span></button><input id="ob-restore-file" type="file" accept=".json,application/json" hidden></div><div id="ob-restore-preview" aria-live="polite"></div></div>`;
     if(step===1)return prog+`<div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:4px">What are your goals?</div><div style="font-size:12px;color:var(--t4);margin-bottom:10px">Select all that apply.</div><div style="display:flex;flex-wrap:wrap;gap:8px">${GOALS.map(g=>`<button class="ob-goal" data-id="${g.id}" style="padding:9px 14px;border-radius:99px;background:${data.goals.includes(g.id)?"#A78BFA22":"var(--surface-2)"};border:1px solid ${data.goals.includes(g.id)?"#A78BFA":"var(--border-sub)"};color:${data.goals.includes(g.id)?"#A78BFA":"var(--t2)"};font-size:13px">${g.l}</button>`).join("")}</div>`;
     if(step===2)return prog+`<div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:10px">A few quick numbers <span style="font-size:11px;color:var(--t4);font-weight:400">(optional)</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div><div style="font-size:11px;color:var(--t4);margin-bottom:4px">Current weight (${data.weightUnit})</div><input id="ob-sw" class="inp" type="number" placeholder="e.g. 185" value="${data.startWeight}" style="width:100%;height:40px"></div><div><div style="font-size:11px;color:var(--t4);margin-bottom:4px">Goal weight (${data.weightUnit})</div><input id="ob-gw" class="inp" type="number" placeholder="e.g. 160" value="${data.goalWeight}" style="width:100%;height:40px"></div></div><div style="font-size:12px;color:var(--t4);margin-bottom:6px">Experience level</div><div style="display:flex;gap:6px">${[["new","New"],["some","Some"],["advanced","Advanced"]].map(([id,l])=>`<button class="ob-exp" data-id="${id}" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid ${data.experience===id?"#A78BFA":"var(--border)"};background:${data.experience===id?"#A78BFA22":"transparent"};color:${data.experience===id?"#A78BFA":"var(--t3)"};font-size:11px">${l}</button>`).join("")}</div>`;
     if(step===3)return prog+`<div style="text-align:center;padding:10px 0"><div style="font-size:36px;margin-bottom:8px">🎉</div><h2 style="font-size:18px;color:var(--t1);margin-bottom:8px">You're all set${data.name?", "+esc(data.name):""}!</h2><p style="font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:12px">Here's how to get started:</p><div style="display:flex;flex-direction:column;gap:7px">${[["💉","Log a dose","Today → + Log Dose"],["📋","Create a protocol","Protocol → New Protocol"],["📦","Add inventory","Stash → + Add Kit"],["🔬","Browse compounds","Nexus → Learn → Discover"]].map(([icon,title,desc])=>`<div style="background:var(--surface-2);border-radius:8px;padding:9px 12px;display:flex;gap:10px;align-items:center"><span style="font-size:16px">${icon}</span><div><div style="font-size:12px;font-weight:600;color:var(--t1)">${title}</div><div style="font-size:10px;color:var(--t4)">${desc}</div></div></div>`).join("")}</div><button id="ob-tutorial" style="width:100%;margin-top:12px;padding:10px;border-radius:10px;border:1px solid var(--border-sub);color:#A78BFA;background:#A78BFA12;font-size:12px">📖 View Getting Started Guide</button></div>`;
@@ -1153,6 +1174,21 @@ function showOnboarding() {
   }
   function wireOb(){
     const m=document.getElementById("ob-wrap");if(!m)return;
+    m.querySelector("#ob-fresh")?.addEventListener("click",()=>{step=1;rebuild();});
+    m.querySelector("#ob-restore")?.addEventListener("click",()=>m.querySelector("#ob-restore-file")?.click());
+    m.querySelector("#ob-restore-file")?.addEventListener("change",async e=>{
+      const file=e.target.files&&e.target.files[0];if(!file)return;
+      try{
+        if(file.size>12*1024*1024)throw Error("File exceeds 12 MB. Use the full backup flow for larger exports.");
+        const raw=JSON.parse(await file.text());
+        if(!raw||typeof raw!=="object"||Array.isArray(raw)||!raw.peptides||typeof raw.peptides!=="object"||Array.isArray(raw.peptides)||!raw.profile||typeof raw.profile!=="object"||Array.isArray(raw.profile)||!raw.settings||typeof raw.settings!=="object"||Array.isArray(raw.settings)||!Array.isArray(raw.dailyLogs||[])||!Array.isArray(raw.supplies||[])||!Array.isArray(raw.protocols||[]))throw Error("This is not a recognized Nexus JSON backup.");
+        restoreCandidate=raw;
+        const c=countsForBackup(raw);
+        const box=m.querySelector("#ob-restore-preview");
+        box.innerHTML='<div class="nx-ob-privacy"><strong>Backup preview</strong><p>'+c.compounds+' compounds · '+c.checkins+' Check-Ins · '+c.protocols+' protocols · '+c.kits+' kits</p><button id="ob-confirm-restore" type="button" class="btn-primary" style="min-height:44px">Review and confirm restore</button></div>';
+        box.querySelector("#ob-confirm-restore").onclick=safeRestore;
+      }catch(err){restoreCandidate=null;m.querySelector("#ob-restore-preview").textContent=err.message;}
+    });
     m.querySelector("#ob-skip")?.addEventListener("click",()=>finish());
     m.querySelector("#ob-back")?.addEventListener("click",()=>{step--;rebuild();});
     m.querySelector("#ob-next")?.addEventListener("click",()=>{step++;rebuild();});

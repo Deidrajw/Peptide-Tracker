@@ -1,4 +1,3 @@
-Clearer card layouts and easier navigation
-- More consistent cards: Research, Goals, Stash and Protocol display status beneath the title with consistent management controls.
-- Simpler Journal filters: Filter notes without a long scrolling row of compound names.
-- Focused Check-In comparisons: Choose one symptom or mood measure at a time and see how many days contain records.
+A warmer start with safer backup choices
+- Welcome to Nexus: New users can see what Nexus does, learn how browser storage works, and choose to start fresh or restore a backup.
+- Backup preview before restoration: Review counts and confirm before restoring; onboarding restoration is blocked when existing records are detected.

@@ -294,3 +294,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — New publish gate tests (PENDING latest CI)
 - Eight simulated LIVE/isolated complete DEMO 320/390 light/dark test cases now verify NEXUS_RELEASE version and unverified status no popup; simulated published release shows modal, Later leaves it unseen, Got it writes version-specific key and suppresses repeat; restores isolated test-local key/status. Generator check enforces release manifest as source for three outputs and runtime embedded metadata, builder crosschecks page title. Confirm no effects to onboarding, records, backup, or numeric legacy history. Physical iPhone and real publication pending.
+
+### 2026-10-25 — Onboarding first-run new tests (PENDING)
+- Verify welcome on 320/390 light/dark, local browser storage/cross-device/no-sync explanation, Start Fresh optional preferences and step navigation, Restore picker validation malformed/oversized JSON, file record-count preview, cancel/consent, existing-data blocking, pre-import snapshot, save failures/rollback, and existing users bypass onboarding. Verify version=manifest=title=runtime=in-app/Apple/Google generated notes, no announcement for UNVERIFIED status, full LIVE/full DEMO isolation. Preserve Check-In/Supplements/Protocol/Stash and dose history. Real iPhone/VoiceOver NOT TESTED.
