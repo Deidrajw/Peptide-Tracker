@@ -335,3 +335,8 @@
 ### 2026-10-25 — v0.9.19-beta corrective candidate (NOT YET RELEASED)
 - Targeted response to physical iPhone issues: blend open vial and reconstitution metadata, blend-as-one-entry in Today picker/dose logs, composition percentages, and Protocol phase/review input geometry. Source branch `release/v0919-blend-protocol-iphone-fixes`; baseline v0.9.18 main `2bf40535`.
 - Data impact: additive blend vial metadata, new single blend-dose logs, no automatic migration; existing constituent dose logs retained. Version manifest `unverified`. Full CI/live Cloudflare/iPhone acceptance pending. Published v0.9.18 unaffected until safe merge.
+
+### 2026-10-25 — v0.9.19-beta blend and Protocol corrective WEB DEPLOY VERIFIED
+- PR #100 merged `955c904860b39c5c56472b07cd3521828d5d9d79` from baseline v0.9.18. PR #101 merged `c6b64c113c703fcfcb7fb372172fcf8c966d7266` and verified Cloudflare root index, 3 CSS, 12 JS 16/16 byte parity (run 40162047192 / artifact 12587340188). Source QA run 40161722598 and mobile-form 40161722564 passed.
+- New blend opening form adds BAC, expiry, recon date, notes; logging is one dose under blend; Legacy component records retained; Protocol review and phase controls resized; incorrect per-vial composition percent fixed. Same storage key and no migration.
+- Canonical publication-status activation staged separately on `release/v0919-published-verified-manifest` and is not presumed deployed before new Cloudflare verification. Real physical iPhone/VoiceOver still not tested after code change.
