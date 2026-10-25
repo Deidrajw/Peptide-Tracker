@@ -1,0 +1,4 @@
+Clearer card layouts and easier navigation
+- More consistent cards: Research, Goals, Stash and Protocol display status beneath the title with consistent management controls.
+- Simpler Journal filters: Filter notes without a long scrolling row of compound names.
+- Focused Check-In comparisons: Choose one symptom or mood measure at a time and see how many days contain records.
