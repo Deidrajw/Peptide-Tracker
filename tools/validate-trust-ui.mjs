@@ -105,8 +105,8 @@ try{
         assert.deepEqual(parity.blend.tabs,parity.single.tabs,'shared kit details tabs');
         assert.equal(parity.blend.summary,parity.single.summary,'shared kit detail disclosure');
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#bd-amount').fill('3');
-        await page.locator('#bd-save').click();
+        await page.locator('#dose').fill('3');
+        await page.locator('#save').click();
         const doses=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
           return {blend:state.customPeptides[k.name]?.doses?.length,
@@ -118,8 +118,8 @@ try{
         assert.equal(await page.evaluate(()=>getBlendOpenVialRemainingMg(state.supplies.find(k=>k.id===975310))),27,
           'open vial has 27mg after a 3mg draw, not the full kit remainder');
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#bd-amount').fill('31');
-        await page.locator('#bd-save').click();
+        await page.locator('#dose').fill('31');
+        await page.locator('#save').click();
         assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
           'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');
         await page.evaluate(()=>{closeModal();finishBlendVialModal(975310);});
