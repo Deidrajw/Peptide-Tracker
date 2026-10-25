@@ -427,3 +427,7 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 :root[data-theme="light"] .nx-kit-detail-button:focus-visible {
   outline:3px solid #5B3FA8!important;outline-offset:2px;
 }
+
+/* Some inline modal actions force ink via important declarations. Contrast wins. */
+:root[data-theme="light"] .modal .btn-primary:not(:disabled),
+:root[data-theme="light"] .modal #rvsave:not(:disabled){color:#FFFFFF!important;}
