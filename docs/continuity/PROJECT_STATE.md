@@ -632,3 +632,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **Visual warning:** contrast audit emitted 31 light-theme candidates across 9 tabs (including 1.27:1 headings); this audit is informational and can overflag transparent composition, but must be investigated before merge. No real iPhone test. Browser status != device approval.
 - Build pipeline generated the complete source-parity LIVE ZIP, standalone FULL_DEMO HTML and browser-openable isolated DEMO ZIP in GitHub Actions artifact 12613828154. GitHub Cloudflare parity for experimental branch returned UNVERIFIED (expected; do not deploy branch).
 - **ONE NEXT ACTION:** visually inspect and resolve/light-mode contrast findings in both themes using rendered screenshots before user approval; preserve untouched production.
+
+
+### 2026-10-25 — Hybrid visual feedback correction: visibly floating navigation
+- User reports preceding hybrid preview still flat and navigation unchanged. Verified stylesheet previously used weak `:where()` selectors and did not materially update existing `.tabbar` active styling.
+- Branch commit `087e3679` targets actual existing `.tabbar`, `.tabbar button.active`, `.card`, `.btn-primary`, `.modal`, adds distinct theme backgrounds and correct 320px spacing. No JS/state/data change. Production not deployed.
+- **ONE NEXT ACTION:** finish latest-head GitHub browser/contrast QA, inspect real 320/390 screenshots both themes, and present updated downloadable preview to user; don't merge or deploy.
