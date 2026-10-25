@@ -264,3 +264,7 @@
 ### 2026-10-25 — App-wide contrast token baseline (branch approval implementation)
 - User requires app-wide light/dark legibility, not isolated controls. Preserve hierarchy but prevent muted text tokens from fading below AA on neutral surfaces. Dark t3/t4/t5 elevated to legible lavender-gray tones; light t4/t5 darkened. Small Calendar weight labels use accessible light blue (dark) or navy (light), no changes to saved numerical weights.
 - Direct white-on-solid-lavender foreground is not accepted (observed ratios 2.1–2.7); use dark ink. Browser gate checks rendered modal buttons and neutral token/surface combinations, plus diagnostic sweep of nine tabs, but no whole-app AA certification without broader human and modal audit.
+
+### 2026-10-25 — Theme hotfix risk gate and follow-up (implemented PR #111)
+- PR #111 implements systemic neutral muted token legibility in both themes plus direct solid-accent and modal action fixes. A published patch may retain canonical v0.9.19-beta version if manifest, title and runtime continue to match, but then existing acknowledged users won't see a second What's New; do not claim announcement delivered.
+- Browser computed contrast checks block known failures. Nine-tab diagnostic remains informational because translucent backgrounds and JS-rendered states need manual pixel review. A passed PR does NOT equal all-modal WCAG AA or physical iPhone acceptance. Primary Cloudflare byte parity is independent post-merge gate.
