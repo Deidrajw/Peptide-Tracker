@@ -314,3 +314,7 @@
 
 ### 2026-10-25 — Kit-card two-action design approved for preview
 - User prefers one context-sensitive inventory action plus a visible Kit Details disclosure. Prepare Doses should stay accessible from existing kit ellipsis sheet and top Stash Prepare control, not appear as a third equally weighted persistent button. Never show Open New Vial if existing conditions do not permit it, and do not change calculations or preparation behaviour.
+
+
+### 2026-10-25 — Inventory Resolution design scope after full-app gate
+- User requested clearer vial source allocation without changing math/ledger. Number and distinguish source rows, label confirm-draw more explicitly, preserve existing editable mg allocations, calculated units, draft flow, multi-vial depletion, undo and exactly one administered dose. Do not assume duplicate 'current vial' rows mean duplicate physical inventory without evidence. No automatic allocation changes authorized.
