@@ -484,3 +484,28 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 /* Release action on pale lavender: preserve dark readable ink, not white. */
 :root[data-theme="light"] #nx-release-dismiss,
 :root[data-theme="dark"] #nx-release-dismiss{color:#211630!important;-webkit-text-fill-color:#211630!important;}
+
+
+/* Stash context-aware sizing: two equal actions when no vial is open. */
+.nx-kit-card .nx-kit-actions-three.nx-kit-actions-two{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.nx-kit-card .nx-kit-vial-unopened .nx-kit-primary-value span{
+  display:block;font-size:23px;font-weight:750;letter-spacing:-.45px;
+  line-height:1.2;color:var(--t1);
+}
+.nx-kit-card .nx-kit-vial-unopened .nx-kit-primary-hint{
+  margin-top:8px;font-size:12px;color:var(--t3);
+}
+/* Vial list's ellipsis must not inherit the broad full-width action treatment.
+   A 44px hit area is retained with compact 18px iconography. */
+.nx-kit-card .nx-kit-vial-row{display:flex;align-items:center;gap:12px}
+.nx-kit-card .nx-kit-vial-row .nx-kit-list-copy{flex:1;min-width:0}
+.nx-kit-card .nx-kit-vial-row .vial-actions-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+  height:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;
+  border-radius:11px!important;
+}
+.nx-kit-card .nx-kit-vial-row .vial-actions-btn svg{width:17px;height:17px}
