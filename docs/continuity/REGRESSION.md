@@ -338,3 +338,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS (AUTOMATED): candidate release workflow 40161722598 + mobile forms 40161722564. Fictional isolated blend 2 sealed → 1 open with BAC/expiry/notes, single 3mg dose under blend name, no constituent logs, 31mg overdraw rejected, finish vial records 27mg outflow while preserving 1 sealed vial and 30mg remaining. Full app × 320/390 light/dark; math diagnostic 80/80; Check-In, Protocol, Stash, Log Dose, Combo, Calendar protection.
 - PASS (HOST): 16/16 Cloudflare index/3 CSS/12 JS source hashes in 40162047192 against PR #100 merged implementation commit.
 - PENDING: publication-metadata follow-up generated note/runtime parity, live re-verification and physical iPhone/VoiceOver/keyboard acceptance. Do not treat automated simulations as real iPhone tests.
+
+### 2026-10-25 — v0.9.19-beta final regression results
+- PASS AUTOMATED: PR #100 build/browser 40161722598 and mobile 40161722564; post-publication 16-file Cloudflare exact SHA-256 `verified:true` in run 40162805366; companion mobile form 40162805313 PASS.
+- PASS AUTOMATED (synthetic isolated): blend 30mg two-vial kit, 2mL BAC, expiry 30 days, opening seals transition, logging one 3mg dose under blend only, rejecting 31mg overdraw, vial finish with 27mg waste and preserving second sealed vial, constituent-only suppression in Today picker. Existing unrelated state/historical doses not migrated.
+- SOURCE-CHECKED: 10mg each of Cartalax/BPC-157/TB-500 in physical 30mg vial gives ~33% per ingredient; Protocol Review name input box-sizing, Phase +/− 44px square targets, Dose/Rest 44px readable segments. These are code and browser facts, not confirmed user iPhone acceptance.
+- NOT TESTED: actual user's iPhone after deployment, keyboard toolbar and native picker behavior, VoiceOver, full manual WCAG AA color and navigation audit.
