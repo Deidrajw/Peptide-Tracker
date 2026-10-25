@@ -1413,24 +1413,20 @@ function manageKitMenu(kitId) {
   const actions = [
     {
       label: "VIAL & INVENTORY",
-      entries: isBlend ? [
-        ...(!hasRecon && sealed>0 ? [{id:"blend-open",name:"Open / reconstitute blend vial",desc:"Record BAC water, expiry and vial notes",icon:"+"}] : []),
-        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Log one premixed blend dose",icon:"◈"}] : []),
-        ...(hasRecon ? [{id:"blend-finish",name:"Finish current blend vial",desc:"Record any leftover as outflow before opening another",icon:"✓"}] : []),
-        {id:"blend-restock",name:"Add blend vials",desc:"Increase sealed stock for this premixed kit",icon:"+"}
-      ] : [
-        ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
-        ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the existing preparation and stock-allocation flow",icon:"◌"}] : []),
-        ...(hasOpen ? [{id:"finish-vial",name:"Finish this vial",desc:"Keep sealed backup vials in the kit",icon:"✓"},{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
-        {id:"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
-        ...(hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
+      entries: [
+        ...(!isDone && sealed>0 ? [{id:isBlend?"blend-open":"open",name:"Open new vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
+        ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the shared preparation and inventory flow",icon:"◌"}] : []),
+        ...(hasOpen ? [{id:isBlend?"blend-finish":"finish-vial",name:"Finish this vial",desc:"Complete the current vial and reconcile remaining inventory",icon:"✓"}] : []),
+        ...(!isBlend && hasOpen ? [{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
+        {id:isBlend?"blend-restock":"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
+        ...(!isBlend && hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
       ]
     },
     {
       label:"KIT & RECORDS",
       entries: [
         {id:"edit",name:"Edit kit",desc:isBlend?"Edit blend composition and metadata":"Change kit metadata without rewriting vial history",icon:"✎"},
-        {id:"details",name:"Kit details & history",desc:isBlend?"Composition and kit information":"Inventory, vial and dose history",icon:"▤"},
+        {id:"details",name:"Kit details & history",desc:"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
         ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
       ]
@@ -1474,7 +1470,7 @@ function manageKitMenu(kitId) {
         icon(item)+'<span style="min-width:0;flex:1"><span style="display:block;font-size:13.5px;font-weight:650;color:'+(item.danger?'#ff8585':'var(--t1)')+'">'+item.name+'</span>'+
         '<span style="display:block;font-size:11px;line-height:1.4;margin-top:3px;color:var(--t4)">'+item.desc+'</span></span>'+
         '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t4);flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg></button>'
-      ).join('') : '<div class="nx-stash-empty-note" role="status" style="border-radius:12px;padding:12px 14px;background:var(--surface-2);color:var(--t3);font-size:12px;line-height:1.55"><strong style="display:block;color:var(--t2);font-size:12.5px;margin-bottom:3px">'+(isBlend&&!hasRecon?'No blend vial opened yet':'No vial actions available')+'</strong>'+(isBlend&&!hasRecon?'No blend vial has been opened or reconstituted yet. Vial-specific actions, including Log blend dose, become available after a vial is opened.':'There are no applicable actions for the current vial state.')+'</div>')+'</section>').join('')+
+      ).join('') : '<div class="nx-stash-empty-note" role="status" style="border-radius:12px;padding:12px 14px;background:var(--surface-2);color:var(--t3);font-size:12px;line-height:1.55"><strong style="display:block;color:var(--t2);font-size:12.5px;margin-bottom:3px">'+('No vial actions available')+'</strong>'+(isBlend&&!hasRecon?'No blend vial has been opened or reconstituted yet. Vial-specific actions, including Log blend dose, become available after a vial is opened.':'There are no applicable actions for the current vial state.')+'</div>')+'</section>').join('')+
     '</div>', c.color);
   m.querySelector("#x").onclick=closeModal;
   const openDetails=()=>{
