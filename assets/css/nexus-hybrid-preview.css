@@ -1,0 +1,57 @@
+/* Nexus Hybrid Design System 2.0 — branch-only preview layer.
+   Visual selectors only; no storage, JS, records, math, or navigation changes.
+   Experimental: do not merge/deploy without UI/contrast regression signoff. */
+:root,[data-theme="dark"],body:not(.light-mode) {
+  --nx-hybrid-canvas:#171521;
+  --nx-hybrid-surface:#292436;
+  --nx-hybrid-soft:#352d43;
+  --nx-hybrid-ink:#f9f5fc;
+  --nx-hybrid-muted:#cdc1d8;
+  --nx-hybrid-border:#50445c;
+  --nx-hybrid-accent:#dec5fa;
+}
+[data-theme="light"],body.light-mode,body.light {
+  --nx-hybrid-canvas:#f9f7f8;
+  --nx-hybrid-surface:#fff;
+  --nx-hybrid-soft:#f4eef8;
+  --nx-hybrid-ink:#292332;
+  --nx-hybrid-muted:#635a6e;
+  --nx-hybrid-border:#e2d8ea;
+  --nx-hybrid-accent:#76519c;
+}
+html, body {
+  background-color:var(--nx-hybrid-canvas);
+}
+body {
+  background-image:radial-gradient(ellipse 80vw 42vh at 12% 0%,rgba(153,112,189,.12),transparent 78%);
+  background-attachment:fixed;
+}
+[data-theme="light"] body,body.light-mode,body.light {
+  background-image:radial-gradient(ellipse 78vw 38vh at 12% 0%,rgba(170,126,209,.09),transparent 80%);
+}
+#app {min-height:100vh;}
+/* Gentle global treatment; all preexisting spacing and critical control geometry remain. */
+:where(.card,.nx-card,.nx-kit-card,.nx-panel,.modal-content,.nx-sheet,.nx-dose-form,.sheet-content) {
+  border-radius:18px;
+}
+:where(button,.btn,.nx-btn,[role="button"]) {
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .2s ease,transform .18s ease;
+}
+:where(button,.btn,.nx-btn):where(:focus-visible){
+  outline:2px solid var(--nx-hybrid-accent);
+  outline-offset:2px;
+}
+:where(.card,.nx-card,.nx-kit-card,.nx-panel) {
+  box-shadow:0 7px 22px rgba(10,8,22,.06);
+}
+:where(.modal-content,.nx-sheet,.sheet-content) {
+  box-shadow:0 20px 55px rgba(8,6,18,.19);
+}
+/* Keep site/history/vial calculations and numeric fields free from ornamental transformations. */
+:where(input,select,textarea) { transition:border-color .18s ease,box-shadow .18s ease; }
+@media(prefers-reduced-motion:reduce){
+  :where(button,.btn,.nx-btn,[role="button"],input,select,textarea){transition:none!important;animation:none!important;}
+}
+@media(max-width:359px){
+  :where(.card,.nx-card,.nx-kit-card,.nx-panel){border-radius:15px;}
+}
