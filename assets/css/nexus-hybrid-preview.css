@@ -82,3 +82,108 @@ html[data-theme="light"] :where(.btn-primary) {
  box-shadow:0 -7px 24px rgba(12,8,28,.11);
 }
 :where(.tabbar button) {border-radius:15px;}
+
+/* VISUAL REFINEMENT 02 — real floating navigation and layered screens.
+   Applied to existing .tabbar/.card selectors, not invented component classes. */
+:root {
+ --t1:#f8f4ff;--t2:#dcd1e8;--t3:#b8a7cd;--t4:#a497bc;
+ --tabbar-txt:#c8badc;--tabbar-act:#261735;
+ --tabbar-bg:#292136;--tabbar-bdr:#74638a;
+}
+html[data-theme="light"] {
+ --t1:#241b2f;--t2:#3d344a;--t3:#554760;--t4:#665775;
+ --tabbar-txt:#655674;--tabbar-act:#2b1940;
+ --tabbar-bg:#ffffff;--tabbar-bdr:#dbcae8;
+}
+body {
+ background-image:
+ radial-gradient(ellipse 110vw 55vh at -8% -12%,rgba(157,106,205,.33),transparent 72%),
+ radial-gradient(ellipse 90vw 70vh at 105% 48%,rgba(83,67,142,.16),transparent 72%),
+ linear-gradient(165deg,#211a30 0%,#171521 64%,#1a172a 100%);
+ background-attachment:fixed;
+}
+html[data-theme="light"] body {
+ background-image:
+ radial-gradient(ellipse 115vw 52vh at -8% -10%,rgba(193,151,228,.33),transparent 72%),
+ radial-gradient(ellipse 90vw 65vh at 110% 55%,rgba(228,212,243,.45),transparent 70%),
+ linear-gradient(165deg,#fbf8fd,#f7f3f9 72%,#f7f4fa);
+}
+#app {padding-bottom:calc(114px + env(safe-area-inset-bottom));}
+.tabbar {
+ position:fixed!important;
+ bottom:calc(12px + env(safe-area-inset-bottom))!important;
+ left:50%!important;
+ transform:translateX(-50%)!important;
+ width:calc(100% - 24px)!important;
+ max-width:520px!important;
+ padding:7px!important;
+ display:flex!important;
+ gap:3px!important;
+ align-items:stretch;
+ justify-content:space-around;
+ border:1px solid var(--tabbar-bdr)!important;
+ border-radius:28px!important;
+ background:rgba(41,33,54,.96)!important;
+ box-shadow:0 14px 42px rgba(8,5,25,.46),inset 0 1px 0 rgba(255,255,255,.13)!important;
+ backdrop-filter:blur(26px)!important;
+ -webkit-backdrop-filter:blur(26px)!important;
+}
+html[data-theme="light"] .tabbar {
+ background:rgba(255,255,255,.96)!important;
+ box-shadow:0 15px 36px rgba(65,42,98,.17),inset 0 1px 0 rgba(255,255,255,.94)!important;
+}
+.tabbar button {
+ flex:1 1 0!important;
+ min-width:0!important;
+ min-height:52px!important;
+ padding:7px 2px!important;
+ border-radius:21px!important;
+ gap:4px!important;
+ color:var(--tabbar-txt)!important;
+ font-weight:600!important;
+ transition:background .2s ease,transform .18s ease,color .2s ease!important;
+}
+.tabbar button.active {
+ background:linear-gradient(150deg,#e3ccff,#b99ae8)!important;
+ color:#261735!important;
+ box-shadow:0 3px 12px rgba(9,3,25,.25),inset 0 1px 0 #ffffffa0!important;
+}
+html[data-theme="light"] .tabbar button.active {
+ background:linear-gradient(145deg,#e9dafa,#d3b9ee)!important;
+ color:#29183a!important;
+ box-shadow:0 4px 12px rgba(104,73,139,.17)!important;
+}
+.tabbar button.active svg {color:#29183a!important;}
+.tabbar svg {width:21px!important;height:21px!important;}
+.card {
+ border:1px solid rgba(192,158,220,.16)!important;
+ background:linear-gradient(155deg,rgba(53,44,69,.96),rgba(39,33,54,.98))!important;
+ box-shadow:0 9px 28px rgba(9,6,22,.21),inset 0 1px 0 rgba(255,255,255,.045)!important;
+ border-radius:21px!important;
+}
+html[data-theme="light"] .card {
+ background:linear-gradient(155deg,#ffffff,#fbf9fd)!important;
+ border-color:rgba(171,142,194,.21)!important;
+ box-shadow:0 10px 26px rgba(89,58,117,.1),inset 0 1px 0 #ffffff!important;
+}
+.btn-primary {
+ border-radius:16px!important;
+ background:linear-gradient(135deg,#e4caff 0%,#bb98ef 66%,#ae84e6 100%)!important;
+ color:#271733!important;
+ box-shadow:0 6px 18px rgba(133,84,194,.29),inset 0 1px 0 rgba(255,255,255,.7)!important;
+}
+html[data-theme="light"] .btn-primary {
+ background:linear-gradient(135deg,#dfc4fa,#c29de9)!important;
+ color:#281638!important;
+}
+.modal {
+ border-radius:28px 28px 0 0!important;
+ box-shadow:0 -18px 65px rgba(9,5,24,.35)!important;
+}
+@media(max-width:359px) {
+ .tabbar {width:calc(100% - 16px)!important;padding:5px!important;}
+ .tabbar button {padding:6px 1px!important;font-size:9px!important;}
+}
+@media(prefers-reduced-motion:reduce) {
+ .tabbar button,.card,.btn-primary {transition:none!important;animation:none!important;}
+}
