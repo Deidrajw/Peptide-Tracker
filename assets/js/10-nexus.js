@@ -409,9 +409,8 @@ function stashView() {
     return `<div class="card nx-kit-card nx-blend-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
       <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
         <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
-        <span style="font-size:16px;font-weight:700;color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span>
-        ${statusBadge(st.label, st.color)}
-        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit">⋯</button>
+        <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span><span class="nx-card-status">${statusBadge(st.label, st.color)}</span></span>
+        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
         <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">BLEND INVENTORY REMAINING</div>
