@@ -1504,7 +1504,7 @@ function manageKitMenu(kitId) {
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
     else if(id==="classify-premix") classifyLegacyPremixedKit(kitId);
-    else if(id==="edit") { if(isBlend) addBlendKitModal(s); else supplyModal(s); }
+    else if(id==="edit") { if(isBlend && s.blendInventoryMode!=="legacy-v2") addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
     else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
