@@ -1270,6 +1270,7 @@ function logWasteModal(supplyId) {
 function openNewVialModal(supplyId) {
   const s = state.supplies.find(x=>x.id===supplyId); if(!s) return;
   const c = cfg(s.name);
+  if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
   const vialNum = ((s.reconHistory||[]).length)+1;
   const m = openModal(`
@@ -1282,11 +1283,11 @@ function openNewVialModal(supplyId) {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div>
           <label class="field-label">VIALS IN KIT</label>
-          <input id="rv-totalvials" type="number" class="inp" value="${s.totalVials||""}" placeholder="e.g. 10" style="padding:6px 8px;font-size:12px">
+          <input id="rv-totalvials" type="number" ${s.isBlend?"readonly":""} class="inp" value="${s.totalVials||""}" placeholder="e.g. 10" style="padding:6px 8px;font-size:12px">
         </div>
         <div>
           <label class="field-label">MG PER VIAL</label>
-          <input id="rv-vialmg" type="number" class="inp" value="${s.vialMg||""}" placeholder="e.g. 30" style="padding:6px 8px;font-size:12px">
+          <input id="rv-vialmg" type="number" ${s.isBlend?"readonly":""} class="inp" value="${s.vialMg||""}" placeholder="e.g. 30" style="padding:6px 8px;font-size:12px">
         </div>
         <div>
           <label class="field-label">BAC WATER (mL)</label>
@@ -1297,9 +1298,11 @@ function openNewVialModal(supplyId) {
     </div>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
+    <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
+    <input id="rv-expiry" type="number" step="1" min="1" class="inp" value="${s.expiryDays||28}" style="margin-bottom:14px">
     <label class="field-label">NOTES (lot #, batch, anything notable)</label>
     <input id="rvn" class="inp" placeholder="optional" style="margin-bottom:18px">
-    <button id="rvsave" class="btn-primary" style="background:${c.color}">Log Reconstitution</button>
+    <button id="rvsave" class="btn-primary" style="background:${c.color};color:#1A1728!important">Log Reconstitution</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
 
@@ -1327,13 +1330,25 @@ function openNewVialModal(supplyId) {
     const newMg = parseFloat(m.querySelector("#rv-vialmg").value);
     const newBac = parseFloat(m.querySelector("#rv-bacml").value);
     const newTv = parseInt(m.querySelector("#rv-totalvials").value);
-    if(!isNaN(newMg)) entry.vialMg = newMg;
-    if(!isNaN(newTv)) entry.totalVials = newTv;
+    const expiryDays=Number(m.querySelector("#rv-expiry").value);
+    if(!Number.isFinite(newBac)||newBac<=0||!Number.isInteger(expiryDays)||expiryDays<1||expiryDays>3650){showErrorBanner("Enter valid BAC water and expiry interval.");return;}
+    if(!entry.isBlend && !isNaN(newMg)) entry.vialMg = newMg;
+    if(!entry.isBlend && !isNaN(newTv)) entry.totalVials = newTv;
     // If reconstituting today, capture the actual time (not just the date). Otherwise a dose
     // logged earlier today (from the vial being finished) would share the same calendar date
     // as this new vial's reconDate and get miscounted as "used from the new vial."
     const pickedDate = m.querySelector("#rvd").value;
     const reconTimestamp = (pickedDate === localDate()) ? new Date().toISOString() : pickedDate;
+    if(entry.isBlend){
+      const sealed=getSealedVials(entry);if(!sealed.length||getActiveVial(entry)){showErrorBanner("No available sealed vial to open.");return;}
+      const vial=sealed[0],notes=m.querySelector("#rvn").value.trim();
+      vial.status="open";vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
+      entry.bacMl=newBac;entry.expiryDays=expiryDays;entry.reconDate=reconTimestamp;entry.openedVials=(entry.openedVials||0)+1;entry.activeKit=true;
+      entry.reconHistory=entry.reconHistory||[];
+      entry.reconHistory.push({id:uid(),date:reconTimestamp,notes,vialId:vial.id,bacMl:newBac,expiryDays});
+      saveState();closeModal();render();return;
+    }
+    entry.expiryDays=expiryDays;
     confirmOpenIfOtherKitOpen(entry, () => {
       // Single canonical path for opening a vial — the same activateVial() used by the
       // mid-dose "Open New Vial" flow, so this button and that one can never drift apart

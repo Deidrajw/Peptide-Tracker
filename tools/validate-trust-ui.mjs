@@ -76,16 +76,34 @@ try{
             state.customPeptides[name]={status:'active',scheduleDays:7,doses:[]};
           openBlendVialModal(kit.id);
         });
-        await page.locator('#nx-blend-bac').fill('2');
-        await page.locator('#nx-blend-expiry').fill('30');
-        await page.locator('#nx-blend-notes').fill('Fictional vial');
-        await page.locator('#nx-blend-open').click();
+        await page.locator('#rv-bacml').fill('2');
+        await page.locator('#rv-expiry').fill('30');
+        await page.locator('#rvn').fill('Fictional vial');
+        await page.locator('#rvsave').click();
         const opened=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
           return {bac:k.bacMl,expiry:k.expiryDays,remaining:getSealedVials(k).length,
             open:ensureKitVials(k).some(v=>v.status==='open'||v.status==='active')};
         });
         assert.deepEqual(opened,{bac:2,expiry:30,remaining:1,open:true},'blend open vial/recon and sealed-count');
+        const parity=await page.evaluate(()=>{
+          const normal={id:975311,name:'QA Single',totalVials:2,vialMg:30,activeKit:false,reconDate:null,openedVials:0,emptyVials:0,doseLog:[],wasteLog:[],reconHistory:[]};
+          state.supplies.push(normal);
+          tab='stash';render();
+          const read=id=>{
+            const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
+            if(!card)return null;
+            return {label:card.querySelector('.nx-stash-inventory-summary')?.textContent?.includes('KIT INVENTORY REMAINING'),
+              actionPresent:!!card.querySelector('.opennewvial,.openblendvial'),
+              summary:card.querySelector('details>summary')?.textContent?.trim(),
+              tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
+          };
+          return {single:read(normal.id),blend:read(975310)};
+        });
+        assert.ok(parity.single&&parity.blend,'both standard and premixed cards must render');
+        assert.equal(parity.single.label,true);assert.equal(parity.blend.label,true);
+        assert.deepEqual(parity.blend.tabs,parity.single.tabs,'shared kit details tabs');
+        assert.equal(parity.blend.summary,parity.single.summary,'shared kit detail disclosure');
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#bd-amount').fill('3');
         await page.locator('#bd-save').click();

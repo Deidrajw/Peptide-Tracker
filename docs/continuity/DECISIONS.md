@@ -256,3 +256,7 @@
 ### 2026-10-25 — Premixed blend releases use independently verified publication gates
 - v0.9.19 merge #100 changed only new blend vial and dose logic; old ingredient dose entries remain immutable historical records. Opening/finalizing a vial requires explicit user action; current-vial math prevents drawing against sealed kit inventory. Displayed blend component percentages use the vial total rather than kit total.
 - After 16/16 Cloudflare remote parity for main source (Actions 40162047192), source of truth may mark v0.9.19 published via an additive, separately validated manifest/What's New follow-up, not by retroactively rewriting saved localStorage history.
+
+### 2026-10-25 — Issue #109 approved kit parity correction
+- **APPROVED:** Premixed blend is a normal kit; Stash, Prepare, Open new vial, Log Dose, History must use **the same components** as regular kits. Composition/ingredient math is the only intentional distinction. Blend-only screens and labels are disallowed. User explicitly prioritized parity above isolated button fixes.
+- **In progress on branch:** initial Stash copy and Open Vial modal visual alignment coded, not yet validated. Full shared renderer/event-path refactor still required. Preserve blend-level single administration identity and accurate composition breakdown, historical kLOW and all records without automatic rewrite.
