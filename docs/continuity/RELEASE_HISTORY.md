@@ -356,3 +356,8 @@
 - PR #110 adds opt-in legacy premixed kit designation with original vial-ledger compatibility and new synthetic regression coverage. Preserves all prior dose histories, kit identifiers and stock; no automatic migration.
 - Shared kit detail overview now presents remaining inventory as primary metric, then sparse full-width rows for vials/concentration/purchase, and separated notes; vials view shows inventory summary and opened vial actions; kit history defaults to five recent items with expansion. Today per-compound history similarly limits initial rows with explicit Close/Show All/Fewer.
 - JS source syntax parse only passed; latest browser/mobile and true iPhone results pending, full-app LIVE/DEMO packages incomplete, Cloudflare unaffected.
+
+### v0.9.20-beta candidate follow-up — 2026-10-25 (NOT DEPLOYED)
+- UI: current open vial remaining becomes primary Stash card figure; kit-wide remaining moves under Overview. Kit Details becomes a real third action-row button, with one expand/collapse icon and no old disclosure row. Existing Overview/Vials/History tab content retained and visually standardized.
+- Read-only structural validation: relevant JavaScript parsed, no persistent storage schema or dose records modified by this patch. Full mobile/theme regression and deployment artifacts pending.
+- Observed user-data discrepancy between Glutathione declared 1200 mg/vial and open vial 1250 mg: not changed without accounting review.
