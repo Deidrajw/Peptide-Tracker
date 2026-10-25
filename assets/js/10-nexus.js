@@ -680,7 +680,7 @@ function reconCalcView() {
   const unitsRaw = mlPerDose!=null ? mlPerDose*100 : null; // U-100 units
   const units = unitsRaw!=null ? Math.round(unitsRaw*10)/10 : null;
   // Volume syringes (1mL/3mL): use mL-based fill; insulin syringes: use unit-based fill
-  const syringeUnits = !syr.isVol&&unitsRaw!=null ? Math.round(unitsRaw/100*syr.max*10)/10 : null;
+  const syringeUnits = !syr.isVol&&unitsRaw!=null ? Math.round(unitsRaw*10)/10 : null;
   const syringeMl = syr.isVol&&mlPerDose!=null ? mlPerDose : null;
   const fillPct = syr.isVol ? (syringeMl!=null?Math.min(100,(syringeMl/syr.mlMax)*100):0) : (syringeUnits!=null?Math.min(100,syringeUnits/syr.max*100):0);
   // Supply calculation
@@ -808,7 +808,7 @@ function wireReconCalc() {
     if(res&&mlPerDose!=null){
       const r2=state._recon, syr2={"30u":{max:30,label:"30-unit (0.3 mL)",mlMax:0.3},"50u":{max:50,label:"50-unit (0.5 mL)",mlMax:0.5},"100u":{max:100,label:"100-unit (1 mL)",mlMax:1},"1mL":{max:100,label:"1 mL",mlMax:1,isVol:true},"3mL":{max:300,label:"3 mL",mlMax:3,isVol:true}}[r2.syringe||"100u"];
       const unitsRaw=mlPerDose*100, units=Math.round(unitsRaw*10)/10;
-      const syringeUnits=syr2.isVol?null:Math.round(unitsRaw/100*syr2.max*10)/10;
+      const syringeUnits=syr2.isVol?null:Math.round(unitsRaw*10)/10;
       const syringeMl2=syr2.isVol?mlPerDose:null; // mL draw for volume syringes
       const dosesPerDay=r2.freq==="twice"?2:r2.freq==="weekly"?1/7:1;
       const totalDoses=vmg&&doseMg?Math.floor(vmg/doseMg):null;
