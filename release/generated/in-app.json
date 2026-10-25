@@ -1,7 +1,7 @@
 {
   "version": "v0.9.19-beta",
   "channel": "beta",
-  "publicationStatus": "unverified",
+  "publicationStatus": "published",
   "title": "Blend vial tracking and Protocol polish",
   "changes": [
     {
@@ -28,8 +28,8 @@
   ],
   "dataImpact": "No automatic migration, deletion or change to existing dose history. New premixed blend doses are recorded under the blend name; old ingredient records are preserved. Opening a vial updates only its selected kit and vial metadata.",
   "limitations": [
-    "Previous ingredient-level dose records made by older blend logging remain preserved; not automatically rewritten.",
-    "Physical iPhone and VoiceOver acceptance are pending.",
-    "Cloudflare publication is unverified until the candidate is merged and deployed."
+    "Older constituent dose logs are preserved and are not silently migrated.",
+    "Physical iPhone and VoiceOver acceptance remain pending.",
+    "Cloudflare 16-file app-source parity was verified in GitHub Actions run 40162047192."
   ]
 }

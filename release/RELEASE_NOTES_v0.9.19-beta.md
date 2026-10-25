@@ -1,6 +1,6 @@
 # Nexus v0.9.19-beta — Premixed Blend & Protocol iPhone Corrections
 
-**Status:** IMPLEMENTED IN PR #100 / NOT MERGED / NOT DEPLOYED. Source base main `2bf40535e2530b3c9d439504d52f3e8045f14fef`. Canonical manifest `release/release.json`: publication `unverified`.
+**Status:** WEB SOURCE MERGED AND CLOUDFLARE VERIFIED. Implementation PR #100 merged at `955c904860b39c5c56472b07cd3521828d5d9d79`; post-merge Cloudflare matched all 16 source files in Actions run 40162047192. Separate published What's New metadata is in release PR (not yet merged). Physical iPhone acceptance pending.
 
 ## Fixes
 - **Stash / Blend:** Add direct `Open first blend vial` action and kit menu action. Opening records BAC water (mL), recon date, expiry-after-reconstitution days and notes, moves one sealed vial to open and updates the blend kit without creating new constituent kits.
@@ -16,3 +16,7 @@ No automatic migration. Existing Check-In, Protocol, Stash, dose, backup, Journa
 Required GitHub Actions gates: JavaScript syntax, canonical version and generated notes, complete root-index LIVE ZIP and same-source fictional isolated full DEMO HTML/ZIP, browser matrix at 320px and 390px in light/dark, Check-In, Combo, Protocol, Stash and Log Dose regressions. New synthetic test covers open/date/BAC/expiry, dose-as-one, hidden blend-only ingredients, open-vial capacity, and finish/waste accounting. **Do not report Pass before the latest PR-head CI finishes.**
 
 Physical iPhone keyboard behavior, VoiceOver, independent device usability acceptance and Cloudflare exact-source deployment are NOT TESTED for this candidate. Publication state must remain `unverified` until merge and remote byte parity confirmation. The previously published v0.9.18-beta is preserved.
+
+## Verified release checks
+- Release candidate build/browser suite 40161722598 PASS, mobile forms 40161722564 PASS; math diagnostic 80/80. Fictional blend opening, current-vial capacity, one-dose identity, finishing/waste and backup safeguards tested without live writes.
+- Post-merge remote Cloudflare compare (run 40162047192) `verified:true`, 16/16 index/CSS/JS assets match implementation source. Publication-metadata follow-up requires a separate CI, merge and remote comparison before closing release gates.
