@@ -375,3 +375,6 @@
 
 ### 2026-10-25 — PR #118 accessibility follow-up (candidate)
 - `Open New Vial > Log Reconstitution` white-on-violet correction: removed conflicting inline important dark text; added light-mode CSS/WebKit text fill plus browser computed-style assertion. Not merged/released at documentation time; no data mutation or migration.
+
+### 2026-10-25 — UI alignment proposal on PR #118 (NOT RELEASED)
+- Added target Stash two/three-column action layout, typographic unopened state and compact vial-row ellipsis, plus 8-mode responsive Stash assertions. Broad Log Dose/Combo/Trends/Blend visual refactor remains design review. Branch only, no production files or stored records updated.
