@@ -283,3 +283,7 @@
 
 ### 2026-10-24 — A5 Goal Check-In evidence candidate
 - Proposed additive `goal.evidenceSymptom` selection and read-only existing `dailyLogs` evidence in Goal Activity. No Check-In data writes or duplication. Code staged on release branch only, CI/merge/deployment UNVERIFIED.
+
+### 2026-10-24 — Connected Goals A5 merged; A6 design audit
+- A5 PR #76 merged commit `f980a2837e342e1b99adc476a17f9a2d12039e50` (head `7c166c6a`); mobile CI `40144905392` SUCCESS, full build/browser CI `40144905391` SUCCESS, artifact `12580236276`. Tests include 320/390 light/dark LIVE/full DEMO and exact symptom/activity intensity/exclusion assertions; this is automated evidence, not physical iPhone acceptance. Full DEMO HTML, offline DEMO ZIP and root-index LIVE ZIP extracted/inspected. A5 is MERGED, Cloudflare/Pages deployment UNVERIFIED. No destructive migration; Check-In history read-only. Calculator #67 held.
+- Design-only A6 source audit on branch `design/connected-goals-a6-source-audit` documents Journal source identity and staged read-only reflections/Insights. No app code, migration, or deployable A6 release.
