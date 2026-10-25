@@ -209,3 +209,6 @@
 
 ### 2026-10-24 — A6a Check-In reflection implementation (branch coded, unmerged)
 - Reflections are read live from `dailyLogs[].notes` only when that *same* daily record contains the goal's exact selected symptom. Label 'Check-In reflection from the same entry', not symptom-specific or causal evidence. Show nonempty text, source date and canonical original Check-In ID action; no copied data/goal schema change. Other Journal aggregations and contextual Insights deferred to later releases. Regression and physical iPhone pending.
+
+### 2026-10-24 — Approved coordinated hierarchy refresh
+- User explicitly approved Research, Journal, Check-In Changes and consistent status/ellipsis handling together. Compounds take title priority; 'Compound intel' is secondary, research reason has semantic label, ellipsis distinct from card. Journal keeps canonical records, uses accessible select instead of horizontal filter rail, preserves jump actions. Check-In Changes defaults to one selected metric/symptom and sample coverage, avoids 100%-of-logged-day ambiguity and nested scrolling record box. All saved data and prior approved actions protected. Broader shared components to validate across Goals, Protocol and Stash.
