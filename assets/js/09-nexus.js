@@ -177,7 +177,7 @@ function trendsView() {
     const showSupp=overlappingSupp.length>=5&&enoughObservations;
     const subKey=k=>name+'_'+k;
     const subOpen=k=>!!(state._trendsOpen||{})[subKey(k)];
-    const subHdr=(k,label)=>`<div class="app-sub-acc" style="border:1px solid var(--border-sub);background:var(--surface-2)"><button class="tacc" data-key="${esc(subKey(k))}" aria-expanded="${subOpen(k)}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;background:transparent"><span style="font-size:12px;font-weight:650;color:var(--t2)">${label}</span><span style="color:var(--t4)">${subOpen(k)?'∧':'∨'}</span></button>`;
+    const subHdr=(k,label)=>`<div class="app-sub-acc" style="border:1px solid var(--border-sub);background:var(--surface-2)"><button class="tacc" data-key="${esc(subKey(k))}" aria-expanded="${subOpen(k)}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;background:transparent"><span style="font-size:12px;font-weight:650;color:var(--t2)">${label}</span></button>`;
     const subBody=(k,content)=>`${subOpen(k)?`<div class="app-sub-body" style="padding:12px">${content}</div>`:''}</div>`;
     const sub=(k,label,content)=>subHdr(k,label)+subBody(k,content);
     const fact=(value,label)=>`<div class="nx-compound-fact"><b>${value}</b><span>${label}</span></div>`;
