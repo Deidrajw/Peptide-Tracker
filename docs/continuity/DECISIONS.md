@@ -230,3 +230,6 @@
 
 ### 2026-10-25 — Onboarding action icon consistency
 - User rejected final Getting Started card icon hierarchy. Corrective design uses single outline SVG family in all 4 actions (Log Dose, Protocol, Stash, Learn) and guide, with matching icon box, type scale and supporting route copy. Existing routes/workflows protected. Release v0.9.17-beta candidate, do not claim publication until host parity verified.
+
+### 2026-10-25 — Getting Started parity + next store-compliance gate
+- PR #89 merged b6737fad: all four onboarding quick-action rows and Guide use consistent outline SVG, label hierarchy, touch dimensions; original source navigation and stored records preserved. Canonical release v0.9.17-beta stays publication unverified until host verification. Privacy language may describe browser localStorage and manual backups but must not claim zero collection until network/SDK/CDN analysis; audit in `docs/design/PRIVACY_PERMISSIONS_DATAFLOW_AUDIT.md` is source inventory, not finalized privacy notice.

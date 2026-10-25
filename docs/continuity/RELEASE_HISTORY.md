@@ -307,3 +307,6 @@
 
 ### 2026-10-25 — v0.9.17-beta Getting Started polish (NOT RELEASED)
 - New candidate branch `release/onboarding-getting-started-polish` from v0.9.16 main 888d746c. Changes onboarding Done-step visuals and guide button only, no migration/storage/calculation changes; aligns canonical release manifest and three notes with v0.9.17-beta (publication unverified). CI/artifact/merge/deployment pending.
+
+### 2026-10-25 — v0.9.17-beta Getting Started visual consistency MERGED, public parity unverified
+- PR #89 merged `b6737fad61195211f0e2b0025a6074c2de8f3e81`, tested head `0aa8c8d8`, browser CI `40154254695` SUCCESS, mobile `40154254586` SUCCESS. Source-identical 20-file LIVE ZIP + complete isolated DEMO artifact `12583508226`, CRC and standalone/ZIP HTML parity PASS, 320/390 light/dark browser matrix PASS. Updated onboarding Log Dose/Protocol/Stash/Learn/Guide SVGs and typography/spacing; no schema migration or dose math changes. Version app/runtime/in-app, Apple and Google notes synced to v0.9.17-beta; publication remains UNVERIFIED. Physical iPhone and Cloudflare unverified; calculator #67 diagnostic still held.

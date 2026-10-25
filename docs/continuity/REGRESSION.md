@@ -300,3 +300,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Getting Started visual follow-up (NOT TESTED yet)
 - New 320px and 390px light/dark LIVE/full DEMO assertions: exactly four feature cards with same outline SVG treatment and nonempty contextual route subtitles, 48px guide SVG/button, Log Dose label/route, no emoji replacement regression; existing onboarding step flow and import safeguards preserved. Physical iPhone acceptance and Cloudflare source parity pending. Calculator #67 hold.
+
+### 2026-10-25 — v0.9.17-beta Getting Started executed evidence
+- PASS: mobile forms 40154254586 and browser/release 40154254695, all 8 LIVE/full DEMO at 320/390 light/dark. New checks four SVG Getting Started cards and Log Dose route, SVG Guide and min 60px quick action; previous onboarding and protected Check-In, Protocol, Stash, Log Dose suites executed in same browser job. ZIP 20 files CRC PASS, offline/standalone DEMO byte identity PASS. NOT TESTED: physical iPhone, VoiceOver and live Cloudflare publication; privacy network audit, notification opt-in and public store labels are not yet validated. Calculator numerical diagnostic unresolved 40/80; PR #67 HOLD.
