@@ -307,3 +307,6 @@
 
 ### 2026-10-25 — v0.9.17-beta Getting Started polish (NOT RELEASED)
 - New candidate branch `release/onboarding-getting-started-polish` from v0.9.16 main 888d746c. Changes onboarding Done-step visuals and guide button only, no migration/storage/calculation changes; aligns canonical release manifest and three notes with v0.9.17-beta (publication unverified). CI/artifact/merge/deployment pending.
+
+### 2026-10-25 — Privacy screen candidate
+- Draft PR #91 on branch release/privacy-data-disclosures-v0918 adds read-only Settings information and navigation. Live production host network capture unavailable, so third-party transmissions are NOT certified. Notification consent explanation, public privacy policy, native store declarations, full browser QA, artifacts, merge and deployment INCOMPLETE. No user-data migration or deletion. One next action: verify production network request inventory, then finish permission explanation and regression before merging.
