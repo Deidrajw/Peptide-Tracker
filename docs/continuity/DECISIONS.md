@@ -273,3 +273,19 @@
 ### 2026-10-25 — Version-aware release promotion policy
 - **APPROVED by user:** A successful preview deployment is not an approved production release. Report separately PREVIEW, CODE MERGED and PRODUCTION VERIFIED with exact version + commit; do not certify newest-release success merely because production files match an older main. Implement a production SHA-256 parity gate plus intended-version check, not a manual checklist alone. Current proposal on safety branch, not yet accepted as deployed.
 - Preserve the v0.9.20 release preview and branch; do not merge open PR #110 while its inventory and legacy-vial regressions are incomplete, and never convert users' KLOW data automatically.
+
+
+### 2026-10-25 — Divider and light-accent direction
+- User-approved visual direction: use whitespace and typographic hierarchy rather than serial borders between simple key/value rows or adjacent CTAs. Keep boundaries required for form fields, true separate cards, focus state and meaningful long lists, plus active tab underline.
+- Light mode must not use low-contrast pale-lime primary buttons, helper text or warnings on white/near-white sheets; lavender/violet is preferred, with readable label text and explicitly distinguishable disabled state. Scope to light theme; dark theme retains its own tested contrast rules.
+- Design is CANDIDATE on separate branch until representative screens and modal states visually accepted; no data migration.
+
+### 2026-10-25 — Supply deletion information architecture
+- Approved earlier user direction implemented as candidate on #118: destructive Delete supply belongs within Edit Supply, not as a standalone line under Restock in the overview. Keep visible secondary action and existing confirmation, never delete/overwrite user records automatically. Confirm with 320/390 accessible modal testing before release.
+
+### 2026-10-25 — Filled control foreground contract
+- User-approved: dark filled CTAs including reconstitution use white foreground (text and relevant icons), irrespective of former per-compound dark-text inline styling; light filled controls use dark foreground. Prefer semantic light/dark styling over unchecked one-off `!important` text overrides. Verify CSS `color` and `-webkit-text-fill-color` with actual computed styles on iPhone-sized browsers. Dark theme should not accidentally receive white text on pale fill.
+
+### 2026-10-25 — Screenshot-driven UI decisions (scope and approval)
+- **User direction:** small ellipsis on vial row but minimum 44px tap box; unopened kit exactly two equal-width actions (Open new vial, Kit details), open vial has three including Prepare; 'No vial open' should be a primary state headline.
+- **Requested design review, not yet approved as final layout:** make multi-vial choice a recognizable action; move site-rotation context next to Injection site using compact guidance; collapse/organize combo favorites so many saved recipes do not monopolize modal height; compound Trends history should navigate to its own detail view with Back to all compounds; eliminate chevrons that duplicate native disclosure indicators and reconsider excessive chevrons; render premixed blends with identical current card shell to regular kits, only composition/deductions differ. Do not migrate stored data or replace calculations to accomplish visual parity.

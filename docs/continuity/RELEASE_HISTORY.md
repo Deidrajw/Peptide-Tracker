@@ -364,3 +364,17 @@
 - Intended version v0.9.20-beta exists on unmerged `release/issue-109-kit-experience-parity` / Cloudflare preview deployment `a3c0ce76-5176-406a-91b2-08bf73763ceb`; production and current main confirmed v0.9.19-beta at audit. Preview SUCCESS does not imply production deployed.
 - Dedicated read-only post-main-push and manually invokable version + exact 16-file remote parity gate authored on `safety/release-deployment-parity-gate-20261025`. Candidate, not merged or CI verified at writing. Does not modify release.json, app source, data or published assets.
 - v0.9.20 application release still blocked by unverified inventory/KLOW/legacy edit, full LIVE/full isolated DEMO and responsive functional regression on PR #110. Promotion not claimed.
+
+
+### 2026-10-25 — Divider/light theme audit proposal (not a release)
+- v0.9.20-beta main remains authoritative. Scoped CSS candidate reduces repeated dividers in kit and supplies detail panels and replaces light-mode pale-green modal primary actions with darker violet, including disabled state. No app version bump, no merge/Cloudflare deployment claimed, no storage or dose/inventory changes.
+- Complete app-wide audit, test matrix and demo package INCOMPLETE until all affected surfaces are reviewed and release CI/Cloudflare verified.
+
+### 2026-10-25 — Expanded #118 candidate (NOT RELEASED)
+- Light-theme lime-generated status text/buttons/tints and SVG accents remapped to violet for accessibility; special Check-In CTA cascade corrected. Supply Delete relocated to Edit details with confirmation. App-wide divider reduction remains selective. Tests on latest head pending; earlier CI failed Check-In contrast and a transient JS syntax error, both addressed in branch. Production unchanged by #118.
+
+### 2026-10-25 — PR #118 accessibility follow-up (candidate)
+- `Open New Vial > Log Reconstitution` white-on-violet correction: removed conflicting inline important dark text; added light-mode CSS/WebKit text fill plus browser computed-style assertion. Not merged/released at documentation time; no data mutation or migration.
+
+### 2026-10-25 — UI alignment proposal on PR #118 (NOT RELEASED)
+- Added target Stash two/three-column action layout, typographic unopened state and compact vial-row ellipsis, plus 8-mode responsive Stash assertions. Broad Log Dose/Combo/Trends/Blend visual refactor remains design review. Branch only, no production files or stored records updated.

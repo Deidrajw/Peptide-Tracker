@@ -1302,7 +1302,7 @@ function openNewVialModal(supplyId, onDone) {
     <input id="rv-expiry" type="number" step="1" min="1" class="inp" value="${s.expiryDays||28}" style="margin-bottom:14px">
     <label class="field-label">NOTES (lot #, batch, anything notable)</label>
     <input id="rvn" class="inp" placeholder="optional" style="margin-bottom:18px">
-    <button id="rvsave" class="btn-primary" style="background:${c.color};color:#1A1728!important">Log Reconstitution</button>
+    <button id="rvsave" class="btn-primary nx-reconstitution-cta" style="background:${isLight()?"#62449C":c.color};color:${isLight()?"#FFFFFF":"#1A1728"}">Log Reconstitution</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
 
@@ -1536,7 +1536,7 @@ function equipmentView() {
           <button class="supply-edit" data-id="${item.id}">Edit details</button>
           <button class="supply-restock" data-id="${item.id}">Restock</button>
         </div>
-        <div class="nx-supply-detail-footer"><button class="supply-delete" data-id="${item.id}" aria-label="Delete ${esc(item.type)}" title="Permanently deletes this supply and its history">Delete supply</button></div>
+        
       </div>
     </div>`;
   };
@@ -1618,7 +1618,7 @@ function equipmentModal(existing) {
     <select id="eq-storage" class="inp" style="margin-bottom:12px">${["fridge","freezer","room_temp","unknown"].map(s=>`<option value="${s}" ${(e.storageLocation||"unknown")===s?"selected":""}>${{fridge:"Fridge",freezer:"Freezer",room_temp:"Room temp",unknown:"Unknown"}[s]}</option>`).join("")}</select>
     <label class="field-label">NOTES <span style="color:var(--t5);font-weight:400">(optional)</span></label>
     <textarea id="eq-notes" class="inp" style="min-height:50px;margin-bottom:16px">${esc(e.notes||"")}</textarea>
-    <button id="eq-save" class="btn-primary" style="background:#7DF9C0;color:#000">Save</button>`);
+    <button id="eq-save" class="btn-primary" style="background:#7DF9C0;color:#000">Save</button>\n    ${isNew?"":`<div class="nx-equipment-danger-area"><button type="button" id="eq-delete" class="nx-equipment-delete">Delete supply</button></div>`}`);
 
   document.querySelector("#eq-type").onchange = function() {
     if (hasHistory) return; // locked fields must not shift just because Type changed
@@ -1639,6 +1639,13 @@ function equipmentModal(existing) {
     };
     document.getElementById("eq-status-sealed").onclick = () => setInitialStatus("sealed");
     document.getElementById("eq-status-open").onclick = () => setInitialStatus("open");
+  }
+
+  if (!isNew) {
+    document.querySelector("#eq-delete").onclick = () => confirmAction("Delete this supply and its history?", () => {
+      state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==e.id);
+      saveState();closeModal();render();
+    });
   }
 
   document.querySelector("#eq-save").onclick = () => {

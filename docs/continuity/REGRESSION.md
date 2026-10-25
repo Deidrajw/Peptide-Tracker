@@ -368,3 +368,37 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Protected app source | Safety PR changes workflow/script/docs only; no application files | TO VERIFY AT PR |
 | Full application QA | v0.9.20 blend, KLOW, vial math, history, supplies, 320/390 themes, isolated full DEMO and LIVE ZIP | INCOMPLETE, DO NOT MERGE PR #110 |
 | Physical iPhone | v0.9.20 real device before release acceptance | NOT TESTED |
+
+
+### 2026-10-25 — UI audit acceptance matrix (proposed)
+| Surface | Acceptance | Status |
+|---|---|---|
+| Stash Overview / Vials / History | No decorative separators above tabs/under hero; tab underline, meaningful vial rows remain | NOT TESTED |
+| Supplies detail and edit/delete | Whitespace for summary/action groups, destructive action still reachable and confirmed | NOT TESTED |
+| Prepare Dose / Open Vial / Log Reconstitution | No pale green text/fill on white; visible enabled/disabled CTA, 4.5:1 text, 3:1 control states | NOT TESTED |
+| Today / Calendar / Protocol / More | Audit duplicate dividers across screens and modal overlays, including headers, nested cards | NOT TESTED |
+| Touch/keyboard/VoiceOver | 44px+ touch, focus visible, no loss of field borders, sticky sheet actions | NOT TESTED |
+| Protected flows | Check-In, Supplements, dose ledger, legacy KLOW, multi-vial deductions, saved history unchanged | NOT TESTED |
+| LIVE/DEMO | exact-source full app and isolated demo, 320/390 both themes | NOT TESTED |
+| Production | New design branch merged & Cloudflare source verified | NOT DEPLOYED |
+
+### 2026-10-25 — Expanded candidate evidence #118
+- Source changes: CSS-only light-colour remap and spacing, plus Supply Delete navigation inside Edit Supply (existing confirmAction). **NOT YET PASSED** on latest head. Test required: opening edit does not mutate supply; cancel Delete preserves item/history; confirming Delete removes only intended item after user acknowledgement; existing Restock and active-unit calculations unchanged. Light Check-In CTA failure 2.36:1 in early CI; high-specificity fix pending retest. Earlier supply JS code syntax error corrected at 443b5bb; check fresh JS parser pass. Physical iPhone accessibility/VoiceOver NOT TESTED.
+
+### 2026-10-25 — Filled CTA computed contrast contract
+| Surface | Assertion | State |
+|---|---|---|
+| Open New Vial > Log Reconstitution, light | `rgb(98,68,156)` fill and white computed `color` + `-webkit-text-fill-color` at 320/390 LIVE/isolated DEMO; height >=44px | RUNNING / NOT YET PASSED |
+| Dark-themed Open New Vial | Retain contrast against actual compound fill; no force-white fallback on pale colour | NOT TESTED |
+| Remaining modal CTA fills | Flag dark-ink on dark fills and white-on-pale fills, computed values | NOT FULLY AUDITED |
+
+### 2026-10-25 — Screenshot-based UI acceptance additions
+| Area | Acceptance | Status |
+|---|---|---|
+| Stash stored/open action row | Two equal actions when closed, three when open, at 320/390 light/dark LIVE/full DEMO | CODED, CI PENDING |
+| Stash unopened hierarchy | 'No vial open' >=22px primary line, count remains secondary | CODED, CI PENDING |
+| Stash vial ellipsis | Compact 44x44 accessible action with visual 17px glyph, independent of full-width action style | CODED, VISUAL NOT TESTED |
+| Blend parity | Same modern cards/panels/sheets as single compound; original dose ledger and inventory math preserved | NOT TESTED |
+| Dose / Combo | Multi-vial choice, nearby site guidance, favorites overflow and confirmation/scroll behaviours | DESIGN REVIEW |
+| Trends | Compound full-screen detail/back, single disclosure affordances without double chevrons | DESIGN REVIEW |
+| Protected data | Legacy KLOW, dose edits and deductions, Stash history, Check-In/Calendar/More remain exact | NOT TESTED ON LATEST HEAD |
