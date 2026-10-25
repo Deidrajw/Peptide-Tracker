@@ -31,7 +31,13 @@ jobs:
         run: python3 tools/verify-pages.py --smoke
       - name: Compare primary Cloudflare Pages files with source (required after merge)
         continue-on-error: ${{ github.event_name == 'pull_request' }}
-        run: python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            python3 tools/verify-pages.py --attempts 1 --interval 0 --output dist/Nexus_CLOUDFLARE_PARITY.json
+          else
+            python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json
+          fi
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
