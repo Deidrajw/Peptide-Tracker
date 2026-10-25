@@ -674,3 +674,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Phase 2B segmented selection accessibility correction
 - Source-native toggleChip lacked active/aria state; `assets/js/10-nexus.js` now emits `active` and `aria-pressed` on Compound kits / Supplies at commit `257c3f30`. Latest exact-head browser run `40243076274`, mobile run `40243076300` underway. Package build and validation steps passed, full browser regression still in progress at observation. Modal styling is **baseline only**; full kit-action modal UX and contrast audits remain INCOMPLETE. No deployment or merge.
 - **ONE NEXT ACTION:** inspect completed 40243076274 results and 320/390 dual-theme screenshots, then audit actual kit action modals individually.
+
+
+### 2026-10-25 — Stash/Today visual feedback correction (Phase 2C)
+- User approved targeted cleanup: kit action button shadow removed, Today Log Dose and New Check-In button geometry harmonized, and Needs Attention left accent and count capsule removed/softened. CSS commit `7fa1a893` on design PR #123; no inventory math or persistence code changed. Production stays unchanged.
+- Separate **Inventory Resolution UX discovery**: confusing duplicated 'Current vial' rows and Draw controls, unclear per-source allocation and shortage presentation. Do NOT change dose math/record writing in this visual pass; redesign as a separate reviewed workflow with source-specific labels and validation.
+- **ONE NEXT ACTION:** verify exact-head 320px/390px light/dark browser QA, inspect modal screenshots and contrast; resolve problems and seek visual review, no merge/deploy.
