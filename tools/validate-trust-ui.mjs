@@ -76,19 +76,59 @@ try{
             state.customPeptides[name]={status:'active',scheduleDays:7,doses:[]};
           openBlendVialModal(kit.id);
         });
-        await page.locator('#nx-blend-bac').fill('2');
-        await page.locator('#nx-blend-expiry').fill('30');
-        await page.locator('#nx-blend-notes').fill('Fictional vial');
-        await page.locator('#nx-blend-open').click();
+        await page.locator('#rv-bacml').fill('2');
+        await page.locator('#rv-expiry').fill('30');
+        await page.locator('#rvn').fill('Fictional vial');
+        await page.locator('#rvsave').click();
         const opened=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
           return {bac:k.bacMl,expiry:k.expiryDays,remaining:getSealedVials(k).length,
             open:ensureKitVials(k).some(v=>v.status==='open'||v.status==='active')};
         });
         assert.deepEqual(opened,{bac:2,expiry:30,remaining:1,open:true},'blend open vial/recon and sealed-count');
+        const parity=await page.evaluate(()=>{
+          const normal={id:975311,name:'QA Single',totalVials:2,vialMg:30,activeKit:false,reconDate:null,openedVials:0,emptyVials:0,doseLog:[],wasteLog:[],reconHistory:[]};
+          state.supplies.push(normal);
+          tab='stash';render();
+          const read=id=>{
+            const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
+            if(!card)return null;
+            return {label:card.querySelector('.nx-stash-inventory-summary')?.textContent?.includes('KIT INVENTORY REMAINING'),
+              actionPresent:!!card.querySelector('.opennewvial,.openblendvial'),
+              summary:card.querySelector('details>summary')?.textContent?.trim(),
+              tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
+          };
+          return {single:read(normal.id),blend:read(975310)};
+        });
+        assert.ok(parity.single&&parity.blend,'both standard and premixed cards must render');
+        assert.equal(parity.single.label,true);assert.equal(parity.blend.label,true);
+        assert.deepEqual(parity.blend.tabs,parity.single.tabs,'shared kit details tabs');
+        assert.equal(parity.blend.summary,parity.single.summary,'shared kit detail disclosure');
+        const legacy=await page.evaluate(()=>{
+          const kit={id:975320,name:"QA Legacy Blend",isBlend:true,blendInventoryMode:"legacy-v2",
+            composition:[{compound:"Test A",mg:50},{compound:"Test B",mg:30}],
+            vialMg:80,totalVials:3,bacMl:3,reconDate:localDatetime(),activeKit:true,
+            vials:[{id:975321,status:"empty",vialMg:80,remainingMg:0},
+                   {id:975322,status:"open",vialMg:80,remainingMg:48.5},
+                   {id:975323,status:"sealed",vialMg:80,remainingMg:80}],
+            doseLog:[],wasteLog:[],expiryDays:28};
+          state.supplies.push(kit);
+          const initial=getBlendKitRemainingMg(kit),openStart=getBlendOpenVialRemainingMg(kit);
+          const tx=consumeCompoundInventory({kit,amountMg:1.5,reason:"administered",transactionId:uid()});
+          const after=getBlendOpenVialRemainingMg(kit);
+          undoConsumeCompoundInventory(kit,{allocations:tx.allocations});
+          const restored=getBlendOpenVialRemainingMg(kit);
+          return {initial,openStart,committed:tx.committed,after,restored,
+             totalBack:getBlendKitRemainingMg(kit),oldVial:kit.vials[0].remainingMg,
+             sealed:kit.vials[2].remainingMg};
+        });
+        assert.deepEqual(legacy,{
+          initial:128.5,openStart:48.5,committed:true,after:47,restored:48.5,
+          totalBack:128.5,oldVial:0,sealed:80
+        },"legacy premixed kit preserves physical vial balances through new draw and Undo");
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#bd-amount').fill('3');
-        await page.locator('#bd-save').click();
+        await page.locator('#dose').fill('3');
+        await page.locator('#save').click();
         const doses=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
           return {blend:state.customPeptides[k.name]?.doses?.length,
@@ -99,9 +139,66 @@ try{
           'premixed blend records once without creating individual component doses');
         assert.equal(await page.evaluate(()=>getBlendOpenVialRemainingMg(state.supplies.find(k=>k.id===975310))),27,
           'open vial has 27mg after a 3mg draw, not the full kit remainder');
+
+        const preparedLedger=await page.evaluate(()=>{
+          const k=state.supplies.find(k=>k.id===975310);
+          const before=getBlendOpenVialRemainingMg(k);
+          const doseHistory=getKitDoseHistory(k);
+          const tx=consumeCompoundInventory({kit:k,amountMg:2,reason:'prepared',transactionId:uid()});
+          const after=getBlendOpenVialRemainingMg(k);
+          undoConsumeCompoundInventory(k,{allocations:tx.allocations});
+          const restored=getBlendOpenVialRemainingMg(k);
+          tab='stash';render();
+          const card=document.querySelector('.nx-kit-card[data-kit-id="975310"]');
+          return {before,after,restored,committed:tx.committed,history:doseHistory.length,
+            prepareVisible:!!card?.querySelector('.preparedoses'),detailsTabs:card?.querySelectorAll('.nx-stash-tab').length};
+        });
+        assert.deepEqual(preparedLedger,{before:27,after:25,restored:27,committed:true,history:1,prepareVisible:true,detailsTabs:3},
+          'shared Prepare entry and reversible premixed stock transaction must preserve kit history');
+
+
+        // Prepared-syringe write and delete must use exactly one premixed ledger
+        // allocation and restore ONLY the unused share, never ingredient stock.
+        const prepPartial=await page.evaluate(()=>{
+          const kit=state.supplies.find(k=>k.id===975310);
+          const original=getBlendOpenVialRemainingMg(kit);
+          const tx=consumeCompoundInventory({kit,amountMg:6,reason:'prepared',transactionId:uid()});
+          const allocation=tx.allocations[0];
+          const prepared={id:uid(),compound:kit.name,amountEach:'2',unit:'mg',count:3,remainingCount:2,
+            allocations:[{kitId:kit.id,vialId:allocation.vialId,amount:6,ledgerId:allocation.ledgerId}],createdAt:localDatetime()};
+          state.preparedDoses.push(prepared);
+          const afterPrepare=getBlendOpenVialRemainingMg(kit);
+          const ok=deletePreparedDose(prepared);
+          const afterDelete=getBlendOpenVialRemainingMg(kit);
+          const logged=kit.doseLog.find(d=>String(d.id)===String(allocation.ledgerId));
+          const oldRecord=state.customPeptides[kit.name].doses[0];
+          const oldId=oldRecord.id;
+          const doseReversal=reverseDoseInventoryEffect(oldRecord);
+          const afterDoseReversal=getBlendOpenVialRemainingMg(kit);
+          // Restore the original dose allocation within the isolated QA fixture.
+          const reconsume=consumeCompoundInventory({kit,amountMg:3,reason:'administered',transactionId:uid()});
+          oldRecord.allocations=reconsume.allocations.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:a.amountMg,ledgerId:a.ledgerId}));
+          return {original,afterPrepare,ok,afterDelete,logged:logged?.totalMgDrawn,
+            doseReversal,afterDoseReversal,restoredDose:oldRecord.id===oldId,
+            afterRestore:getBlendOpenVialRemainingMg(kit)};
+        });
+        assert.deepEqual(prepPartial,{
+          original:27,afterPrepare:21,ok:true,afterDelete:25,logged:2,
+          doseReversal:true,afterDoseReversal:28,restoredDose:true,afterRestore:25
+        },'partial prepared deletion returns only unused share and exact dose reversal uses the linked ledger');
+        // Return fixture to the 27mg remaining expected by the finishing test.
+        await page.evaluate(()=>{
+          const kit=state.supplies.find(k=>k.id===975310);
+          const dose=state.customPeptides[kit.name].doses[0];
+          reverseDoseInventoryEffect(dose);
+          const remainingPrepared=(kit.doseLog||[]).find(d=>d.kind==='prepared');
+          if(remainingPrepared) refundBlendLedgerAmount(kit,remainingPrepared.id,remainingPrepared.totalMgDrawn);
+          const restored=consumeCompoundInventory({kit,amountMg:3,reason:'administered',transactionId:uid()});
+          dose.allocations=restored.allocations.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:a.amountMg,ledgerId:a.ledgerId}));
+        });
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#bd-amount').fill('31');
-        await page.locator('#bd-save').click();
+        await page.locator('#dose').fill('31');
+        await page.locator('#save').click();
         assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
           'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');
         await page.evaluate(()=>{closeModal();finishBlendVialModal(975310);});
