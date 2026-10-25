@@ -134,6 +134,12 @@ function comboDoseModal() {
   } catch(e) { showErrorBanner("comboDoseModal prepared-syringe wiring: "+e.message); }
 
   try {
+    const presetSelect=m.querySelector("#nx-combo-preset-select");
+    if(presetSelect) presetSelect.onchange=()=>{
+      if(!presetSelect.value)return;
+      const target=[...m.querySelectorAll(".combo-preset-chip")].find(b=>b.dataset.id===presetSelect.value);
+      if(target)target.click();
+    };
     document.querySelectorAll(".combo-preset-chip").forEach(chip=>{
       chip.onclick = (e) => {
         const preset = presets.find(p=>String(p.id)===chip.dataset.id);
