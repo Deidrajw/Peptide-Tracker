@@ -29,6 +29,45 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  });
  ensure(releasePopup,'Published version must show once, Later defer and acknowledgement persist');
 
+ // Broader diagnostic sweep of main navigation surfaces. Scans computed foreground
+ // vs the nearest visible surface for text-bearing elements. It reports candidates,
+ // while the separately enforced release modal action check is a hard blocker.
+ // Transparency, pseudo-elements and imagery require human visual review.
+ const themeAudit=await page.evaluate(()=>{
+   const tabs=['home','calendar','protocols','stash','plans','profile','trends','amino','learn'];
+   const out=[];
+   const parse=(raw)=>{
+     const m=(raw||'').match(/^rgba?\\(([^)]+)\\)$/);if(!m)return null;
+     const vals=m[1].split(/[,\\s/]+/).filter(Boolean).map(Number);
+     return vals.length>=3?[vals[0],vals[1],vals[2],vals[3]??1]:null;
+   };
+   const over=(a,b)=>{const k=Math.min(1,Math.max(0,a[3]));return [0,1,2].map(i=>a[i]*k+b[i]*(1-k)).concat([1]);};
+   const lum=c=>{const q=c.slice(0,3).map(n=>{let v=n/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});return .2126*q[0]+.7152*q[1]+.0722*q[2]};
+   const ratio=(a,b)=>{let x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+   const bgFor=el=>{
+     let chain=[],p=el;while(p&&p.nodeType===1){chain.unshift(p);p=p.parentElement;}
+     let bg=[255,255,255,1];
+     for(const node of chain){const cs=getComputedStyle(node),rgb=parse(cs.backgroundColor);if(rgb)bg=over(rgb,bg);}
+     return bg;
+   };
+   const previous=tab;
+   try{for(const name of tabs){
+     tab=name;render();
+     for(const el of document.querySelectorAll('#app button,#app a,#app label,#app p,#app h1,#app h2,#app h3,#app span,#app small,#app strong,#app summary')){
+       const direct=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join(' ').trim();
+       if(!direct||direct.length<2)continue;
+       const cs=getComputedStyle(el),rect=el.getBoundingClientRect();
+       if(rect.width<2||rect.height<2||cs.display==='none'||cs.visibility!=='visible'||Number(cs.opacity)<.2)continue;
+       const ink=parse(cs.color);if(!ink)continue;
+       const bg=bgFor(el),fg=over(ink,bg),value=ratio(fg,bg);
+       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100});
+     }
+   }}finally{tab=previous;render();}
+   return {tabs:tabs.length,total:out.length,candidates:out.slice(0,45)};
+ });
+ if(mode==='demo'&&width===390)console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));
+
+
  // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
  const releaseContrast=await page.evaluate(()=>{
    const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
