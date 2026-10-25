@@ -1,3 +1,2 @@
-A warmer start with safer backup choices
-- Welcome to Nexus: New users can see what Nexus does, learn how browser storage works, and choose to start fresh or restore a backup.
-- Backup preview before restoration: Review counts and confirm before restoring; onboarding restoration is blocked when existing records are detected.
+A cleaner Getting Started experience
+- A clearer start: Getting Started actions now use consistent outline icons, card spacing and readable labels.
