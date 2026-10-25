@@ -1324,7 +1324,9 @@ function manageKitMenu(kitId) {
     {
       label: "VIAL & INVENTORY",
       entries: isBlend ? [
-        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Use the existing blend-specific dose workflow",icon:"◈"}] : [])
+        ...(!hasRecon && sealed>0 ? [{id:"blend-open",name:"Open / reconstitute blend vial",desc:"Record BAC water, expiry and vial notes",icon:"+"}] : []),
+        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Log one premixed blend dose",icon:"◈"}] : []),
+        {id:"blend-restock",name:"Add blend vials",desc:"Increase sealed stock for this premixed kit",icon:"+"}
       ] : [
         ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
         ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the existing preparation and stock-allocation flow",icon:"◌"}] : []),
@@ -1349,6 +1351,8 @@ function manageKitMenu(kitId) {
   ];
   // One consistent outline icon system for all kit actions; no emoji glyphs.
   const iconPaths = {
+    "blend-open":'<path d="M12 5v14M5 12h14"/>',
+    "blend-restock":'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/>',
     "blend-dose":'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
     open:'<path d="M12 5v14M5 12h14"/>',
     prepare:'<path d="M4 11h16M7 7h10M8 15h8M10 3h4M9 19h6"/>',
@@ -1393,6 +1397,8 @@ function manageKitMenu(kitId) {
     if(id==="details"){openDetails();return;}
     closeModal();
     if(id==="open") { if(!isBlend) openNewVialModal(kitId); }
+    else if(id==="blend-open") openBlendVialModal(kitId);
+    else if(id==="blend-restock") addVialsModal(kitId);
     else if(id==="blend-dose") logBlendDoseModal(kitId);
     else if(id==="prepare") prepareDosesModal(s.name);
     else if(id==="finish-vial") finishVialModal(kitId);
@@ -2107,7 +2113,17 @@ window.addEventListener("unhandledrejection", (e) => {
 
 // One clear logging entry point. Existing individual dose modal and combo modal remain authoritative.
 function todayLogDosePicker() {
-  const names=Object.entries(allPeptides()).filter(([,d])=>(d.status||"active")==="active").map(([n])=>n);
+  // Existing legacy blend component records are retained, but only independently
+  // tracked components belong in this picker. A premixed vial is one choice.
+  const blendKits=(state.supplies||[]).filter(k=>k.isBlend && k.kitStatus!=="done");
+  const blendNames=new Set(blendKits.map(k=>k.name));
+  const componentOnly=new Set(blendKits.flatMap(k=>(k.composition||[]).map(c=>c.compound)));
+  const names=[...new Set([...Object.entries(allPeptides()).filter(([n,d])=>
+    (d.status||"active")==="active" &&
+    (!componentOnly.has(n) || blendNames.has(n) ||
+      (state.supplies||[]).some(k=>!k.isBlend && k.name===n) ||
+      (d.doses||[]).some(dose=>!dose.blendSource)
+    )).map(([n])=>n),...blendNames])];
   const m=openModal(`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px"><div><div class="mono" style="font-size:11px;letter-spacing:1px;color:var(--t4)">TODAY</div><h2 style="font-size:20px;color:var(--t1);margin:3px 0">Log a dose</h2></div><button type="button" id="x" aria-label="Close" style="font-size:20px;color:var(--t3)">✕</button></div>
     <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Choose a compound or log multiple compounds together.</p>
     ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#A78BFA!important;color:#211630!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid #A78BFA;border-radius:12px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
@@ -2120,7 +2136,10 @@ function todayLogDosePicker() {
     const index=m.querySelector("#today-dose-compound").value;
     if(index==="") {m.querySelector("#today-dose-compound").focus();return;}
     const name=names[Number(index)];if(!name)return;
-    closeModal();doseModal(name);
+    const blendKit=blendKits.find(k=>k.name===name);
+    closeModal();
+    if(blendKit){ if(!blendKit.reconDate) openBlendVialModal(blendKit.id); else logBlendDoseModal(blendKit.id); }
+    else doseModal(name);
   };
   const combo=m.querySelector("#today-dose-combo");
   if(combo) combo.onclick=()=>{closeModal();comboDoseModal();};
