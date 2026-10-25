@@ -365,3 +365,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - New fictional legacy-v2 smoke expects open 48.5mg + sealed 80mg, consume 1.5mg → open 47mg, exact Undo → 48.5mg; no change to emptied vial or sealed stock. Test committed but CI NOT VERIFIED.
 - Stash Overview/Vials/History redesigned and Today compound history first 5 + Show All/Fewer + Close. JS syntax parse: PASS, computed 320/390 light/dark/browser functional QA: NOT TESTED, physical iPhone: NOT TESTED.
 - Protected data edit/history, real KLOW migration, blend/vial/prepare/undo and previous suite: NOT TESTED until full CI. Hold merge/deployment.
+
+### 2026-10-25 — Open vial as Stash hero / unified detail toggle
+- Source checks on PR #110 candidate: 04/10/12 JavaScript parses; old `<summary>` removed; current-vial hero and single details button present: PASS (static only).
+- Physical iPhone 390, narrow 320, light/dark contrast, action button click/keyboard, menu-to-panel focus, hidden pane behavior, all three tabs and first-five history: NOT TESTED.
+- Protected Stash reconstitution/preparation/partial-vial/dose flows, localStorage, KLOW actual designation: NOT TESTED in this follow-up. No new data writes in this visual patch.
+- User screenshot shows possible 1200mg declared strength vs 1250mg open-vial capacity on Glutathione Kit 2; flag as separate reconciliation item, do not auto-change saved vial records.
