@@ -305,3 +305,8 @@
 - Model Compound kits / Supplies after a native-style two-segment switcher (Nexus-original styling), preserving route/tab logic.
 - Keep Needs Attention information but visually soften into compact rows; do not hide alerts or change their triggers.
 - Apply coherent action-sheet foundation first, then inspect each kit modal for header, save, keyboard, scroll, focus, math and light contrast. Production deployment still prohibited.
+
+
+### 2026-10-25 — Visual feedback on action hierarchy and attention
+- Keep kit actions rounded with little/no elevation inside already elevated cards. Today Log Dose may remain primary and Check-In secondary, but geometry/spacing/type must match. Remove amber left rail from Needs Attention; use neutral rows and plum review link. Distinct design from alert urgency semantics.
+- Inventory Resolution allocation confusion is a separate UX workflow task; do not silently alter source-vial allocations, single dose record, Draw confirmations or inventory deduction math.
