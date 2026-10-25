@@ -378,7 +378,7 @@ function getKitDoseHistory(kit) {
   const compData = allPeptides()[kit.name];
   (compData?.doses||[]).forEach(d=>{
     const allocs = attributedAllocations(d.allocations);
-    const directMatch = d.kitId===kit.id;
+    const directMatch = d.kitId===kit.id || (kit.isBlend && String(d.blendSource)===String(kit.id));
     if (!allocs.length && !directMatch) return; // not attributed to THIS kit at all
     events.push({
       date: d.date,
