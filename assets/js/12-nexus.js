@@ -1194,6 +1194,25 @@ function showOnboarding() {
   wireOb();
 }
 
+// Only a verified, explicitly published release may prompt. Draft/unverified builds stay silent.
+const NEXUS_SEEN_RELEASE_KEY = STORE_KEY + '-last-seen-published-release-v1';
+function shouldShowPublishedRelease() {
+  if (typeof NEXUS_RELEASE==='undefined' || NEXUS_RELEASE.publicationStatus!=='published') return false;
+  if (!state.profile.onboardingDone) return false;
+  try { return localStorage.getItem(NEXUS_SEEN_RELEASE_KEY)!==NEXUS_RELEASE.version; }
+  catch { return false; }
+}
+function showPublishedReleaseModal() {
+  if (!shouldShowPublishedRelease()) return;
+  const changes=NEXUS_RELEASE.changes.map(c=>'<div style="padding:10px 0;border-bottom:1px solid var(--border-sub)"><div style="font-weight:700;color:var(--t1)">'+esc(c.title)+'</div><div style="font-size:12px;color:var(--t3);line-height:1.5;margin-top:4px">'+esc(c.detail)+'</div></div>').join('');
+  const modal=openModal('<div class="nx-release-whats-new"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">'+esc(NEXUS_RELEASE.version)+'</div><h2 style="color:var(--t1);font-size:21px;margin:8px 0">What’s new in Nexus</h2><p style="color:var(--t3);font-size:13px">'+esc(NEXUS_RELEASE.title)+'</p>'+changes+'<p style="color:var(--t3);font-size:11px;line-height:1.5">'+esc(NEXUS_RELEASE.dataImpact)+'</p><div style="display:flex;gap:10px;margin-top:18px"><button type="button" id="nx-release-later" class="btn-ghost" style="min-height:44px;flex:1">Later</button><button type="button" id="nx-release-dismiss" class="btn-primary" style="min-height:44px;flex:2">Got it</button></div></div>', '#A78BFA');
+  modal.querySelector('#nx-release-later').onclick=()=>closeModal();
+  modal.querySelector('#nx-release-dismiss').onclick=()=>{
+    try { localStorage.setItem(NEXUS_SEEN_RELEASE_KEY,NEXUS_RELEASE.version); } catch(e){ console.warn('Unable to record seen Nexus release',e); }
+    closeModal();
+  };
+}
+
 sinceLastVisitSummary = computeSinceLastVisit();
 // One-time, guarded by its own inventoryModelVersion check — migrateToInventoryV2()
 // no-ops immediately if already run. Runs here, once, at actual app startup, rather than
@@ -1208,5 +1227,6 @@ preserveOriginalState();
 migrateToInventoryV2();
 saveState();
 if(!state.profile.onboardingDone){render();showOnboarding();}
+else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
 else if((state.settings.lastSeenChangelog||0)<CURRENT_CHANGELOG_VERSION){render();whatsNewModal();}
 else render();
