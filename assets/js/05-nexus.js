@@ -523,6 +523,11 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
     // A draw that fell short of what THIS syringe needed is judged separately, against
     // the intended draw, not the vial's full contents — so a deliberate partial draw from
     // a vial with plenty left over doesn't get treated as a shortfall at all.
+    if(kit.isBlend){
+      // Preserve the confirmed actual amount in the parent dose/preparation draft.
+      // The blend ledger is committed ONLY on final Confirm, never twice here.
+      closeModal();onComplete(actual);return;
+    }
     const emptiesVial = (vialRemaining - actual) <= 0.01;
     const drawShortfall = Math.round((intendedDraw - actual)*100)/100;
     // For a v2-migrated vial, remainingMg is authoritative and must actually move here —
@@ -844,7 +849,7 @@ function doseModal(name, existing, occTime) {
       };
       closeModal();
       drawFromVialModal(kit, vial, target, (actualMg) => {
-        r.mg = actualMg; r.vialId = vial.id; r.finished = true;
+        r.mg = actualMg; r.vialId = vial.id; r.finished = !kit.isBlend;
         state._pendingDoseDraft.rows = rows.map(r2=>({...r2}));
         doseModal(name);
       }, () => doseModal(name));
@@ -1583,7 +1588,7 @@ function prepareDosesModal(name) {
       state._pendingPrepareDraft = { name, count, amountEach: m.querySelector("#pd-amt").value, rows: rows.map(r2=>({...r2})) };
       closeModal();
       drawFromVialModal(kit, vial, target, (actualMg) => {
-        r.mg = actualMg; r.vialId = vial.id; r.finished = true;
+        r.mg = actualMg; r.vialId = vial.id; r.finished = !kit.isBlend;
         state._pendingPrepareDraft.rows = rows.map(r2=>({...r2}));
         prepareDosesModal(name);
       }, () => prepareDosesModal(name));
