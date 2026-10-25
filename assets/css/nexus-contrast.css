@@ -458,3 +458,11 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 }
 :root[data-theme="light"] svg [stroke="#7DF9C0" i] {stroke:#62449C!important;}
 :root[data-theme="light"] svg [fill="#7DF9C0" i] {fill:#62449C!important;}
+
+
+/* Supply deletion belongs to Edit details, not the overview action area. */
+.nx-equipment-danger-area{margin-top:20px;padding-top:12px}
+.nx-equipment-delete{display:block;width:100%;min-height:44px;padding:10px 14px;
+  border:1px solid var(--border-sub);border-radius:11px;
+  background:var(--surface-2);color:var(--t2);font-size:13px;font-weight:650}
+.nx-equipment-delete:focus-visible{outline:3px solid var(--nx-focus-accessible);outline-offset:2px}
