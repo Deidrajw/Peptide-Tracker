@@ -352,3 +352,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS GitHub Actions workflow 40165612214: exact-source LIVE and isolated FULL DEMO generated; browser 320px/390px × dark/light × LIVE/DEMO; published What's New primary/secondary actions computed contrast >=4.5:1 and >=44px bounds; muted t3/t4/t5 against three surfaces >=4.5:1; preceding Check-In, Calendar, Stash, Dose, Combo, Plans, Protocol screens regression suites green.
 - PASS mobile forms workflow 40165612207. Merged main squash `da18b2fb`; no storage key/schema mutation.
 - NOT TESTED: real iPhone light/dark after correction, VoiceOver, all secondary modals and overlays with human AA/visibility signoff. Nine-tab diagnostic candidates not all validated; preserve Issue #112. New Cloudflare postmerge parity NOT YET VERIFIED.
+
+### 2026-10-25 — Verified primary Cloudflare after v0.9.19 contrast patch
+- PASS web host: PR #113 CI 40165897243 `Nexus_CLOUDFLARE_PARITY.json` verified:true, 16 identical remote entry files vs merged source, artifact #12588721468.
+- PASS branch/browser: release 40165612214, mobile form 40165612207, 320/390 × light/dark × LIVE/full isolated DEMO, visible published Later/Got it computed foreground contrast >=4.5 and 44px targets, t3/t4/t5 neutral surfaces thresholds, existing protected Check-In/Log Dose/Calendar/Stash/Protocol suites.
+- NOT TESTED: real physical iPhone post-fix, VoiceOver, every modal/control combination, true entire app WCAG AA. Heuristic 9-tab low contrast diagnostic has false-positive candidates and is not a full accessibility audit.
