@@ -319,3 +319,26 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 #proto-builder-body .pb-phdose {min-width:0;max-width:100%;min-height:44px!important;box-sizing:border-box;}
 #proto-builder-body .pb-phrem {min-width:44px;min-height:44px;font-size:16px!important;}
 #proto-builder-body .pb-addphase {min-height:44px!important;font-size:13px!important;}
+
+/* Accessibility hotfix — published release acknowledgment was effectively invisible
+   in the light-theme sheet. Modals mount outside #app: app-scoped button treatments
+   do not reach their controls. Keep both actions explicit in both themes. */
+.modal .nx-release-whats-new #nx-release-dismiss {
+  display:inline-flex !important;align-items:center;justify-content:center;
+  min-height:48px !important;min-width:0;
+  background:#A78BFA !important;color:#1A1728 !important;
+  border:1px solid #7753B9 !important;border-radius:12px;
+  opacity:1 !important;visibility:visible !important;
+  font-weight:750 !important;text-shadow:none !important;
+}
+.modal .nx-release-whats-new #nx-release-later {
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:48px !important;min-width:0;
+  background:var(--surface-2) !important;color:var(--t1) !important;
+  border:1px solid var(--border) !important;border-radius:12px;
+  opacity:1 !important;visibility:visible !important;
+}
+.modal .nx-release-whats-new #nx-release-dismiss:focus-visible,
+.modal .nx-release-whats-new #nx-release-later:focus-visible {
+  outline:3px solid var(--nx-focus-accessible) !important;outline-offset:2px;
+}
