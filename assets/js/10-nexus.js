@@ -385,7 +385,7 @@ function stashView() {
     const reconDoses = currentReconDate ? doseLog.filter(d=>new Date(d.date)>=new Date(currentReconDate)) : [];
     const usedFromCurrent = reconDoses.reduce((a,d)=>a+(d.totalMgDrawn||0),0);
     const wasteFromCurrent = currentReconDate ? getKitActiveWasteMg(s, currentReconDate) : 0;
-    const vialRem = (s.totalVials||0)>0 && (s.emptyVials||0)>=(s.totalVials||0) ? 0 : (s.vialMg>0 ? Math.max(0, s.vialMg-usedFromCurrent-wasteFromCurrent) : null);
+    const vialRem = currentReconDate ? getBlendOpenVialRemainingMg(s) : null;
     const vialPct = s.vialMg>0 && vialRem!=null ? Math.round(vialRem/s.vialMg*100) : null;
 
     // Blend kits deliberately stay on their own formula rather than getKitRemainingMg —
