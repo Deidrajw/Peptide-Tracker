@@ -1156,8 +1156,11 @@ function showOnboarding() {
       const next=migrate(restoreCandidate);
       if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
       next.profile.onboardingDone=true;
-      state=next;saveState();closeModal();render();
-    }catch(e){alert("Restore was not completed. Existing data has been kept. "+e.message);}
+      const before=state;
+      try{state=next;saveState();if(!loadState()||!loadState().profile?.onboardingDone)throw Error("Could not verify saved backup");}
+      catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
+      closeModal();render();
+    }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
   }
   function buildNav(){return `<div style="display:flex;gap:8px;margin-top:12px">${step>0?`<button id="ob-back" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">← Back</button>`:`<button id="ob-skip" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);color:var(--t4);background:transparent;font-size:12px">Skip</button>`}${step<STEPS.length-1?`<button id="ob-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-weight:700">Next →</button>`:`<button id="ob-done" style="flex:1;padding:11px;border-radius:10px;background:#7DF9C0;color:#000;font-weight:700">Let's go →</button>`}</div>`;}
   function rebuild(){const b=document.getElementById("ob-body");if(b){b.innerHTML=buildOb();}const n=document.getElementById("ob-nav");if(n){n.innerHTML=buildNav();}wireOb();}
