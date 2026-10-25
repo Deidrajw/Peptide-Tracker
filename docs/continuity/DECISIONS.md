@@ -294,3 +294,7 @@
 
 ### 2026-10-25 — User feedback mandates component-level visual differentiation
 - User rejected overly subtle hybrid CSS-only styling and asked to actually implement earlier proposals. Replace actual Today component hierarchy, progress visualization, cards, actions and schedule grouping on existing design branch, while retaining all event classes/IDs and stored logic. Physical design acceptance remains pending. No production deployment approval.
+
+
+### 2026-10-25 — Stash follows user-liked Today 2.0 depth
+- User confirmed meaningful Today progress and approved continuing next screen: Stash. Visual work only on draft PR #123; use original Stash markup/classes/actions, preserve 28px ellipsis in 44px target, kit/vial math, status, details tabs and blend records. No production deployment or blanket design-system signoff.
