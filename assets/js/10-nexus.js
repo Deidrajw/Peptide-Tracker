@@ -271,25 +271,27 @@ function stashView() {
 
       </div>`:""}
 
-      <details style="margin-top:8px">
-        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Kit details & history</summary>
+      <details class="nx-kit-disclosure" style="margin-top:12px"><summary class="nx-kit-disclosure-trigger"><span class="nx-kit-disclosure-title"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg> View kit details</span><span class="nx-kit-disclosure-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></summary>
         <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
           <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
           <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="vials" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Vials</button>
           <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="history" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">History</button>
         </div>
         <section class="nx-stash-pane" data-pane="overview" role="tabpanel">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-            ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
-            <button class="editsupply" data-id="${s.id}" aria-label="Edit ${esc(s.name)} kit" style="min-height:36px;display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:6px;color:var(--t3);font-size:11px;padding:4px 10px">Edit</button>
-            ${!s.reconDate&&sealed>0?`<button class="reconkit" data-id="${s.id}" aria-label="Reconstitute ${esc(s.name)} vial" style="min-height:36px;display:inline-flex;align-items:center;border:1px solid ${c.color}44;border-radius:6px;color:${c.color};font-size:11px;padding:4px 10px">Reconstitute</button>`:""}
-            <button class="compound-intel-btn" data-name="${esc(s.name)}" aria-label="View ${esc(s.name)} Intel" style="min-height:36px;display:inline-flex;align-items:center;border:1px solid ${c.color}44;border-radius:6px;color:${c.color};font-size:11px;padding:4px 10px;background:${c.color}10">Intel ›</button>
+          <div class="nx-kit-overview-hero">
+            <div class="nx-kit-overview-label">AVAILABLE IN THIS KIT</div>
+            <div class="nx-kit-overview-number">${kitRemMg.toFixed(kitRemMg%1?1:0)} <span>of ${totalMg} mg</span></div>
+            <div class="nx-kit-overview-track"><span style="width:${totalMg>0?Math.max(0,Math.min(100,kitRemMg/totalMg*100)):0}%"></span></div>
           </div>
-
-          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px">
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">KIT TOTAL</div><div style="font-size:12px;font-weight:600;color:var(--t2)">${kitRemMg.toFixed(0)} / ${totalMg} mg</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">VIALS</div><div style="font-size:11px;color:var(--t2)">${sealed>0?`${sealed} sealed `:""}${vialList.filter(v=>v.status==="active"||v.status==="open").length>0?`· ${vialList.filter(v=>v.status==="active"||v.status==="open").length} open `:""}${vialList.filter(v=>v.status==="finished"||v.status==="empty").length>0?`· ${vialList.filter(v=>v.status==="finished"||v.status==="empty").length} empty`:""}${vialList.filter(v=>v.status==="transferred").length>0?`· ${vialList.filter(v=>v.status==="transferred").length} transferred`:""}</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">CONC</div><div style="font-size:12px;color:var(--t2)">${conc?conc.toFixed(2)+" mg/mL":"—"}</div></div>
+          <div class="nx-kit-stat-list">
+            <div><span>Vials</span><strong>${sealed} sealed${openCount?` · ${openCount} open`:""}${empty>0?` · ${empty} empty`:""}</strong></div>
+            <div><span>Concentration</span><strong>${conc?conc.toFixed(2)+" mg/mL":"Not recorded"}</strong></div>
+            ${s.cost?`<div><span>Purchase price</span><strong>${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(s.currency||"CAD")}</strong></div>`:""}
+          </div>
+          ${s.notes?`<div class="nx-kit-note"><div class="nx-kit-overview-label">KIT NOTE</div><p>${esc(s.notes)}</p></div>`:""}
+          <div class="nx-kit-overview-actions">
+            <button class="editsupply" data-id="${s.id}">Edit details</button>
+            <button class="compound-intel-btn" data-name="${esc(s.name)}">Compound Intel</button>
           </div>
 
           ${s.isBlend && Array.isArray(s.composition) && s.composition.length ? `
@@ -297,10 +299,6 @@ function stashView() {
               <div class="mono" style="font-size:9px;color:var(--t4);margin-bottom:8px">COMPOSITION PER VIAL</div>
               ${s.composition.map(part=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:10px;font-size:12px;color:var(--t2)"><span>${esc(part.compound)}</span><span>${Number(part.mg).toFixed(2)} mg · ${s.vialMg>0?Math.round(Number(part.mg)/Number(s.vialMg)*100):0}%</span></div>`).join("")}
             </div>` : ""}
-          ${weeksRemaining!=null?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px">At current pace: ~${weeksRemaining.toFixed(1)} wks remaining, depleting around ${fmtDate(depletionDate)}</div>`:""}
-
-          ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-bottom:10px">${esc(s.notes)}</div>`:""}
-
         </section>
         <section class="nx-stash-pane" data-pane="vials" role="tabpanel" hidden>          ${(()=>{
             // Kit → individual physical vials, in that order — which vial is current,
@@ -337,26 +335,16 @@ function stashView() {
         <section class="nx-stash-pane" data-pane="history" role="tabpanel" hidden>          ${(()=>{
             const history = getKitDoseHistory(s);
             if (!history.length) return "";
-            return `<div class="nx-stash-record-list"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:8px">${history.length} dose event${history.length===1?"":"s"}</div>
-              <div style="margin-top:8px">
-                ${history.map(ev=>{
-                  const amtNative = mgToUnit(ev.amountMg, c.unit);
-                  const amtLabel = ev.sprayCount ? `${ev.sprayCount} spray${ev.sprayCount===1?"":"s"} <span style="font-weight:400;color:var(--t5)">(${amtNative.toFixed(amtNative<1?2:1)}${c.unit})</span>` : `${amtNative.toFixed(amtNative<1?2:1)}${c.unit}`;
-                  const kindLabel = ev.kind==="prepared" ? "Prepared" : ev.kind==="administered" ? "Administered from prepared dose" : "Logged dose";
-                  const kindColor = ev.kind==="prepared" ? "#A78BFA" : ev.kind==="administered" ? "var(--t4)" : "var(--t2)";
-                  const vialLines = ev.vials.length>1
-                    ? ev.vials.map(v=>`<div style="font-size:10px;color:var(--t5);padding-left:10px">${esc(v.label||"Vial")} → ${mgToUnit(v.amountMg, c.unit).toFixed(v.amountMg<1?2:1)}${c.unit}</div>`).join("")
-                    : ev.vials.length===1 ? `<div style="font-size:10px;color:var(--t5);padding-left:10px">${esc(ev.vials[0].label||"Vial")}</div>` : "";
-                  return `<div style="padding:8px 0;border-bottom:1px solid var(--surface-2)">
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-                      <span style="font-size:11px;color:var(--t4)">${historyDateLabel(ev)}</span>
-                      <span style="font-size:11.5px;color:var(--t1);font-weight:600">${amtLabel} <span style="font-weight:400;color:${kindColor};font-size:10.5px">· ${kindLabel}</span></span>
-                    </div>
-                    ${vialLines}
-                  </div>`;
-                }).join("")}
+            const display=history.slice(0,5);
+            return `<div class="nx-kit-history-heading"><span>${history.length} dose events</span><span>Most recent first</span></div>
+              <div class="nx-kit-history-items">
+                ${display.map(ev=>`<div class="nx-kit-history-row">
+                  <div class="nx-kit-history-date">${historyDateLabel(ev)}</div>
+                  <div class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</div>
+                  <div class="nx-kit-history-sub">${ev.kind==="prepared"?"Prepared":ev.kind==="administered"?"From prepared dose":"Logged dose"}${ev.vials.length?" · "+ev.vials.map(v=>esc(v.label||"Vial")).join(", "):""}</div>
+                </div>`).join("")}
               </div>
-            </div>`;
+              ${history.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${history.length}">Show all ${history.length} records</button><div class="nx-kit-history-extra" hidden>${history.slice(5).map(ev=>`<div class="nx-kit-history-row"><div class="nx-kit-history-date">${historyDateLabel(ev)}</div><div class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</div></div>`).join("")}</div>`:""}`;
           })()}
 
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4);margin-bottom:8px">Reconstituted ${fmtDate(currentReconDate)}${reconCount>1?` · ${reconCount} vials opened total`:""}</div>
