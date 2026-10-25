@@ -1842,3 +1842,41 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-ob-guide-icon{display:inline-flex;width:19px;height:19px}
 .nx-ob-guide-icon svg{display:block;width:19px;height:19px}
 .nx-ob-guide:focus-visible{outline:3px solid #AA8BEC;outline-offset:2px}
+
+
+/* Issue 109 — clear hierarchy in shared Stash detail surfaces */
+.nx-kit-disclosure{border-top:1px solid var(--border);padding-top:4px}
+.nx-kit-disclosure-trigger{list-style:none!important;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;color:var(--t2);font-size:13px;font-weight:650}
+.nx-kit-disclosure-trigger::-webkit-details-marker{display:none}
+.nx-kit-disclosure-title{display:inline-flex;align-items:center;gap:10px}
+.nx-kit-disclosure-icon{display:grid;place-items:center;width:32px;height:32px;color:var(--t3);transition:transform .2s ease}
+.nx-kit-disclosure[open] .nx-kit-disclosure-icon{transform:rotate(90deg)}
+.nx-kit-disclosure .nx-stash-tabs{margin:10px 0 18px!important}
+.nx-kit-disclosure .nx-stash-pane{padding:0 0 12px;min-width:0}
+.nx-kit-overview-hero{padding:8px 0 20px}
+.nx-kit-overview-label{font-size:10px;letter-spacing:1.25px;font-weight:700;color:var(--t3);margin-bottom:10px}
+.nx-kit-overview-number{font-size:32px;letter-spacing:-.9px;font-weight:750;color:var(--t1);line-height:1.1;font-variant-numeric:tabular-nums}
+.nx-kit-overview-number span{font-size:13px;letter-spacing:0;font-weight:450;color:var(--t3)}
+.nx-kit-overview-track{height:6px;background:var(--surface-2);border-radius:8px;overflow:hidden;margin-top:14px}
+.nx-kit-overview-track span{display:block;height:100%;border-radius:inherit;background:#a78bfa}
+.nx-kit-stat-list{border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 18px}
+.nx-kit-stat-list>div{display:flex;justify-content:space-between;gap:14px;padding:14px 0;align-items:start}
+.nx-kit-stat-list>div+div{border-top:1px solid var(--border)}
+.nx-kit-stat-list span{font-size:12px;color:var(--t3);flex:0 0 37%}
+.nx-kit-stat-list strong{font-size:13px;color:var(--t1);font-weight:650;text-align:right;overflow-wrap:anywhere}
+.nx-kit-note{padding:13px 0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.nx-kit-note p{font-size:13px;line-height:1.55;color:var(--t2);margin:0;overflow-wrap:anywhere}
+.nx-kit-overview-actions{display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap;margin-top:8px}
+.nx-kit-overview-actions button{min-height:44px;padding:10px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);background:var(--surface-2);font-weight:650;font-size:12px}
+.nx-kit-history-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0 15px}
+.nx-kit-history-heading span:first-child{color:var(--t1);font-size:14px;font-weight:700}
+.nx-kit-history-heading span:last-child{color:var(--t3);font-size:11px}
+.nx-kit-history-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;padding:13px 0;border-top:1px solid var(--border);font-variant-numeric:tabular-nums}
+.nx-kit-history-date{color:var(--t2);font-size:12px}
+.nx-kit-history-value{color:var(--t1);font-size:12px;font-weight:700}
+.nx-kit-history-sub{grid-column:1/-1;color:var(--t3);font-size:11px}
+.nx-kit-show-more{width:100%;min-height:44px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650;margin-top:10px}
+.nx-kit-history-extra[hidden]{display:none!important}
+.nx-stash-pane[data-pane="vials"] .nx-stash-record-list{margin-top:8px}
+.nx-stash-pane[data-pane="vials"] .nx-stash-record-list>div:first-child{font-size:14px!important;color:var(--t1)!important;margin-bottom:12px!important}
+@media(max-width:360px){.nx-kit-overview-number{font-size:28px}.nx-kit-stat-list>div{gap:8px}}
