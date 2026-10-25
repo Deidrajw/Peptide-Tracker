@@ -3,9 +3,9 @@
   "version": "v0.9.18-beta",
   "channel": "beta",
   "publication": {
-    "status": "unverified",
-    "publishedAt": null,
-    "commit": null,
+    "status": "published",
+    "publishedAt": "2026-10-25T03:41:30Z",
+    "commit": "623025665c549dadbe3fb467b6d556f5d44e7e34",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
@@ -53,7 +53,7 @@
   "dataImpact": "No automatic migration or modification of existing saved records. A user-initiated restore now requires confirmation and keeps a local recovery copy before replacement.",
   "limitations": [
     "Calculator mass conversions support mg and mcg; generic IU conversion is intentionally unsupported.",
-    "Cloudflare publication and physical iPhone/VoiceOver acceptance are unverified.",
+    "Cloudflare source parity verified for the v0.9.18 baseline. Physical iPhone/VoiceOver acceptance remains unverified.",
     "App Store and Play Store native-wrapper submission readiness still requires independent verification."
   ],
   "privacyChanged": true,

@@ -314,3 +314,16 @@
 - Added Privacy & Data, notification context, backup restore preview/typed confirmation/recovery, 44px navigation, reduced-motion/focus controls, strict calculator input/capacity/IU guards and fixed 30/50/100 U-100 invariant math.
 - Synchronized `release/release.json`, in-app metadata, Apple and Google notes and HTML title to v0.9.18-beta. CI and 13 browser scripts now obtain version from canonical manifest. Added protected restore/privacy browser tests and blocking math assertions. No schema migration.
 - At entry: latest-head LIVE/full isolated DEMO/QA, PR merge, Cloudflare site parity, iPhone/VoiceOver and native stores are INCOMPLETE. Final evidence and mapping must be appended, not inferred.
+
+
+### 2026-10-24 — v0.9.18-beta GitHub MERGED / Cloudflare UNVERIFIED
+- PR #94 merged into main `623025665c549dadbe3fb467b6d556f5d44e7e34`; branch head `c169db6bcbe48c0991d6e81a6b8675383be66979`. Previous v0.9.18 candidate notes above are superseded with respect to PR status only.
+- Changes: Privacy & Data, guarded backup restore, dose-alert consent copy, numeric calculator IU/overflow/negative/rounding guards, invariant U-100 syringe conversion, keyboard focus/reduced motion/back touch target, clean route chips and unified release CI.
+- PR Actions (2026-10-25 UTC): build-and-parity run 40158486843 SUCCESS; mobile form run 40158486825 SUCCESS. Source-verified artifacts: 20-file LIVE ZIP, standalone fictional full-app DEMO HTML and same-byte offline DEMO ZIP. Measurement math diagnostic 80 PASS/0 FAIL over eight contexts; trust UI 4 PASS. Real iPhone/VoiceOver NOT TESTED; clinical validation not claimed.
+- No state migrations. User-confirmed backup restore is a deliberate replacement; previously stored records unchanged unless user explicitly chooses restore.
+- Cloudflare Pages deployment/version/asset checks remain UNVERIFIED, publication manifest intentionally remains `unverified`. App Store/Play Store native readiness blocked on independently reviewed health dosage rule/privacy policy and binary analysis.
+
+
+### 2026-10-25 UTC — v0.9.18-beta Cloudflare web release VERIFIED
+- GitHub main commit `623025665c549dadbe3fb467b6d556f5d44e7e34` contains merged PR #94. Exact-source Cloudflare verification by independent HTTP byte compare in PR #95 Actions run `40158910879`: all 16 deployed app files matched source (1 root index, 3 CSS, ordered JS 01–12), `verified=true`, `smoke_only=false`, artifact `12585875043`, produced 2026-10-25T03:41:30Z. Live URL `https://nexuspeplog.pages.dev/`.
+- This confirms web code deployment but not native store compliance. Published-release announcement metadata remains `unverified` until validated follow-up activation; do not equate deployment proof with popup publication state.

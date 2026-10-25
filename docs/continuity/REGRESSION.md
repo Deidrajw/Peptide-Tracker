@@ -309,3 +309,19 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Required `tools/validate-trust-ui.mjs`: four Privacy disclosures, entry in Settings, guard on Import, typed restore disabled until exact confirmation, Cancel unchanged, fictional restore and local pre-restore snapshot; 320/390 × both themes in standalone in-memory DEMO.
 - Protected suites: Check-In single record/date, symptoms, notes and edits; Supplements search and day-specific history; Log Dose/Combo source, drafts, multi-vial deductions, Stash, Calendar month, Weight, Nutrition, Protocol/Goals/Plans and history.
 - No fake PASS: latest-head PR #94 CI and artifact evaluation must be obtained. GitHub Pages comparator is NOT proof of primary Cloudflare parity. Real iPhone, VoiceOver and store submission NOT TESTED.
+
+
+### 2026-10-24 — v0.9.18-beta PR #94 observed automated regression results
+- PASS source/syntax/manifest/20-file complete LIVE/isolated full DEMO packaging: Actions run 40158486843 (success). Source archive offline-demo index.html exactly equals standalone DEMO; fictional isolated storage and disabled sync confirmed by CI and archive inspection.
+- PASS automated browser 320/390 × light/dark × LIVE/full DEMO, including protected Check-In, Protocol, vial, Combo, Log Dose, Stash, Plans, chevrons and daily histories: same run; mobile-form 40158486825 PASS.
+- PASS independent math `tools/audit-measurement-math.mjs`: 80/80 checks, 0 FAIL; 30/50/100 U-100 invariant, mg/mcg, invalid IU, negative/empty/zero denominator. No clinical approval implied.
+- PASS standalone fictional trust UI: 4/4 width/theme cases including Privacy & Data, input validation, Cancel, explicit RESTORE, prior storage snapshot, test-local save; no real user records imported.
+- PASS static UI source check for unwanted administration route commas, Privacy shield/keyboard motion CSS.
+- NOT TESTED: real iPhone, VoiceOver/TalkBack, full manual review of every one of the formerly 57 heuristically graded surfaces, native app store builds.
+- NOT VERIFIED: primary Cloudflare Pages published full asset hashes and `release/release.json publication.status`. Do not fake PASS.
+
+
+### 2026-10-25 UTC — Verified Cloudflare parity evidence
+- PASS remote primary Cloudflare: `Nexus_CLOUDFLARE_PARITY.json` artifact 12585875043, GitHub Actions 40158910879, `verified=true`, `smoke_only=false`, 16/16 exact file bytes (index + 3 CSS + 12 JS). No local-only smoke or GitHub Pages substitution.
+- PASS v0.9.18 merged app regression: 80/80 mathematical assertions, 4/4 backup/privacy UI, source-validated LIVE/full DEMO packaging, existing mobile/protected suites (PR #94).
+- NOT TESTED: real iPhone/VoiceOver, native store binary and official review. Popup publication status in manifest still `unverified` pending a separate deploy-gated change.
