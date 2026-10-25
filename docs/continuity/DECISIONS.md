@@ -277,3 +277,7 @@
 
 ### 2026-10-25 — Approved shared list design for Vials and History
 - Both Vials and History MUST use divider-separated compact rows, not oversized individually bordered vial cards. Common spacing/typography/color, quantity/metadata hierarchy, 44px action control, default first five records and Show All/Fewer. Vial row: number, open/finished status, opened date, remaining mg, context action. History: date/time, quantity, source/notes metadata, corresponding action where supported. Preserve underlying saved records and full historical access.
+
+### 2026-10-25 — Premium Stash/Supplies visual alignment
+- Vials must have horizontal separators ONLY, no enclosing list outline. The inventory Overview/Vials/History row is secondary to the main action controls (subtle underline tabs instead of another large three-button bar). History's reconstitution/date/vial-count data is secondary contextual inventory metadata, visually separated from record pagination; labels must explain the meaning.
+- Supplies should follow kit mental model where applicable: current open pack/bottle quantity is hero, usage/open as primary action, Details button opens secondary inventory summary with available/open/sealed/completed, pack size, notes, edit/restock; do not invent compound-only vial/reconstitution fields or change underlying supply usage histories.
