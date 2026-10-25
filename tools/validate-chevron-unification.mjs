@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
-const version="v0.9.16-beta", demo=path.resolve("dist/Nexus_"+version+"_FULL_DEMO.html");
+const version="v0.9.17-beta", demo=path.resolve("dist/Nexus_"+version+"_FULL_DEMO.html");
 if (!fs.existsSync(demo)) throw new Error("Complete DEMO not built");
 const b=await chromium.launch({headless:true,args:["--no-sandbox"]}),results=[];
 const assert=(x,m)=>{if(!x)throw new Error(m)};
