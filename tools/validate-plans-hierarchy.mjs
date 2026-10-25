@@ -49,7 +49,6 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
- await page.evaluate(()=>{state._plansSub='research';render();});
  ensure(await page.locator('.nx-plan-item .nx-open-goal').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'View goal touch target too small');
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
