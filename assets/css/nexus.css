@@ -1758,3 +1758,23 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-focus-dates{font-size:12px;line-height:1.8;color:var(--t3);overflow-wrap:anywhere}
 .nx-plan-head .manage-plan-btn:focus-visible,#nx-report-focus:focus-visible,#journal-compound-filter:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
 @media(max-width:360px){.nx-research-title{font-size:17px}.nx-focus-result{padding:13px}}
+
+/* One visually distinct 44px management affordance in Plans, Stash and Protocol. */
+#app .nx-plan-head .manage-plan-btn,
+#app .nx-shopping-row .manage-plan-btn,
+#app .nexus-protocol-head .manage-proto-btn,
+#app .nexus-protocol-card .manage-proto-btn,
+#app .nx-kit-heading-unified .nx-kit-header-manage{
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  background:var(--surface-1)!important;color:var(--t2)!important;
+  border:1px solid var(--border)!important;border-radius:11px!important;
+  flex:0 0 44px!important;box-shadow:none!important
+}
+#app .nx-plan-head .manage-plan-btn svg{width:20px;height:20px}
+#app .nx-plan-head .status-badge,
+#app .nexus-protocol-head .status-badge,
+#app .nx-kit-heading-unified .status-badge{align-self:center;flex-shrink:0}
+#app .nx-plan-head .manage-plan-btn:focus-visible,
+#app .nexus-protocol-card .manage-proto-btn:focus-visible,
+#app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
