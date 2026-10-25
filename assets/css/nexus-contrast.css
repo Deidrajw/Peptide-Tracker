@@ -348,3 +348,15 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 .nexus-screen-protocols #new-protocol.nx-proto-create {
   background:#A78BFA !important;color:#1A1728 !important;
 }
+
+/* App-wide audit of inline styles: multiple modal buttons, onboarding actions,
+   protocol wizard controls, amino Send and Stash instruction badges used white
+   lettering on light lavender backgrounds (2.1–2.7:1). Unlike the older
+   button-only selector this covers text-bearing divs and spans too. */
+body [style*="background:#A78BFA"][style*="color:#fff"],
+body [style*="background:#C9A0FF"][style*="color:#fff"],
+body [style*="background:#9270D2"][style*="color:#fff"],
+body [style*="background: #A78BFA"][style*="color: #fff"],
+body [style*="background: #C9A0FF"][style*="color: #fff"] {
+  color:#1A1728 !important;
+}
