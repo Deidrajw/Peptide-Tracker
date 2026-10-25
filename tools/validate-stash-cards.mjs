@@ -41,6 +41,17 @@ try{
     ensure(await card(99002).locator('.nx-stash-open-progress').innerText().then(x=>x.includes('30 / 50')),'Vial remaining display wrong');
     ensure(await card(99002).locator('.nx-stash-open-progress [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
     ensure(await card(99003).locator('.manage-kit-btn').count()>=1,'v0.9.9 blend actions were lost');
+
+    for(const id of [99001,99002,99003]){
+      const parity=await card(id).locator('.nx-kit-heading-unified').evaluate(header=>{
+        const title=header.querySelector('.nx-kit-title-stack'),status=header.querySelector('.nx-card-status'),btn=header.querySelector('.nx-kit-header-manage');
+        if(!title||!status||!btn)return false;
+        const t=title.getBoundingClientRect(),p=status.getBoundingClientRect(),m=btn.getBoundingClientRect();
+        return p.top>t.top && p.left>=t.left-2 && p.right<=m.left+2 && m.width>=44 && m.height>=44 && !!btn.querySelector('.nx-unified-more-svg');
+      });
+      ensure(parity,'Stash card header missing stacked status/unified ellipsis for kit '+id);
+    }
+
     // Onboarding is independent of these fictional inventory fixtures; close any
     // introductory overlay before testing a real pointer tap on the Stash details.
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
