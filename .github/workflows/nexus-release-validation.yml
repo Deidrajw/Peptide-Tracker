@@ -1,7 +1,7 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**']
+    branches: ['release/**', main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -29,9 +29,9 @@ jobs:
           node tools/validate-recon-safety.mjs
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
-      - name: Independently compare published Pages files with source (nonblocking, preserve failure evidence)
-        continue-on-error: true
-        run: python3 tools/verify-pages.py --attempts 5 --interval 8 --output dist/Nexus_PAGES_REMOTE_CHECK_PR.json
+      - name: Compare primary Cloudflare Pages files with source (required after merge)
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        run: python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
