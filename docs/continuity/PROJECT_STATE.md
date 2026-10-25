@@ -625,3 +625,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Caveat: preview/NEXUS_HYBRID_FULL_APP_DEMO.html is a candidate copy; the builder's `dist/Nexus_v0.9.20-beta_FULL_DEMO.html` uses stronger fail-closed storage/network isolation and embeds icon pixels. Prefer the build artifact for QA. No merge, live deployment, or user data migration.
 - Separate: paused PR #121 medical audit, PR #118 divider contrast, PR #110 blend parity; ideas PR #122.
 - **ONE NEXT ACTION:** obtain passing build & browser QA evidence at 320/390 dual themes for the exact current design head, fix any failures, then ask user to review preview before any merge/deployment.
+
+
+### 2026-10-25 — Hybrid preview QA evidence (source commit 3f3ff27)
+- GitHub Actions run 40233319212 SUCCESS: build + package validation PASS, 320/390 dual-theme LIVE/isolated DEMO browser flows PASS, including Log Dose, Stash, Check-In, Protocol, chevrons, blends. Separate mobile workflow 40233319183 SUCCESS. Math diagnostic 80/80, not clinical validation.
+- **Visual warning:** contrast audit emitted 31 light-theme candidates across 9 tabs (including 1.27:1 headings); this audit is informational and can overflag transparent composition, but must be investigated before merge. No real iPhone test. Browser status != device approval.
+- Build pipeline generated the complete source-parity LIVE ZIP, standalone FULL_DEMO HTML and browser-openable isolated DEMO ZIP in GitHub Actions artifact 12613828154. GitHub Cloudflare parity for experimental branch returned UNVERIFIED (expected; do not deploy branch).
+- **ONE NEXT ACTION:** visually inspect and resolve/light-mode contrast findings in both themes using rendered screenshots before user approval; preserve untouched production.
