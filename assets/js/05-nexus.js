@@ -1962,6 +1962,9 @@ function reconstituteVialModal(kit, onDone) {
 // safely, or when multiple occurrences are still pending and none was specified — Quick
 // Log must never guess which of several same-day doses it's logging.
 function quickLogDose(name, occTime) {
+  // Quick Log's legacy direct inventory mutation is not blend-ledger aware.
+  // Always use the canonical form/confirmation for premixed preparations.
+  if((state.supplies||[]).some(k=>k.name===name&&k.isBlend))return doseModal(name,null,occTime);
   const cData = allPeptides()[name] || {};
   const doseHistory = [...(cData.doses||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
   if (!occTime && cData.dosesPerDay>1) {
