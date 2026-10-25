@@ -319,3 +319,65 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 #proto-builder-body .pb-phdose {min-width:0;max-width:100%;min-height:44px!important;box-sizing:border-box;}
 #proto-builder-body .pb-phrem {min-width:44px;min-height:44px;font-size:16px!important;}
 #proto-builder-body .pb-addphase {min-height:44px!important;font-size:13px!important;}
+
+/* Accessibility hotfix — published release acknowledgment was effectively invisible
+   in the light-theme sheet. Modals mount outside #app: app-scoped button treatments
+   do not reach their controls. Keep both actions explicit in both themes. */
+.modal .nx-release-whats-new #nx-release-dismiss {
+  display:inline-flex !important;align-items:center;justify-content:center;
+  min-height:48px !important;min-width:0;
+  background:#A78BFA !important;color:#1A1728 !important;
+  border:1px solid #7753B9 !important;border-radius:12px;
+  opacity:1 !important;visibility:visible !important;
+  font-weight:750 !important;text-shadow:none !important;
+}
+.modal .nx-release-whats-new #nx-release-later {
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:48px !important;min-width:0;
+  background:var(--surface-2) !important;color:var(--t1) !important;
+  border:1px solid var(--border) !important;border-radius:12px;
+  opacity:1 !important;visibility:visible !important;
+}
+.modal .nx-release-whats-new #nx-release-dismiss:focus-visible,
+.modal .nx-release-whats-new #nx-release-later:focus-visible {
+  outline:3px solid var(--nx-focus-accessible) !important;outline-offset:2px;
+}
+
+/* Whole-app theme audit: the Protocol New Protocol CTA was forced to white on
+   #9270D2 in nexus.css (3.84:1), below AA for standard button text. */
+.nexus-screen-protocols #new-protocol.nx-proto-create {
+  background:#A78BFA !important;color:#1A1728 !important;
+}
+
+/* App-wide audit of inline styles: multiple modal buttons, onboarding actions,
+   protocol wizard controls, amino Send and Stash instruction badges used white
+   lettering on light lavender backgrounds (2.1–2.7:1). Unlike the older
+   button-only selector this covers text-bearing divs and spans too. */
+body [style*="background:#A78BFA"][style*="color:#fff"],
+body [style*="background:#C9A0FF"][style*="color:#fff"],
+body [style*="background:#9270D2"][style*="color:#fff"],
+body [style*="background: #A78BFA"][style*="color: #fff"],
+body [style*="background: #C9A0FF"][style*="color: #fff"] {
+  color:#1A1728 !important;
+}
+
+/* App-wide theme baseline: old muted dark tokens were too dim for helper text
+   (#5A5775 on #221E35 = 2.34:1; #3E3A5E = 1.51:1). Ensure readable
+   secondary labels even on raised dark panels. Light --t5 was 3.44:1 on white. */
+:root:not([data-theme="light"]) {
+  --t3:#B6B2CD;
+  --t4:#AAA6C6;
+  --t5:#A49FC2;
+}
+:root[data-theme="light"] {
+  --t4:#524D67;
+  --t5:#57536D;
+}
+
+/* Calendar uses saved numeric weight in a very small 9–10px row; historical
+   #416EBC on dark cells had only ~2.8:1 text contrast. Keep values, change ink. */
+:root:not([data-theme="light"]) .nx-cal-weight {color:#A9C8FF !important;}
+:root[data-theme="light"] .nx-cal-weight {color:#2853A8 !important;}
+/* Today's numeric day marker should remain readable on compact cells. */
+:root:not([data-theme="light"]) .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#7DF9C0 !important;}
+:root[data-theme="light"] .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#146E50 !important;}

@@ -340,3 +340,11 @@
 - Implementation PR #100 merged `955c904860b39c5c56472b07cd3521828d5d9d79`. Release CI 40161722598 and mobile form 40161722564 PASSED. Post-merge PR #101 remote site audit 40162047192 verified 16/16 primary Cloudflare application entry files; docs PR #101 merged `c6b64c113c703fcfcb7fb372172fcf8c966d7266`.
 - Data effect: no migration; explicit open/finish blend entries and new blend-level dose logs only, with existing ingredient doses preserved. Full LIVE ZIP and fictional isolated standalone DEMO/ZIP generated from identical source. Physical iPhone review outstanding.
 - Publication metadata follow-up `release/v0919-verified-publication` is an UNMERGED candidate; generated runtime and notes updated, not yet verified on live host.
+
+### 2026-10-25 — Published release modal theme contrast hotfix candidate (NOT RELEASED)
+- v0.9.19-beta in live screenshot, published What's New light theme primary acknowledgment appears absent. Candidate branch `fix/issue-109-theme-visibility-audit` adds explicit modal action colors/geometry and Playwright contrast/visibility gate. No data model/storage changes, real dose logs unaffected.
+- Branch awaiting latest-head CI, version/manifest decision, complete isolated FULL DEMO + LIVE ZIP, merge and independent Cloudflare host parity. Real iPhone revalidation and broad full-app theme audit remain incomplete. Do not mark deployed from a PR merge.
+
+### 2026-10-25 — PR #111 extended theme audit candidate (still NOT DEPLOYED)
+- Scope grew from published release Got it invisible on physical light-mode iPhone to targeted source-confirmed repeated contrast defects in Protocol actions, inline lavender buttons/badges, Calendar numerical weights and dark/light muted token palette. CSS only; 9-tab diagnostic + block on 4.5:1 release modal and neutral token combos in 8 browser modes.
+- PR #111, independent of unfinished PR #110. First CI failed due audit regex bug, corrected; run 40165287614 passed after correction. *Later* commits require new latest-head CI. No changes to localStorage/data history; no actual iPhone recheck or independently verified deployment yet.

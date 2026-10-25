@@ -29,6 +29,85 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  });
  ensure(releasePopup,'Published version must show once, Later defer and acknowledgement persist');
 
+ // Broader diagnostic sweep of main navigation surfaces. Scans computed foreground
+ // vs the nearest visible surface for text-bearing elements. It reports candidates,
+ // while the separately enforced release modal action check is a hard blocker.
+ // Transparency, pseudo-elements and imagery require human visual review.
+ const themeAudit=await page.evaluate(()=>{
+   const tabs=['home','calendar','protocols','stash','plans','profile','trends','amino','learn'];
+   const out=[];
+   const parse=(raw)=>{
+     const m=(raw||'').match(/^rgba?\(([^)]+)\)$/);if(!m)return null;
+     const vals=m[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+     return vals.length>=3?[vals[0],vals[1],vals[2],vals[3]??1]:null;
+   };
+   const over=(a,b)=>{const k=Math.min(1,Math.max(0,a[3]));return [0,1,2].map(i=>a[i]*k+b[i]*(1-k)).concat([1]);};
+   const lum=c=>{const q=c.slice(0,3).map(n=>{let v=n/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});return .2126*q[0]+.7152*q[1]+.0722*q[2]};
+   const ratio=(a,b)=>{let x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+   const bgFor=el=>{
+     let chain=[],p=el;while(p&&p.nodeType===1){chain.unshift(p);p=p.parentElement;}
+     let bg=[255,255,255,1];
+     for(const node of chain){const cs=getComputedStyle(node),rgb=parse(cs.backgroundColor);if(rgb)bg=over(rgb,bg);}
+     return bg;
+   };
+   const previous=tab;
+   try{for(const name of tabs){
+     tab=name;render();
+     for(const el of document.querySelectorAll('#app button,#app a,#app label,#app p,#app h1,#app h2,#app h3,#app span,#app small,#app strong,#app summary')){
+       const direct=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join(' ').trim();
+       if(!direct||direct.length<2)continue;
+       const cs=getComputedStyle(el),rect=el.getBoundingClientRect();
+       if(rect.width<2||rect.height<2||cs.display==='none'||cs.visibility!=='visible'||Number(cs.opacity)<.2)continue;
+       const ink=parse(cs.color);if(!ink)continue;
+       const bg=bgFor(el),fg=over(ink,bg),value=ratio(fg,bg);
+       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100});
+     }
+   }}finally{tab=previous;render();}
+   return {tabs:tabs.length,total:out.length,candidates:out.slice(0,45)};
+ });
+ if(mode==='demo'&&width===390)console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));
+
+
+ // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
+ const releaseContrast=await page.evaluate(()=>{
+   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
+   const luminance=(str)=>{
+     const raw=str.match(/[0-9.]+/g)||[];
+     if(raw.length<3)return null;
+     const cs=raw.slice(0,3).map(n=>{let v=Math.min(255,Math.max(0,Number(n)))/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+     return .2126*cs[0]+.7152*cs[1]+.0722*cs[2];
+   };
+   const ratio=(a,b)=>{let x=luminance(a),y=luminance(b);return x===null||y===null?0:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+   try{
+     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);showPublishedReleaseModal();
+     return ['#nx-release-later','#nx-release-dismiss'].map(sel=>{
+       const el=document.querySelector(sel),cs=el&&getComputedStyle(el),rect=el&&el.getBoundingClientRect();
+       const bg=cs?.backgroundColor,fg=cs?.color;
+       return {sel,visible:!!el&&cs.visibility!=='hidden'&&cs.display!=='none'&&Number(cs.opacity)>.2&&rect.width>=44&&rect.height>=44,fg,bg,contrast:ratio(fg,bg)};
+     });
+   } finally {
+     NEXUS_RELEASE.publicationStatus=old;
+     if(seen===null)localStorage.removeItem(key);else localStorage.setItem(key,seen);
+     document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
+   }
+ });
+ ensure(releaseContrast.length===2&&releaseContrast.every(x=>x.visible&&x.contrast>=4.5),'Release modal actions must have visible 44px+ targets and >=4.5:1 foreground contrast: '+JSON.stringify(releaseContrast));
+
+ const themeTokenContrast=await page.evaluate(()=>{
+   const css=getComputedStyle(document.documentElement),vars=['--t3','--t4','--t5'],surfaces=['--surface','--surface-2','--surface-3'];
+   const rgb=(x)=>{x=x.trim().replace('#','');if(x.length===3)x=x.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(x.slice(i,i+2),16))};
+   const lum=(s)=>{const v=rgb(s).map(x=>{const c=x/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
+   const ratio=(a,b)=>{let l=lum(a),r=lum(b);return (Math.max(l,r)+.05)/(Math.min(l,r)+.05)};
+   const result=[];for(const text of vars)for(const surface of surfaces){
+     const contrast=ratio(css.getPropertyValue(text),css.getPropertyValue(surface));
+     result.push({text,surface,contrast:Math.round(contrast*100)/100});
+   }
+   return result;
+ });
+ ensure(themeTokenContrast.every(x=>x.contrast>=4.5),'Muted token text must remain AA legible on all neutral cards: '+JSON.stringify(themeTokenContrast));
+
+
+
 
  await page.evaluate(()=>showOnboarding());
  ensure(await page.locator('#ob-fresh').count()===1 && await page.locator('#ob-restore').count()===1,'Welcome must offer both first-run choices');
