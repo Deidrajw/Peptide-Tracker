@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 // All cases run with discarded in-memory fictional browser state; no production URL,
 // network writes, real records, reconstitution changes or user inventory are involved.
-const VERSION='v0.9.17-beta';
+const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version;
 const demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');
 if(!fs.existsSync(demo))throw Error('Full source-identical DEMO missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
