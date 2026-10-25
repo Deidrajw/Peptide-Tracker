@@ -442,3 +442,7 @@ const BLEND_COMPOSITIONS = {
   "CJC-1295 / Ipamorelin Blend": [{compound:"CJC-1295 no DAC", mg:5}, {compound:"Ipamorelin", mg:5}],
   "Deadpool": [{compound:"TB-500", mg:10}, {compound:"BPC-157", mg:10}, {compound:"Cartalax", mg:10}],
 };
+
+// BEGIN GENERATED RELEASE META
+const NEXUS_RELEASE={"version":"v0.9.15-beta","channel":"beta","publicationStatus":"unverified","title":"Clearer card layouts and easier navigation","changes":[{"key":"card-hierarchy","title":"More consistent cards","detail":"Research, Goals, Stash and Protocol display status beneath the title with consistent management controls.","screen":"Research, Goals, Stash and Protocol","kind":"improvement"},{"key":"journal","title":"Simpler Journal filters","detail":"Filter notes without a long scrolling row of compound names.","screen":"Journal","kind":"improvement"},{"key":"check-in","title":"Focused Check-In comparisons","detail":"Choose one symptom or mood measure at a time and see how many days contain records.","screen":"Check-In Changes","kind":"improvement"}],"dataImpact":"Existing records are retained; these interface changes do not require a destructive migration.","limitations":["Calculator PR #67 is held pending safety validation.","Published web-build parity and physical iPhone acceptance remain unverified."]};
+// END GENERATED RELEASE META
