@@ -31,22 +31,21 @@ try{
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
-    ensure(await card(99001).locator('.nx-stash-inventory-summary').count()===1,'Sealed kit total summary missing');
-    ensure(await card(99001).locator('.nx-stash-open-progress').count()===0,'Sealed kit shows a misleading percent bar');
-    ensure(await card(99001).locator('.nx-stash-sealed-note').count()===1,'Sealed kit is not clearly labeled');
-    ensure(await card(99003).locator('.nx-stash-open-progress').count()===0,'Unprepared blend shows fake percent progress');
-    ensure(await card(99003).locator('.nx-stash-inventory-summary').count()===1,'Blend missing total inventory summary');
-    ensure(await card(99002).locator('.nx-stash-open-progress [role="progressbar"]').count()===1,'Open vial progress is missing');
-    ensure(await card(99002).locator('.nx-stash-inventory-summary').innerText().then(x=>x.includes('80')),'Canonical kit remaining should include sealed + open');
-    ensure(await card(99002).locator('.nx-stash-open-progress').innerText().then(x=>x.includes('30 / 50')),'Vial remaining display wrong');
-    ensure(await card(99002).locator('.nx-stash-open-progress [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
+    ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
+    ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
+    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
+    ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
+    ensure(await card(99003).locator('.nx-kit-overview-number').count()===1,'Blend missing kit-wide inventory under Overview');
+    ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').count()===1,'Open vial progress is missing');
+    ensure(await card(99002).locator('.nx-kit-overview-number').innerText().then(x=>x.includes('80')),'Kit Overview total should include sealed plus open');
+    ensure(await card(99002).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('30') && x.includes('50')),'Open vial remaining display wrong');
+    ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
     ensure(await card(99003).locator('.manage-kit-btn').count()>=1,'v0.9.9 blend actions were lost');
     // Onboarding is independent of these fictional inventory fixtures; close any
     // introductory overlay before testing a real pointer tap on the Stash details.
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
-    const summary=card(99002).locator('details').first();
-    await summary.locator('summary').first().click();
-    ensure(await summary.evaluate(x=>x.open),'History/details not expandable');
+    await card(99002).locator('.nx-kit-detail-button').click();
+    ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
     const preserved=await page.evaluate(()=>JSON.stringify(state.supplies));
     const group=card(99002).locator('.nx-stash-tabs');
     ensure(await group.count()===1,'Overview/Vials/History tabs missing');
