@@ -345,3 +345,9 @@
 - Source identified distinct blend and regular kit render/modal code in 03-, 05-, and 10-nexus.js; initial branch `release/issue-109-kit-experience-parity` created.
 - Branch application commits `df350f96` Stash wording and `f2bc5742` Open Vial form/CTA alignment. **Does not yet satisfy exact visual/functional parity**: prepare workflow and blend Log Dose still separate; real side-by-side comparisons and validation pending.
 - No intended schema migration or production writes. CI, PR review, whole-app source-identical DEMO/LIVE ZIP, hosted deployment and physical iPhone checks INCOMPLETE; user live version unchanged.
+
+### v0.9.20-beta — CODED CANDIDATE / NOT RELEASED (2026-10-25)
+- PR #110 branch `release/issue-109-kit-experience-parity`; candidate version promoted from v0.9.19 metadata to v0.9.20-beta, publication `unverified`.
+- Deletes distinct blend-card renderer and routes blends through standard Stash/Prepare/Open Vial/Log Dose UI and detail tabs; adds protective vial-ID ledger paths and reversible prepared/dose allocations. Shared display still supplies blend composition ratios.
+- No automatic migration or intentional overwrite of historical records. Legacy KLOW conversion intentionally unresolved when source values ambiguous.
+- Syntax PASS on modified six JS modules (source parse only), but complete browser tests, iPhone tests, exact-source packages, full theme audit, merge and Cloudflare deployment are **INCOMPLETE/NOT VERIFIED** until latest-head evidence is inspected. PR #111 is separate theme-contrast fix.
