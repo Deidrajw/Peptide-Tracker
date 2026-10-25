@@ -1892,3 +1892,14 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-kit-vial-meta{font-size:11px;color:var(--t3);margin-top:7px}
 .nx-kit-vial-row .vial-actions-btn{display:block;margin-top:14px;min-height:44px;width:100%;font-size:12px!important;font-weight:650;border:1px solid var(--border)!important;border-radius:10px!important;padding:8px 10px!important;background:var(--surface-1)!important;color:var(--t2)!important}
 .nx-kit-empty-note{font-size:13px;color:var(--t3);padding:12px 0}
+
+
+.nx-dose-history-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0 12px}
+.nx-dose-history-title strong{font-size:14px;color:var(--t1)}
+.nx-dose-history-title span{font-size:11px;color:var(--t3)}
+.nx-dose-history .nx-dose-history-extra{display:none!important}
+.nx-dose-history.is-expanded .nx-dose-history-extra{display:flex!important}
+.nx-dose-history-more{display:block;width:100%;min-height:46px;margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--t1);font-weight:700}
+.nx-dose-history-record{align-items:center!important;min-height:60px}
+.nx-dose-history-record .editdose{min-height:38px!important;padding:7px 10px!important}
+.nx-dose-history-record .deldose{min-height:40px;min-width:32px}
