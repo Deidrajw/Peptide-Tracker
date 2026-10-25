@@ -29,6 +29,32 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  });
  ensure(releasePopup,'Published version must show once, Later defer and acknowledgement persist');
 
+ // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
+ const releaseContrast=await page.evaluate(()=>{
+   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
+   const luminance=(str)=>{
+     const raw=str.match(/[\\d.]+/g)||[];
+     if(raw.length<3)return null;
+     const cs=raw.slice(0,3).map(n=>{let v=Math.min(255,Math.max(0,Number(n)))/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+     return .2126*cs[0]+.7152*cs[1]+.0722*cs[2];
+   };
+   const ratio=(a,b)=>{let x=luminance(a),y=luminance(b);return x===null||y===null?0:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+   try{
+     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);showPublishedReleaseModal();
+     return ['#nx-release-later','#nx-release-dismiss'].map(sel=>{
+       const el=document.querySelector(sel),cs=el&&getComputedStyle(el),rect=el&&el.getBoundingClientRect();
+       const bg=cs?.backgroundColor,fg=cs?.color;
+       return {sel,visible:!!el&&cs.visibility!=='hidden'&&cs.display!=='none'&&Number(cs.opacity)>.2&&rect.width>=44&&rect.height>=44,fg,bg,contrast:ratio(fg,bg)};
+     });
+   } finally {
+     NEXUS_RELEASE.publicationStatus=old;
+     if(seen===null)localStorage.removeItem(key);else localStorage.setItem(key,seen);
+     document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
+   }
+ });
+ ensure(releaseContrast.length===2&&releaseContrast.every(x=>x.visible&&x.contrast>=4.5),'Release modal actions must have visible 44px+ targets and >=4.5:1 foreground contrast: '+JSON.stringify(releaseContrast));
+
+
 
  await page.evaluate(()=>showOnboarding());
  ensure(await page.locator('#ob-fresh').count()===1 && await page.locator('#ob-restore').count()===1,'Welcome must offer both first-run choices');
