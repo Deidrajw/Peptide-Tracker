@@ -273,3 +273,9 @@
 ### 2026-10-25 — Version-aware release promotion policy
 - **APPROVED by user:** A successful preview deployment is not an approved production release. Report separately PREVIEW, CODE MERGED and PRODUCTION VERIFIED with exact version + commit; do not certify newest-release success merely because production files match an older main. Implement a production SHA-256 parity gate plus intended-version check, not a manual checklist alone. Current proposal on safety branch, not yet accepted as deployed.
 - Preserve the v0.9.20 release preview and branch; do not merge open PR #110 while its inventory and legacy-vial regressions are incomplete, and never convert users' KLOW data automatically.
+
+
+### 2026-10-25 — Divider and light-accent direction
+- User-approved visual direction: use whitespace and typographic hierarchy rather than serial borders between simple key/value rows or adjacent CTAs. Keep boundaries required for form fields, true separate cards, focus state and meaningful long lists, plus active tab underline.
+- Light mode must not use low-contrast pale-lime primary buttons, helper text or warnings on white/near-white sheets; lavender/violet is preferred, with readable label text and explicitly distinguishable disabled state. Scope to light theme; dark theme retains its own tested contrast rules.
+- Design is CANDIDATE on separate branch until representative screens and modal states visually accepted; no data migration.
