@@ -2002,3 +2002,39 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-combo-manage summary::after{content:"⌄";margin-left:8px}
 .nx-combo-manage[open] summary::after{transform:rotate(180deg)}
 .nx-combo-manage-options{display:flex;flex-wrap:wrap;gap:7px;padding:8px 0 3px}
+
+
+/* iPhone review 2026-10-25: secondary multi-vial action should not compress.
+   It remains a real 44px control, with natural multi-line/wrapping at 320px. */
+.nx-dose-form button.nx-multi-vial-toggle{
+  box-sizing:border-box!important;display:inline-flex!important;
+  width:auto!important;max-width:100%!important;min-width:max-content!important;
+  flex:0 0 auto!important;align-self:flex-start!important;
+  white-space:normal!important;overflow:visible!important;
+  line-height:1.4!important;letter-spacing:0!important;
+  padding:10px 16px!important;min-height:46px!important;
+  font-size:13px!important;text-align:center!important;
+}
+/* Vial-row action: 44px usable target but visually lightweight 28px glyph
+   surround, rather than a heavy 44px outlined square beside short labels. */
+.nx-kit-card .nx-kit-list-row button.nx-kit-list-action{
+  position:relative;box-sizing:border-box;display:flex;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  max-width:44px!important;max-height:44px!important;
+  padding:0!important;margin:0!important;
+  border:0!important;background:transparent!important;
+  box-shadow:none!important;border-radius:12px!important;
+  align-items:center;justify-content:center;
+}
+.nx-kit-card .nx-kit-list-row button.nx-kit-list-action::before{
+  content:"";position:absolute;inset:8px;
+  border:1px solid var(--border-sub);border-radius:9px;
+  background:var(--surface-2);pointer-events:none;
+}
+.nx-kit-card .nx-kit-list-row button.nx-kit-list-action svg{
+  position:relative;z-index:1;width:15px!important;height:15px!important;
+}
+.nx-kit-card .nx-kit-list-row button.nx-kit-list-action:focus-visible{
+  outline:3px solid var(--t2)!important;outline-offset:1px;
+}
