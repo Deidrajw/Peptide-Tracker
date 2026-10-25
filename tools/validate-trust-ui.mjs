@@ -97,6 +97,23 @@ try{
         });
         assert.deepEqual(doses,{blend:1,components:[0,0,0],ledger:1},
           'premixed blend records once without creating individual component doses');
+        assert.equal(await page.evaluate(()=>getBlendOpenVialRemainingMg(state.supplies.find(k=>k.id===975310))),27,
+          'open vial has 27mg after a 3mg draw, not the full kit remainder');
+        await page.evaluate(()=>logBlendDoseModal(975310));
+        await page.locator('#bd-amount').fill('31');
+        await page.locator('#bd-save').click();
+        assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
+          'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');
+        await page.evaluate(()=>{closeModal();finishBlendVialModal(975310);});
+        await page.locator('#ca-ok').click();
+        const finished=await page.evaluate(()=>{
+          const k=state.supplies.find(k=>k.id===975310);
+          return {open:k.reconDate!=null,discarded:k.wasteLog.reduce((x,w)=>x+w.mg,0),
+            remaining:getBlendKitRemainingMg(k),sealed:getSealedVials(k).length};
+        });
+        assert.deepEqual(finished,{open:false,discarded:27,remaining:30,sealed:1},
+          'finishing blend vial accounts for discarded balance and preserves sealed backup');
+
         await page.evaluate(()=>todayLogDosePicker());
         const options=await page.locator('#today-dose-compound option').allTextContents();
         assert.ok(options.includes('QA Premixed Blend'),'blend is one selectable dose entry');
