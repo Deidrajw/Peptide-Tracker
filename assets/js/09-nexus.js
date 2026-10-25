@@ -1267,7 +1267,7 @@ function logWasteModal(supplyId) {
   };
 }
 
-function openNewVialModal(supplyId) {
+function openNewVialModal(supplyId, onDone) {
   const s = state.supplies.find(x=>x.id===supplyId); if(!s) return;
   const c = cfg(s.name);
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
@@ -1346,7 +1346,7 @@ function openNewVialModal(supplyId) {
       entry.bacMl=newBac;entry.expiryDays=expiryDays;entry.reconDate=reconTimestamp;entry.openedVials=(entry.openedVials||0)+1;entry.activeKit=true;
       entry.reconHistory=entry.reconHistory||[];
       entry.reconHistory.push({id:uid(),date:reconTimestamp,notes,vialId:vial.id,bacMl:newBac,expiryDays});
-      saveState();closeModal();render();return;
+      saveState();closeModal();render();if(typeof onDone==='function')onDone(vial);return;
     }
     entry.expiryDays=expiryDays;
     confirmOpenIfOtherKitOpen(entry, () => {
@@ -1357,6 +1357,7 @@ function openNewVialModal(supplyId) {
       // kits here — multiple can now be open at once, by explicit confirmation above.
       activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
       saveState(); closeModal(); render();
+      if(typeof onDone==='function')onDone(getActiveVial(entry));
     });
   };
 }
