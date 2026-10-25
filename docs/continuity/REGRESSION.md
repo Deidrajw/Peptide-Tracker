@@ -410,3 +410,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | LIVE & isolated full DEMO browser/package suite | Workflow 40212593263 on final PR head d57fbf | PASS |
 | Real production Cloudflare bytes | Need postmerge 16-file source hash parity report | NOT VERIFIED |
 | Old blend Today-card expanded parity and app-wide divider audit | Not included in PR #119 | INCOMPLETE / separate PRs |
+
+
+### 2026-10-25 — Hybrid visual preview regression plan (candidate PR #123)
+| Check | Evidence | Status |
+|---|---|---|
+| All 12 JS modules source-matched to main | GitHub branch file fetch / no modified JS | SOURCE INSPECTION ONLY |
+| HTML and four CSS stylesheets packaged | Builder updated for fourth stylesheet | CODED; CI PENDING |
+| Fictional DEMO uses isolated in-memory storage; blocks external network | Existing `tools/build-release.mjs` DEMO bootstrap; preview copy also added | SOURCE INSPECTION; BROWSER NOT YET VERIFIED |
+| 320/390 dark/light browser test, overflow, navigation and sheets | Playwright QA workflow added | NOT TESTED pending run |
+| Check-In, supplements, Log Dose, blend, inventory, Protocol, Calendar and weight history | Protected JS source unchanged; no functional browser evidence yet | NOT TESTED |
+| Real iPhone / dual-theme acceptance | User action required | NOT TESTED |
+| Merge and primary Cloudflare | Prohibited until user approval | NOT MERGED / NOT DEPLOYED |
