@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const VERSION = 'v0.9.15-beta';
+const VERSION = JSON.parse(fs.readFileSync('release/release.json','utf8')).version;
+execFileSync(process.execPath, ['tools/generate-release-notes.mjs', '--check'], {stdio:'inherit'});
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css'];
@@ -13,6 +14,7 @@ if (missing.length) throw Error('Missing release files: ' + missing.join(', '));
 fs.mkdirSync(DIST, {recursive: true});
 
 const html = fs.readFileSync('index.html', 'utf8');
+if (!html.includes('<title>Nexus · '+VERSION+'</title>')) throw Error('Displayed app title version differs from release/release.json');
 const styles = CSS.map(file => fs.readFileSync(file, 'utf8')
   .split('\n').filter(line => !line.trimStart().startsWith('@import')).join('\n')).join('\n');
 let demo = html;
