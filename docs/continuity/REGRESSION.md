@@ -483,3 +483,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Physical iPhone visual review | NOT TESTED |
 | LIVE/DEMO packaging | CI PENDING |
 | Merge and Cloudflare | NOT PERFORMED |
+
+
+### 2026-10-25 — Stash refinement pass 2 regression plan
+| Flow | Status |
+|---|---|
+| Compound kits/Supplies segmented switching and selected accessibility state | CODED, NOT YET TESTED latest head |
+| Kit cards and Inventory Overview 320/390, dark/light | CODED, visual QA pending |
+| Needs Attention notices trigger correct vial/coverage actions | JS unchanged; NOT TESTED latest head |
+| Prepare Dose, Open Next Vial, Reconstitution, ellipsis/Manage sheets and keyboard | Baseline style CODED; modal-by-modal audit INCOMPLETE |
+| Source vial math, prepared doses, multi-vial and blend calculations | Protected JS, latest-head browser pending |
+| Demo isolation/source-parity packages | Latest-head CI pending |
+| Light-mode contrast and physical iPhone acceptance | INCOMPLETE |
+| Merge and Cloudflare deployment | NOT PERFORMED |
