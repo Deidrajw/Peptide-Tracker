@@ -290,3 +290,7 @@
 ### 2026-10-25 — Hybrid design proposal, preview authorization only
 - User chose Hybrid (Soft Depth dark/violet, Porcelain warm-ivory light, Obsidian precision for dense data) and authorized building a source-derived full-app preview. They explicitly prohibited merge/deployment pending approval.
 - Use a branch-only fourth stylesheet, preserve existing JS/data schema and all five navigation destinations; no entitlement, sync, onboarding consent gate or medical calculation changes in this visual sprint. Keep unmerged #118/#110 separate. Browser CI cannot replace user physical-device signoff.
+
+
+### 2026-10-25 — User feedback mandates component-level visual differentiation
+- User rejected overly subtle hybrid CSS-only styling and asked to actually implement earlier proposals. Replace actual Today component hierarchy, progress visualization, cards, actions and schedule grouping on existing design branch, while retaining all event classes/IDs and stored logic. Physical design acceptance remains pending. No production deployment approval.
