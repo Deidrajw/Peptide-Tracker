@@ -10,6 +10,27 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
  ensure(await page.locator('.nx-plan-head .manage-plan-btn').evaluate(e=>e.getBoundingClientRect().height)>=44,'Ellipsis touch target too small');
  ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-plan-action-icon').count()===1,'Management outline SVG missing');
+
+ ensure(await page.locator('.nx-research-title').count()===1,'Research compound title hierarchy missing');
+ ensure(await page.locator('.nx-research-title').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=17,'Research title remains visually undersized');
+ ensure(await page.locator('.nx-research-reason-label').innerText().then(t=>t.includes('RESEARCH REASON')),'Research reason label missing');
+ ensure(await page.locator('.nx-research-card .nx-plan-intel').evaluate(e=>getComputedStyle(e).minHeight==='44px'),'Secondary Intel must keep accessible touch target');
+ ensure(await page.locator('.nx-research-card .manage-plan-btn').evaluate(e=>getComputedStyle(e).backgroundColor!==getComputedStyle(e.closest('.nx-research-card')).backgroundColor),'Management surface must contrast against Research card');
+ await page.evaluate(()=>{tab='amino';state._aminoSub='journal';state.dailyLogs=[{id:'j1',date:'2026-10-19',notes:'Fictional general reflection',symptoms:[]}];state._journalCompound='';render();});
+ ensure(await page.locator('#journal-compound-filter').count()===1,'Journal compact source filter missing');
+ ensure(await page.locator('.journal-comp-chip').count()===0,'Legacy horizontal Journal chip rail still present');
+ await page.locator('#journal-compound-filter').selectOption('__general__');
+ ensure(await page.evaluate(()=>state._journalCompound==='__general__'),'Journal filter change did not update view state');
+ ensure(await page.locator('.nx-journal-entry').count()>=1,'General note filter hid valid source note');
+ await page.evaluate(()=>{tab='plans';state._plansSub='research';render();});
+ await page.evaluate(()=>nxCheckinComparison(7));
+ ensure(await page.locator('#nx-report-focus').count()===1,'Check-In changes metric picker missing');
+ ensure(await page.locator('.nx-focus-result').count()===1,'Focused Check-In comparison missing');
+ ensure(await page.locator('.nx-report-records').count()===0,'Legacy nested Check-In scroll returned');
+ await page.locator('#nx-report-focus').selectOption('__mood__');
+ ensure(await page.locator('#nx-report-focus').inputValue()==='__mood__','Mood focus does not persist on comparison rerender');
+ await page.locator('#nx-report-close').click();
+
  ensure(await page.locator('.nx-plan-intel svg.nx-plan-link-icon').count()===1,'Intel navigation outline SVG missing');
  await page.locator('.nx-plan-head .manage-plan-btn').click();
  ensure(await page.locator('#pm-edit').count()===1,'Manage existing editor missing');

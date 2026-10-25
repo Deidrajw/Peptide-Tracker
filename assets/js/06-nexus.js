@@ -2043,7 +2043,7 @@ function journalView() {
         return `<div style="font-size:12px;color:var(--t3)">• ${esc(s.name)}${tag}</div>`;
       }).join("")}
     </div>` : "";
-    return `<div class="card" data-jump-type="${e.jump.type}" data-jump-id="${esc(String(e.jump.id||""))}" data-jump-name="${esc(e.jump.name||"")}" style="margin-bottom:10px;cursor:pointer">
+    return `<div class="card nx-journal-entry" data-jump-type="${e.jump.type}" data-jump-id="${esc(String(e.jump.id||""))}" data-jump-name="${esc(e.jump.name||"")}" style="margin-bottom:10px;cursor:pointer">
       <div style="font-size:11px;color:var(--t4);margin-bottom:2px">${fmtDate(e.date)}${time?` · ${time}`:""}</div>
       <div style="font-size:13px;font-weight:700;color:${labelColor};margin-bottom:4px">${esc(label)}</div>
       ${symptomLines}
@@ -2052,12 +2052,13 @@ function journalView() {
     </div>`;
   }).join("");
 
-  const chips = [["", "All Notes"], ["__general__", "General Notes"], ...compounds.map(c=>[c,c])]
-    .map(([val,label])=>`<button class="journal-comp-chip" data-c="${val}" style="font-size:11px;padding:5px 10px;border-radius:10px;background:${filterComp===val?(val&&val!=="__general__"?cfg(val).color+"22":"var(--surface-3)"):"var(--surface-2)"};border:1px solid ${filterComp===val?(val&&val!=="__general__"?cfg(val).color:"var(--border)"):"transparent"};color:${filterComp===val?(val&&val!=="__general__"?cfg(val).color:"var(--t1)"):"var(--t3)"};white-space:nowrap;flex-shrink:0">${esc(label)}</button>`).join("");
-
-  return `<div style="margin-bottom:10px">
-    <input id="journal-search" class="inp" placeholder="Search notes, symptoms, compounds…" value="${esc(state._journalQuery||"")}" style="margin-bottom:8px">
-    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px">${chips}</div>
+  const options=[["","All notes"],["__general__","General notes"],...compounds.map(c=>[c,c])];
+  const filterOptions=options.map(([val,label])=>'<option value="'+esc(val)+'"'+(val===filterComp?' selected':'')+'>'+esc(label)+'</option>').join("");
+  return `<div class="nx-journal-filterbar">
+    <label class="nx-journal-search-label" for="journal-search">SEARCH JOURNAL</label>
+    <input id="journal-search" class="inp" placeholder="Search notes, symptoms, compounds…" value="${esc(state._journalQuery||"")}">
+    <label class="nx-journal-filter-label" for="journal-compound-filter">SHOW NOTES FOR</label>
+    <select id="journal-compound-filter" class="inp" aria-label="Filter Journal by compound">${filterOptions}</select>
   </div>
   <div style="font-size:10px;color:var(--t5);margin-bottom:10px">${entries.length} ${entries.length===1?"note":"notes"}${q||filterComp?" matching":""} · what you actually wrote</div>
   ${entries.length?rows:`<div style="text-align:center;padding:30px 0;color:var(--t4);font-size:12px">

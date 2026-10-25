@@ -1582,7 +1582,7 @@ function nxOpenCalculator(){
   render();
   window.scrollTo(0,0);
 }
-function nxCheckinComparison(days=14){
+function nxCheckinComparison(days=14,focus=""){
   const end=new Date();end.setHours(23,59,59,999);
   const start=new Date(end.getTime()-days*86400000);start.setHours(0,0,0,0);
   const priorStart=new Date(start.getTime()-days*86400000);
@@ -1590,26 +1590,31 @@ function nxCheckinComparison(days=14){
   const inWindow=(l,a,b)=>{const t=new Date(l.date).getTime();return t>=a.getTime()&&t<b.getTime()};
   const recent=logs.filter(l=>inWindow(l,start,new Date(end.getTime()+1)));
   const previous=logs.filter(l=>inWindow(l,priorStart,start));
-  const uniqueDays=arr=>new Set(arr.map(l=>dayKey(l.date))).size;
-  const symDays=arr=>new Set(arr.filter(l=>Array.isArray(l.symptoms)&&l.symptoms.length).map(l=>dayKey(l.date))).size;
+  const daysRecorded=arr=>new Set(arr.map(l=>dayKey(l.date))).size;
+  const symptoms=[...new Set(logs.flatMap(l=>(l.symptoms||[]).map(x=>typeof x==="string"?x:x?.name).filter(Boolean)))].sort();
+  const selected=focus==="__mood__"||focus==="__all__"||symptoms.includes(focus)?focus:(symptoms[0]||"__mood__");
+  const matched=arr=>arr.filter(l=>Array.isArray(l.symptoms)&&l.symptoms.some(x=>(typeof x==="string"?x:x?.name)===selected));
   const moodValues=arr=>arr.map(l=>Number(l.mood)).filter(v=>Number.isFinite(v)&&v>0);
   const mean=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;
-  const currentDays=uniqueDays(recent),previousDays=uniqueDays(previous);
+  const recCount=daysRecorded(recent),prevCount=daysRecorded(previous);
+  const recN=selected==="__all__"?recent.filter(l=>(l.symptoms||[]).length>0).length:matched(recent).length;
+  const prevN=selected==="__all__"?previous.filter(l=>(l.symptoms||[]).length>0).length:matched(previous).length;
   const fmt=v=>v==null?"Not enough ratings":v.toFixed(1)+" / 5";
-  const rate=(n,d)=>d?Math.round(n/d*100)+"% of logged days":"Not available";
-  const recordList=(arr)=>arr.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(l=>`<div><b>${esc(dayKey(l.date))}</b> · Mood: ${Number(l.mood)>0?esc(String(l.mood))+"/5":"not recorded"} · Symptoms: ${Array.isArray(l.symptoms)&&l.symptoms.length?esc(l.symptoms.map(s=>typeof s==="string"?s:s.name||"Unspecified").join(", ")):"none listed"}</div>`).join("")||"<div>No check-ins recorded in this period.</div>";
-  const thin=currentDays<3||previousDays<3;
-  const m=openModal(`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="font-size:21px;margin:0;color:var(--t1)">Check-in changes</h2><button id="nx-report-close" class="btn-ghost" type="button">Close</button></div>
-    <p style="color:var(--t3);font-size:13px;line-height:1.5">Compare two equal-length periods using your saved check-ins. No missing day is assumed symptom-free.</p>
+  const title=selected==="__mood__"?"Recorded mood":selected==="__all__"?"Any recorded symptom":selected;
+  const detail=selected==="__mood__"?'Recent: '+fmt(mean(moodValues(recent)))+' · Previous: '+fmt(mean(moodValues(previous))):'Recent: '+recN+' of '+recCount+' logged days · Previous: '+prevN+' of '+prevCount+' logged days';
+  const headline=selected==="__mood__"?fmt(mean(moodValues(recent))):recN+' / '+recCount;
+  const options=[["__mood__","Mood"],["__all__","Any symptom"],...symptoms.map(v=>[v,v])].map(([value,label])=>'<option value="'+esc(value)+'"'+(selected===value?' selected':'')+'>'+esc(label)+'</option>').join("");
+  const m=openModal(`<div class="nx-focus-report"><div class="nx-focus-top"><h2>Check-In changes</h2><button id="nx-report-close" class="btn-ghost" type="button">Close</button></div>
+    <p class="nx-focus-intro">Explore one observation at a time, using only your recorded Check-Ins.</p>
     <div class="nx-report-toolbar">${[7,14,30].map(d=>`<button type="button" data-nx-report-days="${d}" aria-pressed="${d===days}">${d} days</button>`).join("")}</div>
-    <div class="nx-report-row"><strong>Record coverage</strong><p>Recent: ${currentDays} of ${days} days · Previous: ${previousDays} of ${days} days</p>${thin?`<p>Limited comparable data: interpret changes cautiously.</p>`:""}</div>
-    <div class="nx-report-row"><strong>Symptom reporting</strong><p>Recent: ${symDays(recent)} days (${rate(symDays(recent),currentDays)}) · Previous: ${symDays(previous)} days (${rate(symDays(previous),previousDays)})</p><p>This reflects symptoms listed in check-ins, not a diagnosis or proof of improvement.</p></div>
-    <div class="nx-report-row"><strong>Recorded mood</strong><p>Recent: ${fmt(mean(moodValues(recent)))} · Previous: ${fmt(mean(moodValues(previous)))}</p><p>Only check-ins with a recorded mood rating contribute.</p></div>
-    <details class="nx-report-row"><summary style="cursor:pointer;font-weight:650;color:var(--t1)">Inspect recent check-ins (${recent.length})</summary><div class="nx-report-records">${recordList(recent)}</div></details>
-    <details class="nx-report-row"><summary style="cursor:pointer;font-weight:650;color:var(--t1)">Inspect previous check-ins (${previous.length})</summary><div class="nx-report-records">${recordList(previous)}</div></details>
-    <p style="color:var(--t4);font-size:11px;line-height:1.5">Descriptive comparison only. Differences may reflect reporting frequency, missing data, or other factors. No causal claims are made.</p>`,"#A78BFA");
-  m.querySelector('#nx-report-close').onclick=closeModal;
-  m.querySelectorAll('[data-nx-report-days]').forEach(b=>b.onclick=()=>nxCheckinComparison(Number(b.dataset.nxReportDays)));
+    <label for="nx-report-focus" class="nx-focus-label">WHAT WOULD YOU LIKE TO EXAMINE?</label>
+    <select id="nx-report-focus" class="inp">${options}</select>
+    <section class="nx-focus-result" aria-live="polite"><div class="nx-focus-eyebrow">${esc(title)}</div><div class="nx-focus-number">${esc(headline)}</div><div class="nx-focus-detail">${esc(detail)}</div><p>Records available: ${recCount} of ${days} recent days and ${prevCount} of ${days} previous days.</p>${recCount<3||prevCount<3?'<p class="nx-focus-caution">Limited comparable data. This is not a reliable trend for all calendar days.</p>':''}</section>
+    <details class="nx-focus-history"><summary>View the original Check-In dates</summary><div class="nx-focus-dates">Recent: ${recent.map(l=>esc(dayKey(l.date))).join(", ")||"None"}<div>Previous: ${previous.map(l=>esc(dayKey(l.date))).join(", ")||"None"}</div></div></details>
+    <p class="nx-focus-footnote">Missing days are not treated as symptom-free. Associations with compounds and treatment effects cannot be inferred.</p></div>`,"#A78BFA");
+  m.querySelector("#nx-report-close").onclick=closeModal;
+  m.querySelector("#nx-report-focus").onchange=e=>{closeModal();nxCheckinComparison(days,e.target.value);};
+  m.querySelectorAll("[data-nx-report-days]").forEach(b=>b.onclick=()=>{closeModal();nxCheckinComparison(Number(b.dataset.nxReportDays),selected);});
 }
 
 function homeView() {

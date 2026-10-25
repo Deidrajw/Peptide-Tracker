@@ -1724,3 +1724,57 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 #app .nx-kit-heading-unified>span:nth-child(2){flex:1 1 auto!important;min-width:0!important}
 #app .nx-kit-heading-unified .nx-kit-header-manage{flex:0 0 44px!important;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid var(--border-sub)!important;border-radius:11px!important;background:var(--surface-2)!important;color:var(--t2)!important;font-size:22px!important;line-height:1!important}
 #app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:2px solid var(--accent,#A78BFA)!important;outline-offset:2px}
+
+
+/* Unified mobile hierarchy candidate: Research, Journal, Check-In focus, shared action affordances */
+.nx-research-title{font-size:18px;font-weight:750;line-height:1.25;letter-spacing:-.35px;color:var(--t1);overflow-wrap:anywhere}
+.nx-research-card .nx-plan-head{align-items:flex-start;gap:10px;margin-bottom:10px}
+.nx-research-card .nx-plan-head .status-badge{font-size:10px;line-height:1.2;align-self:center}
+.nx-research-card .nx-plan-head .manage-plan-btn{background:var(--surface-1)!important;border:1px solid var(--border)!important;border-radius:12px!important;color:var(--t2)!important;flex-shrink:0}
+.nx-research-card .nx-plan-secondary{margin:6px 0 11px;order:3}
+.nx-research-card{display:flex;flex-direction:column}
+.nx-research-card .nx-plan-head{order:0}
+.nx-research-card .nx-research-reason-label{order:1;font-size:10px;letter-spacing:.65px;font-weight:700;color:var(--t4);margin:5px 0 2px}
+.nx-research-card .nx-research-reason,.nx-research-card .nx-research-empty{order:2;color:var(--t2);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.nx-research-card .nx-research-empty{color:var(--t4);font-style:italic}
+.nx-research-card .nx-research-note{order:2;color:var(--t3);font-size:12px;line-height:1.5;margin:5px 0 0;overflow-wrap:anywhere}
+.nx-research-card .nx-plan-intel{background:transparent;border:0;border-top:1px solid var(--border-sub);border-radius:0;width:100%;justify-content:space-between;padding:11px 0 0;font-size:13px;font-weight:600;color:var(--t2)}
+.nx-journal-filterbar{display:grid;gap:6px;margin-bottom:14px}
+.nx-journal-filterbar label{font-size:10px;letter-spacing:.7px;font-weight:700;color:var(--t4);margin-top:5px}
+.nx-journal-filterbar select{width:100%;min-height:46px}
+.nx-journal-entry{overflow-wrap:anywhere}
+.nx-focus-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nx-focus-top h2{font-size:21px;margin:0;color:var(--t1)}
+.nx-focus-intro{font-size:13px;color:var(--t3);line-height:1.5}
+.nx-focus-label,.nx-focus-eyebrow{display:block;font-size:10px;letter-spacing:.7px;font-weight:700;color:var(--t4);margin:12px 0 7px}
+#nx-report-focus{width:100%;min-height:48px}
+.nx-focus-result{background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin:14px 0}
+.nx-focus-number{font-size:29px;line-height:1.2;color:var(--t1);font-weight:750}
+.nx-focus-detail{font-size:13px;color:var(--t2);line-height:1.5;margin-top:8px}
+.nx-focus-result p,.nx-focus-footnote{font-size:12px;line-height:1.5;color:var(--t3)}
+.nx-focus-result .nx-focus-caution{font-weight:600}
+.nx-focus-history{border-top:1px solid var(--border-sub);padding:12px 0}
+.nx-focus-history summary{min-height:44px;display:flex;align-items:center;color:var(--t2);font-size:13px;cursor:pointer}
+.nx-focus-dates{font-size:12px;line-height:1.8;color:var(--t3);overflow-wrap:anywhere}
+.nx-plan-head .manage-plan-btn:focus-visible,#nx-report-focus:focus-visible,#journal-compound-filter:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
+@media(max-width:360px){.nx-research-title{font-size:17px}.nx-focus-result{padding:13px}}
+
+/* One visually distinct 44px management affordance in Plans, Stash and Protocol. */
+#app .nx-plan-head .manage-plan-btn,
+#app .nx-shopping-row .manage-plan-btn,
+#app .nexus-protocol-head .manage-proto-btn,
+#app .nexus-protocol-card .manage-proto-btn,
+#app .nx-kit-heading-unified .nx-kit-header-manage{
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  background:var(--surface-1)!important;color:var(--t2)!important;
+  border:1px solid var(--border)!important;border-radius:11px!important;
+  flex:0 0 44px!important;box-shadow:none!important
+}
+#app .nx-plan-head .manage-plan-btn svg{width:20px;height:20px}
+#app .nx-plan-head .status-badge,
+#app .nexus-protocol-head .status-badge,
+#app .nx-kit-heading-unified .status-badge{align-self:center;flex-shrink:0}
+#app .nx-plan-head .manage-plan-btn:focus-visible,
+#app .nexus-protocol-card .manage-proto-btn:focus-visible,
+#app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
