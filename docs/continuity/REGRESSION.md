@@ -471,3 +471,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Dark-mode contrast candidates | 2 flagged, NOT VERIFIED |
 | Physical iPhone and VoiceOver | NOT TESTED |
 | User design approval and deploy | NOT GIVEN / NOT DEPLOYED |
+
+
+### 2026-10-25 — Stash Hybrid Phase 2 matrix
+| Check | Status |
+|---|---|
+| Source visual selectors `.nx-stash-hero`, `.nx-kit-card`, `.nx-kit-primary-vial` styled | CODED `157a4128` |
+| Vial source, multi-vial deduction, blend composition, prepared doses | JS unchanged; latest-head browser NOT YET VERIFIED |
+| Kit action sheet/ellipsis/details/history/overview tabs | Latest-head browser NOT YET VERIFIED |
+| 320px/390px dark/light layout/contrast | Latest-head browser NOT YET VERIFIED |
+| Physical iPhone visual review | NOT TESTED |
+| LIVE/DEMO packaging | CI PENDING |
+| Merge and Cloudflare | NOT PERFORMED |
