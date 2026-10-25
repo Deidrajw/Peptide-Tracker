@@ -309,3 +309,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Required `tools/validate-trust-ui.mjs`: four Privacy disclosures, entry in Settings, guard on Import, typed restore disabled until exact confirmation, Cancel unchanged, fictional restore and local pre-restore snapshot; 320/390 × both themes in standalone in-memory DEMO.
 - Protected suites: Check-In single record/date, symptoms, notes and edits; Supplements search and day-specific history; Log Dose/Combo source, drafts, multi-vial deductions, Stash, Calendar month, Weight, Nutrition, Protocol/Goals/Plans and history.
 - No fake PASS: latest-head PR #94 CI and artifact evaluation must be obtained. GitHub Pages comparator is NOT proof of primary Cloudflare parity. Real iPhone, VoiceOver and store submission NOT TESTED.
+
+### 2026-10-24 — Evidence update for v0.9.18-beta PR #94
+- AUTOMATED PASS: release-artifacts workflow run 40158486843 (head `c169db6`), including JS syntax, generated release artifacts, browser suites in 8 LIVE/isolated DEMO × 320/390 × light/dark configurations, 80/80 math diagnostic assertions and trust/typed-restore UI checks. Mobile form workflow run 40158486825 also passed. Candidate and merged-main 16 application-file blob SHAs match.
+- VERIFIED PACKAGE STRUCTURE: artifact 12584823539, root `index.html`, 3 CSS, 12 JS, 4 icons; standalone full-app DEMO + offline DEMO ZIP present and fictional-storage isolation specified in build.
+- HOST VERIFICATION: pre-merge Cloudflare comparison FAIL due to mismatched `index.html` hash; **post-merge Cloudflare unverified**, do not promote this to PASS from source smoke tests.
+- NOT TESTED: independent physical iPhone and VoiceOver, all 120 function-indexed UI surfaces by human visual pass, actual App Store/Play submission, final processor/privacy declaration. Calculator math PASS is conversion assurance only, not a clinical dosage certification.
