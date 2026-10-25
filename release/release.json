@@ -1,61 +1,47 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.18-beta",
+  "version": "v0.9.19-beta",
   "channel": "beta",
   "publication": {
-    "status": "published",
-    "publishedAt": "2026-10-25T03:45:21Z",
-    "commit": "623025665c549dadbe3fb467b6d556f5d44e7e34",
+    "status": "unverified",
+    "publishedAt": null,
+    "commit": null,
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "b6737fad61195211f0e2b0025a6074c2de8f3e81",
-    "pullRequest": 94
+    "baselineMainCommit": "2bf40535e2530b3c9d439504d52f3e8045f14fef",
+    "pullRequest": null
   },
-  "headline": "Clearer, safer everyday tracking",
+  "headline": "Blend vial tracking and Protocol polish",
   "changes": [
     {
-      "key": "privacy-controls",
-      "title": "Privacy & Data",
-      "detail": "New Settings page clarifies browser-local storage, file imports, hosted resources and permission choices.",
-      "screen": "Settings",
-      "kind": "feature"
-    },
-    {
-      "key": "backup-review",
-      "title": "Protected backup restore",
-      "detail": "Import now previews record counts and requires an explicit typed confirmation, with a local recovery copy and rollback safeguards.",
-      "screen": "Backup & Restore",
+      "key": "blend-vial",
+      "title": "Open and reconstitute premixed blend vials",
+      "detail": "Stash now offers an Open vial action with BAC water, expiry and vial notes for blends such as Deadpool.",
+      "screen": "Stash",
       "kind": "fix"
     },
     {
-      "key": "calculator-guards",
-      "title": "More reliable calculator validation",
-      "detail": "Invalid amounts, syringe overflow and compound-dependent IU conversions no longer generate draw results.",
-      "screen": "Dose Calculator",
-      "kind": "safety"
+      "key": "blend-identity",
+      "title": "Log premixed blends as one item",
+      "detail": "Today dose selection treats premixed blends as a single entry, without creating new individual ingredient dose records.",
+      "screen": "Log Dose",
+      "kind": "fix"
     },
     {
-      "key": "accessible-navigation",
-      "title": "More accessible navigation",
-      "detail": "Larger Settings back target, visible keyboard focus, reduced-motion support and calculator field labels.",
-      "screen": "Navigation",
-      "kind": "improvement"
-    },
-    {
-      "key": "notification-context",
-      "title": "Notification choices explained",
-      "detail": "Dose Alerts explains permissions and that background notifications are not provided by this web build.",
-      "screen": "Dose Alerts",
+      "key": "protocol-mobile",
+      "title": "Cleaner Protocol steps",
+      "detail": "The protocol name field fits within the sheet and phase controls have consistent touch sizes and labels.",
+      "screen": "Protocol",
       "kind": "improvement"
     }
   ],
-  "dataImpact": "No automatic migration or modification of existing saved records. A user-initiated restore now requires confirmation and keeps a local recovery copy before replacement.",
+  "dataImpact": "No automatic migration, deletion or change to existing dose history. New premixed blend doses are recorded under the blend name; old ingredient records are preserved. Opening a vial updates only its selected kit and vial metadata.",
   "limitations": [
-    "Calculator mass conversions support mg and mcg; generic IU conversion is intentionally unsupported.",
-    "Physical iPhone/VoiceOver acceptance remains unverified; Cloudflare 16-file parity was verified against the merged application source.",
-    "App Store and Play Store native-wrapper submission readiness still requires independent verification."
+    "Previous ingredient-level dose records made by older blend logging remain preserved; not automatically rewritten.",
+    "Physical iPhone and VoiceOver acceptance are pending.",
+    "Cloudflare publication is unverified until the candidate is merged and deployed."
   ],
-  "privacyChanged": true,
+  "privacyChanged": false,
   "permissionsChanged": false
 }
