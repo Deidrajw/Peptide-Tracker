@@ -290,3 +290,10 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
   outline: 2px solid var(--nx-focus-accessible) !important;
   outline-offset: 2px;
 }
+
+/* Product/trust sweep — simple readable Privacy & Data settings hierarchy. */
+.nx-privacy-card{border:1px solid var(--border-sub);background:var(--surface);border-radius:14px;padding:16px;margin:0 0 12px}
+.nx-privacy-card h3{color:var(--t1);font-size:14px;line-height:1.35;margin:0 0 8px;font-weight:700}
+.nx-privacy-card p{color:var(--t2);font-size:12px;line-height:1.65;margin:0}
+.nx-privacy-footnote{padding:12px 14px;background:var(--surface-2);border-radius:12px;font-size:12px;line-height:1.55;color:var(--t2)}
+#nx-import-open:focus-visible,#nx-import-confirm:focus-visible,#nx-import-cancel:focus-visible,#nx-restore-word:focus-visible{outline:2px solid var(--nx-focus-accessible)!important;outline-offset:2px}
