@@ -34,8 +34,11 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#ob-wrap').innerText().then(t=>t.includes('local storage')&&t.includes('Clearing browser data')),'Welcome must explain browser-local data loss risk');
  const restoreSafety=await page.evaluate(async()=>{
    const old=localStorage.getItem(STORE_KEY);
+   const protectedCopy={...JSON.parse(JSON.stringify(state)),dailyLogs:[{id:'protected-live',date:'2026-10-11',notes:'must preserve'}]};
+   const protectedRaw=JSON.stringify(protectedCopy);
    let result=false;
    try{
+     localStorage.setItem(STORE_KEY,protectedRaw);
      closeModal();showOnboarding();
      const picker=document.querySelector('#ob-restore-file');
      const valid={peptides:{},profile:{name:'Test'},settings:{},dailyLogs:[{id:'backup-only',date:'2026-10-01'}],supplies:[],protocols:[]};
@@ -48,8 +51,9 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
        picker.dispatchEvent(new Event('change',{bubbles:true}));
        await new Promise(done=>setTimeout(done,50));
        const preview=document.querySelector('#ob-restore-preview')?.textContent||'';
+       const hasButton=!!document.querySelector('#ob-confirm-restore');
        document.querySelector('#ob-confirm-restore')?.click();
-       result={preview,hasOriginal:JSON.stringify(loadState())===old,backupAbsent:!JSON.stringify(loadState()).includes('backup-only'),hasButton:!!document.querySelector('#ob-confirm-restore')};
+       result={preview,hasOriginal:localStorage.getItem(STORE_KEY)===protectedRaw,backupAbsent:!JSON.stringify(loadState()).includes('backup-only'),hasButton};
      }finally{window.alert=originalAlert;window.confirm=originalConfirm;}
    }finally{
      if(old===null)localStorage.removeItem(STORE_KEY);else localStorage.setItem(STORE_KEY,old);
