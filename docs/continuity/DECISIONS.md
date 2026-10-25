@@ -273,3 +273,12 @@
 ### 2026-10-25 — Version-aware release promotion policy
 - **APPROVED by user:** A successful preview deployment is not an approved production release. Report separately PREVIEW, CODE MERGED and PRODUCTION VERIFIED with exact version + commit; do not certify newest-release success merely because production files match an older main. Implement a production SHA-256 parity gate plus intended-version check, not a manual checklist alone. Current proposal on safety branch, not yet accepted as deployed.
 - Preserve the v0.9.20 release preview and branch; do not merge open PR #110 while its inventory and legacy-vial regressions are incomplete, and never convert users' KLOW data automatically.
+
+### 2026-10-25 — Approved navigation/control hierarchy
+- Use 44px+ interactive tap areas even for smaller visual ellipsis; kit card shows two evenly sized actions when no vial is actually open, three when one is. No-open label visually prominent. Do not use stale reconDate as evidence that an open vial exists.
+- Log Dose multi-vial is an outlined action and keeps existing underlying multi-source calculations. Site history/suggested next sits by injection-site selector, informational only.
+- Combo favourites remain saved in existing schema; one compact select loads via existing handler, optional Manage area retains deletion controls. Compound History is a dedicated detail view with a back action, preserving search query; model row has one clear disclosure signifier.
+- Blend cards must eventually share same standard component/layout instead of legacy UI branch; functional parity still pending and not implied by these design changes.
+
+### 2026-10-25 — Size by visual hierarchy, not touch target
+- User approved compact 28px visible ellipsis with 44px interactive target for vial-level actions. 'Use multiple vials' remains explicitly outlined with unconstrained readable label and 46px minimum height; it must not squeeze/truncate at iPhone width. The controls must not change dose allocations or saved inventory.

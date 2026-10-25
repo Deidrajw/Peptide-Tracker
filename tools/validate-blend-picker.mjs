@@ -36,9 +36,9 @@ try {
   ensure(await pg.locator('.nx-combo-picker-panel').count()===1,'Bordered compound panel missing');
   ensure(await pg.locator('#combo-choices').evaluate(el=>getComputedStyle(el).overflowY==='auto'),'No bounded inner scrolling');
   ensure(await pg.locator('.nx-combo-picker-panel').innerText().then(x=>x.includes('Scroll for more compounds')),'Scroll affordance missing');
-  ensure(await pg.locator('.field-label').allTextContents().then(a=>a.includes('FAVOURITES')),'Canadian Favourites label missing');
+  ensure(await pg.locator('.field-label').allTextContents().then(a=>a.includes('SAVED COMBINATIONS')),'Saved combinations label missing');
   ensure(await pg.locator('.combo-preset-chip').count()===1,'Saved favourite missing');
-  await pg.locator('.combo-preset-chip').click();
+  await pg.locator('#nx-combo-preset-select').selectOption('p');
   ensure(await pg.locator('.combo-compound-toggle[aria-checked="true"]').count()===2,'Existing favourite selection not retained');
   await pg.evaluate(()=>{closeModal();tab='home';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove())});
   const summary=pg.locator('details.app-detail').filter({has:pg.locator('summary', {hasText:'Needs attention'})}).first();

@@ -368,3 +368,36 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Protected app source | Safety PR changes workflow/script/docs only; no application files | TO VERIFY AT PR |
 | Full application QA | v0.9.20 blend, KLOW, vial math, history, supplies, 320/390 themes, isolated full DEMO and LIVE ZIP | INCOMPLETE, DO NOT MERGE PR #110 |
 | Physical iPhone | v0.9.20 real device before release acceptance | NOT TESTED |
+
+### 2026-10-25 — Approved mobile hierarchy candidate test matrix
+| Area | Acceptance | Status |
+|---|---|---|
+| Stash unopened / open / finished | No Prepare when no vial open, two/three equal actions; kit details and row ellipsis 44px usable | NOT TESTED |
+| Log Dose ordinary/blend | Multi-vial mode still validates allocation and source, suggestion near site, no auto-change | NOT TESTED |
+| Combo favourites | Many presets stay compact; load and Delete from management maintain exact saved semantics | NOT TESTED |
+| Trends compound | Dedicated view; back restores compound list/search, one chevron per model disclosure | NOT TESTED |
+| Today blend parity | Deadpool shares standard card and actions, not old rendering code | NOT IMPLEMENTED |
+| Data | Check-In, history, KLOW, vial math, undo, localStorage unchanged | NOT TESTED |
+| Release | Entire LIVE & isolated full DEMO build 320/390 both themes, physical iPhone, Cloudflare parity | NOT TESTED |
+
+### 2026-10-25 — Physical preview follow-up checks
+| Scope | Required evidence | State |
+|---|---|---|
+| Multi-vial button | Clearly readable/unclipped in 320px and 390px light/dark dose modal; existing multi-vial math untouched | CODED, NOT RE-TESTED |
+| Per-vial ellipsis | 28px perceived box, full 44px tap target, focus visible, action sheet reachable for open/finished vial | CODED, NOT RE-TESTED |
+| Remaining approved changes | User reviewed preview and accepted subject to two fixes; browser test confirmation on new head needed | USER ACCEPTED, AUTO QA PENDING |
+| Blend Today-card modern parity | Same card renderer regardless of blend | OUTSTANDING |
+| Full LIVE + isolated DEMO | Build and 320/390 both themes | NOT TESTED AT NEW HEAD |
+
+### 2026-10-25 iPhone preview feedback
+| Area | Evidence | Status |
+|---|---|---|
+| Log Dose multi-vial secondary action | User screenshot shows text compressed at 390px preview; branch CSS fix requires re-test | NOT TESTED after fix |
+| Stash vial ellipsis | User screenshot shows oversized outlined 44px square; branch CSS keeps 44px hit area with 28px visual | NOT TESTED after fix |
+| Other reviewed UI changes | User reports tested and good in preview; not a substitute for automated complete release QA | USER ACCEPTED |
+
+### 2026-10-25 — Resolved cascade source; verification pending
+| Area | Actual acceptance test | Current evidence |
+|---|---|---|
+| Log Dose Use multiple vials | Button `#toggle-multi` in full LIVE and isolated DEMO has computed padding >=12px vertical / >=20px horizontal, height >=48px, scrollWidth <= clientWidth+1 in 320/390 light/dark | CODED; latest CI PENDING |
+| Previous fix | `.nx-dose-form button.nx-multi-vial-toggle` was overridden by ID-level `padding:5px 0!important` | ROOT CAUSE VERIFIED |

@@ -50,7 +50,8 @@ try {
   ensure(await search.evaluate(el=>el.dataset.preserved==='yes'),'Selection destroyed search field or dialog');
   ensure(await page.locator('#combo-fav-section').isVisible(),'Favorite affordance not revealed at 2 compounds');
   await page.locator('#combo-date').fill('2026-10-24T11:45');
-  await page.locator('.combo-preset-chip').click();
+  ensure(await page.locator('#nx-combo-preset-select').count()===1,'Compact saved combinations selector missing');
+  await page.locator('#nx-combo-preset-select').selectOption('pair-1');
   ensure(await page.locator('#combo-notes').inputValue()==='Fictional combo draft note','Favorite selection erased notes');
   ensure(await page.locator('#combo-date').inputValue()==='2026-10-24T11:45','Favorite selection erased date');
   ensure(await page.locator('.combo-dose-input[data-n="Test Compound 01"]').count()===1,'Favorite did not select first compound');

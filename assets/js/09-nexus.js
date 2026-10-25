@@ -152,10 +152,11 @@ function trendsView() {
   if(startedPeps.length) {
     const names=startedPeps.map(([name,data])=>({name,count:(data.doses||[]).length,last:[...(data.doses||[])].sort((a,b)=>safeDate(b.date)-safeDate(a.date))[0]?.date}));
     const selected=state._nxHistorySelected;
-    html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length} compounds</span></div>
+    if(selected&&names.some(n=>n.name===selected)) html=`<div class="nx-library-head nx-history-screen-back"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Compound history</span></div>`;
+    else html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length} compounds</span></div>
       <input id="nx-library-search" class="nx-library-search" type="search" placeholder="Search compounds…" aria-label="Search compound history" value="${esc(state._nxHistoryQuery||'')}">
       <div id="nx-library-list" class="nx-library-list">${names.map(item=>`<button type="button" class="nx-library-item ${selected===item.name?'is-active':''}" data-nx-compound="${esc(item.name)}"><span><strong>${esc(item.name)}</strong><span class="nx-library-meta" style="display:block">${item.count} logged doses · ${item.last?`Last ${esc(fmtShort(item.last))}`:'No date'}</span></span><span aria-hidden="true">›</span></button>`).join('')}</div></section>`;
-    if(selected&&names.some(n=>n.name===selected)) html+=`<div class="nx-library-head"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Selected history</span></div>`;
+
   }
   startedPeps.forEach(([name,data])=>{
     if(name!==state._nxHistorySelected) return;
@@ -176,7 +177,7 @@ function trendsView() {
     const showSupp=overlappingSupp.length>=5&&enoughObservations;
     const subKey=k=>name+'_'+k;
     const subOpen=k=>!!(state._trendsOpen||{})[subKey(k)];
-    const subHdr=(k,label)=>`<div class="app-sub-acc" style="border:1px solid var(--border-sub);background:var(--surface-2)"><button class="tacc" data-key="${esc(subKey(k))}" aria-expanded="${subOpen(k)}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;background:transparent"><span style="font-size:12px;font-weight:650;color:var(--t2)">${label}</span><span style="color:var(--t4)">${subOpen(k)?'∧':'∨'}</span></button>`;
+    const subHdr=(k,label)=>`<div class="app-sub-acc" style="border:1px solid var(--border-sub);background:var(--surface-2)"><button class="tacc" data-key="${esc(subKey(k))}" aria-expanded="${subOpen(k)}" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;background:transparent"><span style="font-size:12px;font-weight:650;color:var(--t2)">${label}</span></button>`;
     const subBody=(k,content)=>`${subOpen(k)?`<div class="app-sub-body" style="padding:12px">${content}</div>`:''}</div>`;
     const sub=(k,label,content)=>subHdr(k,label)+subBody(k,content);
     const fact=(value,label)=>`<div class="nx-compound-fact"><b>${value}</b><span>${label}</span></div>`;
