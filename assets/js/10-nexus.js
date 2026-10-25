@@ -247,31 +247,24 @@ function stashView() {
       </div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
-      <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
-        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">KIT INVENTORY REMAINING</div>
-        <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
-          <span class="nx-kit-quantity" style="font-size:27px;font-weight:750;color:var(--t1);line-height:1.15">${displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1===0?0:1):"—"}</span>
-          <span style="font-size:13px;color:var(--t4)">mg across this kit</span>
-        </div>
-        <div style="font-size:12px;color:var(--t3);margin-top:6px">${kitInventoryLabel}</div>
-      </div>
-      ${displayOpenMg!==null ? `<div class="nx-stash-open-progress" style="margin:0 0 12px">
-        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px">
-          <span style="font-size:12px;color:var(--t3)">Current open vial</span>
-          <span style="font-size:12px;color:var(--t2);font-weight:650">${displayOpenMg.toFixed(displayOpenMg%1===0?0:1)} / ${activeCapacityMg} mg</span>
-        </div>
-        ${vialPct!==null?`<div role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${vialPct}%;background:${st.color};border-radius:7px"></div></div>`:""}
-      </div>` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No vial currently open${isFrozenUnopened&&s.storageLocation?" · "+esc(s.storageLocation.replace("_"," ")):""}</div>`}
+      ${displayOpenMg!==null ? `<div class="nx-kit-primary-vial">
+        <div class="nx-kit-overview-label">CURRENT OPEN VIAL</div>
+        <div class="nx-kit-primary-value">${displayOpenMg.toFixed(displayOpenMg%1?1:0)} <span>of ${activeCapacityMg} mg remaining</span></div>
+        ${vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
+      </div>` : `<div class="nx-kit-primary-vial nx-kit-vial-unopened">
+        <div class="nx-kit-overview-label">CURRENT OPEN VIAL</div>
+        <div class="nx-kit-primary-value"><span>No vial open</span></div>
+        <div class="nx-kit-primary-hint">${sealed} sealed vial${sealed===1?"":"s"} available</div>
+      </div>`}
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
-      ${action||s.reconDate?`<div class="nx-kit-actions" style="display:flex;gap:8px;margin-bottom:4px">
-        ${action?`<button class="${action.cls}" data-id="${s.id}" style="flex:${s.reconDate?"1.3":"1"};padding:10px;border-radius:10px;background:${actionUrgent?c.color+"15":"transparent"};border:1px solid ${actionUrgent?c.color+"44":"var(--border)"};color:${actionUrgent?c.color:"var(--t3)"};font-size:13px;font-weight:600">${action.label}</button>`:""}
-        ${s.reconDate?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses" style="flex:1;padding:10px;border-radius:10px;border:1px solid #A78BFA44;color:#A78BFA;font-size:13px;font-weight:600">Prepare</button>`:""}
-
-      </div>`:""}
-
-      <details class="nx-kit-disclosure" style="margin-top:12px"><summary class="nx-kit-disclosure-trigger"><span class="nx-kit-disclosure-title"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg> View kit details</span><span class="nx-kit-disclosure-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></summary>
+      <div class="nx-kit-actions nx-kit-actions-three">
+        ${action?`<button class="${action.cls}" data-id="${s.id}">${action.label}</button>`:""}
+        ${s.reconDate?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses">Prepare</button>`:""}
+        <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+      <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
         <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
           <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
           <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="vials" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Vials</button>
@@ -352,7 +345,7 @@ function stashView() {
           </div>`:""}`:""}
 
         </section>
-      </details>
+      </div>
     </div>`;
   };
 
