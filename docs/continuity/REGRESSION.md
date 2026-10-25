@@ -391,3 +391,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Open New Vial > Log Reconstitution, light | `rgb(98,68,156)` fill and white computed `color` + `-webkit-text-fill-color` at 320/390 LIVE/isolated DEMO; height >=44px | RUNNING / NOT YET PASSED |
 | Dark-themed Open New Vial | Retain contrast against actual compound fill; no force-white fallback on pale colour | NOT TESTED |
 | Remaining modal CTA fills | Flag dark-ink on dark fills and white-on-pale fills, computed values | NOT FULLY AUDITED |
+
+### 2026-10-25 — Screenshot-based UI acceptance additions
+| Area | Acceptance | Status |
+|---|---|---|
+| Stash stored/open action row | Two equal actions when closed, three when open, at 320/390 light/dark LIVE/full DEMO | CODED, CI PENDING |
+| Stash unopened hierarchy | 'No vial open' >=22px primary line, count remains secondary | CODED, CI PENDING |
+| Stash vial ellipsis | Compact 44x44 accessible action with visual 17px glyph, independent of full-width action style | CODED, VISUAL NOT TESTED |
+| Blend parity | Same modern cards/panels/sheets as single compound; original dose ledger and inventory math preserved | NOT TESTED |
+| Dose / Combo | Multi-vial choice, nearby site guidance, favorites overflow and confirmation/scroll behaviours | DESIGN REVIEW |
+| Trends | Compound full-screen detail/back, single disclosure affordances without double chevrons | DESIGN REVIEW |
+| Protected data | Legacy KLOW, dose edits and deductions, Stash history, Check-In/Calendar/More remain exact | NOT TESTED ON LATEST HEAD |
