@@ -410,30 +410,30 @@ function stashView() {
       <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
         <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
         <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span><span class="nx-card-status">${statusBadge(st.label, st.color)}</span></span>
-        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} blend kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
-        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">BLEND INVENTORY REMAINING</div>
+        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">KIT INVENTORY REMAINING</div>
         <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
           <span class="nx-kit-quantity" style="font-size:27px;font-weight:750;color:var(--t1);line-height:1.15">${Number.isFinite(kitRemMg)?kitRemMg.toFixed(kitRemMg%1===0?0:1):"—"}</span>
           <span style="font-size:13px;color:var(--t4)">mg across this kit</span>
         </div>
-        <div style="font-size:12px;color:var(--t3);margin-top:6px">${sealed ? sealed+" sealed" : "No sealed vials"}${currentReconDate?" · current vial open":""} · ${(s.composition||[]).length} components</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:6px">${sealed ? sealed+" sealed" : "No sealed vials"} · ${currentReconDate?"1 open":"None open"}</div>
       </div>
       ${currentReconDate && vialRem!==null ? `<div class="nx-stash-open-progress" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px">
-          <span style="font-size:12px;color:var(--t3)">Current open blend vial</span>
+          <span style="font-size:12px;color:var(--t3)">Current open vial</span>
           <span style="font-size:12px;font-weight:650;color:var(--t2)">${vialRem.toFixed(vialRem%1===0?0:1)} / ${s.vialMg} mg</span>
         </div>
         ${vialPct!==null?`<div role="progressbar" aria-label="Open blend vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.max(0,Math.min(100,vialPct))}%;background:${st.color};border-radius:7px"></div></div>`:""}
       </div>
-      <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Blend Dose</button>
+      <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Dose</button>
       <button type="button" class="finishblendvial" data-id="${s.id}" style="width:100%;min-height:44px;margin-top:6px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:13px">Finish current vial</button>
-      ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No blend vial currently open</div>`}
+      ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No vial currently open</div>`}
 
-      ${!currentReconDate && sealed>0 ? `<button type="button" class="openblendvial" data-id="${s.id}" style="width:100%;min-height:48px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;margin:8px 0">Open first blend vial</button>` : ""}
+      ${!currentReconDate && sealed>0 ? `<button type="button" class="openblendvial" data-id="${s.id}" style="width:100%;min-height:48px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;margin:8px 0">Open new vial</button>` : ""}
       <details style="margin-top:${currentReconDate?"8":"2"}px">
-        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Composition & kit details</summary>
+        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Kit details & history</summary>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
           <div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:6px">COMPOSITION PER VIAL (${s.vialMg}mg total)</div>
           <div style="margin-bottom:12px">${(s.composition||[]).map(c=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:3px 0"><span>${esc(c.compound)}</span><span>${c.mg}mg (${totalMg>0?Math.round(c.mg/(s.vialMg||1)*100):0}%)</span></div>`).join("")}</div>
@@ -444,7 +444,7 @@ function stashView() {
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
             ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toFixed(2)} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
-            <button class="manage-kit-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} blend kit" style="min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t3)">Manage blend</button>
+            <button class="manage-kit-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} blend kit" style="min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t3)">Manage kit</button>
           </div>
           <div style="font-size:12px;color:var(--t3);line-height:1.6">
             <div>BAC water: ${s.bacMl>0?s.bacMl+" mL":"Not recorded"}</div>
