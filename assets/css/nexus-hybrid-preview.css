@@ -410,3 +410,106 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-primary-vial {
  .nexus-screen-stash .nx-kit-actions-three{gap:5px!important;}
  .nexus-screen-stash .nx-kit-actions-three>button{padding:7px 4px!important;font-size:10.5px!important;}
 }
+
+/* Phase 2B: deliberate matte surfaces, segmented switcher, and action-sheet polish. */
+.nexus-screen-stash .nx-stash-hero {
+ background:linear-gradient(155deg,#363043 0%,#2b2737 100%)!important;
+ border-color:#665c74!important;
+ box-shadow:0 10px 28px #0906172e,inset 0 1px 0 #ffffff13!important;
+}
+.nexus-screen-stash .nx-stash-hero::before,.nexus-screen-stash .nx-kit-card::before {display:none!important;}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-hero {
+ background:linear-gradient(155deg,#f1eaf7 0%,#eae2f3 100%)!important;
+ border-color:#d8cbe4!important;
+ box-shadow:0 10px 25px #6b4b8519,inset 0 1px 0 #ffffffcf!important;
+}
+.nexus-screen-stash .nx-kit-card {
+ background:linear-gradient(175deg,#373044 0%,#2b2637 100%)!important;
+ border-color:#625670!important;
+ box-shadow:0 11px 26px #0e0a1e30,inset 0 1px 0 #ffffff12!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-kit-card {
+ background:linear-gradient(175deg,#fff 0%,#f9f6fc 100%)!important;
+ border-color:#dfd4ea!important;
+ box-shadow:0 10px 24px #5c40751b,inset 0 1px 0 #fff!important;
+}
+.nexus-screen-stash .nx-hybrid-stash-segment {
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:4px;padding:5px;margin-bottom:23px;
+ border:1px solid var(--border-sub);border-radius:19px;
+ background:var(--surface-2);
+ box-shadow:inset 0 2px 7px #100b2017;
+}
+.nexus-screen-stash .nx-hybrid-stash-segment .stash-sub-btn {
+ width:100%!important;min-width:0;min-height:46px!important;
+ padding:10px 7px!important;border:1px solid transparent!important;
+ background:transparent!important;color:var(--t3)!important;
+ font-size:13px!important;font-weight:650!important;
+ border-radius:15px!important;box-shadow:none!important;
+}
+.nexus-screen-stash .nx-hybrid-stash-segment .stash-sub-btn[aria-pressed="true"],
+.nexus-screen-stash .nx-hybrid-stash-segment .stash-sub-btn.active {
+ background:var(--surface)!important;color:var(--t1)!important;
+ border-color:var(--border-sub)!important;
+ box-shadow:0 3px 12px #100b201f!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-hybrid-stash-segment {
+ background:#eee8f5!important;border-color:#e1d6ea!important;
+}
+.nexus-screen-stash .nx-hybrid-attention {
+ margin:8px 0 24px;padding:0;background:transparent;
+}
+.nexus-screen-stash .nx-hybrid-attention-head {
+ display:flex;align-items:center;gap:9px;margin-bottom:11px;
+ font:700 10px/1.4 'DM Sans',sans-serif;letter-spacing:1.45px;
+ color:var(--t3);
+}
+.nexus-screen-stash .nx-hybrid-attention-dot {
+ width:7px;height:7px;border-radius:50%;background:#D1A05B;flex:none;
+}
+.nexus-screen-stash .nx-hybrid-attention-count {
+ margin-left:auto;display:grid;place-items:center;
+ min-width:25px;min-height:23px;padding:2px 6px;
+ border-radius:9px;background:var(--surface-2);
+ border:1px solid var(--border-sub);color:var(--t2);letter-spacing:0;font-size:11px;
+}
+.nexus-screen-stash .nx-hybrid-attention-row {
+ margin-bottom:7px;padding:13px 15px 14px 17px;
+ background:var(--surface)!important;border:1px solid var(--border-sub)!important;
+ border-left:3px solid #BE965F!important;border-radius:14px!important;
+ box-shadow:0 3px 13px #100b2011;
+}
+.nexus-screen-stash .nx-hybrid-attention-row .inv-notice-action {
+ color:#E2B87A!important;min-height:44px!important;
+ display:inline-flex!important;align-items:center!important;
+ font-size:12px!important;padding:7px 0!important;margin:4px 0 -6px!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-hybrid-attention-row .inv-notice-action {
+ color:#865614!important;
+}
+.nexus-screen-stash .nx-kit-card .nx-kit-primary-vial {
+ background:#ffffff08!important;border-color:#ffffff19!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-kit-card .nx-kit-primary-vial {
+ background:#f2ebf8!important;border-color:#e6d9f0!important;
+}
+/* Shared action sheets and form controls, carefully scoped to Stash-presented dialogs where supported. */
+.modal-bg .modal {
+ background:var(--modal-bg)!important;border:1px solid var(--modal-border)!important;
+ border-radius:28px 28px 0 0!important;
+ box-shadow:0 -17px 50px #0c08283d!important;
+}
+.modal-bg .modal :where(input,textarea,select) {
+ border-radius:13px!important;
+}
+.modal-bg .modal :where(.btn-primary) {
+ min-height:48px!important;
+}
+.modal-bg .modal :where(button):focus-visible,
+.nexus-screen-stash :where(button):focus-visible {
+ outline:3px solid #A88BDB!important;outline-offset:2px!important;
+}
+@media(max-width:359px) {
+ .nexus-screen-stash .nx-hybrid-stash-segment {padding:4px;gap:3px;}
+ .nexus-screen-stash .nx-hybrid-stash-segment .stash-sub-btn {font-size:12px!important;min-height:44px!important;}
+}
