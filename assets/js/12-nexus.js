@@ -1042,6 +1042,7 @@ function wireBody() {
   // data
   const ex=$("#exp"); if(ex)ex.onclick=exportData;
   const im=$("#imp"); if(im)im.onchange=importData;
+  const imOpen=$("#nx-import-open"); if(imOpen)imOpen.onclick=()=>im?.click();
   const imh=$("#imp-health"); if(imh)imh.onclick=()=>healthModal();
   const wu=$("#wunit"); if(wu)wu.onclick=()=>{state.settings.weightUnit=state.settings.weightUnit==="lbs"?"kg":"lbs";saveState();render();};
   const dro=$("#dayrollover"); if(dro)dro.onchange=()=>{ const h=parseInt(dro.value,10); state.settings.dayRolloverHour=(h>0&&h<=12)?h:0; saveState(); render(); };
