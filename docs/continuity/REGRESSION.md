@@ -338,3 +338,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS (AUTOMATED): candidate release workflow 40161722598 + mobile forms 40161722564. Fictional isolated blend 2 sealed → 1 open with BAC/expiry/notes, single 3mg dose under blend name, no constituent logs, 31mg overdraw rejected, finish vial records 27mg outflow while preserving 1 sealed vial and 30mg remaining. Full app × 320/390 light/dark; math diagnostic 80/80; Check-In, Protocol, Stash, Log Dose, Combo, Calendar protection.
 - PASS (HOST): 16/16 Cloudflare index/3 CSS/12 JS source hashes in 40162047192 against PR #100 merged implementation commit.
 - PENDING: publication-metadata follow-up generated note/runtime parity, live re-verification and physical iPhone/VoiceOver/keyboard acceptance. Do not treat automated simulations as real iPhone tests.
+
+### 2026-10-25 — Screenshot: light-mode What's New invisible CTA; hotfix QA pending
+- User-observed FAIL: published v0.9.19-beta release modal primary control appears blank at bottom in light-mode iPhone screenshot. New browser gate tests foreground/background contrast >=4.5:1 and rendered 44px+ action bounds for both Later/Got it in 8 LIVE/full DEMO modes (320/390, dark/light). Gate NOT TESTED until CI.
+- Every other screen, theme and nested bottom sheet text contrast: NOT TESTED as site-wide audit; follow-up surface sweep required. Physical iPhone post-fix NOT TESTED. PR #110 ongoing kit parity tests are separate.
