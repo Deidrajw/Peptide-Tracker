@@ -134,6 +134,46 @@ try{
         assert.deepEqual(preparedLedger,{before:27,after:25,restored:27,committed:true,history:1,prepareVisible:true,detailsTabs:3},
           'shared Prepare entry and reversible premixed stock transaction must preserve kit history');
 
+
+        // Prepared-syringe write and delete must use exactly one premixed ledger
+        // allocation and restore ONLY the unused share, never ingredient stock.
+        const prepPartial=await page.evaluate(()=>{
+          const kit=state.supplies.find(k=>k.id===975310);
+          const original=getBlendOpenVialRemainingMg(kit);
+          const tx=consumeCompoundInventory({kit,amountMg:6,reason:'prepared',transactionId:uid()});
+          const allocation=tx.allocations[0];
+          const prepared={id:uid(),compound:kit.name,amountEach:'2',unit:'mg',count:3,remainingCount:2,
+            allocations:[{kitId:kit.id,vialId:allocation.vialId,amount:6,ledgerId:allocation.ledgerId}],createdAt:localDatetime()};
+          state.preparedDoses.push(prepared);
+          const afterPrepare=getBlendOpenVialRemainingMg(kit);
+          const ok=deletePreparedDose(prepared);
+          const afterDelete=getBlendOpenVialRemainingMg(kit);
+          const logged=kit.doseLog.find(d=>String(d.id)===String(allocation.ledgerId));
+          const oldRecord=state.customPeptides[kit.name].doses[0];
+          const oldId=oldRecord.id;
+          const doseReversal=reverseDoseInventoryEffect(oldRecord);
+          const afterDoseReversal=getBlendOpenVialRemainingMg(kit);
+          // Restore the original dose allocation within the isolated QA fixture.
+          const reconsume=consumeCompoundInventory({kit,amountMg:3,reason:'administered',transactionId:uid()});
+          oldRecord.allocations=reconsume.allocations.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:a.amountMg,ledgerId:a.ledgerId}));
+          return {original,afterPrepare,ok,afterDelete,logged:logged?.totalMgDrawn,
+            doseReversal,afterDoseReversal,restoredDose:oldRecord.id===oldId,
+            afterRestore:getBlendOpenVialRemainingMg(kit)};
+        });
+        assert.deepEqual(prepPartial,{
+          original:27,afterPrepare:21,ok:true,afterDelete:25,logged:2,
+          doseReversal:true,afterDoseReversal:28,restoredDose:true,afterRestore:25
+        },'partial prepared deletion returns only unused share and exact dose reversal uses the linked ledger');
+        // Return fixture to the 27mg remaining expected by the finishing test.
+        await page.evaluate(()=>{
+          const kit=state.supplies.find(k=>k.id===975310);
+          const dose=state.customPeptides[kit.name].doses[0];
+          reverseDoseInventoryEffect(dose);
+          const remainingPrepared=(kit.doseLog||[]).find(d=>d.kind==='prepared');
+          if(remainingPrepared) refundBlendLedgerAmount(kit,remainingPrepared.id,remainingPrepared.totalMgDrawn);
+          const restored=consumeCompoundInventory({kit,amountMg:3,reason:'administered',transactionId:uid()});
+          dose.allocations=restored.allocations.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:a.amountMg,ledgerId:a.ledgerId}));
+        });
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('31');
         await page.locator('#save').click();
