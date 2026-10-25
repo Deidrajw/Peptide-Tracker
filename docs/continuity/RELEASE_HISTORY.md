@@ -319,3 +319,9 @@
 - PR #94 merged at main `623025665c549dadbe3fb467b6d556f5d44e7e34`. Prior candidate note marked NOT MERGED is retained as historical state.
 - GitHub Actions PR release run 40158486843 successful; mobile-form run 40158486825 successful. Candidate artifact 12584823539 contains standalone full-app DEMO HTML, offline DEMO ZIP, complete LIVE ZIP and JSON browser evidence. Inspected LIVE ZIP: root index, all three CSS, twelve ordered JS, four icons. All 16 index/CSS/JS Git blob SHAs match merged main. No storage migration; user-initiated restore remains explicitly gated.
 - Pre-merge host comparison `Nexus_CLOUDFLARE_PARITY.json` was FAIL (`index.html` hash mismatch), so no actual Cloudflare publication is certified. Manifest status remains `unverified`. Physical iPhone, VoiceOver, native store policy/privacy signoff NOT TESTED.
+
+### 2026-10-24 — v0.9.18-beta verified Cloudflare live and publication acknowledgment candidate
+- Web app PR #94 merged in main `623025665c549dadbe3fb467b6d556f5d44e7e34`. Docs PR #96 merged `1a5b6f231dd279db306d2a17906a4fbbab2303d9`.
+- Remote comparison in Actions run 40159182188: `verified:true`, 16/16 HTML/CSS/JS byte hashes match target web source. Full CI and mobile forms run 40159182258 PASS. Earlier pre-merge host mismatch was correctly treated as a temporary unpublished source, not covered up.
+- Next staged follow-up `release/v0918-publish-verified-manifest`: manifest status `published`, source commit `623025...`, UTC verification timestamp `2026-10-25T03:45:21Z`, updated in-app/runtime metadata, same app version and no record migration. Follow-up PR CI, merge and new Cloudflare deployed byte parity still pending.
+- Physical iPhone, VoiceOver, native store approvals and public privacy policy remain NOT TESTED / INCOMPLETE.
