@@ -1641,7 +1641,14 @@ function equipmentModal(existing) {
     document.getElementById("eq-status-open").onclick = () => setInitialStatus("open");
   }
 
-  if (!isNew) {\n    document.querySelector("#eq-delete").onclick = () => confirmAction("Delete this supply and its history?", () => {\n      state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==e.id);\n      saveState();closeModal();render();\n    });\n  }\n\n  document.querySelector("#eq-save").onclick = () => {
+  if (!isNew) {
+    document.querySelector("#eq-delete").onclick = () => confirmAction("Delete this supply and its history?", () => {
+      state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==e.id);
+      saveState();closeModal();render();
+    });
+  }
+
+  document.querySelector("#eq-save").onclick = () => {
     e.type = document.querySelector("#eq-type").value;
     e.brand = document.querySelector("#eq-brand").value.trim();
     if (!hasHistory) {
