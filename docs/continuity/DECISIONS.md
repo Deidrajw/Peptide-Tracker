@@ -215,3 +215,6 @@
 
 ### 2026-10-25 — Explicit approved card header standard (correction)
 - User screenshots reject earlier styling-only claim. Required pattern on Research, Goals, Protocol and Stash cards: readable title first; status pill directly beneath title in left stack (not beside menu); single standardized 44×44px right-aligned ellipsis control with same filled SVG circles, stroke/size, distinct surface/border in both themes. Badge may remain actionable where it already was; handlers preserved. Existing shared CSS alone was insufficient; HTML hierarchy itself must change. No data, calculation or migration effects. Source/browser and user iPhone acceptance required.
+
+### 2026-10-25 — Card header standard released in source
+- PR #82 merged `7624c4d3`: source-level title-over-status left stack across Research, Goals, Protocol, Stash regular and blend kit cards; common 44px bordered contrasting ellipsis with shared three-circle SVG. Kit status actions, original menus, Goal detail, Research Intel and Protocol schedule preserved. Automated checks passed but physical iPhone acceptance remains unverified. Supersedes PR #80's inaccurate claim that CSS-only styling achieved full parity.
