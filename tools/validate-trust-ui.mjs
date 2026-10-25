@@ -65,6 +65,45 @@ try{
         await page.locator('#nx-import-confirm').click();
         assert.equal(await page.evaluate(()=>state.profile.name),'Fictional Restore QA','confirmed restore');
         assert.equal(await page.evaluate(()=>[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).some(k=>k.includes('-before-manual-restore-'))),true,'pre-restore copy');
+        // Single-vial premixed blend regression, in fully isolated fictional DEMO.
+        await page.evaluate(()=>{
+          const kit={id:975310,name:'QA Premixed Blend',isBlend:true,
+            composition:[{compound:'QA A',mg:10},{compound:'QA B',mg:10},{compound:'QA C',mg:10}],
+            totalVials:2,vialMg:30,openedVials:0,emptyVials:0,activeKit:false,
+            reconDate:null,bacMl:0,expiryDays:28,notes:'',doseLog:[],wasteLog:[],reconHistory:[]};
+          state.supplies.push(kit);
+          for(const name of ['QA A','QA B','QA C'])
+            state.customPeptides[name]={status:'active',scheduleDays:7,doses:[]};
+          openBlendVialModal(kit.id);
+        });
+        await page.locator('#nx-blend-bac').fill('2');
+        await page.locator('#nx-blend-expiry').fill('30');
+        await page.locator('#nx-blend-notes').fill('Fictional vial');
+        await page.locator('#nx-blend-open').click();
+        const opened=await page.evaluate(()=>{
+          const k=state.supplies.find(k=>k.id===975310);
+          return {bac:k.bacMl,expiry:k.expiryDays,remaining:getSealedVials(k).length,
+            open:ensureKitVials(k).some(v=>v.status==='open'||v.status==='active')};
+        });
+        assert.deepEqual(opened,{bac:2,expiry:30,remaining:1,open:true},'blend open vial/recon and sealed-count');
+        await page.evaluate(()=>logBlendDoseModal(975310));
+        await page.locator('#bd-amount').fill('3');
+        await page.locator('#bd-save').click();
+        const doses=await page.evaluate(()=>{
+          const k=state.supplies.find(k=>k.id===975310);
+          return {blend:state.customPeptides[k.name]?.doses?.length,
+            components:['QA A','QA B','QA C'].map(n=>state.customPeptides[n].doses.length),
+            ledger:k.doseLog?.length};
+        });
+        assert.deepEqual(doses,{blend:1,components:[0,0,0],ledger:1},
+          'premixed blend records once without creating individual component doses');
+        await page.evaluate(()=>todayLogDosePicker());
+        const options=await page.locator('#today-dose-compound option').allTextContents();
+        assert.ok(options.includes('QA Premixed Blend'),'blend is one selectable dose entry');
+        for(const name of ['QA A','QA B','QA C'])
+          assert.ok(!options.includes(name),'blend-only ingredient excluded from dose selector: '+name);
+        await page.locator('#x').click();
+
       }
       await page.close();
     }
