@@ -1,0 +1,36 @@
+name: Cloudflare production release parity
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: 'Intended production version (e.g. v0.9.20-beta); must match canonical release manifest'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  verify-cloudflare-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify release version, production HTML and all application assets
+        env:
+          NEXUS_PRODUCTION_URL: https://nexuspeplog.pages.dev/
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: node tools/verify-cloudflare-production.mjs
+      - name: Upload immutable verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-production-parity-${{ github.sha }}
+          path: release/verification/cloudflare-production-parity.json
+          if-no-files-found: warn
+          retention-days: 30

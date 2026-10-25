@@ -358,3 +358,9 @@
 - App PR #111 squash merge `da18b2fb243a57e3023e493093dac70bfe8056f9`. No version bump: original v0.9.19-beta published acknowledgment remains as-is. Fixes blank-looking Got it/Later action, muted palette, Protocol Create, inline light-lavender text, Calendar small weights/today marker. No data migration, inventory or dose-math change.
 - PR #111 release/full DEMO and browser build run 40165612214 PASS, mobile forms 40165612207 PASS; LIVE ZIP 20 files, standalone full fictional isolated DEMO plus offline demo ZIP artifact #12588676170. Version source app files match main merge.
 - **Independent primary host audit:** docs-only PR #113 run 40165897243 artifact #12588721468 `Nexus_CLOUDFLARE_PARITY.json` `verified:true` for 16/16 index+CSS+JS remote SHA256 hashes. Mobile forms #40165897242 PASS. Hence web implementation deployed. Human device acceptance and full all-modal AA contrast are **NOT TESTED**, Issue #112 remains open. PR #110 still unmerged.
+
+
+### 2026-10-25 — Release reliability guard (candidate)
+- Intended version v0.9.20-beta exists on unmerged `release/issue-109-kit-experience-parity` / Cloudflare preview deployment `a3c0ce76-5176-406a-91b2-08bf73763ceb`; production and current main confirmed v0.9.19-beta at audit. Preview SUCCESS does not imply production deployed.
+- Dedicated read-only post-main-push and manually invokable version + exact 16-file remote parity gate authored on `safety/release-deployment-parity-gate-20261025`. Candidate, not merged or CI verified at writing. Does not modify release.json, app source, data or published assets.
+- v0.9.20 application release still blocked by unverified inventory/KLOW/legacy edit, full LIVE/full isolated DEMO and responsive functional regression on PR #110. Promotion not claimed.

@@ -357,3 +357,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS web host: PR #113 CI 40165897243 `Nexus_CLOUDFLARE_PARITY.json` verified:true, 16 identical remote entry files vs merged source, artifact #12588721468.
 - PASS branch/browser: release 40165612214, mobile form 40165612207, 320/390 × light/dark × LIVE/full isolated DEMO, visible published Later/Got it computed foreground contrast >=4.5 and 44px targets, t3/t4/t5 neutral surfaces thresholds, existing protected Check-In/Log Dose/Calendar/Stash/Protocol suites.
 - NOT TESTED: real physical iPhone post-fix, VoiceOver, every modal/control combination, true entire app WCAG AA. Heuristic 9-tab low contrast diagnostic has false-positive candidates and is not a full accessibility audit.
+
+
+### 2026-10-25 — Production parity regression gate, source-only candidate
+| Area | Acceptance | Current status |
+|---|---|---|
+| Version intent | Source `release/release.json`, `index.html` and manually entered version agree | CODED, NOT TESTED |
+| Host parity | Production matches 16 exact app HTML/CSS/JS SHA256 values after merge; retry while Cloudflare deploys | CODED, NOT TESTED |
+| Negative test | v0.9.20 candidate while production remains v0.9.19 must report mismatch, not pass based on older main | NOT TESTED |
+| Protected app source | Safety PR changes workflow/script/docs only; no application files | TO VERIFY AT PR |
+| Full application QA | v0.9.20 blend, KLOW, vial math, history, supplies, 320/390 themes, isolated full DEMO and LIVE ZIP | INCOMPLETE, DO NOT MERGE PR #110 |
+| Physical iPhone | v0.9.20 real device before release acceptance | NOT TESTED |
