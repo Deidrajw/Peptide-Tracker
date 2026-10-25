@@ -342,3 +342,9 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 .modal .nx-release-whats-new #nx-release-later:focus-visible {
   outline:3px solid var(--nx-focus-accessible) !important;outline-offset:2px;
 }
+
+/* Whole-app theme audit: the Protocol New Protocol CTA was forced to white on
+   #9270D2 in nexus.css (3.84:1), below AA for standard button text. */
+.nexus-screen-protocols #new-protocol.nx-proto-create {
+  background:#A78BFA !important;color:#1A1728 !important;
+}
