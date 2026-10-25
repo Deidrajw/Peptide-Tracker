@@ -947,9 +947,37 @@ function getBlendOpenVialRemainingMg(kit) {
   const consumed=(kit.doseLog||[]).filter(d=>d.vialId!=null
     ? String(d.vialId)===String(open.id)
     : new Date(d.date)>=new Date(date)).reduce((n,d)=>n+(Number(d.totalMgDrawn)||0),0);
-  const wasted=getKitActiveWasteMg(kit,date);
+  const wasted=(kit.wasteLog||[]).filter(w=>w.status!=="reversed" &&
+    (w.vialId!=null ? String(w.vialId)===String(open.id) :
+      (w.loggedAt ? new Date(w.loggedAt) : safeDate(w.date))>=safeDate(date)))
+    .reduce((n,w)=>n+(Number(w.mg)||0),0);
   return Math.max(0,Math.min(getBlendKitRemainingMg(kit),
     (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
+}
+
+// Explicit blend vial closure preserves mass balance before another vial opens.
+// Closing with leftovers records outflow; it never erases prior doses or kit history.
+function finishBlendVialModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>k.id===kitId && k.isBlend);
+  if(!kit) return;
+  const vial=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
+  if(!vial){showErrorBanner("No blend vial is currently open.");return;}
+  const rem=getBlendOpenVialRemainingMg(kit);
+  confirmAction(`Finish the current ${esc(kit.name)} vial? ${rem.toFixed(2)} mg remaining will be recorded as discarded outflow. Existing dose logs stay unchanged.`,()=>{
+    const latest=ensureKitVials(kit).find(v=>String(v.id)===String(vial.id));
+    if(!latest || !["open","active"].includes(latest.status))return;
+    const remaining=getBlendOpenVialRemainingMg(kit);
+    if(remaining>0) {
+      kit.wasteLog=kit.wasteLog||[];
+      kit.wasteLog.push({id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
+        mg:remaining,type:"waste",reason:"Blend vial finished with remainder",
+        status:"active",vialId:latest.id});
+    }
+    latest.status="finished";
+    kit.emptyVials=(kit.emptyVials||0)+1;
+    kit.reconDate=null;
+    saveState();render();
+  },{tone:"warning",confirmLabel:"Finish vial",cancelLabel:"Keep open"});
 }
 
 function logBlendDoseModal(kitId) {
