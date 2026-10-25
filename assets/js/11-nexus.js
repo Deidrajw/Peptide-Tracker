@@ -21,6 +21,7 @@ function renderSettingsTabContent() {
     ${row("onboarding","👋","Setup & Onboarding")}
     ${sectionLabel("DATA")}
     ${row("health","🍎","Health & Data")}
+    ${row("privacy","🔒","Privacy & Data")}
     ${row("backup","💾","Backup & Restore")}
     ${row("datamanagement","⚠️","Data Management")}
     ${row("usage","📊","Shortcut Activity",state.settings.nxUsageEnabled===true?"On":"Off")}
@@ -31,7 +32,7 @@ function renderSettingsTabContent() {
 
 function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
-  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
+  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", privacy:"Privacy & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer">‹</button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
@@ -41,6 +42,7 @@ function renderSettingsDetailScreen(key) {
   else if (key==="phasereminders") content = renderPhaseRemindersDetail();
   else if (key==="units") content = renderUnitsDetail();
   else if (key==="health") content = nxHealthImportContext() + renderHealthDataDetail();
+  else if (key==="privacy") content = renderPrivacyDataDetail();
   else if (key==="backup") content = renderBackupDetail();
   else if (key==="datamanagement") content = renderDataManagementDetail();
   else if (key==="usage") content = nxUsageSettingsView();
@@ -122,13 +124,22 @@ function renderHealthDataDetail() {
   <div style="font-size:11px;color:var(--t5);padding:0 4px">${importedCount} imported health record${importedCount===1?"":"s"} currently stored. Automatic sync isn't available in this browser-based build — imports are manual for now.</div>`;
 }
 
+function renderPrivacyDataDetail() {
+  const card=(title,body)=>`<section class="nx-privacy-card"><h3>${title}</h3><p>${body}</p></section>`;
+  return `<p style="font-size:12px;line-height:1.6;color:var(--t2)">Understand where Nexus keeps your records, when permissions are requested, and how backups work.</p>
+    ${card("Stored in this browser", "The web app stores logs, profile, schedules, and inventory in this browser’s local storage. They are not automatically synchronized with other devices. Clearing website data, using private browsing or switching browsers can make saved records unavailable.")}
+    ${card("Export and restore", "Export JSON backups from Backup & Restore before changing devices. Restoring previews a file and requires explicit confirmation because it replaces existing browser records. Backup files contain personal information; store them securely.")}
+    ${card("Permission choices", "Dose Alerts request browser notification permission only when you choose Enable. You can decline and continue using Nexus. Apple Health is imported manually from a file that you choose, not through direct account access.")}
+    ${card("Online resources", "Loading Nexus uses the web host and its assets, including a Google Fonts stylesheet. Do not assume every request stays on your device. Native App Store or Play Store privacy declarations require a separate verified audit.")}
+    <div class="nx-privacy-footnote">Nexus is a personal record-keeping tool, not an emergency alert service or a substitute for professional medication instructions.</div>`;
+}
 function renderBackupDetail() {
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px">
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <button id="exp" style="flex:1;min-width:120px;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600">↓ Export Backup</button>
-      <label style="flex:1;min-width:120px;text-align:center;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer">↑ Import Backup<input id="imp" type="file" accept="application/json" style="display:none"></label>
+      <button type="button" id="nx-import-open" style="flex:1;min-width:120px;min-height:44px;text-align:center;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600">↑ Import Backup</button><input id="imp" type="file" accept=".json,application/json" hidden>
     </div>
-    <div style="font-size:11px;color:var(--t5);line-height:1.5">Saved on this device automatically. Export a backup regularly — your history shouldn't live in only one place.</div>
+    <div style="font-size:11px;color:var(--t5);line-height:1.5">Saved in this browser, not automatically synced. Export before changing devices or clearing website data. Import previews the file and requests confirmation before replacing records.</div>
   </div>`;
 }
 
