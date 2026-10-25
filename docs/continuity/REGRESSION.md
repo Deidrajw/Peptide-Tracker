@@ -338,3 +338,11 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS (AUTOMATED): candidate release workflow 40161722598 + mobile forms 40161722564. Fictional isolated blend 2 sealed → 1 open with BAC/expiry/notes, single 3mg dose under blend name, no constituent logs, 31mg overdraw rejected, finish vial records 27mg outflow while preserving 1 sealed vial and 30mg remaining. Full app × 320/390 light/dark; math diagnostic 80/80; Check-In, Protocol, Stash, Log Dose, Combo, Calendar protection.
 - PASS (HOST): 16/16 Cloudflare index/3 CSS/12 JS source hashes in 40162047192 against PR #100 merged implementation commit.
 - PENDING: publication-metadata follow-up generated note/runtime parity, live re-verification and physical iPhone/VoiceOver/keyboard acceptance. Do not treat automated simulations as real iPhone tests.
+
+### Issue #109 parity candidate — NOT TESTED (2026-10-25)
+- Side-by-side Stash regular/blend heading/Prepare/Open new vial/disclosure, body fields and primary CTA at 320/390 both themes: NOT TESTED.
+- Open Vial form visibility, keyboard/safe-area/contrast and date/BAC/expiry/notes persistence: NOT TESTED.
+- Blend Log Dose regular-form equivalence and historic kLOW compatibility: NOT IMPLEMENTED / NOT TESTED.
+- Source selection, drafts, single/multi-vial deductions, insufficient inventory, stock accounting, composition and exact one blend entry: NOT TESTED on these branch edits.
+- All protected Today, Calendar, Check-In, Supplements, Protocol, Stash, backups, settings: NOT TESTED on these branch edits.
+- Physical iPhone acceptance / Cloudflare parity: NOT TESTED. No PASS has been recorded for this candidate.
