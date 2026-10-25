@@ -366,3 +366,6 @@
 ### v0.9.20-beta PR #110 compact list follow-up (NOT RELEASED)
 - Unified Vials and History tab presentation into one divider-separated row design, removing oversized per-vial cards, retaining original vial action identifiers. Five-row default/expand for both. 44px controls, 320px-aware CSS.
 - No data schema/storage changes. JS parse PASS, functional/mobile/contrast/Cloudflare validation NOT TESTED; PR unmerged and full DEMO/LIVE artifacts INCOMPLETE.
+
+### v0.9.20-beta PR #110 final presentation candidate (2026-10-25, UNRELEASED)
+- Candidate adds clean borderless divider-only Vials, restrained underline details tabs, and separated labeled preparation/history metadata. Supplies cards match current-unit hero + main action + details with summary rows, retaining old event class selectors. JS syntax parse PASS (09,10,12); full LIVE and DEMO/browser regression NOT VERIFIED, no merge and no verified Cloudflare deployment. User requested production; release intentionally held due untested stock transaction branches in same PR.
