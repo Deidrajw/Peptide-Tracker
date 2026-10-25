@@ -284,7 +284,7 @@ function stashView() {
             <div class="nx-kit-overview-track"><span style="width:${totalMg>0?Math.max(0,Math.min(100,kitRemMg/totalMg*100)):0}%"></span></div>
           </div>
           <div class="nx-kit-stat-list">
-            <div><span>Vials</span><strong>${sealed} sealed${openCount?` · ${openCount} open`:""}${empty>0?` · ${empty} empty`:""}</strong></div>
+            <div><span>Vials</span><strong>${sealed} sealed${openCount?` · ${openCount} open`:""}${finishedVialsWithHistory.length?` · ${finishedVialsWithHistory.length} empty`:""}</strong></div>
             <div><span>Concentration</span><strong>${conc?conc.toFixed(2)+" mg/mL":"Not recorded"}</strong></div>
             ${s.cost?`<div><span>Purchase price</span><strong>${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(s.currency||"CAD")}</strong></div>`:""}
           </div>
