@@ -1778,3 +1778,31 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 #app .nx-plan-head .manage-plan-btn:focus-visible,
 #app .nexus-protocol-card .manage-proto-btn:focus-visible,
 #app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
+
+/* Header parity contract: text and status form ONE left stack; menu remains the sole right control. */
+#app .nx-card-status{display:flex;align-items:center;justify-content:flex-start;min-height:24px;margin-top:7px}
+#app .nx-card-status .status-badge{align-self:flex-start!important;margin:0!important;font-size:10px!important;line-height:1.3!important}
+#app .nx-plan-head{align-items:flex-start!important}
+#app .nx-plan-head>div:first-child{min-width:0;flex:1}
+#app .nx-research-card .nx-plan-head{margin-bottom:12px}
+#app .nx-plan-item .nx-card-status{margin:7px 0 1px}
+#app .nexus-protocol-card-head{align-items:flex-start!important}
+#app .nexus-protocol-card-head>div:first-child{min-width:0;flex:1}
+#app .nexus-protocol-card-head .nx-card-status{margin-bottom:4px}
+#app .nx-kit-heading-unified{align-items:flex-start!important;gap:11px!important}
+#app .nx-kit-heading-unified .nx-kit-title-stack{display:flex;flex:1 1 auto;min-width:0;flex-direction:column;align-items:flex-start;gap:0;white-space:normal}
+#app .nx-kit-card-title{font-size:16px;font-weight:700;line-height:1.3;color:var(--t1);overflow-wrap:anywhere}
+#app .nx-kit-heading-unified .nx-card-status{margin-top:8px}
+#app .nx-kit-heading-unified>div:first-child{margin-top:9px}
+#app .nx-kit-heading-unified .nx-kit-header-manage{margin-left:auto!important}
+#app .nx-plan-head .manage-plan-btn,#app .nexus-protocol-card-head .manage-proto-btn,#app .nx-kit-heading-unified .nx-kit-header-manage{
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  padding:0!important;border-radius:12px!important;
+  border:1px solid var(--border)!important;
+  background:var(--surface-1)!important;color:var(--t2)!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 44px!important;font-size:0!important;line-height:1!important
+}
+#app .nx-unified-more-svg{width:20px!important;height:20px!important;display:block;flex:none;pointer-events:none}
+#app .nx-plan-head .manage-plan-btn:focus-visible,#app .nexus-protocol-card-head .manage-proto-btn:focus-visible,#app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:3px solid #A78BFA!important;outline-offset:2px!important}
+@media(max-width:360px){#app .nx-plan-head,#app .nexus-protocol-card-head{gap:8px!important}#app .nx-kit-heading-unified{gap:8px!important}}
