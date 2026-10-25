@@ -340,3 +340,8 @@
 - Implementation PR #100 merged `955c904860b39c5c56472b07cd3521828d5d9d79`. Release CI 40161722598 and mobile form 40161722564 PASSED. Post-merge PR #101 remote site audit 40162047192 verified 16/16 primary Cloudflare application entry files; docs PR #101 merged `c6b64c113c703fcfcb7fb372172fcf8c966d7266`.
 - Data effect: no migration; explicit open/finish blend entries and new blend-level dose logs only, with existing ingredient doses preserved. Full LIVE ZIP and fictional isolated standalone DEMO/ZIP generated from identical source. Physical iPhone review outstanding.
 - Publication metadata follow-up `release/v0919-verified-publication` is an UNMERGED candidate; generated runtime and notes updated, not yet verified on live host.
+
+### 2026-10-25 — v0.9.19-beta PUBLISHED and exact-host verified
+- PR #100 merged `955c904860b39c5c56472b07cd3521828d5d9d79`, PR #101 docs merged `c6b64c113c703fcfcb7fb372172fcf8c966d7266`, PR #103 published metadata merged `61f5217bbd11f3598b582ff6fcfd75490b96aa0f`, PR #105 final Cloudflare parity docs merged `4087711852a0a2d9d125e4ba0de7231d4c8b8b94`.
+- LIVE primary Cloudflare 16 exact files verified with `verified:true` in run 40162805366 after published What's New metadata. QA run 40162444774 PASS for generated notes/package, browser 320/390 light/dark full LIVE/fictional full DEMO and protected flows, mobile-form 40162444815 PASS; earlier blend lifecycle QA, 80/80 measurement checks passed. Standalone full-app DEMO HTML, offline DEMO ZIP, LIVE ZIP bundled from same source.
+- No automatic migration; legacy constituent doses retained. New premixed doses recorded under blend name, one vial at a time with safe outflow. Physical device and native store approval remain incomplete.
