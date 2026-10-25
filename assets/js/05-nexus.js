@@ -663,7 +663,7 @@ function doseModal(name, existing, occTime) {
       <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div></div>
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
-    ${!isEdit&&recent.length?`<div class="hint" style="margin-bottom:12px">Recent sites: ${recent.map(esc).join(" → ")} · suggested next: ${esc(suggestedSite)}</div>`:""}
+    
     <section class="nx-dose-section" aria-label="Dose source">
       <div class="nx-dose-section-title">Dose source</div>
       <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Select the prepared dose or vial used for this entry."}</p>
@@ -709,9 +709,10 @@ function doseModal(name, existing, occTime) {
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isEdit ? `<button id="toggle-multi" style="background:transparent;border:none;padding:0;font-size:11px;color:var(--t4);margin-bottom:14px">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
+    ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Observations"${isEdit ? " open" : ""}>
       <summary>Observations <span style="font-size:11px;color:var(--t3);font-weight:500;margin-left:auto">Optional</span></summary>
