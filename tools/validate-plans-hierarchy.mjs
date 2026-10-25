@@ -93,6 +93,20 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  });
  ensure(releaseContrast.length===2&&releaseContrast.every(x=>x.visible&&x.contrast>=4.5),'Release modal actions must have visible 44px+ targets and >=4.5:1 foreground contrast: '+JSON.stringify(releaseContrast));
 
+ const themeTokenContrast=await page.evaluate(()=>{
+   const css=getComputedStyle(document.documentElement),vars=['--t3','--t4','--t5'],surfaces=['--surface','--surface-2','--surface-3'];
+   const rgb=(x)=>{x=x.trim().replace('#','');if(x.length===3)x=x.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(x.slice(i,i+2),16))};
+   const lum=(s)=>{const v=rgb(s).map(x=>{const c=x/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
+   const ratio=(a,b)=>{let l=lum(a),r=lum(b);return (Math.max(l,r)+.05)/(Math.min(l,r)+.05)};
+   const result=[];for(const text of vars)for(const surface of surfaces){
+     const contrast=ratio(css.getPropertyValue(text),css.getPropertyValue(surface));
+     result.push({text,surface,contrast:Math.round(contrast*100)/100});
+   }
+   return result;
+ });
+ ensure(themeTokenContrast.every(x=>x.contrast>=4.5),'Muted token text must remain AA legible on all neutral cards: '+JSON.stringify(themeTokenContrast));
+
+
 
 
  await page.evaluate(()=>showOnboarding());
