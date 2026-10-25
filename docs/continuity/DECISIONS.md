@@ -252,3 +252,7 @@
 ### 2026-10-25 — Premixed blend identity and Stash parity
 - User explicitly clarifies Deadpool consists of Cartalax, BPC-157 and TB-500 physically premixed **in one vial**. One blend = one tracked dose selection, one blend dose record and one Stash vial; constituent names are formulation metadata, not separate administered compounds. Keep all old constituent logs intact; do not automatically delete/migrate history. If an ingredient is independently tracked or has a standalone kit/dose, retain that choice.
 - Blend Stash must allow opening/reconstituting sealed vials with BAC, expiration-days and notes; do not route through single-compound stock deduction math. Protocol phase steppers need consistent 44px targets; Review input must not clip.
+
+### 2026-10-25 — Premixed blend releases use independently verified publication gates
+- v0.9.19 merge #100 changed only new blend vial and dose logic; old ingredient dose entries remain immutable historical records. Opening/finalizing a vial requires explicit user action; current-vial math prevents drawing against sealed kit inventory. Displayed blend component percentages use the vial total rather than kit total.
+- After 16/16 Cloudflare remote parity for main source (Actions 40162047192), source of truth may mark v0.9.19 published via an additive, separately validated manifest/What's New follow-up, not by retroactively rewriting saved localStorage history.
