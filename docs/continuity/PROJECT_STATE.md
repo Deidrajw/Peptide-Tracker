@@ -680,3 +680,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - User approved targeted cleanup: kit action button shadow removed, Today Log Dose and New Check-In button geometry harmonized, and Needs Attention left accent and count capsule removed/softened. CSS commit `7fa1a893` on design PR #123; no inventory math or persistence code changed. Production stays unchanged.
 - Separate **Inventory Resolution UX discovery**: confusing duplicated 'Current vial' rows and Draw controls, unclear per-source allocation and shortage presentation. Do NOT change dose math/record writing in this visual pass; redesign as a separate reviewed workflow with source-specific labels and validation.
 - **ONE NEXT ACTION:** verify exact-head 320px/390px light/dark browser QA, inspect modal screenshots and contrast; resolve problems and seek visual review, no merge/deploy.
+
+
+### 2026-10-25 — Stash card action hierarchy Phase 2D (user-approved preview)
+- User approved replacing three equal kit-card actions with contextual Open/other applicable vial action plus Kit Details; Prepare Doses remains in pre-existing kit ellipsis action sheet (`manageKitMenu` in `assets/js/04-nexus.js`) and global Stash Prepare shortcut. Source `assets/js/10-nexus.js` commit `bba65429`; visual two-column CSS `assets/css/nexus-hybrid-preview.css` commit `ac9a4f27`. No dosing, kit or storage logic changed. Menu prepare eligibility is still existing hasRecon rule. No merge or deploy.
+- **ONE NEXT ACTION:** inspect latest source head full-app DEMO, verify menu Prepare and two-button layout at 320/390 both themes, review context action conditions, contrast and regression before asking for visual approval.
