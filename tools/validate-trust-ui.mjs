@@ -151,10 +151,10 @@ try{
           tab='stash';render();
           const card=document.querySelector('.nx-kit-card[data-kit-id="975310"]');
           return {before,after,restored,committed:tx.committed,history:doseHistory.length,
-            prepareVisible:!!card?.querySelector('.preparedoses'),detailsTabs:card?.querySelectorAll('.nx-stash-tab').length};
+            prepareVisible:(()=>{manageKitMenu(k.id);const available=!!document.querySelector('.nx-stash-action[data-action="prepare"]');document.querySelector('.nx-stash-sheet #x')?.click();return available;})(),detailsTabs:card?.querySelectorAll('.nx-stash-tab').length};
         });
         assert.deepEqual(preparedLedger,{before:27,after:25,restored:27,committed:true,history:1,prepareVisible:true,detailsTabs:3},
-          'shared Prepare entry and reversible premixed stock transaction must preserve kit history');
+          'kit sheet Prepare entry and reversible premixed stock transaction must preserve kit history');
 
 
         // Prepared-syringe write and delete must use exactly one premixed ledger
