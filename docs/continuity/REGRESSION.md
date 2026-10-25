@@ -359,3 +359,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Added fictional ledger scenario to `tools/validate-trust-ui.mjs`: 27mg active → prepare 6mg → 21mg → delete 2/3 unused → 25mg with 2mg retained as used → reverse linked 3mg administration → 28mg; fixture cleanup returns to 27mg before finish-vial check. Code authored, automated result pending.
 - Quick Log of premixed blend must open standard Log Dose screen for explicit confirmation; coded but latest browser result pending.
 - Explicit release blocker: latest-head Actions results not returned, real iPhone not tested; do not inherit green status from earlier commit or old build.
+
+### 2026-10-25 — KLOW historical compatibility and progressive Stash UX candidate
+- Read-only inspection of private backup verified missing blend metadata with preserved original vial balances and existing dose history (source private; no export committed). Actual conversion on real iPhone: NOT TESTED, not automatically applied.
+- New fictional legacy-v2 smoke expects open 48.5mg + sealed 80mg, consume 1.5mg → open 47mg, exact Undo → 48.5mg; no change to emptied vial or sealed stock. Test committed but CI NOT VERIFIED.
+- Stash Overview/Vials/History redesigned and Today compound history first 5 + Show All/Fewer + Close. JS syntax parse: PASS, computed 320/390 light/dark/browser functional QA: NOT TESTED, physical iPhone: NOT TESTED.
+- Protected data edit/history, real KLOW migration, blend/vial/prepare/undo and previous suite: NOT TESTED until full CI. Hold merge/deployment.
