@@ -1157,7 +1157,7 @@ function showOnboarding() {
       if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
       next.profile.onboardingDone=true;
       const before=state;
-      try{state=next;saveState();if(!loadState()||!loadState().profile?.onboardingDone)throw Error("Could not verify saved backup");}
+      try{state=next;saveState();const stored=localStorage.getItem(STORE_KEY);if(!stored||stored!==JSON.stringify(next))throw Error("Could not verify saved backup");}
       catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
       closeModal();render();
     }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
@@ -1181,7 +1181,7 @@ function showOnboarding() {
       try{
         if(file.size>12*1024*1024)throw Error("File exceeds 12 MB. Use the full backup flow for larger exports.");
         const raw=JSON.parse(await file.text());
-        if(!raw||typeof raw!=="object"||Array.isArray(raw)||!raw.peptides||typeof raw.peptides!=="object"||Array.isArray(raw.peptides)||!Array.isArray(raw.dailyLogs||[])||!Array.isArray(raw.supplies||[])||!Array.isArray(raw.protocols||[]))throw Error("This is not a recognized Nexus JSON backup.");
+        if(!raw||typeof raw!=="object"||Array.isArray(raw)||!raw.peptides||typeof raw.peptides!=="object"||Array.isArray(raw.peptides)||!raw.profile||typeof raw.profile!=="object"||Array.isArray(raw.profile)||!raw.settings||typeof raw.settings!=="object"||Array.isArray(raw.settings)||!Array.isArray(raw.dailyLogs||[])||!Array.isArray(raw.supplies||[])||!Array.isArray(raw.protocols||[]))throw Error("This is not a recognized Nexus JSON backup.");
         restoreCandidate=raw;
         const c=countsForBackup(raw);
         const box=m.querySelector("#ob-restore-preview");
