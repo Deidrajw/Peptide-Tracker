@@ -36,6 +36,8 @@ for (const file of JS) {
       'state = buildDemoState("weight_loss");',
       'state.profile.onboardingDone = true;',
       'state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION;',
+      '// Demo only: suppress automatic first-visit release announcement in fixture-driven flows; never touch live storage.',
+      'try { if (typeof NEXUS_SEEN_RELEASE_KEY !== "undefined") localStorage.setItem(NEXUS_SEEN_RELEASE_KEY, NEXUS_RELEASE.version); } catch {}',
       boot
     ].join('\n'));
   }
