@@ -220,6 +220,15 @@ function wireBody() {
   document.querySelectorAll(".stash-sub-btn").forEach(b=>b.onclick=()=>{state._stashSub=b.dataset.sub;renderBody();});
   // Equipment items
   const addEq=document.getElementById("add-equipment"); if(addEq)addEq.onclick=()=>equipmentModal(null);
+  document.querySelectorAll(".nx-supply-detail-toggle").forEach(button=>{
+    button.onclick=()=>{
+      const panel=document.getElementById(button.getAttribute("aria-controls"));
+      if(!panel)return;
+      const opening=panel.hidden;
+      panel.hidden=!opening;
+      button.setAttribute("aria-expanded",String(opening));
+    };
+  });
   document.querySelectorAll(".supply-edit").forEach(b=>b.onclick=()=>{const e=(state.equipmentItems||[]).find(x=>x.id===+b.dataset.id);if(e)equipmentModal(e);});
   document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);saveState();render();}));
   document.querySelectorAll(".supply-log-use").forEach(b=>b.onclick=()=>logSupplyUseModal(+b.dataset.id));
@@ -478,14 +487,19 @@ function wireBody() {
     const name=b.dataset.name,id=+b.dataset.id,builtin=!!PEPTIDES[name],tgt=builtin?state.peptides:state.customPeptides;
     if(tgt[name]){
       const dose = tgt[name].doses.find(d=>d.id===id);
-      if (dose) reverseDoseInventoryEffect(dose);
+      if (dose && reverseDoseInventoryEffect(dose)===false)return;
       tgt[name].doses=tgt[name].doses.filter(d=>d.id!==id);
     }
     saveState();render();
   }));
   document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=()=>{
     const box=document.querySelector(`.histbox[data-name="${CSS.escape(b.dataset.name)}"]`);
-    if(box) box.style.display=box.style.display==="none"?"block":"none";
+    if(box){
+      const opening=box.style.display==="none";
+      box.style.display=opening?"block":"none";
+      b.setAttribute("aria-expanded",String(opening));
+      b.textContent=opening?"Close history":"History ("+box.querySelectorAll(".nx-dose-history-record").length+")";
+    }
   });
   document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=()=>{
     const box=document.querySelector(`.tunebox[data-name="${CSS.escape(b.dataset.name)}"]`);
@@ -768,6 +782,15 @@ function wireBody() {
   document.querySelectorAll(".finishvial").forEach(b=>b.onclick=()=>finishVialModal(+b.dataset.id));
   document.querySelectorAll(".vial-actions-btn").forEach(b=>b.onclick=()=>vialActionsMenu(+b.dataset.kit, +b.dataset.vial));
   // Stash detail tabs are presentation-only: never recalculate or save inventory.
+  document.querySelectorAll(".nx-kit-detail-button").forEach(button=>{
+    button.onclick=()=>{
+      const panel=document.getElementById(button.getAttribute("aria-controls"));
+      if(!panel)return;
+      const opening=panel.hidden;
+      panel.hidden=!opening;
+      button.setAttribute("aria-expanded",String(opening));
+    };
+  });
   document.querySelectorAll(".nx-stash-tabs").forEach(group=>{
     const buttons=Array.from(group.querySelectorAll(".nx-stash-tab"));
     const parent=group.parentElement;
@@ -789,6 +812,25 @@ function wireBody() {
         else if(e.key==="Home"||e.key==="End"){e.preventDefault();choose(buttons[e.key==="Home"?0:buttons.length-1]);}
       };
     });
+  });
+  document.querySelectorAll(".nx-dose-history-more").forEach(button=>{
+    button.onclick=()=>{
+      const container=button.closest(".nx-dose-history");
+      if(!container)return;
+      const expanded=container.classList.toggle("is-expanded");
+      button.setAttribute("aria-expanded",String(expanded));
+      button.textContent=expanded?"Show recent 5 doses":"Show all "+button.dataset.count+" doses";
+    };
+  });
+  document.querySelectorAll(".nx-kit-show-more").forEach(button=>{
+    button.onclick=()=>{
+      const extra=button.nextElementSibling;
+      if(!extra)return;
+      const expanded=button.getAttribute("aria-expanded")==="true";
+      extra.hidden=expanded;
+      button.setAttribute("aria-expanded",expanded?"false":"true");
+      button.textContent=expanded?"Show all "+button.dataset.count+" "+(button.dataset.noun||"records"):"Show fewer "+(button.dataset.noun||"records");
+    };
   });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
   document.querySelectorAll(".markkitdone").forEach(b=>b.onclick=()=>markKitDoneModal(+b.dataset.id));
