@@ -320,3 +320,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS (automated, remote): v0.9.18-beta 16 hosted HTML/CSS/JS byte hashes equal verified merged app source (run 40159182188, `Nexus_CLOUDFLARE_PARITY.json` `verified:true`); source build and 8 browser modes PASS; mobile form regression run 40159182258 PASS.
 - PENDING: manifest/runtime `published` follow-up must pass generated note parity and 8-browser publish-gated popup tests: show once after onboarding, Later does not acknowledge, Got it stores isolated version key, no duplicate old numeric changelog, no state corruption. Then verify live Cloudflare bytes again.
 - NOT TESTED: real iPhone/VoiceOver, independent store submission, all 120 function-indexed UI surfaces individually reviewed visually.
+
+### 2026-10-24 — Published manifest regression test correction (CANDIDATE)
+- PR #97 run 40159568404: PASS prior sections (source, generate-release, artifact, 8-mode privacy, Check-In, Protocol, Stash, Combo, chevrons); FAIL at `tools/validate-plans-hierarchy.mjs` because its assertion hardcoded `publicationStatus==='unverified'` after verified publication. **No merge.**
+- Updated assertion to match canonical `release/release.json.publication.status`; still explicitly verifies unpublished releases cannot auto-prompt, while the existing scenario tests published Later vs Got it and isolated acknowledgement. Requires fresh latest-head full CI PASS before merge.
