@@ -1017,6 +1017,26 @@ function continueConsumeCompoundInventory(kit, remainingNeeded, transactionId) {
   return consumeCompoundInventory({ kit, amountMg: remainingNeeded, transactionId });
 }
 
+// Exact reversal against a premixed vial's historical transaction. Supports a
+// partial refund when only some prepared syringes remain unused.
+function refundBlendLedgerAmount(kit,ledgerId,requestedMg) {
+  if(!kit?.isBlend||ledgerId==null)return false;
+  const idx=(kit.doseLog||[]).findIndex(x=>String(x.id)===String(ledgerId));
+  if(idx<0)return false;
+  const item=kit.doseLog[idx],old=Number(item.totalMgDrawn)||0;
+  const refund=Number(requestedMg);
+  if(!Number.isFinite(refund)||refund<=0||refund>old+.001)return false;
+  const next=Math.max(0,Math.round((old-refund)*1000)/1000);
+  if(next<=.001)kit.doseLog.splice(idx,1);
+  else item.totalMgDrawn=next;
+  const vial=(kit.vials||[]).find(v=>String(v.id)===String(item.vialId));
+  if(vial&&vial.status==="empty"){
+    vial.status="open";kit.emptyVials=Math.max(0,(kit.emptyVials||0)-1);
+    kit.reconDate=vial.reconDate||kit.reconDate;kit.activeKit=true;
+  }
+  return true;
+}
+
 // Reverses a committed transaction exactly — adds each allocation's amount back onto the
 // specific vial it came from, and reopens a vial that went empty as a direct result. No
 // historical-window recalculation: it only undoes the specific numbers this transaction
@@ -1024,13 +1044,9 @@ function continueConsumeCompoundInventory(kit, remainingNeeded, transactionId) {
 function undoConsumeCompoundInventory(kit, transactionResult) {
   if(kit.isBlend){
     for(const a of transactionResult.allocations||[]){
-      const idx=(kit.doseLog||[]).findIndex(d=>a.ledgerId && String(d.id)===String(a.ledgerId));
-      if(idx<0){showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");continue;}
-      const [entry]=kit.doseLog.splice(idx,1);
-      const vial=(kit.vials||[]).find(v=>String(v.id)===String(entry.vialId));
-      if(vial&&vial.status==="empty"){
-        vial.status="open";kit.emptyVials=Math.max(0,(kit.emptyVials||0)-1);
-        kit.reconDate=vial.reconDate||kit.reconDate;kit.activeKit=true;
+      const old=(kit.doseLog||[]).find(d=>String(d.id)===String(a.ledgerId));
+      if(!old||!refundBlendLedgerAmount(kit,a.ledgerId,Number(old.totalMgDrawn))){
+        showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");
       }
     }
     saveState();return;
@@ -1127,6 +1143,21 @@ function reapplyEditedDoseInventory(f, newAmountStr, unit, fallbackKit) {
 
 function reverseDoseInventoryEffect(dose) {
   if (!dose) return;
+  if(dose.isBlendDose && !dose.fromPreparedId){
+    const allocations=dose.allocations||[];
+    if(!allocations.length||allocations.some(a=>{
+      const k=state.supplies.find(s=>String(s.id)===String(a.kitId));
+      return !k?.isBlend || !(k.doseLog||[]).some(x=>String(x.id)===String(a.ledgerId));
+    })){
+      showErrorBanner("This older blend dose has no exact vial transaction link. Deletion is blocked to protect inventory; export a backup and reconcile it first.");
+      return false;
+    }
+    for(const a of allocations){
+      const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+      if(!refundBlendLedgerAmount(kit,a.ledgerId,doseToMg(a.amount,cfg(kit.name).unit)))return false;
+    }
+    saveState();return true;
+  }
   if (dose.fromPreparedId) {
     const pd = (state.preparedDoses||[]).find(p=>p.id===dose.fromPreparedId);
     if (pd) pd.remainingCount = (pd.remainingCount||0)+1;
