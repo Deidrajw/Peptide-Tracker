@@ -326,7 +326,7 @@
 - Next staged follow-up `release/v0918-publish-verified-manifest`: manifest status `published`, source commit `623025...`, UTC verification timestamp `2026-10-25T03:45:21Z`, updated in-app/runtime metadata, same app version and no record migration. Follow-up PR CI, merge and new Cloudflare deployed byte parity still pending.
 - Physical iPhone, VoiceOver, native store approvals and public privacy policy remain NOT TESTED / INCOMPLETE.
 
-### 2026-10-24 — v0.9.18-beta PUBLISHED WEB, FINAL CLOUDFARE PARITY PASS
+### 2026-10-24 — v0.9.18-beta PUBLISHED WEB, FINAL CLOUDFLARE PARITY PASS
 - PR #94 implementation merged `623025665c549dadbe3fb467b6d556f5d44e7e34`; PR #96 docs merged `1a5b6f231dd279db306d2a17906a4fbbab2303d9`; PR #97 publisher metadata merged `3625462a04c1eb124e350f6989b57019e3256380`; PR #98 final remote comparison docs merged `8c3d874c549f2e3ef3b8004bb961ec29b7f4743f`.
 - **LIVE:** Cloudflare `https://nexuspeplog.pages.dev/`; post-publication remote byte compare Actions run 40160165392 `verified:true` for all 16 app entry files (HTML/3 CSS/12 JS). Final published manifest source includes the once-per-version What's New popup. Browser/build and mobile forms PASS in runs 40160165392/40160165348; previous independent conversion math 80/80 and backup trust matrix PASS.
 - LIVE 20-file package, standalone full-app fictional isolated DEMO HTML and offline DEMO ZIP were generated from the same v0.9.18-beta published source; data impact: no automatic migration, manual restore requires typed confirmation and attempts local recovery/rollback. Historical changelog preserved.
