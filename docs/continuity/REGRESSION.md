@@ -276,3 +276,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### A5 evidence QA (all NOT TESTED)
 - Goal with no linked symptom shows opt-in guidance; select existing symptom and save/reopen; Goal Activity displays only matching dates and recorded intensity; no irrelevant symptoms or imported notes; remove selection and keep Check-In data unchanged, edit original record propagates; 320/390 light/dark LIVE and full DEMO. Protect one-Check-In-per-date, symptoms and associations, Supplements, Protocols, Calendar, Log Dose and vial math.
+
+### 2026-10-24 — A5 actual QA / A6 planned regression
+- A5 PASS automated on head `7c166c6a`: mobile forms run `40144905392`; release/browser run `40144905391` with eight LIVE/full DEMO × 320/390 × light/dark conditions and symptom selection, matched dated intensity, exclusion of unrelated symptoms, dailyLogs count protection. A5 archive/artifact `12580236276`. NOT TESTED: physical iPhone, VoiceOver, comprehensive production history/backup restore, post-merge Cloudflare/Pages parity, calculator clinical safety.
+- A6a future checks NOT TESTED: only exact linked-symptom Check-In source's nonempty daily note appears as 'same-entry reflection'; no unrelated note/date; edits/removal from original immediately reflected, no Goal-copy storage, no Check-In/updates/dose/Stash mutations; 320/390 both themes LIVE/full DEMO, modal keyboard/back behavior. See `docs/design/CONNECTED_GOALS_A6_SOURCE_AUDIT.md`.
