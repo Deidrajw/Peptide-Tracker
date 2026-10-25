@@ -360,3 +360,15 @@ body [style*="background: #A78BFA"][style*="color: #fff"],
 body [style*="background: #C9A0FF"][style*="color: #fff"] {
   color:#1A1728 !important;
 }
+
+/* App-wide theme baseline: old muted dark tokens were too dim for helper text
+   (#5A5775 on #221E35 = 2.34:1; #3E3A5E = 1.51:1). Ensure readable
+   secondary labels even on raised dark panels. Light --t5 was 3.44:1 on white. */
+:root:not([data-theme="light"]) {
+  --t3:#B6B2CD;
+  --t4:#AAA6C6;
+  --t5:#A49FC2;
+}
+:root[data-theme="light"] {
+  --t5:#645F7D;
+}
