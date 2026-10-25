@@ -398,3 +398,7 @@
 
 ### 2026-10-25 — Kit-card action hierarchy Phase 2D (UNRELEASED)
 - Draft PR #123 commits `bba65429` and `ac9a4f27`: remove persistent Prepare button from Stash cards, retain menu Prepare and global shortcut; responsive two-action card styling. Data impact none; branch-only candidate pending QA. No production changes.
+
+
+### 2026-10-25 — Inventory source allocation clarity (UNRELEASED)
+- Draft PR #123 source commits `3875da06`/`74228713`: numbered source labels, kit identity and explicit Draw confirmation wording, CSS grouping. Previous Stash open-card test updated `3dc44b22`. Math and persistence logic unchanged; testing and design approval pending. No production deployment.
