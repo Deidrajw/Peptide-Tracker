@@ -166,6 +166,7 @@ try{
           const allocation=tx.allocations[0];
           const prepared={id:uid(),compound:kit.name,amountEach:'2',unit:'mg',count:3,remainingCount:2,
             allocations:[{kitId:kit.id,vialId:allocation.vialId,amount:6,ledgerId:allocation.ledgerId}],createdAt:localDatetime()};
+          state.preparedDoses=state.preparedDoses||[];
           state.preparedDoses.push(prepared);
           const afterPrepare=getBlendOpenVialRemainingMg(kit);
           const ok=deletePreparedDose(prepared);

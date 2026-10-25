@@ -761,7 +761,8 @@ function doseModal(name, existing, occTime) {
     const neededMg = doseToMg(doseAmtStr, c.unit);
     // The UI is shared. Premixed blends keep one administration record and an
     // explicit vial-ID ledger, rather than independent ingredient administrations.
-    if(isBlend){ panel.innerHTML=""; return; } // Blend allocations commit only when Save is tapped.\n    const ak = activeKit();
+    if(isBlend){ panel.innerHTML=""; return; } // Blend allocations commit only when Save is tapped.
+    const ak = activeKit();
     // "Current vial" must mean the OPEN vial specifically — not the kit's total including
     // sealed reserve that hasn't been reconstituted yet. getKitRemainingMg is correctly
     // kit-wide (that's its job), but using it here mislabeled "Current vial" with a number

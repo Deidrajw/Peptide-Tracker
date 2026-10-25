@@ -34,7 +34,7 @@ try{
   ensure(await page.locator('.nx-stash-action[data-action="finish-vial"]').count()===0,'Sealed kit shows Finish Vial');
   ensure(await page.locator('.nx-stash-action[data-action="open"]').count()===1,'Sealed kit missing Open');
   await page.locator('.nx-stash-action[data-action="details"]').click();
-  ensure(await page.locator('.nx-kit-card[data-kit-id="88902"] details').first().evaluate(el=>el.open),'Kit details did not expand');
+  ensure(await page.locator('.nx-kit-card[data-kit-id="88902"] .nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-88902').evaluate(el=>!el.hidden),'Kit details did not expand');
   await page.evaluate(()=>manageKitMenu(88903));
   ensure(await page.locator('.nx-stash-action[data-action="edit"]').count()===1,'Blend kit edit absent');
   ensure(await page.locator('.nx-stash-action[data-action="prepare"]').count()===0,'Blend incorrectly routed to standard preparation');
