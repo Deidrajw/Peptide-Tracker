@@ -312,3 +312,101 @@ html[data-theme="light"] .nx-hybrid-checkin-symbol {background:#EFE2FA;color:#88
  .nx-qa-tile{padding:9px!important;}
  .nexus-today-actions button{font-size:12px!important;padding:8px!important;}
 }
+
+/* Hybrid Phase 2: actual Stash source selectors; presentation only. */
+.nexus-screen-stash .nx-stash-hero {
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:24px 20px 19px!important;margin-bottom:18px!important;
+ border:1px solid #78618b!important;border-radius:27px!important;
+ background:linear-gradient(125deg,#443353,#32263e 65%,#292235)!important;
+ box-shadow:0 16px 35px #0b071f38,inset 0 1px 0 #ffffff23!important;
+}
+.nexus-screen-stash .nx-stash-hero::before {
+ content:"";position:absolute;z-index:-1;right:-45px;top:-85px;width:210px;height:210px;border-radius:50%;
+ background:radial-gradient(circle,#ca91f148,transparent 70%);
+}
+.nexus-screen-stash .nx-stash-hero-title {
+ color:#eadcf7!important;font-size:11px!important;letter-spacing:1.3px!important;margin-bottom:16px!important;
+}
+.nexus-screen-stash .nx-stash-stats {gap:9px!important;}
+.nexus-screen-stash .nx-stash-stat {
+ padding:15px 8px 12px!important;text-align:center;border-radius:17px!important;
+ background:#ffffff12!important;border:1px solid #ffffff2c!important;
+ box-shadow:inset 0 1px 0 #ffffff19!important;
+}
+.nexus-screen-stash .nx-stash-stat strong {font-size:clamp(23px,7vw,32px)!important;color:#fff7ff!important;letter-spacing:-1px;margin-bottom:7px!important;}
+.nexus-screen-stash .nx-stash-stat span,.nexus-screen-stash .nx-stash-invested {color:#e0d0ed!important;}
+.nexus-screen-stash .nx-stash-stat.attention {background:#b794dd29!important;}
+.nexus-screen-stash .nx-stash-stat.attention strong {color:#ebc7ff!important;}
+.nexus-screen-stash .nx-stash-invested {margin-top:15px!important;font-size:11px!important;}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-hero {
+ background:linear-gradient(125deg,#ede0fa,#ddc8ee 74%,#d5bde7)!important;
+ border-color:#cfb6e3!important;box-shadow:0 17px 36px #65427b24,inset 0 1px 0 #ffffffd9!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-hero-title,
+html[data-theme="light"] .nexus-screen-stash .nx-stash-stat strong {color:#332440!important;}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-stat span,
+html[data-theme="light"] .nexus-screen-stash .nx-stash-invested {color:#59476a!important;}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-stat {background:#ffffff6b!important;border-color:#ffffffa8!important;}
+html[data-theme="light"] .nexus-screen-stash .nx-stash-stat.attention strong {color:#683a96!important;}
+.nexus-screen-stash .nx-stash-actions {gap:10px!important;margin-bottom:25px!important;}
+.nexus-screen-stash .nx-stash-actions button {
+ min-height:51px!important;padding:10px 5px!important;border-radius:16px!important;
+ border:1px solid var(--border)!important;
+ background:linear-gradient(150deg,var(--surface),var(--surface-2))!important;
+ box-shadow:0 7px 19px #0e0a1e20,inset 0 1px 0 #ffffff18!important;
+ font-weight:700!important;
+}
+.nexus-screen-stash .nx-stash-actions #qa-addkit {
+ color:#2b1838!important;background-color:#d7b6f5!important;
+ background-image:linear-gradient(145deg,#edceff,#b996ec)!important;
+ border-color:#cfabf3!important;
+ box-shadow:0 8px 21px #7a4aa644,inset 0 1px 0 #ffffffa8!important;
+}
+.nexus-screen-stash .nx-kit-card {
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:20px!important;margin-bottom:17px!important;border-radius:24px!important;
+ background:linear-gradient(150deg,#382c49,#2a2338 78%)!important;
+ border:1px solid #645171!important;
+ box-shadow:0 15px 32px #09061b38,inset 0 1px 0 #ffffff18!important;
+}
+.nexus-screen-stash .nx-kit-card::before {
+ content:"";position:absolute;z-index:-1;top:-92px;right:-95px;
+ width:185px;height:185px;border-radius:50%;background:radial-gradient(circle,#b88ee12c,transparent 72%);
+}
+html[data-theme="light"] .nexus-screen-stash .nx-kit-card {
+ background:linear-gradient(150deg,#fff,#f5effb 92%)!important;
+ border-color:#e1d2ed!important;
+ box-shadow:0 13px 29px #654a7d20,inset 0 1px 0 #fff!important;
+}
+.nexus-screen-stash .nx-kit-heading-unified {margin-bottom:15px!important;}
+.nexus-screen-stash .nx-kit-primary-vial {
+ margin:15px 0!important;padding:19px 17px 16px!important;
+ border-radius:19px!important;background:#ffffff0b!important;border:1px solid #ffffff20!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-kit-primary-vial {
+ background:#eee5f7!important;border:1px solid #dfd0ec!important;
+}
+.nexus-screen-stash .nx-kit-primary-value {font-size:clamp(27px,8vw,38px)!important;letter-spacing:-1.3px!important;}
+.nexus-screen-stash .nx-kit-overview-track {height:8px!important;border-radius:99px!important;overflow:hidden!important;}
+.nexus-screen-stash .nx-kit-actions-three {gap:9px!important;margin-top:17px!important;}
+.nexus-screen-stash .nx-kit-actions-three>button {
+ min-height:47px!important;border-radius:14px!important;
+ background:linear-gradient(135deg,var(--surface-2),var(--surface))!important;
+ box-shadow:inset 0 1px 0 #ffffff16,0 5px 12px #10091e15!important;
+}
+.nexus-screen-stash .nx-kit-actions-three>.nx-kit-detail-button {border-color:var(--border)!important;color:var(--t1)!important;}
+.nexus-screen-stash .nx-kit-detail-panel {margin-top:18px!important;}
+.nexus-screen-stash .nx-stash-tabs {border:1px solid var(--border-sub)!important;border-radius:16px!important;}
+.nexus-screen-stash .nx-stash-tab[aria-selected="true"] {
+ background:var(--surface)!important;color:var(--t1)!important;
+ box-shadow:0 3px 10px #110b211f!important;
+}
+@media(max-width:359px) {
+ .nexus-screen-stash .nx-stash-hero{padding:17px 12px!important;}
+ .nexus-screen-stash .nx-stash-stat{padding:11px 3px!important;}
+ .nexus-screen-stash .nx-kit-card{padding:14px!important;}
+ .nexus-screen-stash .nx-kit-primary-vial{padding:14px!important;}
+ .nexus-screen-stash .nx-kit-actions-three{gap:5px!important;}
+ .nexus-screen-stash .nx-kit-actions-three>button{padding:7px 4px!important;font-size:10.5px!important;}
+}
