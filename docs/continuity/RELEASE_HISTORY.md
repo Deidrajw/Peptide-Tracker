@@ -344,3 +344,7 @@
 ### 2026-10-25 — Published release modal theme contrast hotfix candidate (NOT RELEASED)
 - v0.9.19-beta in live screenshot, published What's New light theme primary acknowledgment appears absent. Candidate branch `fix/issue-109-theme-visibility-audit` adds explicit modal action colors/geometry and Playwright contrast/visibility gate. No data model/storage changes, real dose logs unaffected.
 - Branch awaiting latest-head CI, version/manifest decision, complete isolated FULL DEMO + LIVE ZIP, merge and independent Cloudflare host parity. Real iPhone revalidation and broad full-app theme audit remain incomplete. Do not mark deployed from a PR merge.
+
+### 2026-10-25 — PR #111 extended theme audit candidate (still NOT DEPLOYED)
+- Scope grew from published release Got it invisible on physical light-mode iPhone to targeted source-confirmed repeated contrast defects in Protocol actions, inline lavender buttons/badges, Calendar numerical weights and dark/light muted token palette. CSS only; 9-tab diagnostic + block on 4.5:1 release modal and neutral token combos in 8 browser modes.
+- PR #111, independent of unfinished PR #110. First CI failed due audit regex bug, corrected; run 40165287614 passed after correction. *Later* commits require new latest-head CI. No changes to localStorage/data history; no actual iPhone recheck or independently verified deployment yet.
