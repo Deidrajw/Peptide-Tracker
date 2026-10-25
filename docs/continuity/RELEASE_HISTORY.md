@@ -348,3 +348,8 @@
 ### 2026-10-25 — PR #111 extended theme audit candidate (still NOT DEPLOYED)
 - Scope grew from published release Got it invisible on physical light-mode iPhone to targeted source-confirmed repeated contrast defects in Protocol actions, inline lavender buttons/badges, Calendar numerical weights and dark/light muted token palette. CSS only; 9-tab diagnostic + block on 4.5:1 release modal and neutral token combos in 8 browser modes.
 - PR #111, independent of unfinished PR #110. First CI failed due audit regex bug, corrected; run 40165287614 passed after correction. *Later* commits require new latest-head CI. No changes to localStorage/data history; no actual iPhone recheck or independently verified deployment yet.
+
+### 2026-10-25 — v0.9.19-beta theme contrast hotfix — CODED / TESTED / MERGED, CLOUDFARE UNVERIFIED
+- PR #111 merged with squash `da18b2fb243a57e3023e493093dac70bfe8056f9`; unchanged version v0.9.19-beta (patch delivery to published channel, not a new published What's New entry).
+- Fixed published release Got it/Later visibility in light/dark, AA muted palette on neutral surfaces, Protocol CTA, inline white-on-lavender buttons/badges, and Calendar compact weight/day colours. CSS + QA/doc code only; no localStorage changes, history edits or changes to dose math. Browser matrix 40165612214 and mobile forms 40165612207 PASS on PR head, 8 LIVE/full DEMO theme/width configurations; 9-main-surface contrast diagnostic still requires manual candidate review.
+- FULL DEMO/LIVE ZIP generated in passing workflow artifact; independent postmerge Cloudflare 16-file verification pending; physical iPhone, VoiceOver, all modal AA certification NOT TESTED. Issue #112 remains open. Separate blend parity PR #110 remains unmerged.
