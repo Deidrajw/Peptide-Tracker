@@ -32,6 +32,33 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.evaluate(()=>showOnboarding());
  ensure(await page.locator('#ob-fresh').count()===1 && await page.locator('#ob-restore').count()===1,'Welcome must offer both first-run choices');
  ensure(await page.locator('#ob-wrap').innerText().then(t=>t.includes('local storage')&&t.includes('Clearing browser data')),'Welcome must explain browser-local data loss risk');
+ const restoreSafety=await page.evaluate(async()=>{
+   const old=localStorage.getItem(STORE_KEY);
+   let result=false;
+   try{
+     closeModal();showOnboarding();
+     const picker=document.querySelector('#ob-restore-file');
+     const valid={peptides:{},profile:{name:'Test'},settings:{},dailyLogs:[{id:'backup-only',date:'2026-10-01'}],supplies:[],protocols:[]};
+     picker.files=new DataTransfer().files;
+     const originalAlert=window.alert,originalConfirm=window.confirm;
+     window.alert=()=>{};window.confirm=()=>true;
+     try{
+       const blob=new File([JSON.stringify(valid)],'backup.json',{type:'application/json'});
+       const transfer=new DataTransfer();transfer.items.add(blob);picker.files=transfer.files;
+       picker.dispatchEvent(new Event('change',{bubbles:true}));
+       await new Promise(done=>setTimeout(done,50));
+       const preview=document.querySelector('#ob-restore-preview')?.textContent||'';
+       document.querySelector('#ob-confirm-restore')?.click();
+       result=preview.includes('1 Check-Ins') && JSON.stringify(loadState())===old && !JSON.stringify(loadState()).includes('backup-only');
+     }finally{window.alert=originalAlert;window.confirm=originalConfirm;}
+   }finally{
+     if(old===null)localStorage.removeItem(STORE_KEY);else localStorage.setItem(STORE_KEY,old);
+     closeModal();
+   }
+   return result;
+ });
+ ensure(restoreSafety,'Restore preview or existing saved-record guard failed');
+ await page.evaluate(()=>showOnboarding());
  await page.locator('#ob-fresh').click();
  ensure(await page.locator('.ob-goal').count()>0,'Start Fresh must preserve goal setup steps');
  await page.evaluate(()=>closeModal());
