@@ -342,3 +342,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### 2026-10-25 — Screenshot: light-mode What's New invisible CTA; hotfix QA pending
 - User-observed FAIL: published v0.9.19-beta release modal primary control appears blank at bottom in light-mode iPhone screenshot. New browser gate tests foreground/background contrast >=4.5:1 and rendered 44px+ action bounds for both Later/Got it in 8 LIVE/full DEMO modes (320/390, dark/light). Gate NOT TESTED until CI.
 - Every other screen, theme and nested bottom sheet text contrast: NOT TESTED as site-wide audit; follow-up surface sweep required. Physical iPhone post-fix NOT TESTED. PR #110 ongoing kit parity tests are separate.
+
+### 2026-10-25 — Expanded source/browser contrast audit evidence
+- PREVIOUS candidate 40165287614: all prior browser workflows and 8-mode publication contrast gate PASSED; 9-tab read-only scanner flagged 69 light/31 dark potential low-contrast nodes, **diagnostic counts only**, not measured individual failures (nearest-surface heuristic can misread translucent layers). Full WCAG signoff NOT claimed.
+- Source-confirmed failures corrected in later PR #111 commits: dark --t4/--t5 readability, light t4/t5 on raised cards, Protocol New Protocol, published release buttons, white-on-lavender direct inline styles, and Calendar tiny numerical weight labels/today markers.
+- Latest head: full 320/390 light/dark LIVE/full DEMO regression / primary Cloudflare parity / actual physical iPhone STILL NOT VERIFIED until run. Expanded sheet/modal text coverage remains OPEN; retain fail-closed release controls.
