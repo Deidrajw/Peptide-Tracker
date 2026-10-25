@@ -32,6 +32,10 @@ try{
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
     ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
+    ensure(await card(99001).locator('.nx-kit-actions-two>button').count()===2,'Sealed standard kit should show two equal-width actions');
+    ensure(await card(99003).locator('.nx-kit-actions-two>button').count()===2,'Sealed blend kit should show two actions');
+    ensure(await card(99002).locator('.nx-kit-actions-three:not(.nx-kit-actions-two)>button').count()===3,'Open vial should show three actions');
+    ensure(await card(99001).locator('.nx-kit-primary-empty').isVisible(),'No-vial state must be prominent');
     ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
     ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
     ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
