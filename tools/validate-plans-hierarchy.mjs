@@ -49,7 +49,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
        await new Promise(done=>setTimeout(done,50));
        const preview=document.querySelector('#ob-restore-preview')?.textContent||'';
        document.querySelector('#ob-confirm-restore')?.click();
-       result=preview.includes('1 Check-Ins') && JSON.stringify(loadState())===old && !JSON.stringify(loadState()).includes('backup-only');
+       result={preview,hasOriginal:JSON.stringify(loadState())===old,backupAbsent:!JSON.stringify(loadState()).includes('backup-only'),hasButton:!!document.querySelector('#ob-confirm-restore')};
      }finally{window.alert=originalAlert;window.confirm=originalConfirm;}
    }finally{
      if(old===null)localStorage.removeItem(STORE_KEY);else localStorage.setItem(STORE_KEY,old);
@@ -57,7 +57,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    }
    return result;
  });
- ensure(restoreSafety,'Restore preview or existing saved-record guard failed');
+ ensure(restoreSafety.preview.includes('1 Check-Ins')&&restoreSafety.hasOriginal&&restoreSafety.backupAbsent&&restoreSafety.hasButton,'Restore preview or saved-record guard failed: '+JSON.stringify(restoreSafety));
  await page.evaluate(()=>showOnboarding());
  await page.locator('#ob-fresh').click();
  ensure(await page.locator('.ob-goal').count()>0,'Start Fresh must preserve goal setup steps');
