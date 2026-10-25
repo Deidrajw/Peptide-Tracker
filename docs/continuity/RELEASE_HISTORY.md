@@ -378,3 +378,7 @@
 
 ### 2026-10-25 — Hybrid Design System 2.0 preview (UNRELEASED CANDIDATE)
 - Draft PR #123; experimental CSS, source-derived standalone full-app preview, branch-only builder support and browser QA. Main/Cloudflare unaffected. Version still v0.9.20-beta; this entry is *not a release* or deployed version. No data schema change. Build/browser results pending latest CI; full artifact parity and isolated storage require verification before approval.
+
+
+### 2026-10-25 — Hybrid Today screen source-level redesign (UNRELEASED)
+- Design draft PR #123: Today presentation in `assets/js/10-nexus.js` + experimental CSS; responsive progress ring uses existing schedule percentage, Check-In action event classes preserved. All historical data and JS calculations unchanged. Workflow results pending. This is not a deployed release.
