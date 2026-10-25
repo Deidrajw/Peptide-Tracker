@@ -1,7 +1,7 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**']
+    branches: ['release/**', main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -20,26 +20,36 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-ux-consistency.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
-          grep -q 'v0.9.17-beta' index.html
+          release_version="$(node -p "require('./release/release.json').version")"
+          grep -Fq "<title>Nexus · ${release_version}</title>" index.html
+          node tools/validate-recon-safety.mjs
+          node tools/validate-ux-consistency.mjs
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
-      - name: Independently compare published Pages files with source (nonblocking, preserve failure evidence)
-        continue-on-error: true
-        run: python3 tools/verify-pages.py --attempts 5 --interval 8 --output dist/Nexus_PAGES_REMOTE_CHECK_PR.json
+      - name: Compare primary Cloudflare Pages files with source (required after merge)
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            python3 tools/verify-pages.py --attempts 1 --interval 0 --output dist/Nexus_CLOUDFLARE_PARITY.json
+          else
+            python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json
+          fi
       - name: Build exact-source LIVE and offline full-app DEMO
         run: node tools/build-release.mjs
       - name: Validate artifacts and required files
         shell: bash
         run: |
           python3 - <<'PY'
-          import zipfile, pathlib
-          z=pathlib.Path('dist/Nexus_v0.9.17-beta_LIVE_GitHub.zip')
-          h=pathlib.Path('dist/Nexus_v0.9.17-beta_FULL_DEMO.html')
-          o=pathlib.Path('dist/Nexus_v0.9.17-beta_OFFLINE_FULL_DEMO_OPEN_ME.zip')
+          import zipfile, pathlib, json
+          version=json.loads(pathlib.Path('release/release.json').read_text())['version']
+          z=pathlib.Path(f'dist/Nexus_{version}_LIVE_GitHub.zip')
+          h=pathlib.Path(f'dist/Nexus_{version}_FULL_DEMO.html')
+          o=pathlib.Path(f'dist/Nexus_{version}_OFFLINE_FULL_DEMO_OPEN_ME.zip')
           assert z.exists() and h.exists() and o.exists()
           with zipfile.ZipFile(o) as preview:
               assert preview.testzip() is None
@@ -64,6 +74,7 @@ jobs:
           npm install --no-save --no-package-lock playwright
           npx playwright install --with-deps chromium
           python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node tools/validate-trust-ui.mjs
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
           node tools/validate-protocol-design.mjs
@@ -81,7 +92,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Nexus-v0.9.17-beta-release
+          name: Nexus-release-artifacts
           path: dist/
           if-no-files-found: warn
           retention-days: 30

@@ -21,6 +21,7 @@ function renderSettingsTabContent() {
     ${row("onboarding","👋","Setup & Onboarding")}
     ${sectionLabel("DATA")}
     ${row("health","🍎","Health & Data")}
+    ${row("privacy","🔒","Privacy & Data")}
     ${row("backup","💾","Backup & Restore")}
     ${row("datamanagement","⚠️","Data Management")}
     ${row("usage","📊","Shortcut Activity",state.settings.nxUsageEnabled===true?"On":"Off")}
@@ -31,9 +32,9 @@ function renderSettingsTabContent() {
 
 function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
-  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
+  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", privacy:"Privacy & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button id="settings-detail-back" style="color:var(--t4);font-size:20px;padding:2px 8px;background:transparent;border:none">‹</button>
+    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer">‹</button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
   </div>`;
   let content = "";
@@ -41,6 +42,7 @@ function renderSettingsDetailScreen(key) {
   else if (key==="phasereminders") content = renderPhaseRemindersDetail();
   else if (key==="units") content = renderUnitsDetail();
   else if (key==="health") content = nxHealthImportContext() + renderHealthDataDetail();
+  else if (key==="privacy") content = renderPrivacyDataDetail();
   else if (key==="backup") content = renderBackupDetail();
   else if (key==="datamanagement") content = renderDataManagementDetail();
   else if (key==="usage") content = nxUsageSettingsView();
@@ -73,6 +75,7 @@ function renderRemindersDetail() {
         ? `<button id="disablerem" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:7px 14px;font-size:12px">Turn off</button>`
         : `<button id="enablerem" style="background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Enable</button>`}
     </div>
+    <p style="font-size:12px;line-height:1.55;color:var(--t2);margin:12px 0 0">Dose alerts only appear while Nexus is open. Enabling asks your browser for notification permission; you can decline and still use logging, schedules and your saved records. Nexus does not send background push alerts in this web build.</p>
     ${state.settings.remindersEnabled ? `
     <div style="background:var(--surface-2);border-radius:10px;padding:10px 12px">
       ${Object.entries(allPeptides()).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").map(([n,d])=>{
@@ -121,13 +124,22 @@ function renderHealthDataDetail() {
   <div style="font-size:11px;color:var(--t5);padding:0 4px">${importedCount} imported health record${importedCount===1?"":"s"} currently stored. Automatic sync isn't available in this browser-based build — imports are manual for now.</div>`;
 }
 
+function renderPrivacyDataDetail() {
+  const card=(title,body)=>`<section class="nx-privacy-card"><h3>${title}</h3><p>${body}</p></section>`;
+  return `<p style="font-size:12px;line-height:1.6;color:var(--t2)">Understand where Nexus keeps your records, when permissions are requested, and how backups work.</p>
+    ${card("Stored in this browser", "The web app stores logs, profile, schedules, and inventory in this browser’s local storage. They are not automatically synchronized with other devices. Clearing website data, using private browsing or switching browsers can make saved records unavailable.")}
+    ${card("Export and restore", "Export JSON backups from Backup & Restore before changing devices. Restoring previews a file and requires explicit confirmation because it replaces existing browser records. Backup files contain personal information; store them securely.")}
+    ${card("Permission choices", "Dose Alerts request browser notification permission only when you choose Enable. You can decline and continue using Nexus. Apple Health is imported manually from a file that you choose, not through direct account access.")}
+    ${card("Online resources", "Loading Nexus uses the web host and its assets, including a Google Fonts stylesheet. Do not assume every request stays on your device. Native App Store or Play Store privacy declarations require a separate verified audit.")}
+    <div class="nx-privacy-footnote">Nexus is a personal record-keeping tool, not an emergency alert service or a substitute for professional medication instructions.</div>`;
+}
 function renderBackupDetail() {
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px">
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <button id="exp" style="flex:1;min-width:120px;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600">↓ Export Backup</button>
-      <label style="flex:1;min-width:120px;text-align:center;background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer">↑ Import Backup<input id="imp" type="file" accept="application/json" style="display:none"></label>
+      <button type="button" id="nx-import-open" style="flex:1;min-width:120px;min-height:44px;text-align:center;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600">↑ Import Backup</button><input id="imp" type="file" accept=".json,application/json" hidden>
     </div>
-    <div style="font-size:11px;color:var(--t5);line-height:1.5">Saved on this device automatically. Export a backup regularly — your history shouldn't live in only one place.</div>
+    <div style="font-size:11px;color:var(--t5);line-height:1.5">Saved in this browser, not automatically synced. Export before changing devices or clearing website data. Import previews the file and requests confirmation before replacing records.</div>
   </div>`;
 }
 
@@ -516,12 +528,69 @@ function importAppleHealth(e) {
 
 
 function importData(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const r=new FileReader();
-  r.onload=ev=>{ try{ const p=JSON.parse(ev.target.result); if(p&&p.peptides){state=migrate(p);saveState();render();alert("Backup restored ✓");}else alert("Doesn't look like a valid backup."); }catch{alert("Couldn't read that file.");} };
-  r.readAsText(file); e.target.value="";
+  const file=e.target.files&&e.target.files[0];
+  e.target.value="";
+  if(!file)return;
+  if(file.size>50*1024*1024){alert("Backup exceeds the 50 MB review limit. No records changed.");return;}
+  const reader=new FileReader();
+  reader.onerror=()=>alert("Could not read the backup file. No records changed.");
+  reader.onload=ev=>{
+    let incoming;
+    try{
+      incoming=JSON.parse(ev.target.result);
+      if(!incoming||typeof incoming!=="object"||Array.isArray(incoming)||
+         !incoming.peptides||typeof incoming.peptides!=="object"||Array.isArray(incoming.peptides))
+        throw Error("Unsupported backup format");
+      for(const field of ["dailyLogs","weightLogs","supplementLogs"])
+        if(incoming[field]!=null&&!Array.isArray(incoming[field]))throw Error("Invalid "+field);
+    }catch{alert("Not a supported Nexus JSON backup. No records changed.");return;}
+    const counts=[
+      ["Compounds",Object.keys(incoming.peptides).length],
+      ["Check-ins",(incoming.dailyLogs||[]).length],
+      ["Weight records",(incoming.weightLogs||[]).length],
+      ["Supplement entries",(incoming.supplementLogs||[]).length],
+      ["Stash kits",Object.keys(incoming.peptideKits||{}).length]
+    ];
+    const summary=counts.map(([name,n])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub)"><span>${esc(name)}</span><strong>${n}</strong></div>`).join("");
+    openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <strong style="font-size:17px;color:var(--t1)">Review backup before restore</strong>
+      <button id="nx-import-close" aria-label="Close restore preview" style="min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t1);font-size:22px">×</button></div>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6">File: ${esc(file.name)}. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
+      <div style="font-size:12px;color:var(--t2);margin:12px 0">${summary}</div>
+      <label for="nx-restore-word" style="display:block;font-size:12px;font-weight:650;color:var(--t1);margin-bottom:6px">Type RESTORE to confirm</label>
+      <input id="nx-restore-word" class="inp" autocomplete="off" autocapitalize="characters" placeholder="RESTORE">
+      <p style="font-size:11px;color:var(--t3);margin:8px 0 14px">Nexus saves a local recovery copy before replacement if browser storage permits.</p>
+      <div style="display:flex;gap:8px"><button id="nx-import-cancel" style="flex:1;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
+      <button id="nx-import-confirm" disabled style="flex:1;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
+    const box=document.querySelector(".modal");if(!box)return;
+    box.querySelector("#nx-import-close").onclick=closeModal;
+    box.querySelector("#nx-import-cancel").onclick=closeModal;
+    const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
+    word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
+    go.onclick=()=>{
+      if(word.value.trim()!=="RESTORE")return;
+      const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
+      const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
+      try{
+        if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
+        const next=migrate(incoming),serialized=JSON.stringify(next);
+        if(!next||!serialized)throw Error("Invalid restored state");
+        localStorage.setItem(STORE_KEY,serialized);
+        if(localStorage.getItem(STORE_KEY)!==serialized)throw Error("Restore read-back mismatch");
+        state=next;
+        closeModal();render();
+        alert("Backup restored. A local recovery copy of the previous records was saved.");
+      }catch(err){
+        state=oldState;
+        try{if(oldRaw!==null)localStorage.setItem(STORE_KEY,oldRaw);else localStorage.removeItem(STORE_KEY);}
+        catch(rollbackError){console.error("Restore rollback failed",rollbackError);showSaveWarning();}
+        console.error("Backup restore failed",err);
+        alert("Restore failed. Existing records were retained where browser storage permitted.");
+      }
+    };
+  };
+  reader.readAsText(file);
 }
-
 // ─── Profile modal ────────────────────────────────────────────────────────────
 const ICONS = {
   calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the complete GitHub Pages app files equal the release's checked-out source.
+"""Verify the complete Cloudflare Pages app files equal the release's checked-out source.
 
 No GitHub API secrets and no production writes. Unlike reading the <title>, byte parity
 checks the root HTML, all 3 CSS files and 12 ordered JS modules from the SAME commit.
@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FILES = (["index.html"]
          + ["assets/css/nexus.css", "assets/css/nexus-disclosures.css", "assets/css/nexus-contrast.css"]
          + [f"assets/js/{n:02d}-nexus.js" for n in range(1, 13)])
-DEFAULT_SITE = "https://deidrajw.github.io/Peptide-Tracker/"
+DEFAULT_SITE = "https://nexuspeplog.pages.dev/"
 
 
 def sha256(data):
@@ -92,7 +92,7 @@ def main():
     output.write_text(json.dumps(evidence, indent=2) + "\n")
     if not evidence["verified"]:
         raise SystemExit(f"PAGES UNVERIFIED — {args.base}: failed byte parity; see {output}")
-    label = "LOCAL SMOKE ONLY" if args.smoke else "LIVE GITHUB PAGES VERIFIED"
+    label = "LOCAL SMOKE ONLY" if args.smoke else "LIVE CLOUDFLARE PAGES VERIFIED"
     print(f"{label}: {len(FILES)} exact source files match commit {commit}; evidence: {output}")
 
 

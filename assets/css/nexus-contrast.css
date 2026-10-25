@@ -272,3 +272,28 @@ body .morebox.nx-compound-sheet-open input:focus-visible {
 }
 @keyframes nxSheetFade{from{opacity:0}to{opacity:1}}
 @keyframes nxSheetReveal{from{opacity:.75;translate:0 16px}to{opacity:1;translate:0 0}}
+
+/* Accessibility sweep: honor the iOS Reduce Motion preference across all screens.
+   Preserve visibility/state changes; remove decorative transitions and scrolling only. */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Ensure keyboard users can identify actionable elements even when local
+   component styles omit a focus state. Do not change pointer/touch focus. */
+:where(#app, .modal, .nexus-more-sheet) :is(button, a[href], input, select, textarea, summary, [role="button"]):focus-visible {
+  outline: 2px solid var(--nx-focus-accessible) !important;
+  outline-offset: 2px;
+}
+
+/* Product/trust sweep — simple readable Privacy & Data settings hierarchy. */
+.nx-privacy-card{border:1px solid var(--border-sub);background:var(--surface);border-radius:14px;padding:16px;margin:0 0 12px}
+.nx-privacy-card h3{color:var(--t1);font-size:14px;line-height:1.35;margin:0 0 8px;font-weight:700}
+.nx-privacy-card p{color:var(--t2);font-size:12px;line-height:1.65;margin:0}
+.nx-privacy-footnote{padding:12px 14px;background:var(--surface-2);border-radius:12px;font-size:12px;line-height:1.55;color:var(--t2)}
+#nx-import-open:focus-visible,#nx-import-confirm:focus-visible,#nx-import-cancel:focus-visible,#nx-restore-word:focus-visible{outline:2px solid var(--nx-focus-accessible)!important;outline-offset:2px}
