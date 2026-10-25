@@ -944,15 +944,15 @@ function protocolBuilderModal(existing) {
         ${(c.phases||[{type:"dose",durationWeeks:4,dose:""}]).map((ph,pi)=>`
         <div style="background:var(--surface-3);border-radius:8px;padding:9px;margin-bottom:5px">
           <div style="display:flex;gap:5px;margin-bottom:7px">
-            <button class="pb-ptype" data-ci="${ci}" data-pi="${pi}" data-t="dose" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="dose"?"#A78BFA22":"transparent"};border:1px solid ${ph.type==="dose"?"#A78BFA":"var(--border)"};color:${ph.type==="dose"?"#A78BFA":"var(--t4)"}">Dose</button>
-            <button class="pb-ptype" data-ci="${ci}" data-pi="${pi}" data-t="rest" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="rest"?"#F9C87D22":"transparent"};border:1px solid ${ph.type==="rest"?"#F9C87D":"var(--border)"};color:${ph.type==="rest"?"#F9C87D":"var(--t4)"}">Rest</button>
+            <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="dose" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="dose"?"#A78BFA22":"transparent"};border:1px solid ${ph.type==="dose"?"#A78BFA":"var(--border)"};color:${ph.type==="dose"?"#A78BFA":"var(--t4)"}">Dose</button>
+            <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="rest" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="rest"?"#F9C87D22":"transparent"};border:1px solid ${ph.type==="rest"?"#F9C87D":"var(--border)"};color:${ph.type==="rest"?"#F9C87D":"var(--t4)"}">Rest</button>
             ${pi>0?`<button class="pb-phrem" data-ci="${ci}" data-pi="${pi}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);color:var(--t5);font-size:11px">✕</button>`:""}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span style="font-size:11px;color:var(--t4);flex:1">Duration (weeks)</span>
-            <button class="pb-phdec" data-ci="${ci}" data-pi="${pi}" style="width:26px;height:26px;border-radius:50%;border:1px solid var(--border);color:var(--t2)">−</button>
+            <button type="button" class="pb-phdec nx-pb-stepper" aria-label="Decrease phase duration" data-ci="${ci}" data-pi="${pi}">−</button>
             <span style="font-size:13px;font-weight:600;min-width:24px;text-align:center">${ph.durationWeeks||4}w</span>
-            <button class="pb-phinc" data-ci="${ci}" data-pi="${pi}" style="width:26px;height:26px;border-radius:50%;border:1px solid var(--border);color:var(--t2)">+</button>
+            <button type="button" class="pb-phinc nx-pb-stepper" aria-label="Increase phase duration" data-ci="${ci}" data-pi="${pi}">+</button>
           </div>
           ${ph.type==="dose"?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input class="pb-phdose inp" data-ci="${ci}" data-pi="${pi}" type="number" placeholder="Amount" value="${ph.dose||""}" style="flex:1;height:34px;padding:0 10px"><span style="font-size:11px;color:var(--t4)">${c.unit||cfg(c.name)?.unit||"mg"}</span></div>`:"<div style='font-size:11px;color:var(--t4);margin-bottom:8px'>Rest — no dosing</div>"}
           <div style="display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid var(--border-sub)">
@@ -970,9 +970,9 @@ function protocolBuilderModal(existing) {
               </div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
                 <span style="font-size:10px;color:var(--t3);flex:1">Doses per day</span>
-                <button class="pb-ph-dpdec" data-ci="${ci}" data-pi="${pi}" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:13px">−</button>
+                <button type="button" class="pb-ph-dpdec nx-pb-stepper" aria-label="Decrease doses per day" data-ci="${ci}" data-pi="${pi}">−</button>
                 <span style="font-size:12px;font-weight:700;min-width:14px;text-align:center">${s.dosesPerDay||1}</span>
-                <button class="pb-ph-dpinc" data-ci="${ci}" data-pi="${pi}" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:13px">+</button>
+                <button type="button" class="pb-ph-dpinc nx-pb-stepper" aria-label="Increase doses per day" data-ci="${ci}" data-pi="${pi}">+</button>
               </div>
               ${Array.from({length:s.dosesPerDay||1},(_,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--t4)">${(s.dosesPerDay||1)>1?"Dose "+(i+1):"Time"}</span><input type="time" class="pb-ph-time inp" data-ci="${ci}" data-pi="${pi}" data-i="${i}" value="${(s.times||[])[i]||"08:00"}" style="height:28px;padding:0 6px;width:100px;font-size:11px"></div>`).join("")}
             </div>`;
@@ -989,7 +989,7 @@ function protocolBuilderModal(existing) {
       const interactions=getInteractions(proto.compounds);
       const dosesPerWeek=proto.schedule.dosesPerDay*(proto.schedule.days?.length||1);
       return prog+`
-      <input id="pb-name" class="inp" placeholder="Protocol name *" value="${esc(proto.name)}" style="width:100%;margin-bottom:8px">
+      <label for="pb-name" class="field-label">PROTOCOL NAME</label><input id="pb-name" class="inp nx-pb-name" autocomplete="off" placeholder="Protocol name *" value="${esc(proto.name)}" style="width:100%;margin-bottom:8px">
       <textarea id="pb-notes" class="inp" placeholder="Notes (optional)" style="width:100%;min-height:50px;resize:vertical;margin-bottom:12px">${esc(proto.notes||"")}</textarea>
       <label for="pb-personal-goal" class="field-label">LINK A PERSONAL GOAL (OPTIONAL)</label>
       <select id="pb-personal-goal" class="inp" style="width:100%;min-height:44px;margin-bottom:6px">
