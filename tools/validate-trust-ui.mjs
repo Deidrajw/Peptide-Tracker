@@ -76,10 +76,10 @@ try{
             state.customPeptides[name]={status:'active',scheduleDays:7,doses:[]};
           openBlendVialModal(kit.id);
         });
-        await page.locator('#nx-blend-bac').fill('2');
-        await page.locator('#nx-blend-expiry').fill('30');
-        await page.locator('#nx-blend-notes').fill('Fictional vial');
-        await page.locator('#nx-blend-open').click();
+        await page.locator('#rv-bacml').fill('2');
+        await page.locator('#rv-expiry').fill('30');
+        await page.locator('#rvn').fill('Fictional vial');
+        await page.locator('#rvsave').click();
         const opened=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
           return {bac:k.bacMl,expiry:k.expiryDays,remaining:getSealedVials(k).length,
