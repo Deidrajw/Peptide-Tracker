@@ -431,3 +431,6 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 /* Some inline modal actions force ink via important declarations. Contrast wins. */
 :root[data-theme="light"] .modal .btn-primary:not(:disabled),
 :root[data-theme="light"] .modal #rvsave:not(:disabled){color:#FFFFFF!important;}
+
+/* Override the old Check-In sheet's high-specificity ink-on-accent rule. */
+:root[data-theme="light"] .modal.nx-checkin-sheet #save.btn-primary:not(:disabled) {background:#62449C!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;}
