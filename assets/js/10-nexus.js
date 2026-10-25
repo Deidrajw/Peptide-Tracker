@@ -301,31 +301,38 @@ function stashView() {
             <div><span>Finished</span><strong>${finishedVialsWithHistory.length} vials</strong></div>
           </div>
           <div class="nx-kit-history-heading"><span>Opened vial details</span></div>
-          ${everOpenedVials.length? `<div class="nx-kit-vial-list">
-             ${[...everOpenedVials].reverse().map(v=>{
-               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
-               return `<div class="nx-kit-vial-row">
-                 <div class="nx-kit-vial-row-top"><strong>Vial ${v.sequenceNumber||"—"}</strong><span class="nx-kit-vial-state">${isActive?"Open":"Finished"}</span></div>
-                 <div class="nx-kit-vial-amount">${rem.toFixed(2)} mg <span>remaining</span></div>
-                 <div class="nx-kit-vial-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"}</div>
-                 <button class="vial-actions-btn" data-kit="${s.id}" data-vial="${v.id}" aria-label="Manage vial ${v.sequenceNumber||""}">Vial actions</button>
-               </div>`;
-             }).join("")}
-          </div>`:`<p class="nx-kit-empty-note">No opened vials in this kit yet.</p>`}
+          ${everOpenedVials.length? (() => {
+            const ordered=[...everOpenedVials].reverse();
+            const renderVial=v=>{
+              const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
+              const num=v.sequenceNumber||"—";
+              return `<div class="nx-kit-list-row nx-kit-vial-row">
+                <div class="nx-kit-list-copy">
+                  <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
+                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left</div>
+                </div>
+                <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+              </div>`;
+            };
+            return `<div class="nx-kit-record-list">${ordered.slice(0,5).map(renderVial).join("")}</div>
+              ${ordered.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${ordered.length}" data-noun="vials">Show all ${ordered.length} vials</button><div class="nx-kit-history-extra" hidden>${ordered.slice(5).map(renderVial).join("")}</div>`:""}`;
+          })():`<p class="nx-kit-empty-note">No opened vials in this kit yet.</p>`}
+
         </section>
         <section class="nx-stash-pane" data-pane="history" role="tabpanel" hidden>          ${(()=>{
             const history = getKitDoseHistory(s);
             if (!history.length) return "";
             const display=history.slice(0,5);
             return `<div class="nx-kit-history-heading"><span>${history.length} dose events</span><span>Most recent first</span></div>
-              <div class="nx-kit-history-items">
-                ${display.map(ev=>`<div class="nx-kit-history-row">
-                  <div class="nx-kit-history-date">${historyDateLabel(ev)}</div>
-                  <div class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</div>
-                  <div class="nx-kit-history-sub">${ev.kind==="prepared"?"Prepared":ev.kind==="administered"?"From prepared dose":"Logged dose"}${ev.vials.length?" · "+ev.vials.map(v=>esc(v.label||"Vial")).join(", "):""}</div>
+              <div class="nx-kit-record-list">
+                ${display.map(ev=>`<div class="nx-kit-list-row nx-kit-history-row">
+                  <div class="nx-kit-list-copy">
+                    <div class="nx-kit-list-top"><strong>${historyDateLabel(ev)}</strong><span class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</span></div>
+                    <div class="nx-kit-list-meta">${ev.kind==="prepared"?"Prepared":ev.kind==="administered"?"From prepared dose":"Logged dose"}${ev.vials.length?" · "+ev.vials.map(v=>esc(v.label||"Vial")).join(", "):""}</div>
+                  </div>
                 </div>`).join("")}
               </div>
-              ${history.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${history.length}">Show all ${history.length} records</button><div class="nx-kit-history-extra" hidden>${history.slice(5).map(ev=>`<div class="nx-kit-history-row"><div class="nx-kit-history-date">${historyDateLabel(ev)}</div><div class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</div></div>`).join("")}</div>`:""}`;
+              ${history.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${history.length}" data-noun="records">Show all ${history.length} records</button><div class="nx-kit-history-extra" hidden>${history.slice(5).map(ev=>`<div class="nx-kit-list-row nx-kit-history-row"><div class="nx-kit-list-copy"><div class="nx-kit-list-top"><strong>${historyDateLabel(ev)}</strong><span class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</span></div><div class="nx-kit-list-meta">${ev.kind==="prepared"?"Prepared":ev.kind==="administered"?"From prepared dose":"Logged dose"}</div></div></div>`).join("")}</div>`:""}`;
           })()}
 
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4);margin-bottom:8px">Reconstituted ${fmtDate(currentReconDate)}${reconCount>1?` · ${reconCount} vials opened total`:""}</div>
