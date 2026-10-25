@@ -243,3 +243,8 @@
 - Independent GitHub Actions remote comparison returned 16/16 Cloudflare HTML/CSS/JS exact source hashes for merged v0.9.18-beta (run 40159182188). This meets the previously adopted publication gate for the web build, unlike PR merge alone.
 - Allowed additive publication acknowledgment: set `release/release.json.publication.status` to `published` with the previously verified deployed source SHA/date, then regenerate in-app and JS runtime metadata; the once-per-version popup is only enabled after that new source is independently deployed. Preserve `Later`/acknowledge version-key behavior, legacy changelog and all user records.
 - Web publication says nothing about physical iPhone acceptance, independent calculator clinical safety, Apple/Google review, or complete external-processor privacy declarations.
+
+### 2026-10-24 — Release completion is web-specific
+- v0.9.18-beta has verified published web delivery after PR #97, and primary Cloudflare served 16/16 byte-identical app entry files in run 40160165392. Treat this as completed **web deployment**, not App Store readiness or full human usability acceptance.
+- Persistent policy: publication metadata must follow independent host-byte evidence; What's New is version-gated, stores a separate acknowledgment key, never rewrites legacy changelog or clinical/logging state. Protect localStorage storage and backup integrity.
+- Physical iPhone/VoiceOver signoff, Apple/Google store compliance, public privacy policy and third-party processor disclosures require independent evidence and are not inferred from GitHub CI.
