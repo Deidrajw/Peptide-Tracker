@@ -1992,3 +1992,13 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-dose-form .nx-site-guidance{padding:11px 13px;margin:-4px 0 14px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-sub);font-size:12px;line-height:1.5;color:var(--t2)}
 .nx-dose-form .nx-site-guidance strong{color:var(--t1)}
 .nx-dose-form .nx-site-guidance .nx-site-recent{color:var(--t3);margin-top:4px}
+
+
+.nx-combo-presets{margin:0 0 16px}
+.nx-combo-presets>.inp{width:100%;min-height:48px}
+.nx-combo-manage{margin:8px 0 0}
+.nx-combo-manage summary{list-style:none;cursor:pointer;display:flex;align-items:center;min-height:44px;color:var(--t2);font-size:12px;font-weight:650}
+.nx-combo-manage summary::-webkit-details-marker{display:none}
+.nx-combo-manage summary::after{content:"⌄";margin-left:8px}
+.nx-combo-manage[open] summary::after{transform:rotate(180deg)}
+.nx-combo-manage-options{display:flex;flex-wrap:wrap;gap:7px;padding:8px 0 3px}
