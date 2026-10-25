@@ -285,3 +285,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Card-header parity targeted follow-up (PENDING)
 - Screenshots show FAIL acceptance after #80: all four card headers still have title left with status pill next to large or differently rendered ellipsis at right. Required LIVE/full DEMO × 320/390 × dark/light visual and DOM checks: status below name in same left stack; ellipsis same SVG with 44×44px target, distinct surface, no overlap on long names; clickable Stash status toggle remains working; Goals edit/menu/View goal, Research Intel/menu, Protocol statuses/menu and scheduling unaffected. Physical iPhone retest NOT TESTED for candidate; independent calculator diagnostic remains held.
+
+### 2026-10-25 — Release manifest foundation new gates (PENDING CI)
+- Must pass: generated three channel note outputs exactly match release/release.json, builder refuses stale notes or mismatched index title/version, ordinary app LIVE/isolated DEMO builds retain all pages and scripts; old numeric CHANGELOG and saved `lastSeenChangelog` unchanged; draft/unverified release does not show user popup. Other protected Check-In/Protocol/Stash/Calendar/Dose flows remain governed by existing suite. No privacy permissions invoked. Real iPhone and Cloudflare parity NOT TESTED.
