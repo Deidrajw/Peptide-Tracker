@@ -1672,6 +1672,43 @@ function prepareDosesModal(name) {
   m.querySelector("#pd-save").onclick = () => {
     const amt = m.querySelector("#pd-amt").value;
     if (!state.preparedDoses) state.preparedDoses = [];
+    // All kits—including premixed blends—use this same Prepare sheet. Blends
+    // retain the physical one-vial ledger instead of using direct v2 mutations.
+    if(state.supplies.some(k=>k.name===name&&k.isBlend)){
+      const amount=Number(amt),required=amount*count;
+      if(!Number.isFinite(amount)||amount<=0||!Number.isSafeInteger(count)||count<1){
+        showErrorBanner("Enter a valid amount and syringe count.");return;
+      }
+      const expectedMg=doseToMg(required,c.unit);
+      const plan=rows.filter(r=>Number.isFinite(Number(r.mg))&&Number(r.mg)>0);
+      const allocated=plan.reduce((sum,r)=>sum+Number(r.mg),0);
+      if(!plan.length||Math.abs(allocated-expectedMg)>0.01){
+        showErrorBanner("Allocate the full prepared amount to open vial(s) before confirming.");return;
+      }
+      const tx=uid(),saved=[];
+      for(const row of plan){
+        const kit=state.supplies.find(k=>String(k.id)===String(row.kitId)&&k.isBlend);
+        if(!kit||!getActiveVial(kit)){
+          saved.forEach(a=>undoConsumeCompoundInventory(a.kit,{allocations:[{ledgerId:a.ledgerId}]}));
+          showErrorBanner("Select a prepared blend vial with sufficient available inventory.");return;
+        }
+        const result=consumeCompoundInventory({kit,amountMg:Number(row.mg),reason:"prepared",transactionId:tx});
+        if(!result.committed){
+          saved.forEach(a=>undoConsumeCompoundInventory(a.kit,{allocations:[{ledgerId:a.ledgerId}]}));
+          showErrorBanner("Insufficient open-vial stock. No prepared doses were saved.");return;
+        }
+        for(const al of result.allocations)saved.push({...al,kit});
+      }
+      const allocations=saved.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId}));
+      const entry={id:uid(),compound:name,amountEach:amt,unit:c.unit,count,remainingCount:count,allocations,createdAt:localDatetime()};
+      state.preparedDoses.push(entry);saveState();closeModal();render();
+      showUndoToast(`${count} ${name} doses prepared · Undo`,()=>{
+        state.preparedDoses=state.preparedDoses.filter(p=>p.id!==entry.id);
+        allocations.forEach(a=>{const kit=state.supplies.find(k=>k.id===a.kitId);if(kit)undoConsumeCompoundInventory(kit,{allocations:[a]});});
+        render();
+      });
+      return;
+    }
     if (count>1) {
       if (!rows.length) return;
       // Route through the same canonical consumption function as everything else —
