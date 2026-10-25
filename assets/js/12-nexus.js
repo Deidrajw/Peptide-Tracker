@@ -478,7 +478,7 @@ function wireBody() {
     const name=b.dataset.name,id=+b.dataset.id,builtin=!!PEPTIDES[name],tgt=builtin?state.peptides:state.customPeptides;
     if(tgt[name]){
       const dose = tgt[name].doses.find(d=>d.id===id);
-      if (dose) reverseDoseInventoryEffect(dose);
+      if (dose && reverseDoseInventoryEffect(dose)===false)return;
       tgt[name].doses=tgt[name].doses.filter(d=>d.id!==id);
     }
     saveState();render();
