@@ -466,3 +466,17 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
   border:1px solid var(--border-sub);border-radius:11px;
   background:var(--surface-2);color:var(--t2);font-size:13px;font-weight:650}
 .nx-equipment-delete:focus-visible{outline:3px solid var(--nx-focus-accessible);outline-offset:2px}
+
+
+/* Consistent accessible foreground for filled modal buttons in light mode.
+   CSS color alone cannot override an inline !important text-fill: both must be set. */
+:root[data-theme="light"] .modal :is(.btn-primary,#rvsave):not(:disabled){
+  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+:root[data-theme="light"] .modal :is(.btn-primary,#rvsave):disabled{
+  color:#514968!important;-webkit-text-fill-color:#514968!important;
+}
+:root[data-theme="light"] .modal .nx-reconstitution-cta{
+  background:#62449C!important;border-color:#62449C!important;
+  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
