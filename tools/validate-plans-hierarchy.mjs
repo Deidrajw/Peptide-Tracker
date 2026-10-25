@@ -1,12 +1,12 @@
 import fs from 'node:fs'; import path from 'node:path'; import {chromium} from 'playwright';
-const VERSION='v0.9.17-beta',demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
+const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version,demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),results=[];const ensure=(x,msg)=>{if(!x)throw Error(msg)};
 try { for(const mode of ['live','demo'])for(const width of [320,390])for(const theme of ['light','dark']){
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
  await page.evaluate(t=>{state=buildDemoState('weight_loss');state.profile.onboardingDone=true;state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());},theme);
 
- ensure(await page.evaluate(()=>typeof NEXUS_RELEASE==='object'&&NEXUS_RELEASE.version==='v0.9.17-beta'&&NEXUS_RELEASE.publicationStatus==='unverified'&&!shouldShowPublishedRelease()),'Unverified release must never auto-present as published');
+ ensure(await page.evaluate(()=>typeof NEXUS_RELEASE==='object'&&NEXUS_RELEASE.version===document.title.replace('Nexus · ','')&&NEXUS_RELEASE.publicationStatus==='unverified'&&!shouldShowPublishedRelease()),'Unverified release must never auto-present as published');
  const releasePopup=await page.evaluate(()=>{
    const previous=NEXUS_RELEASE.publicationStatus;
    const key=NEXUS_SEEN_RELEASE_KEY;
