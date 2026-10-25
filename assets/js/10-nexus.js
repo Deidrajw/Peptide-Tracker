@@ -48,7 +48,7 @@ function stashView() {
   const stashSub = state._stashSub || "kits";
   const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn" data-sub="${id}"`, padding:"9px"});
   let html = `<h1 class="serif greet">Stash</h1>
-  <div style="display:flex;gap:6px;margin-bottom:16px">
+  <div class="nx-hybrid-stash-segment" role="group" aria-label="Stash category">
     ${stashSubBtn("kits","Compound kits")}
     ${stashSubBtn("equipment","Supplies")}
   </div>
@@ -109,15 +109,15 @@ function stashView() {
     });
   });
   if (invNotices.length) {
-    html += `<div style="margin-bottom:16px">
-      <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">NEEDS ATTENTION</div>
-      ${invNotices.map(n=>`<div style="background:#F9C87D0d;border:1px solid #F9C87D33;border-radius:10px;padding:12px 14px;margin-bottom:8px">
+    html += `<section class="nx-hybrid-attention" aria-label="Needs attention">
+      <div class="nx-hybrid-attention-head"><span class="nx-hybrid-attention-dot" aria-hidden="true"></span> NEEDS ATTENTION <span class="nx-hybrid-attention-count">${invNotices.length}</span></div>
+      ${invNotices.map(n=>`<div class="nx-hybrid-attention-row">
         <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${esc(n.name)}</div>
         <div style="font-size:12px;color:var(--t3)">${esc(n.text)}</div>
         ${n.sub?`<div style="font-size:12px;color:#F9C87D">${esc(n.sub)}</div>`:""}
         <button class="inv-notice-action" data-kind="${n.kind}" data-kit="${n.kitId||""}" data-name="${esc(n.name)}" style="margin-top:8px;font-size:11px;font-weight:600;color:#F9C87D;background:transparent;border:none;padding:0">${esc(n.action)} →</button>
       </div>`).join("")}
-    </div>`;
+    </section>`;
   }
 
   html += `<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR KITS</div>
