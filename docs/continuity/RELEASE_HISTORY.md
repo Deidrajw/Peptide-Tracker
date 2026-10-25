@@ -390,3 +390,7 @@
 
 ### 2026-10-25 — Hybrid Stash refinement pass 2 (UNRELEASED)
 - Draft PR #123 code `e29cb50f` / `5134978f`: native-style category segments, toned-down Inventory Overview and kit gradients, structured Needs Attention list, modal styling baseline. No data migration or logic change. Latest-head QA pending. Not merged or deployed; production unaffected.
+
+
+### 2026-10-25 — Visual cleanup candidate (NOT RELEASED)
+- Design PR #123 commit `7fa1a893`: reduced kit-button shadow, paired Today CTA consistency, Needs Attention rail removed. Visual-only CSS; no migrations. Latest-head tests pending, no production deployment.
