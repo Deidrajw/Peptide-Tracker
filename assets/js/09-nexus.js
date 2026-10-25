@@ -1302,7 +1302,7 @@ function openNewVialModal(supplyId, onDone) {
     <input id="rv-expiry" type="number" step="1" min="1" class="inp" value="${s.expiryDays||28}" style="margin-bottom:14px">
     <label class="field-label">NOTES (lot #, batch, anything notable)</label>
     <input id="rvn" class="inp" placeholder="optional" style="margin-bottom:18px">
-    <button id="rvsave" class="btn-primary" style="background:${c.color};color:#1A1728!important">Log Reconstitution</button>
+    <button id="rvsave" class="btn-primary nx-reconstitution-cta" style="background:${isLight()?"#62449C":c.color};color:${isLight()?"#FFFFFF":"#1A1728"}">Log Reconstitution</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
 
