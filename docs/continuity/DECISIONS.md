@@ -218,3 +218,6 @@
 
 ### 2026-10-25 — Canonical release notes source (candidate)
 - `release/release.json` is proposed as source for one semantic app version, release channel/status, commit/date, user-visible changes, data impact and limitations. Three generated outputs must match exactly; release builder checks parity and display title. Publication remains `unverified`, NOT assumed from GitHub merge. Existing history and localStorage change-log number are not rewritten or marked read. Popup and native submission declarations follow only after release mechanism and store review.
+
+### 2026-10-25 — Publish-gated release announcement candidate
+- Source manifest drives generated runtime NEXUS_RELEASE and three channel outputs. New popup is silent for unverified/draft releases, only shows once per version when manifest explicitly published and onboarding finished, supports Later and explicit Got it, and stores seen version in an additive localStorage key rather than rewriting saved clinical/log records or legacy lastSeenChangelog. Existing history is retained; numeric legacy popup suppressed for confirmed published manifest to avoid duplicate announcements. Real publication status requires verified GitHub/Cloudflare evidence, not inferred from merge.
