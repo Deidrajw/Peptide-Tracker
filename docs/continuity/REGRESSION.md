@@ -324,3 +324,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### 2026-10-24 — Published manifest regression test correction (CANDIDATE)
 - PR #97 run 40159568404: PASS prior sections (source, generate-release, artifact, 8-mode privacy, Check-In, Protocol, Stash, Combo, chevrons); FAIL at `tools/validate-plans-hierarchy.mjs` because its assertion hardcoded `publicationStatus==='unverified'` after verified publication. **No merge.**
 - Updated assertion to match canonical `release/release.json.publication.status`; still explicitly verifies unpublished releases cannot auto-prompt, while the existing scenario tests published Later vs Got it and isolated acknowledgement. Requires fresh latest-head full CI PASS before merge.
+
+### 2026-10-24 — Final published web source regression evidence
+- **PASS (automated and remote):** post-published-flag GitHub Actions run 40160165392, root HTML/3 CSS/12 JS all 16 remote Cloudflare source hashes match expected merged application bytes (`Nexus_CLOUDFLARE_PARITY.json` `verified:true`). Mobile form run 40160165348 PASS. Full LIVE and fictional full DEMO packages and 320/390 light/dark browser regression PASS. Published popup Later/acknowledge and old changelog nonduplication covered by release suite; no data migration.
+- **PASS (earlier independent numerical evidence):** measurement conversion diagnostic 80 PASS, 0 FAIL; invalid inputs/IU/multi-syringe guards verified mathematically, not clinically.
+- **NOT TESTED:** physical iPhone, VoiceOver, complete human 57/120 visual surfaces, external processors and public privacy declaration signoff, native iOS/Android and Apple/Google store review.
