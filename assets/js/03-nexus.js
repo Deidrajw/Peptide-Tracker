@@ -893,57 +893,8 @@ function getBlendKitRemainingMg(kit) {
 
 // Blend vials are ONE premixed inventory item. Never create separate constituent-dose
 // entries when opening a physical blend vial or logging that blend.
-function openBlendVialModal(kitId) {
-  const kit=(state.supplies||[]).find(k=>k.id===kitId && k.isBlend);
-  if(!kit) return;
-  const available=getSealedVials(kit);
-  if(!available.length){showErrorBanner("No sealed blend vials remain in this kit.");return;}
-  if(kit.reconDate && kit.activeKit && ensureKitVials(kit).some(v=>v.status==="active"||v.status==="open")){
-    showErrorBanner("A blend vial is already open. Finish it before opening another.");return;
-  }
-  const m=openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span class="mono" style="font-size:13px;color:#A78BFA;letter-spacing:1.5px">OPEN NEW VIAL</span>
-      <button type="button" id="nx-blend-cancel" aria-label="Close open vial" style="color:var(--t2);min-width:44px;min-height:44px;font-size:18px">✕</button>
-    </div>
-    <div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:14px;margin-bottom:16px">
-      <div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:10px">VIAL DETAILS</div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
-        <div><label class="field-label">VIALS IN KIT</label><div class="inp" style="padding:9px 8px;font-size:12px;min-height:44px">${kit.totalVials||0}</div></div>
-        <div><label class="field-label">MG PER VIAL</label><div class="inp" style="padding:9px 8px;font-size:12px;min-height:44px">${kit.vialMg||0}</div></div>
-        <div><label for="nx-blend-bac" class="field-label">BAC WATER (mL)</label><input id="nx-blend-bac" type="number" min="0.01" step="0.1" class="inp" value="${kit.bacMl>0?kit.bacMl:""}" placeholder="e.g. 3" style="padding:9px 8px;font-size:12px;min-height:44px"></div>
-      </div>
-      <div style="font-size:11px;color:var(--t3);margin-top:8px">${esc(kit.name)} · premixed blend · ${(kit.composition||[]).length} components</div>
-    </div>
-    <label for="nx-blend-date" class="field-label">RECONSTITUTION DATE</label>
-    <input id="nx-blend-date" type="date" class="inp" value="${localDate()}" style="margin-bottom:14px">
-    <label for="nx-blend-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label>
-    <input id="nx-blend-expiry" type="number" min="1" step="1" class="inp" value="${kit.expiryDays||28}" style="margin-bottom:14px">
-    <label for="nx-blend-notes" class="field-label">NOTES (lot #, batch, anything notable)</label>
-    <textarea id="nx-blend-notes" class="inp" rows="2" style="margin-bottom:18px" placeholder="optional"></textarea>
-    <button type="button" id="nx-blend-open" class="btn-primary" style="width:100%;min-height:48px;background:#A78BFA;color:#1A1728;font-weight:700">Log Reconstitution</button>
-  `, "#A78BFA");
-  m.querySelector("#nx-blend-cancel").onclick=closeModal;
-  m.querySelector("#nx-blend-open").onclick=()=>{
-    const bac=Number(m.querySelector("#nx-blend-bac").value);
-    const days=Number(m.querySelector("#nx-blend-expiry").value);
-    const date=m.querySelector("#nx-blend-date").value;
-    if(!Number.isFinite(bac)||bac<=0||!Number.isSafeInteger(days)||days<1||days>3650||!/^\d{4}-\d{2}-\d{2}$/.test(date)){
-      showErrorBanner("Enter valid BAC water, expiry days and reconstitution date.");return;
-    }
-    const remaining=getSealedVials(kit);
-    if(!remaining.length){showErrorBanner("No sealed blend vial remains.");return;}
-    const vial=remaining[0];
-    vial.status="open"; vial.reconDate=date; vial.bacMl=bac;
-    vial.expiryDays=days; vial.notes=m.querySelector("#nx-blend-notes").value.trim();
-    kit.bacMl=bac;kit.expiryDays=days;kit.reconDate=date;
-    kit.openedVials=(kit.openedVials||0)+1;
-    kit.activeKit=true;
-    kit.reconHistory=kit.reconHistory||[];
-    kit.reconHistory.push({id:uid(),date,notes:vial.notes,vialId:vial.id,bacMl:bac,expiryDays:days});
-    saveState();closeModal();render();
-  };
-}
+// Blend entry uses exactly the same visual sheet as every other kit.
+function openBlendVialModal(kitId) { return openNewVialModal(kitId); }
 
 // The kit total includes sealed inventory; an administered draw is limited by
 // the ONE opened blend vial. Vial IDs prevent same-day rollover double counting.
