@@ -1,7 +1,7 @@
 {
   "version": "v0.9.18-beta",
   "channel": "beta",
-  "publicationStatus": "unverified",
+  "publicationStatus": "published",
   "title": "Clearer, safer everyday tracking",
   "changes": [
     {
@@ -43,7 +43,7 @@
   "dataImpact": "No automatic migration or modification of existing saved records. A user-initiated restore now requires confirmation and keeps a local recovery copy before replacement.",
   "limitations": [
     "Calculator mass conversions support mg and mcg; generic IU conversion is intentionally unsupported.",
-    "Cloudflare publication and physical iPhone/VoiceOver acceptance are unverified.",
+    "Physical iPhone/VoiceOver acceptance remains unverified; Cloudflare 16-file parity was verified against the merged application source.",
     "App Store and Play Store native-wrapper submission readiness still requires independent verification."
   ]
 }

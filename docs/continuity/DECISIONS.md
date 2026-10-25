@@ -238,3 +238,8 @@
 - Browser transparency must distinguish local records, host/font network access, manual Apple Health imports, in-app reminders and browser permission. Do not claim no external data collection without server/native audit.
 - Calculator must not infer universal IU→mg potency, show a result for invalid nonfinite or physically overflowing entries, or change U-100 unit readings when syringe capacity changes. Independent math gate must block candidate on failures; clinical/safety certification is not implied.
 - Canonical release manifest drives runtime/title/three What's New channels and test artifact paths. Publish-gated popup remains silent for unverified builds. Apple 1.4.2 dosage-calculator review requirements and Google Play health/privacy declarations are store blockers independent of web-app UX.
+
+### 2026-10-24 — Verified web publication activates What's New without claiming store clearance
+- Independent GitHub Actions remote comparison returned 16/16 Cloudflare HTML/CSS/JS exact source hashes for merged v0.9.18-beta (run 40159182188). This meets the previously adopted publication gate for the web build, unlike PR merge alone.
+- Allowed additive publication acknowledgment: set `release/release.json.publication.status` to `published` with the previously verified deployed source SHA/date, then regenerate in-app and JS runtime metadata; the once-per-version popup is only enabled after that new source is independently deployed. Preserve `Later`/acknowledge version-key behavior, legacy changelog and all user records.
+- Web publication says nothing about physical iPhone acceptance, independent calculator clinical safety, Apple/Google review, or complete external-processor privacy declarations.
