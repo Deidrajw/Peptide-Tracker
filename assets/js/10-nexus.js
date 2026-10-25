@@ -292,6 +292,11 @@ function stashView() {
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">CONC</div><div style="font-size:12px;color:var(--t2)">${conc?conc.toFixed(2)+" mg/mL":"—"}</div></div>
           </div>
 
+          ${s.isBlend && Array.isArray(s.composition) && s.composition.length ? `
+            <div style="border-top:1px solid var(--border-sub);margin:10px 0 8px;padding-top:10px">
+              <div class="mono" style="font-size:9px;color:var(--t4);margin-bottom:8px">COMPOSITION PER VIAL</div>
+              ${s.composition.map(part=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:10px;font-size:12px;color:var(--t2)"><span>${esc(part.compound)}</span><span>${Number(part.mg).toFixed(2)} mg · ${s.vialMg>0?Math.round(Number(part.mg)/Number(s.vialMg)*100):0}%</span></div>`).join("")}
+            </div>` : ""}
           ${weeksRemaining!=null?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px">At current pace: ~${weeksRemaining.toFixed(1)} wks remaining, depleting around ${fmtDate(depletionDate)}</div>`:""}
 
           ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-bottom:10px">${esc(s.notes)}</div>`:""}
