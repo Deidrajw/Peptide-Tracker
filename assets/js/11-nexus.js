@@ -73,6 +73,7 @@ function renderRemindersDetail() {
         ? `<button id="disablerem" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:7px 14px;font-size:12px">Turn off</button>`
         : `<button id="enablerem" style="background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Enable</button>`}
     </div>
+    <p style="font-size:12px;line-height:1.55;color:var(--t2);margin:12px 0 0">Dose alerts only appear while Nexus is open. Enabling asks your browser for notification permission; you can decline and still use logging, schedules and your saved records. Nexus does not send background push alerts in this web build.</p>
     ${state.settings.remindersEnabled ? `
     <div style="background:var(--surface-2);border-radius:10px;padding:10px 12px">
       ${Object.entries(allPeptides()).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").map(([n,d])=>{
