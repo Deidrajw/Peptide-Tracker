@@ -381,3 +381,49 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 /* Today's numeric day marker should remain readable on compact cells. */
 :root:not([data-theme="light"]) .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#7DF9C0 !important;}
 :root[data-theme="light"] .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#146E50 !important;}
+
+
+/* v0.9.20 design pass: remove dividers that don't signify a change in context.
+   Preserve tab selection underlines, focus outlines, field bounds and list identity. */
+.nx-kit-detail-panel .nx-kit-stat-list,
+.nx-supply-detail-panel .nx-kit-stat-list {
+  border-top:0!important;border-bottom:0!important;
+}
+.nx-kit-detail-panel .nx-kit-stat-list > div + div,
+.nx-supply-detail-panel .nx-kit-stat-list > div + div {
+  border-top:0!important;
+}
+.nx-kit-detail-panel .nx-kit-note {
+  border-bottom:0!important;margin-bottom:12px!important;
+}
+.nx-supply-detail-panel .nx-supply-detail-footer {
+  border-top:0!important;margin-top:10px!important;padding-top:0!important;
+}
+.nx-kit-detail-panel .nx-kit-history-heading + .nx-kit-stat-list {
+  margin-top:8px;
+}
+/* Accessible light sheets: no pale-lime CTAs or pale-green-on-white labels.
+   Vivid status tint is not relied upon as the sole signifier; retain text labels.
+   Restrict recoloring to light theme, keeping dark-theme semantics untouched. */
+:root[data-theme="light"] .modal .btn-primary,
+:root[data-theme="light"] .modal #rvsave {
+  background:#62449C!important;color:#FFFFFF!important;
+  border-color:#62449C!important;
+  text-shadow:none!important;
+}
+:root[data-theme="light"] .modal .btn-primary:disabled,
+:root[data-theme="light"] .modal #rvsave:disabled {
+  background:#E7E3F0!important;color:#514968!important;
+  border-color:#C8C1DC!important;
+  opacity:1!important;cursor:not-allowed;
+}
+:root[data-theme="light"] .modal [style*="color:#7DF9C0"],
+:root[data-theme="light"] .modal [style*="color: #7DF9C0"],
+:root[data-theme="light"] .modal [style*="color:#B9FF"],
+:root[data-theme="light"] .modal [style*="color:#b9ff"] {
+  color:#5B3FA8!important;
+}
+:root[data-theme="light"] .modal button:focus-visible,
+:root[data-theme="light"] .nx-kit-detail-button:focus-visible {
+  outline:3px solid #5B3FA8!important;outline-offset:2px;
+}
