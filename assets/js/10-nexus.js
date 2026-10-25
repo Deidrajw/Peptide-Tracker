@@ -136,7 +136,7 @@ function stashView() {
     const c = cfg(s.name);
     const sameCompoundKits=state.supplies.filter(k=>k.name===s.name);
     const allCompDoses=(aps[s.name] ? (aps[s.name].doses||[]) : []);
-    const compDoses = allCompDoses.filter(d=>d.dose&&parseFloat(d.dose)>0&&(d.kitId===s.id||(sameCompoundKits.length===1&&!d.kitId)));
+    const compDoses = allCompDoses.filter(d=>d.dose&&parseFloat(d.dose)>0&&(d.kitId===s.id||d.blendSource===s.id||(sameCompoundKits.length===1&&!d.kitId)));
     const conc = (parseFloat(s.vialMg||0)>0&&parseFloat(s.bacMl||0)>0) ? parseFloat(s.vialMg)/parseFloat(s.bacMl) : null;
 
     // ── Current reconstituted vial ─────────────────────────────────────────────
@@ -151,7 +151,7 @@ function stashView() {
     // value — exactly the kind of second formula capable of quietly disagreeing with the
     // real number once a kit is migrated.
     const activeVialForCard = getActiveVial(s);
-    const vialRem = activeVialForCard ? getVialRemainingMg(s, activeVialForCard) : null;
+    const vialRem = activeVialForCard ? (s.isBlend ? getBlendOpenVialRemainingMg(s) : getVialRemainingMg(s, activeVialForCard)) : null;
     const activeCapacityMg = activeVialForCard ? Number(activeVialForCard.vialMg||s.vialMg) : 0;
     const vialPct = activeCapacityMg>0 && vialRem!=null ? Math.max(0,Math.min(100,Math.round(vialRem/activeCapacityMg*100))) : null;
     // Separate from vialRem above — how much has been logged as OUTFLOW (waste/gift/
@@ -181,7 +181,7 @@ function stashView() {
     // third independent formula built from dose history and a waste sum. This is the
     // most visible number on the whole card; it must never be able to disagree with what
     // Log Dose, Prepare Dose, or any other screen just did to this kit's inventory.
-    const kitRemMg = getKitRemainingMg(s);
+    const kitRemMg = s.isBlend ? getBlendKitRemainingMg(s) : getKitRemainingMg(s);
     const vialList = ensureKitVials(s);
     const sealed = getSealedVials(s).length;
     // Transferred vials are deliberately excluded — this list is specifically about vials
@@ -224,15 +224,15 @@ function stashView() {
     // says "Open New Vial," never "First."
     let action = null;
     if (s.kitStatus==="done") action = {label:"Reopen kit", cls:"reopenkit"};
-    else if (!currentReconDate && everOpenedVials.length===0) action = {label:"Open first vial", cls:"opennewvial"};
-    else action = {label:"Open new vial", cls:"opennewvial"};
+    else if (!currentReconDate && everOpenedVials.length===0) action = {label:"Open new vial", cls:s.isBlend?"openblendvial":"opennewvial"};
+    else action = {label:"Open new vial", cls:s.isBlend?"openblendvial":"opennewvial"};
     const actionUrgent = statusKey==="empty"||statusKey==="low"||statusKey==="expiring";
 
     // Owned stock includes sealed reserves; progress applies only to an actual open vial.
     const displayKitMg = Number.isFinite(kitRemMg) ? kitRemMg : null;
     const displayOpenMg = activeVialForCard && vialRem!=null ? vialRem : null;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
-    const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : ""].filter(Boolean).join(" · ") || "No available vials";
+    const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
 
     const secondaryBits = [];
     if (shotsEst!=null) secondaryBits.push(`~${shotsEst} shots left`);
@@ -377,87 +377,7 @@ function stashView() {
 
   const liveEntries = entries.filter(s=>s.kitStatus!=="done");
   const doneEntries = entries.filter(s=>s.kitStatus==="done");
-  const renderBlendKitCard = (s) => {
-    const totalMg = (s.totalVials||0) * (s.vialMg||0);
-    const doseLog = s.doseLog||[];
-    const wasteLog = s.wasteLog||[];
-    const currentReconDate = s.reconDate||null;
-    const reconDoses = currentReconDate ? doseLog.filter(d=>new Date(d.date)>=new Date(currentReconDate)) : [];
-    const usedFromCurrent = reconDoses.reduce((a,d)=>a+(d.totalMgDrawn||0),0);
-    const wasteFromCurrent = currentReconDate ? getKitActiveWasteMg(s, currentReconDate) : 0;
-    const vialRem = currentReconDate ? getBlendOpenVialRemainingMg(s) : null;
-    const vialPct = s.vialMg>0 && vialRem!=null ? Math.round(vialRem/s.vialMg*100) : null;
-
-    // Blend kits deliberately stay on their own formula rather than getKitRemainingMg —
-    // they track consumption through kit.doseLog/totalMgDrawn, a genuinely different,
-    // simpler shape than the vials[]-based peptide kit model (one mixed vial at a time,
-    // no reconstitution rollover, no sealed backups). getBlendKitRemainingMg is now the
-    // ONE place this formula lives, shared with logBlendDoseModal's own save-time
-    // validation — previously this card computed it separately from that modal, and nothing
-    // stopped a dose amount from exceeding what the card showed as available.
-    const kitRemMg = getBlendKitRemainingMg(s);
-    // This one IS safe to fix regardless of the above — it's purely about which vials are
-    // physically sealed, unrelated to whichever dose-tracking mechanism this kit uses.
-    const vialList = ensureKitVials(s);
-    const sealed = getSealedVials(s).length;
-
-    let statusKey = "empty";
-    if (currentReconDate && s.activeKit) statusKey = vialPct<=20 ? "low" : "healthy";
-    else if (sealed>0 || !s.activeKit) statusKey = "stored";
-    const st = STATUS_META[statusKey] || STATUS_META.stored;
-
-    return `<div class="card nx-kit-card nx-blend-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-        <div style="width:9px;height:9px;border-radius:50%;background:#C9A0FF;flex-shrink:0"></div>
-        <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)} <span style="font-size:10px;color:var(--t5);font-weight:400">blend</span></span><span class="nx-card-status">${statusBadge(st.label, st.color)}</span></span>
-        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Actions for ${esc(s.name)} kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
-      </div>
-      <div class="nx-stash-inventory-summary" style="margin-bottom:12px">
-        <div style="font-size:10px;letter-spacing:.5px;font-weight:650;color:var(--t4);margin-bottom:5px">KIT INVENTORY REMAINING</div>
-        <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
-          <span class="nx-kit-quantity" style="font-size:27px;font-weight:750;color:var(--t1);line-height:1.15">${Number.isFinite(kitRemMg)?kitRemMg.toFixed(kitRemMg%1===0?0:1):"—"}</span>
-          <span style="font-size:13px;color:var(--t4)">mg across this kit</span>
-        </div>
-        <div style="font-size:12px;color:var(--t3);margin-top:6px">${sealed ? sealed+" sealed" : "No sealed vials"} · ${currentReconDate?"1 open":"None open"}</div>
-      </div>
-      ${currentReconDate && vialRem!==null ? `<div class="nx-stash-open-progress" style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px">
-          <span style="font-size:12px;color:var(--t3)">Current open vial</span>
-          <span style="font-size:12px;font-weight:650;color:var(--t2)">${vialRem.toFixed(vialRem%1===0?0:1)} / ${s.vialMg} mg</span>
-        </div>
-        ${vialPct!==null?`<div role="progressbar" aria-label="Open blend vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.max(0,Math.min(100,vialPct))}%;background:${st.color};border-radius:7px"></div></div>`:""}
-      </div>
-      <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Dose</button>
-      <button type="button" class="finishblendvial" data-id="${s.id}" style="width:100%;min-height:44px;margin-top:6px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:13px">Finish current vial</button>
-      ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No vial currently open</div>`}
-
-      ${!currentReconDate && sealed>0 ? `<button type="button" class="openblendvial" data-id="${s.id}" style="width:100%;min-height:48px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;margin:8px 0">Open new vial</button>` : ""}
-      <details style="margin-top:${currentReconDate?"8":"2"}px">
-        <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Kit details & history</summary>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
-          <div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:6px">COMPOSITION PER VIAL (${s.vialMg}mg total)</div>
-          <div style="margin-bottom:12px">${(s.composition||[]).map(c=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:3px 0"><span>${esc(c.compound)}</span><span>${c.mg}mg (${totalMg>0?Math.round(c.mg/(s.vialMg||1)*100):0}%)</span></div>`).join("")}</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">KIT TOTAL</div><div style="font-size:12px;font-weight:600;color:var(--t2)">${kitRemMg.toFixed(0)} / ${totalMg} mg</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">VIALS</div><div style="font-size:11px;color:var(--t2)">${sealed>0?`${sealed} sealed `:""}${vialList.filter(v=>v.status==="active"||v.status==="open").length>0?`· ${vialList.filter(v=>v.status==="active"||v.status==="open").length} open`:""}${vialList.filter(v=>v.status==="finished"||v.status==="empty").length>0?`· ${vialList.filter(v=>v.status==="finished"||v.status==="empty").length} empty`:""}${vialList.filter(v=>v.status==="transferred").length>0?`· ${vialList.filter(v=>v.status==="transferred").length} transferred`:""}</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">CONC</div><div style="font-size:12px;color:var(--t2)">${(s.bacMl>0)?(s.vialMg/s.bacMl).toFixed(2)+" mg/mL":"—"}</div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-            ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toFixed(2)} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
-            <button class="manage-kit-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} blend kit" style="min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t3)">Manage kit</button>
-          </div>
-          <div style="font-size:12px;color:var(--t3);line-height:1.6">
-            <div>BAC water: ${s.bacMl>0?s.bacMl+" mL":"Not recorded"}</div>
-            <div>Expiry after reconstitution: ${s.expiryDays||28} days</div>
-            <div>Notes: ${s.notes?esc(s.notes):"None"}</div>
-          </div>
-          ${currentReconDate?`<div style="font-size:11px;color:var(--t4)">Reconstituted ${fmtDate(currentReconDate)}</div>`:""}
-          ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:6px">${esc(s.notes)}</div>`:""}
-        </div>
-      </details>
-    </div>`;
-  };
-  const renderAnyKitCard = s => s.isBlend ? renderBlendKitCard(s) : renderKitCard(s);
+  const renderAnyKitCard = s => renderKitCard(s);
   const GROUP_LABELS_STATUS = {attention:"NEEDS ATTENTION",active:"ACTIVE",stored:"STORED"};
   const GROUP_LABELS_INV = {active:"ACTIVE",sealed:"STORED / SEALED"};
   if (group==="status" || group==="inventory_state") {
