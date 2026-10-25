@@ -596,3 +596,11 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **Additional separate accounting concern:** screenshot showed `1200 mg/vial` headline but `10 / 1250 mg` current open vial. Needs non-destructive data consistency investigation; DO NOT overwrite physical vial quantity from UI assumptions. No change to inventory math in this follow-up.
 - Static latest-branch JS syntax parse on 04/10/12: PASS. Real browser/phone, theme/320-390, complete DEMO/LIVE ZIP, PR merge and Cloudflare parity: **INCOMPLETE**. Do not claim production release.
 - **ONE NEXT ACTION:** Execute PR #110 latest-head full browser tests including details toggling/Overview-Vials-History parity at 320/390 light/dark and legacy KLOW balance tests; investigate 1200/1250 discrepancy; build isolated full DEMO and LIVE ZIP before merging/deploying.
+
+
+### 2026-10-25 — User-approved compact Vials & History layout on PR #110 (CANDIDATE)
+- Approved design: remove oversized opened-vial cards; both Vials and History use common `nx-kit-list-row` visual language: 13px primary, 12px muted metadata, subtle row dividers, 44px action controls, five recent rows then Show All/Fewer.
+- Implemented source on branch: `assets/js/10-nexus.js` renders number/status, opened date and remaining mg in a compact vial row with existing `.vial-actions-btn` dataset, preserving action behavior. History has corresponding compact date/dose rows; both use `.nx-kit-show-more` and hidden overflow sections. `assets/js/12-nexus.js` toggles both with accurate nouns. `assets/css/nexus.css` scopes matching row layout to the kit details panel, preserving all data.
+- Source syntax on modified JS: PASS. Browser interactive, test-at-width, theme contrast, exact vial-action menus and inherited history: **NOT TESTED**. Full DEMO/LIVE ZIP, PR merge and Cloudflare deployment: **INCOMPLETE**. Production unchanged.
+- Branch is one main commit behind and must preserve main's theme contrast corrections.
+- **ONE NEXT ACTION:** Run latest-head full-app DEMO/LIVE regression for Vials/History list interactions, actions and 320/390 both themes together with legacy blend inventory, then package, merge and independently verify Cloudflare only if all checks pass.
