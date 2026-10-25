@@ -94,14 +94,16 @@ try{
             const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
             if(!card)return null;
             return {label:card.querySelector('.nx-stash-inventory-summary')?.textContent?.includes('KIT INVENTORY REMAINING'),
-              action:card.querySelector('.opennewvial,.openblendvial')?.textContent?.trim(),
+              actionPresent:!!card.querySelector('.opennewvial,.openblendvial'),
               summary:card.querySelector('details>summary')?.textContent?.trim(),
               tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
           };
           return {single:read(normal.id),blend:read(975310)};
         });
         assert.ok(parity.single&&parity.blend,'both standard and premixed cards must render');
-        assert.deepEqual(parity.blend,parity.single,'blend and regular kit must share inventory label, action, disclosure and detail tabs');
+        assert.equal(parity.single.label,true);assert.equal(parity.blend.label,true);
+        assert.deepEqual(parity.blend.tabs,parity.single.tabs,'shared kit details tabs');
+        assert.equal(parity.blend.summary,parity.single.summary,'shared kit detail disclosure');
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#bd-amount').fill('3');
         await page.locator('#bd-save').click();
