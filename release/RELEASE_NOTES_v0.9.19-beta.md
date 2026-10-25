@@ -16,3 +16,8 @@ No automatic migration. Existing Check-In, Protocol, Stash, dose, backup, Journa
 Required GitHub Actions gates: JavaScript syntax, canonical version and generated notes, complete root-index LIVE ZIP and same-source fictional isolated full DEMO HTML/ZIP, browser matrix at 320px and 390px in light/dark, Check-In, Combo, Protocol, Stash and Log Dose regressions. New synthetic test covers open/date/BAC/expiry, dose-as-one, hidden blend-only ingredients, open-vial capacity, and finish/waste accounting. **Do not report Pass before the latest PR-head CI finishes.**
 
 Physical iPhone keyboard behavior, VoiceOver, independent device usability acceptance and Cloudflare exact-source deployment are NOT TESTED for this candidate. Publication state must remain `unverified` until merge and remote byte parity confirmation. The previously published v0.9.18-beta is preserved.
+
+## Verified deployment and publication metadata follow-up
+- PR #100 merged at `955c904860b39c5c56472b07cd3521828d5d9d79`; Cloudflare exact-source parity `verified:true` for 16 files in GitHub Actions run `40162047192` (artifact 12587340188). Candidate browser and mobile suites passed runs `40161722598` and `40161722564`.
+- This follow-up stages the published release marker and regenerates the in-app/runtime What's New metadata. Its merge and Cloudflare deployment must independently pass; the marker does not prove physical iPhone or VoiceOver acceptance.
+- The user's screenshot acceptance is still **NOT TESTED** after deployment; real-device keyboard clipping, blend controls and dose picker require a fresh user review.
