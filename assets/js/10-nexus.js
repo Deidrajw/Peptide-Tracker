@@ -335,7 +335,7 @@ function stashView() {
               ${history.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${history.length}" data-noun="records">Show all ${history.length} records</button><div class="nx-kit-history-extra" hidden>${history.slice(5).map(ev=>`<div class="nx-kit-list-row nx-kit-history-row"><div class="nx-kit-list-copy"><div class="nx-kit-list-top"><strong>${historyDateLabel(ev)}</strong><span class="nx-kit-history-value">${mgToUnit(ev.amountMg,c.unit).toFixed(2)} ${c.unit}</span></div><div class="nx-kit-list-meta">${ev.kind==="prepared"?"Prepared":ev.kind==="administered"?"From prepared dose":"Logged dose"}</div></div></div>`).join("")}</div>`:""}`;
           })()}
 
-          ${currentReconDate?`<div style="font-size:11px;color:var(--t4);margin-bottom:8px">Reconstituted ${fmtDate(currentReconDate)}${reconCount>1?` · ${reconCount} vials opened total`:""}</div>
+          ${currentReconDate?`<div class="nx-kit-history-context"><span>Current vial prepared</span><strong>${fmtDate(currentReconDate)}</strong>${reconCount>1?`<span>${reconCount} vials opened in this kit</span>`:""}</div>
           ${wasteFromCurrent>0?`<button class="outflow-history-toggle" data-id="${s.id}" style="display:flex;align-items:center;gap:6px;width:100%;text-align:left;background:transparent;border:none;padding:0;margin-bottom:8px;font-size:10px;color:#ff7c7c">
             <span>${wasteFromCurrent.toFixed(1)}mg outflow · ${getKitActiveTransactions(s,currentReconDate).length} transaction${getKitActiveTransactions(s,currentReconDate).length===1?"":"s"}</span>
             <span style="color:var(--t5)">›</span>
