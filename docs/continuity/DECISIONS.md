@@ -206,3 +206,6 @@
 
 ### 2026-10-24 — Goal symptom evidence (A5 candidate)
 - A personal Goal may opt in to one named existing Check-In symptom, matched exactly by symptom name. Show dated observations and any recorded intensity, not inferred effectiveness. Deselecting unlinks the evidence view without editing Check-In records. Journal linkage separately scoped after stable source identity audit.
+
+### 2026-10-24 — A6a Check-In reflection implementation (branch coded, unmerged)
+- Reflections are read live from `dailyLogs[].notes` only when that *same* daily record contains the goal's exact selected symptom. Label 'Check-In reflection from the same entry', not symptom-specific or causal evidence. Show nonempty text, source date and canonical original Check-In ID action; no copied data/goal schema change. Other Journal aggregations and contextual Insights deferred to later releases. Regression and physical iPhone pending.

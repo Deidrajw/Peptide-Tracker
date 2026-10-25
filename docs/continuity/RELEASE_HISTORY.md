@@ -283,3 +283,6 @@
 
 ### 2026-10-24 — A5 Goal Check-In evidence candidate
 - Proposed additive `goal.evidenceSymptom` selection and read-only existing `dailyLogs` evidence in Goal Activity. No Check-In data writes or duplication. Code staged on release branch only, CI/merge/deployment UNVERIFIED.
+
+### 2026-10-24 — A6a Check-In reflections candidate (NOT RELEASED)
+- On branch `release/connected-goals-a6a-checkin-reflections` from A5 main f980a283, coded source-linked Goal Activity daily reflections and navigation to original Check-In; no migration, no copied Journal content, no changes to original logging. New browser assertions cover source matching, exclusion, edit/removal, and storage preservation. CI, exact-source LIVE/full DEMO artifact, merge, deployment and iPhone QA INCOMPLETE.

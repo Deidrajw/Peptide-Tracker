@@ -24,14 +24,27 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-goal-detail-tab[data-tab="connections"]').click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
- await page.evaluate(()=>{state.dailyLogs=[{id:'sym1',date:'2026-10-18',symptoms:[{name:'Skin irritation',intensity:2}]},{id:'sym2',date:'2026-10-20',symptoms:[{name:'Headache',intensity:4}]}];goalModal(state.plans.goals[0]);});
+ await page.evaluate(()=>{state.dailyLogs=[{id:'sym1',date:'2026-10-18',notes:'Skin felt calmer today',symptoms:[{name:'Skin irritation',intensity:2}],updates:[{time:'2026-10-18T18:00:00',notes:'Later unrelated update'}]},{id:'sym2',date:'2026-10-20',notes:'Unrelated headache reflection',symptoms:[{name:'Headache',intensity:4}]}];goalModal(state.plans.goals[0]);});
  await page.locator('#g-evidence-symptom').selectOption('Skin irritation');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].evidenceSymptom==='Skin irritation'&&state.dailyLogs.length===2),'Evidence selection or original Check-In history mutated');
  await page.locator('.nx-open-goal').first().click();
  await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(v=>v.includes('Skin irritation')&&v.includes('Intensity: 2')&&!v.includes('Headache')),'Activity must show only matched symptom and recorded intensity');
- await page.locator('#nx-goal-detail-close').click();
+ ensure(await page.locator('#nx-goal-detail-content').innerText().then(v=>v.includes('Skin felt calmer today')&&v.includes('CHECK-IN REFLECTION FROM THE SAME ENTRY')&&!v.includes('Unrelated headache reflection')&&!v.includes('Later unrelated update')),'A6a must show only the exact matched source Check-In daily reflection');
+ ensure(await page.evaluate(()=>state.plans.goals[0].notes!== 'Skin felt calmer today'&&state.dailyLogs[0].notes==='Skin felt calmer today'&&state.dailyLogs.length===2),'A6a source reflection may not mutate or clone saved notes');
+ ensure(await page.locator('.nx-goal-checkin-source').count()===1,'A6a must link only to original matched Check-In ID');
+ await page.evaluate(()=>{state.dailyLogs[0].notes='Edited original reflection';});
+ await page.locator('.nx-goal-detail-tab[data-tab="overview"]').click();await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
+ ensure(await page.locator('#nx-goal-detail-content').innerText().then(v=>v.includes('Edited original reflection')&&!v.includes('Skin felt calmer today')),'Edited canonical Check-In note must update Goal view without copied state');
+ await page.evaluate(()=>{state.dailyLogs[0].notes='';});
+ await page.locator('.nx-goal-detail-tab[data-tab="overview"]').click();await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
+ ensure(await page.locator('.nx-goal-reflection').count()===0,'Empty original note must not appear as reflection');
+ await page.evaluate(()=>{state.dailyLogs[0].notes='Restored original note';});
+ await page.locator('.nx-goal-detail-tab[data-tab="overview"]').click();await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
+ await page.locator('.nx-goal-checkin-source').click();
+ ensure(await page.locator('#nx-goal-detail-content').count()===0,'Source action should close Goal Details before opening existing Check-In');
+ await page.evaluate(()=>closeModal()); // Close the original Check-In modal opened via source link.
 
  await page.evaluate(()=>{state.weightLogs=[{id:'w1',date:'2026-10-01',weight:190},{id:'w2',date:'2026-10-20',weight:185}];state.settings.weightUnit='lbs';goalModal(state.plans.goals[0]);});
  await page.locator('#g-progress-type').selectOption('numeric');
