@@ -9,9 +9,19 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
  ensure(await page.locator('.nx-plan-head .manage-plan-btn').evaluate(e=>e.getBoundingClientRect().height)>=44,'Ellipsis touch target too small');
- ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-plan-action-icon').count()===1,'Management outline SVG missing');
+ ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-unified-more-svg').count()===1,'Management outline SVG missing');
 
  ensure(await page.locator('.nx-research-title').count()===1,'Research compound title hierarchy missing');
+
+ const headRules=async(sel)=>page.locator(sel).first().evaluate(el=>{
+   const title=el.querySelector('.nx-card-status'),button=el.querySelector('button.manage-plan-btn,button.manage-proto-btn,button.nx-kit-header-manage');
+   if(!title||!button)return {ok:false,reason:'missing status or menu'};
+   const sr=title.getBoundingClientRect(),br=button.getBoundingClientRect(),icon=button.querySelector('svg.nx-unified-more-svg');
+   return {ok:sr.top>el.getBoundingClientRect().top&&br.height>=44&&br.width>=44&&!!icon&&sr.right<br.left+2,reason:'position/size/icon'};
+ });
+ const researchHeader=await headRules('.nx-research-card .nx-plan-head');
+ ensure(researchHeader.ok,'Research title/status/menu parity '+researchHeader.reason);
+
  ensure(await page.locator('.nx-research-title').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=17,'Research title remains visually undersized');
  ensure(await page.locator('.nx-research-reason-label').innerText().then(t=>t.includes('RESEARCH REASON')),'Research reason label missing');
  ensure(await page.locator('.nx-research-card .nx-plan-intel').evaluate(e=>getComputedStyle(e).minHeight==='44px'),'Secondary Intel must keep accessible touch target');
@@ -38,6 +48,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.evaluate(()=>{state._plansSub='goals';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
+ ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'View goal touch target too small');
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
@@ -95,6 +106,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
  ensure(await page.locator('.nx-shopping-row .manage-plan-btn').count()===1,'Shopping edit menu lost');
+
+ await page.evaluate(()=>{state.protocols=[{id:'qa-proto',name:'Fictional Protocol',status:'draft',compounds:[],schedule:{type:'weekly'}}];tab='protocols';render();});
+ ensure(await page.locator('.nexus-protocol-card-head .nx-card-status').count()===1,'Protocol status must be in title stack');
+ const protoHeader=await page.locator('.nexus-protocol-card-head').first().evaluate(h=>{
+   const status=h.querySelector('.nx-card-status'),btn=h.querySelector('.manage-proto-btn'),title=h.querySelector('.nx-proto-title');
+   if(!status||!btn||!title)return false;
+   const p=status.getBoundingClientRect(),t=title.getBoundingClientRect(),b=btn.getBoundingClientRect();
+   return p.top>t.top&&p.right<=b.left+2&&b.width>=44&&b.height>=44&&!!btn.querySelector('.nx-unified-more-svg');
+ });
+ ensure(protoHeader,'Protocol title/status/ellipsis visual parity failed');
+
  ensure(errors.length===0,'Exceptions: '+errors.join('; '));
  results.push({mode,width,theme,status:'PASS'});await ctx.close();
 }}finally{await browser.close()}
