@@ -955,6 +955,9 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
     const allocations=[];
     if(committed){
       const take=Math.round(requested*1000)/1000;
+      if(kit.blendInventoryMode==="legacy-v2"){
+        vial.remainingMg=Math.max(0,Math.round((Number(vial.remainingMg)-take)*1000)/1000);
+      }
       const ledgerId=uid();
       kit.doseLog=kit.doseLog||[];
       kit.doseLog.push({id:ledgerId,date:localDatetime(),totalMgDrawn:take,vialId:vial.id,
@@ -1027,6 +1030,10 @@ function refundBlendLedgerAmount(kit,ledgerId,requestedMg) {
   const refund=Number(requestedMg);
   if(!Number.isFinite(refund)||refund<=0||refund>old+.001)return false;
   const next=Math.max(0,Math.round((old-refund)*1000)/1000);
+  if(kit.blendInventoryMode==="legacy-v2"){
+    const source=(kit.vials||[]).find(v=>String(v.id)===String(item.vialId));
+    if(source)source.remainingMg=Math.min(Number(source.vialMg)||Number(kit.vialMg)||0,Math.round((Number(source.remainingMg||0)+refund)*1000)/1000);
+  }
   if(next<=.001)kit.doseLog.splice(idx,1);
   else item.totalMgDrawn=next;
   const vial=(kit.vials||[]).find(v=>String(v.id)===String(item.vialId));
@@ -1426,6 +1433,7 @@ function manageKitMenu(kitId) {
       label:"KIT & RECORDS",
       entries: [
         {id:"edit",name:"Edit kit",desc:isBlend?"Edit blend composition and metadata":"Change kit metadata without rewriting vial history",icon:"✎"},
+        ...(!isBlend?[{id:"classify-premix",name:"Mark as premixed blend",desc:"Preserve existing vials and dose history",icon:"▤"}]:[]),
         {id:"details",name:"Kit details & history",desc:"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
         ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
@@ -1438,6 +1446,7 @@ function manageKitMenu(kitId) {
   ];
   // One consistent outline icon system for all kit actions; no emoji glyphs.
   const iconPaths = {
+    "classify-premix":'<path d="M5 4h14v16H5zM9 9h6M9 13h6"/>',
     "blend-open":'<path d="M12 5v14M5 12h14"/>',
     "blend-restock":'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/>',
     "blend-finish":'<path d="m5 12 5 5L20 7"/>',
@@ -1494,6 +1503,7 @@ function manageKitMenu(kitId) {
     else if(id==="add-to-open") addToOpenVialModal(kitId);
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
+    else if(id==="classify-premix") classifyLegacyPremixedKit(kitId);
     else if(id==="edit") { if(isBlend) addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
