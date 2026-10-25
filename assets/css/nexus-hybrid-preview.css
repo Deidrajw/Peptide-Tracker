@@ -187,3 +187,8 @@ html[data-theme="light"] .btn-primary {
 @media(prefers-reduced-motion:reduce) {
  .tabbar button,.card,.btn-primary {transition:none!important;animation:none!important;}
 }
+
+/* Keep an opaque computed backdrop for contrast audits and accessibility tools.
+   Background images decorate; background-color remains the reliable fallback. */
+.btn-primary {background-color:#d7b6f5!important;}
+html[data-theme="light"] .btn-primary {background-color:#d2b1ef!important;}
