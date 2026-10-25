@@ -215,3 +215,6 @@
 
 ### 2026-10-25 — Explicit approved card header standard (correction)
 - User screenshots reject earlier styling-only claim. Required pattern on Research, Goals, Protocol and Stash cards: readable title first; status pill directly beneath title in left stack (not beside menu); single standardized 44×44px right-aligned ellipsis control with same filled SVG circles, stroke/size, distinct surface/border in both themes. Badge may remain actionable where it already was; handlers preserved. Existing shared CSS alone was insufficient; HTML hierarchy itself must change. No data, calculation or migration effects. Source/browser and user iPhone acceptance required.
+
+### 2026-10-25 — Canonical release notes source (candidate)
+- `release/release.json` is proposed as source for one semantic app version, release channel/status, commit/date, user-visible changes, data impact and limitations. Three generated outputs must match exactly; release builder checks parity and display title. Publication remains `unverified`, NOT assumed from GitHub merge. Existing history and localStorage change-log number are not rewritten or marked read. Popup and native submission declarations follow only after release mechanism and store review.
