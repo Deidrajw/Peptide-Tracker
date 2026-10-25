@@ -938,10 +938,24 @@ function openBlendVialModal(kitId) {
   };
 }
 
+// The kit total includes sealed inventory; an administered draw is limited by
+// the ONE opened blend vial. Vial IDs prevent same-day rollover double counting.
+function getBlendOpenVialRemainingMg(kit) {
+  const open=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
+  if(!open || !kit.reconDate) return 0;
+  const date=open.reconDate||kit.reconDate;
+  const consumed=(kit.doseLog||[]).filter(d=>d.vialId!=null
+    ? String(d.vialId)===String(open.id)
+    : new Date(d.date)>=new Date(date)).reduce((n,d)=>n+(Number(d.totalMgDrawn)||0),0);
+  const wasted=getKitActiveWasteMg(kit,date);
+  return Math.max(0,Math.min(getBlendKitRemainingMg(kit),
+    (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
+}
+
 function logBlendDoseModal(kitId) {
   const kit = (state.supplies||[]).find(s=>s.id===kitId); if (!kit || !kit.isBlend) return;
   const totalMg = kit.vialMg||0;
-  const remainingMg = getBlendKitRemainingMg(kit);
+  const remainingMg = getBlendOpenVialRemainingMg(kit);
   if(!kit.reconDate || !ensureKitVials(kit).some(v=>v.status==="open"||v.status==="active")){showErrorBanner("Open and reconstitute a blend vial in Stash before logging a dose.");return;}
   const m = openModal(`
     <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">Log ${esc(kit.name)} Dose</div>
@@ -990,7 +1004,8 @@ function logBlendDoseModal(kitId) {
     blend.doses.push({id:uid(),date,dose:String(amt),notes,blendSource:kit.id,isBlendDose:true});
     
     if (!kit.doseLog) kit.doseLog = [];
-    kit.doseLog.push({ id: uid(), date, totalMgDrawn: amt, notes });
+    const currentVial=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
+    kit.doseLog.push({ id: uid(), date, totalMgDrawn: amt, notes, vialId:currentVial?.id });
     saveState(); closeModal(); render();
   };
 }
