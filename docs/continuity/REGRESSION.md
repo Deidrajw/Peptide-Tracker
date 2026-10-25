@@ -434,3 +434,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Light-mode text contrast diagnostic | 31 candidates over 9 tabs (some ~1.27:1), unresolved; no claim of WCAG AA |
 | Physical iPhone review | NOT TESTED |
 | Cloudflare parity against experimental branch | UNVERIFIED/EXPECTED MISMATCH; NO DEPLOY |
+
+
+### 2026-10-25 — Hybrid visual depth feedback follow-up
+| Check | Status |
+|---|---|
+| Actual selector `.tabbar` transformed into floating capsule and selected pill | CODED at `087e3679`, not visually device-verified |
+| Cards/primary actions stronger elevation in dark/light | CODED; visual review pending |
+| 320px/390px both themes, keyboard/safe area/overflow | LATEST HEAD CI PENDING |
+| Light contrast previous 31 diagnostic candidates | UNRESOLVED pending screenshot evidence |
+| User iPhone acceptance | NOT TESTED |
+| Production deploy/merge | NOT DONE |
