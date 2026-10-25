@@ -669,3 +669,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Browser workflow 40242927710 and mobile regression 40242927698 started but results not yet verified as of this entry. Full-app DEMO and LIVE packages must be taken from latest passing head, not previous artifact.
 - A full modal-by-modal visual inspection (Prepare, Open Vial, Manage, Reconstitution, source-selection), real iPhone test, and contrast certification remain **INCOMPLETE**. The modal CSS applied is a baseline shared treatment only.
 - **ONE NEXT ACTION:** inspect QA and screenshot evidence for newest Stash refinement at 320/390 dark/light, validate segmented active state and every kit action modal, fix failures, then request user visual approval. Do NOT merge or deploy.
+
+
+### 2026-10-25 — Phase 2B segmented selection accessibility correction
+- Source-native toggleChip lacked active/aria state; `assets/js/10-nexus.js` now emits `active` and `aria-pressed` on Compound kits / Supplies at commit `257c3f30`. Latest exact-head browser run `40243076274`, mobile run `40243076300` underway. Package build and validation steps passed, full browser regression still in progress at observation. Modal styling is **baseline only**; full kit-action modal UX and contrast audits remain INCOMPLETE. No deployment or merge.
+- **ONE NEXT ACTION:** inspect completed 40243076274 results and 320/390 dual-theme screenshots, then audit actual kit action modals individually.
