@@ -368,3 +368,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Protected app source | Safety PR changes workflow/script/docs only; no application files | TO VERIFY AT PR |
 | Full application QA | v0.9.20 blend, KLOW, vial math, history, supplies, 320/390 themes, isolated full DEMO and LIVE ZIP | INCOMPLETE, DO NOT MERGE PR #110 |
 | Physical iPhone | v0.9.20 real device before release acceptance | NOT TESTED |
+
+
+### 2026-10-25 — UI audit acceptance matrix (proposed)
+| Surface | Acceptance | Status |
+|---|---|---|
+| Stash Overview / Vials / History | No decorative separators above tabs/under hero; tab underline, meaningful vial rows remain | NOT TESTED |
+| Supplies detail and edit/delete | Whitespace for summary/action groups, destructive action still reachable and confirmed | NOT TESTED |
+| Prepare Dose / Open Vial / Log Reconstitution | No pale green text/fill on white; visible enabled/disabled CTA, 4.5:1 text, 3:1 control states | NOT TESTED |
+| Today / Calendar / Protocol / More | Audit duplicate dividers across screens and modal overlays, including headers, nested cards | NOT TESTED |
+| Touch/keyboard/VoiceOver | 44px+ touch, focus visible, no loss of field borders, sticky sheet actions | NOT TESTED |
+| Protected flows | Check-In, Supplements, dose ledger, legacy KLOW, multi-vial deductions, saved history unchanged | NOT TESTED |
+| LIVE/DEMO | exact-source full app and isolated demo, 320/390 both themes | NOT TESTED |
+| Production | New design branch merged & Cloudflare source verified | NOT DEPLOYED |
