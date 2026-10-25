@@ -220,6 +220,15 @@ function wireBody() {
   document.querySelectorAll(".stash-sub-btn").forEach(b=>b.onclick=()=>{state._stashSub=b.dataset.sub;renderBody();});
   // Equipment items
   const addEq=document.getElementById("add-equipment"); if(addEq)addEq.onclick=()=>equipmentModal(null);
+  document.querySelectorAll(".nx-supply-detail-toggle").forEach(button=>{
+    button.onclick=()=>{
+      const panel=document.getElementById(button.getAttribute("aria-controls"));
+      if(!panel)return;
+      const opening=panel.hidden;
+      panel.hidden=!opening;
+      button.setAttribute("aria-expanded",String(opening));
+    };
+  });
   document.querySelectorAll(".supply-edit").forEach(b=>b.onclick=()=>{const e=(state.equipmentItems||[]).find(x=>x.id===+b.dataset.id);if(e)equipmentModal(e);});
   document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);saveState();render();}));
   document.querySelectorAll(".supply-log-use").forEach(b=>b.onclick=()=>logSupplyUseModal(+b.dataset.id));
