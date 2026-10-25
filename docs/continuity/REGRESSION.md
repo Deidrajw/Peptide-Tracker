@@ -520,3 +520,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Single/multi vial, blends, prepared accounting, edits/history | JS math unchanged; latest-head browser pending |
 | 320/390 dark/light, modal scroll, contrast and keyboard | BROWSER PENDING / manual review needed |
 | iPhone manual test and merge/deploy | NOT TESTED / NOT DONE |
+
+
+### 2026-10-25 — Two-action Stash QA finding
+- Browser QA `40246509943`: FAIL at `validate-trust-ui.mjs`, outdated visible Prepare card assertion; actual prepared blend inventory reversibility and ledger checks matched expected values. Test updated at `65cba791` to assert kit-sheet Prepare entry instead. Latest-head retest PENDING. Mobile regression on source `ac9a4f27`: PASS.
