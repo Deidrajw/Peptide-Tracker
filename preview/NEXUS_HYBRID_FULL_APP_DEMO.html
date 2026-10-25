@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nexus">
 <meta name="theme-color" content="#080808">
-<title>Nexus · Hybrid Design Preview · Fictional Demo</title>
+<title>Nexus · Isolated Hybrid Full-App Preview</title>
 <link rel="apple-touch-icon" sizes="180x180" href="data:,">
 <link rel="icon" type="image/png" sizes="192x192" href="data:,">
 <link rel="icon" type="image/png" sizes="512x512" href="data:,">
@@ -2583,7 +2583,7 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 /* Nexus Hybrid Design System 2.0 — branch-only preview layer.
    Visual selectors only; no storage, JS, records, math, or navigation changes.
    Experimental: do not merge/deploy without UI/contrast regression signoff. */
-:root,[data-theme="dark"],body:not(.light-mode) {
+:root {
   --nx-hybrid-canvas:#171521;
   --nx-hybrid-surface:#292436;
   --nx-hybrid-soft:#352d43;
@@ -2592,7 +2592,7 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
   --nx-hybrid-border:#50445c;
   --nx-hybrid-accent:#dec5fa;
 }
-[data-theme="light"],body.light-mode,body.light {
+html[data-theme="light"] {
   --nx-hybrid-canvas:#f9f7f8;
   --nx-hybrid-surface:#fff;
   --nx-hybrid-soft:#f4eef8;
@@ -2608,7 +2608,7 @@ body {
   background-image:radial-gradient(ellipse 80vw 42vh at 12% 0%,rgba(153,112,189,.12),transparent 78%);
   background-attachment:fixed;
 }
-[data-theme="light"] body,body.light-mode,body.light {
+html[data-theme="light"] body {
   background-image:radial-gradient(ellipse 78vw 38vh at 12% 0%,rgba(170,126,209,.09),transparent 80%);
 }
 #app {min-height:100vh;}
@@ -2639,15 +2639,7 @@ body {
 }
 
 </style>
-<script>
-/* Isolated per-document in-memory storage; never reads or writes production keys. */
-(function(){
-const values=Object.create(null);
-const fake={getItem(k){return Object.prototype.hasOwnProperty.call(values,String(k))?values[String(k)]:null;},setItem(k,v){values[String(k)]=String(v);},removeItem(k){delete values[String(k)];},clear(){Object.keys(values).forEach(k=>delete values[k]);},key(i){return Object.keys(values)[i]||null;},get length(){return Object.keys(values).length;}};
-try{Object.defineProperty(window,'localStorage',{configurable:true,value:fake});}catch(e){document.documentElement.dataset.storageIsolationFailure='true';}
-fake.setItem('pep-theme','dark');
-})();
-</script></head>
+<script>(function(){const d=Object.create(null),mem={getItem(k){return Object.prototype.hasOwnProperty.call(d,String(k))?d[String(k)]:null},setItem(k,v){d[String(k)]=String(v)},removeItem(k){delete d[String(k)]},clear(){Object.keys(d).forEach(k=>delete d[k])},key(i){return Object.keys(d)[i]||null},get length(){return Object.keys(d).length}};try{Object.defineProperty(window,'localStorage',{configurable:true,value:mem})}catch(e){document.documentElement.dataset.storageIsolationFailure='true'}mem.setItem('pep-theme','dark')})();</script></head>
 <body>
 <div id="app"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#7DF9C0" class="mono">LOADING…</div></div>
 <div id="demo-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:#F9C87D;color:#000;font-size:11px;font-weight:700;text-align:center;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top));letter-spacing:1px">🧪 DEVELOPER DEMO MODE — Sample Data Active &nbsp;<button onclick="demoPickerModal()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Change</button>&nbsp;<button onclick="exitDemoMode()" style="background:#00000022;border:1px solid #00000033;border-radius:5px;padding:1px 8px;font-size:10px;color:#000">Exit</button></div>
@@ -22923,7 +22915,5 @@ else if((typeof NEXUS_RELEASE==='undefined'||NEXUS_RELEASE.publicationStatus!=='
 else render();
 
 </script>
-<script>/* Fixture-only demonstration: same release model, in memory only. */
-try{if(typeof enterDemoMode==='function') enterDemoMode('weight_loss');}catch(e){console.error('Demo fixture initialization',e);}
-</script></body>
+<script>try{if(typeof enterDemoMode==='function')enterDemoMode('weight_loss')}catch(e){console.error('Fixture init',e)}</script></body>
 </html>
