@@ -301,3 +301,6 @@
 
 ### 2026-10-25 — Release notes and publish-gated popup candidate (UNRELEASED)
 - PR #85 now includes generator/output parity, ordered runtime metadata in 02 JS, first-launch publication-gated modal in 12 JS, and browser assertions for unverified silence, Later and acknowledgement. Current release manifest status UNVERIFIED so no popup triggers for that build. Legacy numeric changelog not erased; no record migration. CI/merge/Cloudflare/real device pending.
+
+### 2026-10-25 — v0.9.16-beta onboarding candidate (UNRELEASED)
+- Branch `release/onboarding-safe-first-run` at main base a3318973, changes first-run welcome, local storage explanation, Start Fresh, guarded import with JSON shape checking/count preview/confirmation/empty-state backup, and standard CSS. Canonical manifest and generated three note formats updated to v0.9.16-beta (status UNVERIFIED); browser/source/CI and packaging unverified, no merge/Cloudflare/physical iPhone. No destructive migration or automatic import. Calculator #67 held.
