@@ -38,9 +38,9 @@
   ],
   "dataImpact": "No automatic migration, deletion or change to existing dose history. New premixed blend doses are recorded under the blend name; old ingredient records are preserved. Opening a vial updates only its selected kit and vial metadata.",
   "limitations": [
-    "Physical iPhone and VoiceOver acceptance are pending.",
-    "Physical iPhone and VoiceOver acceptance are pending.",
-    "Web deployment verified by 16/16 Cloudflare HTML/CSS/JS exact hashes in GitHub Actions run 40162047192."
+    "Older constituent dose logs are preserved and are not silently migrated.",
+    "Physical iPhone and VoiceOver acceptance remain pending.",
+    "Cloudflare 16-file app-source parity was verified in GitHub Actions run 40162047192."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
