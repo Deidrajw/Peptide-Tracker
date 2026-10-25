@@ -340,3 +340,8 @@
 - Implementation PR #100 merged `955c904860b39c5c56472b07cd3521828d5d9d79`. Release CI 40161722598 and mobile form 40161722564 PASSED. Post-merge PR #101 remote site audit 40162047192 verified 16/16 primary Cloudflare application entry files; docs PR #101 merged `c6b64c113c703fcfcb7fb372172fcf8c966d7266`.
 - Data effect: no migration; explicit open/finish blend entries and new blend-level dose logs only, with existing ingredient doses preserved. Full LIVE ZIP and fictional isolated standalone DEMO/ZIP generated from identical source. Physical iPhone review outstanding.
 - Publication metadata follow-up `release/v0919-verified-publication` is an UNMERGED candidate; generated runtime and notes updated, not yet verified on live host.
+
+### Issue #109 — PARTIAL BRANCH IMPLEMENTATION (2026-10-25; NOT RELEASED)
+- Source identified distinct blend and regular kit render/modal code in 03-, 05-, and 10-nexus.js; initial branch `release/issue-109-kit-experience-parity` created.
+- Branch application commits `df350f96` Stash wording and `f2bc5742` Open Vial form/CTA alignment. **Does not yet satisfy exact visual/functional parity**: prepare workflow and blend Log Dose still separate; real side-by-side comparisons and validation pending.
+- No intended schema migration or production writes. CI, PR review, whole-app source-identical DEMO/LIVE ZIP, hosted deployment and physical iPhone checks INCOMPLETE; user live version unchanged.
