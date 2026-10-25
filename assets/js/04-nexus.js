@@ -378,7 +378,7 @@ function getKitDoseHistory(kit) {
   const compData = allPeptides()[kit.name];
   (compData?.doses||[]).forEach(d=>{
     const allocs = attributedAllocations(d.allocations);
-    const directMatch = d.kitId===kit.id;
+    const directMatch = d.kitId===kit.id || (kit.isBlend && String(d.blendSource)===String(kit.id));
     if (!allocs.length && !directMatch) return; // not attributed to THIS kit at all
     events.push({
       date: d.date,
@@ -476,6 +476,8 @@ function getKitUsedMg(kit) {
   return usedMg;
 }
 function getKitRemainingMg(kit) {
+  // Premixed inventory uses its vial-ID ledger; never treat component records as separate stock.
+  if(kit.isBlend) return getBlendKitRemainingMg(kit);
   // Once a kit's vials carry remainingMg (inventory v2), the kit total is ALWAYS the sum
   // of its vials' remainders — never totalVials×vialMg minus a separately-derived used
   // amount. Two formulas that are each individually reasonable but computed from
@@ -689,6 +691,11 @@ function getSealedVials(kit) {
 // specifically to IT: live vialId-tagged usage for anything logged since per-vial
 // tracking existed, PLUS the persisted legacyUsedMg snapshot for anything that predates it.
 function getVialRemainingMg(kit, vial) {
+  if(kit.isBlend){
+    if(vial.status==='open'||vial.status==='active') return getBlendOpenVialRemainingMg(kit);
+    if(vial.status==='sealed')return Number(vial.vialMg ?? kit.vialMg)||0;
+    return 0;
+  }
   // Once a vial has been migrated to inventory v2, remainingMg is the sole authoritative
   // number for it — a directly-mutated field, never re-derived. Falling through to the
   // history-based computation below for an already-migrated vial would create exactly
@@ -848,6 +855,7 @@ function migrateToInventoryV2() {
 // so wiring one screen to this function never silently breaks any other screen.
 // Idempotent: a kit whose vials already carry remainingMg is left untouched.
 function migrateKitToV2(kit) {
+  if(kit.isBlend)return; // Never overwrite the distinct, historical premixed-vial ledger.
   if ((kit.vials||[]).length && kit.vials.every(v=>v.remainingMg!==undefined)) return; // already migrated
   // Captured BEFORE anything below touches a single vial — this is the number the old
   // kit-level formula has been showing all along, and it's the one number in this whole
@@ -937,6 +945,33 @@ function kitOwnedVialCount(kit) { const vials = ensureKitVials(kit); return vial
 // Returns a plan/result rather than throwing when short, so the caller decides whether
 // to prompt for the next vial or block the transaction outright.
 function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
+  // Premixed blends are one physical preparation with one total-mg outflow. The
+  // existing ledger remains authoritative; no independent component stock writes.
+  if(kit.isBlend){
+    const vial=getActiveVial(kit),available=vial?getBlendOpenVialRemainingMg(kit):0;
+    const requested=Number(amountMg),valid=Number.isFinite(requested)&&requested>0;
+    const id=transactionId||uid();
+    const committed=valid&&requested<=available+0.0001;
+    const allocations=[];
+    if(committed){
+      const take=Math.round(requested*1000)/1000;
+      if(kit.blendInventoryMode==="legacy-v2"){
+        vial.remainingMg=Math.max(0,Math.round((Number(vial.remainingMg)-take)*1000)/1000);
+      }
+      const ledgerId=uid();
+      kit.doseLog=kit.doseLog||[];
+      kit.doseLog.push({id:ledgerId,date:localDatetime(),totalMgDrawn:take,vialId:vial.id,
+        kind:reason||"prepared",transactionId:id});
+      allocations.push({kitId:kit.id,vialId:vial.id,amountMg:take,ledgerId});
+      if(getBlendOpenVialRemainingMg(kit)<=0.01){
+        vial.status="empty";kit.emptyVials=(kit.emptyVials||0)+1;kit.reconDate=null;
+      }
+      saveState();
+    }
+    return {transactionId:id,totalMg:amountMg,allocations,
+      remainingNeeded:committed?0:Math.max(0,requested-available),committed,
+      hasSealedVial:getSealedVials(kit).length>0,reason:reason||"dose"};
+  }
   migrateKitToV2(kit); // lazy, per-kit only — never touches any other kit
   const allocations = [];
   let remaining = Math.round(amountMg*100)/100;
@@ -985,11 +1020,44 @@ function continueConsumeCompoundInventory(kit, remainingNeeded, transactionId) {
   return consumeCompoundInventory({ kit, amountMg: remainingNeeded, transactionId });
 }
 
+// Exact reversal against a premixed vial's historical transaction. Supports a
+// partial refund when only some prepared syringes remain unused.
+function refundBlendLedgerAmount(kit,ledgerId,requestedMg) {
+  if(!kit?.isBlend||ledgerId==null)return false;
+  const idx=(kit.doseLog||[]).findIndex(x=>String(x.id)===String(ledgerId));
+  if(idx<0)return false;
+  const item=kit.doseLog[idx],old=Number(item.totalMgDrawn)||0;
+  const refund=Number(requestedMg);
+  if(!Number.isFinite(refund)||refund<=0||refund>old+.001)return false;
+  const next=Math.max(0,Math.round((old-refund)*1000)/1000);
+  if(kit.blendInventoryMode==="legacy-v2"){
+    const source=(kit.vials||[]).find(v=>String(v.id)===String(item.vialId));
+    if(source)source.remainingMg=Math.min(Number(source.vialMg)||Number(kit.vialMg)||0,Math.round((Number(source.remainingMg||0)+refund)*1000)/1000);
+  }
+  if(next<=.001)kit.doseLog.splice(idx,1);
+  else item.totalMgDrawn=next;
+  const vial=(kit.vials||[]).find(v=>String(v.id)===String(item.vialId));
+  if(vial&&vial.status==="empty"){
+    vial.status="open";kit.emptyVials=Math.max(0,(kit.emptyVials||0)-1);
+    kit.reconDate=vial.reconDate||kit.reconDate;kit.activeKit=true;
+  }
+  return true;
+}
+
 // Reverses a committed transaction exactly — adds each allocation's amount back onto the
 // specific vial it came from, and reopens a vial that went empty as a direct result. No
 // historical-window recalculation: it only undoes the specific numbers this transaction
 // recorded, nothing else.
-function undoConsumeCompoundInventory(kit, transactionResult) {  transactionResult.allocations.forEach(a => {
+function undoConsumeCompoundInventory(kit, transactionResult) {
+  if(kit.isBlend){
+    for(const a of transactionResult.allocations||[]){
+      const old=(kit.doseLog||[]).find(d=>String(d.id)===String(a.ledgerId));
+      if(!old||!refundBlendLedgerAmount(kit,a.ledgerId,Number(old.totalMgDrawn))){
+        showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");
+      }
+    }
+    saveState();return;
+  }  transactionResult.allocations.forEach(a => {
     const v = (kit.vials||[]).find(v=>v.id===a.vialId);
     if (!v) return;
     const wasEmpty = v.status === "empty";
@@ -1082,6 +1150,21 @@ function reapplyEditedDoseInventory(f, newAmountStr, unit, fallbackKit) {
 
 function reverseDoseInventoryEffect(dose) {
   if (!dose) return;
+  if(dose.isBlendDose && !dose.fromPreparedId){
+    const allocations=dose.allocations||[];
+    if(!allocations.length||allocations.some(a=>{
+      const k=state.supplies.find(s=>String(s.id)===String(a.kitId));
+      return !k?.isBlend || !(k.doseLog||[]).some(x=>String(x.id)===String(a.ledgerId));
+    })){
+      showErrorBanner("This older blend dose has no exact vial transaction link. Deletion is blocked to protect inventory; export a backup and reconcile it first.");
+      return false;
+    }
+    for(const a of allocations){
+      const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+      if(!refundBlendLedgerAmount(kit,a.ledgerId,doseToMg(a.amount,cfg(kit.name).unit)))return false;
+    }
+    saveState();return true;
+  }
   if (dose.fromPreparedId) {
     const pd = (state.preparedDoses||[]).find(p=>p.id===dose.fromPreparedId);
     if (pd) pd.remainingCount = (pd.remainingCount||0)+1;
@@ -1123,6 +1206,14 @@ function reverseDoseInventoryEffect(dose) {
 // further inventory change (as designed) — deleting the batch record must only give back
 // the 3 still-unused syringes' worth, never the full original amount.
 function deletePreparedDose(pd) {
+  const blendAllocations=getSyringeComponents(pd).flatMap(comp=>(comp.allocations||[]).map(a=>({a,comp}))).filter(v=>state.supplies.find(k=>String(k.id)===String(v.a.kitId))?.isBlend);
+  if(blendAllocations.some(({a})=>{
+    const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+    return !a.ledgerId||!(kit.doseLog||[]).some(x=>String(x.id)===String(a.ledgerId));
+  })){
+    showErrorBanner("This prepared blend has no exact vial transaction link. Deletion was blocked to protect inventory.");
+    return false;
+  }
   const totalCount = pd.count || 1;
   const remainingCount = pd.remainingCount || 0;
   const shareRemaining = totalCount>0 ? remainingCount/totalCount : 0;
@@ -1132,6 +1223,11 @@ function deletePreparedDose(pd) {
       (comp.allocations||[]).forEach(a=>{
         const k = state.supplies.find(s=>s.id===a.kitId);
         if (!k) return;
+        if(k.isBlend){
+          const refund=doseToMg(a.amount,cc.unit)*shareRemaining;
+          refundBlendLedgerAmount(k,a.ledgerId,refund);
+          return;
+        }
         migrateKitToV2(k);
         const v = a.vialId ? (k.vials||[]).find(v=>v.id===a.vialId) : kitOpenVialV2(k);
         if (!v || v.remainingMg===undefined) return; // legacy vial — removing the record itself is enough, its history-derived calculation naturally reflects the deletion
@@ -1142,6 +1238,7 @@ function deletePreparedDose(pd) {
     });
   }
   state.preparedDoses = (state.preparedDoses||[]).filter(p=>p.id!==pd.id);
+  return true;
 }
 
 function deletePreparedDoseModal(pd) {
@@ -1166,7 +1263,7 @@ function deletePreparedDoseModal(pd) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
-    deletePreparedDose(pd);
+    if(deletePreparedDose(pd)===false)return;
     saveState(); closeModal(); render();
   };
 }
@@ -1323,24 +1420,21 @@ function manageKitMenu(kitId) {
   const actions = [
     {
       label: "VIAL & INVENTORY",
-      entries: isBlend ? [
-        ...(!hasRecon && sealed>0 ? [{id:"blend-open",name:"Open / reconstitute blend vial",desc:"Record BAC water, expiry and vial notes",icon:"+"}] : []),
-        ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Log one premixed blend dose",icon:"◈"}] : []),
-        ...(hasRecon ? [{id:"blend-finish",name:"Finish current blend vial",desc:"Record any leftover as outflow before opening another",icon:"✓"}] : []),
-        {id:"blend-restock",name:"Add blend vials",desc:"Increase sealed stock for this premixed kit",icon:"+"}
-      ] : [
-        ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
-        ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the existing preparation and stock-allocation flow",icon:"◌"}] : []),
-        ...(hasOpen ? [{id:"finish-vial",name:"Finish this vial",desc:"Keep sealed backup vials in the kit",icon:"✓"},{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
-        {id:"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
-        ...(hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
+      entries: [
+        ...(!isDone && sealed>0 ? [{id:isBlend?"blend-open":"open",name:"Open new vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
+        ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the shared preparation and inventory flow",icon:"◌"}] : []),
+        ...(hasOpen ? [{id:isBlend?"blend-finish":"finish-vial",name:"Finish this vial",desc:"Complete the current vial and reconcile remaining inventory",icon:"✓"}] : []),
+        ...(!isBlend && hasOpen ? [{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
+        {id:isBlend?"blend-restock":"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
+        ...(!isBlend && hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
       ]
     },
     {
       label:"KIT & RECORDS",
       entries: [
         {id:"edit",name:"Edit kit",desc:isBlend?"Edit blend composition and metadata":"Change kit metadata without rewriting vial history",icon:"✎"},
-        {id:"details",name:"Kit details & history",desc:isBlend?"Composition and kit information":"Inventory, vial and dose history",icon:"▤"},
+        ...(!isBlend?[{id:"classify-premix",name:"Mark as premixed blend",desc:"Preserve existing vials and dose history",icon:"▤"}]:[]),
+        {id:"details",name:"Kit details & history",desc:"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
         ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
       ]
@@ -1352,6 +1446,7 @@ function manageKitMenu(kitId) {
   ];
   // One consistent outline icon system for all kit actions; no emoji glyphs.
   const iconPaths = {
+    "classify-premix":'<path d="M5 4h14v16H5zM9 9h6M9 13h6"/>',
     "blend-open":'<path d="M12 5v14M5 12h14"/>',
     "blend-restock":'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/>',
     "blend-finish":'<path d="m5 12 5 5L20 7"/>',
@@ -1384,15 +1479,15 @@ function manageKitMenu(kitId) {
         icon(item)+'<span style="min-width:0;flex:1"><span style="display:block;font-size:13.5px;font-weight:650;color:'+(item.danger?'#ff8585':'var(--t1)')+'">'+item.name+'</span>'+
         '<span style="display:block;font-size:11px;line-height:1.4;margin-top:3px;color:var(--t4)">'+item.desc+'</span></span>'+
         '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t4);flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg></button>'
-      ).join('') : '<div class="nx-stash-empty-note" role="status" style="border-radius:12px;padding:12px 14px;background:var(--surface-2);color:var(--t3);font-size:12px;line-height:1.55"><strong style="display:block;color:var(--t2);font-size:12.5px;margin-bottom:3px">'+(isBlend&&!hasRecon?'No blend vial opened yet':'No vial actions available')+'</strong>'+(isBlend&&!hasRecon?'No blend vial has been opened or reconstituted yet. Vial-specific actions, including Log blend dose, become available after a vial is opened.':'There are no applicable actions for the current vial state.')+'</div>')+'</section>').join('')+
+      ).join('') : '<div class="nx-stash-empty-note" role="status" style="border-radius:12px;padding:12px 14px;background:var(--surface-2);color:var(--t3);font-size:12px;line-height:1.55"><strong style="display:block;color:var(--t2);font-size:12.5px;margin-bottom:3px">'+('No vial actions available')+'</strong>'+(isBlend&&!hasRecon?'No blend vial has been opened or reconstituted yet. Vial-specific actions, including Log blend dose, become available after a vial is opened.':'There are no applicable actions for the current vial state.')+'</div>')+'</section>').join('')+
     '</div>', c.color);
   m.querySelector("#x").onclick=closeModal;
   const openDetails=()=>{
     closeModal();
     const card=Array.from(document.querySelectorAll(".nx-kit-card[data-kit-id]")).find(el=>el.dataset.kitId===String(kitId));
     if(!card){showErrorBanner("Kit details are unavailable in this Stash view.");return;}
-    const details=card.querySelector("details");
-    if(details){details.open=true;card.scrollIntoView({block:"nearest",behavior:"smooth"});details.querySelector("summary")?.focus();}
+    const btn=card.querySelector(".nx-kit-detail-button");
+    if(btn){const panel=card.querySelector(".nx-kit-detail-panel"); if(panel){panel.hidden=false;btn.setAttribute("aria-expanded","true");card.scrollIntoView({block:"nearest",behavior:"smooth"});btn.focus({preventScroll:true});}}
   };
   m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=()=>{
     const id=btn.dataset.action;
@@ -1408,7 +1503,8 @@ function manageKitMenu(kitId) {
     else if(id==="add-to-open") addToOpenVialModal(kitId);
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
-    else if(id==="edit") { if(isBlend) addBlendKitModal(s); else supplyModal(s); }
+    else if(id==="classify-premix") classifyLegacyPremixedKit(kitId);
+    else if(id==="edit") { if(isBlend && s.blendInventoryMode!=="legacy-v2") addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
     else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }

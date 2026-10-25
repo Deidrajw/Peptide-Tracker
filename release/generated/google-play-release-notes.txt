@@ -1,4 +1,5 @@
-Blend vial tracking and Protocol polish
-- Open and reconstitute premixed blend vials: Stash now offers an Open vial action with BAC water, expiry and vial notes for blends such as Deadpool.
-- Log premixed blends as one item: Today dose selection treats premixed blends as a single entry, without creating new individual ingredient dose records.
-- Cleaner Protocol steps: The protocol name field fits within the sheet and phase controls have consistent touch sizes and labels.
+One consistent kit experience
+- Premixed blends use the regular Stash kit design: Premixed and single-compound kits share the same card renderer, inventory heading, Open New Vial action, Prepare entry and Overview/Vials/History disclosure.
+- One Open New Vial workflow: Both kit types use the same reconstitution form. Premixed composition and vial transactions remain linked to their source kit.
+- One Log Dose workflow: Premixed blends use the standard logging form, with a compact composition breakdown and one blend dose event instead of duplicate ingredient administrations.
+- Premixed inventory transaction safeguards: Blend inventory uses vial-ID ledger allocations for preparation and logging, with confirmation checks and historical record protections.
