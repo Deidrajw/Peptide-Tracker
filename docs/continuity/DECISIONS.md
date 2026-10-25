@@ -224,3 +224,6 @@
 
 ### 2026-10-25 — Publish-gated release announcement candidate
 - Source manifest drives generated runtime NEXUS_RELEASE and three channel outputs. New popup is silent for unverified/draft releases, only shows once per version when manifest explicitly published and onboarding finished, supports Later and explicit Got it, and stores seen version in an additive localStorage key rather than rewriting saved clinical/log records or legacy lastSeenChangelog. Existing history is retained; numeric legacy popup suppressed for confirmed published manifest to avoid duplicate announcements. Real publication status requires verified GitHub/Cloudflare evidence, not inferred from merge.
+
+### 2026-10-25 — First-run onboarding staged implementation
+- User approved welcoming feature explanation and Start Fresh / Restore Backup. New welcome clearly states that current web records use per-browser localStorage, do not sync automatically, and can be erased by clearing browser data. Import must be user-triggered JSON, preview counts and require explicit consent; onboarding blocks import when existing Check-In, kit, protocol or compound records exist. Current goal/stats/final onboarding steps protected. Version v0.9.16-beta remains unpublished/unverified and must not falsely prompt as deployed.
