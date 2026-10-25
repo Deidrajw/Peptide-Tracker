@@ -1199,6 +1199,14 @@ function reverseDoseInventoryEffect(dose) {
 // further inventory change (as designed) — deleting the batch record must only give back
 // the 3 still-unused syringes' worth, never the full original amount.
 function deletePreparedDose(pd) {
+  const blendAllocations=getSyringeComponents(pd).flatMap(comp=>(comp.allocations||[]).map(a=>({a,comp}))).filter(v=>state.supplies.find(k=>String(k.id)===String(v.a.kitId))?.isBlend);
+  if(blendAllocations.some(({a})=>{
+    const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+    return !a.ledgerId||!(kit.doseLog||[]).some(x=>String(x.id)===String(a.ledgerId));
+  })){
+    showErrorBanner("This prepared blend has no exact vial transaction link. Deletion was blocked to protect inventory.");
+    return false;
+  }
   const totalCount = pd.count || 1;
   const remainingCount = pd.remainingCount || 0;
   const shareRemaining = totalCount>0 ? remainingCount/totalCount : 0;
@@ -1208,6 +1216,11 @@ function deletePreparedDose(pd) {
       (comp.allocations||[]).forEach(a=>{
         const k = state.supplies.find(s=>s.id===a.kitId);
         if (!k) return;
+        if(k.isBlend){
+          const refund=doseToMg(a.amount,cc.unit)*shareRemaining;
+          refundBlendLedgerAmount(k,a.ledgerId,refund);
+          return;
+        }
         migrateKitToV2(k);
         const v = a.vialId ? (k.vials||[]).find(v=>v.id===a.vialId) : kitOpenVialV2(k);
         if (!v || v.remainingMg===undefined) return; // legacy vial — removing the record itself is enough, its history-derived calculation naturally reflects the deletion
@@ -1218,6 +1231,7 @@ function deletePreparedDose(pd) {
     });
   }
   state.preparedDoses = (state.preparedDoses||[]).filter(p=>p.id!==pd.id);
+  return true;
 }
 
 function deletePreparedDoseModal(pd) {
@@ -1242,7 +1256,7 @@ function deletePreparedDoseModal(pd) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
-    deletePreparedDose(pd);
+    if(deletePreparedDose(pd)===false)return;
     saveState(); closeModal(); render();
   };
 }
