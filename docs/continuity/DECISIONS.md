@@ -218,3 +218,9 @@
 
 ### 2026-10-24 — Store readiness design proposals (pending implementation)
 - Approved direction: once-per-published-version in-app What's New popup and single release manifest producing in-app, Apple and Google notes. Preserve historical changelog counters until reconciled; never infer deployment from merge. First-run onboarding must explain features and browser-local storage, offer Start Fresh vs validated/confirmed Restore Backup. Privacy/permission declarations require actual network/native-wrapper audit, not blanket 'no data collected'. Neutral outline user avatar instead of initial is coded on isolated branch, pending CI/merge.
+
+### 2026-10-25 — Canonical release notes source (candidate)
+- `release/release.json` is proposed as source for one semantic app version, release channel/status, commit/date, user-visible changes, data impact and limitations. Three generated outputs must match exactly; release builder checks parity and display title. Publication remains `unverified`, NOT assumed from GitHub merge. Existing history and localStorage change-log number are not rewritten or marked read. Popup and native submission declarations follow only after release mechanism and store review.
+
+### 2026-10-25 — Publish-gated release announcement candidate
+- Source manifest drives generated runtime NEXUS_RELEASE and three channel outputs. New popup is silent for unverified/draft releases, only shows once per version when manifest explicitly published and onboarding finished, supports Later and explicit Got it, and stores seen version in an additive localStorage key rather than rewriting saved clinical/log records or legacy lastSeenChangelog. Existing history is retained; numeric legacy popup suppressed for confirmed published manifest to avoid duplicate announcements. Real publication status requires verified GitHub/Cloudflare evidence, not inferred from merge.
