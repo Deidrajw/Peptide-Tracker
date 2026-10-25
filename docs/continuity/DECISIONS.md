@@ -282,3 +282,6 @@
 
 ### 2026-10-25 — Supply deletion information architecture
 - Approved earlier user direction implemented as candidate on #118: destructive Delete supply belongs within Edit Supply, not as a standalone line under Restock in the overview. Keep visible secondary action and existing confirmation, never delete/overwrite user records automatically. Confirm with 320/390 accessible modal testing before release.
+
+### 2026-10-25 — Filled control foreground contract
+- User-approved: dark filled CTAs including reconstitution use white foreground (text and relevant icons), irrespective of former per-compound dark-text inline styling; light filled controls use dark foreground. Prefer semantic light/dark styling over unchecked one-off `!important` text overrides. Verify CSS `color` and `-webkit-text-fill-color` with actual computed styles on iPhone-sized browsers. Dark theme should not accidentally receive white text on pale fill.
