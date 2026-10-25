@@ -445,3 +445,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **ONE CONCRETE NEXT ACTION:** Run A4 full browser matrix and mobile regressions, fix failures, and release only if passing; specifically examine baseline/target equal and units, then plan Check-In evidence linkage.
 
 - A4 correction: changing a saved goal's progress mode retains prior model-specific fields (additive merge) so users can switch back without silently losing prior baseline/target/rating/milestones. Head latest `1ca3a951` and both workflows in progress; not merged, no Cloudflare parity or physical iPhone verification. **ONE CONCRETE NEXT ACTION:** Require latest-head CI success and inspect browser goal QA, then merge and validate hosting only if green.
+
+### 2026-10-24 — A5 opt-in symptom evidence candidate
+- Verified main `6e0df4e70fc8355a9fb33daa241d12b8cf47e9bb`. Branch `release/connected-goals-a5-checkin-sources` adds one optional symptom selection to Goal edit and read-only dated existing Check-In observations in Goal Activity, with intensity when present and no causal claim. Does not duplicate/mutate `dailyLogs`, does not implement Journal links yet. Candidate CODED, CI/QA, artifacts, PR merge, hosting and physical iPhone NOT VERIFIED.
+- **ONE CONCRETE NEXT ACTION:** Add dedicated browser checks for opt-in selection, date/intensity display and unchanged Check-In history, then validate branch CI before any merge.

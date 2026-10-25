@@ -280,3 +280,6 @@
 
 ### 2026-10-24 — A4 flexible progress modes candidate
 - Based on A3 main `223fea3c`, A4 branch adds progressModel editor, truthful Goal Overview and opt-in weight-history comparison, no record duplication or migration. Added browser matrix functional assertions; CI/merge/deployment unverified pending PR.
+
+### 2026-10-24 — A5 Goal Check-In evidence candidate
+- Proposed additive `goal.evidenceSymptom` selection and read-only existing `dailyLogs` evidence in Goal Activity. No Check-In data writes or duplication. Code staged on release branch only, CI/merge/deployment UNVERIFIED.

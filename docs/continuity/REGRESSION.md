@@ -273,3 +273,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-24 — A4 focused QA
 - New `validate-plans-hierarchy.mjs` assertions exercise saving numeric source lb with latest 185 vs baseline 200 target 180 => 75%; switch and save subjective 4/5, two milestones, exploratory; confirm weight log length and notes preserved in all 8 browser environments. Expected but NOT TESTED until CI. Additional unit mismatch, equal baseline/target, dates invalid/future and switching away/back require follow-up testing.
+
+### A5 evidence QA (all NOT TESTED)
+- Goal with no linked symptom shows opt-in guidance; select existing symptom and save/reopen; Goal Activity displays only matching dates and recorded intensity; no irrelevant symptoms or imported notes; remove selection and keep Check-In data unchanged, edit original record propagates; 320/390 light/dark LIVE and full DEMO. Protect one-Check-In-per-date, symptoms and associations, Supplements, Protocols, Calendar, Log Dose and vial math.
