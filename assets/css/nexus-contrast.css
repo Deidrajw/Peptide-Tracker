@@ -373,3 +373,11 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
   --t4:#524D67;
   --t5:#57536D;
 }
+
+/* Calendar uses saved numeric weight in a very small 9–10px row; historical
+   #416EBC on dark cells had only ~2.8:1 text contrast. Keep values, change ink. */
+:root:not([data-theme="light"]) .nx-cal-weight {color:#A9C8FF !important;}
+:root[data-theme="light"] .nx-cal-weight {color:#2853A8 !important;}
+/* Today's numeric day marker should remain readable on compact cells. */
+:root:not([data-theme="light"]) .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#7DF9C0 !important;}
+:root[data-theme="light"] .nx-cal-compact-day[data-today="true"] .nx-cal-day-number {color:#146E50 !important;}
