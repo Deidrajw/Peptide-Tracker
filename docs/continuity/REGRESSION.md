@@ -410,3 +410,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | LIVE & isolated full DEMO browser/package suite | Workflow 40212593263 on final PR head d57fbf | PASS |
 | Real production Cloudflare bytes | Need postmerge 16-file source hash parity report | NOT VERIFIED |
 | Old blend Today-card expanded parity and app-wide divider audit | Not included in PR #119 | INCOMPLETE / separate PRs |
+
+
+### 2026-10-25 — Medical/calculator claims audit acceptance matrix (NOT TESTED)
+- Matrix: `docs/audits/MEDICAL_CALCULATOR_CLAIMS_2026-10-25.md`. Current branch is documentation-only; none of the mathematical, medication-copy, browser, data-integrity, LIVE/DEMO, device or host assertions were executed by this audit change. Prior separate PASS evidence does not transfer automatically. Re-run 30/50/100 U-100 invariance, mg/mcg, generic IU guard, invalid/overflow/rounding, existing blend vial math/undo and 320/390 × light/dark on next coded source. Do not mark clinically validated.
