@@ -159,7 +159,7 @@ function peptideCardHTML(name, data, opts={}) {
       <div style="margin-bottom:14px">
         <div class="mono" style="font-size:11px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">ADMINISTRATION</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-          ${ROUTES.map(r=>toggleChip(r, (data.route||"SubQ")===r, {attrs:`class="route-btn" data-name="${esc(name)}" data-route="${r}"`, fontSize:"11px", padding:"7px 10px"}))}
+          ${ROUTES.map(r=>toggleChip(r, (data.route||"SubQ")===r, {attrs:`class="route-btn" data-name="${esc(name)}" data-route="${r}"`, fontSize:"11px", padding:"7px 10px"})).join("")}
         </div>
         <div class="route-nasal-ui" data-name="${esc(name)}" style="display:${data.route==="Nasal"?"block":"none"}">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
