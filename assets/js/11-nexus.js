@@ -1712,7 +1712,7 @@ function renderBody() {
   const profileBtn = tab==="profile" ? "" : `<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px"><button id="profile-btn" style="position:relative;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:20px;padding:4px 12px 4px 4px;font-size:12px;display:flex;align-items:center;gap:6px">
   ${state.profile.avatar
     ?`<img src="${state.profile.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`
-    :`<span style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7DF9C0,#C9A0FF);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0">${(state.profile.name||"?")[0].toUpperCase()}</span>`}
+    :`<span class="nx-profile-avatar-fallback" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`}
   <span style="color:var(--t3)">Profile</span>${hasUnseenUpdate?`<span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#A78BFA;border:1.5px solid var(--bg)"></span>`:""}</button><button id="theme-toggle" title="Toggle light/dark">${themeIcon}</button></div>`;
   app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${profileBtn}${inner}</div>`;
   wireBody();

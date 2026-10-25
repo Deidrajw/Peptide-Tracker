@@ -1806,3 +1806,10 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 #app .nx-unified-more-svg{width:20px!important;height:20px!important;display:block;flex:none;pointer-events:none}
 #app .nx-plan-head .manage-plan-btn:focus-visible,#app .nexus-protocol-card-head .manage-proto-btn:focus-visible,#app .nx-kit-heading-unified .nx-kit-header-manage:focus-visible{outline:3px solid #A78BFA!important;outline-offset:2px!important}
 @media(max-width:360px){#app .nx-plan-head,#app .nexus-protocol-card-head{gap:8px!important}#app .nx-kit-heading-unified{gap:8px!important}}
+
+
+/* Neutral identity fallback: no initials or invented photo; retained uploaded avatar unchanged. */
+.nx-profile-avatar-fallback{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;background:var(--surface-3);color:var(--t2)}
+.nx-profile-avatar-fallback .nx-avatar-placeholder{width:17px;height:17px;display:block}
+.nx-profile-avatar-large{width:64px;height:64px;background:var(--surface-2);color:var(--t2)}
+.nx-profile-avatar-large .nx-avatar-placeholder{width:34px;height:34px}

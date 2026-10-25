@@ -215,3 +215,6 @@
 
 ### 2026-10-25 — Explicit approved card header standard (correction)
 - User screenshots reject earlier styling-only claim. Required pattern on Research, Goals, Protocol and Stash cards: readable title first; status pill directly beneath title in left stack (not beside menu); single standardized 44×44px right-aligned ellipsis control with same filled SVG circles, stroke/size, distinct surface/border in both themes. Badge may remain actionable where it already was; handlers preserved. Existing shared CSS alone was insufficient; HTML hierarchy itself must change. No data, calculation or migration effects. Source/browser and user iPhone acceptance required.
+
+### 2026-10-24 — Store readiness design proposals (pending implementation)
+- Approved direction: once-per-published-version in-app What's New popup and single release manifest producing in-app, Apple and Google notes. Preserve historical changelog counters until reconciled; never infer deployment from merge. First-run onboarding must explain features and browser-local storage, offer Start Fresh vs validated/confirmed Restore Backup. Privacy/permission declarations require actual network/native-wrapper audit, not blanket 'no data collected'. Neutral outline user avatar instead of initial is coded on isolated branch, pending CI/merge.
