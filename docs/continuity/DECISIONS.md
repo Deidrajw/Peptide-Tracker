@@ -230,3 +230,11 @@
 
 ### 2026-10-25 — Onboarding action icon consistency
 - User rejected final Getting Started card icon hierarchy. Corrective design uses single outline SVG family in all 4 actions (Log Dose, Protocol, Stash, Learn) and guide, with matching icon box, type scale and supporting route copy. Existing routes/workflows protected. Release v0.9.17-beta candidate, do not claim publication until host parity verified.
+
+
+### 2026-10-24 — Unified implementation sweep and data-protection controls (approved direction)
+- User requested development without repeating planning; deliver product UX, privacy/reliability and version/release infrastructure as one coordinated candidate, but keep engineering/test/deployment gates explicit.
+- Preserve baseline v0.9.17 onboarding, original localStorage key `peptide-tracker-html-v1`, Check-In, dose, Stash, Calendar, Plans/Goals and all past records. No automatic migration. A manual restore may replace data **only after** preview and typed RESTORE; previous bytes require recovery-copy attempt before applying.
+- Browser transparency must distinguish local records, host/font network access, manual Apple Health imports, in-app reminders and browser permission. Do not claim no external data collection without server/native audit.
+- Calculator must not infer universal IU→mg potency, show a result for invalid nonfinite or physically overflowing entries, or change U-100 unit readings when syringe capacity changes. Independent math gate must block candidate on failures; clinical/safety certification is not implied.
+- Canonical release manifest drives runtime/title/three What's New channels and test artifact paths. Publish-gated popup remains silent for unverified builds. Apple 1.4.2 dosage-calculator review requirements and Google Play health/privacy declarations are store blockers independent of web-app UX.
