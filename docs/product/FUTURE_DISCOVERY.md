@@ -66,6 +66,60 @@
 - [ ] Competitor references for **patterns only**, not direct copying: Pep AI, Medisafe, MyTherapy, Bearable, Gentler Streak and other peptide trackers; benchmark objectively and validate current feature sets before claims.
 - [ ] Explicitly defer social community, compound marketplace, unsupported AI body scanning, excessive gamification until strong user need and risk review.
 
+## G. Explicit feature checklist — iOS & Android research follow-up (2026-10-25)
+This table makes the named research ideas individually searchable rather than only implicit in broader paragraphs. **Candidate tier is a hypothesis**, not a pricing decision. Essential data access/export and basic accuracy/safety must remain available without Pro.
+
+| Idea | Existing register coverage | Candidate tier / decision |
+|---|---|---|
+| Apple Health + Android Health Connect | Section E; optional, granular-permission import, dedupe and source attribution | Free integration baseline; advanced cross-source analytics might be Pro |
+| Optional Apple/Google account and encrypted Cloud Sync | Sections A/E | Investigate operational cost and a free backup baseline; Pro expanded sync/storage TBD |
+| Android widgets + native shortcuts / quick tiles | Section E (previously grouped under native quick actions) | Investigate free basics vs configurable Pro widgets |
+| Custom iPhone Home/Lock Screen widgets + Apple Shortcuts | Section E (previously grouped) | Free glanceable defaults; Pro advanced widget layouts TBD |
+| Reusable templates | Section C | Free essentials; sophisticated reusable workflows a possible Pro benefit |
+| Password vault / app lock | **New explicit discovery** | Evaluate *app-specific biometric/PIN lock and sensitive attachment protection first*. Do **not** store users' unrelated website passwords or call Nexus a general password manager without dedicated security design/audit |
+| Advanced secure photo / document vault | Section C COA attachment vault, **expanded here** | Encrypted images/PDFs, camera imports, optional biometric unlock, attachment removal, backup/restoration, retention and storage quotas; free basic document access, Pro capacity TBD |
+| Smart empty states | Sections B/D | Free core usability feature; not premium |
+| Customizable dashboard / cards | Section D | Basic personalization free; advanced multi-layout dashboards possible Pro |
+| Quick Actions / contextual quick-log | Section D | Free fast primary actions; premium automation uncertain |
+| Global search / command palette | Section D | Core navigation should be free; advanced saved views potentially Pro |
+| Personal reports and CSV/PDF | Section D | Basic export always free; custom layouts/automated reports possible Pro |
+| Intelligent reminders / notifications | Section E | Free core reminders; customization and advanced automation potential Pro |
+| Barcode / QR label scan | Section E | Reviewable inputs only; tier TBD |
+| Guided tours / contextual Help | Sections A/B | Free onboarding/accessibility; not premium |
+| Advanced multi-format calculator | Section C | No paywall for mathematical correctness, disclaimers, or safety; implementation independently gated |
+| Nexus AI | Section F | Free trial/limited usage vs Pro allowances are *ideas*, pending privacy, model cost and safety |
+| App Store lifecycle, subscriptions, pricing, billing | Section F | Research, not implemented |
+
+### Proposed premium packaging research (not approved)
+- **Free/core:** onboarding and disclaimers, records and editing, essential reminders, core tracking/history, correct available calculator features, essential local backups and export, accessibility and data security.
+- **Potential Pro convenience:** deeper configurable analytics, multi-workspace dashboards, advanced report templates/scheduling, expanded encrypted attachments and sync history, advanced widgets, extra automation, optional higher AI usage.
+- **Evaluate before deciding:** infrastructure costs, storage quotas and offline support, fair downgrade/grace behavior, Play/App Store subscription rules, user willingness to pay, consent and privacy. No data hostage behavior.
+
+## H. Distinct visual inspiration and UI pattern library
+**This is a different backlog from feature delivery.** Inspiration describes presentation/interactions, not an agreement to adopt another app's implementation, aesthetic, or claims.
+
+| Reference / concept | UI idea to examine | Nexus design evaluation |
+|---|---|---|
+| Apple iOS / Liquid Glass examples | Familiar tab shell, depth/translucency, navigation layering | Safe areas, contrast, keyboard/Reduce Motion and performance |
+| Android Material 3 / Material 3 Expressive | Adaptive shapes, navigation bars, selected states, typography/motion | Consistent Android behavior rather than an exact iPhone clone |
+| User screenshots of peptide apps | Rounded pill bottom tabs, soft cards, icon geometry, spacious onboarding | Original Nexus styling, not copying screenshots or brand assets |
+| Competitor guided tour | Spotlight/coachmark overlays, animated step transitions, replay | Real focus management, Back/Next/Skip and screen-reader support |
+| Competitor searchable modal selection | Search, recents/favourites, selection checkmark, dismiss gestures | Keyboard-safe scroll, preserved drafts, 320px fit |
+| Competitor kit/add forms | Essential details first; accordion for pricing, batch, COAs | Progressive disclosure and separate kit-vs-vial metadata |
+| Pep AI calculator acknowledgment | A clear 'measurement math, not medical advice' explanation | Keep a separate safety validation gate; acknowledgment does not prove safe math |
+| Gentler Streak wellness examples | Gentle visual storytelling and progress hierarchy | No misleading claims or ungrounded causal inference |
+| Bearable and Medisafe examples | Daily logging patterns, reminder states, legible history | Compare interactions without inventing current competitor capabilities |
+| Nexus original proposed Soft Depth | Midnight violet, pearl/ivory light mode, atmospheric gradient, satin primary, raised secondary | Contrast and battery/performance evidence before code |
+| Nexus original rounded control system | Consistent 44–48px targets, outline icon family, subtle haptics/motion | All five tabs, modal consistency, reduced-motion fallback |
+
+**Research references:** Apple Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines/), Android Design (developer.android.com/design), user-provided screenshots, and prior in-chat competitive design notes. These are design *sources and ideas*, not a verified October 2026 feature-by-feature competitor audit.
+
+### Suggested research artifact structure
+- Keep **this file** as master candidate features and business-tier hypotheses.
+- Future `docs/design/VISUAL_INSPIRATION.md`: original moodboard references, annotated patterns, platform differences and approved design tokens once visual direction is signed off.
+- Future `docs/product/MONETIZATION_DISCOVERY.md`: tier economics, entitlement rules, cancellation/downgrade and AI/token/storage costs once monetization research begins.
+- Do not mix sketches, discovery hypotheses or competitive examples with actual deployed features.
+
 ## Decision and delivery gates
 All above are *not yet approved for implementation*. Existing approved UI, saved data and ongoing work remain authoritative. Design previews must be shown before large redesign approval, then implement on a separate branch with the Nexus six mandatory deliverables and tested Cloudflare release parity. Do not confuse proposal/design, branch code, tests, merge and deployment.
 
