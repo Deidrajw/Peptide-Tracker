@@ -422,3 +422,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Check-In, supplements, Log Dose, blend, inventory, Protocol, Calendar and weight history | Protected JS source unchanged; no functional browser evidence yet | NOT TESTED |
 | Real iPhone / dual-theme acceptance | User action required | NOT TESTED |
 | Merge and primary Cloudflare | Prohibited until user approval | NOT MERGED / NOT DEPLOYED |
+
+
+### 2026-10-25 — Browser evidence for source commit 3f3ff27
+| Check | Result |
+|---|---|
+| Run 40233319212 build and release-artifact validation | PASS |
+| Browser live/isolated DEMO at 320px and 390px, dark/light | PASS automated |
+| Check-In, Protocol, Stash, Log Dose, combos, chevrons and math | PASS according to run logs; math diagnostic 80/80 is not clinical validity |
+| Run 40233319183 mobile form regression | PASS |
+| Light-mode text contrast diagnostic | 31 candidates over 9 tabs (some ~1.27:1), unresolved; no claim of WCAG AA |
+| Physical iPhone review | NOT TESTED |
+| Cloudflare parity against experimental branch | UNVERIFIED/EXPECTED MISMATCH; NO DEPLOY |
