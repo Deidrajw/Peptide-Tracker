@@ -238,3 +238,9 @@
 - Browser transparency must distinguish local records, host/font network access, manual Apple Health imports, in-app reminders and browser permission. Do not claim no external data collection without server/native audit.
 - Calculator must not infer universal IU→mg potency, show a result for invalid nonfinite or physically overflowing entries, or change U-100 unit readings when syringe capacity changes. Independent math gate must block candidate on failures; clinical/safety certification is not implied.
 - Canonical release manifest drives runtime/title/three What's New channels and test artifact paths. Publish-gated popup remains silent for unverified builds. Apple 1.4.2 dosage-calculator review requirements and Google Play health/privacy declarations are store blockers independent of web-app UX.
+
+
+### 2026-10-24 — Source-validated v0.9.18 merge and publication boundary
+- v0.9.18 PR #94 merged after 80/80 calculator math automated assertions, four trust/restore browser cases, mobile regression and protected app build QA. This establishes browser engineering evidence, not clinical clearance/physical iPhone acceptance.
+- Hosting authority remains Cloudflare Pages. A merge alone does not imply deployment; publish-gated What's New must not activate until a byte-identical Cloudflare deployment is separately validated. Preserve manifest status unverified until then.
+- Existing user storage key and all records must be preserved. RESTORE deliberately replaces records only on confirmed user action, with recovery copy/rollback attempted. No automatic migration.
