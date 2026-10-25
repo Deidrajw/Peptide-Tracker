@@ -43,6 +43,31 @@ try{
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
+  // Supply deletion is available from Edit details only. Confirm and Cancel
+  // operate on fictional supply fixtures; opening either sheet must not mutate it.
+  await page.evaluate(()=>{
+    state.equipmentItems=[
+      {id:881000,type:'Alcohol Wipes',brand:'QA wipes',unitLabel:'packs',
+       unitSize:100,unitOfMeasure:'count',storageLocation:'room_temp',notes:'QA only',
+       units:[{id:881001,status:'sealed',consumed:0}],usageLog:[]},
+      {id:881002,type:'Alcohol Wipes',brand:'Preserve me',unitLabel:'packs',
+       unitSize:100,unitOfMeasure:'count',storageLocation:'room_temp',notes:'',
+       units:[{id:881003,status:'sealed',consumed:0}],usageLog:[]}
+    ];
+    tab='stash';render();
+  });
+  ensure(await page.locator('.nx-supply-detail-footer .supply-delete').count()===0,'Delete supply remains on overview');
+  await page.evaluate(()=>equipmentModal(state.equipmentItems.find(x=>x.id===881000)));
+  ensure(await page.locator('#eq-delete').count()===1,'Supply Delete missing from Edit details');
+  ensure(await page.evaluate(()=>state.equipmentItems.length)===2,'Opening editor mutated supplies');
+  await page.locator('#eq-delete').click();
+  ensure(await page.locator('#ca-cancel').count()===1,'Delete requires confirmation');
+  await page.locator('#ca-cancel').click();
+  ensure(await page.evaluate(()=>state.equipmentItems.length)===2,'Cancel deleted supply unexpectedly');
+  await page.evaluate(()=>equipmentModal(state.equipmentItems.find(x=>x.id===881000)));
+  await page.locator('#eq-delete').click();
+  await page.locator('#ca-ok').click();
+  ensure(await page.evaluate(()=>state.equipmentItems.length===1&&state.equipmentItems[0].id===881002),'Delete altered unrelated supply');
   ensure(errors.length===0,'Browser exceptions '+errors.join('; '));
   results.push({width,theme,mode,status:'PASS',checks:['standard actions mapped','stored conditional','detail disclosure','blend safe routing','non-mutating open','touch targets']});
   await context.close();
