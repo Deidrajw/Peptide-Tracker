@@ -20,11 +20,13 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
-          grep -q 'v0.9.17-beta' index.html
+          release_version="$(node -p "require('./release/release.json').version")"
+          grep -Fq "<title>Nexus · ${release_version}</title>" index.html
+          node tools/validate-recon-safety.mjs
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
       - name: Independently compare published Pages files with source (nonblocking, preserve failure evidence)
@@ -36,10 +38,11 @@ jobs:
         shell: bash
         run: |
           python3 - <<'PY'
-          import zipfile, pathlib
-          z=pathlib.Path('dist/Nexus_v0.9.17-beta_LIVE_GitHub.zip')
-          h=pathlib.Path('dist/Nexus_v0.9.17-beta_FULL_DEMO.html')
-          o=pathlib.Path('dist/Nexus_v0.9.17-beta_OFFLINE_FULL_DEMO_OPEN_ME.zip')
+          import zipfile, pathlib, json
+          version=json.loads(pathlib.Path('release/release.json').read_text())['version']
+          z=pathlib.Path(f'dist/Nexus_{version}_LIVE_GitHub.zip')
+          h=pathlib.Path(f'dist/Nexus_{version}_FULL_DEMO.html')
+          o=pathlib.Path(f'dist/Nexus_{version}_OFFLINE_FULL_DEMO_OPEN_ME.zip')
           assert z.exists() and h.exists() and o.exists()
           with zipfile.ZipFile(o) as preview:
               assert preview.testzip() is None
@@ -81,7 +84,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Nexus-v0.9.17-beta-release
+          name: Nexus-release-artifacts
           path: dist/
           if-no-files-found: warn
           retention-days: 30
