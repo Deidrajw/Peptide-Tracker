@@ -256,3 +256,8 @@
 ### 2026-10-25 — Premixed blend releases use independently verified publication gates
 - v0.9.19 merge #100 changed only new blend vial and dose logic; old ingredient dose entries remain immutable historical records. Opening/finalizing a vial requires explicit user action; current-vial math prevents drawing against sealed kit inventory. Displayed blend component percentages use the vial total rather than kit total.
 - After 16/16 Cloudflare remote parity for main source (Actions 40162047192), source of truth may mark v0.9.19 published via an additive, separately validated manifest/What's New follow-up, not by retroactively rewriting saved localStorage history.
+
+### 2026-10-25 — Confirmed premixed blend semantics and Protocol polish
+- A premixed blend kit is one product/dose identity. Constituent amounts are informational composition, not separate administered dose events; existing old constituent records are immutable, and independent standalone constituent tracking remains available where genuine prior doses or separate inventory exist.
+- Blend vial opening is user-initiated (BAC water, date, expiry after recon, notes) and inventory-scoped; physical per-vial balance and excess-dose guard required. Percentages use `ingredientMg / physicalVialMg`, not across-kit total inventory.
+- Protocol wizard 44px steppers/type selectors and constrained input box should work on iPhone with keyboard. Browser tests are release guards; actual iOS acceptance requires phone screenshots.
