@@ -367,3 +367,6 @@
 
 ### 2026-10-25 — Approved mobile hierarchy candidate (unreleased)
 - Candidate on `feature/approved-ui-hierarchy-20261025`: compact vial ellipsis, responsive empty/open kit actions, multi-vial action styling, injection-site guidance relocation, Combo favourite dropdown, single-compound Trends detail/back navigation and duplicate glyph removal. No data schema changes. Blend Today card parity outstanding; branch/PR validation and Cloudflare production NOT COMPLETE.
+
+### 2026-10-25 — PR #119 follow-up (candidate; not a production release)
+- From iPhone preview evidence, fixed cramped multi-vial control and oversized Stash per-vial ellipsis by CSS-only overrides. User accepted the rest of the previewed UI, but latest-head automated and release artifact verification pending; PR draft and Cloudflare production unchanged.
