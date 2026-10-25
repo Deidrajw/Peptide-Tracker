@@ -1580,7 +1580,7 @@ function homeView() {
     <div class="nexus-today-eyebrow"><span class="nx-hybrid-eyebrow-dot" aria-hidden="true"></span> TODAY <span class="nx-hybrid-eyebrow-side">DAILY SUMMARY</span></div>
     <div class="nexus-today-hero-row">
       <div><div class="nexus-today-big">${scheduledCount ? `${takenCount} <span>of ${scheduledCount}</span>` : `No scheduled doses`}</div>
-        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div><div class="nx-hybrid-hero-orbit" aria-hidden="true"><span class="nx-hybrid-orbit-core">${scheduledCount ? Math.round(progressPct) + "%" : "—"}</span></div>
+        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div><div class="nx-hybrid-hero-orbit" style="--nx-progress:${progressPct}%" aria-hidden="true"><span class="nx-hybrid-orbit-core">${scheduledCount ? Math.round(progressPct) + "%" : "—"}</span></div>
       
     </div>
     ${scheduledCount ? `<div class="nexus-today-track" role="progressbar" aria-label="Scheduled doses logged" aria-valuemin="0" aria-valuemax="${scheduledCount}" aria-valuenow="${takenCount}"><div style="width:${progressPct}%"></div></div>` : ``}
