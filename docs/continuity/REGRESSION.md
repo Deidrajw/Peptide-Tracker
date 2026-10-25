@@ -457,3 +457,17 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Log Dose, blend, source-vial maths | NOT TESTED on latest head |
 | Contrast and real iPhone keyboard/safe areas | NOT TESTED / unresolved |
 | Merge and deployment | NOT PERFORMED |
+
+
+### 2026-10-25 — source Today candidate functional test evidence
+| Area | Outcome |
+|---|---|
+| Full-app DEMO and LIVE ZIP source packaging | PASS Actions 40237121428 |
+| 320px + 390px dark/light LIVE/DEMO browser | PASS Actions 40237121428 |
+| Check-In/Log Dose/Stash/Protocol/combos/chevrons | PASS automated browser suites 40237121428 |
+| Calculator dimension/math | 80/80 diagnostic; NOT clinical approval |
+| Mobile regression | PASS Actions 40237121416 |
+| Light-mode contrast candidates | **56 flagged, NOT VERIFIED / BLOCKER** |
+| Dark-mode contrast candidates | 2 flagged, NOT VERIFIED |
+| Physical iPhone and VoiceOver | NOT TESTED |
+| User design approval and deploy | NOT GIVEN / NOT DEPLOYED |
