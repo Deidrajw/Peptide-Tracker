@@ -40,6 +40,19 @@ try{
     ensure(await card(99002).locator('.nx-kit-overview-number').innerText().then(x=>x.includes('80')),'Kit Overview total should include sealed plus open');
     ensure(await card(99002).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('30') && x.includes('50')),'Open vial remaining display wrong');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
+    // A stored kit has two full-width actions; an opened kit retains three.
+    const storedActions=card(99001).locator('.nx-kit-actions');
+    ensure(await storedActions.evaluate(el=>el.classList.contains('nx-kit-actions-two')),
+      'Stored kit must use a two-column action layout');
+    ensure(await storedActions.locator('button').count()===2,'Stored kit action count differs from two');
+    const openActions=card(99002).locator('.nx-kit-actions');
+    ensure(await openActions.evaluate(el=>!el.classList.contains('nx-kit-actions-two')),
+      'Opened kit must retain three-column action layout');
+    ensure(await openActions.locator('button').count()===3,'Opened kit must show three actions');
+    const grids=await Promise.all([storedActions,openActions].map(x=>x.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)));
+    ensure(grids[0]===2&&grids[1]===3,'Wrong actual Stash grid columns '+JSON.stringify(grids));
+    ensure(await card(99001).locator('.nx-kit-vial-unopened .nx-kit-primary-value').evaluate(el=>parseFloat(getComputedStyle(el.querySelector('span')).fontSize)>=22),
+      'No vial open needs primary visual hierarchy');
     ensure(await card(99003).locator('.manage-kit-btn').count()>=1,'v0.9.9 blend actions were lost');
 
     for(const id of [99001,99002,99003]){
