@@ -72,7 +72,8 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const releaseContrast=await page.evaluate(()=>{
    const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
    const luminance=(str)=>{
-     const raw=str.match(/[0-9.]+/g)||[];
+     const strValue=String(str||"");
+     const raw=strValue.includes("(")?strValue.slice(strValue.indexOf("(")+1,strValue.indexOf(")")).split(",").map(v=>v.trim()):[];
      if(raw.length<3)return null;
      const cs=raw.slice(0,3).map(n=>{let v=Math.min(255,Math.max(0,Number(n)))/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
      return .2126*cs[0]+.7152*cs[1]+.0722*cs[2];
