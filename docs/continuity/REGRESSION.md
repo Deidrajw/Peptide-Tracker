@@ -508,3 +508,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Light/dark 320px/390px modal and keyboard screenshot review | NOT TESTED latest head |
 | Contrast audit and physical iPhone | INCOMPLETE |
 | Merge/deploy | NOT PERFORMED |
+
+
+### 2026-10-25 — Stash two-action card QA
+| Check | Status |
+|---|---|
+| Card shows contextual vial action + Kit Details (or details only) | CODED; latest-head browser pending |
+| Prepare Doses accessible in existing kit ellipsis for eligible recon kits | SOURCE VERIFIED; browser pending |
+| Global Stash Prepare shortcut retained | SOURCE UNCHANGED; browser pending |
+| Kit details disclosure, Overview/Vials/History, menu actions | BROWSER PENDING |
+| Single/multi vial, blends, prepared accounting, edits/history | JS math unchanged; latest-head browser pending |
+| 320/390 dark/light, modal scroll, contrast and keyboard | BROWSER PENDING / manual review needed |
+| iPhone manual test and merge/deploy | NOT TESTED / NOT DONE |
