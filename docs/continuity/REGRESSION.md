@@ -347,3 +347,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PREVIOUS candidate 40165287614: all prior browser workflows and 8-mode publication contrast gate PASSED; 9-tab read-only scanner flagged 69 light/31 dark potential low-contrast nodes, **diagnostic counts only**, not measured individual failures (nearest-surface heuristic can misread translucent layers). Full WCAG signoff NOT claimed.
 - Source-confirmed failures corrected in later PR #111 commits: dark --t4/--t5 readability, light t4/t5 on raised cards, Protocol New Protocol, published release buttons, white-on-lavender direct inline styles, and Calendar tiny numerical weight labels/today markers.
 - Latest head: full 320/390 light/dark LIVE/full DEMO regression / primary Cloudflare parity / actual physical iPhone STILL NOT VERIFIED until run. Expanded sheet/modal text coverage remains OPEN; retain fail-closed release controls.
+
+### 2026-10-25 — Contrast hotfix PR #111 merged, automated branch QA PASS
+- PASS GitHub Actions workflow 40165612214: exact-source LIVE and isolated FULL DEMO generated; browser 320px/390px × dark/light × LIVE/DEMO; published What's New primary/secondary actions computed contrast >=4.5:1 and >=44px bounds; muted t3/t4/t5 against three surfaces >=4.5:1; preceding Check-In, Calendar, Stash, Dose, Combo, Plans, Protocol screens regression suites green.
+- PASS mobile forms workflow 40165612207. Merged main squash `da18b2fb`; no storage key/schema mutation.
+- NOT TESTED: real iPhone light/dark after correction, VoiceOver, all secondary modals and overlays with human AA/visibility signoff. Nine-tab diagnostic candidates not all validated; preserve Issue #112. New Cloudflare postmerge parity NOT YET VERIFIED.
