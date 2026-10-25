@@ -364,3 +364,6 @@
 - Intended version v0.9.20-beta exists on unmerged `release/issue-109-kit-experience-parity` / Cloudflare preview deployment `a3c0ce76-5176-406a-91b2-08bf73763ceb`; production and current main confirmed v0.9.19-beta at audit. Preview SUCCESS does not imply production deployed.
 - Dedicated read-only post-main-push and manually invokable version + exact 16-file remote parity gate authored on `safety/release-deployment-parity-gate-20261025`. Candidate, not merged or CI verified at writing. Does not modify release.json, app source, data or published assets.
 - v0.9.20 application release still blocked by unverified inventory/KLOW/legacy edit, full LIVE/full isolated DEMO and responsive functional regression on PR #110. Promotion not claimed.
+
+### 2026-10-25 — Approved mobile hierarchy candidate (unreleased)
+- Candidate on `feature/approved-ui-hierarchy-20261025`: compact vial ellipsis, responsive empty/open kit actions, multi-vial action styling, injection-site guidance relocation, Combo favourite dropdown, single-compound Trends detail/back navigation and duplicate glyph removal. No data schema changes. Blend Today card parity outstanding; branch/PR validation and Cloudflare production NOT COMPLETE.
