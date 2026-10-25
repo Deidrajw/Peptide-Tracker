@@ -289,3 +289,6 @@
 
 ### 2026-10-24 — Combined UX consistency candidate (UNRELEASED)
 - Branch `release/unified-ui-research-journal-insights` from A6a main. Research title/Intel/reason hierarchy, Journal dropdown filter, single-focus Check-In changes modal, shared style adjustments. No persisted schema or data migration. Full-browser mobile 320/390 light/dark LIVE/DEMO, artifact parity, merge/deployment, physical iPhone PENDING. Do not call release shipped based on branch code.
+
+### 2026-10-25 — Card header parity corrective candidate (UNRELEASED)
+- From main dded5084, user-reported visual mismatch remains after PR #80. Branch `release/card-header-parity-20261025` applies DOM-level status-below-title structure and unified menu SVG to Research/Goals/Protocol/Stash, preserves all actions/status semantics and storage. CSS parity rules and targeted browser assertions added. CI, packaging, PR merge and host parity pending; physical screenshot defects are confirmed in current live UI, not signed off.
