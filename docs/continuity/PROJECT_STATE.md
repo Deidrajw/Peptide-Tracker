@@ -602,3 +602,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Physical iPhone preview acceptance, two requested visual corrections
 - User tested Cloudflare preview `b450ef9b.nexuspeplog.pages.dev` and accepted all reviewed UX except (1) squashed '+ Use multiple vials' action in dark Log Dose, (2) oversized outlined ellipses beside individual Stash vial rows. These are UI issues; don't change ledger, dosage or stored data.
 - PR #119 CSS-only follow-up `959beabf`: multi-vial button now non-compressing, natural width, wrapping if needed, 46px minimum; vial menu retains 44x44 accessible touch box but draws 28px bounded visual behind 15px ellipsis. No data/schema changes. **ONE NEXT ACTION:** verify latest-head CI and 320/390 light/dark browser screenshots; correct any failures, reconcile unfinished blend card parity and #118 before merge/deploy.
+
+### 2026-10-25 physical iPhone preview feedback — two targeted corrections
+- User tested preview at 12:19–12:21 Toronto local time; all other reviewed changes accepted. Screenshots show compressed `+ Use multiple vials` control in Log Dose and oversized outlined vial-row ellipsis in Stash.
+- Branch `assets/css/nexus.css` currently contains targeted overrides: `nx-multi-vial-toggle` natural-width minimum 46px high and `nx-kit-list-action` transparent 44px hit target with 28px visual outline. These changes are branch-only, not yet independently verified on a device after the correction.
+- **NEXT ACTION:** Run current PR #119 browser suite on latest head, verify corrected controls at 320/390 and physical iPhone, then finish remaining blend-card parity; do not merge or deploy without all required release gates.
