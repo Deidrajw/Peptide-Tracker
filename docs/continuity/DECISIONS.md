@@ -248,3 +248,7 @@
 - v0.9.18-beta has verified published web delivery after PR #97, and primary Cloudflare served 16/16 byte-identical app entry files in run 40160165392. Treat this as completed **web deployment**, not App Store readiness or full human usability acceptance.
 - Persistent policy: publication metadata must follow independent host-byte evidence; What's New is version-gated, stores a separate acknowledgment key, never rewrites legacy changelog or clinical/logging state. Protect localStorage storage and backup integrity.
 - Physical iPhone/VoiceOver signoff, Apple/Google store compliance, public privacy policy and third-party processor disclosures require independent evidence and are not inferred from GitHub CI.
+
+### 2026-10-25 — Premixed blend identity and Stash parity
+- User explicitly clarifies Deadpool consists of Cartalax, BPC-157 and TB-500 physically premixed **in one vial**. One blend = one tracked dose selection, one blend dose record and one Stash vial; constituent names are formulation metadata, not separate administered compounds. Keep all old constituent logs intact; do not automatically delete/migrate history. If an ingredient is independently tracked or has a standalone kit/dose, retain that choice.
+- Blend Stash must allow opening/reconstituting sealed vials with BAC, expiration-days and notes; do not route through single-compound stock deduction math. Protocol phase steppers need consistent 44px targets; Review input must not clip.

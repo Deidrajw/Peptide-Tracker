@@ -331,3 +331,7 @@
 - **LIVE:** Cloudflare `https://nexuspeplog.pages.dev/`; post-publication remote byte compare Actions run 40160165392 `verified:true` for all 16 app entry files (HTML/3 CSS/12 JS). Final published manifest source includes the once-per-version What's New popup. Browser/build and mobile forms PASS in runs 40160165392/40160165348; previous independent conversion math 80/80 and backup trust matrix PASS.
 - LIVE 20-file package, standalone full-app fictional isolated DEMO HTML and offline DEMO ZIP were generated from the same v0.9.18-beta published source; data impact: no automatic migration, manual restore requires typed confirmation and attempts local recovery/rollback. Historical changelog preserved.
 - Not equivalent to native-store approval: human iPhone/VoiceOver, all surfaces manual usability/contrast, policy/privacy processor declarations, and Apple/Google submissions remain incomplete.
+
+### 2026-10-25 — v0.9.19-beta corrective candidate (NOT YET RELEASED)
+- Targeted response to physical iPhone issues: blend open vial and reconstitution metadata, blend-as-one-entry in Today picker/dose logs, composition percentages, and Protocol phase/review input geometry. Source branch `release/v0919-blend-protocol-iphone-fixes`; baseline v0.9.18 main `2bf40535`.
+- Data impact: additive blend vial metadata, new single blend-dose logs, no automatic migration; existing constituent dose logs retained. Version manifest `unverified`. Full CI/live Cloudflare/iPhone acceptance pending. Published v0.9.18 unaffected until safe merge.
