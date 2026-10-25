@@ -690,3 +690,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Two-action QA regression correction
 - Source commit `ac9a4f27` build succeeded/mobile regression passed but browser run `40246509943` FAILED because trust UI test expected card-level `.preparedoses` button (which user requested removed). Preserved accounting assertions and changed test at `65cba791` to open existing `manageKitMenu` and verify its Prepare item. Do not call QA passed until new latest-head run finishes.
 - **ONE NEXT ACTION:** verify latest-head browser suite and full-app DEMO packaging, inspect 320/390 light/dark and test kit menu Prepare; resolve any failures before iPhone review. No merge/deploy.
+
+
+### 2026-10-25 — Full-app verification and Inventory Resolution UX candidate
+- Latest previous browser run `40246705484` FAILED Stash card expectation in `validate-stash-cards.mjs` (still expected three actions for open kit), despite source-parity LIVE/isolated DEMO package build and successful mobile run `40246705466`. Updated the outdated card assertion at `3dc44b22` for two user-approved actions.
+- Began separate Inventory Resolution source-label clarity pass in `assets/js/05-nexus.js` (`3875da06`) plus `assets/css/nexus-hybrid-preview.css` (`74228713`): numbered source vial rows, source kit ID, clearer 'Confirm draw', grid presentation and 44px controls; no dose amount / math / state or persistence code intentionally changed.
+- **Latest-head browser, contrast and physical iPhone evidence still PENDING.** Production untouched; no merge/deploy.
+- **ONE NEXT ACTION:** get latest-head browser and math/vial inventory regressions passing; inspect source rows, shortage flow and all modal screens at 320/390 both themes; remedy failures before user design approval.
