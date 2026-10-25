@@ -212,3 +212,6 @@
 
 ### 2026-10-24 — Approved coordinated hierarchy refresh
 - User explicitly approved Research, Journal, Check-In Changes and consistent status/ellipsis handling together. Compounds take title priority; 'Compound intel' is secondary, research reason has semantic label, ellipsis distinct from card. Journal keeps canonical records, uses accessible select instead of horizontal filter rail, preserves jump actions. Check-In Changes defaults to one selected metric/symptom and sample coverage, avoids 100%-of-logged-day ambiguity and nested scrolling record box. All saved data and prior approved actions protected. Broader shared components to validate across Goals, Protocol and Stash.
+
+### 2026-10-24 — Unified UX refresh implemented via PR #80
+- User-approved one release: compound-first Research hierarchy and semantic reasons; Intel secondary; Journal select dropdown and search instead of chip rail, source record jumps retained; Check-In Changes narrowed to one chosen metric with explicit sample coverage and no nested scroll; consistent distinguishable 44px ellipsis surfaces and aligned statuses across Research/Goals/Protocol/Stash. Merged at dded5084; real iPhone and Cloudflare publication not yet verified. Data and calculator code unchanged.
