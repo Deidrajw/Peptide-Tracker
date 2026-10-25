@@ -206,3 +206,6 @@
 
 ### 2026-10-24 — Goal symptom evidence (A5 candidate)
 - A personal Goal may opt in to one named existing Check-In symptom, matched exactly by symptom name. Show dated observations and any recorded intensity, not inferred effectiveness. Deselecting unlinks the evidence view without editing Check-In records. Journal linkage separately scoped after stable source identity audit.
+
+### 2026-10-24 — A6 Journal source identity (design proposal, not app approval)
+- `journalEntries()` in `assets/js/06-nexus.js` is derived from Check-In daily notes, per-compound notes, later updates, dose notes and Stash waste notes; there is no independent persisted Journal record ID. Proposed first slice A6a is a contextual, read-only daily-note display only for a Check-In containing the exact linked goal symptom, labeled same-entry context rather than symptom-specific evidence. Do not join notes merely by date or copy contents into goals. Defer typed deep links and Insights until their underlying source IDs and derivations are audited. See `docs/design/CONNECTED_GOALS_A6_SOURCE_AUDIT.md`.
