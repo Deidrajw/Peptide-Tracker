@@ -881,7 +881,46 @@ function addBlendKitModal(blendNameOrKit) {
 // consumeCompoundInventory; it's proportionate to keep it in its own small, self-
 // consistent formula rather than force-fit a structurally different product into that
 // engine.
+
+// Explicit, opt-in classification for legacy kits. Inventory and historical
+// administrations remain in the original v2 vial ledger.
+function classifyLegacyPremixedKit(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+  if(!kit||kit.isBlend)return;
+  const m=openModal(`<div class="nx-legacy-blend-setup">
+    <h2 style="font-size:21px;margin:0 0 8px">Mark as premixed blend</h2>
+    <p style="font-size:13px;line-height:1.6;color:var(--t3)">${esc(kit.name)} keeps all existing vial balances, dates, doses and notes. Enter the actual contents of ONE purchased vial. No existing dose will be split or recreated.</p>
+    <label class="field-label" for="legacy-blend-components">COMPONENTS PER VIAL</label>
+    <textarea id="legacy-blend-components" class="inp" rows="5" placeholder="Compound A: 50\nCompound B: 10" style="width:100%;min-height:132px;resize:vertical"></textarea>
+    <div style="font-size:12px;color:var(--t3);margin:10px 0 16px">One ingredient per line: name: mg. The total must equal ${Number(kit.vialMg)} mg. Historical allocations stay linked to their original vials.</div>
+    <button class="btn-primary" id="legacy-blend-confirm" style="width:100%;min-height:48px;background:#A78BFA;color:#1A1728!important">Review and mark as blend</button>
+  </div>`);
+  m.querySelector("#legacy-blend-confirm").onclick=()=>{
+    const raw=m.querySelector("#legacy-blend-components").value.trim();
+    const lines=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    const comps=lines.map(line=>{
+      const at=line.lastIndexOf(":");
+      return at<1?null:{compound:line.slice(0,at).trim(),mg:Number(line.slice(at+1).trim())};
+    });
+    if(comps.length<2||comps.some(x=>!x||!x.compound||!Number.isFinite(x.mg)||x.mg<=0)||
+       new Set(comps.map(x=>x.compound.toLowerCase())).size!==comps.length||
+       Math.abs(comps.reduce((a,c)=>a+c.mg,0)-Number(kit.vialMg))>0.001){
+      showErrorBanner("Enter at least two unique components and match the original vial strength exactly.");return;
+    }
+    confirmAction("Mark "+kit.name+" as a premixed blend? Your original dose history and physical vial balances will be preserved. This is not a rewrite of past doses.",()=>{
+      const original=state.supplies.find(x=>String(x.id)===String(kitId));
+      if(!original||original.isBlend)return;
+      // No updates to dose arrays, historical outflows, or physical vials.
+      original.isBlend=true;
+      original.blendInventoryMode="legacy-v2";
+      original.composition=comps;
+      original.legacyBlendDesignatedAt=localDatetime();
+      saveState();render();
+    },{tone:"info",confirmLabel:"Mark as blend",cancelLabel:"Cancel"});
+  };
+}
 function getBlendKitRemainingMg(kit) {
+  if(kit.blendInventoryMode==="legacy-v2")return (kit.vials||[]).reduce((n,v)=>n+(["sealed","open","active"].includes(v.status)?Math.max(0,Number(v.remainingMg)||0):0),0);
   const totalMg = (kit.totalVials||0) * (kit.vialMg||0);
   const totalUsedMg = (kit.doseLog||[]).reduce((a,d)=>a+(d.totalMgDrawn||0),0);
   const totalWasteMg = getKitActiveWasteMg(kit);
@@ -893,54 +932,13 @@ function getBlendKitRemainingMg(kit) {
 
 // Blend vials are ONE premixed inventory item. Never create separate constituent-dose
 // entries when opening a physical blend vial or logging that blend.
-function openBlendVialModal(kitId) {
-  const kit=(state.supplies||[]).find(k=>k.id===kitId && k.isBlend);
-  if(!kit) return;
-  const available=getSealedVials(kit);
-  if(!available.length){showErrorBanner("No sealed blend vials remain in this kit.");return;}
-  if(kit.reconDate && kit.activeKit && ensureKitVials(kit).some(v=>v.status==="active"||v.status==="open")){
-    showErrorBanner("A blend vial is already open. Finish it before opening another.");return;
-  }
-  const m=openModal(`
-    <div style="font-size:17px;font-weight:700;color:var(--t1);margin-bottom:6px">Open ${esc(kit.name)} vial</div>
-    <div class="hint" style="margin-bottom:14px">One premixed blend vial (${kit.vialMg} mg total). Components remain together as ${esc(kit.name)}.</div>
-    <label for="nx-blend-bac" class="field-label">BAC WATER (mL)</label>
-    <input id="nx-blend-bac" type="number" min="0.01" step="0.1" class="inp" value="${kit.bacMl>0?kit.bacMl:""}" placeholder="Enter volume" style="margin-bottom:12px">
-    <label for="nx-blend-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label>
-    <input id="nx-blend-expiry" type="number" min="1" step="1" class="inp" value="${kit.expiryDays||28}" style="margin-bottom:12px">
-    <label for="nx-blend-date" class="field-label">RECONSTITUTION DATE</label>
-    <input id="nx-blend-date" type="date" class="inp" value="${localDate()}" style="margin-bottom:12px">
-    <label for="nx-blend-notes" class="field-label">VIAL NOTES (OPTIONAL)</label>
-    <textarea id="nx-blend-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Lot, batch or observations"></textarea>
-    <div style="display:flex;gap:10px">
-      <button type="button" id="nx-blend-cancel" style="flex:1;min-height:48px;border:1px solid var(--border);border-radius:12px;color:var(--t2)">Cancel</button>
-      <button type="button" id="nx-blend-open" class="btn-primary" style="flex:2;min-height:48px">Open vial</button>
-    </div>`, "#A78BFA");
-  m.querySelector("#nx-blend-cancel").onclick=closeModal;
-  m.querySelector("#nx-blend-open").onclick=()=>{
-    const bac=Number(m.querySelector("#nx-blend-bac").value);
-    const days=Number(m.querySelector("#nx-blend-expiry").value);
-    const date=m.querySelector("#nx-blend-date").value;
-    if(!Number.isFinite(bac)||bac<=0||!Number.isSafeInteger(days)||days<1||days>3650||!/^\d{4}-\d{2}-\d{2}$/.test(date)){
-      showErrorBanner("Enter valid BAC water, expiry days and reconstitution date.");return;
-    }
-    const remaining=getSealedVials(kit);
-    if(!remaining.length){showErrorBanner("No sealed blend vial remains.");return;}
-    const vial=remaining[0];
-    vial.status="open"; vial.reconDate=date; vial.bacMl=bac;
-    vial.expiryDays=days; vial.notes=m.querySelector("#nx-blend-notes").value.trim();
-    kit.bacMl=bac;kit.expiryDays=days;kit.reconDate=date;
-    kit.openedVials=(kit.openedVials||0)+1;
-    kit.activeKit=true;
-    kit.reconHistory=kit.reconHistory||[];
-    kit.reconHistory.push({id:uid(),date,notes:vial.notes,vialId:vial.id,bacMl:bac,expiryDays:days});
-    saveState();closeModal();render();
-  };
-}
+// Blend entry uses exactly the same visual sheet as every other kit.
+function openBlendVialModal(kitId) { return openNewVialModal(kitId); }
 
 // The kit total includes sealed inventory; an administered draw is limited by
 // the ONE opened blend vial. Vial IDs prevent same-day rollover double counting.
 function getBlendOpenVialRemainingMg(kit) {
+  if(kit.blendInventoryMode==="legacy-v2"){const vial=(kit.vials||[]).find(v=>v.status==="open"||v.status==="active");return vial?Math.max(0,Number(vial.remainingMg)||0):0;}
   const open=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
   if(!open || !kit.reconDate) return 0;
   const date=open.reconDate||kit.reconDate;
@@ -980,62 +978,12 @@ function finishBlendVialModal(kitId) {
   },{tone:"warning",confirmLabel:"Finish vial",cancelLabel:"Keep open"});
 }
 
+// Premixed blends use the identical Log Dose screen and form controls.
 function logBlendDoseModal(kitId) {
-  const kit = (state.supplies||[]).find(s=>s.id===kitId); if (!kit || !kit.isBlend) return;
-  const totalMg = kit.vialMg||0;
-  const remainingMg = getBlendOpenVialRemainingMg(kit);
-  if(!kit.reconDate || !ensureKitVials(kit).some(v=>v.status==="open"||v.status==="active")){showErrorBanner("Open and reconstitute a blend vial in Stash before logging a dose.");return;}
-  const m = openModal(`
-    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">Log ${esc(kit.name)} Dose</div>
-    <div class="hint" style="margin-bottom:14px">Enter the one amount you actually drew — the app splits it into each compound's own dose record automatically, using this vial's ratio. ${remainingMg.toFixed(1)}mg currently in the open vial.</div>
-    <label class="field-label">AMOUNT DRAWN (mg total)</label>
-    <input id="bd-amount" type="number" step="0.1" class="inp" placeholder="e.g. 8" style="margin-bottom:8px">
-    <div id="bd-preview" style="font-size:11px;color:var(--t4);line-height:1.7;margin-bottom:14px"></div>
-    <label class="field-label">DATE</label>
-    <input id="bd-date" type="date" class="inp" value="${localDate()}" style="margin-bottom:14px">
-    <label class="field-label">NOTES (optional)</label>
-    <textarea id="bd-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px"></textarea>
-    <button id="bd-save" class="btn-primary" style="background:#C9A0FF">Log Dose</button>
-  `, "#C9A0FF");
-
-  const updatePreview = () => {
-    const amt = parseFloat(m.querySelector("#bd-amount").value)||0;
-    const preview = m.querySelector("#bd-preview");
-    if (!amt || !totalMg) { preview.innerHTML = ""; return; }
-    preview.innerHTML = kit.composition.map(c => {
-      const share = (c.mg/totalMg) * amt;
-      return `${esc(c.compound)}: ${share.toFixed(2)}mg`;
-    }).join(" · ");
-  };
-  m.querySelector("#bd-amount").oninput = updatePreview;
-
-  m.querySelector("#bd-save").onclick = () => {
-    const amt = parseFloat(m.querySelector("#bd-amount").value)||0;
-    if (amt <= 0 || !totalMg) return;
-    // Never allow logging more than the open vial actually has — this was previously
-    // unchecked entirely, meaning a typo or overestimate would silently push the vial's
-    // remaining below zero with no warning, exactly the kind of negative-inventory state
-    // this whole rebuild exists to prevent.
-    if (amt > remainingMg + 0.01) {
-      showErrorBanner(`Only ${remainingMg.toFixed(1)}mg remains in this vial — ${amt}mg wasn't logged. Adjust the amount or reconstitute a new vial first.`);
-      return;
-    }
-    const date = m.querySelector("#bd-date").value || localDate();
-    const notes = m.querySelector("#bd-notes").value;
-
-    // One premixed dose belongs to the blend name. Do not create independent
-    // administration records for Cartalax/BPC-157/TB-500 as if drawn separately.
-    state.customPeptides=state.customPeptides||{};
-    if(!state.customPeptides[kit.name]) initCompoundTracking(kit.name);
-    const blend=state.customPeptides[kit.name]||state.peptides[kit.name];
-    blend.doses=blend.doses||[];
-    blend.doses.push({id:uid(),date,dose:String(amt),notes,blendSource:kit.id,isBlendDose:true});
-    
-    if (!kit.doseLog) kit.doseLog = [];
-    const currentVial=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
-    kit.doseLog.push({ id: uid(), date, totalMgDrawn: amt, notes, vialId:currentVial?.id });
-    saveState(); closeModal(); render();
-  };
+  const kit=(state.supplies||[]).find(s=>String(s.id)===String(kitId)&&s.isBlend);
+  if(!kit)return;
+  if(!getActiveVial(kit)){showErrorBanner("Open a vial before logging a fresh dose.");return;}
+  return doseModal(kit.name);
 }
 
 function confirmAction(msg, cb, opts={}) {
