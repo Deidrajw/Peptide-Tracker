@@ -43,6 +43,19 @@ try{
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
+  // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
+  await page.evaluate(()=>{closeModal();doseModal('GHK-Cu');});
+  const multi=await page.locator('#toggle-multi').evaluate(el=>{
+    const s=getComputedStyle(el),r=el.getBoundingClientRect();
+    return {top:parseFloat(s.paddingTop),bottom:parseFloat(s.paddingBottom),
+      left:parseFloat(s.paddingLeft),right:parseFloat(s.paddingRight),height:r.height,
+      width:r.width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
+  });
+  ensure(multi.top>=12&&multi.bottom>=12&&multi.left>=20&&multi.right>=20,
+    'Use multiple vials has compressed padding: '+JSON.stringify(multi));
+  ensure(multi.height>=48&&multi.scrollWidth<=multi.clientWidth+1,
+    'Use multiple vials clips or undersizes text: '+JSON.stringify(multi));
+  await page.evaluate(()=>closeModal());
   ensure(errors.length===0,'Browser exceptions '+errors.join('; '));
   results.push({width,theme,mode,status:'PASS',checks:['standard actions mapped','stored conditional','detail disclosure','blend safe routing','non-mutating open','touch targets']});
   await context.close();
