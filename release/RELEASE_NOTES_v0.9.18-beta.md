@@ -1,6 +1,6 @@
 # Nexus v0.9.18-beta — Release Candidate Notes
 
-**Status:** IMPLEMENTED ON PR #94 / NOT YET MERGED OR DEPLOYED. Canonical version: `release/release.json`. Publication status: `unverified`.
+**Status:** PR #94 merged to main (`623025665c549dadbe3fb467b6d556f5d44e7e34`); Cloudflare 16-file byte parity verified in GitHub Actions run 40159182188. Publication acknowledgement metadata is now being staged on a separate release branch and requires fresh merge/deployment parity. Canonical version: `release/release.json`.
 
 ## Product experience
 - Settings: Privacy & Data screen, matching shield outline icon, accessible detail navigation and 44px back target.
@@ -23,8 +23,12 @@
 
 ## Tests and unresolved limitations
 - Test suite target: 320/390px × light/dark × LIVE/full DEMO plus mobile-form, Check-In, Protocol, Vial, Stash, Combo, Dose, Plans, chevron and independent calculation audits.
-- At candidate authoring time: full latest-head workflow, physical iPhone, VoiceOver, Cloudflare commit/asset parity and final publication **NOT VERIFIED**. Do not claim release complete while any remains unverified.
+- PR #94 release-artifact/browser workflow 40158486843 and mobile-form workflow 40158486825 PASSED; subsequent post-merge Cloudflare parity checked 16 hosted files and returned verified:true (run 40159182188). Physical iPhone and VoiceOver remain **NOT TESTED**. Publication-metadata follow-up is not deployed until separately merged and verified.
 - Apple App Review 1.4.2 places additional restrictions on drug dosage calculators. Public privacy policy URL, native iOS/Android wrappers, store declarations, and relevant review/clearance are outstanding. See `docs/store/STORE_READINESS_V0918.md`.
 
 ## Primary website
 https://nexuspeplog.pages.dev/ — Cloudflare Pages, publication parity must be verified separately from GitHub PR merge.
+
+## Publication acknowledgment follow-up
+- Cloudflare source parity was confirmed only after the v0.9.18-beta merged source went live. The separate manifest/What's New metadata update now identifies that verified initial publication and enables the version-gated popup only after redeployment.
+- Store-submission readiness and clinical approval are not implied by the publication flag.
