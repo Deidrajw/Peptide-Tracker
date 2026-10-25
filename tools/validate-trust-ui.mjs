@@ -93,9 +93,9 @@ try{
           const read=id=>{
             const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
             if(!card)return null;
-            return {label:card.querySelector('.nx-stash-inventory-summary')?.textContent?.includes('KIT INVENTORY REMAINING'),
+            return {label:card.querySelector('.nx-kit-overview-label')?.textContent?.includes('CURRENT OPEN VIAL'),
               actionPresent:!!card.querySelector('.opennewvial,.openblendvial'),
-              summary:card.querySelector('details>summary')?.textContent?.trim(),
+              summary:card.querySelector('.nx-kit-detail-button')?.textContent?.trim(),
               tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
           };
           return {single:read(normal.id),blend:read(975310)};
