@@ -117,6 +117,23 @@ try{
           'premixed blend records once without creating individual component doses');
         assert.equal(await page.evaluate(()=>getBlendOpenVialRemainingMg(state.supplies.find(k=>k.id===975310))),27,
           'open vial has 27mg after a 3mg draw, not the full kit remainder');
+
+        const preparedLedger=await page.evaluate(()=>{
+          const k=state.supplies.find(k=>k.id===975310);
+          const before=getBlendOpenVialRemainingMg(k);
+          const doseHistory=getKitDoseHistory(k);
+          const tx=consumeCompoundInventory({kit:k,amountMg:2,reason:'prepared',transactionId:uid()});
+          const after=getBlendOpenVialRemainingMg(k);
+          undoConsumeCompoundInventory(k,{allocations:tx.allocations});
+          const restored=getBlendOpenVialRemainingMg(k);
+          tab='stash';render();
+          const card=document.querySelector('.nx-kit-card[data-kit-id="975310"]');
+          return {before,after,restored,committed:tx.committed,history:doseHistory.length,
+            prepareVisible:!!card?.querySelector('.preparedoses'),detailsTabs:card?.querySelectorAll('.nx-stash-tab').length};
+        });
+        assert.deepEqual(preparedLedger,{before:27,after:25,restored:27,committed:true,history:1,prepareVisible:true,detailsTabs:3},
+          'shared Prepare entry and reversible premixed stock transaction must preserve kit history');
+
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('31');
         await page.locator('#save').click();
