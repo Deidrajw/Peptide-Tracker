@@ -578,3 +578,17 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Post-merge independent primary Cloudflare 16-file parity NOT YET VERIFIED. Verification branch `verify/v0920-postmerge-cloudflare-20261025` exists solely to trigger source-identical PR CI. Do not claim deployed until generated parity result shows `verified:true`, 16 matching remote files.
 - Recent PR QA: full artifacts generated, mobile workflow passed on prior head; full browser gate revealed a fixture preparedDoses undefined error. Fixture correction commit `8feb7a6d` was on release branch after merge; latest main acceptance still requires clean evidence. No storage migration.
 - **ONE NEXT ACTION:** Inspect latest source-identical Cloudflare parity workflow and full browser release artifact, fix any test-harness gaps in follow-up without reverting merged v0.9.20 app, then document verified deployment or actual failure.
+
+
+### 2026-10-25 — Final v0.9.20 main source, primary-host parity follow-up
+- User-approved v0.9.20 implementation PR #115 merged at `e9193dc389e05565a6fcb15d85359ea9d744b202`. Follow-up PR #116 merged at `ef8a9ee26be4cbfaae96f9a0962de6803bf720d3`, repairing Log Dose's current-kit variable/comment rendering issue and aligning preserved Stash QA assertions. Both merges preserve v0.9.20 release version and non-destructive record schema.
+- Mobile QA passed on latest PR branch (workflow 40173267575). The full 320/390 LIVE/DEMO browser workflow 40173267474 was still running at merge; its final outcome requires inspection. Do not claim all browser suites green without reviewing that run.
+- Primary Cloudflare production exact parity against final merge SHA is PENDING. This source-identical docs-only verification branch triggers independent CI; only `verified:true` for all 16 remote files completes WEB deployment. Preserve real user storage.
+- **ONE NEXT ACTION:** Verify Cloudflare 16-file match against v0.9.20 final source and finalize release acceptance status in docs; physical iPhone signoff separate.
+
+
+### 2026-10-25 — Primary Cloudflare v0.9.20 exact-source deployment VERIFIED
+- Independent PR #117 branch workflow `40173460710` logged **LIVE CLOUDFLARE PAGES VERIFIED: 16 exact source files**, matching the final `main` v0.9.20 application from merge `ef8a9ee26be4cbfaae96f9a0962de6803bf720d3`; verified against root index.html, three CSS and twelve JS files. Verified source at job `121109045792`. Source-identical docs branch GitHub Actions run/host comparison is authoritative evidence for WEB host, not physical iPhone.
+- Mobile workflow `40173460658` PASS. Release artifacts built from exact source; 8-mode major browser, Check-In, Protocol, vial-source, Log Dose 40 flows, combo, Stash Actions and card QA had previously passed, but full suite `40173460710` overall FAILURE on outdated `tools/validate-stash-panels.mjs` selector, not a proven app failure. The stale test assertion was corrected on this docs/testing branch, pending CI confirmation; do not mark overall release-browser PASS until complete run succeeds.
+- v0.9.20 is deployed to primary `https://nexuspeplog.pages.dev/`. The preview environment is no longer the only v0.9.20 source. No automatic data rewrite/migration. Personal records were not accessed in QA. The divider removal requested separately has not been implemented in this release.
+- **ONE NEXT ACTION:** Finish 8-mode regression CI of changed test fixtures, then independently user-review Stash and blend logging on physical iPhone and schedule requested divider cleanup as separate PR.
