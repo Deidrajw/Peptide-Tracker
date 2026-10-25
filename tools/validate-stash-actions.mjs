@@ -21,6 +21,20 @@ try{
     ];
     tab='stash';render();
   },theme);
+  // Test actual Open New Vial sheet, not only a CSS selector in isolation.
+  await page.evaluate(()=>openNewVialModal(88902));
+  const cta=await page.locator('#rvsave').evaluate(el=>{
+    const s=getComputedStyle(el);
+    return {bg:s.backgroundColor,fg:s.color,webkit:s.webkitTextFillColor,
+      height:el.getBoundingClientRect().height};
+  });
+  if(theme==='light'){
+    ensure(cta.bg==='rgb(98, 68, 156)' && cta.fg==='rgb(255, 255, 255)'
+      && cta.webkit==='rgb(255, 255, 255)',
+      'Light Open New Vial CTA must be white text on deep violet: '+JSON.stringify(cta));
+  }
+  ensure(cta.height>=44,'Open New Vial CTA touch target below 44px');
+  await page.evaluate(()=>closeModal());
   const snap=()=>page.evaluate(()=>JSON.stringify(state.supplies));
   const before=await snap();
   ensure(await page.locator('.nx-kit-card[data-kit-id="88903"] .manage-kit-btn').count()>=1,'Blend kit has no actions button');
