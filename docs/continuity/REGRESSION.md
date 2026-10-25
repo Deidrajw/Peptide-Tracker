@@ -319,3 +319,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - PASS static UI source check for unwanted administration route commas, Privacy shield/keyboard motion CSS.
 - NOT TESTED: real iPhone, VoiceOver/TalkBack, full manual review of every one of the formerly 57 heuristically graded surfaces, native app store builds.
 - NOT VERIFIED: primary Cloudflare Pages published full asset hashes and `release/release.json publication.status`. Do not fake PASS.
+
+
+### 2026-10-25 UTC — Verified Cloudflare parity evidence
+- PASS remote primary Cloudflare: `Nexus_CLOUDFLARE_PARITY.json` artifact 12585875043, GitHub Actions 40158910879, `verified=true`, `smoke_only=false`, 16/16 exact file bytes (index + 3 CSS + 12 JS). No local-only smoke or GitHub Pages substitution.
+- PASS v0.9.18 merged app regression: 80/80 mathematical assertions, 4/4 backup/privacy UI, source-validated LIVE/full DEMO packaging, existing mobile/protected suites (PR #94).
+- NOT TESTED: real iPhone/VoiceOver, native store binary and official review. Popup publication status in manifest still `unverified` pending a separate deploy-gated change.
