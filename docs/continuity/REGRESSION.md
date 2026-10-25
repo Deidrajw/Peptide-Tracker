@@ -401,3 +401,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 |---|---|---|
 | Log Dose Use multiple vials | Button `#toggle-multi` in full LIVE and isolated DEMO has computed padding >=12px vertical / >=20px horizontal, height >=48px, scrollWidth <= clientWidth+1 in 320/390 light/dark | CODED; latest CI PENDING |
 | Previous fix | `.nx-dose-form button.nx-multi-vial-toggle` was overridden by ID-level `padding:5px 0!important` | ROOT CAUSE VERIFIED |
+
+### 2026-10-25 — PR #119 release evidence
+| Check | Evidence | Result |
+|---|---|---|
+| iPhone preview user acceptance | Explicit acceptance of corrected multi-vial padding and vial ellipsis, all other reviewed items | USER PASS (preview only) |
+| Automated mobile form | Workflow 40212593190 on final PR head d57fbf | PASS |
+| LIVE & isolated full DEMO browser/package suite | Workflow 40212593263 on final PR head d57fbf | PASS |
+| Real production Cloudflare bytes | Need postmerge 16-file source hash parity report | NOT VERIFIED |
+| Old blend Today-card expanded parity and app-wide divider audit | Not included in PR #119 | INCOMPLETE / separate PRs |
