@@ -260,3 +260,7 @@
 ### 2026-10-25 — Theme visibility is a release-blocking usability requirement
 - Real iPhone screenshot confirmed a blank-looking published What's New CTA on light theme. Approval: permanent theme-aware foreground/background contrast for all actionable text including modals attached outside #app, not isolated copy changes. Require computed browser assertions for visible action targets and text contrast, both dark/light at 320/390px; do not claim whole-app audit from testing only one modal.
 - Scoped candidate on `fix/issue-109-theme-visibility-audit` does not modify saved data or the unfinished blend experience parity PR #110.
+
+### 2026-10-25 — App-wide contrast token baseline (branch approval implementation)
+- User requires app-wide light/dark legibility, not isolated controls. Preserve hierarchy but prevent muted text tokens from fading below AA on neutral surfaces. Dark t3/t4/t5 elevated to legible lavender-gray tones; light t4/t5 darkened. Small Calendar weight labels use accessible light blue (dark) or navy (light), no changes to saved numerical weights.
+- Direct white-on-solid-lavender foreground is not accepted (observed ratios 2.1–2.7); use dark ink. Browser gate checks rendered modal buttons and neutral token/surface combinations, plus diagnostic sweep of nine tabs, but no whole-app AA certification without broader human and modal audit.
