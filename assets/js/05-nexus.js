@@ -605,6 +605,9 @@ function debounce(fn, wait) {
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
+  const blendKits=state.supplies.filter(k=>k.name===name&&k.isBlend);
+  const isBlend=blendKits.length>0;
+  const blendFormulation=blendKits[0]||null;
   const doseHistory = [...(cData.doses||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const recent = doseHistory.slice(0,3).map(d=>d.site).filter(Boolean);
   const occIndex = occTime ? getOccurrenceTimes(cData).indexOf(timeKeyOf(occTime+":00")) : -1;
@@ -705,6 +708,7 @@ function doseModal(name, existing, occTime) {
     <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
+    ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" style="background:transparent;border:none;padding:0;font-size:11px;color:var(--t4);margin-bottom:14px">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
@@ -755,6 +759,75 @@ function doseModal(name, existing, occTime) {
     if (isEdit || selectedSource!=="fresh") { panel.innerHTML=""; return; }
     const doseAmtStr = m.querySelector("#dose")?.value || f.dose;
     const neededMg = doseToMg(doseAmtStr, c.unit);
+    // The UI is shared. Premixed blends keep one administration record and an
+    // explicit vial-ID ledger, rather than independent ingredient administrations.
+    if(isBlend){
+      const raw=Number(doseAmtStr),neededMg=doseToMg(raw,c.unit);
+      if(!Number.isFinite(neededMg)||neededMg<=0){showErrorBanner("Invalid blend amount.");return;}
+      const inputDate=m.querySelector("#date").value,site=m.querySelector("#site").value;
+      const notes=m.querySelector("#notes").value,symptoms=f.symptoms;
+      const tgt=state.customPeptides[name]||(state.customPeptides[name]={enabled:true,scheduleDays:7,doses:[]});
+      tgt.doses=tgt.doses||[];
+      if(isEdit){
+        if(Math.abs(Number(f.dose)-raw)>.0001){
+          showErrorBanner("Changing a saved blend amount requires reconciling its source vial first. The original dose was preserved.");return;
+        }
+        const old=tgt.doses.find(x=>x.id===f.id);
+        if(!old){showErrorBanner("Original blend record not found.");return;}
+        Object.assign(old,{date:inputDate,site,notes,symptoms,escalation:m.querySelector("#esc").checked});
+        saveState();closeModal();render();return;
+      }
+      const id=uid(),allocations=[];
+      let fromPreparedId;
+      if(selectedSource!=="fresh"){
+        const pd=(state.preparedDoses||[]).find(p=>String(p.id)===String(selectedSource)&&p.remainingCount>0);
+        if(!pd||Math.abs(Number(pd.amountEach)-raw)>.01){showErrorBanner("Prepared dose amount or source does not match.");return;}
+        pd.remainingCount--;
+        fromPreparedId=pd.id;
+        allocations.push(...(pd.allocations||[]).map(a=>({...a})));
+      }else{
+        const ak=activeKit();
+        const plan=rows.length?rows.filter(r=>Number(r.mg)>0):[{kitId:ak?.id,mg:neededMg}];
+        const planned=plan.reduce((v,r)=>v+Number(r.mg||0),0);
+        if(!plan.length||Math.abs(planned-neededMg)>.01||plan.some(r=>r.finished)){
+          showErrorBanner("Confirm the complete amount and sources before saving. No inventory changed.");return;
+        }
+        const totals=new Map();
+        for(const row of plan){
+          const kit=blendKits.find(k=>String(k.id)===String(row.kitId));
+          const vial=kit&&getActiveVial(kit);
+          if(!vial || (row.vialId!=null&&String(row.vialId)!==String(vial.id))){
+            showErrorBanner("An allocated blend vial is no longer open. Nothing saved.");return;
+          }
+          const key=String(kit.id),cur=totals.get(key)||0;
+          totals.set(key,cur+Number(row.mg));
+        }
+        for(const [key,total] of totals){
+          const kit=blendKits.find(k=>String(k.id)===key);
+          if(total>getBlendOpenVialRemainingMg(kit)+.001){
+            showErrorBanner("Insufficient blend inventory in one of the selected open vials.");return;
+          }
+        }
+        const committed=[];
+        const tx=uid();
+        for(const row of plan){
+          const kit=blendKits.find(k=>String(k.id)===String(row.kitId));
+          const result=consumeCompoundInventory({kit,amountMg:Number(row.mg),reason:"administered",transactionId:tx});
+          if(!result.committed){
+            committed.forEach(a=>undoConsumeCompoundInventory(a.kit,{allocations:[{ledgerId:a.ledgerId}]}));
+            showErrorBanner("Inventory changed during allocation. The dose was not logged.");return;
+          }
+          result.allocations.forEach(a=>committed.push({...a,kit}));
+        }
+        allocations.push(...committed.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId})));
+      }
+      const dose={id,date:inputDate,dose:String(raw),site,notes,symptoms,
+        escalation:m.querySelector("#esc").checked,isBlendDose:true,
+        blendSource:allocations[0]?.kitId||blendKits[0]?.id,
+        allocations,fromPreparedId};
+      tgt.doses.push(dose);
+      saveState();closeModal();render();return;
+    }
     const ak = activeKit();
     // "Current vial" must mean the OPEN vial specifically — not the kit's total including
     // sealed reserve that hasn't been reconstituted yet. getKitRemainingMg is correctly
@@ -920,6 +993,19 @@ function doseModal(name, existing, occTime) {
       if (hint) hint.innerHTML = sprays ? `= ${mgToUnit(doseMg, c.unit).toFixed(3)}${c.unit}` : "&nbsp;";
       debouncedRenderAllocPanel();
     };
+  }
+  if(isBlend){
+    const refreshBlendBreakdown=()=>{
+      const holder=m.querySelector("#nx-blend-dose-breakdown");
+      if(!holder)return;
+      const dose=Number(m.querySelector("#dose").value);
+      const total=Number(blendFormulation?.vialMg)||0;
+      if(!Number.isFinite(dose)||dose<=0||!total){holder.textContent="";return;}
+      const pieces=(blendFormulation.composition||[]).map(part=>part.compound+": "+(Number(part.mg)/total*dose).toFixed(2)+" mg");
+      holder.textContent=pieces.length?"Blend composition · "+pieces.join(" · "):"";
+    };
+    m.querySelector("#dose").addEventListener("input",refreshBlendBreakdown);
+    refreshBlendBreakdown();
   }
   const toggleBtn = m.querySelector("#toggle-multi");
   if (toggleBtn) toggleBtn.onclick = () => { multiMode = !multiMode; if(!multiMode) rows=[]; toggleBtn.textContent = multiMode?"− Use a single vial instead":"+ Use multiple vials"; renderAllocPanel(); };
