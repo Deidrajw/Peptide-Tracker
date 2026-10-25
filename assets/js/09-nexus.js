@@ -152,10 +152,11 @@ function trendsView() {
   if(startedPeps.length) {
     const names=startedPeps.map(([name,data])=>({name,count:(data.doses||[]).length,last:[...(data.doses||[])].sort((a,b)=>safeDate(b.date)-safeDate(a.date))[0]?.date}));
     const selected=state._nxHistorySelected;
-    html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length} compounds</span></div>
+    if(selected&&names.some(n=>n.name===selected)) html=`<div class="nx-library-head nx-history-screen-back"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Compound history</span></div>`;
+    else html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length} compounds</span></div>
       <input id="nx-library-search" class="nx-library-search" type="search" placeholder="Search compounds…" aria-label="Search compound history" value="${esc(state._nxHistoryQuery||'')}">
       <div id="nx-library-list" class="nx-library-list">${names.map(item=>`<button type="button" class="nx-library-item ${selected===item.name?'is-active':''}" data-nx-compound="${esc(item.name)}"><span><strong>${esc(item.name)}</strong><span class="nx-library-meta" style="display:block">${item.count} logged doses · ${item.last?`Last ${esc(fmtShort(item.last))}`:'No date'}</span></span><span aria-hidden="true">›</span></button>`).join('')}</div></section>`;
-    if(selected&&names.some(n=>n.name===selected)) html+=`<div class="nx-library-head"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Selected history</span></div>`;
+
   }
   startedPeps.forEach(([name,data])=>{
     if(name!==state._nxHistorySelected) return;
