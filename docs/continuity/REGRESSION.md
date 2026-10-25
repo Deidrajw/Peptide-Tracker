@@ -346,3 +346,11 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Source selection, drafts, single/multi-vial deductions, insufficient inventory, stock accounting, composition and exact one blend entry: NOT TESTED on these branch edits.
 - All protected Today, Calendar, Check-In, Supplements, Protocol, Stash, backups, settings: NOT TESTED on these branch edits.
 - Physical iPhone acceptance / Cloudflare parity: NOT TESTED. No PASS has been recorded for this candidate.
+
+### 2026-10-25 — v0.9.20-beta Issue #109 acceptance matrix (pending latest CI)
+- Single/blend kit card: identical renderer, labels, prepare/open controls and Overview/Vials/History tabs: source CODED, latest-head browser NOT TESTED.
+- Open New Vial: identical modal fields and contrast, blend ratio preservation, sealed/open counts and recon metadata: source CODED, browser NOT TESTED.
+- Log Dose: shared date/time/source/site/observations, optional blend composition calculation, one blend record, no ingredient duplicate and source vial-only deduction: source CODED, browser NOT TESTED.
+- Prepare: blend-specific ledger allocations, Undo, partial/multi-vial, discard/finish reconciliation, and no double deduction from prepared administration: NOT TESTED; any failing behavior BLOCKS RELEASE.
+- Legacy KLOW original-history preservation, linked edit/delete, unknown-origin protection and localStorage backup: NOT TESTED. Opt-in legacy conversion remains unresolved.
+- Protected Check-In, Supplements, Calendar current month/numeric weight, Protocol and Plans, Weight/Nutrition, light/dark 320/390, whole-app DEMO isolation: NOT TESTED at latest HEAD. Physical iPhone/VoiceOver NOT TESTED. No fabricated Pass.
