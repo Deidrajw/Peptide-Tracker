@@ -28,6 +28,14 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  });
  ensure(releasePopup,'Published version must show once, Later defer and acknowledgement persist');
 
+
+ await page.evaluate(()=>showOnboarding());
+ ensure(await page.locator('#ob-fresh').count()===1 && await page.locator('#ob-restore').count()===1,'Welcome must offer both first-run choices');
+ ensure(await page.locator('#ob-wrap').innerText().then(t=>t.includes('local storage')&&t.includes('Clearing browser data')),'Welcome must explain browser-local data loss risk');
+ await page.locator('#ob-fresh').click();
+ ensure(await page.locator('.ob-goal').count()>0,'Start Fresh must preserve goal setup steps');
+ await page.evaluate(()=>closeModal());
+
  ensure(await page.locator('.nx-plan-head').count()===1,'Research header missing');
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
