@@ -428,6 +428,7 @@ function stashView() {
         ${vialPct!==null?`<div role="progressbar" aria-label="Open blend vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}" style="height:6px;background:var(--surface-2);border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.max(0,Math.min(100,vialPct))}%;background:${st.color};border-radius:7px"></div></div>`:""}
       </div>
       <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Blend Dose</button>
+      <button type="button" class="finishblendvial" data-id="${s.id}" style="width:100%;min-height:44px;margin-top:6px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:13px">Finish current vial</button>
       ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No blend vial currently open</div>`}
 
       ${!currentReconDate && sealed>0 ? `<button type="button" class="openblendvial" data-id="${s.id}" style="width:100%;min-height:48px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;margin:8px 0">Open first blend vial</button>` : ""}
