@@ -298,3 +298,10 @@
 
 ### 2026-10-25 — Stash follows user-liked Today 2.0 depth
 - User confirmed meaningful Today progress and approved continuing next screen: Stash. Visual work only on draft PR #123; use original Stash markup/classes/actions, preserve 28px ellipsis in 44px target, kit/vial math, status, details tabs and blend records. No production deployment or blanket design-system signoff.
+
+
+### 2026-10-25 — Stash polish direction confirmed
+- Keep Hybrid but avoid decorative localized top-right glows in kit cards and Inventory Overview. Favor smooth low-contrast matte gradients and hierarchy over spotlight effects.
+- Model Compound kits / Supplies after a native-style two-segment switcher (Nexus-original styling), preserving route/tab logic.
+- Keep Needs Attention information but visually soften into compact rows; do not hide alerts or change their triggers.
+- Apply coherent action-sheet foundation first, then inspect each kit modal for header, save, keyboard, scroll, focus, math and light contrast. Production deployment still prohibited.
