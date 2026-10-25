@@ -77,7 +77,7 @@ function comboDoseModal() {
     </div>
     <div class="hint" style="margin-bottom:14px">For compounds you draw into one syringe and inject together. Each still logs as its own dose behind the scenes — supply, schedule, and trends stay accurate per compound.</div>
     ${preparedSection}
-    ${presets.length?`<label class="field-label">FAVOURITES</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${presetChips}</div>`:""}
+    ${presets.length?`<div class="nx-combo-presets"><label class="field-label" for="nx-combo-preset-select">SAVED COMBINATIONS</label><select id="nx-combo-preset-select" class="inp" aria-label="Load saved combination"><option value="">Choose a favourite…</option>${presets.map(p=>`<option value="${esc(String(p.id))}">${esc(p.name)}</option>`).join("")}</select><details class="nx-combo-manage"><summary>Manage favourites</summary><div class="nx-combo-manage-options">${presetChips}</div></details></div>`:""}
     <section class="nx-combo-picker-panel" aria-label="Compounds in this syringe" style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:16px;background:var(--surface)">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px">
         <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
