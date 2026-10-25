@@ -370,5 +370,6 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
   --t5:#A49FC2;
 }
 :root[data-theme="light"] {
-  --t5:#645F7D;
+  --t4:#524D67;
+  --t5:#57536D;
 }
