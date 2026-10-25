@@ -480,3 +480,7 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
   background:#62449C!important;border-color:#62449C!important;
   color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
 }
+
+/* Release action on pale lavender: preserve dark readable ink, not white. */
+:root[data-theme="light"] #nx-release-dismiss,
+:root[data-theme="dark"] #nx-release-dismiss{color:#211630!important;-webkit-text-fill-color:#211630!important;}
