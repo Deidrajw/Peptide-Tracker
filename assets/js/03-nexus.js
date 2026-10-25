@@ -809,6 +809,12 @@ function addBlendKitModal(blendNameOrKit) {
       <div style="flex:1"><label class="field-label">STORAGE</label><select id="bk-storage" class="inp"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select></div>
       <div style="flex:1"><label class="field-label">COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 180"></div>
     </div>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div style="flex:1;min-width:0"><label for="bk-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label><input id="bk-expiry" type="number" min="1" step="1" class="inp" value="${existingKit?.expiryDays||28}"></div>
+      <div style="flex:1;min-width:0"><label for="bk-bac-edit" class="field-label">BAC WATER (mL)</label><input id="bk-bac-edit" type="number" min="0.01" step="0.1" class="inp" value="${existingKit?.bacMl||""}" placeholder="At vial opening"></div>
+    </div>
+    <label for="bk-notes" class="field-label">KIT NOTES (OPTIONAL)</label>
+    <textarea id="bk-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Storage, lot or other kit notes">${esc(existingKit?.notes||"")}</textarea>
     <button id="bk-save" class="btn-primary" style="background:#C9A0FF">${isEdit?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
 
@@ -834,6 +840,11 @@ function addBlendKitModal(blendNameOrKit) {
       existingKit.vialMg = totalMg;
       existingKit.storageLocation = m.querySelector("#bk-storage").value;
       existingKit.cost = m.querySelector("#bk-cost").value;
+      const expiry=Number(m.querySelector("#bk-expiry").value);
+      const bac=Number(m.querySelector("#bk-bac-edit").value);
+      if(!Number.isSafeInteger(expiry)||expiry<1||expiry>3650||(!Number.isFinite(bac))||bac<0){showErrorBanner("Check blend expiry and BAC water amounts.");return;}
+      existingKit.expiryDays=expiry;existingKit.bacMl=bac;
+      existingKit.notes=m.querySelector("#bk-notes").value.trim();
       initCompoundTracking(isEdit ? existingKit.name : finalName);
       saveState(); closeModal(); render();
       return;
@@ -846,9 +857,9 @@ function addBlendKitModal(blendNameOrKit) {
       id: uid(), name: finalName, isBlend: true, composition: validComponents.map(c=>({...c})),
       totalVials, vialMg: totalMg, bacMl,
       openedVials: oneActive?1:0, emptyVials: 0,
-      reconDate: oneActive?localDate():null, expiryDays: 28,
+      reconDate: oneActive?localDate():null, expiryDays: Math.max(1,parseInt(m.querySelector("#bk-expiry").value,10)||28),
       activeKit: oneActive, storageLocation: m.querySelector("#bk-storage").value,
-      cost: m.querySelector("#bk-cost").value, currency: "CAD", notes: "",
+      cost: m.querySelector("#bk-cost").value, currency: "CAD", notes: m.querySelector("#bk-notes").value.trim(),
       doseLog: [], wasteLog: [], reconHistory: oneActive?[{id:uid(), date:localDate(), notes:""}]:[],
     };
     if (!state.supplies) state.supplies = [];
@@ -931,6 +942,7 @@ function logBlendDoseModal(kitId) {
   const kit = (state.supplies||[]).find(s=>s.id===kitId); if (!kit || !kit.isBlend) return;
   const totalMg = kit.vialMg||0;
   const remainingMg = getBlendKitRemainingMg(kit);
+  if(!kit.reconDate || !ensureKitVials(kit).some(v=>v.status==="open"||v.status==="active")){showErrorBanner("Open and reconstitute a blend vial in Stash before logging a dose.");return;}
   const m = openModal(`
     <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">Log ${esc(kit.name)} Dose</div>
     <div class="hint" style="margin-bottom:14px">Enter the one amount you actually drew — the app splits it into each compound's own dose record automatically, using this vial's ratio. ${remainingMg.toFixed(1)}mg currently in the open vial.</div>
