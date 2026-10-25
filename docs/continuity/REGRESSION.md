@@ -445,3 +445,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Light contrast previous 31 diagnostic candidates | UNRESOLVED pending screenshot evidence |
 | User iPhone acceptance | NOT TESTED |
 | Production deploy/merge | NOT DONE |
+
+
+### 2026-10-25 — Today component redesign QA matrix
+| Area | Status |
+|---|---|
+| `assets/js/10-nexus.js` source-level Today markup, unchanged progressPct logic | CODED; runtime verification pending |
+| Five-tab nav floating active pill at 320/390 light/dark | CODED; visual review pending |
+| Actual progress ring percent and empty state | CODED; numeric browser verification pending |
+| Check-In click delegation, date-specific history, Supplements | NOT TESTED on latest head |
+| Log Dose, blend, source-vial maths | NOT TESTED on latest head |
+| Contrast and real iPhone keyboard/safe areas | NOT TESTED / unresolved |
+| Merge and deployment | NOT PERFORMED |
