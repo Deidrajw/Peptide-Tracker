@@ -307,3 +307,10 @@
 
 ### 2026-10-25 — v0.9.17-beta Getting Started polish (NOT RELEASED)
 - New candidate branch `release/onboarding-getting-started-polish` from v0.9.16 main 888d746c. Changes onboarding Done-step visuals and guide button only, no migration/storage/calculation changes; aligns canonical release manifest and three notes with v0.9.17-beta (publication unverified). CI/artifact/merge/deployment pending.
+
+
+### 2026-10-24 — v0.9.18-beta unified UI/trust/release (CANDIDATE / NOT DEPLOYED)
+- Branch `audit/unified-experience-trust-release-20261024`, PR #94 from main b6737fad (PR #89 merged v0.9.17-beta). Publication metadata still unverified, no deploy commit claimed.
+- Added Privacy & Data, notification context, backup restore preview/typed confirmation/recovery, 44px navigation, reduced-motion/focus controls, strict calculator input/capacity/IU guards and fixed 30/50/100 U-100 invariant math.
+- Synchronized `release/release.json`, in-app metadata, Apple and Google notes and HTML title to v0.9.18-beta. CI and 13 browser scripts now obtain version from canonical manifest. Added protected restore/privacy browser tests and blocking math assertions. No schema migration.
+- At entry: latest-head LIVE/full isolated DEMO/QA, PR merge, Cloudflare site parity, iPhone/VoiceOver and native stores are INCOMPLETE. Final evidence and mapping must be appended, not inferred.
