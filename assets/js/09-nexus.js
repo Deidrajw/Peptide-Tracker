@@ -1536,7 +1536,7 @@ function equipmentView() {
           <button class="supply-edit" data-id="${item.id}">Edit details</button>
           <button class="supply-restock" data-id="${item.id}">Restock</button>
         </div>
-        <div class="nx-supply-detail-footer"><button class="supply-delete" data-id="${item.id}" aria-label="Delete ${esc(item.type)}" title="Permanently deletes this supply and its history">Delete supply</button></div>
+        
       </div>
     </div>`;
   };
@@ -1618,7 +1618,7 @@ function equipmentModal(existing) {
     <select id="eq-storage" class="inp" style="margin-bottom:12px">${["fridge","freezer","room_temp","unknown"].map(s=>`<option value="${s}" ${(e.storageLocation||"unknown")===s?"selected":""}>${{fridge:"Fridge",freezer:"Freezer",room_temp:"Room temp",unknown:"Unknown"}[s]}</option>`).join("")}</select>
     <label class="field-label">NOTES <span style="color:var(--t5);font-weight:400">(optional)</span></label>
     <textarea id="eq-notes" class="inp" style="min-height:50px;margin-bottom:16px">${esc(e.notes||"")}</textarea>
-    <button id="eq-save" class="btn-primary" style="background:#7DF9C0;color:#000">Save</button>`);
+    <button id="eq-save" class="btn-primary" style="background:#7DF9C0;color:#000">Save</button>\n    ${isNew?"":`<div class="nx-equipment-danger-area"><button type="button" id="eq-delete" class="nx-equipment-delete">Delete supply</button></div>`}`);
 
   document.querySelector("#eq-type").onchange = function() {
     if (hasHistory) return; // locked fields must not shift just because Type changed
@@ -1641,7 +1641,7 @@ function equipmentModal(existing) {
     document.getElementById("eq-status-open").onclick = () => setInitialStatus("open");
   }
 
-  document.querySelector("#eq-save").onclick = () => {
+  if (!isNew) {\n    document.querySelector("#eq-delete").onclick = () => confirmAction("Delete this supply and its history?", () => {\n      state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==e.id);\n      saveState();closeModal();render();\n    });\n  }\n\n  document.querySelector("#eq-save").onclick = () => {
     e.type = document.querySelector("#eq-type").value;
     e.brand = document.querySelector("#eq-brand").value.trim();
     if (!hasHistory) {
