@@ -1,7 +1,7 @@
 /* Nexus Hybrid Design System 2.0 — branch-only preview layer.
    Visual selectors only; no storage, JS, records, math, or navigation changes.
    Experimental: do not merge/deploy without UI/contrast regression signoff. */
-:root,[data-theme="dark"],body:not(.light-mode) {
+:root {
   --nx-hybrid-canvas:#171521;
   --nx-hybrid-surface:#292436;
   --nx-hybrid-soft:#352d43;
@@ -10,7 +10,7 @@
   --nx-hybrid-border:#50445c;
   --nx-hybrid-accent:#dec5fa;
 }
-[data-theme="light"],body.light-mode,body.light {
+html[data-theme="light"] {
   --nx-hybrid-canvas:#f9f7f8;
   --nx-hybrid-surface:#fff;
   --nx-hybrid-soft:#f4eef8;
@@ -26,7 +26,7 @@ body {
   background-image:radial-gradient(ellipse 80vw 42vh at 12% 0%,rgba(153,112,189,.12),transparent 78%);
   background-attachment:fixed;
 }
-[data-theme="light"] body,body.light-mode,body.light {
+html[data-theme="light"] body {
   background-image:radial-gradient(ellipse 78vw 38vh at 12% 0%,rgba(170,126,209,.09),transparent 80%);
 }
 #app {min-height:100vh;}
