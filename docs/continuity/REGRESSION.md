@@ -377,3 +377,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Static source: Vials and History both render `nx-kit-list-row`, Vial actions keep `data-kit`/`data-vial`, and both support first five + Show all/fewer: CODED; modified JS syntax PASS.
 - Browser QA: open details, switch tabs, compact row hierarchy at 320/390 dark/light, action menus for open and finished vials, historical dose display, more/fewer, scroll retention, keyboard, no mutation: NOT TESTED.
 - Protected blend/non-blend preparation, vial deductions and history edits, original KLOW export, Cloudflare parity and real iPhone: NOT TESTED. No PASS claimed.
+
+### 2026-10-25 — Supplies parity and presentation follow-up
+- Source parse PASS for 09,10,12; CSS-only Vials outline/History contextual separation source CODED. No data schema change in this visual patch.
+- Not tested: Supply active pack/healthy/expiring, open-from-sealed, Log Use, restock, edit with locked unit size, delete confirmation, completed inventory view; Kit Details toggle/tab keyboard/focus, Vials ellipsis actions, pagination and footer spacing; blend stock integrity; light/dark 320/390, real iPhone, full isolated DEMO and LIVE zip, release deployment parity.
+- Release-blocking: PR #110 includes unverified blended physical-vial math and legacy migration paths. Do not infer green latest-head CI from static parse or earlier runs. No production push claimed.
