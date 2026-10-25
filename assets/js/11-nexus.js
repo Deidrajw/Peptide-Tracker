@@ -528,12 +528,69 @@ function importAppleHealth(e) {
 
 
 function importData(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const r=new FileReader();
-  r.onload=ev=>{ try{ const p=JSON.parse(ev.target.result); if(p&&p.peptides){state=migrate(p);saveState();render();alert("Backup restored ✓");}else alert("Doesn't look like a valid backup."); }catch{alert("Couldn't read that file.");} };
-  r.readAsText(file); e.target.value="";
+  const file=e.target.files&&e.target.files[0];
+  e.target.value="";
+  if(!file)return;
+  if(file.size>50*1024*1024){alert("Backup exceeds the 50 MB review limit. No records changed.");return;}
+  const reader=new FileReader();
+  reader.onerror=()=>alert("Could not read the backup file. No records changed.");
+  reader.onload=ev=>{
+    let incoming;
+    try{
+      incoming=JSON.parse(ev.target.result);
+      if(!incoming||typeof incoming!=="object"||Array.isArray(incoming)||
+         !incoming.peptides||typeof incoming.peptides!=="object"||Array.isArray(incoming.peptides))
+        throw Error("Unsupported backup format");
+      for(const field of ["dailyLogs","weightLogs","supplementLogs"])
+        if(incoming[field]!=null&&!Array.isArray(incoming[field]))throw Error("Invalid "+field);
+    }catch{alert("Not a supported Nexus JSON backup. No records changed.");return;}
+    const counts=[
+      ["Compounds",Object.keys(incoming.peptides).length],
+      ["Check-ins",(incoming.dailyLogs||[]).length],
+      ["Weight records",(incoming.weightLogs||[]).length],
+      ["Supplement entries",(incoming.supplementLogs||[]).length],
+      ["Stash kits",Object.keys(incoming.peptideKits||{}).length]
+    ];
+    const summary=counts.map(([name,n])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub)"><span>${esc(name)}</span><strong>${n}</strong></div>`).join("");
+    openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <strong style="font-size:17px;color:var(--t1)">Review backup before restore</strong>
+      <button id="nx-import-close" aria-label="Close restore preview" style="min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t1);font-size:22px">×</button></div>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6">File: ${esc(file.name)}. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
+      <div style="font-size:12px;color:var(--t2);margin:12px 0">${summary}</div>
+      <label for="nx-restore-word" style="display:block;font-size:12px;font-weight:650;color:var(--t1);margin-bottom:6px">Type RESTORE to confirm</label>
+      <input id="nx-restore-word" class="inp" autocomplete="off" autocapitalize="characters" placeholder="RESTORE">
+      <p style="font-size:11px;color:var(--t3);margin:8px 0 14px">Nexus saves a local recovery copy before replacement if browser storage permits.</p>
+      <div style="display:flex;gap:8px"><button id="nx-import-cancel" style="flex:1;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
+      <button id="nx-import-confirm" disabled style="flex:1;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
+    const box=document.querySelector(".modal");if(!box)return;
+    box.querySelector("#nx-import-close").onclick=closeModal;
+    box.querySelector("#nx-import-cancel").onclick=closeModal;
+    const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
+    word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
+    go.onclick=()=>{
+      if(word.value.trim()!=="RESTORE")return;
+      const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
+      const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
+      try{
+        if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
+        const next=migrate(incoming),serialized=JSON.stringify(next);
+        if(!next||!serialized)throw Error("Invalid restored state");
+        localStorage.setItem(STORE_KEY,serialized);
+        if(localStorage.getItem(STORE_KEY)!==serialized)throw Error("Restore read-back mismatch");
+        state=next;
+        closeModal();render();
+        alert("Backup restored. A local recovery copy of the previous records was saved.");
+      }catch(err){
+        state=oldState;
+        try{if(oldRaw!==null)localStorage.setItem(STORE_KEY,oldRaw);else localStorage.removeItem(STORE_KEY);}
+        catch(rollbackError){console.error("Restore rollback failed",rollbackError);showSaveWarning();}
+        console.error("Backup restore failed",err);
+        alert("Restore failed. Existing records were retained where browser storage permitted.");
+      }
+    };
+  };
+  reader.readAsText(file);
 }
-
 // ─── Profile modal ────────────────────────────────────────────────────────────
 const ICONS = {
   calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',
