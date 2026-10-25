@@ -227,3 +227,6 @@
 
 ### 2026-10-25 — First-run onboarding staged implementation
 - User approved welcoming feature explanation and Start Fresh / Restore Backup. New welcome clearly states that current web records use per-browser localStorage, do not sync automatically, and can be erased by clearing browser data. Import must be user-triggered JSON, preview counts and require explicit consent; onboarding blocks import when existing Check-In, kit, protocol or compound records exist. Current goal/stats/final onboarding steps protected. Version v0.9.16-beta remains unpublished/unverified and must not falsely prompt as deployed.
+
+### 2026-10-25 — Onboarding action icon consistency
+- User rejected final Getting Started card icon hierarchy. Corrective design uses single outline SVG family in all 4 actions (Log Dose, Protocol, Stash, Learn) and guide, with matching icon box, type scale and supporting route copy. Existing routes/workflows protected. Release v0.9.17-beta candidate, do not claim publication until host parity verified.
