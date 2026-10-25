@@ -790,6 +790,16 @@ function wireBody() {
       };
     });
   });
+  document.querySelectorAll(".nx-kit-show-more").forEach(button=>{
+    button.onclick=()=>{
+      const extra=button.nextElementSibling;
+      if(!extra)return;
+      const expanded=button.getAttribute("aria-expanded")==="true";
+      extra.hidden=expanded;
+      button.setAttribute("aria-expanded",expanded?"false":"true");
+      button.textContent=expanded?"Show all "+button.dataset.count+" records":"Show fewer records";
+    };
+  });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
   document.querySelectorAll(".markkitdone").forEach(b=>b.onclick=()=>markKitDoneModal(+b.dataset.id));
   document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=()=>{
