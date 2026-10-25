@@ -921,7 +921,7 @@ function openBlendVialModal(kitId) {
     const bac=Number(m.querySelector("#nx-blend-bac").value);
     const days=Number(m.querySelector("#nx-blend-expiry").value);
     const date=m.querySelector("#nx-blend-date").value;
-    if(!Number.isFinite(bac)||bac<=0||!Number.isSafeInteger(days)||days<1||days>3650||!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)){
+    if(!Number.isFinite(bac)||bac<=0||!Number.isSafeInteger(days)||days<1||days>3650||!/^\d{4}-\d{2}-\d{2}$/.test(date)){
       showErrorBanner("Enter valid BAC water, expiry days and reconstitution date.");return;
     }
     const remaining=getSealedVials(kit);
