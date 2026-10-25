@@ -268,3 +268,8 @@
 ### 2026-10-25 — Theme hotfix risk gate and follow-up (implemented PR #111)
 - PR #111 implements systemic neutral muted token legibility in both themes plus direct solid-accent and modal action fixes. A published patch may retain canonical v0.9.19-beta version if manifest, title and runtime continue to match, but then existing acknowledged users won't see a second What's New; do not claim announcement delivered.
 - Browser computed contrast checks block known failures. Nine-tab diagnostic remains informational because translucent backgrounds and JS-rendered states need manual pixel review. A passed PR does NOT equal all-modal WCAG AA or physical iPhone acceptance. Primary Cloudflare byte parity is independent post-merge gate.
+
+
+### 2026-10-25 — Version-aware release promotion policy
+- **APPROVED by user:** A successful preview deployment is not an approved production release. Report separately PREVIEW, CODE MERGED and PRODUCTION VERIFIED with exact version + commit; do not certify newest-release success merely because production files match an older main. Implement a production SHA-256 parity gate plus intended-version check, not a manual checklist alone. Current proposal on safety branch, not yet accepted as deployed.
+- Preserve the v0.9.20 release preview and branch; do not merge open PR #110 while its inventory and legacy-vial regressions are incomplete, and never convert users' KLOW data automatically.
