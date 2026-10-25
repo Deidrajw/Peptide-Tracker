@@ -109,7 +109,7 @@ function wireBody() {
   if(state._aminoSub==="journal"){
     const jsearch=$("#journal-search");
     if(jsearch){ jsearch.oninput=()=>{ state._journalQuery=jsearch.value; renderBody(); const n=$("#journal-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
-    document.querySelectorAll(".journal-comp-chip").forEach(ch=>ch.onclick=()=>{ state._journalCompound=ch.dataset.c; renderBody(); });
+    const journalFilter=$("#journal-compound-filter"); if(journalFilter)journalFilter.onchange=()=>{state._journalCompound=journalFilter.value;renderBody();};
     document.querySelectorAll("[data-jump-type]").forEach(card=>card.onclick=()=>{
       const t=card.dataset.jumpType;
       if(t==="daily"){ const log=(state.dailyLogs||[]).find(l=>String(l.id)===card.dataset.jumpId); if(log) dailyModal(log); }
