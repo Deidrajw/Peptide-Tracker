@@ -5,6 +5,29 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
  await page.evaluate(t=>{state=buildDemoState('weight_loss');state.profile.onboardingDone=true;state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());},theme);
+
+ ensure(await page.evaluate(()=>typeof NEXUS_RELEASE==='object'&&NEXUS_RELEASE.version==='v0.9.15-beta'&&NEXUS_RELEASE.publicationStatus==='unverified'&&!shouldShowPublishedRelease()),'Unverified release must never auto-present as published');
+ const releasePopup=await page.evaluate(()=>{
+   const previous=NEXUS_RELEASE.publicationStatus;
+   const key=NEXUS_SEEN_RELEASE_KEY;
+   const old=localStorage.getItem(key);
+   try{
+     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
+     showPublishedReleaseModal();
+     const first=document.querySelector('#nx-release-dismiss');
+     if(!first)return false;
+     document.querySelector('#nx-release-later').click();
+     if(!shouldShowPublishedRelease())return false;
+     showPublishedReleaseModal();document.querySelector('#nx-release-dismiss').click();
+     return localStorage.getItem(key)===NEXUS_RELEASE.version&&!shouldShowPublishedRelease();
+   }finally{
+     NEXUS_RELEASE.publicationStatus=previous;
+     if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old);
+     document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
+   }
+ });
+ ensure(releasePopup,'Published version must show once, Later defer and acknowledgement persist');
+
  ensure(await page.locator('.nx-plan-head').count()===1,'Research header missing');
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
