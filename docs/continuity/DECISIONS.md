@@ -256,3 +256,7 @@
 ### 2026-10-25 — Premixed blend releases use independently verified publication gates
 - v0.9.19 merge #100 changed only new blend vial and dose logic; old ingredient dose entries remain immutable historical records. Opening/finalizing a vial requires explicit user action; current-vial math prevents drawing against sealed kit inventory. Displayed blend component percentages use the vial total rather than kit total.
 - After 16/16 Cloudflare remote parity for main source (Actions 40162047192), source of truth may mark v0.9.19 published via an additive, separately validated manifest/What's New follow-up, not by retroactively rewriting saved localStorage history.
+
+### 2026-10-25 — Theme visibility is a release-blocking usability requirement
+- Real iPhone screenshot confirmed a blank-looking published What's New CTA on light theme. Approval: permanent theme-aware foreground/background contrast for all actionable text including modals attached outside #app, not isolated copy changes. Require computed browser assertions for visible action targets and text contrast, both dark/light at 320/390px; do not claim whole-app audit from testing only one modal.
+- Scoped candidate on `fix/issue-109-theme-visibility-audit` does not modify saved data or the unfinished blend experience parity PR #110.
