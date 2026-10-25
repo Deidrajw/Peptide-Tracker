@@ -381,3 +381,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Protected flows | Check-In, Supplements, dose ledger, legacy KLOW, multi-vial deductions, saved history unchanged | NOT TESTED |
 | LIVE/DEMO | exact-source full app and isolated demo, 320/390 both themes | NOT TESTED |
 | Production | New design branch merged & Cloudflare source verified | NOT DEPLOYED |
+
+### 2026-10-25 — Expanded candidate evidence #118
+- Source changes: CSS-only light-colour remap and spacing, plus Supply Delete navigation inside Edit Supply (existing confirmAction). **NOT YET PASSED** on latest head. Test required: opening edit does not mutate supply; cancel Delete preserves item/history; confirming Delete removes only intended item after user acknowledgement; existing Restock and active-unit calculations unchanged. Light Check-In CTA failure 2.36:1 in early CI; high-specificity fix pending retest. Earlier supply JS code syntax error corrected at 443b5bb; check fresh JS parser pass. Physical iPhone accessibility/VoiceOver NOT TESTED.
