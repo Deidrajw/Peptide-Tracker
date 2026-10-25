@@ -524,3 +524,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Two-action Stash QA finding
 - Browser QA `40246509943`: FAIL at `validate-trust-ui.mjs`, outdated visible Prepare card assertion; actual prepared blend inventory reversibility and ledger checks matched expected values. Test updated at `65cba791` to assert kit-sheet Prepare entry instead. Latest-head retest PENDING. Mobile regression on source `ac9a4f27`: PASS.
+
+
+### 2026-10-25 — Inventory Resolution source-label preview
+| Scenario | Status |
+|---|---|
+| Previous open-kit card assertion adapted to 2-action user-approved hierarchy | CODED `3dc44b22`; latest-run pending |
+| Source 1/2 rows, kit identity, units, focus/keyboard | CODED; browser NOT TESTED latest head |
+| Confirm draw opens existing draw-and-reconcile modal | Event class unchanged; browser NOT TESTED latest head |
+| Existing multi-vial allocation, sum equality, open-next, draft and confirmation | Logic unchanged; latest-head tests pending |
+| Blend accounting, reversals and history | Logic unchanged; latest-head tests pending |
+| 320/390 dark/light and contrast | NOT TESTED latest head |
+| iPhone review | NOT TESTED |
+| Production merge/deploy | NOT DONE |
