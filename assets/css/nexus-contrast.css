@@ -434,3 +434,27 @@ body [style*="background: #C9A0FF"][style*="color: #fff"] {
 
 /* Override the old Check-In sheet's high-specificity ink-on-accent rule. */
 :root[data-theme="light"] .modal.nx-checkin-sheet #save.btn-primary:not(:disabled) {background:#62449C!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;}
+
+
+/* Light-theme accent hygiene across Today, Calendar, Protocol, Stash and More.
+   Generated inline neon labels/tints were previously missed by modal-only overrides. */
+:root[data-theme="light"] [style*="color:#7DF9C0" i],
+:root[data-theme="light"] [style*="color:#C8FF9C" i],
+:root[data-theme="light"] [style*="color:#B9FF" i] {
+  color:#5B3FA8!important;
+}
+:root[data-theme="light"] [style*="background:#7DF9C0" i],
+:root[data-theme="light"] [style*="background:#C8FF9C" i] {
+  background:#EFECF8!important;
+}
+:root[data-theme="light"] button[style*="background:#7DF9C0" i],
+:root[data-theme="light"] button[style*="background:#C8FF9C" i] {
+  background:#62449C!important;color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+:root[data-theme="light"] [style*="border-color:#7DF9C0" i],
+:root[data-theme="light"] [style*="border:1px solid #7DF9C0" i] {
+  border-color:#9276C2!important;
+}
+:root[data-theme="light"] svg [stroke="#7DF9C0" i] {stroke:#62449C!important;}
+:root[data-theme="light"] svg [fill="#7DF9C0" i] {fill:#62449C!important;}
