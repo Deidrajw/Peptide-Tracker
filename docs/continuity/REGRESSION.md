@@ -379,3 +379,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Today blend parity | Deadpool shares standard card and actions, not old rendering code | NOT IMPLEMENTED |
 | Data | Check-In, history, KLOW, vial math, undo, localStorage unchanged | NOT TESTED |
 | Release | Entire LIVE & isolated full DEMO build 320/390 both themes, physical iPhone, Cloudflare parity | NOT TESTED |
+
+### 2026-10-25 — Physical preview follow-up checks
+| Scope | Required evidence | State |
+|---|---|---|
+| Multi-vial button | Clearly readable/unclipped in 320px and 390px light/dark dose modal; existing multi-vial math untouched | CODED, NOT RE-TESTED |
+| Per-vial ellipsis | 28px perceived box, full 44px tap target, focus visible, action sheet reachable for open/finished vial | CODED, NOT RE-TESTED |
+| Remaining approved changes | User reviewed preview and accepted subject to two fixes; browser test confirmation on new head needed | USER ACCEPTED, AUTO QA PENDING |
+| Blend Today-card modern parity | Same card renderer regardless of blend | OUTSTANDING |
+| Full LIVE + isolated DEMO | Build and 320/390 both themes | NOT TESTED AT NEW HEAD |
