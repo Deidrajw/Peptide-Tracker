@@ -300,3 +300,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Getting Started visual follow-up (NOT TESTED yet)
 - New 320px and 390px light/dark LIVE/full DEMO assertions: exactly four feature cards with same outline SVG treatment and nonempty contextual route subtitles, 48px guide SVG/button, Log Dose label/route, no emoji replacement regression; existing onboarding step flow and import safeguards preserved. Physical iPhone acceptance and Cloudflare source parity pending. Calculator #67 hold.
+
+
+### 2026-10-24 — v0.9.18-beta unified candidate validation matrix
+- Source-level changed surfaces: Settings → Privacy & Data; Settings → Backup & Restore (picker, preview, Cancel, typed RESTORE, recovery copy), Dose Alerts disclosure, Settings/Calculator back actions, reduced-motion/focus; Dose Calculator numeric and U-100 invariant behavior.
+- Required `tools/validate-recon-safety.mjs`: 5mg/2mL at 1mg equals 0.4mL; 200mcg equals 0.08mL; reject invalid/negative/nonfinite/zero, IU without potency, dose exceeding vial, syringe overflow and sub-display-level volume.
+- Required blocking `tools/audit-measurement-math.mjs`: 30/50/100-unit U-100 calculated mark must be the same, mg↔mcg equivalence, no generic IU, negative, blank, zero denominator, no browser errors; × LIVE/full DEMO, 320/390 light/dark.
+- Required `tools/validate-trust-ui.mjs`: four Privacy disclosures, entry in Settings, guard on Import, typed restore disabled until exact confirmation, Cancel unchanged, fictional restore and local pre-restore snapshot; 320/390 × both themes in standalone in-memory DEMO.
+- Protected suites: Check-In single record/date, symptoms, notes and edits; Supplements search and day-specific history; Log Dose/Combo source, drafts, multi-vial deductions, Stash, Calendar month, Weight, Nutrition, Protocol/Goals/Plans and history.
+- No fake PASS: latest-head PR #94 CI and artifact evaluation must be obtained. GitHub Pages comparator is NOT proof of primary Cloudflare parity. Real iPhone, VoiceOver and store submission NOT TESTED.
