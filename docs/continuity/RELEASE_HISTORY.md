@@ -351,3 +351,8 @@
 - Deletes distinct blend-card renderer and routes blends through standard Stash/Prepare/Open Vial/Log Dose UI and detail tabs; adds protective vial-ID ledger paths and reversible prepared/dose allocations. Shared display still supplies blend composition ratios.
 - No automatic migration or intentional overwrite of historical records. Legacy KLOW conversion intentionally unresolved when source values ambiguous.
 - Syntax PASS on modified six JS modules (source parse only), but complete browser tests, iPhone tests, exact-source packages, full theme audit, merge and Cloudflare deployment are **INCOMPLETE/NOT VERIFIED** until latest-head evidence is inspected. PR #111 is separate theme-contrast fix.
+
+### v0.9.20-beta candidate update — 2026-10-25 (NOT MERGED OR DEPLOYED)
+- PR #110 adds opt-in legacy premixed kit designation with original vial-ledger compatibility and new synthetic regression coverage. Preserves all prior dose histories, kit identifiers and stock; no automatic migration.
+- Shared kit detail overview now presents remaining inventory as primary metric, then sparse full-width rows for vials/concentration/purchase, and separated notes; vials view shows inventory summary and opened vial actions; kit history defaults to five recent items with expansion. Today per-compound history similarly limits initial rows with explicit Close/Show All/Fewer.
+- JS source syntax parse only passed; latest browser/mobile and true iPhone results pending, full-app LIVE/DEMO packages incomplete, Cloudflare unaffected.
