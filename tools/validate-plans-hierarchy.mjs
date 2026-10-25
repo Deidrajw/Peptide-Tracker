@@ -106,6 +106,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
  ensure(await page.locator('.nx-shopping-row .manage-plan-btn').count()===1,'Shopping edit menu lost');
+
+ await page.evaluate(()=>{state.protocols=[{id:'qa-proto',name:'Fictional Protocol',status:'draft',compounds:[],schedule:{type:'weekly'}}];tab='protocols';render();});
+ ensure(await page.locator('.nexus-protocol-card-head .nx-card-status').count()===1,'Protocol status must be in title stack');
+ const protoHeader=await page.locator('.nexus-protocol-card-head').first().evaluate(h=>{
+   const status=h.querySelector('.nx-card-status'),btn=h.querySelector('.manage-proto-btn'),title=h.querySelector('.nx-proto-title');
+   if(!status||!btn||!title)return false;
+   const p=status.getBoundingClientRect(),t=title.getBoundingClientRect(),b=btn.getBoundingClientRect();
+   return p.top>t.top&&p.right<=b.left+2&&b.width>=44&&b.height>=44&&!!btn.querySelector('.nx-unified-more-svg');
+ });
+ ensure(protoHeader,'Protocol title/status/ellipsis visual parity failed');
+
  ensure(errors.length===0,'Exceptions: '+errors.join('; '));
  results.push({mode,width,theme,status:'PASS'});await ctx.close();
 }}finally{await browser.close()}
