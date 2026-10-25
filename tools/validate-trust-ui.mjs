@@ -104,6 +104,28 @@ try{
         assert.equal(parity.single.label,true);assert.equal(parity.blend.label,true);
         assert.deepEqual(parity.blend.tabs,parity.single.tabs,'shared kit details tabs');
         assert.equal(parity.blend.summary,parity.single.summary,'shared kit detail disclosure');
+        const legacy=await page.evaluate(()=>{
+          const kit={id:975320,name:"QA Legacy Blend",isBlend:true,blendInventoryMode:"legacy-v2",
+            composition:[{compound:"Test A",mg:50},{compound:"Test B",mg:30}],
+            vialMg:80,totalVials:3,bacMl:3,reconDate:localDatetime(),activeKit:true,
+            vials:[{id:975321,status:"empty",vialMg:80,remainingMg:0},
+                   {id:975322,status:"open",vialMg:80,remainingMg:48.5},
+                   {id:975323,status:"sealed",vialMg:80,remainingMg:80}],
+            doseLog:[],wasteLog:[],expiryDays:28};
+          state.supplies.push(kit);
+          const initial=getBlendKitRemainingMg(kit),openStart=getBlendOpenVialRemainingMg(kit);
+          const tx=consumeCompoundInventory({kit,amountMg:1.5,reason:"administered",transactionId:uid()});
+          const after=getBlendOpenVialRemainingMg(kit);
+          undoConsumeCompoundInventory(kit,{allocations:tx.allocations});
+          const restored=getBlendOpenVialRemainingMg(kit);
+          return {initial,openStart,committed:tx.committed,after,restored,
+             totalBack:getBlendKitRemainingMg(kit),oldVial:kit.vials[0].remainingMg,
+             sealed:kit.vials[2].remainingMg};
+        });
+        assert.deepEqual(legacy,{
+          initial:128.5,openStart:48.5,committed:true,after:47,restored:48.5,
+          totalBack:128.5,oldVial:0,sealed:80
+        },"legacy premixed kit preserves physical vial balances through new draw and Undo");
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('3');
         await page.locator('#save').click();
