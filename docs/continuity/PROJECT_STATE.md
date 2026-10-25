@@ -644,3 +644,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Responded to user report of flat visual style and unchanged nav with actual `.tabbar`, `.tabbar button.active`, `.card`, `.btn-primary` CSS changes at commit `087e3679`; no JS and no production writes.
 - Browser run 40236310694 FAILED at Check-In CTA contrast (transparent computed button background beneath image gradient), though packaging passed and mobile form suite passed. Added opaque primary CTA background fallback in commit `be45613c`; **latest-head QA pending, do not claim pass**.
 - **ONE NEXT ACTION:** inspect successful latest run 40236446027 and its 320/390 dual-theme screenshots, fix visual regressions before user's physical preview, maintain unmerged PR #123.
+
+
+### 2026-10-25 — Real Today screen component redesign underway
+- Based on explicit user dissatisfaction with CSS-only flat preview, source `assets/js/10-nexus.js` now adds presentation-specific Today hero orbit, progress eyebrow, and Check-In component classes. `assets/css/nexus-hybrid-preview.css` now redesigns hero, accurate progress ring (bound to existing progressPct), primary/secondary Today actions, check-in, quick access tiles, schedule view navigation, and dual theme with 320px overrides. Existing event class, IDs, calculations, routes and storage retained. Source head `99f0dcfd` before this docs commit.
+- Current FULL-APP DEMO must be REBUILT from this latest head: previously generated workflow artifacts are stale. GitHub Action run 40237121428 build/browser and 40237121416 mobile regression pending. Do not claim tests pass until verified. No merge/Cloudflare deployment.
+- **ONE NEXT ACTION:** finish latest-head QA and visually inspect identical fictional Today light/dark screenshots 320/390; address issues before requesting user's review.
