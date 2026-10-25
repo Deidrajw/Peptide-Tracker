@@ -252,3 +252,7 @@
 ### 2026-10-25 — Premixed blend identity and Stash parity
 - User explicitly clarifies Deadpool consists of Cartalax, BPC-157 and TB-500 physically premixed **in one vial**. One blend = one tracked dose selection, one blend dose record and one Stash vial; constituent names are formulation metadata, not separate administered compounds. Keep all old constituent logs intact; do not automatically delete/migrate history. If an ingredient is independently tracked or has a standalone kit/dose, retain that choice.
 - Blend Stash must allow opening/reconstituting sealed vials with BAC, expiration-days and notes; do not route through single-compound stock deduction math. Protocol phase steppers need consistent 44px targets; Review input must not clip.
+
+### 2026-10-25 — Premixed blend is one dose identity
+- A premixed blend kit such as Deadpool is one recorded product, with components shown as informational composition. Opening/reconstitution uses the selected kit and one vial; new administration records are under the blend name, not each constituent. Legacy constituent records are never deleted or backfilled. Individual constituents remain independently selectable only when separately stocked or explicitly independently dosed.
+- Per-vial composition percentages divide ingredient mg by physical vial mg, never whole-kit stock mg. Stash exposes explicit Open vial and BAC/expiry/date/notes; 44px Protocol controls protect iPhone touch and keyboard space.
