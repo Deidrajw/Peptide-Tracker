@@ -372,3 +372,6 @@
 
 ### 2026-10-25 — Expanded #118 candidate (NOT RELEASED)
 - Light-theme lime-generated status text/buttons/tints and SVG accents remapped to violet for accessibility; special Check-In CTA cascade corrected. Supply Delete relocated to Edit details with confirmation. App-wide divider reduction remains selective. Tests on latest head pending; earlier CI failed Check-In contrast and a transient JS syntax error, both addressed in branch. Production unchanged by #118.
+
+### 2026-10-25 — PR #118 accessibility follow-up (candidate)
+- `Open New Vial > Log Reconstitution` white-on-violet correction: removed conflicting inline important dark text; added light-mode CSS/WebKit text fill plus browser computed-style assertion. Not merged/released at documentation time; no data mutation or migration.
