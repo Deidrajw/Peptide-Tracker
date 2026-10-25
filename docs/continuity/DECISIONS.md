@@ -279,3 +279,6 @@
 - Log Dose multi-vial is an outlined action and keeps existing underlying multi-source calculations. Site history/suggested next sits by injection-site selector, informational only.
 - Combo favourites remain saved in existing schema; one compact select loads via existing handler, optional Manage area retains deletion controls. Compound History is a dedicated detail view with a back action, preserving search query; model row has one clear disclosure signifier.
 - Blend cards must eventually share same standard component/layout instead of legacy UI branch; functional parity still pending and not implied by these design changes.
+
+### 2026-10-25 — Size by visual hierarchy, not touch target
+- User approved compact 28px visible ellipsis with 44px interactive target for vial-level actions. 'Use multiple vials' remains explicitly outlined with unconstrained readable label and 46px minimum height; it must not squeeze/truncate at iPhone width. The controls must not change dose allocations or saved inventory.
