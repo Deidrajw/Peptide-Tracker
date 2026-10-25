@@ -368,3 +368,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Protected app source | Safety PR changes workflow/script/docs only; no application files | TO VERIFY AT PR |
 | Full application QA | v0.9.20 blend, KLOW, vial math, history, supplies, 320/390 themes, isolated full DEMO and LIVE ZIP | INCOMPLETE, DO NOT MERGE PR #110 |
 | Physical iPhone | v0.9.20 real device before release acceptance | NOT TESTED |
+
+### 2026-10-25 — Approved mobile hierarchy candidate test matrix
+| Area | Acceptance | Status |
+|---|---|---|
+| Stash unopened / open / finished | No Prepare when no vial open, two/three equal actions; kit details and row ellipsis 44px usable | NOT TESTED |
+| Log Dose ordinary/blend | Multi-vial mode still validates allocation and source, suggestion near site, no auto-change | NOT TESTED |
+| Combo favourites | Many presets stay compact; load and Delete from management maintain exact saved semantics | NOT TESTED |
+| Trends compound | Dedicated view; back restores compound list/search, one chevron per model disclosure | NOT TESTED |
+| Today blend parity | Deadpool shares standard card and actions, not old rendering code | NOT IMPLEMENTED |
+| Data | Check-In, history, KLOW, vial math, undo, localStorage unchanged | NOT TESTED |
+| Release | Entire LIVE & isolated full DEMO build 320/390 both themes, physical iPhone, Cloudflare parity | NOT TESTED |
