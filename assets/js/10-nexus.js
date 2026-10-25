@@ -253,13 +253,13 @@ function stashView() {
         ${vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>` : `<div class="nx-kit-primary-vial nx-kit-vial-unopened">
         <div class="nx-kit-overview-label">CURRENT OPEN VIAL</div>
-        <div class="nx-kit-primary-value"><span>No vial open</span></div>
+        <div class="nx-kit-primary-value nx-kit-primary-empty">No vial open</div>
         <div class="nx-kit-primary-hint">${sealed} sealed vial${sealed===1?"":"s"} available</div>
       </div>`}
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
-      <div class="nx-kit-actions nx-kit-actions-three">
+      <div class="nx-kit-actions nx-kit-actions-three ${s.reconDate?"":"nx-kit-actions-two"}">
         ${action?`<button class="${action.cls}" data-id="${s.id}">${action.label}</button>`:""}
         ${s.reconDate?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses">Prepare</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
