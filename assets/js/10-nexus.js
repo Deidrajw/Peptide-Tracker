@@ -259,9 +259,8 @@ function stashView() {
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
-      <div class="nx-kit-actions nx-kit-actions-three ${displayOpenMg!==null?"":"nx-kit-actions-two"}">
+      <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions ${action?"":"nx-hybrid-detail-only"}">
         ${action?`<button class="${action.cls}" data-id="${s.id}">${action.label}</button>`:""}
-        ${displayOpenMg!==null?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses">Prepare</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
