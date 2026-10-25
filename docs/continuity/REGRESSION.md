@@ -300,3 +300,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Getting Started visual follow-up (NOT TESTED yet)
 - New 320px and 390px light/dark LIVE/full DEMO assertions: exactly four feature cards with same outline SVG treatment and nonempty contextual route subtitles, 48px guide SVG/button, Log Dose label/route, no emoji replacement regression; existing onboarding step flow and import safeguards preserved. Physical iPhone acceptance and Cloudflare source parity pending. Calculator #67 hold.
+
+### 2026-10-25 — Privacy screen candidate
+- Draft PR #91 on branch release/privacy-data-disclosures-v0918 adds read-only Settings information and navigation. Live production host network capture unavailable, so third-party transmissions are NOT certified. Notification consent explanation, public privacy policy, native store declarations, full browser QA, artifacts, merge and deployment INCOMPLETE. No user-data migration or deletion. One next action: verify production network request inventory, then finish permission explanation and regression before merging.
