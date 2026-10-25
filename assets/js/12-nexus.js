@@ -1228,5 +1228,5 @@ migrateToInventoryV2();
 saveState();
 if(!state.profile.onboardingDone){render();showOnboarding();}
 else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
-else if((state.settings.lastSeenChangelog||0)<CURRENT_CHANGELOG_VERSION){render();whatsNewModal();}
+else if((typeof NEXUS_RELEASE==='undefined'||NEXUS_RELEASE.publicationStatus!=='published')&&(state.settings.lastSeenChangelog||0)<CURRENT_CHANGELOG_VERSION){render();whatsNewModal();}
 else render();
