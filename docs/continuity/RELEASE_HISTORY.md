@@ -369,3 +369,6 @@
 ### 2026-10-25 — Divider/light theme audit proposal (not a release)
 - v0.9.20-beta main remains authoritative. Scoped CSS candidate reduces repeated dividers in kit and supplies detail panels and replaces light-mode pale-green modal primary actions with darker violet, including disabled state. No app version bump, no merge/Cloudflare deployment claimed, no storage or dose/inventory changes.
 - Complete app-wide audit, test matrix and demo package INCOMPLETE until all affected surfaces are reviewed and release CI/Cloudflare verified.
+
+### 2026-10-25 — Expanded #118 candidate (NOT RELEASED)
+- Light-theme lime-generated status text/buttons/tints and SVG accents remapped to violet for accessibility; special Check-In CTA cascade corrected. Supply Delete relocated to Edit details with confirmation. App-wide divider reduction remains selective. Tests on latest head pending; earlier CI failed Check-In contrast and a transient JS syntax error, both addressed in branch. Production unchanged by #118.
