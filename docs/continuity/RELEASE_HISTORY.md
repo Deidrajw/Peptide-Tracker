@@ -304,3 +304,6 @@
 
 ### 2026-10-25 — v0.9.16-beta onboarding candidate (UNRELEASED)
 - Branch `release/onboarding-safe-first-run` at main base a3318973, changes first-run welcome, local storage explanation, Start Fresh, guarded import with JSON shape checking/count preview/confirmation/empty-state backup, and standard CSS. Canonical manifest and generated three note formats updated to v0.9.16-beta (status UNVERIFIED); browser/source/CI and packaging unverified, no merge/Cloudflare/physical iPhone. No destructive migration or automatic import. Calculator #67 held.
+
+### 2026-10-25 — v0.9.17-beta Getting Started polish (NOT RELEASED)
+- New candidate branch `release/onboarding-getting-started-polish` from v0.9.16 main 888d746c. Changes onboarding Done-step visuals and guide button only, no migration/storage/calculation changes; aligns canonical release manifest and three notes with v0.9.17-beta (publication unverified). CI/artifact/merge/deployment pending.
