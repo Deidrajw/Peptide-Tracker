@@ -1486,8 +1486,8 @@ function manageKitMenu(kitId) {
     closeModal();
     const card=Array.from(document.querySelectorAll(".nx-kit-card[data-kit-id]")).find(el=>el.dataset.kitId===String(kitId));
     if(!card){showErrorBanner("Kit details are unavailable in this Stash view.");return;}
-    const details=card.querySelector("details");
-    if(details){details.open=true;card.scrollIntoView({block:"nearest",behavior:"smooth"});details.querySelector("summary")?.focus();}
+    const btn=card.querySelector(".nx-kit-detail-button");
+    if(btn){const panel=card.querySelector(".nx-kit-detail-panel"); if(panel){panel.hidden=false;btn.setAttribute("aria-expanded","true");card.scrollIntoView({block:"nearest",behavior:"smooth"});btn.focus({preventScroll:true});}}
   };
   m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=()=>{
     const id=btn.dataset.action;
