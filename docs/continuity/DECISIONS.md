@@ -256,3 +256,7 @@
 ### 2026-10-25 — Premixed blend releases use independently verified publication gates
 - v0.9.19 merge #100 changed only new blend vial and dose logic; old ingredient dose entries remain immutable historical records. Opening/finalizing a vial requires explicit user action; current-vial math prevents drawing against sealed kit inventory. Displayed blend component percentages use the vial total rather than kit total.
 - After 16/16 Cloudflare remote parity for main source (Actions 40162047192), source of truth may mark v0.9.19 published via an additive, separately validated manifest/What's New follow-up, not by retroactively rewriting saved localStorage history.
+
+### 2026-10-25 — v0.9.19 premixed identity approved and web verified
+- Blend contents are formulation metadata. Only explicitly independent tracking creates individual ingredient dose choice/history. Preserve older historical ingredient records without rewrite. New blend dose logs under one named blend and link to physical vial ID. Sealed kit stock may not count as current opened vial capacity. Finishing a vial records leftover as outflow before next vial.
+- iPhone Protocol review clipping and warped steppers corrected at source and protected in regression. Physical screenshot acceptance is separate from automated browser results. Web publication requires remote 16-file hash parity after publication metadata; observed PASS run 40162805366.
