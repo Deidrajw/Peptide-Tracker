@@ -286,7 +286,7 @@ function stashView() {
             <button class="compound-intel-btn" data-name="${esc(s.name)}" aria-label="View ${esc(s.name)} Intel" style="min-height:36px;display:inline-flex;align-items:center;border:1px solid ${c.color}44;border-radius:6px;color:${c.color};font-size:11px;padding:4px 10px;background:${c.color}10">Intel ›</button>
           </div>
 
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px">
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">KIT TOTAL</div><div style="font-size:12px;font-weight:600;color:var(--t2)">${kitRemMg.toFixed(0)} / ${totalMg} mg</div></div>
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">VIALS</div><div style="font-size:11px;color:var(--t2)">${sealed>0?`${sealed} sealed `:""}${vialList.filter(v=>v.status==="active"||v.status==="open").length>0?`· ${vialList.filter(v=>v.status==="active"||v.status==="open").length} open `:""}${vialList.filter(v=>v.status==="finished"||v.status==="empty").length>0?`· ${vialList.filter(v=>v.status==="finished"||v.status==="empty").length} empty`:""}${vialList.filter(v=>v.status==="transferred").length>0?`· ${vialList.filter(v=>v.status==="transferred").length} transferred`:""}</div></div>
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">CONC</div><div style="font-size:12px;color:var(--t2)">${conc?conc.toFixed(2)+" mg/mL":"—"}</div></div>
@@ -430,11 +430,12 @@ function stashView() {
       <button class="log-blend-dose" data-id="${s.id}" style="width:100%;min-height:44px;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Blend Dose</button>
       ` : `<div class="nx-stash-sealed-note" style="font-size:12px;color:var(--t4);margin-bottom:12px">No blend vial currently open</div>`}
 
+      ${!currentReconDate && sealed>0 ? `<button type="button" class="openblendvial" data-id="${s.id}" style="width:100%;min-height:48px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;margin:8px 0">Open first blend vial</button>` : ""}
       <details style="margin-top:${currentReconDate?"8":"2"}px">
         <summary style="font-size:13px;color:var(--t3);cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:space-between">Composition & kit details</summary>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
           <div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:6px">COMPOSITION PER VIAL (${s.vialMg}mg total)</div>
-          <div style="margin-bottom:12px">${(s.composition||[]).map(c=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:3px 0"><span>${esc(c.compound)}</span><span>${c.mg}mg (${totalMg>0?Math.round(c.mg/totalMg*100):0}%)</span></div>`).join("")}</div>
+          <div style="margin-bottom:12px">${(s.composition||[]).map(c=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:3px 0"><span>${esc(c.compound)}</span><span>${c.mg}mg (${totalMg>0?Math.round(c.mg/(s.vialMg||1)*100):0}%)</span></div>`).join("")}</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">KIT TOTAL</div><div style="font-size:12px;font-weight:600;color:var(--t2)">${kitRemMg.toFixed(0)} / ${totalMg} mg</div></div>
             <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">VIALS</div><div style="font-size:11px;color:var(--t2)">${sealed>0?`${sealed} sealed `:""}${vialList.filter(v=>v.status==="active"||v.status==="open").length>0?`· ${vialList.filter(v=>v.status==="active"||v.status==="open").length} open`:""}${vialList.filter(v=>v.status==="finished"||v.status==="empty").length>0?`· ${vialList.filter(v=>v.status==="finished"||v.status==="empty").length} empty`:""}${vialList.filter(v=>v.status==="transferred").length>0?`· ${vialList.filter(v=>v.status==="transferred").length} transferred`:""}</div></div>
@@ -443,6 +444,11 @@ function stashView() {
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
             ${s.cost?`<span style="font-size:11px;color:var(--t4);flex:1">${parseFloat(s.cost).toFixed(2)} ${s.currency||"CAD"}</span>`:`<span style="flex:1"></span>`}
             <button class="manage-kit-btn" data-id="${s.id}" aria-label="Manage ${esc(s.name)} blend kit" style="min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--t3)">Manage blend</button>
+          </div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.6">
+            <div>BAC water: ${s.bacMl>0?s.bacMl+" mL":"Not recorded"}</div>
+            <div>Expiry after reconstitution: ${s.expiryDays||28} days</div>
+            <div>Notes: ${s.notes?esc(s.notes):"None"}</div>
           </div>
           ${currentReconDate?`<div style="font-size:11px;color:var(--t4)">Reconstituted ${fmtDate(currentReconDate)}</div>`:""}
           ${s.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:6px">${esc(s.notes)}</div>`:""}
