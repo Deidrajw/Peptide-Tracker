@@ -1,6 +1,4 @@
-Clearer, safer everyday tracking
-- Privacy & Data: New Settings page clarifies browser-local storage, file imports, hosted resources and permission choices.
-- Protected backup restore: Import now previews record counts and requires an explicit typed confirmation, with a local recovery copy and rollback safeguards.
-- More reliable calculator validation: Invalid amounts, syringe overflow and compound-dependent IU conversions no longer generate draw results.
-- More accessible navigation: Larger Settings back target, visible keyboard focus, reduced-motion support and calculator field labels.
-- Notification choices explained: Dose Alerts explains permissions and that background notifications are not provided by this web build.
+Blend vial tracking and Protocol polish
+- Open and reconstitute premixed blend vials: Stash now offers an Open vial action with BAC water, expiry and vial notes for blends such as Deadpool.
+- Log premixed blends as one item: Today dose selection treats premixed blends as a single entry, without creating new individual ingredient dose records.
+- Cleaner Protocol steps: The protocol name field fits within the sheet and phase controls have consistent touch sizes and labels.
