@@ -1,7 +1,7 @@
 {
   "version": "v0.9.19-beta",
   "channel": "beta",
-  "publicationStatus": "unverified",
+  "publicationStatus": "published",
   "title": "Blend vial tracking and Protocol polish",
   "changes": [
     {
