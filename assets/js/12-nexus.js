@@ -760,6 +760,7 @@ function wireBody() {
   document.querySelectorAll(".phase-bar-seg").forEach(b=>b.onclick=()=>phaseRoadmapModal(isNaN(+b.dataset.proto)?b.dataset.proto:+b.dataset.proto, b.dataset.comp));
   const ssb=document.getElementById("stash-sort-btn"); if(ssb) ssb.onclick=stashSortModal;
   document.querySelectorAll(".opennewvial").forEach(b=>b.onclick=()=>openNewVialModal(+b.dataset.id));
+  document.querySelectorAll(".openblendvial").forEach(b=>b.onclick=()=>openBlendVialModal(+b.dataset.id));
   document.querySelectorAll(".log-blend-dose").forEach(b=>b.onclick=()=>logBlendDoseModal(+b.dataset.id));
   document.querySelectorAll(".logwaste").forEach(b=>b.onclick=()=>logWasteModal(+b.dataset.id));
   const tdk=$("#toggle-done-kits"); if(tdk) tdk.onclick=()=>{state._showDoneKits=!state._showDoneKits;renderBody();};
