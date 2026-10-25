@@ -496,3 +496,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Demo isolation/source-parity packages | Latest-head CI pending |
 | Light-mode contrast and physical iPhone acceptance | INCOMPLETE |
 | Merge and Cloudflare deployment | NOT PERFORMED |
+
+
+### 2026-10-25 — Phase 2C targeted cleanup QA
+| Check | Status |
+|---|---|
+| Stash action buttons remain discoverable and clickable without raised shadow | CODED; browser latest-head pending |
+| Today primary/secondary CTA aligned and functional | CODED; browser latest-head pending |
+| Needs Attention review actions preserved, no left rail | CODED; browser latest-head pending |
+| Inventory Resolution per-vial Draw and total confirmation math | NOT MODIFIED; targeted redesign pending |
+| Light/dark 320px/390px modal and keyboard screenshot review | NOT TESTED latest head |
+| Contrast audit and physical iPhone | INCOMPLETE |
+| Merge/deploy | NOT PERFORMED |
