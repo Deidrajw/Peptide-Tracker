@@ -354,3 +354,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Prepare: blend-specific ledger allocations, Undo, partial/multi-vial, discard/finish reconciliation, and no double deduction from prepared administration: NOT TESTED; any failing behavior BLOCKS RELEASE.
 - Legacy KLOW original-history preservation, linked edit/delete, unknown-origin protection and localStorage backup: NOT TESTED. Opt-in legacy conversion remains unresolved.
 - Protected Check-In, Supplements, Calendar current month/numeric weight, Protocol and Plans, Weight/Nutrition, light/dark 320/390, whole-app DEMO isolation: NOT TESTED at latest HEAD. Physical iPhone/VoiceOver NOT TESTED. No fabricated Pass.
+
+### 2026-10-25 — Candidate blend partial-preparation and Quick Log regression (NOT TESTED)
+- Added fictional ledger scenario to `tools/validate-trust-ui.mjs`: 27mg active → prepare 6mg → 21mg → delete 2/3 unused → 25mg with 2mg retained as used → reverse linked 3mg administration → 28mg; fixture cleanup returns to 27mg before finish-vial check. Code authored, automated result pending.
+- Quick Log of premixed blend must open standard Log Dose screen for explicit confirmation; coded but latest browser result pending.
+- Explicit release blocker: latest-head Actions results not returned, real iPhone not tested; do not inherit green status from earlier commit or old build.
