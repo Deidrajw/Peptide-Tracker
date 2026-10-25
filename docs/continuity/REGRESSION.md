@@ -288,3 +288,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Release manifest foundation new gates (PENDING CI)
 - Must pass: generated three channel note outputs exactly match release/release.json, builder refuses stale notes or mismatched index title/version, ordinary app LIVE/isolated DEMO builds retain all pages and scripts; old numeric CHANGELOG and saved `lastSeenChangelog` unchanged; draft/unverified release does not show user popup. Other protected Check-In/Protocol/Stash/Calendar/Dose flows remain governed by existing suite. No privacy permissions invoked. Real iPhone and Cloudflare parity NOT TESTED.
+
+### 2026-10-25 — New publish gate tests (PENDING latest CI)
+- Eight simulated LIVE/isolated complete DEMO 320/390 light/dark test cases now verify NEXUS_RELEASE version and unverified status no popup; simulated published release shows modal, Later leaves it unseen, Got it writes version-specific key and suppresses repeat; restores isolated test-local key/status. Generator check enforces release manifest as source for three outputs and runtime embedded metadata, builder crosschecks page title. Confirm no effects to onboarding, records, backup, or numeric legacy history. Physical iPhone and real publication pending.
