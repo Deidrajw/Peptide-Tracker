@@ -292,3 +292,6 @@
 
 ### 2026-10-25 — Card header parity corrective candidate (UNRELEASED)
 - From main dded5084, user-reported visual mismatch remains after PR #80. Branch `release/card-header-parity-20261025` applies DOM-level status-below-title structure and unified menu SVG to Research/Goals/Protocol/Stash, preserves all actions/status semantics and storage. CSS parity rules and targeted browser assertions added. CI, packaging, PR merge and host parity pending; physical screenshot defects are confirmed in current live UI, not signed off.
+
+### 2026-10-24 — Store readiness and neutral avatar audit candidate (NOT RELEASED)
+- Branch `feature/release-readiness-onboarding-avatar-audit` from main `7624c4d3`: scoped no-photo profile avatar replaced with user outline in shell/profile editor (candidate), detailed release/onboarding/privacy audit committed. No migrations, no final changelog popup, no release manifest implementation. CI/merge/host/artifacts INCOMPLETE; no app store submission. Calculator #67 held.
