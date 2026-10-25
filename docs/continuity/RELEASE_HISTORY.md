@@ -314,3 +314,8 @@
 - Added Privacy & Data, notification context, backup restore preview/typed confirmation/recovery, 44px navigation, reduced-motion/focus controls, strict calculator input/capacity/IU guards and fixed 30/50/100 U-100 invariant math.
 - Synchronized `release/release.json`, in-app metadata, Apple and Google notes and HTML title to v0.9.18-beta. CI and 13 browser scripts now obtain version from canonical manifest. Added protected restore/privacy browser tests and blocking math assertions. No schema migration.
 - At entry: latest-head LIVE/full isolated DEMO/QA, PR merge, Cloudflare site parity, iPhone/VoiceOver and native stores are INCOMPLETE. Final evidence and mapping must be appended, not inferred.
+
+### 2026-10-24 — v0.9.18-beta merged source and package verification (WEB PUBLICATION UNVERIFIED)
+- PR #94 merged at main `623025665c549dadbe3fb467b6d556f5d44e7e34`. Prior candidate note marked NOT MERGED is retained as historical state.
+- GitHub Actions PR release run 40158486843 successful; mobile-form run 40158486825 successful. Candidate artifact 12584823539 contains standalone full-app DEMO HTML, offline DEMO ZIP, complete LIVE ZIP and JSON browser evidence. Inspected LIVE ZIP: root index, all three CSS, twelve ordered JS, four icons. All 16 index/CSS/JS Git blob SHAs match merged main. No storage migration; user-initiated restore remains explicitly gated.
+- Pre-merge host comparison `Nexus_CLOUDFLARE_PARITY.json` was FAIL (`index.html` hash mismatch), so no actual Cloudflare publication is certified. Manifest status remains `unverified`. Physical iPhone, VoiceOver, native store policy/privacy signoff NOT TESTED.
