@@ -46,7 +46,7 @@ function stashView() {
   const SORT_LABELS = {attention:"Needs Attention first",expiry:"Expiry soonest",remaining_low:"Remaining: low → high",remaining_high:"Remaining: high → low",remaining_pct_low:"Remaining %: low → high",remaining_pct_high:"Remaining %: high → low",doses_left:"Fewest doses left",recon_recent:"Most recently reconstituted",recon_oldest:"Oldest reconstituted",last_used:"Most recently used",name_az:"Name A–Z",name_za:"Name Z–A",cost_high:"Cost high → low",cost_low:"Cost low → high"};
 
   const stashSub = state._stashSub || "kits";
-  const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn" data-sub="${id}"`, padding:"9px"});
+  const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn ${stashSub===id?"active":""}" aria-pressed="${stashSub===id}" data-sub="${id}"`, padding:"9px"});
   let html = `<h1 class="serif greet">Stash</h1>
   <div class="nx-hybrid-stash-segment" role="group" aria-label="Stash category">
     ${stashSubBtn("kits","Compound kits")}
