@@ -371,3 +371,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Physical iPhone 390, narrow 320, light/dark contrast, action button click/keyboard, menu-to-panel focus, hidden pane behavior, all three tabs and first-five history: NOT TESTED.
 - Protected Stash reconstitution/preparation/partial-vial/dose flows, localStorage, KLOW actual designation: NOT TESTED in this follow-up. No new data writes in this visual patch.
 - User screenshot shows possible 1200mg declared strength vs 1250mg open-vial capacity on Glutathione Kit 2; flag as separate reconciliation item, do not auto-change saved vial records.
+
+
+### v0.9.20-beta Vials / History list parity — pending release evidence
+- Static source: Vials and History both render `nx-kit-list-row`, Vial actions keep `data-kit`/`data-vial`, and both support first five + Show all/fewer: CODED; modified JS syntax PASS.
+- Browser QA: open details, switch tabs, compact row hierarchy at 320/390 dark/light, action menus for open and finished vials, historical dose display, more/fewer, scroll retention, keyboard, no mutation: NOT TESTED.
+- Protected blend/non-blend preparation, vial deductions and history edits, original KLOW export, Cloudflare parity and real iPhone: NOT TESTED. No PASS claimed.
