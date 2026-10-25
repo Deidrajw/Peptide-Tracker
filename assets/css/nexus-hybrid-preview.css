@@ -513,3 +513,59 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card .nx-kit-primary-vial {
  .nexus-screen-stash .nx-hybrid-stash-segment {padding:4px;gap:3px;}
  .nexus-screen-stash .nx-hybrid-stash-segment .stash-sub-btn {font-size:12px!important;min-height:44px!important;}
 }
+
+/* Hybrid Phase 2C: user-approved restrained action depth / cohesive paired CTAs. */
+.nexus-screen-stash .nx-kit-card .nx-kit-actions-three>button {
+ box-shadow:none!important;
+ background:var(--surface-2)!important;
+ border:1px solid var(--border)!important;
+ border-radius:13px!important;
+}
+.nexus-screen-stash .nx-kit-card .nx-kit-actions-three>button:active {
+ background:var(--surface-3)!important;
+ transform:scale(.985);
+}
+.nexus-today-actions .nexus-today-action-primary,
+.nexus-today-actions .nexus-today-action-secondary {
+ border-radius:17px!important;
+ min-height:54px!important;
+ font-family:inherit!important;
+ font-weight:700!important;
+ box-sizing:border-box!important;
+}
+.nexus-today-actions .nexus-today-action-primary {
+ box-shadow:0 4px 11px #8055a025,inset 0 1px 0 #ffffff8a!important;
+}
+.nexus-today-actions .nexus-today-action-secondary {
+ background:var(--surface-2)!important;
+ border:1px solid var(--border)!important;
+ box-shadow:none!important;
+}
+.nexus-screen-stash .nx-hybrid-attention-head {
+ color:var(--t2)!important;
+}
+.nexus-screen-stash .nx-hybrid-attention-dot {
+ background:#9b83bb!important;
+}
+.nexus-screen-stash .nx-hybrid-attention-count {
+ border:0!important;box-shadow:none!important;
+ background:transparent!important;color:var(--t2)!important;
+ min-width:auto!important;padding:0 3px!important;
+ font-variant-numeric:tabular-nums;
+}
+.nexus-screen-stash .nx-hybrid-attention-row {
+ border:1px solid var(--border-sub)!important;
+ border-left:1px solid var(--border-sub)!important;
+ padding:15px 16px!important;
+ border-radius:15px!important;
+ box-shadow:none!important;
+}
+.nexus-screen-stash .nx-hybrid-attention-row .inv-notice-action {
+ color:#bb9bd8!important;
+}
+html[data-theme="light"] .nexus-screen-stash .nx-hybrid-attention-row .inv-notice-action {
+ color:#6b4c8e!important;
+}
+@media(prefers-reduced-motion:reduce) {
+ .nexus-screen-stash .nx-kit-card .nx-kit-actions-three>button:active {transform:none!important;}
+}
