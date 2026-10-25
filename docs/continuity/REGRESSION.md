@@ -315,3 +315,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - VERIFIED PACKAGE STRUCTURE: artifact 12584823539, root `index.html`, 3 CSS, 12 JS, 4 icons; standalone full-app DEMO + offline DEMO ZIP present and fictional-storage isolation specified in build.
 - HOST VERIFICATION: pre-merge Cloudflare comparison FAIL due to mismatched `index.html` hash; **post-merge Cloudflare unverified**, do not promote this to PASS from source smoke tests.
 - NOT TESTED: independent physical iPhone and VoiceOver, all 120 function-indexed UI surfaces by human visual pass, actual App Store/Play submission, final processor/privacy declaration. Calculator math PASS is conversion assurance only, not a clinical dosage certification.
+
+### 2026-10-24 — Cloudflare release parity observed and What's New re-publication gate
+- PASS (automated, remote): v0.9.18-beta 16 hosted HTML/CSS/JS byte hashes equal verified merged app source (run 40159182188, `Nexus_CLOUDFLARE_PARITY.json` `verified:true`); source build and 8 browser modes PASS; mobile form regression run 40159182258 PASS.
+- PENDING: manifest/runtime `published` follow-up must pass generated note parity and 8-browser publish-gated popup tests: show once after onboarding, Later does not acknowledge, Got it stores isolated version key, no duplicate old numeric changelog, no state corruption. Then verify live Cloudflare bytes again.
+- NOT TESTED: real iPhone/VoiceOver, independent store submission, all 120 function-indexed UI surfaces individually reviewed visually.
