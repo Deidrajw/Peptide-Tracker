@@ -86,6 +86,22 @@ try{
             open:ensureKitVials(k).some(v=>v.status==='open'||v.status==='active')};
         });
         assert.deepEqual(opened,{bac:2,expiry:30,remaining:1,open:true},'blend open vial/recon and sealed-count');
+        const parity=await page.evaluate(()=>{
+          const normal={id:975311,name:'QA Single',totalVials:2,vialMg:30,activeKit:false,reconDate:null,openedVials:0,emptyVials:0,doseLog:[],wasteLog:[],reconHistory:[]};
+          state.supplies.push(normal);
+          tab='stash';render();
+          const read=id=>{
+            const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
+            if(!card)return null;
+            return {label:card.querySelector('.nx-stash-inventory-summary')?.textContent?.includes('KIT INVENTORY REMAINING'),
+              action:card.querySelector('.opennewvial,.openblendvial')?.textContent?.trim(),
+              summary:card.querySelector('details>summary')?.textContent?.trim(),
+              tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
+          };
+          return {single:read(normal.id),blend:read(975310)};
+        });
+        assert.ok(parity.single&&parity.blend,'both standard and premixed cards must render');
+        assert.deepEqual(parity.blend,parity.single,'blend and regular kit must share inventory label, action, disclosure and detail tabs');
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#bd-amount').fill('3');
         await page.locator('#bd-save').click();
