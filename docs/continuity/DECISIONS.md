@@ -310,3 +310,7 @@
 ### 2026-10-25 — Visual feedback on action hierarchy and attention
 - Keep kit actions rounded with little/no elevation inside already elevated cards. Today Log Dose may remain primary and Check-In secondary, but geometry/spacing/type must match. Remove amber left rail from Needs Attention; use neutral rows and plum review link. Distinct design from alert urgency semantics.
 - Inventory Resolution allocation confusion is a separate UX workflow task; do not silently alter source-vial allocations, single dose record, Draw confirmations or inventory deduction math.
+
+
+### 2026-10-25 — Kit-card two-action design approved for preview
+- User prefers one context-sensitive inventory action plus a visible Kit Details disclosure. Prepare Doses should stay accessible from existing kit ellipsis sheet and top Stash Prepare control, not appear as a third equally weighted persistent button. Never show Open New Vial if existing conditions do not permit it, and do not change calculations or preparation behaviour.
