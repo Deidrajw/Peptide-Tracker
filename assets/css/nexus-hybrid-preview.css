@@ -192,3 +192,123 @@ html[data-theme="light"] .btn-primary {
    Background images decorate; background-color remains the reliable fallback. */
 .btn-primary {background-color:#d7b6f5!important;}
 html[data-theme="light"] .btn-primary {background-color:#d2b1ef!important;}
+
+/* SPRINT 01 — actual Today component redesign, not a generic theme overlay. */
+.nexus-today-hero {
+ position:relative;overflow:hidden;isolation:isolate;
+ min-height:196px;padding:25px 24px 22px!important;
+ border-radius:27px!important;
+ background:linear-gradient(118deg,#47335b 0%,#31253f 55%,#241f34 100%)!important;
+ border:1px solid rgba(226,196,253,.31)!important;
+ box-shadow:0 20px 42px rgba(22,11,42,.26),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+.nexus-today-hero::before {
+ content:"";position:absolute;width:210px;height:210px;right:-60px;top:-100px;z-index:-1;
+ border-radius:50%;background:radial-gradient(circle,rgba(213,155,255,.37),rgba(159,115,201,.04) 72%,transparent 75%);
+}
+.nexus-today-hero::after {
+ content:"";position:absolute;width:140px;height:140px;left:-60px;bottom:-110px;z-index:-1;
+ border-radius:50%;background:radial-gradient(circle,rgba(194,148,244,.19),transparent 73%);
+}
+.nexus-today-eyebrow {
+ display:flex;align-items:center;gap:9px;
+ color:#EEDFFC!important;letter-spacing:1.5px!important;font-size:10px!important;
+}
+.nx-hybrid-eyebrow-dot {display:inline-block;width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#EACBFF;box-shadow:0 0 0 4px #dfbeff26;}
+.nx-hybrid-eyebrow-side {font-size:9px;margin-left:auto;letter-spacing:.9px;color:#D2B8E3;white-space:nowrap;}
+.nexus-today-hero-row {align-items:center!important;gap:8px;}
+.nexus-today-big {font-size:clamp(24px,7vw,38px)!important;line-height:1.17!important;letter-spacing:-1px!important;font-weight:750!important;color:#FCF8FF!important;}
+.nexus-today-big span {color:#DBC6EF!important;font-size:.56em!important;letter-spacing:-.3px!important;}
+.nexus-today-sub {color:#D9C8E9!important;margin-top:10px!important;}
+.nx-hybrid-hero-orbit {
+ width:96px;height:96px;min-width:96px;border-radius:50%;
+ background:conic-gradient(#D8B0FF 0 72%,rgba(255,255,255,.16) 72% 100%);
+ display:grid;place-items:center;box-shadow:0 8px 29px #100A2845,inset 0 1px 0 #ffffff35;
+}
+.nx-hybrid-orbit-core {
+ display:grid;place-items:center;width:75px;height:75px;border-radius:50%;
+ background:linear-gradient(135deg,#554169,#352947);color:#F6E9FF;
+ font-size:19px;font-weight:750;letter-spacing:-.6px;
+}
+.nexus-today-track {height:9px!important;margin-top:22px!important;border-radius:99px!important;background:#ffffff26!important;}
+.nexus-today-track>div {background:linear-gradient(90deg,#F1D6FF,#C49AFF)!important;border-radius:99px!important;box-shadow:0 0 16px #b78aee66;}
+html[data-theme="light"] .nexus-today-hero {
+ background:linear-gradient(125deg,#F0E6FA,#E8D9F4 64%,#DCC9EE)!important;
+ border-color:#D6C0E9!important;
+ box-shadow:0 19px 38px #8665a626,inset 0 1px 0 #fff!important;
+}
+html[data-theme="light"] .nexus-today-eyebrow,html[data-theme="light"] .nexus-today-big{color:#33243E!important;}
+html[data-theme="light"] .nx-hybrid-eyebrow-side,html[data-theme="light"] .nexus-today-sub,html[data-theme="light"] .nexus-today-big span{color:#645075!important;}
+html[data-theme="light"] .nx-hybrid-hero-orbit{background:conic-gradient(#9770CB 0 72%,#CAB6DE 72% 100%)}
+html[data-theme="light"] .nx-hybrid-orbit-core{background:linear-gradient(135deg,#FBF8FE,#EADCF6);color:#382549}
+html[data-theme="light"] .nexus-today-track{background:#73589428!important;}
+html[data-theme="light"] .nexus-today-track>div{background:linear-gradient(90deg,#8E6CC9,#B197DF)!important;}
+.nexus-today-actions {grid-template-columns:1.05fr .95fr!important;gap:11px!important;margin:4px 0 23px!important;}
+.nexus-today-actions button {min-height:55px!important;border-radius:18px!important;font-size:14px!important;}
+.nexus-today-action-primary {
+ border:1px solid #DAC2F6!important;
+ background-color:#D6B5F3!important;
+ background-image:linear-gradient(150deg,#EBCFFF,#B58CE9)!important;
+ color:#2C193B!important;
+ box-shadow:0 11px 23px #8055a044,inset 0 2px 0 #ffffffa8!important;
+}
+.nexus-today-action-secondary {
+ background:linear-gradient(150deg,var(--surface),var(--surface-2))!important;
+ border:1px solid var(--border)!important;
+ box-shadow:0 6px 15px #110E2419!important;
+}
+.nx-hybrid-checkin {
+ position:relative;display:flex;align-items:center;gap:14px;
+ margin:14px 0 25px;padding:18px 17px;border-radius:21px;
+ background:linear-gradient(130deg,var(--surface),var(--surface-2));
+ border:1px solid var(--border-sub);
+ box-shadow:0 9px 24px #160E2919,inset 0 1px 0 #ffffff13;
+}
+.nx-hybrid-checkin-symbol {
+ flex:0 0 46px;display:grid;place-items:center;width:46px;height:46px;
+ border-radius:15px;background:#aa83e126;color:#d1acff;font-size:28px;
+}
+html[data-theme="light"] .nx-hybrid-checkin-symbol {background:#EFE2FA;color:#8861B3;}
+.nx-hybrid-checkin-cta {
+ min-height:44px;padding:8px 13px!important;border-radius:13px!important;
+ border:1px solid var(--border)!important;
+ background:var(--surface)!important;color:var(--t1)!important;font-size:12px!important;
+}
+.nx-qa {margin-bottom:32px;}
+.nx-qa-head {margin-bottom:16px!important;}
+.nx-qa-grid {gap:12px!important;}
+.nx-qa-tile {
+ min-height:91px!important;display:flex;align-items:center!important;
+ border-radius:20px!important;
+ border:1px solid var(--border-sub)!important;
+ background:linear-gradient(140deg,var(--surface),var(--surface-2))!important;
+ box-shadow:0 9px 22px #100B2519,inset 0 1px 0 #ffffff12!important;
+ padding:16px!important;
+}
+.nx-qa-icon {
+ display:grid!important;place-items:center!important;flex:0 0 38px;
+ width:38px;height:38px;border-radius:13px;
+ background:#b290e52a!important;color:var(--nx-hybrid-accent)!important;
+}
+.nx-qa-copy strong {font-weight:750!important;letter-spacing:-.2px;}
+.nexus-today-view-nav {
+ padding:5px!important;border-radius:20px!important;
+ background:linear-gradient(135deg,var(--surface-2),var(--surface))!important;
+ border:1px solid var(--border-sub)!important;
+ box-shadow:0 6px 20px #100B2312;
+}
+.nexus-today-view-nav .hv-nav[aria-pressed="true"] {
+ background:var(--surface)!important;
+ color:var(--t1)!important;
+ box-shadow:0 3px 12px #09051525!important;
+ border:1px solid var(--border-sub)!important;
+ border-radius:15px!important;
+}
+@media(max-width:359px) {
+ .nexus-today-hero {padding:19px 16px 18px!important;min-height:165px;}
+ .nx-hybrid-hero-orbit {width:69px;height:69px;min-width:69px;}
+ .nx-hybrid-orbit-core {width:53px;height:53px;font-size:14px;}
+ .nx-hybrid-eyebrow-side{display:none;}
+ .nx-qa-tile{padding:9px!important;}
+ .nexus-today-actions button{font-size:12px!important;padding:8px!important;}
+}
