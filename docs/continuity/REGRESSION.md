@@ -384,3 +384,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Expanded candidate evidence #118
 - Source changes: CSS-only light-colour remap and spacing, plus Supply Delete navigation inside Edit Supply (existing confirmAction). **NOT YET PASSED** on latest head. Test required: opening edit does not mutate supply; cancel Delete preserves item/history; confirming Delete removes only intended item after user acknowledgement; existing Restock and active-unit calculations unchanged. Light Check-In CTA failure 2.36:1 in early CI; high-specificity fix pending retest. Earlier supply JS code syntax error corrected at 443b5bb; check fresh JS parser pass. Physical iPhone accessibility/VoiceOver NOT TESTED.
+
+### 2026-10-25 — Filled CTA computed contrast contract
+| Surface | Assertion | State |
+|---|---|---|
+| Open New Vial > Log Reconstitution, light | `rgb(98,68,156)` fill and white computed `color` + `-webkit-text-fill-color` at 320/390 LIVE/isolated DEMO; height >=44px | RUNNING / NOT YET PASSED |
+| Dark-themed Open New Vial | Retain contrast against actual compound fill; no force-white fallback on pale colour | NOT TESTED |
+| Remaining modal CTA fills | Flag dark-ink on dark fills and white-on-pale fills, computed values | NOT FULLY AUDITED |
