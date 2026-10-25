@@ -790,6 +790,15 @@ function wireBody() {
       };
     });
   });
+  document.querySelectorAll(".nx-dose-history-more").forEach(button=>{
+    button.onclick=()=>{
+      const container=button.closest(".nx-dose-history");
+      if(!container)return;
+      const expanded=container.classList.toggle("is-expanded");
+      button.setAttribute("aria-expanded",String(expanded));
+      button.textContent=expanded?"Show recent 5 doses":"Show all "+button.dataset.count+" doses";
+    };
+  });
   document.querySelectorAll(".nx-kit-show-more").forEach(button=>{
     button.onclick=()=>{
       const extra=button.nextElementSibling;
