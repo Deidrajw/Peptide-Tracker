@@ -1,6 +1,6 @@
 # Nexus v0.9.19-beta — Premixed Blend & Protocol iPhone Corrections
 
-**Status:** WEB SOURCE MERGED AND CLOUDFLARE VERIFIED. Implementation PR #100 merged at `955c904860b39c5c56472b07cd3521828d5d9d79`; post-merge Cloudflare matched all 16 source files in Actions run 40162047192. Separate published What's New metadata is in release PR (not yet merged). Physical iPhone acceptance pending.
+**Status:** WEB SOURCE MERGED AND CLOUDFLARE VERIFIED. Implementation PR #100 merged at `955c904860b39c5c56472b07cd3521828d5d9d79`; post-merge Cloudflare matched all 16 source files in Actions run 40162047192. Published What's New metadata PR #103 merged and Cloudflare verified with 16/16 matching files in run 40162805366; final parity docs PR #105 merged. Physical iPhone acceptance pending.
 
 ## Fixes
 - **Stash / Blend:** Add direct `Open first blend vial` action and kit menu action. Opening records BAC water (mL), recon date, expiry-after-reconstitution days and notes, moves one sealed vial to open and updates the blend kit without creating new constituent kits.
@@ -19,4 +19,4 @@ Physical iPhone keyboard behavior, VoiceOver, independent device usability accep
 
 ## Verified release checks
 - Release candidate build/browser suite 40161722598 PASS, mobile forms 40161722564 PASS; math diagnostic 80/80. Fictional blend opening, current-vial capacity, one-dose identity, finishing/waste and backup safeguards tested without live writes.
-- Post-merge remote Cloudflare compare (run 40162047192) `verified:true`, 16/16 index/CSS/JS assets match implementation source. Publication-metadata follow-up requires a separate CI, merge and remote comparison before closing release gates.
+- Post-merge remote Cloudflare compare (run 40162047192) `verified:true`, 16/16 index/CSS/JS assets match implementation source. Publication-metadata follow-up CI 40162444774 PASSED, merge PR #103 completed, and final remote 16-file Cloudflare comparison 40162805366 PASSED.
