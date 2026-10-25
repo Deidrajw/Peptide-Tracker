@@ -388,3 +388,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Remaining approved changes | User reviewed preview and accepted subject to two fixes; browser test confirmation on new head needed | USER ACCEPTED, AUTO QA PENDING |
 | Blend Today-card modern parity | Same card renderer regardless of blend | OUTSTANDING |
 | Full LIVE + isolated DEMO | Build and 320/390 both themes | NOT TESTED AT NEW HEAD |
+
+### 2026-10-25 iPhone preview feedback
+| Area | Evidence | Status |
+|---|---|---|
+| Log Dose multi-vial secondary action | User screenshot shows text compressed at 390px preview; branch CSS fix requires re-test | NOT TESTED after fix |
+| Stash vial ellipsis | User screenshot shows oversized outlined 44px square; branch CSS keeps 44px hit area with 28px visual | NOT TESTED after fix |
+| Other reviewed UI changes | User reports tested and good in preview; not a substitute for automated complete release QA | USER ACCEPTED |
