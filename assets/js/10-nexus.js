@@ -634,7 +634,7 @@ function mixingChartView() {
 
   return `<div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <button id="mixback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;width:32px;height:32px;font-size:18px">‹</button>
+      <button id="mixback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;min-width:44px;min-height:44px;font-size:22px" aria-label="Back to guides">‹</button>
       <h1 class="serif" style="font-size:20px;margin:0;color:var(--t1)">Stacking & Mixing Guide</h1>
     </div>
     <div style="background:#F9C87D11;border:1px solid #F9C87D33;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:var(--t4);line-height:1.6">
@@ -647,13 +647,33 @@ function mixingChartView() {
   </div>`;
 }
 
+function nxReconValidate(r) {
+  const rawV=String(r.vialMg??"").trim(), rawB=String(r.bacMl??"").trim(), rawD=String(r.dose??"").trim();
+  const vmg=rawV?Number(rawV):0, bac=rawB?Number(rawB):0, doseRaw=rawD?Number(rawD):0;
+  const invalid=(error)=>({vmg:0,bac:0,doseRaw:0,doseMg:0,conc:null,mlPerDose:null,error});
+  if(rawV&&(!Number.isFinite(vmg)||vmg<=0))return invalid("Vial amount must be a positive finite number.");
+  if(rawB&&(!Number.isFinite(bac)||bac<=0))return invalid("Diluent volume must be a positive finite number.");
+  if(r.unit==="iu")return invalid("IU cannot be converted into mg without a compound-specific potency reference. Enter a verified mass in mg or mcg.");
+  if(!["mg","mcg"].includes(r.unit||"mg"))return invalid("Choose mg or mcg.");
+  if(rawD&&(!Number.isFinite(doseRaw)||doseRaw<=0))return invalid("Dose amount must be a positive finite number.");
+  const conc=vmg>0&&bac>0?vmg/bac:null;
+  if(!rawV||!rawB||!rawD)return {vmg,bac,doseRaw,doseMg:0,conc,mlPerDose:null,error:null};
+  const doseMg=r.unit==="mcg"?doseRaw/1000:doseRaw;
+  if(!Number.isFinite(conc)||!Number.isFinite(doseMg)||doseMg<=0)return invalid("Check the entered amounts and units.");
+  if(doseMg>vmg)return invalid("The dose exceeds the total contents of the vial.");
+  const mlPerDose=doseMg/conc;
+  const cap=({"30u":0.3,"50u":0.5,"100u":1,"1mL":1,"3mL":3})[r.syringe||"100u"];
+  if(!cap)return invalid("Select a supported syringe.");
+  if(!Number.isFinite(mlPerDose)||mlPerDose<=0)return invalid("Calculated volume is invalid.");
+  if(mlPerDose>cap+1e-10)return invalid("Calculated volume exceeds the selected syringe capacity. No drawing instruction is shown.");
+  if(mlPerDose*100<0.5)return invalid("Calculated draw is under 0.5 U-100 units; this visual cannot show a reliable mark.");
+  return {vmg,bac,doseRaw,doseMg,conc,mlPerDose,error:null};
+}
+
 function reconCalcView() {
   const r = state._recon || { vialMg:"", bacMl:"", dose:"", unit:"mg", freq:"daily", syringe:"100u" };
-  const vmg=parseFloat(r.vialMg)||0, bac=parseFloat(r.bacMl)||0;
-  const doseRaw=parseFloat(r.dose)||0;
-  const doseMg = r.unit==="mcg" ? doseRaw/1000 : r.unit==="iu" ? doseRaw*0.001 : doseRaw;
-  const conc = vmg&&bac ? vmg/bac : null;
-  const mlPerDose = conc&&doseMg ? doseMg/conc : null;
+  const check=nxReconValidate(r);
+  const {vmg,bac,doseRaw,doseMg,conc,mlPerDose}=check;
   // Syringe configs
   const SYRINGES = {"30u":{max:30,label:"30-unit (0.3 mL)",mlMax:0.3,isVol:false},"50u":{max:50,label:"50-unit (0.5 mL)",mlMax:0.5,isVol:false},"100u":{max:100,label:"100-unit (1 mL)",mlMax:1,isVol:false},"1mL":{max:100,label:"1 mL",mlMax:1,isVol:true},"3mL":{max:300,label:"3 mL",mlMax:3,isVol:true}};
   const syr = SYRINGES[r.syringe||"100u"];
@@ -692,7 +712,7 @@ function reconCalcView() {
     <polygon points="${BR},${BY+4} ${W-4},${BY+BH/2} ${BR},${BY+BH-4}" fill="var(--surface-3)" stroke="var(--border)" stroke-width="1"/>
     <!-- Unit badge -->
     ${syringeUnits!=null?`<rect x="${Math.max(BL+4,Math.min(BR-36,fillX-18))}" y="${BY+BH+6}" width="36" height="16" rx="8" fill="#A78BFA22" stroke="#A78BFA55"/>
-    <text x="${Math.max(BL+22,Math.min(BR-18,fillX))}" y="${BY+BH+18}" text-anchor="middle" font-size="10" font-weight="700" fill="#A78BFA">${Math.round(syringeUnits)}u</text>`:""}
+    <text x="${Math.max(BL+22,Math.min(BR-18,fillX))}" y="${BY+BH+18}" text-anchor="middle" font-size="10" font-weight="700" fill="#A78BFA">${syringeUnits.toFixed(1)}u</text>`:""}
   </svg>`;
   const step=(n,title,body)=>`<div style="display:flex;gap:12px;margin-bottom:18px;align-items:flex-start">
     <div style="width:28px;height:28px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${n}</div>
@@ -700,40 +720,41 @@ function reconCalcView() {
   </div>`;
   const pill=(val,cur,id)=>`<button data-id="${id}" data-val="${val}" onclick="calcPillClick(this)" style="padding:5px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid ${cur===val?"#A78BFA":"var(--border-sub)"};background:${cur===val?"#A78BFA22":"transparent"};color:${cur===val?"#A78BFA":"var(--t4)"}">${val}</button>`;
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button id="reconback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;width:32px;height:32px;font-size:18px">‹</button>
+    <button id="reconback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;min-width:44px;min-height:44px;font-size:22px" aria-label="Back to guides">‹</button>
     <h1 class="serif" style="font-size:20px;margin:0;color:var(--t1);flex:1">Dose Calculator</h1>
     <button onclick="state._recon=null;renderBody();" style="background:transparent;border:1px solid var(--border-sub);color:var(--t4);border-radius:8px;padding:5px 12px;font-size:11px">Reset</button>
   </div>
   <div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:16px 18px;margin-bottom:14px">
     ${step(1,"What's in your vial?",`<div style="display:flex;gap:10px;flex-wrap:wrap">
-      <div style="flex:1;min-width:120px"><label class="field-label">Peptide amount (mg)</label><input id="rc-vmg" type="number" step="0.1" class="inp" value="${esc(r.vialMg)}" placeholder="e.g. 5"></div>
-      <div style="flex:1;min-width:120px"><label class="field-label">BAC water to add (mL)</label><input id="rc-bac" type="number" step="0.1" class="inp" value="${esc(r.bacMl)}" placeholder="e.g. 2">
-        <div style="font-size:10px;color:var(--t5);margin-top:4px">Typical: 2 mL per vial</div>
+      <div style="flex:1;min-width:120px"><label class="field-label">Peptide amount (mg)</label><input id="rc-vmg" type="number" min="0" step="any" inputmode="decimal" aria-label="Vial amount in milligrams" class="inp" value="${esc(r.vialMg)}" placeholder="e.g. 5"></div>
+      <div style="flex:1;min-width:120px"><label class="field-label">BAC water to add (mL)</label><input id="rc-bac" type="number" min="0" step="any" inputmode="decimal" aria-label="Diluent amount in millilitres" class="inp" value="${esc(r.bacMl)}" placeholder="e.g. 2">
+        <div style="font-size:10px;color:var(--t5);margin-top:4px">Enter volume actually used</div>
       </div></div>${conc?`<div style="margin-top:10px;font-size:12px;color:#A78BFA">Creates <b>${conc.toFixed(2)} mg/mL</b> solution</div>`:""}`)}
     ${step(2,"Your dose per injection?",`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div style="flex:2;min-width:100px"><label class="field-label">Dose amount</label><input id="rc-dose" type="number" step="0.1" class="inp" value="${esc(r.dose)}" placeholder="e.g. 2"></div>
-      <div style="display:flex;gap:4px;padding-bottom:8px">${["mg","mcg","IU"].map(u=>pill(u.toLowerCase(),r.unit||"mg","unit")).join("")}</div>
+      <div style="flex:2;min-width:100px"><label class="field-label">Dose amount</label><input id="rc-dose" type="number" min="0" step="any" inputmode="decimal" aria-label="Dose amount" class="inp" value="${esc(r.dose)}" placeholder="e.g. 2"></div>
+      <div style="display:flex;gap:4px;padding-bottom:8px">${["mg","mcg"].map(u=>pill(u,r.unit||"mg","unit")).join("")}</div>
     </div>`)}
     ${step(3,"How often?",`<div style="display:flex;gap:6px;flex-wrap:wrap">
       ${[["daily","Daily","1×/day"],["twice","Twice","2×/day"],["weekly","Weekly","1×/wk"]].map(([v,l,s])=>`<button data-id="freq" data-val="${v}" onclick="calcPillClick(this)" style="flex:1;padding:8px 6px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid ${(r.freq||"daily")===v?"#A78BFA":"var(--border-sub)"};background:${(r.freq||"daily")===v?"#A78BFA22":"transparent"};color:${(r.freq||"daily")===v?"#A78BFA":"var(--t4)"};display:flex;flex-direction:column;align-items:center;gap:2px">${l}<span style="font-size:10px;font-weight:400;opacity:0.7">${s}</span></button>`).join("")}
     </div>`)}
   </div>
+  <div id="rc-validation" role="status" aria-live="polite" style="display:${check.error?"block":"none"};margin-bottom:12px;padding:12px 14px;border-radius:10px;border:1px solid #D97777;background:#D9777718;color:var(--t1);font-size:12px;line-height:1.5">${esc(check.error||"")}</div>
   <div id="rc-results">${mlPerDose!=null?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
-    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Your Recipe</div>
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Calculation summary</div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
       <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
         <div style="width:24px;height:24px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">1</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Add ${parseFloat(r.bacMl||2).toFixed(1)} mL diluent</div><div style="font-size:11px;color:var(--t4)">Creates ${(vmg/bac).toFixed(2)} mg/mL solution</div></div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Entered diluent: ${bac.toFixed(3)} mL</div><div style="font-size:11px;color:var(--t4)">Creates ${(vmg/bac).toFixed(2)} mg/mL solution</div></div>
       </div>
       <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
         <div style="width:24px;height:24px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">2</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Draw ${Math.round(units||0)} units</div><div style="font-size:11px;color:var(--t4)">${(mlPerDose).toFixed(3)} mL per dose</div></div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--t2)">U-100 equivalent: ${units?.toFixed(1)} units</div><div style="font-size:11px;color:var(--t4)">${(mlPerDose).toFixed(3)} mL per dose</div></div>
       </div>
     </div>
     <!-- Syringe visual -->
     <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;margin-bottom:12px">
       ${syringeSVG}
-      <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">${syr.isVol?((syringeMl||0).toFixed(2)+"mL"):Math.round(syringeUnits||0)+" units"} on your syringe · ${(mlPerDose).toFixed(3)} mL</div>
+      <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">Calculated ${syr.isVol?((syringeMl||0).toFixed(3)+" mL"):(syringeUnits||0).toFixed(1)+" U-100 units"} · ${(mlPerDose).toFixed(3)} mL</div>
       <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px">
         ${Object.keys(SYRINGES).map(s=>pill(s,r.syringe||"100u","syringe")).join("")}
       </div>
@@ -775,11 +796,10 @@ function wireReconCalc() {
   // Targeted result update — does NOT destroy/recreate inputs, preserving cursor position
   const updateResult = () => {
     if(!state._recon) state._recon={vialMg:"5",bacMl:"2",dose:"",unit:"mg",freq:"daily",syringe:"100u"};
-    const vmg=parseFloat(state._recon.vialMg)||0, bac=parseFloat(state._recon.bacMl)||0;
-    const doseRaw=parseFloat(state._recon.dose)||0;
-    const doseMg=state._recon.unit==="mcg"?doseRaw/1000:state._recon.unit==="iu"?doseRaw*0.001:doseRaw;
-    const conc=vmg&&bac?vmg/bac:null;
-    const mlPerDose=conc&&doseMg?doseMg/conc:null;
+    const check=nxReconValidate(state._recon);
+    const {vmg,bac,doseRaw,doseMg,conc,mlPerDose}=check;
+    const validationEl=document.getElementById("rc-validation");
+    if(validationEl){validationEl.textContent=check.error||"";validationEl.style.display=check.error?"block":"none";}
     // Update concentration hint inline (no re-render)
     const concEl=document.getElementById("rc-conc-hint");
     if(concEl)concEl.textContent=conc?`Creates ${conc.toFixed(2)} mg/mL solution`:"";
@@ -814,19 +834,19 @@ function wireReconCalc() {
       </svg>`;
       const pill2=(val,cur,id)=>`<button data-id="${id}" data-val="${val}" onclick="calcPillClick(this)" style="padding:5px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid ${cur===val?"#A78BFA":"var(--border-sub)"};background:${cur===val?"#A78BFA22":"transparent"};color:${cur===val?"#A78BFA":"var(--t4)"}">${val}</button>`;
       res.innerHTML=`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
-        <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Your Recipe</div>
+        <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Calculation summary</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
           <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
             <div style="width:24px;height:24px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">1</div>
-            <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Add ${parseFloat(r2.bacMl||2).toFixed(1)} mL diluent</div><div style="font-size:11px;color:var(--t4)">Creates ${conc.toFixed(2)} mg/mL solution</div></div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Entered diluent: ${bac.toFixed(3)} mL</div><div style="font-size:11px;color:var(--t4)">Creates ${conc.toFixed(2)} mg/mL solution</div></div>
           </div>
           <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--surface);border-radius:10px">
             <div style="width:24px;height:24px;border-radius:50%;background:#A78BFA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">2</div>
-            <div><div style="font-size:13px;font-weight:600;color:var(--t2)">Draw ${Math.round(units)} units</div><div style="font-size:11px;color:var(--t4)">${mlPerDose.toFixed(3)} mL per dose</div></div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--t2)">U-100 equivalent: ${units?.toFixed(1)} units</div><div style="font-size:11px;color:var(--t4)">${mlPerDose.toFixed(3)} mL per dose</div></div>
           </div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;margin-bottom:12px">${svg}
-          <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">Draw to ${syr2.isVol?(syringeMl2||0).toFixed(2)+"mL":Math.round(syringeUnits)+" units"} on your syringe · ${mlPerDose.toFixed(3)} mL</div>
+          <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">Calculated ${syr2.isVol?(syringeMl2||0).toFixed(3)+" mL":syringeUnits.toFixed(1)+" U-100 units"} · ${mlPerDose.toFixed(3)} mL</div>
           <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px">${Object.keys({"30u":1,"50u":1,"100u":1,"1mL":1,"3mL":1}).map(s=>pill2(s,r2.syringe||"100u","syringe")).join("")}</div>
           <div style="text-align:center;font-size:10px;color:var(--t5);margin-top:4px">${syr2.label}</div>
         </div>
