@@ -638,3 +638,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - User reports preceding hybrid preview still flat and navigation unchanged. Verified stylesheet previously used weak `:where()` selectors and did not materially update existing `.tabbar` active styling.
 - Branch commit `087e3679` targets actual existing `.tabbar`, `.tabbar button.active`, `.card`, `.btn-primary`, `.modal`, adds distinct theme backgrounds and correct 320px spacing. No JS/state/data change. Production not deployed.
 - **ONE NEXT ACTION:** finish latest-head GitHub browser/contrast QA, inspect real 320/390 screenshots both themes, and present updated downloadable preview to user; don't merge or deploy.
+
+
+### 2026-10-25 — User visibility concern / real floating tabbar candidate
+- Responded to user report of flat visual style and unchanged nav with actual `.tabbar`, `.tabbar button.active`, `.card`, `.btn-primary` CSS changes at commit `087e3679`; no JS and no production writes.
+- Browser run 40236310694 FAILED at Check-In CTA contrast (transparent computed button background beneath image gradient), though packaging passed and mobile form suite passed. Added opaque primary CTA background fallback in commit `be45613c`; **latest-head QA pending, do not claim pass**.
+- **ONE NEXT ACTION:** inspect successful latest run 40236446027 and its 320/390 dual-theme screenshots, fix visual regressions before user's physical preview, maintain unmerged PR #123.
