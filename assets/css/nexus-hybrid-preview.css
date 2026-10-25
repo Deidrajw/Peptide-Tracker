@@ -55,3 +55,30 @@ html[data-theme="light"] body {
 @media(max-width:359px){
   :where(.card,.nx-card,.nx-kit-card,.nx-panel){border-radius:15px;}
 }
+
+/* Source-native tokens: map the hybrid concept onto Nexus's existing variables. */
+:root {
+ --bg:#171521;--bg-deep:#14131c;--surface:#292436;--surface-2:#352d43;
+ --surface-3:#40354e;--border:#50445c;--border-sub:#41374c;
+ --modal-bg:#292436;--modal-border:#514560;
+}
+html[data-theme="light"] {
+ --bg:#f9f7f8;--bg-deep:#f4f0f6;--surface:#ffffff;--surface-2:#f4eef8;
+ --surface-3:#ede4f4;--border:#e2d8ea;--border-sub:#ede5f0;
+ --modal-bg:#fff;--modal-border:#e2d8ea;
+}
+:where(.btn-primary) {
+ border-radius:999px;
+ background:linear-gradient(135deg,#dec5fa,#af89e6);
+ color:#281833;
+ box-shadow:0 6px 15px rgba(110,62,149,.13);
+}
+html[data-theme="light"] :where(.btn-primary) {
+ background:linear-gradient(135deg,#d7b8f1,#bc9be9);
+ color:#281833;
+}
+:where(.tabbar) {
+ border-radius:22px 22px 0 0;
+ box-shadow:0 -7px 24px rgba(12,8,28,.11);
+}
+:where(.tabbar button) {border-radius:15px;}
