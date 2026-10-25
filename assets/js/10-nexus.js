@@ -1096,7 +1096,7 @@ function profileModal() {
     </div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
       <div id="avatar-preview" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#7DF9C0,#C9A0FF);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#000;flex-shrink:0;overflow:hidden">
-        ${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span>${(p.name||"?")[0].toUpperCase()}</span>`}
+        ${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span class="nx-profile-avatar-fallback nx-profile-avatar-large" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;gap:6px">
         <label style="background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-align:center">
@@ -1147,7 +1147,7 @@ function profileModal() {
   const removeAvatar = m.querySelector("#remove-avatar");
   if(removeAvatar) removeAvatar.onclick = () => {
     state.profile.avatar = null;
-    avatarPreview.innerHTML=`<span>${(state.profile.name||"?")[0].toUpperCase()}</span>`;
+    avatarPreview.innerHTML=`<span class="nx-profile-avatar-fallback nx-profile-avatar-large" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`;
     removeAvatar.remove();
   };
   m.querySelector("#psave").onclick = () => {
