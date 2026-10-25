@@ -300,37 +300,25 @@ function stashView() {
               ${s.composition.map(part=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:10px;font-size:12px;color:var(--t2)"><span>${esc(part.compound)}</span><span>${Number(part.mg).toFixed(2)} mg · ${s.vialMg>0?Math.round(Number(part.mg)/Number(s.vialMg)*100):0}%</span></div>`).join("")}
             </div>` : ""}
         </section>
-        <section class="nx-stash-pane" data-pane="vials" role="tabpanel" hidden>          ${(()=>{
-            // Kit → individual physical vials, in that order — which vial is current,
-            // what Nexus estimates is in each, and (once finished) why/how much was
-            // used. This is now the ONE vial-history display — it replaced a second,
-            // separate "reconstitution history" list that read reconHistory[] directly
-            // and could silently drift out of sync with this one.
-            if (!everOpenedVials.length) return "";
-            return `<div class="nx-stash-record-list"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:8px">${everOpenedVials.length} opened vial${everOpenedVials.length===1?"":"s"}</div>
-              <div style="margin-top:8px">
-                ${[...everOpenedVials].reverse().map((v,vi)=>{
-                  const rem = getVialRemainingMg(s, v);
-                  const usedMgVal = (v.expectedMg!=null?v.expectedMg:s.vialMg||0) - rem;
-                  const isActive = v.status==="active"||v.status==="open";
-                  // rem/usedMgVal are canonical mg — convert to the compound's own native
-                  // display unit before showing them, the same gap that made "5.0mg
-                  // remaining" read as "5.0mcg" here (a thousand-fold-misleading label).
-                  const remNative = mgToUnit(rem, c.unit);
-                  const usedNative = mgToUnit(usedMgVal, c.unit);
-                  return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--surface-2)">
-                    <div style="width:6px;height:6px;border-radius:50%;background:${isActive?"#7DF9C0":"var(--t5)"};flex-shrink:0"></div>
-                    <div style="flex:1;min-width:0">
-                      <div style="font-size:11.5px;color:${isActive?"var(--t1)":"var(--t3)"};font-weight:600">Vial ${v.sequenceNumber||"?"}${v.reconDate?" · "+fmtDate(v.reconDate):" · Date unavailable"}</div>
-                      <div style="font-size:10px;color:var(--t5)">${isActive?`~${remNative.toFixed(1)} ${c.unit} estimated remaining`:v.finishReason?`Finished — ${({used_in_dose:"used in dose",discarded:"discarded",discrepancy:"inventory discrepancy",other:"other"})[v.finishReason]||v.finishReason}`:"Finished"} · ${usedNative.toFixed(1)}${c.unit} used</div>
-                    </div>
-                    <button class="vial-actions-btn" data-kit="${s.id}" data-vial="${v.id}" title="Vial actions" style="color:var(--t5);font-size:14px;background:transparent;border:none;padding:4px 8px;flex-shrink:0">⋯</button>
-                  </div>`;
-                }).join("")}
-              </div>
-            </div>`;
-          })()}
-
+        <section class="nx-stash-pane" data-pane="vials" role="tabpanel" hidden>
+          <div class="nx-kit-history-heading"><span>Vial inventory</span><span>${vialList.length} total</span></div>
+          <div class="nx-kit-stat-list">
+            <div><span>Sealed</span><strong>${sealed} vials</strong></div>
+            <div><span>Open</span><strong>${openCount} vials</strong></div>
+            <div><span>Finished</span><strong>${finishedVialsWithHistory.length} vials</strong></div>
+          </div>
+          <div class="nx-kit-history-heading"><span>Opened vial details</span></div>
+          ${everOpenedVials.length? `<div class="nx-kit-vial-list">
+             ${[...everOpenedVials].reverse().map(v=>{
+               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
+               return `<div class="nx-kit-vial-row">
+                 <div class="nx-kit-vial-row-top"><strong>Vial ${v.sequenceNumber||"—"}</strong><span class="nx-kit-vial-state">${isActive?"Open":"Finished"}</span></div>
+                 <div class="nx-kit-vial-amount">${rem.toFixed(2)} mg <span>remaining</span></div>
+                 <div class="nx-kit-vial-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"}</div>
+                 <button class="vial-actions-btn" data-kit="${s.id}" data-vial="${v.id}" aria-label="Manage vial ${v.sequenceNumber||""}">Vial actions</button>
+               </div>`;
+             }).join("")}
+          </div>`:`<p class="nx-kit-empty-note">No opened vials in this kit yet.</p>`}
         </section>
         <section class="nx-stash-pane" data-pane="history" role="tabpanel" hidden>          ${(()=>{
             const history = getKitDoseHistory(s);
