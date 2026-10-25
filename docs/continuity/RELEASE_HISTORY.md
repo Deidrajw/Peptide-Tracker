@@ -386,3 +386,7 @@
 
 ### 2026-10-25 — Phase 2 Stash hybrid visual preview (UNRELEASED)
 - Draft PR #123 visual-only Stash CSS commit `157a4128`; layered inventory summary, elevated kit/vial surfaces, action control hierarchy and two themes. Source math/data unchanged. Branch-only; CI and design approval pending; not a versioned production release.
+
+
+### 2026-10-25 — Hybrid Stash refinement pass 2 (UNRELEASED)
+- Draft PR #123 code `e29cb50f` / `5134978f`: native-style category segments, toned-down Inventory Overview and kit gradients, structured Needs Attention list, modal styling baseline. No data migration or logic change. Latest-head QA pending. Not merged or deployed; production unaffected.
