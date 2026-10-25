@@ -44,7 +44,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-goal-detail-tab[data-tab="overview"]').click();await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
  await page.locator('.nx-goal-checkin-source').click();
  ensure(await page.locator('#nx-goal-detail-content').count()===0,'Source action should close Goal Details before opening existing Check-In');
- await page.locator('#nx-goal-detail-close').click();
+ await page.evaluate(()=>closeModal()); // Close the original Check-In modal opened via source link.
 
  await page.evaluate(()=>{state.weightLogs=[{id:'w1',date:'2026-10-01',weight:190},{id:'w2',date:'2026-10-20',weight:185}];state.settings.weightUnit='lbs';goalModal(state.plans.goals[0]);});
  await page.locator('#g-progress-type').selectOption('numeric');
