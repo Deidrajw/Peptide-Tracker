@@ -209,3 +209,6 @@
 
 ### 2026-10-24 — A6a Check-In reflection implementation (branch coded, unmerged)
 - Reflections are read live from `dailyLogs[].notes` only when that *same* daily record contains the goal's exact selected symptom. Label 'Check-In reflection from the same entry', not symptom-specific or causal evidence. Show nonempty text, source date and canonical original Check-In ID action; no copied data/goal schema change. Other Journal aggregations and contextual Insights deferred to later releases. Regression and physical iPhone pending.
+
+### 2026-10-24 — A6a approved behavior implemented and merged
+- PR #78 merged SHA `e1a7cbd9`: Goal Activity shows `dailyLogs[].notes` as labeled same-entry context only for an exactly matching selected symptom; notes remain canonical, original Check-In navigation uses source record ID. A6b typed Journal reference and A6c contextual Insights are separate unimplemented scope. No destructive migration; calculator #67 remains held.
