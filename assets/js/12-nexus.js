@@ -1032,6 +1032,7 @@ function wireBody() {
     if (key==="onboarding") { state.profile.onboardingDone=false; showOnboarding(); return; }
     state._settingsDetail=key; render(); window.scrollTo(0,0);
   });
+  document.querySelectorAll("[data-privacy-target]").forEach(b=>b.onclick=()=>{state._settingsDetail=b.dataset.privacyTarget;render();});
   const sdBack=$("#settings-detail-back"); if(sdBack) sdBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
   const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=()=>{ state.settings.measureUnit=state.settings.measureUnit==="in"?"cm":"in"; saveState(); render(); };
   const suppSearch=$("#supp-search");
