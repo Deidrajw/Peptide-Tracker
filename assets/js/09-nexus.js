@@ -1502,53 +1502,42 @@ function equipmentView() {
       }
     }
 
-    return `<div class="card" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-        <div style="width:9px;height:9px;border-radius:50%;background:${isBacWater?"#7DD4F9":"#C9A0FF"};flex-shrink:0"></div>
-        <span style="font-size:15px;font-weight:700;color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(item.type)}${item.brand?` · ${esc(item.brand)}`:""}</span>
-        ${statusBadge(st.label, st.color)}
-      </div>
-
-      <div style="font-size:12px;color:var(--t4);margin-bottom:10px">${activeUnit?"1 open":"0 open"} ${item.unitLabel}${sealedCount?` • ${sealedCount} sealed ${item.unitLabel}${sealedCount===1?"":"s"}`:""}</div>
-
-      ${activeUnit?`
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-        <span style="font-size:28px;font-weight:800;color:var(--t1);line-height:1">${remaining%1===0?remaining:remaining.toFixed(1)}</span>
-        <span style="font-size:13px;color:var(--t4)">/ ${item.unitSize} ${item.unitOfMeasure}</span>
-      </div>
-      <div style="font-size:11.5px;color:var(--t4);margin-bottom:6px">${remaining%1===0?remaining:remaining.toFixed(1)} ${item.unitOfMeasure} remaining in current ${item.unitLabel}</div>
-      <div class="nx-kit-meter" style="height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${pct}%;background:${st.color};border-radius:5px"></div>
-      </div>
-      ${isBacWater&&activeUnit.openedDate?`<div style="font-size:11px;color:${statusKey==="expired"||statusKey==="expiring"?st.color:"var(--t4)"};margin-bottom:6px">Opened ${fmtDate(activeUnit.openedDate)} · ${daysOpen}d open · use-by ${fmtDate(useByDate)} (${daysUntilUseBy>=0?daysUntilUseBy+"d left":Math.abs(daysUntilUseBy)+"d past"})</div>`:""}
-      ${forecastLine?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${forecastLine}</div>`:""}
-      <button class="supply-log-use" data-id="${item.id}" style="width:100%;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Log Use</button>
-      `:sealedCount>0?`
-      <div style="font-size:13px;color:var(--t4);margin-bottom:12px">No ${item.unitLabel} currently active.</div>
-      <button class="supply-activate-next" data-id="${item.id}" style="width:100%;padding:10px;border-radius:10px;background:${st.color}15;border:1px solid ${st.color}44;color:${st.color};font-size:13px;font-weight:600;margin-bottom:4px">Open a ${item.unitLabel}</button>
-      `:`<div style="font-size:13px;color:var(--t4);margin-bottom:12px">All ${item.unitLabel}s used up.</div>`}
-
-      <details class="nx-kit-details" style="margin-top:8px">
-        <summary style="font-size:11.5px;color:var(--t4);cursor:pointer;list-style:none">Details</summary>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-sub)">
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">AVAILABLE</div><div style="font-size:13px;font-weight:600;color:var(--t2)">${(activeUnit?1:0)+sealedCount}</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">OPEN</div><div style="font-size:13px;font-weight:600;color:var(--t2)">${activeUnit?1:0}</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">SEALED</div><div style="font-size:13px;font-weight:600;color:var(--t2)">${sealedCount}</div></div>
-            <div><div class="mono" style="font-size:8px;color:var(--t5);letter-spacing:1.5px;margin-bottom:3px">COMPLETED</div><div style="font-size:13px;font-weight:600;color:var(--t2)">${emptyCount}</div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-            <span style="font-size:11px;color:var(--t4);flex:1">${item.unitSize} ${item.unitOfMeasure} per ${item.unitLabel}</span>
-            <button class="supply-edit" data-id="${item.id}" style="min-height:32px;display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:6px;color:var(--t3);font-size:11px;padding:4px 10px">Edit</button>
-            <button class="supply-restock" data-id="${item.id}" style="min-height:32px;display:inline-flex;align-items:center;border:1px solid #7DF9C044;border-radius:6px;color:#7DF9C0;font-size:11px;padding:4px 10px;background:#7DF9C010">+ Restock</button>
-          </div>
-          ${forecast?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Using ~${forecast.avgDailyUse.toFixed(2)} ${item.unitOfMeasure}/day</div>`:`<div style="font-size:11px;color:var(--t5);margin-bottom:10px">Log a couple uses to start seeing a depletion estimate.</div>`}
-          ${item.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-bottom:10px">${esc(item.notes)}</div>`:""}
-          <div style="margin-top:6px">
-            <button class="supply-delete" data-id="${item.id}" aria-label="Delete ${esc(item.type)}" title="Permanently deletes this supply and its history" style="width:100%;min-height:36px;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--t5);font-size:11px;font-weight:600;background:transparent;border:1px dashed var(--border-sub);border-radius:8px;padding:6px">🗑 Delete</button>
-          </div>
+    return `<div class="card nx-supply-kit-card" data-supply-id="${item.id}">
+      <div class="nx-supply-kit-header">
+        <div class="nx-supply-kit-name"><span class="nx-supply-dot" style="background:${isBacWater?"#7DD4F9":"#C9A0FF"}"></span>
+          <strong>${esc(item.type)}${item.brand?` · ${esc(item.brand)}`:""}</strong>
         </div>
-      </details>
+        ${statusBadge(st.label,st.color)}
+      </div>
+      <div class="nx-supply-current">
+        <div class="nx-kit-overview-label">CURRENT OPEN ${esc((item.unitLabel||"UNIT").toUpperCase())}</div>
+        ${activeUnit?`
+          <div class="nx-kit-primary-value">${remaining%1===0?remaining:remaining.toFixed(1)} <span>of ${item.unitSize} ${esc(item.unitOfMeasure)} left</span></div>
+          <div class="nx-kit-overview-track" role="progressbar" aria-label="Current supply remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%;background:${st.color}"></span></div>
+        `:`<div class="nx-kit-primary-value"><span>No ${esc(item.unitLabel)} open</span></div><div class="nx-supply-subtle">${sealedCount} sealed available</div>`}
+        ${isBacWater&&activeUnit?.openedDate?`<div class="nx-supply-subtle">Opened ${fmtDate(activeUnit.openedDate)} · use by ${fmtDate(useByDate)}</div>`:""}
+        ${forecastLine?`<div class="nx-supply-subtle">${forecastLine}</div>`:""}
+      </div>
+      <div class="nx-supply-actions">
+        ${activeUnit?`<button class="supply-log-use" data-id="${item.id}">Log use</button>`:sealedCount>0?`<button class="supply-activate-next" data-id="${item.id}">Open ${esc(item.unitLabel)}</button>`:`<button class="supply-restock" data-id="${item.id}">Restock</button>`}
+        <button class="nx-supply-detail-toggle" type="button" data-id="${item.id}" aria-controls="nx-supply-details-${item.id}" aria-expanded="false">Details <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+      <div class="nx-supply-detail-panel" id="nx-supply-details-${item.id}" hidden>
+        <div class="nx-kit-history-heading"><span>Inventory overview</span><span>${units.length} total ${esc(item.unitLabel)}${units.length===1?"":"s"}</span></div>
+        <div class="nx-kit-stat-list">
+          <div><span>Available</span><strong>${(activeUnit?1:0)+sealedCount}</strong></div>
+          <div><span>Open</span><strong>${activeUnit?1:0}</strong></div>
+          <div><span>Sealed</span><strong>${sealedCount}</strong></div>
+          <div><span>Completed</span><strong>${emptyCount}</strong></div>
+          <div><span>Pack size</span><strong>${item.unitSize} ${esc(item.unitOfMeasure)} per ${esc(item.unitLabel)}</strong></div>
+        </div>
+        ${item.notes?`<div class="nx-kit-note"><div class="nx-kit-overview-label">NOTES</div><p>${esc(item.notes)}</p></div>`:""}
+        <div class="nx-kit-overview-actions">
+          <button class="supply-edit" data-id="${item.id}">Edit details</button>
+          <button class="supply-restock" data-id="${item.id}">Restock</button>
+        </div>
+        <div class="nx-supply-detail-footer"><button class="supply-delete" data-id="${item.id}" aria-label="Delete ${esc(item.type)}" title="Permanently deletes this supply and its history">Delete supply</button></div>
+      </div>
     </div>`;
   };
 
