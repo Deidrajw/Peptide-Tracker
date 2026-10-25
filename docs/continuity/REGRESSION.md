@@ -395,3 +395,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Log Dose multi-vial secondary action | User screenshot shows text compressed at 390px preview; branch CSS fix requires re-test | NOT TESTED after fix |
 | Stash vial ellipsis | User screenshot shows oversized outlined 44px square; branch CSS keeps 44px hit area with 28px visual | NOT TESTED after fix |
 | Other reviewed UI changes | User reports tested and good in preview; not a substitute for automated complete release QA | USER ACCEPTED |
+
+### 2026-10-25 — Resolved cascade source; verification pending
+| Area | Actual acceptance test | Current evidence |
+|---|---|---|
+| Log Dose Use multiple vials | Button `#toggle-multi` in full LIVE and isolated DEMO has computed padding >=12px vertical / >=20px horizontal, height >=48px, scrollWidth <= clientWidth+1 in 320/390 light/dark | CODED; latest CI PENDING |
+| Previous fix | `.nx-dose-form button.nx-multi-vial-toggle` was overridden by ID-level `padding:5px 0!important` | ROOT CAUSE VERIFIED |
