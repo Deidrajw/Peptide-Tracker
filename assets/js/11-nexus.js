@@ -22,6 +22,7 @@ function renderSettingsTabContent() {
     ${sectionLabel("DATA")}
     ${row("health","🍎","Health & Data")}
     ${row("backup","💾","Backup & Restore")}
+    ${row("privacy","🔒","Privacy & Data","Source-reviewed")}
     ${row("datamanagement","⚠️","Data Management")}
     ${row("usage","📊","Shortcut Activity",state.settings.nxUsageEnabled===true?"On":"Off")}
     ${sectionLabel("DEVELOPER")}
@@ -31,7 +32,7 @@ function renderSettingsTabContent() {
 
 function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
-  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
+  const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", backup:"Backup & Restore", privacy:"Privacy & Data", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button id="settings-detail-back" style="color:var(--t4);font-size:20px;padding:2px 8px;background:transparent;border:none">‹</button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
@@ -42,12 +43,23 @@ function renderSettingsDetailScreen(key) {
   else if (key==="units") content = renderUnitsDetail();
   else if (key==="health") content = nxHealthImportContext() + renderHealthDataDetail();
   else if (key==="backup") content = renderBackupDetail();
+  else if (key==="privacy") content = renderPrivacyDataDetail();
   else if (key==="datamanagement") content = renderDataManagementDetail();
   else if (key==="usage") content = nxUsageSettingsView();
   else if (key==="developer") content = renderDeveloperDetail();
   return backBtn + content;
 }
 
+function renderPrivacyDataDetail() {
+ return `<div class="nx-privacy-page">
+ <p class="nx-privacy-disclaimer">Source-reviewed information. Live traffic and future native app integrations remain unverified.</p>
+ <section><h3>Records on this device</h3><p>Nexus saves your entries in this browser's local storage. They do not automatically synchronize between devices. Clearing browser site data can erase them. Export backups regularly.</p></section>
+ <section><h3>Backups</h3><p>Backup import and export are user-initiated. Restoring a backup can replace stored records. Review files carefully before importing.</p><button type="button" class="nx-privacy-link" data-privacy-target="backup">Review backups ›</button></section>
+ <section><h3>Notifications</h3><p>Enabling dose alerts asks your browser for permission. These alerts are checked when Nexus is open, not guaranteed while the app is closed. Protocol phase alerts appear inside the app.</p><button type="button" class="nx-privacy-link" data-privacy-target="reminders">Review alerts ›</button></section>
+ <section><h3>External services</h3><p>Research links open external websites. An optional API-key field is stored locally. Production hosting requests and third-party data practices still need verification before final store declarations.</p></section>
+ <section><h3>Your choices</h3><p>Use Backup & Restore to export a copy, or adjust alerts in Settings. This page does not alter or erase saved records.</p></section>
+ </div>`;
+}
 function renderPhaseRemindersDetail() {
   const enabled = state.settings.phaseRemindersEnabled!==false;
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;margin-bottom:14px">
