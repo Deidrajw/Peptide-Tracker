@@ -510,3 +510,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Primary Cloudflare `https://nexuspeplog.pages.dev/` not yet independently verified; do not set publication.status=published without 16-file remote HTTP parity. Existing localStorage remains protected with no automatic migration.
 - Working continuity branch `docs/v0918-merged-deployment-evidence` records final merge and awaits host verification.
 - **ONE CONCRETE NEXT ACTION:** Verify Cloudflare's deployed index + 3 CSS + 12 JS bytes against merged `62302566`, then gate v0.9.18 published announcement on confirmed deployment; update continuity and merge this docs PR.
+
+
+### 2026-10-25 UTC — Cloudflare v0.9.18 verified, release announcement not yet activated
+- **VERIFIED** source parity at `https://nexuspeplog.pages.dev/`: PR #95 GitHub Actions run `40158910879`, uploaded `Nexus_CLOUDFLARE_PARITY.json` with `verified=true`, `smoke_only=false`, one independent HTTP check, all 16 files byte-for-byte identical to merged PR #94 source (root index, 3 CSS, 12 JS). Verified evidence artifact ID `12585875043`, record creation 2026-10-25T03:41:30Z. No native iPhone testing implied.
+- Main merged release code commit `623025665c549dadbe3fb467b6d556f5d44e7e34`; v0.9.18-beta LIVE deployed and verified on primary Cloudflare. Publication metadata in app still `unverified`, so publish-gated What's New popup is intentionally silent until the separately validated metadata activation.
+- PR #95 `docs/v0918-merged-deployment-evidence` records merge, QA and Cloudflare proof. Do not confuse GitHub Pages with Cloudflare.
+- **ONE CONCRETE NEXT ACTION:** Merge the documentation-only PR #95 after its green checks, then activate publish-gated v0.9.18 in-app What's New in a separate source-verified release PR, deploy to Cloudflare and reverify all 16 files. Physical iPhone/VoiceOver still NOT TESTED.
