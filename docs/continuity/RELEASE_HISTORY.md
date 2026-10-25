@@ -295,3 +295,6 @@
 
 ### 2026-10-25 — Release manifest foundation candidate (NOT PUBLISHED)
 - Branch `feature/unified-release-manifest-foundation` adds machine-readable `release/release.json` for current v0.9.15-beta (publication status `unverified`), three derived note outputs and build-time parity gate. It does not claim a new release, activate a popup or change user records. LIVE/full isolated DEMO CI, branch PR, deployment and iPhone testing pending. Legacy numeric CHANGELOG remains intact. Neutral avatar fix remains separately in PR #84 pending final merge.
+
+### 2026-10-25 — Release notes and publish-gated popup candidate (UNRELEASED)
+- PR #85 now includes generator/output parity, ordered runtime metadata in 02 JS, first-launch publication-gated modal in 12 JS, and browser assertions for unverified silence, Later and acknowledgement. Current release manifest status UNVERIFIED so no popup triggers for that build. Legacy numeric changelog not erased; no record migration. CI/merge/Cloudflare/real device pending.
