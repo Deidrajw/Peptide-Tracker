@@ -244,3 +244,7 @@
 - v0.9.18 PR #94 merged after 80/80 calculator math automated assertions, four trust/restore browser cases, mobile regression and protected app build QA. This establishes browser engineering evidence, not clinical clearance/physical iPhone acceptance.
 - Hosting authority remains Cloudflare Pages. A merge alone does not imply deployment; publish-gated What's New must not activate until a byte-identical Cloudflare deployment is separately validated. Preserve manifest status unverified until then.
 - Existing user storage key and all records must be preserved. RESTORE deliberately replaces records only on confirmed user action, with recovery copy/rollback attempted. No automatic migration.
+
+
+### 2026-10-25 UTC — Confirmed Cloudflare deployment gate
+- v0.9.18-beta from merged PR #94 is independently verified on the primary Cloudflare origin: run 40158910879, exact 16/16 application file hashes; safe to describe code as web deployed. In-app What's New publication flag must remain separate and transition to published only after verified source evidence, then obtain parity of that follow-up change too.
