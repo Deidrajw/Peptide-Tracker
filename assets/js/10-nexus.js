@@ -242,9 +242,8 @@ function stashView() {
     return `<div class="card nx-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
       <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
         <div style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
-        <span style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:0.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(s.name)}</span>
-        ${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}
-         <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit">⋯</button>
+        <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}</span></span>
+         <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
