@@ -361,3 +361,8 @@
 - UI: current open vial remaining becomes primary Stash card figure; kit-wide remaining moves under Overview. Kit Details becomes a real third action-row button, with one expand/collapse icon and no old disclosure row. Existing Overview/Vials/History tab content retained and visually standardized.
 - Read-only structural validation: relevant JavaScript parsed, no persistent storage schema or dose records modified by this patch. Full mobile/theme regression and deployment artifacts pending.
 - Observed user-data discrepancy between Glutathione declared 1200 mg/vial and open vial 1250 mg: not changed without accounting review.
+
+
+### v0.9.20-beta PR #110 compact list follow-up (NOT RELEASED)
+- Unified Vials and History tab presentation into one divider-separated row design, removing oversized per-vial cards, retaining original vial action identifiers. Five-row default/expand for both. 44px controls, 320px-aware CSS.
+- No data schema/storage changes. JS parse PASS, functional/mobile/contrast/Cloudflare validation NOT TESTED; PR unmerged and full DEMO/LIVE artifacts INCOMPLETE.
