@@ -37,8 +37,8 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    const tabs=['home','calendar','protocols','stash','plans','profile','trends','amino','learn'];
    const out=[];
    const parse=(raw)=>{
-     const m=(raw||'').match(/^rgba?\\(([^)]+)\\)$/);if(!m)return null;
-     const vals=m[1].split(/[,\\s/]+/).filter(Boolean).map(Number);
+     const m=(raw||'').match(/^rgba?\(([^)]+)\)$/);if(!m)return null;
+     const vals=m[1].split(/[,\s/]+/).filter(Boolean).map(Number);
      return vals.length>=3?[vals[0],vals[1],vals[2],vals[3]??1]:null;
    };
    const over=(a,b)=>{const k=Math.min(1,Math.max(0,a[3]));return [0,1,2].map(i=>a[i]*k+b[i]*(1-k)).concat([1]);};
@@ -72,7 +72,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const releaseContrast=await page.evaluate(()=>{
    const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
    const luminance=(str)=>{
-     const raw=str.match(/[\\d.]+/g)||[];
+     const raw=str.match(/[0-9.]+/g)||[];
      if(raw.length<3)return null;
      const cs=raw.slice(0,3).map(n=>{let v=Math.min(255,Math.max(0,Number(n)))/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
      return .2126*cs[0]+.7152*cs[1]+.0722*cs[2];
