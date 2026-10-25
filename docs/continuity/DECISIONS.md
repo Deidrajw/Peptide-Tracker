@@ -230,3 +230,6 @@
 
 ### 2026-10-25 — Onboarding action icon consistency
 - User rejected final Getting Started card icon hierarchy. Corrective design uses single outline SVG family in all 4 actions (Log Dose, Protocol, Stash, Learn) and guide, with matching icon box, type scale and supporting route copy. Existing routes/workflows protected. Release v0.9.17-beta candidate, do not claim publication until host parity verified.
+
+### 2026-10-25 — Privacy screen candidate
+- Draft PR #91 on branch release/privacy-data-disclosures-v0918 adds read-only Settings information and navigation. Live production host network capture unavailable, so third-party transmissions are NOT certified. Notification consent explanation, public privacy policy, native store declarations, full browser QA, artifacts, merge and deployment INCOMPLETE. No user-data migration or deletion. One next action: verify production network request inventory, then finish permission explanation and regression before merging.
