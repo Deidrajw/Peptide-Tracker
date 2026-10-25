@@ -273,3 +273,7 @@
 ### 2026-10-25 — Stash information priority, iPhone feedback
 - **Approved:** The current open vial's remaining mg is the single top-level Stash card hero, above a progress bar. If unopened, show the explicit no-open-vial state and number sealed. Kit-total quantity, price and notes belong in Overview, not above the open-vial hero.
 - **Approved:** Kit details is a button alongside Open New Vial / Prepare when present; remove standalone full-width “View kit details” disclosure and both confusing nested chevrons. Button controls one expand/collapse panel with accessible state. Overview, Vials and History use matching spacing, type scale and section hierarchy, while retaining their distinct meaning and existing operations.
+
+
+### 2026-10-25 — Approved shared list design for Vials and History
+- Both Vials and History MUST use divider-separated compact rows, not oversized individually bordered vial cards. Common spacing/typography/color, quantity/metadata hierarchy, 44px action control, default first five records and Show All/Fewer. Vial row: number, open/finished status, opened date, remaining mg, context action. History: date/time, quantity, source/notes metadata, corresponding action where supported. Preserve underlying saved records and full historical access.
