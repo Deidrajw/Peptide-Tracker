@@ -30,10 +30,10 @@ try {
         const el=document.createElement('section');
         el.innerHTML=reconCalcView();
         const main=el.querySelector('#rc-results')?.textContent || '';
-        const draw=main.match(/Draw\s+([0-9.]+)\s+units/i);
-        const onSyringe=main.match(/([0-9.]+)\s+units on your syringe/i);
+        const draw=main.match(/U-100 equivalent:\s*([0-9.]+)\s+units/i);
+        const onSyringe=main.match(/Calculated\s+([0-9.]+)\s+U-100 units/i);
         return {
-          hasRecipe:main.includes('Your Recipe'),
+          hasRecipe:main.includes('Calculation summary'),
           drawUnits:draw?Number(draw[1]):null,
           displayedUnits:onSyringe?Number(onSyringe[1]):null,
           displayedText:main.slice(0,140).replace(/\s+/g,' ').trim()
@@ -69,8 +69,8 @@ try {
   }
 } finally {await browser.close();}
 const summary={
-  version:VERSION,source:'current unmodified application source',
-  mode:'DIAGNOSTIC_NONBLOCKING_NOT_CLINICAL_CERTIFICATION',
+  version:VERSION,source:'exact release candidate app source',
+  mode:'BLOCKING_MATH_ASSERTIONS_NOT_CLINICAL_CERTIFICATION',
   context:'synthetic examples; LIVE local server and standalone fully isolated DEMO; never production Pages',
   cases:results.length,assertions:results.reduce((a,r)=>a+r.checks.length,0),
   pass:results.reduce((a,r)=>a+r.checks.filter(x=>x.result==='PASS').length,0),
@@ -81,5 +81,5 @@ console.log('Measurement math DIAGNOSTIC: '+summary.pass+' PASS / '+summary.fail
 for(const c of results.filter(c=>c.status==='FAIL').slice(0,2)){
   console.log(c.kind+' '+c.width+'px '+c.theme+': '+c.checks.filter(t=>t.result==='FAIL').map(t=>t.description).join('; '));
 }
-if(summary.fail===0)console.log('No diagnostic failures, but clinical and App Review validation still required.');
-else console.log('KNOWN FAILURES: Do not use calculator results as validated injection preparation guidance. Diagnostics are nonblocking for QA-doc-only PR; iOS release remains BLOCKED.');
+if(summary.fail===0)console.log('Math assertions pass; clinical and App Review validation still required.');
+else { console.error('SAFETY GATE FAILED: calculated U-100 marks or input guards are inconsistent.'); process.exitCode=1; }
