@@ -820,7 +820,7 @@ function wireBody() {
       const expanded=button.getAttribute("aria-expanded")==="true";
       extra.hidden=expanded;
       button.setAttribute("aria-expanded",expanded?"false":"true");
-      button.textContent=expanded?"Show all "+button.dataset.count+" records":"Show fewer records";
+      button.textContent=expanded?"Show all "+button.dataset.count+" "+(button.dataset.noun||"records"):"Show fewer "+(button.dataset.noun||"records");
     };
   });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
