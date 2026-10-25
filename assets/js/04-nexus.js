@@ -1326,6 +1326,7 @@ function manageKitMenu(kitId) {
       entries: isBlend ? [
         ...(!hasRecon && sealed>0 ? [{id:"blend-open",name:"Open / reconstitute blend vial",desc:"Record BAC water, expiry and vial notes",icon:"+"}] : []),
         ...(hasRecon ? [{id:"blend-dose",name:"Log blend dose",desc:"Log one premixed blend dose",icon:"◈"}] : []),
+        ...(hasRecon ? [{id:"blend-finish",name:"Finish current blend vial",desc:"Record any leftover as outflow before opening another",icon:"✓"}] : []),
         {id:"blend-restock",name:"Add blend vials",desc:"Increase sealed stock for this premixed kit",icon:"+"}
       ] : [
         ...(!isDone && sealed > 0 ? [{id:"open",name:hasRecon?"Open another vial":"Open a vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
@@ -1353,6 +1354,7 @@ function manageKitMenu(kitId) {
   const iconPaths = {
     "blend-open":'<path d="M12 5v14M5 12h14"/>',
     "blend-restock":'<path d="M4 8 12 4l8 4v9l-8 4-8-4z"/>',
+    "blend-finish":'<path d="m5 12 5 5L20 7"/>',
     "blend-dose":'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
     open:'<path d="M12 5v14M5 12h14"/>',
     prepare:'<path d="M4 11h16M7 7h10M8 15h8M10 3h4M9 19h6"/>',
@@ -1398,6 +1400,7 @@ function manageKitMenu(kitId) {
     closeModal();
     if(id==="open") { if(!isBlend) openNewVialModal(kitId); }
     else if(id==="blend-open") openBlendVialModal(kitId);
+    else if(id==="blend-finish") finishBlendVialModal(kitId);
     else if(id==="blend-restock") addVialsModal(kitId);
     else if(id==="blend-dose") logBlendDoseModal(kitId);
     else if(id==="prepare") prepareDosesModal(s.name);
