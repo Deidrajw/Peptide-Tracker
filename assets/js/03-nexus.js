@@ -834,7 +834,7 @@ function addBlendKitModal(blendNameOrKit) {
       existingKit.vialMg = totalMg;
       existingKit.storageLocation = m.querySelector("#bk-storage").value;
       existingKit.cost = m.querySelector("#bk-cost").value;
-      validComponents.forEach(c => { if (c.compound) initCompoundTracking(c.compound); });
+      initCompoundTracking(isEdit ? existingKit.name : finalName);
       saveState(); closeModal(); render();
       return;
     }
@@ -856,7 +856,7 @@ function addBlendKitModal(blendNameOrKit) {
     // Constituent compounds still need to exist in state.peptides so their own dose
     // history/symptom tracking works — but they get NO separate Stash kit of their own;
     // this one blend vial is the only physical inventory record.
-    validComponents.forEach(c => { if (c.compound) initCompoundTracking(c.compound); });
+    initCompoundTracking(isEdit ? existingKit.name : finalName);
     saveState(); closeModal(); render();
   };
 }
@@ -878,6 +878,53 @@ function getBlendKitRemainingMg(kit) {
   const emptyCapMg = Math.max(0, ((kit.totalVials||0)-(kit.emptyVials||0)) * (kit.vialMg||0));
   const ledgerRemMg = Math.max(0, totalMg-totalUsedMg-totalWasteMg);
   return allVialsMarkedEmpty ? 0 : Math.min(ledgerRemMg, emptyCapMg);
+}
+
+// Blend vials are ONE premixed inventory item. Never create separate constituent-dose
+// entries when opening a physical blend vial or logging that blend.
+function openBlendVialModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>k.id===kitId && k.isBlend);
+  if(!kit) return;
+  const available=getSealedVials(kit);
+  if(!available.length){showErrorBanner("No sealed blend vials remain in this kit.");return;}
+  if(kit.reconDate && kit.activeKit && ensureKitVials(kit).some(v=>v.status==="active"||v.status==="open")){
+    showErrorBanner("A blend vial is already open. Finish it before opening another.");return;
+  }
+  const m=openModal(`
+    <div style="font-size:17px;font-weight:700;color:var(--t1);margin-bottom:6px">Open ${esc(kit.name)} vial</div>
+    <div class="hint" style="margin-bottom:14px">One premixed blend vial (${kit.vialMg} mg total). Components remain together as ${esc(kit.name)}.</div>
+    <label for="nx-blend-bac" class="field-label">BAC WATER (mL)</label>
+    <input id="nx-blend-bac" type="number" min="0.01" step="0.1" class="inp" value="${kit.bacMl>0?kit.bacMl:""}" placeholder="Enter volume" style="margin-bottom:12px">
+    <label for="nx-blend-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label>
+    <input id="nx-blend-expiry" type="number" min="1" step="1" class="inp" value="${kit.expiryDays||28}" style="margin-bottom:12px">
+    <label for="nx-blend-date" class="field-label">RECONSTITUTION DATE</label>
+    <input id="nx-blend-date" type="date" class="inp" value="${localDate()}" style="margin-bottom:12px">
+    <label for="nx-blend-notes" class="field-label">VIAL NOTES (OPTIONAL)</label>
+    <textarea id="nx-blend-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Lot, batch or observations"></textarea>
+    <div style="display:flex;gap:10px">
+      <button type="button" id="nx-blend-cancel" style="flex:1;min-height:48px;border:1px solid var(--border);border-radius:12px;color:var(--t2)">Cancel</button>
+      <button type="button" id="nx-blend-open" class="btn-primary" style="flex:2;min-height:48px">Open vial</button>
+    </div>`, "#A78BFA");
+  m.querySelector("#nx-blend-cancel").onclick=closeModal;
+  m.querySelector("#nx-blend-open").onclick=()=>{
+    const bac=Number(m.querySelector("#nx-blend-bac").value);
+    const days=Number(m.querySelector("#nx-blend-expiry").value);
+    const date=m.querySelector("#nx-blend-date").value;
+    if(!Number.isFinite(bac)||bac<=0||!Number.isSafeInteger(days)||days<1||days>3650||!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)){
+      showErrorBanner("Enter valid BAC water, expiry days and reconstitution date.");return;
+    }
+    const remaining=getSealedVials(kit);
+    if(!remaining.length){showErrorBanner("No sealed blend vial remains.");return;}
+    const vial=remaining[0];
+    vial.status="open"; vial.reconDate=date; vial.bacMl=bac;
+    vial.expiryDays=days; vial.notes=m.querySelector("#nx-blend-notes").value.trim();
+    kit.bacMl=bac;kit.expiryDays=days;kit.reconDate=date;
+    kit.openedVials=(kit.openedVials||0)+1;
+    kit.activeKit=true;
+    kit.reconHistory=kit.reconHistory||[];
+    kit.reconHistory.push({id:uid(),date,notes:vial.notes,vialId:vial.id,bacMl:bac,expiryDays:days});
+    saveState();closeModal();render();
+  };
 }
 
 function logBlendDoseModal(kitId) {
@@ -922,19 +969,14 @@ function logBlendDoseModal(kitId) {
     const date = m.querySelector("#bd-date").value || localDate();
     const notes = m.querySelector("#bd-notes").value;
 
-    // The core correctness step: split the ONE amount drawn proportionally across the
-    // vial's actual composition, and write a real dose record to EACH constituent's own
-    // history — never a single blob. This is what makes per-compound symptom attribution
-    // still possible for a blend.
-    kit.composition.forEach(c => {
-      if (!c.compound) return;
-      const share = (c.mg/totalMg) * amt;
-      const tgt = state.peptides[c.compound] ? state.peptides : state.customPeptides;
-      if (!tgt[c.compound]) return;
-      if (!tgt[c.compound].doses) tgt[c.compound].doses = [];
-      tgt[c.compound].doses.push({ id: uid(), date, dose: share.toFixed(2), notes, blendSource: kit.id });
-    });
-
+    // One premixed dose belongs to the blend name. Do not create independent
+    // administration records for Cartalax/BPC-157/TB-500 as if drawn separately.
+    state.customPeptides=state.customPeptides||{};
+    if(!state.customPeptides[kit.name]) initCompoundTracking(kit.name);
+    const blend=state.customPeptides[kit.name]||state.peptides[kit.name];
+    blend.doses=blend.doses||[];
+    blend.doses.push({id:uid(),date,dose:String(amt),notes,blendSource:kit.id,isBlendDose:true});
+    
     if (!kit.doseLog) kit.doseLog = [];
     kit.doseLog.push({ id: uid(), date, totalMgDrawn: amt, notes });
     saveState(); closeModal(); render();
