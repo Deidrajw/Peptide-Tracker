@@ -809,7 +809,7 @@ function doseModal(name, existing, occTime) {
           <div class="nx-allocation-metric"><small>Short by</small><strong style="color:#F9C87D">${fmt(shortBy)} ${c.unit}</strong></div>
         </div>`
         : `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Sources for this dose</div>`}
-        <div class="nx-shortfall-step">Step 1 · Allocate the dose</div>
+        <div class="nx-shortfall-step">Step 1 · Review sources and amounts</div>
         <div class="nx-shortfall-progress" role="progressbar" aria-label="Dose amount allocated" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0)))}"><div style="width:${Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0))}%"></div></div>
         <div class="nx-shortfall-status" aria-live="polite">${remaining>0.01?`${fmt(remaining)} ${c.unit} still needs a source.`:remaining < -0.01?`Allocation exceeds the requested dose by ${fmt(Math.abs(remaining))} ${c.unit}.`:`✓ Allocation matches the requested dose.`}</div>
         <div id="alloc-rows">
@@ -817,19 +817,19 @@ function doseModal(name, existing, occTime) {
             const kit = state.supplies.find(s=>s.id===r.kitId);
             const units = kit ? mgToUnitsForKit(parseFloat(r.mg)||0, kit) : null;
             const kitFinished = kit && !kit.activeKit && !!r.finished;
-            const kitLabel = kit ? (kitFinished?"Finished vial":kit.activeKit?"Current vial":kit.reconDate?"Open vial":"Vial") : "Vial";
+            const kitLabel = kit ? (kitFinished?"Finished vial":kit.activeKit?"Open vial":kit.reconDate?"Open vial":"Vial") : "Vial";
             const kitHasStock = kit && !kitFinished && getKitRemainingMg(kit)>0.001;
-            return `<div class="nx-alloc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
+            return `<div class="nx-alloc-row nx-hybrid-source-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">Source ${i+1} · ${esc(kitLabel)}${kit?.id!=null?" · Kit "+esc(String(kit.id)):""}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
-              ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm what you actually drew from this vial" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Draw</button>`:""}
+              ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm the amount actually obtained from this source vial" aria-label="Confirm draw from source ${i+1}" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Confirm draw</button>`:""}
               <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button>
             </div>`;
           }).join("")}
         </div>
-        <div class="nx-allocation-help">Use <strong>Draw</strong> to confirm what you actually obtained from each vial. If the draw is short, Nexus will ask you to reconcile the difference. Multiple sources still create <strong>one dose record</strong>.</div>
+        <div class="nx-allocation-help">Use <strong>Confirm draw</strong> to record what you actually obtained from each listed source vial. If the draw is short, Nexus will ask you to reconcile the difference. Multiple sources still create <strong>one dose record</strong>.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">
           <span style="font-size:11px;color:var(--t4)">Total: <b style="color:${Math.abs(remaining)<0.01?"#7DF9C0":"var(--t2)"}">${fmt(totalAllocated)}${c.unit}</b> / ${fmt(neededMg)}${c.unit}</span>
           ${Math.abs(remaining)<0.01?`<span style="font-size:11px;color:#7DF9C0">✓ Matches dose</span>`:remaining>0?`<span style="font-size:11px;color:#F9C87D">${fmt(remaining)}${c.unit} still needed</span>`:`<span style="font-size:11px;color:#FF7C7C">${fmt(Math.abs(remaining))}${c.unit} over</span>`}
