@@ -285,3 +285,7 @@
 
 ### 2026-10-25 — Filled control foreground contract
 - User-approved: dark filled CTAs including reconstitution use white foreground (text and relevant icons), irrespective of former per-compound dark-text inline styling; light filled controls use dark foreground. Prefer semantic light/dark styling over unchecked one-off `!important` text overrides. Verify CSS `color` and `-webkit-text-fill-color` with actual computed styles on iPhone-sized browsers. Dark theme should not accidentally receive white text on pale fill.
+
+### 2026-10-25 — Screenshot-driven UI decisions (scope and approval)
+- **User direction:** small ellipsis on vial row but minimum 44px tap box; unopened kit exactly two equal-width actions (Open new vial, Kit details), open vial has three including Prepare; 'No vial open' should be a primary state headline.
+- **Requested design review, not yet approved as final layout:** make multi-vial choice a recognizable action; move site-rotation context next to Injection site using compact guidance; collapse/organize combo favorites so many saved recipes do not monopolize modal height; compound Trends history should navigate to its own detail view with Back to all compounds; eliminate chevrons that duplicate native disclosure indicators and reconsider excessive chevrons; render premixed blends with identical current card shell to regular kits, only composition/deductions differ. Do not migrate stored data or replace calculations to accomplish visual parity.
