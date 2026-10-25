@@ -382,3 +382,7 @@
 
 ### 2026-10-25 — Hybrid Today screen source-level redesign (UNRELEASED)
 - Design draft PR #123: Today presentation in `assets/js/10-nexus.js` + experimental CSS; responsive progress ring uses existing schedule percentage, Check-In action event classes preserved. All historical data and JS calculations unchanged. Workflow results pending. This is not a deployed release.
+
+
+### 2026-10-25 — Phase 2 Stash hybrid visual preview (UNRELEASED)
+- Draft PR #123 visual-only Stash CSS commit `157a4128`; layered inventory summary, elevated kit/vial surfaces, action control hierarchy and two themes. Source math/data unchanged. Branch-only; CI and design approval pending; not a versioned production release.
