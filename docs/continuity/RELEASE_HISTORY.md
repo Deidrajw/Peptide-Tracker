@@ -286,3 +286,6 @@
 
 ### 2026-10-24 — A6a Check-In reflections candidate (NOT RELEASED)
 - On branch `release/connected-goals-a6a-checkin-reflections` from A5 main f980a283, coded source-linked Goal Activity daily reflections and navigation to original Check-In; no migration, no copied Journal content, no changes to original logging. New browser assertions cover source matching, exclusion, edit/removal, and storage preservation. CI, exact-source LIVE/full DEMO artifact, merge, deployment and iPhone QA INCOMPLETE.
+
+### 2026-10-24 — Combined UX consistency candidate (UNRELEASED)
+- Branch `release/unified-ui-research-journal-insights` from A6a main. Research title/Intel/reason hierarchy, Journal dropdown filter, single-focus Check-In changes modal, shared style adjustments. No persisted schema or data migration. Full-browser mobile 320/390 light/dark LIVE/DEMO, artifact parity, merge/deployment, physical iPhone PENDING. Do not call release shipped based on branch code.
