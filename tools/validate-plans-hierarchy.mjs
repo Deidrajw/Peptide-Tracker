@@ -9,7 +9,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
  ensure(await page.locator('.nx-plan-head .manage-plan-btn').evaluate(e=>e.getBoundingClientRect().height)>=44,'Ellipsis touch target too small');
- ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-plan-action-icon').count()===1,'Management outline SVG missing');
+ ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-unified-more-svg').count()===1,'Management outline SVG missing');
 
  ensure(await page.locator('.nx-research-title').count()===1,'Research compound title hierarchy missing');
 
@@ -49,6 +49,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
+ await page.evaluate(()=>{state._plansSub='research';render();});
  ensure(await page.locator('.nx-plan-item .nx-open-goal').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'View goal touch target too small');
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
