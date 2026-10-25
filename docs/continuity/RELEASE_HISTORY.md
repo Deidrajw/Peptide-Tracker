@@ -364,3 +364,8 @@
 - Intended version v0.9.20-beta exists on unmerged `release/issue-109-kit-experience-parity` / Cloudflare preview deployment `a3c0ce76-5176-406a-91b2-08bf73763ceb`; production and current main confirmed v0.9.19-beta at audit. Preview SUCCESS does not imply production deployed.
 - Dedicated read-only post-main-push and manually invokable version + exact 16-file remote parity gate authored on `safety/release-deployment-parity-gate-20261025`. Candidate, not merged or CI verified at writing. Does not modify release.json, app source, data or published assets.
 - v0.9.20 application release still blocked by unverified inventory/KLOW/legacy edit, full LIVE/full isolated DEMO and responsive functional regression on PR #110. Promotion not claimed.
+
+
+### 2026-10-25 — Divider/light theme audit proposal (not a release)
+- v0.9.20-beta main remains authoritative. Scoped CSS candidate reduces repeated dividers in kit and supplies detail panels and replaces light-mode pale-green modal primary actions with darker violet, including disabled state. No app version bump, no merge/Cloudflare deployment claimed, no storage or dose/inventory changes.
+- Complete app-wide audit, test matrix and demo package INCOMPLETE until all affected surfaces are reviewed and release CI/Cloudflare verified.
