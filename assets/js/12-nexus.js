@@ -773,6 +773,15 @@ function wireBody() {
   document.querySelectorAll(".finishvial").forEach(b=>b.onclick=()=>finishVialModal(+b.dataset.id));
   document.querySelectorAll(".vial-actions-btn").forEach(b=>b.onclick=()=>vialActionsMenu(+b.dataset.kit, +b.dataset.vial));
   // Stash detail tabs are presentation-only: never recalculate or save inventory.
+  document.querySelectorAll(".nx-kit-detail-button").forEach(button=>{
+    button.onclick=()=>{
+      const panel=document.getElementById(button.getAttribute("aria-controls"));
+      if(!panel)return;
+      const opening=panel.hidden;
+      panel.hidden=!opening;
+      button.setAttribute("aria-expanded",String(opening));
+    };
+  });
   document.querySelectorAll(".nx-stash-tabs").forEach(group=>{
     const buttons=Array.from(group.querySelectorAll(".nx-stash-tab"));
     const parent=group.parentElement;
