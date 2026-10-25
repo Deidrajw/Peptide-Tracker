@@ -227,3 +227,6 @@
 
 ### 2026-10-25 — First-run onboarding staged implementation
 - User approved welcoming feature explanation and Start Fresh / Restore Backup. New welcome clearly states that current web records use per-browser localStorage, do not sync automatically, and can be erased by clearing browser data. Import must be user-triggered JSON, preview counts and require explicit consent; onboarding blocks import when existing Check-In, kit, protocol or compound records exist. Current goal/stats/final onboarding steps protected. Version v0.9.16-beta remains unpublished/unverified and must not falsely prompt as deployed.
+
+### 2026-10-25 — v0.9.16-beta onboarding source merged
+- PR #87 main `888d746c`: first-run choice Start Fresh vs Restore Nexus JSON, browser storage/non-sync/risk disclosure, backup preview and user confirmation, block any onboarding import when existing persisted Check-Ins/compounds/protocols/kits exist; previous stored setup captured before import. Saved data schema unaffected unless user explicitly restores. Existing Goals, Stats and tour retained. Release manifest remains marked unverified until public host is verified; do not infer published popup activation from merge.
