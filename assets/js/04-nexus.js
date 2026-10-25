@@ -476,6 +476,8 @@ function getKitUsedMg(kit) {
   return usedMg;
 }
 function getKitRemainingMg(kit) {
+  // Premixed inventory uses its vial-ID ledger; never treat component records as separate stock.
+  if(kit.isBlend) return getBlendKitRemainingMg(kit);
   // Once a kit's vials carry remainingMg (inventory v2), the kit total is ALWAYS the sum
   // of its vials' remainders — never totalVials×vialMg minus a separately-derived used
   // amount. Two formulas that are each individually reasonable but computed from
@@ -689,6 +691,11 @@ function getSealedVials(kit) {
 // specifically to IT: live vialId-tagged usage for anything logged since per-vial
 // tracking existed, PLUS the persisted legacyUsedMg snapshot for anything that predates it.
 function getVialRemainingMg(kit, vial) {
+  if(kit.isBlend){
+    if(vial.status==='open'||vial.status==='active') return getBlendOpenVialRemainingMg(kit);
+    if(vial.status==='sealed')return Number(vial.vialMg ?? kit.vialMg)||0;
+    return 0;
+  }
   // Once a vial has been migrated to inventory v2, remainingMg is the sole authoritative
   // number for it — a directly-mutated field, never re-derived. Falling through to the
   // history-based computation below for an already-migrated vial would create exactly
@@ -848,6 +855,7 @@ function migrateToInventoryV2() {
 // so wiring one screen to this function never silently breaks any other screen.
 // Idempotent: a kit whose vials already carry remainingMg is left untouched.
 function migrateKitToV2(kit) {
+  if(kit.isBlend)return; // Never overwrite the distinct, historical premixed-vial ledger.
   if ((kit.vials||[]).length && kit.vials.every(v=>v.remainingMg!==undefined)) return; // already migrated
   // Captured BEFORE anything below touches a single vial — this is the number the old
   // kit-level formula has been showing all along, and it's the one number in this whole
@@ -937,6 +945,30 @@ function kitOwnedVialCount(kit) { const vials = ensureKitVials(kit); return vial
 // Returns a plan/result rather than throwing when short, so the caller decides whether
 // to prompt for the next vial or block the transaction outright.
 function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
+  // Premixed blends are one physical preparation with one total-mg outflow. The
+  // existing ledger remains authoritative; no independent component stock writes.
+  if(kit.isBlend){
+    const vial=getActiveVial(kit),available=vial?getBlendOpenVialRemainingMg(kit):0;
+    const requested=Number(amountMg),valid=Number.isFinite(requested)&&requested>0;
+    const id=transactionId||uid();
+    const committed=valid&&requested<=available+0.0001;
+    const allocations=[];
+    if(committed){
+      const take=Math.round(requested*1000)/1000;
+      const ledgerId=uid();
+      kit.doseLog=kit.doseLog||[];
+      kit.doseLog.push({id:ledgerId,date:localDatetime(),totalMgDrawn:take,vialId:vial.id,
+        kind:reason||"prepared",transactionId:id});
+      allocations.push({kitId:kit.id,vialId:vial.id,amountMg:take,ledgerId});
+      if(getBlendOpenVialRemainingMg(kit)<=0.01){
+        vial.status="empty";kit.emptyVials=(kit.emptyVials||0)+1;kit.reconDate=null;
+      }
+      saveState();
+    }
+    return {transactionId:id,totalMg:amountMg,allocations,
+      remainingNeeded:committed?0:Math.max(0,requested-available),committed,
+      hasSealedVial:getSealedVials(kit).length>0,reason:reason||"dose"};
+  }
   migrateKitToV2(kit); // lazy, per-kit only — never touches any other kit
   const allocations = [];
   let remaining = Math.round(amountMg*100)/100;
@@ -989,7 +1021,20 @@ function continueConsumeCompoundInventory(kit, remainingNeeded, transactionId) {
 // specific vial it came from, and reopens a vial that went empty as a direct result. No
 // historical-window recalculation: it only undoes the specific numbers this transaction
 // recorded, nothing else.
-function undoConsumeCompoundInventory(kit, transactionResult) {  transactionResult.allocations.forEach(a => {
+function undoConsumeCompoundInventory(kit, transactionResult) {
+  if(kit.isBlend){
+    for(const a of transactionResult.allocations||[]){
+      const idx=(kit.doseLog||[]).findIndex(d=>a.ledgerId && String(d.id)===String(a.ledgerId));
+      if(idx<0){showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");continue;}
+      const [entry]=kit.doseLog.splice(idx,1);
+      const vial=(kit.vials||[]).find(v=>String(v.id)===String(entry.vialId));
+      if(vial&&vial.status==="empty"){
+        vial.status="open";kit.emptyVials=Math.max(0,(kit.emptyVials||0)-1);
+        kit.reconDate=vial.reconDate||kit.reconDate;kit.activeKit=true;
+      }
+    }
+    saveState();return;
+  }  transactionResult.allocations.forEach(a => {
     const v = (kit.vials||[]).find(v=>v.id===a.vialId);
     if (!v) return;
     const wasEmpty = v.status === "empty";
