@@ -22,4 +22,18 @@ for(const [file,content] of Object.entries(outputs)){
  if(check){if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==content)throw Error('Stale generated release content: '+file);}
  else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,content);}
 }
+const metaPath='assets/js/02-nexus.js';
+const start='// BEGIN GENERATED RELEASE META';
+const end='// END GENERATED RELEASE META';
+const meta='const NEXUS_RELEASE='+JSON.stringify(inApp)+';';
+const block=start+'\n'+meta+'\n'+end;
+let src=fs.readFileSync(metaPath,'utf8');
+const a=src.indexOf(start),b=src.indexOf(end);
+if(check) {
+  if(a<0||b<a||src.slice(a,b+end.length)!==block) throw Error('Generated runtime release metadata stale');
+} else {
+  if(a>=0&&b>a) src=src.slice(0,a)+block+src.slice(b+end.length);
+  else src+='\n'+block+'\n';
+  fs.writeFileSync(metaPath,src);
+}
 console.log((check?'Verified':'Generated')+' all three channel outputs for '+manifest.version+' ['+manifest.publication.status+']');
