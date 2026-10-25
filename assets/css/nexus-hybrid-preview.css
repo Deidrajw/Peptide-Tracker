@@ -222,7 +222,7 @@ html[data-theme="light"] .btn-primary {background-color:#d2b1ef!important;}
 .nexus-today-sub {color:#D9C8E9!important;margin-top:10px!important;}
 .nx-hybrid-hero-orbit {
  width:96px;height:96px;min-width:96px;border-radius:50%;
- background:conic-gradient(#D8B0FF 0 72%,rgba(255,255,255,.16) 72% 100%);
+ background:conic-gradient(#D8B0FF 0 var(--nx-progress,0%),rgba(255,255,255,.16) var(--nx-progress,0%) 100%);
  display:grid;place-items:center;box-shadow:0 8px 29px #100A2845,inset 0 1px 0 #ffffff35;
 }
 .nx-hybrid-orbit-core {
@@ -239,7 +239,7 @@ html[data-theme="light"] .nexus-today-hero {
 }
 html[data-theme="light"] .nexus-today-eyebrow,html[data-theme="light"] .nexus-today-big{color:#33243E!important;}
 html[data-theme="light"] .nx-hybrid-eyebrow-side,html[data-theme="light"] .nexus-today-sub,html[data-theme="light"] .nexus-today-big span{color:#645075!important;}
-html[data-theme="light"] .nx-hybrid-hero-orbit{background:conic-gradient(#9770CB 0 72%,#CAB6DE 72% 100%)}
+html[data-theme="light"] .nx-hybrid-hero-orbit{background:conic-gradient(#9770CB 0 var(--nx-progress,0%),#CAB6DE var(--nx-progress,0%) 100%)}
 html[data-theme="light"] .nx-hybrid-orbit-core{background:linear-gradient(135deg,#FBF8FE,#EADCF6);color:#382549}
 html[data-theme="light"] .nexus-today-track{background:#73589428!important;}
 html[data-theme="light"] .nexus-today-track>div{background:linear-gradient(90deg,#8E6CC9,#B197DF)!important;}
