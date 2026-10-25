@@ -394,3 +394,7 @@
 
 ### 2026-10-25 — Visual cleanup candidate (NOT RELEASED)
 - Design PR #123 commit `7fa1a893`: reduced kit-button shadow, paired Today CTA consistency, Needs Attention rail removed. Visual-only CSS; no migrations. Latest-head tests pending, no production deployment.
+
+
+### 2026-10-25 — Kit-card action hierarchy Phase 2D (UNRELEASED)
+- Draft PR #123 commits `bba65429` and `ac9a4f27`: remove persistent Prepare button from Stash cards, retain menu Prepare and global shortcut; responsive two-action card styling. Data impact none; branch-only candidate pending QA. No production changes.
