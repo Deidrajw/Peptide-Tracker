@@ -485,7 +485,12 @@ function wireBody() {
   }));
   document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=()=>{
     const box=document.querySelector(`.histbox[data-name="${CSS.escape(b.dataset.name)}"]`);
-    if(box) box.style.display=box.style.display==="none"?"block":"none";
+    if(box){
+      const opening=box.style.display==="none";
+      box.style.display=opening?"block":"none";
+      b.setAttribute("aria-expanded",String(opening));
+      b.textContent=opening?"Close history":"History ("+box.querySelectorAll(".nx-dose-history-record").length+")";
+    }
   });
   document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=()=>{
     const box=document.querySelector(`.tunebox[data-name="${CSS.escape(b.dataset.name)}"]`);
