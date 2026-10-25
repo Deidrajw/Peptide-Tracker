@@ -269,3 +269,7 @@
 ### 2026-10-25 — Legacy premixed kit classification and details hierarchy
 - Approval implemented as **opt-in**, not silent migration: older kit lacking `isBlend` may be designated premixed through explicit user entry of per-vial ingredient names/mg, strict sum-equals-vial-strength validation and final confirmation. Preserve original v2 vial `remainingMg`, kit IDs, historical dose IDs/allocations, purchase metadata and notes; use `blendInventoryMode:"legacy-v2"` for future blend transactions. Do not backfill or duplicate component dose history automatically.
 - Shared Stash disclosure copy is “View kit details,” no lone far-right giant chevron; all three tabs must prioritize one primary metric and readable secondary rows. History stays compact until explicit Show All. Today compound History must offer Close and Show Fewer states.
+
+### 2026-10-25 — Stash information priority, iPhone feedback
+- **Approved:** The current open vial's remaining mg is the single top-level Stash card hero, above a progress bar. If unopened, show the explicit no-open-vial state and number sealed. Kit-total quantity, price and notes belong in Overview, not above the open-vial hero.
+- **Approved:** Kit details is a button alongside Open New Vial / Prepare when present; remove standalone full-width “View kit details” disclosure and both confusing nested chevrons. Button controls one expand/collapse panel with accessible state. Overview, Vials and History use matching spacing, type scale and section hierarchy, while retaining their distinct meaning and existing operations.
