@@ -67,6 +67,16 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.ob-goal').count()>0,'Start Fresh must preserve goal setup steps');
  await page.evaluate(()=>closeModal());
 
+ await page.evaluate(()=>showOnboarding());
+ await page.locator('#ob-fresh').click();
+ await page.locator('#ob-next').click();
+ await page.locator('#ob-next').click();
+ ensure(await page.locator('.nx-ob-next-card').count()===4,'Getting Started must show all four feature cards');
+ ensure(await page.locator('.nx-ob-next-icon svg').count()===4,'Feature cards must use matching outline SVG icons');
+ ensure(await page.locator('.nx-ob-guide svg').count()===1,'Getting Started guide must use matching outline SVG icon');
+ ensure(await page.locator('.nx-ob-next-card').first().innerText().then(x=>x.includes('Log a dose')&&x.includes('Today')),'Log Dose quick action missing context');
+ ensure(await page.locator('.nx-ob-next-card').first().evaluate(e=>parseFloat(getComputedStyle(e).minHeight)>=60),'Getting Started cards too small');
+ await page.evaluate(()=>closeModal());
  ensure(await page.locator('.nx-plan-head').count()===1,'Research header missing');
  ensure(await page.locator('.nx-plan-head .compound-intel-btn').count()===0,'Intel still crowded in header');
  ensure(await page.locator('.nx-plan-secondary .compound-intel-btn').count()===1,'Research Intel lost');
