@@ -260,3 +260,8 @@
 ### 2026-10-25 — Issue #109 approved kit parity correction
 - **APPROVED:** Premixed blend is a normal kit; Stash, Prepare, Open new vial, Log Dose, History must use **the same components** as regular kits. Composition/ingredient math is the only intentional distinction. Blend-only screens and labels are disallowed. User explicitly prioritized parity above isolated button fixes.
 - **In progress on branch:** initial Stash copy and Open Vial modal visual alignment coded, not yet validated. Full shared renderer/event-path refactor still required. Preserve blend-level single administration identity and accurate composition breakdown, historical kLOW and all records without automatic rewrite.
+
+### 2026-10-25 — Issue #109 exact UI parity implementation decision
+- **Approved / coded on PR #110, not merged:** a premixed blend is a normal kit with composition metadata. Use the existing regular Stash card, Open Vial, Prepare, Log Dose and detail-tab components. Do not revive the separate `renderBlendKitCard` or distinct blend dose/reconstitution sheets. Same labels and UI controls; allow formulation ratio breakdown inside Log Dose.
+- Stock remains by physical premixed vial: one administered blend dose record, one/vial-part ledger allocation; never automatically create ingredient administrations or rewrite older history. Explicitly linked ledger transactions support reversal; ambiguous old historical data is protected against guessed mutation.
+- Preserve full native-app compatibility, production localStorage, backup/restore and all existing Check-In/Calendar/Plans/Protocol/Weight/Nutrition features. No automated historical KLOW conversion without confirmation.
