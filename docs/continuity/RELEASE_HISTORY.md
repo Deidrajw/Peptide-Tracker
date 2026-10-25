@@ -374,3 +374,7 @@
 ### 2026-10-25 — v0.9.20-beta UX hierarchy patch — MERGED; DEPLOYMENT UNVERIFIED
 - PR #119 squash merge SHA `3ef22b98326fc54777dbbef8ca9b013082f8f9fb` includes adaptive Stash kit actions/empty state and compact vial ellipsis, injection-site guidance relocation, corrected multi-vial button with 20px horizontal/12px vertical padding, compact Combo favourites selector, and compound Trends dedicated detail/back; targeted browser fixture updates.
 - User preview iPhone acceptance for displayed changes recorded. CI mobile `40212593190` PASS, release browser and packaging `40212593263` PASS. Application version remains 0.9.20-beta; no destructive migration. Main merge is proven, Cloudflare Production source parity PENDING. The specific old expanded blend-card parity and app-wide divider/contrast PR #118 remain separately unresolved.
+
+
+### 2026-10-25 — Medical/calculator claims audit, proposal only
+- Branch `audit/medical-calculator-claims-matrix-20261025`, starting main `c1c95e1`, v0.9.20-beta unchanged. Added risk and evidence matrix under `docs/audits/` with no application/release-manifest changes; **no new release, merge or deployment implied**. Browser/iPhone/math tests NOT RUN on this audit branch. PR #118 / PR #110 remain independent.

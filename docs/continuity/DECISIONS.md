@@ -285,3 +285,8 @@
 
 ### 2026-10-25 — Preview-approved UI hierarchy released to GitHub main
 - User accepted PR #119 iPhone preview following targeted `Use multiple vials` 20px inline/12px block padding override against legacy #toggle-multi selector, plus visually compact 28px vial ellipsis within 44px touch target. PR merged to main at 3ef22b98326fc54777dbbef8ca9b013082f8f9fb; version retained v0.9.20-beta. Production parity remains separate signoff, not implied by GitHub merge.
+
+
+### 2026-10-25 — Claims audit separation decision (proposed, not implemented)
+- Source-first triage matrix at `docs/audits/MEDICAL_CALCULATOR_CLAIMS_2026-10-25.md`. Explicitly separate recorded facts and dimensional arithmetic from modeled pharmacokinetics, medical inferences and dose-escalation advice. Proposed wording restrictions are **NOT APPROVED CODE CHANGES**.
+- Keep PR #118 design/contrast and PR #110 unresolved legacy blend parity separate; protect all old records, vial ledgers and localStorage from silent migration. Apple 1.4.1–1.4.2 store eligibility is a separate signoff and cannot be inferred from tests passing.
