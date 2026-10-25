@@ -1911,6 +1911,7 @@ function prepareDosesModal(name) {
 // marked "reconstituted / in use" days before its first dose is ever administered. Reuses
 // the existing kit edit form's fields rather than building a second reconstitution UI.
 function reconstituteVialModal(kit, onDone) {
+  if(kit.isBlend)return openNewVialModal(kit.id,onDone);
   const c = cfg(kit.name);
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
