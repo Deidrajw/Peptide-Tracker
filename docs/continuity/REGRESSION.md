@@ -297,3 +297,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Onboarding first-run new tests (PENDING)
 - Verify welcome on 320/390 light/dark, local browser storage/cross-device/no-sync explanation, Start Fresh optional preferences and step navigation, Restore picker validation malformed/oversized JSON, file record-count preview, cancel/consent, existing-data blocking, pre-import snapshot, save failures/rollback, and existing users bypass onboarding. Verify version=manifest=title=runtime=in-app/Apple/Google generated notes, no announcement for UNVERIFIED status, full LIVE/full DEMO isolation. Preserve Check-In/Supplements/Protocol/Stash and dose history. Real iPhone/VoiceOver NOT TESTED.
+
+### 2026-10-25 — Getting Started visual follow-up (NOT TESTED yet)
+- New 320px and 390px light/dark LIVE/full DEMO assertions: exactly four feature cards with same outline SVG treatment and nonempty contextual route subtitles, 48px guide SVG/button, Log Dose label/route, no emoji replacement regression; existing onboarding step flow and import safeguards preserved. Physical iPhone acceptance and Cloudflare source parity pending. Calculator #67 hold.

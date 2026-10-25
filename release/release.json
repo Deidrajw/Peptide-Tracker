@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.16-beta",
+  "version": "v0.9.17-beta",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,27 +9,20 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "a3318973d2332b44c7efb12b275d79a59186c164",
+    "baselineMainCommit": "888d746ce0b4488aa4c0eba0fe83110cd019f746",
     "pullRequest": null
   },
-  "headline": "A warmer start with safer backup choices",
+  "headline": "A cleaner Getting Started experience",
   "changes": [
     {
-      "key": "onboarding",
-      "title": "Welcome to Nexus",
-      "detail": "New users can see what Nexus does, learn how browser storage works, and choose to start fresh or restore a backup.",
+      "key": "onboarding-next",
+      "title": "A clearer start",
+      "detail": "Getting Started actions now use consistent outline icons, card spacing and readable labels.",
       "screen": "Onboarding",
       "kind": "improvement"
-    },
-    {
-      "key": "backup-restore",
-      "title": "Backup preview before restoration",
-      "detail": "Review counts and confirm before restoring; onboarding restoration is blocked when existing records are detected.",
-      "screen": "Onboarding",
-      "kind": "safety"
     }
   ],
-  "dataImpact": "No automatic migration. An explicit, confirmed restore can replace the empty setup after preserving its previous storage value.",
+  "dataImpact": "No migration or change to saved records. Existing onboarding navigation is preserved.",
   "limitations": [
     "Calculator PR #67 is held pending safety validation.",
     "Published web-build parity and physical iPhone acceptance remain unverified."

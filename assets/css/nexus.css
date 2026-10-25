@@ -1825,3 +1825,20 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-ob-option{min-height:58px;text-align:left;display:flex;flex-direction:column;gap:3px;justify-content:center;padding:11px 14px;border-radius:12px;background:var(--surface-1);color:var(--t1);border:1px solid var(--border);font-weight:700;font-size:14px;cursor:pointer}
 .nx-ob-option span{font-size:12px;color:var(--t3);font-weight:400}
 .nx-ob-option:focus-visible{outline:3px solid #A78BFA;outline-offset:2px}
+
+/* Shared onboarding next-action language: quiet SVG icons, consistent information scale. */
+.nx-ob-finish{display:grid;gap:12px;color:var(--t1)}
+.nx-ob-finish-symbol{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--surface-2);color:#9B84DB;font-size:23px;font-weight:700;margin:0 auto}
+.nx-ob-finish h2{text-align:center;font-size:21px;line-height:1.3;margin:0}
+.nx-ob-finish>p{text-align:center;color:var(--t3);font-size:13px;line-height:1.5;margin:0 0 3px}
+.nx-ob-next-list{display:grid;gap:8px}
+.nx-ob-next-card{display:flex;align-items:center;gap:13px;min-height:64px;border-radius:13px;padding:11px 13px;background:var(--surface-2);border:1px solid var(--border-sub)}
+.nx-ob-next-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:30px;color:var(--t2)}
+.nx-ob-next-icon svg{display:block;width:23px;height:23px}
+.nx-ob-next-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nx-ob-next-copy strong{font-size:14px;line-height:1.3;font-weight:650;color:var(--t1)}
+.nx-ob-next-copy>span{font-size:12px;line-height:1.3;color:var(--t3);overflow-wrap:anywhere}
+.nx-ob-guide{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;width:100%;margin-top:3px;padding:11px 13px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:#AA8BEC;font-size:13px;font-weight:650}
+.nx-ob-guide-icon{display:inline-flex;width:19px;height:19px}
+.nx-ob-guide-icon svg{display:block;width:19px;height:19px}
+.nx-ob-guide:focus-visible{outline:3px solid #AA8BEC;outline-offset:2px}
