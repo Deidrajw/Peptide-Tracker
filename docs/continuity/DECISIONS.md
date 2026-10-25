@@ -279,3 +279,6 @@
 - User-approved visual direction: use whitespace and typographic hierarchy rather than serial borders between simple key/value rows or adjacent CTAs. Keep boundaries required for form fields, true separate cards, focus state and meaningful long lists, plus active tab underline.
 - Light mode must not use low-contrast pale-lime primary buttons, helper text or warnings on white/near-white sheets; lavender/violet is preferred, with readable label text and explicitly distinguishable disabled state. Scope to light theme; dark theme retains its own tested contrast rules.
 - Design is CANDIDATE on separate branch until representative screens and modal states visually accepted; no data migration.
+
+### 2026-10-25 — Supply deletion information architecture
+- Approved earlier user direction implemented as candidate on #118: destructive Delete supply belongs within Edit Supply, not as a standalone line under Restock in the overview. Keep visible secondary action and existing confirmation, never delete/overwrite user records automatically. Confirm with 320/390 accessible modal testing before release.
