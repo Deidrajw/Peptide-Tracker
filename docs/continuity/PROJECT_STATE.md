@@ -1127,3 +1127,8 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Verified PR #123 head `34629941` full build/parity workflow 40386863855 FAILED. Browser matrix, Check-In, Protocol, vial-source, Log Dose, Combo, Stash, chevrons passed before Plans test failure: `tools/validate-plans-hierarchy.mjs:212` attempted to interact with `#g-evidence-symptom` before opening wizard Connections step. Hybrid Preview Browser QA 40386854803 succeeded; latest mobile workflow pending at review.
 - Test change `c9b6782c` updates Plans regression to step through Basics/Progress/Connections/Review before interacting/saving. This test correction needs its own latest-head CI evidence; not claimed PASS. No app storage or dose changes. PR draft/unmerged; Cloudflare unchanged.
 - **ONE NEXT ACTION:** inspect new-head complete browser QA after wizard-aware test update; fix any actual UI issues; verify exact-source artifacts and physical iPhone acceptance. Do not merge/deploy.
+
+## 2026-10-26 — Goal wizard test-file correction verified
+- Current-head QA on `8d61fe06`: Hybrid Preview 40389017205 SUCCESS, mobile 40389028382 SUCCESS, full build 40389027791 FAILURE. Failure at Plans browser test selecting hidden Check-In symptom without entering wizard Connections.
+- Earlier correction `c9b6782c` did not modify the test file (GitHub blob unchanged). Actual change `fe024eaf` verified new test blob `d653d2f7`, traverses Basics/Progress/Connections and Review before saving. New-head CI pending; no overall PASS or release clearance. Draft PR, production untouched.
+- **ONE NEXT ACTION:** inspect CI results at commit fe024eaf or later and fix any additional wizard or regression failures, then verify complete isolated demo and live ZIP.
