@@ -334,3 +334,7 @@
 
 ### 2026-10-25 — Today expanded-card follow-up
 - PR #123 preview only: group existing Last/Next facts in equal-width surface while preserving schedule calculations, insights, site notices and actions. Intel receives plain label and aria label. Not production-approved.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- Approved direction via user screenshot: pill-shaped segmented Insights / History / Details in expanded Today compounds. Keep status and primary logging visible; supporting notices under Insights and site rotation text without emoji. Preview-coded only, iPhone acceptance pending.
