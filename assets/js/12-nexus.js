@@ -693,6 +693,7 @@ function wireBody() {
     if(panel)panel.open=true;
   }));
   document.querySelectorAll(".nx-activity-period").forEach(btn=>btn.onclick=()=>{
+    state._todayActivityPeriod=btn.dataset.period;
     document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
     document.querySelectorAll(".nx-activity-panel").forEach(el=>{el.hidden=el.dataset.activityPanel!==btn.dataset.period;});
   });
