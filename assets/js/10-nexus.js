@@ -1578,7 +1578,7 @@ function homeView() {
   const started=sortActiveCards(Object.entries(aps).filter(e=>isActive(e)&&hasStarted(e)));
   const notStarted=Object.entries(aps).filter(e=>isActive(e)&&!hasStarted(e));
   const paused=Object.entries(aps).filter(e=>isPaused(e));
-  let html=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div></div>`;
+  let html=`<div class="nx-today-header"><div class="nx-today-greeting"><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div><div id="nx-alert-trigger-slot"></div></div>`;
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
   // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
   // Never infer completion from inventory, and never change any schedule or dose record.
@@ -1672,7 +1672,9 @@ function homeView() {
       ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
     </section>
   </div>`;
-  html+=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true">${nxCompoundMenuIcon("bell")}</span><span>Needs attention</span><span class="nx-alert-count">${alertCount}</span><span class="nx-alert-hint">Review notices</span></button>`;
+  const alertTriggerHtml=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-label="Needs attention, ${alertCount} notices" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true">${nxCompoundMenuIcon("bell")}</span><span class="nx-alert-count">${alertCount}</span></button>`;
+  html=html.replace('<div id="nx-alert-trigger-slot"></div>',alertTriggerHtml);
+
   // THIS WEEK — merged schedule strip + summary
   // (dosingTimeline now embedded in Today card above)
   const weekStart2=startOfWeek(logicalNow());
@@ -1731,15 +1733,10 @@ function homeView() {
   // something that needs to be visible every time. Session-only preference: doesn't
   // persist across app restarts, and never auto-expands on its own.
   const weekExpanded = !!state._weekExpanded;
-  const thisWeekCardHtml=`<section class="nexus-week-card nexus-week-quiet nx-today-text-disclosure" aria-label="Weekly progress">
-    <div class="nexus-quiet-header"><button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span class="nexus-quiet-copy"><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} unresolved` : ``}</p></span><span class="nx-today-disclosure-label" aria-hidden="true">${weekExpanded?"Hide details":"View details"}</span></button></div>
-    <div id="nexus-week-expanded" ${weekExpanded?"":"hidden"}>
-      <div class="nexus-week-expanded-top"><span>${weekRangeLabel}</span><button type="button" id="opendigest" class="nexus-text-action">Full report →</button></div>
-      <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Unresolved</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
-      ${wkSkipped>0?`<p class="nexus-week-footnote">${wkSkipped} skipped this week</p>`:""}
-      ${weekExpanded?weekScheduleStrip():""}
-    </div>
-  </section>`;
+  // The top weekly card owns these numbers. One direct Full report action avoids
+  // a second disclosure, duplicated count rows and unnecessary chevron.
+  const thisWeekCardHtml=`<button type="button" id="opendigest" class="nx-week-report-link">Full weekly report <span aria-hidden="true">↗</span></button>`;
+
   // PRIMARY NAV — Today/Active/Upcoming/All. Today is the default: what needs attention
   // right now, not every active compound regardless of relevance.
   const homeViewKey = state._homeView || "today";
