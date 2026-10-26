@@ -716,6 +716,40 @@ function wireBody() {
       alertOpen.setAttribute("aria-expanded","true");
       alertOverlay.querySelector(".nx-alert-sheet")?.focus();
     };
+    const manage=$("#nx-alert-manage"),all=$("#nx-alert-select-all"),selected=$("#nx-alert-clear-selected"),clearAll=$("#nx-alert-clear-all"),counter=$("#nx-alert-selected-count");
+    const choices=()=>[...alertOverlay.querySelectorAll(".nx-alert-choice")];
+    const refresh=()=>{
+      const n=choices().filter(x=>x.checked).length;
+      if(counter)counter.textContent=n+" selected";
+      if(selected)selected.disabled=n===0;
+      if(all)all.textContent=n===choices().length && n>0?"Deselect all":"Select all";
+    };
+    if(manage)manage.onclick=()=>{
+      const on=alertOverlay.classList.toggle("nx-alert-managing");
+      manage.textContent=on?"Cancel":"Manage";
+      if(!on)choices().forEach(x=>x.checked=false);
+      refresh();
+    };
+    choices().forEach(x=>x.onchange=refresh);
+    if(all)all.onclick=()=>{
+      const next=!choices().every(x=>x.checked);
+      choices().forEach(x=>x.checked=next);
+      refresh();
+    };
+    const dismissIds=ids=>{
+      const existing=state.settings.dismissedReminders||{};
+      ids.forEach(id=>{if(id)existing[id]=Date.now();});
+      state.settings.dismissedReminders=existing;
+      saveState();closeAlerts();render();
+    };
+    if(selected)selected.onclick=()=>{
+      const ids=choices().filter(x=>x.checked).map(x=>x.dataset.id);
+      if(ids.length)confirmAction("Clear "+ids.length+" selected notice"+(ids.length===1?"":"s")+"? You can restore them later.",()=>dismissIds(ids));
+    };
+    if(clearAll)clearAll.onclick=()=>{
+      const ids=choices().map(x=>x.dataset.id);
+      if(ids.length)confirmAction("Clear all "+ids.length+" notices? You can restore them later.",()=>dismissIds(ids));
+    };
     ["nx-alert-close","nx-alert-dismiss"].forEach(id=>{const b=$("#"+id);if(b)b.onclick=closeAlerts;});
     alertOverlay.onkeydown=e=>{
       if(e.key==="Escape"){e.preventDefault();closeAlerts();}
