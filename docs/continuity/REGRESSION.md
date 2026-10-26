@@ -882,3 +882,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — User-observed UI regressions
 - Added automated assertions to Plans hierarchy browser suite: More→Plans defaults Goals despite previously selected Research; manual switch Research works; repeat More→Plans resets Goals; single rendered border above Intel (`.nx-plan-secondary` 1px, Intel button 0px); Add Research retains picker/status/reason/goal/notes. Test at 320/390 light/dark in both LIVE and isolated DEMO; latest HEAD pending. Physical iPhone screenshot confirms PRE-FIX double separator; no post-fix physical acceptance yet. Add Research and Add Shopping modal visual consistency vs Goal wizard still needs direct screenshot review.
+
+## 2026-10-26 — Editor alignment test matrix
+- New browser assertions in `9ddfac17`: Research modal 5 preserved fields, header title/label, min 44px save; Shopping 6 preserved fields, min 44px save. 320/390 both themes LIVE/DEMO automated run pending; direct physical iPhone keyboard, scroll, focus, native selects and screen reader NOT TESTED. Verify actual Add/Edit persistence, Research picker, Shopping links, management bottom sheet, and Log Dose regression before merging.
