@@ -915,3 +915,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Clarified failure classification, not a UI pass
 - Failure `40421697164`: stale Stash Cards assertion measured deliberately hidden Step-1 Save height; corrected in `6d209ed5` to test hidden on Steps 1–2 and visible 44px+ Review Save. Other suites in failed run include Stash Actions PASS 8 configurations, vial-source PASS 8/48 assertions, Log Dose PASS 8/40 flows, Combo picker PASS. Full overall QA still FAIL until rerun passes; iPhone screenshot pre-fix rejection remains FAIL.
+
+## 2026-10-26 — Corrected Stash regression and screenshot suite
+- PASS: full build/parity `40422263758` and mobile `40422263763` on application/test SHA `6d209ed5`, after updating obsolete Save-height assertion to require hidden Save before Review and >=44px visible Save at Review. Additional screenshot capture tests `ed77a3e7` and `dac2ba4a` pending newest-head QA. New images planned: Kit and Blend stages 1/2/Review, widths 320/390, themes dark/light, LIVE and full-app DEMO. Actual screenshots/real iPhone/VoiceOver NOT YET REVIEWED. Preserve physical screenshot reported defects as not accepted until resolved on real device.
