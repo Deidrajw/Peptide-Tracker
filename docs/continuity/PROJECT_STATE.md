@@ -1109,3 +1109,7 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Base main at start `c1c95e1d`; CI on pre-change head `3248b6bc` mobile and full-build SUCCESS, but does not validate new commits. Latest branch-head CI, complete release artifacts and physical iPhone NOT VERIFIED.
 - No production writes, no merge/deploy, no storage migration authorized.
 - **ONE NEXT ACTION:** inspect latest-head CI and run Goals card + Protocol ↔ Goal browser regression at 320/390 light/dark, correct failures, then produce source-identical full-app isolated DEMO and LIVE ZIP.
+
+## 2026-10-26 — Goal card visual correction after user screenshot
+- User observed original Goals cards were materially unchanged and too tall. Commits `457652a8` and `f5be4806` remove redundant three-counter summary from Plans, remove repeated exploratory heading, compact Goal cards and put status/linked count/details on one action row. Existing data and interactions not intentionally changed. New-head CI and physical visual acceptance pending. PR draft, no merge/deploy.
+- **ONE NEXT ACTION:** review latest CI screenshots and correct any Goals card visual or navigation regression at 320/390 light/dark; generate exact-source DEMO/LIVE artifacts.
