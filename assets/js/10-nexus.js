@@ -1681,7 +1681,8 @@ function homeView() {
     if (k>todayStr2) return;
     list.forEach(s=>{
       if (s.status==="taken") wkTaken++;
-      else if (s.status==="overdue" || s.status==="missed") wkMissed++;
+      else if (s.status==="missed") wkMissed++;
+      else if (s.status==="overdue") wkPending++;
       else if (s.status==="skipped") wkSkipped++;
       else if (k===todayStr2 && ["due_now","due_later_today"].includes(s.status)) wkPending++;
     });
@@ -1706,7 +1707,7 @@ function homeView() {
     [wkTaken,"Completed","#7DF9C0"],
     ...(wkSkipped>0?[[wkSkipped,"Skipped","var(--t4)"]]:[]),
     [wkMissed,"Missed",wkMissed>0?"#FF7C7C":"var(--t4)"],
-    [wkPending,"Pending Today","var(--t3)"],
+    [wkPending,"Unresolved","var(--t3)"],
   ].map(([v,l,c])=>`<span style="color:${c};font-weight:600">${v}</span><span style="color:var(--t5);font-size:10px"> ${l}</span>`).join(`<span style="color:var(--border-sub);margin:0 6px">·</span>`);
   // The seven-day strip is collapsible — This Week's one job is a compact overview
   // (statsLine below), and the day-by-day grid is the "more detail" layer under it, not
@@ -1714,10 +1715,10 @@ function homeView() {
   // persist across app restarts, and never auto-expands on its own.
   const weekExpanded = !!state._weekExpanded;
   const thisWeekCardHtml=`<section class="nexus-week-card nexus-week-quiet nx-today-text-disclosure" aria-label="Weekly progress">
-    <div class="nexus-quiet-header"><button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span class="nexus-quiet-copy"><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} due today` : ``}</p></span><span class="nx-today-disclosure-label" aria-hidden="true">${weekExpanded?"Hide details":"View details"}</span></button></div>
+    <div class="nexus-quiet-header"><button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span class="nexus-quiet-copy"><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} unresolved` : ``}</p></span><span class="nx-today-disclosure-label" aria-hidden="true">${weekExpanded?"Hide details":"View details"}</span></button></div>
     <div id="nexus-week-expanded" ${weekExpanded?"":"hidden"}>
       <div class="nexus-week-expanded-top"><span>${weekRangeLabel}</span><button type="button" id="opendigest" class="nexus-text-action">Full report →</button></div>
-      <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Due today</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
+      <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Unresolved</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
       ${wkSkipped>0?`<p class="nexus-week-footnote">${wkSkipped} skipped this week</p>`:""}
       ${weekExpanded?weekScheduleStrip():""}
     </div>
