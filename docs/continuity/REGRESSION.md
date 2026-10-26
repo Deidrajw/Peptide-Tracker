@@ -550,3 +550,15 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Latest 320/390 dual-theme browser release packaging | CI pending |
 | Physical iPhone and VoiceOver review | NOT TESTED |
 | Merge/Cloudflare deploy | NOT PERFORMED |
+
+
+### 2026-10-25 — Today lower-page protection matrix
+| Area | Result |
+|---|---|
+| Schedule Today / Active / Upcoming / All / add | Styled, runtime latest-head NOT TESTED |
+| Compact compound card Last/Next, status, Log Dose, Reschedule, History | JS unchanged, styled; latest-head NOT TESTED |
+| Expanded compound: Intel, Insights, warnings, overdue, after-dose links, actions | EXISTING renderer preserved; visual refactor INCOMPLETE |
+| Daily tracking disclosure, supplements, weight/nutrition, weekly summary | Functional markup unchanged; redesign pending |
+| Stash Prepare/Open New Vial modal keyboard/focus/sticky action and math | Modal audit documented; NOT FULLY TESTED |
+| 320/390 light/dark, contrast, VoiceOver, physical iPhone | NOT VERIFIED latest head |
+| Production merge and deploy | NOT PERFORMED |
