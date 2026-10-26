@@ -909,3 +909,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — User-observed guided Stash regressions / correction gate
 - FAIL on user-provided physical iPhone screenshots: duplicate compound controls, redundant step counter, early Save Kit appearance, blend native-looking compound dropdowns, blue detached Continue CTA and open-vial default checked. User explicitly rejected screens. Corrective source commits `0a0a9f67`, `8d30293d`, `939e5c7e`, `90ecfd9e`, `b8f8f2db`; latest-head outcomes NOT TESTED. Browser checks added for hidden pre-review blend Save, editable searchable combo and sealed default. Must validate actual modal DOM, initial/read-write select, picker no matches/keyboard, one primary CTA, stage progression and historical ledger before Pass.
+
+## 2026-10-26 — Latest guided Stash QA failure
+- FAIL: `40421697164` full build/parity browser QA on app head `b8f8f2db`; error assertion unavailable from GitHub connector; job `121917447165`. PASS: mobile form regression `40421697072` on same SHA. Physical user iPhone screenshots documenting PRE-FIX broken Stash UI remain FAIL; post-fix device visuals NOT TESTED. No release clearance.
