@@ -1290,3 +1290,85 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-info-panel button.
  box-shadow:0 2px 6px rgba(0,0,0,.06)!important;
  cursor:pointer!important;align-items:center!important;justify-content:space-between!important;
 }
+
+/* Today 2.0 refinement: selectors anchored on actual card classes, not an assumed
+   screen ancestor. One SVG chevron, no legacy pseudo-icon. */
+.compound-collapse-btn.nx-today-disclosure::after,
+.compound-collapse-btn.nx-today-disclosure::before,
+.nx-hybrid-expanded-compound .compound-collapse-btn.nx-today-disclosure::after,
+.nx-hybrid-expanded-compound .compound-collapse-btn.nx-today-disclosure::before{
+ content:none!important;display:none!important;width:0!important;height:0!important;
+ border:0!important;transform:none!important;box-shadow:none!important;
+}
+.nx-hybrid-expanded-compound .nx-today-disclosure .nx-today-disclosure-icon{
+ display:block!important;flex:none!important;width:18px!important;height:18px!important;
+}
+.nx-hybrid-expanded-compound .nx-expanded-compound-head .compound-collapse-btn.nx-today-disclosure{
+ margin-left:auto!important;justify-self:end!important;align-self:center!important;
+}
+.nx-compound-card .nx-today-disclosure,
+.nx-hybrid-expanded-compound .nx-today-disclosure{background:var(--surface-2)!important}
+/* Use the native iPhone typography feel instead of a mixture of tracked mono labels and
+   differently weighted display text, scoped to Today compound cards only. */
+.nx-compound-card, .nx-hybrid-expanded-compound{
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif!important;
+}
+.nx-compound-card .nx-today-compound-name,
+.nx-hybrid-expanded-compound .nx-today-compound-name{
+ font-family:inherit!important;font-weight:700!important;letter-spacing:-.4px!important;
+}
+.nx-hybrid-expanded-compound .nx-expanded-fact-label,
+.nx-hybrid-expanded-compound .nx-insight-eyebrow{
+ font-family:inherit!important;letter-spacing:.25px!important;text-transform:none!important;
+}
+/* No nested insight cards, borders, or visual rail dividers. One calm surface with
+   whitespace distinguishing observations. */
+.nx-hybrid-expanded-compound .nx-info-insights{
+ padding:16px 3px 3px!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-summary,
+.nx-hybrid-expanded-compound .nx-insight-list>div,
+.nx-hybrid-expanded-compound .nx-insight-fact,
+.nx-hybrid-expanded-compound .nx-insight-overview{
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;margin:0!important;padding:0!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-summary{
+ display:flex!important;flex-direction:column!important;gap:5px!important;
+ padding:0 2px 15px!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-summary .nx-insight-eyebrow{
+ font-size:11px!important;color:var(--t3)!important;font-weight:650!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-summary strong{
+ font-size:16px!important;line-height:1.35!important;color:var(--t1)!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-summary>span:last-child{
+ font-size:13px!important;color:var(--t3)!important;line-height:1.55!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-list{
+ display:flex!important;flex-direction:column!important;gap:17px!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-list>div{
+ padding:0 2px!important;font-size:13px!important;line-height:1.55!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-list>div b{
+ display:block!important;margin:0 0 5px!important;
+ font-weight:700!important;color:var(--t1)!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-secondary{
+ display:block!important;margin:0!important;color:var(--t3)!important;
+ font-weight:400!important;line-height:1.55!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-fact{
+ display:flex!important;flex-direction:column!important;gap:4px!important;
+ margin:0 0 17px!important;padding:0 2px!important;
+}
+.nx-hybrid-expanded-compound .nx-insight-fact strong{font-weight:700!important}
+.nx-hybrid-expanded-compound .nx-insight-fact span{font-size:13px!important}
+.nx-hybrid-expanded-compound .nx-compound-info-tabs{
+ box-shadow:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .nx-hybrid-expanded-compound .nx-today-disclosure-icon{transition:none!important}
+}
