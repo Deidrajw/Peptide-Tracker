@@ -476,3 +476,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 
 ## 2026-10-26 Protocol interior ideas — USER PROPOSALS, NOT IMPLEMENTED. Requested: celebration animation on completion; notification when phase changes; countdown of protocol days; current phase displayed in compound details. Source already supports in-app phase transition alerts (3 days, 1 day, transition day), not closed-app push. Existing getProtocolPhaseInfo function is pause-aware and authoritative. Preview designs before behavioral changes; completion only on explicit action with reduced-motion alternative and no replay; decide how a protocol-wide countdown handles differing compound durations. No deployment approval.
+
+
+## 2026-10-26 — Protocol interior implementation and pause parity
+- User approved proceeding with four Protocol enhancements. Current draft source contains countdown, completion celebration and compound roadmap; existing phase alert settings/notifications reused rather than adding browser push. Roadmap visual phase markers must use the pausedAt effective day when paused, matching `getProtocolPhaseInfo`; commit `177e25fa`. Keep PR draft and do not deploy without separate authorization.
