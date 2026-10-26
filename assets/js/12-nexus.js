@@ -682,6 +682,20 @@ function wireBody() {
   // within the same page, not navigation to a different screen, so jumping to the top
   // would be jarring and wrong.
   const preserveScroll = (fn) => { const y = window.scrollY; fn(); requestAnimationFrame(()=>window.scrollTo(0,y)); };
+  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=()=>preserveScroll(()=>{
+    const allowed=["checkin","supplements","weight","nutrition"];
+    const selected=Array.isArray(state.settings.todayTrackingActivities)?[...state.settings.todayTrackingActivities]:["checkin","supplements"];
+    const next=new Set(selected.filter(id=>allowed.includes(id)));
+    if(el.checked) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
+    state.settings.todayTrackingActivities=allowed.filter(id=>next.has(id));
+    saveState(); render();
+    const panel=document.querySelector(".nx-daily-tracking");
+    if(panel)panel.open=true;
+  }));
+  document.querySelectorAll(".nx-activity-period").forEach(btn=>btn.onclick=()=>{
+    document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
+    document.querySelectorAll(".nx-activity-panel").forEach(el=>{el.hidden=el.dataset.activityPanel!==btn.dataset.period;});
+  });
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
   document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
   // History is a direct action: expand and reveal records in one tap, without the ellipsis.
