@@ -748,3 +748,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Calendar Add Log menu / Today week patch
 - Implemented targeted CSS in draft PR #123, no data/schema changes. Check Add Log plus-only (no pseudo chevron), 44px trigger, popup five options with centered text, 2-col grid and full-width Supplements tile, Measurements text clipping at 320/390, both themes. Check This week `29% so far` separated while percentage math unchanged.
 - Automated assertions added to `tools/validate-chevron-unification.mjs`; **PENDING** new run. Prior full QA 40335573068 PASS was before this patch and is not its evidence. Physical iPhone/VoiceOver **NOT TESTED**. Historic logs, edit actions, storage and data math unchanged in source patch, functional regression pending.
+
+
+## 2026-10-26 — Physical iPhone Sprint 01 report
+- **PASS WITH MINOR VISUAL ISSUE (user-reported, physical iPhone):** Sprint 01 tested; user requests changes to **Calendar Month-view icons**. Individual checklist item results were not supplied, so do not backfill individual Pass outcomes.
+- **PASS (automated latest pre-doc head):** mobile regression workflow 40339121261; full source/browser/package workflow 40339121469 at PR head 375b8879. Artifact #12658936702 published. The automated matrix is distinct from physical iPhone acceptance.
+- **PENDING / NOT TESTED AFTER FIX:** specific Month icon changes, their legibility/alignment across 320/390 dark/light, icon QA on physical iPhone. No icon fix implemented in this checkpoint.
