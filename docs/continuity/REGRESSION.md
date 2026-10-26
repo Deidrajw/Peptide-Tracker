@@ -830,3 +830,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS automated** PR merge source 08bd02b7, workflow 40361824665: complete build/live/demo artifact verification and 8 LIVE/DEMO × 320/390 × light/dark navigation suites (Protocol list→Overview→vertical timeline→back→close), Plans contrast, protected Calendar/Check-In/Stash/Log Dose/Combo Picker/measurement checks. Screenshots now captured after animation settling; inspected 390 dark Overview/roadmap and 320 light Overview with no obvious offscreen clipping. Full WCAG AA contrast and physical iPhone gesture/keyboard tests **NOT TESTED**.
 - **OBSERVED VISUAL FOLLOW-UPS (not blockers to demo preview):** single compound header `1 compounds` grammar and current Overview as bottom sheet rather than conceptual full-page destination. User acceptance pending.
 - Latest mobile CI 40361824205 pending when documentation written; distinguish older successful mobile from latest. Cloudflare parity mismatch expected for unmerged preview; production not deployed. Keep PR draft.
+
+
+## 2026-10-26 — Contextual Plans links: NOT TESTED latest head
+- Verify at 320/390 light/dark: Protocol Overview → correct linked Goal → Connections → correct Protocol Overview, missing/unlinked goal, close/back/scroll, multiple protocols, touch size, no saved-data writes. Preserve protected dose, phase, pause and history tests.
