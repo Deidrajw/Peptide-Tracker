@@ -434,6 +434,15 @@ function wireBody() {
   const eag=$("#empty-add-goal"); if(eag) eag.onclick=()=>goalModal();
   const ar=$("#add-research"); if(ar) ar.onclick=()=>researchModal();
   const ear=$("#empty-add-research"); if(ear) ear.onclick=()=>researchModal();
+  document.querySelectorAll(".nx-research-note-toggle").forEach(button=>button.onclick=()=>{
+    const body=document.getElementById(button.getAttribute("aria-controls"));
+    if(!body)return;
+    const opening=body.hidden;
+    body.hidden=!opening;
+    button.setAttribute("aria-expanded",String(opening));
+    const label=button.querySelector("span");
+    if(label)label.textContent=opening?"Hide personal notes":"Show personal notes";
+  });
   const ap=$("#add-protocol"); if(ap) ap.onclick=()=>protocolModal();
   const ash=$("#add-shopping"); if(ash) ash.onclick=()=>shoppingModal();
   const eash=$("#empty-add-shopping"); if(eash) eash.onclick=()=>shoppingModal();
