@@ -1353,6 +1353,8 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
   const pct=total?Math.round(elapsed/total*100):0;
   const ended=Boolean(lastEnd && frozenDay>=lastEnd && p.status!=="paused");
   const label=p.status==="completed"?"Completed":p.status==="paused"?"Paused":ended?"Schedule ended":p.status==="active"||p.status==="in_progress"?"In progress":p.status==="planned"?"Planned":p.status==="draft"?"Not started":"Not started";
+  // Goal links are opt-in associations, not evidence that a protocol caused goal progress.
+  const linkedGoal=p.linkedGoalId?(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId)):null;
   const overviewRows=phaseInfos.map(({compound:c,info})=>{
     const stage=info?.current?("Phase "+(info.index+1)+" of "+info.phases.length+" · "+(info.isRest?"Rest":"Dosing")):info?.done?"Schedule ended":info?.notStartedYet?"Not started":"No phase dates";
     const detail=info?.current?("Week "+info.weekInPhase+" of "+info.totalWeeks+" · "+info.daysLeft+" days until next phase"):info?.done?"Review completed phases":"Open phase roadmap";
@@ -1366,9 +1368,15 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
     const body=m.querySelector("#nx-proto-detail-body");
     if(view==="overview"){
       const ring=remaining===null?"—":String(remaining);
-      body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+' compounds</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div><button type="button" class="nx-proto-detail-notice">Manage protocol</button>';
+      body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+' compounds</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div>'+(linkedGoal?'<div class="nx-proto-linked-goal-section"><div class="nx-proto-detail-title"><strong>Linked goal</strong></div><button type="button" class="nx-proto-linked-goal"><span class="nx-proto-goal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="nx-proto-goal-copy"><strong>'+esc(linkedGoal.name)+'</strong><small>'+esc(linkedGoal.status||"Active")+' goal · View in Plans</small></span><svg class="nx-proto-goal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>':'')+'<button type="button" class="nx-proto-detail-notice">Manage protocol</button>';
       body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
       body.querySelector(".nx-proto-detail-notice").onclick=()=>manageProtocolMenu(String(p.id));
+      body.querySelector(".nx-proto-linked-goal")?.addEventListener("click",()=>{
+        // Use existing Plans navigator and original goal detail; never copy/modify goal data.
+        closeModal();tab="plans";state._plansSub="goals";render();window.scrollTo(0,0);
+        goalDetailModal(linkedGoal.id);
+      });
+
 
     }
   };
