@@ -434,3 +434,7 @@
 
 ### 2026-10-25 — Log Dose preview release checkpoint
 - 2026-10-25 — DESIGN PREVIEW CODED / CLOUDFLARE PREVIEW DEPLOYED / PRODUCTION UNCHANGED. PR #123 commits 0819acc1, 9fe7803. Today compact scheduled dose CTA, overdue entry, completed state and conditional action styling. No localStorage schema or accounting logic migrations intended. Cloudflare reports success at 9fe7803; preview https://fce7e142.nexuspeplog.pages.dev. Exact-head full browser/iPhone acceptance INCOMPLETE. GitHub LIVE/DEMO bundles must be validated against final branch head before release.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 preview-only PR #123 commits 4c1ba682, 56f215c8, 59c6e7b6: expanded Today overdue de-duplication, visual timing/data hierarchy, per-occurrence labels and hit targets, completed-state notice. No persistent schema, calculation or inventory edits intended. QA NOT TESTED at this head. LIVE ZIP/isolated FULL DEMO INCOMPLETE; Cloudflare and merge not verified/authorized.
