@@ -43,12 +43,20 @@ try{
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
+  ensure(await page.locator('#bk-save').isHidden(),'Blend Save visible before Review');
+  ensure(await page.locator('#nx-blend-next').isVisible(),'Blend Continue missing on first step');
+  ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('role')==='combobox','Blend picker is not editable combobox');
+  ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('type')==='search','Blend picker is not searchable input');
   // Guided blend regression: no state mutation while navigating; single BAC field is
   // both the review source and the value the canonical #bk-save handler persists.
   await page.evaluate(()=>{closeModal();addBlendKitModal(null);});
   ensure(await page.locator('#bk-bac').count()===0,'Obsolete duplicate BAC field still exists');
   ensure(await page.locator('#bk-bac-edit').count()===1,'Canonical blend BAC field missing');
   ensure(await page.locator('#nx-blend-next').count()===1,'Guided blend navigation missing');
+  ensure(!(await page.locator('#bk-active').isChecked()),'New blend unexpectedly opens first vial by default');
+  ensure(await page.locator('#bk-save').isHidden(),'New blend Save visible before Review');
+  await page.locator('.nx-blend-compound-trigger').first().fill('BPC');
+  ensure(await page.locator('.nx-blend-compound-option').count()>0,'Blend combobox search did not return options');
   await page.locator('#bk-name').fill('QA Fixture Blend');
   await page.evaluate(()=>{
     const selects=[...document.querySelectorAll('.comp-select')];
