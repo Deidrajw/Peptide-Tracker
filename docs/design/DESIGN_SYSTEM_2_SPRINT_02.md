@@ -51,3 +51,13 @@ The user likes the Sprint 02A Protocol card direction and requested further work
 4. Current phase shown in each compound's detail view, with phase name/number, week/day progress, and next phase where available.
 
 **Status:** Requested/recorded, not implemented or tested. Design and edge-case review before code; no production changes. Prioritize Protocol detail and phase lifecycle work ahead of additional Stash refinements. Keep PR #123 draft.
+
+
+## 2026-10-26 — User iPhone Protocol interior feedback (DESIGN REVISION REQUIRED)
+User shared actual dark/light iPhone preview screenshots and requested:
+- Redesign expanded Schedule & phases: current route pill, timing text, active-dosing line and mini Gantt are visually redundant/dense. Prefer a compact per-compound progress row with purposeful drill-down; preserve route/schedule in details.
+- Redesign Phase Roadmap as a clear vertical timeline, current stage emphasized, other stages condensed; treat pause-aware effective dates and avoid contradictory "Now" labels.
+- Investigate apparent stale status after Pause: user saw a card remain under In progress until leaving/reentering; this might be a transient render/filter issue, NOT confirmed root cause. Verify filter in-progress, paused, all tabs and immediate rerender.
+- For schedule elapsed while recorded compound usage continues, distinguish scheduled completion from explicit protocol completion; prefer status "Schedule ended" rather than implying dosing stopped. Detect qualifying logs after scheduled end (avoid cross-protocol false positives; use known associations), show an optional one-time, dismissible non-clinical prompt to Review/extend, Create new, or Not now. Do NOT auto-extend or copy dosing instructions or mutate records; don't count future scheduled doses as actual logs.
+- Redesign Create/Edit multi-step builder as polished iPhone workflow with progress, clear section labels, review, consistent Back/Next/sticky safe-area actions, and preserved selections. No migration.
+**State:** USER FEEDBACK RECEIVED; proposals NOT APPROVED AS FINAL and NOT CODED. Review interactive in-chat prototype, then implement in priority order after approval. PR #123 draft only, no deployment.
