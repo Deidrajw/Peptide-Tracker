@@ -453,3 +453,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Approved Add Log / weekly score optical fixes
 - APPROVED targeted visual patch on draft PR #123. Add Log uses plus icon only; eliminate redundant chevron. Popup tiles horizontally/vertically center labels; Measurements must not escape bounds; Supplements stays full-width. Today This week must show a perceptible gap in `29% so far`. Retain layout intent, real handlers, saved records, 44px actions, light/dark and mobile sizing. No merge or deployment authorization.
+
+
+## 2026-10-26 — Calendar Month icons require minor Sprint 01 follow-up
+- **User feedback recorded, design choice unresolved:** physical iPhone Sprint 01 passed with minor visual issues specifically in the **Calendar Month icons**. Exact change not specified; no replacement icon set or appearance is approved yet. Do not change other Calendar workflows or saved records as part of icon follow-up. Keep PR #123 draft; release approval not provided.
