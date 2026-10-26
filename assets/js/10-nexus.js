@@ -1207,7 +1207,7 @@ function buildReminders() {
         if (info.current.startDate===today && info.index>0) {
           const prev = info.phases[info.index-1], cur = info.current;
           const prevIsRest = prev.type!=="dose", curIsRest = cur.type!=="dose";
-          const idBase = `ptransition_${comp.name}_${cur.startDate}`;
+          const idBase = `ptransition_${proto.id}_${comp.name}_${cur.startDate}`;
           if (!prevIsRest && curIsRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins today`,`Your active dosing ends. No doses will be scheduled during this rest period.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (prevIsRest && !curIsRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes today`,`Next phase: ${cur.dose||"—"} ${c2.unit} · ${cur.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+1} today`,`New dose: ${cur.dose||"—"} ${c2.unit}`,c2.color,"protocol|"+comp.name,"View Protocol");
@@ -1228,7 +1228,7 @@ function buildReminders() {
         };
         const enteringRest = !curIsRest && nextIsRest;
         const exitingRest = curIsRest && !nextIsRest;
-        const idBase = `ptransition_${comp.name}_${next.startDate}`;
+        const idBase = `ptransition_${proto.id}_${comp.name}_${next.startDate}`;
         if (daysUntil===1) {
           if (enteringRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins tomorrow`,`Your active dosing ends tomorrow.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${next.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
