@@ -411,3 +411,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Dark Today hero intensity adjustment
 - **User feedback:** previous dark hero gradient too aggressive. Approved direction: calmer, low-contrast obsidian-violet panel; use lavender as an accent for progress ring, bar and action, not as the main card fill. Implemented for draft review only at `0ae00f2`; do not infer release approval.
+
+
+### 2026-10-25 — Today dark-mode hero: no decorative corner orb
+- User identified top-right glow as aggressive in screenshot. **Approved targeted correction:** eliminate the decorative `::before` radial orb in dark mode while retaining the quiet dark card gradient, progress ring, and lavender data accents. No global lighting changes, light-mode change or production merge approval.
