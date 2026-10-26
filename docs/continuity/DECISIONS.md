@@ -342,3 +342,7 @@
 
 ### Today compact action cleanup
 - 2026-10-25 approved preview-only: compact compound disclosure explicitly says View details; expanded card uses existing Insights/History/Details for history; no repeated card-level History CTA. Compact action row adapts to present actions, site warning says repeated-site count rather than generic Site rotation, obsolete history instruction removed. Preserve history edit/view and overdue/reschedule handlers. Do not merge/deploy.
+
+
+### Log Dose preview trial
+- 2026-10-25 user approved trial of calmer Log Dose action hierarchy on PR #123. Scheduled action should reflect getDoseStatus.showLogBtn; no duplicate scheduled Log Dose in completed/upcoming/paused states. Preserve separate unscheduled/retrospective entry routes and overdue resolution.
