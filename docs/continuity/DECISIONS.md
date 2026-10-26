@@ -457,3 +457,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Calendar Month icons require minor Sprint 01 follow-up
 - **User feedback recorded, design choice unresolved:** physical iPhone Sprint 01 passed with minor visual issues specifically in the **Calendar Month icons**. Exact change not specified; no replacement icon set or appearance is approved yet. Do not change other Calendar workflows or saved records as part of icon follow-up. Keep PR #123 draft; release approval not provided.
+
+
+## 2026-10-26 — Sprint 02 draft Stash visual kickoff
+- Sprint 02 Protocol hierarchy design preview was presented; user authorized continuation (“let's go”), **not release**. First code scope is CSS-only Stash card accessibility / compact text treatment on draft PR #123; preserve exact existing Manage, Kit details, Overview/Vials/History behaviors and vial/dose calculations. No approval to merge/deploy.
