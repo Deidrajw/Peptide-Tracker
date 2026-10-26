@@ -737,3 +737,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### Log Dose preview trial
 - Preview-only Log Dose availability alignment committed as 2dfae668. Expanded cards now honor showLogBtn for ordinary due states; completed/upcoming/paused fallback no longer advertises a scheduled Log Dose. Aged-overdue What happened and existing reschedule/skip/resolve handlers preserved. Preview deployment and exact-head browser QA UNVERIFIED. Next action: inspect Cloudflare branch preview and test scheduled/unscheduled logging and inventory paths before approval.
+
+
+### 2026-10-25 — Log Dose preview release checkpoint
+- 2026-10-25 — Log Dose conditional Today preview: on draft PR #123, 0819acc1 adjusted compact due/aged-overdue/completed action labels to respect schedule state, 9fe7803 added conditional action layout/completed confirmation. Cloudflare PR comment independently reports successful preview build at 9fe7803, exact URL https://fce7e142.nexuspeplog.pages.dev, branch URL https://design-design-system-2-previ.nexuspeplog.pages.dev. This is PREVIEW ONLY; production main unchanged. Latest full browser and dual-theme iPhone acceptance NOT VERIFIED. One next action: review exact-head CI and iPhone previews, resolve failures, then continue Today Daily Tracking and Weekly Summary without merging or deploying production.
