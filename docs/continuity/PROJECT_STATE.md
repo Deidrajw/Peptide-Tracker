@@ -765,3 +765,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Prevention gate added
 - Preview workflow `.github/workflows/hybrid-preview.yml` commit `157dd7d00db5b9c7156aacb91bdfc705987111ed` now runs `node --check` for all modular JS files before Playwright. Exact-source syntax was separately compiled by V8 for modules 07-12; compiled successfully.
 - Old Cloudflare commit preview URL remains an immutable stale deployment and may still show the earlier broken JavaScript. Reverify new branch deployment URL and real browser startup before declaring the incident resolved.
+
+
+### 2026-10-25 — Today card milestone consolidation
+- 2026-10-25 Today card acceptance consolidation on PR #123: source commit 5ef99dea standardizes expanded name casing, reduces decorative emoji in timing insights and corrects misleading no-insights message where timing pattern exists. Added `tools/validate-today-card-ux.cjs` at 91cf8bce (14 source invariant checks plus JS parser) and wired into Hybrid browser workflow at 99c12afc. Direct source checks for all 14 probes PASSED by inspection. Full latest-head CI/browser QA, Cloudflare branch preview, 320/390 interactive cases and physical iPhone remain NOT TESTED. Full source-derived DEMO and LIVE ZIP not delivered. ONE NEXT ACTION: verify the CI result at current head, repair any invariant/browser failures, then run functional card-state/overdue flow tests before seeking acceptance; do not merge/deploy.
