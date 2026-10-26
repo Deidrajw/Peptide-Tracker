@@ -1008,3 +1008,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 
 ## 2026-10-26 Protocol interior design review: user requested completion animation, phase transition notification, protocol countdown, and compound detail phase. Treat as proposed, not coded. Existing in-app alerts + pause-aware getProtocolPhaseInfo should be reused. PR #123 verified head 7751ccdc at review was draft/unmerged. CI 40347404028 FAILED Browser QA at 320/390 light/dark; mobile run 40347403827 pending at check. ONE NEXT ACTION: identify/fix browser failure, preview internal Protocol screens and get behavioral design approval; no merge/deploy.
+
+
+## 2026-10-26 — Protocol interior implementation follow-up
+- Verified PR #123 draft/unmerged at `e3b5cc23d0fa0145b8642dcdba01d43bfb5ef1ed`: Protocol interior countdown, completion celebration and compound phase roadmap already present in actual source; mobile regression SUCCESS, browser/build IN PROGRESS for that pre-fix head. Existing phase reminder settings and alerts reused, no new background push.
+- Coded `177e25fa` pause-aware roadmap indicator fix: phase roadmap now freezes its visual current/past markers at pausedAt, consistent with canonical phase calculator. No stored data or dose logic changed. **Latest-head QA NOT VERIFIED;** do not merge/deploy.
+- **ONE NEXT ACTION:** verify latest-head mobile/browser CI and isolated full-app artifact parity; test countdown, completion animation/reduced motion, phase alerts and paused roadmap on 320/390 light/dark and physical iPhone, then present preview for acceptance.
