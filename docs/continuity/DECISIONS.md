@@ -480,3 +480,9 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Protocol interior implementation and pause parity
 - User approved proceeding with four Protocol enhancements. Current draft source contains countdown, completion celebration and compound roadmap; existing phase alert settings/notifications reused rather than adding browser push. Roadmap visual phase markers must use the pausedAt effective day when paused, matching `getProtocolPhaseInfo`; commit `177e25fa`. Keep PR draft and do not deploy without separate authorization.
+
+
+## 2026-10-26 — Approved Protocol interior behaviors (draft implementation)
+- Completion celebration is a one-time visual response to explicitly confirmed Mark completed, never on screen refresh; reduced-motion static checkmark. Existing saved doses/phases unaffected.
+- Reuse existing in-app transition alerts at 3 days, 1 day and phase start; IDs include protocol ID and compound to prevent same-compound collisions across protocols. No promise of closed-app push notifications.
+- Protocol countdown uses the latest computed phase end of all compounds with known start and phases, respecting accumulated pauses; paused, not started, scheduled elapsed, and manually completed states are explicit. Each compound shows its own current phase and roadmap with existing pause-aware source-of-truth. No automatic complete state change, no dose logic changes. Draft PR only.
