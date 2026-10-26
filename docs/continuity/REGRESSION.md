@@ -784,3 +784,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol interior enhancement regression targets
 - NOT TESTED on new head: completion only after confirm, cancel path must not celebrate, single animation / reduced-motion, close/reopen no replay, historic dose records unchanged; countdown latest end across compounds, paused (frozen), start date missing, not started, elapsed schedule, completed (manual only); compound roadmap phase number/week/days and next phase accurate after pause/resume; per-compound buttons functional and focus/touch >=44px; in-app transition alerts at 3d/1d/day-of, no duplicates between protocols sharing a compound, respect settings and no push claim. Test 320/390 in light/dark and physical iPhone separately, full-app DEMO/LIVE parity and prior protected flows. No Pass until evidence.
+
+
+## 2026-10-26 — User-observed Protocol visual and behavior issues
+- **USER OBSERVED (not reproduced):** after Pause action, card appeared briefly in In progress filter until navigating away/back. Recheck immediate rerender under All, In progress and Paused; persist, reload, phase countdown and pause timestamp. No premature Pass/Fail root cause claim.
+- **VISUAL FEEDBACK:** expanded compound route pill/time/active-dosing cluster and Phase Roadmap need redesign; Create/Edit builder needs hierarchy/sticky keyboard-safe actions. Not yet coded.
+- **PROPOSED NOT TESTED:** 'Schedule ended' distinct from manually completed; after-end recorded dose correlation must avoid schedule-only and unrelated-protocol false positives; opt-in prompt choices Review/Extend, Create New, Not now; no automatic status, dose, history or stock mutations.
+- Latest source QA at user review: run 40348986886 **FAIL**, mobile 40348987869 in progress, pre-documentation head 1448c411. Failure cause unverified; latest-head full-app DEMO and LIVE ZIP unverified.
