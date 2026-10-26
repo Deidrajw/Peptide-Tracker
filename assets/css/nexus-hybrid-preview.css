@@ -2254,3 +2254,23 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 #app .nx-goals-header-add:focus-visible{outline:2px solid var(--t1);outline-offset:3px}
 @media(max-width:350px){.nx-goals-page-header{gap:8px}.nx-goals-page-header h2{font-size:19px}.nx-goals-page-header p{font-size:11px}#app .nx-goals-header-add{min-width:102px;padding-inline:10px}}
 @media(prefers-reduced-motion:reduce){#app .nx-goals-header-add{transition:none}}
+
+
+/* Research and Shopping follow the approved Goals action hierarchy. */
+#app .nx-research-page-header .nx-goals-header-add{background:#A78BFA;color:#171125}
+#app .nx-shopping-page-header .nx-goals-header-add{background:#A78BFA;color:#171125}
+.nx-research-v3{padding:16px;margin-bottom:11px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px}
+.nx-research-v3 .nx-plan-head{margin-bottom:12px}
+.nx-research-v3 .nx-research-goal{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.4}
+.nx-research-v3 .nx-research-reason{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.55;margin-top:5px}
+.nx-research-v3 .nx-research-notes{margin-top:10px}
+#app .nx-research-v3 .nx-research-note-toggle{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 0;border:0;background:transparent;color:var(--t2);font-size:12px;font-weight:650;text-align:left}
+.nx-research-note-toggle svg{width:17px;height:17px;flex:none}
+.nx-research-note-body{padding:12px;border-radius:10px;background:var(--surface-3);color:var(--t2);font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.nx-research-note-body[hidden]{display:none!important}
+.nx-research-v3 .nx-plan-secondary{border-top:1px solid var(--border-sub);padding-top:6px;margin-top:7px}
+.nx-research-v3 .nx-plan-intel{min-height:44px}
+.nx-research-v3 .nx-plan-link-icon{width:16px;height:16px}
+#app .nx-research-note-toggle:focus-visible{outline:2px solid #A78BFA;outline-offset:3px;border-radius:4px}
+.nx-shopping-page-header{margin-bottom:16px}
+@media(prefers-reduced-motion:reduce){#app .nx-research-note-toggle{transition:none}}
