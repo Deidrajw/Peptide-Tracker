@@ -28,11 +28,9 @@ try{
     const weightCheckbox=tracking.locator('.nx-track-select[data-activity="weight"]');
     await weightCheckbox.check();
     check(await page.evaluate(()=>state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
-    check(await page.locator('.nx-today-activity .nx-activity-period').count()===2,'Activity periods missing');
-    await page.locator('.nx-activity-period[data-period="week"]').click();
-    check(await page.locator('.nx-activity-panel[data-activity-panel="week"]').isVisible(),'Weekly activity segment did not open');
-    await page.locator('.nx-activity-period[data-period="today"]').click();
-    check(await page.locator('.nx-activity-panel[data-activity-panel="today"]').isVisible(),'Daily activity segment did not restore');
+    check(await page.locator('.nx-today-activity.nx-week-pulse').count()===1,'Compact weekly pulse missing');
+    check(await page.locator('.nx-today-activity .nx-activity-period').count()===0,'Retired activity periods unexpectedly reappeared');
+    check(await page.locator('.nx-today-activity .nx-week-score').count()===1,'Weekly pulse score missing');
     check(await page.locator('.nx-today-coming-up').count()===1,'Coming Up section missing');
     await page.locator('#nx-open-calendar').click();
     check(await page.locator('h1.greet').first().innerText().then(s=>s.includes('Calendar')),'View Calendar failed to navigate');
