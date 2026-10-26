@@ -824,3 +824,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Source files touched: `assets/js/10-nexus.js`, `assets/js/12-nexus.js`, `assets/css/nexus-hybrid-preview.css`, `tools/validate-protocol-design.mjs`, `tools/validate-stash-cards.mjs`. No destructive migration or changes to dose engine, vial calculations, inventory ledger. Optional `settings.todayTrackingActivities` preference only.
 - Full source-parity LIVE/DEMO artifacts are built by CI but independent exact-head contents/behavior and final downloads INCOMPLETE until full green run. Real iPhone, screen reader, Cloudflare preview/production parity NOT VERIFIED. PR remains draft.
 - **ONE NEXT ACTION:** inspect full QA run `40264637477` and address remaining failure(s) before accepting Today, documenting artifact verification and requesting real-iPhone review; do not merge/deploy without release approval.
+
+
+### 2026-10-25 — Today dark hero gradient feedback
+- User screenshot showed overpowering purple gradient in dark Today hero. Dark-only targeted change at `0ae00f2` replaces high-contrast diagonal wash with muted #30283d→#292335, reduces decorative radial glow, removes second glow, softens border/shadow, preserves numeric lavender progress. Light theme unaffected by scoped selectors. DRAFT PR #123, no merge/deploy. Browser/real iPhone acceptance and release artifacts PENDING.
+- **Next action:** inspect exact-head browser QA and compare dark hero at 320/390 before release consideration.
