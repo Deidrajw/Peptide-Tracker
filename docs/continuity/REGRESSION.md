@@ -903,3 +903,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Guided blend workflow acceptance follow-up
 - User approved the three-step guided Blend Kit workflow and the screenshot-style dropdown with embedded search. Current source `assets/js/03-nexus.js` already includes a three-step blend wizard and component dropdown search, preserving original `#bk-save` handler. Review uncovered two BAC inputs on new blends (`#bk-bac` and `#bk-bac-edit`) with potentially divergent displayed review/save semantics. Existing edit must preserve opened-vial ratios and historical allocations. Do not merge/deploy until targeted validation, UI acceptance, and full-app artifact inspection. Next action: reconcile BAC UI and test blend save and history at 320/390 light/dark.
+
+## 2026-10-26 — Guided Blend BAC parity assertions added, pending CI
+- `tools/validate-stash-actions.mjs` now checks at 320/390, light/dark, LIVE/DEMO that there is no `#bk-bac`, one `#bk-bac-edit`, three-stage journey, no save before Review, two component amounts, review 2.5 mL and CAD $190, saved BAC 2.5 mL, vial count 3, total 15 mg and component ratio 10:5. Commit `6407d532`; workflow status PENDING at first check. Physical iPhone, full complete blend accounting history, VoiceOver and artifact extraction NOT TESTED.
