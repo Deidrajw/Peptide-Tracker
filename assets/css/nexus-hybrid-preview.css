@@ -1479,3 +1479,12 @@ body.nx-alert-modal-open{overflow:hidden}
 .nx-week-compact .nexus-quiet-copy{display:none!important}
 .nx-week-compact #nexus-week-expanded{margin-top:10px;padding:12px;border-radius:12px;background:var(--surface-2)}
 @media(max-width:350px){.nx-week-compact .nx-week-score strong{font-size:20px}.nx-alert-trigger{gap:6px;padding:8px 10px}.nx-alert-hint{display:none}}
+
+/* Today approved refinements: top-right alert bell; one uncluttered weekly report. */
+.nx-today-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.nx-today-greeting{flex:1;min-width:0}
+.nx-today-header .nx-alert-trigger{margin:0!important;display:inline-flex!important;justify-content:center;align-items:center;gap:7px;min-height:44px;min-width:54px;padding:8px 10px;border-radius:14px;flex-shrink:0}
+.nx-today-header .nx-alert-count{min-width:20px;height:20px;padding:0 5px}
+.nx-week-compact .nx-week-report-link{width:100%;min-height:44px;display:flex;align-items:center;justify-content:flex-end;gap:6px;background:transparent;border:0;color:var(--t3);font-size:12px;font-weight:650;padding:8px 2px;text-align:right}
+.nx-week-compact .nx-week-report-link span{font-size:13px}
+@media(max-width:350px){.nx-today-header .nx-alert-trigger{min-width:49px;padding:8px}.nx-today-header .nx-alert-count{font-size:11px}}
