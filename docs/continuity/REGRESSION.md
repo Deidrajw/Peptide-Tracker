@@ -758,3 +758,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Sprint 02 Stash patch regression pending
 - New CSS at `76f232d`: verify 320/390 dark/light kit name wrapping, 44px Manage target, focus visibility, Overview/Vials/History tap targets, Kit details toggling, light-mode visibility. **NOT TESTED on this latest commit at documentation time.** Protected vial opening (blend/single), edit, inventory deductions, insufficient stock, source association, history must remain unchanged. Sprint 01 Month icons still user-feedback pending.
+
+
+## 2026-10-26 — Sprint 02A Protocol visual check
+- **PASS (automation, previous exact head 137306ab only):** mobile run 40341448639 and full browser/build run 40341448649, includes prior Stash compact card patch.
+- **CODED / NOT YET TESTED at new head 6479eea:** Protocol name/status/goal wrapping, 44px Manage ellipsis, Schedule & phases expansion and keyboard focus, first-dose and Activate actions, archived status. Verify 320/390 in both themes, no duplicate chevrons, sheets stay within safe area. Protect saved phases, schedules, dose history, first-log action handlers and production storage. Real iPhone new-build check pending.
