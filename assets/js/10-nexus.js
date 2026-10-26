@@ -953,6 +953,21 @@ function getWeekInstances(weekKeys) {
     }
   });
   activeCompounds.forEach(([n,d])=>(d.doses||[]).forEach(dd=>{ const k=dayKey(dd.date); if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n); }));
+  // An occurrence moved to a non-cadence day is still scheduled. Include both
+  // original and destination dates so getDayOccurrences can resolve the chain
+  // without inventing or double-counting slots.
+  activeCompounds.forEach(([n,d])=>(d.reschedules||[]).forEach(move=>{
+    [move.originalDate,move.newDate].filter(Boolean).forEach(date=>{
+      const k=dayKey(date);
+      if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n);
+    });
+  }));
+  activeCompounds.forEach(([n,d])=>(d.skips||[]).forEach(event=>{
+    if(!event.date) return;
+    const k=dayKey(event.date);
+    if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n);
+  }));
+
 
   const dayInstances = {};
   weekKeys.forEach(k=>{
@@ -1680,6 +1695,7 @@ function homeView() {
   Object.entries(weekInstances2).forEach(([k,list])=>{
     if (k>todayStr2) return;
     list.forEach(s=>{
+      if(s.adhoc || s.status==="paused") return;
       if (s.status==="taken") wkTaken++;
       else if (s.status==="missed") wkMissed++;
       else if (s.status==="overdue") wkPending++;
