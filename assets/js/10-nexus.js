@@ -1790,11 +1790,12 @@ function homeView() {
   const weekSkipped=elapsedWeekRows.filter(slot=>slot.status==="skipped").length;
   const weekTotal=elapsedWeekRows.length;
   const weekPercent=weekTotal?Math.round(weekDone/weekTotal*100):null;
-  html+=`<section class="nx-today-activity nx-week-compact" aria-label="This week">
-    <div class="nx-today-activity-head"><div><h3>This week</h3><p class="nx-activity-sub">${weekRangeLabel} · Week in progress</p></div><div class="nx-week-score"><strong>${weekTotal?`${weekDone} / ${weekTotal}`:"—"}</strong><span>${weekPercent===null?"No scheduled occurrences":weekPercent+"% logged"}</span></div></div>
-    ${weekTotal?`<div class="nx-daily-track-progress" role="progressbar" aria-label="This week scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${weekTotal}" aria-valuenow="${weekDone}"><span style="width:${weekPercent}%"></span></div>`:""}
-    <div class="nx-activity-stats"><span><strong>${weekDone}</strong>Completed</span><span><strong>${weekOpen}</strong>Unresolved</span><span><strong>${weekSkipped}</strong>Skipped</span></div>
-    ${thisWeekCardHtml}
+  // Today owns the daily hero; Calendar owns detailed weekly outcome analytics.
+  // This small pulse only reports elapsed-week scheduled completion, never future doses.
+  html+=`<section class="nx-today-activity nx-week-pulse" aria-label="This week">
+    <div class="nx-today-activity-head"><div><h3>This week</h3><p class="nx-activity-sub">${weekTotal?`${weekDone} of ${weekTotal} scheduled occurrences completed so far`:"No scheduled occurrences so far"}</p></div>
+      <div class="nx-week-score"><strong>${weekPercent===null?"—":weekPercent+"%"}</strong><span>so far</span></div></div>
+    ${weekTotal?`<div class="nx-daily-track-progress" role="progressbar" aria-label="This week's scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${weekTotal}" aria-valuenow="${weekDone}"><span style="width:${weekPercent}%"></span></div>`:""}
   </section>`;
 
   // Coming Up is prospective; the week report above is retrospective. Never render
