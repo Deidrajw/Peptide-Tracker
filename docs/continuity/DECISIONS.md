@@ -551,3 +551,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Ledger truth and safe wording
 - Render in-memory allocation rows in Review rather than copied DOM text; label as read-only preview and retain original save-time vial/stock checks. Never claim a blend is deducted until original Save validates it. Native unit conversion is required for each displayed vial allocation. Use 46px sticky actions and reduced-motion preferences.
+
+## 2026-10-26 — Source identification in Review
+- Show actual selected open vial ID (not generic `open`), identify prepared batch amount and count, display per-vial rows from the existing allocation records; never invent blend-specific deductions before authoritative save calculation.
