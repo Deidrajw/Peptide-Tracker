@@ -362,3 +362,7 @@
 
 ### 2026-10-25 — Today card milestone consolidation
 - 2026-10-25 Consolidated milestone decision: stop presenting individual card polish commits as acceptance. Preserve one labelled compact/expanded disclosure, a single overdue status, history inside tabs, context-sensitive dose action, no duplicate History CTA, and 44px+ touch targets. Keep calculation and persistence code unchanged. Validate the entire card-state matrix before advancing to Daily Tracking. No production approval.
+
+
+### Today milestone — source-derived QA gate (2026-10-25)
+- Preview test policy: source-specific Today changes must be tested against a FULL APP DEMO rebuilt from the exact design-branch head, never a stale checked-in demo snapshot. Card UX acceptance means state-complete testing and user visual approval, not source string assertions alone. PR #123 remains draft.
