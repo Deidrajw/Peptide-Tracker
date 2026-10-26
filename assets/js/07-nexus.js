@@ -235,7 +235,7 @@ function supplyModal(existing, presetName) {
   body.insertBefore(stepHeader,stages[0]);
   const nav=document.createElement("div");nav.className="nx-kit-wizard-navigation";
   nav.innerHTML='<p class="nx-kit-wizard-error" role="alert" hidden></p><div class="nx-kit-wizard-buttons"><button type="button" id="nx-kit-back">Back</button><button type="button" id="nx-kit-next">Continue</button></div>';
-  if(editorFooter){editorFooter.classList.add("nx-kit-wizard-footer");editorFooter.appendChild(nav);m.appendChild(editorFooter);}
+  if(editorFooter){editorFooter.classList.add("nx-kit-wizard-footer");editorFooter.appendChild(nav);nav.querySelector(".nx-kit-wizard-buttons").appendChild(saveAction);m.appendChild(editorFooter);}
   const back=m.querySelector("#nx-kit-back"),next=m.querySelector("#nx-kit-next"),error=m.querySelector(".nx-kit-wizard-error");
   let currentStep=0;
   const read=id=>m.querySelector("#"+id)?.value||"";
@@ -257,7 +257,7 @@ function supplyModal(existing, presetName) {
     }
     if(currentStep===1&&m.querySelector("#shasopen")?.checked){
       const rem=read("sremaining");
-      if(rem!==""&&(!Number.isFinite(Number(rem))||Number(rem)<0))return "Remaining amount cannot be negative.";
+      if(rem!==""&&(!Number.isFinite(Number(rem))||Number(rem)<0||doseToMg(Number(rem),cfg(read("sname")).unit)>Number(read("svmg"))))return "Remaining amount must be between zero and one full vial.";
     }
     return "";
   };
@@ -268,6 +268,8 @@ function supplyModal(existing, presetName) {
     stepHeader.querySelector(".nx-kit-wizard-track span").style.width=((currentStep+1)/3*100)+"%";
     back.hidden=currentStep===0;next.hidden=currentStep===2;
     saveAction.hidden=currentStep!==2;
+    saveAction.style.setProperty("display",currentStep===2?"block":"none","important");
+    next.style.setProperty("display",currentStep===2?"none":"block","important");
     if(currentStep===2)updateReview();
     error.hidden=true;
     body.scrollTop=0;
@@ -278,7 +280,7 @@ function supplyModal(existing, presetName) {
   if(originalSelect){
     const field=originalSelect.parentElement;
     const combo=document.createElement("div");combo.className="nx-kit-combobox";
-    combo.innerHTML='<input id="nx-kit-combobox-input" type="search" role="combobox" aria-label="Search compound" aria-expanded="false" aria-controls="nx-kit-combobox-list" autocomplete="off" placeholder="Search compounds"><div id="nx-kit-combobox-list" role="listbox" hidden></div>';
+    combo.innerHTML='<input id="nx-kit-combobox-input" class="inp" type="search" role="combobox" aria-autocomplete="list" aria-label="Compound · type to search or browse" aria-expanded="false" aria-controls="nx-kit-combobox-list" autocomplete="off" placeholder="Search or choose compound"><div id="nx-kit-combobox-list" role="listbox" hidden></div>';
     originalSelect.insertAdjacentElement("afterend",combo);
     originalSelect.classList.add("nx-kit-original-select");
     const input=combo.querySelector("input"),list=combo.querySelector('[role="listbox"]');
@@ -294,7 +296,8 @@ function supplyModal(existing, presetName) {
       filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.textContent=o.name;b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
       list.hidden=false;input.setAttribute("aria-expanded","true");
     };
-    input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape")closeList();else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
+    input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
+    list.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();closeList();input.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const bs=[...list.querySelectorAll('[role="option"]')],i=bs.indexOf(document.activeElement);bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
     combo.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!combo.contains(document.activeElement))closeList();});});
   }
   paint();
