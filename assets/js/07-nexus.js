@@ -110,6 +110,24 @@ function supplyModal(existing, presetName) {
     <input id="snotes" class="inp" value="${esc(f.notes||"")}" placeholder="e.g. Lot #ABC, ordered from XYZ" style="margin-bottom:18px">
     <button id="ssave" class="btn-primary" style="background:#C9A0FF">SAVE KIT</button>
   `, "#C9A0FF");
+  // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
+  m.classList.add("nx-stash-kit-editor");
+  const originalTitle=m.querySelector(".mono");
+  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");}
+  const controls=["sname","stv","svmg","srecon","sremaining","sbac","sexp","scost","scur","sloc","snotes"];
+  controls.forEach(id=>{
+    const control=m.querySelector("#"+id);
+    if(!control)return;
+    const previous=control.previousElementSibling;
+    if(previous?.matches("label.field-label")){
+      previous.htmlFor=id;
+      previous.classList.add("nx-kit-editor-label");
+    }
+  });
+  const saveAction=m.querySelector("#ssave");
+  if(saveAction){saveAction.classList.add("nx-kit-editor-save");const footer=document.createElement("div");footer.className="nx-kit-editor-footer";saveAction.parentNode.insertBefore(footer,saveAction);footer.appendChild(saveAction);}
+  const blendSwitch=m.querySelector("#sw-blend");
+  if(blendSwitch)blendSwitch.classList.add("nx-kit-editor-blend-switch");
   m.querySelector("#x").onclick = closeModal;
   const swBlend = m.querySelector("#sw-blend");
   if (swBlend) swBlend.onclick = () => { closeModal(); addBlendKitModal(null); };
