@@ -715,3 +715,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - User explicitly ordered CONTINUE, retaining full-app Hybrid redesign as initial scope. Added `nx-hybrid-expanded-compound` presentation hook to `assets/js/08-nexus.js` commit `685a6aab` (no logic change); CSS commit `593e6d19` styles expanded compound headers, actions, tracking disclosure and weekly summary in both themes, including 320px overrides. No insight, history, notification, accounting or state logic removed.
 - This is a first component-level visual consistency pass, NOT completed modal audit or full screen functional acceptance. Stash Prepare/Open New Vial audit is still open.
 - **ONE NEXT ACTION:** verify exact-head source-parity full-app builds/browser suite, review expanded/daily tracking/weekly visual screenshots at 320/390 dark/light, then fix identified regressions before Protocol/Plans work or deployment.
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- New Today expanded-card hierarchy coded on draft PR #123 at JS commit 464e07de and CSS commit fd66a187. Last/Next fact comparison and semantic timing layout changed; dose math, handlers, saved data unchanged. Browser QA, 320/390 dual-theme visual inspection, iPhone and exact-head LIVE/DEMO build NOT TESTED. No merge/deploy. NEXT ACTION: fix failed browser QA and inspect rendered Today expanded, tracking, weekly sections.
