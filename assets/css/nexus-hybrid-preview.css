@@ -939,3 +939,28 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
  .nexus-screen-home .nx-compound-info-tabs{padding:7px!important}
  .nexus-screen-home .nx-info-segments label{font-size:11px;padding:8px 2px}
 }
+
+/* Today action simplification: intrinsic two-action layout, not reserved three-column slots. */
+.nexus-screen-home .nx-compound-card .nx-compound-actions{
+ display:grid!important;
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,126px),1fr))!important;
+ gap:8px!important;
+}
+.nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{
+ display:inline-flex;align-items:center;justify-content:center;
+ margin-left:auto;white-space:nowrap;
+ font-size:12px;font-weight:650;color:var(--t2);
+}
+.nexus-screen-home .nx-compound-card .nx-card-top{
+ gap:8px!important;
+}
+.nexus-screen-home .nx-compound-card .nx-compound-chevron{
+ flex-shrink:0!important;
+}
+.nexus-screen-home .nx-compound-card .nx-compound-header:focus-visible{
+ outline:2px solid #b99be9;outline-offset:3px;border-radius:12px;
+}
+@media(max-width:359px){
+ .nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{font-size:11px}
+ .nexus-screen-home .nx-compound-card .nx-compound-actions{grid-template-columns:repeat(auto-fit,minmax(min(100%,104px),1fr))!important}
+}
