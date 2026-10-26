@@ -832,7 +832,7 @@ function addBlendKitModal(blendNameOrKit) {
 
     ${!isEdit?`<div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1"><label class="field-label">VIALS ON HAND</label><input id="bk-vials" type="number" min="1" class="inp" value="1"></div>
-      <div style="flex:1"><label class="field-label" for="bk-bac-edit">BAC WATER (mL)</label><p class="hint" style="margin:8px 0">Set the per-vial BAC water amount in Preparation & storage.</p></div>
+      <div style="flex:1"><p class="hint" style="margin:8px 0">Set preparation details in the next step.</p></div>
     </div>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" checked style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
     <div style="display:flex;gap:10px;margin-bottom:12px">
