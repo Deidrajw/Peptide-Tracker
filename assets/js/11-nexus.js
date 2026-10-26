@@ -1351,9 +1351,9 @@ function phaseRoadmapModal(protocolId, compoundName) {
 function manageProtocolMenu(protoId) {
   const p = state.protocols?.find(x=>String(x.id)===String(protoId)); if(!p) return;
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:15px;font-weight:600;color:var(--t1)">Manage ${esc(p.name)}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-sprint2-action-head">
+      <div class="nx-sprint2-action-heading"><span class="nx-sprint2-action-eyebrow">PROTOCOL ACTIONS</span><strong>Manage ${esc(p.name)}</strong></div>
+      <button type="button" id="x" class="nx-sprint2-action-close" aria-label="Close protocol actions">✕</button>
     </div>
     <button id="mp-edit" class="sheet-row">Edit protocol<div class="sub">Change compounds, schedule, or phases</div></button>
     ${p.status==="in_progress"?`<button id="mp-pause" class="sheet-row">Pause protocol<div class="sub">Temporarily stop — phase timing picks up where it left off on resume</div></button>
@@ -1543,9 +1543,9 @@ function managePlanItemMenu(type, id) {
   const label = type==="goal"?"goal":type==="research"?"research item":"shopping item";
   const itemName = item.name || item.compound || item.item || label;
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:15px;font-weight:600;color:var(--t1)">${esc(itemName)}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-sprint2-action-head">
+      <div class="nx-sprint2-action-heading"><span class="nx-sprint2-action-eyebrow">PLAN ACTIONS</span><strong>${esc(itemName)}</strong></div>
+      <button type="button" id="x" class="nx-sprint2-action-close" aria-label="Close plan actions">✕</button>
     </div>
     <button id="pm-edit" class="sheet-row">Edit</button>
     <button id="pm-delete" class="sheet-row danger">Delete<div class="sub">Removes this ${esc(label)} — cannot be undone</div></button>
