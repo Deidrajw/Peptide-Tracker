@@ -93,6 +93,21 @@ try {
   assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Overview not restored after phase roadmap");
   await pg.locator(".nx-proto-detail-close").click();
   assert(await pg.locator(".nx-proto-detail-page").count()===0,"Protocol overview failed to close");
+  // Cross-navigation with fictional goal association: read-only navigation, no persistence.
+  await pg.evaluate(()=>{
+    const p=state.protocols?.[0];if(!p)throw Error("No demo protocol fixture");
+    const linked={id:"qa-protocol-linked-goal",name:"Fictional linked goal",category:"Personal",status:"active",progressModel:{type:"exploratory"}};
+    state.plans=state.plans||{goals:[],research:[],shopping:[]};
+    state.plans.goals=[...(state.plans.goals||[]).filter(g=>String(g.id)!==linked.id),linked];
+    p.linkedGoalId=linked.id;tab="protocols";render();
+  });
+  await pg.locator(".nx-proto-view-overview").first().click();
+  assert(await pg.locator(".nx-proto-linked-goal").count()===1,"Linked goal entry missing from Overview");
+  await pg.locator(".nx-proto-linked-goal").click();
+  assert(await pg.evaluate(()=>tab==="plans" && state._plansSub==="goals"),"Linked goal did not navigate to Plans Goals");
+  assert(await pg.locator(".nx-goal-detail").isVisible(),"Linked goal detail did not open");
+  assert((await pg.locator(".nx-goal-detail").innerText()).includes("Fictional linked goal"),"Linked goal navigation opened wrong goal");
+  await pg.locator("#nx-goal-detail-close").click();
   await pg.evaluate(()=>{tab="stash";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
   const kitSummary=pg.locator(".nx-kit-card details>summary").first();
   if (await kitSummary.count()) {
