@@ -601,3 +601,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Goals visual density correction (DRAFT)
 - `457652a8`, `f5be4806`: remove duplicate Plans counts, shorten repeat progress copy and tighten Goal cards while retaining detail/management handlers. No data schema change; newest-head QA/artifacts and iPhone acceptance pending. Not deployed.
+
+
+### 2026-10-26 Approved Goals preview restored (DRAFT)
+- Commits d98d7b78 and 7727191f restore originally accepted spacious Goals card in place of compact experiment. No migration. New-head QA pending; not deployed.
