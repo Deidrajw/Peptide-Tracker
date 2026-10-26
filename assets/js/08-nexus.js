@@ -22,7 +22,7 @@ function peptideCardHTML(name, data, opts={}) {
     return `<div class="card" style="border-color:#F9C87D33;opacity:0.85">
       <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
-        <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name)}</span>
+        <span class="nx-expanded-name" style="flex:1">${esc(name)}</span>
         ${statusBadge("⏸ Paused", "warning")}
         ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">Hide details</button>`:""}
       </div>
@@ -87,7 +87,7 @@ function peptideCardHTML(name, data, opts={}) {
   return `<div class="card nx-hybrid-expanded-compound" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
     <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
-      <span class="mono nx-expanded-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name.toUpperCase())}</span>
+      <span class="nx-expanded-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
       
       ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0">Hide details</button>`:""}
     </div>
@@ -137,18 +137,18 @@ function peptideCardHTML(name, data, opts={}) {
       </div>
       <div class="nx-info-panel nx-info-insights">
         ${(()=>{const tv=getTimingVariance(data);if(!tv)return "";const mag=Math.abs(tv.avgMinutes),dir=tv.avgMinutes>0?"after":"before";return `<div class="nx-insight-fact"><strong>Logging time pattern</strong><span>${mag<5?"Usually logged near the scheduled time":`Usually logged about ${mag} minutes ${dir} the scheduled time`} · ${tv.sampleSize} records</span></div>`;})()}
-        ${nxInsightCount || siteWarn ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
+        ${nxInsightCount || siteWarn || getTimingVariance(data) ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
     <div class="nx-insight-list">
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
-      currentPh.id==="activation"  ? `⚡ Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
-      currentPh.id==="rising"      ? `📈 Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
-      currentPh.id==="peak"        ? `🎯 Peak Effect — estimated peak concentration. Appetite suppression and food noise at their strongest. Metabolic rate most elevated above baseline. Avoid undereating.` :
-      currentPh.id==="cruise"      ? `🛳 Cruise Phase — levels stable near peak, effects consistent. This is your steadiest window — good time to assess how you feel at this dose.` :
+      currentPh.id==="activation"  ? `Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
+      currentPh.id==="rising"      ? `Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
+      currentPh.id==="peak"        ? `Peak Effect — estimated peak concentration. Appetite suppression and food noise at their strongest. Metabolic rate most elevated above baseline. Avoid undereating.` :
+      currentPh.id==="cruise"      ? `Cruise Phase — levels stable near peak, effects consistent. This is your steadiest window — good time to assess how you feel at this dose.` :
       currentPh.label
     }</div>`:""}
-    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">💡 Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
-    ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">📉 Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
-    ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0">📈 <b>Escalation check:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
+    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
+    ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
+    ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0"><b>Protocol review:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
 
     ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D"><b>Site rotation</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
     </div>      </div>
@@ -742,7 +742,7 @@ function weeklyView() {
         <div style="font-size:8px;color:${today?"#7DF9C0":"#444"};margin-top:3px">${d.date.getDate()}</div>
       </div>`;
     }).join("")}</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${top.length?12:0}px">${[["SHOTS",shots],["WEIGH-INS",dd.filter(d=>d.weight).length],["CHECK-INS",dd.filter(d=>d.daily).length]].map(([l,v])=>`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div style="font-size:16px;font-weight:700;color:var(--t2)">${v}</div></div>`).join("")}</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${top.length?12:0}px">${[["SHOTS",shots],["WEIGH-INS",dd.filter(d=>d.weight).length],["CHECK-INS",dd.filter(d=>d.daily).length]].map(([l,v])=>`<div><div class="nx-expanded-fact-label">${l}</div><div style="font-size:16px;font-weight:700;color:var(--t2)">${v}</div></div>`).join("")}</div>
     ${top.length?`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:6px">MOST LOGGED SYMPTOMS</div><div style="display:flex;gap:6px;flex-wrap:wrap">${top.map(([n,c])=>`<span class="pill" style="background:rgba(255,255,255,.05);color:var(--t3);border:1px solid #2e2e2e">${esc(n)} ×${c}</span>`).join("")}</div></div>`:""}
   </div>`;
   return html;
