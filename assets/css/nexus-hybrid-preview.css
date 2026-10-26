@@ -1866,3 +1866,28 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
   .nexus-screen-plans .nx-plan-2-goal,
   .nexus-screen-plans .nx-plan-2-research{padding:13px!important}
 }
+
+
+/* Sprint 02A — shared Protocol and Plans bottom-sheet action hierarchy. */
+.nx-sprint2-action-head {
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;min-width:0;margin-bottom:16px;
+}
+.nx-sprint2-action-heading {display:grid;gap:5px;min-width:0;padding-top:3px}
+.nx-sprint2-action-eyebrow {
+  color:var(--t3);font-size:10px;letter-spacing:.9px;font-weight:750;
+}
+.nx-sprint2-action-heading strong {
+  font-size:17px;line-height:1.35;color:var(--t1);
+  font-weight:700;overflow-wrap:anywhere;
+}
+.nx-sprint2-action-close {
+  display:grid;place-items:center;flex:0 0 44px;
+  width:44px;height:44px;border-radius:12px;
+  border:1px solid var(--border-sub);
+  background:var(--surface-2);color:var(--t1)!important;
+  font-size:17px;line-height:1;
+}
+.nx-sprint2-action-close:focus-visible {
+  outline:2px solid var(--nx-hybrid-accent);outline-offset:2px;
+}
