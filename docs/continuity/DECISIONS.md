@@ -532,3 +532,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Goal density refinement
 - User rejected earlier Goals card pass as visually unchanged. Approved direction is less redundant summary, fewer stacked labels and more compact hierarchy; preserve accessible 44px controls and actual evidence. Draft implementation only, user visual acceptance pending.
+
+## 2026-10-26 — Original Goals preview is approved visual reference
+- User provided two screenshots of the original in-chat Goals preview and rejected the subsequent compact experiment. Preserve original spacious card hierarchy (title, status, target, meaningful progress, linked protocol, View goal details) and original detail sections. Do not independently reimagine or compact an already-approved preview. `d98d7b78`, `7727191f` are draft restoration commits; real UI acceptance pending.
