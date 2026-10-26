@@ -1658,20 +1658,21 @@ function homeView() {
         </div>
         <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`;
-  const renderGroup = (items, icon, label) => items.length ? `<details class="app-detail" style="margin-bottom:14px" ${items.length<=1?"open":""}>
-      <summary>
-        <span style="font-size:14px">${icon}</span>
-        <span style="font-size:12px;font-weight:600;color:var(--t2);flex:1">${label}</span>
-        <span style="font-size:11px;color:var(--t4)">${items.length} item${items.length===1?"":"s"}</span>
-        
-      </summary>
-      <div class="app-detail-body" style="padding:0;overflow:hidden">
-        ${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}
-      </div>
-    </details>` : "";
+  // Alert inbox: alerts remain actionable and managed, but no longer push the schedule off screen.
   const dismissedCount=Object.keys(dismissedReminders).length;
-  const todayAttentionHtml = renderGroup(needsAttnItems, "🔔", "Needs attention") + renderGroup(forYouItems, "✨", "For you") + (dismissedCount ? `<div class="nexus-dismissed-alerts"><button type="button" id="restore-dismissed-alerts">Manage dismissed alerts (${dismissedCount})</button></div>` : "");
-
+  const alertCount=needsAttnItems.length+forYouItems.length;
+  const renderAlertSection=(items,label)=>items.length?`<section class="nx-alert-section"><h3>${label}<span>${items.length}</span></h3><div class="nx-alert-items">${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}</div></section>`:"";
+  const todayAttentionHtml=`<div class="nx-alert-overlay" id="nx-alert-overlay" hidden>
+    <button type="button" class="nx-alert-scrim" id="nx-alert-dismiss" aria-label="Close notifications"></button>
+    <section class="nx-alert-sheet" role="dialog" aria-modal="true" aria-labelledby="nx-alert-heading" tabindex="-1">
+      <div class="nx-alert-handle" aria-hidden="true"></div>
+      <div class="nx-alert-heading"><div><h2 id="nx-alert-heading">Needs attention</h2><p>${alertCount} active notice${alertCount===1?"":"s"}</p></div><button type="button" id="nx-alert-close" aria-label="Close notifications">Close</button></div>
+      <div class="nx-alert-scroll">${renderAlertSection(needsAttnItems,"Action needed")}${renderAlertSection(forYouItems,"For you")}
+      ${alertCount?"":'<p class="nx-alert-empty">You’re all caught up.</p>'}
+      ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
+    </section>
+  </div>`;
+  html+=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true">${nxCompoundMenuIcon("bell")}</span><span>Needs attention</span><span class="nx-alert-count">${alertCount}</span><span class="nx-alert-hint">Review notices</span></button>`;
   // THIS WEEK — merged schedule strip + summary
   // (dosingTimeline now embedded in Today card above)
   const weekStart2=startOfWeek(logicalNow());
@@ -1758,7 +1759,7 @@ function homeView() {
   else if (homeViewKey==="active") html += renderActiveFullView(started);
   else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
-  html += todayAttentionHtml; // contextual alerts appear after the schedule, not between progress and schedule
+  html += todayAttentionHtml; // hidden modal remains available without occupying Today layout
   // Daily tracking uses real dated records; the activity selection only changes the
   // progress denominator, never whether an entry exists. Persist settings, not synthetic logs.
   const trackingItems=[
@@ -1784,26 +1785,20 @@ function homeView() {
   const todayInstanceRows=(getWeekInstances([today])[today]||[]).filter(slot=>!slot.adhoc);
   const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc);
   const countStatus=(rows,name)=>rows.filter(x=>x.status===name).length;
-  const selectedActivityPeriod=state._todayActivityPeriod==="week"?"week":"today";
-  const activityPanel=(rows,period)=>{
-    const completed=countStatus(rows,"taken"), total=rows.length;
-    const unresolved=rows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
-    const skipped=countStatus(rows,"skipped"),moved=countStatus(rows,"moved");
-    const pct=total?Math.round(completed/total*100):null;
-    return `<div class="nx-activity-panel" data-activity-panel="${period}" ${period===selectedActivityPeriod?"":"hidden"}>
-      <div class="nx-activity-top"><strong>${total?`${completed} <small>/ ${total}</small>`:"—"}</strong><span>${pct===null?"No scheduled occurrences":pct+"% complete"}</span></div>
-      <p class="nx-activity-sub">Scheduled occurrences completed</p>
-      ${total?`<div class="nx-daily-track-progress" role="progressbar" aria-label="${period} scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${completed}"><span style="width:${pct}%"></span></div>`:""}
-      <div class="nx-activity-stats"><span><strong>${completed}</strong>Completed</span><span><strong>${total}</strong>Scheduled</span><span><strong>${unresolved}</strong>Unresolved</span></div>
-      ${skipped||moved?`<p class="nx-activity-sub">${skipped?skipped+" skipped":""}${skipped&&moved?" · ":""}${moved?moved+" rescheduled":""}</p>`:""}
-      ${period==="week"?thisWeekCardHtml:""}
-    </div>`;
-  };
-  html+=`<section class="nx-today-activity" aria-label="Your activity"><div class="nx-today-activity-head"><h3>Your activity</h3><div class="nx-activity-segments" role="group" aria-label="Activity period"><button type="button" class="nx-activity-period" data-period="today" aria-pressed="${selectedActivityPeriod==="today"}">Today</button><button type="button" class="nx-activity-period" data-period="week" aria-pressed="${selectedActivityPeriod==="week"}">This week</button></div></div>
-    ${activityPanel(todayInstanceRows,"today")}${activityPanel(weekInstanceRows,"week")}
-    <p class="nx-daily-track-note">Scheduled occurrences only. Additional actual dose records are counted separately in history; upcoming is not missed.</p>
+  // Weekly metrics are the same canonical scheduled-occurrence counts as the existing reports.
+  // The Today hero already owns today's counts, so do not duplicate them here.
+  const elapsedWeekRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc&&slot.status!=="paused");
+  const weekDone=elapsedWeekRows.filter(slot=>slot.status==="taken").length;
+  const weekOpen=elapsedWeekRows.filter(slot=>["overdue","due_now","due_later_today","upcoming"].includes(slot.status)).length;
+  const weekSkipped=elapsedWeekRows.filter(slot=>slot.status==="skipped").length;
+  const weekTotal=elapsedWeekRows.length;
+  const weekPercent=weekTotal?Math.round(weekDone/weekTotal*100):null;
+  html+=`<section class="nx-today-activity nx-week-compact" aria-label="This week">
+    <div class="nx-today-activity-head"><div><h3>This week</h3><p class="nx-activity-sub">${weekRangeLabel} · Week in progress</p></div><div class="nx-week-score"><strong>${weekTotal?`${weekDone} / ${weekTotal}`:"—"}</strong><span>${weekPercent===null?"No scheduled occurrences":weekPercent+"% logged"}</span></div></div>
+    ${weekTotal?`<div class="nx-daily-track-progress" role="progressbar" aria-label="This week scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${weekTotal}" aria-valuenow="${weekDone}"><span style="width:${weekPercent}%"></span></div>`:""}
+    <div class="nx-activity-stats"><span><strong>${weekDone}</strong>Completed</span><span><strong>${weekOpen}</strong>Unresolved</span><span><strong>${weekSkipped}</strong>Skipped</span></div>
+    ${thisWeekCardHtml}
   </section>`;
-
 
   // Coming Up is prospective; the week report above is retrospective. Never render
   // finished, skipped or moved occurrences as future scheduled actions.
