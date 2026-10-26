@@ -18,7 +18,7 @@ try{
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
-    await page.evaluate(()=>render());
+    await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
     check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
