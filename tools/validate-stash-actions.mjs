@@ -55,6 +55,7 @@ try{
   ensure(await page.locator('#nx-blend-next').count()===1,'Guided blend navigation missing');
   ensure(!(await page.locator('#bk-active').isChecked()),'New blend unexpectedly opens first vial by default');
   ensure(await page.locator('#bk-save').isHidden(),'New blend Save visible before Review');
+  await page.screenshot({path:'dist/stash-blend-step1-'+mode+'-'+theme+'-'+width+'.png'});
   await page.locator('.nx-blend-compound-trigger').first().fill('BPC');
   ensure(await page.locator('.nx-blend-compound-option').count()>0,'Blend combobox search did not return options');
   await page.locator('#bk-name').fill('QA Fixture Blend');
@@ -68,11 +69,13 @@ try{
   await page.locator('.comp-mg-input').nth(1).fill('5');
   await page.locator('#nx-blend-next').click();
   ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"]').evaluate(el=>!el.hidden),'Preparation step not visible');
+  await page.screenshot({path:'dist/stash-blend-step2-'+mode+'-'+theme+'-'+width+'.png'});
   await page.locator('#bk-bac-edit').fill('2.5');
   await page.locator('#bk-vials').fill('3');
   await page.locator('#bk-cost').fill('190');
   await page.locator('#nx-blend-next').click();
   ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('CAD $190')),'Review differs from entered BAC/cost');
+  await page.screenshot({path:'dist/stash-blend-review-'+mode+'-'+theme+'-'+width+'.png'});
   ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
   await page.locator('#bk-save').click();
   const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
