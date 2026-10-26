@@ -2083,3 +2083,16 @@ html[data-theme="light"] .nexus-screen-plans .nx-plan-2-research .manage-plan-bt
 .nx-phase-roadmap-title{flex:1;min-width:0;color:var(--t1);font-size:15px;font-weight:750;line-height:1.3;overflow-wrap:anywhere}
 .nx-phase-return,.nx-phase-roadmap-close{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;background:var(--surface-2);color:var(--t1);border:1px solid var(--border-sub);border-radius:12px}
 .nx-phase-return:focus-visible,.nx-phase-roadmap-close:focus-visible{outline:2px solid var(--nx-hybrid-accent);outline-offset:2px}
+
+
+/* Sprint 02A — approved low-redundancy Protocol list → Overview → phase timeline. */
+.nexus-screen-protocols .nx-protocol-compact .nexus-protocol-card-head{margin-bottom:10px!important}
+.nexus-screen-protocols .nx-protocol-compact .nexus-protocol-summary{margin:5px 0 13px!important}
+.nexus-screen-protocols .nx-proto-compact-progress{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 12px;margin:0 0 9px;color:var(--t2);font-size:12px;line-height:1.4}
+.nexus-screen-protocols .nx-proto-compact-progress span{overflow-wrap:anywhere}
+.nexus-screen-protocols .nx-proto-compact-progress strong{color:var(--t1);font-size:12px;white-space:nowrap}
+.nexus-screen-protocols .nx-proto-compact-track{height:7px;margin-bottom:12px;border-radius:99px;background:var(--border-sub);overflow:hidden}
+.nexus-screen-protocols .nx-proto-compact-track span{display:block;height:100%;border-radius:99px;background:#ae83e4}
+.nexus-screen-protocols .nx-protocol-compact .nx-proto-view-overview{margin:10px 0 0;min-height:48px;background:var(--surface-2);font-size:13px}
+.nexus-screen-protocols .nx-protocol-compact .nexus-protocol-start{margin-top:12px}
+.nx-proto-detail-context{font-size:12px;color:var(--t3);font-weight:750;text-transform:uppercase;letter-spacing:1px;margin:0 0 14px}
