@@ -629,3 +629,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Goals Add Goal top placement (DRAFT / UNRELEASED)
 - `efbbd544`: moves existing Add Goal action to top of Goals section and removes bottom duplicate; `7706e8f7`: responsive 46px header styling. No schema or persistent data changes. New-head automated/mobile/physical QA pending; no merge/deploy. Next: Research and Shopping design audit.
+
+### 2026-10-26 — Research card density and Shopping action placement (DRAFT / UNRELEASED)
+- `5a060265` Research header/card semantic structure and single Intel chevron, `dd654713` chevron-free Show/Hide notes disclosure, `fca17f95` Shopping top Add Item, `cbd286c4` hybrid spacing/focus CSS, `477e6e59` and `d860c2d9` research browser assertions. No persistent schema modification and existing Add/Edit/Intel/inventory actions retained. Latest-head CI, full-app DEMO, LIVE ZIP and physical iPhone signoff INCOMPLETE. PR #123 draft/unmerged.
