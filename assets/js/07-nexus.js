@@ -1708,12 +1708,12 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   if (isExpanded) return peptideCardHTML(name, data, {showCollapseChevron:true, view});
 
   if (status === "paused") {
-    return `<div class="card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
-      <div class="compound-compact-tap" data-name="${esc(name)}" data-view="${esc(view)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
+    return `<div class="card nx-compound-card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
+      <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
         <div style="width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0"></div>
-        <span style="font-size:14px;font-weight:600;color:var(--t2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
+        <span class="nx-today-compound-name" style="flex:1;min-width:0">${esc(name)}</span>
         ${statusBadge("⏸ Paused","warning")}
-        <span class="nx-compound-chevron" aria-hidden="true"></span>
+        <span class="nx-compact-disclosure nx-today-disclosure" aria-hidden="true">${nxTodayDisclosureInner(false)}</span>
       </div>
       <button class="resumepep" data-name="${esc(name)}" style="width:100%;min-height:36px;margin-top:8px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;font-size:11px;font-weight:600">▶ Resume</button>
     </div>`;
