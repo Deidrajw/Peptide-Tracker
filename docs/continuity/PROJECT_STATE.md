@@ -723,3 +723,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Segmented Today information follow-up
 - User iPhone screenshot review identified dense expanded Today insights, three competing notices and unwanted site-rotation emoji. Branch commits cf74e60b + 6ff6ec2c added pill-shaped native-radio Insights / History / Details switcher; kept overdue badges/primary logging outside tabs, moved site rotation text into Insights and removed rotation emoji, preserved content and dose handlers. Browser QA for this head NOT TESTED; no merge/deploy. NEXT ACTION: verify latest-head CI and actual 320/390 light/dark segmented-panel interactions before daily tracking/weekly summary.
+
+
+### 2026-10-25 — Segmented Today follow-up, draft PR #123
+- User approved pill-shaped Insights / History / Details organization for expanded Today. Existing implementation commits `cf74e60b` and `6ff6ec2c` add segmented views, existing insight content, history summary and schedule details. Commit `ae8ff5da` removes competing duplicate header Intel action; Intel remains reachable inside Details. Site rotation notice now uses text without the rotation emoji.
+- This remains design-branch-only. Real dose/status math, saved data and administration actions not intentionally modified. Latest-head full browser QA, native keyboard tab semantics, full history interaction and physical iPhone acceptance are UNVERIFIED. Prior full-app QA failure remains a release gate until exact-head passing evidence.
+- **ONE NEXT ACTION:** validate rendered segmented tabs and actions in latest-source isolated FULL-APP DEMO at 320/390 both themes; repair full-app browser QA and history flow before resuming Daily Tracking/Weekly Summary. Do not merge or deploy.
