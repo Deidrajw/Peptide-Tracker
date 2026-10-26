@@ -164,6 +164,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-unified-more-svg').count()===1,'Management outline SVG missing');
 
  ensure(await page.locator('.nx-research-title').count()===1,'Research compound title hierarchy missing');
+ ensure(await page.locator('#add-research').count()===1,'Top Add Research missing or duplicated');
+ ensure(await page.locator('.nx-research-page-header #add-research').count()===1,'Add Research not at top of queue');
+ ensure(await page.locator('.nx-research-card .nx-plan-link-icon').count()===1,'Research card must have exactly one visible navigation chevron');
+ ensure(await page.locator('.nx-research-note-toggle svg path').count()===3,'Notes toggle icon unexpected: use notebook, not a chevron');
+ ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='false','Notes should start collapsed');
+ ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes initially visible');
+ await page.locator('.nx-research-note-toggle').click();
+ ensure(await page.locator('.nx-research-note-body').isVisible(),'Research notes did not expand');
+ ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='true','Research notes missing expanded aria state');
+ await page.locator('.nx-research-note-toggle').click();
+ ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes failed to collapse');
 
  const headRules=async(sel)=>page.locator(sel).first().evaluate(el=>{
    const title=el.querySelector('.nx-card-status'),button=el.querySelector('button.manage-plan-btn,button.manage-proto-btn,button.nx-kit-header-manage');
