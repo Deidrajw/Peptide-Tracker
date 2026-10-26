@@ -79,8 +79,10 @@ try {
   assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Protocol progress ring missing");
   assert(await pg.locator(".nx-proto-detail-compound").count()>0,"Protocol compound drilldowns missing");
   assert(await pg.locator(".nx-proto-detail-tabs").count()===0,"Redundant Protocol detail tabs returned");
+  await pg.screenshot({path:"dist/protocol-overview-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator(".nx-proto-detail-compound").first().click();
   assert(await pg.locator(".nx-phase-vertical-timeline").isVisible(),"Compound phase timeline failed to open");
+  await pg.screenshot({path:"dist/protocol-phase-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   assert(await pg.locator(".nx-phase-return").count()===1,"Phase roadmap back control missing");
   await pg.locator(".nx-phase-return").click();
   assert(await pg.locator(".nx-proto-detail-page").isVisible(),"Timeline did not return to Overview");
