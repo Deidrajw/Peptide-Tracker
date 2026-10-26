@@ -1678,3 +1678,61 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
   .nexus-screen-stash .nx-kit-title-stack {row-gap:5px}
   .nexus-screen-stash .nx-kit-header-manage {flex-basis:44px}
 }
+
+
+/* Sprint 02A — Protocol card hierarchy: visual-only, preserve native details
+   disclosure, existing Manage bottom sheet, dose action and phase timeline. */
+.nexus-screen-protocols .nexus-protocol-card {
+  min-width:0;overflow:visible;
+  padding:17px!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,var(--surface),var(--surface-2))!important;
+  border:1px solid var(--border-sub)!important;
+  box-shadow:0 8px 24px #11091b16!important;
+}
+.nexus-screen-protocols .nexus-protocol-card-head {
+  min-width:0;align-items:flex-start!important;gap:10px!important;
+  margin-bottom:10px!important;
+}
+.nexus-screen-protocols .nexus-protocol-card-head>div:first-child {
+  flex:1 1 auto;min-width:0;
+}
+.nexus-screen-protocols .nx-proto-title {
+  overflow-wrap:anywhere;line-height:1.3;
+  letter-spacing:-.3px;
+}
+.nexus-screen-protocols .nexus-protocol-card .manage-proto-btn {
+  display:grid!important;place-items:center!important;
+  flex:0 0 44px;min-width:44px!important;min-height:44px!important;
+  width:44px!important;height:44px!important;
+  margin-left:auto;border-radius:12px!important;
+}
+.nexus-screen-protocols .nexus-protocol-summary {
+  overflow-wrap:anywhere;line-height:1.5;
+}
+.nexus-screen-protocols .nexus-protocol-meta,
+.nexus-screen-protocols .nexus-protocol-muted {
+  overflow-wrap:anywhere;line-height:1.5;
+}
+.nexus-screen-protocols .nexus-protocol-details {
+  min-width:0;
+}
+.nexus-screen-protocols .nexus-protocol-details>summary {
+  min-height:44px;display:flex;align-items:center;
+  overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nexus-protocol-details-body {
+  min-width:0;overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nexus-protocol-card :is(.manage-proto-btn,.proto-log-first,.proto-activate):focus-visible,
+.nexus-screen-protocols .nexus-protocol-details>summary:focus-visible {
+  outline:2px solid var(--nx-hybrid-accent)!important;
+  outline-offset:2px!important;
+}
+.nexus-screen-protocols .nexus-protocol-card :is(.proto-log-first,.proto-activate) {
+  min-height:44px;
+}
+@media(max-width:359px) {
+  .nexus-screen-protocols .nexus-protocol-card {padding:13px!important}
+  .nexus-screen-protocols .nexus-protocol-card-head {gap:7px!important}
+}
