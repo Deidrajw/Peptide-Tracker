@@ -438,3 +438,7 @@
 
 ### 2026-10-25 — Today expanded screenshot audit
 - 2026-10-25 preview-only PR #123 commits 4c1ba682, 56f215c8, 59c6e7b6: expanded Today overdue de-duplication, visual timing/data hierarchy, per-occurrence labels and hit targets, completed-state notice. No persistent schema, calculation or inventory edits intended. QA NOT TESTED at this head. LIVE ZIP/isolated FULL DEMO INCOMPLETE; Cloudflare and merge not verified/authorized.
+
+
+### 2026-10-25 — Critical preview syntax hotfix
+- 2026-10-25 unreleased preview hotfix on draft PR #123: `77de882432af2ec48a0d44b3342af13f5b68df26` repairs missing `}` in `assets/js/08-nexus.js` expanded completed-dose presentation. Data impact: none intended; source code-only syntax correction. V8 syntax parse of scripts 07-12 PASS; browser UX, builds, Cloudflare deploy, physical iPhone NOT TESTED. No merge or production release. Standalone DEMO and LIVE ZIP INCOMPLETE.
