@@ -804,3 +804,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol detail status semantic correction
 - Code review found active protocol label incorrectly `Ready` and paused elapsed schedule potentially labelled ended; corrected in `5764db48`. **NOT TESTED** latest head for active/paused/ended/completed/unscheduled and multi-compound calculations. GitHub build/parity 40354741333 and mobile 40354741424 were IN PROGRESS at review; no Pass claimed.
+
+
+## 2026-10-26 — Protocol de-duplication latest-head checks
+- NOT TESTED: 320/390 dark/light list compactness, no old details expansion or extra detail tabs, proper View overview entry, correct ring and list progress for paused, completed, ended, unscheduled, multi-compound; compound tap → approved vertical roadmap → back to Overview, bottom-sheet close, Manage edit/pause/resume/complete confirmation, activation and first dose; unchanged dose history, drafts, inventory and stored data. Previous browser run 40355170877 failed Plans Research manage-surface contrast; do not claim latest-head Pass. Full source packages and physical iPhone not verified.
