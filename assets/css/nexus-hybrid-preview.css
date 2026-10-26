@@ -2220,3 +2220,13 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 #nx-dose-review-rows strong{color:var(--t1);text-align:right;overflow-wrap:anywhere;max-width:65%}
 .nx-dose-review-stage p{font-size:11px;line-height:1.5;color:var(--t2)}
 @media(prefers-reduced-motion:reduce){.nx-dose-step-track span{transition:none}}
+
+
+/* Dose flow: one sticky action footer, stable error and confirmation controls. */
+.nx2-dose-modal .nx-dose-footer .nx-dose-step-nav{padding:0 0 9px;margin:0}
+.nx2-dose-modal .nx-dose-step-actions{margin-top:8px}
+.nx2-dose-modal .nx-dose-step-error{padding:10px 12px;margin:0 0 10px;border-radius:10px;color:var(--t1);background:var(--surface-2);border:1px solid #B66B78;font-size:12px;line-height:1.4}
+.nx2-dose-modal .nx-dose-step-error[hidden]{display:none!important}
+.nx2-dose-modal .nx-dose-review-stage{margin-top:12px}
+.nx2-dose-modal .nx-dose-review-stage #nx-dose-review-rows>div{min-height:37px}
+.nx2-dose-modal .nx-dose-mode-switch button:focus-visible,.nx2-dose-modal .nx-dose-step-actions button:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
