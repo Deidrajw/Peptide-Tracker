@@ -539,3 +539,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-26 — Approved Add/Edit Goal four-step wizard
 - Approved design: one persistent bottom-sheet modal, four stages Basics / Progress / Connections / Review, Back/Continue and final Save, existing Goal data and Check-In associations preserved, no intermediate persisted writes. Reuse same wizard for Add and Edit. Implemented draft, browser/device acceptance pending.
 - Log Dose: quick vs guided concept approved for exploration; **not authorized as a dose accounting change**. Design and validate separately; preserve source selection, drafts, blend splits and inventory confirmation.
+
+## 2026-10-26 — Log Dose Quick/Guided design proposal (not coded)
+- Quick Log should reduce repeated entry for known routine doses while ALWAYS exposing compound, route, amount, vial source, calculated units and deductions for explicit confirmation. No silent recording or silently chosen source. Guided Log splits (1) compound/amount, (2) vial/source and allocation, (3) final review with per-vial and per-component breakdown for blends. Preserve original state, drafts, source selection, dose history, insufficient-inventory blocking and editing. User has approved design exploration, not merge/deploy or bypass of validation. Hybrid Soft Depth + Porcelain + Obsidian Precision styling.
