@@ -918,3 +918,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Corrected Stash regression and screenshot suite
 - PASS: full build/parity `40422263758` and mobile `40422263763` on application/test SHA `6d209ed5`, after updating obsolete Save-height assertion to require hidden Save before Review and >=44px visible Save at Review. Additional screenshot capture tests `ed77a3e7` and `dac2ba4a` pending newest-head QA. New images planned: Kit and Blend stages 1/2/Review, widths 320/390, themes dark/light, LIVE and full-app DEMO. Actual screenshots/real iPhone/VoiceOver NOT YET REVIEWED. Preserve physical screenshot reported defects as not accepted until resolved on real device.
+
+## 2026-10-26 — Passing candidate artifact evidence
+- Build 40422263758 PASS: Stash Cards 8/8, Stash Actions 8/8. Artifact 12698436592 downloaded/extracted: ZIP CRC good, root index and 21 manifest-listed files exact, standalone DEMO 2.56 MB, manifest notes ephemeral fictional data/no sync. Browser direct local render blocked by administrator; new 320/390 screen captures pending CI. Do not equate this candidate with user acceptance or deployment.
