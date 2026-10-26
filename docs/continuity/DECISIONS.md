@@ -492,3 +492,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 - User dislikes pill/timing/active-dosing cluster under Schedule & phases and present flat phase roadmap; wants redesigned surfaces. Also requests better Create/Edit builder and optional notification when recorded compound use continues after scheduled protocol phases. These are **design requests, not final approval of proposed layout**.
 - Distinguish schedule elapsed from user-confirmed protocol completion; never mark complete automatically. Explicit future scheduled activity is not proof of dose administration. Do not infer medical advice or automatically extend/copy dosing. Validate historical record association before prompting, respect dismissal, preserve localStorage, existing data and manual pause/resume.
 - Possible post-pause stale filter rendering is an observation to reproduce, not a confirmed defect diagnosis. Keep PR draft and production unchanged.
+
+
+## 2026-10-26 — Approved vertical phase timeline
+User explicitly approved the vertical phase timeline proposal. It replaces the flat phase list, emphasizes current stage, and distinguishes completed/current/upcoming. Keep existing phase dates and pause-aware calculation. Other proposed expanded-card, elapsed schedule prompt and builder redesign remain unapproved/not coded.
