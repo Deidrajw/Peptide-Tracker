@@ -520,3 +520,7 @@
 ### 2026-10-26 — PR #123 Calendar Logs validation checkpoint (DRAFT, NOT RELEASED)
 - PR #123 head `d6e3dfc4bf60592c7eb7296aa3038785d40fbef7`; source main base `c1c95e1da2749c3aa8c4459b81a04fc51d9b7f7e` at observation. User-approved Calendar Logs Day View + All Logs coded on design branch; not merged or deployed.
 - Mobile forms workflow 40334643562 PASS; full release workflow 40334643538 exact-source build/required files steps PASS, browser matrix still in progress and downloadable artifacts unavailable at observation. Physical iPhone NOT TESTED. No production data touched; migration effect requires final source review. This entry records QA progress only, not a new release.
+
+
+### 2026-10-26 — PR #123 optical patch (CODED; NOT RELEASED)
+- Scoped Add Log plus-only, tile centering/wrapping, and Today This week label gap to hybrid CSS. New automated mobile matrix assertions added. Branch commits `799f254` CSS and `bf5a4b1` test. No saved-data migration or business logic changes. New CI, artifacts, physical iPhone approval and deployment **PENDING**. Draft PR #123 remains unmerged.
