@@ -1768,20 +1768,22 @@ function homeView() {
   const todayInstanceRows=(getWeekInstances([today])[today]||[]).filter(slot=>!slot.adhoc);
   const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc);
   const countStatus=(rows,name)=>rows.filter(x=>x.status===name).length;
+  const selectedActivityPeriod=state._todayActivityPeriod==="week"?"week":"today";
   const activityPanel=(rows,period)=>{
     const completed=countStatus(rows,"taken"), total=rows.length;
     const unresolved=rows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
     const skipped=countStatus(rows,"skipped"),moved=countStatus(rows,"moved");
     const pct=total?Math.round(completed/total*100):null;
-    return `<div class="nx-activity-panel" data-activity-panel="${period}" ${period==="week"?"hidden":""}>
+    return `<div class="nx-activity-panel" data-activity-panel="${period}" ${period===selectedActivityPeriod?"":"hidden"}>
       <div class="nx-activity-top"><strong>${total?`${completed} <small>/ ${total}</small>`:"—"}</strong><span>${pct===null?"No scheduled occurrences":pct+"% complete"}</span></div>
       <p class="nx-activity-sub">Scheduled occurrences completed</p>
       ${total?`<div class="nx-daily-track-progress" role="progressbar" aria-label="${period} scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${completed}"><span style="width:${pct}%"></span></div>`:""}
       <div class="nx-activity-stats"><span><strong>${completed}</strong>Completed</span><span><strong>${total}</strong>Scheduled</span><span><strong>${unresolved}</strong>Unresolved</span></div>
       ${skipped||moved?`<p class="nx-activity-sub">${skipped?skipped+" skipped":""}${skipped&&moved?" · ":""}${moved?moved+" rescheduled":""}</p>`:""}
+      ${period==="week"?thisWeekCardHtml:""}
     </div>`;
   };
-  html+=`<section class="nx-today-activity" aria-label="Your activity"><div class="nx-today-activity-head"><h3>Your activity</h3><div class="nx-activity-segments" role="group" aria-label="Activity period"><button type="button" class="nx-activity-period" data-period="today" aria-pressed="true">Today</button><button type="button" class="nx-activity-period" data-period="week" aria-pressed="false">This week</button></div></div>
+  html+=`<section class="nx-today-activity" aria-label="Your activity"><div class="nx-today-activity-head"><h3>Your activity</h3><div class="nx-activity-segments" role="group" aria-label="Activity period"><button type="button" class="nx-activity-period" data-period="today" aria-pressed="${selectedActivityPeriod==="today"}">Today</button><button type="button" class="nx-activity-period" data-period="week" aria-pressed="${selectedActivityPeriod==="week"}">This week</button></div></div>
     ${activityPanel(todayInstanceRows,"today")}${activityPanel(weekInstanceRows,"week")}
     <p class="nx-daily-track-note">Scheduled occurrences only. Additional actual dose records are counted separately in history; upcoming is not missed.</p>
   </section>`;
@@ -1802,7 +1804,7 @@ function homeView() {
     <button type="button" id="nx-open-calendar" class="nx-coming-calendar">View Calendar →</button></section>`;
   // This Week recedes below the actual compound/dose list — it's a secondary weekly
   // summary, not the thing Today exists to answer.
-  html += thisWeekCardHtml;
+  // Weekly drill-down now lives within Your Activity → This week, not as a duplicate card.
   return html;
 }
 
