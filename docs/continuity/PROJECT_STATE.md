@@ -1089,3 +1089,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Automated 320/390 light/dark LIVE+DEMO navigation PASS; inspected screenshot set captured after 450ms transition, and confirmed Overview and approved vertical roadmap visible in dark 390 / light 320. Browser functional checks pass, **not a physical iPhone acceptance or WCAG AA blanket claim**. Known visual follow-ups: Overview presented in bottom sheet (not full-screen mockup) and single compound count reads `1 compounds` in detail. Do not misrepresent as accepted.
 - Production Cloudflare byte parity intentionally fails for preview SHA because PR not deployed; no production changes, data migration or live writes. No merge/deploy approval.
 - **ONE NEXT ACTION:** User to review the isolated full-app DEMO on physical iPhone and report screen/interaction acceptance; fix confirmed UX issues in PR #123, revalidate, then seek separate merge/deploy approval.
+
+
+## 2026-10-26 — Contextual Plans ↔ Protocol links, draft
+- User approved Plans-first contextual navigation. Existing Protocol Overview already opens its linked Goal in Plans. Commit `3b692b1e` adds reverse Goal Connections → linked Protocol Overview and fixes singular compound count. No data or calculation changes.
+- PR #123 remains draft/unmerged. Latest-head QA and new full-app packages NOT VERIFIED; production unchanged.
+- **ONE NEXT ACTION:** validate Protocol → linked Goal → Connections → Protocol at 320/390 in both themes, then build isolated full-app DEMO and LIVE ZIP for iPhone acceptance.
