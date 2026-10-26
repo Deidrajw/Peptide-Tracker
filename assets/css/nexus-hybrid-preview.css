@@ -1443,3 +1443,39 @@ html:not([data-theme="light"]) .nexus-today-hero::after {display:none!important;
 html[data-theme="dark"] .nexus-today-track>div {
  background:#CDA7F0!important;box-shadow:none!important;
 }
+
+
+/* Today: actionable notice sheet and nonduplicated weekly disclosure. */
+.nx-alert-trigger{display:flex;align-items:center;gap:9px;width:fit-content;min-height:44px;padding:9px 13px;margin:12px 0 16px;border:1px solid var(--border-sub);border-radius:13px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;cursor:pointer}
+.nx-alert-bell{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px}
+.nx-alert-bell svg{width:18px;height:18px}
+.nx-alert-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:rgba(190,153,232,.19);color:var(--t1);font-size:12px;font-weight:700}
+.nx-alert-hint{font-size:11px;color:var(--t3);font-weight:500}
+.nx-alert-overlay[hidden]{display:none!important}
+.nx-alert-overlay{position:fixed;inset:0;z-index:9900;display:flex;align-items:flex-end;justify-content:center}
+.nx-alert-scrim{position:absolute;inset:0;width:100%;height:100%;background:rgba(12,8,22,.64);border:none}
+.nx-alert-sheet{position:relative;z-index:1;width:100%;max-width:600px;max-height:min(86dvh,800px);display:flex;flex-direction:column;background:var(--surface);color:var(--t1);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:12px 0 env(safe-area-inset-bottom, 0px);box-shadow:0 -12px 40px rgba(0,0,0,.23);outline:none}
+.nx-alert-handle{width:36px;height:4px;border-radius:99px;background:var(--t4);opacity:.5;align-self:center;margin:2px 0 14px}
+.nx-alert-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 14px}
+.nx-alert-heading h2{font-size:19px;margin:0;color:var(--t1)}
+.nx-alert-heading p{font-size:12px;margin:3px 0 0;color:var(--t3)}
+#nx-alert-close{min-height:44px;min-width:64px;padding:8px 12px;border-radius:11px;background:var(--surface-2);color:var(--t1);border:1px solid var(--border-sub)}
+.nx-alert-scroll{overflow-y:auto;overscroll-behavior:contain;padding:0 12px 15px}
+.nx-alert-section{margin:8px 0 16px}
+.nx-alert-section h3{display:flex;align-items:center;gap:9px;padding:8px 5px;margin:0;color:var(--t2);font-size:12px}
+.nx-alert-section h3 span{border-radius:99px;background:var(--surface-3);padding:2px 7px}
+.nx-alert-items{overflow:hidden;border-radius:13px;background:var(--surface-2)}
+.nx-alert-items .reminder-card{min-height:54px}
+.nx-alert-items .snooze-item{min-width:44px!important;min-height:44px!important}
+.nx-alert-empty{padding:22px 10px;text-align:center;color:var(--t3)}
+.nx-alert-restore{min-height:44px;color:var(--t1);font-size:12px}
+body.nx-alert-modal-open{overflow:hidden}
+.nx-week-compact .nx-week-score{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;text-align:right}
+.nx-week-compact .nx-week-score strong{display:block;font-size:23px;font-weight:750;line-height:1.2;white-space:nowrap;color:var(--t1);font-variant-numeric:tabular-nums}
+.nx-week-compact .nx-week-score span{display:block;font-size:12px;line-height:1.4;white-space:nowrap;color:var(--t3)}
+.nx-week-compact .nexus-week-card{margin:3px 0 0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.nx-week-compact .nexus-quiet-header{padding:0!important}
+.nx-week-compact .nexus-quiet-toggle{display:flex!important;min-height:44px!important;width:100%;justify-content:flex-end!important;align-items:center!important;padding:0 2px!important;text-align:right!important;border:0!important;background:transparent!important}
+.nx-week-compact .nexus-quiet-copy{display:none!important}
+.nx-week-compact #nexus-week-expanded{margin-top:10px;padding:12px;border-radius:12px;background:var(--surface-2)}
+@media(max-width:350px){.nx-week-compact .nx-week-score strong{font-size:20px}.nx-alert-trigger{gap:6px;padding:8px 10px}.nx-alert-hint{display:none}}
