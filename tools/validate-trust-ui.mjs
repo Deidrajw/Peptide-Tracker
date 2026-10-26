@@ -128,6 +128,7 @@ try{
         },"legacy premixed kit preserves physical vial balances through new draw and Undo");
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('3');
+        if(await page.locator('#nx-dose-step-next').count()){await page.locator('#nx-dose-step-next').click();}
         await page.locator('#save').click();
         const doses=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
@@ -199,6 +200,7 @@ try{
         });
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('31');
+        if(await page.locator('#nx-dose-step-next').count()){await page.locator('#nx-dose-step-next').click();}
         await page.locator('#save').click();
         assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
           'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');
