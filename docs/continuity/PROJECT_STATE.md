@@ -1005,3 +1005,6 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **ONE NEXT ACTION:** Run/inspect latest-head Protocol + Plans browser QA at 320/390 dark/light including Manage, phase, goal/research actions, and original protected flows; prepare exact-source isolated full-app DEMO for user acceptance before returning to Stash.
 
 - Follow-up commit `29cb2434` replaces generic Schedule overview tile with NEXT SCHEDULED, using existing first-compound dose status `nextDueStr` if present, otherwise honest `See schedule` fallback. This is not a computed/invented date and requires latest-head regression.
+
+
+## 2026-10-26 Protocol interior design review: user requested completion animation, phase transition notification, protocol countdown, and compound detail phase. Treat as proposed, not coded. Existing in-app alerts + pause-aware getProtocolPhaseInfo should be reused. PR #123 verified head 7751ccdc at review was draft/unmerged. CI 40347404028 FAILED Browser QA at 320/390 light/dark; mobile run 40347403827 pending at check. ONE NEXT ACTION: identify/fix browser failure, preview internal Protocol screens and get behavioral design approval; no merge/deploy.
