@@ -374,3 +374,7 @@
 
 ### Today grouped correction pass — 2026-10-25
 Today insights must be record-grounded, not imply pharmacokinetic certainty or suggest escalation. A phase countdown should only appear when an actual dated phase boundary exists. Completed-dose main action uses existing Dose completed / Scheduled entry recorded, not an additional Log Dose CTA. One chevron per disclosure, Intel must read as a button.
+
+
+### 2026-10-25 — Today visual reset based on iPhone screenshot
+- 2026-10-25 user rejected stacked insight boxes and generic Wear Off Window / Protocol review wording. Use one calm segmented surface with typography and whitespace rather than nested cards; avoid duplicating overdue state between ring and insight summary as much as practicable. Scope native system-font stack to Today compound cards during preview, subject to visual acceptance. Legacy pseudo chevron must be suppressed by selector valid independent of screen ancestry; do not add a second chevron. Do not invent phase countdowns absent actual schedules.
