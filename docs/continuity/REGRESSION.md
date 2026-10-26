@@ -737,3 +737,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **IN PROGRESS:** same run browser matrix 320/390px light/dark and complete artifact upload; artifacts list empty at check. Mark full browser/DEMO isolation and parity **NOT YET VERIFIED** pending result files.
 - **NOT TESTED:** real iPhone Calendar tap/day navigation, All Logs filtering, edit correct historical date, saved Check-In/Supplements/Weight/Nutrition/dose history, draft handling, single/multi-vial math, safe-area scroll and VoiceOver. No live/localStorage writes made.
 - No failed test is being hidden or converted to PASS. No production release authorized.
+
+
+### 2026-10-26 updated regression outcome — full browser failure found
+- **FAIL (automated):** run 40334643538 final browser step; timeout `.nx-journal-mode[data-mode="all"]` at validate-chevron-unification.mjs:133 after fixture replacement. Previously completed browser/Check-In/Protocol/vial/dose/combo/Stash suites remain individually PASS; do not label aggregate PASS.
+- **CODED, NOT RETESTED:** commit `d086513` updates test harness to re-open journal through real Calendar UI after synthetic fixture reset; new PR-head CI result pending. Does not alter app code or production storage.
+- Artifact #12656152966 produced from failing preview checkout and locally inspected: LIVE ZIP contains 21 files at correct paths; full DEMO HTML and offline ZIP present; manifest flags ephemeral memory/no sync. Runtime isolation end-to-end and all Calendar cases cannot be marked PASS until passing post-fix QA.
