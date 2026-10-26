@@ -39,6 +39,18 @@ const {pathToFileURL}=require("node:url");
    let disclosureParity={tested:false};
    const compact=page.locator(".nx-compound-card .compound-compact-tap").first();
    if(await compact.count()){
+     // Regression: the compact schedule summary and action row must have no rails.
+     const compactBorders=await compact.evaluate(node=>{
+       const card=node.closest(".nx-compound-card");
+       const facts=card?.querySelector(".nx-card-facts");
+       const actions=card?.querySelector(".nx-compound-actions");
+       const px=(element,side)=>element?parseFloat(getComputedStyle(element)[side])||0:null;
+       return {factsTop:px(facts,"borderTopWidth"),factsBottom:px(facts,"borderBottomWidth"),
+         actionsTop:px(actions,"borderTopWidth")};
+     });
+     if(compactBorders.factsTop!==0||compactBorders.factsBottom!==0||
+       (compactBorders.actionsTop!==null&&compactBorders.actionsTop!==0))
+       throw Error("Compact Today dividers persist at "+width+"/"+theme+": "+JSON.stringify(compactBorders));
      const collapsed=await compact.evaluate(node=>{
        const pill=node.querySelector(".nx-today-disclosure");
        const title=node.querySelector(".nx-today-compound-name");
