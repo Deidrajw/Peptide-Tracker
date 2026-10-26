@@ -2196,3 +2196,27 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-goal-wizard-review strong{color:var(--t1);max-width:63%;overflow-wrap:anywhere;text-align:right}
 .nx-goal-wizard-panel #g-save{width:100%;min-height:48px;border-radius:12px;background:#C6A6F2!important;color:#24182F!important}
 @media(prefers-reduced-motion:reduce){#nx-g-step-fill{transition:none}}
+
+
+/* Approved Log Dose Quick / Guided selector — shared full-app form, no logic fork. */
+.nx-dose-mode-switch{display:flex;gap:5px;padding:4px;margin:0 0 14px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px}
+.nx-dose-mode-switch button{flex:1;min-height:44px;border-radius:10px;color:var(--t2);background:transparent;font-size:13px;font-weight:650}
+.nx-dose-mode-switch button.is-selected{background:var(--surface-3);color:var(--t1);box-shadow:0 1px 5px #00000016}
+.nx-dose-step-nav{padding:0 0 14px}
+.nx-dose-step-nav[hidden],.nx-dose-review-stage[hidden],.nx-dose-section[hidden],.nx-dose-footer #save[hidden]{display:none!important}
+#nx-dose-step-caption{display:block;color:var(--t2);font-size:12px;font-weight:650;margin-bottom:10px}
+.nx-dose-step-track{height:5px;overflow:hidden;background:var(--border-sub);border-radius:99px}
+.nx-dose-step-track span{display:block;height:100%;background:#C6A6F2;border-radius:inherit;transition:width 180ms ease}
+.nx-dose-step-actions{display:flex;gap:8px;margin-top:12px}
+.nx-dose-step-actions button{min-height:44px;border-radius:12px;font-size:13px;font-weight:650}
+#nx-dose-step-back{min-width:88px;background:var(--surface-2);color:var(--t1);border:1px solid var(--border)}
+#nx-dose-step-back:disabled{opacity:.42}
+#nx-dose-step-next{flex:1;background:#C6A6F2;color:#211829}
+#nx-dose-step-next[hidden]{display:none!important}
+.nx-dose-review-stage{padding:15px;border-radius:15px;background:var(--surface-2);margin:8px 0 18px}
+.nx-dose-review-stage h3{color:var(--t1);font-size:16px;margin:0 0 10px}
+#nx-dose-review-rows>div{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-sub);font-size:12px}
+#nx-dose-review-rows span{color:var(--t2)}
+#nx-dose-review-rows strong{color:var(--t1);text-align:right;overflow-wrap:anywhere;max-width:65%}
+.nx-dose-review-stage p{font-size:11px;line-height:1.5;color:var(--t2)}
+@media(prefers-reduced-motion:reduce){.nx-dose-step-track span{transition:none}}
