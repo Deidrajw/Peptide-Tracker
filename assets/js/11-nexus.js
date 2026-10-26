@@ -2075,6 +2075,7 @@ function renderTabbar() {
       state._protoCalSub = 'month';
       state._calOff = 0;
     }
+    if (id === "plans") state._plansSub = "goals";
     tab=id;
     state._guideOpen=null; state._discoverOpen=null;
     state._compoundIntel=null; state._intelReturn=null;
