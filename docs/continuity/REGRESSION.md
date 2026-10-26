@@ -607,3 +607,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Today card milestone consolidation
 - 2026-10-25: Today acceptance cases asserted at source (14 invariants): labelled disclosure both states, compound casing, single overdue badge, existing overdue/log handler, independent occurrence data, large controls, completion notice, no duplicated history, tab panels, insights/detail hierarchy. These are source assertions only; runtime 320/390 light/dark, keyboard, logging, reschedule, multi-occurrence, vial math and physical iPhone: NOT TESTED. Latest CI outcome pending.
+
+
+### Today milestone — source-derived QA gate (2026-10-25)
+- 2026-10-25 new gates on PR #123: JavaScript syntax, 14 Today source assertions, runtime Playwright startup, 320/390 dark/light, no page errors, no horizontal document overflow, exact-source isolated FULL-APP DEMO. No browser result yet, and overdue modals, record edits, multi-vial deductions, site history, completed/uncompleted multi-occurrence states and physical iPhone remain NOT TESTED; these are release blockers.
