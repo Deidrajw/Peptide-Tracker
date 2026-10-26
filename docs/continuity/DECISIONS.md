@@ -586,3 +586,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Approved guided Blend BAC single-source interpretation
 - A blend has one BAC-water-per-vial input in Preparation & storage (`#bk-bac-edit`), and final Review must display the exact value the existing authoritative `#bk-save` will persist for a new kit. The old duplicate new-kit `#bk-bac` field is removed. Preserve the existing composition and history protections. Code is draft; not release approval.
+
+## 2026-10-26 — User rejected guided Stash UI, approved pattern reaffirmed
+- Physical iPhone screenshots explicitly REJECT the current ordinary and blend kit UI. The source-faithful acceptance requirement is one searchable editable combobox per compound (type OR browse same field, no double native select), same stepper geometry as approved Goal wizard without redundant `1 / 3`, single sticky Continue/Back or final Save—not both, and *new blend open vial defaults false*. Match approved modal typography/safe-area and eliminate isolated blue text actions. Keep original inventory accounting and draft PR; new corrective code awaits visual/functional acceptance.
