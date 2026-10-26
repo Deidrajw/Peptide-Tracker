@@ -587,3 +587,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Today compact action cleanup
 - 2026-10-25 newly changed Today compact/expanded flow: View details toggling, correct History panel entry and complete history, no duplicate History CTA, no blank action slots on log-unavailable states, reschedule/overdue/skip paths, site-warning count, 320/390 dual theme, full-app demo isolation: NOT TESTED pending latest-head browser evidence. Physical iPhone: NOT TESTED. Do not infer preservation of inventory math from source-only edits.
+
+
+### Log Dose preview trial
+- PR #123 Log Dose availability change 2dfae668: due now, due later today, overdue under/over aged threshold, taken today, rescheduled today/future, skipped, paused, no doses, multi-occurrence, prepared sources, multi-vial ledger: NOT TESTED. Preview deployment UNVERIFIED.
