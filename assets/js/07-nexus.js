@@ -1624,6 +1624,14 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
   const isDue = doseStatus && ["due_now","due_later_today","overdue"].includes(doseStatus.status);
   const showScheduledLog = !!doseStatus?.showLogBtn;
   const isAgedOverdue = doseStatus?.status === "overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS);
+  if (doseStatus?.status === "taken_today") {
+    const recorded = doses[0];
+    const recordedTime = recorded?.date ? ` · ${esc(fmtT(new Date(recorded.date)))}` : "";
+    return `<div class="nx-today-completion-actions">
+      <div class="nx-today-completion-status" role="status"><span class="nx-today-completion-icon" aria-hidden="true">✓</span><span><strong>Dose completed</strong><small>Scheduled entry recorded${recordedTime}</small></span></div>
+      <button class="moremenu nx-today-completion-more" data-name="${esc(name)}" aria-expanded="false" aria-label="More actions for ${esc(name)}">More actions</button>
+    </div>`;
+  }
   if (doseStatus?.status === "skipped") {
     return `<div style="margin-bottom:8px">
       <div style="display:flex;align-items:baseline;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;margin-bottom:6px">
