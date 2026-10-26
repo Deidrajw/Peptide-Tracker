@@ -2173,3 +2173,26 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 #app .nx-goal-v2 .nx-goal-v2-connected{margin:0 0 14px!important;font-size:12px}
 #app .nx-goal-v2 .nx-goal-v2-open{display:flex!important;width:100%!important;min-height:48px;justify-content:space-between!important;margin:0!important;padding:12px 0 0!important;border-top:1px solid var(--border-sub)!important;font-size:13px!important}
 #app .nx-goal-v2 .nx-plan-head .manage-plan-btn{width:44px!important;height:44px!important;min-width:44px!important}
+
+
+/* Goals wizard — Hybrid Soft Depth / Porcelain / Obsidian Precision */
+.nx-goal-wizard{display:flex;flex-direction:column;min-width:0;gap:14px}
+.nx-goal-wizard-top{padding:4px 0 0}
+#nx-g-step-label{display:block;font-size:12px;font-weight:650;color:var(--t2);margin-bottom:10px}
+.nx-goal-wizard-track{height:5px;border-radius:99px;background:var(--border-sub);overflow:hidden}
+#nx-g-step-fill{display:block;height:100%;background:#A78BFA;border-radius:inherit;transition:width .2s ease}
+.nx-goal-wizard-panel[hidden]{display:none!important}
+.nx-goal-wizard-panel{min-width:0}
+.nx-goal-wizard-panel .goal-comp{min-height:44px}
+.nx-goal-wizard-footer{position:sticky;bottom:0;display:flex;gap:10px;padding:12px 0 max(12px,env(safe-area-inset-bottom));background:var(--surface);z-index:2}
+.nx-goal-wizard-footer button{min-height:48px;border-radius:12px;font-size:13px;font-weight:700}
+#nx-g-back{min-width:88px;background:var(--surface-2);color:var(--t1);border:1px solid var(--border)}
+#nx-g-back:disabled{opacity:.42}
+#nx-g-next{flex:1;background:#C6A6F2;color:#24182F}
+#nx-g-next[hidden]{display:none!important}
+.nx-goal-wizard-review{display:grid;gap:0;margin-bottom:16px}
+.nx-goal-wizard-review>div{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-sub);font-size:12px}
+.nx-goal-wizard-review span{color:var(--t2)}
+.nx-goal-wizard-review strong{color:var(--t1);max-width:63%;overflow-wrap:anywhere;text-align:right}
+.nx-goal-wizard-panel #g-save{width:100%;min-height:48px;border-radius:12px;background:#C6A6F2!important;color:#24182F!important}
+@media(prefers-reduced-motion:reduce){#nx-g-step-fill{transition:none}}
