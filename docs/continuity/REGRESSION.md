@@ -791,3 +791,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **VISUAL FEEDBACK:** expanded compound route pill/time/active-dosing cluster and Phase Roadmap need redesign; Create/Edit builder needs hierarchy/sticky keyboard-safe actions. Not yet coded.
 - **PROPOSED NOT TESTED:** 'Schedule ended' distinct from manually completed; after-end recorded dose correlation must avoid schedule-only and unrelated-protocol false positives; opt-in prompt choices Review/Extend, Create New, Not now; no automatic status, dose, history or stock mutations.
 - Latest source QA at user review: run 40348986886 **FAIL**, mobile 40348987869 in progress, pre-documentation head 1448c411. Failure cause unverified; latest-head full-app DEMO and LIVE ZIP unverified.
+
+
+## 2026-10-26 — Expanded Protocol phase row and Plans button contrast
+- **FAIL on PRE-PATCH HEAD**: full QA workflow 40351719788, `Management surface must contrast against Research card`, at `tools/validate-plans-hierarchy.mjs:180`; preceding browser suites reported PASS but aggregate FAIL. CSS patch `da015ec0` **NOT RETESTED** at documentation time.
+- **NOT TESTED on latest head:** Protocol rows at 320/390 dark/light, compound labels (long/short), paused / elapsed / not-started progress, zero compounds, full phase roadmap navigation (existing handler), correct source phase and date; Goals/Research menu contrast in both themes, protected modal/nav/dose/history behavior. Do not report passing latest source until workflow evidence arrives.
