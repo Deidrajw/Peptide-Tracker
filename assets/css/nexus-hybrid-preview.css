@@ -883,8 +883,8 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
 
 /* Today phase 3C — one calm segmented surface replaces competing inline notice cards. */
 .nexus-screen-home .nx-hybrid-expanded-compound .nx-compound-info-tabs{
- position:relative;margin:12px 0 15px;padding:10px;
- border-radius:18px;background:var(--surface-2);border:1px solid var(--border-sub);
+ position:relative;margin:12px 0 15px;padding:0;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
 }
 .nexus-screen-home .nx-compound-tab-radio{
  position:absolute!important;width:1px!important;height:1px!important;
@@ -929,9 +929,8 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
  font-size:12px;font-weight:650;
 }
 .nexus-screen-home .nx-info-insights>.nx-insight-list>div{
- background:transparent!important;border:none!important;
- border-bottom:1px solid var(--border-sub)!important;border-radius:0!important;
- margin:0!important;padding:12px 4px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ margin:0!important;padding:0!important;
  color:var(--t2)!important;line-height:1.55!important;
 }
 .nexus-screen-home .nx-info-insights>.nx-insight-list>div:last-child{border-bottom:0!important}
@@ -1182,7 +1181,7 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure{
 }
 /* Insight hierarchy: purposeful grouping rather than a stack of thin divider rails. */
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-info-insights{
- padding:12px 4px 4px!important;
+ padding:18px 2px 4px!important;
 }
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-overview{
  padding:14px!important;border-radius:14px!important;
