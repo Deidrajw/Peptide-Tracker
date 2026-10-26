@@ -54,7 +54,7 @@ body :is(#app,.modal) :is(.symcat-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-sy
 /* Expanded Today/Protocol cards already have a purpose-built right-hand slot.
  * Do not add a second pseudo chevron or a third grid column. */
 /* Native disclosure indicators use the shared summary pseudo-element. */
-body #app :is(.nexus-today-details-chevron,.nexus-quiet-chevron,.nx-proto-chevron,.nx-compound-chevron,.compound-collapse-btn)::after{
+body #app :is(.nexus-today-details-chevron,.nexus-quiet-chevron,.nx-proto-chevron,.nx-compound-chevron,.compound-collapse-btn:not(.nx-today-disclosure))::after{
   content:""!important; box-sizing:border-box!important;
   display:block!important;width:var(--nx-disclosure-size)!important;height:var(--nx-disclosure-size)!important;
   border:0!important;border-right:var(--nx-disclosure-stroke) solid currentColor!important;
@@ -69,7 +69,7 @@ body #app .nexus-today-details[open] .nexus-today-details-chevron::after,
 body #app :is(.nexus-quiet-details,.nexus-lookahead)[open] .nexus-quiet-chevron::after,
 body #app .nexus-protocol-details[open] .nx-proto-chevron::after,
 body #app .nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron::after,
-body #app .compound-collapse-btn::after{transform:translateY(3px) rotate(225deg)!important}
+body #app .compound-collapse-btn:not(.nx-today-disclosure)::after{transform:translateY(3px) rotate(225deg)!important}
 /* Older card rules rotate the entire container and distort its arrow. */
 body #app :is(.nexus-today-details[open] .nexus-today-details-chevron,.nexus-protocol-details[open] .nx-proto-chevron,.nexus-week-quiet .nexus-quiet-toggle[aria-expanded="true"] .nexus-quiet-chevron){transform:none!important}
 /* Manual disclosure icons in nested history/intro sections. */
