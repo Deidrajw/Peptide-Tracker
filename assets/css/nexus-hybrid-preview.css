@@ -1599,3 +1599,8 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 .nx-journal-picker input[type="date"]{flex:1 1 100%;width:100%}
 .nx-journal-more[aria-expanded="true"]{background:var(--surface-3);color:var(--t1)}
 .nx-journal-row:has(.nx-journal-more[aria-expanded="true"]){background:var(--surface-2);border-radius:12px;padding-inline:8px}
+
+/* Logs: searchable full-history mode, with Day View remaining unfiltered. */
+.nx-journal-search-label{display:block;font-size:12px;color:var(--t3);margin:8px 0 6px}
+.nx-journal-search{display:block;box-sizing:border-box;width:100%;min-height:48px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font:inherit;font-size:14px;margin-bottom:12px}
+.nx-journal-search:focus-visible{outline:2px solid #BB9ADD;outline-offset:2px}
