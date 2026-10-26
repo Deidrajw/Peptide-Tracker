@@ -1105,3 +1105,59 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-fact span{
  font-size:11px!important;padding:8px 2px!important;
  }
 }
+
+/* Today disclosure v2: ONE shared visual control for both states.
+   No pseudo chevrons, no separate chevron boxes, consistent 44px tap target. */
+html body .nexus-screen-home .nx-compound-card .nx-today-disclosure,
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure{
+ box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:8px!important;position:relative!important;inset:auto!important;
+ width:auto!important;min-width:44px!important;max-width:100%!important;
+ height:44px!important;min-height:44px!important;flex:0 0 auto!important;
+ margin:0!important;padding:0 12px!important;
+ background:var(--surface-2)!important;color:var(--t2)!important;
+ border:1px solid var(--border-sub)!important;border-radius:12px!important;
+ box-shadow:none!important;text-decoration:none!important;
+ white-space:nowrap!important;line-height:1.25!important;
+ font-family:inherit!important;font-size:12px!important;font-weight:700!important;
+ letter-spacing:0!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-today-disclosure-text,
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure-text{
+ display:inline!important;color:inherit!important;font:inherit!important;white-space:nowrap!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-today-disclosure-icon,
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure-icon{
+ flex:none!important;width:18px!important;height:18px!important;display:block!important;
+ transform:none!important;transition:transform .18s ease!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure-icon-up{
+ transform:rotate(180deg)!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure::after,
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure::before,
+html body .nexus-screen-home .nx-compound-card .nx-today-disclosure::before,
+html body .nexus-screen-home .nx-compound-card .nx-today-disclosure::after{
+ display:none!important;content:none!important;
+}
+/* One typography token across compact, active, paused and expanded Today cards. */
+html body .nexus-screen-home .nx-compound-card .nx-today-compound-name,
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-compound-name{
+ font-family:inherit!important;font-size:17px!important;font-weight:760!important;
+ letter-spacing:-.35px!important;line-height:1.4!important;text-transform:none!important;
+ color:var(--t1)!important;overflow-wrap:anywhere!important;
+}
+@media(max-width:359px){
+ html body .nexus-screen-home .nx-compound-card .nx-today-compound-name,
+ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-compound-name{
+  font-size:15px!important;
+ }
+ html body .nexus-screen-home .nx-compound-card .nx-today-disclosure,
+ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-disclosure{
+  gap:5px!important;padding:0 8px!important;font-size:11px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html body .nexus-screen-home .nx-today-disclosure-icon{transition:none!important}
+}
