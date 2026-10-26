@@ -1251,5 +1251,5 @@ html body .nexus-screen-home .nx-today-completion-status small{
 }
 html body .nexus-screen-home .nx-today-completion-more{
  min-height:44px;border:1px solid var(--border-sub);border-radius:12px;
- background:transparent;color:var(--t2);font:650 12px inherit;
+ background:transparent;color:var(--t2);font-family:inherit;font-size:12px;font-weight:650;
 }
