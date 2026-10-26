@@ -380,7 +380,7 @@ function wireBody() {
     const names={completed:"Completed",scheduled:"Scheduled / unresolved",wellness:"Wellness"};
     const buttons=Object.keys(names).map(key=>`<button type="button" class="nx-cal-category ${active===key?"on":""}" data-category="${key}" aria-pressed="${active===key}"><strong>${grouped[key].length}</strong><span>${names[key]}</span></button>`).join("");
     const items=grouped[active].map(r=>`<div class="nx-cal-history-row"><div><strong>${esc(r.label)}</strong><span>${esc(r.desc)}</span></div></div>`).join("");
-    box.innerHTML=`<section class="nx-cal-day-panel"><div class="nx-cal-day-head"><h3>${esc(fmtDate(date))}</h3><span>Selected day</span></div><div class="nx-cal-categories">${buttons}</div><div class="nx-cal-history-list">${items||'<p class="nx-cal-empty">No records in this category.</p>'}</div></section>`;
+    box.innerHTML=`<section class="nx-cal-day-panel"><div class="nx-cal-day-head"><h3>${esc(fmtDate(date))}</h3><span>Selected day</span></div><div class="nx-cal-categories">${buttons}</div><button type="button" id="nx-open-day-logs" class="nx-cal-open-logs">View full day history</button><div class="nx-cal-history-list">${items||'<p class="nx-cal-empty">No records in this category.</p>'}</div></section>`;
     box.querySelectorAll(".nx-cal-category").forEach(btn=>btn.onclick=()=>{state._calDayCategory=btn.dataset.category;renderCalendarDay(date);});
     const wholeDay=box.querySelector("#nx-open-day-logs");
     if(wholeDay)wholeDay.onclick=()=>{state._logsMode="day";state._logsDate=date;state._protoCalSub="logs";renderBody();};
