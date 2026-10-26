@@ -96,7 +96,7 @@ try{
     await fixture.locator('label[for^="nx-insights-"]').first().click();
     check(await fixture.locator('input[id^="nx-insights-"]').isChecked(),'Insights segment cannot be reselected');
     const menu=fixture.locator('.moremenu');
-    check(await menu.locator('svg').count()===1,'Outline ellipsis missing');
+    check(await menu.count()===1 && !!(await menu.getAttribute('aria-label')),'Accessible compound menu trigger missing');
     await menu.click();
     check((await menu.getAttribute('aria-expanded'))==='true','More menu accessibility state missing');
     const box=page.locator('body > .morebox.nx-compound-sheet-open');
