@@ -703,3 +703,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Audited Prepare Dose (`assets/js/05-nexus.js`), standard vial reconstitution, blend menu route, shared modal CSS and prior user screenshots. Added source-backed findings, acceptance cases, and distinct unverified areas in `docs/design/STASH_MODAL_AUDIT.md` commit `1a2c3540`.
 - Coded branch-only CSS `0bd28df5` enlarging Prepare count stepper 34px→46px (44px at 320) and improving concentration readout visual grouping plus CTA sizes. No dose math, kit accounting, source allocation, persistence or modals logic modified.
 - **ONE NEXT ACTION:** Run latest-head 320/390 dark/light LIVE+DEMO browser tests and actual Prepare/Open New Vial modal keyboard/scroll/confirm inspections. Fix discovered issues before design signoff. No merge/deploy.
+
+
+### 2026-10-25 — Today lower-page design continuity restored
+- User shared screenshots of previous dense expanded compound card vs cleaner compact version and emphasized that entire Today page, not only top hero, must receive Hybrid redesign before expanding Protocol/Plans. CSS commit `287cd89d` refines existing Today `.nexus-today-view-nav`, `.nx-compound-card`, fact rows, actions and chevrons in light/dark and 320px; compact/expanded JS renderer and all action paths, status/insights, records untouched. **No claim that dense expanded-detail view is fully redesigned**; it still requires separate component audit.
+- Stash modal audit remains incomplete: Prepare, Open Vial, keyboard, sticky actions, blending, source-vial QA documented in `docs/design/STASH_MODAL_AUDIT.md`. Latest previous build `40246994233` not fully verified before this change; new head QA required.
+- **ONE NEXT ACTION:** run latest-head source-parity LIVE/DEMO 320/390 both themes browser functional + visual reviews of Today compact/expanded and Stash modal flows; fix any issues before further Protocol/Plans changes. No merge/deploy.
