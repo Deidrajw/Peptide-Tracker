@@ -1592,3 +1592,10 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 .nx-journal-empty{font-size:12px;color:var(--t3);padding:18px 4px}
 .nx-cal-open-logs{min-height:44px;width:100%;margin:10px 0 0;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font-size:12px;font-weight:650}
 @media(max-width:350px){.nx-journal-day{padding:10px}.nx-journal-mark{flex-basis:35px;height:35px}.nx-journal-row{gap:7px}.nx-journal-top h2{font-size:18px}}
+
+/* Logs full-day navigation: touch-friendly without introducing decorative chevrons. */
+.nx-journal-picker .nx-journal-day-step{flex:1 1 90px;min-width:0;min-height:44px;font-weight:650}
+.nx-journal-picker #nx-journal-today{flex:1 1 70px}
+.nx-journal-picker input[type="date"]{flex:1 1 100%;width:100%}
+.nx-journal-more[aria-expanded="true"]{background:var(--surface-3);color:var(--t1)}
+.nx-journal-row:has(.nx-journal-more[aria-expanded="true"]){background:var(--surface-2);border-radius:12px;padding-inline:8px}
