@@ -1095,3 +1095,11 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - User approved Plans-first contextual navigation. Existing Protocol Overview already opens its linked Goal in Plans. Commit `3b692b1e` adds reverse Goal Connections → linked Protocol Overview and fixes singular compound count. No data or calculation changes.
 - PR #123 remains draft/unmerged. Latest-head QA and new full-app packages NOT VERIFIED; production unchanged.
 - **ONE NEXT ACTION:** validate Protocol → linked Goal → Connections → Protocol at 320/390 in both themes, then build isolated full-app DEMO and LIVE ZIP for iPhone acceptance.
+
+ 
+## 2026-10-26 — Next-chat handoff: Plans first
+- User confirmed the next priority is **Plans**, starting with Goals, and approved a contextual Protocol → linked Goal shortcut rather than a generic Plans button.
+- Current draft code already includes contextual Protocol Overview → linked Goal and Goals Connections → Protocol Overview (commit `3b692b1e`); DO NOT duplicate this or mark it deployed. Also fixes singular compound count.
+- Last verified PR #123 head before handoff `1cb4eefef80ea31a72372ada96dcd2a46e45b4f3` (draft/unmerged), base main `c1c95e1da2749c3aa8c4459b81a04fc51d9b7f7e`. Workflow 40364203515 full build/parity and 40364203514 mobile were IN PROGRESS; never claim newest-head pass from older CI.
+- Approved Plans IA direction: Goals progress + Connections + related tracking; Research improved hierarchy/status and create-protocol path; Shopping grouped and related to planned compounds/protocols. Need target design review and precise data source rules; do not infer goal progress from doses. Existing full-app DEMO candidate from older tested merge ref `08bd02b7` is NOT latest-head parity.
+- **ONE NEXT ACTION:** validate latest-head Protocol ↔ linked Goal navigation at 320/390 in light/dark, then present the Goals-first Plans redesign proposal in chat and implement after approval; regenerate LIVE/isolated entire-app DEMO and all release QA. Do not merge/deploy until explicitly approved.
