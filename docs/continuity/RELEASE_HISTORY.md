@@ -446,3 +446,7 @@
 
 ### 2026-10-25 — Today card milestone consolidation
 - 2026-10-25 — Draft PR #123 unmerged Today-card consolidation: `5ef99dea` heading/insight cleanup, `91cf8bce` Today invariant test, `99c12afc` CI gate. Data impact none intended; source assertions 14/14 pass by independent string inspection, but browser startup, runtime flows and physical iPhone are not yet validated. LIVE ZIP, full-app standalone DEMO INCOMPLETE. Not deployed to production.
+
+
+### Today milestone — source-derived QA gate (2026-10-25)
+- 2026-10-25 draft PR #123: 5ef99dea improved expanded text presentation; 91cf8bce + 99c12afc added Today source-invariant CI; b397ac12 + 0513998a changed preview QA to generate and test exact-source isolated full-app demo. Data impact: no migration or dose engine changes. V8 source parse PASS (12/12), source invariants 14/14 reviewed. Latest CI/browser, artifacts and deployment not verified. Not released.
