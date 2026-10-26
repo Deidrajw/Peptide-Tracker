@@ -458,3 +458,7 @@
 
 ### Today grouped correction pass — 2026-10-25
 2026-10-25 PR #123 draft changes c38b9a0 and bdb0da6: Today expanded disclosure CSS, insight grouping, Intel button, record-grounded protocol review copy. No dose math, localStorage, history or migration changes intended. JS 08 syntax checked by V8. Browser QA, 320/390 screenshots, full-app artifacts and Cloudflare preview NOT VERIFIED. Not released.
+
+
+### 2026-10-25 — Root disclosure and Insight cleanup
+- 2026-10-25 unmerged design PR #123 commits 77a86a43, e2245f91, 74409b57, 353b2a31: remove legacy double-chevron generator, reconcile nested insights CSS, update current-source invariant, neutralize speculative phase descriptions. Changes affect Today display and QA only; no changes to stored records, dosing engine or inventory. JavaScript parse PASS for changed module; full browser regression pending; DEMO/LIVE artifacts INCOMPLETE; Cloudflare preview and production deployment not verified/authorized.
