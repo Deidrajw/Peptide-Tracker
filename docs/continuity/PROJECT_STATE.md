@@ -1113,3 +1113,7 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 ## 2026-10-26 — Goal card visual correction after user screenshot
 - User observed original Goals cards were materially unchanged and too tall. Commits `457652a8` and `f5be4806` remove redundant three-counter summary from Plans, remove repeated exploratory heading, compact Goal cards and put status/linked count/details on one action row. Existing data and interactions not intentionally changed. New-head CI and physical visual acceptance pending. PR draft, no merge/deploy.
 - **ONE NEXT ACTION:** review latest CI screenshots and correct any Goals card visual or navigation regression at 320/390 light/dark; generate exact-source DEMO/LIVE artifacts.
+
+## 2026-10-26 — User corrected design reference
+- User explicitly rejected the later compact Goals treatment and provided screenshots of the **original approved first preview** (spacious goal card with title, active badge, target, measurable/exploratory section, progress track, linked protocol, full-width View goal details; detail view with Overview/Connections/Activity). Commits `d98d7b78` and `7727191f` restore that structure and styling on draft PR #123, superseding compact Goals experiment (`457652a8` / `f5be4806`).
+- New-head CI/browser, physical iPhone, source-parity files still pending. No production merge/deploy. **NEXT ACTION:** verify original-layout parity using actual screenshots at 320/390 light/dark and complete latest-source demo/live packages.
