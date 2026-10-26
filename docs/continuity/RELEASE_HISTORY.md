@@ -549,3 +549,7 @@
 
 ### 2026-10-26 — Protocol interior features (DRAFT, NOT RELEASED)
 - Verified current draft source includes `protocolCountdownSummary`, `protocolCompletionCelebration`, and compound `phaseRoadmapModal`, with existing phase alert configuration. `177e25fa` corrects paused roadmap marker day. Data impact: none from marker correction. Latest-head tests, full-app packages and physical iPhone QA incomplete; no deployment.
+
+
+### 2026-10-26 — Protocol interior enhancement candidate (DRAFT / UNRELEASED)
+- Commits `de2ee577`, `6cdd1174`, `7b0c2b9`, `94b66f88`: per-protocol countdown from existing phase data, in-card per-compound roadmap shortcuts and current phase interior, post-confirmation completion celebration (reduced-motion support), existing in-app phase reminder ID collision fix. Screens: Protocol cards, phase roadmap modal, completion modal, in-app notifications. No storage migration or inventory/dose math modifications. QA, FULL DEMO HTML/LIVE ZIP and physical iPhone tests PENDING. Draft PR #123 unmerged, no deployment.
