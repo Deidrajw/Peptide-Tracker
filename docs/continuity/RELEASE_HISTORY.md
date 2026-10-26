@@ -664,3 +664,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Guided Kit corrective QA fails (DRAFT, NOT RELEASED)
 - Source UI fixes at `b8f8f2db` mobile run `40421697072` PASS, full build/parity `40421697164` FAIL at browser QA step. Exact error not retrieved; release artifacts not verified, physical iPhone acceptance outstanding, no merge/deployment. Draft PR #123 remains open.
+
+### 2026-10-26 — Stash test harness correction (DRAFT, unreleased)
+- `6d209ed5` updates outdated card QA for guided Kit staged Save: hidden before Review, visible and >=44px on Review. Triggered after full build `40421697164` failed on hidden-button sizing; preceding Stash Actions, Combo, Log Dose, vial-source checks passed in that run. New-head CI and artifacts pending; production unchanged.
