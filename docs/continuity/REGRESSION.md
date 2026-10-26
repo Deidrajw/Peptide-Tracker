@@ -873,3 +873,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Review source UI assertions
 - `fb8a7c40` adds multi-vial and prepared-batch Review assertions to end-to-end browser regression. Pending latest-head CI. Expected kit/source rows, no repeated deduction for prepared source, amount/date validation, source handoff and split vial math. Blend component breakdown not yet verified. Physical iPhone still NOT TESTED.
+
+## 2026-10-26 — Goals header move (PENDING)
+- Verify #add-goal appears once above goal cards and below Goals/Research/Shopping navigation; no old footer duplicate; opens existing four-step goal wizard; empty state still usable; goal edit/delete/details and saved history remain unchanged. Check 320/390 light/dark, keyboard, focus and physical iPhone (NOT TESTED). Research/Shopping untouched in this commit.
