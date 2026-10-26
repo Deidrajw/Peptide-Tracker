@@ -585,3 +585,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Screenshot visual QA refinement (DRAFT)
 - Successful merge-ref test `2adf5eea` completed mobile and full-browser suites, produced full DEMO HTML, 21-file LIVE ZIP, offline demo ZIP and 16 Protocol screen captures. Inspecting captures revealed opening-frame fade/blur, so `2d67b356` adds 450ms settling and bounds checks to visual QA; latest-head visual validation pending. Application data/code unchanged by test correction. PR draft, no release.
+
+
+### 2026-10-26 — Sprint 02A validated DEMO candidate (DRAFT / NOT DEPLOYED)
+- Test merge source `08bd02b7`, PR branch head `ae49c851`: GitHub browser/build 40361824665 SUCCESS; GitHub artifact 12668996607 contains COMPLETE isolated standalone FULL DEMO HTML, offline full-app DEMO ZIP, 21-file LIVE ZIP, QA reports, and 16 320/390 light/dark LIVE/DEMO Protocol screenshots. Downloaded and verified archive integrity. Screenshot settle test `2d67b356` validated final state. No code/schema/data migration; stored production history untouched. Physical iPhone review, VoiceOver, and Cloudflare/GitHub Pages deployment NOT performed. Version manifest still `v0.9.20-beta` as draft baseline; not a new published release.
