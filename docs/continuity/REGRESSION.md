@@ -718,3 +718,13 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Mobile form regression | PASS `40275552720` |
 | Full source-aligned LIVE ZIP (21 files) and isolated standalone full-app DEMO | PASS artifact #12630341125, inspected |
 | Physical iPhone, VoiceOver, Cloudflare preview byte parity | NOT VERIFIED |
+
+
+### 2026-10-26 — Latest Logs source and visual evidence
+| Gate | Result |
+|---|---|
+| Full LIVE/DEMO QA (Day/All Logs, Calendar navigation, protected workflows, 320/390 both themes) | PASS GitHub run `40276022471`, branch head `3eb6bf4` |
+| Mobile form regression | PASS `40276022466` |
+| 21-file LIVE root ZIP and standalone fully embedded DEMO, isolated fictional storage | PASS artifact #12630810614 independent ZIP/manifest inspection |
+| Screenshot render of Logs 320/390 dark/light in both LIVE and DEMO | PASS presence and visual inspection of dark390/light320; screenshot top partially scrolled |
+| Physical iPhone Safari, screen reader, keyboard safe-area, real saved-data histories and Cloudflare preview served bytes | NOT TESTED / NOT VERIFIED |
