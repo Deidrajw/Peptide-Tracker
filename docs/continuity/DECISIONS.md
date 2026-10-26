@@ -486,3 +486,9 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 - Completion celebration is a one-time visual response to explicitly confirmed Mark completed, never on screen refresh; reduced-motion static checkmark. Existing saved doses/phases unaffected.
 - Reuse existing in-app transition alerts at 3 days, 1 day and phase start; IDs include protocol ID and compound to prevent same-compound collisions across protocols. No promise of closed-app push notifications.
 - Protocol countdown uses the latest computed phase end of all compounds with known start and phases, respecting accumulated pauses; paused, not started, scheduled elapsed, and manually completed states are explicit. Each compound shows its own current phase and roadmap with existing pause-aware source-of-truth. No automatic complete state change, no dose logic changes. Draft PR only.
+
+
+## 2026-10-26 — User Protocol details feedback, design pending
+- User dislikes pill/timing/active-dosing cluster under Schedule & phases and present flat phase roadmap; wants redesigned surfaces. Also requests better Create/Edit builder and optional notification when recorded compound use continues after scheduled protocol phases. These are **design requests, not final approval of proposed layout**.
+- Distinguish schedule elapsed from user-confirmed protocol completion; never mark complete automatically. Explicit future scheduled activity is not proof of dose administration. Do not infer medical advice or automatically extend/copy dosing. Validate historical record association before prompting, respect dismissal, preserve localStorage, existing data and manual pause/resume.
+- Possible post-pause stale filter rendering is an observation to reproduce, not a confirmed defect diagnosis. Keep PR draft and production unchanged.
