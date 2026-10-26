@@ -40,8 +40,13 @@ try {
   await inspectTextDisclosure(".nexus-today-details>summary","View tracking");
   if(await pg.locator(".nexus-lookahead>summary").count())
     await inspectTextDisclosure(".nexus-lookahead>summary","View schedule");
-  if(await pg.locator(".nexus-week-card .nexus-quiet-toggle").count())
-    await inspectTextDisclosure(".nexus-week-card .nexus-quiet-toggle","View details");
+  // Weekly disclosure was intentionally relocated under Your Activity > This week.
+  // Switch the real segmented control before measuring the visible tap target.
+  if(await pg.locator('.nx-activity-period[data-period="week"]').count()){
+    await pg.locator('.nx-activity-period[data-period="week"]').click();
+    if(await pg.locator(".nexus-week-card .nexus-quiet-toggle").count())
+      await inspectTextDisclosure(".nexus-week-card .nexus-quiet-toggle","View details");
+  }
   const daily=pg.locator(".nexus-today-details").first();
   await daily.locator("summary").click();
   assert(await daily.evaluate(x=>x.open),"Today disclosure failed");
