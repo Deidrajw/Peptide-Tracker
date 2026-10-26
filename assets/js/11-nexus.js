@@ -1553,10 +1553,20 @@ function protocolsView() {
         <div class="nexus-protocol-details-body">
           ${p.goal?`<div class="nx-protocol-2-goal"><strong>Purpose</strong><span>${esc(p.goal)}</span></div>`:""}
           ${p.linkedGoalId?`<div class="nx-protocol-2-goal"><strong>Linked goal</strong><span>${goalRef?esc(goalRef.name):"Linked goal unavailable · edit to relink"}</span></div>`:""}
-          <div class="nx-protocol-compound-phases">${compounds.map(c=>{const ph=compoundPhaseStatus(p,c);const label=ph?.current?`Phase ${ph.index+1} of ${ph.phases.length} · ${ph.isRest?"Rest":"Dosing"}`:ph?.done?"Schedule elapsed":ph?.notStartedYet?"Not started":"No phase date";return `<button type="button" class="nx-protocol-open-phase" data-proto="${p.id}" data-comp="${esc(c.name)}"><span>${esc(c.name)}</span><strong>${esc(label)}</strong><span aria-hidden="true">›</span></button>`;}).join("")}</div>
-          <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
-          <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
-          ${compounds.map(c=>`<div class="nexus-protocol-compound"><span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>${compoundDetailRow(p,c)}</div>`).join("")}
+          <div class="nx-protocol-section-heading">Compound timelines</div>
+          <div class="nx-protocol-compound-phases nx-protocol-progress-list">
+            ${compounds.map(c=>{
+              const ph=compoundPhaseStatus(p,c);
+              const label=ph?.current?`Phase ${ph.index+1} of ${ph.phases.length} · ${ph.isRest?"Rest":"Dosing"}`:ph?.done?"Schedule ended":ph?.notStartedYet?"Not started":"Phase dates unavailable";
+              const detail=ph?.current?`${ph.isPaused?"Paused · ":""}Week ${ph.weekInPhase} of ${ph.totalWeeks} · ${ph.daysLeft} ${ph.daysLeft===1?"day":"days"} in phase`:ph?.notStartedYet&&ph.phases?.[0]?.startDate?`Begins ${fmtDate(ph.phases[0].startDate)}`:ph?.done?"View completed phase history":"View phase timeline";
+              const pct=ph?.current&&ph.totalWeeks>0?Math.max(0,Math.min(100,Math.round(100*(1-ph.daysLeft/(ph.totalWeeks*7))))):ph?.done?100:0;
+              return `<button type="button" class="nx-protocol-open-phase nx-protocol-progress-row" data-proto="${p.id}" data-comp="${esc(c.name)}" aria-label="View ${esc(c.name)} phase roadmap">
+                <span class="nx-protocol-progress-copy"><strong class="nx-protocol-progress-name">${esc(c.name)}</strong><span class="nx-protocol-progress-stage">${esc(label)}</span><span class="nx-protocol-progress-detail">${esc(detail)}</span>${ph?.current||ph?.done?`<span class="nx-protocol-progress-track" aria-hidden="true"><span style="width:${pct}%"></span></span>`:""}</span>
+                <svg class="nx-protocol-progress-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>`;
+            }).join("")}
+          </div>
+          <div class="nx-protocol-schedule-footnote">Schedule: ${esc(p.schedule?.type||"Weekly")} · ${Math.max(1,Number(p.schedule?.dosesPerDay)||1)} per scheduled day</div>
         </div>
       </details>
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
