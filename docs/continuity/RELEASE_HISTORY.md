@@ -577,3 +577,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Navigation QA corrective commits (DRAFT, UNRELEASED)
 - `49484971`: replace obsolete Protocol chevron regression assertion with approved end-to-end navigation journey in 8 LIVE/DEMO × 320/390 × light/dark contexts. `80289b93`: Plans Research management control background selector specificity fix. No schema/data changes. New CI and full-app artifacts pending at documentation time; no merge/deployment.
+
+
+### 2026-10-26 — Sprint 2A QA candidate verified (DRAFT, NOT RELEASED)
+- Verified PR head `17112406`, merge SHA `c6885efd`: mobile run 40359787123 SUCCESS, build/parity run 40359787121 SUCCESS. GitHub artifact 12667882258 contains 2.49 MB standalone FULL DEMO HTML, 0.88 MB offline DEMO ZIP, 1.79 MB 21-file LIVE ZIP and QA evidence; manifest reports ephemeral demo storage and no sync, physical iPhone untested. Browser matrix 8 cases and amended chevron navigation 8/8 PASS; Plans Research contrast 8/8 PASS. Cloudflare mismatch expected because draft not deployed. Commit `b155134c` adds screenshot capture; latest-head screenshot run pending. No data migration, merge, deployment, or published version bump.
