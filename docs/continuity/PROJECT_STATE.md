@@ -834,3 +834,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Today dark gradient feedback
 - Screenshot review: user reported strong upper-right circular lavender glow in Today summary. Prior dark override already flattened the background gradient; targeted follow-up removed `html[data-theme="dark"] .nexus-today-hero::before` glow entirely in commit `04c5f1c`. Light mode and progress orbit untouched. No storage/data or dose engine changes. Draft PR #123 only; no merge/deploy.
 - **NEXT ACTION:** verify latest-head 320/390 dark/light browser screenshots and real iPhone design acceptance before requesting release authorization.
+
+
+### 2026-10-25 — Today dark hero gradient follow-up
+- User explicitly requested the dark Today hero match the softer, evenly distributed light-mode gradient rather than the prior nearly flat dark proposal. Candidate CSS committed at `abb816b4e6688653252b6054745535554f3d1a5f`: full-card dark gradient #443451 / #382B46 / #30263D, no upper-right pseudo-element glow; light mode untouched. Visual acceptance/browser QA PENDING. PR #123 remains draft, no production deployment.
+- **NEXT ACTION:** Inspect exact-head 320px/390px light/dark screenshots and run QA; retain draft state until approved.
