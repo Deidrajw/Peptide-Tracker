@@ -330,3 +330,7 @@
 
 ### 2026-10-25 — Today complete coverage reiteration
 - User explicitly wants original entire-app redesign not forgotten; finish lower Today including expanded compound, insights and alerts, tracking disclosure, week summary and all actions before Protocol/Plans. Preserve richer expanded information rather than reducing it to compact scan card. No production merge/deploy approval.
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- PR #123 preview only: group existing Last/Next facts in equal-width surface while preserving schedule calculations, insights, site notices and actions. Intel receives plain label and aria label. Not production-approved.
