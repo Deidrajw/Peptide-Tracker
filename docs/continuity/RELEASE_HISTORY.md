@@ -524,3 +524,7 @@
 
 ### 2026-10-26 — PR #123 optical patch (CODED; NOT RELEASED)
 - Scoped Add Log plus-only, tile centering/wrapping, and Today This week label gap to hybrid CSS. New automated mobile matrix assertions added. Branch commits `799f254` CSS and `bf5a4b1` test. No saved-data migration or business logic changes. New CI, artifacts, physical iPhone approval and deployment **PENDING**. Draft PR #123 remains unmerged.
+
+
+### 2026-10-26 — Sprint 01 physical iPhone acceptance (CONDITIONAL, NOT RELEASED)
+- User reported PASS WITH MINOR VISUAL ISSUES and requested Calendar Month icon modifications. Exact correction pending clarification and implementation. Full browser/build workflow 40339121469 PASS, mobile workflow 40339121261 PASS at pre-doc head 375b8879. No Sprint 01 final acceptance or production release claim. No app code or data migration in this docs-only checkpoint; PR #123 stays draft/unmerged.
