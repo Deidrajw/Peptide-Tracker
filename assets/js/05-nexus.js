@@ -741,6 +741,7 @@ function doseModal(name, existing, occTime) {
   // UI-only Quick / Guided navigation; original source, validation, math,
   // draft restoration, and final #save handler are unchanged.
   const doseScroll=m.querySelector(".nx-dose-scroll");
+  const doseFooter=m.querySelector(".nx-dose-footer");
   const doseHead=m.querySelector(".nx-dose-head");
   const sections=[...m.querySelectorAll(".nx-dose-scroll > .nx-dose-section")];
   const chooser=document.createElement("div");
@@ -750,7 +751,7 @@ function doseModal(name, existing, occTime) {
   const stepNav=document.createElement("div");
   stepNav.className="nx-dose-step-nav";
   stepNav.innerHTML='<span id="nx-dose-step-caption" aria-live="polite"></span><div class="nx-dose-step-track"><span></span></div><div class="nx-dose-step-actions"><button type="button" id="nx-dose-step-back">Back</button><button type="button" id="nx-dose-step-next">Continue</button></div>';
-  chooser.insertAdjacentElement("afterend",stepNav);
+  doseFooter.insertAdjacentElement("afterbegin",stepNav);
   const review=document.createElement("section");
   review.className="nx-dose-review-stage";
   review.innerHTML='<h3>Review your entry</h3><div id="nx-dose-review-rows"></div><p>Recording remains subject to the existing source allocation and inventory validation. Check the calculation above before confirming.</p>';
@@ -760,31 +761,48 @@ function doseModal(name, existing, occTime) {
   const doseBack=stepNav.querySelector("#nx-dose-step-back");
   const doseNext=stepNav.querySelector("#nx-dose-step-next");
   const saveButton=m.querySelector("#save");
+  const reviewNote=m.querySelector(".nx-dose-review-note");
+  const error=document.createElement("p");error.className="nx-dose-step-error";error.setAttribute("role","alert");error.hidden=true;stepNav.insertAdjacentElement("beforebegin",error);
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
+  const validateDoseStep=()=>{
+    const amount=Number(doseVal("dose"));
+    const date=doseVal("date");
+    if(!date)return "Choose a date and time before continuing.";
+    if(!Number.isFinite(amount)||amount<=0)return "Enter a valid amount greater than zero before continuing.";
+    if(doseUiMode==="guided" && doseUiStep===1 && selectedSource==="fresh" && needsKitPicker && !activeKit())return "Select a source vial before continuing.";
+    return "";
+  };
   const updateDoseReview=()=>{
     const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
-    const allocationText=[m.querySelector("#alloc-panel")?.innerText,m.querySelector("#nx-blend-dose-breakdown")?.innerText].filter(Boolean).join(" · ").trim();
+    const allocationText=[m.querySelector("#alloc-panel")?.textContent,m.querySelector("#nx-blend-dose-breakdown")?.textContent].filter(Boolean).join(" · ").trim();
     review.querySelector("#nx-dose-review-rows").innerHTML=row("Compound",name)+row("Amount",doseVal("dose")+" "+c.unit)+row("Date",doseVal("date"))+row("Source",selectedSource==="fresh"?(activeKit()?.name||"Fresh from vial"):"Prepared dose")+row("Site",doseVal("site"))+row("Allocation",allocationText||"Validate amount and available source before confirming");
   };
   const paintDoseUi=()=>{
     const guided=doseUiMode==="guided";
     chooser.querySelectorAll("button").forEach(btn=>{const on=btn.dataset.doseMode===doseUiMode;btn.setAttribute("aria-pressed",String(on));btn.classList.toggle("is-selected",on);});
-    stepNav.hidden=!guided;review.hidden=!guided||doseUiStep!==2;
+    const finalStep=guided?2:1;
+    const atReview=doseUiStep===finalStep;
+    error.hidden=true;
+    stepNav.hidden=false;review.hidden=!atReview;
+    doseStepCaption.textContent=guided?"Step "+(doseUiStep+1)+" of 3 · "+["Dose details","Source allocation","Review"][doseUiStep]:"Step "+(doseUiStep+1)+" of 2 · "+["Quick entry","Review"][doseUiStep];
+    stepNav.querySelector(".nx-dose-step-track span").style.width=((doseUiStep+1)/(finalStep+1)*100)+"%";
+    doseBack.disabled=doseUiStep===0;doseNext.hidden=atReview;
     if(guided){
       doseStepCaption.textContent="Step "+(doseUiStep+1)+" of 3 · "+["Dose details","Source allocation","Review"][doseUiStep];
       stepNav.querySelector(".nx-dose-step-track span").style.width=((doseUiStep+1)/3*100)+"%";
       doseBack.disabled=doseUiStep===0;doseNext.hidden=doseUiStep===2;
       sections.forEach((el,i)=>{el.hidden=doseUiStep===2||((doseUiStep===0)?i===0:i!==0);});
-      saveButton.hidden=doseUiStep!==2;
-      if(doseUiStep===2)updateDoseReview();
+      saveButton.hidden=!atReview;
     }else{
-      sections.forEach(el=>{el.hidden=false;});
-      saveButton.hidden=false;
+      sections.forEach(el=>{el.hidden=atReview;});
+      saveButton.hidden=!atReview;
     }
+    if(reviewNote)reviewNote.textContent=atReview?"Confirm the source, entered amount and calculated allocation before recording.":"Complete the fields, then review the entry before recording.";
+    if(atReview)updateDoseReview();
   };
   chooser.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{doseUiMode=btn.dataset.doseMode;doseUiStep=0;paintDoseUi();});
   doseBack.onclick=()=>{doseUiStep=Math.max(0,doseUiStep-1);paintDoseUi();doseScroll.scrollTop=0;};
-  doseNext.onclick=()=>{doseUiStep=Math.min(2,doseUiStep+1);paintDoseUi();doseScroll.scrollTop=0;};
+  doseNext.onclick=()=>{const message=validateDoseStep();if(message){error.textContent=message;error.hidden=false;return;}doseUiStep=Math.min(doseUiMode==="guided"?2:1,doseUiStep+1);paintDoseUi();doseScroll.scrollTop=0;};
   paintDoseUi();
   m.querySelector("#x").onclick = closeModal;
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
