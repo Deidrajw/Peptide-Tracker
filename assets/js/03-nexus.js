@@ -824,6 +824,66 @@ function addBlendKitModal(blendNameOrKit) {
   const nameInput = m.querySelector("#bk-name");
   if (nameInput) nameInput.oninput = () => { name = nameInput.value.trim(); };
 
+
+  // Nexus 2.0 guided blend editor: presentation only. The original #bk-save
+  // handler below remains the sole authorized inventory mutation path.
+  m.classList.add("nx-guided-blend-editor");
+  const blendSave=m.querySelector("#bk-save");
+  const contentRoot=blendSave.parentElement;
+  const nodes=[...contentRoot.children];
+  const compositionEnd=contentRoot.querySelector("#comp-total");
+  const compEndIndex=nodes.indexOf(compositionEnd);
+  const detailsStart=nodes.findIndex(node=>node.contains?.(m.querySelector("#bk-vials"))||node.contains?.(m.querySelector("#bk-storage"))||node.textContent?.includes("Vials, reconstitution, and BAC water are managed"));
+  if(compEndIndex>=0&&detailsStart>compEndIndex&&blendSave){
+    const panels=[0,1,2].map(i=>{const el=document.createElement("section");el.className="nx-blend-wizard-panel";el.dataset.step=String(i);el.hidden=i!==0;return el;});
+    nodes.slice(0,compEndIndex+1).forEach(el=>panels[0].appendChild(el));
+    nodes.slice(detailsStart,nodes.indexOf(blendSave)).forEach(el=>panels[1].appendChild(el));
+    // In case of intervening nodes, retain them rather than dropping data fields.
+    nodes.slice(compEndIndex+1,detailsStart).forEach(el=>panels[1].prepend(el));
+    const progress=document.createElement("div");progress.className="nx-blend-wizard-progress";
+    progress.innerHTML='<strong id="nx-blend-step-label">Step 1 of 3 · Blend details</strong><span>1 / 3</span><div class="nx-blend-wizard-track"><i></i></div>';
+    const summary=document.createElement("div");summary.className="nx-blend-wizard-summary";summary.setAttribute("aria-live","polite");
+    panels[2].append(summary);
+    contentRoot.append(progress,...panels);
+    const nav=document.createElement("div");nav.className="nx-blend-wizard-footer";
+    nav.innerHTML='<p role="alert" class="nx-blend-wizard-error" hidden></p><div class="nx-blend-wizard-actions"><button type="button" id="nx-blend-back">Back</button><button type="button" id="nx-blend-next">Continue</button></div>';
+    nav.querySelector(".nx-blend-wizard-actions").append(blendSave);
+    contentRoot.append(nav);
+    const back=nav.querySelector("#nx-blend-back"),next=nav.querySelector("#nx-blend-next"),err=nav.querySelector(".nx-blend-wizard-error");
+    let stage=0;
+    const safe=v=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+    const validateStep=()=>{
+      if(stage===0){
+        const selected=composition.filter(c=>c.compound&&Number.isFinite(Number(c.mg))&&Number(c.mg)>0);
+        if(!isEdit&&isCustomNew&&!name.trim())return "Enter a blend name.";
+        if(selected.length!==composition.length||selected.length<2)return "Choose at least two compounds and enter a positive mg amount for each.";
+        if(new Set(selected.map(c=>c.compound.toLowerCase())).size!==selected.length)return "Each compound can appear only once in a blend.";
+      }
+      if(stage===1){
+        if(!isEdit){const n=Number(m.querySelector("#bk-vials")?.value);if(!Number.isSafeInteger(n)||n<1)return "Enter a positive whole number of vials.";}
+        const ex=Number(m.querySelector("#bk-expiry")?.value),water=Number(m.querySelector("#bk-bac-edit")?.value);
+        if(!Number.isSafeInteger(ex)||ex<1||ex>3650||!Number.isFinite(water)||water<0)return "Check expiry days and BAC water.";
+        if(!isEdit){const initial=Number(m.querySelector("#bk-bac")?.value);if(!Number.isFinite(initial)||initial<0)return "BAC water cannot be negative.";}
+      }
+      return "";
+    };
+    const review=()=>{
+      const rows=[["Blend",isEdit?existingKit.name:name||blendName],...composition.map(c=>[c.compound,c.mg+" mg per vial"]),["Total strength",composition.reduce((t,c)=>t+Number(c.mg||0),0)+" mg per vial"],["Vials",isEdit?"Existing vial counts unchanged":m.querySelector("#bk-vials")?.value],["Already open",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One vial":"No")],["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],["Expiry",m.querySelector("#bk-expiry")?.value+" days"],["BAC water",m.querySelector("#bk-bac-edit")?.value+" mL"]];
+      summary.innerHTML='<h3>Review blend inventory</h3><p>Confirm the component amounts per physical vial before saving.</p>'+rows.map(([k,v])=>'<div><span>'+safe(k)+'</span><strong>'+safe(v)+'</strong></div>').join("")+'<p class="nx-blend-review-caution">'+(isEdit?"Existing opened vial ratios and all historical doses remain unchanged. Only the future-vial template and kit details are updated.":"One physical blended vial is recorded per vial, not separate kits for each component.")+'</p>';
+    };
+    const paint=()=>{
+      panels.forEach((panel,i)=>{panel.hidden=i!==stage;});
+      progress.querySelector("#nx-blend-step-label").textContent="Step "+(stage+1)+" of 3 · "+["Blend details","Preparation & storage","Review & save"][stage];
+      progress.querySelector("span").textContent=(stage+1)+" / 3";
+      progress.querySelector("i").style.width=((stage+1)/3*100)+"%";
+      back.hidden=stage===0;next.hidden=stage===2;blendSave.hidden=stage!==2;err.hidden=true;
+      if(stage===2)review();
+    };
+    back.onclick=()=>{stage=Math.max(0,stage-1);paint();};
+    next.onclick=()=>{const problem=validateStep();if(problem){err.textContent=problem;err.hidden=false;return;}stage=Math.min(2,stage+1);paint();};
+    paint();
+  }
+
   m.querySelector("#bk-save").onclick = () => {
     const finalName = isEdit ? existingKit.name : (isCustomNew ? name.trim() : blendName);
     if (!finalName) { showErrorBanner("Give this blend a name first."); return; }
