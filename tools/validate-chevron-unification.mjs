@@ -100,9 +100,13 @@ try {
   assert(await pg.locator(".nx-journal").count()===1,"Logs journal missing");
   assert(await pg.locator("#nx-journal-date").inputValue()===selectedCalendarDate,"Selected day not carried into Logs");
   assert(await pg.locator(".nx-journal-mode").count()===2,"Day/All modes missing");
-  assert(await pg.locator(".nx-journal-row").count()>=0,"Day journal failed");
+  assert(await pg.locator(".nx-journal").count()===1,"Day journal failed");
+  await pg.screenshot({path:"dist/logs-day-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator('.nx-journal-mode[data-mode="all"]').click();
   assert(await pg.locator(".nx-journal-filter").count()===7,"All Logs type filtering missing");
+  assert(await pg.locator(".nx-journal-row").count()>0,"All Logs fictional fixture has no records");
+  assert(await pg.locator(".nx-journal-mark svg").count()>0,"Outline log icons missing");
+  await pg.screenshot({path:"dist/logs-all-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator('.nx-journal-filter[data-type="Weight"]').click();
   assert(await pg.locator('.nx-journal-filter[data-type="Weight"]').evaluate(el=>el.classList.contains("on")),"Weight filter failed");
   await pg.locator('.nx-journal-mode[data-mode="day"]').click();
