@@ -841,3 +841,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Compact Goals correction regression
 - NOT TESTED latest head: 320/390 light/dark compact density, management action target, Details navigation, other goal statuses, numeric and nonnumeric progress, all Goals/Research/Shopping sub-tabs after header count removal, Protocol links, saved history and user data. CI and physical iPhone acceptance pending.
+
+
+## 2026-10-26 Goals approved preview parity
+- NOT TESTED latest head: screenshot parity at 320/390 light/dark for approved original goal card with status, target, progress, links and detail navigation. Physical iPhone pending.
