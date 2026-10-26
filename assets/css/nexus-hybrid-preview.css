@@ -2015,3 +2015,16 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 @media(max-width:359px){
   .nexus-screen-protocols .nx-protocol-progress-row{padding:11px 10px;gap:8px}
 }
+
+
+/* Regression: management surface must remain visibly distinct from Plans Research card.
+   Retain same button/handler and 44px target in both themes. */
+.nexus-screen-plans .nx-plan-2-research .manage-plan-btn {
+  background:var(--surface-2)!important;
+  border:1px solid var(--border)!important;
+  color:var(--t1)!important;
+}
+html[data-theme="light"] .nexus-screen-plans .nx-plan-2-research .manage-plan-btn {
+  background:#f0e9f6!important;
+  border-color:#d7c7e3!important;
+}
