@@ -1488,3 +1488,29 @@ body.nx-alert-modal-open{overflow:hidden}
 .nx-week-compact .nx-week-report-link{width:100%;min-height:44px;display:flex;align-items:center;justify-content:flex-end;gap:6px;background:transparent;border:0;color:var(--t3);font-size:12px;font-weight:650;padding:8px 2px;text-align:right}
 .nx-week-compact .nx-week-report-link span{font-size:13px}
 @media(max-width:350px){.nx-today-header .nx-alert-trigger{min-width:49px;padding:8px}.nx-today-header .nx-alert-count{font-size:11px}}
+
+
+/* Today alerts — native-feeling notification inbox. No extra card/chevron on Today. */
+.nx-today-header .nx-alert-trigger{position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 48px!important;width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important;border-radius:16px!important;overflow:visible!important;background:var(--surface-2)!important;border:1px solid var(--border)!important}
+.nx-today-header .nx-alert-bell,.nx-today-header .nx-alert-bell svg{display:inline-flex!important;width:22px!important;height:22px!important;color:var(--t1)!important}
+.nx-today-header .nx-alert-count{position:absolute!important;right:-5px!important;top:-5px!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:19px!important;height:19px!important;padding:0 5px!important;border:2px solid var(--bg)!important;border-radius:99px!important;background:#B990E6!important;color:#23182F!important;font-weight:750!important;font-size:10px!important;line-height:1!important}
+.nx-alert-sheet{padding-top:10px;padding-bottom:max(12px,env(safe-area-inset-bottom));background:var(--surface)!important}
+.nx-alert-heading{align-items:flex-start}
+.nx-alert-heading-actions{display:flex;gap:6px;align-items:center}
+.nx-alert-heading-actions button{min-height:44px;padding:0 11px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font-size:12px;font-weight:650}
+.nx-alert-managebar{display:none;align-items:center;gap:10px;padding:9px 17px;border-block:1px solid var(--border-sub)}
+.nx-alert-managing .nx-alert-managebar{display:flex}
+.nx-alert-managebar button{min-height:44px;padding:0 9px;border:0;background:transparent;color:var(--accent,#CDA7F0);font-size:12px;font-weight:650}
+.nx-alert-managebar button:disabled{opacity:.4}
+#nx-alert-selected-count{flex:1;color:var(--t3);font-size:12px;text-align:center}
+.nx-alert-choice-wrap{display:none;align-items:center;justify-content:center;flex:0 0 30px;min-width:30px;min-height:44px}
+.nx-alert-managing .nx-alert-choice-wrap{display:flex}
+.nx-alert-choice{accent-color:#AE87D9;width:20px;height:20px}
+.nx-alert-items{background:transparent!important;border:0!important;border-radius:0!important}
+.nx-alert-item{min-height:73px;margin:0 4px 7px;border:1px solid var(--border-sub)!important;border-radius:13px;background:var(--surface-2)!important;padding:12px!important}
+.nx-alert-item .reminder-card{min-height:44px}
+.nx-alert-section h3{padding:10px 9px 8px;text-transform:none;letter-spacing:.01em}
+.nx-alert-scroll{padding-inline:12px}
+.nx-alert-restore{width:100%;margin:8px 0;padding:10px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);font-weight:650}
+.nx-alert-trigger:focus-visible,.nx-alert-sheet button:focus-visible,.nx-alert-choice:focus-visible{outline:2px solid #CDA7F0;outline-offset:3px}
+@media(max-width:360px){.nx-alert-heading{padding-inline:12px}.nx-alert-heading-actions{gap:3px}.nx-alert-heading-actions button{padding-inline:8px}}
