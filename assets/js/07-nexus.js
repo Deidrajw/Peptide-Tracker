@@ -264,7 +264,6 @@ function supplyModal(existing, presetName) {
   const paint=()=>{
     stages.forEach((el,i)=>{el.hidden=i!==currentStep;});
     stepHeader.querySelector("#nx-kit-step-label").textContent="Step "+(currentStep+1)+" of 3 · "+["Kit details","Preparation & storage","Review & save"][currentStep];
-    stepHeader.querySelector("#nx-kit-step-count").textContent=(currentStep+1)+" / 3";
     stepHeader.querySelector(".nx-kit-wizard-track span").style.width=((currentStep+1)/3*100)+"%";
     back.hidden=currentStep===0;next.hidden=currentStep===2;
     saveAction.hidden=currentStep!==2;
