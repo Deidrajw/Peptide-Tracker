@@ -113,7 +113,15 @@ function supplyModal(existing, presetName) {
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
   m.classList.add("nx-stash-kit-editor");
   const originalTitle=m.querySelector(".mono");
-  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");}
+  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");
+    originalTitle.textContent=existing?"Edit kit":"Add kit";
+    const intro=document.createElement("p");intro.className="nx-kit-editor-intro";intro.textContent=existing?"Update kit details without changing vial quantities or history.":"Record a kit and its vial details. You can open a vial later.";
+    originalTitle.parentElement.insertAdjacentElement("afterend",intro);
+  }
+  const openLabel=m.querySelector("#shasopen")?.closest("label");
+  if(openLabel)openLabel.classList.add("nx-kit-editor-open-toggle");
+  const openFields=m.querySelector("#sopen-fields");
+  if(openFields)openFields.classList.add("nx-kit-editor-open-fields");
   const controls=["sname","stv","svmg","srecon","sremaining","sbac","sexp","scost","scur","sloc","snotes"];
   controls.forEach(id=>{
     const control=m.querySelector("#"+id);
