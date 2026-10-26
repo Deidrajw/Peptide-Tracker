@@ -426,3 +426,7 @@
 
 ### Today compact action cleanup
 - 2026-10-25 PR #123 CODED / NOT MERGED: Today UX clarity follow-up, commits c0124a0, d969527, 8b27bab. Affects compact card disclosure/action row and expanded history menu/helper. No dose math, localStorage migration, or production user data writes. LIVE ZIP / FULL isolated DEMO artifacts and latest head QA still INCOMPLETE. No Cloudflare deployment.
+
+
+### Log Dose preview trial
+- 2026-10-25 PR #123 preview-only code 2dfae668: conditional expanded Log Dose presentation, no changes to doseModal or storage. Browser and physical iPhone NOT TESTED, deployment unverified; no merge to main.
