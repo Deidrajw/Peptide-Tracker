@@ -641,3 +641,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Stash kit editor parity polish (DRAFT / UNRELEASED)
 - `9cfb316e`, `8a223e78`, `bdd7532c`, `9b03db6c` add form styling hooks, SVG navigation, light border polish and validation assertions without changing inventory handler math or data schema. New-head QA, complete artifacts, and physical iPhone NOT VERIFIED. PR #123 remains draft/unmerged; no production deploy.
+
+### 2026-10-26 — Proposed guided Add/Edit Kit and Prepared screens redesign (DESIGN ONLY)
+- User-requested design study and Stash secondary-screen audit; no new kit/prepared workflow implementation, schema migration, merge, or deployment. Retain same original inventory/save calculations. Draft PR #123 remains unmerged.
