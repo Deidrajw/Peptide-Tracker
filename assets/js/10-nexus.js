@@ -81,7 +81,7 @@ function stashView() {
   if (readyPrepared.length) {
     html += `<button id="open-prepared-list" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#A78BFA0d;border:1px solid #A78BFA33;margin-bottom:14px">
       <span style="font-size:13px;color:#A78BFA;font-weight:600">Prepared · ${readyPrepared.length} ${readyPrepared.length===1?"syringe":"syringes"} ready</span>
-      <span style="color:#A78BFA">›</span>
+      <svg class="nx-stash-prepared-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
 
@@ -115,7 +115,7 @@ function stashView() {
         <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${esc(n.name)}</div>
         <div style="font-size:12px;color:var(--t3)">${esc(n.text)}</div>
         ${n.sub?`<div style="font-size:12px;color:#F9C87D">${esc(n.sub)}</div>`:""}
-        <button class="inv-notice-action" data-kind="${n.kind}" data-kit="${n.kitId||""}" data-name="${esc(n.name)}" style="margin-top:8px;font-size:11px;font-weight:600;color:#F9C87D;background:transparent;border:none;padding:0">${esc(n.action)} →</button>
+        <button class="inv-notice-action" data-kind="${n.kind}" data-kit="${n.kitId||""}" data-name="${esc(n.name)}" style="margin-top:8px;font-size:11px;font-weight:600;color:#F9C87D;background:transparent;border:none;padding:0">${esc(n.action)}</button>
       </div>`).join("")}
     </section>`;
   }
