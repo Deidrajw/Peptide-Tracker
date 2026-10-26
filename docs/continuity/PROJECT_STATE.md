@@ -860,3 +860,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **Visual follow-up:** Coming Up fixture lists three consecutive GHK-Cu entries (same daily compound), potentially monotonous compared with approved '2–3 meaningful occurrences'. Review with user before altering selection logic. Primary UX confirmation on physical iPhone, full contrast audit and Cloudflare preview SHA/content independent verification remain **INCOMPLETE**.
 - PR #123 stays draft/unmerged. No production release/deployment or data import performed. Candidate release metadata remains v0.9.20-beta [unverified] pending authorized merge/deploy.
 - **ONE NEXT ACTION:** present genuine 320/390 Today screenshots and candidate LIVE/DEMO downloads for user iPhone acceptance; review Coming Up repetition, then seek separate merge/deploy approval only after acceptance.
+
+
+### 2026-10-26 — Notification bell and deferred confirmation defects (PR #123 draft)
+- User screenshot showed alert badge but no bell and confirmation for Clear all only visible after manually closing Needs Attention. Verified alert trigger relied on `nxCompoundMenuIcon("bell")`; replaced with explicit 22px outlined SVG in 10-nexus.js (`2a327bf`).
+- Clear selected and Clear all previously called `confirmAction` with `nx-alert-overlay` still open. Both now close the overlay first and then launch confirmation (`f4ad59e`); original dismiss/restore persistence retained, no direct data erasure before explicit confirmation.
+- **Status:** CODED on design branch, QA/render verification PENDING; no merge/prod deploy.
+- **ONE NEXT ACTION:** verify source-built LIVE/DEMO at 320/390 both themes; directly test bell visibility, immediate confirmation and cancel/confirm/dismiss/restore flows before marking pass.
