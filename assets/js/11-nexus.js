@@ -1344,7 +1344,8 @@ function phaseRoadmapModal(protocolId, compoundName) {
   const cc = cfg(compoundName);
   const info = getProtocolPhaseInfo(p, c);
   const phases = info ? info.phases : (c.phases||[]).map(ph=>({...ph, startDate:null, endDate:null}));
-  const today = localDate();
+  // Match the canonical pause-aware phase position; do not advance the roadmap while paused.
+  const today = (p.status==="paused" && p.pausedAt) ? dayKey(p.pausedAt) : localDate();
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${cc.color};letter-spacing:1.5px">${esc(compoundName.toUpperCase())} — PHASE ROADMAP</span>
