@@ -1945,3 +1945,25 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 @media(prefers-reduced-motion:reduce){
   .nx-protocol-celebration-mark {animation:none}
 }
+
+
+/* Sprint 02A: user-approved vertical compound phase roadmap */
+.nx-phase-vertical-timeline{display:grid;gap:0;margin:14px 0 8px}
+.nx-phase-timeline-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;min-width:0}
+.nx-phase-timeline-rail{display:flex;flex-direction:column;align-items:center}
+.nx-phase-timeline-dot{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--border);border-radius:50%;background:var(--surface);color:var(--t3);font-size:12px;font-weight:800;flex-shrink:0}
+.nx-phase-timeline-line{width:2px;flex:1;min-height:42px;background:var(--border-sub)}
+.nx-phase-timeline-content{min-width:0;padding:0 0 24px}
+.nx-phase-timeline-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nx-phase-timeline-heading strong{font-size:14px;color:var(--t1);line-height:1.4;overflow-wrap:anywhere}
+.nx-phase-timeline-heading span{font-size:11px;color:var(--t3);font-weight:650}
+.nx-phase-timeline-meta{font-size:12px;color:var(--t2);margin-top:5px;line-height:1.4}
+.nx-phase-timeline-date{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.4}
+.nx-phase-timeline-row.is-past .nx-phase-timeline-dot{background:var(--surface-2);border-color:var(--t3);color:var(--t1)}
+.nx-phase-timeline-row.is-current .nx-phase-timeline-dot{background:#a78bfa;border-color:#a78bfa;color:#251833}
+.nx-phase-timeline-row.is-current .nx-phase-timeline-heading strong{color:var(--t1)}
+.nx-phase-timeline-row.is-current .nx-phase-timeline-heading span{color:#a78bfa}
+.nx-phase-timeline-row.is-current .nx-phase-timeline-content{padding:12px 12px 20px;margin:-12px 0 12px;background:var(--surface-2);border-radius:13px}
+.nx-phase-timeline-row.is-upcoming .nx-phase-timeline-dot{border-color:var(--border);background:var(--surface)}
+.nx-phase-timeline-row:last-child .nx-phase-timeline-content{padding-bottom:4px}
+@media(max-width:359px){.nx-phase-timeline-row{gap:8px}.nx-phase-timeline-heading{gap:4px}}
