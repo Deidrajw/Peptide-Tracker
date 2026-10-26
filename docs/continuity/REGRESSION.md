@@ -619,3 +619,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Today grouped correction pass — 2026-10-25
 2026-10-25 Today new acceptance checks: exactly one chevron in expanded Hide details; same right alignment as collapsed; Intel visibly actionable; insight labels grounded in data; no invented phase countdown; completed-dose state visible without Log Dose; verify multiple-occurrence and overdue states; 320/390 both themes. All visual/browser/physical checks NOT TESTED; source edit and JS syntax only.
+
+
+### 2026-10-25 — Root disclosure and Insight cleanup
+- 2026-10-25 expanded Today single-chevron CSS root fix: source assertion selectors verified, but actual computed ::after content, one SVG count, disclosure alignment, 320/390 both themes, Insights no borders, overdue action, completed status and physical iPhone remain NOT TESTED. Previous Hybrid QA failures included stale source invariant; test now targets nx-insight-summary. Requires full head browser PASS and real device acceptance before milestone complete.
