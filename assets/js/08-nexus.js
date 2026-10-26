@@ -873,6 +873,8 @@ function logsView() {
   const mode=state._logsMode||"day";
   const chosen=state._logsDate||localDate();
   const filter=state._logsFilter||"All";
+  const search=(state._logsSearch||"").trim().toLowerCase();
+  const matches=(e)=>!search||[e.type,e.label,e.detail].some(v=>String(v||"").toLowerCase().includes(search));
   const types=["All","Dose","Check-in","Weight","Measurements","Nutrition","Supplements"];
   const row=(entry,index,date)=>{
     const symbol={"Dose":"syringe","Check-in":"clipboard-check","Weight":"scale","Measurements":"ruler","Nutrition":"utensils","Supplements":"pill"}[entry.type];
@@ -880,14 +882,14 @@ function logsView() {
     return '<div class="nx-journal-row"><div class="nx-journal-mark">'+icon(symbol)+'</div><div class="nx-journal-main"><div class="nx-journal-line"><strong>'+esc(entry.type)+'</strong><span>'+esc(entry.time?new Date(entry.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}):date)+'</span></div><div class="nx-journal-title">'+esc(entry.label)+'</div><div class="nx-journal-desc">'+esc(entry.detail)+'</div><div class="nx-journal-extra" id="'+id+'" hidden>'+entry.extra+'<div class="nx-journal-actions">'+entry.actions+'</div></div></div><button type="button" class="nx-journal-more" data-panel="'+id+'" aria-label="View '+esc(entry.type)+' details" aria-expanded="false">'+icon("ellipsis")+'</button></div>';
   };
   const renderDate=(date)=>{
-    const items=(byDate[date]||[]).filter(e=>mode==="day"||filter==="All"||e.type===filter);
+    const items=(byDate[date]||[]).filter(e=>mode==="day"||(filter==="All"||e.type===filter)&&matches(e));
     return '<section class="nx-journal-day"><div class="nx-journal-date"><h3>'+esc(fmtDate(date))+'</h3><span>'+items.length+' entr'+(items.length===1?'y':'ies')+'</span></div><div class="nx-journal-rows">'+(items.map((e,i)=>row(e,i,date)).join("")||'<p class="nx-journal-empty">No records for this date.</p>')+'</div></section>';
   };
-  const visible=allDates.filter(date=>filter==="All"||byDate[date].some(e=>e.type===filter));
+  const visible=allDates.filter(date=>filter==="All"||byDate[date].some(e=>e.type===filter&&matches(e)));
   return '<div class="nx-journal" aria-label="Activity logs"><div class="nx-journal-top"><div><h2>Activity logs</h2><p>Your complete personal history</p></div><div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">'+icon("plus")+' Add log</button><div id="nx-add-log-menu" class="nx-add-log-menu" hidden><button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Nutrition</button><button class="qa-supp" type="button">Supplements</button></div></div></div>'+
   '<div class="seg nx-journal-modes"><button type="button" class="nx-journal-mode '+(mode==="day"?"on":"")+'" data-mode="day">Day view</button><button type="button" class="nx-journal-mode '+(mode==="all"?"on":"")+'" data-mode="all">All logs</button></div>'+
   (mode==="day"?'<div class="nx-journal-picker"><label for="nx-journal-date">View a whole day</label><input type="date" id="nx-journal-date" value="'+esc(chosen)+'"><button type="button" id="nx-journal-today">Today</button><button type="button" class="nx-journal-day-step" data-offset="-1" aria-label="Previous day">Previous</button><button type="button" class="nx-journal-day-step" data-offset="1" aria-label="Next day">Next</button></div>'+renderDate(chosen)
-  :'<div class="nx-journal-filters" role="group" aria-label="Filter logs">'+types.map(type=>'<button type="button" data-type="'+type+'" class="nx-journal-filter '+(filter===type?"on":"")+'">'+type+'</button>').join("")+'</div>'+(visible.length?visible.map(renderDate).join(""):'<p class="nx-journal-empty">No matching entries.</p>'))+
+  :'<label class="nx-journal-search-label" for="nx-journal-search">Search your history</label><input id="nx-journal-search" class="nx-journal-search" type="search" placeholder="Search records" value="'+esc(state._logsSearch||"") +'" autocomplete="off"><div class="nx-journal-filters" role="group" aria-label="Filter logs">'+types.map(type=>'<button type="button" data-type="'+type+'" class="nx-journal-filter '+(filter===type?"on":"")+'">'+type+'</button>').join("")+'</div>'+(visible.length?visible.map(renderDate).join(""):'<p class="nx-journal-empty">No matching entries.</p>'))+
   '</div>';
 }
 
