@@ -557,3 +557,7 @@
 
 ## 2026-10-26 — Approved vertical phase timeline
 DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` responsive CSS. Visual-only; no data migrations. QA/latest-head DEMO/LIVE artifacts pending; no deployment.
+
+
+### 2026-10-26 — Expanded Protocol detail refinement (DRAFT, UNRELEASED)
+- `fd6fda06`: remove duplicated mini Gantt/route pill/dose-status cluster and show current compound phase progress rows; `23f3d666`: mobile responsive CSS; `da015ec0`: Plans Research ellipsis contrast adjustment after browser QA 40351719788 failed assertion at validate-plans-hierarchy.mjs:180. Affected: Protocol expanded card and Plans Research ellipsis styling. Data impact: none expected (markup/CSS only). Latest-head browser/mobile QA and exact-source full-app artifacts pending, physical iPhone untested, PR #123 unmerged/deployment unchanged.
