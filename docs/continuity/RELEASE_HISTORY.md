@@ -658,3 +658,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Guided Blend BAC single-source fix (CODED DRAFT; NOT RELEASED)
 - PR #123 commits d87600cb, b1586e20 and 6407d532. Remove duplicated creation BAC field and reconcile `#bk-bac-edit` between Review and authoritative `#bk-save`; add cost/notes Review, and test create/review/save with fictional 10 mg + 5 mg blend. No intended schema migration, production writes, per-component accounting or history edits. Latest-head CI and independent DEMO/LIVE artifact validation pending; no merge/deploy or real iPhone acceptance.
+
+### 2026-10-26 — Guided Stash iPhone rejection corrective branch changes (CODED DRAFT; NOT RELEASED)
+- Physical iPhone screenshots show substantial UI failures in Add Kit and Blend: duplicated select, broken step count/action hierarchy, premature Save and default opened blend vial. User rejected the design. Targeted fixes on draft PR #123 regular Kit staged save/combobox, Blend editable combo + sealed default, consistent CSS, progress count removal and browser regression assertions. No planned data migration, authoritative inventory handler/maths unchanged. Newest-head QA and exact-source full-app DEMO/LIVE artifacts NOT VERIFIED; no merge or deployment.
