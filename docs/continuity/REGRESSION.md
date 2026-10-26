@@ -906,3 +906,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Guided Blend BAC parity assertions added, pending CI
 - `tools/validate-stash-actions.mjs` now checks at 320/390, light/dark, LIVE/DEMO that there is no `#bk-bac`, one `#bk-bac-edit`, three-stage journey, no save before Review, two component amounts, review 2.5 mL and CAD $190, saved BAC 2.5 mL, vial count 3, total 15 mg and component ratio 10:5. Commit `6407d532`; workflow status PENDING at first check. Physical iPhone, full complete blend accounting history, VoiceOver and artifact extraction NOT TESTED.
+
+## 2026-10-26 — User-observed guided Stash regressions / correction gate
+- FAIL on user-provided physical iPhone screenshots: duplicate compound controls, redundant step counter, early Save Kit appearance, blend native-looking compound dropdowns, blue detached Continue CTA and open-vial default checked. User explicitly rejected screens. Corrective source commits `0a0a9f67`, `8d30293d`, `939e5c7e`, `90ecfd9e`, `b8f8f2db`; latest-head outcomes NOT TESTED. Browser checks added for hidden pre-review blend Save, editable searchable combo and sealed default. Must validate actual modal DOM, initial/read-write select, picker no matches/keyboard, one primary CTA, stage progression and historical ledger before Pass.
