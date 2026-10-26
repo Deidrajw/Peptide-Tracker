@@ -867,3 +867,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Log Dose review-gate QA checklist
 - NOT TESTED new head `c0b882d0`: Quick Entry→Review and Guided Dose→Source→Review, invalid amount/date blocked, final Save hidden before review, selected prepared/fresh kit, blend breakdown, split-vial plan, insufficient stock rejection, draft restoration, edit, keyboard/scroll/safe areas, 320/390 light/dark. Original dose calculation unchanged. Physical iPhone/VoiceOver pending; CI run may fail older one-page selectors.
+
+## 2026-10-26 — Review-ledger QA (PENDING)
+- Commit `631c36a8` modified end-to-end browser helper to traverse Review before clicking Save. Verify 8 live/demo viewport/theme combos, source kit/vial identity, native mg/mcg presentation, prepared no-double-deduction, split vial, invalid zero/negative amount, draft handoff, edits, blend save and source discrepancy. Latest-head browser results pending; manual iPhone/VoiceOver NOT TESTED.
