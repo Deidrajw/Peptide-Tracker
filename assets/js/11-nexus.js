@@ -1697,15 +1697,42 @@ function plansView() {
   const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:44px;height:44px;min-width:44px;border-radius:11px;flex:0 0 44px"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>`;
   let content="";
 
+  const goalSummary=(g)=>{
+    const pm=g.progressModel||{type:"exploratory"};
+    if(pm.type==="numeric"){
+      const start=Number(pm.baseline),target=Number(pm.target);
+      const unit=String(pm.unit||"").trim();
+      const appUnit=String(state.settings?.weightUnit||"lbs").toLowerCase();
+      const sameUnit=(["lb","lbs"].includes(unit.toLowerCase())&&["lb","lbs"].includes(appUnit))||(unit.toLowerCase()==="kg"&&appUnit==="kg");
+      const recorded=pm.source==="weightLogs"&&sameUnit?(state.weightLogs||[]).filter(w=>w.date&&Number(w.weight)>0).sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0]:null;
+      const current=recorded?Number(recorded.weight):null;
+      const valid=Number.isFinite(start)&&Number.isFinite(target)&&start!==target&&current!==null;
+      const ratio=valid?(current-start)/(target-start):null;
+      const percent=ratio===null?null:Math.max(0,Math.min(100,Math.round(ratio*100)));
+      return {label:"Measurable target",detail:current===null?"No comparable recorded measurement":("Latest: "+current+" "+unit+" · Target: "+target+" "+unit),percent};
+    }
+    if(pm.type==="subjective")return {label:"Personal rating",detail:pm.rating?"Self-rating: "+pm.rating+" / 5":"No rating recorded yet",percent:null};
+    if(pm.type==="milestones")return {label:"Milestones",detail:(pm.milestones||[]).length+" milestones planned · completion not yet tracked",percent:null};
+    return {label:"Exploratory review",detail:"Reflection-based · no automatic percentage",percent:null};
+  };
+  const goalCard=(g)=>{
+    const sm=goalSummary(g);
+    const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
+    const sc=goalStatus[g.status||"active"]||goalStatus.active;
+    return `<article class="nx-plan-item nx-plan-2-goal nx-goal-v2">
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · Target "+esc(fmtDate(g.targetDate)):" · No target date"}</div></div>${manageBtn("goal",g.id)}</div>
+      <div class="nx-goal-v2-progress"><div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong>${sm.percent!==null?`<span>${sm.percent}% of target change</span>`:""}</div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>
+      ${sm.percent!==null?`<div class="nx-goal-v2-track" role="progressbar" aria-label="Measurement progress toward goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${sm.percent}"><span style="width:${sm.percent}%"></span></div>`:""}</div>
+      ${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
+      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">View goal details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </article>`;
+  };
   if(sub==="goals"){
     const active=goals.filter(g=>!g.status||g.status==="active");
     const other=goals.filter(g=>g.status&&g.status!=="active");
     content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
-    ${active.map(g=>`<div class="nx-plan-item nx-plan-2-goal">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="margin-top:2px;min-height:44px;padding:8px 0;color:#A78BFA;background:transparent;text-align:left;font-size:12px;font-weight:650">View goal</button><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${manageBtn("goal",g.id)}</div>
-
-    </div>`).join("")}
-    ${other.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:12px 0 6px">OTHER GOALS</div>${other.map(g=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t2)">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status,goalStatus)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="display:block;min-height:44px;padding:8px 0;color:#A78BFA;font-size:12px;background:transparent">View goal</button><div style="font-size:10px;color:var(--t4)">${esc(g.category||"")}</div></div>${manageBtn("goal",g.id)}</div>`).join("")}`:""}
+    ${active.map(goalCard).join("")}
+    ${other.length?`<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin:16px 0 8px">OTHER GOALS</div>${other.map(goalCard).join("")}`:""}
     <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
   } else if(sub==="research"){
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
