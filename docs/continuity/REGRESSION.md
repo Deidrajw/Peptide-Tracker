@@ -562,3 +562,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Stash Prepare/Open New Vial modal keyboard/focus/sticky action and math | Modal audit documented; NOT FULLY TESTED |
 | 320/390 light/dark, contrast, VoiceOver, physical iPhone | NOT VERIFIED latest head |
 | Production merge and deploy | NOT PERFORMED |
+
+
+### 2026-10-25 — Today expanded/tracking/week latest-head matrix
+| Flow | Status |
+|---|---|
+| Expanded compound render, Intel/insights/site rotation/history/overdue | Markup retained, styling coded; NOT TESTED latest head |
+| Compact and expanded toggling, dose/reschedule/History | NOT TESTED latest head |
+| Daily tracking Check-in/Supplements/Weight/Nutrition | Markup/data unchanged, styling coded; NOT TESTED latest head |
+| Weekly detail toggle, full report and metrics | Markup unchanged, styling coded; NOT TESTED latest head |
+| 320px/390px light/dark, contrast, scroll, iPhone | NOT TESTED latest head |
+| Stash modal Prepare/Open New Vial | INCOMPLETE |
+| Source-parity LIVE/DEMO ZIP & HTML | Latest-head CI PENDING |
+| Merge/deploy | NOT PERFORMED |
