@@ -1429,17 +1429,17 @@ html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-fa
 @media(prefers-reduced-motion:reduce){.nx-daily-track-progress>span{transition:none}}
 
 
-/* Today dark hero: soft, visible full-card gradient matching light-mode distribution; no corner spotlight. */
-html[data-theme="dark"] .nexus-today-hero {
+/* Nexus stores dark mode as ABSENT data-theme; match actual runtime theme. Today dark hero: soft, visible full-card gradient matching light-mode distribution; no corner spotlight. */
+html:not([data-theme="light"]) .nexus-today-hero {
  background:linear-gradient(125deg,#443451 0%,#382B46 64%,#30263D 100%)!important;
  border-color:rgba(202,177,228,.18)!important;
  box-shadow:0 10px 26px rgba(12,9,22,.16),inset 0 1px 0 rgba(255,255,255,.045)!important;
 }
-html[data-theme="dark"] .nexus-today-hero::before {
+html:not([data-theme="light"]) .nexus-today-hero::before {
   /* Keep the progress ring as the sole circular focal point. */
   display:none!important;
 }
-html[data-theme="dark"] .nexus-today-hero::after {display:none!important;}
+html:not([data-theme="light"]) .nexus-today-hero::after {display:none!important;}
 html[data-theme="dark"] .nexus-today-track>div {
  background:#CDA7F0!important;box-shadow:none!important;
 }
