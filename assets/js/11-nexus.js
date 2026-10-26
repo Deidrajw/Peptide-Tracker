@@ -1563,6 +1563,14 @@ function protocolsView() {
     const names = compounds.map(c=>c.name).filter(Boolean);
     const shortNames = names.slice(0,2).map(esc).join(" · ") + (names.length>2 ? ` · +${names.length-2} more` : "");
     const countdown=protocolCountdownSummary(p);
+    const phaseEntries=compounds.map(c=>compoundPhaseStatus(p,c)).filter(Boolean);
+    const phaseEnds=phaseEntries.map(info=>info.phases?.[info.phases.length-1]?.endDate).filter(Boolean);
+    const lastPhaseEnd=phaseEnds.length?phaseEnds.reduce((a,b)=>a>b?a:b):null;
+    const effectiveStart=p.startDate?addDays(p.startDate,Number(p.pauseDaysAccumulated)||0):null;
+    const timelineDay=p.status==="paused"&&p.pausedAt?dayKey(p.pausedAt):localDate();
+    const timelineTotal=effectiveStart&&lastPhaseEnd?Math.max(1,Math.round((new Date(lastPhaseEnd+"T12:00")-new Date(effectiveStart+"T12:00"))/86400000)):null;
+    const timelineElapsed=timelineTotal!==null?Math.max(0,Math.min(timelineTotal,Math.round((new Date(timelineDay+"T12:00")-new Date(effectiveStart+"T12:00"))/86400000))):null;
+    const timelinePct=timelineTotal!==null?Math.round(timelineElapsed/timelineTotal*100):null;
     const phaseInfo=compounds.length ? compoundPhaseStatus(p,compounds[0]) : null;
     const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
     const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
@@ -1583,7 +1591,7 @@ function protocolsView() {
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
       <button type="button" class="nx-proto-view-overview" data-id="${p.id}">View overview <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
       <div class="nx-proto-compact-progress"><span>${esc(countdown.detail)}</span><strong>${esc(countdown.label)}</strong></div>
-      <div class="nx-proto-compact-track" aria-hidden="true"><span style="width:${countdown.label==="0 days"||countdown.label==="Completed"?"100%":"45%"}"></span></div>
+      ${timelinePct!==null?`<div class="nx-proto-compact-track" role="progressbar" aria-label="Planned protocol timeline elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${timelinePct}"><span style="width:${timelinePct}%"></span></div>`:""}
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
         <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#7DF9C0">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
         <button class="proto-log-first" data-name="${esc(fc)}" style="padding:9px 12px;border-radius:8px;background:#7DF9C0;color:#000;font-size:12px;font-weight:700;flex-shrink:0">+ Log dose</button>
