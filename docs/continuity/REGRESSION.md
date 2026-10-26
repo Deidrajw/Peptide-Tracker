@@ -876,3 +876,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Goals header move (PENDING)
 - Verify #add-goal appears once above goal cards and below Goals/Research/Shopping navigation; no old footer duplicate; opens existing four-step goal wizard; empty state still usable; goal edit/delete/details and saved history remain unchanged. Check 320/390 light/dark, keyboard, focus and physical iPhone (NOT TESTED). Research/Shopping untouched in this commit.
+
+## 2026-10-26 — Research/Shopping design regression (NEW HEAD PENDING)
+- Research: top Add Research appears once, picker unchanged, status/goal/reason, notes collapsed initially and aria-expanded Show/Hide without notes chevron, one Intel chevron linking same destination, 44px ellipsis bottom sheet edit/delete, empty state. Shopping: top Add Item appears once, existing Needed/Ordered/Received list, quantity/category/goal/protocol/notes, original management menu and editor, no status mutation from read-only list. 320px/390px both themes pending browser run; physical iPhone/VoiceOver NOT TESTED. Prior Log Dose full QA previously passed at `ee22d0d9`, new-head retest required.
