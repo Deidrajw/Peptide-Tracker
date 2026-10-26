@@ -1764,8 +1764,8 @@ function homeView() {
   </details>`;
   // The activity report reads the same canonical instance collection used by Calendar.
   // A completed occurrence and an additional unscheduled dose record are not equivalent.
-  const todayInstanceRows=getWeekInstances([today])[today]||[];
-  const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]);
+  const todayInstanceRows=(getWeekInstances([today])[today]||[]).filter(slot=>!slot.adhoc);
+  const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc);
   const countStatus=(rows,name)=>rows.filter(x=>x.status===name).length;
   const activityPanel=(rows,period)=>{
     const completed=countStatus(rows,"taken"), total=rows.length;
@@ -1786,6 +1786,20 @@ function homeView() {
   </section>`;
 
 
+  // Coming Up is prospective; the week report above is retrospective. Never render
+  // finished, skipped or moved occurrences as future scheduled actions.
+  const forthcoming=getUpcomingEvents(started,6).flatMap(event=>{
+    const record=aps[event.name];
+    if(!record) return [];
+    return getDayOccurrences(record,event.date)
+      .filter(slot=>["upcoming","due_later_today","due_now"].includes(slot.status) && !slot.adhoc)
+      .map(slot=>({name:event.name,date:event.date,time:slot.time,explicit:hasExplicitTimes(record),status:slot.status}));
+  }).sort((a,b)=>(a.date+"T"+a.time).localeCompare(b.date+"T"+b.time)).slice(0,3);
+  const upcomingDateLabel=date=>new Date(date+"T12:00:00").toLocaleDateString("en-CA",{weekday:"short",month:"short",day:"numeric"});
+  const upcomingTimeLabel=time=>{const [hour,min]=time.split(":").map(Number);return (hour%12||12)+":"+String(min).padStart(2,"0")+(hour>=12?" PM":" AM");};
+  html+=`<section class="nx-today-coming-up" aria-label="Coming up"><h3>Coming up</h3>
+    ${forthcoming.length?forthcoming.map(e=>`<div class="nx-coming-row"><div><div class="nx-coming-row-name">${esc(e.name)}</div><div class="nx-coming-row-date">${upcomingDateLabel(e.date)}${e.explicit?" · "+upcomingTimeLabel(e.time):" · Time not set"}</div></div><span class="nx-coming-row-status">Scheduled</span></div>`).join(""):`<p class="nx-activity-sub">No upcoming scheduled occurrences found.</p>`}
+    <button type="button" id="nx-open-calendar" class="nx-coming-calendar">View Calendar →</button></section>`;
   // This Week recedes below the actual compound/dose list — it's a secondary weekly
   // summary, not the thing Today exists to answer.
   html += thisWeekCardHtml;
