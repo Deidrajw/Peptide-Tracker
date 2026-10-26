@@ -1887,7 +1887,7 @@ function renderTodayCompoundSection(started) {
   if (!needsAction.length && !completed.length) {
     out += `<div style="text-align:center;padding:16px 0;color:var(--t4);font-size:13px">Nothing due today.</div>`;
   }
-  out += renderUpcomingPreview(started);
+  // Single prospective schedule preview now lives at the bottom of Today in homeView().
   return out;
 }
 
