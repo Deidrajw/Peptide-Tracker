@@ -1789,13 +1789,12 @@ function homeView() {
 
   // Coming Up is prospective; the week report above is retrospective. Never render
   // finished, skipped or moved occurrences as future scheduled actions.
-  const forthcoming=getUpcomingEvents(started,6).flatMap(event=>{
-    const record=aps[event.name];
-    if(!record) return [];
-    return getDayOccurrences(record,event.date)
-      .filter(slot=>["upcoming","due_later_today","due_now"].includes(slot.status) && !slot.adhoc)
-      .map(slot=>({name:event.name,date:event.date,time:slot.time,explicit:hasExplicitTimes(record),status:slot.status}));
-  }).sort((a,b)=>(a.date+"T"+a.time).localeCompare(b.date+"T"+b.time)).slice(0,3);
+  const upcomingKeys=[...Array(14)].map((_,i)=>addDays(today,i+1));
+  const upcomingByDay=getWeekInstances(upcomingKeys);
+  const forthcoming=upcomingKeys.flatMap(key=>(upcomingByDay[key]||[])
+    .filter(slot=>slot.status==="upcoming" && !slot.adhoc && slot.pep)
+    .map(slot=>({name:slot.pep,date:key,time:slot.time,explicit:hasExplicitTimes(aps[slot.pep]),status:slot.status})))
+    .sort((a,b)=>(a.date+"T"+a.time).localeCompare(b.date+"T"+b.time)).slice(0,3);
   const upcomingDateLabel=date=>new Date(date+"T12:00:00").toLocaleDateString("en-CA",{weekday:"short",month:"short",day:"numeric"});
   const upcomingTimeLabel=time=>{const [hour,min]=time.split(":").map(Number);return (hour%12||12)+":"+String(min).padStart(2,"0")+(hour>=12?" PM":" AM");};
   html+=`<section class="nx-today-coming-up" aria-label="Coming up"><h3>Coming up</h3>
