@@ -407,3 +407,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 - Tracking selection is a preference only, under `state.settings.todayTrackingActivities` (array of `checkin`, `supplements`, `weight`, `nutrition`). Defaults to Check-In + Supplements where absent; toggles must never synthesize activity entries or change historical logs.
 - Scheduled completion excludes `adhoc` events, keeps explicit skipped/moved/missed distinct from unresolved overdue, and reports only elapsed week dates; planned future occurrences are in Coming Up, not "missed".
 - Explicit scheduled times shown only when configured; no fabricated 8 AM default is presented as user-intended. No dose engine or inventory schema changes. This remains CODED / AWAITING TEST, not accepted or approved for production.
+
+
+### 2026-10-25 — Dark Today hero intensity adjustment
+- **User feedback:** previous dark hero gradient too aggressive. Approved direction: calmer, low-contrast obsidian-violet panel; use lavender as an accent for progress ring, bar and action, not as the main card fill. Implemented for draft review only at `0ae00f2`; do not infer release approval.
