@@ -614,3 +614,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Goal wizard automated acceptance candidate (DRAFT, NOT DEPLOYED)
 - Tested PR #123 head `701c6c7e`, workflows 40389965572 full build/Plans/browser SUCCESS, 40389965592 mobile SUCCESS, 40389962603 hybrid SUCCESS. Artifact 12684590713 contains builder-produced full-app LIVE/standalone fictional DEMO/offline demo packages; internal build assertions PASS, independent extraction pending. Data schema migration none intended. Physical iPhone/VoiceOver and contrast-wide acceptance pending; PR draft/unmerged and production unchanged.
+
+### 2026-10-26 — Quick/Guided Log Dose UI (DRAFT / UNRELEASED)
+- `56d0b7ef` existing dose form step-navigation and `69dace51` styling. No intended dose schema or storage changes, existing `#save` remains authoritative. Full separate Quick review and source allocation evidence in Guided review require further implementation. New-head CI, packages, Safari/VoiceOver incomplete. No merge/deploy.
