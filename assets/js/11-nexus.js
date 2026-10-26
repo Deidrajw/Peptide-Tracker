@@ -1729,10 +1729,10 @@ function plansView() {
   if(sub==="goals"){
     const active=goals.filter(g=>!g.status||g.status==="active");
     const other=goals.filter(g=>g.status&&g.status!=="active");
-    content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
+    content=`<div class="nx-goals-page-header"><div><h2>Goals</h2><p>Personal milestones and connected progress</p></div><button type="button" id="add-goal" class="nx-goals-header-add" aria-label="Add Goal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Goal</span></button></div>${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
     ${active.map(goalCard).join("")}
     ${other.length?`<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin:16px 0 8px">OTHER GOALS</div>${other.map(goalCard).join("")}`:""}
-    <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
+    `;
   } else if(sub==="research"){
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
     ${research.map(r=>`<div class="nx-research-card nx-plan-2-research" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin-bottom:10px">
