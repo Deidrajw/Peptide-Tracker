@@ -1032,3 +1032,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ## 2026-10-26 — Approved vertical phase timeline
 User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` and responsive CSS at `8ecc6caf` on draft PR #123. Existing phase calculator and pause-aware date preserved; no record changes. Latest-head QA and demo parity pending. NEXT ACTION: validate roadmap at 320/390 both themes, paused/elapsed/not-started, then address expanded Schedule & phases and CI failure. No merge/deploy.
+
+
+## 2026-10-26 — Sprint 02A expanded Schedule & phases, after vertical roadmap approval
+- User reaffirmed vertical timeline approval and instructed continuation. PR #123 observed draft/unmerged at `5d9004dd9be99bb5ca23b4686846ab5dd30630fb`. Prior mobile workflow 40351719820 SUCCESS; browser/build 40351719788 FAILURE (Plans Research manage button contrast, `tools/validate-plans-hierarchy.mjs:180`), so previous branch was not QA-clear.
+- Coded `fd6fda06` Protocol expanded details: one accessible/tappable current-phase progress row per compound, no duplicate mini Gantt or route pill/dosing-status text; retains phase roadmap handler, goal/purpose detail and a compact scheduled cadence footer. Coded `23f3d666` responsive visual styling with light/dark tokens and >=44px touch targets. No state, dates, dose or history mutations in these UI edits.
+- Coded `da015ec0` corrective Plans Research manage-button background contrast, targeting exact failed browser assertion. QA remains **PENDING** for latest head; CI success not assumed. Other requested UX (pause filter refresh, schedule-ended activity prompt, Create/Edit overhaul) still open and not coded. No release/merge/deploy.
+- **ONE NEXT ACTION:** Inspect CI on latest head and exact-source LIVE/DEMO artifacts, address any new failures, then review expanded Protocol details on 320/390 dark/light and a real iPhone before moving to pause UX.
