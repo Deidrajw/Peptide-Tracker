@@ -62,6 +62,14 @@ try{
     await card(99002).locator('.nx-kit-detail-button').click();
     ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
+    const before=await page.evaluate(()=>JSON.stringify(state.supplies));
+    await page.evaluate(()=>supplyModal());
+    ensure(await page.locator('.nx-stash-kit-editor').count()===1,'Kit editor styling hook missing');
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').count()===1,'Original Save handler target missing');
+    ensure(await page.locator('.nx-stash-kit-editor #sname').count()===1 && await page.locator('.nx-stash-kit-editor #stv').count()===1 && await page.locator('.nx-stash-kit-editor #svmg').count()===1 && await page.locator('.nx-stash-kit-editor #sbac').count()===1 && await page.locator('.nx-stash-kit-editor #sloc').count()===1,'Kit fields lost');
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Save target too small');
+    await page.evaluate(()=>closeModal());
+    ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===before,'Kit editor presentation unexpectedly mutated inventory');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
