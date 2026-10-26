@@ -1028,3 +1028,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Verified PR #123 draft/unmerged head `1448c411a645e2d15341de20761f45cae134a6c8` before documentation. Mobile run 40348987869 IN PROGRESS and browser/build run 40348986886 FAILURE; root failure unverified, **not QA-ready**.
 - Design recommendation: compound progress rows, vertical phase timeline, explicit Schedule ended vs manually Completed, non-destructive opt-in Review/Extend or Create New alert only on verified post-end recorded use; guided Create/Edit builder. Pause UI must be reproduced and immediately reflect status/filter changes. **No application-code changes in this checkpoint; no merge/deploy.**
 - **ONE NEXT ACTION:** obtain user feedback on revised interactive Protocol sub-screen design, then implement expanded Schedule & phases and roadmap first; investigate pause refresh before adding elapsed-with-logging prompt; resolve failed CI and retest before release.
+
+
+## 2026-10-26 — Approved vertical phase timeline
+User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` and responsive CSS at `8ecc6caf` on draft PR #123. Existing phase calculator and pause-aware date preserved; no record changes. Latest-head QA and demo parity pending. NEXT ACTION: validate roadmap at 320/390 both themes, paused/elapsed/not-started, then address expanded Schedule & phases and CI failure. No merge/deploy.
