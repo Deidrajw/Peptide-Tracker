@@ -462,3 +462,7 @@
 
 ### 2026-10-25 — Root disclosure and Insight cleanup
 - 2026-10-25 unmerged design PR #123 commits 77a86a43, e2245f91, 74409b57, 353b2a31: remove legacy double-chevron generator, reconcile nested insights CSS, update current-source invariant, neutralize speculative phase descriptions. Changes affect Today display and QA only; no changes to stored records, dosing engine or inventory. JavaScript parse PASS for changed module; full browser regression pending; DEMO/LIVE artifacts INCOMPLETE; Cloudflare preview and production deployment not verified/authorized.
+
+
+### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
+- 2026-10-25 draft PR #123 corrections d4174ac0 (source of duplicate generated-chevron in nexus-disclosures.css), b6222ea9 (remove unnecessary outer Insights border and per-entry dividers), f65255af (CI guard checks). No application storage, history or dose math changes. Browser visual pass and physical iPhone NOT VERIFIED. LIVE ZIP and full isolated DEMO artifacts INCOMPLETE. No release.
