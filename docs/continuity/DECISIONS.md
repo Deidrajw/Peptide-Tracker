@@ -557,3 +557,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Approved Goals header action and next design focus
 - User approved moving Add Goal above goal cards after Plans subnavigation. Keep the current Goal wizard/editing logic, goals data and visual system; remove bottom duplicate only. Approved next design sequence: Research UI/UX audit and preview first; Shopping audit next. Do not treat visual discussion as release authorization. Research remains an existing queue with status, Intel, reason/notes and management; Shopping remains Needed/Ordered/Received with categories, quantities and goal links; retain all actions and data.
+
+## 2026-10-26 — Approved Research and Shopping UI: single-chevron rule
+- User approved refined Research card, and explicitly prohibited double chevrons (notes + Compound Intel). Research uses one right-pointing chevron only on Compound Intel; personal notes use a 44px labeled Show/Hide button with notebook outline icon and aria-expanded, no chevron. Keep research management ellipsis and original bottom action sheet; original compound picker, status, reason, goal, notes, edit/delete and Intel remain. Add Research and Add Item moved to top like Goals. Shopping keeps Needed/Ordered/Received and original add/edit/delete without new status automation.
