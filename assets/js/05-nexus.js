@@ -778,14 +778,18 @@ function doseModal(name, existing, occTime) {
     // This is a read-only preview, not another inventory calculation or mutation.
     const selectedKit=activeKit();
     const formatNative=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
-    const sourceLabel=selectedSource==="fresh"?(selectedKit?"Kit "+selectedKit.id+" · "+selectedKit.name:"Fresh from vial"):"Prepared dose";
+    const prepared=preparedBatches.find(p=>p.id===selectedSource);
+    const sourceLabel=selectedSource==="fresh"?(selectedKit?"Kit "+selectedKit.id+" · "+selectedKit.name:"Fresh from vial"):(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit+" · "+prepared.remainingCount+" available":"Prepared dose");
+    const selectedVial=selectedKit ? getActiveVial(selectedKit) : null;
+    const selectedVialText=selectedVial?"Kit "+selectedKit.id+" · Vial "+selectedVial.id:"No selected open vial";
     const total=rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
     const nativeNeeded=doseToMg(Number(doseVal("dose")),c.unit);
     const ledger=rows.length && selectedSource==="fresh" && !isBlend && !isEdit
       ? rows.map((r,i)=>{
           const kit=state.supplies.find(k=>k.id===r.kitId);
           const unitCount=kit?mgToUnitsForKit(Number(r.mg)||0,kit):null;
-          const vialName=kit?"Kit "+kit.id+" · Vial "+(r.vialId||"open"):"Unresolved source";
+          const actualVial=kit ? (r.vialId ? (kit.vials||[]).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
+          const vialName=kit?"Kit "+kit.id+" · Vial "+(actualVial?.id||"unresolved"):"Unresolved source";
           return row("Source "+(i+1),vialName+" · "+formatNative(Number(r.mg)||0)+(unitCount!=null?" · "+unitCount.toFixed(1)+" syringe units":"")+(r.finished?" · already deducted":""));
         }).join("")+row("Total allocated",formatNative(total))+
         row("Allocation status",Math.abs(total-nativeNeeded)<0.01?"Matches entered dose":"Requires source reconciliation")
@@ -794,7 +798,8 @@ function doseModal(name, existing, occTime) {
     review.querySelector("#nx-dose-review-rows").innerHTML=
       row("Compound",name)+row("Recorded amount",doseVal("dose")+" "+c.unit)+
       row("Date & time",doseVal("date"))+row("Source",sourceLabel)+row("Site",doseVal("site"))+
-      (ledger||row("Allocation",isEdit?"Original source retained":isBlend?"Blend is validated on confirmation":selectedSource==="fresh"?"Uses the selected open vial":"Prepared dose; no second vial deduction"))+
+      (selectedSource==="fresh"&&!isEdit?row("Selected vial",selectedVialText):"")+
+      (ledger||row("Allocation",isEdit?"Original source retained":isBlend?"Blend vial deduction checked on confirmation":selectedSource==="fresh"?"Uses the selected open vial":"Prepared dose; no second vial deduction"))+
       (blendSummary?row("Blend components",blendSummary):"");
     review.querySelector("p").textContent="Review only. The original Save handler rechecks current stock, vial allocations and blend components before recording. No inventory is deducted by opening this screen.";
   };
