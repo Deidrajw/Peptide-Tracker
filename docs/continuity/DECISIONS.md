@@ -440,3 +440,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-26 — Calendar Logs interaction pattern APPROVED
 - Day View displays every available saved event on one date (check-ins with updates, weights, measurements, macros, supplements, recorded doses). A date picker and Today shortcut enable navigation; entering from a Calendar selected day preselects that date. All Logs spans dates and applies optional type filters. Consistent outline SVG icons replace emojis. Dense Edit/Delete buttons move inside optional record details using existing app edit/delete handlers, preserving history and data integrity. Dose read-only summary in journal keeps existing compound history as editor; no new destructive flows. No data schema migration. Design approval is not permission to merge/deploy.
+
+
+### 2026-10-26 — Logs full-day UX approved
+- Logs support **Day View** for all record types on a date and **All Logs** for cross-date type filtering. Selected Calendar day must open full history for that date. Use consistent outline SVG icons instead of emojis. Previous/Today/Next and date picker must remain accessible at mobile widths. Keep existing dose-history and check-in update editing paths, saved dates, supplement selections and delete-confirmation safeguards; no destructive migrations. Design approval does not authorize merge/deployment.
