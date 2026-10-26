@@ -771,3 +771,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Sprint 02A Protocol + Plans new-head validation targets
 - **NOT TESTED on new head yet:** 320px/390px light/dark Protocol overview phase (live/planned/rest/completed), long names, filter groups, Schedule & phases timeline/disclosure, linked goals, Manage edit/pause/resume/record past pause/delete confirmation, Activate and Log First Dose; Plans goals/research statuses, goal detail, Intel, Manage edit/delete sheets, shopping unaffected; keyboard/focus/safe areas. Confirm computed phase data is accurate and no history/dose/pause records are mutated by UI refresh. Verify full-app isolated DEMO/LIVE ZIP from matching SHA, and physical iPhone acceptance separately. Sprint 01 Calendar Month icon follow-up still open.
+
+- Additional latest-head target `29cb2434`: NEXT SCHEDULED must display verified existing `nextDueStr` when available, otherwise `See schedule`; handle unscheduled compounds without exceptions.
