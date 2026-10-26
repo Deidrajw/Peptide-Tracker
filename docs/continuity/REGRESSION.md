@@ -665,3 +665,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Dark-mode hero selector root-cause QA
 - Source verification PASS: app initializes default dark with no `data-theme` and toggles back to dark by deleting `data-theme`; stale selector `html[data-theme="dark"]` could not match. CSS selector correction commit `6d08812` scoped to Today dark hero. Browser computed-style/raster at 320/390 dark and light: NOT TESTED at correction head. Cloudflare preview deployment: NOT VERIFIED for correction commit. Release prohibited until acceptance.
+
+
+### 2026-10-26 — Today full-app candidate verified QA evidence
+- **PASS:** GitHub Actions full build and parity run 40267178763 at test/app commit 640d594 (16 LIVE/DEMO and viewport/theme sessions across individual suites as configured), mobile forms run 40267178912. Prior run 40264637477 failure in weekly chevron selector resolved by switching to This Week before checking tap target. Prior temporary stylesheet query breaking builder removed.
+- **PASS / local Chromium simulation:** downloaded full-app DEMO at 320px and 390px in light/dark; computed dark hero approved gradient, pseudo-orb disabled; no hero overflow or page exceptions; four daily tracking actions height 44px; week segmented control opens, Calendar navigation works.
+- **PASS / inspected artifact:** 12627006318; LIVE ZIP root index + four stylesheets + twelve ordered scripts + four icon assets; standalone DEMO embeds all scripts/styles without live JS/CSS refs; build manifest states isolated in-memory storage and disabled sync.
+- **NOT TESTED:** physical iPhone Safari, VoiceOver, keyboard/safe-area visual parity under native OS chrome, independent Cloudflare branch preview served-file SHA, actual end-user data fixture. Repeat same-compound Coming Up fixture identified for product review, not a test failure.
