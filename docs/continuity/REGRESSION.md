@@ -838,3 +838,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Goals-first design new-head matrix
 - NOT TESTED on new markup/style commits: 320/390 × dark/light Goals list titles/statuses/target dates; numeric goal valid baseline/target/unit/source and measured value; invalid target, unit mismatch, missing weights; subjective/milestones/exploratory absent numeric bar; linked/unlinked protocol count and Goal detail Connections → Protocol Overview → Goal; 44–48px targets and overflow.
 - NOT TESTED new-head: preserved Goal edit/delete, Check-In original record activity, Protocol and phase/pause history, dose/vial/Combo, Stash, Calendar, backups and production localStorage isolation. Physical iPhone/VoiceOver not tested. Historic passing CI for pre-change heads is not a new-head PASS.
+
+## 2026-10-26 — Compact Goals correction regression
+- NOT TESTED latest head: 320/390 light/dark compact density, management action target, Details navigation, other goal statuses, numeric and nonnumeric progress, all Goals/Research/Shopping sub-tabs after header count removal, Protocol links, saved history and user data. CI and physical iPhone acceptance pending.
