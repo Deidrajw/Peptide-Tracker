@@ -824,3 +824,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol screenshot visual QA
 - Automated navigation PASS on PR merge-ref `2adf5eea` (browser workflow 40360851339); screenshots of new Protocol sheets captured too early in opening animation and cannot support actual final-state visual approval. Commit `2d67b356` waits for settling and asserts onscreen bounds before each Overview and roadmap screenshot. **NOT TESTED** resulting screenshots yet. Physical iPhone / VoiceOver still pending.
+
+
+## 2026-10-26 — Settled screenshot and navigation evidence
+- **PASS automated** PR merge source 08bd02b7, workflow 40361824665: complete build/live/demo artifact verification and 8 LIVE/DEMO × 320/390 × light/dark navigation suites (Protocol list→Overview→vertical timeline→back→close), Plans contrast, protected Calendar/Check-In/Stash/Log Dose/Combo Picker/measurement checks. Screenshots now captured after animation settling; inspected 390 dark Overview/roadmap and 320 light Overview with no obvious offscreen clipping. Full WCAG AA contrast and physical iPhone gesture/keyboard tests **NOT TESTED**.
+- **OBSERVED VISUAL FOLLOW-UPS (not blockers to demo preview):** single compound header `1 compounds` grammar and current Overview as bottom sheet rather than conceptual full-page destination. User acceptance pending.
+- Latest mobile CI 40361824205 pending when documentation written; distinguish older successful mobile from latest. Cloudflare parity mismatch expected for unmerged preview; production not deployed. Keep PR draft.
