@@ -410,3 +410,7 @@
 
 ### 2026-10-25 — Today lower-page visual refinement (UNRELEASED)
 - Draft PR #123 CSS commit `287cd89d`: schedule nav, compact cards, facts, actions and chevrons. Functional renderer/recorded data unchanged. Expanded rich card parity and iPhone visual validation still incomplete; no merge/deploy.
+
+
+### 2026-10-25 — Today expanded/tracking/week visuals (UNRELEASED)
+- Design PR #123 commits `685a6aab` and `593e6d19`: expanded compound presentation hook and scoped style treatment for expanded cards, tracking and weekly disclosure. Does not alter dose logic or saved records. Browser visual/functional QA pending; no release.
