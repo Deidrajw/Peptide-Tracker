@@ -70,9 +70,23 @@ try {
   await daily.locator("summary").click();
   assert(await daily.evaluate(x=>x.open),"Today disclosure failed");
   await pg.evaluate(()=>{tab="protocols";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
-  await inspect(".nexus-protocol-details>summary");
-  await pg.locator(".nexus-protocol-details>summary").first().click();
-  assert(await pg.locator(".nexus-protocol-details").first().evaluate(x=>x.open),"protocol details not open");
+  // Approved Sprint 02A IA: compact Protocol list -> Overview -> compound vertical timeline.
+  // The old inline Schedule & phases disclosure was intentionally removed.
+  assert(await pg.locator(".nexus-protocol-details>summary").count()===0,"Retired Protocol disclosure returned");
+  assert(await pg.locator(".nx-proto-view-overview").count()>0,"Protocol overview entry missing");
+  await pg.locator(".nx-proto-view-overview").first().click();
+  assert(await pg.locator(".nx-proto-detail-page").isVisible(),"Protocol Overview did not open");
+  assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Protocol progress ring missing");
+  assert(await pg.locator(".nx-proto-detail-compound").count()>0,"Protocol compound drilldowns missing");
+  assert(await pg.locator(".nx-proto-detail-tabs").count()===0,"Redundant Protocol detail tabs returned");
+  await pg.locator(".nx-proto-detail-compound").first().click();
+  assert(await pg.locator(".nx-phase-vertical-timeline").isVisible(),"Compound phase timeline failed to open");
+  assert(await pg.locator(".nx-phase-return").count()===1,"Phase roadmap back control missing");
+  await pg.locator(".nx-phase-return").click();
+  assert(await pg.locator(".nx-proto-detail-page").isVisible(),"Timeline did not return to Overview");
+  assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Overview not restored after phase roadmap");
+  await pg.locator(".nx-proto-detail-close").click();
+  assert(await pg.locator(".nx-proto-detail-page").count()===0,"Protocol overview failed to close");
   await pg.evaluate(()=>{tab="stash";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
   const kitSummary=pg.locator(".nx-kit-card details>summary").first();
   if (await kitSummary.count()) {
