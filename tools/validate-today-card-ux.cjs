@@ -9,9 +9,11 @@ for(const [name,code] of [["07",seven],["08",eight],["12",twelve]]) {
  new vm.Script(code,{filename:"assets/js/"+name+"-nexus.js"});
 }
 const tests={
- "compact explicitly labelled disclosure": seven.includes('nx-compact-disclosure-label">View details') && seven.includes('aria-label="View details for'),
- "expanded explicitly labelled disclosure": eight.includes('>Hide details</button>'),
- "same compound casing": eight.includes('${esc(name)}</span>') && !eight.includes('${esc(name.toUpperCase())}</span>'),
+ "compact explicitly labelled disclosure": seven.includes('nxTodayDisclosureInner(false)') && seven.includes('aria-label="View details for'),
+ "expanded explicitly labelled disclosure": eight.includes('nxTodayDisclosureInner(true)') && eight.includes('compound-collapse-btn nx-today-disclosure'),
+ "same compound casing": eight.includes('nx-today-compound-name') && seven.includes('nx-today-compound-name') && !eight.includes('${esc(name.toUpperCase())}</span>'),
+ "same disclosure renderer": seven.includes('function nxTodayDisclosureInner(expanded)') && eight.includes('nxTodayDisclosureInner(true)'),
+ "matching title typography hook": seven.includes('class="nx-today-compound-name"') && eight.includes('nx-expanded-name nx-today-compound-name'),
  "no repeated expanded overdue badge": !eight.includes('od?statusBadge("Overdue"'),
  "overdue action opens resolution": seven.includes('class="whathappened') && twelve.includes('resolveOverdueModal(b.dataset.name'),
  "existing log dose handler remains": twelve.includes('document.querySelectorAll(".logdose")'),
