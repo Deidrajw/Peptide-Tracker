@@ -822,101 +822,74 @@ function monthView() {
 }
 
 function logsView() {
-  // Collect all dates that have ANY data (not just check-ins)
-  const allDates = new Set([
-    ...state.dailyLogs.map(l=>dayKey(l.date)),
-    ...state.weightLogs.map(w=>dayKey(w.date)),
-    ...state.measurementLogs.map(m=>dayKey(m.date)),
-    ...state.macroLogs.map(m=>dayKey(m.date)),
-    ...(state.supplementLogs||[]).map(s=>dayKey(s.date)),
-  ]);
-  const sortedDates = [...allDates].sort((a,b)=>b.localeCompare(a));
-
-  return `<div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">＋ Add log <span aria-hidden="true">⌄</span></button>
-  <div id="nx-add-log-menu" class="nx-add-log-menu" hidden>
-    <button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Macros</button><button class="qa-supp" type="button">Supplements</button>
-  </div></div>
-  ${!sortedDates.length?`<div style="color:var(--t4);font-size:13px;text-align:center;padding:40px 0">No logs yet. Choose Add log to start.</div>`:""}
-  ${sortedDates.map(dk=>{
-    const l    = state.dailyLogs.find(x=>dayKey(x.date)===dk);
-    const wt   = state.weightLogs.find(x=>dayKey(x.date)===dk);
-    const meas = state.measurementLogs.find(x=>dayKey(x.date)===dk);
-    const macro= state.macroLogs.find(x=>dayKey(x.date)===dk);
-    const supp = (state.supplementLogs||[]).find(x=>dayKey(x.date)===dk);
-    const mood = l?MOODS.find(m=>m.v===l.mood):null;
-    const updates = l?(l.updates||[]).sort((a,b)=>new Date(a.time)-new Date(b.time)):[];
-    const isToday = dk===localDate();
-    const dateLabel = fmtDate(dk);
-    const dataRow = (icon,color,content,editBtn,delBtn) =>
-      `<div class="nx-log-entry">
-        <span class="nx-log-entry-icon" aria-hidden="true">${icon}</span>
-        <div class="nx-log-entry-content">${content}</div>
-        <div class="nx-log-entry-actions">${editBtn}${delBtn}</div>
-      </div>`;
-    const editBtnHtml = (cls,id) => `<button class="${cls}" data-id="${id}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`;
-    const delBtnHtml  = (cls,id) => `<button class="${cls}" data-id="${id}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`;
-
-    const entryCount=[!!l,!!wt,!!meas,!!macro,!!(supp?.taken?.length)].filter(Boolean).length;
-    return `<article class="nx-log-day">
-      <div class="nx-log-day-header">
-        <div class="nx-log-day-title">${dateLabel}${isToday?`<span class="nx-log-today">Today</span>`:""}</div>
-        <span class="nx-log-day-count">${entryCount} ${entryCount===1?"entry":"entries"}</span>
-      </div>
-      <div class="nx-log-day-body">
-
-      ${l?dataRow(
-        mood?mood.emoji:"🔘", mood?mood.color:"var(--t3)",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Check-in</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
-          <span style="font-size:13px;font-weight:600;color:${mood?mood.color:"var(--t2)"}">${mood?mood.label:"—"}</span>
-          ${l.compound?`<span style="font-size:10px;color:var(--t4)">· ${esc(l.compound)}</span>`:""}
-          ${updates.length?`<span class="pill" style="background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;font-size:10px">＋${updates.length}</span>`:""}
-        </div>
-        ${l.symptoms&&l.symptoms.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px">${l.symptoms.map(s=>`<span class="pill" style="background:var(--surface-2);color:var(--t3);border:1px solid var(--border);font-size:10px">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div>`:""}
-        ${l.notes?`<div style="font-size:11px;color:var(--t3);font-style:italic">"${esc(l.notes)}"</div>`:""}`,
-        isToday
-          ? `<button class="opentodaysheet" data-id="${l.id}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">View</button>`
-          : editBtnHtml("editdaily",l.id),
-        delBtnHtml("deldaily",l.id)
-      ):""}
-
-      ${wt?dataRow("⚖","#8AB4FF",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Weight</div><span style="font-size:13px;font-weight:650;color:#8AB4FF">${esc(wt.weight)} ${state.settings.weightUnit}</span>${wt.notes?` <span style="font-size:11px;color:var(--t4);font-style:italic">"${esc(wt.notes)}"</span>`:""}`,
-        editBtnHtml("editweight",wt.id), delBtnHtml("delweight",wt.id)
-      ):""}
-
-      ${meas?dataRow("📏","#FF9CC8",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Measurements</div><div style="display:flex;gap:12px;flex-wrap:wrap">${MEASURES.filter(([k])=>meas[k]).map(([k,l,col])=>`<span style="font-size:12px;color:${col}">${l}: <b>${esc(meas[k])}</b> ${state.settings.measureUnit}</span>`).join("")}</div>${meas.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(meas.notes)}"</div>`:""}`,
-        editBtnHtml("editmeasure",meas.id), delBtnHtml("delmeasure",meas.id)
-      ):""}
-
-      ${macro?dataRow("🍽","#F9C87D",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Nutrition</div><div style="display:flex;gap:10px;flex-wrap:wrap">${[["Calories",macro.calories,"kcal","#F9C87D"],["Protein",macro.protein,"g","#C8FF9C"],["Carbs",macro.carbs,"g","#9CC8FF"],["Fat",macro.fat,"g","#FFB84D"]].filter(([,v])=>v).map(([n,v,u,c])=>`<span style="font-size:12px;color:${c}">${n}: <b>${esc(v)}</b> ${u}</span>`).join("")}</div>${macro.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(macro.notes)}"</div>`:""}`,
-        editBtnHtml("editmacro",macro.id), delBtnHtml("delmacro",macro.id)
-      ):""}
-
-      ${supp?.taken?.length?dataRow("💊","#C8FF9C",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Supplements</div><div style="display:flex;gap:6px;flex-wrap:wrap">${supp.taken.map(s=>`<span class="pill" style="background:#C8FF9C18;color:#C8FF9C;border:1px solid #C8FF9C33;font-size:11px">${esc(s)}</span>`).join("")}</div>`,
-        `<button class="edit-supp-log" data-date="${dk}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`,
-        `<button class="del-supp-log" data-date="${dk}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`
-      ):""}
-
-      ${updates.length?`<details class="nx-log-updates"><summary>${updates.length} check-in ${updates.length===1?"update":"updates"} <span aria-hidden="true">⌄</span></summary><div class="nx-log-updates-content">
-        ${updates.map(u=>`<div class="nx-log-update">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:10px;color:#A78BFA;margin-bottom:4px">${new Date(u.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"})}</div>
-            ${u.symptoms&&u.symptoms.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px">${u.symptoms.map(s=>`<span class="pill" style="background:var(--surface-2);color:var(--t3);border:1px solid var(--border);font-size:10px">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div>`:""}
-            ${u.notes?`<div style="font-size:11px;color:var(--t3);font-style:italic">"${esc(u.notes)}"</div>`:""}
-          </div>
-          <button class="edit-update" data-uid="${u.id}" data-lid="${l&&l.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:2px 7px;align-self:flex-start;margin-right:4px">✏</button>
-          <button class="del-update" data-uid="${u.id}" data-lid="${l&&l.id}" style="color:var(--t5);font-size:13px;align-self:flex-start">✕</button>
-        </div>`).join("")}
-        ${isToday?`<button class="opentodaysheet" data-id="${l&&l.id}" style="width:100%;font-size:11px;color:#A78BFA;padding:5px 12px;border-radius:7px;background:#A78BFA18;border:1px solid #A78BFA44;margin-top:4px">＋ Add update</button>`:""}
-      </div></details>`:""}
-      </div>
-    </article>`;
-  }).join("")}`;
+  const icon=(name)=>{const paths={
+    "clipboard-check":'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M9 12l2 2 4-4"/>',
+    "scale":'<path d="M5 4h14a2 2 0 0 1 2 2v13H3V6a2 2 0 0 1 2-2Z"/><path d="M9 10a3 3 0 0 1 6 0M12 10l2-2"/>',
+    "ruler":'<path d="m3 17 14-14 4 4L7 21zM8 12l3 3M12 8l3 3"/>',
+    "utensils":'<path d="M4 3v8a4 4 0 0 0 8 0V3M8 3v18M19 3v18M16 9h3"/>',
+    "pill":'<path d="m10 4 10 10a5 5 0 0 1-7 7L3 11a5 5 0 0 1 7-7ZM8 16l8-8"/>',
+    "syringe":'<path d="m4 20 6-6M14 3l7 7M11 6l7 7M13 4l7 7M7 10l7 7-3 3-7-7z"/>',
+    "plus":'<path d="M12 5v14M5 12h14"/>',
+    "ellipsis":'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>'
+  };return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths["clipboard-check"])+'</svg>';};
+  const byDate={};
+  const put=(date,type,label,detail,actions="",extra="",time="")=>{
+    const key=dayKey(date);if(!key)return;
+    (byDate[key] ||= []).push({type,label,detail,actions,extra,time});
+  };
+  const actionButtons=(cls,del,id,date)=>{
+    const attr=date?'data-date="'+esc(date)+'"':'data-id="'+esc(id)+'"';
+    return '<button type="button" class="'+cls+'" '+attr+'>Edit</button><button type="button" class="'+del+'" '+attr+'>Delete</button>';
+  };
+  (state.dailyLogs||[]).forEach(l=>{
+    const mood=MOODS.find(m=>m.v===l.mood);
+    const symptoms=(l.symptoms||[]).map(v=>typeof v==="string"?v:v.name).filter(Boolean);
+    const updates=(l.updates||[]);
+    put(l.date,"Check-in",mood?mood.label:"Check-in recorded",symptoms.length?symptoms.length+" symptoms recorded":"Daily reflection recorded",
+      (dayKey(l.date)===localDate()?'<button class="opentodaysheet" data-id="'+esc(l.id)+'">View / edit</button>':'<button class="editdaily" data-id="'+esc(l.id)+'">Edit</button>')+'<button class="deldaily" data-id="'+esc(l.id)+'">Delete</button>',
+      (l.notes?'<p>'+esc(l.notes)+'</p>':'')+(symptoms.length?'<p>Symptoms: '+esc(symptoms.join(", "))+'</p>':'')+
+      updates.map(u=>'<div class="nx-journal-update"><span>'+esc(u.time?new Date(u.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}):"Update")+'</span><p>'+esc(u.notes||"Symptom update")+'</p><button class="edit-update" data-lid="'+esc(l.id)+'" data-uid="'+esc(u.id)+'">Edit update</button><button class="del-update" data-lid="'+esc(l.id)+'" data-uid="'+esc(u.id)+'">Delete update</button></div>').join(""),
+      l.date);
+  });
+  (state.weightLogs||[]).forEach(w=>put(w.date,"Weight",w.weight+" "+(state.settings.weightUnit||"lb"),"Weight recorded",actionButtons("editweight","delweight",w.id),w.notes?'<p>'+esc(w.notes)+'</p>':""));
+  (state.measurementLogs||[]).forEach(m=>put(m.date,"Measurements","Body measurements","Measurements recorded",actionButtons("editmeasure","delmeasure",m.id),
+    '<p>'+MEASURES.filter(([k])=>m[k]!=null&&m[k]!=="").map(([k,label])=>esc(label)+": "+esc(m[k])).join(" · ")+'</p>'));
+  (state.macroLogs||[]).forEach(m=>put(m.date,"Nutrition",(m.calories||0)+" kcal","Protein "+(m.protein||0)+" g · Carbs "+(m.carbs||0)+" g",actionButtons("editmacro","delmacro",m.id),
+    m.notes?'<p>'+esc(m.notes)+'</p>':""));
+  (state.supplementLogs||[]).forEach(m=>{if(!(m.taken||[]).length)return;const k=dayKey(m.date);put(m.date,"Supplements",(m.taken||[]).length+" supplements recorded",(m.taken||[]).slice(0,3).join(" · "),
+    '<button class="edit-supp-log" data-date="'+esc(k)+'">Edit</button><button class="del-supp-log" data-date="'+esc(k)+'">Delete</button>',
+    '<p>'+esc((m.taken||[]).join(", "))+'</p>');});
+  // Dose events belong in Full Day History as well as Calendar. They are read-only
+  // here; existing dose-history editing is preserved in its original workflow.
+  Object.entries(allPeptides()).forEach(([name,compound])=>{
+    (compound.doses||[]).forEach(d=>{
+      if(!d.date)return;
+      const unit=cfg(name).unit||"";
+      put(d.date,"Dose",name,(d.dose?d.dose+" "+unit+" · ":"")+"Recorded dose","",
+        '<p>'+esc([d.site?"Site: "+d.site:"",d.notes||""].filter(Boolean).join(" · ")||"View compound history for full dose details.")+'</p>');
+    });
+  });
+  const allDates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  const mode=state._logsMode||"day";
+  const chosen=state._logsDate||localDate();
+  const filter=state._logsFilter||"All";
+  const types=["All","Dose","Check-in","Weight","Measurements","Nutrition","Supplements"];
+  const row=(entry,index,date)=>{
+    const symbol={"Dose":"syringe","Check-in":"clipboard-check","Weight":"scale","Measurements":"ruler","Nutrition":"utensils","Supplements":"pill"}[entry.type];
+    const id="nx-journal-"+date+"-"+index;
+    return '<div class="nx-journal-row"><div class="nx-journal-mark">'+icon(symbol)+'</div><div class="nx-journal-main"><div class="nx-journal-line"><strong>'+esc(entry.type)+'</strong><span>'+esc(entry.time?new Date(entry.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}):date)+'</span></div><div class="nx-journal-title">'+esc(entry.label)+'</div><div class="nx-journal-desc">'+esc(entry.detail)+'</div><div class="nx-journal-extra" id="'+id+'" hidden>'+entry.extra+'<div class="nx-journal-actions">'+entry.actions+'</div></div></div><button type="button" class="nx-journal-more" data-panel="'+id+'" aria-label="View '+esc(entry.type)+' details" aria-expanded="false">'+icon("ellipsis")+'</button></div>';
+  };
+  const renderDate=(date)=>{
+    const items=(byDate[date]||[]).filter(e=>mode==="day"||filter==="All"||e.type===filter);
+    return '<section class="nx-journal-day"><div class="nx-journal-date"><h3>'+esc(fmtDate(date))+'</h3><span>'+items.length+' entr'+(items.length===1?'y':'ies')+'</span></div><div class="nx-journal-rows">'+(items.map((e,i)=>row(e,i,date)).join("")||'<p class="nx-journal-empty">No records for this date.</p>')+'</div></section>';
+  };
+  const visible=allDates.filter(date=>filter==="All"||byDate[date].some(e=>e.type===filter));
+  return '<div class="nx-journal" aria-label="Activity logs"><div class="nx-journal-top"><div><h2>Activity logs</h2><p>Your complete personal history</p></div><div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">'+icon("plus")+' Add log</button><div id="nx-add-log-menu" class="nx-add-log-menu" hidden><button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Nutrition</button><button class="qa-supp" type="button">Supplements</button></div></div></div>'+
+  '<div class="seg nx-journal-modes"><button type="button" class="nx-journal-mode '+(mode==="day"?"on":"")+'" data-mode="day">Day view</button><button type="button" class="nx-journal-mode '+(mode==="all"?"on":"")+'" data-mode="all">All logs</button></div>'+
+  (mode==="day"?'<div class="nx-journal-picker"><label for="nx-journal-date">View a whole day</label><input type="date" id="nx-journal-date" value="'+esc(chosen)+'"><button type="button" id="nx-journal-today">Today</button></div>'+renderDate(chosen)
+  :'<div class="nx-journal-filters" role="group" aria-label="Filter logs">'+types.map(type=>'<button type="button" data-type="'+type+'" class="nx-journal-filter '+(filter===type?"on":"")+'">'+type+'</button>').join("")+'</div>'+(visible.length?visible.map(renderDate).join(""):'<p class="nx-journal-empty">No matching entries.</p>'))+
+  '</div>';
 }
-
 
 function learnContent() {
   const sub = state._learnSub || "guides";
