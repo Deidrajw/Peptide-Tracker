@@ -861,3 +861,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Artifact and device QA follow-up
 - INSPECTED: action artifact 12684590713 extracted, LIVE ZIP 21 expected files with root index and ordered modules, DEMO contains isolated demo markers; CI Plans QA JSON 8/8 PASS. Source manifest commit b04907ea differs from PR source SHA 701c6c7e: parity ancestry UNVERIFIED. Physical iPhone Safari keyboard, scroll, safe areas, VoiceOver NOT TESTED. Log Dose Quick/Guided design only; implementation/regression not tested.
+
+## 2026-10-26 — Quick/Guided Log Dose new test matrix (NOT TESTED)
+- Quick routine log and final explicit confirmation; Guided dose, source, review and actual inventory calculation visibility; switching modes and preserving date/route/site, note, symptoms; prepared source, fresh vial, multiple open vials, insufficient inventory, split vial, blend components/allocations, edits, pending drafts/Open New Vial; iPhone 320/390 light/dark, keyboard and bottom sheet; all old Log Dose browser flows. New-head QA pending. Physical iPhone/VoiceOver not tested.
