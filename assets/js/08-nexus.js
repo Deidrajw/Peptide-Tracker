@@ -125,10 +125,18 @@ function peptideCardHTML(name, data, opts={}) {
         }).join("")}
       </div>`;
     })() : ""}
-    ${nxInsightCount ? `<details class="nx-compound-insights nx-no-chevron"><summary aria-label="Show ${nxInsightCount} timing and dose review insights">
-      <span class="nx-insights-emblem" aria-hidden="true">i</span><span class="nx-insights-title">Insights <span>(${nxInsightCount})</span></span>
-      <span class="nx-insights-preview">Timing and dose review</span><span class="nx-insights-chevron" aria-hidden="true"></span>
-    </summary><div class="nx-compound-insights-body">` : ""}
+    <div class="nx-compound-info-tabs" aria-label="Compound information">
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-insights-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" checked>
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-history-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">
+      <div class="nx-info-segments" role="group" aria-label="Select information view">
+        <label for="nx-insights-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Insights${nxInsightCount || siteWarn? ` <span class="nx-info-count">(${nxInsightCount+Number(!!siteWarn)})</span>` : ""}</label>
+        <label for="nx-history-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">History</label>
+        <label for="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Details</label>
+      </div>
+      <div class="nx-info-panel nx-info-insights">
+        ${nxInsightCount || siteWarn ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
+    <div class="nx-insight-list">
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
       currentPh.id==="activation"  ? `⚡ Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
       currentPh.id==="rising"      ? `📈 Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
@@ -139,8 +147,22 @@ function peptideCardHTML(name, data, opts={}) {
     ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">💡 Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
     ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">📉 Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
     ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0">📈 <b>Escalation check:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
-    ${nxInsightCount ? `</div></details>` : ""}
-    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D">🔄 <b>Rotate your site</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
+
+    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D"><b>Site rotation</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
+    </div>      </div>
+      <div class="nx-info-panel nx-info-history">
+        <div class="nx-info-panel-title">Recent records · ${doses.length} total</div>
+        ${doses.length ? [...doses].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4).map(d=>`<div class="nx-info-history-row"><span>${esc(fmtShort(d.date))}</span><strong>${esc(String(d.dose||"—"))} ${esc(c.unit||"")}</strong></div>`).join("") : '<p class="nx-info-empty">No dose records yet.</p>'}
+        <button class="histtoggle nx-info-history-action" data-name="${esc(name)}">View complete dose history</button>
+      </div>
+      <div class="nx-info-panel nx-info-details">
+        <div class="nx-info-panel-title">Schedule information</div>
+        <div class="nx-info-history-row"><span>Recorded doses</span><strong>${doses.length}</strong></div>
+        <div class="nx-info-history-row"><span>Days on protocol</span><strong>${protocolDays==null?"—":protocolDays}</strong></div>
+        ${last&&last.site?`<div class="nx-info-history-row"><span>Last recorded site</span><strong>${esc(last.site)}</strong></div>`:""}
+        <button class="compound-intel-btn nx-info-history-action" data-name="${esc(name)}">Open compound Intel</button>
+      </div>
+    </div>
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
 
     <div class="morebox" data-name="${esc(name)}" style="display:none;margin-top:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
