@@ -477,3 +477,8 @@
 - Source commits include Protocol regression test replacement `0ea163c`, saved tracking + activity sections `8e14733`, handlers `73dc37b`, styling `b0dcf5f`, upcoming `3c8e952`.
 - Changes to Today and test suite; optional non-destructive settings preference addition, no dose/inventory/storage migration.
 - Status: coded; not verified as fully passing, not merged, not deployed, physical iPhone not tested. Release artifacts/manifest and final version-to-commit mapping INCOMPLETE until passing CI and authorized release.
+
+
+### 2026-10-25 — PR #123 continued; unreleased hybrid Today candidate
+- Additional candidate commits: `ebfd769` weekly reporting consolidated under Your Activity, `07c3d42` period persistence on rerender, `e11a69f` reschedule/canonical week collection and adhoc exclusion, `9f9aafc` Protocol History tab test parity, `29d81b1` Stash selector QA parity. No version bump or live release authorized.
+- Release/artifact state INCOMPLETE pending exact-head green full-app tests and independent package review. CI pass on individual suites does not supersede failed full workflow. Cloudflare not deployed by these commits; real iPhone untested.
