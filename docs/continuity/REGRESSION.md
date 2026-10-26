@@ -683,3 +683,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Week/Month switching and responsive horizontal bounds | Automated assertions added in `9ed4c89`; PENDING |
 | Saved check-in/weight/supplement/nutrition and existing dose history protected | No mutation code added; end-to-end edit/history parity NOT TESTED |
 | Full LIVE/isolated DEMO package and iPhone Safari | NOT VERIFIED |
+
+
+### 2026-10-26 — Calendar 2.0 verified release-candidate evidence
+| Flow | Status / evidence |
+|---|---|
+| Month/Week grid, 3 day category selectors, source-backed outcome overview, viewport bounds at 320/390 both themes in LIVE+DEMO | PASS, run `40273196256`, screenshots `calendar-hub-*.png` |
+| Today compact weekly pulse, alerts open/close, shared chevrons, Protocol forms, Check-In history, vial/dose/Combo/Stash suites | PASS, full GitHub Actions run `40273196256` |
+| Mobile form regression | PASS `40273196254` |
+| Complete 21-file root LIVE ZIP and full-app DEMO, isolated ephemeral storage, disabled sync | PASS artifact inspection #12629580963 |
+| Physical iPhone Safari, VoiceOver, saved real user data, keyboard/safe-area beyond emulation, Cloudflare preview byte parity | NOT TESTED / NOT VERIFIED |
+| Detailed record edits from new categorized day cards, advanced activity trend filters | NOT IMPLEMENTED, legacy Logs/history preserved |
