@@ -743,3 +743,84 @@ html[data-theme="dark"] .nexus-screen-home .nx-compound-card{
  .nexus-screen-home .nx-compound-card .nx-compound-actions{gap:5px!important;}
  .nexus-screen-home .nx-compound-card .nx-compound-actions button{font-size:10px!important;padding:8px 3px!important;}
 }
+
+/* Today Hybrid 2.0 Phase 3: expanded insights + lower tracking/weekly surfaces.
+   Scope is presentational: no status, medical insights, calculation or record changes. */
+.nexus-screen-home .nx-hybrid-expanded-compound{
+ padding:19px!important;
+ border-radius:23px!important;
+ border:1px solid var(--border-sub)!important;
+ background:var(--surface)!important;
+ box-shadow:0 7px 23px rgba(19,12,32,.08)!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound .nx-expanded-compound-head{
+ min-height:45px!important;
+ padding-bottom:11px!important;
+ border-bottom:1px solid var(--border-sub)!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound .nx-expanded-compound-head .mono{
+ font-family:inherit!important;font-size:16px!important;
+ font-weight:750!important;letter-spacing:-.2px!important;
+ text-transform:none!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound :where(.compound-intel-btn,.compound-collapse-btn){
+ min-height:44px!important;min-width:44px!important;
+ border-radius:12px!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound :where(.logdose,.rescheduledose,.histtoggle,.nx-compound-secondary){
+ min-height:46px!important;border-radius:13px!important;box-shadow:none!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound :where(.hint,.insight-row,.nx-insight-row){
+ border-radius:13px!important;
+}
+.nexus-screen-home .nexus-today-details,
+.nexus-screen-home .nexus-week-card.nexus-week-quiet{
+ border-radius:22px!important;
+ background:var(--surface)!important;
+ border:1px solid var(--border-sub)!important;
+ box-shadow:0 6px 21px rgba(21,11,33,.055)!important;
+ overflow:hidden;
+}
+.nexus-screen-home .nexus-today-details>summary{
+ min-height:74px!important;padding:15px 18px!important;
+ background:var(--surface)!important;
+}
+.nexus-screen-home .nexus-today-details-title{
+ font-size:16px!important;font-weight:760!important;letter-spacing:-.25px!important;
+}
+.nexus-screen-home .nexus-today-details-meta{
+ color:var(--t3)!important;line-height:1.45!important;
+}
+.nexus-screen-home .nexus-today-details-body{
+ background:var(--surface-2)!important;
+ padding:8px 17px 15px!important;
+}
+.nexus-screen-home .nexus-today-details-body button{
+ min-height:44px!important;border-radius:12px!important;
+ background:var(--surface)!important;
+}
+.nexus-screen-home .nexus-week-card.nexus-week-quiet{
+ padding:16px 17px!important;
+}
+.nexus-screen-home .nexus-week-card .nexus-quiet-toggle{
+ min-height:52px!important;
+}
+.nexus-screen-home .nexus-week-card .nexus-week-metrics{
+ gap:9px!important;
+}
+.nexus-screen-home .nexus-week-card .nexus-week-metrics>div{
+ background:var(--surface-2)!important;
+ border:1px solid var(--border-sub)!important;border-radius:14px!important;
+ padding:11px 5px!important;
+}
+html[data-theme="light"] .nexus-screen-home .nx-hybrid-expanded-compound{
+ background:linear-gradient(180deg,#fff,#fcfafd)!important;
+}
+html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
+ background:linear-gradient(180deg,#30283e,#292334)!important;
+}
+@media(max-width:359px){
+ .nexus-screen-home .nx-hybrid-expanded-compound{padding:13px!important;}
+ .nexus-screen-home .nexus-today-details>summary{padding:12px 13px!important;}
+ .nexus-screen-home .nexus-week-card.nexus-week-quiet{padding:12px!important;}
+}
