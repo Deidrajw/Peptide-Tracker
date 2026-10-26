@@ -318,3 +318,7 @@
 
 ### 2026-10-25 — Inventory Resolution design scope after full-app gate
 - User requested clearer vial source allocation without changing math/ledger. Number and distinguish source rows, label confirm-draw more explicitly, preserve existing editable mg allocations, calculated units, draft flow, multi-vial depletion, undo and exactly one administered dose. Do not assume duplicate 'current vial' rows mean duplicate physical inventory without evidence. No automatic allocation changes authorized.
+
+
+### 2026-10-25 — Stash modal priority and safety boundary
+- Prepare Dose and Open New Vial must get individual UI audits for hierarchy, field size, live concentration, source identity, keyboard, overflow, safe-area sticky confirmation and blend/standard parity. Preserve existing formulas, vial ledger, saved drafts, one-dose semantics and validations; CSS may improve target sizes and readability without rewriting arithmetic. No production deployment approval.
