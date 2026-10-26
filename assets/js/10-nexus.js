@@ -1642,16 +1642,16 @@ function homeView() {
   const needsAttnItems = groupedItems.filter(i=>!i.isInfo);
   const forYouItems = groupedItems.filter(i=>i.isInfo);
   const renderGroupCard = (item, idx, total) => item.isRem
-    ?`<div style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:${item.color}0d;border-bottom:${idx<total-1?"1px solid var(--surface-2)":"none"}">
-        <div class="reminder-card" data-action="${esc(item.action)}" data-name="${esc(item.title.split(" ")[0])}" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer">
+    ?`<div class="nx-alert-item" style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:${item.color}0d;border-bottom:${idx<total-1?"1px solid var(--surface-2)":"none"}">
+        <label class="nx-alert-choice-wrap"><input type="checkbox" class="nx-alert-choice" data-id="${esc(item.id)}" aria-label="Select ${esc(item.title)}"></label>\n        <div class="reminder-card" data-action="${esc(item.action)}" data-name="${esc(item.title.split(" ")[0])}" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer">
           <div style="font-size:16px;flex-shrink:0">${item.icon}</div>
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t1)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.actionLabel?`<div style="font-size:10px;color:${item.color};background:${item.color}18;border:1px solid ${item.color}33;border-radius:6px;padding:3px 7px;white-space:nowrap;flex-shrink:0">${esc(item.actionLabel)}</div>`:""}
         </div>
         <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`
-    :`<div style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--surface-2);border-bottom:${idx<total-1?"1px solid var(--surface)":"none"}">
-        <div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0">
+    :`<div class="nx-alert-item" style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--surface-2);border-bottom:${idx<total-1?"1px solid var(--surface)":"none"}">
+        <label class="nx-alert-choice-wrap"><input type="checkbox" class="nx-alert-choice" data-id="${esc(item.id)}" aria-label="Select ${esc(item.title)}"></label>\n        <div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0">
           <div style="font-size:16px;flex-shrink:0">${item.icon}</div>
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t2)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.btnClass?`<button class="${item.btnClass}" style="background:${item.color}18;border:1px solid ${item.color}44;color:${item.color};border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;flex-shrink:0">${item.btnLabel}</button>`:""}
@@ -1666,10 +1666,10 @@ function homeView() {
     <button type="button" class="nx-alert-scrim" id="nx-alert-dismiss" aria-label="Close notifications"></button>
     <section class="nx-alert-sheet" role="dialog" aria-modal="true" aria-labelledby="nx-alert-heading" tabindex="-1">
       <div class="nx-alert-handle" aria-hidden="true"></div>
-      <div class="nx-alert-heading"><div><h2 id="nx-alert-heading">Needs attention</h2><p>${alertCount} active notice${alertCount===1?"":"s"}</p></div><button type="button" id="nx-alert-close" aria-label="Close notifications">Close</button></div>
+      <div class="nx-alert-heading"><div><h2 id="nx-alert-heading">Needs attention</h2><p>${alertCount} active notice${alertCount===1?"":"s"}</p></div><div class="nx-alert-heading-actions"><button type="button" id="nx-alert-manage">Manage</button><button type="button" id="nx-alert-close" aria-label="Close notifications">Close</button></div></div><div class="nx-alert-managebar"><button type="button" id="nx-alert-select-all">Select all</button><span id="nx-alert-selected-count" aria-live="polite">0 selected</span><button type="button" id="nx-alert-clear-selected" disabled>Clear selected</button></div>
       <div class="nx-alert-scroll">${renderAlertSection(needsAttnItems,"Action needed")}${renderAlertSection(forYouItems,"For you")}
       ${alertCount?"":'<p class="nx-alert-empty">You’re all caught up.</p>'}
-      ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
+      <button type="button" id="nx-alert-clear-all" class="nx-alert-restore" ${alertCount?"":"disabled"}>Clear all notices</button>\n      ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
     </section>
   </div>`;
   const alertTriggerHtml=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-label="Needs attention, ${alertCount} notices" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true">${nxCompoundMenuIcon("bell")}</span><span class="nx-alert-count">${alertCount}</span></button>`;
