@@ -1897,13 +1897,16 @@ function researchModal(existing) {
   const goalNames=(state.plans?.goals||[]).map(g=>g.name);
   let selComp=r.compound?[r.compound]:[];
   state._cpickQ_rcomp="";
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:#F9C87D;letter-spacing:1px">${existing?"EDIT":"ADD"} RESEARCH</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-    <div id="rcomp-picker">${compoundPickerHTML(selComp,"rcomp")}</div>
-    <select id="r-status" class="inp" style="width:100%;margin-bottom:8px"><option value="researching"${r.status==="researching"?" selected":""}>Researching</option><option value="considering"${r.status==="considering"?" selected":""}>Considering</option><option value="planned"${r.status==="planned"?" selected":""}>Planned</option><option value="not now"${r.status==="not now"?" selected":""}>Not now</option></select>
-    <input id="r-reason" class="inp" placeholder="Why interested?" value="${esc(r.reason||"")}" style="width:100%;margin-bottom:8px">
-    <select id="r-goal" class="inp" style="width:100%;margin-bottom:8px"><option value="">Link to goal...</option>${goalNames.map(g=>`<option${r.goal===g?" selected":""}>${esc(g)}</option>`).join("")}</select>
-    <textarea id="r-notes" class="inp" placeholder="Notes" style="width:100%;min-height:55px;resize:vertical;margin-bottom:14px">${esc(r.notes||"")}</textarea>
-    <button id="r-save" class="btn-primary" style="background:#F9C87D;color:#000">${existing?"Save":"Add"}</button>`,"#F9C87D");
+  const m=openModal(`<div class="nx-plan-edit-header"><div><span class="nx-plan-edit-eyebrow">PLANS · RESEARCH</span><h2>${existing?"Edit research":"Add research"}</h2><p>Organize a compound you're exploring.</p></div><button type="button" id="x" class="nx-plan-edit-close" aria-label="Close research editor">×</button></div>
+    <div class="nx-plan-edit-fields">
+      <div class="nx-plan-edit-field"><label for="rcomp-picker">Compound <span aria-hidden="true">*</span></label><div id="rcomp-picker">${compoundPickerHTML(selComp,"rcomp")}</div></div>
+      <div class="nx-plan-edit-field"><label for="r-status">Research status</label><select id="r-status" class="inp"><option value="researching"${r.status==="researching"?" selected":""}>Researching</option><option value="considering"${r.status==="considering"?" selected":""}>Considering</option><option value="planned"${r.status==="planned"?" selected":""}>Planned</option><option value="not now"${r.status==="not now"?" selected":""}>Not now</option></select></div>
+      <div class="nx-plan-edit-field"><label for="r-reason">Research reason</label><input id="r-reason" class="inp" placeholder="Why are you interested?" value="${esc(r.reason||"")}"></div>
+      <div class="nx-plan-edit-field"><label for="r-goal">Related goal <small>Optional</small></label><select id="r-goal" class="inp"><option value="">No linked goal</option>${goalNames.map(g=>`<option${r.goal===g?" selected":""}>${esc(g)}</option>`).join("")}</select></div>
+      <div class="nx-plan-edit-field"><label for="r-notes">Personal notes <small>Optional</small></label><textarea id="r-notes" class="inp" placeholder="Capture useful context and questions">${esc(r.notes||"")}</textarea></div>
+    </div>
+    <div class="nx-plan-edit-footer"><button type="button" id="r-save" class="btn-primary">${existing?"Save changes":"Add research"}</button></div>`,"#A78BFA");
+  m.classList.add("nx-plan-edit-modal","nx-plan-research-edit");
   m.querySelector("#x").onclick=closeModal;
   const rp=m.querySelector("#rcomp-picker");
   const refreshR=()=>{rp.innerHTML=compoundPickerHTML(selComp,"rcomp");wireCompoundPicker(rp,selComp,"rcomp",refreshR);};
@@ -1945,14 +1948,17 @@ function protocolModal(existing) {
 function shoppingModal(existing) {
   const s=existing||{id:uid(),item:"",category:"supply",status:"needed",qty:"",goal:"",notes:""};
   const linkedNames=[...(state.plans?.goals||[]).map(g=>g.name),...(state.protocols||[]).map(p=>p.name)];
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:var(--t2);letter-spacing:1px">${existing?"EDIT":"ADD"} ITEM</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-    <input id="s-item" class="inp" placeholder="Item name *" value="${esc(s.item)}" style="width:100%;margin-bottom:8px">
-    <select id="s-cat" class="inp" style="width:100%;margin-bottom:8px"><option value="compound"${s.category==="compound"?" selected":""}>💊 Compound</option><option value="supply"${s.category==="supply"?" selected":""}>🧪 Supply</option><option value="equipment"${s.category==="equipment"?" selected":""}>🔧 Equipment</option></select>
-    <select id="s-status" class="inp" style="width:100%;margin-bottom:8px"><option value="needed"${s.status==="needed"?" selected":""}>Needed</option><option value="ordered"${s.status==="ordered"?" selected":""}>Ordered</option><option value="received"${s.status==="received"?" selected":""}>Received</option></select>
-    <input id="s-qty" class="inp" placeholder="Quantity (optional)" value="${esc(s.qty||"")}" style="width:100%;margin-bottom:8px">
-    <select id="s-goal" class="inp" style="width:100%;margin-bottom:8px"><option value="">Link to goal/protocol (optional)</option>${linkedNames.map(n=>`<option${s.goal===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
-    <textarea id="s-notes" class="inp" placeholder="Notes" style="width:100%;min-height:50px;resize:vertical;margin-bottom:14px">${esc(s.notes||"")}</textarea>
-    <button id="s-save" class="btn-primary" style="background:var(--surface-3);color:var(--t1);border:1px solid var(--border)">${existing?"Save":"Add Item"}</button>`,"var(--t3)");
+  const m=openModal(`<div class="nx-plan-edit-header"><div><span class="nx-plan-edit-eyebrow">PLANS · SHOPPING</span><h2>${existing?"Edit item":"Add item"}</h2><p>Keep track of what you need and receive.</p></div><button type="button" id="x" class="nx-plan-edit-close" aria-label="Close item editor">×</button></div>
+    <div class="nx-plan-edit-fields">
+      <div class="nx-plan-edit-field"><label for="s-item">Item name <span aria-hidden="true">*</span></label><input id="s-item" class="inp" placeholder="What do you need?" value="${esc(s.item)}"></div>
+      <div class="nx-plan-edit-field"><label for="s-cat">Category</label><select id="s-cat" class="inp"><option value="compound"${s.category==="compound"?" selected":""}>Compound</option><option value="supply"${s.category==="supply"?" selected":""}>Supply</option><option value="equipment"${s.category==="equipment"?" selected":""}>Equipment</option></select></div>
+      <div class="nx-plan-edit-field"><label for="s-status">Order status</label><select id="s-status" class="inp"><option value="needed"${s.status==="needed"?" selected":""}>Needed</option><option value="ordered"${s.status==="ordered"?" selected":""}>Ordered</option><option value="received"${s.status==="received"?" selected":""}>Received</option></select></div>
+      <div class="nx-plan-edit-field"><label for="s-qty">Quantity <small>Optional</small></label><input id="s-qty" class="inp" placeholder="e.g. 2" value="${esc(s.qty||"")}"></div>
+      <div class="nx-plan-edit-field"><label for="s-goal">Related goal or protocol <small>Optional</small></label><select id="s-goal" class="inp"><option value="">No connection</option>${linkedNames.map(n=>`<option${s.goal===n?" selected":""}>${esc(n)}</option>`).join("")}</select></div>
+      <div class="nx-plan-edit-field"><label for="s-notes">Notes <small>Optional</small></label><textarea id="s-notes" class="inp" placeholder="Any details to remember">${esc(s.notes||"")}</textarea></div>
+    </div>
+    <div class="nx-plan-edit-footer"><button type="button" id="s-save" class="btn-primary">${existing?"Save changes":"Add item"}</button></div>`,"#A78BFA");
+  m.classList.add("nx-plan-edit-modal","nx-plan-shopping-edit");
   m.querySelector("#x").onclick=closeModal;
   m.querySelector("#s-save").onclick=()=>{
     const item=(m.querySelector("#s-item").value||"").trim();if(!item)return;
