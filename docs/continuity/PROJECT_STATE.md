@@ -1117,3 +1117,8 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 ## 2026-10-26 — User corrected design reference
 - User explicitly rejected the later compact Goals treatment and provided screenshots of the **original approved first preview** (spacious goal card with title, active badge, target, measurable/exploratory section, progress track, linked protocol, full-width View goal details; detail view with Overview/Connections/Activity). Commits `d98d7b78` and `7727191f` restore that structure and styling on draft PR #123, superseding compact Goals experiment (`457652a8` / `f5be4806`).
 - New-head CI/browser, physical iPhone, source-parity files still pending. No production merge/deploy. **NEXT ACTION:** verify original-layout parity using actual screenshots at 320/390 light/dark and complete latest-source demo/live packages.
+
+## 2026-10-26 — Goal wizard draft implementation
+- Approved 4-step Add/Edit Goal workflow coded on PR #123: Basics → Progress → Connections → Review. `23aa6e04` reuses existing fields/IDs and save handler; `d7a8026c` theme/safe-area styling; `a44cdcb8` per-progress-method draft caching. No schema migration or production write intended. Log Dose quick/guided is **PROPOSED ONLY**, not coded, to protect vial/blend accounting.
+- New-head automated browser/mobile QA and exact-source packages PENDING. Physical iPhone / VoiceOver NOT TESTED; no merge/deploy.
+- **ONE NEXT ACTION:** run real browser wizard Add/Edit and progress-method-switch regression at 320/390 in both themes; inspect FULL DEMO isolation and source-parity LIVE ZIP, repair findings before any release approval.
