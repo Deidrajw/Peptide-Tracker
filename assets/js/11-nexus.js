@@ -1313,6 +1313,31 @@ function getProtocolPhaseInfo(p, c) {
   return { index:idx, isRest: cur.type!=="dose", weekInPhase, totalWeeks: cur.durationWeeks||4, daysLeft, current:cur, next, phases:phaseDates, isPaused: p.status==="paused" };
 }
 
+// Phase-aware timeline summary: use existing pause-aware phase dates, never
+// infer a countdown from the number of compounds or logged administrations.
+function protocolCountdownSummary(p) {
+  if (p.status==="completed") return {label:"Completed", detail:"Marked complete"};
+  const entries=(p.compounds||[]).map(c=>getProtocolPhaseInfo(p,c)).filter(Boolean);
+  const endDates=entries.map(info=>info.phases?.[info.phases.length-1]?.endDate).filter(Boolean);
+  if(!endDates.length) return {label:"Not scheduled",detail:"Add a start date and phases"};
+  const latest=endDates.reduce((a,b)=>a>b?a:b);
+  if(p.status==="paused") return {label:"Paused",detail:"Countdown resumes with protocol"};
+  const days=Math.max(0,Math.round((new Date(latest+"T12:00")-new Date(localDate()+"T12:00"))/86400000));
+  if(entries.every(info=>info.done)) return {label:"0 days",detail:"Schedule elapsed · not automatically completed"};
+  if(entries.every(info=>info.notStartedYet)) return {label:"Not started",detail:"Scheduled end "+fmtDate(addDays(latest,-1))};
+  return {label:days+" "+(days===1?"day":"days"),detail:"Until scheduled end · "+fmtDate(addDays(latest,-1))};
+}
+
+function protocolCompletionCelebration(name) {
+  const m=openModal(`<div class="nx-protocol-celebration" role="status" aria-live="polite">
+    <div class="nx-protocol-celebration-mark" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10 24 10 10 19-21"/></svg></div>
+    <h2>Protocol completed</h2>
+    <p>${esc(name)} has been marked completed. Your past doses and phase records are preserved.</p>
+    <button class="btn-primary" id="nx-protocol-celebration-close" type="button">Done</button>
+  </div>`, "#A78BFA");
+  m.querySelector("#nx-protocol-celebration-close").onclick=closeModal;
+}
+
 function phaseRoadmapModal(protocolId, compoundName) {
   const p = state.protocols.find(x=>x.id===protocolId); if(!p) return;
   const c = (p.compounds||[]).find(x=>x.name===compoundName); if(!c) return;
@@ -1325,6 +1350,12 @@ function phaseRoadmapModal(protocolId, compoundName) {
       <span class="mono" style="font-size:13px;color:${cc.color};letter-spacing:1.5px">${esc(compoundName.toUpperCase())} — PHASE ROADMAP</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
+    ${info?.current?`<section class="nx-protocol-phase-current" aria-label="Current compound phase">
+      <span class="nx-protocol-phase-eyebrow">CURRENT PHASE</span>
+      <strong>Phase ${info.index+1} of ${phases.length} · ${info.isRest?"Rest":"Dosing"}</strong>
+      <div>Week ${info.weekInPhase} of ${info.totalWeeks} · ${info.daysLeft} days left in this phase${info.isPaused?" · Paused":""}</div>
+      ${info.next?`<div>Next: ${info.next.type==="dose"?"Dosing":"Rest"} · ${fmtDate(info.next.startDate)}</div>`:""}
+    </section>`:info?.done?`<div class="nx-protocol-phase-current">All scheduled phases have elapsed.</div>`:info?.notStartedYet?`<div class="nx-protocol-phase-current">Not started · first phase begins ${fmtDate(phases[0].startDate)}</div>`:""}
     ${phases.map((ph,i)=>{
       const isPast = ph.endDate && today>=ph.endDate;
       const isCurrent = ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate;
@@ -1368,7 +1399,7 @@ function manageProtocolMenu(protoId) {
   if (pauseBtn) pauseBtn.onclick = () => { closeModal(); pauseProtocol(p); saveState(); renderBody(); };
   const completeBtn = m.querySelector("#mp-complete");
   if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", () => {
-    p.status="completed"; saveState(); renderBody();
+    p.status="completed"; saveState(); renderBody(); protocolCompletionCelebration(p.name);
   }, { confirmLabel: "Complete", cancelLabel: "Cancel", tone: "success" }); };
   const resumeBtn = m.querySelector("#mp-resume");
   if (resumeBtn) resumeBtn.onclick = () => { closeModal(); resumeProtocol(p); saveState(); renderBody(); };
@@ -1488,6 +1519,7 @@ function protocolsView() {
     const compounds = p.compounds||[];
     const names = compounds.map(c=>c.name).filter(Boolean);
     const shortNames = names.slice(0,2).map(esc).join(" · ") + (names.length>2 ? ` · +${names.length-2} more` : "");
+    const countdown=protocolCountdownSummary(p);
     const phaseInfo=compounds.length ? compoundPhaseStatus(p,compounds[0]) : null;
     const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
     const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
@@ -1510,12 +1542,14 @@ function protocolsView() {
         <div><span class="nx-protocol-2-label">CURRENT PHASE</span><strong>${esc(phaseCaption)}</strong></div>
         <div><span class="nx-protocol-2-label">NEXT SCHEDULED</span><strong>${esc(nextScheduledCaption)}</strong></div>
       </div>
+      <div class="nx-protocol-countdown" aria-label="Protocol schedule countdown"><span class="nx-protocol-2-label">PROTOCOL COUNTDOWN</span><strong>${esc(countdown.label)}</strong><small>${esc(countdown.detail)}</small></div>
       <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"} · ${esc(startCaption)}${totalPhaseWeeks?` · ${totalPhaseWeeks} planned weeks`:""}</div>
       <details class="nexus-protocol-details">
         <summary><span>Schedule &amp; phases</span></summary>
         <div class="nexus-protocol-details-body">
           ${p.goal?`<div class="nx-protocol-2-goal"><strong>Purpose</strong><span>${esc(p.goal)}</span></div>`:""}
           ${p.linkedGoalId?`<div class="nx-protocol-2-goal"><strong>Linked goal</strong><span>${goalRef?esc(goalRef.name):"Linked goal unavailable · edit to relink"}</span></div>`:""}
+          <div class="nx-protocol-compound-phases">${compounds.map(c=>{const ph=compoundPhaseStatus(p,c);const label=ph?.current?`Phase ${ph.index+1} of ${ph.phases.length} · ${ph.isRest?"Rest":"Dosing"}`:ph?.done?"Schedule elapsed":ph?.notStartedYet?"Not started":"No phase date";return `<button type="button" class="nx-protocol-open-phase" data-proto="${p.id}" data-comp="${esc(c.name)}"><span>${esc(c.name)}</span><strong>${esc(label)}</strong><span aria-hidden="true">›</span></button>`;}).join("")}</div>
           <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
           <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
           ${compounds.map(c=>`<div class="nexus-protocol-compound"><span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>${compoundDetailRow(p,c)}</div>`).join("")}
