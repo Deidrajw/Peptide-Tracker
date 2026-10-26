@@ -1200,8 +1200,9 @@ function protocolCalendarView() {
     ?state._calSelectedDate:todayStr.startsWith(year+"-"+String(month+1).padStart(2,"0"))?todayStr:`${year}-${String(month+1).padStart(2,"0")}-01`;
   const weekStart=startOfWeek(new Date(weekAnchor+"T12:00:00"));
   const weekDates=[...Array(7)].map((_,i)=>addDays(calendarDayKey(weekStart.toISOString()),i));
+  const weekInstances=calSub==="week"?getWeekInstances(weekDates):null;
   const periodKeys=calSub==="week"?weekDates:Object.keys(monthInstances);
-  const periodRows=periodKeys.filter(k=>k<=todayStr).flatMap(k=>(monthInstances[k]||[]).filter(x=>!x.adhoc&&x.status!=="paused"));
+  const periodRows=periodKeys.filter(k=>k<=todayStr).flatMap(k=>((weekInstances||monthInstances)[k]||[]).filter(x=>!x.adhoc&&x.status!=="paused"));
   const complete=periodRows.filter(x=>x.status==="taken").length;
   const missed=periodRows.filter(x=>x.status==="missed").length;
   const unresolved=periodRows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
@@ -1222,10 +1223,10 @@ function protocolCalendarView() {
 
   const dayCell=(day)=>{
     if(!day) return `<div></div>`;
-    const k=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const k=typeof day==="string"?day:`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     const d=dayData[k]||{};
     const isToday=k===todayStr;
-    const slots=monthInstances[k]||[];
+    const slots=(weekInstances||monthInstances)[k]||[];
     // A fixed status vocabulary scales regardless of the number of compounds.
     const loggedCount = slots.filter(s=>s.status==="taken").length;
     const upcomingCount = slots.filter(s=>["pending","due_now","due_later_today","upcoming","overdue"].includes(s.status)).length;
@@ -1236,7 +1237,7 @@ function protocolCalendarView() {
     const weightLabel = weightNum === null ? '' : weightNum.toFixed(1);
     const dayDescription = [loggedCount+' logged',upcomingCount+' scheduled',mood?'Check-in '+mood.label:'',weightLabel?'Weight '+weightLabel+' pounds':''].filter(Boolean).join(', ');
     return `<button class="cal-day nx-cal-compact-day" data-date="${k}" aria-label="${k}: ${dayDescription}" ${isToday?'data-today="true"':''}>
-      <span class="nx-cal-day-number">${day}</span>
+      <span class="nx-cal-day-number">${typeof day==="string"?Number(day.slice(-2)):day}</span>
       <span class="nx-cal-day-signals">
         ${loggedCount?`<span class="nx-cal-log-count" title="${loggedCount} logged">${loggedCount}</span>`:''}
         ${upcomingCount?`<span class="nx-cal-scheduled" title="${upcomingCount} scheduled"></span>`:''}
@@ -1248,7 +1249,7 @@ function protocolCalendarView() {
   };
 
   const cells=[];
-  if(calSub==="week"){weekDates.forEach(k=>cells.push(k.startsWith(year+"-"+String(month+1).padStart(2,"0"))?Number(k.slice(-2)):null));}
+  if(calSub==="week"){weekDates.forEach(k=>cells.push(k));}
   else {for(let i=0;i<firstDay;i++) cells.push(null);for(let d=1;d<=daysInMonth;d++) cells.push(d);}
 
   return subBar+overview+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
