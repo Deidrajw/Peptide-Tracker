@@ -982,3 +982,46 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
 .nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-secondary-only .moremenu{
  min-height:44px!important;
 }
+
+/* Today Phase 3D: labelled disclosures and clear aged-overdue hierarchy.
+   Overrides legacy absolute-chevron rules only on Today's compact cards. */
+html body .nexus-screen-home .nx-compound-card .nx-card-top {
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:start!important;gap:8px!important;
+ padding-right:0!important;position:static!important;min-height:44px!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure {
+ display:inline-flex!important;gap:5px!important;align-items:center!important;
+ justify-content:flex-end!important;align-self:start!important;
+ min-height:44px!important;white-space:nowrap!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compact-disclosure-label{
+ display:inline!important;margin:0!important;color:var(--t2)!important;
+ font-size:12px!important;font-weight:700!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compound-chevron{
+ position:static!important;inset:auto!important;flex:0 0 32px!important;
+ width:32px!important;min-width:32px!important;height:44px!important;
+ margin:0!important;border-radius:11px!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .compound-collapse-btn{
+ width:auto!important;min-width:44px!important;min-height:44px!important;
+ padding:0 8px!important;display:inline-flex!important;
+ gap:8px!important;align-items:center!important;justify-content:center!important;
+ font-size:12px!important;font-weight:700!important;white-space:nowrap!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .compound-collapse-btn::after{
+ flex:0 0 auto!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-contextual-actions{
+ display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,125px),1fr))!important;
+ gap:8px!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-contextual-actions .moremenu{
+ flex:1!important;min-height:44px!important;padding:10px 12px!important;
+ border-radius:12px!important;font-size:12px!important;
+}
+@media(max-width:359px){
+ html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compact-disclosure-label{font-size:11px!important}
+ html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compound-chevron{min-width:29px!important;width:29px!important;flex-basis:29px!important}
+}
