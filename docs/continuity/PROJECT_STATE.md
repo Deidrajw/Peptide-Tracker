@@ -793,3 +793,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
 - 2026-10-25 user screenshots confirmed duplicate Hide details chevron and unwanted insight borders persisted. Root cause: `assets/css/nexus-disclosures.css` includes body #app highly specific pseudo-chevron with !important; previous fixes in nexus.css and hybrid layer missed it. Commit d4174ac0 excludes `.nx-today-disclosure` from generated pseudo-chevron in that stylesheet; b6222ea9 removes actual `.nx-compound-info-tabs` wrapper border/background and observation divider rule; f65255af adds CI source checks. This is source-corrected, NOT rendered-validated. Main remains protected; PR #123 draft. ONE NEXT ACTION: review exact-head browser QA, confirm one chevron and unboxed Insights at 320/390 dual theme, then validate remaining Today states before asking for approval.
+
+
+### 2026-10-25 — Compact Today divider correction
+- Compact Today card divider removal committed on design PR #123: 73ec2a05 removes internal header, facts, and supporting-context border rails in CSS; 4208fe9b adds source regression check. Main remains unchanged. Browser visual 320/390 and dual-theme QA pending. ONE NEXT ACTION: verify exact-head screenshot and computed border widths for compact cards, then resume Today acceptance.
