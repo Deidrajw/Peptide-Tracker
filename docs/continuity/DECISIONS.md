@@ -370,3 +370,7 @@
 
 ### Today disclosure / typography parity (2026-10-25)
 - 2026-10-25: compact/expanded View details and Hide details are ONE shared UI: `nxTodayDisclosureInner(expanded)` text plus same outline SVG, with only label/rotation differing; both wrapped in `.nx-today-disclosure`. Same `.nx-today-compound-name` class for typography in both states, including paused compact card. No ellipsis reintroduced. Design preview code, not yet user accepted or merged.
+
+
+### Today grouped correction pass — 2026-10-25
+Today insights must be record-grounded, not imply pharmacokinetic certainty or suggest escalation. A phase countdown should only appear when an actual dated phase boundary exists. Completed-dose main action uses existing Dose completed / Scheduled entry recorded, not an additional Log Dose CTA. One chevron per disclosure, Intel must read as a button.
