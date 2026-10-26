@@ -988,3 +988,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - **CODED:** commit `6479eea378f2972ce1d5ead141602d53c97f8278` adds Protocol card visual hierarchy and accessibility styling exclusively to `assets/css/nexus-hybrid-preview.css`. Keeps existing Manage action handler, native Schedule & phases details, timeline and dose/activate buttons; no JS, saved state or calculation changes. Improves long-name wrapping, 44px touch targets, visible keyboard focus, compact 320px layout.
 - **NOT YET VERIFIED:** fresh automated mobile + browser workflow, latest-source FULL DEMO / LIVE package, physical iPhone 320/390 (physical 320 via browser only) visual behavior for this commit. Sprint 01 Calendar Month icon design request still unresolved. PR stays DRAFT, no release.
 - **ONE NEXT ACTION:** complete latest-head 320/390 dark/light automated QA + full-app isolated DEMO artifact check, then visually inspect the actual Protocol Manage/phase sheets and finish Stash blend/non-blend vial form parity without changing data logic.
+
+
+## 2026-10-26 — Sprint 02 shared Open New Vial mobile form
+- Latest observed PR #123 head before work `18af83b9032b3e054397207bd6db4ebcb5c58d13` (draft/unmerged). Mobile run 40345473419 SUCCESS, browser/build run 40345474301 IN PROGRESS at observation; these predate this patch.
+- Coded `d21f2cf` shared Open New Vial grid class in `assets/js/09-nexus.js` and `e6eacc6` hybrid CSS: two columns with full-width BAC field on iPhone, three columns on wider sheets, 44px numeric inputs, 48px save action, explicit button contrast/focus. Shared blend and single-vial modal already routes through same source. No calculation, event handler, state schema, migration or history modifications.
+- **NOT YET TESTED** on current source; exact-head QA, full-app DEMO, 320/390 both themes and real iPhone form/keyboard/save validation pending. Sprint 01 Month icons still open. PR draft, no merge/deploy.
+- **ONE NEXT ACTION:** Run and inspect latest-head browser/mobile regressions, review Open New Vial at 320/390 in both themes with fictional blend/single kits, then inspect physical iPhone before any release approval.
