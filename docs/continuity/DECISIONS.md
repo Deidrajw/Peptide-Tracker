@@ -548,3 +548,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Log Dose final confirmation requirement
 - Every mode must explicitly reach Review before record Save becomes available. Step errors are visible and anchored near sticky footer. Preserve original validated Save logic; UI prevalidation for amount/date must not become a new independent inventory calculator. Quick uses 2 steps; Guided uses 3. User-approved visual direction unchanged. Audit checklist must be compact, avoid warped per-row controls.
+
+## 2026-10-26 — Ledger truth and safe wording
+- Render in-memory allocation rows in Review rather than copied DOM text; label as read-only preview and retain original save-time vial/stock checks. Never claim a blend is deducted until original Save validates it. Native unit conversion is required for each displayed vial allocation. Use 46px sticky actions and reduced-motion preferences.
