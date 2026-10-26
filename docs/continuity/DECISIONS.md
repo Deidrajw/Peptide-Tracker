@@ -569,3 +569,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Stash parity polish implementation scope
 - The existing Stash hierarchy stays authoritative, including active/frozen kits, open vial and blend math, prepared batches, history and deductions. Add/Edit Kit receives presentation-only header, associated labels, one sticky primary action, touch/focus and reduced redundant panel depth. Prepared list uses one outline chevron. Needs-attention actions gain a 44px minimum. Existing separate blend editor unchanged until source-faithful parity tests; never silently convert formats or fields.
+
+## 2026-10-26 — User-requested Stash workflow redesign direction (design proposed, approval pending)
+- User requests guided Add/Edit Kit similar to Log Dose (reduce scrolling), searchable compound combobox, Prepared Doses redesign, and complete Stash secondary-screen visual consistency audit. Proposed three-step Kit Details → Preparation & Storage → Review & Save. Existing blend editor must receive consistent experience without flattening component-level vial math. Do not alter inventory identifiers, existing vial accounting, prepared allocations, history or storage; no destructive migration. Proposal not yet coded or approved as exact interaction design.
