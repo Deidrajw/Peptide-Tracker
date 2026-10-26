@@ -623,3 +623,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Draft Log Dose source-review iteration (UNRELEASED)
 - `3fe3f1a9` structured allocation review, `631c36a8` browser regression helper follows final Review, `14981bf6` visual refinement. No storage change. New-head full QA, exact-source artifacts, manual mobile testing pending. No merge/deploy.
+
+### 2026-10-26 — DRAFT source identity review (NOT RELEASED)
+- `8abba0bb` source ID/selected vial/prepared batch readout; `fb8a7c40` browser assertions. No storage migration, no production release; latest-head QA and source-matched artifacts pending.
