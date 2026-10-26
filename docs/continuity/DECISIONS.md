@@ -386,3 +386,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
 - 2026-10-25 clear user direction: eliminate decorative bordered container around Insights and unnecessary per-row dividers; preserve pill-shaped segmented control. Shared View/Hide details must show exactly one SVG chevron; inspect all ordered CSS layers including nexus-disclosures.css, not just base and preview. No production merge/deploy.
+
+
+### 2026-10-25 — Compact Today divider correction
+- Compact Today compound cards should not contain horizontal separator rails between heading, last/next facts and context. Use spacing and typographic hierarchy; do not alter the outer card boundary or unrelated surfaces.
