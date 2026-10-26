@@ -78,6 +78,23 @@ try {
     const info=await kitSummary.evaluate(e=>({svg:e.querySelectorAll("svg").length,triangle:e.textContent.includes("▸"),height:e.getBoundingClientRect().height}));
     assert(info.svg===0&&!info.triangle&&info.height>=44,"Stash disclosure duplication");
   }
+  // Calendar 2.0: actual source rendering at both widths and themes.
+  await pg.evaluate(()=>{tab="calendar";state._protoCalSub="month";state._calOff=0;render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
+  assert(await pg.locator(".nx-cal-hub").count()===1,"Calendar activity overview missing");
+  assert(await pg.locator(".nx-cal-hub-stats > div").count()===3,"Calendar outcome metrics missing");
+  assert(await pg.locator(".cal-day").count()>=28,"Calendar current-month grid missing");
+  await pg.locator(".cal-day").first().click();
+  assert(await pg.locator(".nx-cal-category").count()===3,"Categorized day history missing");
+  await pg.locator('.nx-cal-category[data-category="scheduled"]').click();
+  assert((await pg.locator('.nx-cal-category[data-category="scheduled"]').getAttribute("aria-pressed"))==="true","Scheduled category selection failed");
+  await pg.locator("#pcal-week").click();
+  assert(await pg.locator(".cal-day").count()>=4,"Calendar Week view missing");
+  assert(await pg.locator(".nx-cal-hub").count()===1,"Calendar Week summary missing");
+  await pg.locator("#pcal-month").click();
+  assert(await pg.locator(".cal-day").count()>=28,"Calendar Month restore failed");
+  const calWidth=await pg.locator(".nx-cal-hub").evaluate(el=>({width:el.getBoundingClientRect().width,left:el.getBoundingClientRect().left,screen:innerWidth}));
+  assert(calWidth.left>=-1 && calWidth.left+calWidth.width<=calWidth.screen+2,"Calendar 2.0 horizontal overflow "+JSON.stringify(calWidth));
+  await pg.screenshot({path:"dist/calendar-hub-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   assert(errors.length===0,"page errors "+errors.join(";"));
   results.push({mode,width,theme,status:"PASS"});await ctx.close();
  }
