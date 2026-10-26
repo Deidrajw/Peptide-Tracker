@@ -870,3 +870,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Review-ledger QA (PENDING)
 - Commit `631c36a8` modified end-to-end browser helper to traverse Review before clicking Save. Verify 8 live/demo viewport/theme combos, source kit/vial identity, native mg/mcg presentation, prepared no-double-deduction, split vial, invalid zero/negative amount, draft handoff, edits, blend save and source discrepancy. Latest-head browser results pending; manual iPhone/VoiceOver NOT TESTED.
+
+## 2026-10-26 — Review source UI assertions
+- `fb8a7c40` adds multi-vial and prepared-batch Review assertions to end-to-end browser regression. Pending latest-head CI. Expected kit/source rows, no repeated deduction for prepared source, amount/date validation, source handoff and split vial math. Blend component breakdown not yet verified. Physical iPhone still NOT TESTED.
