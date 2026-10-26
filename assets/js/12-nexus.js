@@ -340,6 +340,7 @@ function wireBody() {
     doseModal(b.dataset.name);
   });
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
+  document.querySelectorAll(".nx-proto-view-overview").forEach(b=>b.onclick=()=>nexusProtocolDetails(b.dataset.id));
   document.querySelectorAll(".nx-journal-mode").forEach(b=>b.onclick=()=>{state._logsMode=b.dataset.mode;renderBody();});
   document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
   const journalSearch=$("#nx-journal-search");
