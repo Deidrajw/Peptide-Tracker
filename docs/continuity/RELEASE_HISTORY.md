@@ -515,3 +515,8 @@
 
 ### 2026-10-26 — Logs current candidate QA evidence, still UNRELEASED
 - Latest tested PR head `3eb6bf4`, full pipeline `40276022471` PASS, mobile forms `40276022466` PASS, exact-source artifact #12630810614 inspected: 21-file LIVE ZIP, self-contained isolated DEMO, 16 log screenshots across viewports/themes and LIVE/DEMO. Existing version metadata v0.9.20-beta; no schema changes or saved-data migration. Draft PR #123 unmerged; Cloudflare deployment and physical iPhone not verified.
+
+
+### 2026-10-26 — PR #123 Calendar Logs validation checkpoint (DRAFT, NOT RELEASED)
+- PR #123 head `d6e3dfc4bf60592c7eb7296aa3038785d40fbef7`; source main base `c1c95e1da2749c3aa8c4459b81a04fc51d9b7f7e` at observation. User-approved Calendar Logs Day View + All Logs coded on design branch; not merged or deployed.
+- Mobile forms workflow 40334643562 PASS; full release workflow 40334643538 exact-source build/required files steps PASS, browser matrix still in progress and downloadable artifacts unavailable at observation. Physical iPhone NOT TESTED. No production data touched; migration effect requires final source review. This entry records QA progress only, not a new release.
