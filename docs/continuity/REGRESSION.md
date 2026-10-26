@@ -537,3 +537,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | 320/390 dark/light and contrast | NOT TESTED latest head |
 | iPhone review | NOT TESTED |
 | Production merge/deploy | NOT DONE |
+
+
+### 2026-10-25 — Stash modal audit QA additions
+| Flow | Status |
+|---|---|
+| Prepare count stepper enlarged to 46px (44px at 320) | CODED, rendered verification pending |
+| Open New Vial concentration summary visibly separated | CODED, source formula unchanged; contrast pending |
+| Standard vs blend vial modal visual parity and keyboard scroll | NOT TESTED |
+| Prepare Draw/source selection/shortage/cancel + draft resume | NOT TESTED latest head |
+| Sticky confirmation visible on numeric keyboard + safe area | NOT TESTED |
+| Latest 320/390 dual-theme browser release packaging | CI pending |
+| Physical iPhone and VoiceOver review | NOT TESTED |
+| Merge/Cloudflare deploy | NOT PERFORMED |
