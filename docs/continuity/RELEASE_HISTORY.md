@@ -493,3 +493,9 @@
 ### 2026-10-26 — Calendar 2.0 initial implementation, UNRELEASED
 - Draft PR #123: `ef93fc2` Calendar Week/Month activity overview, `060c583` categorized selected-day source-backed records, `5480de2` Calendar hub CSS, `9ed4c89` eight-case browser QA assertions. Affected Calendar screen, zero destructive migrations, Today weekly pulse unchanged.
 - Candidate NOT a release: tests, final packages, iPhone, merge and deployment still incomplete.
+
+
+### 2026-10-26 — Calendar 2.0 candidate validated, NOT RELEASED
+- Source commits: `ef93fc2` activity hub, `060c583` categorized day records, `5480de2` visual styles, `9ed4c89` browser tests, `ce2b54e` cross-month week integrity. Test updates `4f63119`, `137adc0`, `ed0fc8c` align protected Today controls with approved compact weekly pulse.
+- 320/390 dark/light LIVE/DEMO full QA run `40273196256` PASS, mobile run `40273196254` PASS; download artifact #12629580963 inspected (full 21-file LIVE package + standalone isolated full DEMO). No production migrations. Version metadata remains v0.9.20-beta; no new release label authorized.
+- Draft PR #123 open/unmerged, Cloudflare preview/production parity and physical iPhone remain NOT VERIFIED. Calendar analytics trending/filtering/history edit UX remains subsequent implementation before sign-off.
