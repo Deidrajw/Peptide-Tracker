@@ -1010,9 +1010,7 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .compound-collapse-btn
  gap:8px!important;align-items:center!important;justify-content:center!important;
  font-size:12px!important;font-weight:700!important;white-space:nowrap!important;
 }
-html body .nexus-screen-home .nx-hybrid-expanded-compound .compound-collapse-btn::after{
- flex:0 0 auto!important;
-}
+/* Legacy generated chevrons excluded for the shared Today disclosure. */
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-contextual-actions{
  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,125px),1fr))!important;
  gap:8px!important;
@@ -1094,8 +1092,8 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-actions
  border-color:var(--border)!important;
 }
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-fact{
- display:grid;gap:4px;padding:12px 4px;border-bottom:1px solid var(--border-sub);
- font-size:13px;line-height:1.45;color:var(--t2);
+ display:grid;gap:4px;padding:0;border:0;
+ font-size:13px;line-height:1.5;color:var(--t2);
 }
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-fact span{
  color:var(--t3);font-size:12px;
@@ -1271,11 +1269,8 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound button.compound-collap
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-list{
  display:grid!important;gap:10px!important;
 }
-html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-list>div{
- margin:0!important;padding:12px 14px!important;border-radius:12px!important;
- border:1px solid var(--border-sub)!important;background:var(--surface-2)!important;
- color:var(--t2)!important;font-size:13px!important;line-height:1.55!important;
-}
+/* Insight items intentionally inherit the single unboxed content area.
+   Legacy nested card styling removed instead of overridden again. */
 html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-info-history-row{
  border-bottom:0!important;padding:12px 0!important;
 }
