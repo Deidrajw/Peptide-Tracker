@@ -101,6 +101,34 @@ try {
   assert(await pg.locator("#nx-journal-date").inputValue()===selectedCalendarDate,"Selected day not carried into Logs");
   assert(await pg.locator(".nx-journal-mode").count()===2,"Day/All modes missing");
   assert(await pg.locator(".nx-journal").count()===1,"Day journal failed");
+  // Full-day view must retain ALL record types, not inherit the All Logs filter.
+  // The date chooser is explicit and never mutates underlying saved history.
+  await pg.evaluate(()=>{
+    const all=[
+      {id:"qa-checkin",date:"2026-10-24",mood:"good",symptoms:[],notes:"QA only"},
+    ];
+    state._logsMode="day"; state._logsDate="2026-10-24";
+    state._logsFilter="Weight"; state._logsSearch="unmatched-hidden-query";
+    state.dailyLogs=all;
+    state.weightLogs=[{id:"qa-weight",date:"2026-10-24",weight:180}];
+    state.measurementLogs=[{id:"qa-measure",date:"2026-10-24",waist:30}];
+    state.macroLogs=[{id:"qa-nutrition",date:"2026-10-24",calories:1600,protein:120}];
+    state.supplementLogs=[{id:"qa-supplement",date:"2026-10-24",taken:["Vitamin D"]}];
+    render();
+  });
+  assert(await pg.locator(".nx-journal-row").count()>=5,"Complete-day journal omitted saved wellness categories");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Check-in"}).count()===1,"Check-in missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Weight"}).count()===1,"Weight missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Nutrition"}).count()===1,"Nutrition missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Supplements"}).count()===1,"Supplements missing from full-day view");
+  const firstRow=pg.locator(".nx-journal-row").first();
+  await firstRow.locator(".nx-journal-more").click();
+  assert(await firstRow.locator(".nx-journal-extra").isVisible(),"Record details cannot expand");
+  assert((await firstRow.locator(".nx-journal-more").getAttribute("aria-expanded"))==="true","Record details ARIA not updated");
+  await firstRow.locator(".nx-journal-more").click();
+  assert(await firstRow.locator(".nx-journal-extra").isHidden(),"Record details cannot collapse");
+  await pg.evaluate(()=>{state=buildDemoState("weight_loss");state._logsMode="day";state._logsDate=localDate();render();});
+
   await pg.screenshot({path:"dist/logs-day-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator('.nx-journal-mode[data-mode="all"]').click();
   assert(await pg.locator(".nx-journal-filter").count()===7,"All Logs type filtering missing");
