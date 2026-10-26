@@ -93,6 +93,22 @@ try {
   assert(await pg.locator(".nx-cal-hub").count()===1,"Calendar Week summary missing");
   await pg.locator("#pcal-month").click();
   assert(await pg.locator(".cal-day").count()>=28,"Calendar Month restore failed");
+  // The selected date must open the full journal without losing its date.
+  await pg.locator(".cal-day").first().click();
+  const selectedCalendarDate=await pg.locator(".cal-day.nexus-cal-selected").first().getAttribute("data-date");
+  await pg.locator("#nx-open-day-logs").click();
+  assert(await pg.locator(".nx-journal").count()===1,"Logs journal missing");
+  assert(await pg.locator("#nx-journal-date").inputValue()===selectedCalendarDate,"Selected day not carried into Logs");
+  assert(await pg.locator(".nx-journal-mode").count()===2,"Day/All modes missing");
+  assert(await pg.locator(".nx-journal-row").count()>=0,"Day journal failed");
+  await pg.locator('.nx-journal-mode[data-mode="all"]').click();
+  assert(await pg.locator(".nx-journal-filter").count()===7,"All Logs type filtering missing");
+  await pg.locator('.nx-journal-filter[data-type="Weight"]').click();
+  assert(await pg.locator('.nx-journal-filter[data-type="Weight"]').evaluate(el=>el.classList.contains("on")),"Weight filter failed");
+  await pg.locator('.nx-journal-mode[data-mode="day"]').click();
+  await pg.locator("#nx-journal-today").click();
+  assert(await pg.locator("#nx-journal-date").inputValue()===await pg.evaluate(()=>localDate()),"Today date picker action failed");
+  await pg.evaluate(()=>{state._protoCalSub="month";render();});
   const calWidth=await pg.locator(".nx-cal-hub").evaluate(el=>({width:el.getBoundingClientRect().width,left:el.getBoundingClientRect().left,screen:innerWidth}));
   assert(calWidth.left>=-1 && calWidth.left+calWidth.width<=calWidth.screen+2,"Calendar 2.0 horizontal overflow "+JSON.stringify(calWidth));
   await pg.screenshot({path:"dist/calendar-hub-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
