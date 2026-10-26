@@ -503,3 +503,7 @@
 
 ### 2026-10-26 — Calendar Logs Day/All candidate, UNRELEASED
 - PR #123 draft: `e465049` source-backed Day/All log journal with outline icons, `044f9c7` handlers, `6d921a0` Calendar selected-date handoff, `5c7e241` responsive styles, `aa84611` browser QA extension. No historical data rewrite or schema migration, existing editing handlers preserved. Full QA and LIVE/DEMO package acceptance pending; no merge or production deployment.
+
+
+### 2026-10-26 — Logs Day View navigation candidate (unreleased)
+- Commits `25b5124` date controls, `bcb8cd7` handler, `8d2c616` styling, `5167a87` browser tests; builds on existing Day/All journal. No saved data migration; candidate on draft PR #123. Latest full build/isolated DEMO artifacts and preview deployment not yet verified; no merge/release.
