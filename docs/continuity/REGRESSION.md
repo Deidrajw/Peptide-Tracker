@@ -763,3 +763,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Sprint 02A Protocol visual check
 - **PASS (automation, previous exact head 137306ab only):** mobile run 40341448639 and full browser/build run 40341448649, includes prior Stash compact card patch.
 - **CODED / NOT YET TESTED at new head 6479eea:** Protocol name/status/goal wrapping, 44px Manage ellipsis, Schedule & phases expansion and keyboard focus, first-dose and Activate actions, archived status. Verify 320/390 in both themes, no duplicate chevrons, sheets stay within safe area. Protect saved phases, schedules, dose history, first-log action handlers and production storage. Real iPhone new-build check pending.
+
+
+## 2026-10-26 — Sprint 02 shared vial sheet QA target
+- New changes: shared `nx-open-vial-fields` responsive 2-column iPhone grid (BAC spans both) and 3-column at >=480px, 44px input targets, visible `#rvsave` primary action, focus styles. **NOT TESTED on new head**. Verify 320/390 dark/light, iPhone keyboard and bottom safe-area, blend and single create/open flows, numeric entry, validation, confirmation, dose history and inventory unchanged. No Pass inferred from earlier workflows.
