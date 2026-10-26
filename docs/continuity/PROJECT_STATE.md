@@ -954,3 +954,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - User-approved cosmetic correction on draft PR #123: remove duplicate chevron on Add Log (plus retained); center tile labels and fix Measurements overflow; separate Today weekly percentage from `so far`. CSS-only changes in `assets/css/nexus-hybrid-preview.css` commit `799f254`; no production storage/schema/record/logic changes. Added 320/390 browser assertions for Add Log popup in `tools/validate-chevron-unification.mjs` commit `bf5a4b1`.
 - Previous corrected browser workflow 40335573068 SUCCESS and mobile 40335572967 SUCCESS on earlier `93aea82` source; **new patch browser and physical iPhone status PENDING**; no release approval, merge or deployment.
 - **ONE NEXT ACTION:** Review latest PR #123 head CI (mobile and complete release/browser), inspect 320/390 light/dark screenshot and measured labels, and conduct physical iPhone acceptance before merge discussion.
+
+
+### 2026-10-26 — Add Log chevron follow-up based on physical screenshot
+- User supplied visual evidence that Add Log still displayed a chevron after cosmetic patch. Actual cause in `assets/css/nexus-disclosures.css`: broad `body #app ... .nx-add-log-btn::after` generated the chevron with `!important`, plus enforced `justify-content:space-between!important`. Previous hybrid styling alone did not override the higher-specificity selector.
+- Fixed **at source** in branch commit `6da8dff4e0f53701655013a6e26c37c672512cc2`: remove `.nx-add-log-btn` from generated-chevron and shared disclosure alignment rules. Existing plus-only `#nx-add-log-toggle` style now applies; handlers remain untouched. This is CODED, not yet verified at live production or physical iPhone after fix.
+- **ONE NEXT ACTION:** Confirm new PR-head browser run and screenshot at 320/390 light/dark shows no Add Log pseudo-chevron, then user-review actual iPhone preview. Keep PR draft, unmerged and production unchanged.
