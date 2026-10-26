@@ -595,3 +595,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Log Dose preview release checkpoint
 - 2026-10-25 — Log Dose CTA preview checks at 9fe7803: due now, due later today, overdue under 3 days, older overdue What happened?, logged today, rescheduled today/later, no history, paused/resting; Log Dose opens matching occurrence; multi-occurrence date/time, draft recovery, source selection, shortage, draw confirmation, one record and accurate ledger. All functional end-to-end cases NOT TESTED on latest head. Mobile regressions at earlier 0819acc1 SUCCESS; exact-head CI not yet verified. Cloudflare deploy SUCCESS per PR comment; physical iPhone NOT TESTED.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 latest Today expanded card changes: source-modified ring, status badge, Last/Next, slotLabel by configured time, standalone per-occurrence Log/Reschedule/Skip 46px controls, Taken today. Browser functional checks, 320/390 dual theme, date rollover, multi-occur independent actions, status for overdue and completed, snapshots, storage and inventory math: NOT TESTED. Do not mark Pass until exact-head run evidence. Physical iPhone NOT TESTED.
