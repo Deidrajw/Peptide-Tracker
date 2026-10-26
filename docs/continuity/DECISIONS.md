@@ -382,3 +382,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Root disclosure and Insight cleanup
 - 2026-10-25 root-level correction: legacy `.compound-collapse-btn::after` pseudo icon must exclude `.nx-today-disclosure` rather than append endless override rules. Insights content should be a single unboxed surface using typographic grouping, not nested mini-cards. Pharmacokinetic or treatment-effect claims must not be presented as if derived from tracked records. No invented countdown until actual dated milestone source verified. Preview only, not approved for merge.
+
+
+### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
+- 2026-10-25 clear user direction: eliminate decorative bordered container around Insights and unnecessary per-row dividers; preserve pill-shaped segmented control. Shared View/Hide details must show exactly one SVG chevron; inspect all ordered CSS layers including nexus-disclosures.css, not just base and preview. No production merge/deploy.
