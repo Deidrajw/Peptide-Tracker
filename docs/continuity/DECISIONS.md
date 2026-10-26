@@ -572,3 +572,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — User-requested Stash workflow redesign direction (design proposed, approval pending)
 - User requests guided Add/Edit Kit similar to Log Dose (reduce scrolling), searchable compound combobox, Prepared Doses redesign, and complete Stash secondary-screen visual consistency audit. Proposed three-step Kit Details → Preparation & Storage → Review & Save. Existing blend editor must receive consistent experience without flattening component-level vial math. Do not alter inventory identifiers, existing vial accounting, prepared allocations, history or storage; no destructive migration. Proposal not yet coded or approved as exact interaction design.
+
+## 2026-10-26 — Stash guided wizard approval boundary clarified
+- Source audit found guided ordinary kit editor and searchable compound combobox already coded on draft PR #123 despite previous DESIGN ONLY handoff. Treat code as **draft candidate, not approved or accepted**; review exact interaction and validation before extending changes.
+- Keep ordinary kit `#ssave` and separate blend-kit authoritative handlers, original element IDs, vial-count/strength edit restrictions, per-component accounting, review-only navigation and no intermediate persistence. Do not merge or deploy without explicit approval.
