@@ -209,7 +209,12 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
  await page.evaluate(()=>{state.dailyLogs=[{id:'sym1',date:'2026-10-18',notes:'Skin felt calmer today',symptoms:[{name:'Skin irritation',intensity:2}],updates:[{time:'2026-10-18T18:00:00',notes:'Later unrelated update'}]},{id:'sym2',date:'2026-10-20',notes:'Unrelated headache reflection',symptoms:[{name:'Headache',intensity:4}]}];goalModal(state.plans.goals[0]);});
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
+ await page.locator('#nx-g-next').click(); // Progress -> Connections
+ ensure(await page.locator('#g-evidence-symptom').isVisible(),'Connections field must be visible');
  await page.locator('#g-evidence-symptom').selectOption('Skin irritation');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].evidenceSymptom==='Skin irritation'&&state.dailyLogs.length===2),'Evidence selection or original Check-In history mutated');
  await page.locator('.nx-open-goal').first().click();
@@ -231,28 +236,40 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.evaluate(()=>closeModal()); // Close the original Check-In modal opened via source link.
 
  await page.evaluate(()=>{state.weightLogs=[{id:'w1',date:'2026-10-01',weight:190},{id:'w2',date:'2026-10-20',weight:185}];state.settings.weightUnit='lbs';goalModal(state.plans.goals[0]);});
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('numeric');
  await page.locator('#g-p-baseline').fill('200');
  await page.locator('#g-p-target').fill('180');
  await page.locator('#g-p-unit').fill('lb');
  await page.locator('#g-p-source').selectOption('weightLogs');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.source==='weightLogs'&&state.weightLogs.length===2),'Numeric model save or weight history preservation failed');
  await page.locator('.nx-open-goal').first().click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('185')&&t.includes('75%')),'Goal weight progress did not use latest dated record');
  await page.locator('#nx-goal-detail-close').click();
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('subjective');
  await page.locator('#g-p-rating').selectOption('4');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.rating===4),'Subjective rating save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('milestones');
  await page.locator('#g-p-milestones').fill(['One','Two'].join(String.fromCharCode(10)));
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.milestones.length===2),'Milestones save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('exploratory');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.type==='exploratory'&&state.plans.goals[0].notes==='Fictional note'),'Exploratory save or legacy notes preservation failed');
 
