@@ -885,3 +885,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Editor alignment test matrix
 - New browser assertions in `9ddfac17`: Research modal 5 preserved fields, header title/label, min 44px save; Shopping 6 preserved fields, min 44px save. 320/390 both themes LIVE/DEMO automated run pending; direct physical iPhone keyboard, scroll, focus, native selects and screen reader NOT TESTED. Verify actual Add/Edit persistence, Research picker, Shopping links, management bottom sheet, and Log Dose regression before merging.
+
+## 2026-10-26 — Stash kit editor parity verification (NEW HEAD PENDING)
+- Check 320/390 LIVE/DEMO dark/light kit editor original `#sname/#stv/#svmg/#sbac/#sloc/#ssave`, 44px Save target, opening/closing without inventory state mutation; concentration calculation, open-vial conditional input, edited kit disabled vial-count fields, blend switch and source-aware vial math remain protected. Check Prepared SVG, attention 44px controls, kit detail tabs, no duplicate chevrons and full source/Log Dose/Combo Stash suites. `9b03db6c` adds subset automated checks; browser/physical iPhone results pending.
