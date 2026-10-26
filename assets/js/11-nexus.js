@@ -1357,21 +1357,24 @@ function phaseRoadmapModal(protocolId, compoundName) {
       <div>Week ${info.weekInPhase} of ${info.totalWeeks} · ${info.daysLeft} days left in this phase${info.isPaused?" · Paused":""}</div>
       ${info.next?`<div>Next: ${info.next.type==="dose"?"Dosing":"Rest"} · ${fmtDate(info.next.startDate)}</div>`:""}
     </section>`:info?.done?`<div class="nx-protocol-phase-current">All scheduled phases have elapsed.</div>`:info?.notStartedYet?`<div class="nx-protocol-phase-current">Not started · first phase begins ${fmtDate(phases[0].startDate)}</div>`:""}
-    ${phases.map((ph,i)=>{
-      const isPast = ph.endDate && today>=ph.endDate;
-      const isCurrent = ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate;
-      const isFuture = !isPast && !isCurrent;
-      const label = ph.type==="dose" ? `${ph.dose||"—"}${cc.unit||"mg"}` : "Rest";
-      const status = isPast ? "✓" : isCurrent ? "— Next".replace("Next","Now") : "";
-      return `<div style="padding:12px 0;border-bottom:1px solid var(--surface-2);opacity:${isFuture&&!isCurrent?0.6:1}">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-          <span style="font-size:13px;font-weight:700;color:${isCurrent?cc.color:"var(--t1)"}">Phase ${i+1}${isPast?" ✓":isCurrent?" — Now":""}</span>
-        </div>
-        <div style="font-size:12px;color:${ph.type==="dose"?cc.color:"var(--t4)"};margin-bottom:2px">${label} · ${ph.durationWeeks||4} weeks</div>
-        <div style="font-size:11px;color:var(--t5)">${ph.startDate?`${fmtDate(ph.startDate)} – ${fmtDate(addDays(ph.endDate,-1))}`:"Date unavailable"}</div>
-      </div>`;
-    }).join("")}
-    ${!info?`<div class="hint" style="margin-top:12px">This protocol doesn't have a start date set, so exact phase dates can't be calculated yet.</div>`:""}
+    <div class="nx-phase-vertical-timeline" aria-label="Compound phase timeline">
+     ${phases.map((ph,i)=>{
+       const isPast=Boolean(ph.endDate && today>=ph.endDate);
+       const isCurrent=Boolean(ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate);
+       const stateLabel=isPast?"Completed":isCurrent?(info?.isPaused?"Paused here":"Current"):"Upcoming";
+       const label=ph.type==="dose"?"Dosing":"Rest";
+       const duration=Number(ph.durationWeeks)||4;
+       return `<div class="nx-phase-timeline-row ${isCurrent?"is-current":isPast?"is-past":"is-upcoming"}">
+         <div class="nx-phase-timeline-rail" aria-hidden="true"><span class="nx-phase-timeline-dot">${isPast?"✓":isCurrent?"●":""}</span>${i<phases.length-1?'<span class="nx-phase-timeline-line"></span>':""}</div>
+         <div class="nx-phase-timeline-content">
+           <div class="nx-phase-timeline-heading"><strong>Phase ${i+1} · ${label}</strong><span>${stateLabel}</span></div>
+           <div class="nx-phase-timeline-meta">${duration} ${duration===1?"week":"weeks"}${ph.type==="dose"&&ph.dose?` · ${esc(String(ph.dose))}${esc(cc.unit||"mg")}`:""}</div>
+           <div class="nx-phase-timeline-date">${ph.startDate&&ph.endDate?`${fmtDate(ph.startDate)} – ${fmtDate(addDays(ph.endDate,-1))}`:"Dates unavailable"}</div>
+         </div>
+       </div>`;
+     }).join("")}
+     </div>
+     ${!info?`<div class="hint" style="margin-top:12px">This protocol doesn't have a start date set, so exact phase dates can't be calculated yet.</div>`:""}
   `, cc.color);
   m.querySelector("#x").onclick = closeModal;
 }
