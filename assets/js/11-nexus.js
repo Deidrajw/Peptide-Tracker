@@ -1734,13 +1734,14 @@ function plansView() {
     ${other.length?`<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin:16px 0 8px">OTHER GOALS</div>${other.map(goalCard).join("")}`:""}
     `;
   } else if(sub==="research"){
-    content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
-    ${research.map(r=>`<div class="nx-research-card nx-plan-2-research" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin-bottom:10px">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-research-title">${esc(r.compound)}</div><div class="nx-card-status">${statusPill(r.status||"researching",resStatus)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${manageBtn("research",r.id)}</div>
-      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>${r.reason?`<div class="nx-research-reason-label">RESEARCH REASON</div><div class="nx-research-reason">${esc(r.reason)}</div>`:`<div class="nx-research-empty">No research reason added yet.</div>`}
-      ${r.notes?`<div class="nx-research-note">${esc(r.notes)}</div>`:""}
-    </div>`).join("")}
-    <button id="add-research" class="btn-primary" style="width:100%;margin-top:10px;background:#F9C87D;color:#000">＋ Add to Research Queue</button>`;
+    content=`<div class="nx-goals-page-header nx-research-page-header"><div><h2>Research</h2><p>Your personal research queue</p></div><button id="add-research" type="button" class="nx-goals-header-add" aria-label="Add Research"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Research</span></button></div>
+    ${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
+    ${research.map(r=>`<article class="nx-research-card nx-plan-2-research nx-research-v3">
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-research-title">${esc(r.compound)}</div><div class="nx-card-status">${statusPill(r.status||"researching",resStatus)}</div>${r.goal?`<div class="nx-research-goal">Linked goal · ${esc(r.goal)}</div>`:""}</div>${manageBtn("research",r.id)}</div>
+      <div class="nx-research-reason-label">RESEARCH REASON</div><div class="nx-research-reason">${r.reason?esc(r.reason):"No research reason added yet."}</div>
+      ${r.notes?`<div class="nx-research-notes"><button type="button" class="nx-research-note-toggle" aria-expanded="false" aria-controls="nx-research-note-${esc(String(r.id))}" data-id="${esc(String(r.id))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h6"/></svg><span>Show personal notes</span></button><div class="nx-research-note-body" id="nx-research-note-${esc(String(r.id))}" hidden>${esc(r.notes)}</div></div>`:""}
+      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+    </article>`).join("")}`;
   } else if(sub==="shopping"){
     const needed=shopping.filter(s=>!s.status||s.status==="needed");
     const ordered=shopping.filter(s=>s.status==="ordered");
