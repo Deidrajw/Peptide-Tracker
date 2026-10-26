@@ -1359,26 +1359,20 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
     const fill=info?.done?100:info?.current?Math.max(0,Math.min(100,Math.round(100*(1-info.daysLeft/(info.totalWeeks*7))))):0;
     return '<button type="button" class="nx-proto-detail-compound" data-proto-comp="'+esc(c.name)+'"><span class="nx-proto-detail-compound-head"><strong>'+esc(c.name)+'</strong><span aria-hidden="true">›</span></span><span>'+esc(stage)+'</span>'+(info?.current||info?.done?'<span class="nx-proto-detail-bar" aria-hidden="true"><span style="width:'+fill+'%"></span></span>':"")+'<small>'+esc(detail)+'</small></button>';
   }).join("");
-  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-tabs" role="tablist" aria-label="Protocol detail sections"><button data-view="overview" role="tab">Overview</button><button data-view="compound" role="tab">Compound</button><button data-view="completion" role="tab">Completion</button></div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
+  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
   m.querySelector(".nx-proto-detail-close").onclick=closeModal;
   const show=(view)=>{
-    m.querySelectorAll(".nx-proto-detail-tabs button").forEach(b=>{const active=b.dataset.view===view;b.setAttribute("aria-selected",String(active));b.tabIndex=active?0:-1;});
+
     const body=m.querySelector("#nx-proto-detail-body");
     if(view==="overview"){
       const ring=remaining===null?"—":String(remaining);
-      body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+' compounds</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div><button type="button" class="nx-proto-detail-notice">About phase notifications</button>';
+      body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+' compounds</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div><button type="button" class="nx-proto-detail-notice">Manage protocol</button>';
       body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
-      body.querySelector(".nx-proto-detail-notice").onclick=()=>{show("completion");};
-    }else if(view==="compound"){
-      body.innerHTML='<div class="nx-proto-detail-title"><strong>Compound timelines</strong><span>'+phaseInfos.length+'</span></div><p class="nx-proto-detail-explain">Select a compound to inspect the approved vertical phase timeline.</p><div class="nx-proto-detail-compound-list">'+(overviewRows||"<p>No compounds added</p>")+'</div><div class="nx-proto-detail-schedule">Schedule: '+esc(p.schedule?.type||"Weekly")+' · '+(Number(p.schedule?.dosesPerDay)||1)+' per scheduled day</div>';
-      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
-    }else{
-      body.innerHTML='<div class="nx-proto-detail-title"><strong>Completion & next steps</strong></div><div class="nx-proto-detail-completion"><strong>'+esc(label)+'</strong><p>'+(ended&&p.status!=="completed"?"Your planned phases have ended. This does not mean recorded compound use has stopped.":"Completion is recorded only when you explicitly mark this protocol completed.")+'</p><p>Phase change reminders use the existing in-app notification settings; they are not phone push alerts.</p><button type="button" class="nx-proto-detail-manage">Manage this protocol</button></div>';
-      body.querySelector(".nx-proto-detail-manage").onclick=()=>manageProtocolMenu(String(p.id));
+      body.querySelector(".nx-proto-detail-notice").onclick=()=>manageProtocolMenu(String(p.id));
+
     }
   };
-  m.querySelectorAll(".nx-proto-detail-tabs button").forEach(b=>b.onclick=()=>show(b.dataset.view));
-  show(["overview","compound","completion"].includes(initialTab)?initialTab:"overview");
+  show("overview");
 }
 
 function phaseRoadmapModal(protocolId, compoundName, returnToDetails=false) {
@@ -1587,34 +1581,9 @@ function protocolsView() {
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
-      <button type="button" class="nx-proto-view-overview" data-id="${p.id}">View protocol overview <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-      <div class="nx-protocol-2-overview" aria-label="Protocol at a glance">
-        <div><span class="nx-protocol-2-label">CURRENT PHASE</span><strong>${esc(phaseCaption)}</strong></div>
-        <div><span class="nx-protocol-2-label">NEXT SCHEDULED</span><strong>${esc(nextScheduledCaption)}</strong></div>
-      </div>
-      <div class="nx-protocol-countdown" aria-label="Protocol schedule countdown"><span class="nx-protocol-2-label">PROTOCOL COUNTDOWN</span><strong>${esc(countdown.label)}</strong><small>${esc(countdown.detail)}</small></div>
-      <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"} · ${esc(startCaption)}${totalPhaseWeeks?` · ${totalPhaseWeeks} planned weeks`:""}</div>
-      <details class="nexus-protocol-details">
-        <summary><span>Schedule &amp; phases</span></summary>
-        <div class="nexus-protocol-details-body">
-          ${p.goal?`<div class="nx-protocol-2-goal"><strong>Purpose</strong><span>${esc(p.goal)}</span></div>`:""}
-          ${p.linkedGoalId?`<div class="nx-protocol-2-goal"><strong>Linked goal</strong><span>${goalRef?esc(goalRef.name):"Linked goal unavailable · edit to relink"}</span></div>`:""}
-          <div class="nx-protocol-section-heading">Compound timelines</div>
-          <div class="nx-protocol-compound-phases nx-protocol-progress-list">
-            ${compounds.map(c=>{
-              const ph=compoundPhaseStatus(p,c);
-              const label=ph?.current?`Phase ${ph.index+1} of ${ph.phases.length} · ${ph.isRest?"Rest":"Dosing"}`:ph?.done?"Schedule ended":ph?.notStartedYet?"Not started":"Phase dates unavailable";
-              const detail=ph?.current?`${ph.isPaused?"Paused · ":""}Week ${ph.weekInPhase} of ${ph.totalWeeks} · ${ph.daysLeft} ${ph.daysLeft===1?"day":"days"} in phase`:ph?.notStartedYet&&ph.phases?.[0]?.startDate?`Begins ${fmtDate(ph.phases[0].startDate)}`:ph?.done?"View completed phase history":"View phase timeline";
-              const pct=ph?.current&&ph.totalWeeks>0?Math.max(0,Math.min(100,Math.round(100*(1-ph.daysLeft/(ph.totalWeeks*7))))):ph?.done?100:0;
-              return `<button type="button" class="nx-protocol-open-phase nx-protocol-progress-row" data-proto="${p.id}" data-comp="${esc(c.name)}" aria-label="View ${esc(c.name)} phase roadmap">
-                <span class="nx-protocol-progress-copy"><strong class="nx-protocol-progress-name">${esc(c.name)}</strong><span class="nx-protocol-progress-stage">${esc(label)}</span><span class="nx-protocol-progress-detail">${esc(detail)}</span>${ph?.current||ph?.done?`<span class="nx-protocol-progress-track" aria-hidden="true"><span style="width:${pct}%"></span></span>`:""}</span>
-                <svg class="nx-protocol-progress-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-              </button>`;
-            }).join("")}
-          </div>
-          <div class="nx-protocol-schedule-footnote">Schedule: ${esc(p.schedule?.type||"Weekly")} · ${Math.max(1,Number(p.schedule?.dosesPerDay)||1)} per scheduled day</div>
-        </div>
-      </details>
+      <button type="button" class="nx-proto-view-overview" data-id="${p.id}">View overview <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="nx-proto-compact-progress"><span>${esc(countdown.detail)}</span><strong>${esc(countdown.label)}</strong></div>
+      <div class="nx-proto-compact-track" aria-hidden="true"><span style="width:${countdown.label==="0 days"||countdown.label==="Completed"?"100%":"45%"}"></span></div>
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
         <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#7DF9C0">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
         <button class="proto-log-first" data-name="${esc(fc)}" style="padding:9px 12px;border-radius:8px;background:#7DF9C0;color:#000;font-size:12px;font-weight:700;flex-shrink:0">+ Log dose</button>
