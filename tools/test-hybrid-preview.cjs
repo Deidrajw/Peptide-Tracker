@@ -80,6 +80,26 @@ const {pathToFileURL}=require("node:url");
    }else throw Error("No Today compact card found for UI acceptance at "+width+"/"+theme);
    cases.push({width,theme,...info,disclosureParity,errors:errors.slice(0,5),pass:ok&&disclosureParity.pass});
    await page.screenshot({path:path.resolve(__dirname,`hybrid-${width}-${theme}.png`),fullPage:true});
+   // Source-faithful mobile form visual evidence, isolated to full-app DEMO.
+   await page.evaluate(()=>{state.profile.onboardingDone=true;state.plans={goals:[],research:[],shopping:[]};tab="plans";state._plansSub="research";render();});
+   for(const editor of ["research","shopping"]){
+     await page.evaluate(kind=>{state._plansSub=kind;render();if(kind==="research")researchModal();else shoppingModal();},editor);
+     const form=page.locator(".nx-plan-"+editor+"-edit");
+     if(await form.count()!==1)throw Error(editor+" editor missing at "+width+"/"+theme);
+     const layout=await form.evaluate(el=>{
+       const save=el.querySelector(".nx-plan-edit-footer .btn-primary");
+       const labels=[...el.querySelectorAll(".nx-plan-edit-field>label")];
+       const all=[...el.querySelectorAll(".nx-plan-edit-field>input,.nx-plan-edit-field>select,.nx-plan-edit-field>textarea")];
+       return {saveHeight:save?.getBoundingClientRect().height||0,labels:labels.length,
+         horizontalOverflow:document.documentElement.scrollWidth>innerWidth+1,
+         minHeight:Math.min(...all.map(n=>n.getBoundingClientRect().height))};
+     });
+     if(layout.saveHeight<44||layout.minHeight<44||layout.horizontalOverflow||layout.labels<(editor==="research"?5:6))
+       throw Error(editor+" mobile form layout failed "+width+"/"+theme+" "+JSON.stringify(layout));
+     await page.screenshot({path:path.resolve(__dirname,`hybrid-${editor}-form-${width}-${theme}.png`),fullPage:true});
+     await page.evaluate(()=>closeModal());
+   }
+
    await page.close();
  }
  await browser.close();
