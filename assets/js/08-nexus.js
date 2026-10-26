@@ -24,7 +24,7 @@ function peptideCardHTML(name, data, opts={}) {
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
         <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name.toUpperCase())}</span>
         ${statusBadge("⏸ Paused", "warning")}
-        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0"></button>`:""}
+        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0"></button>`:""}
       </div>
       <div style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:12px">
         ${data.pausedAt?`Paused ${fmtDate(data.pausedAt)}`:""}${data.pauseNote?` · <span style="font-style:italic">${esc(data.pauseNote)}</span>`:""}
@@ -166,7 +166,7 @@ function peptideCardHTML(name, data, opts={}) {
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
 
     <div class="morebox" data-name="${esc(name)}" style="display:none;margin-top:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
-      <button class="histtoggle" data-name="${esc(name)}" title="Dose history" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("history")}History <span style="color:var(--t5);font-weight:400">(${doses.length})</span></button>
+      
       <button class="ics-export" data-name="${esc(name)}" title="Add to calendar" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("calendar")}Add to Calendar</button>
       <button class="tunetoggle" data-name="${esc(name)}" title="Schedule settings" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("settings")}Schedule Settings</button>
       <div style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border-bottom:1px solid var(--border-sub)">
@@ -279,7 +279,7 @@ function peptideCardHTML(name, data, opts={}) {
       ${doses.map((d,i)=>`<div class="nx-dose-history-record ${i>=5?"nx-dose-history-extra":""}" style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface-2);align-items:flex-start"><div style="width:2px;align-self:stretch;background:${c.color}44;border-radius:2px"></div><div class="doseretro" data-name="${esc(name)}" data-id="${d.id}" style="flex:1;min-width:0;cursor:pointer"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px"><span style="font-size:12px;color:var(--t2)">${fmtDT(d.date)}</span>${d.dose?`<span style="font-size:11px;color:${c.color}">${esc(d.dose)} ${c.unit}</span>`:""}${d.site?`<span style="font-size:10px;color:var(--t4)">${esc(d.site)}</span>`:""}</div>${d.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic">${esc(d.notes)}</div>`:""}${d.allocations&&d.allocations.length>1?`<div style="font-size:10px;color:#A78BFA;margin-top:3px">Source: ${d.allocations.length} vials · ${d.allocations.map(a=>{const k=state.supplies.find(s=>s.id===a.kitId);return `${a.amount}${c.unit}${k?" ("+(k.activeKit?"current":"other")+")":""}`;}).join(", ")}</div>`:""}${d.syringeId?`<button class="view-syringe" data-syringe="${d.syringeId}" style="display:block;font-size:10px;color:#A78BFA;margin-top:3px;background:transparent;border:none;padding:0">💉 Mixed syringe · ${(()=>{const pd=(state.preparedDoses||[]).find(p=>p.id===d.syringeId);return pd?getSyringeComponents(pd).length:"?";})()} compounds · View details ›</button>`:""}</div><button class="editdose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 7px;flex-shrink:0;min-width:38px;text-align:center">Edit</button><button class="deldose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t5);font-size:13px;flex-shrink:0">✕</button></div>`).join("")}
       ${doses.length>5?`<button class="nx-dose-history-more" type="button" aria-expanded="false" data-count="${doses.length}">Show all ${doses.length} doses</button>`:""}
     </div>
-    <div style="font-size:10px;color:var(--t4);text-align:center;margin-top:4px">Tap a dose to see what happened after it</div>
+    
   </div>`;
 }
 
