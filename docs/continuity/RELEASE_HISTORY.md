@@ -593,3 +593,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Plans/Protocol contextual navigation (DRAFT)
 - `3b692b1e`: Goals Connections linked protocol action opens Protocol Overview; singular compound count fixed. Existing Protocol Overview linked-goal path retained. No schema/data changes. Latest-head QA/artifacts pending; no merge/deploy.
+
+### 2026-10-26 — Goals-first Plans UI (DRAFT / UNRELEASED)
+- PR #123; commits `8393d955` and `1ead81b6`. Affected Plans → Goals list: title/status/date hierarchy, honest measurement summary and progress track, connected-protocol count, unified details target, 320px adaptation.
+- Progress is read-only from existing `progressModel` and comparable recorded weight logs; no saved state/schema/measurement/dose migration. Original goal detail navigation and management remain.
+- QA for new head, complete full-app DEMO/LIVE packages, iPhone and VoiceOver all **NOT VERIFIED**. Draft/unmerged; Cloudflare remains unchanged.
