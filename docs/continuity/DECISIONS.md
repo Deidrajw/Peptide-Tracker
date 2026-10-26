@@ -516,3 +516,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Protocol artifact provenance and acceptance
 - An Actions `pull_request` build uses the tested PR merge ref (not branch head) and its merge SHA is the build manifest source_commit; compare it with PR merge_commit_sha before calling builds exact-source. User acceptance must inspect extracted full isolated standalone DEMO and actual 320/390 light/dark browser screenshots; automated tests are not physical iPhone checks. Keep PR draft and Cloudflare unchanged.
+
+
+## 2026-10-26 — Contextual Plans/Protocol navigation approved
+- Keep Protocol list compact; Protocol Overview links directly to an associated goal, not a generic Plans button. Goals Connections links back to existing Protocol Overview. No shortcut when a goal is unlinked. Never infer goal progress from protocol activity. User approved design, not deployment.
