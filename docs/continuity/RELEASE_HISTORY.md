@@ -418,3 +418,7 @@
 
 ### 2026-10-25 — Today expanded-card follow-up
 - 2026-10-25 Today expanded detail hierarchy coded at 464e07de + fd66a187; branch-only, not merged, not deployed. No storage or math migrations. Exact-head QA and release artifacts INCOMPLETE.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- PR #123 preview commits cf74e60b and 6ff6ec2c: Today expanded card gained segmented Insights, History, Details; moved site rotation notice into Insights and removed rotation emoji. No intended dose data, schedule, storage or math changes; no merge or deployment; exact-head test/artifact status NOT VERIFIED.
