@@ -135,7 +135,7 @@ function peptideCardHTML(name, data, opts={}) {
         <label for="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Details</label>
       </div>
       <div class="nx-info-panel nx-info-insights">
-        <div class="nx-insight-overview"><div class="nx-insight-overview-label">Schedule snapshot</div><div class="nx-insight-overview-value">${od?"Overdue occurrence":isProtoPaused?"Protocol paused":isResting?"Rest period":currentPh?.label||"Active schedule"}</div><div class="nx-insight-overview-sub">${since!=null?`${Math.round(since*10)/10} days since the last recorded dose`:"No previous administration recorded"}${doseStatus.nextDueStr?` · Scheduled ${esc(fmtShort(doseStatus.nextDueStr))}`:""}</div></div>
+        <div class="nx-insight-overview"><div class="nx-insight-overview-label">Current schedule status</div><div class="nx-insight-overview-value">${od?"Overdue occurrence":isProtoPaused?"Protocol paused":isResting?"Rest period":currentPh?.label||"Active schedule"}</div><div class="nx-insight-overview-sub">${since!=null?`${Math.round(since*10)/10} days since the last recorded dose`:"No previous administration recorded"}${doseStatus.nextDueStr?` · Scheduled ${esc(fmtShort(doseStatus.nextDueStr))}`:""}</div></div>
         ${(()=>{const tv=getTimingVariance(data);if(!tv)return "";const mag=Math.abs(tv.avgMinutes),dir=tv.avgMinutes>0?"after":"before";return `<div class="nx-insight-fact"><strong>Logging time pattern</strong><span>${mag<5?"Usually logged near the scheduled time":`Usually logged about ${mag} minutes ${dir} the scheduled time`} · ${tv.sampleSize} records</span></div>`;})()}
         ${nxInsightCount || siteWarn || getTimingVariance(data) ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
     <div class="nx-insight-list">
@@ -148,7 +148,7 @@ function peptideCardHTML(name, data, opts={}) {
     }</div>`:""}
     ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
     ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
-    ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0"><b>Protocol review:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at the recorded dose. Review your tracked response and any previous changes before deciding what to discuss with a clinician.</div>`:""}
+    ${escalation&&escalation.signal==="may_be_ready"?`<div class="nx-insight-review"><b>Time at recorded dose</b><span class="nx-insight-secondary">${escalation.weeksAtDose.toFixed(1)} weeks recorded at this dose. Compare dose history and your check-ins to review changes over time.</span></div>`:""}
 
     ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D"><b>Site rotation</b><span class="nx-insight-secondary">${esc(siteWarn.site)} · ${siteWarn.countInLast5} of your last 5 recorded administrations. Review the full site history to compare locations.</span></div>`:""}
     </div>      </div>
@@ -163,7 +163,7 @@ function peptideCardHTML(name, data, opts={}) {
         <div class="nx-info-history-row"><span>Recorded doses</span><strong>${doses.length}</strong></div>
         <div class="nx-info-history-row"><span>Days on protocol</span><strong>${protocolDays==null?"—":protocolDays}</strong></div>
         ${last&&last.site?`<div class="nx-info-history-row"><span>Last recorded site</span><strong>${esc(last.site)}</strong></div>`:""}
-        <button class="compound-intel-btn nx-info-history-action nx-intel-cta" data-name="${esc(name)}" aria-label="Open ${esc(name)} compound Intel">Open compound Intel <span aria-hidden="true">›</span></button>
+        <button class="compound-intel-btn nx-info-history-action nx-intel-cta" data-name="${esc(name)}" aria-label="Open ${esc(name)} compound Intel">Open compound Intel <span aria-hidden="true">↗</span></button>
       </div>
     </div>
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
