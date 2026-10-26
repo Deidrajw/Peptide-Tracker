@@ -780,3 +780,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol interior latest-head regression pending
 - **NOT TESTED on new head**: countdown for not-started/paused/elapsed/multi-compound protocols; explicit completion animation and reduced-motion; existing phase alerts (dedup, on/off, transition-day); compound roadmap current/past/future and pause frozen date; preservation of dose/phase histories. Mobile/browser green on older head is not evidence for `177e25fa`. Verify 320/390 themes, full DEMO/LIVE parity and physical iPhone separately.
+
+
+## 2026-10-26 — Protocol interior enhancement regression targets
+- NOT TESTED on new head: completion only after confirm, cancel path must not celebrate, single animation / reduced-motion, close/reopen no replay, historic dose records unchanged; countdown latest end across compounds, paused (frozen), start date missing, not started, elapsed schedule, completed (manual only); compound roadmap phase number/week/days and next phase accurate after pause/resume; per-compound buttons functional and focus/touch >=44px; in-app transition alerts at 3d/1d/day-of, no duplicates between protocols sharing a compound, respect settings and no push claim. Test 320/390 in light/dark and physical iPhone separately, full-app DEMO/LIVE parity and prior protected flows. No Pass until evidence.
