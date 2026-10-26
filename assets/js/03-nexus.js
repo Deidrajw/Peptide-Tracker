@@ -789,24 +789,24 @@ function addBlendKitModal(blendNameOrKit) {
       const wrapper=document.createElement("div");wrapper.className="nx-blend-compound-picker";
       sel.parentNode.insertBefore(wrapper,sel);
       wrapper.appendChild(sel);
-      const trigger=document.createElement("button");trigger.type="button";trigger.className="nx-blend-compound-trigger";
+      const trigger=document.createElement("input");trigger.type="search";trigger.className="nx-blend-compound-trigger";trigger.placeholder="Search or choose compound";trigger.setAttribute("role","combobox");trigger.setAttribute("aria-autocomplete","list");
       trigger.setAttribute("aria-label","Choose blend compound");trigger.setAttribute("aria-expanded","false");
       const popup=document.createElement("div");popup.className="nx-blend-compound-popup";popup.hidden=true;
-      const search=document.createElement("input");search.type="search";search.placeholder="Search compounds";search.setAttribute("aria-label","Search compounds");
+      const search=trigger;
       const results=document.createElement("div");results.className="nx-blend-compound-results";
-      popup.append(search,results);wrapper.append(trigger,popup);
+      popup.append(results);wrapper.append(trigger,popup);
       const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
       const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
       const render=()=>{
         results.replaceChildren();
         const q=search.value.trim().toLowerCase();
         const opts=[...sel.options].filter(o=>o.value&&o.textContent.toLowerCase().includes(q)).slice(0,80);
-        opts.forEach(opt=>{const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;button.className="nx-blend-compound-option";button.onclick=()=>{sel.value=opt.value;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};results.appendChild(button);});
+        opts.forEach(opt=>{const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;button.className="nx-blend-compound-option";button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};results.appendChild(button);});
         if(!opts.length){const empty=document.createElement("p");empty.textContent="No matching compounds";results.appendChild(empty);}
       };
-      const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");search.value="";render();search.focus();};
-      trigger.textContent=label();trigger.onclick=()=>popup.hidden?open():close();
-      search.oninput=render;
+      const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
+      trigger.value=sel.value?label():"";trigger.onfocus=open;trigger.oninput=()=>{sel.value="";composition[+sel.dataset.i].compound="";render();};
+
       search.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"){e.preventDefault();results.querySelector("button")?.focus();}};
       results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
       wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
@@ -834,7 +834,7 @@ function addBlendKitModal(blendNameOrKit) {
       <div style="flex:1"><label class="field-label">VIALS ON HAND</label><input id="bk-vials" type="number" min="1" class="inp" value="1"></div>
       <div style="flex:1"><p class="hint" style="margin:8px 0">Set preparation details in the next step.</p></div>
     </div>
-    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" checked style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
     <div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1"><label class="field-label">STORAGE</label><select id="bk-storage" class="inp"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select></div>
       <div style="flex:1"><label class="field-label">COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 180"></div>
@@ -871,7 +871,7 @@ function addBlendKitModal(blendNameOrKit) {
     // In case of intervening nodes, retain them rather than dropping data fields.
     nodes.slice(compEndIndex+1,detailsStart).forEach(el=>panels[1].prepend(el));
     const progress=document.createElement("div");progress.className="nx-blend-wizard-progress";
-    progress.innerHTML='<strong id="nx-blend-step-label">Step 1 of 3 · Blend details</strong><span>1 / 3</span><div class="nx-blend-wizard-track"><i></i></div>';
+    progress.innerHTML='<strong id="nx-blend-step-label">Step 1 of 3 · Blend details</strong><div class="nx-blend-wizard-track"><i></i></div>';
     const summary=document.createElement("div");summary.className="nx-blend-wizard-summary";summary.setAttribute("aria-live","polite");
     panels[2].append(summary);
     contentRoot.append(progress,...panels);
@@ -903,9 +903,11 @@ function addBlendKitModal(blendNameOrKit) {
     const paint=()=>{
       panels.forEach((panel,i)=>{panel.hidden=i!==stage;});
       progress.querySelector("#nx-blend-step-label").textContent="Step "+(stage+1)+" of 3 · "+["Blend details","Preparation & storage","Review & save"][stage];
-      progress.querySelector("span").textContent=(stage+1)+" / 3";
+
       progress.querySelector("i").style.width=((stage+1)/3*100)+"%";
       back.hidden=stage===0;next.hidden=stage===2;blendSave.hidden=stage!==2;err.hidden=true;
+      blendSave.style.setProperty("display",stage===2?"block":"none","important");
+      next.style.setProperty("display",stage===2?"none":"block","important");
       if(stage===2)review();
     };
     back.onclick=()=>{stage=Math.max(0,stage-1);paint();};
