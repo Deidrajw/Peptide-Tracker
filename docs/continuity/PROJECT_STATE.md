@@ -733,3 +733,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### Today compact action cleanup
 - 2026-10-25 user-approved Today card interaction trial on draft PR #123: JS commits c0124a0 (compact View details label, remove duplicated History action, meaningful repeated-site signal), d969527 (remove redundant expanded-menu History and obsolete Tap a dose helper), CSS 8b27bab (auto-fit action row). Calculation/status logic and storage schema intentionally unchanged. Exact-head browser/iPhone validation and release packages INCOMPLETE. One next action: inspect latest-head rendered 320/390 light/dark and resolve QA failures before Daily Tracking.
+
+
+### Log Dose preview trial
+- Preview-only Log Dose availability alignment committed as 2dfae668. Expanded cards now honor showLogBtn for ordinary due states; completed/upcoming/paused fallback no longer advertises a scheduled Log Dose. Aged-overdue What happened and existing reschedule/skip/resolve handlers preserved. Preview deployment and exact-head browser QA UNVERIFIED. Next action: inspect Cloudflare branch preview and test scheduled/unscheduled logging and inventory paths before approval.
