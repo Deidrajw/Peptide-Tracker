@@ -346,3 +346,7 @@
 
 ### Log Dose preview trial
 - 2026-10-25 user approved trial of calmer Log Dose action hierarchy on PR #123. Scheduled action should reflect getDoseStatus.showLogBtn; no duplicate scheduled Log Dose in completed/upcoming/paused states. Preserve separate unscheduled/retrospective entry routes and overdue resolution.
+
+
+### 2026-10-25 — Log Dose preview release checkpoint
+- 2026-10-25 — Approved preview-only Log Dose UX: show scheduled Log Dose when occurrence is actionable; show What happened? for older overdue situations, completed-state readout after recorded scheduled dose, with available controls filling the row. Keep unscheduled/retroactive logging and other existing logging flows discoverable; preserve drafts/source allocations/math. Cloudflare preview deployment approval does not authorize merge or production deployment.
