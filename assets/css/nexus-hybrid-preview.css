@@ -2274,3 +2274,8 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 #app .nx-research-note-toggle:focus-visible{outline:2px solid #A78BFA;outline-offset:3px;border-radius:4px}
 .nx-shopping-page-header{margin-bottom:16px}
 @media(prefers-reduced-motion:reduce){#app .nx-research-note-toggle{transition:none}}
+
+
+/* One and only one separator above Compound Intel: the row owns the border. */
+#app .nx-research-v3 .nx-plan-secondary{border-top:1px solid var(--border-sub);padding-top:4px}
+#app .nx-research-v3 .nx-plan-secondary .nx-plan-intel{border-top:0!important;border-bottom:0!important;border-left:0!important;border-right:0!important;border-radius:0;box-shadow:none;margin:0}
