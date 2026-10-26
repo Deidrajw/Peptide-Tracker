@@ -851,3 +851,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Goal wizard failing test triage
 - FAIL pre-patch: build/parity 40386863855, Plans selector visibility timeout at Check-In connection before Connections step. Other automated suites preceding Plans passed; no actual user-flow parity established. `c9b6782c` test now advances stages and uses final Review save. Latest-head results PENDING. Physical iPhone/VoiceOver NOT TESTED.
+
+## 2026-10-26 — Corrected Plans wizard regression harness
+- Previous full build 40389027791 FAIL due to hidden wizard Connections field; other suites passed in that run. Verified new `validate-plans-hierarchy.mjs` blob `d653d2f7` at commit `fe024eaf`: test clicks through wizard and only saves on Review. Latest-head end-to-end NOT TESTED at handoff. Physical iPhone/VoiceOver pending.
