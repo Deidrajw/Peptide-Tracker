@@ -390,3 +390,13 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Compact Today divider correction
 - Compact Today compound cards should not contain horizontal separator rails between heading, last/next facts and context. Use spacing and typographic hierarchy; do not alter the outer card boundary or unrelated surfaces.
+
+
+### 2026-10-25 — Today Daily Tracking and Activity design direction approved
+- **Approval:** User explicitly liked and approved the interactive Today proposal (compact expandable Daily Tracking, Today / This Week numerical Your Activity report, short Coming Up list with View Calendar). This is **design approval for implementation and review**, NOT permission to merge PR #123 or deploy to production.
+- **Daily Tracking:** collapsed by default, shows saved-record-derived recorded/pending state; progress denominator includes user-selected tracking activities, not all possible activities. Preserve editable Check-In, searchable multi-select Supplements, Weight and Nutrition.
+- **Activity:** retain motivating completion count and progress indicator; scheduled occurrence completion is distinct from total actual dose records, future items are not 'missed', unresolved / skipped / rescheduled remain distinct, multiple same-day occurrences cannot double-count. Today / This Week views use consistent metrics shared with later Calendar 2.0.
+- **Coming Up:** 2–3 meaningful upcoming occurrences with date/compound/time and grounded status, Calendar navigation; no redundant week strip or completed items repeated.
+- **Weekly:** compact retrospective summary integrated coherently with Activity, separate from future Coming Up.
+- **Design:** midnight lavender/porcelain, minimal borders, readable hierarchy, 44–48px targets, both themes at 320/390, reduced motion; retain functionality and data protections.
+- **Implementation status:** not yet implemented or accepted on physical iPhone. Keep draft PR #123 unmerged, production unchanged pending explicit release approval.
