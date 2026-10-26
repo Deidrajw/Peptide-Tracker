@@ -32,6 +32,7 @@ const tests={
  "no globally generated duplicate chevron": disclosureCss.includes(".compound-collapse-btn:not(.nx-today-disclosure))::after") && !disclosureCss.includes("body #app .compound-collapse-btn::after{"),
  "compact facts intentionally unruled": /\.nx-compound-card \.nx-card-facts\s*\{[^}]*border:0!important/.test(hybridCss) && !hybridCss.includes("padding:15px 0 13px!important;border-top:1px solid var(--border-sub)!important"),
  "compact actions no separator": /\.nx-compound-card \.nx-compound-actions\s*\{[^}]*border-top:0!important/.test(hybridCss),
+ "compact Today card divider rails removed": hybridCss.includes("Today compact-card acceptance — dividers") && hybridCss.includes(".compound-compact-tap .nx-card-facts > div"),
  "insight container has no border": hybridCss.includes("border:0;border-radius:0;background:transparent;box-shadow:none;"),
  "insight observations have no divider": !hybridCss.includes("border-bottom:1px solid var(--border-sub)!important;border-radius:0!important"),
  "one svg chevron shared": seven.includes('nx-today-disclosure-icon') && eight.includes('nxTodayDisclosureInner(true)'),
