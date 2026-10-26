@@ -1143,3 +1143,6 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - **PARITY BLOCKER:** package manifest `source_commit=b04907eade1e8910cafd353d87a364b1a0a45671`, whereas verified PR head of tested CI was `701c6c7e`. May represent synthetic merge checkout; parent/compare must be verified before claiming branch-source parity. Do not deploy package on this evidence alone.
 - Log Dose Quick/Guided conceptual preview initiated; NO Log Dose source changes or dose/inventory calculation modifications. PR remains draft/unmerged, production unchanged.
 - **ONE NEXT ACTION:** resolve artifact manifest-to-PR SHA provenance using workflow checkout ancestry, then obtain physical iPhone Goal wizard review; develop Log Dose Quick/Guided proposal without altering accounting code.
+
+## 2026-10-26 — Package SHA provenance resolved
+- Verified GitHub commit b04907eade1e8910cafd353d87a364b1a0a45671 is Actions synthetic merge commit with parents main c1c95e1da2749c3aa8c4459b81a04fc51d9b7f7e and tested PR source 701c6c7ef8872936a1ecf13b1347cdbafcd09bd1. Artifact source is therefore validated PR merge-candidate snapshot, **not byte-identical PR branch head**. Rebuild against branch HEAD before calling it exact-release source for an approved deployment. Physical iPhone still not tested.
