@@ -644,3 +644,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Proposed guided Add/Edit Kit and Prepared screens redesign (DESIGN ONLY)
 - User-requested design study and Stash secondary-screen audit; no new kit/prepared workflow implementation, schema migration, merge, or deployment. Retain same original inventory/save calculations. Draft PR #123 remains unmerged.
+
+### 2026-10-26 — Stash guided wizard source reconciliation (DRAFT / NOT RELEASED)
+- PR #123 branch head `5a9d6c7a` already contains three-step ordinary Kit wizard and searchable compound picker in `assets/js/07-nexus.js`; previously documented as merely proposed. Found during code review; no new app code, storage migration, merge or deployment in this documentation update.
+- Current-head PR workflows 40417820123 mobile and 40417820282 build/parity SUCCESS. Artifact 12696280782 exists but extraction and source integrity unverified; real-device/VoiceOver and blend parity NOT TESTED. Separate authoritative inventory handler remains. Proposed design not accepted as finished.
