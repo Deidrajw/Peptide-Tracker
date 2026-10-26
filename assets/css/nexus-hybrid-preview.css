@@ -1604,3 +1604,6 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 .nx-journal-search-label{display:block;font-size:12px;color:var(--t3);margin:8px 0 6px}
 .nx-journal-search{display:block;box-sizing:border-box;width:100%;min-height:48px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font:inherit;font-size:14px;margin-bottom:12px}
 .nx-journal-search:focus-visible{outline:2px solid #BB9ADD;outline-offset:2px}
+
+/* Live journal search must conceal flex rows and whole dates without repainting the editor. */
+.nx-journal-row[hidden],.nx-journal-day[hidden],#nx-journal-search-empty[hidden]{display:none!important}
