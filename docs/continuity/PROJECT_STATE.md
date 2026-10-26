@@ -960,3 +960,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - User supplied visual evidence that Add Log still displayed a chevron after cosmetic patch. Actual cause in `assets/css/nexus-disclosures.css`: broad `body #app ... .nx-add-log-btn::after` generated the chevron with `!important`, plus enforced `justify-content:space-between!important`. Previous hybrid styling alone did not override the higher-specificity selector.
 - Fixed **at source** in branch commit `6da8dff4e0f53701655013a6e26c37c672512cc2`: remove `.nx-add-log-btn` from generated-chevron and shared disclosure alignment rules. Existing plus-only `#nx-add-log-toggle` style now applies; handlers remain untouched. This is CODED, not yet verified at live production or physical iPhone after fix.
 - **ONE NEXT ACTION:** Confirm new PR-head browser run and screenshot at 320/390 light/dark shows no Add Log pseudo-chevron, then user-review actual iPhone preview. Keep PR draft, unmerged and production unchanged.
+
+
+## 2026-10-26 — Sprint 01 closeout gate / Sprint 02 planning
+- User confirms Add Log chevron fixed on viewed UI. Latest PR #123 was draft and unmerged at review; head before Sprint 02 planning `d1a31bc53452ac84a074721e97d8201f648604e3`.
+- Latest-head mobile run `40338983339` and full browser/build `40338983345` were **IN PROGRESS**, including browser 320/390 light/dark. Older full run `40337658608` was also still in browser QA at check. Therefore **Sprint 01 QA NOT CLOSED**, pending final green workflows, exact-source artifacts and physical iPhone acceptance.
+- Sprint 02 Protocol/Stash implementation plan created at `docs/design/DESIGN_SYSTEM_2_SPRINT_02.md` (planning only; no application code changes). Draft PR remains unmerged; production unchanged.
+- **ONE NEXT ACTION:** Recheck latest-head workflow conclusions and artifact integrity; once green, perform Protocol/Stash 320/390 light/dark baseline audit and present interactive visual proposal for approval.
