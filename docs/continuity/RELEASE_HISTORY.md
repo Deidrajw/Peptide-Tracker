@@ -442,3 +442,7 @@
 
 ### 2026-10-25 — Critical preview syntax hotfix
 - 2026-10-25 unreleased preview hotfix on draft PR #123: `77de882432af2ec48a0d44b3342af13f5b68df26` repairs missing `}` in `assets/js/08-nexus.js` expanded completed-dose presentation. Data impact: none intended; source code-only syntax correction. V8 syntax parse of scripts 07-12 PASS; browser UX, builds, Cloudflare deploy, physical iPhone NOT TESTED. No merge or production release. Standalone DEMO and LIVE ZIP INCOMPLETE.
+
+
+### 2026-10-25 — Today card milestone consolidation
+- 2026-10-25 — Draft PR #123 unmerged Today-card consolidation: `5ef99dea` heading/insight cleanup, `91cf8bce` Today invariant test, `99c12afc` CI gate. Data impact none intended; source assertions 14/14 pass by independent string inspection, but browser startup, runtime flows and physical iPhone are not yet validated. LIVE ZIP, full-app standalone DEMO INCOMPLETE. Not deployed to production.
