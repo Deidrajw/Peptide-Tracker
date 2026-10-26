@@ -1747,7 +1747,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
       <div class="nx-card-top"><div>
         <div class="nx-card-title"><strong>${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
         <div class="nx-card-frequency">${esc(freqLabel)}</div>
-      </div><span class="nx-compact-disclosure-label">View details</span><span class="nx-compound-chevron" aria-hidden="true"></span></div>
+      </div><span class="nx-compact-disclosure" aria-hidden="true"><span class="nx-compact-disclosure-label">View details</span><span class="nx-compound-chevron"></span></span></div>
       <div class="nx-card-facts">
         <div><div class="nx-card-fact-label">Last recorded</div><div class="nx-card-fact-value">${esc(lastDateLabel)}${doseAmount?` · ${doseAmount}`:""}</div></div>
         <div><div class="nx-card-fact-label">Next scheduled</div><div class="nx-card-fact-value">${esc(nextDateLabel)}</div></div>
