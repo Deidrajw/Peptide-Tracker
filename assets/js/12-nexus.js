@@ -340,6 +340,14 @@ function wireBody() {
     doseModal(b.dataset.name);
   });
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
+  document.querySelectorAll(".nx-journal-mode").forEach(b=>b.onclick=()=>{state._logsMode=b.dataset.mode;renderBody();});
+  document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
+  const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
+  const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
+  document.querySelectorAll(".nx-journal-more").forEach(b=>b.onclick=()=>{
+    const panel=document.getElementById(b.dataset.panel);if(!panel)return;
+    panel.hidden=!panel.hidden;b.setAttribute("aria-expanded",String(!panel.hidden));
+  });
   const pcm=$("#pcal-month"); if(pcm) pcm.onclick=()=>{state._protoCalSub="month";renderBody();};
   const pcl=$("#pcal-logs"); if(pcl) pcl.onclick=()=>{state._protoCalSub="logs";renderBody();};
   const cp=$("#cal-prev"); if(cp) cp.onclick=()=>{state._calOff=(state._calOff||0)-1;renderBody();};
@@ -374,6 +382,9 @@ function wireBody() {
     const items=grouped[active].map(r=>`<div class="nx-cal-history-row"><div><strong>${esc(r.label)}</strong><span>${esc(r.desc)}</span></div></div>`).join("");
     box.innerHTML=`<section class="nx-cal-day-panel"><div class="nx-cal-day-head"><h3>${esc(fmtDate(date))}</h3><span>Selected day</span></div><div class="nx-cal-categories">${buttons}</div><div class="nx-cal-history-list">${items||'<p class="nx-cal-empty">No records in this category.</p>'}</div></section>`;
     box.querySelectorAll(".nx-cal-category").forEach(btn=>btn.onclick=()=>{state._calDayCategory=btn.dataset.category;renderCalendarDay(date);});
+    const wholeDay=box.querySelector("#nx-open-day-logs");
+    if(wholeDay)wholeDay.onclick=()=>{state._logsMode="day";state._logsDate=date;state._protoCalSub="logs";renderBody();};
+
   };
   document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
     document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
