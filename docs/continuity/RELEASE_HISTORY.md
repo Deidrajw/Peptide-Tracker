@@ -422,3 +422,7 @@
 
 ### 2026-10-25 — Segmented Today information follow-up
 - PR #123 preview commits cf74e60b and 6ff6ec2c: Today expanded card gained segmented Insights, History, Details; moved site rotation notice into Insights and removed rotation emoji. No intended dose data, schedule, storage or math changes; no merge or deployment; exact-head test/artifact status NOT VERIFIED.
+
+
+### Today compact action cleanup
+- 2026-10-25 PR #123 CODED / NOT MERGED: Today UX clarity follow-up, commits c0124a0, d969527, 8b27bab. Affects compact card disclosure/action row and expanded history menu/helper. No dose math, localStorage migration, or production user data writes. LIVE ZIP / FULL isolated DEMO artifacts and latest head QA still INCOMPLETE. No Cloudflare deployment.
