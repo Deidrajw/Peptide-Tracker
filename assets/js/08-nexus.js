@@ -125,6 +125,7 @@ function peptideCardHTML(name, data, opts={}) {
         }).join("")}
       </div>`;
     })() : ""}
+    ${doseStatus.status==="taken_today" && !(data.dosesPerDay>1) ? `<div class="nx-compound-completed" role="status"><span aria-hidden="true">✓</span> Taken today${last?.date?` · ${esc(fmtT(new Date(last.date)))`:""}</div>` : ""}
     <div class="nx-compound-info-tabs" aria-label="Compound information">
       <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-insights-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" checked>
       <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-history-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">
