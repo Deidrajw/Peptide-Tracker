@@ -1025,3 +1025,25 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-contextual-ac
  html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compact-disclosure-label{font-size:11px!important}
  html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compound-chevron{min-width:29px!important;width:29px!important;flex-basis:29px!important}
 }
+
+/* Today acceptance: disclosure is one labelled affordance at the top-right,
+   including legacy compact-chevron pseudo-elements. */
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure{
+ position:relative!important;inset:auto!important;transform:none!important;
+ width:auto!important;max-width:100%!important;
+ padding:0!important;margin:0!important;vertical-align:top!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-card-top>div:first-child{
+ min-width:0!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compound-chevron{
+ display:inline-flex!important;position:relative!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ transform:none!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compound-chevron::before{
+ position:static!important;
+}
+html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{
+ text-decoration:none!important;
+}
