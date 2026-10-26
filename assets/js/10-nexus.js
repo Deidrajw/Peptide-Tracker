@@ -1742,7 +1742,49 @@ function homeView() {
   else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
   html += todayAttentionHtml; // contextual alerts appear after the schedule, not between progress and schedule
-  html+=`<details class="nexus-today-details nx-today-text-disclosure"><summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">${todayLog?"Check-in complete":"Check-in pending"} · ${todaySupp?.taken?.length||0} supplements logged</span></span><span class="nx-today-disclosure-label" aria-hidden="true">View tracking</span></summary><div class="nexus-today-details-body" style="padding:8px 16px 14px"><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Check-in<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed"}</div></div><button type="button" class="${todayLog?"editdaily":"qa-daily"}" data-id="${todayLog?todayLog.id:""}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayLog?"Edit":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Supplements<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todaySupp?.taken?.length?todaySupp.taken.length+" taken":"Not logged"}</div></div><button type="button" class="${"qa-supp"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todaySupp?.taken?.length?"Edit":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Weight<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayWeight?esc(todayWeight.weight)+" "+esc(state.settings.weightUnit):"Not logged"}</div></div><button type="button" class="${"qa-weight"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayWeight?"Update":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Nutrition<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayMacro?.calories?esc(todayMacro.calories)+" kcal":"Not logged"}</div></div><button type="button" class="${"qa-macro"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayMacro?.calories?"Edit":"Log"}</button></div></div></details>`;
+  // Daily tracking uses real dated records; the activity selection only changes the
+  // progress denominator, never whether an entry exists. Persist settings, not synthetic logs.
+  const trackingItems=[
+    {id:"checkin",label:"Daily check-in",recorded:!!todayLog,detail:todayLog?"Recorded"+(mood?" · "+esc(mood.label):""):"Not recorded",button:todayLog?"Edit":"Log",cls:todayLog?"editdaily":"qa-daily",extra:' data-id="'+(todayLog?.id||"")+'"'},
+    {id:"supplements",label:"Supplements",recorded:!!(todaySupp?.taken?.length),detail:todaySupp?.taken?.length?todaySupp.taken.length+" taken":"Not recorded",button:todaySupp?.taken?.length?"Edit":"Log",cls:"qa-supp",extra:""},
+    {id:"weight",label:"Weight",recorded:!!todayWeight,detail:todayWeight?esc(todayWeight.weight)+" "+esc(state.settings.weightUnit||"lbs"):"Not recorded",button:todayWeight?"Update":"Log",cls:"qa-weight",extra:""},
+    {id:"nutrition",label:"Nutrition",recorded:!!todayMacro?.calories,detail:todayMacro?.calories?esc(todayMacro.calories)+" kcal":"Not recorded",button:todayMacro?.calories?"Edit":"Log",cls:"qa-macro",extra:""}
+  ];
+  const configured=Array.isArray(state.settings.todayTrackingActivities)?state.settings.todayTrackingActivities:["checkin","supplements"];
+  const selectedTracking=trackingItems.filter(t=>configured.includes(t.id));
+  const recordedTracking=selectedTracking.filter(t=>t.recorded).length;
+  const trackingPct=selectedTracking.length?Math.round(recordedTracking/selectedTracking.length*100):null;
+  html+=`<details class="nexus-today-details nx-today-text-disclosure nx-daily-tracking">
+    <summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">${selectedTracking.length?`${recordedTracking} of ${selectedTracking.length} recorded · ${trackingPct}%`:"Choose activities to track"} · ${todayLog?"Check-in saved":"Check-in pending"}</span></span><span class="nx-today-disclosure-label" aria-hidden="true">View tracking</span></summary>
+    <div class="nexus-today-details-body nx-daily-tracking-body">
+      ${selectedTracking.length?`<div class="nx-daily-track-progress" role="progressbar" aria-label="Selected daily tracking activities recorded" aria-valuemin="0" aria-valuemax="${selectedTracking.length}" aria-valuenow="${recordedTracking}"><span style="width:${trackingPct}%"></span></div>`:""}
+      ${trackingItems.map(t=>`<div class="nx-daily-tracking-row"><label class="nx-track-preference"><input type="checkbox" class="nx-track-select" data-activity="${t.id}" ${configured.includes(t.id)?"checked":""} aria-label="Include ${t.label} in daily tracking progress"><span class="nx-daily-track-name">${t.label}</span></label><span class="nx-daily-track-status">${t.recorded?"✓ ":""}${t.detail}</span><button type="button" class="${t.cls} nx-track-action" ${t.extra}>${t.button}</button></div>`).join("")}
+      <p class="nx-daily-track-note">Choose what counts toward your daily tracking progress. Recorded statuses come from saved entries.</p>
+    </div>
+  </details>`;
+  // The activity report reads the same canonical instance collection used by Calendar.
+  // A completed occurrence and an additional unscheduled dose record are not equivalent.
+  const todayInstanceRows=getWeekInstances([today])[today]||[];
+  const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]);
+  const countStatus=(rows,name)=>rows.filter(x=>x.status===name).length;
+  const activityPanel=(rows,period)=>{
+    const completed=countStatus(rows,"taken"), total=rows.length;
+    const unresolved=rows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
+    const skipped=countStatus(rows,"skipped"),moved=countStatus(rows,"moved");
+    const pct=total?Math.round(completed/total*100):null;
+    return `<div class="nx-activity-panel" data-activity-panel="${period}" ${period==="week"?"hidden":""}>
+      <div class="nx-activity-top"><strong>${total?`${completed} <small>/ ${total}</small>`:"—"}</strong><span>${pct===null?"No scheduled occurrences":pct+"% complete"}</span></div>
+      <p class="nx-activity-sub">Scheduled occurrences completed</p>
+      ${total?`<div class="nx-daily-track-progress" role="progressbar" aria-label="${period} scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${completed}"><span style="width:${pct}%"></span></div>`:""}
+      <div class="nx-activity-stats"><span><strong>${completed}</strong>Completed</span><span><strong>${total}</strong>Scheduled</span><span><strong>${unresolved}</strong>Unresolved</span></div>
+      ${skipped||moved?`<p class="nx-activity-sub">${skipped?skipped+" skipped":""}${skipped&&moved?" · ":""}${moved?moved+" rescheduled":""}</p>`:""}
+    </div>`;
+  };
+  html+=`<section class="nx-today-activity" aria-label="Your activity"><div class="nx-today-activity-head"><h3>Your activity</h3><div class="nx-activity-segments" role="group" aria-label="Activity period"><button type="button" class="nx-activity-period" data-period="today" aria-pressed="true">Today</button><button type="button" class="nx-activity-period" data-period="week" aria-pressed="false">This week</button></div></div>
+    ${activityPanel(todayInstanceRows,"today")}${activityPanel(weekInstanceRows,"week")}
+    <p class="nx-daily-track-note">Scheduled occurrences only. Additional actual dose records are counted separately in history; upcoming is not missed.</p>
+  </section>`;
+
 
   // This Week recedes below the actual compound/dose list — it's a secondary weekly
   // summary, not the thing Today exists to answer.
