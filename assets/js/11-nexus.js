@@ -1752,9 +1752,9 @@ function plansView() {
       ${manageBtn("shopping",s.id)}
     </div>`;
     const grp=(label,col,items)=>items.length?`<div class="mono" style="font-size:9px;color:${col};letter-spacing:1.5px;margin-bottom:4px;margin-top:10px">${label}</div><div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:0 12px">${items.map(row).join("")}</div>`:"";
-    content=`${!shopping.length?emptyState("Your procurement list is empty", "Add items you need to order or restock.", {id:"empty-add-shopping", label:"+ Add Item", color:"#F9C87D"}):""}
+    content=`<div class="nx-goals-page-header nx-shopping-page-header"><div><h2>Shopping</h2><p>Needed, ordered and received</p></div><button type="button" id="add-shopping" class="nx-goals-header-add" aria-label="Add Item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Item</span></button></div>${!shopping.length?emptyState("Your procurement list is empty", "Add items you need to order or restock.", {id:"empty-add-shopping", label:"+ Add Item", color:"#F9C87D"}):""}
     ${grp("NEEDED","#F9C87D",needed)}${grp("ORDERED","#8AB4FF",ordered)}${grp("RECEIVED","#7DF9C0",received)}
-    <button id="add-shopping" class="btn-primary" style="width:100%;margin-top:12px;background:var(--surface-3);color:var(--t1);border:1px solid var(--border)">＋ Add Item</button>`;
+    `;
   }
 
   return `<div class="nx-page-intro"><h1 class="serif greet">Plans</h1><p>Track your goals, research queue, and shopping needs.</p></div>
