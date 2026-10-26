@@ -542,3 +542,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Log Dose Quick/Guided design proposal (not coded)
 - Quick Log should reduce repeated entry for known routine doses while ALWAYS exposing compound, route, amount, vial source, calculated units and deductions for explicit confirmation. No silent recording or silently chosen source. Guided Log splits (1) compound/amount, (2) vial/source and allocation, (3) final review with per-vial and per-component breakdown for blends. Preserve original state, drafts, source selection, dose history, insufficient-inventory blocking and editing. User has approved design exploration, not merge/deploy or bypass of validation. Hybrid Soft Depth + Porcelain + Obsidian Precision styling.
+
+## 2026-10-26 — Log Dose implementation boundary
+- Approved Quick Log / Guided Log layout; first code pass uses one existing `doseModal` and single `#save` handler, no independent calculator or storage path. Guided stage navigation does not persist dose; preserve existing logic and user-entered values while changing stages. Do not conflate implemented mode switching with full approved quick-review parity: Quick separate review is not yet coded and must be validated before approval. Both themes use Soft Depth / Porcelain / Obsidian Precision.
