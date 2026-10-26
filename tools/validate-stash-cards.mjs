@@ -67,7 +67,22 @@ try{
     ensure(await page.locator('.nx-stash-kit-editor').count()===1,'Kit editor styling hook missing');
     ensure(await page.locator('.nx-stash-kit-editor #ssave').count()===1,'Original Save handler target missing');
     ensure(await page.locator('.nx-stash-kit-editor #sname').count()===1 && await page.locator('.nx-stash-kit-editor #stv').count()===1 && await page.locator('.nx-stash-kit-editor #svmg').count()===1 && await page.locator('.nx-stash-kit-editor #sbac').count()===1 && await page.locator('.nx-stash-kit-editor #sloc').count()===1,'Kit fields lost');
-    ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Save target too small');
+    // The guided editor hides Save until final Review. Test the real journey,
+    // rather than treating the intentionally hidden step-1 Save as zero-size UI.
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').isHidden(),'Kit Save exposed on Step 1');
+    ensure(await page.locator('#nx-kit-next').isVisible(),'Kit Continue missing');
+    await page.evaluate(()=>{
+      const name=document.querySelector('#sname');name.value='GHK-Cu';name.dispatchEvent(new Event('change',{bubbles:true}));
+      document.querySelector('#stv').value='2';document.querySelector('#svmg').value='10';
+    });
+    await page.locator('#nx-kit-next').click();
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"]').evaluate(x=>!x.hidden),'Kit preparation step not reachable');
+    ensure(await page.locator('#ssave').isHidden(),'Kit Save exposed on Step 2');
+    await page.locator('#nx-kit-next').click();
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="2"]').evaluate(x=>!x.hidden),'Kit Review not reachable');
+    ensure(await page.locator('#ssave').isVisible(),'Kit Save absent on Review');
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Review Save target too small');
+
     await page.evaluate(()=>closeModal());
     ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===before,'Kit editor presentation unexpectedly mutated inventory');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
