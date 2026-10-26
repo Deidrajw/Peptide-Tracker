@@ -1366,3 +1366,27 @@ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-info-panel button.
 @media(prefers-reduced-motion:reduce){
  .nx-hybrid-expanded-compound .nx-today-disclosure-icon{transition:none!important}
 }
+
+/* Today compact-card acceptance — dividers are not part of the card hierarchy.
+   Scope narrowly to compact Today cards; leave Stash, Protocol and modal borders intact. */
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-top,
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-facts,
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-facts > div,
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-frequency,
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-title{
+ border:0!important;border-top:0!important;border-bottom:0!important;
+ box-shadow:none!important;
+}
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-top{
+ padding-bottom:0!important;margin-bottom:0!important;
+}
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-facts{
+ margin-top:20px!important;padding:0!important;gap:14px!important;
+}
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-facts > div{
+ padding:0!important;
+}
+html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-facts + div{
+ border:0!important;border-top:0!important;border-bottom:0!important;
+ padding-top:0!important;
+}
