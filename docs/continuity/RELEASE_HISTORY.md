@@ -532,3 +532,8 @@
 
 ### 2026-10-26 — Sprint 02 Stash card visual patch (DRAFT; UNRELEASED)
 - Commit `76f232d` adds long-kit-name wrapping, 44px Manage action, focus outlines and narrower-tab labeling in hybrid CSS. Affected: Stash kit cards only. Data impact: none (CSS only). **New-head QA and physical iPhone checks pending;** no LIVE/DEMO artifact claim for this commit, no merge/deployment.
+
+
+### 2026-10-26 — Sprint 02A Protocol visual refinement (DRAFT; NOT RELEASED)
+- Prior head `137306ab`: workflows mobile 40341448639 PASS, browser/build 40341448649 PASS, validating prior Stash patch.
+- Protocol CSS commit `6479eea`: improved card spacing and long-name wrapping, minimum 44px controls, keyboard-visible focus and compact viewport styling. Affected: Protocol cards and existing disclosure/actions; no JS, business logic, storage or migration changes. Latest-head QA, complete LIVE/DEMO artifacts, physical iPhone and deployment **pending**. Draft PR #123 not merged.
