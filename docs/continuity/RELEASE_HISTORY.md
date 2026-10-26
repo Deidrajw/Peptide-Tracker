@@ -620,3 +620,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Log Dose Review gate + validation (DRAFT)
 - `2649a11a` implements separate Quick final Review and Guided final Review, positive amount/date Continue validation and original Save visibility gate; `c0b882d0` styles sticky step controls and errors. No migration or intended dose math change; automated/physical verification pending, no merge/deploy.
+
+### 2026-10-26 — Draft Log Dose source-review iteration (UNRELEASED)
+- `3fe3f1a9` structured allocation review, `631c36a8` browser regression helper follows final Review, `14981bf6` visual refinement. No storage change. New-head full QA, exact-source artifacts, manual mobile testing pending. No merge/deploy.
