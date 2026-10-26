@@ -745,3 +745,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Today overdue actions and disclosure acceptance correction
 - 2026-10-25 user-reported preview failure: compact View details label displaced beneath frequency because legacy .nx-card-top absolute chevron CSS; expanded collapse remained icon-only; aged-overdue What happened competed with direct Reschedule / Resolve overdue and ambiguous ellipsis. Branch-only corrections: b598830 (compact overdue action dedup), 35c01b9 (expanded overdue action simplification and explicit More actions), 98b4eed (compact disclosure wrapper), a99a7c0 (expanded Hide details), 89dee10 (responsive layout CSS). Source checks of presence only, exact-head mobile/browser QA queued; actual iPhone visual acceptance NOT TESTED. Main/Cloudflare production untouched. ONE NEXT ACTION: inspect 320/390 dual-theme actual render/screenshots of compact/expanded aged overdue and click What happened→Taken late/Missed/Skip/Reschedule/Pause, then validate logging math/drafts before asking user approval.
+
+
+### 2026-10-25 Today card acceptance checkpoint
+- Latest targeted accessibility commit `ec9b6022`: compact View details disclosure now exposes `aria-expanded=false` at initial render. Existing click handling rerenders the expanded card; real screen-reader and keyboard checks NOT TESTED.
+- Source audit: compact aged-overdue shows What happened, expanded aged-overdue shows What happened plus More actions; conditional action parity and the user-approved hierarchy still require real browser review. No production merge/deploy.
+- Latest exact-head CI was queued at inspection; Cloudflare preview URL and browser pass NOT VERIFIED. LIVE ZIP and standalone FULL-APP DEMO INCOMPLETE.
+- **ONE NEXT ACTION:** run full-app latest-head browser/visual QA at 320/390 both themes, validate aged-overdue modal and card disclosure, and confirm Cloudflare branch preview before requesting user acceptance.
