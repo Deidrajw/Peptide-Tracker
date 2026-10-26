@@ -635,3 +635,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Plans Goals-default and single Research separator (DRAFT)
 - `d794a215` More→Plans defaults Goals; `daf9acdb` generic quick Plans same; `af4cd980` single Intel divider; `d4a5b488` regression assertions. Existing source data, add/edit forms and workflows untouched; no storage migration. Prior head `1d0815d4` full/mobile/hybrid success, new-head QA and exact-source packages pending. No merge/deployment.
+
+### 2026-10-26 — Research/Shopping Add/Edit visual parity (DRAFT, UNRELEASED)
+- `d4a55d5e` shared labelled modal markup; `23064980` spacing, 46px form fields, 48px sticky save, theme colors, focus and reduced motion; `9ddfac17` regression assertions. Saved field definitions and original save code retained, no schema change. Prior `c7ffe1bb` all three QA workflows SUCCESS, latest commit QA and artifacts not verified. No merge or production deployment.
