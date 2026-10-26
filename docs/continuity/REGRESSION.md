@@ -858,3 +858,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Verified Goal wizard automated run
 - PASS on head `701c6c7e`: 40389965572 build/browser including Plans hierarchy eight LIVE/DEMO 320/390 theme sessions, 40389965592 mobile forms, 40389962603 hybrid preview. Protected Check-In, Protocol, source-vial, Log Dose, Combo, Stash and chevron browser suites PASS. Full builder package assertions PASS. Measurement math diagnostic 80/80, not clinical validation.
 - NOT TESTED: physical iPhone/VoiceOver, comprehensive WCAG AA contrast, independent artifact extraction and source file-level inspection. Diagnostic contrast candidate list exists in build log. No deployment.
+
+## 2026-10-26 — Artifact and device QA follow-up
+- INSPECTED: action artifact 12684590713 extracted, LIVE ZIP 21 expected files with root index and ordered modules, DEMO contains isolated demo markers; CI Plans QA JSON 8/8 PASS. Source manifest commit b04907ea differs from PR source SHA 701c6c7e: parity ancestry UNVERIFIED. Physical iPhone Safari keyboard, scroll, safe areas, VoiceOver NOT TESTED. Log Dose Quick/Guided design only; implementation/regression not tested.
