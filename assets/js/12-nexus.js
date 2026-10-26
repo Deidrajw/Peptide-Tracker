@@ -342,6 +342,7 @@ function wireBody() {
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
   document.querySelectorAll(".nx-journal-mode").forEach(b=>b.onclick=()=>{state._logsMode=b.dataset.mode;renderBody();});
   document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
+  const journalSearch=$("#nx-journal-search");if(journalSearch)journalSearch.onchange=()=>{state._logsSearch=journalSearch.value;renderBody();};
   const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
   const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
   document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
