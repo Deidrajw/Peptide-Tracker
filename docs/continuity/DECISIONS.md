@@ -554,3 +554,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Source identification in Review
 - Show actual selected open vial ID (not generic `open`), identify prepared batch amount and count, display per-vial rows from the existing allocation records; never invent blend-specific deductions before authoritative save calculation.
+
+## 2026-10-26 — Approved Goals header action and next design focus
+- User approved moving Add Goal above goal cards after Plans subnavigation. Keep the current Goal wizard/editing logic, goals data and visual system; remove bottom duplicate only. Approved next design sequence: Research UI/UX audit and preview first; Shopping audit next. Do not treat visual discussion as release authorization. Research remains an existing queue with status, Intel, reason/notes and management; Shopping remains Needed/Ordered/Received with categories, quantities and goal links; retain all actions and data.
