@@ -897,6 +897,7 @@ function wireBody() {
   });
   const sfb=document.getElementById("stash-filter-btn"); if(sfb) sfb.onclick=stashFilterModal;
   document.querySelectorAll(".phase-bar-seg").forEach(b=>b.onclick=()=>phaseRoadmapModal(isNaN(+b.dataset.proto)?b.dataset.proto:+b.dataset.proto, b.dataset.comp));
+  document.querySelectorAll(".nx-protocol-open-phase").forEach(b=>b.onclick=()=>phaseRoadmapModal(isNaN(+b.dataset.proto)?b.dataset.proto:+b.dataset.proto, b.dataset.comp));
   const ssb=document.getElementById("stash-sort-btn"); if(ssb) ssb.onclick=stashSortModal;
   document.querySelectorAll(".opennewvial").forEach(b=>b.onclick=()=>openNewVialModal(+b.dataset.id));
   document.querySelectorAll(".openblendvial").forEach(b=>b.onclick=()=>openBlendVialModal(+b.dataset.id));
