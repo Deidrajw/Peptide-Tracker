@@ -627,3 +627,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
 - 2026-10-25 root cause verified by CSS source: nexus-disclosures.css high-specificity generated pseudo-chevron persisted despite repeated overrides. Source selector now excludes nx-today-disclosure, and tabs wrapper/observation borders changed. Current head CI pending; actual 320/390 both themes, computed pseudo::after, border widths, toggling, history, overdue, completed and inventory NOT TESTED. Do not mark PASS until rendered verification.
+
+
+### 2026-10-25 — Compact Today divider correction
+- Compact Today card divider check: source CSS updated and source assertion added, rendered computed borders and visual light/dark 320/390 NOT TESTED. Expanded state, dose actions, history, modal flows, inventory unaffected in source but functional regression NOT TESTED.
