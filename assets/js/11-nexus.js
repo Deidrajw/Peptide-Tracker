@@ -1345,14 +1345,14 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
   const phaseInfos=(p.compounds||[]).map(c=>({compound:c,info:getProtocolPhaseInfo(p,c)}));
   const ends=phaseInfos.map(x=>x.info?.phases?.at(-1)?.endDate).filter(Boolean);
   const lastEnd=ends.length?ends.reduce((a,b)=>a>b?a:b):null;
-  const firstDay=p.startDate?addDays(p.startDate,Number(p.pauseDaysAccumulated)||0):null;
+  const firstDay=p.startDate?addDays(p.startDate,Number(p.pauseDaysAccumulated)||0):null; // Same effective start as getProtocolPhaseInfo
   const frozenDay=p.status==="paused"&&p.pausedAt?dayKey(p.pausedAt):localDate();
   const remaining=lastEnd?Math.max(0,Math.round((new Date(lastEnd+"T12:00")-new Date(frozenDay+"T12:00"))/86400000)):null;
   const total=firstDay&&lastEnd?Math.max(1,Math.round((new Date(lastEnd+"T12:00")-new Date(firstDay+"T12:00"))/86400000)):null;
   const elapsed=total!==null&&remaining!==null?Math.max(0,Math.min(total,total-remaining)):null;
   const pct=total?Math.round(elapsed/total*100):0;
-  const ended=lastEnd&&localDate()>=lastEnd;
-  const label=p.status==="completed"?"Completed":p.status==="paused"?"Paused":ended?"Schedule ended":p.status==="in_progress"?"In progress":p.status==="active"?"Ready":p.status==="planned"?"Planned":"Draft";
+  const ended=Boolean(lastEnd && frozenDay>=lastEnd && p.status!=="paused");
+  const label=p.status==="completed"?"Completed":p.status==="paused"?"Paused":ended?"Schedule ended":p.status==="active"||p.status==="in_progress"?"In progress":p.status==="planned"?"Planned":p.status==="draft"?"Not started":"Not started";
   const overviewRows=phaseInfos.map(({compound:c,info})=>{
     const stage=info?.current?("Phase "+(info.index+1)+" of "+info.phases.length+" · "+(info.isRest?"Rest":"Dosing")):info?.done?"Schedule ended":info?.notStartedYet?"Not started":"No phase dates";
     const detail=info?.current?("Week "+info.weekInPhase+" of "+info.totalWeeks+" · "+info.daysLeft+" days until next phase"):info?.done?"Review completed phases":"Open phase roadmap";
