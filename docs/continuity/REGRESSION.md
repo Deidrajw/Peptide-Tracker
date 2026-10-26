@@ -754,3 +754,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS WITH MINOR VISUAL ISSUE (user-reported, physical iPhone):** Sprint 01 tested; user requests changes to **Calendar Month-view icons**. Individual checklist item results were not supplied, so do not backfill individual Pass outcomes.
 - **PASS (automated latest pre-doc head):** mobile regression workflow 40339121261; full source/browser/package workflow 40339121469 at PR head 375b8879. Artifact #12658936702 published. The automated matrix is distinct from physical iPhone acceptance.
 - **PENDING / NOT TESTED AFTER FIX:** specific Month icon changes, their legibility/alignment across 320/390 dark/light, icon QA on physical iPhone. No icon fix implemented in this checkpoint.
+
+
+## 2026-10-26 — Sprint 02 Stash patch regression pending
+- New CSS at `76f232d`: verify 320/390 dark/light kit name wrapping, 44px Manage target, focus visibility, Overview/Vials/History tap targets, Kit details toggling, light-mode visibility. **NOT TESTED on this latest commit at documentation time.** Protected vial opening (blend/single), edit, inventory deductions, insufficient stock, source association, history must remain unchanged. Sprint 01 Month icons still user-feedback pending.
