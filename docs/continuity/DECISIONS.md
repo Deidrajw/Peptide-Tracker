@@ -338,3 +338,7 @@
 
 ### 2026-10-25 — Segmented Today information follow-up
 - Approved direction via user screenshot: pill-shaped segmented Insights / History / Details in expanded Today compounds. Keep status and primary logging visible; supporting notices under Insights and site rotation text without emoji. Preview-coded only, iPhone acceptance pending.
+
+
+### Today compact action cleanup
+- 2026-10-25 approved preview-only: compact compound disclosure explicitly says View details; expanded card uses existing Insights/History/Details for history; no repeated card-level History CTA. Compact action row adapts to present actions, site warning says repeated-site count rather than generic Site rotation, obsolete history instruction removed. Preserve history edit/view and overdue/reschedule handlers. Do not merge/deploy.
