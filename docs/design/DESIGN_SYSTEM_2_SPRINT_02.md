@@ -41,3 +41,13 @@ Extend the approved Hybrid Soft Depth + Porcelain + Obsidian design language fro
 
 ## Concrete next action
 Finish latest-head Sprint 01 browser and mobile QA and artifact inspection, then begin **Protocol/Stash baseline screenshot + interaction audit** before presenting Sprint 02 visual proposals.
+
+
+## 2026-10-26 — User-requested Protocol detail enhancements (PROPOSED, NOT CODED)
+The user likes the Sprint 02A Protocol card direction and requested further work **inside Protocol screens**:
+1. Subtle animation on explicit protocol completion (respect reduced motion; never animate a mere render/status refresh).
+2. Notification when a compound/protocol enters a new scheduled phase, including rest transitions. Design must avoid duplicate alerts after reopening or rerendering and clearly distinguish scheduled transition from logged administration; permission/persistence model to be reviewed.
+3. Days-remaining countdown derived from actual phase dates and pauses, not a fabricated global duration. Handle not started, paused, open-ended, finished and differing compound schedules.
+4. Current phase shown in each compound's detail view, with phase name/number, week/day progress, and next phase where available.
+
+**Status:** Requested/recorded, not implemented or tested. Design and edge-case review before code; no production changes. Prioritize Protocol detail and phase lifecycle work ahead of additional Stash refinements. Keep PR #123 draft.
