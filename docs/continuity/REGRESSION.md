@@ -672,3 +672,14 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS / local Chromium simulation:** downloaded full-app DEMO at 320px and 390px in light/dark; computed dark hero approved gradient, pseudo-orb disabled; no hero overflow or page exceptions; four daily tracking actions height 44px; week segmented control opens, Calendar navigation works.
 - **PASS / inspected artifact:** 12627006318; LIVE ZIP root index + four stylesheets + twelve ordered scripts + four icon assets; standalone DEMO embeds all scripts/styles without live JS/CSS refs; build manifest states isolated in-memory storage and disabled sync.
 - **NOT TESTED:** physical iPhone Safari, VoiceOver, keyboard/safe-area visual parity under native OS chrome, independent Cloudflare branch preview served-file SHA, actual end-user data fixture. Repeat same-compound Coming Up fixture identified for product review, not a test failure.
+
+
+### 2026-10-26 — Calendar 2.0 new test matrix
+| Test | Status |
+|---|---|
+| Month opens in current month and retains numeric historical weight | SOURCE PRESERVED; latest-head browser QA PENDING |
+| Weekly and monthly metric calculation from canonical saved occurrence statuses | CODED; edge-case math NOT FULLY TESTED |
+| Completed, Scheduled/Unresolved, Wellness selected-day tabs | CODED; 320/390 light/dark automated run PENDING |
+| Week/Month switching and responsive horizontal bounds | Automated assertions added in `9ed4c89`; PENDING |
+| Saved check-in/weight/supplement/nutrition and existing dose history protected | No mutation code added; end-to-end edit/history parity NOT TESTED |
+| Full LIVE/isolated DEMO package and iPhone Safari | NOT VERIFIED |
