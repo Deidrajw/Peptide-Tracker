@@ -845,3 +845,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 Goals approved preview parity
 - NOT TESTED latest head: screenshot parity at 320/390 light/dark for approved original goal card with status, target, progress, links and detail navigation. Physical iPhone pending.
+
+## 2026-10-26 — Goal wizard test matrix (pending)
+- NOT TESTED latest head: Add and Edit start values; Basics required name; Back/Continue across four stages; change numeric/subjective/milestones/exploratory and return without losing unsaved values; compound selection, original Check-In symptom association, target date, notes; final Review and exactly one save; closing without save, no duplicate goal; keyboard/safe-area/scroll 320/390 dark/light; protected Log Dose draft, source, multi-vial, Combo and insufficient inventory. Physical iPhone and VoiceOver NOT TESTED.
