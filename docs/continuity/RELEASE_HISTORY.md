@@ -626,3 +626,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — DRAFT source identity review (NOT RELEASED)
 - `8abba0bb` source ID/selected vial/prepared batch readout; `fb8a7c40` browser assertions. No storage migration, no production release; latest-head QA and source-matched artifacts pending.
+
+### 2026-10-26 — Goals Add Goal top placement (DRAFT / UNRELEASED)
+- `efbbd544`: moves existing Add Goal action to top of Goals section and removes bottom duplicate; `7706e8f7`: responsive 46px header styling. No schema or persistent data changes. New-head automated/mobile/physical QA pending; no merge/deploy. Next: Research and Shopping design audit.
