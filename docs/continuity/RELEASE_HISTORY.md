@@ -450,3 +450,7 @@
 
 ### Today milestone — source-derived QA gate (2026-10-25)
 - 2026-10-25 draft PR #123: 5ef99dea improved expanded text presentation; 91cf8bce + 99c12afc added Today source-invariant CI; b397ac12 + 0513998a changed preview QA to generate and test exact-source isolated full-app demo. Data impact: no migration or dose engine changes. V8 source parse PASS (12/12), source invariants 14/14 reviewed. Latest CI/browser, artifacts and deployment not verified. Not released.
+
+
+### Today disclosure / typography parity (2026-10-25)
+- 2026-10-25 draft PR #123 continued: shared disclosure/typography changes 1b4feb9f, 12da3fa7, 6405c0db, 853e58e3, b9cc9a7a, 4c52a898; tests 87a32f82, 5d555d70, 6fee66f0. Impact: Today compact, paused compact, expanded cards. Data changes: none intended; no schedule, dose, ledger or inventory algorithm modifications. JS syntax checks PASS; full browser/cross-theme parity and iPhone NOT TESTED. DEMO/LIVE artifacts not delivered; no production release.
