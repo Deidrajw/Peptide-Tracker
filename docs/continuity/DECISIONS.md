@@ -512,3 +512,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Regression contract updated for approved Protocol IA
 - Tests must verify the current approved compact Protocol list → dedicated Overview → vertical phase timeline/back navigation; do not require the removed inline Schedule & phases disclosure. Protected Today/Calendar/Stash behaviors and dose logs remain tested. Plans Research ellipsis must visibly contrast from its parent card; override the higher-specificity `#app` rule rather than masking test failure.
+
+
+## 2026-10-26 — Protocol artifact provenance and acceptance
+- An Actions `pull_request` build uses the tested PR merge ref (not branch head) and its merge SHA is the build manifest source_commit; compare it with PR merge_commit_sha before calling builds exact-source. User acceptance must inspect extracted full isolated standalone DEMO and actual 320/390 light/dark browser screenshots; automated tests are not physical iPhone checks. Keep PR draft and Cloudflare unchanged.
