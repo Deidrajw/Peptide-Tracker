@@ -796,3 +796,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Expanded Protocol phase row and Plans button contrast
 - **FAIL on PRE-PATCH HEAD**: full QA workflow 40351719788, `Management surface must contrast against Research card`, at `tools/validate-plans-hierarchy.mjs:180`; preceding browser suites reported PASS but aggregate FAIL. CSS patch `da015ec0` **NOT RETESTED** at documentation time.
 - **NOT TESTED on latest head:** Protocol rows at 320/390 dark/light, compound labels (long/short), paused / elapsed / not-started progress, zero compounds, full phase roadmap navigation (existing handler), correct source phase and date; Goals/Research menu contrast in both themes, protected modal/nav/dose/history behavior. Do not report passing latest source until workflow evidence arrives.
+
+
+## 2026-10-26 — Dedicated Protocol detail QA required
+- **NOT TESTED on current head:** Overview entry from list, correct Overview/Compound/Completion switching, ring percentage/day math after pause and multi-compound differing durations, started/paused/schedule-elapsed/completed labels, missing dates, long names, roadmap modal open from details and clean close/reopen, accessibility and 44px targets, 320/390 light/dark, safe areas and keyboard; protected dose/source/phase history and Manage actions. 'About phase notifications' is explanation only. Full-app DEMO/LIVE source parity and physical iPhone unverified. Do not claim release QA Passed.
