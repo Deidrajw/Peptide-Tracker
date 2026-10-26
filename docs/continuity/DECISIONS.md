@@ -358,3 +358,7 @@
 
 ### 2026-10-25 — Critical preview syntax hotfix
 - 2026-10-25 blocker response: syntax errors that stop preview startup take priority over UX polish; apply minimal source edit only, never reset production localStorage or change dose data. The `Taken today` timestamp must close both JavaScript interpolations correctly. Validation requires source JS parse plus browser startup; parse alone is not enough. PR #123 remains preview-only.
+
+
+### 2026-10-25 — Today card milestone consolidation
+- 2026-10-25 Consolidated milestone decision: stop presenting individual card polish commits as acceptance. Preserve one labelled compact/expanded disclosure, a single overdue status, history inside tabs, context-sensitive dose action, no duplicate History CTA, and 44px+ touch targets. Keep calculation and persistence code unchanged. Validate the entire card-state matrix before advancing to Daily Tracking. No production approval.
