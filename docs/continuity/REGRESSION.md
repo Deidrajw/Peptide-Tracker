@@ -694,3 +694,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Complete 21-file root LIVE ZIP and full-app DEMO, isolated ephemeral storage, disabled sync | PASS artifact inspection #12629580963 |
 | Physical iPhone Safari, VoiceOver, saved real user data, keyboard/safe-area beyond emulation, Cloudflare preview byte parity | NOT TESTED / NOT VERIFIED |
 | Detailed record edits from new categorized day cards, advanced activity trend filters | NOT IMPLEMENTED, legacy Logs/history preserved |
+
+
+### 2026-10-26 — Logs journal candidate regression matrix
+| Test | Evidence |
+|---|---|
+| Day/All mode switching, selected Calendar date preserved, Today date shortcut, Weight type filter | Browser assertions added in `aa84611`; pending full run `40275277177` |
+| 320/390 light/dark LIVE and isolated full DEMO, icons and expandable entry actions | Source-coded, latest run PENDING; physical iPhone NOT TESTED |
+| Existing Check-in/edit/update, supplements, weight, measurements, nutrition, dose data, history intact | Original state arrays and action-class handlers reused; end-to-end regression PENDING |
+| Exact-source LIVE ZIP, self-contained demo, Cloudflare preview | NOT VERIFIED after Logs changes |
