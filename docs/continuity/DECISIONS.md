@@ -500,3 +500,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Simplify expanded Protocol compound content after approved roadmap
 - User approved vertical phase timeline and said continue. Replace duplicate mini Gantt, route pill, and active-dosing text in expanded Schedule & phases with one coherent per-compound progress row linking to the existing approved vertical roadmap. Preserve schedule cadence and goal details, and avoid equating planned phases with administered doses. No new storage or dosage behavior. PR remains draft.
+
+
+## 2026-10-26 — Dedicated Protocol Overview screen approved
+- User explicitly clarified the approved screenshot: detail navigation with Overview / Compound / Completion segmented tabs, a ring countdown and estimated scheduled end, a compound/phase card list, and optional phase alert explanation. This is the intended **Protocol detail screen**, separate from lightweight list cards; do not replace it with only card expansion. The initial draft implementation uses a sheet and preserves the approved vertical compound roadmap, existing Manage actions, data history and phase math. The prior compact list card remains entry context. Product equivalence and physical iPhone signoff are still pending; no merge/deploy.
