@@ -1718,13 +1718,12 @@ function plansView() {
   const goalCard=(g)=>{
     const sm=goalSummary(g);
     const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
-    const sc=goalStatus[g.status||"active"]||goalStatus.active;
     return `<article class="nx-plan-item nx-plan-2-goal nx-goal-v2">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · Target "+esc(fmtDate(g.targetDate)):" · No target date"}</div></div>${manageBtn("goal",g.id)}</div>
-      <div class="nx-goal-v2-progress"><div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong>${sm.percent!==null?`<span>${sm.percent}% of target change</span>`:""}</div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · "+esc(fmtDate(g.targetDate)):""}</div></div>${manageBtn("goal",g.id)}</div>
+      <div class="nx-goal-v2-progress">${sm.percent!==null?`<div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong><span>${sm.percent}% toward target</span></div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>`:`<div class="nx-goal-v2-detail">${esc(sm.detail)}</div>`}
       ${sm.percent!==null?`<div class="nx-goal-v2-track" role="progressbar" aria-label="Measurement progress toward goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${sm.percent}"><span style="width:${sm.percent}%"></span></div>`:""}</div>
-      ${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
-      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">View goal details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="nx-goal-v2-footer"><span class="nx-goal-v2-status">${esc(g.status||"Active")}</span>${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
+      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
     </article>`;
   };
   if(sub==="goals"){
@@ -1758,7 +1757,7 @@ function plansView() {
   }
 
   return `<div class="nx-page-intro"><h1 class="serif greet">Plans</h1><p>Track your goals, research queue, and shopping needs.</p></div>
-  <div class="nx-plan-summary"><div><strong>${goals.filter(g=>!g.status||g.status==="active").length}</strong><span>Active goals</span></div><div><strong>${research.length}</strong><span>Research items</span></div><div><strong>${shopping.filter(s=>!s.status||s.status==="needed").length}</strong><span>To purchase</span></div></div>
+  
   <nav class="nx-plan-nav" aria-label="Plans sections">
     ${subBtn("goals","Goals",goals.filter(g=>!g.status||g.status==="active").length||"")}
     ${subBtn("research","Research",research.length||"")}
