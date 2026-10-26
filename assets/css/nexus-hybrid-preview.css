@@ -1546,3 +1546,49 @@ body.nx-alert-modal-open{overflow:hidden}
 .nx-cal-history-row span{font-size:12px;color:var(--t3);line-height:1.45}
 .nx-cal-empty{font-size:12px;color:var(--t3);padding:14px 2px}
 @media(max-width:350px){.nx-cal-hub,.nx-cal-day-panel{padding:12px}.nx-cal-hub-stats{gap:5px}.nx-cal-hub-stats>div{padding:11px 7px}.nx-cal-category{padding:9px 6px}}
+
+
+/* Calendar Logs 2.0 — iPhone-first full-day journal */
+.nx-journal{display:flex;flex-direction:column;gap:15px;padding-bottom:16px}
+.nx-journal-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.nx-journal-top h2{font-size:20px;font-weight:720;color:var(--t1);margin:0}
+.nx-journal-top p{font-size:12px;color:var(--t3);margin:4px 0 0}
+.nx-journal .nx-log-add-wrap{margin:0;flex-shrink:0;position:relative}
+.nx-journal .nx-add-log-btn{display:flex;align-items:center;gap:6px;min-height:44px;padding:9px 13px;font-size:12px;white-space:nowrap}
+.nx-journal .nx-add-log-btn svg{width:17px;height:17px}
+.nx-journal .nx-add-log-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:174px;box-shadow:0 8px 32px rgba(0,0,0,.24)}
+.nx-journal-modes{display:flex;margin:0!important}
+.nx-journal-picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nx-journal-picker label{font-size:12px;color:var(--t3);width:100%}
+.nx-journal-picker input{background:var(--surface-2);color:var(--t1);border:1px solid var(--border-sub);min-height:44px;padding:9px 10px;border-radius:11px;flex:1;min-width:0;color-scheme:dark}
+html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
+.nx-journal-picker button{padding:0 13px;min-height:44px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t1);border-radius:11px;font-weight:650;font-size:12px}
+.nx-journal-filters{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.nx-journal-filters::-webkit-scrollbar{display:none}
+.nx-journal-filter{flex:0 0 auto;min-height:44px;padding:8px 12px;border-radius:99px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t3);font-size:12px}
+.nx-journal-filter.on{background:var(--surface-3);border-color:#A78BFA;color:var(--t1)}
+.nx-journal-day{background:var(--surface);border-radius:17px;padding:13px;min-width:0}
+.nx-journal-date{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.nx-journal-date h3{font-size:14px;color:var(--t1);margin:0}
+.nx-journal-date>span{font-size:11px;color:var(--t3)}
+.nx-journal-row{display:flex;gap:10px;align-items:flex-start;padding:13px 2px;border-bottom:1px solid var(--border-sub);min-width:0}
+.nx-journal-row:last-child{border-bottom:0}
+.nx-journal-mark{display:flex;align-items:center;justify-content:center;flex:0 0 40px;height:40px;border-radius:11px;background:var(--surface-2);color:#BB9ADD}
+.nx-journal-main{flex:1;min-width:0}
+.nx-journal-line{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.nx-journal-line strong{font-size:13px;font-weight:670;color:var(--t1)}
+.nx-journal-line span{font-size:10px;color:var(--t4);text-align:right}
+.nx-journal-title{font-size:12px;color:var(--t2);margin-top:4px;overflow-wrap:anywhere}
+.nx-journal-desc{font-size:11px;color:var(--t3);margin-top:3px;line-height:1.45;overflow-wrap:anywhere}
+.nx-journal-more{display:flex;align-items:center;justify-content:center;flex:0 0 44px;min-height:44px;border:0;background:transparent;color:var(--t3);border-radius:11px}
+.nx-journal-more:focus-visible,.nx-journal-picker button:focus-visible,.nx-journal-filter:focus-visible{outline:2px solid #BB9ADD;outline-offset:2px}
+.nx-journal-extra{padding:10px 0 0;color:var(--t3);font-size:12px;line-height:1.6}
+.nx-journal-extra[hidden]{display:none!important}
+.nx-journal-extra p{margin:4px 0 9px}
+.nx-journal-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.nx-journal-actions button,.nx-journal-update button{min-height:44px;padding:9px 14px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t1);font-size:12px}
+.nx-journal-actions button[class^="del"],.nx-journal-update .del-update{color:#E8A3A9}
+.nx-journal-update{padding:9px 0;border-top:1px solid var(--border-sub)}
+.nx-journal-empty{font-size:12px;color:var(--t3);padding:18px 4px}
+.nx-cal-open-logs{min-height:44px;width:100%;margin:10px 0 0;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t1);font-size:12px;font-weight:650}
+@media(max-width:350px){.nx-journal-day{padding:10px}.nx-journal-mark{flex-basis:35px;height:35px}.nx-journal-row{gap:7px}.nx-journal-top h2{font-size:18px}}
