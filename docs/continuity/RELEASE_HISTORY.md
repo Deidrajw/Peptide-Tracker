@@ -511,3 +511,7 @@
 
 ### 2026-10-26 — Logs candidate QA verified, NOT DEPLOYED
 - Candidate at `5167a87`: complete QA workflow `40275552699` and mobile `40275552720` PASS. Artifact #12630341125 inspected: complete root LIVE ZIP, standalone isolated full app DEMO. No storage migration. PR #123 remains draft, no production deployment/Cloudflare parity confirmation. Final version remains v0.9.20-beta pending approved release.
+
+
+### 2026-10-26 — Logs current candidate QA evidence, still UNRELEASED
+- Latest tested PR head `3eb6bf4`, full pipeline `40276022471` PASS, mobile forms `40276022466` PASS, exact-source artifact #12630810614 inspected: 21-file LIVE ZIP, self-contained isolated DEMO, 16 log screenshots across viewports/themes and LIVE/DEMO. Existing version metadata v0.9.20-beta; no schema changes or saved-data migration. Draft PR #123 unmerged; Cloudflare deployment and physical iPhone not verified.
