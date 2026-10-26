@@ -525,3 +525,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-26 — Next-chat Plans priority confirmed
 - User accepted moving on to Plans. Start with **Goals** and contextual relationships to Protocol, then Research and Shopping. A goal's Connections should point to its genuine linked protocol; Protocol Overview should point to its actual linked goal. Avoid generic navigation buttons, duplicated content, status inference, automatic goal progress or medical recommendations. Preserve standalone Goals/Research/Shopping flows.
 - Design approval to proceed is not an instruction to merge/deploy. Current PR #123 stays draft; source and tests must be reverified in next chat.
+
+## 2026-10-26 — Goals-first progress hierarchy (approved direction, draft implementation)
+- Show goal identity, status, real progress evidence, target date, connections, and detail navigation. Numeric percent appears only with comparable saved weight records, configured source, valid baseline and target; subjective, milestones and exploratory goals show descriptive states, not fabricated completion. No protocol-to-goal causality or automatic status inference.
+- Preserve Goal detail Overview/Connections/Activity, management actions, linked Protocol Overview route and Check-In original-record links. CSS/markup changes in draft PR #123 only; no release approval.
