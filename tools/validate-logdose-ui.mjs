@@ -109,6 +109,10 @@ try {
     ensure(await page.locator('#alloc-add-kit').count()===1,'Use another vial action absent');
     await page.locator('#alloc-add-kit').click();
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
+    await page.locator('#nx-dose-step-next').click();
+    const splitReview=await page.locator('#nx-dose-review-rows').innerText();
+    ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Total allocated'),'Multi-vial Review omits structured source rows');
+    ensure(splitReview.includes('Kit 9104')&&splitReview.includes('Kit 9105'),'Multi-vial Review loses selected kit identity');
     await clickSave(page);
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
@@ -128,6 +132,9 @@ try {
     });
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
+    await page.locator('#nx-dose-step-next').click();
+    const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
+    ensure(preparedReview.includes('Prepared dose')&&preparedReview.includes('8109')===false,'Prepared review source is unclear');
     await clickSave(page);
     const prepared=await stateSnapshot(page);
     ensure(prepared.entries.length===1 && prepared.entries[0].fromPreparedId===8109,
