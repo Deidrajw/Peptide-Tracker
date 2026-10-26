@@ -591,3 +591,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Log Dose preview trial
 - PR #123 Log Dose availability change 2dfae668: due now, due later today, overdue under/over aged threshold, taken today, rescheduled today/future, skipped, paused, no doses, multi-occurrence, prepared sources, multi-vial ledger: NOT TESTED. Preview deployment UNVERIFIED.
+
+
+### 2026-10-25 — Log Dose preview release checkpoint
+- 2026-10-25 — Log Dose CTA preview checks at 9fe7803: due now, due later today, overdue under 3 days, older overdue What happened?, logged today, rescheduled today/later, no history, paused/resting; Log Dose opens matching occurrence; multi-occurrence date/time, draft recovery, source selection, shortage, draw confirmation, one record and accurate ledger. All functional end-to-end cases NOT TESTED on latest head. Mobile regressions at earlier 0819acc1 SUCCESS; exact-head CI not yet verified. Cloudflare deploy SUCCESS per PR comment; physical iPhone NOT TESTED.
