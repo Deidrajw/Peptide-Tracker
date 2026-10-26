@@ -631,3 +631,16 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Compact Today divider correction
 - Compact Today card divider check: source CSS updated and source assertion added, rendered computed borders and visual light/dark 320/390 NOT TESTED. Expanded state, dose actions, history, modal flows, inventory unaffected in source but functional regression NOT TESTED.
+
+
+### 2026-10-25 — PR #123 Today 2.0 candidate QA matrix
+| Area | Acceptance requirement | Status |
+|---|---|---|
+| Protocol segmented card | Insights / History / Details panels and action-sheet tests replace obsolete accordion assertions | TEST UPDATE COMMITTED; exact-head run PENDING |
+| Daily Tracking | Check-In saved/edit, supplement multi-select, dated weight/nutrition status, collapsed default, selections persisted after reload | NOT TESTED at latest head |
+| Today activity | Scheduled vs adhoc records, multi-dose same day, skip/moved/missed/overdue, no false missed | NOT TESTED at latest head |
+| This Week | Elapsed dates only; no future missed; accurate scheduled completion and unresolved | NOT TESTED at latest head |
+| Coming Up | 2–3 future instances, explicit times only, repeated multi-dose schedules, working Calendar navigation | NOT TESTED at latest head |
+| Visual | 320/390, dark/light, focus, keyboard, contrast, reduce-motion | NOT TESTED at latest head |
+| Data integrity | No lost check-in, dose draft, multi-vial, blend deduction or history; DEMO isolated | NOT TESTED at latest head |
+| Cloudflare / iPhone | No merge/deploy, real-device review pending | NOT DEPLOYED / NOT TESTED |
