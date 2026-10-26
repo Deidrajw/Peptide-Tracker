@@ -1427,3 +1427,19 @@ html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-fa
 .nx-coming-calendar{width:100%;min-height:44px;border-radius:11px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t1);font-weight:650;margin-top:6px}
 @media(max-width:350px){.nx-today-activity{padding:12px}.nx-activity-period{padding:0 8px}.nx-daily-tracking-body{padding:10px 12px!important}}
 @media(prefers-reduced-motion:reduce){.nx-daily-track-progress>span{transition:none}}
+
+
+/* Today dark hero refinement — quieter Obsidian surface, lavender reserved for data. */
+html[data-theme="dark"] .nexus-today-hero {
+ background:linear-gradient(125deg,#30283d 0%,#2b2538 60%,#292335 100%)!important;
+ border-color:rgba(202,177,228,.18)!important;
+ box-shadow:0 10px 26px rgba(12,9,22,.16),inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+html[data-theme="dark"] .nexus-today-hero::before {
+ width:135px;height:135px;right:-52px;top:-64px;
+ background:radial-gradient(circle,rgba(186,152,216,.075),transparent 72%);
+}
+html[data-theme="dark"] .nexus-today-hero::after {display:none!important;}
+html[data-theme="dark"] .nexus-today-track>div {
+ background:#CDA7F0!important;box-shadow:none!important;
+}
