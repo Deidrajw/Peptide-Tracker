@@ -879,3 +879,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Implemented week/month Calendar activity overview based on existing `getMonthInstances` occurrence status data in assets/js/11-nexus.js (`ef93fc2`); old month default, mood, numeric weight and paused toggle retained. Selected-day `Completed`, `Scheduled / unresolved`, `Wellness` categories replace compound wall; day events grounded in `getDayOccurrences` and saved dailyLogs/weightLogs/measurementLogs/supplementLogs/macroLogs (`060c583` in assets/js/12-nexus.js). CSS component styling committed `5480de2`; automated 320/390 dark/light Week/Month/category QA added `9ed4c89`.
 - **TEST STATUS:** source-coded, latest-head full QA PENDING; real iPhone/VoiceOver, standalone LIVE/DEMO artifact verification and Cloudflare preview NOT VERIFIED. No data migrations, no changed records, no production deployment.
 - **ONE NEXT ACTION:** review GitHub Actions build/parity QA for `9ed4c89`, fix failures, validate exact-source LIVE/DEMO and run Calendar visual screenshots, then present preview for acceptance. PR stays draft.
+
+
+### 2026-10-26 — Calendar 2.0 cross-month week correction
+- Added canonical `getWeekInstances(weekDates)` for Week overview and included the actual preceding/following month dates in the seven-day grid; replaces partial edge-of-month cells and month-only weekly totals. Commit `ce2b54e73159d0d7800404ee84ea3312b3dc2f6f`. Main Month default and saved data remain unchanged.
+- Full QA and mobile regression at candidate commit `ce2b54e` running (unverified). No preview or production deployment.
+- **ONE NEXT ACTION:** inspect exact-head full build/parity and 320/390 browser screenshots, repair any failure, inspect LIVE/DEMO artifacts and present for design approval.
