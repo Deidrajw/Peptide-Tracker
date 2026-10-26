@@ -608,3 +608,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Goal Add/Edit four-stage wizard (DRAFT / UNRELEASED)
 - PR #123: `23aa6e04` wizard markup reusing existing controls; `d7a8026c` hybrid theme/step styling; `a44cdcb8` preserve unsaved progress method choices. No intended schema or localStorage migration. Existing save handler still writes only on final Save. Latest-head QA/source-parity artifacts and physical acceptance incomplete. Log Dose unchanged; not deployed.
+
+### 2026-10-26 — Goal wizard QA harness correction, DRAFT
+- Commit `c9b6782c` changes Plans browser test to navigate wizard steps before field selection and saving. Pre-patch build/parity workflow 40386863855 FAILED (hidden Connections input). Other suites passed, but full release QA not passed. No production merge/deployment, new-head retest pending.
