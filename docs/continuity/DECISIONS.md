@@ -545,3 +545,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Log Dose implementation boundary
 - Approved Quick Log / Guided Log layout; first code pass uses one existing `doseModal` and single `#save` handler, no independent calculator or storage path. Guided stage navigation does not persist dose; preserve existing logic and user-entered values while changing stages. Do not conflate implemented mode switching with full approved quick-review parity: Quick separate review is not yet coded and must be validated before approval. Both themes use Soft Depth / Porcelain / Obsidian Precision.
+
+## 2026-10-26 — Log Dose final confirmation requirement
+- Every mode must explicitly reach Review before record Save becomes available. Step errors are visible and anchored near sticky footer. Preserve original validated Save logic; UI prevalidation for amount/date must not become a new independent inventory calculator. Quick uses 2 steps; Guided uses 3. User-approved visual direction unchanged. Audit checklist must be compact, avoid warped per-row controls.
