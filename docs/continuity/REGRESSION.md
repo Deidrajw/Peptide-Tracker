@@ -820,3 +820,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS for PR test-merge c6885efd:** mobile form workflow 40359787123, build/parity workflow 40359787121; 8 LIVE/DEMO × 320/390 × light/dark navigation assertions (list→Overview→phase→back→close), 8 Plans hierarchy/contrast cases, 8 Browser matrix, protected Check-In, Log Dose, vial-source, Combo Picker, Stash panels/actions and calculator safeguards recorded as PASS in CI logs.
 - **NOT TESTED physical:** iPhone Safari actual touch, keyboard, safe areas, VoiceOver, real saved-record history. Screenshot-enhanced test commit `b155134c` requires latest-head CI and visual review. Automated theme contrast audit reports candidates; cannot claim WCAG AA compliance for all surfaces.
 - Artifact manifest source PR merge SHA c6885efd, GitHub Actions artifact 12667882258. Standalone demo ephemeral isolated state; no production writes. Preserve draft; production parity not expected and Cloudflare remains unchanged.
+
+
+## 2026-10-26 — Protocol screenshot visual QA
+- Automated navigation PASS on PR merge-ref `2adf5eea` (browser workflow 40360851339); screenshots of new Protocol sheets captured too early in opening animation and cannot support actual final-state visual approval. Commit `2d67b356` waits for settling and asserts onscreen bounds before each Overview and roadmap screenshot. **NOT TESTED** resulting screenshots yet. Physical iPhone / VoiceOver still pending.
