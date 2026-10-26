@@ -465,3 +465,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Sprint 02A Protocol implementation boundary
 - User requested to continue after Protocol card preview. Approved direction: improve hierarchy and accessibility without changing status, saved phases, scheduling, compound calculations, first-dose/activate functionality or the Manage bottom sheet. CSS-only change `6479eea` implements long-name wrapping, 44px Manage/primary targets, focused detail summary and restrained card treatment. No data/schema migration; still requires latest-head QA and real iPhone preview acceptance. PR remains draft, unmerged and undeployed.
+
+
+## 2026-10-26 — Shared Open New Vial form, Sprint 02
+- Existing blend and non-blend open-vial buttons both reach `openNewVialModal`; keep this canonical handler. Approved Sprint 02 continuation permits scoped visual layout and accessibility correction only: responsive two-column grid at iPhone widths, BAC water full-width, readable inputs/confirm action. Do not change vial allocation, blend math, validation, history or storage. PR #123 remains draft; no merge/deploy approval.
