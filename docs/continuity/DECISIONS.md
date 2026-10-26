@@ -520,3 +520,8 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Contextual Plans/Protocol navigation approved
 - Keep Protocol list compact; Protocol Overview links directly to an associated goal, not a generic Plans button. Goals Connections links back to existing Protocol Overview. No shortcut when a goal is unlinked. Never infer goal progress from protocol activity. User approved design, not deployment.
+
+ 
+## 2026-10-26 — Next-chat Plans priority confirmed
+- User accepted moving on to Plans. Start with **Goals** and contextual relationships to Protocol, then Research and Shopping. A goal's Connections should point to its genuine linked protocol; Protocol Overview should point to its actual linked goal. Avoid generic navigation buttons, duplicated content, status inference, automatic goal progress or medical recommendations. Preserve standalone Goals/Research/Shopping flows.
+- Design approval to proceed is not an instruction to merge/deploy. Current PR #123 stays draft; source and tests must be reverified in next chat.
