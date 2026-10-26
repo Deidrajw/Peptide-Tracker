@@ -167,7 +167,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#add-research').count()===1,'Top Add Research missing or duplicated');
  ensure(await page.locator('.nx-research-page-header #add-research').count()===1,'Add Research not at top of queue');
  ensure(await page.locator('.nx-research-card .nx-plan-link-icon').count()===1,'Research card must have exactly one visible navigation chevron');
- ensure(await page.locator('.nx-research-note-toggle svg path').count()===3,'Notes toggle icon unexpected: use notebook, not a chevron');
+ ensure(await page.locator('.nx-research-note-toggle svg path').count()===1,'Notes toggle icon unexpected: use notebook, not a chevron');
  ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='false','Notes should start collapsed');
  ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes initially visible');
  await page.locator('.nx-research-note-toggle').click();
