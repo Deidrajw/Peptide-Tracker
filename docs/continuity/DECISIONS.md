@@ -535,3 +535,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Original Goals preview is approved visual reference
 - User provided two screenshots of the original in-chat Goals preview and rejected the subsequent compact experiment. Preserve original spacious card hierarchy (title, status, target, meaningful progress, linked protocol, View goal details) and original detail sections. Do not independently reimagine or compact an already-approved preview. `d98d7b78`, `7727191f` are draft restoration commits; real UI acceptance pending.
+
+## 2026-10-26 — Approved Add/Edit Goal four-step wizard
+- Approved design: one persistent bottom-sheet modal, four stages Basics / Progress / Connections / Review, Back/Continue and final Save, existing Goal data and Check-In associations preserved, no intermediate persisted writes. Reuse same wizard for Add and Edit. Implemented draft, browser/device acceptance pending.
+- Log Dose: quick vs guided concept approved for exploration; **not authorized as a dose accounting change**. Design and validate separately; preserve source selection, drafts, blend splits and inventory confirmation.
