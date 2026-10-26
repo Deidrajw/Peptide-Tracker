@@ -1772,3 +1772,97 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
   .nx-open-vial-fields {grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .nx-open-vial-fields>div:last-child {grid-column:auto}
 }
+
+
+/* Sprint 02A — implemented Protocol/Plans information hierarchy.
+   All actions still use their existing handlers; no changes to persisted state. */
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-card-head {
+  margin-bottom:8px!important;
+}
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-summary {
+  color:var(--t2);font-size:13px;line-height:1.5;
+  margin:0 0 14px;overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nx-protocol-2-overview {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;margin-bottom:10px;
+}
+.nexus-screen-protocols .nx-protocol-2-overview>div {
+  min-width:0;padding:13px 12px;border-radius:13px;
+  background:var(--surface-2);
+}
+.nexus-screen-protocols .nx-protocol-2-label {
+  display:block;color:var(--t3);font-size:10px;
+  font-weight:700;letter-spacing:.6px;margin-bottom:6px;
+}
+.nexus-screen-protocols .nx-protocol-2-overview strong {
+  display:block;color:var(--t1);font-size:14px;font-weight:700;
+  line-height:1.35;overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-meta {
+  font-size:11px;color:var(--t3);margin-bottom:12px;
+}
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-details {
+  border-top:1px solid var(--border-sub);
+}
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-details>summary {
+  min-height:48px;padding:12px 2px;
+  color:var(--t1);font-weight:650;font-size:13px;
+}
+.nexus-screen-protocols .nx-protocol-2-goal {
+  display:grid;gap:4px;margin-bottom:10px;padding:10px 12px;
+  border-radius:12px;background:var(--surface-2);
+  overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nx-protocol-2-goal strong {
+  font-size:10px;letter-spacing:.5px;color:var(--t3);
+  text-transform:uppercase;
+}
+.nexus-screen-protocols .nx-protocol-2-goal span {
+  color:var(--t1);font-size:12px;line-height:1.45;
+}
+.nexus-screen-protocols .nx-protocol-2-card .nexus-protocol-timeline {
+  min-width:0;overflow:hidden;
+}
+.nexus-screen-plans .nx-plan-2-goal,
+.nexus-screen-plans .nx-plan-2-research {
+  min-width:0;overflow:hidden;border-radius:18px!important;
+  border:1px solid var(--border-sub)!important;
+  background:var(--surface)!important;
+  padding:16px!important;
+  box-shadow:0 6px 18px #100b2110;
+}
+.nexus-screen-plans .nx-plan-2-goal .nx-plan-head,
+.nexus-screen-plans .nx-plan-2-research .nx-plan-head {
+  display:flex;gap:10px;align-items:flex-start;
+  min-width:0;
+}
+.nexus-screen-plans .nx-plan-2-goal .nx-plan-item-title,
+.nexus-screen-plans .nx-plan-2-research .nx-research-title {
+  overflow-wrap:anywhere;line-height:1.35;
+  letter-spacing:-.2px;
+}
+.nexus-screen-plans :is(.nx-plan-2-goal,.nx-plan-2-research) .manage-plan-btn {
+  min-width:44px!important;min-height:44px!important;
+  flex:0 0 44px;display:grid;place-items:center;
+}
+.nexus-screen-plans :is(.nx-plan-2-goal,.nx-plan-2-research) .manage-plan-btn:focus-visible,
+.nexus-screen-plans .nx-plan-2-goal .nx-open-goal:focus-visible,
+.nexus-screen-plans .nx-plan-2-research .nx-plan-intel:focus-visible {
+  outline:2px solid var(--nx-hybrid-accent);
+  outline-offset:2px;
+}
+.nexus-screen-plans .nx-plan-2-goal .nx-open-goal {
+  display:inline-flex;align-items:center;min-height:44px;
+  margin-top:6px!important;
+}
+.nexus-screen-plans .nx-plan-2-research .nx-plan-secondary {
+  margin-top:9px;
+}
+@media(max-width:359px){
+  .nexus-screen-protocols .nx-protocol-2-overview {gap:7px}
+  .nexus-screen-protocols .nx-protocol-2-overview>div{padding:11px 9px}
+  .nexus-screen-protocols .nx-protocol-2-overview strong{font-size:12px}
+  .nexus-screen-plans .nx-plan-2-goal,
+  .nexus-screen-plans .nx-plan-2-research{padding:13px!important}
+}
