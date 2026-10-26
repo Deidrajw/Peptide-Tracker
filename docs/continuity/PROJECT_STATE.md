@@ -1122,3 +1122,8 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Approved 4-step Add/Edit Goal workflow coded on PR #123: Basics → Progress → Connections → Review. `23aa6e04` reuses existing fields/IDs and save handler; `d7a8026c` theme/safe-area styling; `a44cdcb8` per-progress-method draft caching. No schema migration or production write intended. Log Dose quick/guided is **PROPOSED ONLY**, not coded, to protect vial/blend accounting.
 - New-head automated browser/mobile QA and exact-source packages PENDING. Physical iPhone / VoiceOver NOT TESTED; no merge/deploy.
 - **ONE NEXT ACTION:** run real browser wizard Add/Edit and progress-method-switch regression at 320/390 in both themes; inspect FULL DEMO isolation and source-parity LIVE ZIP, repair findings before any release approval.
+
+## 2026-10-26 — Goal wizard QA blocker triage
+- Verified PR #123 head `34629941` full build/parity workflow 40386863855 FAILED. Browser matrix, Check-In, Protocol, vial-source, Log Dose, Combo, Stash, chevrons passed before Plans test failure: `tools/validate-plans-hierarchy.mjs:212` attempted to interact with `#g-evidence-symptom` before opening wizard Connections step. Hybrid Preview Browser QA 40386854803 succeeded; latest mobile workflow pending at review.
+- Test change `c9b6782c` updates Plans regression to step through Basics/Progress/Connections/Review before interacting/saving. This test correction needs its own latest-head CI evidence; not claimed PASS. No app storage or dose changes. PR draft/unmerged; Cloudflare unchanged.
+- **ONE NEXT ACTION:** inspect new-head complete browser QA after wizard-aware test update; fix any actual UI issues; verify exact-source artifacts and physical iPhone acceptance. Do not merge/deploy.
