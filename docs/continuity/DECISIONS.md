@@ -576,3 +576,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-26 — Stash guided wizard approval boundary clarified
 - Source audit found guided ordinary kit editor and searchable compound combobox already coded on draft PR #123 despite previous DESIGN ONLY handoff. Treat code as **draft candidate, not approved or accepted**; review exact interaction and validation before extending changes.
 - Keep ordinary kit `#ssave` and separate blend-kit authoritative handlers, original element IDs, vial-count/strength edit restrictions, per-component accounting, review-only navigation and no intermediate persistence. Do not merge or deploy without explicit approval.
+
+## 2026-10-26 — Approved compound selection visual for guided Blend Kit
+- User selected dark screenshot style: labelled Compound field, selected value with a single chevron; an expanded bordered browse surface containing Search compounds input and vertically stacked matching choices. Retain type-to-search and keyboard/VoiceOver accessibility. Apply this pattern to ordinary and blend kit selectors as alignment work, not to reimplement calculation logic.
+- Approved continuation of a 3-step guided Add/Edit Blend Kit presentation in PR #123. The original `#bk-save`, component composition, existing-vial locked ratio, historic allocations, and single physical inventory representation remain authoritative. This is approval to implement in draft, not permission to merge/deploy.
