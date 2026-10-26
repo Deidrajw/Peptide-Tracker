@@ -561,3 +561,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Expanded Protocol detail refinement (DRAFT, UNRELEASED)
 - `fd6fda06`: remove duplicated mini Gantt/route pill/dose-status cluster and show current compound phase progress rows; `23f3d666`: mobile responsive CSS; `da015ec0`: Plans Research ellipsis contrast adjustment after browser QA 40351719788 failed assertion at validate-plans-hierarchy.mjs:180. Affected: Protocol expanded card and Plans Research ellipsis styling. Data impact: none expected (markup/CSS only). Latest-head browser/mobile QA and exact-source full-app artifacts pending, physical iPhone untested, PR #123 unmerged/deployment unchanged.
+
+
+### 2026-10-26 — Protocol dedicated overview (DRAFT, NOT RELEASED)
+- `89f33fbe`: actual Overview/Compound/Completion detail surface and phase-aware progress ring; `be3fa15f`: list card View protocol overview action; `3c10f974`: action binding; `c8353f0e`: responsive CSS. Preview concept source is user-approved, implementation and exact-source parity NOT TESTED. No data schema or dose migration. Latest-head CI/real iPhone/full-app standalone DEMO/LIVE ZIP incomplete; PR #123 unmerged.
