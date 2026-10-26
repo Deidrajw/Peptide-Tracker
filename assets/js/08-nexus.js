@@ -22,7 +22,7 @@ function peptideCardHTML(name, data, opts={}) {
     return `<div class="card" style="border-color:#F9C87D33;opacity:0.85">
       <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
-        <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name.toUpperCase())}</span>
+        <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name)}</span>
         ${statusBadge("⏸ Paused", "warning")}
         ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">Hide details</button>`:""}
       </div>
@@ -82,7 +82,7 @@ function peptideCardHTML(name, data, opts={}) {
     isResting?statusBadge(`⏸ Rest phase${doseStatus.restWeek?` · wk ${doseStatus.restWeek}/${doseStatus.restTotalWeeks}`:""}`,"warning"):"",
     currentPh&&!trough&&!isProtoPaused?statusBadge(currentPh.label, currentPh.color):"",
     trough?statusBadge("Winding Down", "#ff8c00"):"",
-    od?statusBadge("Overdue", "danger"):"",
+    ""
   ].filter(Boolean).join("");
   return `<div class="card nx-hybrid-expanded-compound" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
     <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
@@ -94,10 +94,10 @@ function peptideCardHTML(name, data, opts={}) {
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
     ${doseStatus.recentSkip?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px;padding-left:18px">✕ Skipped ${esc(fmtDate(doseStatus.recentSkip.date))}${doseStatus.recentSkip.reason?` · ${esc(doseStatus.recentSkip.reason)}`:""} <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.recentSkip.date)}" style="color:var(--t4);text-decoration:underline;background:none;border:none;font-size:11px;padding:0;margin-left:4px">Undo</button></div>`:""}
     <section class="nx-compound-timing-row" aria-label="Dose schedule and timing" style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">${ring}<div class="nx-compound-timing-details" style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:170px">
-      <div class="nx-expanded-facts" style="display:flex;gap:20px;flex-wrap:wrap">${(()=>{const nextDueDisplay=doseStatus.nextDueStr?fmtShort(doseStatus.nextDueStr):doseStatus.nextDueMs?fmtShort(new Date(doseStatus.nextDueMs)):"—";return [["LAST",last?fmtShort(last.date):"—"],["NEXT",nextDueDisplay]]})().map(([l,v])=>`<div class="nx-expanded-fact"><div class="mono nx-expanded-fact-label" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div class="nx-expanded-fact-value" style="font-size:15px;color:var(--t2);font-weight:600;margin-top:2px">${v}</div></div>`).join("")}</div>
-      <div style="font-size:11px;color:var(--t5)">${since!=null?(Math.round(since*10)/10)+"d since last dose":""}${doses.length?` · ${doses.length} dose${doses.length===1?"":"s"} logged`:""}${protocolDays!==null?` · ${protocolDays}d on protocol`:""}</div>
-      ${(()=>{ const tv=getTimingVariance(data); if(!tv) return ""; const mag=Math.abs(tv.avgMinutes); const dir=tv.avgMinutes>0?"after":"before"; return mag<5 ? `<div style="font-size:10px;color:var(--t5)">Usually logged right around the planned time (${tv.sampleSize} doses)</div>` : `<div style="font-size:10px;color:var(--t5)">Usually logged ~${mag} min ${dir} the planned time (${tv.sampleSize} doses)</div>`; })()}
-      ${last&&last.dose?`<div style="font-size:11px;color:var(--t4)">Last: <span style="color:${c.color}">${esc(last.dose)} ${c.unit}</span>${last.site?` · ${esc(last.site)}`:""}</div>`:""}
+      <div class="nx-expanded-facts" style="display:flex;gap:20px;flex-wrap:wrap">${(()=>{const nextDueDisplay=doseStatus.nextDueStr?fmtShort(doseStatus.nextDueStr):doseStatus.nextDueMs?fmtShort(new Date(doseStatus.nextDueMs)):"—";return [["LAST",last?fmtShort(last.date):"—"],["NEXT",nextDueDisplay]]})().map(([l,v])=>`<div class="nx-expanded-fact"><div class="mono nx-expanded-fact-label" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div class="nx-expanded-fact-value" style="font-size:15px;color:var(--t2);font-weight:600;margin-top:2px">${v}${l==="LAST" && last?.dose ? `<small class="nx-expanded-last-dose">${esc(last.dose)} ${esc(c.unit)}</small>` : ""}</div></div>`).join("")}</div>
+      
+      
+      
     </div></section>
     ${(data.dosesPerDay>1) ? (()=>{
       // Multi-dose-per-day: LAST/NEXT above is a whole-day summary. This strip shows
@@ -108,19 +108,19 @@ function peptideCardHTML(name, data, opts={}) {
       if (!todaySlots.length) return "";
       const fmtOccT = dt=>dt.toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"});
       const label12 = t=>{const [h,m]=t.split(":").map(Number); const ap=h>=12?"PM":"AM"; const h12=h%12||12; return `${h12}:${String(m).padStart(2,"0")} ${ap}`;};
-      const slotLabel = i => i===0?"Morning":i===todaySlots.length-1?"Evening":`Dose ${i+1}`;
+      const slotLabel = (slot,i) => { const hour=Number(slot.time?.split(":")[0]); return Number.isFinite(hour) ? (hour<12?"Morning":hour<17?"Afternoon":"Evening") : `Dose ${i+1}`; };
       return `<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:10px 12px;margin-bottom:14px">
-        <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">TODAY'S DOSES</div>
+        <h3 class="nx-today-slots-title">Today's doses</h3>
         ${todaySlots.map((s,i)=>{
           const statusColor = s.status==="taken"?"#7DF9C0":s.status==="skipped"?"var(--t5)":s.status==="moved"?"#A78BFA":s.status==="missed"?"var(--t5)":s.status==="overdue"?"#FF7C7C":s.status==="due_now"?"#F9C87D":s.status==="paused"?"var(--t4)":"var(--t3)";
           const statusText = s.status==="taken"?`✓ Logged ${fmtOccT(new Date(s.dose.date))}`:s.status==="skipped"?"Skipped":s.status==="moved"?"Moved":s.status==="missed"?"Missed":s.status==="overdue"?"Overdue":s.status==="due_now"?"Due now":s.status==="paused"?"Paused":`Due ${label12(s.time)}`;
           const canAct = ["due_now","overdue","due_later_today","upcoming"].includes(s.status);
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<todaySlots.length-1?"border-bottom:1px solid var(--border-sub)":""}">
-            <span style="font-size:11px;color:var(--t3);width:56px;flex-shrink:0">${esc(slotLabel(i))}</span>
-            <span style="font-size:12px;color:${statusColor};flex:1">${statusText}</span>
-            ${canAct?`<button class="logdose" data-name="${esc(name)}" data-occ-time="${esc(s.dateTime)}" style="font-size:10px;color:${c.color};background:${c.color}18;border:1px solid ${c.color}44;border-radius:6px;padding:3px 8px">Log</button>
-            <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Reschedule this dose" style="width:26px;height:26px;flex-shrink:0;background:transparent;border:1px solid var(--border-sub);border-radius:6px;color:#A78BFA;font-size:11px">↺</button>
-            <button class="skipdose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Skip this dose" style="width:26px;height:26px;flex-shrink:0;background:transparent;border:1px solid var(--border-sub);border-radius:6px;color:var(--t4);font-size:11px">⊘</button>`:""}
+          return `<div class="nx-today-slot-row" style="${i<todaySlots.length-1?"border-bottom:1px solid var(--border-sub)":""}">
+            <span class="nx-today-slot-period">${esc(slotLabel(s,i))}</span>
+            <span class="nx-today-slot-status" style="color:${statusColor}">${statusText}</span>
+            ${canAct?`<div class="nx-today-slot-actions"><button class="logdose" data-name="${esc(name)}" data-occ-time="${esc(s.dateTime)}" aria-label="Log ${esc(slotLabel(s,i).toLowerCase())} dose">Log</button>
+            <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Reschedule this dose" aria-label="Reschedule ${esc(slotLabel(s,i).toLowerCase())} dose">Reschedule</button>
+            <button class="skipdose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Skip this dose" aria-label="Skip ${esc(slotLabel(s,i).toLowerCase())} dose">Skip</button></div>`:""}
           </div>`;
         }).join("")}
       </div>`;
@@ -135,6 +135,7 @@ function peptideCardHTML(name, data, opts={}) {
         <label for="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Details</label>
       </div>
       <div class="nx-info-panel nx-info-insights">
+        ${(()=>{const tv=getTimingVariance(data);if(!tv)return "";const mag=Math.abs(tv.avgMinutes),dir=tv.avgMinutes>0?"after":"before";return `<div class="nx-insight-fact"><strong>Logging time pattern</strong><span>${mag<5?"Usually logged near the scheduled time":`Usually logged about ${mag} minutes ${dir} the scheduled time`} · ${tv.sampleSize} records</span></div>`;})()}
         ${nxInsightCount || siteWarn ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
     <div class="nx-insight-list">
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
@@ -156,6 +157,7 @@ function peptideCardHTML(name, data, opts={}) {
         <button class="histtoggle nx-info-history-action" data-name="${esc(name)}">View complete dose history</button>
       </div>
       <div class="nx-info-panel nx-info-details">
+        ${since!=null?`<div class="nx-info-history-row"><span>Since last recorded dose</span><strong>${Math.round(since*10)/10} days</strong></div>`:""}
         <div class="nx-info-panel-title">Schedule information</div>
         <div class="nx-info-history-row"><span>Recorded doses</span><strong>${doses.length}</strong></div>
         <div class="nx-info-history-row"><span>Days on protocol</span><strong>${protocolDays==null?"—":protocolDays}</strong></div>
