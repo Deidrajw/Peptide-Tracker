@@ -569,3 +569,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Protocol detail status semantics (DRAFT)
 - `5764db48`: fix detail Overview active status `In progress` and paused status precedence over elapsed schedule. Presentation only, no user data migration. Latest-head QA, full-app DEMO/LIVE ZIP, physical iPhone validation incomplete; PR #123 draft and production unchanged.
+
+
+### 2026-10-26 — Protocol list/Overview IA cleanup (DRAFT, NOT RELEASED)
+- `ed6b984a` removes duplicated Compound/Completion tabs and list-card expanded details, preserves Overview with compound roadmap and Manage action. `48784383` computes list progress using pause-aware scheduled phase dates; `0d3a3d33` compact card CSS. Affected: Protocol list and dedicated detail navigation. No schema or recorded dose/history changes. QA, user iPhone acceptance, standalone full DEMO/LIVE ZIP, merge/deployment incomplete.
