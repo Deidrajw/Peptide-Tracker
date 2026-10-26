@@ -444,3 +444,8 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-26 — Logs full-day UX approved
 - Logs support **Day View** for all record types on a date and **All Logs** for cross-date type filtering. Selected Calendar day must open full history for that date. Use consistent outline SVG icons instead of emojis. Previous/Today/Next and date picker must remain accessible at mobile widths. Keep existing dose-history and check-in update editing paths, saved dates, supplement selections and delete-confirmation safeguards; no destructive migrations. Design approval does not authorize merge/deployment.
+
+
+## 2026-10-26 — Calendar Logs approved implementation boundary
+- User confirms **Calendar Logs Day View + All Logs approved and implemented** on draft PR #123 branch. Approved implementation does **not** authorize merging or deploying.
+- Preserve historical day-specific records, editors and dose history without rewriting stored dates, localStorage or production accounts. Keep draft PR and isolate full-app DEMO fictional data. Physical iPhone signoff and comprehensive 320/390 light/dark browser verification remain separate gates.
