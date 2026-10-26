@@ -611,3 +611,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Today milestone — source-derived QA gate (2026-10-25)
 - 2026-10-25 new gates on PR #123: JavaScript syntax, 14 Today source assertions, runtime Playwright startup, 320/390 dark/light, no page errors, no horizontal document overflow, exact-source isolated FULL-APP DEMO. No browser result yet, and overdue modals, record edits, multi-vial deductions, site history, completed/uncompleted multi-occurrence states and physical iPhone remain NOT TESTED; these are release blockers.
+
+
+### Today disclosure / typography parity (2026-10-25)
+- 2026-10-25 PR #123 Today disclosure parity: source and JS syntax inspected PASS. Added browser computed-style equality test (background, radius, border, font, size, padding, compound title font/size/weight/letter spacing/line height/text) at 320/390 light/dark, plus paused-card source invariant. Actual browser PASS not yet established; keyboard, click/collapse, paused branch, landscape, dose log/history/overdue, full-app DEMO source isolation and physical iPhone NOT TESTED. Do not report as accepted before tests.
