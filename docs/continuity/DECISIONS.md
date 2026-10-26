@@ -354,3 +354,7 @@
 
 ### 2026-10-25 — Today expanded screenshot audit
 - 2026-10-25 user feedback: use matching compact/expanded compound typography and disclosures; status should appear once, preserve overdue context; align ring with date facts; keep immediately useful Last/Next only, move long-running statistics to Details and logging pattern to Insights; give Today doses normal heading and minimum 44px actions; show Taken today confirmation when a single daily occurrence is recorded. Approved as design refinement only; no deployment authorized.
+
+
+### 2026-10-25 — Critical preview syntax hotfix
+- 2026-10-25 blocker response: syntax errors that stop preview startup take priority over UX polish; apply minimal source edit only, never reset production localStorage or change dose data. The `Taken today` timestamp must close both JavaScript interpolations correctly. Validation requires source JS parse plus browser startup; parse alone is not enough. PR #123 remains preview-only.
