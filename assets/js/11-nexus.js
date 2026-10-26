@@ -1367,11 +1367,11 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
     if(view==="overview"){
       const ring=remaining===null?"—":String(remaining);
       body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+' compounds</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div><button type="button" class="nx-proto-detail-notice">About phase notifications</button>';
-      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp));
+      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
       body.querySelector(".nx-proto-detail-notice").onclick=()=>{show("completion");};
     }else if(view==="compound"){
       body.innerHTML='<div class="nx-proto-detail-title"><strong>Compound timelines</strong><span>'+phaseInfos.length+'</span></div><p class="nx-proto-detail-explain">Select a compound to inspect the approved vertical phase timeline.</p><div class="nx-proto-detail-compound-list">'+(overviewRows||"<p>No compounds added</p>")+'</div><div class="nx-proto-detail-schedule">Schedule: '+esc(p.schedule?.type||"Weekly")+' · '+(Number(p.schedule?.dosesPerDay)||1)+' per scheduled day</div>';
-      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp));
+      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
     }else{
       body.innerHTML='<div class="nx-proto-detail-title"><strong>Completion & next steps</strong></div><div class="nx-proto-detail-completion"><strong>'+esc(label)+'</strong><p>'+(ended&&p.status!=="completed"?"Your planned phases have ended. This does not mean recorded compound use has stopped.":"Completion is recorded only when you explicitly mark this protocol completed.")+'</p><p>Phase change reminders use the existing in-app notification settings; they are not phone push alerts.</p><button type="button" class="nx-proto-detail-manage">Manage this protocol</button></div>';
       body.querySelector(".nx-proto-detail-manage").onclick=()=>manageProtocolMenu(String(p.id));
@@ -1381,7 +1381,7 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
   show(["overview","compound","completion"].includes(initialTab)?initialTab:"overview");
 }
 
-function phaseRoadmapModal(protocolId, compoundName) {
+function phaseRoadmapModal(protocolId, compoundName, returnToDetails=false) {
   const p = state.protocols.find(x=>x.id===protocolId); if(!p) return;
   const c = (p.compounds||[]).find(x=>x.name===compoundName); if(!c) return;
   const cc = cfg(compoundName);
@@ -1390,9 +1390,10 @@ function phaseRoadmapModal(protocolId, compoundName) {
   // Match the canonical pause-aware phase position; do not advance the roadmap while paused.
   const today = (p.status==="paused" && p.pausedAt) ? dayKey(p.pausedAt) : localDate();
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:${cc.color};letter-spacing:1.5px">${esc(compoundName.toUpperCase())} — PHASE ROADMAP</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-phase-roadmap-header">
+      ${returnToDetails?`<button type="button" class="nx-phase-return" aria-label="Back to compound details"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>`:""}
+      <span class="nx-phase-roadmap-title">${esc(compoundName)} · Phase timeline</span>
+      <button id="x" class="nx-phase-roadmap-close" aria-label="Close phase timeline">✕</button>
     </div>
     ${info?.current?`<section class="nx-protocol-phase-current" aria-label="Current compound phase">
       <span class="nx-protocol-phase-eyebrow">CURRENT PHASE</span>
@@ -1420,6 +1421,7 @@ function phaseRoadmapModal(protocolId, compoundName) {
      ${!info?`<div class="hint" style="margin-top:12px">This protocol doesn't have a start date set, so exact phase dates can't be calculated yet.</div>`:""}
   `, cc.color);
   m.querySelector("#x").onclick = closeModal;
+  if(returnToDetails) m.querySelector(".nx-phase-return").onclick=()=>nexusProtocolDetails(protocolId,"compound");
 }
 
 // Protocol lifecycle + edit/delete actions — previously an always-visible Edit pill and ✕
