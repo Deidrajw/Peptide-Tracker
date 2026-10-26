@@ -466,3 +466,7 @@
 
 ### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
 - 2026-10-25 draft PR #123 corrections d4174ac0 (source of duplicate generated-chevron in nexus-disclosures.css), b6222ea9 (remove unnecessary outer Insights border and per-entry dividers), f65255af (CI guard checks). No application storage, history or dose math changes. Browser visual pass and physical iPhone NOT VERIFIED. LIVE ZIP and full isolated DEMO artifacts INCOMPLETE. No release.
+
+
+### 2026-10-25 — Compact Today divider correction
+- 2026-10-25 PR #123 unmerged preview correction: 73ec2a05 targeted compact-card divider CSS; 4208fe9b source regression assertion. No storage, dose, or inventory logic changes. Browser rendered QA NOT TESTED at this commit. DEMO HTML/LIVE ZIP INCOMPLETE; no production release.
