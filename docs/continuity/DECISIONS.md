@@ -563,3 +563,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Plans default and single Intel divider
 - Approved by user: normal entry into Plans from More (or generic Plans quick action) defaults to Goals every time. Explicit Research Queue / Shopping List shortcuts and manual sub-tab switching remain functional. Research card has exactly one separator above Compound Intel, exactly one Intel chevron, and no notes chevron. Preserve all records and navigation destinations.
+
+## 2026-10-26 — Research and Shopping form design
+- User approved aligning the Add/Edit Research and Add/Edit Item modals with premium Nexus styling without adding wizard steps or modifying records. Keep both single-page; reuse original compound picker, values, field IDs, status options, linked goal/protocol choices and save handlers. Visible field labels, one header close action and one sticky Save primary action; no emoji category labels. User-approved one-chevron-per-Research-card rule and Plans→Goals default retained.
