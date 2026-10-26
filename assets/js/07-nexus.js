@@ -231,7 +231,7 @@ function supplyModal(existing, presetName) {
   review.innerHTML='<h3>Review your kit</h3><div class="nx-kit-wizard-summary" aria-live="polite"></div><p class="nx-kit-wizard-review-note">Confirm these details before saving. Vial counts and balances are updated only by the original Save action.</p>';
   const stepHeader=document.createElement("div");
   stepHeader.className="nx-kit-wizard-progress";
-  stepHeader.innerHTML='<div class="nx-kit-wizard-step-heading"><span id="nx-kit-step-label">Step 1 of 3 · Kit details</span><span id="nx-kit-step-count">1 / 3</span></div><div class="nx-kit-wizard-track"><span></span></div>';
+  stepHeader.innerHTML='<div class="nx-kit-wizard-step-heading"><span id="nx-kit-step-label">Step 1 of 3 · Kit details</span></div><div class="nx-kit-wizard-track"><span></span></div>';
   body.insertBefore(stepHeader,stages[0]);
   const nav=document.createElement("div");nav.className="nx-kit-wizard-navigation";
   nav.innerHTML='<p class="nx-kit-wizard-error" role="alert" hidden></p><div class="nx-kit-wizard-buttons"><button type="button" id="nx-kit-back">Back</button><button type="button" id="nx-kit-next">Continue</button></div>';
