@@ -744,11 +744,11 @@ function wireBody() {
     };
     if(selected)selected.onclick=()=>{
       const ids=choices().filter(x=>x.checked).map(x=>x.dataset.id);
-      if(ids.length)confirmAction("Clear "+ids.length+" selected notice"+(ids.length===1?"":"s")+"? You can restore them later.",()=>dismissIds(ids));
+      if(ids.length){closeAlerts();confirmAction("Clear "+ids.length+" selected notice"+(ids.length===1?"":"s")+"? You can restore them later.",()=>dismissIds(ids));}
     };
     if(clearAll)clearAll.onclick=()=>{
       const ids=choices().map(x=>x.dataset.id);
-      if(ids.length)confirmAction("Clear all "+ids.length+" notices? You can restore them later.",()=>dismissIds(ids));
+      if(ids.length){closeAlerts();confirmAction("Clear all "+ids.length+" notices? You can restore them later.",()=>dismissIds(ids));}
     };
     ["nx-alert-close","nx-alert-dismiss"].forEach(id=>{const b=$("#"+id);if(b)b.onclick=closeAlerts;});
     alertOverlay.onkeydown=e=>{
