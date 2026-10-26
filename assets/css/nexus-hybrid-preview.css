@@ -1390,3 +1390,40 @@ html body .nexus-screen-home .nx-compound-card .compound-compact-tap .nx-card-fa
  border:0!important;border-top:0!important;border-bottom:0!important;
  padding-top:0!important;
 }
+
+
+/* Today 2.0 — compact saved-record tracking and canonical occurrence activity. */
+.nx-daily-tracking-body{padding:12px 16px 14px!important}
+.nx-daily-track-progress{width:100%;height:7px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin:10px 0 12px}
+.nx-daily-track-progress>span{display:block;height:100%;border-radius:inherit;background:#B899E4;transition:width .18s ease}
+.nx-daily-tracking-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:1px;padding:8px 0}
+.nx-track-preference{display:flex;gap:10px;align-items:center;min-height:44px;min-width:0;color:var(--t1)}
+.nx-track-preference input{width:18px;height:18px;accent-color:#A78BFA;flex-shrink:0}
+.nx-daily-track-name{font-size:13px;font-weight:650}
+.nx-daily-track-status{grid-column:1;min-width:0;padding-left:28px;color:var(--t3);font-size:12px}
+.nx-track-action{grid-column:2;grid-row:1 / span 2;min-width:58px;min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
+.nx-daily-track-note{font-size:11px;color:var(--t4);line-height:1.5;margin:9px 0 0}
+.nx-today-activity{border-radius:18px;padding:16px;margin:14px 0;background:var(--surface);box-shadow:0 4px 16px rgba(14,8,25,.05)}
+.nx-today-activity-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nx-today-activity-head h3{font-size:16px;margin:0;color:var(--t1);font-weight:700}
+.nx-activity-segments{display:flex;align-items:center;padding:3px;border-radius:99px;background:var(--surface-2);gap:2px}
+.nx-activity-period{border:0;min-height:44px;padding:0 11px;border-radius:99px;color:var(--t3);font-size:12px;font-weight:650;background:transparent}
+.nx-activity-period[aria-pressed=true]{color:var(--t1);background:var(--surface-3);box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.nx-activity-panel[hidden]{display:none!important}
+.nx-activity-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:14px}
+.nx-activity-top>strong{font-size:28px;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--t1)}
+.nx-activity-top small{font-size:17px;color:var(--t3)}
+.nx-activity-top>span{font-size:12px;font-weight:650;color:var(--t3)}
+.nx-activity-sub{font-size:12px;color:var(--t4);margin:5px 0}
+.nx-activity-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:8px}
+.nx-activity-stats>span{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--t3)}
+.nx-activity-stats strong{font-size:18px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.nx-today-coming-up{padding:14px 16px;border-radius:18px;background:var(--surface);margin:12px 0}
+.nx-today-coming-up h3{font-size:16px;margin:0;color:var(--t1)}
+.nx-coming-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0}
+.nx-coming-row-name{font-size:13px;font-weight:650;color:var(--t1)}
+.nx-coming-row-date{font-size:12px;color:var(--t3);margin-top:3px}
+.nx-coming-row-status{font-size:11px;color:var(--t4);white-space:nowrap}
+.nx-coming-calendar{width:100%;min-height:44px;border-radius:11px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t1);font-weight:650;margin-top:6px}
+@media(max-width:350px){.nx-today-activity{padding:12px}.nx-activity-period{padding:0 8px}.nx-daily-tracking-body{padding:10px 12px!important}}
+@media(prefers-reduced-motion:reduce){.nx-daily-track-progress>span{transition:none}}
