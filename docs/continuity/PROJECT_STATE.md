@@ -719,3 +719,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Today expanded-card follow-up
 - New Today expanded-card hierarchy coded on draft PR #123 at JS commit 464e07de and CSS commit fd66a187. Last/Next fact comparison and semantic timing layout changed; dose math, handlers, saved data unchanged. Browser QA, 320/390 dual-theme visual inspection, iPhone and exact-head LIVE/DEMO build NOT TESTED. No merge/deploy. NEXT ACTION: fix failed browser QA and inspect rendered Today expanded, tracking, weekly sections.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- User iPhone screenshot review identified dense expanded Today insights, three competing notices and unwanted site-rotation emoji. Branch commits cf74e60b + 6ff6ec2c added pill-shaped native-radio Insights / History / Details switcher; kept overdue badges/primary logging outside tabs, moved site rotation text into Insights and removed rotation emoji, preserved content and dose handlers. Browser QA for this head NOT TESTED; no merge/deploy. NEXT ACTION: verify latest-head CI and actual 320/390 light/dark segmented-panel interactions before daily tracking/weekly summary.
