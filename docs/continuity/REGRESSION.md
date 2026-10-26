@@ -657,3 +657,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ### 2026-10-25 — Today dark gradient refinement
 - Source: dark-only CSS scoped to `.nexus-today-hero`, its pseudo-elements and progress bar; light mode and computation untouched.
 - **NOT TESTED latest head:** computed visual contrast and screenshots at 320/390 dark/light, iPhone review, no horizontal overflow, all QA gates. No release or production deployment.
+
+
+### 2026-10-25 — Today dark hero visual acceptance
+- Branch commit `04c5f1c`: remove upper-right glow from dark Today summary; source-level CSS review only. 320/390 dark and light snapshots, ring legibility and physical iPhone acceptance: NOT TESTED at new head. No app data behavior changed.
