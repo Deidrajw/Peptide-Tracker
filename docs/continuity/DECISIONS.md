@@ -566,3 +566,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Research and Shopping form design
 - User approved aligning the Add/Edit Research and Add/Edit Item modals with premium Nexus styling without adding wizard steps or modifying records. Keep both single-page; reuse original compound picker, values, field IDs, status options, linked goal/protocol choices and save handlers. Visible field labels, one header close action and one sticky Save primary action; no emoji category labels. User-approved one-chevron-per-Research-card rule and Plans→Goals default retained.
+
+## 2026-10-26 — Stash parity polish implementation scope
+- The existing Stash hierarchy stays authoritative, including active/frozen kits, open vial and blend math, prepared batches, history and deductions. Add/Edit Kit receives presentation-only header, associated labels, one sticky primary action, touch/focus and reduced redundant panel depth. Prepared list uses one outline chevron. Needs-attention actions gain a 44px minimum. Existing separate blend editor unchanged until source-faithful parity tests; never silently convert formats or fields.
