@@ -891,3 +891,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Proposed guided Stash form acceptance (NOT TESTED)
 - Add/Edit kit 3-step flow, back preservation, searchable compound combobox and existing choices; blend vs ordinary kit parity; disabled pre-existing vial count/size edit; open-vial controls and unit conversion; cost/notes/expiry; Review summary and exactly one authoritative Save; cancelling without writes. Prepared inventory: list, prepare choice, single/mixed syringe detail, source allocations, prepared counts, logging/administration, delete/refund. Vial lifecycle: open/reconstitute/finish/reopen/adjust/outflow/undo. Test 320/390 both themes LIVE and isolated DEMO; keyboard, VoiceOver and physical iPhone pending. No new Pass claimed.
+
+## 2026-10-26 — Guided Stash candidate verification status
+- PASS (automated workflow status at exact PR branch head `5a9d6c7a`): mobile 40417820123; build/parity 40417820282. Individual guided wizard and keyboard tests NOT verified as covered by these workflow summaries.
+- NOT TESTED manually: 320/390 light/dark wizard screenshots, searchable picker arrows/Enter/Escape/blur, original-select synchronization, screen reader semantics, positive vial counts/strength, zero/negative/excess remaining quantities, unit conversion, Back/Continue value preservation, correct Review, saving only once on step 3, blend editor parity, prepared batch refund, vial lifecycle and physical iPhone.
+- NOT VERIFIED: independently downloaded and inspected complete full-app DEMO + LIVE ZIP for head; artifact 12696280782 exists.
