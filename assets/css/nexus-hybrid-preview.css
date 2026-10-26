@@ -2365,3 +2365,24 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-guided-blend-editor .nx-blend-review-caution{font-size:12px;line-height:1.5;color:var(--t3)}
 @media(max-width:360px){.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 68px 44px;gap:5px!important}}
 @media(prefers-reduced-motion:reduce){.nx-guided-blend-editor .nx-blend-wizard-track i{transition:none}}
+
+/* 2026-10-26: Guided Stash editor repair — one field, one action, consistent step hierarchy. */
+.nx-stash-kit-editor .nx-kit-original-select{display:none!important}
+.nx-stash-kit-editor .nx-kit-combobox{position:relative;width:100%;min-width:0;margin-bottom:14px}
+.nx-stash-kit-editor #nx-kit-combobox-input{display:block;width:100%;min-height:48px;font-size:16px;color:var(--t1);border-radius:13px}
+.nx-stash-kit-editor #nx-kit-combobox-list{display:block;max-height:220px;overflow-y:auto;overscroll-behavior:contain;background:var(--surface-2);border:1px solid var(--bdr);border-radius:13px;padding:7px;margin:6px 0 0}
+.nx-stash-kit-editor #nx-kit-combobox-list[hidden]{display:none!important}
+.nx-stash-kit-editor #nx-kit-combobox-list button{display:block;width:100%;background:transparent;border:0;color:var(--t1);text-align:left;padding:12px;min-height:48px;border-radius:9px}
+.nx-stash-kit-editor #nx-kit-combobox-list button:focus-visible{outline:2px solid #9e83e8}
+.nx-stash-kit-editor .nx-kit-wizard-stage[hidden],.nx-stash-kit-editor .nx-kit-wizard-navigation button[hidden]{display:none!important}
+.nx-stash-kit-editor .nx-kit-wizard-footer{position:sticky;bottom:0;z-index:8;background:var(--bg);padding:12px 0 max(12px,env(safe-area-inset-bottom))}
+.nx-stash-kit-editor .nx-kit-wizard-buttons{display:flex;gap:10px}
+.nx-stash-kit-editor #nx-kit-next,.nx-stash-kit-editor #ssave{width:100%;flex:1;min-height:48px;margin:0}
+.nx-guided-blend-editor .nx-blend-compound-trigger{display:block!important;width:100%;min-height:48px;font-size:16px;text-align:left;cursor:text;padding:10px 14px}
+.nx-guided-blend-editor .nx-blend-compound-popup{margin-top:6px}
+.nx-guided-blend-editor .nx-blend-wizard-progress{display:flex;flex-direction:column;gap:9px;align-items:stretch}
+.nx-guided-blend-editor .nx-blend-wizard-progress>strong{font-size:14px}
+.nx-guided-blend-editor .nx-blend-wizard-actions{display:flex;gap:10px;align-items:stretch}
+.nx-guided-blend-editor #nx-blend-next,.nx-guided-blend-editor #bk-save{width:100%;flex:1;min-height:48px}
+.nx-guided-blend-editor .nx-blend-wizard-actions button[hidden]{display:none!important}
+@media(max-width:390px){.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 76px 44px;gap:6px!important}}
