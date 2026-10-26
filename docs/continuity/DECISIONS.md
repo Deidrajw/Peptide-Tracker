@@ -366,3 +366,7 @@
 
 ### Today milestone — source-derived QA gate (2026-10-25)
 - Preview test policy: source-specific Today changes must be tested against a FULL APP DEMO rebuilt from the exact design-branch head, never a stale checked-in demo snapshot. Card UX acceptance means state-complete testing and user visual approval, not source string assertions alone. PR #123 remains draft.
+
+
+### Today disclosure / typography parity (2026-10-25)
+- 2026-10-25: compact/expanded View details and Hide details are ONE shared UI: `nxTodayDisclosureInner(expanded)` text plus same outline SVG, with only label/rotation differing; both wrapped in `.nx-today-disclosure`. Same `.nx-today-compound-name` class for typography in both states, including paused compact card. No ellipsis reintroduced. Design preview code, not yet user accepted or merged.
