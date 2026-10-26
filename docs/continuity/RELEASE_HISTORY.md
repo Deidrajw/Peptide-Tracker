@@ -581,3 +581,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Sprint 2A QA candidate verified (DRAFT, NOT RELEASED)
 - Verified PR head `17112406`, merge SHA `c6885efd`: mobile run 40359787123 SUCCESS, build/parity run 40359787121 SUCCESS. GitHub artifact 12667882258 contains 2.49 MB standalone FULL DEMO HTML, 0.88 MB offline DEMO ZIP, 1.79 MB 21-file LIVE ZIP and QA evidence; manifest reports ephemeral demo storage and no sync, physical iPhone untested. Browser matrix 8 cases and amended chevron navigation 8/8 PASS; Plans Research contrast 8/8 PASS. Cloudflare mismatch expected because draft not deployed. Commit `b155134c` adds screenshot capture; latest-head screenshot run pending. No data migration, merge, deployment, or published version bump.
+
+
+### 2026-10-26 — Screenshot visual QA refinement (DRAFT)
+- Successful merge-ref test `2adf5eea` completed mobile and full-browser suites, produced full DEMO HTML, 21-file LIVE ZIP, offline demo ZIP and 16 Protocol screen captures. Inspecting captures revealed opening-frame fade/blur, so `2d67b356` adds 450ms settling and bounds checks to visual QA; latest-head visual validation pending. Application data/code unchanged by test correction. PR draft, no release.
