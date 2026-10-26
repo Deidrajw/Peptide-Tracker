@@ -763,7 +763,8 @@ function doseModal(name, existing, occTime) {
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const updateDoseReview=()=>{
     const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
-    review.querySelector("#nx-dose-review-rows").innerHTML=row("Compound",name)+row("Amount",doseVal("dose")+" "+c.unit)+row("Date",doseVal("date"))+row("Source",selectedSource==="fresh"?(activeKit()?.name||"Fresh from vial"):"Prepared dose")+row("Site",doseVal("site"));
+    const allocationText=[m.querySelector("#alloc-panel")?.innerText,m.querySelector("#nx-blend-dose-breakdown")?.innerText].filter(Boolean).join(" · ").trim();
+    review.querySelector("#nx-dose-review-rows").innerHTML=row("Compound",name)+row("Amount",doseVal("dose")+" "+c.unit)+row("Date",doseVal("date"))+row("Source",selectedSource==="fresh"?(activeKit()?.name||"Fresh from vial"):"Prepared dose")+row("Site",doseVal("site"))+row("Allocation",allocationText||"Validate amount and available source before confirming");
   };
   const paintDoseUi=()=>{
     const guided=doseUiMode==="guided";
