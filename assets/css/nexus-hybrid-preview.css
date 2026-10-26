@@ -2109,3 +2109,15 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
   background:#f0e9f6!important;
   border-color:#d7c7e3!important;
 }
+
+
+/* Sprint 02B: contextual goal connection in Protocol Overview. */
+.nx-proto-linked-goal-section{margin-top:20px}
+.nx-proto-linked-goal{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;color:var(--t1);text-align:left}
+.nx-proto-goal-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:12px;background:var(--surface-3);color:#a78bfa}
+.nx-proto-goal-icon svg{width:21px;height:21px}
+.nx-proto-goal-copy{display:grid;gap:3px;min-width:0;flex:1}
+.nx-proto-goal-copy strong{font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.nx-proto-goal-copy small{font-size:11px;color:var(--t3);line-height:1.4}
+.nx-proto-goal-arrow{width:18px;height:18px;flex-shrink:0;color:var(--t3)}
+.nx-proto-linked-goal:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
