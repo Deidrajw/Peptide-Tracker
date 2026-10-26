@@ -583,3 +583,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Guided blend workflow acceptance follow-up
 - User approved the three-step guided Blend Kit workflow and the screenshot-style dropdown with embedded search. Current source `assets/js/03-nexus.js` already includes a three-step blend wizard and component dropdown search, preserving original `#bk-save` handler. Review uncovered two BAC inputs on new blends (`#bk-bac` and `#bk-bac-edit`) with potentially divergent displayed review/save semantics. Existing edit must preserve opened-vial ratios and historical allocations. Do not merge/deploy until targeted validation, UI acceptance, and full-app artifact inspection. Next action: reconcile BAC UI and test blend save and history at 320/390 light/dark.
+
+## 2026-10-26 — Approved guided Blend BAC single-source interpretation
+- A blend has one BAC-water-per-vial input in Preparation & storage (`#bk-bac-edit`), and final Review must display the exact value the existing authoritative `#bk-save` will persist for a new kit. The old duplicate new-kit `#bk-bac` field is removed. Preserve the existing composition and history protections. Code is draft; not release approval.
