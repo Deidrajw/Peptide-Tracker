@@ -797,3 +797,11 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Compact Today divider correction
 - Compact Today card divider removal committed on design PR #123: 73ec2a05 removes internal header, facts, and supporting-context border rails in CSS; 4208fe9b adds source regression check. Main remains unchanged. Browser visual 320/390 and dual-theme QA pending. ONE NEXT ACTION: verify exact-head screenshot and computed border widths for compact cards, then resume Today acceptance.
+
+
+## 2026-10-25 — PR #123 full browser QA diagnostic (unmerged)
+- Verified run `40261233755` failed in `tools/validate-protocol-design.mjs:56` while locating obsolete `.nx-expanded-compound-head > span.mono`. Actual shared expanded compound markup in `assets/js/08-nexus.js` uses `.nx-expanded-name`. Earlier syntax/package/general browser/Check-In tests in same workflow passed; full workflow did NOT pass.
+- Targeted test selector correction on draft branch commit `07416c4aa68f2692d4aac3c22c379d3ad4a7dea0`, changing assertion to `.nx-expanded-compound-head > .nx-expanded-name`. No production code, dose math, storage or migrations changed by this commit.
+- Exact-head CI result for corrected selector: PENDING / NOT VERIFIED. Today Daily Tracking, Activity, Coming Up and Weekly implementation remain INCOMPLETE on this session; do not claim release approval.
+- PR #123 must remain DRAFT and unmerged; primary Cloudflare production must remain untouched until explicit approval.
+- **ONE NEXT ACTION:** inspect the next full QA run at `07416c4`, resolve any additional stale Protocol assertions, then implement approved Today tracking/reporting improvements on the draft branch with source-parity artifacts and regressions.
