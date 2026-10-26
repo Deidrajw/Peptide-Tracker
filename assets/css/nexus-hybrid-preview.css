@@ -1047,3 +1047,61 @@ html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure .nx-compou
 html body .nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{
  text-decoration:none!important;
 }
+
+/* Today visual hierarchy acceptance: retain information, remove redundant competition. */
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-expanded-name{
+ font-family:inherit!important;font-size:16px!important;font-weight:750!important;
+ letter-spacing:-.3px!important;text-transform:none!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-expanded-compound-head{
+ border-bottom:1px solid var(--border-sub)!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-compound-timing-row{
+ align-items:center!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-expanded-last-dose{
+ display:block;font-family:inherit;font-size:12px;line-height:1.5;font-weight:500;
+ color:var(--t3);margin-top:3px;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slots-title{
+ margin:0 0 12px!important;font-family:inherit!important;
+ font-size:15px!important;font-weight:750!important;letter-spacing:-.2px!important;
+ text-transform:none!important;color:var(--t1)!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-row{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:9px!important;padding:12px 0!important;align-items:center!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-period{
+ color:var(--t2)!important;font-size:13px!important;font-weight:650!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-status{
+ font-size:13px!important;line-height:1.4!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-actions{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-actions button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;min-width:0!important;min-height:46px!important;
+ background:var(--surface-3)!important;border:1px solid var(--border-sub)!important;
+ border-radius:11px!important;padding:9px 4px!important;
+ font-family:inherit!important;font-size:12px!important;font-weight:650!important;
+ color:var(--t2)!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-actions .logdose{
+ background:var(--surface)!important;color:var(--t1)!important;
+ border-color:var(--border)!important;
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-fact{
+ display:grid;gap:4px;padding:12px 4px;border-bottom:1px solid var(--border-sub);
+ font-size:13px;line-height:1.45;color:var(--t2);
+}
+html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-insight-fact span{
+ color:var(--t3);font-size:12px;
+}
+@media(max-width:359px){
+ html body .nexus-screen-home .nx-hybrid-expanded-compound .nx-today-slot-actions button{
+ font-size:11px!important;padding:8px 2px!important;
+ }
+}
