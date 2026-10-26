@@ -496,3 +496,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Approved vertical phase timeline
 User explicitly approved the vertical phase timeline proposal. It replaces the flat phase list, emphasizes current stage, and distinguishes completed/current/upcoming. Keep existing phase dates and pause-aware calculation. Other proposed expanded-card, elapsed schedule prompt and builder redesign remain unapproved/not coded.
+
+
+## 2026-10-26 — Simplify expanded Protocol compound content after approved roadmap
+- User approved vertical phase timeline and said continue. Replace duplicate mini Gantt, route pill, and active-dosing text in expanded Schedule & phases with one coherent per-compound progress row linking to the existing approved vertical roadmap. Preserve schedule cadence and goal details, and avoid equating planned phases with administered doses. No new storage or dosage behavior. PR remains draft.
