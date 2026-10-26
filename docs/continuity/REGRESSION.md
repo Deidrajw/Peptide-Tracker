@@ -834,3 +834,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Contextual Plans links: NOT TESTED latest head
 - Verify at 320/390 light/dark: Protocol Overview → correct linked Goal → Connections → correct Protocol Overview, missing/unlinked goal, close/back/scroll, multiple protocols, touch size, no saved-data writes. Preserve protected dose, phase, pause and history tests.
+
+## 2026-10-26 — Goals-first design new-head matrix
+- NOT TESTED on new markup/style commits: 320/390 × dark/light Goals list titles/statuses/target dates; numeric goal valid baseline/target/unit/source and measured value; invalid target, unit mismatch, missing weights; subjective/milestones/exploratory absent numeric bar; linked/unlinked protocol count and Goal detail Connections → Protocol Overview → Goal; 44–48px targets and overflow.
+- NOT TESTED new-head: preserved Goal edit/delete, Check-In original record activity, Protocol and phase/pause history, dose/vial/Combo, Stash, Calendar, backups and production localStorage isolation. Physical iPhone/VoiceOver not tested. Historic passing CI for pre-change heads is not a new-head PASS.
