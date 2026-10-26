@@ -808,3 +808,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol de-duplication latest-head checks
 - NOT TESTED: 320/390 dark/light list compactness, no old details expansion or extra detail tabs, proper View overview entry, correct ring and list progress for paused, completed, ended, unscheduled, multi-compound; compound tap → approved vertical roadmap → back to Overview, bottom-sheet close, Manage edit/pause/resume/complete confirmation, activation and first dose; unchanged dose history, drafts, inventory and stored data. Previous browser run 40355170877 failed Plans Research manage-surface contrast; do not claim latest-head Pass. Full source packages and physical iPhone not verified.
+
+
+## 2026-10-26 — Browser QA triage and new navigation assertion
+- **FAILED prior head:** run 40358780283 stopped in `validate-chevron-unification.mjs` with `missing .nexus-protocol-details>summary`: a test for intentionally retired content, not proof that new navigation is broken. Its Browser matrix and Protocol candidate 8-session suites completed, but aggregate result FAIL.
+- **NEW NOT YET VERIFIED:** `49484971` tests 320px/390px, light/dark, LIVE/DEMO: no retired inline disclosure, list View Overview, Overview progress ring, compound card, vertical phase roadmap, back to Overview, close. Other protected flows in same suite remain.
+- **Potential remaining FAIL targeted:** Plans Research manage control had contrast assertion failure at older heads. `80289b93` corrects selector specificity. Await new-head browser result; don't mark Pass until evidence.
