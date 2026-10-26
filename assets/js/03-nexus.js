@@ -832,7 +832,7 @@ function addBlendKitModal(blendNameOrKit) {
 
     ${!isEdit?`<div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1"><label class="field-label">VIALS ON HAND</label><input id="bk-vials" type="number" min="1" class="inp" value="1"></div>
-      <div style="flex:1"><label class="field-label">BAC WATER (mL)</label><input id="bk-bac" type="number" step="0.1" class="inp" placeholder="e.g. 2"></div>
+      <div style="flex:1"><label class="field-label" for="bk-bac-edit">BAC WATER (mL)</label><p class="hint" style="margin:8px 0">Set the per-vial BAC water amount in Preparation & storage.</p></div>
     </div>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" checked style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
     <div style="display:flex;gap:10px;margin-bottom:12px">
@@ -893,12 +893,11 @@ function addBlendKitModal(blendNameOrKit) {
         if(!isEdit){const n=Number(m.querySelector("#bk-vials")?.value);if(!Number.isSafeInteger(n)||n<1)return "Enter a positive whole number of vials.";}
         const ex=Number(m.querySelector("#bk-expiry")?.value),water=Number(m.querySelector("#bk-bac-edit")?.value);
         if(!Number.isSafeInteger(ex)||ex<1||ex>3650||!Number.isFinite(water)||water<0)return "Check expiry days and BAC water.";
-        if(!isEdit){const initial=Number(m.querySelector("#bk-bac")?.value);if(!Number.isFinite(initial)||initial<0)return "BAC water cannot be negative.";}
       }
       return "";
     };
     const review=()=>{
-      const rows=[["Blend",isEdit?existingKit.name:name||blendName],...composition.map(c=>[c.compound,c.mg+" mg per vial"]),["Total strength",composition.reduce((t,c)=>t+Number(c.mg||0),0)+" mg per vial"],["Vials",isEdit?"Existing vial counts unchanged":m.querySelector("#bk-vials")?.value],["Already open",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One vial":"No")],["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],["Expiry",m.querySelector("#bk-expiry")?.value+" days"],["BAC water",m.querySelector("#bk-bac-edit")?.value+" mL"]];
+      const rows=[["Blend",isEdit?existingKit.name:name||blendName],...composition.map(c=>[c.compound,c.mg+" mg per vial"]),["Total strength",composition.reduce((t,c)=>t+Number(c.mg||0),0)+" mg per vial"],["Vials",isEdit?"Existing vial counts unchanged":m.querySelector("#bk-vials")?.value],["Already open",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One vial":"No")],["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],["Expiry",m.querySelector("#bk-expiry")?.value+" days"],["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],["Cost",m.querySelector("#bk-cost")?.value?("CAD $"+m.querySelector("#bk-cost").value):"Not provided"],["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"]];
       summary.innerHTML='<h3>Review blend inventory</h3><p>Confirm the component amounts per physical vial before saving.</p>'+rows.map(([k,v])=>'<div><span>'+safe(k)+'</span><strong>'+safe(v)+'</strong></div>').join("")+'<p class="nx-blend-review-caution">'+(isEdit?"Existing opened vial ratios and all historical doses remain unchanged. Only the future-vial template and kit details are updated.":"One physical blended vial is recorded per vial, not separate kits for each component.")+'</p>';
     };
     const paint=()=>{
@@ -941,7 +940,8 @@ function addBlendKitModal(blendNameOrKit) {
     }
 
     const totalVials = Math.max(1, parseInt(m.querySelector("#bk-vials").value)||1);
-    const bacMl = parseFloat(m.querySelector("#bk-bac").value)||0;
+    // The single visible BAC field is shared by Review and the authoritative save pathway.
+    const bacMl = Number(m.querySelector("#bk-bac-edit").value)||0;
     const oneActive = m.querySelector("#bk-active").checked;
     const kit = {
       id: uid(), name: finalName, isBlend: true, composition: validComponents.map(c=>({...c})),
