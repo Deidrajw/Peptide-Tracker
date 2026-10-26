@@ -667,3 +667,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Stash test harness correction (DRAFT, unreleased)
 - `6d209ed5` updates outdated card QA for guided Kit staged Save: hidden before Review, visible and >=44px on Review. Triggered after full build `40421697164` failed on hidden-button sizing; preceding Stash Actions, Combo, Log Dose, vial-source checks passed in that run. New-head CI and artifacts pending; production unchanged.
+
+### 2026-10-26 — Guided Stash correction automated candidate (DRAFT / NOT RELEASED)
+- At `6d209ed5`, GitHub mobile workflow 40422263763 SUCCESS and browser build 40422263758 SUCCESS after test updated to navigate to Kit Review; original authoritative inventory handlers unchanged. New later test-only commits ed77a3e7 and dac2ba4a capture 320/390 × dark/light × LIVE/DEMO real Kit/Blend step screenshots. Their CI and images pending independent inspection. Production unchanged; no iPhone acceptance or merge/deploy.
