@@ -1488,20 +1488,31 @@ function protocolsView() {
     const compounds = p.compounds||[];
     const names = compounds.map(c=>c.name).filter(Boolean);
     const shortNames = names.slice(0,2).map(esc).join(" · ") + (names.length>2 ? ` · +${names.length-2} more` : "");
-    return `<div class="card nexus-protocol-card" style="border-color:${sc.color}33;margin-bottom:10px">
+    const phaseInfo=compounds.length ? compoundPhaseStatus(p,compounds[0]) : null;
+    const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
+    const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
+    const phaseTotal=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.totalWeeks)?phaseInfo.totalWeeks:null;
+    const phaseCaption=phaseInfo?.done?"Phases complete":phaseInfo?.isRest?"Rest phase":phaseWeek&&phaseTotal?`Week ${phaseWeek} of ${phaseTotal}`:"See schedule";
+    const startCaption=p.startDate?`Started ${fmtDate(p.startDate)}`:"Start date not set";
+    const goalRef=p.linkedGoalId?(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId)):null;
+    return `<div class="card nexus-protocol-card nx-protocol-2-card" style="border-color:${sc.color}33;margin-bottom:10px">
       <div class="nexus-protocol-card-head">
         <div style="flex:1;min-width:0">
           <div class="nx-proto-title">${esc(p.name)}</div><div class="nx-card-status">${statusBadge(sc.label, sc.color)}</div>
-          ${p.goal?`<div class="nexus-protocol-muted">${esc(p.goal)}</div>`:""}
-          ${p.linkedGoalId?(()=>{const g=(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId));return g?`<div class="nexus-protocol-muted">Goal: ${esc(g.name)}</div>`:`<div class="nexus-protocol-muted">Linked goal unavailable · edit to relink</div>`;})():""}
         </div>
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
-      <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"}${p.startDate?` · Started ${fmtDate(p.startDate)}`:""}</div>
+      <div class="nx-protocol-2-overview" aria-label="Protocol at a glance">
+        <div><span class="nx-protocol-2-label">CURRENT PHASE</span><strong>${esc(phaseCaption)}</strong></div>
+        <div><span class="nx-protocol-2-label">SCHEDULE</span><strong>${esc(p.schedule?.type||"Weekly")}</strong></div>
+      </div>
+      <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"} · ${esc(startCaption)}${totalPhaseWeeks?` · ${totalPhaseWeeks} planned weeks`:""}</div>
       <details class="nexus-protocol-details">
         <summary><span>Schedule &amp; phases</span></summary>
         <div class="nexus-protocol-details-body">
+          ${p.goal?`<div class="nx-protocol-2-goal"><strong>Purpose</strong><span>${esc(p.goal)}</span></div>`:""}
+          ${p.linkedGoalId?`<div class="nx-protocol-2-goal"><strong>Linked goal</strong><span>${goalRef?esc(goalRef.name):"Linked goal unavailable · edit to relink"}</span></div>`:""}
           <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
           <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
           ${compounds.map(c=>`<div class="nexus-protocol-compound"><span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>${compoundDetailRow(p,c)}</div>`).join("")}
@@ -1608,7 +1619,7 @@ function plansView() {
     const active=goals.filter(g=>!g.status||g.status==="active");
     const other=goals.filter(g=>g.status&&g.status!=="active");
     content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
-    ${active.map(g=>`<div class="nx-plan-item">
+    ${active.map(g=>`<div class="nx-plan-item nx-plan-2-goal">
       <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="margin-top:2px;min-height:44px;padding:8px 0;color:#A78BFA;background:transparent;text-align:left;font-size:12px;font-weight:650">View goal</button><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${manageBtn("goal",g.id)}</div>
 
     </div>`).join("")}
@@ -1616,7 +1627,7 @@ function plansView() {
     <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
   } else if(sub==="research"){
     content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
-    ${research.map(r=>`<div class="nx-research-card" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin-bottom:10px">
+    ${research.map(r=>`<div class="nx-research-card nx-plan-2-research" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin-bottom:10px">
       <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-research-title">${esc(r.compound)}</div><div class="nx-card-status">${statusPill(r.status||"researching",resStatus)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${manageBtn("research",r.id)}</div>
       <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>${r.reason?`<div class="nx-research-reason-label">RESEARCH REASON</div><div class="nx-research-reason">${esc(r.reason)}</div>`:`<div class="nx-research-empty">No research reason added yet.</div>`}
       ${r.notes?`<div class="nx-research-note">${esc(r.notes)}</div>`:""}
