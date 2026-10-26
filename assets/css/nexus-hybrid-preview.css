@@ -692,9 +692,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-hybrid-attention-row .inv-notic
  margin-top:7px!important;font-size:12px!important;line-height:1.5!important;
 }
 .nexus-screen-home .nx-compound-card .nx-card-facts {
- gap:13px!important;margin-top:17px!important;
- padding:15px 0 13px!important;border-top:1px solid var(--border-sub)!important;
- border-bottom:1px solid var(--border-sub)!important;
+ gap:13px!important;margin-top:19px!important;
+ padding:0!important;border:0!important;
 }
 .nexus-screen-home .nx-compound-card .nx-card-fact-label{
  font-size:10px!important;letter-spacing:.6px!important;color:var(--t3)!important;
@@ -944,6 +943,7 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
  display:grid!important;
  grid-template-columns:repeat(auto-fit,minmax(min(100%,126px),1fr))!important;
  gap:8px!important;
+ padding-top:0!important;border-top:0!important;margin-top:18px!important;
 }
 .nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{
  display:inline-flex;align-items:center;justify-content:center;
