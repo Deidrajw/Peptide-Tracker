@@ -728,3 +728,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | 21-file LIVE root ZIP and standalone fully embedded DEMO, isolated fictional storage | PASS artifact #12630810614 independent ZIP/manifest inspection |
 | Screenshot render of Logs 320/390 dark/light in both LIVE and DEMO | PASS presence and visual inspection of dark390/light320; screenshot top partially scrolled |
 | Physical iPhone Safari, screen reader, keyboard safe-area, real saved-data histories and Cloudflare preview served bytes | NOT TESTED / NOT VERIFIED |
+
+
+## 2026-10-26 — Draft PR #123 Calendar Logs acceptance checkpoint
+- PR head observed `d6e3dfc4bf60592c7eb7296aa3038785d40fbef7`, open/draft. Calendar Day View + All Logs coded per user handoff; actual behavior not yet independently accepted.
+- **PASS (GitHub Actions automated mobile forms):** run [40334643562](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40334643562), completed success. Do not extrapolate this to history editing, vial mathematics or physical iPhone.
+- **PASS (CI steps only):** source JS validation, exact-source LIVE/DEMO builder and required file checks in run [40334643538](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40334643538).
+- **IN PROGRESS:** same run browser matrix 320/390px light/dark and complete artifact upload; artifacts list empty at check. Mark full browser/DEMO isolation and parity **NOT YET VERIFIED** pending result files.
+- **NOT TESTED:** real iPhone Calendar tap/day navigation, All Logs filtering, edit correct historical date, saved Check-In/Supplements/Weight/Nutrition/dose history, draft handling, single/multi-vial math, safe-area scroll and VoiceOver. No live/localStorage writes made.
+- No failed test is being hidden or converted to PASS. No production release authorized.
