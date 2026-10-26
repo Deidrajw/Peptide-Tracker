@@ -1436,8 +1436,8 @@ html[data-theme="dark"] .nexus-today-hero {
  box-shadow:0 10px 26px rgba(12,9,22,.16),inset 0 1px 0 rgba(255,255,255,.045)!important;
 }
 html[data-theme="dark"] .nexus-today-hero::before {
- width:135px;height:135px;right:-52px;top:-64px;
- background:radial-gradient(circle,rgba(186,152,216,.075),transparent 72%);
+  /* Keep the progress ring as the sole circular focal point. */
+  display:none!important;
 }
 html[data-theme="dark"] .nexus-today-hero::after {display:none!important;}
 html[data-theme="dark"] .nexus-today-track>div {
