@@ -499,3 +499,7 @@
 - Source commits: `ef93fc2` activity hub, `060c583` categorized day records, `5480de2` visual styles, `9ed4c89` browser tests, `ce2b54e` cross-month week integrity. Test updates `4f63119`, `137adc0`, `ed0fc8c` align protected Today controls with approved compact weekly pulse.
 - 320/390 dark/light LIVE/DEMO full QA run `40273196256` PASS, mobile run `40273196254` PASS; download artifact #12629580963 inspected (full 21-file LIVE package + standalone isolated full DEMO). No production migrations. Version metadata remains v0.9.20-beta; no new release label authorized.
 - Draft PR #123 open/unmerged, Cloudflare preview/production parity and physical iPhone remain NOT VERIFIED. Calendar analytics trending/filtering/history edit UX remains subsequent implementation before sign-off.
+
+
+### 2026-10-26 — Calendar Logs Day/All candidate, UNRELEASED
+- PR #123 draft: `e465049` source-backed Day/All log journal with outline icons, `044f9c7` handlers, `6d921a0` Calendar selected-date handoff, `5c7e241` responsive styles, `aa84611` browser QA extension. No historical data rewrite or schema migration, existing editing handlers preserved. Full QA and LIVE/DEMO package acceptance pending; no merge or production deployment.
