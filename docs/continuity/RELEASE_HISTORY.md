@@ -611,3 +611,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Goal wizard QA harness correction, DRAFT
 - Commit `c9b6782c` changes Plans browser test to navigate wizard steps before field selection and saving. Pre-patch build/parity workflow 40386863855 FAILED (hidden Connections input). Other suites passed, but full release QA not passed. No production merge/deployment, new-head retest pending.
+
+### 2026-10-26 — Goal wizard automated acceptance candidate (DRAFT, NOT DEPLOYED)
+- Tested PR #123 head `701c6c7e`, workflows 40389965572 full build/Plans/browser SUCCESS, 40389965592 mobile SUCCESS, 40389962603 hybrid SUCCESS. Artifact 12684590713 contains builder-produced full-app LIVE/standalone fictional DEMO/offline demo packages; internal build assertions PASS, independent extraction pending. Data schema migration none intended. Physical iPhone/VoiceOver and contrast-wide acceptance pending; PR draft/unmerged and production unchanged.
