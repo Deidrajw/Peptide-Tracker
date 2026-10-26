@@ -703,3 +703,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | 320/390 light/dark LIVE and isolated full DEMO, icons and expandable entry actions | Source-coded, latest run PENDING; physical iPhone NOT TESTED |
 | Existing Check-in/edit/update, supplements, weight, measurements, nutrition, dose data, history intact | Original state arrays and action-class handlers reused; end-to-end regression PENDING |
 | Exact-source LIVE ZIP, self-contained demo, Cloudflare preview | NOT VERIFIED after Logs changes |
+
+
+### 2026-10-26 — Logs Day View candidate checks
+- Previous and Next day stepping returns to original date: automated assertions committed `5167a87`; latest-head QA PENDING.
+- Existing Day/All modes, type filters, selected Calendar day, all-dose and wellness source records, SVG icons, record action handlers: SOURCE VERIFIED, latest-head browser QA PENDING.
+- Physical iPhone keyboard, native date picker, accessibility, live saved user dataset and Cloudflare preview: NOT TESTED.
