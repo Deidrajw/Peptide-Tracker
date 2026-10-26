@@ -537,3 +537,7 @@
 ### 2026-10-26 — Sprint 02A Protocol visual refinement (DRAFT; NOT RELEASED)
 - Prior head `137306ab`: workflows mobile 40341448639 PASS, browser/build 40341448649 PASS, validating prior Stash patch.
 - Protocol CSS commit `6479eea`: improved card spacing and long-name wrapping, minimum 44px controls, keyboard-visible focus and compact viewport styling. Affected: Protocol cards and existing disclosure/actions; no JS, business logic, storage or migration changes. Latest-head QA, complete LIVE/DEMO artifacts, physical iPhone and deployment **pending**. Draft PR #123 not merged.
+
+
+### 2026-10-26 — Sprint 02 vial form layout (CODED, UNRELEASED)
+- Commits `d21f2cf` (shared form grid class) and `e6eacc6` (responsive field layout and visible confirm/focus). Affected: Stash Open New Vial sheet for blends and singles. No data migration or business-logic change. Fresh-head CI/browser and physical iPhone tests **NOT YET VERIFIED**. Draft PR #123; no deployment.
