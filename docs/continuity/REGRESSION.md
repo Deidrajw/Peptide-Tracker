@@ -864,3 +864,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Quick/Guided Log Dose new test matrix (NOT TESTED)
 - Quick routine log and final explicit confirmation; Guided dose, source, review and actual inventory calculation visibility; switching modes and preserving date/route/site, note, symptoms; prepared source, fresh vial, multiple open vials, insufficient inventory, split vial, blend components/allocations, edits, pending drafts/Open New Vial; iPhone 320/390 light/dark, keyboard and bottom sheet; all old Log Dose browser flows. New-head QA pending. Physical iPhone/VoiceOver not tested.
+
+## 2026-10-26 — Log Dose review-gate QA checklist
+- NOT TESTED new head `c0b882d0`: Quick Entry→Review and Guided Dose→Source→Review, invalid amount/date blocked, final Save hidden before review, selected prepared/fresh kit, blend breakdown, split-vial plan, insufficient stock rejection, draft restoration, edit, keyboard/scroll/safe areas, 320/390 light/dark. Original dose calculation unchanged. Physical iPhone/VoiceOver pending; CI run may fail older one-page selectors.
