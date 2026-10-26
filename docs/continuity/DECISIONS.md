@@ -400,3 +400,10 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 - **Weekly:** compact retrospective summary integrated coherently with Activity, separate from future Coming Up.
 - **Design:** midnight lavender/porcelain, minimal borders, readable hierarchy, 44–48px targets, both themes at 320/390, reduced motion; retain functionality and data protections.
 - **Implementation status:** not yet implemented or accepted on physical iPhone. Keep draft PR #123 unmerged, production unchanged pending explicit release approval.
+
+
+### 2026-10-25 — Today 2.0 implementation details (DRAFT PR #123)
+- Approved UI direction implemented for review using existing saved dailyLogs, supplementLogs, weightLogs and macroLogs, and canonical `getWeekInstances` / `getDayOccurrences` for scheduled occurrence reporting.
+- Tracking selection is a preference only, under `state.settings.todayTrackingActivities` (array of `checkin`, `supplements`, `weight`, `nutrition`). Defaults to Check-In + Supplements where absent; toggles must never synthesize activity entries or change historical logs.
+- Scheduled completion excludes `adhoc` events, keeps explicit skipped/moved/missed distinct from unresolved overdue, and reports only elapsed week dates; planned future occurrences are in Coming Up, not "missed".
+- Explicit scheduled times shown only when configured; no fabricated 8 AM default is presented as user-intended. No dose engine or inventory schema changes. This remains CODED / AWAITING TEST, not accepted or approved for production.
