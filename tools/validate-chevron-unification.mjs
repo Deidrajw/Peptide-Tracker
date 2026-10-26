@@ -55,11 +55,16 @@ try {
     await inspectTextDisclosure(".nexus-lookahead>summary","View schedule");
   // Weekly disclosure was intentionally relocated under Your Activity > This week.
   // Switch the real segmented control before measuring the visible tap target.
-  if(await pg.locator('.nx-activity-period[data-period="week"]').count()){
-    await pg.locator('.nx-activity-period[data-period="week"]').click();
-    if(await pg.locator(".nexus-week-card .nexus-quiet-toggle").count())
-      await inspectTextDisclosure(".nexus-week-card .nexus-quiet-toggle","View details");
-  }
+  // Today has one weekly summary and a direct report action, not another disclosure.
+  assert(await pg.locator('.nx-week-compact .nx-week-report-link').count()===1,'Weekly report link missing');
+  assert(await pg.locator('.nx-week-compact .nexus-week-card').count()===0,'Duplicate weekly card remains');
+  const headerBell=pg.locator('.nx-today-header #nx-open-alerts');
+  assert(await headerBell.count()===1,'Top-right alerts trigger missing');
+  assert(await headerBell.evaluate(el=>el.getBoundingClientRect().height)>=44,'Alerts trigger too small');
+  await headerBell.click();
+  assert(await pg.locator('#nx-alert-overlay').isVisible(),'Alerts sheet failed to open');
+  await pg.locator('#nx-alert-close').click();
+  assert(await pg.locator('#nx-alert-overlay').isHidden(),'Alerts sheet failed to close');
   const daily=pg.locator(".nexus-today-details").first();
   await daily.locator("summary").click();
   assert(await daily.evaluate(x=>x.open),"Today disclosure failed");
