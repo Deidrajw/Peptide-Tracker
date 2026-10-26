@@ -605,3 +605,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 Approved Goals preview restored (DRAFT)
 - Commits d98d7b78 and 7727191f restore originally accepted spacious Goals card in place of compact experiment. No migration. New-head QA pending; not deployed.
+
+### 2026-10-26 — Goal Add/Edit four-stage wizard (DRAFT / UNRELEASED)
+- PR #123: `23aa6e04` wizard markup reusing existing controls; `d7a8026c` hybrid theme/step styling; `a44cdcb8` preserve unsaved progress method choices. No intended schema or localStorage migration. Existing save handler still writes only on final Save. Latest-head QA/source-parity artifacts and physical acceptance incomplete. Log Dose unchanged; not deployed.
