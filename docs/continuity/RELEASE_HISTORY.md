@@ -648,3 +648,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 ### 2026-10-26 — Stash guided wizard source reconciliation (DRAFT / NOT RELEASED)
 - PR #123 branch head `5a9d6c7a` already contains three-step ordinary Kit wizard and searchable compound picker in `assets/js/07-nexus.js`; previously documented as merely proposed. Found during code review; no new app code, storage migration, merge or deployment in this documentation update.
 - Current-head PR workflows 40417820123 mobile and 40417820282 build/parity SUCCESS. Artifact 12696280782 exists but extraction and source integrity unverified; real-device/VoiceOver and blend parity NOT TESTED. Separate authoritative inventory handler remains. Proposed design not accepted as finished.
+
+### 2026-10-26 — Guided Blend Kit and browse selector (CODED DRAFT / NOT RELEASED)
+- PR #123 `design/design-system-2-preview-20261025`: commits `8f47c431`, `c28302e9`, `0af72826` add 3-stage blend editor layout and screenshot-inspired compound browse/search picker with responsive CSS. Reuses `#bk-save` inventory pathway and in-memory composition input values; intended no data schema or storage migration. Existing opened vial and recorded dose accounting must be verified, not assumed.
+- Current-head CI, exact full-app DEMO/LIVE ZIP, physical iPhone and a11y tests PENDING. PR stays DRAFT/UNMERGED/UNDEPLOYED; no Cloudflare production change authorized.
