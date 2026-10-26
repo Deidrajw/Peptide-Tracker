@@ -670,3 +670,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Guided Stash correction automated candidate (DRAFT / NOT RELEASED)
 - At `6d209ed5`, GitHub mobile workflow 40422263763 SUCCESS and browser build 40422263758 SUCCESS after test updated to navigate to Kit Review; original authoritative inventory handlers unchanged. New later test-only commits ed77a3e7 and dac2ba4a capture 320/390 × dark/light × LIVE/DEMO real Kit/Blend step screenshots. Their CI and images pending independent inspection. Production unchanged; no iPhone acceptance or merge/deploy.
+
+### 2026-10-26 — Candidate package inspection (NOT RELEASED)
+- Successful source build 40422263758 at app/test SHA 6d209ed5 produced artifact 12698436592. Downloaded and verified 21-file ZIP, root index, standalone full-app DEMO, manifest source merge ref 7203418d, and Stash Actions/Cards QA reports 8/8 each. Physical iPhone acceptance not achieved; new screenshot-run CI pending; no merge/deployment.
