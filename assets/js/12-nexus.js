@@ -342,7 +342,29 @@ function wireBody() {
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
   document.querySelectorAll(".nx-journal-mode").forEach(b=>b.onclick=()=>{state._logsMode=b.dataset.mode;renderBody();});
   document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
-  const journalSearch=$("#nx-journal-search");if(journalSearch)journalSearch.onchange=()=>{state._logsSearch=journalSearch.value;renderBody();};
+  const journalSearch=$("#nx-journal-search");
+  if(journalSearch)journalSearch.oninput=()=>{
+    // Live filtering preserves the keyboard and input focus, unlike renderBody() on change.
+    // Filtering never modifies historical logs or the chosen Calendar date.
+    state._logsSearch=journalSearch.value;
+    const q=journalSearch.value.trim().toLocaleLowerCase();
+    let visibleDays=0;
+    document.querySelectorAll(".nx-journal-day").forEach(day=>{
+      let n=0;
+      day.querySelectorAll(".nx-journal-row").forEach(row=>{
+        const searchable=row.querySelector(".nx-journal-main");
+        const match=!q||(searchable&&searchable.textContent.toLocaleLowerCase().includes(q));
+        row.hidden=!match;
+        if(match)n++;
+      });
+      day.hidden=n===0;
+      if(n)visibleDays++;
+      const count=day.querySelector(".nx-journal-date > span");
+      if(count)count.textContent=n+" "+(n===1?"entry":"entries");
+    });
+    const empty=$("#nx-journal-search-empty");
+    if(empty)empty.hidden=visibleDays!==0;
+  };
   const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
   const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
   document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
