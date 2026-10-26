@@ -470,3 +470,10 @@
 
 ### 2026-10-25 — Compact Today divider correction
 - 2026-10-25 PR #123 unmerged preview correction: 73ec2a05 targeted compact-card divider CSS; 4208fe9b source regression assertion. No storage, dose, or inventory logic changes. Browser rendered QA NOT TESTED at this commit. DEMO HTML/LIVE ZIP INCOMPLETE; no production release.
+
+
+### 2026-10-25 — Unreleased candidate: Today 2.0 (DRAFT, NOT A RELEASE)
+- PR #123 design/design-system-2-preview-20261025, ongoing implementation based on user-approved interactive Today design.
+- Source commits include Protocol regression test replacement `0ea163c`, saved tracking + activity sections `8e14733`, handlers `73dc37b`, styling `b0dcf5f`, upcoming `3c8e952`.
+- Changes to Today and test suite; optional non-destructive settings preference addition, no dose/inventory/storage migration.
+- Status: coded; not verified as fully passing, not merged, not deployed, physical iPhone not tested. Release artifacts/manifest and final version-to-commit mapping INCOMPLETE until passing CI and authorized release.
