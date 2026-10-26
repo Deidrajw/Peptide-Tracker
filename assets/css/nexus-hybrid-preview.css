@@ -880,3 +880,62 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
 @media(prefers-reduced-motion:reduce){
  .nexus-screen-home .nx-hybrid-expanded-compound *{scroll-behavior:auto!important}
 }
+
+/* Today phase 3C — one calm segmented surface replaces competing inline notice cards. */
+.nexus-screen-home .nx-hybrid-expanded-compound .nx-compound-info-tabs{
+ position:relative;margin:12px 0 15px;padding:10px;
+ border-radius:18px;background:var(--surface-2);border:1px solid var(--border-sub);
+}
+.nexus-screen-home .nx-compound-tab-radio{
+ position:absolute!important;width:1px!important;height:1px!important;
+ opacity:0!important;overflow:hidden!important;
+}
+.nexus-screen-home .nx-info-segments{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
+ padding:4px;border-radius:999px;background:var(--surface-3);
+}
+.nexus-screen-home .nx-info-segments label{
+ display:flex;align-items:center;justify-content:center;gap:3px;
+ min-height:44px;padding:8px 5px;border-radius:999px;
+ font-size:12px;font-weight:650;line-height:1.2;color:var(--t3);
+ cursor:pointer;text-align:center;
+}
+.nexus-screen-home .nx-info-count{font-size:10px;opacity:.85}
+.nexus-screen-home .nx-compound-tab-radio:first-child:checked~.nx-info-segments label:nth-child(1),
+.nexus-screen-home .nx-compound-tab-radio:nth-child(2):checked~.nx-info-segments label:nth-child(2),
+.nexus-screen-home .nx-compound-tab-radio:nth-child(3):checked~.nx-info-segments label:nth-child(3){
+ background:var(--surface);color:var(--t1);box-shadow:0 1px 5px rgba(14,9,20,.12);
+}
+.nexus-screen-home .nx-compound-tab-radio:nth-child(1):focus-visible~.nx-info-segments label:nth-child(1),
+.nexus-screen-home .nx-compound-tab-radio:nth-child(2):focus-visible~.nx-info-segments label:nth-child(2),
+.nexus-screen-home .nx-compound-tab-radio:nth-child(3):focus-visible~.nx-info-segments label:nth-child(3){
+ outline:2px solid #b99be9;outline-offset:2px;
+}
+.nexus-screen-home .nx-compound-info-tabs>.nx-info-panel{display:none;padding:14px 3px 2px}
+.nexus-screen-home .nx-compound-tab-radio:nth-child(1):checked~.nx-info-insights,
+.nexus-screen-home .nx-compound-tab-radio:nth-child(2):checked~.nx-info-history,
+.nexus-screen-home .nx-compound-tab-radio:nth-child(3):checked~.nx-info-details{display:block}
+.nexus-screen-home .nx-info-panel-title{font-size:12px;font-weight:700;color:var(--t2);margin:2px 0 10px}
+.nexus-screen-home .nx-info-history-row{
+ display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+ padding:10px 2px;border-bottom:1px solid var(--border-sub);
+ color:var(--t3);font-size:12px;
+}
+.nexus-screen-home .nx-info-history-row strong{color:var(--t1);font-size:12px;text-align:right}
+.nexus-screen-home .nx-info-empty{margin:6px 2px 10px;color:var(--t3);font-size:12px}
+.nexus-screen-home .nx-info-history-action{
+ width:100%;margin-top:12px;min-height:44px;border:1px solid var(--border-sub);
+ border-radius:12px;background:var(--surface);color:var(--t2);
+ font-size:12px;font-weight:650;
+}
+.nexus-screen-home .nx-info-insights>.nx-insight-list>div{
+ background:transparent!important;border:none!important;
+ border-bottom:1px solid var(--border-sub)!important;border-radius:0!important;
+ margin:0!important;padding:12px 4px!important;
+ color:var(--t2)!important;line-height:1.55!important;
+}
+.nexus-screen-home .nx-info-insights>.nx-insight-list>div:last-child{border-bottom:0!important}
+@media(max-width:359px){
+ .nexus-screen-home .nx-compound-info-tabs{padding:7px!important}
+ .nexus-screen-home .nx-info-segments label{font-size:11px;padding:8px 2px}
+}
