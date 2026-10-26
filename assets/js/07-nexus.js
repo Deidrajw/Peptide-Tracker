@@ -1622,6 +1622,7 @@ function getDoseStatus(name, data) {
 const OVERDUE_AGED_DAYS = 3;
 function renderCompoundActionArea(name, data, c, doses, doseStatus) {
   const isDue = doseStatus && ["due_now","due_later_today","overdue"].includes(doseStatus.status);
+  const showScheduledLog = !!doseStatus?.showLogBtn;
   const isAgedOverdue = doseStatus?.status === "overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS);
   if (doseStatus?.status === "skipped") {
     return `<div style="margin-bottom:8px">
@@ -1653,7 +1654,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
     return `<div style="margin-bottom:8px">
       ${isAgedOverdue
         ? `<button class="whathappened" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="width:100%;min-height:44px;background:#F9C87D22;border:1px solid #F9C87D66;color:#F9C87D;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">⚠ WHAT HAPPENED?</button>`
-        : `<button class="logdose" data-name="${esc(name)}" style="width:100%;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">+ LOG DOSE</button>`}
+        : showScheduledLog ? `<button class="logdose" data-name="${esc(name)}" style="width:100%;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">+ LOG DOSE</button>` : ""}
       <div style="display:flex;gap:8px">
         <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid #A78BFA44;border-radius:9px;color:#A78BFA;font-size:11px;font-weight:600">↺ Reschedule</button>
         ${isOverdue
@@ -1663,9 +1664,10 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
       </div>
     </div>`;
   }
-  return `<div style="display:flex;gap:8px;align-items:stretch;margin-bottom:8px">
-      <button class="logdose" data-name="${esc(name)}" style="flex:1;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px">+ LOG DOSE</button>
-      <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+  // A completed, upcoming or paused occurrence should not imply another scheduled dose.
+  // Unscheduled and retrospective logging remains available via existing app workflows.
+  return `<div class="nx-dose-secondary-only" style="display:flex;gap:8px;align-items:stretch;margin-bottom:8px">
+      <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:44px;flex:1;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t3);font-size:12px;font-weight:600">More actions ···</button>
     </div>`;
 }
 
