@@ -573,3 +573,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Protocol list/Overview IA cleanup (DRAFT, NOT RELEASED)
 - `ed6b984a` removes duplicated Compound/Completion tabs and list-card expanded details, preserves Overview with compound roadmap and Manage action. `48784383` computes list progress using pause-aware scheduled phase dates; `0d3a3d33` compact card CSS. Affected: Protocol list and dedicated detail navigation. No schema or recorded dose/history changes. QA, user iPhone acceptance, standalone full DEMO/LIVE ZIP, merge/deployment incomplete.
+
+
+### 2026-10-26 — Navigation QA corrective commits (DRAFT, UNRELEASED)
+- `49484971`: replace obsolete Protocol chevron regression assertion with approved end-to-end navigation journey in 8 LIVE/DEMO × 320/390 × light/dark contexts. `80289b93`: Plans Research management control background selector specificity fix. No schema/data changes. New CI and full-app artifacts pending at documentation time; no merge/deployment.
