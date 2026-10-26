@@ -191,6 +191,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.plans-sub[data-sub="research"]').click();
  await page.locator('#add-research').click();
  ensure(await page.locator('#rcomp-picker').count()===1&&await page.locator('#r-status').count()===1&&await page.locator('#r-reason').count()===1&&await page.locator('#r-goal').count()===1&&await page.locator('#r-notes').count()===1,'Research editor lost required fields');
+ ensure(await page.locator('.nx-plan-research-edit .nx-plan-edit-header h2').innerText().then(t=>t.includes('research')),'Research editor title missing');
+ ensure(await page.locator('.nx-plan-research-edit .nx-plan-edit-fields > .nx-plan-edit-field').count()===5,'Research field group count changed');
+ ensure(await page.locator('.nx-plan-research-edit label[for="r-status"]').count()===1,'Research status not visibly labelled');
+ ensure(await page.locator('.nx-plan-research-edit #r-save').evaluate(e=>e.getBoundingClientRect().height)>=44,'Research save action too small');
  await page.locator('#x').click();
 
  const headRules=async(sel)=>page.locator(sel).first().evaluate(el=>{
@@ -303,6 +307,11 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
  ensure(await page.locator('.nx-shopping-row .manage-plan-btn').count()===1,'Shopping edit menu lost');
+ await page.locator('#add-shopping').click();
+ ensure(await page.locator('.nx-plan-shopping-edit .nx-plan-edit-fields > .nx-plan-edit-field').count()===6,'Shopping editor missing field groups');
+ ensure(await page.locator('.nx-plan-shopping-edit #s-item').count()===1&&await page.locator('#s-cat').count()===1&&await page.locator('#s-status').count()===1&&await page.locator('#s-qty').count()===1&&await page.locator('#s-goal').count()===1&&await page.locator('#s-notes').count()===1,'Shopping editor missing original fields');
+ ensure(await page.locator('.nx-plan-shopping-edit #s-save').evaluate(e=>e.getBoundingClientRect().height)>=44,'Shopping save action too small');
+ await page.locator('.nx-plan-shopping-edit #x').click();
 
  await page.evaluate(()=>{state.protocols=[{id:'qa-proto',name:'Fictional Protocol',status:'draft',compounds:[],schedule:{type:'weekly'}}];tab='protocols';render();});
  ensure(await page.locator('.nexus-protocol-card-head .nx-card-status').count()===1,'Protocol status must be in title stack');
