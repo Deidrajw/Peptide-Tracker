@@ -378,3 +378,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Today visual reset based on iPhone screenshot
 - 2026-10-25 user rejected stacked insight boxes and generic Wear Off Window / Protocol review wording. Use one calm segmented surface with typography and whitespace rather than nested cards; avoid duplicating overdue state between ring and insight summary as much as practicable. Scope native system-font stack to Today compound cards during preview, subject to visual acceptance. Legacy pseudo chevron must be suppressed by selector valid independent of screen ancestry; do not add a second chevron. Do not invent phase countdowns absent actual schedules.
+
+
+### 2026-10-25 — Root disclosure and Insight cleanup
+- 2026-10-25 root-level correction: legacy `.compound-collapse-btn::after` pseudo icon must exclude `.nx-today-disclosure` rather than append endless override rules. Insights content should be a single unboxed surface using typographic grouping, not nested mini-cards. Pharmacokinetic or treatment-effect claims must not be presented as if derived from tracked records. No invented countdown until actual dated milestone source verified. Preview only, not approved for merge.
