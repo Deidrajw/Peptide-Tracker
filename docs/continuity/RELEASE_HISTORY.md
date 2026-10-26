@@ -655,3 +655,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ## 2026-10-26 — Guided blend workflow acceptance follow-up
 - User approved the three-step guided Blend Kit workflow and the screenshot-style dropdown with embedded search. Current source `assets/js/03-nexus.js` already includes a three-step blend wizard and component dropdown search, preserving original `#bk-save` handler. Review uncovered two BAC inputs on new blends (`#bk-bac` and `#bk-bac-edit`) with potentially divergent displayed review/save semantics. Existing edit must preserve opened-vial ratios and historical allocations. Do not merge/deploy until targeted validation, UI acceptance, and full-app artifact inspection. Next action: reconcile BAC UI and test blend save and history at 320/390 light/dark.
+
+### 2026-10-26 — Guided Blend BAC single-source fix (CODED DRAFT; NOT RELEASED)
+- PR #123 commits d87600cb, b1586e20 and 6407d532. Remove duplicated creation BAC field and reconcile `#bk-bac-edit` between Review and authoritative `#bk-save`; add cost/notes Review, and test create/review/save with fictional 10 mg + 5 mg blend. No intended schema migration, production writes, per-component accounting or history edits. Latest-head CI and independent DEMO/LIVE artifact validation pending; no merge/deploy or real iPhone acceptance.
