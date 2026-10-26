@@ -1492,6 +1492,9 @@ function protocolsView() {
     const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
     const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
     const phaseTotal=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.totalWeeks)?phaseInfo.totalWeeks:null;
+    const firstCompoundData=fc?allPeptides()[fc]:null;
+    const firstDoseStatus=fc&&firstCompoundData?getDoseStatus(fc,firstCompoundData):null;
+    const nextScheduledCaption=firstDoseStatus?.nextDueStr?fmtDate(firstDoseStatus.nextDueStr):"See schedule";
     const phaseCaption=phaseInfo?.done?"Phases complete":phaseInfo?.isRest?"Rest phase":phaseWeek&&phaseTotal?`Week ${phaseWeek} of ${phaseTotal}`:"See schedule";
     const startCaption=p.startDate?`Started ${fmtDate(p.startDate)}`:"Start date not set";
     const goalRef=p.linkedGoalId?(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId)):null;
@@ -1505,7 +1508,7 @@ function protocolsView() {
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
       <div class="nx-protocol-2-overview" aria-label="Protocol at a glance">
         <div><span class="nx-protocol-2-label">CURRENT PHASE</span><strong>${esc(phaseCaption)}</strong></div>
-        <div><span class="nx-protocol-2-label">SCHEDULE</span><strong>${esc(p.schedule?.type||"Weekly")}</strong></div>
+        <div><span class="nx-protocol-2-label">NEXT SCHEDULED</span><strong>${esc(nextScheduledCaption)}</strong></div>
       </div>
       <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"} · ${esc(startCaption)}${totalPhaseWeeks?` · ${totalPhaseWeeks} planned weeks`:""}</div>
       <details class="nexus-protocol-details">
