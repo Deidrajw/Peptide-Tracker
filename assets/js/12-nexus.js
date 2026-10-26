@@ -344,7 +344,7 @@ function wireBody() {
   document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
   const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
   const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
-  document.querySelectorAll(".nx-journal-date-step").forEach(b=>b.onclick=()=>{const base=new Date((state._logsDate||localDate())+"T12:00:00");base.setDate(base.getDate()+Number(b.dataset.step));state._logsDate=dayKey(base);renderBody();});
+  document.querySelectorAll(".nx-journal-date-step").forEach(b=>b.onclick=()=>{const base=new Date((state._logsDate||localDate())+"T12:00:00");base.setDate(base.getDate()+Number(b.dataset.step));state._logsDate=base.getFullYear()+"-"+String(base.getMonth()+1).padStart(2,"0")+"-"+String(base.getDate()).padStart(2,"0");renderBody();});
   document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
   document.querySelectorAll(".nx-journal-more").forEach(b=>b.onclick=()=>{
     const panel=document.getElementById(b.dataset.panel);if(!panel)return;
