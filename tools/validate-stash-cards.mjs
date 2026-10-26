@@ -70,6 +70,7 @@ try{
     // The guided editor hides Save until final Review. Test the real journey,
     // rather than treating the intentionally hidden step-1 Save as zero-size UI.
     ensure(await page.locator('.nx-stash-kit-editor #ssave').isHidden(),'Kit Save exposed on Step 1');
+    await page.screenshot({path:'dist/stash-regular-step1-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#nx-kit-next').isVisible(),'Kit Continue missing');
     await page.evaluate(()=>{
       const name=document.querySelector('#sname');name.value='GHK-Cu';name.dispatchEvent(new Event('change',{bubbles:true}));
@@ -77,9 +78,11 @@ try{
     });
     await page.locator('#nx-kit-next').click();
     ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"]').evaluate(x=>!x.hidden),'Kit preparation step not reachable');
+    await page.screenshot({path:'dist/stash-regular-step2-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#ssave').isHidden(),'Kit Save exposed on Step 2');
     await page.locator('#nx-kit-next').click();
     ensure(await page.locator('.nx-kit-wizard-stage[data-step="2"]').evaluate(x=>!x.hidden),'Kit Review not reachable');
+    await page.screenshot({path:'dist/stash-regular-review-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#ssave').isVisible(),'Kit Save absent on Review');
     ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Review Save target too small');
 
