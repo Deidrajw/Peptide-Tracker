@@ -1803,7 +1803,27 @@ function goalModal(existing) {
       ? '<label for="g-p-milestones" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Milestones (one per line)</label><textarea id="g-p-milestones" class="inp" style="width:100%;min-height:75px" placeholder="e.g. Establish a routine">'+esc((model.milestones||[]).join("\n"))+'</textarea>'
       : '<p class="nx-muted">Use your notes, reviews, and connected observations to explore progress. No artificial score is assigned.</p>';
   };
-  m.querySelector("#g-progress-type").addEventListener("change",renderProgressSettings);
+  // Preserve in-progress progress configurations when switching methods.
+  const progressDrafts={};
+  const readProgressDraft=(type)=>{
+    const read=id=>m.querySelector("#"+id)?.value;
+    if(type==="numeric")return {baseline:read("g-p-baseline"),target:read("g-p-target"),unit:read("g-p-unit"),source:read("g-p-source")};
+    if(type==="subjective")return {rating:read("g-p-rating")};
+    if(type==="milestones")return {milestones:read("g-p-milestones")};
+    return {};
+  };
+  const writeProgressDraft=(type,draft)=>{
+    const ids=type==="numeric"?{baseline:"g-p-baseline",target:"g-p-target",unit:"g-p-unit",source:"g-p-source"}:type==="subjective"?{rating:"g-p-rating"}:type==="milestones"?{milestones:"g-p-milestones"}:{};
+    Object.keys(ids).forEach(key=>{const el=m.querySelector("#"+ids[key]);if(el&&draft[key]!==undefined)el.value=draft[key];});
+  };
+  let priorProgressType=m.querySelector("#g-progress-type").value;
+  m.querySelector("#g-progress-type").addEventListener("change",()=>{
+    progressDrafts[priorProgressType]=readProgressDraft(priorProgressType);
+    renderProgressSettings();
+    const newType=m.querySelector("#g-progress-type").value;
+    if(progressDrafts[newType])writeProgressDraft(newType,progressDrafts[newType]);
+    priorProgressType=newType;
+  });
   renderProgressSettings();
   m.querySelector("#x").onclick=closeModal;
   m.querySelectorAll(".goal-comp").forEach(b=>b.onclick=()=>{const n=b.dataset.name,i=selC.indexOf(n);i>=0?selC.splice(i,1):selC.push(n);refresh();});
