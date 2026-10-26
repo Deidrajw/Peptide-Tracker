@@ -449,3 +449,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 ## 2026-10-26 — Calendar Logs approved implementation boundary
 - User confirms **Calendar Logs Day View + All Logs approved and implemented** on draft PR #123 branch. Approved implementation does **not** authorize merging or deploying.
 - Preserve historical day-specific records, editors and dose history without rewriting stored dates, localStorage or production accounts. Keep draft PR and isolate full-app DEMO fictional data. Physical iPhone signoff and comprehensive 320/390 light/dark browser verification remain separate gates.
+
+
+## 2026-10-26 — Approved Add Log / weekly score optical fixes
+- APPROVED targeted visual patch on draft PR #123. Add Log uses plus icon only; eliminate redundant chevron. Popup tiles horizontally/vertically center labels; Measurements must not escape bounds; Supplements stays full-width. Today This week must show a perceptible gap in `29% so far`. Retain layout intent, real handlers, saved records, 44px actions, light/dark and mobile sizing. No merge or deployment authorization.
