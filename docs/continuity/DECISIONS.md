@@ -415,3 +415,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Today dark-mode hero: no decorative corner orb
 - User identified top-right glow as aggressive in screenshot. **Approved targeted correction:** eliminate the decorative `::before` radial orb in dark mode while retaining the quiet dark card gradient, progress ring, and lavender data accents. No global lighting changes, light-mode change or production merge approval.
+
+
+### 2026-10-25 — Today dark hero gradient refinement
+- User rejected the nearly flat dark surface after removing the concentrated upper-right glow. Approved direction: retain a visibly graduated full-card dark gradient, matching light mode's even gradient distribution, without a circular spotlight. Implemented dark linear gradient #443451 → #382B46 at 64% → #30263D in draft PR #123; corner orb stays disabled. Light-theme CSS and progress accents unchanged. No release approval.
