@@ -776,3 +776,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 
 ## 2026-10-26 QA checkpoint: PR #123 head 7751ccdc, workflow 40347404028 FAILED at Browser QA 320/390 light/dark; root failure cause unverified. Proposed NOT TESTED: completion celebration only on confirmed action, reduced motion; paused countdown, different compound phase duration; phase alerts deduplicated with correct deep linking, respecting settings and no background push. Existing stored records, dose and pause histories must stay unchanged.
+
+
+## 2026-10-26 — Protocol interior latest-head regression pending
+- **NOT TESTED on new head**: countdown for not-started/paused/elapsed/multi-compound protocols; explicit completion animation and reduced-motion; existing phase alerts (dedup, on/off, transition-day); compound roadmap current/past/future and pause frozen date; preservation of dose/phase histories. Mobile/browser green on older head is not evidence for `177e25fa`. Verify 320/390 themes, full DEMO/LIVE parity and physical iPhone separately.
