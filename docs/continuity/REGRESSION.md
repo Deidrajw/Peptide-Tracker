@@ -814,3 +814,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAILED prior head:** run 40358780283 stopped in `validate-chevron-unification.mjs` with `missing .nexus-protocol-details>summary`: a test for intentionally retired content, not proof that new navigation is broken. Its Browser matrix and Protocol candidate 8-session suites completed, but aggregate result FAIL.
 - **NEW NOT YET VERIFIED:** `49484971` tests 320px/390px, light/dark, LIVE/DEMO: no retired inline disclosure, list View Overview, Overview progress ring, compound card, vertical phase roadmap, back to Overview, close. Other protected flows in same suite remain.
 - **Potential remaining FAIL targeted:** Plans Research manage control had contrast assertion failure at older heads. `80289b93` corrects selector specificity. Await new-head browser result; don't mark Pass until evidence.
+
+
+## 2026-10-26 — Automation results and screenshot evidence
+- **PASS for PR test-merge c6885efd:** mobile form workflow 40359787123, build/parity workflow 40359787121; 8 LIVE/DEMO × 320/390 × light/dark navigation assertions (list→Overview→phase→back→close), 8 Plans hierarchy/contrast cases, 8 Browser matrix, protected Check-In, Log Dose, vial-source, Combo Picker, Stash panels/actions and calculator safeguards recorded as PASS in CI logs.
+- **NOT TESTED physical:** iPhone Safari actual touch, keyboard, safe areas, VoiceOver, real saved-record history. Screenshot-enhanced test commit `b155134c` requires latest-head CI and visual review. Automated theme contrast audit reports candidates; cannot claim WCAG AA compliance for all surfaces.
+- Artifact manifest source PR merge SHA c6885efd, GitHub Actions artifact 12667882258. Standalone demo ephemeral isolated state; no production writes. Preserve draft; production parity not expected and Cloudflare remains unchanged.
