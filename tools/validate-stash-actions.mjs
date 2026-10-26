@@ -43,6 +43,34 @@ try{
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
+  // Guided blend regression: no state mutation while navigating; single BAC field is
+  // both the review source and the value the canonical #bk-save handler persists.
+  await page.evaluate(()=>{closeModal();addBlendKitModal(null);});
+  ensure(await page.locator('#bk-bac').count()===0,'Obsolete duplicate BAC field still exists');
+  ensure(await page.locator('#bk-bac-edit').count()===1,'Canonical blend BAC field missing');
+  ensure(await page.locator('#nx-blend-next').count()===1,'Guided blend navigation missing');
+  await page.locator('#bk-name').fill('QA Fixture Blend');
+  await page.evaluate(()=>{
+    const selects=[...document.querySelectorAll('.comp-select')];
+    selects[0].value='BPC-157';selects[0].dispatchEvent(new Event('change',{bubbles:true}));
+    const refreshed=[...document.querySelectorAll('.comp-select')];
+    refreshed[1].value='TB-500';refreshed[1].dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await page.locator('.comp-mg-input').nth(0).fill('10');
+  await page.locator('.comp-mg-input').nth(1).fill('5');
+  await page.locator('#nx-blend-next').click();
+  ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"]').evaluate(el=>!el.hidden),'Preparation step not visible');
+  await page.locator('#bk-bac-edit').fill('2.5');
+  await page.locator('#bk-vials').fill('3');
+  await page.locator('#bk-cost').fill('190');
+  await page.locator('#nx-blend-next').click();
+  ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('CAD $190')),'Review differs from entered BAC/cost');
+  ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
+  await page.locator('#bk-save').click();
+  const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
+  ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
+  ensure(recorded?.composition?.length===2&&recorded.composition[0].mg===10&&recorded.composition[1].mg===5,'Saved component amounts incorrect');
+  await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
   // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
   await page.evaluate(()=>{closeModal();doseModal('GHK-Cu');});
   const multi=await page.locator('#toggle-multi').evaluate(el=>{
