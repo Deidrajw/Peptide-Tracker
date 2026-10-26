@@ -528,3 +528,7 @@
 
 ### 2026-10-26 — Sprint 01 physical iPhone acceptance (CONDITIONAL, NOT RELEASED)
 - User reported PASS WITH MINOR VISUAL ISSUES and requested Calendar Month icon modifications. Exact correction pending clarification and implementation. Full browser/build workflow 40339121469 PASS, mobile workflow 40339121261 PASS at pre-doc head 375b8879. No Sprint 01 final acceptance or production release claim. No app code or data migration in this docs-only checkpoint; PR #123 stays draft/unmerged.
+
+
+### 2026-10-26 — Sprint 02 Stash card visual patch (DRAFT; UNRELEASED)
+- Commit `76f232d` adds long-kit-name wrapping, 44px Manage action, focus outlines and narrower-tab labeling in hybrid CSS. Affected: Stash kit cards only. Data impact: none (CSS only). **New-head QA and physical iPhone checks pending;** no LIVE/DEMO artifact claim for this commit, no merge/deployment.
