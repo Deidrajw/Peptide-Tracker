@@ -697,3 +697,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Began separate Inventory Resolution source-label clarity pass in `assets/js/05-nexus.js` (`3875da06`) plus `assets/css/nexus-hybrid-preview.css` (`74228713`): numbered source vial rows, source kit ID, clearer 'Confirm draw', grid presentation and 44px controls; no dose amount / math / state or persistence code intentionally changed.
 - **Latest-head browser, contrast and physical iPhone evidence still PENDING.** Production untouched; no merge/deploy.
 - **ONE NEXT ACTION:** get latest-head browser and math/vial inventory regressions passing; inspect source rows, shortage flow and all modal screens at 320/390 both themes; remedy failures before user design approval.
+
+
+### 2026-10-25 — Phase 2E Stash modal source audit and first accessibility adjustment
+- Audited Prepare Dose (`assets/js/05-nexus.js`), standard vial reconstitution, blend menu route, shared modal CSS and prior user screenshots. Added source-backed findings, acceptance cases, and distinct unverified areas in `docs/design/STASH_MODAL_AUDIT.md` commit `1a2c3540`.
+- Coded branch-only CSS `0bd28df5` enlarging Prepare count stepper 34px→46px (44px at 320) and improving concentration readout visual grouping plus CTA sizes. No dose math, kit accounting, source allocation, persistence or modals logic modified.
+- **ONE NEXT ACTION:** Run latest-head 320/390 dark/light LIVE+DEMO browser tests and actual Prepare/Open New Vial modal keyboard/scroll/confirm inspections. Fix discovered issues before design signoff. No merge/deploy.
