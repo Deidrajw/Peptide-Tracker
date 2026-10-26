@@ -623,3 +623,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Root disclosure and Insight cleanup
 - 2026-10-25 expanded Today single-chevron CSS root fix: source assertion selectors verified, but actual computed ::after content, one SVG count, disclosure alignment, 320/390 both themes, Insights no borders, overdue action, completed status and physical iPhone remain NOT TESTED. Previous Hybrid QA failures included stale source invariant; test now targets nx-insight-summary. Requires full head browser PASS and real device acceptance before milestone complete.
+
+
+### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
+- 2026-10-25 root cause verified by CSS source: nexus-disclosures.css high-specificity generated pseudo-chevron persisted despite repeated overrides. Source selector now excludes nx-today-disclosure, and tabs wrapper/observation borders changed. Current head CI pending; actual 320/390 both themes, computed pseudo::after, border widths, toggling, history, overdue, completed and inventory NOT TESTED. Do not mark PASS until rendered verification.
