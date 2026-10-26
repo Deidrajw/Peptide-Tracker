@@ -35,7 +35,38 @@ const {pathToFileURL}=require("node:url");
       && info.innerWidth===width && info.htmlWidth<=width+1
       && !/LOADING…/.test(info.appText) && info.appText.length>0
       && info.jsLoaded>=12 && errors.length===0;
-   cases.push({width,theme,...info,errors:errors.slice(0,5),pass:ok});
+   // Compare the actual rendered components, not just selector or class presence.
+   let disclosureParity={tested:false};
+   const compact=page.locator(".nx-compound-card .compound-compact-tap").first();
+   if(await compact.count()){
+     const collapsed=await compact.evaluate(node=>{
+       const pill=node.querySelector(".nx-today-disclosure");
+       const title=node.querySelector(".nx-today-compound-name");
+       if(!pill||!title)return null;
+       const p=getComputedStyle(pill), t=getComputedStyle(title);
+       return {pill:{background:p.backgroundColor,borderRadius:p.borderRadius,borderWidth:p.borderTopWidth,
+         fontFamily:p.fontFamily,fontSize:p.fontSize,fontWeight:p.fontWeight,height:p.height,padding:p.padding},
+         name:{text:title.textContent.trim(),fontFamily:t.fontFamily,fontSize:t.fontSize,
+         fontWeight:t.fontWeight,letterSpacing:t.letterSpacing,lineHeight:t.lineHeight}};
+     });
+     await compact.click();
+     const expanded=page.locator(".nx-hybrid-expanded-compound .compound-collapse-btn.nx-today-disclosure").first();
+     if(!collapsed||!(await expanded.count())) throw Error("Today disclosure missing in compact or expanded "+width+"/"+theme);
+     const shown=await expanded.evaluate(node=>{
+       const root=node.closest(".nx-hybrid-expanded-compound");
+       const title=root?.querySelector(".nx-today-compound-name");
+       if(!title)return null;
+       const p=getComputedStyle(node),t=getComputedStyle(title);
+       return {pill:{background:p.backgroundColor,borderRadius:p.borderRadius,borderWidth:p.borderTopWidth,
+         fontFamily:p.fontFamily,fontSize:p.fontSize,fontWeight:p.fontWeight,height:p.height,padding:p.padding},
+         name:{text:title.textContent.trim(),fontFamily:t.fontFamily,fontSize:t.fontSize,
+         fontWeight:t.fontWeight,letterSpacing:t.letterSpacing,lineHeight:t.lineHeight}};
+     });
+     const parity=!!shown && JSON.stringify(collapsed)===JSON.stringify(shown);
+     disclosureParity={tested:true,pass:parity,collapsed,expanded:shown};
+     if(!parity)throw Error("Today disclosure/name visual parity failed at "+width+"/"+theme+": "+JSON.stringify(disclosureParity));
+   }else throw Error("No Today compact card found for UI acceptance at "+width+"/"+theme);
+   cases.push({width,theme,...info,disclosureParity,errors:errors.slice(0,5),pass:ok&&disclosureParity.pass});
    await page.screenshot({path:path.resolve(__dirname,`hybrid-${width}-${theme}.png`),fullPage:true});
    await page.close();
  }
