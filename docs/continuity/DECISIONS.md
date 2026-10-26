@@ -423,3 +423,10 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ### 2026-10-25 — Actual dark-mode selector (verified)
 - Nexus dark theme is represented by the ABSENCE of `html[data-theme]`, while light explicitly uses `data-theme="light"` in assets/js/01-nexus.js. For theme-specific Today CSS, use `html:not([data-theme="light"])` for dark instead of `html[data-theme="dark"]`, unless theme bootstrapping is separately migrated with testing. This fixes the incorrectly applied hero override without touching stored theme choice.
+
+
+### 2026-10-26 — Today information hierarchy and Needs Attention UX approved
+- User approved replacement of duplicated **Your Activity** Today/This Week segment with a compact **This Week** report, retaining actual scheduled-occurrence metrics and optional weekly drill-down without duplicating Daily Summary.
+- User approved removing the redundant upper **Coming up** preview. Exactly one **Coming up** section should remain on Today (below reporting), grounded in the schedule engine.
+- User selected **Option A** for Needs Attention: a compact, visible alert chip (with actionable count) that opens a polished iPhone bottom sheet, rather than the current 9-item inline expansion. Sheet groups actionable notices by urgency/type, retains real existing actions/navigation (Stash, Protocol, Check-In, Calendar) and management/dismissal/snooze behavior. Distinguish urgent safety-related notices from ordinary reminders; never hide critical alerts solely because the list is collapsed.
+- Design approval is authorization to implement and test on **draft PR #123**, not approval to merge or deploy. Preserve production storage, reminders and calculation logic. Physical iPhone, parity package and full regression still required after changes.
