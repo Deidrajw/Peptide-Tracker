@@ -598,3 +598,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - PR #123; commits `8393d955` and `1ead81b6`. Affected Plans → Goals list: title/status/date hierarchy, honest measurement summary and progress track, connected-protocol count, unified details target, 320px adaptation.
 - Progress is read-only from existing `progressModel` and comparable recorded weight logs; no saved state/schema/measurement/dose migration. Original goal detail navigation and management remain.
 - QA for new head, complete full-app DEMO/LIVE packages, iPhone and VoiceOver all **NOT VERIFIED**. Draft/unmerged; Cloudflare remains unchanged.
+
+### 2026-10-26 — Goals visual density correction (DRAFT)
+- `457652a8`, `f5be4806`: remove duplicate Plans counts, shorten repeat progress copy and tighten Goal cards while retaining detail/management handlers. No data schema change; newest-head QA/artifacts and iPhone acceptance pending. Not deployed.
