@@ -79,9 +79,13 @@ try {
   assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Protocol progress ring missing");
   assert(await pg.locator(".nx-proto-detail-compound").count()>0,"Protocol compound drilldowns missing");
   assert(await pg.locator(".nx-proto-detail-tabs").count()===0,"Redundant Protocol detail tabs returned");
+  await pg.waitForTimeout(450); // allow bottom-sheet entrance motion and backdrop fade to settle
+  assert(await pg.locator(".nx-proto-detail-page").evaluate(e=>{const r=e.getBoundingClientRect();return r.top<innerHeight && r.bottom>0 && r.width<=innerWidth+1}),"Protocol Overview sheet not onscreen after transition");
   await pg.screenshot({path:"dist/protocol-overview-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator(".nx-proto-detail-compound").first().click();
   assert(await pg.locator(".nx-phase-vertical-timeline").isVisible(),"Compound phase timeline failed to open");
+  await pg.waitForTimeout(450); // capture the visible roadmap, not its opening frame
+  assert(await pg.locator(".nx-phase-vertical-timeline").evaluate(e=>{const r=e.getBoundingClientRect();return r.top<innerHeight && r.bottom>0}),"Phase timeline not onscreen after transition");
   await pg.screenshot({path:"dist/protocol-phase-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   assert(await pg.locator(".nx-phase-return").count()===1,"Phase roadmap back control missing");
   await pg.locator(".nx-phase-return").click();
