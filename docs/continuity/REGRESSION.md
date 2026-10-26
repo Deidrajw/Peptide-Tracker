@@ -709,3 +709,12 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Previous and Next day stepping returns to original date: automated assertions committed `5167a87`; latest-head QA PENDING.
 - Existing Day/All modes, type filters, selected Calendar day, all-dose and wellness source records, SVG icons, record action handlers: SOURCE VERIFIED, latest-head browser QA PENDING.
 - Physical iPhone keyboard, native date picker, accessibility, live saved user dataset and Cloudflare preview: NOT TESTED.
+
+
+### 2026-10-26 — Logs latest-head candidate results
+| Check | Result |
+|---|---|
+| Day View/All Logs and Previous/Next/Today interactions 320/390 light/dark LIVE+DEMO | PASS in workflow `40275552699` |
+| Mobile form regression | PASS `40275552720` |
+| Full source-aligned LIVE ZIP (21 files) and isolated standalone full-app DEMO | PASS artifact #12630341125, inspected |
+| Physical iPhone, VoiceOver, Cloudflare preview byte parity | NOT VERIFIED |
