@@ -1967,3 +1967,51 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 .nx-phase-timeline-row.is-upcoming .nx-phase-timeline-dot{border-color:var(--border);background:var(--surface)}
 .nx-phase-timeline-row:last-child .nx-phase-timeline-content{padding-bottom:4px}
 @media(max-width:359px){.nx-phase-timeline-row{gap:8px}.nx-phase-timeline-heading{gap:4px}}
+
+
+/* Sprint 02A: compound progress rows replace duplicate Gantt, pills and status lines.
+   One tap reaches the approved vertical phase timeline. */
+.nexus-screen-protocols .nx-protocol-section-heading {
+  font-size:11px;font-weight:750;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--t3);margin:5px 0 9px;
+}
+.nexus-screen-protocols .nx-protocol-progress-list {display:grid;gap:8px}
+.nexus-screen-protocols .nx-protocol-progress-row {
+  box-sizing:border-box;display:flex;align-items:center;text-align:left;
+  width:100%;min-height:76px;gap:12px;padding:13px 14px;
+  background:var(--surface-2);border:1px solid var(--border-sub);
+  border-radius:14px;color:var(--t1);cursor:pointer;
+}
+.nexus-screen-protocols .nx-protocol-progress-row:hover {border-color:var(--nx-hybrid-accent)}
+.nexus-screen-protocols .nx-protocol-progress-row:focus-visible {
+  outline:2px solid var(--nx-hybrid-accent)!important;outline-offset:2px;
+}
+.nexus-screen-protocols .nx-protocol-progress-copy {
+  display:flex;flex:1;flex-direction:column;gap:4px;min-width:0;
+}
+.nexus-screen-protocols .nx-protocol-progress-name {
+  display:block;font-size:13px;line-height:1.4;font-weight:750;
+  color:var(--t1);overflow-wrap:anywhere;
+}
+.nexus-screen-protocols .nx-protocol-progress-stage {
+  display:block;font-size:12px;line-height:1.4;color:var(--t2);
+}
+.nexus-screen-protocols .nx-protocol-progress-detail {
+  display:block;font-size:11px;line-height:1.4;color:var(--t3);
+}
+.nexus-screen-protocols .nx-protocol-progress-track {
+  display:block;margin-top:4px;height:5px;overflow:hidden;
+  border-radius:99px;background:var(--border-sub);
+}
+.nexus-screen-protocols .nx-protocol-progress-track>span {
+  display:block;height:100%;border-radius:inherit;background:#a78bfa;
+}
+.nexus-screen-protocols .nx-protocol-progress-arrow {
+  flex:0 0 18px;color:var(--t3);
+}
+.nexus-screen-protocols .nx-protocol-schedule-footnote {
+  margin-top:13px;font-size:11px;line-height:1.5;color:var(--t3);
+}
+@media(max-width:359px){
+  .nexus-screen-protocols .nx-protocol-progress-row{padding:11px 10px;gap:8px}
+}
