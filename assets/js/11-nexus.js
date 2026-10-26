@@ -1173,6 +1173,7 @@ function protocolCalendarView() {
   const calSub = state._protoCalSub||"month";
   const subBar=`<div class="seg nx-cal-segment" style="margin-bottom:14px">
     <button id="pcal-month" class="${calSub==="month"?"on":""}" onclick="">Month</button>
+    <button id="pcal-week" class="${calSub==="week"?"on":""}" onclick="">Week</button>
     <button id="pcal-logs" class="${calSub==="logs"?"on":""}" onclick="">Logs</button>
   </div>`;
 
@@ -1193,6 +1194,24 @@ function protocolCalendarView() {
     [day, slots.filter(slot => showPaused || slot.status !== "paused")]
   ));
 
+  // Both overview and day history consume the canonical monthly occurrence collection.
+  // Future dates do not count as missed; paused and ad-hoc entries never inflate the denominator.
+  const weekAnchor=state._calSelectedDate&&state._calSelectedDate.startsWith(year+"-"+String(month+1).padStart(2,"0"))
+    ?state._calSelectedDate:todayStr.startsWith(year+"-"+String(month+1).padStart(2,"0"))?todayStr:`${year}-${String(month+1).padStart(2,"0")}-01`;
+  const weekStart=startOfWeek(new Date(weekAnchor+"T12:00:00"));
+  const weekDates=[...Array(7)].map((_,i)=>addDays(calendarDayKey(weekStart.toISOString()),i));
+  const periodKeys=calSub==="week"?weekDates:Object.keys(monthInstances);
+  const periodRows=periodKeys.filter(k=>k<=todayStr).flatMap(k=>(monthInstances[k]||[]).filter(x=>!x.adhoc&&x.status!=="paused"));
+  const complete=periodRows.filter(x=>x.status==="taken").length;
+  const missed=periodRows.filter(x=>x.status==="missed").length;
+  const unresolved=periodRows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
+  const eligible=complete+missed;
+  const rate=eligible?Math.round(100*complete/eligible):null;
+  const overview=`<section class="nx-cal-hub" aria-label="Schedule and activity overview">
+    <div class="nx-cal-hub-head"><div><h2>Schedule &amp; activity</h2><p>${calSub==="week"?"Selected week":monthLabel} · ${eligible?"Resolved outcomes":"In progress"}</p></div><div class="nx-cal-hub-score"><strong>${rate===null?"—":rate+"%"}</strong><span>of resolved outcomes completed</span></div></div>
+    <div class="nx-cal-hub-stats"><div><strong>${complete}</strong><span>Completed</span></div><div><strong>${missed}</strong><span>Missed</span></div><div><strong>${unresolved}</strong><span>Unresolved</span></div></div>
+    <p class="nx-cal-hub-note">Future doses are planned, not missed. Tap a day to explore records.</p>
+  </section>`;
   // Day-cell auxiliary data (check-ins, weight) stays a simple date lookup — only the
   // dose/occurrence side needs the canonical engine.
   const dayData={};
@@ -1229,10 +1248,10 @@ function protocolCalendarView() {
   };
 
   const cells=[];
-  for(let i=0;i<firstDay;i++) cells.push(null);
-  for(let d=1;d<=daysInMonth;d++) cells.push(d);
+  if(calSub==="week"){weekDates.forEach(k=>cells.push(k.startsWith(year+"-"+String(month+1).padStart(2,"0"))?Number(k.slice(-2)):null));}
+  else {for(let i=0;i<firstDay;i++) cells.push(null);for(let d=1;d<=daysInMonth;d++) cells.push(d);}
 
-  return subBar+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+  return subBar+overview+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <button id="cal-prev" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">‹</button>
     <span style="font-size:14px;font-weight:600;color:var(--t1)">${monthLabel}</span>
     <button id="cal-next" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">›</button>
