@@ -912,3 +912,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Added an All Logs search field matching type/title/description in `assets/js/08-nexus.js`, event binding in `assets/js/12-nexus.js` and styling in `assets/css/nexus-hybrid-preview.css`. Day View intentionally ignores search and type filters, ensuring all saved entries on the chosen day remain visible. No schema migration, no destructive data writes.
 - **INCOMPLETE:** latest-head CI, 320/390 light/dark actual screenshots, full LIVE and isolated DEMO parity artifacts, physical iPhone QA, user acceptance, merge and Cloudflare preview/prod verification. PR #123 remains draft.
 - **ONE NEXT ACTION:** run latest-head full QA and verify the All Logs search and Day View non-filtering at 320/390 in both themes; fix failures and package exact-source artifacts before requesting approval.
+
+
+### 2026-10-26 — Logs Day View candidate validated
+- Tested source/test commit `5167a87865d824cb297603a595faa436d6853319`: full LIVE/DEMO build and browser QA run `40275552699` SUCCESS; mobile regression run `40275552720` SUCCESS. Both include 320/390 dark/light. Previous/Next day assertion passed within chevron suite.
+- Inspected artifact `12630341125`, downloaded as `Nexus_Logs_QA_5167a87.zip`: root LIVE ZIP contains 21 files (index, four CSS, twelve ordered JS, four icons); standalone full-app DEMO HTML embeds Logs navigation/icons. Manifest reports fictional fixtures and ephemeral isolated storage. Runner manifest source_commit is ephemeral PR merge checkout SHA, NOT branch head.
+- Real iPhone Safari, VoiceOver, Cloudflare preview byte parity, and direct live saved-data workflow remain UNVERIFIED. No merge or production deploy. Design/reporting remains v0.9.20-beta unreleased.
+- **ONE NEXT ACTION:** review source-matched Logs Day View on physical iPhone and verify Cloudflare preview commit; address UX feedback, then request separate release approval.
