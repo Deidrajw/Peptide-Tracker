@@ -638,3 +638,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Research/Shopping Add/Edit visual parity (DRAFT, UNRELEASED)
 - `d4a55d5e` shared labelled modal markup; `23064980` spacing, 46px form fields, 48px sticky save, theme colors, focus and reduced motion; `9ddfac17` regression assertions. Saved field definitions and original save code retained, no schema change. Prior `c7ffe1bb` all three QA workflows SUCCESS, latest commit QA and artifacts not verified. No merge or production deployment.
+
+### 2026-10-26 — Stash kit editor parity polish (DRAFT / UNRELEASED)
+- `9cfb316e`, `8a223e78`, `bdd7532c`, `9b03db6c` add form styling hooks, SVG navigation, light border polish and validation assertions without changing inventory handler math or data schema. New-head QA, complete artifacts, and physical iPhone NOT VERIFIED. PR #123 remains draft/unmerged; no production deploy.
