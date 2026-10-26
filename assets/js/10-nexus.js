@@ -1495,7 +1495,7 @@ function nxQuickGo(id){
   if(id==="stash"||id==="supplies"){tab="stash";state._stashSub=id==="supplies"?"equipment":"kits";render();window.scrollTo(0,0);return;}
   if(id==="history"){tab="trends";state._trendsOpen={...(state._trendsOpen||{}),compound:true};render();window.scrollTo(0,0);requestAnimationFrame(()=>{const el=document.querySelector("#nx-compound-library");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});});return;}
   if(id==="learn"||id==="journal"){tab="amino";state._aminoSub=id;render();window.scrollTo(0,0);return;}
-  if(id==="plans"){tab="plans";render();window.scrollTo(0,0);}
+  if(id==="plans"){state._plansSub="goals";tab="plans";render();window.scrollTo(0,0);}
 }
 function nxQuickCustomize(){
   const selected=new Set(nxQuickIds());
