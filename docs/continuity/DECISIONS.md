@@ -461,3 +461,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Sprint 02 draft Stash visual kickoff
 - Sprint 02 Protocol hierarchy design preview was presented; user authorized continuation (“let's go”), **not release**. First code scope is CSS-only Stash card accessibility / compact text treatment on draft PR #123; preserve exact existing Manage, Kit details, Overview/Vials/History behaviors and vial/dose calculations. No approval to merge/deploy.
+
+
+## 2026-10-26 — Sprint 02A Protocol implementation boundary
+- User requested to continue after Protocol card preview. Approved direction: improve hierarchy and accessibility without changing status, saved phases, scheduling, compound calculations, first-dose/activate functionality or the Manage bottom sheet. CSS-only change `6479eea` implements long-name wrapping, 44px Manage/primary targets, focused detail summary and restrained card treatment. No data/schema migration; still requires latest-head QA and real iPhone preview acceptance. PR remains draft, unmerged and undeployed.
