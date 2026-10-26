@@ -615,3 +615,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### Today disclosure / typography parity (2026-10-25)
 - 2026-10-25 PR #123 Today disclosure parity: source and JS syntax inspected PASS. Added browser computed-style equality test (background, radius, border, font, size, padding, compound title font/size/weight/letter spacing/line height/text) at 320/390 light/dark, plus paused-card source invariant. Actual browser PASS not yet established; keyboard, click/collapse, paused branch, landscape, dose log/history/overdue, full-app DEMO source isolation and physical iPhone NOT TESTED. Do not report as accepted before tests.
+
+
+### Today grouped correction pass — 2026-10-25
+2026-10-25 Today new acceptance checks: exactly one chevron in expanded Hide details; same right alignment as collapsed; Intel visibly actionable; insight labels grounded in data; no invented phase countdown; completed-dose state visible without Log Dose; verify multiple-occurrence and overdue states; 320/390 both themes. All visual/browser/physical checks NOT TESTED; source edit and JS syntax only.
