@@ -56,7 +56,7 @@ try {
   // Weekly disclosure was intentionally relocated under Your Activity > This week.
   // Switch the real segmented control before measuring the visible tap target.
   // Today has one weekly summary and a direct report action, not another disclosure.
-  assert(await pg.locator('.nx-week-compact .nx-week-report-link').count()===1,'Weekly report link missing');
+  assert(await pg.locator('.nx-week-pulse .nx-week-report-link').count()===1,'Weekly report link missing');
   assert(await pg.locator('.nx-week-compact .nexus-week-card').count()===0,'Duplicate weekly card remains');
   const headerBell=pg.locator('.nx-today-header #nx-open-alerts');
   assert(await headerBell.count()===1,'Top-right alerts trigger missing');
