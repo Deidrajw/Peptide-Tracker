@@ -599,3 +599,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Today expanded screenshot audit
 - 2026-10-25 latest Today expanded card changes: source-modified ring, status badge, Last/Next, slotLabel by configured time, standalone per-occurrence Log/Reschedule/Skip 46px controls, Taken today. Browser functional checks, 320/390 dual theme, date rollover, multi-occur independent actions, status for overdue and completed, snapshots, storage and inventory math: NOT TESTED. Do not mark Pass until exact-head run evidence. Physical iPhone NOT TESTED.
+
+
+### 2026-10-25 — Critical preview syntax hotfix
+- 2026-10-25 critical reported failure: 08-nexus.js line 128 Missing } in template expression prevented preview app startup. Fixed at `77de882`; V8 parse PASS for 07-12 at latest code readback. Browser startup, complete card render, recorded-dose timestamp, overdue resolution, mobile 320/390 light/dark, source-vial math, and full DEMO/LIVE artifact parity still NOT TESTED. No physical iPhone PASS claimed.
