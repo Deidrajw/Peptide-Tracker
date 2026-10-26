@@ -1755,10 +1755,13 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
       </div>
       ${attentionLabel?`<div style="font-size:11px;color:var(--t4);margin-top:9px">${esc(attentionLabel)}</div>`:""}
     </div>
-    <div class="nx-compound-actions">
-      ${doseStatus.showLogBtn?`<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`:""}
+    ${doseStatus.status==="taken_today" ? `<div class="nx-compound-completed" role="status"><span aria-hidden="true">✓</span> Scheduled entry recorded</div>` : ""}
+    ${doseStatus.showLogBtn || (doseStatus.nextDueStr && !["taken_today","skipped"].includes(doseStatus.status)) ? `<div class="nx-compound-actions">
+      ${doseStatus.showLogBtn ? (doseStatus.status==="overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS)
+        ? `<button class="whathappened nx-compound-primary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="--nx-compound-accent:${c.color}">What happened?</button>`
+        : `<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`) : ""}
       ${doseStatus.nextDueStr && !["taken_today","skipped"].includes(doseStatus.status)?`<button class="rescheduledose nx-compound-secondary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}">Reschedule</button>`:""}
-    </div>
+    </div>` : ""}
   </div>`;
 }
 
