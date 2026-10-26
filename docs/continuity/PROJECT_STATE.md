@@ -867,3 +867,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Clear selected and Clear all previously called `confirmAction` with `nx-alert-overlay` still open. Both now close the overlay first and then launch confirmation (`f4ad59e`); original dismiss/restore persistence retained, no direct data erasure before explicit confirmation.
 - **Status:** CODED on design branch, QA/render verification PENDING; no merge/prod deploy.
 - **ONE NEXT ACTION:** verify source-built LIVE/DEMO at 320/390 both themes; directly test bell visibility, immediate confirmation and cancel/confirm/dismiss/restore flows before marking pass.
+
+
+### 2026-10-26 — Calendar 2.0 approved next priority
+- User approved Schedule & Activity Hub redesign and division of responsibilities: Today concise weekly pulse, Calendar full analytics and categorized daily history. Branch `design/design-system-2-preview-20261025`, draft PR #123 verified OPEN/draft at `144a5f735c33a291acdad32160e2f6acdbe2152f` before this docs update.
+- Inspected `assets/js/10-nexus.js`: compact Today weekly pulse already present around lines 1793–1799; avoid duplicating it. Inspected `assets/js/11-nexus.js`: Calendar 2.0 hub not yet found; implementation INCOMPLETE. No deployment performed.
+- **ONE NEXT ACTION:** implement Calendar 2.0 incrementally using shared `buildTodayOccurrenceModel`/saved-data logic, preserving Month default, weight, day history, and all editing; run full source parity and browser regression before requesting preview sign-off.
