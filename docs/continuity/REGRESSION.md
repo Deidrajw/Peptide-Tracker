@@ -579,3 +579,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Today expanded-card follow-up
 - Today expanded layout, actual Last/Next dates, multi-occurrence logging, insight disclosure, history, inventory math, 320/390 both themes, physical iPhone: NOT TESTED on new commits. Prior full browser run 40248559713 FAILED; prior mobile 40248559707 PASS only at earlier commit.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- At commits cf74e60b/6ff6ec2c: Today Insights/History/Details switching, preservation of doses and warnings, tab keyboard behavior, 320/390 light/dark, History handler, dose and vial calculations, full-demo isolation, iPhone/VoiceOver all NOT TESTED. Earlier full browser run failed. Do not infer parity or accessibility signoff.
