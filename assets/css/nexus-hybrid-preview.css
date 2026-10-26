@@ -1639,3 +1639,42 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
 }
 .nx-week-pulse .nx-week-score strong{white-space:nowrap}
 .nx-week-pulse .nx-week-score span{white-space:nowrap}
+
+
+/* Sprint 02B kickoff — kit-card action and detail readability, presentation only.
+   Do not change vial status, source selection, blend math, or saved records. */
+.nexus-screen-stash .nx-kit-heading-unified {
+  min-width:0;align-items:flex-start!important;
+}
+.nexus-screen-stash .nx-kit-title-stack {
+  min-width:0;flex:1 1 auto;display:flex;flex-wrap:wrap;
+  align-items:center;column-gap:9px;row-gap:6px;
+}
+.nexus-screen-stash .nx-kit-card-title {
+  min-width:0;max-width:100%;overflow-wrap:anywhere;
+  line-height:1.35;letter-spacing:-.15px;
+}
+.nexus-screen-stash .nx-kit-header-manage {
+  flex:0 0 44px;min-width:44px;min-height:44px;
+  display:grid;place-items:center;margin-left:auto;
+  border-radius:12px;
+}
+.nexus-screen-stash .nx-kit-header-manage:focus-visible,
+.nexus-screen-stash .nx-stash-tab:focus-visible,
+.nexus-screen-stash .nx-kit-detail-button:focus-visible {
+  outline:2px solid var(--nx-hybrid-accent);outline-offset:2px;
+}
+.nexus-screen-stash .nx-stash-tab {
+  min-width:0;white-space:normal;overflow-wrap:anywhere;
+  line-height:1.3;text-align:center;
+}
+.nexus-screen-stash .nx-kit-detail-button {
+  min-width:0;white-space:normal;line-height:1.35;
+}
+.nexus-screen-stash .nx-kit-detail-button svg {
+  flex-shrink:0;
+}
+@media(max-width:359px) {
+  .nexus-screen-stash .nx-kit-title-stack {row-gap:5px}
+  .nexus-screen-stash .nx-kit-header-manage {flex-basis:44px}
+}
