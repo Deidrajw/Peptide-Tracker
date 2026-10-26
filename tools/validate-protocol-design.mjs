@@ -61,12 +61,20 @@ try{
       });
       check(Math.abs(timing.ringTop-timing.summaryTop)<24,'320px ring and Last/Next wrapped: '+JSON.stringify(timing));
     }
-    const summary=fixture.locator('.nx-compound-insights summary');
-    check(await summary.count()===1,'Timing insights missing from sample Retatrutide card');
-    check((await fixture.locator('.nx-compound-insights').getAttribute('open'))===null,'Insights should default collapsed');
-    await summary.click();
-    check(await fixture.locator('.nx-compound-insights').evaluate(el=>el.open),'Insights disclosure not expanded');
-    check(await fixture.locator('.nx-compound-insights-body').innerText().then(s=>s.includes('Day')),'Original timeline insight missing');
+    // Hybrid Today replaces the old timing <details> with three radio-backed panels.
+    const insights=fixture.locator('.nx-compound-info-tabs');
+    check(await insights.count()===1,'Hybrid compound information tabs missing');
+    check(await fixture.locator('.nx-info-insights').count()===1,'Insights panel missing');
+    check(await fixture.locator('.nx-info-insights').innerText().then(s=>s.includes('At a glance')),'Record-grounded insights missing');
+    check(await fixture.locator('.nx-info-history').count()===1,'History panel missing');
+    check(await fixture.locator('.nx-info-details').count()===1,'Details panel missing');
+    check(await fixture.locator('.nx-compound-tab-radio:checked').count()===1,'Exactly one information segment must be selected');
+    await fixture.locator('label[for^="nx-history-"]').first().click();
+    check(await fixture.locator('input[id^="nx-history-"]').isChecked(),'History segment cannot be selected');
+    await fixture.locator('label[for^="nx-details-"]').first().click();
+    check(await fixture.locator('input[id^="nx-details-"]').isChecked(),'Details segment cannot be selected');
+    await fixture.locator('label[for^="nx-insights-"]').first().click();
+    check(await fixture.locator('input[id^="nx-insights-"]').isChecked(),'Insights segment cannot be reselected');
     const menu=fixture.locator('.moremenu');
     check(await menu.locator('svg').count()===1,'Outline ellipsis missing');
     await menu.click();
