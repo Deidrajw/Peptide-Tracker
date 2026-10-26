@@ -752,3 +752,7 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Source audit: compact aged-overdue shows What happened, expanded aged-overdue shows What happened plus More actions; conditional action parity and the user-approved hierarchy still require real browser review. No production merge/deploy.
 - Latest exact-head CI was queued at inspection; Cloudflare preview URL and browser pass NOT VERIFIED. LIVE ZIP and standalone FULL-APP DEMO INCOMPLETE.
 - **ONE NEXT ACTION:** run full-app latest-head browser/visual QA at 320/390 both themes, validate aged-overdue modal and card disclosure, and confirm Cloudflare branch preview before requesting user acceptance.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 Today expanded-card screenshot audit: 14 UX issues identified (duplicate overdue, mismatched typography/disclosure, countdown alignment, excessive metadata, tiny Today's doses, occurrence actions, completion confirmation). Targeted source changes: 4c1ba682 (status/timing/slot structure), 56f215c8 (visual hierarchy and 46px occurrence buttons), 59c6e7b6 (single-occurrence Taken today status). No calculations, storage, or dose handlers intentionally changed. Not yet validated on browser/iPhone. Cloudflare preview unverified. ONE NEXT ACTION: confirm latest-head CI and full source-derived demo 320/390 dual theme, test morning/evening occurrence labels and independent dose actions; then finish card action hierarchy.
