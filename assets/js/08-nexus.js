@@ -140,13 +140,13 @@ function peptideCardHTML(name, data, opts={}) {
         ${nxInsightCount || siteWarn || getTimingVariance(data) ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
     <div class="nx-insight-list">
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
-      currentPh.id==="activation"  ? `Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
-      currentPh.id==="rising"      ? `Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
-      currentPh.id==="peak"        ? `Peak Effect — estimated peak concentration. Appetite suppression and food noise at their strongest. Metabolic rate most elevated above baseline. Avoid undereating.` :
-      currentPh.id==="cruise"      ? `Cruise Phase — levels stable near peak, effects consistent. This is your steadiest window — good time to assess how you feel at this dose.` :
+      currentPh.id==="activation"  ? `Activation phase — current phase label from this protocol. Compare recorded symptoms and dose history for your own pattern.` :
+      currentPh.id==="rising"      ? `Rising phase — compare your tracked check-ins and previous entries to identify any changes you noticed.` :
+      currentPh.id==="peak"        ? `Peak phase — this is a schedule-derived phase label, not a measurement of concentration or effect. Review your recorded observations.` :
+      currentPh.id==="cruise"      ? `Cruise phase — view your recent dose and check-in records to compare changes across this interval.` :
       currentPh.label
     }</div>`:""}
-    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
+    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">Day ${Math.floor(since)+1} since the last recorded dose. This interval was flagged for review; compare your tracked observations.</div>`:""}
     ${trough?`<div><b>Timing window</b><span class="nx-insight-secondary">Day ${Math.floor(since)+1} since the last recorded dose. Compare recent check-ins to see whether your experience has changed.</span></div>`:""}
     ${escalation&&escalation.signal==="may_be_ready"?`<div class="nx-insight-review"><b>Time at recorded dose</b><span class="nx-insight-secondary">${escalation.weeksAtDose.toFixed(1)} weeks recorded at this dose. Compare dose history and your check-ins to review changes over time.</span></div>`:""}
 
