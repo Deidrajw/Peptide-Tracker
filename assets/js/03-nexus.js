@@ -782,6 +782,36 @@ function addBlendKitModal(blendNameOrKit) {
       composition[i].compound = sel.value === "__other__" ? "" : sel.value;
       rebuild();
     });
+
+    // Browse/search combo follows the approved screenshot; native select remains
+    // authoritative for component state and all existing change handling.
+    m.querySelectorAll(".comp-select").forEach(sel=>{
+      const wrapper=document.createElement("div");wrapper.className="nx-blend-compound-picker";
+      sel.parentNode.insertBefore(wrapper,sel);
+      wrapper.appendChild(sel);
+      const trigger=document.createElement("button");trigger.type="button";trigger.className="nx-blend-compound-trigger";
+      trigger.setAttribute("aria-label","Choose blend compound");trigger.setAttribute("aria-expanded","false");
+      const popup=document.createElement("div");popup.className="nx-blend-compound-popup";popup.hidden=true;
+      const search=document.createElement("input");search.type="search";search.placeholder="Search compounds";search.setAttribute("aria-label","Search compounds");
+      const results=document.createElement("div");results.className="nx-blend-compound-results";
+      popup.append(search,results);wrapper.append(trigger,popup);
+      const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
+      const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
+      const render=()=>{
+        results.replaceChildren();
+        const q=search.value.trim().toLowerCase();
+        const opts=[...sel.options].filter(o=>o.value&&o.textContent.toLowerCase().includes(q)).slice(0,80);
+        opts.forEach(opt=>{const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;button.className="nx-blend-compound-option";button.onclick=()=>{sel.value=opt.value;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};results.appendChild(button);});
+        if(!opts.length){const empty=document.createElement("p");empty.textContent="No matching compounds";results.appendChild(empty);}
+      };
+      const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");search.value="";render();search.focus();};
+      trigger.textContent=label();trigger.onclick=()=>popup.hidden?open():close();
+      search.oninput=render;
+      search.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"){e.preventDefault();results.querySelector("button")?.focus();}};
+      results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
+      wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
+    });
+
     m.querySelectorAll(".comp-other").forEach(inp => inp.oninput = () => { composition[+inp.dataset.i].compound = inp.value.trim(); });
     m.querySelectorAll(".comp-mg-input").forEach(inp => inp.oninput = () => {
       composition[+inp.dataset.i].mg = parseFloat(inp.value)||0;
