@@ -13,6 +13,7 @@ const tests={
  "expanded explicitly labelled disclosure": eight.includes('nxTodayDisclosureInner(true)') && eight.includes('compound-collapse-btn nx-today-disclosure'),
  "same compound casing": eight.includes('nx-today-compound-name') && seven.includes('nx-today-compound-name') && !eight.includes('${esc(name.toUpperCase())}</span>'),
  "same disclosure renderer": seven.includes('function nxTodayDisclosureInner(expanded)') && eight.includes('nxTodayDisclosureInner(true)'),
+ "paused compact shares disclosure": seven.includes('class="card nx-compound-card" style="padding:14px 16px') && seven.includes('nxTodayDisclosureInner(false)'),
  "matching title typography hook": seven.includes('class="nx-today-compound-name"') && eight.includes('nx-expanded-name nx-today-compound-name'),
  "no repeated expanded overdue badge": !eight.includes('od?statusBadge("Overdue"'),
  "overdue action opens resolution": seven.includes('class="whathappened') && twelve.includes('resolveOverdueModal(b.dataset.name'),
