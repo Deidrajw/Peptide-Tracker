@@ -482,3 +482,9 @@
 ### 2026-10-25 — PR #123 continued; unreleased hybrid Today candidate
 - Additional candidate commits: `ebfd769` weekly reporting consolidated under Your Activity, `07c3d42` period persistence on rerender, `e11a69f` reschedule/canonical week collection and adhoc exclusion, `9f9aafc` Protocol History tab test parity, `29d81b1` Stash selector QA parity. No version bump or live release authorized.
 - Release/artifact state INCOMPLETE pending exact-head green full-app tests and independent package review. CI pass on individual suites does not supersede failed full workflow. Cloudflare not deployed by these commits; real iPhone untested.
+
+
+### 2026-10-26 — PR #123 Today pre-release QA candidate (NOT DEPLOYED)
+- QA/code corrections: 3f128dc (relocated weekly disclosure test), ef600d1 (restore exact CSS path), 640d594 (default-dark computed-gradient and 320/390 bounds assertions).
+- Full GitHub Actions build & parity run 40267178763 PASS; mobile form regression run 40267178912 PASS. Downloaded artifact 12627006318 independently inspected for LIVE ZIP complete 21 files and standalone full-app DEMO inline CSS/JS. Local Chromium screenshots for Today 320/390 both themes verified gradient and tap/action behavior, not physical iPhone.
+- Version metadata unchanged v0.9.20-beta (unverified publication). Draft PR #123 remains open, no merge, no Cloudflare production deploy. No production storage/data migration. Final release commit, version bump, deployment verification and real-device acceptance remain INCOMPLETE.
