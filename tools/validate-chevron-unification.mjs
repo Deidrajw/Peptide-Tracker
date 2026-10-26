@@ -106,6 +106,17 @@ try {
   assert(await pg.locator(".nx-journal-filter").count()===7,"All Logs type filtering missing");
   assert(await pg.locator(".nx-journal-row").count()>0,"All Logs fictional fixture has no records");
   assert(await pg.locator(".nx-journal-mark svg").count()>0,"Outline log icons missing");
+  // Search must filter immediately, preserve focus, and restore rows when cleared.
+  const historySearch=pg.locator("#nx-journal-search");
+  assert(await historySearch.count()===1,"History search missing");
+  const allLogRows=await pg.locator(".nx-journal-row:visible").count();
+  await historySearch.fill("unmatchable-journal-query-9348");
+  assert(await pg.locator(".nx-journal-row:visible").count()===0,"Live search failed to hide unmatched records");
+  assert(await pg.locator("#nx-journal-search-empty").isVisible(),"Live search empty state missing");
+  assert(await historySearch.evaluate(el=>document.activeElement===el),"Typing moved focus from search field");
+  await historySearch.fill("");
+  assert(await pg.locator(".nx-journal-row:visible").count()===allLogRows,"Clearing search failed to restore history");
+  assert(await pg.locator("#nx-journal-search-empty").isHidden(),"Search empty state still visible after clear");
   await pg.screenshot({path:"dist/logs-all-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator('.nx-journal-filter[data-type="Weight"]').click();
   assert(await pg.locator('.nx-journal-filter[data-type="Weight"]').evaluate(el=>el.classList.contains("on")),"Weight filter failed");
