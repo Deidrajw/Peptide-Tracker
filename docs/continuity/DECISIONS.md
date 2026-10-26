@@ -469,3 +469,7 @@ Today insights must be record-grounded, not imply pharmacokinetic certainty or s
 
 ## 2026-10-26 — Shared Open New Vial form, Sprint 02
 - Existing blend and non-blend open-vial buttons both reach `openNewVialModal`; keep this canonical handler. Approved Sprint 02 continuation permits scoped visual layout and accessibility correction only: responsive two-column grid at iPhone widths, BAC water full-width, readable inputs/confirm action. Do not change vial allocation, blend math, validation, history or storage. PR #123 remains draft; no merge/deploy approval.
+
+
+## 2026-10-26 — Sprint 02A Protocol + Plans must precede Stash
+- User clarified approved Protocol/Plans visual proposal was a request to **implement** the Protocol/Plans changes, not to move directly to Stash. Respect feature priority. Protocol cards now foreground status, phase and schedule with purpose/linked goal in existing details. Plans goal/research cards get consistent design hierarchy, and Protocol/Plans Manage sheets gain explicit headings and accessible close buttons. Preserve existing handlers, timeline, goal detail, Intel, edit/pause/resume/history and existing calculation/storage semantics. Earlier Stash draft edits remain but no further Stash work before Protocol acceptance. No merge/deploy approval.
