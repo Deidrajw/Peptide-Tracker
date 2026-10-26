@@ -644,3 +644,11 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Visual | 320/390, dark/light, focus, keyboard, contrast, reduce-motion | NOT TESTED at latest head |
 | Data integrity | No lost check-in, dose draft, multi-vial, blend deduction or history; DEMO isolated | NOT TESTED at latest head |
 | Cloudflare / iPhone | No merge/deploy, real-device review pending | NOT DEPLOYED / NOT TESTED |
+
+
+### 2026-10-25 — Current evidence for Today 2.0 candidate
+- **PASS (earlier branch run 40264328882):** Protocol hybrid information segments + More sheet, 8 LIVE/DEMO mobile widths/themes; vial-source core 48 safety assertions, Log Dose E2E 40 flows, Combo picker matrix, Stash actions.
+- **FAIL (same run):** Stash cards QA used removed `.nx-kit-actions-two` selector. Revised check now targets shared `.nx-hybrid-two-actions` in commit `29d81b1`; exact-head result PENDING.
+- **PASS:** mobile form regression run `40264637486` at candidate app+test commit `29d81b1`.
+- **NOT TESTED / NOT ACCEPTED:** complete full QA at latest head, physical iPhone, VoiceOver, all reschedule/skip/multi-occurrence details, WCAG AA contrast, Cloudflare preview/production, complete source-parity artifact extraction/review.
+- No direct change to production saved records or dose/inventory engine. Recheck if subsequent commits alter scope.
