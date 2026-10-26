@@ -22,7 +22,7 @@ function peptideCardHTML(name, data, opts={}) {
     return `<div class="card" style="border-color:#F9C87D33;opacity:0.85">
       <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
-        <span class="nx-expanded-name" style="flex:1">${esc(name)}</span>
+        <span class="nx-expanded-name nx-today-compound-name" style="flex:1">${esc(name)}</span>
         ${statusBadge("⏸ Paused", "warning")}
         ${opts.showCollapseChevron?`<button class="compound-collapse-btn nx-today-disclosure" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">${nxTodayDisclosureInner(true)}</button>`:""}
       </div>
@@ -87,7 +87,7 @@ function peptideCardHTML(name, data, opts={}) {
   return `<div class="card nx-hybrid-expanded-compound" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
     <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
-      <span class="nx-expanded-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
+      <span class="nx-expanded-name nx-today-compound-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
       
       ${opts.showCollapseChevron?`<button class="compound-collapse-btn nx-today-disclosure" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0">${nxTodayDisclosureInner(true)}</button>`:""}
     </div>
