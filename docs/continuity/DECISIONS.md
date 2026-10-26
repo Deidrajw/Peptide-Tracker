@@ -326,3 +326,7 @@
 
 ### 2026-10-25 — Today full-screen scope reminder
 - User approves finishing Today visual redesign including schedule selector, compact AND expanded compound cards, alerts, insights, actions, tracking and weekly detail. Never erase expanded insights/history to imitate a cleaner compact card. Prioritize these protected workflows and outstanding Stash modals before moving to Protocol/Plans. Keep Hybrid visual identity across modes; preview only.
+
+
+### 2026-10-25 — Today complete coverage reiteration
+- User explicitly wants original entire-app redesign not forgotten; finish lower Today including expanded compound, insights and alerts, tracking disclosure, week summary and all actions before Protocol/Plans. Preserve richer expanded information rather than reducing it to compact scan card. No production merge/deploy approval.
