@@ -1723,7 +1723,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   // reserved for cases with no better description available.
   let attentionLabel = null;
   if (trough) attentionLabel = "Winding Down";
-  else if (siteWarn) attentionLabel = "Site rotation";
+  else if (siteWarn) attentionLabel = `Repeated site use · ${siteWarn.countInLast5} of last 5`;
   else if (escalation && escalation.signal==="may_be_ready") attentionLabel = "Protocol review";
 
   // Via scheduleLabel (phase-aware) rather than re-deriving from the top-level fields — this
@@ -1746,7 +1746,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
       <div class="nx-card-top"><div>
         <div class="nx-card-title"><strong>${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
         <div class="nx-card-frequency">${esc(freqLabel)}</div>
-      </div><span class="nx-compound-chevron" aria-hidden="true"></span></div>
+      </div><span class="nx-compact-disclosure-label">View details</span><span class="nx-compound-chevron" aria-hidden="true"></span></div>
       <div class="nx-card-facts">
         <div><div class="nx-card-fact-label">Last recorded</div><div class="nx-card-fact-value">${esc(lastDateLabel)}${doseAmount?` · ${doseAmount}`:""}</div></div>
         <div><div class="nx-card-fact-label">Next scheduled</div><div class="nx-card-fact-value">${esc(nextDateLabel)}</div></div>
@@ -1756,7 +1756,6 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
     <div class="nx-compound-actions">
       ${doseStatus.showLogBtn?`<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`:""}
       ${doseStatus.nextDueStr && !["taken_today","skipped"].includes(doseStatus.status)?`<button class="rescheduledose nx-compound-secondary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}">Reschedule</button>`:""}
-      <button class="nx-open-compound-history nx-compound-secondary" data-name="${esc(name)}" data-view="${esc(view)}" aria-label="Open ${esc(name)} dose history">History</button>
     </div>
   </div>`;
 }
