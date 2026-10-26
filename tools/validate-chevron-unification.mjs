@@ -106,6 +106,12 @@ try {
   await pg.locator('.nx-journal-filter[data-type="Weight"]').click();
   assert(await pg.locator('.nx-journal-filter[data-type="Weight"]').evaluate(el=>el.classList.contains("on")),"Weight filter failed");
   await pg.locator('.nx-journal-mode[data-mode="day"]').click();
+  const chosenBefore=await pg.locator("#nx-journal-date").inputValue();
+  await pg.locator('.nx-journal-day-step[data-offset="-1"]').click();
+  const previousDate=await pg.locator("#nx-journal-date").inputValue();
+  assert(previousDate!==chosenBefore,"Previous day failed to change selected date");
+  await pg.locator('.nx-journal-day-step[data-offset="1"]').click();
+  assert(await pg.locator("#nx-journal-date").inputValue()===chosenBefore,"Next day failed to restore selected date");
   await pg.locator("#nx-journal-today").click();
   assert(await pg.locator("#nx-journal-date").inputValue()===await pg.evaluate(()=>localDate()),"Today date picker action failed");
   await pg.evaluate(()=>{state._protoCalSub="month";render();});
