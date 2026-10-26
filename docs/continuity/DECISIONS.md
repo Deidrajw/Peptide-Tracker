@@ -504,3 +504,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Dedicated Protocol Overview screen approved
 - User explicitly clarified the approved screenshot: detail navigation with Overview / Compound / Completion segmented tabs, a ring countdown and estimated scheduled end, a compound/phase card list, and optional phase alert explanation. This is the intended **Protocol detail screen**, separate from lightweight list cards; do not replace it with only card expansion. The initial draft implementation uses a sheet and preserves the approved vertical compound roadmap, existing Manage actions, data history and phase math. The prior compact list card remains entry context. Product equivalence and physical iPhone signoff are still pending; no merge/deploy.
+
+
+## 2026-10-26 — Approved Protocol information architecture de-duplication
+- User approved simpler Protocol navigation. Protocol list must be compact with only name/status, short timeline progress and next actions. Dedicated Overview is source for ring countdown, estimated schedule end and compound progress. Tapping a compound opens approved vertical timeline. Remove duplicated Compound tab and status-only Completion tab; retain completion/pause/edit and other existing actions via Manage. List must not expose another Schedule & phases expansion. Progress is derived from canonical pause-aware timeline, never a placeholder. Approval does not authorize merge/deploy.
