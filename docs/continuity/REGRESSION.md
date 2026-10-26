@@ -652,3 +652,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS:** mobile form regression run `40264637486` at candidate app+test commit `29d81b1`.
 - **NOT TESTED / NOT ACCEPTED:** complete full QA at latest head, physical iPhone, VoiceOver, all reschedule/skip/multi-occurrence details, WCAG AA contrast, Cloudflare preview/production, complete source-parity artifact extraction/review.
 - No direct change to production saved records or dose/inventory engine. Recheck if subsequent commits alter scope.
+
+
+### 2026-10-25 — Today dark gradient refinement
+- Source: dark-only CSS scoped to `.nexus-today-hero`, its pseudo-elements and progress bar; light mode and computation untouched.
+- **NOT TESTED latest head:** computed visual contrast and screenshots at 320/390 dark/light, iPhone review, no horizontal overflow, all QA gates. No release or production deployment.
