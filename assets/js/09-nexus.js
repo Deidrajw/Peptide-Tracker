@@ -1281,7 +1281,7 @@ function openNewVialModal(supplyId, onDone) {
     </div>
     <div style="background:${c.color}11;border:1px solid ${c.color}33;border-radius:10px;padding:14px;margin-bottom:16px">
       <div style="font-size:11px;color:${c.color};font-weight:600;margin-bottom:10px">VIAL ${vialNum} DETAILS</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div class="nx-open-vial-fields" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div>
           <label class="field-label">VIALS IN KIT</label>
           <input id="rv-totalvials" type="number" ${s.isBlend?"readonly":""} class="inp" value="${s.totalVials||""}" placeholder="e.g. 10" style="padding:6px 8px;font-size:12px">
