@@ -839,3 +839,9 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 ### 2026-10-25 — Today dark hero gradient follow-up
 - User explicitly requested the dark Today hero match the softer, evenly distributed light-mode gradient rather than the prior nearly flat dark proposal. Candidate CSS committed at `abb816b4e6688653252b6054745535554f3d1a5f`: full-card dark gradient #443451 / #382B46 / #30263D, no upper-right pseudo-element glow; light mode untouched. Visual acceptance/browser QA PENDING. PR #123 remains draft, no production deployment.
 - **NEXT ACTION:** Inspect exact-head 320px/390px light/dark screenshots and run QA; retain draft state until approved.
+
+
+### 2026-10-25 — Cloudflare preview gradient not visually updating
+- User reports successful Cloudflare preview deployment f0c32cd did not visibly show approved gradient. Confirmed at commit f0c32cd source `assets/css/nexus-hybrid-preview.css` contains `#443451 → #382B46 → #30263D` and index references this stylesheet; cannot independently fetch Cloudflare served CSS with available web/container tools, so actual computed style remains UNVERIFIED.
+- Committed targeted stylesheet cache-busting `?v=today-gradient-abb816b` to branch index in `d4cb58c31a12f4e7544b485a1692cd82fa3fcc00` to force new fetch on subsequent preview deployments. No CSS visual settings/data, localStorage, dose engine or production changed.
+- **NEXT ACTION:** confirm new Cloudflare preview deploy SHA includes d4cb58c, inspect served CSS and computed gradient at 320/390 dark. Do not claim fixed until witnessed. PR #123 remains draft, no merge/production deployment.
