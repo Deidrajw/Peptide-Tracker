@@ -737,6 +737,7 @@ function wireBody() {
     state._homeView = "upcoming";
     render();
   }));
+  const todayCalendar=$("#nx-open-calendar"); if(todayCalendar) todayCalendar.onclick=()=>{ tab="calendar"; render(); window.scrollTo(0,0); };
   const viewUp=$("#view-upcoming"); if(viewUp) viewUp.onclick=()=>preserveScroll(()=>{ state._homeView="upcoming"; render(); });
   document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._allStatusFilter=b.dataset.status; saveState(); render(); }));
   // pause/resume/delete compound
