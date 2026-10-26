@@ -17,6 +17,26 @@ try{
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
+    // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
+    await page.evaluate(()=>render());
+    const tracking=page.locator('.nx-daily-tracking');
+    check(await tracking.count()===1,'Daily tracking disclosure missing');
+    check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
+    await tracking.locator('summary').click();
+    check(await tracking.evaluate(el=>el.open),'Daily tracking cannot expand');
+    check(await tracking.locator('.nx-track-select').count()===4,'Tracking preferences missing');
+    const weightCheckbox=tracking.locator('.nx-track-select[data-activity="weight"]');
+    await weightCheckbox.check();
+    check(await page.evaluate(()=>state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
+    check(await page.locator('.nx-today-activity .nx-activity-period').count()===2,'Activity periods missing');
+    await page.locator('.nx-activity-period[data-period="week"]').click();
+    check(await page.locator('.nx-activity-panel[data-activity-panel="week"]').isVisible(),'Weekly activity segment did not open');
+    await page.locator('.nx-activity-period[data-period="today"]').click();
+    check(await page.locator('.nx-activity-panel[data-activity-panel="today"]').isVisible(),'Daily activity segment did not restore');
+    check(await page.locator('.nx-today-coming-up').count()===1,'Coming Up section missing');
+    await page.locator('#nx-open-calendar').click();
+    check(await page.locator('h1.greet').first().innerText().then(s=>s.includes('Calendar')),'View Calendar failed to navigate');
+    await page.evaluate(()=>{tab='home';render()});
     await page.evaluate(()=>protocolBuilderModal());
     check((await page.locator('#proto-builder-count').textContent()).trim()==='1/6','New Protocol opens at 1/6');
     await page.locator('#proto-builder-body #pb-next').count(); // Back/Next live in footer.
