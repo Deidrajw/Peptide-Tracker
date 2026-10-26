@@ -553,3 +553,7 @@
 
 ### 2026-10-26 — Protocol interior enhancement candidate (DRAFT / UNRELEASED)
 - Commits `de2ee577`, `6cdd1174`, `7b0c2b9`, `94b66f88`: per-protocol countdown from existing phase data, in-card per-compound roadmap shortcuts and current phase interior, post-confirmation completion celebration (reduced-motion support), existing in-app phase reminder ID collision fix. Screens: Protocol cards, phase roadmap modal, completion modal, in-app notifications. No storage migration or inventory/dose math modifications. QA, FULL DEMO HTML/LIVE ZIP and physical iPhone tests PENDING. Draft PR #123 unmerged, no deployment.
+
+
+## 2026-10-26 — Approved vertical phase timeline
+DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` responsive CSS. Visual-only; no data migrations. QA/latest-head DEMO/LIVE artifacts pending; no deployment.
