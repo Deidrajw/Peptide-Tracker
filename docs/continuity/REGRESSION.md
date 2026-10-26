@@ -743,3 +743,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL (automated):** run 40334643538 final browser step; timeout `.nx-journal-mode[data-mode="all"]` at validate-chevron-unification.mjs:133 after fixture replacement. Previously completed browser/Check-In/Protocol/vial/dose/combo/Stash suites remain individually PASS; do not label aggregate PASS.
 - **CODED, NOT RETESTED:** commit `d086513` updates test harness to re-open journal through real Calendar UI after synthetic fixture reset; new PR-head CI result pending. Does not alter app code or production storage.
 - Artifact #12656152966 produced from failing preview checkout and locally inspected: LIVE ZIP contains 21 files at correct paths; full DEMO HTML and offline ZIP present; manifest flags ephemeral memory/no sync. Runtime isolation end-to-end and all Calendar cases cannot be marked PASS until passing post-fix QA.
+
+
+## 2026-10-26 — Calendar Add Log menu / Today week patch
+- Implemented targeted CSS in draft PR #123, no data/schema changes. Check Add Log plus-only (no pseudo chevron), 44px trigger, popup five options with centered text, 2-col grid and full-width Supplements tile, Measurements text clipping at 320/390, both themes. Check This week `29% so far` separated while percentage math unchanged.
+- Automated assertions added to `tools/validate-chevron-unification.mjs`; **PENDING** new run. Prior full QA 40335573068 PASS was before this patch and is not its evidence. Physical iPhone/VoiceOver **NOT TESTED**. Historic logs, edit actions, storage and data math unchanged in source patch, functional regression pending.
