@@ -583,3 +583,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Segmented Today information follow-up
 - At commits cf74e60b/6ff6ec2c: Today Insights/History/Details switching, preservation of doses and warnings, tab keyboard behavior, 320/390 light/dark, History handler, dose and vial calculations, full-demo isolation, iPhone/VoiceOver all NOT TESTED. Earlier full browser run failed. Do not infer parity or accessibility signoff.
+
+
+### Today compact action cleanup
+- 2026-10-25 newly changed Today compact/expanded flow: View details toggling, correct History panel entry and complete history, no duplicate History CTA, no blank action slots on log-unavailable states, reschedule/overdue/skip paths, site-warning count, 320/390 dual theme, full-app demo isolation: NOT TESTED pending latest-head browser evidence. Physical iPhone: NOT TESTED. Do not infer preservation of inventory math from source-only edits.
