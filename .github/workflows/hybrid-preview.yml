@@ -14,6 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Fail fast on modular JavaScript syntax errors
+        run: |
+          set -e
+          for file in assets/js/*-nexus.js; do node --check "$file"; done
       - run: npm install --no-save playwright
       - run: npx playwright install --with-deps chromium
       - run: node tools/test-hybrid-preview.cjs
