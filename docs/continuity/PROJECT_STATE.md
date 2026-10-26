@@ -981,3 +981,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Coded CSS-only Stash kit card accessibility / compact hierarchy change at `76f232d46563d55b1d47ea253e822721b80c21c4`: enforce 44px Manage target, long-name wrapping, focus-visible outlines, robust tab/detail labels at narrow widths. No JS, storage or dose math edits.
 - **Status: CODED, NOT YET TESTED/APPROVED/RELEASED.** Previous green Sprint 01 CI cannot validate this new commit. Sprint 01 Calendar Month icon feedback still open; keep PR #123 draft, production unchanged.
 - **ONE NEXT ACTION:** inspect latest-head mobile and browser QA for the new Stash CSS; audit Protocol actual plan-card source for next narrowly scoped Sprint 02A refinement, then review both themes on a real iPhone before a release request.
+
+
+## 2026-10-26 — Sprint 02A Protocol card targeted implementation
+- Reverified draft PR #123 before change: head `137306abece2b30efc3073e62d66c5b079b0140b`, draft/unmerged; mobile workflow 40341448639 SUCCESS and browser/build workflow 40341448649 SUCCESS for that exact prior head (validates Sprint 02B Stash CSS, not subsequent Protocol change). No production merge/deployment.
+- **CODED:** commit `6479eea378f2972ce1d5ead141602d53c97f8278` adds Protocol card visual hierarchy and accessibility styling exclusively to `assets/css/nexus-hybrid-preview.css`. Keeps existing Manage action handler, native Schedule & phases details, timeline and dose/activate buttons; no JS, saved state or calculation changes. Improves long-name wrapping, 44px touch targets, visible keyboard focus, compact 320px layout.
+- **NOT YET VERIFIED:** fresh automated mobile + browser workflow, latest-source FULL DEMO / LIVE package, physical iPhone 320/390 (physical 320 via browser only) visual behavior for this commit. Sprint 01 Calendar Month icon design request still unresolved. PR stays DRAFT, no release.
+- **ONE NEXT ACTION:** complete latest-head 320/390 dark/light automated QA + full-app isolated DEMO artifact check, then visually inspect the actual Protocol Manage/phase sheets and finish Stash blend/non-blend vial form parity without changing data logic.
