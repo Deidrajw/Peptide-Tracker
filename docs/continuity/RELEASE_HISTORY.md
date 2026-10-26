@@ -402,3 +402,7 @@
 
 ### 2026-10-25 — Inventory source allocation clarity (UNRELEASED)
 - Draft PR #123 source commits `3875da06`/`74228713`: numbered source labels, kit identity and explicit Draw confirmation wording, CSS grouping. Previous Stash open-card test updated `3dc44b22`. Math and persistence logic unchanged; testing and design approval pending. No production deployment.
+
+
+### 2026-10-25 — Stash modal audit / responsive control preview (UNRELEASED)
+- Draft PR #123 audit doc `1a2c3540`, CSS `0bd28df5`: larger Prepare count hit targets, readable concentration output and 50px buttons. No data changes; latest-head QA/visual signoff pending. No production merge or deployment.
