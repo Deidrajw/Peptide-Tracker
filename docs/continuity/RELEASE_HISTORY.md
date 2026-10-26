@@ -617,3 +617,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Quick/Guided Log Dose UI (DRAFT / UNRELEASED)
 - `56d0b7ef` existing dose form step-navigation and `69dace51` styling. No intended dose schema or storage changes, existing `#save` remains authoritative. Full separate Quick review and source allocation evidence in Guided review require further implementation. New-head CI, packages, Safari/VoiceOver incomplete. No merge/deploy.
+
+### 2026-10-26 — Log Dose Review gate + validation (DRAFT)
+- `2649a11a` implements separate Quick final Review and Guided final Review, positive amount/date Continue validation and original Save visibility gate; `c0b882d0` styles sticky step controls and errors. No migration or intended dose math change; automated/physical verification pending, no merge/deploy.
