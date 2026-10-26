@@ -350,3 +350,7 @@
 
 ### 2026-10-25 — Log Dose preview release checkpoint
 - 2026-10-25 — Approved preview-only Log Dose UX: show scheduled Log Dose when occurrence is actionable; show What happened? for older overdue situations, completed-state readout after recorded scheduled dose, with available controls filling the row. Keep unscheduled/retroactive logging and other existing logging flows discoverable; preserve drafts/source allocations/math. Cloudflare preview deployment approval does not authorize merge or production deployment.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 user feedback: use matching compact/expanded compound typography and disclosures; status should appear once, preserve overdue context; align ring with date facts; keep immediately useful Last/Next only, move long-running statistics to Details and logging pattern to Insights; give Today doses normal heading and minimum 44px actions; show Taken today confirmation when a single daily occurrence is recorded. Approved as design refinement only; no deployment authorized.
