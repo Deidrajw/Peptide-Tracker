@@ -912,3 +912,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Latest guided Stash QA failure
 - FAIL: `40421697164` full build/parity browser QA on app head `b8f8f2db`; error assertion unavailable from GitHub connector; job `121917447165`. PASS: mobile form regression `40421697072` on same SHA. Physical user iPhone screenshots documenting PRE-FIX broken Stash UI remain FAIL; post-fix device visuals NOT TESTED. No release clearance.
+
+## 2026-10-26 — Clarified failure classification, not a UI pass
+- Failure `40421697164`: stale Stash Cards assertion measured deliberately hidden Step-1 Save height; corrected in `6d209ed5` to test hidden on Steps 1–2 and visible 44px+ Review Save. Other suites in failed run include Stash Actions PASS 8 configurations, vial-source PASS 8/48 assertions, Log Dose PASS 8/40 flows, Combo picker PASS. Full overall QA still FAIL until rerun passes; iPhone screenshot pre-fix rejection remains FAIL.
