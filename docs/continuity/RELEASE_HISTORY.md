@@ -406,3 +406,7 @@
 
 ### 2026-10-25 — Stash modal audit / responsive control preview (UNRELEASED)
 - Draft PR #123 audit doc `1a2c3540`, CSS `0bd28df5`: larger Prepare count hit targets, readable concentration output and 50px buttons. No data changes; latest-head QA/visual signoff pending. No production merge or deployment.
+
+
+### 2026-10-25 — Today lower-page visual refinement (UNRELEASED)
+- Draft PR #123 CSS commit `287cd89d`: schedule nav, compact cards, facts, actions and chevrons. Functional renderer/recorded data unchanged. Expanded rich card parity and iPhone visual validation still incomplete; no merge/deploy.
