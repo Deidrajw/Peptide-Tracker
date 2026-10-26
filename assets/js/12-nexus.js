@@ -346,36 +346,45 @@ function wireBody() {
   const cn=$("#cal-next"); if(cn) cn.onclick=()=>{state._calOff=(state._calOff||0)+1;renderBody();};
   const calPausedToggle = document.getElementById("cal-show-paused");
   if(calPausedToggle) calPausedToggle.onchange = () => { state._calShowPaused=calPausedToggle.checked; renderBody(); };
-  document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
-    document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
-    const date=b.dataset.date;
-    const evs=[];
+  const weekTab=$("#pcal-week");if(weekTab)weekTab.onclick=()=>{state._protoCalSub="week";renderBody();};
+  const renderCalendarDay=(date)=>{
+    const box=$("#cal-day-detail");if(!box)return;
+    state._calSelectedDate=date;
+    const grouped={completed:[],scheduled:[],wellness:[]};
     const aps2=allPeptides();
-    // Same canonical getDayOccurrences() as everywhere else — this is what correctly
-    // labels Placenta AM vs PM as separate instances, and surfaces a rescheduled MOTS-c
-    // occurrence on its actual EFFECTIVE date rather than only where it was originally
-    // logged.
     Object.entries(aps2).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").forEach(([name,d])=>{
-      const slots = getDayOccurrences(d, date).filter(slot => state._calShowPaused || slot.status !== "paused");
-      const multi = slots.length>1;
-      slots.forEach((s,i)=>{
-        const label = multi ? `${name} ${i===0?"AM":i===slots.length-1?"PM":"#"+(i+1)}` : name;
-        const unit = cfg(name).unit;
-        if (s.status==="taken") evs.push({icon:"✓",text:`${label} — Taken${s.dose.dose?` · ${s.dose.dose}${unit}`:""}${s.dose.site?" · "+s.dose.site:""}`});
-        else if (s.status==="skipped") evs.push({icon:"⊘",text:`${label} — Skipped`});
-        else if (s.status==="moved") evs.push({icon:"↺",text:`${label} — Moved to another day`});
-        else if (s.status==="overdue") evs.push({icon:"✗",text:`${label} — Overdue (was due ${s.time})`});
-        else evs.push({icon:"○",text:`${label} — ${date>=localDate()?"Scheduled":"Scheduled · not logged"} ${s.time}`});
+      const slots=getDayOccurrences(d,date).filter(x=>state._calShowPaused||x.status!=="paused");
+      slots.forEach((slot,index)=>{
+        const unit=cfg(name).unit;
+        const label=slots.length>1?name+" · "+(index+1):name;
+        const done=slot.status==="taken";
+        const desc=done?("Recorded"+(slot.dose?.dose?" · "+slot.dose.dose+" "+unit:"")+(slot.dose?.site?" · "+slot.dose.site:""))
+          :slot.status==="moved"?"Rescheduled":slot.status==="skipped"?"Skipped":slot.status==="overdue"?"Overdue · unresolved":"Scheduled"+(slot.time?" · "+slot.time:"");
+        (done?grouped.completed:grouped.scheduled).push({label,desc,status:slot.status});
       });
     });
-    state.dailyLogs.filter(l=>dayKey(l.date)===date).forEach(l=>{const syms=(l.symptoms||[]).map(s=>typeof s==="string"?s:s.name);evs.push({icon:"📋",text:`Check-in · Mood ${l.mood||"-"}${syms.length?" · "+syms.slice(0,3).join(", "):""}${l.notes?" · "+l.notes:""}`});});
-    state.weightLogs.filter(l=>dayKey(l.date)===date).forEach(l=>evs.push({icon:"⚖️",text:`Weight: ${l.weight} ${state.settings.weightUnit}`}));
-    (state.measurementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>evs.push({icon:"📏",text:`Measurement${l.waist?" · Waist: "+l.waist:""}${l.hips?" · Hips: "+l.hips:""}`}));
-    const detail=document.getElementById("cal-day-detail");
-    if(detail) detail.innerHTML=evs.length?`<div class="card" style="border-color:#A78BFA22"><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">${fmtDate(date)}</div>${evs.map(e=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--surface-2)"><span>${e.icon}</span><span style="font-size:12px;color:var(--t2)">${esc(e.text)}</span></div>`).join("")}</div>`:"";});
-  if(tab==="calendar" && state._protoCalSub!=="logs") {
+    state.dailyLogs.filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Daily check-in",desc:"Mood: "+(l.mood||"Not specified")}));
+    state.weightLogs.filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Weight",desc:l.weight+" "+(state.settings.weightUnit||"lbs")}));
+    (state.measurementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Measurements",desc:[l.waist?"Waist: "+l.waist:"",l.hips?"Hips: "+l.hips:""].filter(Boolean).join(" · ")||"Recorded"}));
+    (state.supplementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Supplements",desc:(l.taken||[]).length+" recorded"}));
+    (state.macroLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Nutrition",desc:l.calories?l.calories+" kcal":"Recorded"}));
+    const active=state._calDayCategory||"completed";
+    const names={completed:"Completed",scheduled:"Scheduled / unresolved",wellness:"Wellness"};
+    const buttons=Object.keys(names).map(key=>`<button type="button" class="nx-cal-category ${active===key?"on":""}" data-category="${key}" aria-pressed="${active===key}"><strong>${grouped[key].length}</strong><span>${names[key]}</span></button>`).join("");
+    const items=grouped[active].map(r=>`<div class="nx-cal-history-row"><div><strong>${esc(r.label)}</strong><span>${esc(r.desc)}</span></div></div>`).join("");
+    box.innerHTML=`<section class="nx-cal-day-panel"><div class="nx-cal-day-head"><h3>${esc(fmtDate(date))}</h3><span>Selected day</span></div><div class="nx-cal-categories">${buttons}</div><div class="nx-cal-history-list">${items||'<p class="nx-cal-empty">No records in this category.</p>'}</div></section>`;
+    box.querySelectorAll(".nx-cal-category").forEach(btn=>btn.onclick=()=>{state._calDayCategory=btn.dataset.category;renderCalendarDay(date);});
+  };
+  document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
+    renderCalendarDay(b.dataset.date);
+  });
+  if(tab==="calendar" && state._protoCalSub!=="logs"){
+    const preferred=state._calSelectedDate;
+    const current=document.querySelector(`.cal-day[data-date="${preferred}"]`);
     const todayButton=document.querySelector(`.cal-day[data-date="${localDate()}"]`);
-    if(todayButton) todayButton.click();
+    const choice=current||todayButton||document.querySelector(".cal-day[data-date]");
+    if(choice)choice.click();
   }
   document.querySelectorAll(".proto-edit").forEach(b=>b.onclick=()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
