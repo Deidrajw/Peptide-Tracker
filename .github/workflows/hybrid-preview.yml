@@ -22,6 +22,8 @@ jobs:
         run: node tools/validate-today-card-ux.cjs
       - run: npm install --no-save playwright
       - run: npx playwright install --with-deps chromium
+      - name: Build current-commit isolated FULL-APP DEMO and LIVE package
+        run: node tools/build-release.mjs
       - run: node tools/test-hybrid-preview.cjs
       - uses: actions/upload-artifact@v4
         if: always()
