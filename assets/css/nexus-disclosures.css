@@ -18,8 +18,8 @@
 body #app details:not(.nx-no-chevron)>summary::after,
 body .modal details:not(.nx-no-chevron)>summary::after,
 body .nexus-more-sheet details:not(.nx-no-chevron)>summary::after,
-body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#stash-filter-btn,#stash-sort-btn)::after,
-body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn)::after,
+body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-quiet-toggle,#stash-filter-btn,#stash-sort-btn)::after,
+body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn)::after,
 body #app :is(#supp-toggle,#supp-selected-toggle)::after {
   content:""!important; box-sizing:border-box!important; display:block!important;
   width:var(--nx-disclosure-size)!important; height:var(--nx-disclosure-size)!important;
@@ -35,22 +35,22 @@ body #app :is(#supp-toggle,#supp-selected-toggle)::after {
 body #app details:not(.nx-no-chevron)[open]>summary::after,
 body .modal details:not(.nx-no-chevron)[open]>summary::after,
 body .nexus-more-sheet details:not(.nx-no-chevron)[open]>summary::after,
-body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
-body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
+body #app :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
+body .modal :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-quiet-toggle,#supp-toggle,#supp-selected-toggle)[aria-expanded="true"]::after,
 body .modal .symcat-toggle[data-nx-open="true"]::after {
   transform:translateY(3px) rotate(225deg)!important;
 }
 /* Disclosure rows must have a full touch target and predictable right inset. */
-body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn) {
+body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,#supp-toggle,#supp-selected-toggle,#stash-filter-btn,#stash-sort-btn) {
   min-height:48px!important; box-sizing:border-box!important;
   align-items:center!important; text-align:left;
 }
-body :is(#app,.modal) :is(.nx-tag-sym-row,.nx-notes-toggle,.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle) {
+body :is(#app,.modal) :is(.nx-tag-sym-row,.nx-notes-toggle,.tacc,.symcat-toggle,.nx-sym-browse-toggle,#supp-toggle,#supp-selected-toggle) {
   display:flex!important;justify-content:space-between!important; gap:12px!important;
 }
 /* Hide only identified legacy decorative glyphs, not counters or captions. */
 .nx-chevron-slot{display:none!important}
-body :is(#app,.modal) :is(.symcat-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-sym-browse-toggle,#supp-toggle,#supp-selected-toggle,.nx-add-log-btn)>span[aria-hidden="true"]{display:none!important}
+body :is(#app,.modal) :is(.symcat-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-sym-browse-toggle,#supp-toggle,#supp-selected-toggle)>span[aria-hidden="true"]{display:none!important}
 /* Expanded Today/Protocol cards already have a purpose-built right-hand slot.
  * Do not add a second pseudo chevron or a third grid column. */
 /* Native disclosure indicators use the shared summary pseudo-element. */
@@ -76,12 +76,12 @@ body #app :is(.nexus-today-details[open] .nexus-today-details-chevron,.nexus-pro
 body #app :is(.nexus-today-onboarding,.nx-log-updates)>summary>span[aria-hidden="true"]{display:none!important}
 body #app :is(.nexus-today-onboarding,.nx-log-updates)>summary::after{display:block!important;content:""!important}
 body #app details>summary:focus-visible,body .modal details>summary:focus-visible,
-body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle):focus-visible{
+body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,#supp-toggle,#supp-selected-toggle):focus-visible{
  outline:2px solid #A78BFA!important;outline-offset:-2px!important;
 }
 @media(prefers-reduced-motion:reduce){
   body #app details>summary::after,body .modal details>summary::after,
-  body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,.nx-add-log-btn,#supp-toggle,#supp-selected-toggle)::after{transition:none!important}
+  body :is(#app,.modal) :is(.tacc,.symcat-toggle,.nx-sym-browse-toggle,.nx-tag-sym-row,.nx-notes-toggle,#supp-toggle,#supp-selected-toggle)::after{transition:none!important}
 }
 
 /* Searchable symptom combobox: one discoverable trigger, no redundant Browse button. */
