@@ -1807,6 +1807,53 @@ function goalModal(existing) {
   renderProgressSettings();
   m.querySelector("#x").onclick=closeModal;
   m.querySelectorAll(".goal-comp").forEach(b=>b.onclick=()=>{const n=b.dataset.name,i=selC.indexOf(n);i>=0?selC.splice(i,1):selC.push(n);refresh();});
+  // Four-stage Goal wizard: move existing form controls without changing their IDs,
+  // data mapping, or final save handler. Hidden stages stay mounted so edits persist.
+  const wizard=document.createElement("div");
+  wizard.className="nx-goal-wizard";
+  wizard.innerHTML='<div class="nx-goal-wizard-top"><span id="nx-g-step-label" aria-live="polite">Step 1 of 4 · Basics</span><div class="nx-goal-wizard-track" aria-hidden="true"><span id="nx-g-step-fill"></span></div></div><div id="nx-g-wizard-panels"></div><div class="nx-goal-wizard-footer"><button type="button" id="nx-g-back">Back</button><button type="button" id="nx-g-next">Continue</button></div>';
+  const panels=wizard.querySelector("#nx-g-wizard-panels");
+  const host=m.querySelector("#g-name").parentElement;
+  const steps=[document.createElement("section"),document.createElement("section"),document.createElement("section"),document.createElement("section")];
+  const labels=["Basics","Progress","Connections","Review"];
+  steps.forEach((panel,i)=>{panel.className="nx-goal-wizard-panel";panel.setAttribute("aria-label",labels[i]);panel.hidden=i!==0;panels.appendChild(panel);});
+  const move=(selector,to)=>{const el=m.querySelector(selector);if(el)steps[to].appendChild(el);};
+  move("#g-name",0);move("#g-cat",0);move("#g-status",0);
+  // Capture the existing compound label and chip group, not only the buttons.
+  const chip=m.querySelector(".goal-comp");
+  if(chip){const group=chip.parentElement;const label=group.previousElementSibling;if(label&&label.parentElement===host)steps[2].appendChild(label);steps[2].appendChild(group);}
+  move("#g-metrics",1);
+  const method=m.querySelector("#g-progress-type");
+  if(method){const label=method.previousElementSibling;if(label&&label.parentElement===host)steps[1].appendChild(label);steps[1].appendChild(method);}
+  move("#g-progress-settings",1);
+  const symptom=m.querySelector("#g-evidence-symptom");
+  if(symptom){const label=symptom.previousElementSibling;if(label&&label.parentElement===host)steps[2].appendChild(label);steps[2].appendChild(symptom);}
+  const evidenceNote=Array.from(host.children).find(el=>el.classList?.contains("nx-muted")&&el.textContent?.includes("Selected observations remain"));
+  if(evidenceNote)steps[2].appendChild(evidenceNote);
+  move("#g-target",0);move("#g-notes",2);
+  const save=m.querySelector("#g-save");
+  if(save){steps[3].appendChild(save);save.textContent=existing?"Save changes":"Add Goal";}
+  host.appendChild(wizard);
+  let currentStep=0;
+  const review=document.createElement("div");review.className="nx-goal-wizard-review";steps[3].insertBefore(review,save);
+  const paintWizard=()=>{
+    steps.forEach((panel,i)=>{panel.hidden=i!==currentStep;});
+    wizard.querySelector("#nx-g-step-label").textContent="Step "+(currentStep+1)+" of 4 · "+labels[currentStep];
+    wizard.querySelector("#nx-g-step-fill").style.width=((currentStep+1)*25)+"%";
+    wizard.querySelector("#nx-g-back").disabled=currentStep===0;
+    wizard.querySelector("#nx-g-next").hidden=currentStep===3;
+    if(currentStep===3){
+      const field=id=>m.querySelector("#"+id)?.value||"";
+      const row=(label,value)=>'<div><span>'+label+'</span><strong>'+esc(String(value||"Not set"))+'</strong></div>';
+      review.innerHTML=row("Goal",field("g-name"))+row("Category",field("g-cat"))+row("Status",field("g-status"))+row("Progress",field("g-progress-type"))+row("Target date",field("g-target"))+row("Compounds",selC.length?selC.join(", "):"None linked")+row("Check-In symptom",field("g-evidence-symptom"));
+    }
+  };
+  wizard.querySelector("#nx-g-back").onclick=()=>{currentStep=Math.max(0,currentStep-1);paintWizard();};
+  wizard.querySelector("#nx-g-next").onclick=()=>{
+    if(currentStep===0&&!m.querySelector("#g-name").value.trim()){m.querySelector("#g-name").focus();return;}
+    currentStep=Math.min(3,currentStep+1);paintWizard();
+  };
+  paintWizard();
   m.querySelector("#g-save").onclick=()=>{
     const name=(m.querySelector("#g-name").value||"").trim();if(!name)return;
     const type=m.querySelector("#g-progress-type").value;
