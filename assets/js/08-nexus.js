@@ -88,7 +88,7 @@ function peptideCardHTML(name, data, opts={}) {
     <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
       <span class="mono nx-expanded-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name.toUpperCase())}</span>
-      <button class="compound-intel-btn" data-name="${esc(name)}" aria-label="Open ${esc(name)} compound Intel" style="color:${c.color};font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid ${c.color}33;background:${c.color}10;flex-shrink:0">Intel</button>
+      
       ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0"></button>`:""}
     </div>
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
