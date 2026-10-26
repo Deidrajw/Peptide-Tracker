@@ -24,7 +24,7 @@ function peptideCardHTML(name, data, opts={}) {
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
         <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name.toUpperCase())}</span>
         ${statusBadge("⏸ Paused", "warning")}
-        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0"></button>`:""}
+        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">Hide details</button>`:""}
       </div>
       <div style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:12px">
         ${data.pausedAt?`Paused ${fmtDate(data.pausedAt)}`:""}${data.pauseNote?` · <span style="font-style:italic">${esc(data.pauseNote)}</span>`:""}
@@ -89,7 +89,7 @@ function peptideCardHTML(name, data, opts={}) {
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
       <span class="mono nx-expanded-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name.toUpperCase())}</span>
       
-      ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0"></button>`:""}
+      ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0">Hide details</button>`:""}
     </div>
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
     ${doseStatus.recentSkip?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px;padding-left:18px">✕ Skipped ${esc(fmtDate(doseStatus.recentSkip.date))}${doseStatus.recentSkip.reason?` · ${esc(doseStatus.recentSkip.reason)}`:""} <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.recentSkip.date)}" style="color:var(--t4);text-decoration:underline;background:none;border:none;font-size:11px;padding:0;margin-left:4px">Undo</button></div>`:""}
