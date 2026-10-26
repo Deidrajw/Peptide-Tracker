@@ -508,3 +508,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Approved Protocol information architecture de-duplication
 - User approved simpler Protocol navigation. Protocol list must be compact with only name/status, short timeline progress and next actions. Dedicated Overview is source for ring countdown, estimated schedule end and compound progress. Tapping a compound opens approved vertical timeline. Remove duplicated Compound tab and status-only Completion tab; retain completion/pause/edit and other existing actions via Manage. List must not expose another Schedule & phases expansion. Progress is derived from canonical pause-aware timeline, never a placeholder. Approval does not authorize merge/deploy.
+
+
+## 2026-10-26 — Regression contract updated for approved Protocol IA
+- Tests must verify the current approved compact Protocol list → dedicated Overview → vertical phase timeline/back navigation; do not require the removed inline Schedule & phases disclosure. Protected Today/Calendar/Stash behaviors and dose logs remain tested. Plans Research ellipsis must visibly contrast from its parent card; override the higher-specificity `#app` rule rather than masking test failure.
