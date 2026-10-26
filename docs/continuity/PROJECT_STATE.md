@@ -967,3 +967,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Latest-head mobile run `40338983339` and full browser/build `40338983345` were **IN PROGRESS**, including browser 320/390 light/dark. Older full run `40337658608` was also still in browser QA at check. Therefore **Sprint 01 QA NOT CLOSED**, pending final green workflows, exact-source artifacts and physical iPhone acceptance.
 - Sprint 02 Protocol/Stash implementation plan created at `docs/design/DESIGN_SYSTEM_2_SPRINT_02.md` (planning only; no application code changes). Draft PR remains unmerged; production unchanged.
 - **ONE NEXT ACTION:** Recheck latest-head workflow conclusions and artifact integrity; once green, perform Protocol/Stash 320/390 light/dark baseline audit and present interactive visual proposal for approval.
+
+
+## 2026-10-26 — Sprint 01 user iPhone acceptance: minor Calendar Month icon feedback
+- User performed physical iPhone Sprint 01 test and reported **PASS WITH MINOR VISUAL ISSUES**, specifically wants changes to **icons in Calendar Month view**. Exact icons and desired replacement have **not yet been specified**. Do not invent visual defects or mark icons repaired. Screenshot/description pending.
+- Verified draft PR #123 pre-documentation head `375b8879cc81dd2c1f3f9b7702ac5`; mobile workflow [40339121261](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40339121261) SUCCESS and full browser/build [40339121469](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40339121469) SUCCESS. GitHub artifact 12658936702 published for that head. These are automated results, not evidence for resolving the pending icon feedback.
+- Sprint 01 **CONDITIONALLY ACCEPTED ON IPHONE, NOT FULLY SIGNED OFF** pending icon design clarification, preview, implementation and retest. Sprint 02 plan exists; no application code changes here, no merge or production deploy.
+- **ONE NEXT ACTION:** Identify which Calendar Month icons need to change and how; implement only approved visual correction, run responsive/theme and iPhone checks, then close Sprint 01 and begin Sprint 02 Protocol/Stash visual refinement.
