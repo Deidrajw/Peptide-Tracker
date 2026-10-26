@@ -1719,11 +1719,11 @@ function plansView() {
     const sm=goalSummary(g);
     const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
     return `<article class="nx-plan-item nx-plan-2-goal nx-goal-v2">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · "+esc(fmtDate(g.targetDate)):""}</div></div>${manageBtn("goal",g.id)}</div>
-      <div class="nx-goal-v2-progress">${sm.percent!==null?`<div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong><span>${sm.percent}% toward target</span></div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>`:`<div class="nx-goal-v2-detail">${esc(sm.detail)}</div>`}
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · Target "+esc(fmtDate(g.targetDate)):" · Target not set"}</div></div>${manageBtn("goal",g.id)}</div>
+      <div class="nx-goal-v2-progress"><div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong>${sm.percent!==null?`<span>${sm.percent}%</span>`:""}</div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>
       ${sm.percent!==null?`<div class="nx-goal-v2-track" role="progressbar" aria-label="Measurement progress toward goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${sm.percent}"><span style="width:${sm.percent}%"></span></div>`:""}</div>
-      <div class="nx-goal-v2-footer"><span class="nx-goal-v2-status">${esc(g.status||"Active")}</span>${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
-      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+      ${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
+      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">View goal details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
     </article>`;
   };
   if(sub==="goals"){
