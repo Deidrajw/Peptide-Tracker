@@ -2230,3 +2230,15 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx2-dose-modal .nx-dose-review-stage{margin-top:12px}
 .nx2-dose-modal .nx-dose-review-stage #nx-dose-review-rows>div{min-height:37px}
 .nx2-dose-modal .nx-dose-mode-switch button:focus-visible,.nx2-dose-modal .nx-dose-step-actions button:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+
+
+/* Log Dose: restrained Soft Depth / Porcelain / Obsidian Precision polish. */
+.nx2-dose-modal .nx-dose-mode-switch{border-color:var(--border-sub);margin-block:10px 12px}
+.nx2-dose-modal .nx-dose-mode-switch button{letter-spacing:.005em;transition:background-color .16s ease,box-shadow .16s ease}
+.nx2-dose-modal .nx-dose-review-stage{border:1px solid var(--border-sub);background:var(--surface-2);padding:16px;border-radius:16px}
+.nx2-dose-modal .nx-dose-review-stage h3{font-size:16px;letter-spacing:-.02em;font-weight:750}
+.nx2-dose-modal #nx-dose-review-rows>div{padding-block:12px;gap:16px}
+.nx2-dose-modal #nx-dose-review-rows>div strong{font-variant-numeric:tabular-nums;line-height:1.45}
+.nx2-dose-modal .nx-dose-footer .nx-dose-step-actions button{min-height:46px}
+.nx2-dose-modal #nx-dose-step-next{font-weight:750}
+@media(prefers-reduced-motion:reduce){.nx2-dose-modal .nx-dose-mode-switch button{transition:none}}
