@@ -98,6 +98,27 @@ try {
   const selectedCalendarDate=await pg.locator(".cal-day.nexus-cal-selected").first().getAttribute("data-date");
   await pg.locator("#nx-open-day-logs").click();
   assert(await pg.locator(".nx-journal").count()===1,"Logs journal missing");
+
+  // Add Log is a plus-only trigger; its popup is an aligned 2-column grid.
+  const addTrigger=pg.locator("#nx-add-log-toggle");
+  assert(await addTrigger.locator("svg").count()===1,"Add Log must have exactly one plus icon");
+  const pseudo=await addTrigger.evaluate(e=>({
+    before:getComputedStyle(e,"::before").content,
+    after:getComputedStyle(e,"::after").content
+  }));
+  assert(["none","normal"].includes(pseudo.after)&&["none","normal"].includes(pseudo.before),"Add Log has a decorative chevron "+JSON.stringify(pseudo));
+  await addTrigger.click();
+  const menu=pg.locator("#nx-add-log-menu");
+  assert(await menu.isVisible(),"Add Log menu did not open");
+  const tiles=await menu.locator("button").evaluateAll(items=>items.map(e=>{
+    const box=e.getBoundingClientRect(),style=getComputedStyle(e);
+    return {width:box.width,scrollWidth:e.scrollWidth,text:e.textContent.trim(),align:style.textAlign,justify:style.justifyContent};
+  }));
+  assert(tiles.length===5&&tiles.every(t=>t.scrollWidth<=t.width+2 && t.align==="center" && t.justify==="center"),"Add Log tile overflow/alignment "+JSON.stringify(tiles));
+  assert(await menu.evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(" ").length===2),"Add Log popup must use two columns");
+  await addTrigger.click();
+  assert(await menu.isHidden(),"Add Log did not collapse");
+
   assert(await pg.locator("#nx-journal-date").inputValue()===selectedCalendarDate,"Selected day not carried into Logs");
   assert(await pg.locator(".nx-journal-mode").count()===2,"Day/All modes missing");
   assert(await pg.locator(".nx-journal").count()===1,"Day journal failed");
