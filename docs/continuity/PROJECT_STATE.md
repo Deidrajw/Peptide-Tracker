@@ -760,3 +760,8 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 
 ### 2026-10-25 — Critical preview syntax hotfix
 - 2026-10-25 critical preview boot failure: user reported `Uncaught SyntaxError: Missing } in template expression` in assets/js/08-nexus.js:128:182, Cloudflare preview. Fixed exact nested `Taken today` time interpolation in source commit `77de882432af2ec48a0d44b3342af13f5b68df26`. Confirmed readback and V8 syntax compilation of scripts 07 through 12 PASS. Browser startup, 320/390 screenshots, full functional regression, isolated DEMO/LIVE package and Cloudflare preview deployment of this SHA remain UNVERIFIED. PR #123 stays draft/unmerged; production untouched. ONE NEXT ACTION: verify fresh preview deployment for commit 77de882, open in clean isolated browser and run startup and due/completed/overdue card regression, then resolve any remaining failures.
+
+
+### 2026-10-25 — Prevention gate added
+- Preview workflow `.github/workflows/hybrid-preview.yml` commit `157dd7d00db5b9c7156aacb91bdfc705987111ed` now runs `node --check` for all modular JS files before Playwright. Exact-source syntax was separately compiled by V8 for modules 07-12; compiled successfully.
+- Old Cloudflare commit preview URL remains an immutable stale deployment and may still show the earlier broken JavaScript. Reverify new branch deployment URL and real browser startup before declaring the incident resolved.
