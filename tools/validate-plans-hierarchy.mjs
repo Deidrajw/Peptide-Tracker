@@ -175,6 +175,23 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='true','Research notes missing expanded aria state');
  await page.locator('.nx-research-note-toggle').click();
  ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes failed to collapse');
+ const dividers=await page.locator('.nx-research-card').first().evaluate(card=>{
+   const wrapper=card.querySelector('.nx-plan-secondary'),button=card.querySelector('.nx-plan-intel');
+   return {wrapper:getComputedStyle(wrapper).borderTopWidth,button:getComputedStyle(button).borderTopWidth};
+ });
+ ensure(dividers.wrapper==='1px'&&dividers.button==='0px','Research Intel has double divider: '+JSON.stringify(dividers));
+ await page.locator('.nexus-tabbar-v2 button[data-tab="more"]').click();
+ await page.locator('.nexus-more-item').filter({hasText:'Plans'}).click();
+ ensure(await page.locator('.plans-sub[data-sub="goals"]').getAttribute('aria-selected')==='true','Opening Plans from More must default to Goals');
+ await page.locator('.plans-sub[data-sub="research"]').click();
+ ensure(await page.locator('.plans-sub[data-sub="research"]').getAttribute('aria-selected')==='true','Research subtab should stay navigable');
+ await page.locator('.nexus-tabbar-v2 button[data-tab="more"]').click();
+ await page.locator('.nexus-more-item').filter({hasText:'Plans'}).click();
+ ensure(await page.locator('.plans-sub[data-sub="goals"]').getAttribute('aria-selected')==='true','Returning to Plans must reset to Goals');
+ await page.locator('.plans-sub[data-sub="research"]').click();
+ await page.locator('#add-research').click();
+ ensure(await page.locator('#rcomp-picker').count()===1&&await page.locator('#r-status').count()===1&&await page.locator('#r-reason').count()===1&&await page.locator('#r-goal').count()===1&&await page.locator('#r-notes').count()===1,'Research editor lost required fields');
+ await page.locator('#x').click();
 
  const headRules=async(sel)=>page.locator(sel).first().evaluate(el=>{
    const title=el.querySelector('.nx-card-status'),button=el.querySelector('button.manage-plan-btn,button.manage-proto-btn,button.nx-kit-header-manage');
