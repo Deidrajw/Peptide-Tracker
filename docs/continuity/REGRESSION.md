@@ -800,3 +800,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Dedicated Protocol detail QA required
 - **NOT TESTED on current head:** Overview entry from list, correct Overview/Compound/Completion switching, ring percentage/day math after pause and multi-compound differing durations, started/paused/schedule-elapsed/completed labels, missing dates, long names, roadmap modal open from details and clean close/reopen, accessibility and 44px targets, 320/390 light/dark, safe areas and keyboard; protected dose/source/phase history and Manage actions. 'About phase notifications' is explanation only. Full-app DEMO/LIVE source parity and physical iPhone unverified. Do not claim release QA Passed.
+
+
+## 2026-10-26 — Protocol detail status semantic correction
+- Code review found active protocol label incorrectly `Ready` and paused elapsed schedule potentially labelled ended; corrected in `5764db48`. **NOT TESTED** latest head for active/paused/ended/completed/unscheduled and multi-compound calculations. GitHub build/parity 40354741333 and mobile 40354741424 were IN PROGRESS at review; no Pass claimed.
