@@ -2096,3 +2096,16 @@ html[data-theme="light"] .nexus-screen-plans .nx-plan-2-research .manage-plan-bt
 .nexus-screen-protocols .nx-protocol-compact .nx-proto-view-overview{margin:10px 0 0;min-height:48px;background:var(--surface-2);font-size:13px}
 .nexus-screen-protocols .nx-protocol-compact .nexus-protocol-start{margin-top:12px}
 .nx-proto-detail-context{font-size:12px;color:var(--t3);font-weight:750;text-transform:uppercase;letter-spacing:1px;margin:0 0 14px}
+
+
+/* Fix actual selector specificity: base nexus.css #app rule otherwise overrides
+   Research management surface even when later hybrid CSS is loaded. */
+#app .nexus-screen-plans .nx-plan-2-research .nx-plan-head .manage-plan-btn {
+  background:var(--surface-2)!important;
+  border:1px solid var(--border)!important;
+  color:var(--t1)!important;
+}
+html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-head .manage-plan-btn{
+  background:#f0e9f6!important;
+  border-color:#d7c7e3!important;
+}
