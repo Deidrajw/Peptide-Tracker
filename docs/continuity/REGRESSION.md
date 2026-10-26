@@ -661,3 +661,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ### 2026-10-25 — Today dark hero visual acceptance
 - Branch commit `04c5f1c`: remove upper-right glow from dark Today summary; source-level CSS review only. 320/390 dark and light snapshots, ring legibility and physical iPhone acceptance: NOT TESTED at new head. No app data behavior changed.
+
+
+### 2026-10-25 — Dark-mode hero selector root-cause QA
+- Source verification PASS: app initializes default dark with no `data-theme` and toggles back to dark by deleting `data-theme`; stale selector `html[data-theme="dark"]` could not match. CSS selector correction commit `6d08812` scoped to Today dark hero. Browser computed-style/raster at 320/390 dark and light: NOT TESTED at correction head. Cloudflare preview deployment: NOT VERIFIED for correction commit. Release prohibited until acceptance.
