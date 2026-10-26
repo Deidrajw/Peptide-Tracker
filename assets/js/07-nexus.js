@@ -1683,6 +1683,12 @@ function isCompoundRelevantToday(doseStatus) {
   return null;
 }
 
+// Shared visual content for compact and expanded Today disclosures.
+// Keep both states structurally identical; only the label and chevron direction change.
+function nxTodayDisclosureInner(expanded) {
+  return `<span class="nx-today-disclosure-text">${expanded?"Hide details":"View details"}</span><svg class="nx-today-disclosure-icon${expanded?" nx-today-disclosure-icon-up":""}" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
+}
+
 function renderCompoundCardCompact(name, data, view, isUpNext) {
   view = view || "active";
   const c = cfg(name);
@@ -1747,7 +1753,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
       <div class="nx-card-top"><div>
         <div class="nx-card-title"><strong>${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
         <div class="nx-card-frequency">${esc(freqLabel)}</div>
-      </div><span class="nx-compact-disclosure" aria-hidden="true"><span class="nx-compact-disclosure-label">View details</span><span class="nx-compound-chevron"></span></span></div>
+      </div><span class="nx-compact-disclosure nx-today-disclosure" aria-hidden="true">${nxTodayDisclosureInner(false)}</span></div>
       <div class="nx-card-facts">
         <div><div class="nx-card-fact-label">Last recorded</div><div class="nx-card-fact-value">${esc(lastDateLabel)}${doseAmount?` · ${doseAmount}`:""}</div></div>
         <div><div class="nx-card-fact-label">Next scheduled</div><div class="nx-card-fact-value">${esc(nextDateLabel)}</div></div>
