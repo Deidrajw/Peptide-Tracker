@@ -38,7 +38,18 @@ async function stateSnapshot(page){return page.evaluate(()=>({
 }));}
 async function setDose(page,amount){await page.locator('#dose').fill(String(amount));}
 async function openDose(page){await page.evaluate(()=>doseModal('Retatrutide'));}
-async function clickSave(page){await page.locator('.nx2-dose-modal #save').click();}
+async function clickSave(page){
+  const modal=page.locator('.nx2-dose-modal');
+  const next=modal.locator('#nx-dose-step-next');
+  for(let i=0;i<3 && !(await modal.locator('#save').isVisible());i++){
+    ensure(await next.isVisible(),'Continue unavailable before review');
+    await next.click();
+    if(!(await modal.locator('#save').isVisible()) && !(await next.isVisible()))break;
+  }
+  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
+  // Invalid entry must remain unsaved on Entry, with feedback from step validation.
+  else ensure(await modal.locator('.nx-dose-step-error').isVisible(),'Invalid entry lacks step validation feedback');
+}
 try {
   for(const width of [320,390])for(const theme of ['dark','light'])for(const kind of ['live','demo']){
     const context=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});
