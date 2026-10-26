@@ -322,3 +322,7 @@
 
 ### 2026-10-25 — Stash modal priority and safety boundary
 - Prepare Dose and Open New Vial must get individual UI audits for hierarchy, field size, live concentration, source identity, keyboard, overflow, safe-area sticky confirmation and blend/standard parity. Preserve existing formulas, vial ledger, saved drafts, one-dose semantics and validations; CSS may improve target sizes and readability without rewriting arithmetic. No production deployment approval.
+
+
+### 2026-10-25 — Today full-screen scope reminder
+- User approves finishing Today visual redesign including schedule selector, compact AND expanded compound cards, alerts, insights, actions, tracking and weekly detail. Never erase expanded insights/history to imitate a cleaner compact card. Prioritize these protected workflows and outstanding Stash modals before moving to Protocol/Plans. Keep Hybrid visual identity across modes; preview only.
