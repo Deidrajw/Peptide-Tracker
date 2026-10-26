@@ -414,3 +414,7 @@
 
 ### 2026-10-25 — Today expanded/tracking/week visuals (UNRELEASED)
 - Design PR #123 commits `685a6aab` and `593e6d19`: expanded compound presentation hook and scoped style treatment for expanded cards, tracking and weekly disclosure. Does not alter dose logic or saved records. Browser visual/functional QA pending; no release.
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- 2026-10-25 Today expanded detail hierarchy coded at 464e07de + fd66a187; branch-only, not merged, not deployed. No storage or math migrations. Exact-head QA and release artifacts INCOMPLETE.
