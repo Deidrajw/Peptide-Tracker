@@ -529,3 +529,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-26 — Goals-first progress hierarchy (approved direction, draft implementation)
 - Show goal identity, status, real progress evidence, target date, connections, and detail navigation. Numeric percent appears only with comparable saved weight records, configured source, valid baseline and target; subjective, milestones and exploratory goals show descriptive states, not fabricated completion. No protocol-to-goal causality or automatic status inference.
 - Preserve Goal detail Overview/Connections/Activity, management actions, linked Protocol Overview route and Check-In original-record links. CSS/markup changes in draft PR #123 only; no release approval.
+
+## 2026-10-26 — Goal density refinement
+- User rejected earlier Goals card pass as visually unchanged. Approved direction is less redundant summary, fewer stacked labels and more compact hierarchy; preserve accessible 44px controls and actual evidence. Draft implementation only, user visual acceptance pending.
