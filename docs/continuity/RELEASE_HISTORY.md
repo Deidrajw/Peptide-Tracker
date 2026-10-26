@@ -454,3 +454,7 @@
 
 ### Today disclosure / typography parity (2026-10-25)
 - 2026-10-25 draft PR #123 continued: shared disclosure/typography changes 1b4feb9f, 12da3fa7, 6405c0db, 853e58e3, b9cc9a7a, 4c52a898; tests 87a32f82, 5d555d70, 6fee66f0. Impact: Today compact, paused compact, expanded cards. Data changes: none intended; no schedule, dose, ledger or inventory algorithm modifications. JS syntax checks PASS; full browser/cross-theme parity and iPhone NOT TESTED. DEMO/LIVE artifacts not delivered; no production release.
+
+
+### Today grouped correction pass — 2026-10-25
+2026-10-25 PR #123 draft changes c38b9a0 and bdb0da6: Today expanded disclosure CSS, insight grouping, Intel button, record-grounded protocol review copy. No dose math, localStorage, history or migration changes intended. JS 08 syntax checked by V8. Browser QA, 320/390 screenshots, full-app artifacts and Cloudflare preview NOT VERIFIED. Not released.
