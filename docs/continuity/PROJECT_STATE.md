@@ -1169,4 +1169,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 ## 2026-10-26 — Review source identity and end-to-end checks
 - On draft PR #123, commit `8abba0bb` identifies the selected open vial in Review, resolves individual source-row vial IDs from current rows, and labels prepared dose batch amount/remaining count. Commit `fb8a7c40` adds browser assertions for multi-vial review rows and prepared-source Review before recording. Original final save/inventory handler unchanged; no production writes.
 - Corrected full-build run `40401946169` still in progress at last check. New-head full build/parity, exact-source artifacts, complete blend component ledger and physical iPhone all INCOMPLETE or NOT TESTED. No merge/deploy authorization.
-- **ONE NEXT ACTION:** inspect latest-head full-build Log Dose test results; resolve any actual failure; retrieve and inspect exact-source full-app DEMO and LIVE ZIP; then obtain physical iPhone acceptance. 
+- **ONE NEXT ACTION:** inspect latest-head full-build Log Dose test results; resolve any actual failure; retrieve and inspect exact-source full-app DEMO and LIVE ZIP; then obtain physical iPhone acceptance.
+
+## 2026-10-26 — Goals header change; Research and Shopping next
+- User explicitly approved top Add Goal action and Research then Shopping UI/UX design exploration. `efbbd544` moved existing `#add-goal` to top of Goals list, preserving wiring to `goalModal`; `7706e8f7` adds 46px responsive header button and focus styling. Changes UNVERIFIED on physical iPhone, no data migration. Source audit finds Research queue cards (status, Compound Intel, reason, notes, management) and Shopping sections (Needed/Ordered/Received, categories, quantity, goal, management): preserve their workflows.
+- Earlier Log Dose QA unresolved: latest-head full build and parity not yet accepted; exact-source DEMO/LIVE ZIP and iPhone QA INCOMPLETE. PR #123 remains draft and may not merge/deploy without explicit approval.
+- **ONE NEXT ACTION:** inspect current-head Goals 320/390 light/dark tests, then draft source-faithful Research UI preview while finishing Log Dose release-gate tests separately.
