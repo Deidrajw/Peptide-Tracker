@@ -974,3 +974,10 @@ Review PR #19's latest mobile/browser CI run, including Constipation browse/sear
 - Verified draft PR #123 pre-documentation head `375b8879cc81dd2c1f3f9b7702ac5`; mobile workflow [40339121261](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40339121261) SUCCESS and full browser/build [40339121469](https://github.com/Deidrajw/Peptide-Tracker/actions/runs/40339121469) SUCCESS. GitHub artifact 12658936702 published for that head. These are automated results, not evidence for resolving the pending icon feedback.
 - Sprint 01 **CONDITIONALLY ACCEPTED ON IPHONE, NOT FULLY SIGNED OFF** pending icon design clarification, preview, implementation and retest. Sprint 02 plan exists; no application code changes here, no merge or production deploy.
 - **ONE NEXT ACTION:** Identify which Calendar Month icons need to change and how; implement only approved visual correction, run responsive/theme and iPhone checks, then close Sprint 01 and begin Sprint 02 Protocol/Stash visual refinement.
+
+
+## 2026-10-26 — Sprint 02B first scoped code change (DRAFT)
+- User said “let's go” after Sprint 02 Protocol preview; proceed with draft design improvements while leaving merge/deploy gated. Baseline PR head before work `b3cd408b5ec6f5f0b0b55dc835445c3820e91410`.
+- Coded CSS-only Stash kit card accessibility / compact hierarchy change at `76f232d46563d55b1d47ea253e822721b80c21c4`: enforce 44px Manage target, long-name wrapping, focus-visible outlines, robust tab/detail labels at narrow widths. No JS, storage or dose math edits.
+- **Status: CODED, NOT YET TESTED/APPROVED/RELEASED.** Previous green Sprint 01 CI cannot validate this new commit. Sprint 01 Calendar Month icon feedback still open; keep PR #123 draft, production unchanged.
+- **ONE NEXT ACTION:** inspect latest-head mobile and browser QA for the new Stash CSS; audit Protocol actual plan-card source for next narrowly scoped Sprint 02A refinement, then review both themes on a real iPhone before a release request.
