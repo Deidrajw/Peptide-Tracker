@@ -212,6 +212,93 @@ function supplyModal(existing, presetName) {
     // sealed new kit isn't opening anything, so there's nothing to confirm.
     if (hasOpen) confirmOpenIfOtherKitOpen(rec, finishCreate); else finishCreate();
   };
+
+  // Guided presentation over the ORIGINAL fields and authoritative Save handler.
+  // The original input nodes stay in the DOM; no independent inventory write occurs.
+  const body=m.querySelector(".nx-unified-body")||m;
+  const wizardIntro=body.querySelector(".nx-kit-editor-intro");
+  const editorFooter=m.querySelector(".nx-kit-editor-footer");
+  const allNodes=Array.from(body.children).filter(n=>n!==wizardIntro&&n!==editorFooter);
+  const stages=[0,1,2].map(i=>{const el=document.createElement("section");el.className="nx-kit-wizard-stage";el.dataset.step=String(i);el.hidden=i!==0;return el;});
+  let stageIndex=0;
+  allNodes.forEach(node=>{
+    if(node.querySelector?.("#ssave")||node.id==="ssave")return;
+    stages[stageIndex].appendChild(node);
+    if(node.querySelector?.("#stv")||node.id==="stv")stageIndex=1;
+  });
+  stages.forEach(el=>body.appendChild(el));
+  const review=stages[2];
+  review.innerHTML='<h3>Review your kit</h3><div class="nx-kit-wizard-summary" aria-live="polite"></div><p class="nx-kit-wizard-review-note">Confirm these details before saving. Vial counts and balances are updated only by the original Save action.</p>';
+  const stepHeader=document.createElement("div");
+  stepHeader.className="nx-kit-wizard-progress";
+  stepHeader.innerHTML='<div class="nx-kit-wizard-step-heading"><span id="nx-kit-step-label">Step 1 of 3 · Kit details</span><span id="nx-kit-step-count">1 / 3</span></div><div class="nx-kit-wizard-track"><span></span></div>';
+  body.insertBefore(stepHeader,stages[0]);
+  const nav=document.createElement("div");nav.className="nx-kit-wizard-navigation";
+  nav.innerHTML='<p class="nx-kit-wizard-error" role="alert" hidden></p><div class="nx-kit-wizard-buttons"><button type="button" id="nx-kit-back">Back</button><button type="button" id="nx-kit-next">Continue</button></div>';
+  if(editorFooter){editorFooter.classList.add("nx-kit-wizard-footer");editorFooter.appendChild(nav);m.appendChild(editorFooter);}
+  const back=m.querySelector("#nx-kit-back"),next=m.querySelector("#nx-kit-next"),error=m.querySelector(".nx-kit-wizard-error");
+  let currentStep=0;
+  const read=id=>m.querySelector("#"+id)?.value||"";
+  const escReview=v=>String(v??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  const updateReview=()=>{
+    const count=existing?f.totalVials:Math.max(1,Number(read("stv"))||1);
+    const mg=existing?f.vialMg:Number(read("svmg"));
+    const isOpen=existing?!!getActiveVial(existing):!!m.querySelector("#shasopen")?.checked;
+    const activeCount=isOpen?1:0;
+    const fieldPairs=[["Compound",existing?f.name:read("sname")],["Vial count",count],["Strength per vial",mg+" mg"],["Initially open",isOpen?"Yes":"No"],["Sealed vials",existing?getSealedVials(existing).length:Math.max(0,count-activeCount)],["BAC water per vial",read("sbac")?read("sbac")+" mL":"Not provided"],["Expiry after recon",read("sexp")?read("sexp")+" days":"Default 28 days"],["Storage",m.querySelector("#sloc")?.selectedOptions[0]?.textContent||"Unknown"],["Cost",read("scost")?(read("scost")+" "+read("scur")):"Not provided"],["Notes",read("snotes")||"None"]];
+    review.querySelector(".nx-kit-wizard-summary").innerHTML=fieldPairs.map(([label,val])=>'<div><span>'+escReview(label)+'</span><strong>'+escReview(val)+'</strong></div>').join("");
+  };
+  const validate=()=>{
+    if(currentStep===0&&!existing){
+      if(!read("sname"))return "Select a compound before continuing.";
+      const number=Number(read("stv")), strength=Number(read("svmg"));
+      if(!Number.isInteger(number)||number<1)return "Enter a positive whole number of vials.";
+      if(!Number.isFinite(strength)||strength<=0)return "Enter a positive mg amount per vial.";
+    }
+    if(currentStep===1&&m.querySelector("#shasopen")?.checked){
+      const rem=read("sremaining");
+      if(rem!==""&&(!Number.isFinite(Number(rem))||Number(rem)<0))return "Remaining amount cannot be negative.";
+    }
+    return "";
+  };
+  const paint=()=>{
+    stages.forEach((el,i)=>{el.hidden=i!==currentStep;});
+    stepHeader.querySelector("#nx-kit-step-label").textContent="Step "+(currentStep+1)+" of 3 · "+["Kit details","Preparation & storage","Review & save"][currentStep];
+    stepHeader.querySelector("#nx-kit-step-count").textContent=(currentStep+1)+" / 3";
+    stepHeader.querySelector(".nx-kit-wizard-track span").style.width=((currentStep+1)/3*100)+"%";
+    back.hidden=currentStep===0;next.hidden=currentStep===2;
+    saveAction.hidden=currentStep!==2;
+    if(currentStep===2)updateReview();
+    error.hidden=true;
+    body.scrollTop=0;
+  };
+  back.onclick=()=>{currentStep=Math.max(0,currentStep-1);paint();};
+  next.onclick=()=>{const msg=validate();if(msg){error.textContent=msg;error.hidden=false;return;}currentStep=Math.min(2,currentStep+1);paint();};
+  const originalSelect=m.querySelector("#sname");
+  if(originalSelect){
+    const field=originalSelect.parentElement;
+    const combo=document.createElement("div");combo.className="nx-kit-combobox";
+    combo.innerHTML='<input id="nx-kit-combobox-input" type="search" role="combobox" aria-label="Search compound" aria-expanded="false" aria-controls="nx-kit-combobox-list" autocomplete="off" placeholder="Search compounds"><div id="nx-kit-combobox-list" role="listbox" hidden></div>';
+    originalSelect.insertAdjacentElement("afterend",combo);
+    originalSelect.classList.add("nx-kit-original-select");
+    const input=combo.querySelector("input"),list=combo.querySelector('[role="listbox"]');
+    const options=[...originalSelect.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value}));
+    input.value=originalSelect.selectedOptions[0]?.value?originalSelect.selectedOptions[0].textContent:"";
+    if(existing){input.readOnly=true;input.setAttribute("aria-label","Compound (locked for existing kit)");}
+    const closeList=()=>{list.hidden=true;input.setAttribute("aria-expanded","false");};
+    const showOptions=()=>{
+      if(existing)return;
+      const q=input.value.toLowerCase().trim();
+      const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,70);
+      list.replaceChildren();
+      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.textContent=o.name;b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
+      list.hidden=false;input.setAttribute("aria-expanded","true");
+    };
+    input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape")closeList();else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
+    combo.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!combo.contains(document.activeElement))closeList();});});
+  }
+  paint();
+
 }
 
 // ─── Health import modal ─────────────────────────────────────────────────────────
