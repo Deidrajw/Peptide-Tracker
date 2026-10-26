@@ -1585,6 +1585,7 @@ function protocolsView() {
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
+      <button type="button" class="nx-proto-view-overview" data-id="${p.id}">View protocol overview <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
       <div class="nx-protocol-2-overview" aria-label="Protocol at a glance">
         <div><span class="nx-protocol-2-label">CURRENT PHASE</span><strong>${esc(phaseCaption)}</strong></div>
         <div><span class="nx-protocol-2-label">NEXT SCHEDULED</span><strong>${esc(nextScheduledCaption)}</strong></div>
