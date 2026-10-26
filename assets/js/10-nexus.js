@@ -1672,7 +1672,7 @@ function homeView() {
       <button type="button" id="nx-alert-clear-all" class="nx-alert-restore" ${alertCount?"":"disabled"}>Clear all notices</button>\n      ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
     </section>
   </div>`;
-  const alertTriggerHtml=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-label="Needs attention, ${alertCount} notices" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true">${nxCompoundMenuIcon("bell")}</span><span class="nx-alert-count">${alertCount}</span></button>`;
+  const alertTriggerHtml=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-label="Needs attention, ${alertCount} notices" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="nx-alert-count">${alertCount}</span></button>`;
   html=html.replace('<div id="nx-alert-trigger-slot"></div>',alertTriggerHtml);
 
   // THIS WEEK — merged schedule strip + summary
