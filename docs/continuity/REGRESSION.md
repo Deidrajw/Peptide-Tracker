@@ -575,3 +575,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 | Stash modal Prepare/Open New Vial | INCOMPLETE |
 | Source-parity LIVE/DEMO ZIP & HTML | Latest-head CI PENDING |
 | Merge/deploy | NOT PERFORMED |
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- Today expanded layout, actual Last/Next dates, multi-occurrence logging, insight disclosure, history, inventory math, 320/390 both themes, physical iPhone: NOT TESTED on new commits. Prior full browser run 40248559713 FAILED; prior mobile 40248559707 PASS only at earlier commit.
