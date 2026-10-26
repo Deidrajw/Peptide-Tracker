@@ -964,3 +964,21 @@ html[data-theme="dark"] .nexus-screen-home .nx-hybrid-expanded-compound{
  .nexus-screen-home .nx-compound-card .nx-compact-disclosure-label{font-size:11px}
  .nexus-screen-home .nx-compound-card .nx-compound-actions{grid-template-columns:repeat(auto-fit,minmax(min(100%,104px),1fr))!important}
 }
+
+/* Today preview: clarity for the completed schedule and contextual action counts. */
+.nexus-screen-home .nx-compound-card .nx-compound-completed{
+ display:flex;align-items:center;gap:9px;min-height:44px;margin-top:14px;
+ padding:10px 12px;border-radius:13px;background:var(--surface-2);
+ color:var(--t2);font-size:12px;font-weight:650;
+}
+.nexus-screen-home .nx-compound-card .nx-compound-completed>span{
+ display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+ background:var(--surface-3);color:var(--t1);font-size:13px;flex-shrink:0;
+}
+.nexus-screen-home .nx-compound-card .nx-compound-actions:empty{display:none!important}
+.nexus-screen-home .nx-compound-card .nx-compound-actions:has(>button:only-child){
+ grid-template-columns:minmax(0,1fr)!important;
+}
+.nexus-screen-home .nx-hybrid-expanded-compound .nx-dose-secondary-only .moremenu{
+ min-height:44px!important;
+}
