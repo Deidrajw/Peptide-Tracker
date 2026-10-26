@@ -661,3 +661,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Guided Stash iPhone rejection corrective branch changes (CODED DRAFT; NOT RELEASED)
 - Physical iPhone screenshots show substantial UI failures in Add Kit and Blend: duplicated select, broken step count/action hierarchy, premature Save and default opened blend vial. User rejected the design. Targeted fixes on draft PR #123 regular Kit staged save/combobox, Blend editable combo + sealed default, consistent CSS, progress count removal and browser regression assertions. No planned data migration, authoritative inventory handler/maths unchanged. Newest-head QA and exact-source full-app DEMO/LIVE artifacts NOT VERIFIED; no merge or deployment.
+
+### 2026-10-26 — Guided Kit corrective QA fails (DRAFT, NOT RELEASED)
+- Source UI fixes at `b8f8f2db` mobile run `40421697072` PASS, full build/parity `40421697164` FAIL at browser QA step. Exact error not retrieved; release artifacts not verified, physical iPhone acceptance outstanding, no merge/deployment. Draft PR #123 remains open.
