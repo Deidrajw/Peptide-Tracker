@@ -115,7 +115,7 @@ try{
     check((await page.evaluate(()=>document.body.style.overflow))==='hidden','Body scroll not locked');
     const hdr=box.locator('.nx-compound-sheet-heading strong');
     check((await hdr.textContent()).trim()==='Retatrutide','Sheet title not compound-specific');
-    for(const selector of ['.histtoggle','.ics-export','.tunetoggle','.colorpick','.resetcolor','.pausepep','.archivepep']){
+    for(const selector of ['.ics-export','.tunetoggle','.colorpick','.resetcolor','.pausepep','.archivepep']){
       check(await box.locator(selector).count()===1,'Missing contextual action '+selector);
     }
     check(await box.locator('.nx-compound-menu-icon').count()>=5,'Missing outline menu icons');
@@ -132,10 +132,8 @@ try{
     await menu.click();
     await page.locator('.nx-compound-sheet-scrim').click({position:{x:8,y:8}});
     check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'Backdrop did not dismiss menu');
-    await menu.click();
-    await page.locator('body > .morebox .histtoggle').click();
-    check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'History action did not dismiss sheet');
-    check(await fixture.locator('.histbox').isVisible(),'History action lost existing handler');
+    // Hybrid History has a dedicated information segment, not a duplicate sheet action.
+    check(await fixture.locator(".nx-info-history .histtoggle").count()===1,"Full history action missing from History panel");
     await menu.click();
     await page.locator('body > .morebox .tunetoggle').click();
     check(await fixture.locator('.tunebox').isVisible(),'Schedule settings action lost handler');
