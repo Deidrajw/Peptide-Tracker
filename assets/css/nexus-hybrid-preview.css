@@ -2386,3 +2386,29 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-guided-blend-editor #nx-blend-next,.nx-guided-blend-editor #bk-save{width:100%;flex:1;min-height:48px}
 .nx-guided-blend-editor .nx-blend-wizard-actions button[hidden]{display:none!important}
 @media(max-width:390px){.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 76px 44px;gap:6px!important}}
+
+/* Guided Stash visual acceptance correction, grounded in rendered 320/390 screenshots. */
+.modal-bg>.modal.nx-stash-kit-editor,.modal-bg>.modal.nx-guided-blend-editor{max-height:calc(100dvh - env(safe-area-inset-top) - 18px);overflow-y:auto;overscroll-behavior:contain}
+.nx-stash-kit-editor .nx-kit-wizard-progress{display:grid;gap:10px;margin:6px 0 20px}
+.nx-stash-kit-editor .nx-kit-wizard-step-heading{display:block;font-size:14px;font-weight:700;line-height:1.4;color:var(--t1)}
+.nx-stash-kit-editor .nx-kit-wizard-track{height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.nx-stash-kit-editor .nx-kit-wizard-track span{display:block;height:100%;background:#a78bfa;border-radius:99px}
+.nx-stash-kit-editor .nx-kit-wizard-summary{display:grid;gap:0}
+.nx-stash-kit-editor .nx-kit-wizard-summary>div{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-sub)}
+.nx-stash-kit-editor .nx-kit-wizard-summary>div>span{flex:1;color:var(--t3);font-size:12px;line-height:1.45}
+.nx-stash-kit-editor .nx-kit-wizard-summary>div>strong{flex:1;text-align:right;color:var(--t1);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.nx-stash-kit-editor .nx-kit-wizard-review-note{font-size:12px;color:var(--t3);line-height:1.55;margin:18px 0}
+.nx-stash-kit-editor .nx-kit-wizard-footer,.nx-guided-blend-editor .nx-blend-wizard-footer{box-sizing:border-box;border-top:1px solid var(--border-sub);background:var(--surface);margin-top:18px;padding:12px 0 max(14px,env(safe-area-inset-bottom))}
+.nx-stash-kit-editor .nx-kit-wizard-buttons,.nx-guided-blend-editor .nx-blend-wizard-actions{display:flex;align-items:stretch;gap:10px}
+.nx-stash-kit-editor #nx-kit-next,.nx-guided-blend-editor #nx-blend-next{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px!important;border:0!important;border-radius:12px!important;background:#A78BFA!important;color:#1B1425!important;font-size:14px!important;font-weight:750!important;text-align:center}
+.nx-stash-kit-editor #nx-kit-back,.nx-guided-blend-editor #nx-blend-back{display:flex;align-items:center;justify-content:center;min-height:48px;min-width:76px;padding:10px 14px!important;border:1px solid var(--border-sub)!important;border-radius:12px!important;background:var(--surface-2)!important;color:var(--t1)!important;font-size:13px!important;font-weight:650!important}
+.nx-stash-kit-editor #nx-kit-back[hidden],.nx-guided-blend-editor #nx-blend-back[hidden]{display:none!important}
+.nx-stash-kit-editor #ssave,.nx-guided-blend-editor #bk-save{min-height:48px!important;display:flex;align-items:center;justify-content:center;padding:12px 16px!important;border:0!important;border-radius:12px!important;background:#A78BFA!important;color:#1B1425!important;font-size:14px!important;font-weight:750!important}
+.nx-guided-blend-editor .nx-blend-wizard-panel>div[style*="display:flex"]{min-width:0}
+.nx-guided-blend-editor .nx-blend-wizard-progress{margin:6px 0 20px}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 82px 44px}
+.nx-guided-blend-editor .nx-blend-compound-trigger{box-sizing:border-box;outline-offset:2px}
+.nx-guided-blend-editor .nx-blend-compound-popup{z-index:12;position:relative}
+.nx-guided-blend-editor .nx-blend-wizard-footer{position:sticky;bottom:0;z-index:8}
+.nx-guided-blend-editor .nx-blend-wizard-summary>div{padding:10px 0}
+@media(prefers-reduced-motion:reduce){.nx-stash-kit-editor *, .nx-guided-blend-editor *{scroll-behavior:auto!important;transition:none!important}}
