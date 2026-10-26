@@ -697,6 +697,37 @@ function wireBody() {
     document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
     document.querySelectorAll(".nx-activity-panel").forEach(el=>{el.hidden=el.dataset.activityPanel!==btn.dataset.period;});
   });
+  // Alert inbox is a transient bottom sheet; maintain focus/scroll and use existing
+  // reminder action and snooze handlers. Never modify the underlying notices.
+  const alertOverlay=$("#nx-alert-overlay"),alertOpen=$("#nx-open-alerts");
+  if(alertOverlay&&alertOpen){
+    let returnFocus=null;
+    const closeAlerts=()=>{
+      alertOverlay.hidden=true;
+      document.body.classList.remove("nx-alert-modal-open");
+      alertOpen.setAttribute("aria-expanded","false");
+      if(returnFocus&&returnFocus.isConnected)returnFocus.focus();
+    };
+    alertOpen.setAttribute("aria-expanded","false");
+    alertOpen.onclick=()=>{
+      returnFocus=document.activeElement;
+      alertOverlay.hidden=false;
+      document.body.classList.add("nx-alert-modal-open");
+      alertOpen.setAttribute("aria-expanded","true");
+      alertOverlay.querySelector(".nx-alert-sheet")?.focus();
+    };
+    ["nx-alert-close","nx-alert-dismiss"].forEach(id=>{const b=$("#"+id);if(b)b.onclick=closeAlerts;});
+    alertOverlay.onkeydown=e=>{
+      if(e.key==="Escape"){e.preventDefault();closeAlerts();}
+      if(e.key==="Tab"){
+        const nodes=[...alertOverlay.querySelectorAll('button:not([disabled]),[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.getClientRects().length);
+        if(!nodes.length)return;
+        const first=nodes[0],last=nodes[nodes.length-1];
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    };
+  }
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
   document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
   // History is a direct action: expand and reveal records in one tap, without the ellipsis.
