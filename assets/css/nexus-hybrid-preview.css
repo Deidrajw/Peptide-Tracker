@@ -2299,3 +2299,22 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-plan-edit-modal .nx-plan-edit-close:focus-visible,.nx-plan-edit-modal .nx-plan-edit-field .inp:focus-visible,.nx-plan-edit-modal .nx-plan-edit-footer button:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
 @media(max-width:350px){.nx-plan-edit-modal .nx-plan-edit-header h2{font-size:20px}.nx-plan-edit-modal .nx-plan-edit-fields{gap:12px}}
 @media(prefers-reduced-motion:reduce){.nx-plan-edit-modal *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Stash 2.0 parity polish — presentation only; preserve vial fields and handlers. */
+.modal-bg>.modal.nx-stash-kit-editor .nx-kit-editor-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px!important}
+.nx-stash-kit-editor .nx-kit-editor-eyebrow{font-size:12px!important;font-weight:750;letter-spacing:.08em!important;color:var(--t1)!important}
+.nx-stash-kit-editor .nx-kit-editor-header #x{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-sub);font-size:20px!important;color:var(--t2)!important}
+.nx-stash-kit-editor .nx-kit-editor-label{display:block;font-size:12px;line-height:1.35;letter-spacing:.02em;color:var(--t2);font-weight:650;margin-bottom:7px}
+.nx-stash-kit-editor :is(input.inp,select.inp){min-height:46px!important;font-size:16px!important;border-radius:11px!important;max-width:100%}
+.nx-stash-kit-editor .nx-kit-editor-blend-switch{min-height:44px;padding:8px 4px!important;font-size:13px!important;font-weight:650}
+.nx-stash-kit-editor .nx-kit-editor-footer{position:sticky;bottom:0;z-index:3;margin-top:12px;padding:12px 0 max(12px,env(safe-area-inset-bottom));background:var(--modal-bg,var(--surface));border-top:1px solid var(--border-sub)}
+.nx-stash-kit-editor .nx-kit-editor-save{display:block;width:100%;min-height:48px!important;background:#A78BFA!important;color:#1B1425!important;border-radius:12px;font-size:14px;font-weight:750}
+.nx-stash-kit-editor :is(#x,#sw-blend,#ssave):focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.nexus-screen-stash #open-prepared-list{min-height:48px;gap:12px}
+.nexus-screen-stash .nx-stash-prepared-chevron{flex:none;color:#A78BFA}
+.nexus-screen-stash .inv-notice-action{min-height:44px!important;min-width:44px;padding:10px 4px!important;font-size:12px!important;text-align:left}
+.nexus-screen-stash .nx-kit-primary-vial{box-shadow:none!important}
+.nexus-screen-stash .nx-kit-overview-hero{box-shadow:none!important}
+@media(max-width:359px){.nx-stash-kit-editor .nx-kit-editor-header{gap:8px}.nx-stash-kit-editor .nx-kit-editor-label{font-size:11.5px}}
+@media(prefers-reduced-motion:reduce){.nx-stash-kit-editor :is(button,input,select){transition:none!important}}
