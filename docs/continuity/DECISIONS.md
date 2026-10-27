@@ -660,3 +660,10 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-26 — Test results attachment visual correction (approved preview parity)
 - User explicitly rejected the plain blue `Upload test results` link and oversized, dry explanatory paragraph: it did not match the previously shown polished card preview. Preserve the approved Step 2 location beneath Notes and optional behavior, but render a unified bordered, padded card in both Standard and Blend Kit with outline upload icon, `Test results` title, `Optional` pill, concise COA description, full-width `Choose file` outlined 46px action, and subtle concise file limit help. Selected files retain meaningful name/remove/validation feedback. Do not claim image HEIC support or server upload. Do not change record storage semantics or inventory logic.
 - Draft PR #123 only, code `65ac266` and `7d36813`; CI/device acceptance pending. Supplies remains next screen after attachment QA. Mandatory-fields and app-wide nested-scrolling audits separate.
+
+
+## 2026-10-26 — Kit attachment must be reopenable, not download-only (USER REQUIREMENT)
+- User explicitly clarified the core reason to upload test results: **open and view the saved file later**. A filename/download-only Stash action was insufficient.
+- Coded on draft PR #123: both Standard and Blend Step 2 attachment cards expose `View file` after selection, and saved Stash Kit details expose a `View file` action alongside Download. Shared in-app full-screen PDF/image viewer uses temporary local Blob URLs, native PDF frame or image display, close/return, optional download. Does not modify inventory, attachment record schema, history or storage.
+- Preview supported PDF, JPEG, PNG and WebP only; unsupported/imported file blocked. No HEIC support or server upload. Browser runtime + native iPhone Safari PDF viewing/safe-area still acceptance gates, not assumed passing.
+- After attachment acceptance, review Supplies screen. Mandatory-fields and app-wide nested scroll audits remain separate unfinished priorities.
