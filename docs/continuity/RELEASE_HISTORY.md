@@ -778,3 +778,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - Draft PR #123 commits `a9e54daf` inline daily supplement add, `15038801` Profile supplements cleanup, `86ae622a` retired Notion handler, `d24bbada` lavender inline styling, `647b1368` browser fixture, `84a00064` Stash vial detail hierarchy, `2eb7c11c`/`3da1a412` Prepare source responsive styling. No migration, no intentional changes to dosing, vial calculations, prior supplement histories or protocol source. Current-head CI + complete source-parity artifacts and physical iPhone QA pending. PR remains unmerged; no preview/production deployment confirmed.
 
 - Draft extension: `78bafc1d` adds supplement-creation control in Check-In; `36b81eea` adds no-auto-log browser coverage. Prior records and save validation untouched. CI pending; not deployed.
+
+
+### 2026-10-27 — Screenshot-driven Supplements and source-identity correction (DRAFT / UNRELEASED)
+- PR #123 commits `4b8eaa67` reorder supplement add under search/browse/selected and replace main editable Log Dose Kit ID with readable source label plus optional IDs disclosure; `8df3711a` scoped source layout; `801b62a6` supplement order regression assertion. Screens: Check-In Supplements, standalone Supplements logger, Log Dose source details. Data impact: none by design; internal kit/vial IDs preserved and no migration. CI/full-app packages/device retest pending; PR draft, not merged/deployed.
