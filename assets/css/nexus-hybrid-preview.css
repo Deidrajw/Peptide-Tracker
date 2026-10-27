@@ -2799,3 +2799,43 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
   min-height:34px!important;box-sizing:border-box!important;
   line-height:1.25!important;white-space:normal!important;
 }
+
+
+/* Stash > Supplies: premium empty state and consistent add action. */
+.nexus-screen-stash .nx-supplies-empty{
+  box-sizing:border-box;display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:0;max-width:100%;padding:32px 20px 24px;
+  margin:18px 0 0;border:1px solid var(--border-sub);border-radius:20px;
+  background:var(--surface-2);color:var(--t1)
+}
+.nexus-screen-stash .nx-supplies-empty-icon{
+  display:flex;align-items:center;justify-content:center;width:56px;height:56px;
+  border-radius:17px;background:rgba(167,139,250,.13);color:#ac92ee;
+  margin-bottom:16px
+}
+.nexus-screen-stash .nx-supplies-empty h2{
+  font-family:inherit;font-size:18px;line-height:1.3;letter-spacing:-.02em;
+  font-weight:750;color:var(--t1);margin:0 0 8px
+}
+.nexus-screen-stash .nx-supplies-empty p{
+  max-width:310px;font-size:13px;line-height:1.55;color:var(--t2);margin:0 0 22px
+}
+.nexus-screen-stash .nx-supplies-toolbar{display:flex;justify-content:flex-end;margin:12px 0 18px}
+.nexus-screen-stash .nx-supplies-add{
+  appearance:none;box-sizing:border-box;display:inline-flex;align-items:center;
+  justify-content:center;gap:9px;min-height:48px;min-width:0;padding:12px 18px;
+  border:0;border-radius:13px;background:linear-gradient(135deg,#d8bcfa,#aa8bf1);
+  color:#241432;font:inherit;font-size:14px;font-weight:750;
+  box-shadow:0 5px 14px rgba(138,96,205,.16);cursor:pointer
+}
+.nexus-screen-stash .nx-supplies-empty .nx-supplies-add{width:100%;max-width:310px}
+.nexus-screen-stash .nx-supplies-toolbar .nx-supplies-add{width:100%}
+.nexus-screen-stash .nx-supplies-add svg{flex-shrink:0}
+.nexus-screen-stash .nx-supplies-add:focus-visible{outline:2px solid var(--t1);outline-offset:3px}
+.nexus-screen-stash .nx-supplies-add:active{filter:brightness(.94)}
+@media(max-width:360px){
+  .nexus-screen-stash .nx-supplies-empty{padding:25px 16px 20px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nexus-screen-stash .nx-supplies-add{transition:none!important}
+}
