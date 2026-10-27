@@ -624,7 +624,7 @@ function compoundPickerHTML(selected=[], pickerId="cpick") {
     ${selected.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${selected.map(c=>`<span class="pill cpick-remove" data-name="${esc(c)}" data-picker="${pickerId}" style="background:#7DF9C022;color:#7DF9C0;border:1px solid #7DF9C044;cursor:pointer">${esc(c)} ✕</span>`).join("")}</div>`:""}
     <input class="cpick-search inp" data-picker="${pickerId}" placeholder="🔍 Search compounds…" value="${esc(state[`_cpickQ_${pickerId}`]||"")}" style="width:100%;margin-bottom:6px;padding:7px 10px;font-size:12px">
     <div style="max-height:160px;overflow-y:auto;border:1px solid var(--border-sub);border-radius:8px;background:var(--surface-2)">
-      ${filtered.slice(0,30).map(n=>{
+      ${filtered.slice(0,5).map(n=>{
         const isSel=selected.includes(n);
         const lib=LIBRARY.find(l=>l.name===n);
         const alias=lib?.aliases?.[0]||"";
@@ -632,8 +632,9 @@ function compoundPickerHTML(selected=[], pickerId="cpick") {
           <span style="font-weight:${isSel?"600":"400"}">${isSel?"✓ ":""}${esc(n)}</span>${alias?`<span style="font-size:10px;color:var(--t5);margin-left:6px">${esc(alias)}</span>`:""}
         </button>`;
       }).join("")}
-      ${filtered.length>30?`<div style="padding:8px 12px;font-size:10px;color:var(--t5)">Type to narrow — ${filtered.length} total</div>`:""}
+      ${filtered.length>5?`<div style="padding:8px 12px;font-size:11px;color:var(--t5)">Type to narrow · ${filtered.length} matches</div>`:""}
       ${filtered.length===0?`<div style="padding:8px 12px;font-size:11px;color:var(--t5)">No match. <button class="cpick-custom" data-picker="${pickerId}" data-q="${esc(q)}" style="color:#7DF9C0;background:none;border:none;text-decoration:underline;font-size:11px">Add "${esc(q)}"</button></div>`:""}
+      <button type="button" class="cpick-browse-all" data-picker="${pickerId}">View all compounds</button>
     </div>
   </div>`;
 }
@@ -649,6 +650,18 @@ function wireCompoundPicker(container, selected, pickerId, onChange) {
   });
   const cl=container.querySelector(`.cpick-clear[data-picker="${pickerId}"]`); if(cl) cl.onclick=()=>{ selected.length=0; onChange(selected); };
   const s=container.querySelector(`.cpick-search[data-picker="${pickerId}"]`); if(s) s.oninput=()=>{ state[`_cpickQ_${pickerId}`]=s.value; onChange(selected); };
+  const browse=container.querySelector(`.cpick-browse-all[data-picker="${pickerId}"]`);
+  if(browse)browse.onclick=()=>{
+    const modal=container.closest(".modal");
+    if(!modal)return;
+    const opts=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(l=>l.name),...Object.keys(state.customPeptides||{})])].sort().map(name=>({name,value:name}));
+    nexusBrowseAllCompounds(modal,opts,option=>{
+      const i=selected.indexOf(option.name);
+      if(i<0)selected.push(option.name);else selected.splice(i,1);
+      state[`_cpickQ_${pickerId}`]="";
+      onChange(selected);
+    });
+  };
   const cc=container.querySelector(`.cpick-custom[data-picker="${pickerId}"]`); if(cc) cc.onclick=()=>{
     const name=(cc.dataset.q||"").trim(); if(!name) return;
     if(!selected.includes(name)) selected.push(name);
