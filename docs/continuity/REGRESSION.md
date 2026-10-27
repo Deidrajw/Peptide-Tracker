@@ -1181,3 +1181,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - ROOT CAUSE: extra closing div in dose modal markup closed .nx-dose-head before #x; moving header out of .nx-dose-scroll also exposed malformed DOM nesting. Fixed code at 310ccb01, strengthened E2E guards at b61052cc for direct child header/close, scrolling section ancestry and bounding-box separation.
 - Mobile regression workflow 40566073856 SUCCESS for branch head a909e16. Full browser/artifact workflow 40566074048 running as of last check; no physical retest yet. Cloudflare bot reports branch preview 99754367 for a909e16; independently fetched asset bytes unverified.
 - PENDING real-device acceptance: exact preview shows x in header, no orphan control, source and administration cards fully rounded and aligned, one vertical body scroll, bottom review/actions unobstructed, keyboard and Quick/Guided switch work.
+
+
+## 2026-10-27 — Direct reaction access tests
+- **PASS automated on 9d8ad41e:** mobile workflow 40569192074, full build/browser workflow 40569192089. Calendar direct Record reaction path opens independent editor; timestamps, multiple reactions, dose ID and no inventory changes are asserted on fictional fixtures, including re-edit preservation.
+- **ADDED / latest CI PENDING:** commit 85afbd03 tests independent saved-dose retrospective Record reaction, third appended event, unchanged vial count, and legacy note preserved across dose edit in 8 LIVE/DEMO x 320/390 x both theme configurations. CI 40569926373 / 40569926374 not yet cleared.
+- **NOT TESTED:** real iPhone Safari, keyboard, VoiceOver, real production records; Cloudflare source asset hash parity. Draft PR #123 unmerged.
