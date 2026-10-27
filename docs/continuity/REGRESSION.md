@@ -1209,3 +1209,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Today/Active/Completed/All filter test matrix
 - New browser test e8c685fa: Completed view includes a recorded dose today with Record reaction bound to its ID, excludes an old historical-only dose, while existing full suite protects doses, logs and inventory. New-head QA PENDING; DO NOT mark PASS yet.
 - Manual acceptance NOT TESTED: top tabs switch with clear selected state; 320px/390px dark/light fit without clipping; Today retains needs-action plus completed today; Active/All unchanged; Coming up remains below with functioning Calendar drill-down; correct completed-dose reaction form and keyboard. No real production data tested.
+
+- Regression discovered: workflow 40583259646 FAILED in new Completed-tab test because a dose recorded today was not listed by status-only filter. Changed filter at ebd66e42 to include records whose canonical doseDayFor equals today, independently of remaining schedule status (supports multiple daily doses). Fresh CI pending; prior PASS claims do not supersede this failure.
