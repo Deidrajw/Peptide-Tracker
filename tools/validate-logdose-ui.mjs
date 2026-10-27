@@ -126,7 +126,11 @@ try {
     await page.locator('#nx-dose-step-next').click();
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Total allocated'),'Multi-vial Review omits structured source rows');
-    ensure(splitReview.includes('Kit 9104')&&splitReview.includes('Kit 9105'),'Multi-vial Review loses selected kit identity');
+    ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
+    const splitIds=page.locator('#nx-dose-source-ids');
+    await splitIds.locator('summary').click();
+    const auditIds=await splitIds.innerText();
+    ensure(auditIds.includes('9104')&&auditIds.includes('9105'),'Multi-vial Review loses selected kit identity in source identifiers');
     await clickSave(page);
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
