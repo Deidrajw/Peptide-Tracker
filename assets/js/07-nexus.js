@@ -99,7 +99,7 @@ function supplyModal(existing, presetName) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label class="field-label">TOTAL COST</label><input id="scost" type="number" step="0.01" class="inp" value="${esc(f.cost||"")}" placeholder="e.g. 200.00" style="margin-bottom:14px"></div>
       <div><label class="field-label">CURRENCY</label><select id="scur" class="inp" style="margin-bottom:14px">
-        ${["CAD","USD","GBP","EUR","AUD"].map(c=>`<option${c===f.currency?" selected":""}>${c}</option>`).join("")}
+        ${[...new Set(["CAD","USD","GBP","EUR","AUD","NZD","CHF","JPY","CNY","HKD","SGD","INR","MXN","BRL","ZAR",f.currency])].filter(Boolean).map(c=>`<option${c===f.currency?" selected":""}>${c}</option>`).join("")}
       </select></div>
     </div>
     <label class="field-label">STORAGE LOCATION</label>
