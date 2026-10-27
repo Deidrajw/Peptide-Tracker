@@ -109,8 +109,10 @@ try{
   await page.locator('#bk-bac-edit').fill('2.5');
   await page.locator('#bk-vials').fill('3');
   await page.locator('#bk-cost').fill('190');
+  ensure(await page.locator('#bk-currency option').count()>=15,'Blend currency selector has incomplete options');
+  await page.locator('#bk-currency').selectOption('USD');
   await page.locator('#nx-blend-next').click();
-  ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('CAD $190')),'Review differs from entered BAC/cost');
+  ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('USD 190')),'Review differs from entered BAC/cost');
   ensure(await page.locator('.nx-blend-review-hero h3').innerText()==='QA Fixture Blend','Review missing prominent blend name');
   ensure(await page.locator('.nx-blend-review-total').innerText().then(t=>t.includes('15 mg')),'Review missing emphasized total strength');
   ensure(await page.locator('.nx-blend-review-component').count()===2,'Review missing component composition');
@@ -121,7 +123,7 @@ try{
   ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
   await page.locator('#bk-save').click();
   const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
-  ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
+  ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.currency==='USD'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
   ensure(recorded?.composition?.length===2&&recorded.composition[0].mg===10&&recorded.composition[1].mg===5,'Saved component amounts incorrect');
   await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
   // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
