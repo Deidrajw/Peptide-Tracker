@@ -994,3 +994,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL full-browser:** 40437121849 flagged gradient button as transparent when checking only backgroundColor; corrected assertion to permit non-none backgroundImage. Follow-up 40440313012 exposed opaque Blend footer background and FAILED. Scoped kit footer surface changed to transparent at 93ebdae; latest full-browser rerun PENDING.
 - **Artifact partial verification:** artifact 12704174741 zipped 21 files with clean CRC, full standalone DEMO identical to offline ZIP HTML; 17 source text blobs matched GitHub then-current source. Current post-CSS exact-head artifact NOT VERIFIED.
 - **NOT TESTED:** physical native iPhone software keyboard, real safe-area interaction and VoiceOver. Local Chromium navigation blocked by environment policy; no invented browser interaction pass. Broader app-wide nested-scroll audit remains separate.
+
+
+## 2026-10-26 — Latest Kit Wizard visual and CI evidence
+- **PASS automated:** mobile 40441021069; previous full-browser 40440638898 passed all 8 Stash Actions combinations including blend wizard steps and final Add to Stash.
+- **FAIL historical full-browser:** 40440638898 subsequently failed in Stash Cards because Kit Continue gradient was interpreted as transparent. Test updated at a781431d; rerun 40441021070 PENDING.
+- **Visual finding, requires follow-up:** reviewed CI Blend 320/390 dark/light step1, step2, review screenshots from artifact 12705638730; all show readable review content and primary action, but step1/2 footer is placed high with unused bottom viewport. Do not label full visual acceptance PASS.
+- **NOT TESTED:** native physical iPhone software keyboard and safe-area behavior, actual VoiceOver. App-wide scrolling audit remains separate.
