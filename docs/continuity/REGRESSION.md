@@ -1049,3 +1049,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **NOT TESTED** latest native Safari device, backup/restore and VoiceOver. No inventory logic or history changes. App-wide no-nested-scroll and mandatory-fields audits are separately unfinished.
 
 - **CI failure evidence (2026-10-27):** full browser 40448235375 failed new strict Blend equal-width/vertical-alignment assertion. At narrow width, cost/optional label likely wraps differently from currency. CSS fix 9d3e54f reserves matching field-label height. Rerun 40448545857 PENDING; keep FAIL historical until new evidence. Mobile prior run passed.
+
+
+## 2026-10-27 — Step 2 parity verified on source-matched CI
+- **PASS automated:** full-browser 40448545857, mobile 40448545887, 320/390 light/dark LIVE and isolated DEMO wizard suites. Equal-width/label alignment Cost+Currency assertion passed after scoped `min-height:34px` CSS correction. Archive 12708814792: outer/live/offline ZIP CRC PASS and full standalone DEMO matches offline ZIP index. Compared three app-source Git blob SHAs with current branch; equal.
+- **OPEN visual observation:** Blend sticky actions obscure top of Test Results card in unscrolled screenshot; browser scrolling test allows card to clear footer. Do not mark physical iPhone visual acceptance PASS without user confirmation.
+- **NOT TESTED:** physical iPhone keyboard, focus, native Safari PDF and VoiceOver. App-wide nested scrolling and mandatory-fields audit remain separate.
