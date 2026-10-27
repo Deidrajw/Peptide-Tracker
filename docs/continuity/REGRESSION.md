@@ -1156,3 +1156,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL (historical, test DOM assumption):** full browser run 40555517407 expected `.nx2-source-identifiers` nested inside allocation row. In source the disclosure deliberately follows the action row as a sibling; correct locator committed `e14d78e3`. Do not infer latest full suite PASS until rerun.
 - **PENDING tests:** LIVE/full isolated DEMO × 320/390 × both themes; searchable filtered supplements; Add only when no exact match; case-insensitive duplicate selection; no auto taken log; date-specific re-edit; keyboard and VoiceOver; collapsed/expanded Observations retain intensity/notes and edits; full-width Source identifiers no clipping with long labels; exact source IDs and single/multi-vial deduction/insufficient stock; artifacts/source matched; physical iPhone Safari and actual preview commit parity.
 - Production unchanged; no real user data tested.
+
+
+## 2026-10-27 — Current-head CI completed
+- **PASS automated** at `63a6a863`: mobile `40557050089`, Hybrid Preview `40557040475`, release/full browser `40557050146`.
+- Full-browser tested LIVE + isolated DEMO, both 320/390 widths and light/dark: Check-In, Protocol, vial-source core (48), Log Dose E2E (40 flows), combo search (50 fictional compounds), Stash, chevrons, blend, Plans. Measurement math diagnostic 80/80 PASS, no claim of clinical validation.
+- Artifact `12758495941` contains full DEMO HTML, offline DEMO ZIP and LIVE ZIP. GitHub Actions source_commit uses synthetic PR merge `bdd95f87`, not raw branch head. Byte-level file comparison to branch head remains an additional gate.
+- **NOT TESTED:** physical iPhone real Safari, native keyboard/safe area, VoiceOver, actual user's production data, full site WCAG AA, independently fetched Cloudflare preview asset hash. Contrast audit emitted multiple low-ratio candidates in light theme; investigate rather than claim full compliance.
