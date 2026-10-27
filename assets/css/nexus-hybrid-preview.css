@@ -3124,3 +3124,44 @@ body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab.ac
  background:var(--surface)!important;color:var(--t1)!important;
  box-shadow:0 2px 8px #100b201c!important;
 }
+
+
+/* DS2 surface pass — Trends / history and Profile / Settings, 2026-10-27.
+   Presentation-only; preserve renderers, links, histories and local-first storage. */
+.nx2-page--trends .nx-trends-intro,
+.nx2-page--profile .nx-page-intro{margin:0 0 20px;max-width:640px}
+.nx2-page--trends .nx-trends-intro p,
+.nx2-page--profile .nx-page-intro p{color:var(--t3);font-size:13px;line-height:1.6}
+.nx2-page--trends .nx-trends-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.nx2-page--trends .nx-trends-stat{min-width:0;box-sizing:border-box;border:1px solid var(--border-sub);border-radius:16px;background:var(--surface);padding:14px;box-shadow:0 5px 20px #100b2008}
+.nx2-page--trends .nx-trends-stat-value{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nx2-page--trends .nx-trends-jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+.nx2-page--trends .nx-trends-jump button{min-height:44px;flex:1 1 auto;padding:10px 12px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:650}
+.nx2-page--trends .app-acc{border:1px solid var(--border-sub)!important;border-radius:16px!important;overflow:hidden;margin-bottom:10px;background:var(--surface)!important}
+.nx2-page--trends .app-acc>.tacc{min-height:54px;text-align:left}
+.nx2-page--trends .app-acc-body{border-top:1px solid var(--border-sub);min-width:0;overflow-wrap:anywhere}
+.nx2-page--trends .nx-body-tabs{display:flex;gap:4px;padding:4px;border-radius:13px;background:var(--surface-2);margin-bottom:12px}
+.nx2-page--trends .nx-body-tab{flex:1;min-height:44px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--t3);font-weight:650}
+.nx2-page--trends .nx-body-tab.is-active{border-color:var(--border-sub);background:var(--surface);color:var(--t1);box-shadow:0 2px 8px #100b2012}
+.nx2-page--trends .nx-library,.nx2-page--trends .nx-pe-entry{border:1px solid var(--border-sub);border-radius:16px;background:var(--surface);padding:16px;margin:16px 0}
+.nx2-page--trends .nx-library-search{box-sizing:border-box;width:100%;min-height:48px;border-radius:11px}
+.nx2-page--trends .nx-library-item{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;min-width:0;text-align:left}
+.nx2-page--trends .nx-library-item>span:first-child{min-width:0;overflow-wrap:anywhere}
+.nx2-page--trends .nx-pe-actions{display:flex;flex-wrap:wrap;gap:8px}
+.nx2-page--trends .nx-pe-actions button{min-height:44px;flex:1 1 145px;border-radius:11px}
+.nx2-page--profile .profile-subtab{box-sizing:border-box;min-width:0;min-height:48px!important;border-radius:10px!important}
+.nx2-page--profile .nx-profile-hero{display:flex;align-items:center;gap:14px;min-width:0;border-radius:18px}
+.nx2-page--profile .nx-profile-hero #editprofile{flex-shrink:0;min-height:44px;padding:8px 14px}
+.nx2-page--profile .nx-panel{border-radius:17px;min-width:0}
+.nx2-page--profile .settings-row{box-sizing:border-box;min-height:54px!important;padding:13px 8px!important;gap:12px;min-width:0}
+.nx2-page--profile .settings-row>span:nth-child(2){min-width:0;overflow-wrap:anywhere;line-height:1.45}
+.nx2-page--profile .nx-settings-icon{display:inline-flex;align-items:center;justify-content:center;min-width:34px;width:34px;height:34px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t2)}
+.nx2-page--profile .nx-settings-chevron{flex:0 0 16px;width:16px;height:16px;color:var(--t3)}
+.nx2-page--profile #settings-detail-back,.nx2-page--profile #profile-back{min-height:44px;min-width:44px;border-radius:11px}
+.nx2-page--profile .nx2-supp-add{background:#c6a6f2;color:#24182f}
+@media(max-width:360px){
+ .nx2-page--trends .nx-trends-stat{padding:12px}
+ .nx2-page--trends .nx-trends-jump button{flex:1 1 100%}
+ .nx2-page--profile .nx-profile-hero{gap:9px}
+ .nx2-page--profile .nx-settings-icon{width:30px;min-width:30px;height:30px}
+}
