@@ -786,3 +786,11 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — DS2 screenshot fixes QA clearance and preview (DRAFT / NOT RELEASED)
 - App head `e743c2fd` of draft PR #123 passed browser/package workflow `40549029521` and mobile workflow `40549029721`. Generated full-app LIVE ZIP (21 files) and ephemeral standalone/offline DEMO with application blob parity checks. Cloudflare bot confirms successful **preview** deployment `https://fd8194f6.nexuspeplog.pages.dev` for `e743c2f` (stable branch alias `https://design-design-system-2-previ.nexuspeplog.pages.dev`). No production merge/deployment, no migration and no change to production localStorage. Physical iPhone acceptance remains outstanding; preview files not independently fetched for hash comparison.
+
+
+### v0.9.20-beta DS2 iPhone corrections — CODED ON DRAFT, NOT RELEASED (2026-10-27)
+- Branch `design/design-system-2-preview-20261025`, PR #123 DRAFT and UNMERGED, baseline main `c1c95e1d`.
+- Code `f2b31d2e`, style `aaf3998b`, tests `f39458e7`: unified search/Add combobox in Check-In and Supplements logger, standalone Add removed; Source identifiers disclosure full-width beneath source actions; existing separate optional Observations disclosure preserved.
+- No planned production data migration, storage-key change, catalogue auto-log, allocation ID remapping, vial maths change or live user writes.
+- Actions on `f39458e7`: mobile `40555517593` SUCCESS; full browser `40555517407` FAILURE at obsolete test DOM nesting assumption after disclosure relocation. Test locator fixed `e14d78e3`, current-head rerun PENDING; retain historical failure.
+- Cloudflare bot reports immutable preview `https://bbdc78c4.nexuspeplog.pages.dev` for `f39458e7`; independently rendered content parity and physical iPhone acceptance UNVERIFIED. Full-app release artifact available from failed Actions run 40555517407 but NOT release-cleared until green CI and exact-source review. LIVE ZIP / complete isolated DEMO current-head delivery INCOMPLETE. No merge or production deployment.
