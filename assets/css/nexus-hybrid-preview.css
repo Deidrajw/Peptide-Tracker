@@ -2637,3 +2637,14 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
   .nx-stash-kit-editor #nx-kit-next,.nx-guided-blend-editor #nx-blend-next,
   .nx-stash-kit-editor #ssave,.nx-guided-blend-editor #bk-save{transition:none!important}
 }
+
+/* Scoped Stash wizard parity: same breathing room around both primary actions. */
+.modal.nx-stash-kit-editor .nx-kit-wizard-footer,
+.modal.nx-guided-blend-editor .nx-blend-wizard-footer {
+  margin-left:0!important;margin-right:0!important;
+  padding-inline:16px!important;
+}
+.nx-stash-kit-editor .nx-kit-wizard-buttons,
+.nx-guided-blend-editor .nx-blend-wizard-actions {
+  padding-inline:0!important;min-width:0!important;
+}
