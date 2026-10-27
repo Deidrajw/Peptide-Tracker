@@ -83,6 +83,20 @@ try{
     ensure(await card(99002).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('30') && x.includes('50')),'Open vial remaining display wrong');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
     ensure(await card(99003).locator('.manage-kit-btn').count()>=1,'v0.9.9 blend actions were lost');
+    // Regression for real iPhone screenshot: selected Overview/Vials/History
+    // must be a rounded pill, never legacy squared underlined tabs.
+    const tabGeometry=await card(99002).locator('.nx-stash-tabs').evaluate(group=>{
+      const tab=group.querySelector('.nx-stash-tab[aria-selected="true"]');
+      const g=getComputedStyle(group),t=getComputedStyle(tab);
+      return {containerRadius:parseFloat(g.borderTopLeftRadius),containerBottom:parseFloat(g.borderBottomLeftRadius),
+        selectedRadius:parseFloat(t.borderBottomLeftRadius),selectedTop:parseFloat(t.borderTopLeftRadius),
+        selectedBottomBorder:parseFloat(t.borderBottomWidth),containerOverflow:g.overflow};
+    });
+    ensure(tabGeometry.containerRadius>=12 && tabGeometry.containerBottom>=12 &&
+      tabGeometry.selectedRadius>=8 && tabGeometry.selectedTop>=8 &&
+      tabGeometry.selectedBottomBorder<=1.1,
+      'Stash Overview selected tab still square/underlined: '+JSON.stringify(tabGeometry));
+
 
     for(const id of [99001,99002,99003]){
       const parity=await card(id).locator('.nx-kit-heading-unified').evaluate(header=>{
