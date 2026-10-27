@@ -781,6 +781,51 @@ function nexusBrowseAllCompounds(modal, options, choose, initialQuery="") {
   search.focus({preventScroll:true});
 }
 
+// Optional kit test-result attachment. Small files are embedded in the existing
+// kit JSON so ordinary Nexus exports/restores preserve them; no server upload.
+function nexusKitTestResultControl(modal, saveButtonId, initial) {
+  const MAX_BYTES=750*1024;
+  const allowed=["application/pdf","image/png","image/jpeg","image/webp"];
+  let value=initial||null, pending=false, serial=0;
+  const wrap=document.createElement("section");
+  wrap.className="nx-kit-attachment";
+  wrap.innerHTML='<label class="field-label">TEST RESULTS (OPTIONAL)</label>'+
+    '<div class="nx-kit-attachment-actions"><button type="button" class="nx-kit-attachment-choose">Upload test results</button>'+
+    '<button type="button" class="nx-kit-attachment-clear" hidden>Remove</button></div>'+
+    '<input type="file" class="nx-kit-attachment-input" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" hidden>'+
+    '<p class="nx-kit-attachment-info" aria-live="polite">PDF or image, up to 750 KB. Saved locally with the kit and included in backups.</p>'+
+    '<p class="nx-kit-attachment-error" role="alert" hidden></p>';
+  const input=wrap.querySelector(".nx-kit-attachment-input");
+  const choose=wrap.querySelector(".nx-kit-attachment-choose"), clear=wrap.querySelector(".nx-kit-attachment-clear");
+  const info=wrap.querySelector(".nx-kit-attachment-info"), error=wrap.querySelector(".nx-kit-attachment-error");
+  const refresh=()=>{clear.hidden=!value;info.textContent=pending?"Reading file…":value?
+    value.name+" · "+Math.ceil(value.size/1024)+" KB · saved locally with kit":
+    "PDF or image, up to 750 KB. Saved locally with the kit and included in backups.";};
+  choose.onclick=()=>input.click();
+  clear.onclick=()=>{serial++;pending=false;value=null;input.value="";error.hidden=true;refresh();};
+  input.onchange=()=>{
+    const file=input.files?.[0];if(!file)return;
+    const requested=++serial;error.hidden=true;
+    const ext=file.name.split(".").pop()?.toLowerCase()||"";
+    if(file.size>MAX_BYTES||file.size===0||!allowed.includes(file.type)||!["pdf","png","jpg","jpeg","webp"].includes(ext)){
+      error.textContent="Choose a PDF or image smaller than 750 KB.";error.hidden=false;input.value="";return;
+    }
+    pending=true;refresh();
+    const reader=new FileReader();
+    reader.onload=()=>{if(serial!==requested)return;pending=false;
+      if(typeof reader.result!=="string"||!reader.result.startsWith("data:")){
+        error.textContent="This file could not be read.";error.hidden=false;
+      }else value={name:file.name,type:file.type,size:file.size,dataUrl:reader.result,addedAt:new Date().toISOString()};
+      refresh();input.value="";
+    };
+    reader.onerror=()=>{if(serial!==requested)return;pending=false;error.textContent="This file could not be read.";error.hidden=false;refresh();input.value="";};
+    reader.readAsDataURL(file);
+  };
+  modal.querySelector("#"+saveButtonId)?.insertAdjacentElement("beforebegin",wrap);
+  refresh();
+  return {getValue:()=>value,isPending:()=>pending};
+}
+
 function addBlendKitModal(blendNameOrKit) {
   // Editing an existing blend kit was previously impossible: the Stash card's own Edit
   // button always opened the single-compound supplyModal regardless of isBlend, whose
@@ -926,6 +971,7 @@ function addBlendKitModal(blendNameOrKit) {
   // Nexus 2.0 guided blend editor: presentation only. The original #bk-save
   // handler below remains the sole authorized inventory mutation path.
   m.classList.add("nx-guided-blend-editor");
+  const kitTestResult=nexusKitTestResultControl(m,"bk-save",existingKit?.testResultAttachment);
   const blendSave=m.querySelector("#bk-save");
   const contentRoot=blendSave.parentElement;
   const nodes=[...contentRoot.children];
@@ -988,7 +1034,8 @@ function addBlendKitModal(blendNameOrKit) {
         ["Expiry",m.querySelector("#bk-expiry")?.value+" days"],
         ["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],
         ["Cost",m.querySelector("#bk-cost")?.value?((m.querySelector("#bk-currency")?.value||"CAD")+" "+(m.querySelector("#bk-currency")?.value==="CAD"?"$":"")+m.querySelector("#bk-cost").value):"Not provided"],
-        ["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"]
+        ["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"],
+        ["Test results",kitTestResult.getValue()?.name||"None"]
       ];
       summary.innerHTML=
         '<div class="nx-blend-review-hero"><span class="nx-blend-review-kicker">YOUR BLEND KIT</span><h3>'+safe(blendLabel)+'</h3><div class="nx-blend-review-total"><strong>'+safe(total)+' mg</strong><span>total per physical vial</span></div></div>'+
@@ -1012,6 +1059,7 @@ function addBlendKitModal(blendNameOrKit) {
   }
 
   m.querySelector("#bk-save").onclick = () => {
+    if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const finalName = isEdit ? existingKit.name : (isCustomNew ? name.trim() : blendName);
     if (!finalName) { showErrorBanner("Give this blend a name first."); return; }
     const validComponents = composition.filter(c => c.compound && (+c.mg||0) > 0);
@@ -1033,6 +1081,7 @@ function addBlendKitModal(blendNameOrKit) {
       if(!Number.isSafeInteger(expiry)||expiry<1||expiry>3650||(!Number.isFinite(bac))||bac<0){showErrorBanner("Check blend expiry and BAC water amounts.");return;}
       existingKit.expiryDays=expiry;existingKit.bacMl=bac;
       existingKit.notes=m.querySelector("#bk-notes").value.trim();
+      existingKit.testResultAttachment=kitTestResult.getValue();
       initCompoundTracking(isEdit ? existingKit.name : finalName);
       saveState(); closeModal(); render();
       return;
@@ -1049,6 +1098,7 @@ function addBlendKitModal(blendNameOrKit) {
       reconDate: oneActive?localDate():null, expiryDays: Math.max(1,parseInt(m.querySelector("#bk-expiry").value,10)||28),
       activeKit: oneActive, storageLocation: m.querySelector("#bk-storage").value,
       cost: m.querySelector("#bk-cost").value, currency: m.querySelector("#bk-currency")?.value || "CAD", notes: m.querySelector("#bk-notes").value.trim(),
+      testResultAttachment: kitTestResult.getValue(),
       doseLog: [], wasteLog: [], reconHistory: oneActive?[{id:uid(), date:localDate(), notes:""}]:[],
     };
     if (!state.supplies) state.supplies = [];
