@@ -301,9 +301,9 @@ function renderSupplementsTabContent() {
   </div>
   <div style="display:flex;gap:8px;margin-bottom:10px">
     <input id="new-supp" class="inp" placeholder="e.g. Metamucil, Vitamin C" style="flex:1;padding:10px;font-size:13px">
-    <button id="add-supp" style="background:#C8FF9C18;border:1px solid #C8FF9C44;color:#C8FF9C;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600">Add</button>
+    <button id="add-supp" class="nx2-supp-add">Add</button>
   </div>
-  <button id="load-notion-supps" style="width:100%;font-size:12px;color:#C8FF9C;background:#C8FF9C15;border:1px solid #C8FF9C33;border-radius:8px;padding:10px">↓ Import from Notion</button>`;
+  <p class="nx2-supp-catalogue-note">Your supplement list is saved locally. Existing daily history stays intact when you edit this list.</p>`;
 }
 
 function exportData() {
