@@ -1579,7 +1579,7 @@ function homeView() {
   const started=sortActiveCards(Object.entries(aps).filter(e=>isActive(e)&&hasStarted(e)));
   const notStarted=Object.entries(aps).filter(e=>isActive(e)&&!hasStarted(e));
   const paused=Object.entries(aps).filter(e=>isPaused(e));
-  let html=`<div class="nx-today-header"><div class="nx-today-greeting"><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div><div id="nx-alert-trigger-slot"></div></div>`;
+  let html=`<div class="nx-today-header"><div class="nx-today-greeting"><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div><div class="nx-today-header-actions"><div id="nx-alert-trigger-slot"></div></div></div>`;
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
   // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
   // Never infer completion from inventory, and never change any schedule or dose record.
