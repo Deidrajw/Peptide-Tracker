@@ -1211,3 +1211,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Manual acceptance NOT TESTED: top tabs switch with clear selected state; 320px/390px dark/light fit without clipping; Today retains needs-action plus completed today; Active/All unchanged; Coming up remains below with functioning Calendar drill-down; correct completed-dose reaction form and keyboard. No real production data tested.
 
 - Regression discovered: workflow 40583259646 FAILED in new Completed-tab test because a dose recorded today was not listed by status-only filter. Changed filter at ebd66e42 to include records whose canonical doseDayFor equals today, independently of remaining schedule status (supports multiple daily doses). Fresh CI pending; prior PASS claims do not supersede this failure.
+
+
+## 2026-10-27 — Completed and Coming up browser gate expanded
+- Full QA 40583699831 FAILED at Completed tab action assertion after ebd66e42. Analysis: test searched for Record reaction in *collapsed* compact card, but app deliberately displays the action only in expanded View Details. Adjusted test dff7ea52 to assert collapsed disclosure and expanded Record reaction, plus historical-only exclusion. Added 79c7bd35 browser test for top Completed presence, top Upcoming absence, lower Coming up and working Calendar navigation. New-head CI pending; physical iPhone not tested. Retain failed-run record for traceability.
