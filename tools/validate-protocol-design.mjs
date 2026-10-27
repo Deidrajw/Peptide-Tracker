@@ -19,6 +19,35 @@ try{
     await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
+
+    // Regression: activation must not require a first dose log before Today schedules it.
+    // Isolate fictional test data and restore the fixture before existing UX assertions.
+    const firstDose=await page.evaluate(()=>{
+      const before=JSON.parse(JSON.stringify(state)),priorTab=tab;
+      try {
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const name=Object.keys(PEPTIDES)[0],today=localDate();
+        const weekday=new Date(today+"T12:00:00").getDay();
+        initCompoundTracking(name);
+        const data=state.peptides[name];
+        data.status="active";data.doses=[];data.scheduleWeekdays=[weekday];
+        data.dosesPerDay=1;data.times=["08:00"];
+        const protocol={id:"qa-first-dose",name:"Fictional weekly schedule",status:"active",startDate:today,compounds:[{name}]};
+        state.protocols=[protocol];tab="home";renderBody();
+        const due=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.status="paused";renderBody();
+        const paused=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.status="active";protocol.startDate=addDays(today,7);renderBody();
+        const future=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.startDate=today;data.scheduleWeekdays=[(weekday+1)%7];renderBody();
+        const otherWeekday=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        return {due,paused,future,otherWeekday};
+      }finally{state=before;tab=priorTab;renderBody();}
+    });
+    check(/0\\s*of\\s*1/.test(firstDose.due),"First scheduled protocol dose missing from Today: "+JSON.stringify(firstDose));
+    check([firstDose.paused,firstDose.future,firstDose.otherWeekday].every(v=>/No scheduled doses/.test(v)),
+      "Paused/future/wrong-weekday protocol incorrectly scheduled: "+JSON.stringify(firstDose));
+
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
     check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
