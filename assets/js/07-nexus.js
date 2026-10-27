@@ -108,7 +108,7 @@ function supplyModal(existing, presetName) {
     </select>
     <label class="field-label">NOTES (lot #, vendor…)</label>
     <input id="snotes" class="inp" value="${esc(f.notes||"")}" placeholder="e.g. Lot #ABC, ordered from XYZ" style="margin-bottom:18px">
-    <button id="ssave" class="btn-primary" style="background:#C9A0FF">SAVE KIT</button>
+    <button id="ssave" class="btn-primary" style="background:#C9A0FF">Save Kit</button>
   `, "#C9A0FF");
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
   m.classList.add("nx-stash-kit-editor");
@@ -228,7 +228,7 @@ function supplyModal(existing, presetName) {
   });
   stages.forEach(el=>body.appendChild(el));
   const review=stages[2];
-  review.innerHTML='<h3>Review your kit</h3><div class="nx-kit-wizard-summary" aria-live="polite"></div><p class="nx-kit-wizard-review-note">Confirm these details before saving. Vial counts and balances are updated only by the original Save action.</p>';
+  review.innerHTML='<div class="nx-kit-wizard-summary" aria-live="polite"></div><p class="nx-kit-wizard-review-note">Confirm these details before saving. Existing vial and dose history remains protected.</p>';
   const stepHeader=document.createElement("div");
   stepHeader.className="nx-kit-wizard-progress";
   stepHeader.innerHTML='<div class="nx-kit-wizard-step-heading"><span id="nx-kit-step-label">Step 1 of 3 · Kit details</span></div><div class="nx-kit-wizard-track"><span></span></div>';
@@ -246,7 +246,10 @@ function supplyModal(existing, presetName) {
     const isOpen=existing?!!getActiveVial(existing):!!m.querySelector("#shasopen")?.checked;
     const activeCount=isOpen?1:0;
     const fieldPairs=[["Compound",existing?f.name:read("sname")],["Vial count",count],["Strength per vial",mg+" mg"],["Initially open",isOpen?"Yes":"No"],["Sealed vials",existing?getSealedVials(existing).length:Math.max(0,count-activeCount)],["BAC water per vial",read("sbac")?read("sbac")+" mL":"Not provided"],["Expiry after recon",read("sexp")?read("sexp")+" days":"Default 28 days"],["Storage",m.querySelector("#sloc")?.selectedOptions[0]?.textContent||"Unknown"],["Cost",read("scost")?(read("scost")+" "+read("scur")):"Not provided"],["Notes",read("snotes")||"None"]];
-    review.querySelector(".nx-kit-wizard-summary").innerHTML=fieldPairs.map(([label,val])=>'<div><span>'+escReview(label)+'</span><strong>'+escReview(val)+'</strong></div>').join("");
+    const compound=existing?f.name:read("sname");
+    const summary=review.querySelector(".nx-kit-wizard-summary");
+    summary.innerHTML='<div class="nx-kit-review-hero"><span class="nx-kit-review-kicker">YOUR KIT</span><h3>'+escReview(compound)+'</h3><div class="nx-kit-review-total"><strong>'+escReview(mg)+' mg</strong><span>per physical vial</span></div></div>'+
+      '<div class="nx-kit-review-section"><h4>Inventory and preparation</h4><div class="nx-kit-review-facts">'+fieldPairs.slice(1).map(([label,val])=>'<div><span>'+escReview(label)+'</span><strong>'+escReview(val)+'</strong></div>').join("")+'</div></div>';
   };
   const validate=()=>{
     if(currentStep===0&&!existing){
