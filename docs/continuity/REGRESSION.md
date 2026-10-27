@@ -1130,3 +1130,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Stash > Vials: opened status, details and ellipsis aligned, history/remaining values retained, responsive light/dark 320/390 and no horizontal overflow. Prepare Dose source details: long 'Current vial' wraps, amount field small but 44px tall, multi-source buttons/actions accessible, no automatic/double deductions, draft + open next vial + partial draw preserve IDs/math. Physical iPhone keyboard, safe area, focus and VoiceOver NOT TESTED. No data migration.
 
 - **FAIL** run `40542480271`: `node --check assets/js/05-nexus.js` unexpected `}` at line 2503 from leftover empty-catalogue redirect; fixed source `02b75a2c`. Browser Supplement, Prepare Dose and Stash cases NOT TESTED by failed run. Pending rerun; preserve failure.
+
+- Added Check-In empty-supplement-list fixture: inline Add visible, adding name updates catalogue and selection without creating a taken log before explicit Check-In Save. Browser test `36b81eea` pending current CI. Confirm that future date edits do not overwrite another day's supplement log and persistence works after reopen.
