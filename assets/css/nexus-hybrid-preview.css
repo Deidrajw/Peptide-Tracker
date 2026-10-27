@@ -2994,3 +2994,15 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx2-dose-modal .nx-dose-optional>summary{min-height:48px;display:flex;align-items:center;gap:8px}
 .nx2-dose-modal .nx-dose-observations-hint{margin-left:auto;color:var(--t3);font-size:11px;font-weight:500;text-align:right}
 @media(max-width:360px){.nx2-dose-modal .nx-dose-observations-hint{font-size:10px}.nx2-dose-modal .nx-dose-review-stage{padding:12px}}
+
+
+/* DS2 Supplements — reusable primary Add action and inline logging creation. */
+.nx2-supp-add{min-width:72px;min-height:48px;padding:10px 16px;border:0;border-radius:12px;background:#C6A6F2;color:#24182F;font-size:13px;font-weight:700;flex-shrink:0}
+.nx2-supp-add:focus-visible{outline:3px solid var(--t1);outline-offset:2px}
+.nx2-supp-inline-add{margin:2px 0 14px}
+.nx2-supp-inline-add>label{display:block;color:var(--t2);font-size:12px;font-weight:600;margin:0 0 7px}
+.nx2-supp-inline-add>div:nth-child(2){display:flex;gap:8px;align-items:center;min-width:0}
+.nx2-supp-inline-add .inp{flex:1;min-width:0;min-height:48px}
+#nx2-supp-feedback{min-height:15px;margin-top:5px;font-size:11px;color:var(--t3)}
+.nx2-supp-catalogue-note{font-size:11px;line-height:1.55;color:var(--t3);margin:2px 0 12px}
+@media(max-width:360px){.nx2-supp-inline-add>div:nth-child(2){gap:6px}.nx2-supp-add{min-width:64px;padding:10px 12px}}
