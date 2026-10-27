@@ -972,3 +972,11 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL (prior head):** full browser run 40334643538; Logs All-mode selector timed out after synthetic fixture reset. Earlier modules passed but full workflow failed.
 - **CODED / NOT YET VERIFIED:** branch commit 7528306 updates fixture-reset test to explicitly restore Calendar Logs subview and assert All Logs mode. Must rerun full CI; no Pass claimed.
 - **INCOMPLETE:** new exact-source FULL DEMO and LIVE ZIP artifact inspection, real iPhone Safari 320/390 visual, safe areas, focus and software keyboard interaction, VoiceOver. App-wide nested-scroll audit deferred as its own priority.
+
+
+## 2026-10-26 — Kit review parity acceptance matrix
+- Standard Add Kit Step 3 visible `Review & save` heading, hero and inventory facts: **NOT TESTED after implementation**.
+- Blend Step 3 retains component composition and matching review anatomy; new-kit action Save Kit: **NOT TESTED after implementation**.
+- Continue/Save button depth, inset, sticky positioning at 320/390 dark/light and iPhone keyboard: **NOT TESTED after implementation**.
+- Existing standard/blend save handlers, same vial creation math, history/persistence: source handlers untouched; **functional regression NOT TESTED after implementation**.
+- CI pending on source commit 6e0075d; physical iPhone/VoiceOver NOT TESTED. No nested-scroll app-wide pass claimed.
