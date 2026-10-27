@@ -65,6 +65,19 @@ try {
     ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
     ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
     await setDose(page,2);
+    await page.waitForTimeout(650);
+    // In the editable source breakdown, never expose the database kit number as
+    // the primary identity. Preserve exact ID in an opt-in disclosure.
+    const sourceRow=page.locator('#alloc-rows .nx-hybrid-source-row').first();
+    ensure(await sourceRow.count()===1,'Editable source row missing');
+    const rowHeader=await sourceRow.locator('span').first().innerText();
+    ensure(rowHeader.includes('Retatrutide')&&rowHeader.includes('Vial 1')&&!rowHeader.includes('9101'),
+      'Source row must use compound/vial name, not raw kit ID: '+rowHeader);
+    const sourceIdentifiers=sourceRow.locator('.nx2-source-identifiers');
+    ensure(await sourceIdentifiers.count()===1,'Internal kit/vial IDs disclosure missing from source row');
+    ensure(!(await sourceIdentifiers.evaluate(el=>el.open)),'Internal IDs must be collapsed initially');
+    await sourceIdentifiers.locator('summary').click();
+    ensure((await sourceIdentifiers.innerText()).includes('9101'),'Kit ID not recoverable for audit');
     // DS2 review must show useful source labels while retaining full traceability.
     await page.locator('#nx-dose-step-next').click();
     ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review stage missing');
