@@ -1106,3 +1106,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-27 — Goal ellipsis quick-status regression (PENDING)
 - Browser `tools/validate-plans-hierarchy.mjs` tests quick status options Planned/In progress/Paused/Completed, >=44px options, selected ARIA state, save/resume to Active, preserved goal identity and linked Protocol/Check-In/dose records, plus existing edit/delete and Goals list. Run LIVE/isolated DEMO × 320/390 × light/dark. **NOT YET VERIFIED** current-head browser or mobile CI, physical iPhone tap/keyboard/safe area/VoiceOver, persistence after app restart. No data migration. Keep previous source passes separate.
+
+- Protocol first-log visual pass pending: check neutral first-log label, lavender 44px primary action, correct text contrast at 320/390 in light/dark, same handler opens Log Dose and preserves drafts/source/inventory. Source assertion only is not visual/device QA.
