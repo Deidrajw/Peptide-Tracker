@@ -40,18 +40,10 @@ try{
           state.supplementLogs=[];
           supplementModal('2032-11-09');
         });
-        assert(await page.locator('.modal #nx2-new-supp').count()===1,'Empty-list supplement logger still forces Profile');
-        const suppOrdering=await page.evaluate(()=>{
-          const modal=document.querySelector('.modal');
-          const pos=selector=>[...modal.querySelectorAll('*')].indexOf(modal.querySelector(selector));
-          return pos('#supp-search')<pos('#supp-toggle') &&
-            pos('#supp-toggle')<pos('#supp-results') &&
-            pos('#supp-results')<pos('#supp-selected-toggle') &&
-            pos('#supp-selected-toggle')<pos('#nx2-new-supp');
-        });
-        assert(suppOrdering,'Supplement Add control must follow search, results and selection');
-        await page.locator('.modal #nx2-new-supp').fill('Fictional Vitamin B');
-        await page.locator('.modal #nx2-add-supp').click();
+        assert(await page.locator('.modal #nx2-new-supp').count()===0,'Duplicate supplement input remains');
+        await page.locator('.modal #supp-search').fill('Fictional Vitamin B');
+        assert(await page.locator('.modal [data-add-search="modal"]').count()===1,'Unified Add search action absent');
+        await page.locator('.modal [data-add-search="modal"]').click();
         const beforeConfirm=await page.evaluate(()=>({
           catalog:state.settings.supplements.includes('Fictional Vitamin B'),
           logged:(state.supplementLogs||[]).some(l=>dayKey(l.date)==='2032-11-09')
@@ -72,16 +64,10 @@ try{
           state.settings.supplements=[];
           dailyModal(null);
         });
-        assert(await page.locator('.modal #nx2-checkin-add-supp').count()===1,
-          'Empty-catalogue Check-In supplement creation missing');
-        const checkinOrder=await page.evaluate(()=>{
-          const modal=document.querySelector('.modal');
-          const at=sel=>[...modal.querySelectorAll('*')].indexOf(modal.querySelector(sel));
-          return at('#supp-search')<at('#supp-results') && at('#supp-results')<at('#nx2-checkin-new-supp');
-        });
-        assert(checkinOrder,'Check-In add-new control must follow supplement search and results');
-        await page.locator('.modal #nx2-checkin-new-supp').fill('Fictional Zinc');
-        await page.locator('.modal #nx2-checkin-add-supp').click();
+        assert(await page.locator('.modal #nx2-checkin-new-supp').count()===0,'Check-In duplicate supplement input remains');
+        await page.locator('.modal #supp-search').fill('Fictional Zinc');
+        assert(await page.locator('.modal [data-add-search="checkin"]').count()===1,'Check-In unified Add action absent');
+        await page.locator('.modal [data-add-search="checkin"]').click();
         const checkinInline=await page.evaluate(()=>({
           catalog:state.settings.supplements.includes('Fictional Zinc'),
           saved:(state.supplementLogs||[]).some(l=>(l.taken||[]).includes('Fictional Zinc'))
