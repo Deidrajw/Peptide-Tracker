@@ -805,10 +805,10 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
   clear.onclick=()=>{serial++;pending=false;value=null;input.value="";error.hidden=true;refresh();};
   input.onchange=()=>{
     const file=input.files?.[0];if(!file)return;
-    const requested=++serial;error.hidden=true;
+    const requested=++serial;pending=false;error.hidden=true;
     const ext=file.name.split(".").pop()?.toLowerCase()||"";
     if(file.size>MAX_BYTES||file.size===0||!allowed.includes(file.type)||!["pdf","png","jpg","jpeg","webp"].includes(ext)){
-      error.textContent="Choose a PDF or image smaller than 750 KB.";error.hidden=false;input.value="";return;
+      error.textContent="Choose a PDF or image smaller than 750 KB.";error.hidden=false;input.value="";refresh();return;
     }
     pending=true;refresh();
     const reader=new FileReader();
@@ -824,6 +824,15 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
   modal.querySelector("#"+saveButtonId)?.insertAdjacentElement("beforebegin",wrap);
   refresh();
   return {getValue:()=>value,isPending:()=>pending};
+}
+
+// Only expose known local test-result formats. Never trust imported file URLs or HTML.
+function nexusDownloadKitTestResult(kitId) {
+  const item=(state.supplies||[]).find(s=>String(s.id)===String(kitId))?.testResultAttachment;
+  if(!item || typeof item.dataUrl!=="string" || !/^data:(application\\/pdf|image\\/(png|jpeg|webp));base64,[A-Za-z0-9+/=]+$/.test(item.dataUrl)) return;
+  const a=document.createElement("a");
+  a.href=item.dataUrl;a.download=String(item.name||"kit-test-results").replace(/[\\/\\\\<>:"|?*]/g,"_");
+  document.body.appendChild(a);a.click();a.remove();
 }
 
 function addBlendKitModal(blendNameOrKit) {
