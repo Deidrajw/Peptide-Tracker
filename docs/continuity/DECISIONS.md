@@ -716,3 +716,5 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-27 — Supplements and Stash details DS2
 - Remove the legacy `Import from Notion` canned supplement action from the public-facing Profile screen. Never delete an existing supplement or historical supplement log as part of removing the importer. Allow a new supplement to be created in the daily Supplements logging sheet, even with an empty catalogue; adding the name saves it to the catalogue and selects it, but recording it as taken still requires the existing explicit Save supplements confirmation.
 - Apply DS2 lavender/neutral hierarchy to Profile's Add, align Stash opened-vial status next to its vial title and constrain Prepare Dose source amount controls without changing allocation/reconstitution math or logging behaviour. Design remains draft pending browser and physical iPhone review.
+
+- Supplements inline creation must also work in Daily Check-In, even when catalogue empty. New catalogue name is selected in unsaved Check-In draft; existing Check-In Save remains the only path recording day-specific supplement use. Historical logs preserved.
