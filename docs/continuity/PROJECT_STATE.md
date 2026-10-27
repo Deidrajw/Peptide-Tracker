@@ -1588,3 +1588,5 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - **ONE NEXT ACTION:** verify CI current head, correct any failed browser assertions, validate exact-source full-app artifacts, obtain iPhone review of both screenshot flows before approving next work.
 
 - Added runtime browser source-row assertion `ac503930`: primary editable row Retatrutide/Vial 1, no raw Kit ID in row header, exact identifier accessible under collapsed disclosure, with existing review and inventory regression continuing. Current-head QA rerun pending. Next action remains verify passing CI and full-app artifacts; no deploy.
+
+- Further source label clarification `8a42ad32`: if several kits share a compound, display readable `Kit 1`, `Kit 2` ordinals next to `Vial N`, avoiding two indistinguishable `Vial 1` labels; technical IDs remain in disclosure with an explanation. This is visual only, with no source-ID mapping or inventory write change. Current-head CI pending.
