@@ -807,3 +807,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - PR #123 draft branch, source commits `126ca799` (isolated reaction form/event on dose), `06177e4b` (scoped accessibility CSS), `24b98949` (end-to-end regression additions).
 - Removes visible legacy Observations from new dose form and retains legacy fields on prior saved entries with data; new reaction records `observedAt` and `recordedAt` separately, `intensity`, `notes` on the existing dose ID. Existing inventory/dose math not intentionally changed. No destructive migration.
 - Saved-dose Edit provides Record Reaction. Saved-dose action menu and post-save entry not implemented; cannot claim full approved UX complete. Tests/current-head artifacts, Cloudflare served hashes, iPhone and VoiceOver **PENDING/NOT TESTED**. Version candidate unchanged, no merge or production deploy.
+
+
+### DS2 v0.9.20-beta — direct Record Reaction entry points (DRAFT / NOT RELEASED)
+- App head 9d8ad41e adds Record reaction to compound dose-history row, saved-dose retrospective detail and Calendar day detail without opening Edit Dose. Existing standalone reaction form appends distinct events to same dose, preserving vial deductions and dose data. App-head mobile 40569192074 and full 40569192089 SUCCESS.
+- Stronger targeted test commit 85afbd03 adds retrospective, three reactions, note-history and zero-deduction assertions; current-head CI PENDING. Cloudflare bot preview for app head https://d8c3286f.nexuspeplog.pages.dev reported successful, but no independent served-asset hash comparison or real iPhone acceptance. Complete FULL DEMO/LIVE artifact availability to verify from current-head CI; no merge, no production deployment, no schema migration.
