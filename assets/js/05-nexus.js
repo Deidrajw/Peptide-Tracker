@@ -2303,10 +2303,11 @@ function dailyModal(existing, prefillDate) {
     <div id="compound-tag-section"></div>
     <div id="compound-notes-section"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
-    ${(state.settings.supplements||[]).length?`
+    ${`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`:""}
+    <div class="nx2-supp-inline-add"><label for="nx2-checkin-new-supp">Add a new supplement (optional)</label><div><input id="nx2-checkin-new-supp" class="inp" autocomplete="off" placeholder="Supplement name"><button id="nx2-checkin-add-supp" type="button" class="nx2-supp-add">Add</button></div><div id="nx2-checkin-supp-feedback" role="status" aria-live="polite"></div></div>
+    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2409,6 +2410,19 @@ function dailyModal(existing, prefillDate) {
     suppResults.innerHTML=matches.map(n=>`<button type="button" class="supp-add" data-name="${esc(n)}" aria-pressed="${suppTaken2.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:11px 12px;min-height:44px;border-bottom:1px solid var(--border-sub);color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${suppTaken2.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
     suppResults.querySelectorAll(".supp-add").forEach(b=>b.onclick=()=>{if(suppTaken2.has(b.dataset.name))suppTaken2.delete(b.dataset.name);else suppTaken2.add(b.dataset.name);suppSelectionTouched=true;renderSuppSearch();});
   };
+  const newSuppInput=m.querySelector("#nx2-checkin-new-supp"),newSuppFeedback=m.querySelector("#nx2-checkin-supp-feedback");
+  const addCheckinSupplement=()=>{
+    const name=newSuppInput.value.trim();
+    if(!name){newSuppFeedback.textContent="Enter a supplement name.";return;}
+    const known=suppLibrary.find(v=>v.toLocaleLowerCase()===name.toLocaleLowerCase());
+    if(!known){suppLibrary.push(name);suppLibrary.sort((a,b)=>a.localeCompare(b));saveState();}
+    suppTaken2.add(known||name);
+    suppSelectionTouched=true;suppSelectedOpen=true;suppDropdownOpen=true;
+    newSuppFeedback.textContent=known?"Existing supplement selected.":"Added to your list and selected for this check-in.";
+    newSuppInput.value="";renderSuppSearch();
+  };
+  m.querySelector("#nx2-checkin-add-supp").onclick=addCheckinSupplement;
+  newSuppInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addCheckinSupplement();}};
   if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};renderSuppSearch();}
   const suppDateInput=m.querySelector("#date");
   if(suppDateInput)suppDateInput.addEventListener("change",()=>{
