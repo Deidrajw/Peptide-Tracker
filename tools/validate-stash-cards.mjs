@@ -70,6 +70,16 @@ try{
     // The guided editor hides Save until final Review. Test the real journey,
     // rather than treating the intentionally hidden step-1 Save as zero-size UI.
     ensure(await page.locator('.nx-stash-kit-editor #ssave').isHidden(),'Kit Save exposed on Step 1');
+    ensure(await page.locator('#nx-kit-combobox-input').count()===1,'Kit searchable field missing');
+    await page.locator('#nx-kit-combobox-input').fill('GHK');
+    ensure(await page.locator('.nx-kit-browse-all').isVisible(),'Regular Kit browse-all missing');
+    await page.locator('.nx-kit-browse-all').click();
+    ensure(await page.locator('.nx-compound-browser').isVisible(),'Regular Kit full-library view missing');
+    ensure(await page.locator('.nx-browser-choice').count()>5,'Regular Kit full library truncated');
+    await page.locator('#nx-browser-search').fill('GHK-Cu');
+    await page.locator('.nx-browser-choice').first().click();
+    ensure(await page.locator('#sname').inputValue()==='GHK-Cu','Regular Kit browse selection not retained');
+
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-step1-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#nx-kit-next').isVisible(),'Kit Continue missing');
     ensure(await page.locator('#nx-kit-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&s.backgroundColor!=='rgba(0, 0, 0, 0)'&&s.color!==s.backgroundColor;}),'Kit Continue is not a prominent 44px action');
