@@ -782,3 +782,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Screenshot-driven Supplements and source-identity correction (DRAFT / UNRELEASED)
 - PR #123 commits `4b8eaa67` reorder supplement add under search/browse/selected and replace main editable Log Dose Kit ID with readable source label plus optional IDs disclosure; `8df3711a` scoped source layout; `801b62a6` supplement order regression assertion. Screens: Check-In Supplements, standalone Supplements logger, Log Dose source details. Data impact: none by design; internal kit/vial IDs preserved and no migration. CI/full-app packages/device retest pending; PR draft, not merged/deployed.
+
+
+### 2026-10-27 — DS2 screenshot fixes QA clearance and preview (DRAFT / NOT RELEASED)
+- App head `e743c2fd` of draft PR #123 passed browser/package workflow `40549029521` and mobile workflow `40549029721`. Generated full-app LIVE ZIP (21 files) and ephemeral standalone/offline DEMO with application blob parity checks. Cloudflare bot confirms successful **preview** deployment `https://fd8194f6.nexuspeplog.pages.dev` for `e743c2f` (stable branch alias `https://design-design-system-2-previ.nexuspeplog.pages.dev`). No production merge/deployment, no migration and no change to production localStorage. Physical iPhone acceptance remains outstanding; preview files not independently fetched for hash comparison.
