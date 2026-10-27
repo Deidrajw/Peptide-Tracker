@@ -1356,3 +1356,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - User approved **one shared final review**: `Step 3 of 3 · Review & save`; summarized kit hero, grouped inventory/preparation, blend-specific composition only where appropriate; `Add to Stash` on both, inset 16px button/footer, same control visual states, no arbitrary glow mismatch. Documented in DECISIONS. Maintain independent standard/blend inventory math, records, and edits.
 - **Status:** APPROVED DESIGN, not implemented/CI validated. PR #123 remains draft and unmerged; no deployment authorization. Existing full-browser CI and exact-current-head artifact gates must still be met. App-wide nested-scroll audit remains separate.
 - **ONE NEXT ACTION:** implement targeted standard/blend wizard visual parity on PR #123, run both flows end-to-end in isolated source-built DEMO at 320/390 light/dark, then obtain actual iPhone keyboard/safe-area acceptance before any merge.
+
+
+## 2026-10-26 — Nexus design preference classification (documentation-only)
+- User explicitly approved a durable three-category decision system: **Approved preferences / principles**, **Ideas to explore**, and **Implemented decisions**. The definitions and evidence/approval safeguards are in DECISIONS.md. User feedback on individual screens should also produce reusable rules where appropriate.
+- Existing historical documentation has not been exhaustively recategorized; do not claim every past idea was captured. No UI code, personal records, storage, release package, merge or deployment modified by this documentation entry.
+- **ONE NEXT ACTION:** Continue the already documented Add Kit/Blend Kit visual-parity and current-source CI/iPhone acceptance on draft PR #123; keep broader nested-scroll audit separate and unfinished.
