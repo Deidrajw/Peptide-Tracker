@@ -987,3 +987,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **CODED / CI PENDING:** Both new kit save button captions read `Add to Stash`, while edit remains `Save Changes`. App commits 6bf591d and 4c177db; saved record calculations/handlers unchanged.
 - **NOT TESTED:** completed current-head 320/390 light/dark full-browser checks, exact-head full-app DEMO/LIVE ZIP artifact inspection, real iPhone keyboard/focus/scroll/safe-area. Do not infer native keyboard pass from screenshots.
 - **OUT OF SCOPE:** app-wide nested scroll audit remains separate unfinished work.
+
+
+## 2026-10-26 — Kit wizard CI failure triage
+- **PASS mobile:** workflow 40440313001 after test-harness update 62d9d1a. Prior app code mobile 40437121414 also SUCCESS.
+- **FAIL full-browser:** 40437121849 flagged gradient button as transparent when checking only backgroundColor; corrected assertion to permit non-none backgroundImage. Follow-up 40440313012 exposed opaque Blend footer background and FAILED. Scoped kit footer surface changed to transparent at 93ebdae; latest full-browser rerun PENDING.
+- **Artifact partial verification:** artifact 12704174741 zipped 21 files with clean CRC, full standalone DEMO identical to offline ZIP HTML; 17 source text blobs matched GitHub then-current source. Current post-CSS exact-head artifact NOT VERIFIED.
+- **NOT TESTED:** physical native iPhone software keyboard, real safe-area interaction and VoiceOver. Local Chromium navigation blocked by environment policy; no invented browser interaction pass. Broader app-wide nested-scroll audit remains separate.
