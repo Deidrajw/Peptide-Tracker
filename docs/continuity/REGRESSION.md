@@ -1008,3 +1008,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **CODED, NOT YET TESTED:** 16px footer inset parity across Standard/Blend stages 1–3 and both themes at 320/390 widths; observe iOS keyboard and scroll. Existing blend composition/count/BAC/vial math and histories must not change.
 - **FEATURE LOG ONLY:** app-wide mandatory-field audit; current validations unchanged. App-wide no-nested-scrolling audit separate.
 - Last green 40441021070 full and 40441021069 mobile predate currency changes, so do not count as latest-head passes. Physical iPhone native keyboard/VoiceOver NOT TESTED.
+
+
+## 2026-10-26 — Heading parity verification gate
+- Actual user screenshots FAIL old visual parity: standard Add kit was compact letter-spaced/mono while blend title 20px bold. CSS aligned on `2852088a` (CODED; latest visual acceptance pending).
+- PASS automated on preceding app source: currency/footer QA 40441896108, mobile 40441896055. Post-typography mobile 40442588421 PASS; full browser 40442588345 NOT VERIFIED at last check. Screenshot acceptance at both 320/390 and themes plus native iPhone keyboard/VoiceOver NOT TESTED after title edit.
+- Currency fields/selected non-CAD review/persistence belong to protected regression. Mandatory fields audit and global scrolling audit are independent backlog priorities.
