@@ -919,15 +919,16 @@ function doseModal(name, existing, occTime) {
             const kit = state.supplies.find(s=>s.id===r.kitId);
             const units = kit ? mgToUnitsForKit(parseFloat(r.mg)||0, kit) : null;
             const kitFinished = kit && !kit.activeKit && !!r.finished;
-            const kitLabel = kit ? (kitFinished?"Finished vial":kit.activeKit?"Open vial":kit.reconDate?"Open vial":"Vial") : "Vial";
+            const sourceVial=kit ? (r.vialId ? ensureKitVials(kit).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
+            const kitLabel=kit ? `${kit.name||name} · ${sourceVial?.sequenceNumber!=null?"Vial "+sourceVial.sequenceNumber:"Open vial"}${kitFinished?" (finished)":" (open)"}` : "Source vial";
             const kitHasStock = kit && !kitFinished && getKitRemainingMg(kit)>0.001;
             return `<div class="nx-alloc-row nx-hybrid-source-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">Source ${i+1} · ${esc(kitLabel)}${kit?.id!=null?" · Kit "+esc(String(kit.id)):""}${kitFinished?" ✓":""}</span>
+              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">Source ${i+1} · ${esc(kitLabel)}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
               ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm the amount actually obtained from this source vial" aria-label="Confirm draw from source ${i+1}" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Confirm draw</button>`:""}
-              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button>
+              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button><details class="nx2-source-identifiers"><summary>Source identifiers</summary><div>Kit ID: ${esc(String(kit?.id??"Unavailable"))}</div><div>Vial ID: ${esc(String(sourceVial?.id??r.vialId??"Unavailable"))}</div></details>
             </div>`;
           }).join("")}
         </div>
@@ -2306,8 +2307,9 @@ function dailyModal(existing, prefillDate) {
     ${`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <div class="nx2-supp-inline-add"><label for="nx2-checkin-new-supp">Add a new supplement (optional)</label><div><input id="nx2-checkin-new-supp" class="inp" autocomplete="off" placeholder="Supplement name"><button id="nx2-checkin-add-supp" type="button" class="nx2-supp-add">Add</button></div><div id="nx2-checkin-supp-feedback" role="status" aria-live="polite"></div></div>
-    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`}
+
+    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>
+    <div class="nx2-supp-inline-add"><label for="nx2-checkin-new-supp">Add a new supplement (optional)</label><div><input id="nx2-checkin-new-supp" class="inp" autocomplete="off" placeholder="Supplement name"><button id="nx2-checkin-add-supp" type="button" class="nx2-supp-add">Add</button></div><div id="nx2-checkin-supp-feedback" role="status" aria-live="polite"></div></div>`}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2458,10 +2460,11 @@ function supplementModal(prefillDate) {
   const taken = new Set(existing?.taken||[]);
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
-    <div class="nx2-supp-inline-add"><label for="nx2-new-supp">Don't see your supplement? Add it here.</label><div><input id="nx2-new-supp" class="inp" autocomplete="off" placeholder="Supplement name" aria-label="New supplement name"><button type="button" id="nx2-add-supp" class="nx2-supp-add">Add</button></div><div id="nx2-supp-feedback" role="status" aria-live="polite"></div></div>
+
     
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px;line-height:1">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>
     <button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600;margin:8px 0"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-selected" style="margin-bottom:12px" hidden></div>
+    <div class="nx2-supp-inline-add"><label for="nx2-new-supp">Don't see your supplement? Add it here.</label><div><input id="nx2-new-supp" class="inp" autocomplete="off" placeholder="Supplement name" aria-label="New supplement name"><button type="button" id="nx2-add-supp" class="nx2-supp-add">Add</button></div><div id="nx2-supp-feedback" role="status" aria-live="polite"></div></div>
     <button id="suppsave" class="btn-primary" style="background:#C8FF9C;color:#1A1728">Save supplements</button>`,"#C8FF9C");
   const modal=document.querySelector(".modal");
   modal.querySelector("#x").onclick=closeModal;
