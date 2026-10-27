@@ -608,3 +608,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Blend editor uses mobile full-page editing surface
 - To meet the app-wide no-nested-scrolling principle, prefer a full-screen mobile workflow for long guided Blend editing instead of a partial-height sheet with internal scrollbar. Keep one primary editing scroll surface, a sticky primary action, keyboard-safe suggestions that overlay without increasing form height, and iOS safe area support. Treat other modal conversions as a separate systematic audit; don't globally hide content or disable scroll.
+
+## 2026-10-26 — Compound combobox type, suggestions, browse-all (USER APPROVED)
+- One editable field allows searching, tapping for five quick alphabetical suggestions, and a **View all compounds** action opening a full-screen searchable library (one primary scroll only, no nested scrolling). Selection returns to the original form/step without clearing entered vials or mg. Native select remains authoritative backing control where legacy handlers use it. First rollout ordinary Stash Kit + Blend Kit on draft PR #123; broader Protocol/Plans/global picker standard approved in principle but needs per-flow implementation/QA.
