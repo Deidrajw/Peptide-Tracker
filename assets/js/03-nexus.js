@@ -742,6 +742,45 @@ function initCompoundTracking(name) {
     state.customPeptides[name] = { status:"active", scheduleDays:7, doses:[] };
   }
 }
+
+// Full-library compound browser: independent full-screen route; parent editor remains
+// mounted, so Back and selection preserve form values and authoritative Save handlers.
+function nexusBrowseAllCompounds(modal, options, choose, initialQuery="") {
+  const host=modal.closest(".modal-bg");
+  if(!host)return;
+  const viewer=document.createElement("section");
+  viewer.className="nx-compound-browser";
+  viewer.setAttribute("role","dialog");viewer.setAttribute("aria-modal","true");
+  viewer.setAttribute("aria-label","All compounds");
+  viewer.innerHTML='<div class="nx-compound-browser-header"><button type="button" class="nx-browser-back" aria-label="Back to kit editor">←</button><h2>All compounds</h2><span></span></div><label class="nx-browser-label" for="nx-browser-search">Search compounds</label><input id="nx-browser-search" type="search" autocomplete="off" placeholder="Type to filter compounds"><p class="nx-browser-count" aria-live="polite"></p><div class="nx-browser-items"></div>';
+  const back=viewer.querySelector(".nx-browser-back"),search=viewer.querySelector("#nx-browser-search"),
+    count=viewer.querySelector(".nx-browser-count"),items=viewer.querySelector(".nx-browser-items");
+  const priorFocus=document.activeElement;
+  // Do not destroy, re-create or save parent form while selecting.
+  const prevDisplay=modal.style.display;modal.style.display="none";
+  host.appendChild(viewer);
+  const cleanup=()=>{
+    viewer.remove();modal.style.display=prevDisplay;
+    if(priorFocus?.isConnected)priorFocus.focus({preventScroll:true});
+  };
+  back.onclick=cleanup;
+  viewer.onkeydown=e=>{if(e.key==="Escape"){e.stopPropagation();cleanup();}};
+  const render=()=>{
+    const q=search.value.trim().toLocaleLowerCase();
+    const matching=options.filter(o=>o.name.toLocaleLowerCase().includes(q));
+    count.textContent=matching.length+" compound"+(matching.length===1?"":"s");
+    items.replaceChildren();
+    for(const option of matching){
+      const b=document.createElement("button");b.type="button";b.className="nx-browser-choice";
+      b.textContent=option.name;b.onclick=()=>{cleanup();choose(option);};
+      items.appendChild(b);
+    }
+    if(!matching.length){const empty=document.createElement("p");empty.className="nx-browser-empty";empty.textContent="No matching compounds";items.appendChild(empty);}
+  };
+  search.value=initialQuery;search.oninput=render;render();
+  search.focus({preventScroll:true});
+}
+
 function addBlendKitModal(blendNameOrKit) {
   // Editing an existing blend kit was previously impossible: the Stash card's own Edit
   // button always opened the single-compound supplyModal regardless of isBlend, whose
