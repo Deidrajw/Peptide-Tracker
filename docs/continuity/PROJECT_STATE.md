@@ -1632,3 +1632,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Root cause: header and mode selector were nested inside the scrolling body. Moved both to a dedicated non-scrolling header sibling (JS commit da7ed8f8) and added responsive CSS (aaa0029a). Dose amounts, save handlers, allocations, history and storage unaffected by intended change.
 - CODED on draft PR #123. Current-head CI, Cloudflare deployment and physical Safari retest NOT VERIFIED. Production unchanged.
 - ONE NEXT ACTION: check latest CI and Cloudflare preview, obtain actual iPhone scrolling and keyboard acceptance in both Quick/Guided modes, and only then consider approval.
+
+
+## 2026-10-27 — Scroll/header fix verified in automated QA
+- App/test commit 045309057c251a4841e189690524655822e0cf50 passed mobile regression 40562669101 and full build/browser/parity 40562669018. CI verified packaged LIVE ZIP, isolated full-app DEMO and 320/390 light/dark browser suite; artifact 12761377615.
+- Cloudflare bot reported successful preview deployment of commit 04530905 at https://4da04e4e.nexuspeplog.pages.dev. Direct served HTML/JS/CSS hash comparison unavailable; do NOT claim independent deployed-asset parity.
+- User's earlier real Safari screenshot confirmed the scroll/header bug, but fixed preview physical iPhone retest remains NOT TESTED. PR #123 draft/unmerged; production unchanged.
+- ONE NEXT ACTION: user opens immutable preview 4da04e4e on iPhone, scrolls Quick and Guided dose forms, checks sticky header/footer and keyboard/safe-area behavior; record Pass/Fail and remediate any issue before release approval.
