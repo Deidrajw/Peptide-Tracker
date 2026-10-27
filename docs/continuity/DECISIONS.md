@@ -614,3 +614,9 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Shared compound browser rollout implementation
 - Approved quick five-result and full-library Browse All is now implemented in draft Stash single/blend editors, Protocol Stack and reusable Plans/Research/Protocol Idea compound multi-select. Existing selection arrays and route/goal/save handlers are authoritative. Browser returns to editor without a separate record write. Quick result lists must not scroll inside a scrolling window. Other compound filters are not automatically converted without separate audit.
+
+
+## 2026-10-26 — Shared kit creation review and actions (user-requested)
+- **Status:** Approved refinement, implementation on draft PR #123; not deployed or real-device accepted.
+- Both standard and blend kit creation use a consistent three-step progress label, final step `Review & save`, review hero and two-column inventory/preparation facts. Blend additionally lists its compound composition; standard highlights its single compound and strength per physical vial. New-kit primary action uses **Save Kit** for both, while edits retain Save Changes.
+- Continue and Save use one subtle primary lavender depth treatment with 16px horizontal footer insets; Back remains secondary. Avoid full-bleed bottom action backgrounds. No business logic or storage migration permitted for presentation consistency.
