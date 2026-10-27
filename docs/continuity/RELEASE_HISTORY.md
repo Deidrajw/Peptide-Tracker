@@ -812,3 +812,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 ### DS2 v0.9.20-beta — direct Record Reaction entry points (DRAFT / NOT RELEASED)
 - App head 9d8ad41e adds Record reaction to compound dose-history row, saved-dose retrospective detail and Calendar day detail without opening Edit Dose. Existing standalone reaction form appends distinct events to same dose, preserving vial deductions and dose data. App-head mobile 40569192074 and full 40569192089 SUCCESS.
 - Stronger targeted test commit 85afbd03 adds retrospective, three reactions, note-history and zero-deduction assertions; current-head CI PENDING. Cloudflare bot preview for app head https://d8c3286f.nexuspeplog.pages.dev reported successful, but no independent served-asset hash comparison or real iPhone acceptance. Complete FULL DEMO/LIVE artifact availability to verify from current-head CI; no merge, no production deployment, no schema migration.
+
+
+### v0.9.20-beta — direct Record Reaction test milestone GREEN (DRAFT / NOT RELEASED)
+- Source/test head 85afbd03: browser/build run 40569926373 SUCCESS; mobile 40569926374 SUCCESS. Test suite confirms 8 LIVE/DEMO 320/390 light/dark cases and Log Dose 64 flows including Calendar and retrospective direct reaction, 3 reaction history, legacy note preservation, unchanged vial counts and original dose ID. All fictional/isolated data; no production data exercised.
+- CI artifact 12765770553 bundles full LIVE ZIP and isolated full-app DEMO. Cloudflare bot reports draft preview deployment https://32aef596.nexuspeplog.pages.dev for docs head a783546; raw served asset hashes and physical iPhone acceptance unverified. PR #123 remains draft/unmerged; no production release or migration.
