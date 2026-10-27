@@ -847,10 +847,10 @@ function protocolBuilderModal(existing) {
     const isLast=step===STEPS.length-1;
     const isFirst=step===0;
     return `<div style="display:flex;gap:8px">
-      <button id="pb-prev" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:${isFirst?"var(--t5)":"var(--t2)"};font-size:13px;pointer-events:${isFirst?"none":"auto"}">← Back</button>
+      <button id="pb-prev" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:${isFirst?"var(--t5)":"var(--t2)"};font-size:13px;pointer-events:${isFirst?"none":"auto"}">Back</button>
       ${isLast?`<button id="pb-save-draft" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px">Save Draft</button>
       <button id="pb-activate" style="flex:1;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">▶ Activate</button>`
-      :`<button id="pb-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">Next →</button>`}
+      :`<button id="pb-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">Continue</button>`}
     </div>`;
   }
 
@@ -934,7 +934,7 @@ function protocolBuilderModal(existing) {
       };
 
       return prog+`
-      <input id="pb-start" class="inp" type="date" value="${proto.startDate}" style="width:100%;margin-bottom:12px">
+      <label for="pb-start" class="nx-hybrid-field-label">Start date</label><input id="pb-start" class="inp" type="date" value="${proto.startDate}" style="width:100%;min-height:48px;margin-bottom:12px">
       ${multiComp?`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface-2);border-radius:8px;margin-bottom:10px">
         <span style="font-size:12px;color:var(--t2)">Same schedule for all compounds</span>
         <label style="position:relative;display:inline-block;width:38px;height:22px"><input type="checkbox" id="pb-same-sched" ${sameForAll?"checked":""} style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${sameForAll?"#A78BFA":"var(--border)"};border-radius:11px;transition:.2s"></span></label>
@@ -1791,7 +1791,7 @@ function goalModal(existing) {
   const compNames=Object.keys(allPeptidesIncArchived());
   let selC=g.compounds?[...g.compounds]:[];
   const refresh=()=>{m.querySelectorAll(".goal-comp").forEach(b=>{const sel=selC.includes(b.dataset.name);b.style.background=sel?"#A78BFA22":"transparent";b.style.borderColor=sel?"#A78BFA":"var(--border)";b.style.color=sel?"#A78BFA":"var(--t4)";});};
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:#7DF9C0;letter-spacing:1px">${existing?"EDIT":"ADD"} GOAL</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
+  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:var(--nx-hybrid-accent,#A78BFA);letter-spacing:1px">${existing?"EDIT":"ADD"} GOAL</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
     <input id="g-name" class="inp" placeholder="Goal name *" value="${esc(g.name)}" style="width:100%;margin-bottom:8px">
     <select id="g-cat" class="inp" style="width:100%;margin-bottom:8px"><option value="">Category...</option>${GOAL_CATS.map(c=>`<option${g.category===c?" selected":""}>${c}</option>`).join("")}</select>
     <select id="g-status" class="inp" style="width:100%;margin-bottom:8px"><option value="active"${g.status==="active"?" selected":""}>Active</option><option value="planned"${g.status==="planned"?" selected":""}>Planned</option><option value="paused"${g.status==="paused"?" selected":""}>Paused</option><option value="completed"${g.status==="completed"?" selected":""}>Completed</option></select>
@@ -1804,11 +1804,11 @@ function goalModal(existing) {
     </select>
     <div id="g-progress-settings" style="padding:10px 0 12px"></div>
     <label for="g-evidence-symptom" style="display:block;font-size:12px;color:var(--t3);margin-bottom:6px">Check-In symptom connection (optional)</label>
-    <select id="g-evidence-symptom" class="inp" style="width:100%;min-height:44px;margin-bottom:8px"><option value="">No Check-In connection</option>${[...new Set((state.dailyLogs||[]).flatMap(l=>(l.symptoms||[]).map(v=>typeof v==="string"?v:v?.name).filter(Boolean)))].sort().map(n=>`<option value="${esc(n)}"${g.evidenceSymptom===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
+    <select id="g-evidence-symptom" class="inp" style="width:100%;min-height:48px;margin-bottom:8px"><option value="">No Check-In connection</option>${[...new Set((state.dailyLogs||[]).flatMap(l=>(l.symptoms||[]).map(v=>typeof v==="string"?v:v?.name).filter(Boolean)))].sort().map(n=>`<option value="${esc(n)}"${g.evidenceSymptom===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
     <div class="nx-muted" style="font-size:11px;margin-bottom:10px">Selected observations remain in their original Check-In history.</div>
-    <input id="g-target" class="inp" type="date" value="${g.targetDate||""}" style="width:100%;margin-bottom:8px">
+    <label for="g-target" class="nx-hybrid-field-label">Target date <span>(optional)</span></label><input id="g-target" class="inp" type="date" aria-label="Target date, opens calendar" value="${g.targetDate||""}" style="width:100%;min-height:48px;margin-bottom:8px">
     <textarea id="g-notes" class="inp" placeholder="Notes" style="width:100%;min-height:60px;resize:vertical;margin-bottom:14px">${esc(g.notes||"")}</textarea>
-    <button id="g-save" class="btn-primary" style="background:#7DF9C0;color:#000">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
+    <button id="g-save" class="btn-primary">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
 
   const model=g.progressModel||{};
   const progressSettings=m.querySelector("#g-progress-settings");
