@@ -75,8 +75,8 @@ try{
         return {combined,rest,unchanged};
       } finally {state=original;tab=oldTab;renderBody();}
     });
-    check(/0\\s*of\\s*3/.test(extended.combined),"Two protocols/multiple daily slots not represented once each: "+JSON.stringify(extended));
-    check(/0\\s*of\\s*2/.test(extended.rest),"Rest-phase occurrence unexpectedly counted: "+JSON.stringify(extended));
+    check(/0\s*of\s*3/.test(extended.combined),"Two protocols/multiple daily slots not represented once each: "+JSON.stringify(extended));
+    check(/0\s*of\s*2/.test(extended.rest),"Rest-phase occurrence unexpectedly counted: "+JSON.stringify(extended));
     check(extended.unchanged,"Rendering Today mutated protocol or dosing records");
 
     // Wizard parity and tap geometry in both themes/widths.
