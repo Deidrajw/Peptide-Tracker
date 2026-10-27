@@ -95,6 +95,13 @@ try{
     ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"] .nx-kit-attachment').isVisible(),'Standard test-result upload missing from Step 2');
     await page.locator('.nx-kit-attachment-input').setInputFiles({name:'fictional-coa.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
     await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-coa.pdf'));
+    ensure(await page.locator('.nx-kit-attachment-view').isVisible(),'Uploaded standard kit attachment is not previewable');
+    await page.locator('.nx-kit-attachment-view').click();
+    ensure(await page.locator('.nx-kit-file-viewer iframe').count()===1,'PDF preview is missing inside standard editor');
+    ensure(await page.locator('.nx-kit-file-download').getAttribute('download')==='fictional-coa.pdf','PDF viewer missing download');
+    await page.locator('.nx-kit-file-close').click();
+    ensure(await page.locator('.nx-kit-file-viewer').count()===0,'PDF viewer did not close');
+
     ensure(await page.locator('#scur option').count()>=15,'Regular Kit currency selector has incomplete options');
     await page.locator('#scur').selectOption('SGD');
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-step2-'+kind+'-'+theme+'-'+width+'.png'});
@@ -109,6 +116,23 @@ try{
 
     await page.evaluate(()=>closeModal());
     ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===before,'Kit editor presentation unexpectedly mutated inventory');
+    // Saved Stash attachment access must work for both regular and blend kits.
+    await page.evaluate(()=>{
+      const sample={name:'sample.png',type:'image/png',size:68,dataUrl:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+nFfoAAAAASUVORK5CYII='};
+      state.supplies.find(x=>x.id===99001).testResultAttachment={...sample};
+      state.supplies.find(x=>x.id===99003).testResultAttachment={...sample};
+      render();
+    });
+    for(const id of [99001,99003]){
+      await card(id).locator('.nx-kit-detail-button').click();
+      ensure(await card(id).locator('.nx-kit-test-view').isVisible(),'Saved kit missing View file '+id);
+      await card(id).locator('.nx-kit-test-view').click();
+      ensure(await page.locator('.nx-kit-file-viewer img').count()===1,'Image preview missing for kit '+id);
+      ensure(await page.locator('.nx-kit-file-download').getAttribute('download')==='sample.png','Viewer download wrong for kit '+id);
+      await page.locator('.nx-kit-file-close').click();
+      ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Viewer failed to close for kit '+id);
+    }
+
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
