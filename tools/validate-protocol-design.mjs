@@ -69,7 +69,7 @@ try{
         renderBody();
         const combined=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
         const unchanged=JSON.stringify({doses:names.map(n=>state.peptides[n].doses),protocols:state.protocols})===snapshot;
-        second.phases=[{type:"rest",durationWeeks:1}];second.startDate=today;
+        second.phases=[{type:"rest",isRest:true,durationWeeks:1}];second.startDate=today;
         renderBody();
         const rest=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
         return {combined,rest,unchanged};
