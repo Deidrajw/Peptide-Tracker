@@ -1583,8 +1583,17 @@ function homeView() {
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
   // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
   // Never infer completion from inventory, and never change any schedule or dose record.
-  const todaySlots = started.flatMap(([name, record]) => {
-    if (!isCompoundRelevantToday(getDoseStatus(name, record))) return [];
+  // Include first-dose occurrences for active protocols. Previously the 'started'
+  // collection excluded compounds with no dose history, so Today incorrectly said
+  // "No scheduled doses" even while Protocol prompted "Ready for first log".
+  // Do not schedule unrelated unsaved compounds or future/paused protocols.
+  const firstDoseCandidates = notStarted.filter(([, record]) => {
+    const protocol = protocolForData(record);
+    return protocol?.status === "active" && !!protocol.startDate && protocol.startDate <= today;
+  });
+  const todaySlots = [...started, ...firstDoseCandidates].flatMap(([name, record]) => {
+    const hasDoseHistory = (record.doses || []).length > 0;
+    if (hasDoseHistory && !isCompoundRelevantToday(getDoseStatus(name, record))) return [];
     return getDayOccurrences(record, today).filter(slot => slot.status !== "paused");
   });
   const scheduledCount = todaySlots.length;
