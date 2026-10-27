@@ -69,6 +69,15 @@ try{
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-step1-'+mode+'-'+theme+'-'+width+'.png'});
   await page.locator('.nx-blend-compound-trigger').first().fill('BPC');
   ensure(await page.locator('.nx-blend-compound-option').count()>0,'Blend combobox search did not return options');
+  const pickerLayout=await page.locator('.comp-row').first().evaluate(row=>{
+    const menu=row.querySelector('.nx-blend-compound-popup'),results=row.querySelector('.nx-blend-compound-results');
+    const a=row.getBoundingClientRect(),b=menu.getBoundingClientRect(),css=getComputedStyle(menu);
+    return {rowHeight:a.height,menuHeight:b.height,position:css.position,scrollable:results.scrollHeight>results.clientHeight+2,count:results.querySelectorAll('button').length};
+  });
+  ensure(pickerLayout.position==='absolute'&&pickerLayout.rowHeight<100&&!pickerLayout.scrollable&&pickerLayout.count<=5,
+    'Compound suggestions stretch row or create nested scrolling: '+JSON.stringify(pickerLayout));
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-search-'+mode+'-'+theme+'-'+width+'.png'});
+
   await page.locator('#bk-name').fill('QA Fixture Blend');
   await page.evaluate(()=>{
     const selects=[...document.querySelectorAll('.comp-select')];
@@ -86,6 +95,12 @@ try{
   await page.locator('#bk-cost').fill('190');
   await page.locator('#nx-blend-next').click();
   ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('CAD $190')),'Review differs from entered BAC/cost');
+  ensure(await page.locator('.nx-blend-review-hero h3').innerText()==='QA Fixture Blend','Review missing prominent blend name');
+  ensure(await page.locator('.nx-blend-review-total').innerText().then(t=>t.includes('15 mg')),'Review missing emphasized total strength');
+  ensure(await page.locator('.nx-blend-review-component').count()===2,'Review missing component composition');
+  ensure(await page.locator('.nx-blend-wizard-footer').evaluate(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)'),
+    'Blend sticky actions retain opaque dark background');
+
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-review-'+mode+'-'+theme+'-'+width+'.png'});
   ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
   await page.locator('#bk-save').click();
