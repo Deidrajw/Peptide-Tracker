@@ -22,6 +22,32 @@ try{
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
+    // Today DS2 header: all three actions share one vertical rail at 320/390.
+    // Existing trigger IDs and handlers remain usable in both themes.
+    const header=await page.evaluate(()=>{
+      const ids=["#nx-open-alerts","#profile-btn","#theme-toggle"];
+      const nodes=ids.map(id=>document.querySelector(id));
+      if(nodes.some(n=>!n))return {missing:ids.filter((_,i)=>!nodes[i])};
+      const rects=nodes.map(n=>n.getBoundingClientRect());
+      const parent=document.querySelector(".nx-today-header-actions");
+      return {inside:nodes.every(n=>parent?.contains(n)),centres:rects.map(r=>r.top+r.height/2),
+        heights:rects.map(r=>r.height),overflow:document.documentElement.scrollWidth>innerWidth+1};
+    });
+    check(header.inside && !header.overflow && header.heights.every(h=>h>=44) &&
+      Math.max(...header.centres)-Math.min(...header.centres)<=2,
+      "Today header alignment failed: "+JSON.stringify(header));
+    await page.locator("#theme-toggle").click();
+    check(await page.evaluate(()=>document.documentElement.dataset.theme==="light") === (theme==="dark"),
+      "Today theme action did not toggle");
+    await page.locator("#theme-toggle").click();
+    await page.locator("#profile-btn").click();
+    check(await page.evaluate(()=>tab==="profile"),"Today Profile action did not navigate");
+    await page.evaluate(()=>{tab="home";renderBody();});
+    await page.locator("#nx-open-alerts").click();
+    check(await page.locator("#nx-alert-overlay").count()===1,"Today alert action did not open inbox");
+    await page.evaluate(()=>{closeModal();renderBody();});
+
+
     // Regression: activation must not require a first dose log before Today schedules it.
     // Isolate fictional test data and restore the fixture before existing UX assertions.
     const firstDose=await page.evaluate(()=>{
