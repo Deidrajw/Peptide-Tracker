@@ -1030,3 +1030,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Test attachment card screenshot-driven correction
 - UI CODING COMPLETE on draft source commits 65ac266 / 7d36813: both Kit Step 2 flows share attachment card with outline icon, title/Optional, explanatory one-line-ish text, full-width Choose file and concise accepted types/750 KB hint. Existing file input and persistence code preserved.
 - NOT TESTED: updated-head browser screenshot 320/390 light/dark, tap/focus/screenreader, actual iPhone file picker, PDF/image validation, replacement/removal, save/edit, export/restore and storage quota. Keep separate from broader scrolling audit.
+
+
+## 2026-10-26 — Kit attachment viewing regression gate
+- **CODED/CI PENDING:** Step 2 attached PDF `View file` launches viewer iframe with download action, closes without clearing editor. Saved Stash regular and blend kits with attached image each show View file, launch image and close. Test in `validate-stash-cards.mjs` commit 3f55add.
+- **NOT TESTED on physical iPhone:** Safari native PDF rendering in in-app iframe, orientation, document zoom, safe-area, iOS file picker/keyboard, VoiceOver; opening unsupported file should not navigate externally or execute HTML.
+- No data migration; attachment stays under existing `testResultAttachment` shape. Broader mandatory-fields and nested-scroll audits separate.
