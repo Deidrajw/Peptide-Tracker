@@ -1187,3 +1187,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS automated on 9d8ad41e:** mobile workflow 40569192074, full build/browser workflow 40569192089. Calendar direct Record reaction path opens independent editor; timestamps, multiple reactions, dose ID and no inventory changes are asserted on fictional fixtures, including re-edit preservation.
 - **ADDED / latest CI PENDING:** commit 85afbd03 tests independent saved-dose retrospective Record reaction, third appended event, unchanged vial count, and legacy note preserved across dose edit in 8 LIVE/DEMO x 320/390 x both theme configurations. CI 40569926373 / 40569926374 not yet cleared.
 - **NOT TESTED:** real iPhone Safari, keyboard, VoiceOver, real production records; Cloudflare source asset hash parity. Draft PR #123 unmerged.
+
+
+## 2026-10-27 — Direct reaction latest app/test full QA PASS
+- CI 40569926374 (mobile) SUCCESS; 40569926373 (full) SUCCESS at app/test head 85afbd03. Browser log: Log Dose E2E PASS 8 LIVE/DEMO 320px/390px light/dark configurations, 64 flows, including three independent timestamped reactions, direct Calendar and retrospective entry, preserved old notes, no duplicate dose and no inventory deduction. Other core suites passed; calculator math diagnostic 80/80 not clinical validation.
+- PASS (CI package validation): full-app standalone fictional DEMO, offline DEMO ZIP, complete LIVE ZIP uploaded as artifact 12765770553. Cloudflare bot preview commit a783546 reported successful https://32aef596.nexuspeplog.pages.dev; independent HTTP hash parity NOT VERIFIED.
+- NOT TESTED: physical iPhone Safari, real keyboard/VoiceOver, actual saved production data and full WCAG AA. User acceptance remains pending; production untouched.
