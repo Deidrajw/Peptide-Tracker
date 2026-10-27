@@ -2519,3 +2519,18 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-guided-blend-editor .nx-blend-review-facts>div>span{font-size:11px;color:var(--t3)}
 .nx-guided-blend-editor .nx-blend-review-facts>div>strong{font-size:13px;text-align:left;overflow-wrap:anywhere}
 @media(max-width:350px){.nx-guided-blend-editor .nx-blend-review-facts{gap:10px}}
+
+
+/* Full-height guided Stash editor on phones: one document-sized editing surface,
+   no nested search-results scrolling, with iOS safe-area support. */
+@media(max-width:600px){
+  .modal-bg:has(>.nx-guided-blend-editor){padding:0!important;align-items:stretch!important;justify-content:stretch!important}
+  .modal-bg>.modal.nx-guided-blend-editor{
+    width:100%!important;max-width:100%!important;
+    height:100dvh!important;max-height:100dvh!important;
+    box-sizing:border-box!important;margin:0!important;
+    border-radius:0!important;
+    padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px)!important;
+    overflow-y:auto!important;overscroll-behavior:contain!important;
+  }
+}
