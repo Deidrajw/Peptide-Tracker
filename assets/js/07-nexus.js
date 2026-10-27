@@ -2050,7 +2050,7 @@ function renderUpcomingFullView(started) {
 // Completed means recorded or explicitly skipped TODAY, not all historical doses.
 // Retain the same compact/expanded card actions, including Record reaction.
 function renderCompletedFullView(started) {
-  const completed=started.filter(([name,data])=>isCompoundRelevantToday(getDoseStatus(name,data))==="completed");
+  const completed=started.filter(([name,data])=>(data.doses||[]).some(d=>doseDayFor(data,d)===localDate()) || isCompoundRelevantToday(getDoseStatus(name,data))==="completed");
   completed.sort((a,b)=>{
     const aDate=(a[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
     const bDate=(b[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
