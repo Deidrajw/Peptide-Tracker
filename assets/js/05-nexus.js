@@ -702,7 +702,7 @@ function doseModal(name, existing, occTime) {
     <div class="nx-dose-head">
       <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
       <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
-      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div>${isEdit?`<button type="button" id="nx-record-reaction" class="nx-reaction-link">Record reaction ${(f.reactions||[]).length?`(${f.reactions.length})`:""}</button>`:""}</div></div>
+      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div>${isEdit?`<button type="button" id="nx-record-reaction" class="nx-reaction-link">Record reaction ${(f.reactions||[]).length?`(${f.reactions.length})`:""}</button>`:""}</div>
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
