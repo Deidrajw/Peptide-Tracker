@@ -980,3 +980,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Continue/Save button depth, inset, sticky positioning at 320/390 dark/light and iPhone keyboard: **NOT TESTED after implementation**.
 - Existing standard/blend save handlers, same vial creation math, history/persistence: source handlers untouched; **functional regression NOT TESTED after implementation**.
 - CI pending on source commit 6e0075d; physical iPhone/VoiceOver NOT TESTED. No nested-scroll app-wide pass claimed.
+
+
+## 2026-10-26 — Standard/Blend Kit review parity follow-up
+- **Source reviewed:** standard and blend step 3 both display `Step 3 of 3 · Review & save` via independent existing wizard components; standard has summary hero and two-column facts; blend adds physical-vial component breakdown. Shared CSS addresses 16px footer inset and button states.
+- **CODED / CI PENDING:** Both new kit save button captions read `Add to Stash`, while edit remains `Save Changes`. App commits 6bf591d and 4c177db; saved record calculations/handlers unchanged.
+- **NOT TESTED:** completed current-head 320/390 light/dark full-browser checks, exact-head full-app DEMO/LIVE ZIP artifact inspection, real iPhone keyboard/focus/scroll/safe-area. Do not infer native keyboard pass from screenshots.
+- **OUT OF SCOPE:** app-wide nested scroll audit remains separate unfinished work.
