@@ -2583,3 +2583,10 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 #pb-clist{max-height:none!important;overflow:visible!important}
 .nx-plan-edit-field .cpick-search{min-height:48px;font-size:16px!important}
 .cpick-item,.pb-cadd{min-height:44px!important}
+
+
+/* Avoid inner scrolling in Plans/Research compound multi-select quick results. */
+div:has(> .cpick-browse-all):not(.nx-compound-browser){
+ max-height:none!important;overflow:visible!important;
+}
+.cpick-search{min-height:48px!important;font-size:16px!important}
