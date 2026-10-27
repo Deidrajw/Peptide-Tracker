@@ -762,3 +762,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - Draft PR #123 commits `e7f3df6` (status options and save), `9e055e1` (light/dark action sheet styling) and `4c32d42` (browser regression). Affects Plans > Goals ellipsis only. Existing saved goal schema/status values retained, no data migration, linked protocols/check-ins/history/inventory untouched by code; current-head CI and iPhone acceptance pending, no preview deployment verified. PR unmerged and production unchanged.
 
 - Additional draft styling (2026-10-27): `acda2604`/`1c636bca` remove neon green from Protocol first-log status and align CTA to DS2 lavender, source check `172c1f07`. No data or handler changes; QA pending, not released.
+
+
+### 2026-10-27 — Today header action alignment (DRAFT / NOT RELEASED)
+- Draft PR #123 Today home view now composes bell, Profile and theme as one header action group, reused IDs/handlers; Goal quick status and Protocol first-log updates carried forward. CSS light/dark + 320/390 touch alignment, browser action regression added. No schema change, production localStorage or dose history writes. Latest-head CI and isolated artifact verification pending, physical Safari/VoiceOver not tested. PR remains draft/unmerged; no production deployment.
