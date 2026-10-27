@@ -1139,3 +1139,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Validate Log Dose editable `Source 1` shows human-readable compound/vial label and no long kit ID. `Source identifiers` expands to exact Kit/Vial IDs, collapsed by default. Multi-vial rows have distinct traceable identities; editable draw amount/units/confirm/remove functionality and vial allocation/save history unchanged. Physical iPhone latest preview QA NOT TESTED. New source and DOM tests are not evidence of production deployment.
 
 - `validate-logdose-ui.mjs` at `ac503930` tests actual editable row readable label and collapsed exact Kit ID, prior to dose Review; user screenshot raw ID FAIL should not be promoted to PASS without current browser test and iPhone preview confirmation.
+
+- Added multi-kit assertion `ad5722ab`: two same-compound kits must render distinguishable `Kit 1` and `Kit 2` labels, with no raw storage IDs in primary editable rows; exact ID still accessible in optional source identifiers. Browser run PENDING, physical Safari not confirmed.
