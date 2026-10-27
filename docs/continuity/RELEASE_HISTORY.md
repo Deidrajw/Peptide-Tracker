@@ -760,3 +760,5 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Goal quick-status action sheet (DRAFT / NOT RELEASED)
 - Draft PR #123 commits `e7f3df6` (status options and save), `9e055e1` (light/dark action sheet styling) and `4c32d42` (browser regression). Affects Plans > Goals ellipsis only. Existing saved goal schema/status values retained, no data migration, linked protocols/check-ins/history/inventory untouched by code; current-head CI and iPhone acceptance pending, no preview deployment verified. PR unmerged and production unchanged.
+
+- Additional draft styling (2026-10-27): `acda2604`/`1c636bca` remove neon green from Protocol first-log status and align CTA to DS2 lavender, source check `172c1f07`. No data or handler changes; QA pending, not released.
