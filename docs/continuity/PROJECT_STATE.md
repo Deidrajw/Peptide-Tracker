@@ -1,5 +1,14 @@
 # Nexus — Project State
 
+## CURRENT PRIORITY SNAPSHOT — 2026-10-27 (supersedes historical next-action headings)
+- **User acceptance:** Calendar, Protocol/Plans and Supplies are OKAY FOR NOW. Do not schedule these for additional design changes absent a new issue. Other previously tested functional flows stay protected; do not treat physical accessibility checks as passed.
+- **CURRENT DS2 GOAL:** Finish Hybrid Soft Depth + Porcelain + Obsidian styling for the **entire app, including Trends/Nexus/Insights, Profile/Settings, Supplements, More/Learn/Intel, and every remaining nested page, modal and action sheet**. A styled primary tab does not mean its child views are done. Track all surfaces in `docs/design/DS2_SCREEN_COVERAGE.md`.
+- **SCREENSHOT-REPORTED DEFECT:** Stash Kit details Overview/Vials/History selected pill had square bottoms because legacy `nexus.css` `!important` underline/reset rules overrode hybrid styling. Draft CSS fix 135848e + regression assertion e97a2d5; QA and physical iPhone reacceptance PENDING.
+- **FINAL DS2 PASS — INTENTIONALLY LAST:** accessibility/VoiceOver, required/optional fields, app-wide scrolling, typography, navigation, motion/reduced-motion, overall contrast and focus. Do not forget or pull this ahead of unconverted subpages.
+- **LONG-TERM PRODUCT ROADMAP preserved independently:** Core workflow design, onboarding, personalization, public native iOS/Android platform expansion, and future functionality in `docs/product/NEXUS_MASTER_ROADMAP.md`. This current visual sprint is NOT the entire product plan.
+- **ONE NEXT ACTION:** Verify screenshot-specific tab fix in latest 320/390 light/dark CI, then inventory and finish unconverted Trends/Nexus/Profile/Settings/More subpages one by one with preview and tests. Keep draft PR #123 unmerged; no production deployment or saved-data writes.
+
+
 > Living handoff. Update on every material change, including incomplete work. GitHub main is the source of truth; reverify each session. Never store private production data here.
 
 **Documentation baseline:** 2026-10-23
