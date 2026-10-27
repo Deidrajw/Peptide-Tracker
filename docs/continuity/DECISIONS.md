@@ -711,3 +711,8 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-27 — Dose Review source labels and observations disclosure
 - Present *readable source identity first* in Log Dose Review (compound name, vial size/remaining, prepared-dose description), while retaining exact kit/vial and multi-source IDs in an opt-in disclosure for auditability. Never suppress source traceability or change which source is deducted. Explicit dose confirmation continues to invoke original validation/allocation/save code; entering Review is read-only.
 - Keep Observations optional and progressive (collapsed in Quick Log, expanded when editing existing record) so symptoms, notes and escalation remain available without extending the default form. Don't lose entered observations when changing Quick/Guided mode or navigating steps. Approved as part of DS2 continuation, pending device/browser acceptance.
+
+
+## 2026-10-27 — Supplements and Stash details DS2
+- Remove the legacy `Import from Notion` canned supplement action from the public-facing Profile screen. Never delete an existing supplement or historical supplement log as part of removing the importer. Allow a new supplement to be created in the daily Supplements logging sheet, even with an empty catalogue; adding the name saves it to the catalogue and selects it, but recording it as taken still requires the existing explicit Save supplements confirmation.
+- Apply DS2 lavender/neutral hierarchy to Profile's Add, align Stash opened-vial status next to its vial title and constrain Prepare Dose source amount controls without changing allocation/reconstitution math or logging behaviour. Design remains draft pending browser and physical iPhone review.
