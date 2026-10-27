@@ -730,3 +730,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Supplies empty state + form/card hierarchy (DRAFT, NOT RELEASED)
 - Draft PR #123 implemented user-approved compact empty Supplies state (5d85c6e, eaa92a3) and continuation into Add/Edit Supply form/populated-card styling (cb49d73, 5a8f1b6), tests (c6f1085, 49e2298, 327141d). Prior empty-state full CI failed due welcome overlay intercepting test click; corrected fixture on draft. No storage schema changes, changes to unit history, consumption, restock, forecaster or save actions. Latest head CI and artifacts unverified as of this documentation, no deployment or merge.
+
+
+### 2026-10-27 — Supplies screenshot QA fixes (DRAFT / UNRELEASED)
+- Full-browser runs 40451096484 and 40451199358, mobile 40451199390 PASSED for preceding source; artifact 12710184475 manifest 506244fe, integrity verified. Screenshot review uncovered onboarding-overlay capture (test fixture) and narrow 320px initial-status chip clipping (UI issue). Scoped test and CSS corrections at commits 248e1c2 and ef9f6fe, now awaiting complete latest-head CI/artifact acceptance. No changes to supply data shape, quantities or history; no merge, deployment or production writes. Native iPhone acceptance remains not tested.
