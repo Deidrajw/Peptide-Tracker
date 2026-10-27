@@ -46,7 +46,15 @@ async function clickSave(page){
     await next.click();
     if(!(await modal.locator('#save').isVisible()) && !(await next.isVisible()))break;
   }
-  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
+  if(await modal.locator('#save').isVisible()){
+    await modal.locator('#save').click();
+    // New doses have a skippable invitation; edits must not show it.
+    const prompt=page.locator('.nx-reaction-invite');
+    if(await prompt.count()){
+      ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
+      await prompt.locator('#nx-reaction-later').click();
+    }
+  }
   // Invalid entry must remain unsaved on Entry, with feedback from step validation.
   else ensure(await modal.locator('.nx-dose-step-error').isVisible(),'Invalid entry lacks step validation feedback');
 }
@@ -185,6 +193,14 @@ try {
     ensure(Math.abs(first.kits[0].remaining[0]-4)<.01,'Confirmed 2 mg did not deduct exactly 2 mg');
     ensure(Math.abs(first.kits[0].remaining[1]-10)<.01,'Sealed backup was erroneously consumed');
     const originalId=first.entries[0].id;
+    // Test invitation independently: must target existing saved dose and not deduct.
+    await page.evaluate(()=>nexusPostDoseReactionPrompt('Retatrutide',state.peptides.Retatrutide.doses[0].id));
+    ensure(await page.locator('.nx-reaction-invite').isVisible(),'Optional post-save invitation not displayed');
+    await page.locator('#nx-reaction-open').click();
+    ensure(await page.locator('.nx-reaction-editor').isVisible(),'Invitation did not open reaction editor');
+    ensure((await stateSnapshot(page)).entries.length===1,'Invitation unexpectedly changed dose history');
+    await page.locator('#nx-reaction-cancel').click();
+    verified.push('post-dose optional invitation and link to original dose');
     await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
     await setDose(page,3);await clickSave(page);
     let edited=await stateSnapshot(page);
