@@ -110,6 +110,7 @@ function supplyModal(existing, presetName) {
     <input id="snotes" class="inp" value="${esc(f.notes||"")}" placeholder="e.g. Lot #ABC, ordered from XYZ" style="margin-bottom:18px">
     <button id="ssave" class="btn-primary" style="background:#C9A0FF">${existing?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
+  const kitTestResult=nexusKitTestResultControl(m,"ssave",existing?.testResultAttachment);
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
   m.classList.add("nx-stash-kit-editor");
   const originalTitle=m.querySelector(".mono");
@@ -150,6 +151,7 @@ function supplyModal(existing, presetName) {
   m.querySelector("#sbac").oninput = updateConc;
   updateConc();
   m.querySelector("#ssave").onclick = () => {
+    if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const name=m.querySelector("#sname").value.trim(); if(!name||name==="— select compound —") return;
     const bacMl = +m.querySelector("#sbac").value||0;
     const expiryDays = +m.querySelector("#sexp").value||28;
@@ -164,7 +166,7 @@ function supplyModal(existing, presetName) {
       // is preserved exactly as-is by simply not overwriting them, rather than the old
       // behavior of blindly re-deriving them from two raw count fields on every edit,
       // which could silently drift out of sync with the kit's actual vial state.
-      const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes };
+      const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes, testResultAttachment:kitTestResult.getValue() };
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
       saveState(); closeModal(); render();
       return;
@@ -193,6 +195,7 @@ function supplyModal(existing, presetName) {
       reconDate: hasOpen ? openReconDate : null,
       activeKit: hasOpen,
       storageLocation, cost, currency, notes,
+      testResultAttachment:kitTestResult.getValue(),
       vials,
     };
     const finishCreate = () => {
@@ -245,7 +248,7 @@ function supplyModal(existing, presetName) {
     const mg=existing?f.vialMg:Number(read("svmg"));
     const isOpen=existing?!!getActiveVial(existing):!!m.querySelector("#shasopen")?.checked;
     const activeCount=isOpen?1:0;
-    const fieldPairs=[["Compound",existing?f.name:read("sname")],["Vial count",count],["Strength per vial",mg+" mg"],["Initially open",isOpen?"Yes":"No"],["Sealed vials",existing?getSealedVials(existing).length:Math.max(0,count-activeCount)],["BAC water per vial",read("sbac")?read("sbac")+" mL":"Not provided"],["Expiry after recon",read("sexp")?read("sexp")+" days":"Default 28 days"],["Storage",m.querySelector("#sloc")?.selectedOptions[0]?.textContent||"Unknown"],["Cost",read("scost")?(read("scost")+" "+read("scur")):"Not provided"],["Notes",read("snotes")||"None"]];
+    const fieldPairs=[["Compound",existing?f.name:read("sname")],["Vial count",count],["Strength per vial",mg+" mg"],["Initially open",isOpen?"Yes":"No"],["Sealed vials",existing?getSealedVials(existing).length:Math.max(0,count-activeCount)],["BAC water per vial",read("sbac")?read("sbac")+" mL":"Not provided"],["Expiry after recon",read("sexp")?read("sexp")+" days":"Default 28 days"],["Storage",m.querySelector("#sloc")?.selectedOptions[0]?.textContent||"Unknown"],["Cost",read("scost")?(read("scost")+" "+read("scur")):"Not provided"],["Notes",read("snotes")||"None"],["Test results",kitTestResult.getValue()?.name||"None"]];
     const compound=existing?f.name:read("sname");
     const summary=review.querySelector(".nx-kit-wizard-summary");
     summary.innerHTML='<div class="nx-kit-review-hero"><span class="nx-kit-review-kicker">YOUR KIT</span><h3>'+escReview(compound)+'</h3><div class="nx-kit-review-total"><strong>'+escReview(mg)+' mg</strong><span>per physical vial</span></div></div>'+
