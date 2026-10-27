@@ -62,6 +62,17 @@ try {
     // reapply edited amount to the original open vial only.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
     await openDose(page);
+    // Physical Safari regression guard: title and mode must stay visible while only dose fields scroll.
+    const fixedHeader=page.locator('.nx2-dose-modal > .nx-dose-form > .nx-dose-fixed-header');
+    ensure(await fixedHeader.count()===1,'Dose title and mode switch are not in fixed header');
+    ensure(await fixedHeader.locator('.nx-dose-head').count()===1 &&
+      await fixedHeader.locator('.nx-dose-mode-switch').count()===1,
+      'Quick/Guided selector incorrectly lives inside the scrolling fields');
+    await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=el.scrollHeight});
+    ensure(await fixedHeader.locator('[data-dose-mode="quick"]').isVisible() &&
+      await fixedHeader.locator('[data-dose-mode="guided"]').isVisible(),
+      'Quick / Guided mode switch disappears after body scrolling');
+    await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=0});
     ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
     ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
     await setDose(page,2);
