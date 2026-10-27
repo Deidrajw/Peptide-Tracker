@@ -794,3 +794,10 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - No planned production data migration, storage-key change, catalogue auto-log, allocation ID remapping, vial maths change or live user writes.
 - Actions on `f39458e7`: mobile `40555517593` SUCCESS; full browser `40555517407` FAILURE at obsolete test DOM nesting assumption after disclosure relocation. Test locator fixed `e14d78e3`, current-head rerun PENDING; retain historical failure.
 - Cloudflare bot reports immutable preview `https://bbdc78c4.nexuspeplog.pages.dev` for `f39458e7`; independently rendered content parity and physical iPhone acceptance UNVERIFIED. Full-app release artifact available from failed Actions run 40555517407 but NOT release-cleared until green CI and exact-source review. LIVE ZIP / complete isolated DEMO current-head delivery INCOMPLETE. No merge or production deployment.
+
+
+### DS2 v0.9.20-beta latest-head test milestone — TESTED IN CI, UNMERGED (2026-10-27)
+- PR #123 checked branch head `63a6a863`; full build/browser `40557050146` SUCCESS, mobile `40557050089` SUCCESS, hybrid preview `40557040475` SUCCESS. Source test-fix `e14d78e3` now validated.
+- Actions artifact `12758495941`: complete source-based LIVE ZIP, standalone full-app fictional DEMO HTML, offline browser-opening DEMO ZIP. CI manifest source commit `bdd95f87753b21585b6bdf5b4821cd13686347f2` (GitHub synthetic merge SHA); branch byte-for-byte equivalence not independently established here.
+- Automated matrix checks include 320/390 light/dark LIVE/DEMO; Check-In, Log Dose (40 flows), Protocol, vial source (48), stash/blends, other protected pages, math diagnostic 80/80; clinical safety and WCAG-AA independent acceptance not implied.
+- Data impact: no intended schema migration or production writes. PR remains draft/unmerged, Cloudflare exact app asset fetch and physical iPhone validation pending; no production release.
