@@ -700,3 +700,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Blend full-screen mobile editing candidate (DRAFT, not released)
 - Commits 6db7acf7, 767c2ae8 and dd26fdc9 add full-viewport Blend editor for narrow phones, fix grouped Review CSS override and assert mobile modal geometry. This builds on floating picker / Review hierarchy revisions without changing blend IDs, storage schema or inventory accounting. Latest source QA and visual screenshots pending; no merge/deployment.
+
+### 2026-10-26 — Full-screen Blend search/review candidate validated (DRAFT, UNRELEASED)
+- Exact tested app commit dd26fdc9; merge-ref 723b06cb; GitHub Actions full build 40428711527 SUCCESS, artifact 12701700107 independently inspected. Source updates: floating max-five suggestion list, no row expansion; transparent footer; hierarchical Blend Review; full-viewport mobile editor replacing short nested-scrolling sheet. Complete isolated full-app DEMO 2,572,777 B; 21-file root-index LIVE ZIP 1,809,501 B. Visual screenshots inspected 320/390 dark/light search and Review. No accounting, storage or historical data change; actual iPhone test and other modal audits pending, PR draft/unmerged/undeployed.
