@@ -1734,8 +1734,8 @@ function prepareDosesModal(name) {
             const isTrulyCurrent = kit && kit.activeKit && rvial && getActiveVial(kit)?.id===rvial.id;
             const kitLabel = kit ? (kitFinished?"Finished vial": isTrulyCurrent?"Current vial": rvial?`Vial${rvial.sequenceNumber?" "+rvial.sequenceNumber:""}`:(kit.reconDate?"Open vial":"Vial")) : "Vial";
             const kitHasStock = kit && !kitFinished && rvial && getVialRemainingMg(kit, rvial)>0.001;
-            return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
+            return `<div class="nx2-prepare-source-row">
+              <span class="nx2-prepare-source-label" style="color:${kitFinished?"var(--t5)":"var(--t3)"}">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
