@@ -3019,10 +3019,10 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 
 
 /* Prepare Dose source breakdown: no clipped "Current vial" or oversized input row. */
-.nx2-prepare-source-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(66px,82px) minmax(24px,auto);gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border-sub);min-width:0}
-.nx2-prepare-source-label{font-size:12px;line-height:1.4;font-weight:600;overflow-wrap:anywhere;min-width:0}
-.nx2-prepare-source-row .alloc-mg-input{width:100%!important;min-width:0;height:44px!important}
-.nx2-prepare-source-row .palloc-draw,.nx2-prepare-source-row .palloc-remove{min-height:44px;min-width:44px;grid-column:auto}
-.nx2-prepare-source-row .palloc-draw{grid-column:1 / -1;justify-self:stretch;font-size:12px!important}
-.nx2-prepare-source-row .palloc-remove{justify-self:end}
-@media(max-width:360px){.nx2-prepare-source-row{grid-template-columns:minmax(0,1fr) 72px 32px;gap:6px}.nx2-prepare-source-row .palloc-remove{min-width:32px}}
+.nx2-prepare-source-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border-sub);min-width:0}
+ .nx2-prepare-source-label{flex:1 1 94px;font-size:12px;line-height:1.4;font-weight:600;overflow-wrap:anywhere;min-width:0}
+.nx2-prepare-source-row .alloc-mg-input{flex:0 0 76px;width:76px!important;min-width:0;height:44px!important}
+.nx2-prepare-source-row .palloc-draw,.nx2-prepare-source-row .palloc-remove{min-height:44px;min-width:44px}
+.nx2-prepare-source-row .palloc-draw{flex:1 1 160px;font-size:12px!important}
+.nx2-prepare-source-row .palloc-remove{margin-left:auto}
+@media(max-width:360px){.nx2-prepare-source-row{gap:6px}.nx2-prepare-source-row .palloc-remove{min-width:32px}}
