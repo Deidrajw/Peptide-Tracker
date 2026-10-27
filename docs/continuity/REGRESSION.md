@@ -1238,3 +1238,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - OPEN / NOT ACCEPTED: Profile Supplements remove personal Notion import UI and dependent handler safely; Add action color consistency; inline Check-In supplement creation including empty catalogue, search/browse, no duplicate and no save-before-confirm; date-specific historical records must survive.
 - OPEN / NOT ACCEPTED: Stash segmented tab selected corners at 320/390 light/dark, Prepare Dose multi-source amount fields fit and keyboard avoidance, opened-vial status aligned with vial header/actions; source selection/allocations and saved vial balances unchanged.
 - Prior implementation notes are NOT full physical-device acceptance; focused browser and iPhone tests required before closing. Mandatory-fields and app-wide scrolling audits follow afterward.
+
+
+## 2026-10-27 — Stash Overview/Vials/History pill corner regression
+- User-provided physical iPhone screenshot FAIL: selected Overview ends in square underlined lower edge despite rounded container. Source cause legacy `assets/css/nexus.css` `.nx-kit-detail-panel .nx-stash-tab` `border-radius:0!important` and selected `border-bottom:2px` overrode hybrid rules. Targeted CSS candidate 135848e adds stronger scoped selected round radius, removes underlining; browser test e97a2d5 checks computed top/bottom radii and bottom border in LIVE/DEMO 320/390 light/dark. Mobile CI 40600422891 SUCCESS; full browser 40600422694 PENDING at recording. Device retest NOT TESTED. Keep Draft PR #123 and production unchanged.
