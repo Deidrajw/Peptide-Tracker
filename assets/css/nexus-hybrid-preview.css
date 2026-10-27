@@ -3016,3 +3016,13 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nexus-screen-stash .nx-kit-vial-row .nx-kit-list-status{position:static;display:inline-flex;align-items:center;border-radius:999px;border:1px solid var(--border-sub);background:var(--surface-2);color:var(--t2);font-family:inherit;font-size:11px;line-height:1.35;font-weight:600;padding:4px 9px;white-space:nowrap}
 .nexus-screen-stash .nx-kit-vial-row .nx-kit-list-meta{font-family:inherit;font-size:12px;line-height:1.5;color:var(--t3);margin-top:4px;overflow-wrap:anywhere}
 .nexus-screen-stash .nx-kit-vial-row button{min-width:44px;min-height:44px;flex-shrink:0}
+
+
+/* Prepare Dose source breakdown: no clipped "Current vial" or oversized input row. */
+.nx2-prepare-source-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(66px,82px) minmax(24px,auto);gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border-sub);min-width:0}
+.nx2-prepare-source-label{font-size:12px;line-height:1.4;font-weight:600;overflow-wrap:anywhere;min-width:0}
+.nx2-prepare-source-row .alloc-mg-input{width:100%!important;min-width:0;height:44px!important}
+.nx2-prepare-source-row .palloc-draw,.nx2-prepare-source-row .palloc-remove{min-height:44px;min-width:44px;grid-column:auto}
+.nx2-prepare-source-row .palloc-draw{grid-column:1 / -1;justify-self:stretch;font-size:12px!important}
+.nx2-prepare-source-row .palloc-remove{justify-self:end}
+@media(max-width:360px){.nx2-prepare-source-row{grid-template-columns:minmax(0,1fr) 72px 32px;gap:6px}.nx2-prepare-source-row .palloc-remove{min-width:32px}}
