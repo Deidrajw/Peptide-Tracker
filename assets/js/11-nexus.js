@@ -2031,7 +2031,9 @@ function renderBody() {
     ?`<img src="${state.profile.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`
     :`<span class="nx-profile-avatar-fallback" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`}
   <span style="color:var(--t3)">Profile</span>${hasUnseenUpdate?`<span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#A78BFA;border:1.5px solid var(--bg)"></span>`:""}</button><button id="theme-toggle" title="Toggle light/dark">${themeIcon}</button></div>`;
-  app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${profileBtn}${inner}</div>`;
+  // Keep the existing Profile/theme controls and handlers; Today groups them with Alerts.
+  if(tab==="home") inner=inner.replace('<div class="nx-today-header-actions">','<div class="nx-today-header-actions">'+profileBtn);
+  app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${tab==="home"?"":profileBtn}${inner}</div>`;
   wireBody();
 }
 
