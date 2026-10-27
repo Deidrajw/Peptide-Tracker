@@ -789,18 +789,19 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
   let value=initial||null, pending=false, serial=0;
   const wrap=document.createElement("section");
   wrap.className="nx-kit-attachment";
-  wrap.innerHTML='<label class="field-label">TEST RESULTS (OPTIONAL)</label>'+
-    '<div class="nx-kit-attachment-actions"><button type="button" class="nx-kit-attachment-choose">Upload test results</button>'+
+  wrap.innerHTML='<div class="nx-kit-attachment-header"><span class="nx-kit-attachment-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span><span class="nx-kit-attachment-title">Test results</span><span class="nx-kit-attachment-optional">Optional</span></div>'+
+    '<p class="nx-kit-attachment-description">Keep your kit’s test report or certificate of analysis (COA) together with its details.</p>'+
+    '<div class="nx-kit-attachment-actions"><button type="button" class="nx-kit-attachment-choose"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Choose file</button>'+
     '<button type="button" class="nx-kit-attachment-clear" hidden>Remove</button></div>'+
     '<input type="file" class="nx-kit-attachment-input" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" hidden>'+
-    '<p class="nx-kit-attachment-info" aria-live="polite">PDF or image, up to 750 KB. Saved locally with the kit and included in backups.</p>'+
+    '<p class="nx-kit-attachment-info" aria-live="polite">PDF, JPG, PNG or WebP · Max 750 KB</p>'+
     '<p class="nx-kit-attachment-error" role="alert" hidden></p>';
   const input=wrap.querySelector(".nx-kit-attachment-input");
   const choose=wrap.querySelector(".nx-kit-attachment-choose"), clear=wrap.querySelector(".nx-kit-attachment-clear");
   const info=wrap.querySelector(".nx-kit-attachment-info"), error=wrap.querySelector(".nx-kit-attachment-error");
   const refresh=()=>{clear.hidden=!value;info.textContent=pending?"Reading file…":value?
-    value.name+" · "+Math.ceil(value.size/1024)+" KB · saved locally with kit":
-    "PDF or image, up to 750 KB. Saved locally with the kit and included in backups.";};
+    value.name+" · "+Math.ceil(value.size/1024)+" KB · attached to this kit":
+    "PDF, JPG, PNG or WebP · Max 750 KB";};
   choose.onclick=()=>input.click();
   clear.onclick=()=>{serial++;pending=false;value=null;input.value="";error.hidden=true;refresh();};
   input.onchange=()=>{
