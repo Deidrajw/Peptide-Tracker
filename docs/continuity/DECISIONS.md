@@ -611,3 +611,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Compound combobox type, suggestions, browse-all (USER APPROVED)
 - One editable field allows searching, tapping for five quick alphabetical suggestions, and a **View all compounds** action opening a full-screen searchable library (one primary scroll only, no nested scrolling). Selection returns to the original form/step without clearing entered vials or mg. Native select remains authoritative backing control where legacy handlers use it. First rollout ordinary Stash Kit + Blend Kit on draft PR #123; broader Protocol/Plans/global picker standard approved in principle but needs per-flow implementation/QA.
+
+## 2026-10-26 — Shared compound browser rollout implementation
+- Approved quick five-result and full-library Browse All is now implemented in draft Stash single/blend editors, Protocol Stack and reusable Plans/Research/Protocol Idea compound multi-select. Existing selection arrays and route/goal/save handlers are authoritative. Browser returns to editor without a separate record write. Quick result lists must not scroll inside a scrolling window. Other compound filters are not automatically converted without separate audit.
