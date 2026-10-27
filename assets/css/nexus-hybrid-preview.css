@@ -2472,3 +2472,50 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
     column-gap:6px!important;
   }
 }
+
+
+/* Blend UX October 26: floating, bounded suggestions. Never add row height or a nested scroller. */
+.nx-guided-blend-editor .nx-blend-compound-picker{position:relative!important;isolation:isolate}
+.nx-guided-blend-editor .nx-blend-compound-popup{
+  position:absolute!important;left:0;top:calc(100% + 6px);bottom:auto;
+  z-index:200!important;width:min(310px,calc(100vw - 58px));max-width:calc(100vw - 58px);
+  box-sizing:border-box;background:var(--surface-2)!important;
+  padding:7px!important;border:1px solid var(--bdr);border-radius:13px;
+  box-shadow:0 12px 28px #0005;margin:0!important;
+}
+.nx-guided-blend-editor .nx-blend-compound-popup.nx-combo-above{top:auto;bottom:calc(100% + 6px)}
+.nx-guided-blend-editor .nx-blend-compound-results{
+  max-height:none!important;overflow:visible!important;padding:0!important;
+}
+.nx-guided-blend-editor .nx-blend-compound-option{min-height:44px!important;line-height:1.3}
+.nx-guided-blend-editor .nx-blend-combo-hint{padding:8px 12px;margin:0;color:var(--t3);font-size:12px}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{position:relative;z-index:auto;overflow:visible!important}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row:focus-within{z-index:25}
+.nx-guided-blend-editor .nx-blend-wizard-panel:has(.nx-blend-compound-popup:not([hidden])){overflow:visible!important}
+/* Remove the unrelated dark rectangular slab beneath Back/Continue and Review Save. */
+.modal.nx-guided-blend-editor .nx-blend-wizard-footer,
+.nx-guided-blend-editor .nx-blend-wizard-footer{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  padding:10px 0 max(12px,env(safe-area-inset-bottom))!important;
+}
+.nx-guided-blend-editor .nx-blend-wizard-actions{background:transparent!important}
+/* Scan-first Review: composition is primary; storage and cost are supporting details. */
+.nx-guided-blend-editor .nx-blend-wizard-summary{display:block!important}
+.nx-guided-blend-editor .nx-blend-review-hero{padding:17px 16px;border-radius:16px;background:var(--surface-2);border:1px solid var(--bdr)}
+.nx-guided-blend-editor .nx-blend-review-kicker{display:block;font-size:10px;font-weight:750;letter-spacing:.1em;color:var(--t3)}
+.nx-guided-blend-editor .nx-blend-review-hero h3{font-size:20px;line-height:1.25;margin:7px 0 12px;color:var(--t1);overflow-wrap:anywhere}
+.nx-guided-blend-editor .nx-blend-review-total{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px}
+.nx-guided-blend-editor .nx-blend-review-total strong{font-size:25px!important;color:var(--t1)}
+.nx-guided-blend-editor .nx-blend-review-total span{font-size:12px;color:var(--t3)}
+.nx-guided-blend-editor .nx-blend-review-section{margin:19px 0 0}
+.nx-guided-blend-editor .nx-blend-review-section h4{font-size:14px;line-height:1.4;color:var(--t1);margin:0 0 8px}
+.nx-guided-blend-editor .nx-blend-review-components{display:grid;gap:0}
+.nx-guided-blend-editor .nx-blend-review-component{display:grid!important;grid-template-columns:28px minmax(0,1fr) auto!important;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--bdr)}
+.nx-guided-blend-editor .nx-blend-review-component-index{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#a78bfa24;color:var(--t1);font-size:12px}
+.nx-guided-blend-editor .nx-blend-review-component strong{font-size:14px;text-align:left;overflow-wrap:anywhere}
+.nx-guided-blend-editor .nx-blend-review-component>span:last-child{font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap}
+.nx-guided-blend-editor .nx-blend-review-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nx-guided-blend-editor .nx-blend-review-facts>div{display:flex!important;flex-direction:column!important;gap:4px;border:0!important;padding:0!important;min-width:0}
+.nx-guided-blend-editor .nx-blend-review-facts>div>span{font-size:11px;color:var(--t3)}
+.nx-guided-blend-editor .nx-blend-review-facts>div>strong{font-size:13px;text-align:left;overflow-wrap:anywhere}
+@media(max-width:350px){.nx-guided-blend-editor .nx-blend-review-facts{gap:10px}}
