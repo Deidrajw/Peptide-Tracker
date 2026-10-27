@@ -725,3 +725,9 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 - Log Dose editable source rows should never display a long numeric Kit/Vial ID as their primary label. Use compound + Vial sequence and open/finished status; preserve authoritative internal IDs in an optional collapsed disclosure labelled `Source identifiers` for support/traceability. Do not modify allocation IDs, math, source selection, dose confirmation or deductions. This addresses user-submitted physical Safari screenshot, pending acceptance.
 
 - If multiple kits of one compound exist, distinct human-facing kit ordinals (`Kit 1`, `Kit 2`) are needed in addition to vial sequence; neither ordinal replaces persistent IDs. Technical IDs in disclosure must explain why they exist. Never use bare timestamp-length IDs as user-facing kit labels.
+
+
+## 2026-10-27 — Unified supplement combobox / source identifiers / observations (draft implementation)
+- User-approved targeted direction: one search-and-select multi-select for supplements with explicit Add “name” in unmatched results; remove redundant standalone Add input. Catalogue creation selects only the current unsaved entry and **must never log taken** until separate Save. Preserve date-specific history and duplicates by case-insensitive matching.
+- Technical kit/vial identifiers are disclosed in a full-width row below source action controls; underlying authoritative IDs, allocation and maths are unchanged. Human-readable kit/vial labels remain primary.
+- Observations is a separately labeled optional collapsed section in Log Dose; symptoms, intensity and notes remain available, independent of dose save. New mandatory wizard step is NOT approved. Physical iPhone acceptance pending. Draft PR #123 must not merge or deploy without explicit authorization.
