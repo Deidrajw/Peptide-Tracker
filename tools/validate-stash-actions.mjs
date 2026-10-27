@@ -85,6 +85,15 @@ try{
     'Compound suggestions stretch row or create nested scrolling: '+JSON.stringify(pickerLayout));
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-search-'+mode+'-'+theme+'-'+width+'.png'});
 
+
+  await page.locator('.nx-blend-browse-all').first().click();
+  ensure(await page.locator('.nx-compound-browser').isVisible(),'Blend full-library screen missing');
+  ensure(await page.locator('.nx-compound-browser .nx-browser-choice').count()>5,'Blend browser is not showing complete library');
+  await page.locator('#nx-browser-search').fill('BPC-157');
+  ensure(await page.locator('.nx-browser-choice').count()===1,'Blend full-library search failed');
+  await page.locator('.nx-browser-choice').first().click();
+  ensure(await page.locator('.nx-compound-browser').count()===0,'Blend browser did not close after selection');
+  ensure(await page.locator('.comp-select').first().inputValue()==='BPC-157','Blend browser did not update native backing value');
   await page.locator('#bk-name').fill('QA Fixture Blend');
   await page.evaluate(()=>{
     const selects=[...document.querySelectorAll('.comp-select')];
