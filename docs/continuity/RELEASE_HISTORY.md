@@ -831,3 +831,5 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 ### v0.9.20-beta — Today navigation filter cleanup (DRAFT / NOT RELEASED)
 - Top navigation Upcoming replaced with Completed (bf3ef4db, 61103bf9); Completed shows only compounds completed today using existing status logic with the same compact and expanded cards / Record reaction action. Existing lower Coming up preview and Calendar drill-down kept. Browser regression assertion e8c685fa protects current-day inclusion and historical exclusion.
 - Data impact: none intended; no change to production storage, dose records, reaction events or inventory. Full new-head CI, exact-source artifacts, immutable Cloudflare preview and real iPhone acceptance PENDING. PR #123 draft/unmerged, no production deploy.
+
+- 2026-10-27 correction: browser run 40583259646 FAILED new Completed inclusion test, despite other suites passing. Fixed date-of-dose filter code ebd66e42; await replacement CI. No deployment or approval of failed build.
