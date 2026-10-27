@@ -706,3 +706,8 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-27 — Today header grouped controls (draft design decision)
 - Group existing Needs Attention bell, Profile and light/dark theme toggle on one aligned Today header rail, replacing separate top-row/Profile placement on Today only. Retain icons, action handlers, alert badge, profile update dot and non-Today header; do not duplicate actions. Three 44×48px touch targets, safe responsive spacing, outline/focus and accessible labels. Avoid touching schedule/dose state or storage. Approval remains subject to visual iPhone review.
+
+
+## 2026-10-27 — Dose Review source labels and observations disclosure
+- Present *readable source identity first* in Log Dose Review (compound name, vial size/remaining, prepared-dose description), while retaining exact kit/vial and multi-source IDs in an opt-in disclosure for auditability. Never suppress source traceability or change which source is deducted. Explicit dose confirmation continues to invoke original validation/allocation/save code; entering Review is read-only.
+- Keep Observations optional and progressive (collapsed in Quick Log, expanded when editing existing record) so symptoms, notes and escalation remain available without extending the default form. Don't lose entered observations when changing Quick/Guided mode or navigating steps. Approved as part of DS2 continuation, pending device/browser acceptance.
