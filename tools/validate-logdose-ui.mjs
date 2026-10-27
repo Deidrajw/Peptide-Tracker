@@ -65,6 +65,20 @@ try {
     // Physical Safari regression guard: title and mode must stay visible while only dose fields scroll.
     const fixedHeader=page.locator('.nx2-dose-modal > .nx-dose-form > .nx-dose-fixed-header');
     ensure(await fixedHeader.count()===1,'Dose title and mode switch are not in fixed header');
+    ensure(await fixedHeader.locator('.nx-dose-head > #x').count()===1,
+      'Close control escaped fixed header (invalid modal HTML nesting)');
+    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Dose source"]').count()===1 &&
+      await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Administration details"]').count()===1,
+      'Dose sections escaped scrolling body (invalid modal HTML nesting)');
+    const layout=await page.locator('.nx2-dose-modal').evaluate(modal=>{
+      const h=modal.querySelector('.nx-dose-fixed-header').getBoundingClientRect();
+      const body=modal.querySelector('.nx-dose-scroll').getBoundingClientRect();
+      const footer=modal.querySelector('.nx-dose-footer').getBoundingClientRect();
+      return {headerBottom:h.bottom,bodyTop:body.top,bodyBottom:body.bottom,footerTop:footer.top,bodyHeight:body.height};
+    });
+    ensure(layout.bodyHeight>80 && layout.bodyTop>=layout.headerBottom-2 &&
+      layout.bodyBottom<=layout.footerTop+2,
+      'Scroll body overlaps sticky header/footer: '+JSON.stringify(layout));
     ensure(await fixedHeader.locator('.nx-dose-head').count()===1 &&
       await fixedHeader.locator('.nx-dose-mode-switch').count()===1,
       'Quick/Guided selector incorrectly lives inside the scrolling fields');
