@@ -1639,3 +1639,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Cloudflare bot reported successful preview deployment of commit 04530905 at https://4da04e4e.nexuspeplog.pages.dev. Direct served HTML/JS/CSS hash comparison unavailable; do NOT claim independent deployed-asset parity.
 - User's earlier real Safari screenshot confirmed the scroll/header bug, but fixed preview physical iPhone retest remains NOT TESTED. PR #123 draft/unmerged; production unchanged.
 - ONE NEXT ACTION: user opens immutable preview 4da04e4e on iPhone, scrolls Quick and Guided dose forms, checks sticky header/footer and keyboard/safe-area behavior; record Pass/Fail and remediate any issue before release approval.
+
+
+## 2026-10-27 — iPhone/web Log Dose orphan control and clipping regression
+- User supplied web and real iPhone screenshot showing stray down-looking button between fixed header and Dose source, card edges offset, and scroll body clipped behind sticky footer on previous preview. Physical device acceptance FAIL; prior CI passing failed to detect invalid HTML nesting.
+- Root cause VERIFIED IN SOURCE: an extra closing div after the Log Dose title/subtitle ended .nx-dose-head before the #x close button; moving head into a fixed header detached the button and left source/administration sections outside .nx-dose-scroll. Fixed exact markup at commit 310ccb01522c252b9e5328af43b79e6931cb7903; regression test at b61052cc576a1b7b16007be484a7f9f00c0d1a0c asserts #x within fixed header, both sections inside scroll body, non-overlapping header/footer geometry.
+- STATUS: CODED on draft PR #123, current CI and actual new iPhone preview NOT VERIFIED yet; no data migration, dose math, storage or production changes.
+- ONE NEXT ACTION: obtain successful current-head full browser/mobile QA and Cloudflare preview for b61052cc, then physically retest Quick/Guided dose scrolling, header close control, shapes, keyboard and review footer before acceptance.
