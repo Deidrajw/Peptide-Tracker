@@ -68,6 +68,21 @@ try{
     check(await select.count()===1,'Route selection missing after add');
     await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).locator('.pb-crem').click();
     check(await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).count()===0,'Remove from stack failed');
+    await page.evaluate(()=>{
+      const selected=[];
+      const modal=openModal('<div id="nx-picker-qa"></div>');
+      const root=modal.querySelector('#nx-picker-qa');
+      const refresh=()=>{root.innerHTML=compoundPickerHTML(selected,'nxqa');wireCompoundPicker(root,selected,'nxqa',refresh);};
+      refresh();
+    });
+    check(await page.locator('.cpick-browse-all[data-picker="nxqa"]').count()===1,'Plans reusable picker missing browse-all');
+    await page.locator('.cpick-browse-all[data-picker="nxqa"]').click();
+    check(await page.locator('.nx-compound-browser').isVisible(),'Plans full-library did not open');
+    await page.locator('#nx-browser-search').fill('BPC-157');
+    check(await page.locator('.nx-browser-choice').count()===1,'Plans full-library search failed');
+    await page.locator('.nx-browser-choice').click();
+    check(await page.locator('.cpick-remove[data-name="BPC-157"]').count()===1,'Plans multi-select lost full-library choice');
+
     await page.evaluate(()=>closeModal());
 
     await page.evaluate(()=>{
