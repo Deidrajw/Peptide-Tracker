@@ -105,6 +105,12 @@ try{
   await page.locator('.comp-mg-input').nth(1).fill('5');
   await page.locator('#nx-blend-next').click();
   ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"]').evaluate(el=>!el.hidden),'Preparation step not visible');
+  ensure(await page.locator('#bk-cost').evaluate(el=>{
+    const other=document.querySelector('#bk-currency');
+    const a=el.getBoundingClientRect(),b=other.getBoundingClientRect();
+    return Math.abs(a.width-b.width)<=2&&Math.abs(a.top-b.top)<=2&&a.width>=90;
+  }),'Blend cost/currency fields are not equal-width peers');
+  ensure(await page.locator('#bk-notes').evaluate(el=>el.tagName==='TEXTAREA'),'Blend notes must be multiline');
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-step2-'+mode+'-'+theme+'-'+width+'.png'});
   ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment').isVisible(),'Blend test-result upload missing from Step 2');
   await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment-input').setInputFiles({name:'fictional-lab.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
