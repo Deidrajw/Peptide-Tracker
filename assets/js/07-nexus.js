@@ -290,9 +290,17 @@ function supplyModal(existing, presetName) {
     const showOptions=()=>{
       if(existing)return;
       const q=input.value.toLowerCase().trim();
-      const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,70);
+      const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,5);
       list.replaceChildren();
       filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.textContent=o.name;b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
+      const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";
+      browse.textContent="View all compounds";
+      browse.onpointerdown=e=>e.preventDefault();
+      browse.onclick=()=>{closeList();nexusBrowseAllCompounds(m,options,o=>{
+        originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
+        input.value=o.name;
+      });};
+      list.appendChild(browse);
       list.hidden=false;input.setAttribute("aria-expanded","true");
     };
     input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
