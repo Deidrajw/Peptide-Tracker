@@ -839,3 +839,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - Previous full browser QA 40583699831 failed at Completed test expecting expanded action in collapsed card (test mismatch). Targeted test correction dff7ea52 validates both states, and 79c7bd35 tests Coming up → Calendar and revised nav. Full QA at new head PENDING. No migration, merge or production release.
 
 - 2026-10-27: 40585053600 full browser FAILED newly added Coming up → Calendar click because fixture onboarding modal intercepted; test-only correction at 3d4ae796. No application code or production data changed. Full rerun pending.
+
+
+### v0.9.20-beta — Today Completed + Coming up automated QA passed (DRAFT / NOT RELEASED)
+- App/filter code up to ebd66e42; regression fixture correction 3d4ae796. CI mobile 40585601628 and full/browser 40585602137 both SUCCESS. 8 LIVE/DEMO 320/390 light/dark configurations; Log Dose 96 E2E flows, including Completed filter, saved-dose Record reaction, historical exclusion, Coming up → Calendar. Full LIVE ZIP and fictional isolated complete DEMO artifact 12771971424 generated and uploaded.
+- Cloudflare bot reports draft preview https://2d04bd1c.nexuspeplog.pages.dev at source/doc commit f88ec7e. Physical iPhone UX and independent served asset hash comparison not verified; no production deployment, merge, migration or saved data modification.
