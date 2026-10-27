@@ -183,7 +183,7 @@ try {
   assert((await firstRow.locator(".nx-journal-more").getAttribute("aria-expanded"))==="true","Record details ARIA not updated");
   await firstRow.locator(".nx-journal-more").click();
   assert(await firstRow.locator(".nx-journal-extra").isHidden(),"Record details cannot collapse");
-  await pg.evaluate(()=>{state=buildDemoState("weight_loss");state._logsMode="day";state._logsDate=localDate();tab="calendar";render();});
+  await pg.evaluate(()=>{state=buildDemoState("weight_loss");state._logsMode="day";state._logsDate=localDate();state._protoCalSub="logs";tab="calendar";render();});
   // Replacing the complete fixture redraws Calendar and closes the transient journal.
   // Reopen using the real UI before exercising All Logs; do not assume the overlay survives reset.
   if (!await pg.locator(".nx-journal").count()) {
@@ -191,6 +191,7 @@ try {
     await pg.locator("#nx-open-day-logs").click();
   }
   assert(await pg.locator(".nx-journal").count()===1,"Journal cannot reopen after fixture reset");
+  assert(await pg.locator('.nx-journal-mode[data-mode="all"]').count()===1,"All Logs mode missing after fixture reset");
 
   await pg.screenshot({path:"dist/logs-day-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   await pg.locator('.nx-journal-mode[data-mode="all"]').click();
