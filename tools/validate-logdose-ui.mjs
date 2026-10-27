@@ -265,6 +265,43 @@ try {
     ensure(JSON.stringify(fromRetro.kits)===JSON.stringify(fromCalendar.kits),
       'Retrospective reaction deducted inventory');
     verified.push('retrospective saved-dose direct action, 3 reactions, zero inventory deduction');
+    // Editing one reaction preserves its event ID, originally recorded timestamp,
+    // other reactions and all dose/source allocations.
+    const editTarget=fromRetro.entries[0].reactions[0];
+    await page.evaluate(()=>nexusDoseReactionModal('Retatrutide',state.peptides.Retatrutide.doses[0].id));
+    const editButton=page.locator('.nx-reaction-edit').filter({hasText:'Edit'}).first();
+    ensure(await editButton.isVisible(),'Saved reaction Edit action missing');
+    await editButton.click();
+    ensure(await page.locator('.nx-reaction-editor h2').innerText()==='Edit reaction','Reaction editing form not opened');
+    await page.locator('#nx-reaction-notes').fill('Updated fictional immediate observation');
+    await page.locator('#nx-reaction-save').click();
+    const afterReactionEdit=await stateSnapshot(page);
+    ensure(afterReactionEdit.entries[0].reactions.length===3 &&
+      afterReactionEdit.entries[0].reactions[0].id===editTarget.id &&
+      afterReactionEdit.entries[0].reactions[0].recordedAt===editTarget.recordedAt &&
+      afterReactionEdit.entries[0].reactions[0].notes==='Updated fictional immediate observation' &&
+      afterReactionEdit.entries[0].reactions[1].label==='Head rush',
+      'Reaction edit changed identity, timestamp or another reaction');
+    ensure(JSON.stringify(afterReactionEdit.kits)===JSON.stringify(fromRetro.kits) &&
+      afterReactionEdit.entries[0].id===originalId,
+      'Reaction edit changed inventory or dose identity');
+    // Delete one event only after confirmation; dose and vial usage cannot change.
+    await page.evaluate(()=>nexusDoseReactionModal('Retatrutide',state.peptides.Retatrutide.doses[0].id));
+    ensure(await page.locator('.nx-reaction-delete').count()===3,'Reaction Delete actions missing');
+    await page.locator('.nx-reaction-delete').last().click();
+    const confirmDelete=page.getByRole('button',{name:'Delete reaction',exact:true}).last();
+    ensure(await confirmDelete.isVisible(),'Reaction delete confirmation missing');
+    await confirmDelete.click();
+    const afterReactionDelete=await stateSnapshot(page);
+    ensure(afterReactionDelete.entries.length===1 &&
+      afterReactionDelete.entries[0].id===originalId &&
+      afterReactionDelete.entries[0].reactions.length===2 &&
+      !afterReactionDelete.entries[0].reactions.some(r=>r.label==='Injection-site redness') &&
+      JSON.stringify(afterReactionDelete.kits)===JSON.stringify(fromRetro.kits),
+      'Reaction deletion changed another entry, dose ID or vial inventory');
+    await page.evaluate(()=>closeModal());
+    verified.push('individual reaction edit/delete retains other events and zero vial deduction');
+
 
     // Legacy observations remain on old saved entries; adding new reaction must not rewrite them.
     await page.evaluate(()=>{
@@ -279,7 +316,7 @@ try {
     ensure(afterEdit.entries[0].notes==='Legacy historical note preserved',
       'Editing dose erased legacy historical note');
 
-    ensure(afterEdit.entries[0].reactions.length===3,'Subsequent dose edit erased reaction history');
+    ensure(afterEdit.entries[0].reactions.length===2,'Subsequent dose edit erased reaction history');
     verified.push('post-dose reaction timestamp, history & zero inventory changes');
     verified.push('single vial confirm/edit/original-ID and exact deduction');
 
