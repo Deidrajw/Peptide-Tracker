@@ -2442,8 +2442,7 @@ function supplementModal(prefillDate) {
   const existing = state.supplementLogs.find(l=>dayKey(l.date)===today);
   const supps = state.settings.supplements||[];
   const taken = new Set(existing?.taken||[]);
-  if(!supps.length) {
-    openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="mono" style="font-size:13px;color:#C8FF9C;letter-spacing:1.5px">SUPPLEMENTS</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
+  openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="mono" style="font-size:13px;color:#C8FF9C;letter-spacing:1.5px">SUPPLEMENTS</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
       <div style="font-size:13px;color:var(--t3);margin-bottom:16px">No supplements set up yet. Add your supplements in Profile first.</div>
       <button id="goprofile" class="btn-primary" style="background:#C8FF9C;color:#1a1728">Go to Profile</button>`,"#C8FF9C");
     document.querySelector(".modal #x").onclick=closeModal;
@@ -2452,6 +2451,7 @@ function supplementModal(prefillDate) {
   }
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
+    <div class="nx2-supp-inline-add"><label for="nx2-new-supp">Don't see your supplement? Add it here.</label><div><input id="nx2-new-supp" class="inp" autocomplete="off" placeholder="Supplement name" aria-label="New supplement name"><button type="button" id="nx2-add-supp" class="nx2-supp-add">Add</button></div><div id="nx2-supp-feedback" role="status" aria-live="polite"></div></div>
     
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px;line-height:1">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>
     <button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600;margin:8px 0"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-selected" style="margin-bottom:12px" hidden></div>
@@ -2475,6 +2475,25 @@ function supplementModal(prefillDate) {
     results.innerHTML=matches.map(n=>`<button type="button" class="add" data-name="${esc(n)}" aria-pressed="${taken.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;text-align:left;border-bottom:1px solid var(--border-sub);padding:10px;color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${taken.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
     results.querySelectorAll(".add").forEach(b=>b.onclick=()=>{if(taken.has(b.dataset.name))taken.delete(b.dataset.name);else taken.add(b.dataset.name);paint();});
   };
+  const addInput=modal.querySelector("#nx2-new-supp"),addFeedback=modal.querySelector("#nx2-supp-feedback");
+  const addSupplement=()=>{
+    const value=addInput.value.trim();
+    if(!value){addFeedback.textContent="Enter a supplement name.";return;}
+    const existingName=supps.find(n=>n.toLocaleLowerCase()===value.toLocaleLowerCase());
+    if(existingName){
+      taken.add(existingName);addFeedback.textContent="Already in your list — selected for this day.";
+    }else{
+      if(!Array.isArray(state.settings.supplements))state.settings.supplements=[];
+      state.settings.supplements.push(value);
+      state.settings.supplements.sort((a,b)=>a.localeCompare(b));
+      taken.add(value);
+      addFeedback.textContent=value+" added and selected.";
+      saveState(); // Save the new catalogue entry; today's taken log still requires confirmation.
+    }
+    addInput.value="";dropdownOpen=true;selectedOpen=true;paint();
+  };
+  modal.querySelector("#nx2-add-supp").onclick=addSupplement;
+  addInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addSupplement();}};
   input.oninput=()=>{dropdownOpen=true;paint();};paint();
   modal.querySelector("#suppsave").onclick=()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
