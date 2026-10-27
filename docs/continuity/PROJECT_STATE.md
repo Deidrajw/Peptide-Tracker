@@ -1575,3 +1575,5 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - **ONE NEXT ACTION:** check GitHub CI, resolve supplement/Prepare source-layout failures, inspect exact-source full-app LIVE and isolated DEMO, then request physical iPhone keyboard/safe-area validation before pursuing typography audit.
 
 - **CI correction:** initial build run `40542480271` FAILED JavaScript syntax check because obsolete empty-catalogue redirect body was partially retained in `supplementModal`; code fix `02b75a2c` removed it completely. Current-head rerun pending; no PASS claim. ONE NEXT ACTION remains verify latest syntax/browser QA then exact source artifacts and physical iPhone.
+
+- Follow-on **CODED** Daily Check-In supplement inline creation at `78bafc1d` (empty or populated catalogue; existing date-specific Check-In save path retained) and targeted browser assertion `36b81eea`. This extends the Today supplement logger update to Check-In. Test and current-head CI pending. No daily log is auto-saved by creating a catalogue entry. One next action remains verify CI / artifact and physical iPhone review.
