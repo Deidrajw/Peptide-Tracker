@@ -1014,3 +1014,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Actual user screenshots FAIL old visual parity: standard Add kit was compact letter-spaced/mono while blend title 20px bold. CSS aligned on `2852088a` (CODED; latest visual acceptance pending).
 - PASS automated on preceding app source: currency/footer QA 40441896108, mobile 40441896055. Post-typography mobile 40442588421 PASS; full browser 40442588345 NOT VERIFIED at last check. Screenshot acceptance at both 320/390 and themes plus native iPhone keyboard/VoiceOver NOT TESTED after title edit.
 - Currency fields/selected non-CAD review/persistence belong to protected regression. Mandatory fields audit and global scrolling audit are independent backlog priorities.
+
+
+## 2026-10-26 — Kit typography latest source validation
+- Full-browser 40442588345 **PASS**; mobile 40442588421 **PASS**. Artifact 12707236994 source manifest 66908fa; outer ZIP, LIVE 21-file ZIP and offline DEMO ZIP CRC PASS; standalone DEMO matches offline ZIP index. Stash Actions and Cards each 8/8 PASS, including 320/390 dark/light.
+- Native physical iPhone software keyboard, focus movement and safe areas **NOT TESTED**. Broader nested scrolling and required-field policy remain separate.
