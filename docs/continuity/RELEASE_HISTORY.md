@@ -688,3 +688,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Blend component one-row UI (CODED DRAFT / UNRELEASED)
 - PR #123 `a9a3643e` stylesheet now places compound search, per-vial mg and remove in one responsive row; `269f468d` adds multi-viewport browser assertion. No data migration/inventory math modification. QA and artifacts pending; production unchanged.
+
+### 2026-10-26/27 — One-row Blend browser-tested candidate, clipped-placeholder correction (DRAFT/UNRELEASED)
+- Exact app/test commit `269f468d`: mobile 40426868694 and full-browser 40426868293 SUCCESS; artifact 12700776008 downloaded and checked: complete full-app DEMO, 21-file root-index LIVE ZIP, Stash Actions 8/8; four 320/390 dark/light Blend step-one screenshots independently inspected and same-row layout correct. Review exposed truncated placeholder, so later draft commit `3bab1d9a` uses shorter `Search…`, with latest CI pending (40427570891, 40427570879). Authoritative blend math/storage untouched; PR draft/unmerged/undeployed, no physical iPhone acceptance.
