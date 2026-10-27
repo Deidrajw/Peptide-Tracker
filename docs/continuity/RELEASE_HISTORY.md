@@ -756,3 +756,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Preview discrepancy follow-up (DRAFT / NOT RELEASED)
 - User reports that preview does not reflect Today first-dose fix. Previously asserted passing CI did not establish deployed preview SHA or user real-case scheduling behaviour. Draft changes `aa8472b` extend zero-dose Today first-dose eligibility to linked active/in_progress protocols and `ef7eb116` adds test through Protocol sync. No dose/inventory writes or schema changes. Latest source QA/artifacts and Cloudflare branch preview deployment pending; PR #123 draft/unmerged, production untouched.
+
+
+### 2026-10-27 — Goal quick-status action sheet (DRAFT / NOT RELEASED)
+- Draft PR #123 commits `e7f3df6` (status options and save), `9e055e1` (light/dark action sheet styling) and `4c32d42` (browser regression). Affects Plans > Goals ellipsis only. Existing saved goal schema/status values retained, no data migration, linked protocols/check-ins/history/inventory untouched by code; current-head CI and iPhone acceptance pending, no preview deployment verified. PR unmerged and production unchanged.
