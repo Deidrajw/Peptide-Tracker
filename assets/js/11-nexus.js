@@ -1648,10 +1648,23 @@ function managePlanItemMenu(type, id) {
       <div class="nx-sprint2-action-heading"><span class="nx-sprint2-action-eyebrow">PLAN ACTIONS</span><strong>${esc(itemName)}</strong></div>
       <button type="button" id="x" class="nx-sprint2-action-close" aria-label="Close plan actions">✕</button>
     </div>
+    ${type==="goal"?`<div class="nx-goal-status-section"><div class="nx-goal-status-heading">Change status</div><div class="nx-goal-status-options" role="group" aria-label="Change goal status">
+      ${[["planned","Planned"],["active","In progress"],["paused","Paused"],["completed","Completed"]].map(([value,title])=>`<button type="button" class="nx-goal-quick-status" data-status="${value}" aria-pressed="${(item.status||"active")===value}">${esc(title)}${(item.status||"active")===value?` <span aria-hidden="true">✓</span>`:""}</button>`).join("")}
+    </div><p class="nx-goal-status-note">Only this goal's status changes. Linked protocols and existing logs are unaffected.</p></div>`:""}
     <button id="pm-edit" class="sheet-row">Edit</button>
     <button id="pm-delete" class="sheet-row danger">Delete<div class="sub">Removes this ${esc(label)} — cannot be undone</div></button>
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
+  if(type==="goal"){
+    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=()=>{
+      const next=button.dataset.status;
+      if(!["planned","active","paused","completed"].includes(next))return;
+      const current=state.plans?.goals?.find(goal=>String(goal.id)===String(id));
+      if(!current)return;
+      if((current.status||"active")!==next){current.status=next;saveState();}
+      closeModal();renderBody();
+    });
+  }
   m.querySelector("#pm-edit").onclick = () => {
     closeModal();
     if(type==="goal") goalModal(item);
