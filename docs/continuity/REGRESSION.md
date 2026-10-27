@@ -940,3 +940,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26/27 — One-row Blend screenshot acceptance matrix
 - PASS automated app/test commit `269f468d`: mobile workflow 40426868694, full build/parity 40426868293, Stash Actions 8/8 LIVE+isolated DEMO configurations at 320/390 dark/light, grid same-row no-overlap assertion. PASS manually inspected four DEMO screenshots for row alignment and no overlap. FINDING: placeholder clipped in four images, materially at 320; fix `3bab1d9a` changes text to `Search…`, newest-head QA pending at 40427570891/40427570879. Physical iPhone Safari, keyboard and VoiceOver NOT TESTED. No release approval.
+
+## 2026-10-26/27 — Final one-row Blend four-way screenshot QA
+- PASS full browser/parity `40427570891` for app head `3bab1d9a`, 8/8 Stash Actions LIVE/isolated DEMO cases (320/390 dark/light). Independently inspected four screenshot images: compound + mg + remove share one non-overlapping row; compact `Search…` placeholder visible at all sizes. Artifact `12700422861` complete full-app demo, 21-file LIVE ZIP, source manifest `3f2cb550`. NOT TESTED physical Safari keyboard, VoiceOver, custom name long-string input visual, full historical blend outflow/refund matrix. Mobile `40427570879` pending at check. User original screenshot failure remains historical; no merge/deploy.
