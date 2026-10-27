@@ -65,6 +65,20 @@ try {
     ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
     ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
     await setDose(page,2);
+    // DS2 review must show useful source labels while retaining full traceability.
+    await page.locator('#nx-dose-step-next').click();
+    ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review stage missing');
+    const preview=await page.locator('#nx-dose-review-rows').innerText();
+    ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
+      'Raw kit/vial IDs leaked into primary Review rows: '+preview);
+    const idDetails=page.locator('#nx-dose-source-ids');
+    ensure(await idDetails.count()===1 && await idDetails.isVisible(),
+      'Optional source IDs disclosure missing');
+    await idDetails.locator('summary').click();
+    ensure((await idDetails.innerText()).includes('9101'),'Traceable source ID missing from disclosure');
+    ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,
+      'Opening Review unexpectedly persisted a dose');
+    await page.locator('#nx-dose-step-back').click();
     await page.locator('.nx-dose-optional > summary').click();
     await page.locator('#notes').fill('Fictional day 1 note');
     await clickSave(page);
