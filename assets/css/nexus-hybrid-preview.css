@@ -3038,3 +3038,15 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx2-source-identifiers{flex-basis:100%;font-size:11px;color:var(--t3);min-width:0}
 .nx2-source-identifiers summary{display:inline-flex;align-items:center;min-height:44px;padding:6px 0;color:var(--t3);cursor:pointer}
 .nx2-source-identifiers>div{overflow-wrap:anywhere;padding:3px 0 3px 12px}
+
+
+/* Unified supplement combobox creation; action lives in the search results. */
+.nx2-add-search-match{display:block;width:100%;min-height:48px;text-align:left;padding:12px 14px;border-top:1px solid var(--border-sub);background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650;white-space:normal;overflow-wrap:anywhere}
+.nx2-add-search-match:focus-visible{outline:3px solid #C6A6F2;outline-offset:-3px}
+/* Technical identifiers are an independent block BELOW draw and remove controls. */
+.nx2-dose-modal .nx2-source-identifiers{display:block!important;box-sizing:border-box;width:100%!important;max-width:100%;min-width:0;margin:4px 0 12px;padding:0 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);overflow-wrap:anywhere}
+.nx2-dose-modal .nx2-source-identifiers summary{display:flex;align-items:center;width:100%;min-height:44px;padding:10px 0;line-height:1.4;white-space:normal;overflow-wrap:anywhere;list-style-position:inside}
+.nx2-dose-modal .nx2-source-identifiers>div{font-size:11px;line-height:1.55;padding:4px 0 8px}
+.nx2-dose-modal .nx2-observation-title{display:block;font-size:14px;font-weight:700;color:var(--t1)}
+.nx2-dose-modal .nx-dose-optional{margin-top:16px;border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2)}
+.nx2-dose-modal .nx-dose-optional>summary{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px}
