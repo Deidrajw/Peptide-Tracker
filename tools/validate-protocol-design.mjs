@@ -48,6 +48,64 @@ try{
     check([firstDose.paused,firstDose.future,firstDose.otherWeekday].every(v=>/No scheduled doses/.test(v)),
       "Paused/future/wrong-weekday protocol incorrectly scheduled: "+JSON.stringify(firstDose));
 
+
+    // Additional first-dose invariants: multiple active compounds, multi-dose,
+    // unrelated no-dose compound excluded, rest phase and read-only rendering.
+    const extended=await page.evaluate(()=>{
+      const original=JSON.parse(JSON.stringify(state)),oldTab=tab;
+      try{
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const names=Object.keys(PEPTIDES).slice(0,3),today=localDate();
+        const dow=new Date(today+"T12:00:00").getDay();
+        for(const name of names){initCompoundTracking(name);const d=state.peptides[name];d.status="active";d.doses=[];d.scheduleWeekdays=[dow];d.dosesPerDay=1;d.times=["08:00"];}
+        const first=state.peptides[names[0]],second=state.peptides[names[1]];
+        first.dosesPerDay=2;first.times=["08:00","20:00"];
+        state.protocols=[
+          {id:"qa-a",name:"Fictional A",status:"active",startDate:today,compounds:[{name:names[0]}]},
+          {id:"qa-b",name:"Fictional B",status:"active",startDate:today,compounds:[{name:names[1]}]}
+        ];
+        tab="home";
+        const snapshot=JSON.stringify({doses:names.map(n=>state.peptides[n].doses),protocols:state.protocols});
+        renderBody();
+        const combined=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        const unchanged=JSON.stringify({doses:names.map(n=>state.peptides[n].doses),protocols:state.protocols})===snapshot;
+        second.phases=[{type:"rest",durationWeeks:1}];second.startDate=today;
+        renderBody();
+        const rest=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        return {combined,rest,unchanged};
+      } finally {state=original;tab=oldTab;renderBody();}
+    });
+    check(/0\\s*of\\s*3/.test(extended.combined),"Two protocols/multiple daily slots not represented once each: "+JSON.stringify(extended));
+    check(/0\\s*of\\s*2/.test(extended.rest),"Rest-phase occurrence unexpectedly counted: "+JSON.stringify(extended));
+    check(extended.unchanged,"Rendering Today mutated protocol or dosing records");
+
+    // Wizard parity and tap geometry in both themes/widths.
+    await page.evaluate(()=>protocolBuilderModal());
+    for(let k=0;k<3;k++) await page.locator("#pb-next").click();
+    check((await page.locator("#proto-builder-count").innerText()).trim()==="4/6","Protocol Schedule step not reached");
+    check(await page.locator("#pb-start").count()===1,"Protocol start date control missing");
+    check((await page.locator("#pb-next").innerText()).trim()==="Continue","Protocol wizard action differs from Continue");
+    const dimensions=await page.evaluate(()=>{
+      const ids=["#pb-start",".pb-sched",".pb-day",".pb-dpinc",".pb-dpdec",".pb-time","#pb-next"];
+      return ids.map(id=>({id,heights:[...document.querySelectorAll(id)].map(n=>n.getBoundingClientRect().height)}));
+    });
+    check(dimensions.every(x=>x.heights.length&&x.heights.every(h=>h>=43.5)),
+      "Protocol schedule control smaller than 44px: "+JSON.stringify(dimensions));
+    await page.evaluate(()=>closeModal());
+    await page.evaluate(()=>goalModal());
+    check(await page.locator("#nx-g-step-label").count()===1,"Goal wizard missing");
+    check(await page.locator("#g-target").count()===1,"Goal target date missing");
+    const target=page.locator("#g-target");
+    check((await target.getAttribute("aria-label")||"").includes("calendar"),"Goal date calendar not discoverable");
+    await page.locator("#g-name").fill("Fictional QA goal");
+    await page.locator("#nx-g-next").click();
+    await page.locator("#nx-g-next").click();
+    check((await page.locator("#nx-g-step-label").innerText()).includes("Connections"),"Goal Connections step unavailable");
+    const choiceCount=await page.locator("#g-evidence-symptom option").count();
+    if(choiceCount===1)check(await page.locator("#g-evidence-symptom").isDisabled(),"Empty Goal connection picker is misleading");
+    check((await page.locator("#nx-g-next").innerText()).trim()==="Continue","Goal step action differs from Continue");
+    await page.evaluate(()=>closeModal());
+
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
     check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
