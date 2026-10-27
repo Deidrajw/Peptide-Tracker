@@ -69,6 +69,17 @@ try {
       completedAction.includes('More actions'),
       'Compound View details / completed-dose UI did not render a formatted local time');
     verified.push('compound completed-dose details render without undefined fmtT');
+    // Exercise the actual compound card HTML path, not only the action helper.
+    const fullCard=await page.evaluate(()=>{
+      const data=state.peptides.Retatrutide;
+      data.doses=[{id:91827,date:localDate()+'T15:03',dose:'2.5',site:'Abdomen'}];
+      try{return peptideCardHTML('Retatrutide',data);}
+      finally{data.doses=[];}
+    });
+    ensure(fullCard.includes('Dose completed') && fullCard.includes('More actions'),
+      'Full compound card / View Details rendered without completed-dose controls');
+    verified.push('actual compound card completed-dose details render without blank screen');
+
 
     // A: Actual user confirmation, same recorded ID preserved after edit,
     // reapply edited amount to the original open vial only.
