@@ -1805,7 +1805,7 @@ function goalModal(existing) {
     <div id="g-progress-settings" style="padding:10px 0 12px"></div>
     <label for="g-evidence-symptom" style="display:block;font-size:12px;color:var(--t3);margin-bottom:6px">Check-In symptom connection (optional)</label>
     <select id="g-evidence-symptom" class="inp" style="width:100%;min-height:48px;margin-bottom:8px"><option value="">No Check-In connection</option>${[...new Set((state.dailyLogs||[]).flatMap(l=>(l.symptoms||[]).map(v=>typeof v==="string"?v:v?.name).filter(Boolean)))].sort().map(n=>`<option value="${esc(n)}"${g.evidenceSymptom===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
-    <div class="nx-muted" style="font-size:11px;margin-bottom:10px">Selected observations remain in their original Check-In history.</div>
+    ${(state.dailyLogs||[]).some(l=>(l.symptoms||[]).some(v=>typeof v==="string"&&v.trim()||v?.name))?`<div class="nx-muted" style="font-size:11px;margin-bottom:10px">Selected observations remain in their original Check-In history.</div>`:`<div class="nx-goal-connection-empty" role="status">No symptoms in Check-In history yet. This connection is optional; you can add one later.</div>`}
     <label for="g-target" class="nx-hybrid-field-label">Target date <span>(optional)</span></label><input id="g-target" class="inp" type="date" aria-label="Target date, opens calendar" value="${g.targetDate||""}" style="width:100%;min-height:48px;margin-bottom:8px">
     <textarea id="g-notes" class="inp" placeholder="Notes" style="width:100%;min-height:60px;resize:vertical;margin-bottom:14px">${esc(g.notes||"")}</textarea>
     <button id="g-save" class="btn-primary">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
