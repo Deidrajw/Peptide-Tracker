@@ -180,14 +180,6 @@ function wireBody() {
     saveState();render();
   });
   document.querySelectorAll(".qa-supp").forEach(b=>b.onclick=()=>supplementModal());
-  const NOTION_SUPPS=["Psyllium Husk","Peppermint Oil (Enteric)","Betaine HCl","Slippery Elm","Papaya Enzyme","Magnesium Citrate","Electrolyte Gummies","Taurine","L-Carnitine","Acetyl L-Carnitine","Berberine HCl","R-Lipoic Acid","Resveratrol","Myo-Inositol","Yohimbine","Magnesium Glycinate + Ashwagandha","Liposomal Magnesium Glycinate","Ionic Magnesium Liquid","Melatonin","Ashwagandha Melatonin/L-Theanine","Vitamin C","Omega-3 Fish Oil","Odorless Garlic","Ginger Root","Creatine (Creapure)","Lactase Enzyme","Caffeine + Green Tea","EGCG (Green Tea Extract)","Caffeine","CLA","Cayenne","Immune Gummies","Hair Skin Nails Gummies","C-Burn","Calm Caps","PMS Gummies","Women's Probiotic","Women's Probiotic + Cranberry","Women's Prebiotic & Probiotic","Bloat & Gas Probiotic","Metabolic Boost Pre-Pro-Postbiotic","Cranberry Gummies","Prenatal Vitamin","Lysine","Maca Root + Ashwagandha","Glucosamine Chondroitin MSM + Turmeric","Gentle Reset Cleanse","Liquid Chlorophyll","Fennel Seed","Diabetic Formula","Melatonin (Mixed Berry)"];
-  const lns=$("#load-notion-supps"); if(lns) lns.onclick=()=>{
-    if(!state.settings.supplements) state.settings.supplements=[];
-    let added=0;
-    NOTION_SUPPS.forEach(s=>{ if(!state.settings.supplements.includes(s)){state.settings.supplements.push(s);added++;} });
-    saveState(); renderBody();
-    lns.textContent=`✓ ${added} added`;
-  };
   const tlt=$("#timeline-toggle"); if(tlt) tlt.onclick=()=>{state._timelineOpen=!state._timelineOpen;renderBody();};
   const as=$("#add-supp"); if(as) as.onclick=()=>{
     const inp=document.getElementById("new-supp"); const v=(inp?.value||"").trim();
