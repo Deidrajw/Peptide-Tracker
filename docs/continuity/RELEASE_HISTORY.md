@@ -673,3 +673,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Candidate package inspection (NOT RELEASED)
 - Successful source build 40422263758 at app/test SHA 6d209ed5 produced artifact 12698436592. Downloaded and verified 21-file ZIP, root index, standalone full-app DEMO, manifest source merge ref 7203418d, and Stash Actions/Cards QA reports 8/8 each. Physical iPhone acceptance not achieved; new screenshot-run CI pending; no merge/deployment.
+
+### 2026-10-26 — Guided Stash visual rejection follow-up (DRAFT, NOT RELEASED)
+- Inspected actual browser captures from preceding Actions artifact 12698781391 and discovered poor button hierarchy, unstyled ordinary review rows and wasted Blend preparation space despite passing automation. Targeted draft CSS/markup changes 83d374c3, be382d87, 4d34e265; screenshot settling and CSS regression 7eb10d09, e29d2443, 5129b2d3, 5f210026. No intended schema, stored record or inventory math changes. Full build/visual tests on latest app source and independent full-app LIVE/DEMO checks pending; PR #123 unmerged and production unchanged.
