@@ -694,3 +694,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26/27 — One-row Blend candidate verified in browser (DRAFT/NOT RELEASED)
 - Code `a9a3643e`, browser assertion `269f468d`, compact placeholder `3bab1d9a`. Full-browser workflow `40427570891` SUCCESS with 320/390 × dark/light × LIVE/DEMO 8/8 Stash Actions; artifact `12700422861` extracted and independently verified ZIPs/source and four screenshots. Four-way visual shows compound, mg, remove aligned horizontally and `Search…` readable. No schema or authoritative inventory math changes. Mobile current-head `40427570879` awaiting outcome; physical iPhone signoff/VoiceOver outstanding. PR #123 remains DRAFT/UNMERGED/UNDEPLOYED.
+
+### 2026-10-26 — Blend popup and Review UX follow-up (DRAFT; unreleased)
+- Draft commits 416e6217, 7720cef8, 0ad6d4c8 and e130934c address an expanding compound list, opaque footer backdrop and flat Blend Review. Floating suggestions show up to five items with no list scrollbar; Review prioritizes blend identity, total mg and individual components. Additional mobile browser checks added. Production inventory handlers and data schema unchanged. Physical iPhone feedback and an app-wide nested-scroll audit remain outstanding. No merge or deployment.
