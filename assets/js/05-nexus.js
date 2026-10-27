@@ -920,7 +920,10 @@ function doseModal(name, existing, occTime) {
             const units = kit ? mgToUnitsForKit(parseFloat(r.mg)||0, kit) : null;
             const kitFinished = kit && !kit.activeKit && !!r.finished;
             const sourceVial=kit ? (r.vialId ? ensureKitVials(kit).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
-            const kitLabel=kit ? `${kit.name||name} · ${sourceVial?.sequenceNumber!=null?"Vial "+sourceVial.sequenceNumber:"Open vial"}${kitFinished?" (finished)":" (open)"}` : "Source vial";
+            const matchingKits=kit ? state.supplies.filter(k=>k.name===kit.name) : [];
+            const kitOrdinal=matchingKits.length>1 ? "Kit "+(matchingKits.findIndex(k=>String(k.id)===String(kit.id))+1)+" · " : "";
+            const vialState=kitFinished?"finished":sourceVial?.status==="sealed"?"sealed":"open";
+            const kitLabel=kit ? `${kit.name||name} · ${kitOrdinal}${sourceVial?.sequenceNumber!=null?"Vial "+sourceVial.sequenceNumber:"Open vial"} (${vialState})` : "Source vial";
             const kitHasStock = kit && !kitFinished && getKitRemainingMg(kit)>0.001;
             return `<div class="nx-alloc-row nx-hybrid-source-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">Source ${i+1} · ${esc(kitLabel)}${kitFinished?" ✓":""}</span>
@@ -928,7 +931,7 @@ function doseModal(name, existing, occTime) {
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
               ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm the amount actually obtained from this source vial" aria-label="Confirm draw from source ${i+1}" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Confirm draw</button>`:""}
-              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button><details class="nx2-source-identifiers"><summary>Source identifiers</summary><div>Kit ID: ${esc(String(kit?.id??"Unavailable"))}</div><div>Vial ID: ${esc(String(sourceVial?.id??r.vialId??"Unavailable"))}</div></details>
+              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button><details class="nx2-source-identifiers"><summary>Source identifiers</summary><div class="nx2-source-id-hint">These numbers are internal inventory references, not labels printed on the vial.</div><div>Kit ID: ${esc(String(kit?.id??"Unavailable"))}</div><div>Vial ID: ${esc(String(sourceVial?.id??r.vialId??"Unavailable"))}</div></details>
             </div>`;
           }).join("")}
         </div>
