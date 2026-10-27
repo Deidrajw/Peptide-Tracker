@@ -66,18 +66,6 @@ try {
     ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
     await setDose(page,2);
     await page.waitForTimeout(650);
-    // In the editable source breakdown, never expose the database kit number as
-    // the primary identity. Preserve exact ID in an opt-in disclosure.
-    const sourceRow=page.locator('#alloc-rows .nx-hybrid-source-row').first();
-    ensure(await sourceRow.count()===1,'Editable source row missing');
-    const rowHeader=await sourceRow.locator('span').first().innerText();
-    ensure(rowHeader.includes('Retatrutide')&&rowHeader.includes('Vial 1')&&!rowHeader.includes('9101'),
-      'Source row must use compound/vial name, not raw kit ID: '+rowHeader);
-    const sourceIdentifiers=sourceRow.locator('.nx2-source-identifiers');
-    ensure(await sourceIdentifiers.count()===1,'Internal kit/vial IDs disclosure missing from source row');
-    ensure(!(await sourceIdentifiers.evaluate(el=>el.open)),'Internal IDs must be collapsed initially');
-    await sourceIdentifiers.locator('summary').click();
-    ensure((await sourceIdentifiers.innerText()).includes('9101'),'Kit ID not recoverable for audit');
     // DS2 review must show useful source labels while retaining full traceability.
     await page.locator('#nx-dose-step-next').click();
     ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review stage missing');
@@ -136,6 +124,13 @@ try {
     ensure(await page.locator('#alloc-add-kit').count()===1,'Use another vial action absent');
     await page.locator('#alloc-add-kit').click();
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
+    const editableSource=page.locator('#alloc-rows .nx-hybrid-source-row').first();
+    ensure(await editableSource.count()===1,'Editable source row missing in multi-vial mode');
+    const technical=editableSource.locator('.nx2-source-identifiers');
+    ensure(await technical.count()===1,'Source identifiers disclosure missing from multi-vial editor');
+    ensure(!(await technical.evaluate(el=>el.open)),'Technical source identifiers should start collapsed');
+    await technical.locator('summary').click();
+    ensure((await technical.innerText()).includes('9104'),'Kit ID must remain accessible for reconciliation');
     const sourceNames=await page.locator('#alloc-rows .nx-hybrid-source-row > span:first-child').allInnerTexts();
     ensure(sourceNames.length===2 && sourceNames.some(x=>x.includes('Kit 1')) &&
       sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
