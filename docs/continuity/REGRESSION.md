@@ -943,3 +943,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26/27 — Final one-row Blend four-way screenshot QA
 - PASS full browser/parity `40427570891` for app head `3bab1d9a`, 8/8 Stash Actions LIVE/isolated DEMO cases (320/390 dark/light). Independently inspected four screenshot images: compound + mg + remove share one non-overlapping row; compact `Search…` placeholder visible at all sizes. Artifact `12700422861` complete full-app demo, 21-file LIVE ZIP, source manifest `3f2cb550`. NOT TESTED physical Safari keyboard, VoiceOver, custom name long-string input visual, full historical blend outflow/refund matrix. Mobile `40427570879` pending at check. User original screenshot failure remains historical; no merge/deploy.
+
+## 2026-10-26 — Blend modal overlay, Review and app-wide scroll acceptance
+- Physical iPhone screenshot FAIL before patch: combobox results push following form rows, black footer strip, Review lacks hierarchy, scrollbars inside bottom sheet.
+- Pending new head test `e130934c`: popup position absolute/no row expansion, max five non-scrollable matches, correct searchable options, Review hero + prominent total mg and two components, transparent action footer, Review/Save backing values and no premature write. Run 320/390 dark/light LIVE/isolated DEMO; capture focused dropdown screenshot and review. Physical iPhone keyboard/VoiceOver and app-wide modal nested-scroll audit NOT TESTED. Never call no-nested-scroll policy globally complete until entire app audited.
