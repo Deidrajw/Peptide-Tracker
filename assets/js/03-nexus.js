@@ -789,7 +789,7 @@ function addBlendKitModal(blendNameOrKit) {
       const wrapper=document.createElement("div");wrapper.className="nx-blend-compound-picker";
       sel.parentNode.insertBefore(wrapper,sel);
       wrapper.appendChild(sel);
-      const trigger=document.createElement("input");trigger.type="search";trigger.className="nx-blend-compound-trigger";trigger.placeholder="Search compound";trigger.setAttribute("role","combobox");trigger.setAttribute("aria-autocomplete","list");
+      const trigger=document.createElement("input");trigger.type="search";trigger.className="nx-blend-compound-trigger";trigger.placeholder="Search…";trigger.setAttribute("role","combobox");trigger.setAttribute("aria-autocomplete","list");
       trigger.setAttribute("aria-label","Choose blend compound");trigger.setAttribute("aria-expanded","false");
       const popup=document.createElement("div");popup.className="nx-blend-compound-popup";popup.hidden=true;
       const search=trigger;
