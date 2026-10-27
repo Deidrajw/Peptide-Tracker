@@ -126,7 +126,7 @@ try {
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
     const editableSource=page.locator('#alloc-rows .nx-hybrid-source-row').first();
     ensure(await editableSource.count()===1,'Editable source row missing in multi-vial mode');
-    const technical=editableSource.locator('.nx2-source-identifiers');
+    const technical=editableSource.locator('xpath=following-sibling::details[contains(concat(" ", normalize-space(@class), " "), " nx2-source-identifiers ")][1]');
     ensure(await technical.count()===1,'Source identifiers disclosure missing from multi-vial editor');
     ensure(!(await technical.evaluate(el=>el.open)),'Technical source identifiers should start collapsed');
     await technical.locator('summary').click();
