@@ -755,6 +755,7 @@ function doseModal(name, existing, occTime) {
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
+    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
       <summary><span class="nx2-observation-title">Earlier dose observations</span><span class="nx-dose-observations-hint">Legacy entries · Editable</span></summary>
@@ -762,7 +763,7 @@ function doseModal(name, existing, occTime) {
       <p class="nx-dose-section-desc">This is a separate, optional record of how you felt. It is not part of the vial allocation or dose calculation.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(f.notes||"")}</textarea>
-    <label style="display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:13px;color:var(--t3)"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> This dose is an escalation</label>
+
       </div>
     </details>
     </div><!-- scrollable dose form -->
