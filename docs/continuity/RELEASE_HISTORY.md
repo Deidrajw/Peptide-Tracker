@@ -709,3 +709,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Full-library browsing QA candidate validated (DRAFT / UNRELEASED)
 - Application/test SHA c7b06b2a passed mobile 40430545528 and full browser 40430545381. Artifact 12702105755 exact-source full-app DEMO (2,578,053 B) and root LIVE ZIP (1,810,764 B; 21 valid files, ordered JS) independently downloaded/inspected; merge-source manifest 8069de53 parent is c7b06b2a. Independent Chromium browse-all tests also passed 4/4 at 320/390 dark/light, 45 fictional compounds, filter/choose, backing state unchanged except user selection. No migration, active production storage write, PR merge or deployment; physical iPhone and broader app-wide picker rollout remain pending.
+
+### 2026-10-26 — Compound browser expanded to Protocol and Plans (DRAFT/UNRELEASED)
+- Commits 8da177d2, 472c211b, 642b74d2, fd266141, cb1144af and 471fdeed implement reusable five-result and Browse All compound selector across Protocol Stack and Plans/Research multi-select, preserving original state and save paths; add browser regression tests and remove nested quick-list scroll. CI latest head pending, no source-matched artifacts inspected yet, no production data impact/migration/merge/deployment.
