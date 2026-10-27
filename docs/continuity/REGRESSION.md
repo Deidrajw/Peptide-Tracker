@@ -1019,3 +1019,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Kit typography latest source validation
 - Full-browser 40442588345 **PASS**; mobile 40442588421 **PASS**. Artifact 12707236994 source manifest 66908fa; outer ZIP, LIVE 21-file ZIP and offline DEMO ZIP CRC PASS; standalone DEMO matches offline ZIP index. Stash Actions and Cards each 8/8 PASS, including 320/390 dark/light.
 - Native physical iPhone software keyboard, focus movement and safe areas **NOT TESTED**. Broader nested scrolling and required-field policy remain separate.
+
+
+## 2026-10-26 — Kit test-result attachment acceptance matrix (pending)
+- **SOURCE VERIFIED, NOT TESTED:** existing optional test-result control in both standard and blend kit editors; check Step 2 placement beneath Notes, file picker, 750KB PDF/JPEG/PNG/WebP validation, invalid file handling, replace/remove, and async read/save races.
+- **NOT TESTED:** create/edit persistence, kit detail retrieval, backup/export/import restore, storage quota, 320/390 dark/light, physical iPhone picker/keyboard/safe areas. Do not mark PASS based solely on existing code.
+- Blend Composition & Dose Analytics future discovery only; verify component math, physical vial deductions and history totals separately. App-wide mandatory fields and nested-scroll audits remain separate.
