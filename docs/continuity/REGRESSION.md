@@ -1217,3 +1217,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Full QA 40583699831 FAILED at Completed tab action assertion after ebd66e42. Analysis: test searched for Record reaction in *collapsed* compact card, but app deliberately displays the action only in expanded View Details. Adjusted test dff7ea52 to assert collapsed disclosure and expanded Record reaction, plus historical-only exclusion. Added 79c7bd35 browser test for top Completed presence, top Upcoming absence, lower Coming up and working Calendar navigation. New-head CI pending; physical iPhone not tested. Retain failed-run record for traceability.
 
 - Browser 40585053600 FAILED added Coming up Calendar click: Playwright reported fixture onboarding modal intercepted pointer events; prior Completed expanded-card assertions cleared. Browser fixture correction at 3d4ae796 removes stale onboarding overlay only within test before clicking link. Fresh run PENDING; physical Safari still NOT TESTED.
+
+
+## 2026-10-27 — Current Completed and Calendar QA CLEARANCE
+- **PASS automated**: fresh app/test commit 3d4ae796; full/browser 40585602137 SUCCESS, mobile 40585601628 SUCCESS. Log Dose browser E2E 8 LIVE/DEMO × 320/390 × light/dark, 96 flows; Completed includes today record with expanded Record reaction, excludes historical-only record, Coming up section retained and View Calendar click changes to Calendar. Vial core 48 safety assertions, math diagnostic 80/80 (not clinical validation).
+- Full source-built LIVE ZIP, complete isolated standalone DEMO HTML / offline DEMO ZIP uploaded in artifact 12771971424. Previous browser failures 40583699831 (test expecting expanded action in collapsed card) and 40585053600 (fixture onboarding blocked Calendar) resolved in test; history kept.
+- **NOT TESTED** physical iPhone Safari interaction, keyboard, VoiceOver, real production records; Cloudflare served-file hash parity. PR #123 unmerged, primary production unchanged.
