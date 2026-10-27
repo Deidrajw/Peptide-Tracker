@@ -758,3 +758,9 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-27 — Design System 2.0 unfinished work ordering (USER CORRECTION)
 - Keep Profile/Supplements and Stash/Prepare Dose as OPEN user-directed workstreams, despite partially implemented source and earlier test coverage. Prioritize these before broad form/scroll consistency audits. No new green actions, Notion personal importer, clipped Stash pill corners, hidden source amount fields or detached opened-vial status. Preserve supplement history, vial math, source IDs and all saved records. PR #123 draft and unmerged until explicit release approval.
+
+
+## 2026-10-27 — Whole-app DS2, accepted screens and future sprint retention (USER DIRECTED)
+- User confirms Calendar, Protocol/Plans and Supplies are **okay for now**, so avoid unrequested redesign. Design System 2.0 must cover **every subpage** as well as primary tabs: especially Trends/Nexus/Insights, Profile/Settings/Supplements, More/Learn/Intel and hidden sheets. Use approved hybrid Soft Depth + Porcelain + Obsidian. Track all child routes in docs/design/DS2_SCREEN_COVERAGE.md; no implicit Done without acceptance.
+- Put accessibility/VoiceOver, required fields, app-wide scrolling, typography, navigation, motion/reduced-motion and consistency testing **LAST** in the DS2 styling sequence; retain as tracked commitments, not discarded.
+- Separate long-horizon product roadmap (core workflow design, onboarding, personalization, platform expansion to iOS/Android and future functionality) in docs/product/NEXUS_MASTER_ROADMAP.md. Do not overwrite with the current sprint. Screenshot shows squared selected Stash kit detail tabs: draft CSS repair 135848e and automated guard e97a2d5; native iPhone acceptance pending.
