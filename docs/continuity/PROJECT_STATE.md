@@ -1625,3 +1625,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Commits: implementation `126ca799`, UI `06177e4b`, targeted test `24b98949`. No production writes, storage-key or inventory calculation changes intended. **Incomplete UX:** saved-dose context-menu action and immediate post-save invitation not yet coded; currently accessible through saved-dose Edit only. Reaction edit/delete and full Check-In association review also pending.
 - New-head automated browser/mobile CI and full source-aligned DEMO/LIVE package tests **PENDING**, physical iPhone testing **NOT TESTED**. PR #123 stays DRAFT/UNMERGED; no production deployment approval.
 - **ONE NEXT ACTION:** correct any new-head test failures; validate reaction persistence, legacy symptoms, amounts and source allocation at 320/390 both themes, then expose reaction from saved-dose detail/action menu while preserving source and historical records.
+
+
+## 2026-10-27 — Physical iPhone Log Dose header visibility regression (fix coded, QA pending)
+- Real iPhone Safari screenshots from Cloudflare preview 9c06830d show title and Quick/Guided selector disappearing while scrolling, with persistent footer. Device acceptance FAIL.
+- Root cause: header and mode selector were nested inside the scrolling body. Moved both to a dedicated non-scrolling header sibling (JS commit da7ed8f8) and added responsive CSS (aaa0029a). Dose amounts, save handlers, allocations, history and storage unaffected by intended change.
+- CODED on draft PR #123. Current-head CI, Cloudflare deployment and physical Safari retest NOT VERIFIED. Production unchanged.
+- ONE NEXT ACTION: check latest CI and Cloudflare preview, obtain actual iPhone scrolling and keyboard acceptance in both Quick/Guided modes, and only then consider approval.
