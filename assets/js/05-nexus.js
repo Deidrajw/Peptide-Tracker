@@ -2442,13 +2442,6 @@ function supplementModal(prefillDate) {
   const existing = state.supplementLogs.find(l=>dayKey(l.date)===today);
   const supps = state.settings.supplements||[];
   const taken = new Set(existing?.taken||[]);
-  openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="mono" style="font-size:13px;color:#C8FF9C;letter-spacing:1.5px">SUPPLEMENTS</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-      <div style="font-size:13px;color:var(--t3);margin-bottom:16px">No supplements set up yet. Add your supplements in Profile first.</div>
-      <button id="goprofile" class="btn-primary" style="background:#C8FF9C;color:#1a1728">Go to Profile</button>`,"#C8FF9C");
-    document.querySelector(".modal #x").onclick=closeModal;
-    document.querySelector(".modal #goprofile").onclick=()=>{closeModal();tab="profile";render();window.scrollTo(0,0);};
-    return;
-  }
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
     <div class="nx2-supp-inline-add"><label for="nx2-new-supp">Don't see your supplement? Add it here.</label><div><input id="nx2-new-supp" class="inp" autocomplete="off" placeholder="Supplement name" aria-label="New supplement name"><button type="button" id="nx2-add-supp" class="nx2-supp-add">Add</button></div><div id="nx2-supp-feedback" role="status" aria-live="polite"></div></div>
