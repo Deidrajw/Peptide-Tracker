@@ -792,22 +792,40 @@ function addBlendKitModal(blendNameOrKit) {
       const trigger=document.createElement("input");trigger.type="search";trigger.className="nx-blend-compound-trigger";trigger.placeholder="Search…";trigger.setAttribute("role","combobox");trigger.setAttribute("aria-autocomplete","list");
       trigger.setAttribute("aria-label","Choose blend compound");trigger.setAttribute("aria-expanded","false");
       const popup=document.createElement("div");popup.className="nx-blend-compound-popup";popup.hidden=true;
-      const search=trigger;
       const results=document.createElement("div");results.className="nx-blend-compound-results";
+      results.id="nx-blend-options-"+sel.dataset.i;results.setAttribute("role","listbox");
+      trigger.setAttribute("aria-controls",results.id);
       popup.append(results);wrapper.append(trigger,popup);
       const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
       const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
+      // Floating overlay: never adds height to a composition row or creates a second scroll surface.
+      const position=()=>{
+        const rect=trigger.getBoundingClientRect();
+        const viewport=window.visualViewport;
+        const top=viewport?.offsetTop||0,height=viewport?.height||window.innerHeight;
+        const below=top+height-rect.bottom,above=rect.top-top;
+        popup.classList.toggle("nx-combo-above",below<190&&above>below);
+      };
       const render=()=>{
         results.replaceChildren();
-        const q=search.value.trim().toLowerCase();
-        const opts=[...sel.options].filter(o=>o.value&&o.textContent.toLowerCase().includes(q)).slice(0,80);
-        opts.forEach(opt=>{const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;button.className="nx-blend-compound-option";button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};results.appendChild(button);});
-        if(!opts.length){const empty=document.createElement("p");empty.textContent="No matching compounds";results.appendChild(empty);}
+        const q=trigger.value.trim().toLowerCase();
+        const matches=[...sel.options].filter(o=>o.value&&o.textContent.toLowerCase().includes(q));
+        matches.slice(0,5).forEach(opt=>{
+          const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;
+          button.className="nx-blend-compound-option";button.setAttribute("role","option");
+          button.onpointerdown=e=>e.preventDefault();
+          button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};
+          results.appendChild(button);
+        });
+        if(matches.length>5){const hint=document.createElement("p");hint.className="nx-blend-combo-hint";hint.textContent="Type to narrow the results";results.appendChild(hint);}
+        if(!matches.length){const empty=document.createElement("p");empty.className="nx-blend-combo-hint";empty.textContent="No matching compounds";results.appendChild(empty);}
+        position();
       };
       const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
-      trigger.value=sel.value?label():"";trigger.onfocus=open;trigger.oninput=()=>{sel.value="";composition[+sel.dataset.i].compound="";render();};
-
-      search.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"){e.preventDefault();results.querySelector("button")?.focus();}};
+      trigger.value=sel.value?label():"";
+      trigger.onfocus=open;
+      trigger.oninput=()=>{sel.value="";composition[+sel.dataset.i].compound="";open();};
+      trigger.onkeydown=e=>{if(e.key==="Escape"){close();trigger.blur();}if(e.key==="ArrowDown"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.focus();}if(e.key==="Enter"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.click();}};
       results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
       wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
     });
