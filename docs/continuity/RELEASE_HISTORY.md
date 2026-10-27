@@ -826,3 +826,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 ### v0.9.20-beta — Today Record reaction discoverability (DRAFT / NOT RELEASED)
 - One-tap button added to completed Today compound cards by 55232dd9, wired to existing saved-dose standalone reaction form in e8d5e762, scoped responsive CSS 2a1038e0, tests 6142ff10 and 305481bc. Optional action remains available after saving in Today; no blocking new post-save dialog. Existing dose math, inventory and storage unchanged. Native timed notification concept separate, NOT CODED.
 - CI, complete LIVE ZIP/isolated full-app DEMO artifact, Cloudflare latest-head deploy and physical iPhone acceptance PENDING. PR #123 draft/unmerged, production unchanged.
+
+
+### v0.9.20-beta — Today navigation filter cleanup (DRAFT / NOT RELEASED)
+- Top navigation Upcoming replaced with Completed (bf3ef4db, 61103bf9); Completed shows only compounds completed today using existing status logic with the same compact and expanded cards / Record reaction action. Existing lower Coming up preview and Calendar drill-down kept. Browser regression assertion e8c685fa protects current-day inclusion and historical exclusion.
+- Data impact: none intended; no change to production storage, dose records, reaction events or inventory. Full new-head CI, exact-source artifacts, immutable Cloudflare preview and real iPhone acceptance PENDING. PR #123 draft/unmerged, no production deploy.
