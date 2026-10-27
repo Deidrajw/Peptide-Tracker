@@ -856,8 +856,15 @@ function addBlendKitModal(blendNameOrKit) {
           button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};
           results.appendChild(button);
         });
-        if(matches.length>5){const hint=document.createElement("p");hint.className="nx-blend-combo-hint";hint.textContent="Type to narrow the results";results.appendChild(hint);}
+
         if(!matches.length){const empty=document.createElement("p");empty.className="nx-blend-combo-hint";empty.textContent="No matching compounds";results.appendChild(empty);}
+        const browse=document.createElement("button");browse.type="button";browse.className="nx-blend-browse-all";
+        browse.textContent="View all compounds";
+        browse.onpointerdown=e=>e.preventDefault();
+        browse.onclick=()=>{close();nexusBrowseAllCompounds(m,[...sel.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value})),option=>{
+          sel.value=option.value;trigger.value=option.name;sel.dispatchEvent(new Event("change",{bubbles:true}));
+        },"");};
+        results.appendChild(browse);
         position();
       };
       const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
