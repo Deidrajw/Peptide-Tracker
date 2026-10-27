@@ -58,6 +58,26 @@ try{
           state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!=='2032-11-09');
           render();
         });
+        // Empty-catalogue Daily Check-In also permits inline supplement creation.
+        await page.evaluate(()=>{
+          state.settings.supplements=[];
+          dailyModal(null);
+        });
+        assert(await page.locator('.modal #nx2-checkin-add-supp').count()===1,
+          'Empty-catalogue Check-In supplement creation missing');
+        await page.locator('.modal #nx2-checkin-new-supp').fill('Fictional Zinc');
+        await page.locator('.modal #nx2-checkin-add-supp').click();
+        const checkinInline=await page.evaluate(()=>({
+          catalog:state.settings.supplements.includes('Fictional Zinc'),
+          saved:(state.supplementLogs||[]).some(l=>(l.taken||[]).includes('Fictional Zinc'))
+        }));
+        assert(checkinInline.catalog&&!checkinInline.saved,
+          'Check-In catalogue addition must not implicitly write taken history');
+        await page.evaluate(()=>{
+          closeModal();
+          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          render();
+        });
         const before=await snapshot(page,testDay);
         assert(!before.entries.length,'Fixture already has chosen test date');
         await page.evaluate(date=>dailyModal(null,date),testDay);
