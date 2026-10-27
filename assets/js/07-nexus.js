@@ -1758,6 +1758,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
     const recordedTime = recorded?.date ? ` · ${esc(new Date(recorded.date).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}))}` : "";
     return `<div class="nx-today-completion-actions">
       <div class="nx-today-completion-status" role="status"><span class="nx-today-completion-icon" aria-hidden="true">✓</span><span><strong>Dose completed</strong><small>Scheduled entry recorded${recordedTime}</small></span></div>
+      ${recorded?.id!=null?`<button type="button" class="nx-today-record-reaction" data-name="${esc(name)}" data-id="${esc(String(recorded.id))}" aria-label="Record reaction for most recent ${esc(name)} dose">Record reaction</button>`:""}
       <button class="moremenu nx-today-completion-more" data-name="${esc(name)}" aria-expanded="false" aria-label="More actions for ${esc(name)}">More actions</button>
     </div>`;
   }
