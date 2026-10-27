@@ -1468,3 +1468,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Extended `tools/validate-stash-cards.mjs` commit `c6f10853d0b4f86418325185a1c10b25c6091079` for LIVE/DEMO 320/390 dark/light: empty CTA uniqueness, 44px+ target, no clipped width, modal action. Full CI `40450450037` and mobile `40450450084` initiated; outcomes **PENDING** at write. Exact-head full LIVE ZIP and isolated full-app DEMO inspect **INCOMPLETE**. Native iPhone keyboard/device tests NOT TESTED.
 - Draft PR #123 unmerged; no deployment or production storage changes. Prior kit Step 2 Blend sticky action density remains OPEN; mandatory-fields and global no-nested-scrolling audit remain separate unfinished.
 - **ONE NEXT ACTION:** confirm Supplies CI, inspect actual 320/390 light/dark screenshots and exact-source LIVE/DEMO, then request user visual approval before exploring filled Supplies cards/modal.
+
+
+## 2026-10-27 — Supplies form and populated cards on draft PR #123
+- Earlier empty-state full-browser CI 40450450037 **FAILED**: welcome/onboarding `.modal-bg` intercepted pointer click in test; mobile 40450450084 status requires verification. Fixed fixture to dismiss onboarding before CTA click at commit `49e2298` without modifying production onboarding behavior.
+- **CODED** Add/Edit Supply visual hierarchy and CTA wording at `cb49d73`; scoped CSS form/cards at `5a8f1b6`; automated empty/form/populated screenshot assertions at `327141d`. All historic supply inventory/history/calculations handlers untouched. User-approved empty-state remains.
+- **NOT YET VERIFIED:** latest full-browser CI, 320/390 light/dark screenshots, exact-source LIVE/full-app DEMO packages and physical iPhone keyboard/safe-area/VoiceOver. Draft PR remains unmerged and undeployed. Mandatory-fields and app-wide nested scrolling remain separate priorities.
+- **ONE NEXT ACTION:** resolve any latest Supplies CI failures and inspect artifact/screenshots, then obtain real iPhone visual acceptance before seeking any merge approval.
