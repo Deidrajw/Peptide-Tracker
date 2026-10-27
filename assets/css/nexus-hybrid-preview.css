@@ -3026,3 +3026,15 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx2-prepare-source-row .palloc-draw{flex:1 1 160px;font-size:12px!important}
 .nx2-prepare-source-row .palloc-remove{margin-left:auto}
 @media(max-width:360px){.nx2-prepare-source-row{gap:6px}.nx2-prepare-source-row .palloc-remove{min-width:32px}}
+
+
+/* 2026-10-27 iPhone review: exact internal kit/vial IDs are secondary disclosure,
+   never an unlabelled numeric string beside an actionable source. */
+.nx-alloc-row.nx-hybrid-source-row{flex-wrap:wrap;min-width:0}
+.nx-alloc-row.nx-hybrid-source-row>span:first-child{flex:1 1 100%!important;color:var(--t1)!important;font-size:13px!important;line-height:1.4;font-weight:600;overflow-wrap:anywhere}
+.nx-alloc-row.nx-hybrid-source-row .alloc-mg-input{height:44px!important;width:82px!important;flex:0 0 82px}
+.nx-alloc-row.nx-hybrid-source-row .alloc-draw{min-height:44px;font-size:12px!important;padding:9px 12px!important}
+.nx-alloc-row.nx-hybrid-source-row .alloc-remove{min-width:44px;min-height:44px}
+.nx2-source-identifiers{flex-basis:100%;font-size:11px;color:var(--t3);min-width:0}
+.nx2-source-identifiers summary{display:inline-flex;align-items:center;min-height:44px;padding:6px 0;color:var(--t3);cursor:pointer}
+.nx2-source-identifiers>div{overflow-wrap:anywhere;padding:3px 0 3px 12px}
