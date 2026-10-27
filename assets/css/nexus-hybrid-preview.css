@@ -2910,3 +2910,24 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
+
+
+/* Design System 2.0: Protocol Schedule step and Goal calendar field.
+   Presentation only: original input IDs, save handlers and schedule state remain. */
+.nx-hybrid-field-label{display:block;margin:0 0 8px;font-size:12px;font-weight:650;color:var(--t2);}
+.nx-hybrid-field-label span{font-weight:450;color:var(--t4);}
+.nx-proto-schedule-label{font-size:12px;font-weight:650;color:var(--t2);margin:14px 0 9px;}
+.nx-proto-patterns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.nx-proto-patterns .pb-sched{min-height:44px;line-height:1.25;font-size:12px;white-space:normal;}
+.nx-proto-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:0 0 16px;}
+.nx-proto-days .pb-day{width:100%!important;min-width:0;height:auto!important;min-height:44px;border-radius:999px;}
+.nx-proto-dose-count{display:flex;align-items:center;gap:12px;margin:16px 0 12px;}
+.nx-proto-dose-count-label{flex:1;font-size:12px;color:var(--t2);font-weight:600;}
+.nx-proto-dose-count .pb-dpdec,.nx-proto-dose-count .pb-dpinc{flex:0 0 44px;min-width:44px;min-height:44px;}
+.nx-proto-frequency-note{margin-top:12px;font-size:12px;color:var(--t3);}
+#proto-builder-nav #pb-prev,#proto-builder-nav #pb-next,#proto-builder-nav #pb-save-draft,#proto-builder-nav #pb-activate{min-height:48px;border-radius:12px;}
+#proto-builder-nav #pb-next,#proto-builder-nav #pb-activate{background:#C6A6F2!important;color:#24182F!important;}
+#proto-builder-nav #pb-prev{color:var(--t1)!important;}
+.nx-goal-wizard-panel #g-target{color:var(--t1);color-scheme:dark;}
+html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
+@media(max-width:360px){.nx-proto-days{gap:3px}.nx-proto-patterns{gap:6px}.nx-proto-dose-count{gap:8px}}
