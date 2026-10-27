@@ -1688,3 +1688,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 
 - Follow-up on new Completed filter: full-browser 40583259646 FAILURE at new assertion (today dose not in Completed). Corrected filtering via authoritative doseDayFor(data,d) at ebd66e42, while retaining status-based explicitly skipped entries; new CI PENDING. Initial artifact 12770258799 from FAILED workflow must not be treated as cleared.
 - ONE NEXT ACTION: verify CI on ebd66e42, fix any current-head failure, then invite physical iPhone acceptance of filters and Upcoming→Calendar.
+
+
+## 2026-10-27 — Completed / Reaction / Coming up acceptance run
+- Verified full QA 40583699831 FAILED the new Completed action assertion. Root cause in TEST: collapsed compact cards intentionally do not render expanded Record reaction action until user taps View details. Test corrected at dff7ea52 to check collapsed then expanded card; new browser E2E at 79c7bd35 verifies Today/Completed tab, redundant top Upcoming removed, lower Coming up still rendered, and Calendar navigation via button. Prior failure NOT ERASED. Existing canonical doseDayFor-based filter retained. No production data or inventories changed.
+- Mobile/full latest checks and physical iPhone review PENDING. PR #123 DRAFT/UNMERGED; only Cloudflare draft preview allowed.
+- ONE NEXT ACTION: check CI at 79c7bd35 and remediate any failure before presenting exact immutable preview for physical iPhone acceptance.
