@@ -86,12 +86,20 @@ try {
     const completedTab=await page.evaluate(()=>{
       const data=state.peptides.Retatrutide;
       data.doses=[{id:91827,date:localDate()+'T15:03',dose:'2.5',site:'Abdomen'}];
+      const collapsed=renderCompletedFullView([['Retatrutide',data]]);
+      const oldExpanded=state._todayExpandedCompounds;
+      state._todayExpandedCompounds=new Set(['completed::Retatrutide']);
       const recent=renderCompletedFullView([['Retatrutide',data]]);
+      state._todayExpandedCompounds=oldExpanded;
       data.doses=[{id:91828,date:'2025-01-05T15:03',dose:'2.5',site:'Abdomen'}];
       const historical=renderCompletedFullView([['Retatrutide',data]]);
       data.doses=[];
-      return {recent,historical};
+      return {collapsed,recent,historical};
     });
+    ensure(completedTab.collapsed.includes('COMPLETED TODAY') &&
+      completedTab.collapsed.includes('compound-compact-tap') &&
+      completedTab.collapsed.includes('completed'),
+      'Completed tab has no expandable today dose card');
     ensure(completedTab.recent.includes('COMPLETED TODAY') &&
       completedTab.recent.includes('nx-today-record-reaction') &&
       completedTab.recent.includes('91827'),
