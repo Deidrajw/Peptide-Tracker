@@ -697,3 +697,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Blend popup and Review UX follow-up (DRAFT; unreleased)
 - Draft commits 416e6217, 7720cef8, 0ad6d4c8 and e130934c address an expanding compound list, opaque footer backdrop and flat Blend Review. Floating suggestions show up to five items with no list scrollbar; Review prioritizes blend identity, total mg and individual components. Additional mobile browser checks added. Production inventory handlers and data schema unchanged. Physical iPhone feedback and an app-wide nested-scroll audit remain outstanding. No merge or deployment.
+
+### 2026-10-26 — Blend full-screen mobile editing candidate (DRAFT, not released)
+- Commits 6db7acf7, 767c2ae8 and dd26fdc9 add full-viewport Blend editor for narrow phones, fix grouped Review CSS override and assert mobile modal geometry. This builds on floating picker / Review hierarchy revisions without changing blend IDs, storage schema or inventory accounting. Latest source QA and visual screenshots pending; no merge/deployment.
