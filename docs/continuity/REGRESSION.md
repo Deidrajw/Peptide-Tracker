@@ -921,3 +921,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Passing candidate artifact evidence
 - Build 40422263758 PASS: Stash Cards 8/8, Stash Actions 8/8. Artifact 12698436592 downloaded/extracted: ZIP CRC good, root index and 21 manifest-listed files exact, standalone DEMO 2.56 MB, manifest notes ephemeral fictional data/no sync. Browser direct local render blocked by administrator; new 320/390 screen captures pending CI. Do not equate this candidate with user acceptance or deployment.
+
+## 2026-10-26 — Visual defects found in CI screenshots despite passing automated workflows
+- FAIL (visual review, older artifact 12698781391): ordinary Kit Review shows labels/values concatenated; step2 footer Continue appears as detached text; blend title not persistent across stages, Blend Step 2 shows wasted helper; first stage screenshot obscured during entrance animation. Corrective commits 83d374c3, be382d87, 4d34e265 and screen settling changes. Assert colored >=44px button and hidden duplicate native selects in commits 5129b2d3/5f210026. Newest-head screenshots and physical iPhone acceptance PENDING; do not mark PASS on older runs.
