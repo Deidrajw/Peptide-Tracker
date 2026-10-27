@@ -801,3 +801,9 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - Actions artifact `12758495941`: complete source-based LIVE ZIP, standalone full-app fictional DEMO HTML, offline browser-opening DEMO ZIP. CI manifest source commit `bdd95f87753b21585b6bdf5b4821cd13686347f2` (GitHub synthetic merge SHA); branch byte-for-byte equivalence not independently established here.
 - Automated matrix checks include 320/390 light/dark LIVE/DEMO; Check-In, Log Dose (40 flows), Protocol, vial source (48), stash/blends, other protected pages, math diagnostic 80/80; clinical safety and WCAG-AA independent acceptance not implied.
 - Data impact: no intended schema migration or production writes. PR remains draft/unmerged, Cloudflare exact app asset fetch and physical iPhone validation pending; no production release.
+
+
+### v0.9.20-beta post-dose reactions — PARTIALLY CODED, QA PENDING (2026-10-27)
+- PR #123 draft branch, source commits `126ca799` (isolated reaction form/event on dose), `06177e4b` (scoped accessibility CSS), `24b98949` (end-to-end regression additions).
+- Removes visible legacy Observations from new dose form and retains legacy fields on prior saved entries with data; new reaction records `observedAt` and `recordedAt` separately, `intensity`, `notes` on the existing dose ID. Existing inventory/dose math not intentionally changed. No destructive migration.
+- Saved-dose Edit provides Record Reaction. Saved-dose action menu and post-save entry not implemented; cannot claim full approved UX complete. Tests/current-head artifacts, Cloudflare served hashes, iPhone and VoiceOver **PENDING/NOT TESTED**. Version candidate unchanged, no merge or production deploy.
