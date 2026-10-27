@@ -80,8 +80,7 @@ try {
     ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,
       'Opening Review unexpectedly persisted a dose');
     await page.locator('#nx-dose-step-back').click();
-    await page.locator('.nx-dose-optional > summary').click();
-    await page.locator('#notes').fill('Fictional day 1 note');
+    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'New Log Dose still exposes old observations');
     await clickSave(page);
     let first=await stateSnapshot(page);
     ensure(first.entries.length===1,'Single vial confirmation failed to create one dose');
@@ -93,7 +92,27 @@ try {
     let edited=await stateSnapshot(page);
     ensure(edited.entries.length===1 && edited.entries[0].id===originalId,'Editing duplicated a dose record');
     ensure(Math.abs(edited.kits[0].remaining[0]-3)<.01,'Edit failed to reverse and reapply deduction');
-    ensure(edited.entries[0].notes==='Fictional day 1 note','Edit unexpectedly wiped notes');
+    ensure((edited.entries[0].reactions||[]).length===0,'Dose edit unexpectedly created a reaction');
+    // Reactions are a separate, timestamped event and cannot deduct vial inventory.
+    await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
+    await page.locator('#nx-record-reaction').click();
+    ensure(await page.locator('.nx-reaction-editor').isVisible(),'Standalone reaction editor did not open');
+    await page.locator('#nx-reaction-label').selectOption({label:'Flushing / warmth'});
+    await page.locator('#nx-reaction-time').fill('2032-11-07T21:05');
+    await page.locator('#nx-reaction-intensity').selectOption('2');
+    await page.locator('#nx-reaction-notes').fill('Fictional immediate observation');
+    await page.locator('#nx-reaction-save').click();
+    const reactionSaved=await stateSnapshot(page);
+    ensure(reactionSaved.entries.length===1&&reactionSaved.entries[0].id===originalId,'Reaction changed dose identity');
+    ensure(reactionSaved.entries[0].reactions?.length===1,'Reaction failed to append to saved dose');
+    ensure(reactionSaved.entries[0].reactions[0].observedAt==='2032-11-07T21:05','Reaction observation timestamp missing');
+    ensure(reactionSaved.entries[0].reactions[0].recordedAt,'Reaction entry timestamp missing');
+    ensure(Math.abs(reactionSaved.kits[0].remaining[0]-3)<.01,'Reaction changed inventory');
+    await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
+    await clickSave(page);
+    const afterEdit=await stateSnapshot(page);
+    ensure(afterEdit.entries[0].reactions.length===1,'Subsequent dose edit erased reaction history');
+    verified.push('post-dose reaction timestamp, history & zero inventory changes');
     verified.push('single vial confirm/edit/original-ID and exact deduction');
 
     // B: Impossible request across current open sources must not silently
@@ -179,14 +198,15 @@ try {
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9107,1,1)]);
     await openDose(page);
     await setDose(page,3);
-    await page.locator('.nx-dose-optional > summary').click();
-    await page.locator('#notes').fill('Retain this fictional draft');
+    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'New dose includes old observations');
+    await page.locator('#site').selectOption({index:1});
+    const selectedSite=await page.locator('#site').inputValue();
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-open-new').count()===1,'Open sealed vial action missing');
     await page.locator('#alloc-open-new').click();
     const draft=await stateSnapshot(page);
     ensure(draft.draft?.name==='Retatrutide' && draft.draft.dose==='3'
-      && draft.draft.notes==='Retain this fictional draft',
+      && draft.draft.site===selectedSite,
       'New-vial handoff lost typed draft values');
     ensure(draft.entries.length===0 && Math.abs(draft.kits[0].remaining[0]-1)<.01 &&
       Math.abs(draft.kits[0].remaining[1]-10)<.01,'Draft handoff unexpectedly changed inventory/history');
