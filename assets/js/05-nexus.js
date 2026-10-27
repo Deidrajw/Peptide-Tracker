@@ -2385,7 +2385,7 @@ function dailyModal(existing, prefillDate) {
   const suppDate2=f.date||localDate();
   const suppTaken2=new Set(state.supplementLogs.find(l=>dayKey(l.date)===suppDate2)?.taken||[]);
   let suppSelectionTouched=false;
-  const suppLibrary=state.settings.supplements||[];
+  const suppLibrary=state.settings.supplements || (state.settings.supplements=[]);
   const suppSearch=m.querySelector("#supp-search");
   const suppSelected=m.querySelector("#supp-chips");
   const suppResults=m.querySelector("#supp-results");
@@ -2454,7 +2454,7 @@ function dailyModal(existing, prefillDate) {
 function supplementModal(prefillDate) {
   const today = prefillDate || localDate();
   const existing = state.supplementLogs.find(l=>dayKey(l.date)===today);
-  const supps = state.settings.supplements||[];
+  const supps = state.settings.supplements || (state.settings.supplements=[]);
   const taken = new Set(existing?.taken||[]);
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
