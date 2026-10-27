@@ -3050,3 +3050,20 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx2-dose-modal .nx2-observation-title{display:block;font-size:14px;font-weight:700;color:var(--t1)}
 .nx2-dose-modal .nx-dose-optional{margin-top:16px;border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2)}
 .nx2-dose-modal .nx-dose-optional>summary{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px}
+
+/* DS2 post-dose reactions: separate follow-up editor, no changes to dosage UI math. */
+.nx2-dose-modal .nx-reaction-link,.nx-reaction-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:8px;padding:7px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:700}
+.nx-reaction-editor{display:flex;flex-direction:column;gap:10px;max-width:100%;min-width:0;padding-bottom:env(safe-area-inset-bottom)}
+.nx-reaction-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.nx-reaction-heading h2{margin:3px 0;font-size:23px;color:var(--t1)}
+.nx-reaction-heading p,.nx-reaction-explain{margin:2px 0 8px;color:var(--t3);font-size:12px;line-height:1.5}
+.nx-reaction-heading #x{flex:0 0 44px;min-width:44px;min-height:44px}
+.nx-reaction-editor .inp{width:100%;box-sizing:border-box;min-height:48px}
+.nx-reaction-editor .field-label{margin-top:5px;color:var(--t2)}
+.nx-reaction-history{padding:12px;background:var(--surface-2);border-radius:12px;overflow-wrap:anywhere}
+.nx-reaction-history p{font-size:12px;color:var(--t3);margin:8px 0 0}
+.nx-reaction-actions{display:flex;gap:10px;align-items:stretch;margin-top:8px}
+.nx-reaction-actions button{min-height:48px;flex:1;border-radius:12px}
+.nx-reaction-actions #nx-reaction-cancel{background:var(--surface-2);color:var(--t2);border:1px solid var(--border)}
+.nx-reaction-actions #nx-reaction-save{color:#20162D;background:#C6A6F2}
+@media(max-width:360px){.nx-reaction-actions{flex-direction:column-reverse}}
