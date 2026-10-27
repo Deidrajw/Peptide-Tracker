@@ -837,3 +837,5 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### v0.9.20-beta — Completed/Coming up regression investigation (DRAFT / NOT RELEASED)
 - Previous full browser QA 40583699831 failed at Completed test expecting expanded action in collapsed card (test mismatch). Targeted test correction dff7ea52 validates both states, and 79c7bd35 tests Coming up → Calendar and revised nav. Full QA at new head PENDING. No migration, merge or production release.
+
+- 2026-10-27: 40585053600 full browser FAILED newly added Coming up → Calendar click because fixture onboarding modal intercepted; test-only correction at 3d4ae796. No application code or production data changed. Full rerun pending.
