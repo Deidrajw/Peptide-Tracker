@@ -81,6 +81,26 @@ try {
     ensure(fullCard.includes('Dose completed') && fullCard.includes('nx-today-record-reaction') && fullCard.includes('data-id="91827"') && fullCard.includes('More actions'),
       'Full compound card / View Details rendered without completed-dose controls');
     verified.push('actual compound card completed-dose details render without blank screen');
+    // Completed filter is a day-specific view; it must not list a historical dose
+    // just because the compound is active, and it must expose the reaction action.
+    const completedTab=await page.evaluate(()=>{
+      const data=state.peptides.Retatrutide;
+      data.doses=[{id:91827,date:localDate()+'T15:03',dose:'2.5',site:'Abdomen'}];
+      const recent=renderCompletedFullView([['Retatrutide',data]]);
+      data.doses=[{id:91828,date:'2025-01-05T15:03',dose:'2.5',site:'Abdomen'}];
+      const historical=renderCompletedFullView([['Retatrutide',data]]);
+      data.doses=[];
+      return {recent,historical};
+    });
+    ensure(completedTab.recent.includes('COMPLETED TODAY') &&
+      completedTab.recent.includes('nx-today-record-reaction') &&
+      completedTab.recent.includes('91827'),
+      'Completed tab lost today dose or Record reaction action');
+    ensure(completedTab.historical.includes('No completed doses today') &&
+      !completedTab.historical.includes('nx-today-record-reaction'),
+      'Completed tab incorrectly includes old historical dose');
+    verified.push('Completed filter is today-only with saved-dose reaction action');
+
 
 
     // A: Actual user confirmation, same recorded ID preserved after edit,
