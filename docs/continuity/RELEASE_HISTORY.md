@@ -738,3 +738,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Supplies corrected QA, still DRAFT/UNRELEASED
 - Corrected fictional onboarding-overlay screenshot issue and 320px Initial Status button clipping (commits 248e1c2, ef9f6fe). Automated full-browser `40452358905` and mobile `40452358894` SUCCESS. Artifact `12711520065` source manifest `727686bae253bb5ef4f3a1c2cd4c25234dbdf86a`, 21-file LIVE ZIP integrity and 17/17 application blob parity confirmed, full isolated DEMO equals offline ZIP index, screenshots reviewed at 320/390 dark/light. No schema or inventory math modification, no merge/deploy or production writes. Native iPhone keyboard/VoiceOver and complete stateful Supply save/use/restock acceptance remain unverified; PR #123 retained draft.
+
+
+### 2026-10-27 — First-dose Today and wizard polish (DRAFT / UNRELEASED)
+- Draft PR #123 commits `b538f0f` (Today first-dose inclusion), `b1302de` (Back/Continue, start/target date labels), `20df1d9` and `1d2d412` (Protocol schedule groups/touch styling), `06c0617` and `9924be2` (Goal Check-In connection empty state). Preserves existing storage/schema, protocol sync, dose history and inventory handlers; no migration or production data mutation.
+- Affected: Today hero summary, New Protocol Schedule/navigation, Add/Edit Goal wizard. At documentation time current-head browser/mobile CI, standalone full-app DEMO/LIVE ZIP and real-device acceptance are **INCOMPLETE**; do not inherit passes from older releases. PR unmerged, undeployed; production unchanged.
