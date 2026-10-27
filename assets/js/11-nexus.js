@@ -916,20 +916,20 @@ function protocolBuilderModal(existing) {
         const dpw=s.dosesPerDay*(s.days?.length||1);
         return`<div class="pb-comp-sched" data-ci="${ci}" style="${ci>-1?"background:var(--surface-3);border-radius:8px;padding:10px;margin-bottom:8px":""}">
           ${ci>-1?`<div style="font-size:11px;font-weight:600;color:#A78BFA;margin-bottom:8px">${esc(proto.compounds[ci]?.name)}</div>`:""}
-          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
-            ${["Daily","Every Other Day","3x/Week","Weekdays","Weekly"].map(sc=>`<button class="pb-sched" data-ci="${ci}" data-s="${sc}" style="padding:4px 10px;border-radius:99px;font-size:10px;background:${s.type===sc?"#A78BFA22":"transparent"};border:1px solid ${s.type===sc?"#A78BFA":"var(--border)"};color:${s.type===sc?"#A78BFA":"var(--t3)"}">${sc}</button>`).join("")}
+          <div class="nx-proto-schedule-label">Repeat pattern</div><div class="nx-proto-patterns">
+            ${["Daily","Every Other Day","3x/Week","Weekdays","Weekly"].map(sc=>`<button class="pb-sched" data-ci="${ci}" data-s="${sc}" style="min-height:44px;padding:8px 12px;border-radius:99px;font-size:12px;background:${s.type===sc?"#A78BFA22":"transparent"};border:1px solid ${s.type===sc?"#A78BFA":"var(--border)"};color:${s.type===sc?"#A78BFA":"var(--t3)"}">${sc}</button>`).join("")}
           </div>
-          <div style="display:flex;gap:4px;justify-content:center;margin-bottom:8px">
-            ${DAYS_OF_WEEK.map((d,i)=>`<button class="pb-day" data-ci="${ci}" data-i="${i}" style="width:32px;height:32px;border-radius:50%;font-size:10px;font-weight:600;background:${(s.days||[]).includes(i)?"#A78BFA":"var(--surface-2)"};color:${(s.days||[]).includes(i)?"#fff":"var(--t3)"};border:1px solid ${(s.days||[]).includes(i)?"#A78BFA":"var(--border)"}">${d}</button>`).join("")}
+          <div class="nx-proto-schedule-label">Days of the week</div><div class="nx-proto-days">
+            ${DAYS_OF_WEEK.map((d,i)=>`<button class="pb-day" data-ci="${ci}" data-i="${i}" style="width:44px;height:44px;border-radius:50%;font-size:12px;font-weight:600;background:${(s.days||[]).includes(i)?"#A78BFA":"var(--surface-2)"};color:${(s.days||[]).includes(i)?"#fff":"var(--t3)"};border:1px solid ${(s.days||[]).includes(i)?"#A78BFA":"var(--border)"}">${d}</button>`).join("")}
           </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-            <span style="font-size:11px;color:var(--t3);flex:1">Doses per day</span>
-            <button class="pb-dpdec" data-ci="${ci}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:16px">−</button>
+          <div class="nx-proto-dose-count">
+            <span class="nx-proto-dose-count-label">Doses per day</span>
+            <button class="pb-dpdec" data-ci="${ci}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:18px">−</button>
             <span style="font-size:14px;font-weight:700;min-width:20px;text-align:center">${s.dosesPerDay}</span>
             <button class="pb-dpinc" data-ci="${ci}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:16px">+</button>
           </div>
-          ${Array.from({length:s.dosesPerDay},(_,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--t4)">${s.dosesPerDay>1?"Dose "+(i+1):"Time"}</span><input type="time" class="pb-time inp" data-ci="${ci}" data-i="${i}" value="${s.times[i]||"08:00"}" style="height:32px;padding:0 8px;width:110px"></div>`).join("")}
-          <div style="font-size:10px;color:var(--t5);margin-top:4px">→ ${dpw} dose${dpw!==1?"s":""}/week</div>
+          ${Array.from({length:s.dosesPerDay},(_,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--t4)">${s.dosesPerDay>1?"Dose "+(i+1):"Time"}</span><input type="time" class="pb-time inp" data-ci="${ci}" data-i="${i}" value="${s.times[i]||"08:00"}" style="min-height:44px;padding:0 10px;width:132px;max-width:58%"></div>`).join("")}
+          <div class="nx-proto-frequency-note">${dpw} dose${dpw!==1?"s":""} per week</div>
         </div>`;
       };
 
