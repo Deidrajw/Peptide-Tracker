@@ -3067,3 +3067,14 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx-reaction-actions #nx-reaction-cancel{background:var(--surface-2);color:var(--t2);border:1px solid var(--border)}
 .nx-reaction-actions #nx-reaction-save{color:#20162D;background:#C6A6F2}
 @media(max-width:360px){.nx-reaction-actions{flex-direction:column-reverse}}
+
+
+/* iPhone Safari Log Dose regression: persistent title/mode, single body scrollport.
+   The header is a sibling of the scrollport, not part of its scrolling content. */
+.modal.nx2-dose-modal .nx-dose-fixed-header{flex:0 0 auto;min-width:0;padding:16px 20px 0;background:var(--modal-bg);border-bottom:1px solid var(--border-sub)}
+.modal.nx2-dose-modal .nx-dose-fixed-header .nx-dose-head{margin-bottom:10px}
+.modal.nx2-dose-modal .nx-dose-fixed-header .nx-dose-mode-switch{margin:8px 0 12px}
+.modal.nx2-dose-modal .nx-dose-fixed-header .nx-dose-close{min-width:44px;min-height:44px}
+.modal.nx2-dose-modal .nx-dose-scroll{scroll-padding-top:12px}
+@media(max-width:380px){.modal.nx2-dose-modal .nx-dose-fixed-header{padding:14px 14px 0}}
+@media(max-height:680px){.modal.nx2-dose-modal .nx-dose-fixed-header{padding-top:9px}.modal.nx2-dose-modal .nx-dose-fixed-header .nx-dose-head{margin-bottom:6px}.modal.nx2-dose-modal .nx-dose-fixed-header .nx-dose-mode-switch{margin:6px 0 8px}}
