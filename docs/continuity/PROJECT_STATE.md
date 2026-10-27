@@ -1401,3 +1401,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Prior latest currency/footer application full-browser QA 40441896108 **SUCCESS** and mobile QA 40441896055 **SUCCESS**. Its artifact 12707565298 was downloaded: outer and LIVE 21-file ZIP CRC PASS, manifest source `c3c3608f513e287ce0b9f6a052037877d6b7e22d`. It predates current title CSS so is diagnostic, **not latest-head exact-source parity**.
 - New CSS-head full browser 40442588345 **PENDING** at last check; mobile 40442588421 **SUCCESS**. Native iPhone keyboard/safe-area still NOT TESTED. Mandatory-fields discovery and app-wide no-nested-scroll audit remain distinct unfinished priorities. PR #123 stays DRAFT, no merge/deploy.
 - **ONE NEXT ACTION:** confirm full CI for typography commit and inspect exact-source LIVE/DEMO screenshot artifacts at 320/390 in dark/light; then obtain user real-iPhone keyboard/safe-area acceptance before any merge.
+
+
+## 2026-10-26 — Typography CI and exact-source artifact verified
+- Screenshot-reported Add kit vs Add blend kit title mismatch addressed by scoped shared typography CSS commit `2852088a5f83e8312b6a6767dc2efdac0f62d1c7`. The standard introduction remains in place.
+- **PASS:** full-browser workflow 40442588345 and mobile workflow 40442588421. Downloaded workflow artifact 12707236994; manifest identifies source commit `66908fa61bb4f1b5ea28e0c072db7f55db68b9bc`. Outer archive CRC PASS, 21-file LIVE ZIP CRC PASS, standalone full-app DEMO byte-identical to offline DEMO ZIP index; kit title parity CSS present. Stash Actions and Stash Cards QA each report 8/8 PASS across 320/390 dark/light. Artifact is exact-source to its manifest commit, not necessarily to later documentation commits.
+- Physical iPhone native keyboard/safe-area acceptance **NOT TESTED**. Mandatory-fields audit and app-wide nested-scrolling audit remain separate unfinished priorities. PR #123 remains draft; no merge/deploy.
+- **ONE NEXT ACTION:** obtain physical iPhone Safari keyboard/safe-area and visual acceptance of current preview, then review draft PR #123 for approval; do not merge or deploy without explicit authorization.
