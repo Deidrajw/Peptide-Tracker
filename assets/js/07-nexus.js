@@ -1755,7 +1755,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
   const isAgedOverdue = doseStatus?.status === "overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS);
   if (doseStatus?.status === "taken_today") {
     const recorded = doses[0];
-    const recordedTime = recorded?.date ? ` · ${esc(fmtT(new Date(recorded.date)))}` : "";
+    const recordedTime = recorded?.date ? ` · ${esc(new Date(recorded.date).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}))}` : "";
     return `<div class="nx-today-completion-actions">
       <div class="nx-today-completion-status" role="status"><span class="nx-today-completion-icon" aria-hidden="true">✓</span><span><strong>Dose completed</strong><small>Scheduled entry recorded${recordedTime}</small></span></div>
       <button class="moremenu nx-today-completion-more" data-name="${esc(name)}" aria-expanded="false" aria-label="More actions for ${esc(name)}">More actions</button>
