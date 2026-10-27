@@ -33,6 +33,31 @@ try{
           state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
           document.documentElement.dataset.theme=t;
         },theme);
+        // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
+        // Preserve historical records; catalogue addition does not itself save a taken log.
+        await page.evaluate(()=>{
+          state.settings.supplements=[];
+          state.supplementLogs=[];
+          supplementModal('2032-11-09');
+        });
+        assert(await page.locator('.modal #nx2-new-supp').count()===1,'Empty-list supplement logger still forces Profile');
+        await page.locator('.modal #nx2-new-supp').fill('Fictional Vitamin B');
+        await page.locator('.modal #nx2-add-supp').click();
+        const beforeConfirm=await page.evaluate(()=>({
+          catalog:state.settings.supplements.includes('Fictional Vitamin B'),
+          logged:(state.supplementLogs||[]).some(l=>dayKey(l.date)==='2032-11-09')
+        }));
+        assert(beforeConfirm.catalog&&!beforeConfirm.logged,'Inline supplement entry must not auto-log a taken supplement');
+        await page.locator('.modal #suppsave').click();
+        const afterConfirm=await page.evaluate(()=>({
+          logged:(state.supplementLogs||[]).find(l=>dayKey(l.date)==='2032-11-09')?.taken||[]
+        }));
+        assert(afterConfirm.logged.includes('Fictional Vitamin B'),'Inline supplement selection did not persist on explicit Save');
+        await page.evaluate(()=>{
+          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!=='2032-11-09');
+          render();
+        });
         const before=await snapshot(page,testDay);
         assert(!before.entries.length,'Fixture already has chosen test date');
         await page.evaluate(date=>dailyModal(null,date),testDay);
