@@ -924,3 +924,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Visual defects found in CI screenshots despite passing automated workflows
 - FAIL (visual review, older artifact 12698781391): ordinary Kit Review shows labels/values concatenated; step2 footer Continue appears as detached text; blend title not persistent across stages, Blend Step 2 shows wasted helper; first stage screenshot obscured during entrance animation. Corrective commits 83d374c3, be382d87, 4d34e265 and screen settling changes. Assert colored >=44px button and hidden duplicate native selects in commits 5129b2d3/5f210026. Newest-head screenshots and physical iPhone acceptance PENDING; do not mark PASS on older runs.
+
+## 2026-10-26 — Guided Stash screenshot-led polish (DRAFT)
+- Inspected actual source-generated 390px dark Kit/Blend screenshots from artifact `12698781391` (run `40422827201`, SUCCESS): regular Review values collide with labels; Step 2 Continue renders as a text link; Blend footer also has detached Continue styling. New CSS commit `4a1e090b` makes Continue a 48px full-width lavender button, Back a 48px secondary control, Review a two-column wrapped label/value grid, and normalizes Blend sticky footer. No data model or save-handler change.
+- This is a corrective UI candidate, NOT approved on physical iPhone. Re-run newest-head CI, inspect 320/390 both themes and actual step screenshots. No merge/deploy without user approval.
+- **ONE NEXT ACTION:** Inspect newest-head browser screenshot artifact for action visibility, scroll, keyboard and review readability; confirm iPhone user acceptance before merge.
