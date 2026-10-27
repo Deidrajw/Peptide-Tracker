@@ -1672,3 +1672,10 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - User requests timely post-dose prompt on future iOS/Android apps, e.g. “Would you like to record a reaction?” after a configurable delay. This improves discoverability but is not a substitute for one-tap entry on saved doses. Details in DECISIONS.md; suggested optional timing, notification privacy, snooze/dismiss, quiet hours and linking by dose ID are design proposals, not delivered features.
 - No notification code, platform registration, permission prompts, localStorage migration, background services or production deployment added. Existing draft PR #123 remains DRAFT/UNMERGED.
 - ONE NEXT ACTION: after resolving current web draft View Details physical acceptance, design/approve native timed reminder defaults and show iPhone/Android interaction; then implement on a separate scoped branch with permission, cancellation, offline/restart and notification-deep-link tests.
+
+
+## 2026-10-27 — One-tap Today Record reaction implemented, QA pending
+- User approved completing discoverability before native notifications. Completed-dose action area now includes visible 48px Record reaction button targeting saved dose ID, alongside More actions, with 320px wrap styling. App commits 55232dd9 (card), e8d5e762 (click binding), 2a1038e0 (CSS); regression tests 6142ff10 and 305481bc assert proper labelled button and saved ID in full compound card in LIVE/DEMO browser matrix.
+- No dose edit, save, vial deduction, stored history, permissions or notification code changed. Existing Calendar, History and retrospective Record reaction access retained. Post-save invitation is the visible action on completed Today card, not a blocking new modal. Native reminders remain a separate future scoped feature.
+- Status CODED on PR #123 draft; new-head full QA, artifact parity, Cloudflare preview and physical iPhone acceptance PENDING. Production unchanged.
+- ONE NEXT ACTION: verify CI at test/app commit 305481bc, validate immutable Cloudflare preview and physical iPhone Today completed-card reaction button, then fix any issues before merging/deploying.
