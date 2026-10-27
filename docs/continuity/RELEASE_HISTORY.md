@@ -715,3 +715,9 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Protocol/Plans compound picker cross-screen QA verified (DRAFT, NOT RELEASED)
 - Tested application source 471fdeed; GitHub Actions mobile 40432425967 and browser 40432426016 SUCCESS. Artifact 12703425376 manifest merge 15acd041 (parents main c1c95e1d and tested source 471fdeed), independent ZIP integrity PASS and extracted standalone full-app DEMO and 21-file LIVE ZIP. Independent Chromium 320/390 dark/light Protocol library browse/filter/selection passed 4/4. Production main unmodified; PR #123 draft/unmerged. No code fixes necessary for CI; physical iPhone keyboard acceptance, VoiceOver and global modal audit still incomplete.
+
+
+### 2026-10-26 — Kit creation currency and footer parity (DRAFT / UNRELEASED)
+- User screenshot feedback prompted unified Standard/Blend footer insets and expanded cost-currency selector for both kit workflows. Standard previously supported CAD/USD/GBP/EUR/AUD while Blend hardcoded CAD and lacked a selector.
+- Draft branch code commits aaea7807 (blend input), 27675f3 (standard currency list), 7d1fad2 (footer inset), 4e7c685 (CAD display preservation). Validation updated in 7d19ea0 and 8307987 to cover non-CAD Blend save and selector choices. User requested a separate future mandatory-fields audit; no required-field migrations or new constraints implemented.
+- Last previously completed full browser workflow 40441021070 SUCCESS and mobile 40441021069 SUCCESS **predate** these edits; latest workflow 40441896108 and mobile 40441896055 require status verification. Source-matched updated LIVE ZIP/isolated DEMO, native iPhone keyboard and visual reacceptance not yet confirmed. PR #123 stays draft, no merge or deployment. No existing data migration, kit math change or production write.
