@@ -1055,3 +1055,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS automated:** full-browser 40448545857, mobile 40448545887, 320/390 light/dark LIVE and isolated DEMO wizard suites. Equal-width/label alignment Cost+Currency assertion passed after scoped `min-height:34px` CSS correction. Archive 12708814792: outer/live/offline ZIP CRC PASS and full standalone DEMO matches offline ZIP index. Compared three app-source Git blob SHAs with current branch; equal.
 - **OPEN visual observation:** Blend sticky actions obscure top of Test Results card in unscrolled screenshot; browser scrolling test allows card to clear footer. Do not mark physical iPhone visual acceptance PASS without user confirmation.
 - **NOT TESTED:** physical iPhone keyboard, focus, native Safari PDF and VoiceOver. App-wide nested scrolling and mandatory-fields audit remain separate.
+
+
+## 2026-10-27 — Supplies empty-state and CTA regression
+- **CODED, CI PENDING**: Stash > Supplies empty view contains only one `#add-equipment` CTA inside accessible card, min-height 48px, consistent lavender button. Source handler continues to call `equipmentModal(null)`. Test across 320/390 dark/light and LIVE/isolated DEMO added in `validate-stash-cards.mjs` commit c6f1085.
+- **NOT TESTED**: native iPhone screen/VoiceOver, save/edit/restock/usage-history in populated Supplies; no changes to those workflows. Broader app-wide nested scroll and required field audits remain separate.
