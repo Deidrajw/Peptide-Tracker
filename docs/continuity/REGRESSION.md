@@ -960,3 +960,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Compound browser exact-source QA evidence
 - PASS mobile CI 40430545528 and full build/parity 40430545381 on app SHA c7b06b2a; full-source artifact 12702105755 structurally complete and valid, DEMO ephemeral storage. Browser tests of regular Stash Kit and Blend Kit View all -> filter -> select at 320/390 LIVE/DEMO light/dark PASS (CI). Independently repeated 4 Blend DEMO 320/390 dark/light configurations via Chromium set_content: 45 fixture choices in full-screen primary list, BPC-157 search yields one, selection updates backing `.comp-select`, no form teardown. Four 320/390 screenshots rendered. **NOT TESTED:** actual iPhone keyboard/safe areas, VoiceOver, and other selector adaptations.
+
+## 2026-10-26 — Protocol/Plans browse-all expansion awaiting CI
+- New tests in `tools/validate-protocol-design.mjs` verify Protocol Stack full library >5, GHK-Cu filter/choose and route/remove recovery; reusable Plans compound multi-select Browse All BPC-157 selection persists as selected pill. 320/390, dark/light, LIVE/DEMO environment checks are queued on newest application test head. Original Stash browser tests retained. Physical iPhone and VoiceOver NOT TESTED; protected dose/vial accounting unchanged by UI code.
