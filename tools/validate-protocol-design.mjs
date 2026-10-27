@@ -106,6 +106,32 @@ try{
     check((await page.locator("#nx-g-next").innerText()).trim()==="Continue","Goal step action differs from Continue");
     await page.evaluate(()=>closeModal());
 
+
+    // Exercise the same schedule synchronisation called by saving/activating
+    // a real Protocol; old tests assigned compound scheduling fields directly.
+    const synced=await page.evaluate(()=>{
+      const original=JSON.parse(JSON.stringify(state)),oldTab=tab;
+      try{
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const today=localDate(),weekday=new Date(today+"T12:00:00").getDay();
+        const name=Object.keys(PEPTIDES)[0];
+        const proto={
+          id:"qa-synced-protocol",name:"Fictional synced first dose",
+          status:"active",startDate:today,compounds:[{name}],
+          schedule:{type:"Weekly",days:[weekday],dosesPerDay:1,times:["08:00"]}
+        };
+        state.protocols=[proto];syncProtocolToCompoundData(proto);
+        tab="home";renderBody();
+        const active=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        proto.status="in_progress";renderBody();
+        const inProgress=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        const doseCount=(state.peptides[name]?.doses||[]).length;
+        return {active,inProgress,doseCount};
+      }finally{state=original;tab=oldTab;renderBody();}
+    });
+    check(/0\s*of\s*1/.test(synced.active)&&/0\s*of\s*1/.test(synced.inProgress)&&synced.doseCount===0,
+      "Synced activation/first dose not reflected in Today without inventory writes: "+JSON.stringify(synced));
+
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
     check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
