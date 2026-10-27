@@ -78,7 +78,7 @@ try {
       try{return peptideCardHTML('Retatrutide',data);}
       finally{data.doses=[];}
     });
-    ensure(fullCard.includes('Dose completed') && fullCard.includes('More actions'),
+    ensure(fullCard.includes('Dose completed') && fullCard.includes('nx-today-record-reaction') && fullCard.includes('data-id="91827"') && fullCard.includes('More actions'),
       'Full compound card / View Details rendered without completed-dose controls');
     verified.push('actual compound card completed-dose details render without blank screen');
 
