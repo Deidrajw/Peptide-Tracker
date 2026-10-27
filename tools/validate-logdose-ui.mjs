@@ -58,6 +58,18 @@ try {
     page.on('dialog',async d=>d.accept());
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await seed(page,theme);let verified=[];
+    // Regression: compound View details/taken-today action must not throw ReferenceError fmtT.
+    const completedAction=await page.evaluate(()=>{
+      const entry={id:91827,date:'2026-10-27T15:03',dose:'2.5',site:'Abdomen'};
+      return renderCompoundActionArea('Retatrutide',state.peptides.Retatrutide,
+        cfg('Retatrutide'),[entry],{status:'taken_today'});
+    });
+    ensure(completedAction.includes('Dose completed') &&
+      completedAction.includes('3:03') &&
+      completedAction.includes('More actions'),
+      'Compound View details / completed-dose UI did not render a formatted local time');
+    verified.push('compound completed-dose details render without undefined fmtT');
+
     // A: Actual user confirmation, same recorded ID preserved after edit,
     // reapply edited amount to the original open vial only.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
