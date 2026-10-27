@@ -950,3 +950,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Full-screen Blend follow-up QA
 - Commit dd26fdc9 adds Playwright assertions that mobile Blend editor occupies the viewport height within 25 CSS pixels and does not overflow horizontally at 320/390 in LIVE/isolated DEMO dark/light. Alongside prior popup no-row-expansion, max-five suggestion and Review checks, latest CI result still pending. Physical iPhone keyboard, dropdown clipping, VoiceOver and full app-wide nested-scroll audit NOT TESTED.
+
+## 2026-10-26 — Blend floating dropdown / Review / full-screen verified automated evidence
+- PASS full build + browser 40428711527 at app/test dd26fdc9; 320 and 390 dark/light LIVE/isolated DEMO, popup absolute positioning (no row expansion), ≤5 unscrollable suggestions, full-height mobile editor viewport geometry, transparent footer, Review hero / 15 mg and 2 components, BAC/cost and original Save, unchanged inventory records pre-save. Independent screenshot inspection PASS visual for all four search and Review variants. Standalone demo storage overridden in-memory and network fetch disabled; 21-file LIVE ZIP valid.
+- NOT TESTED physical iPhone keyboard/VoiceOver; **NOT AUDITED** no-nested-scroll principle on other app modals. Mobile run 40428711439 initially pending. The original user-reported iPhone defects remain recorded as PRE-FIX FAIL, not current observed Pass.
