@@ -1707,3 +1707,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 ## 2026-10-27 — Reaction event management draft
 - Code e5b9b14f adds optional post-dose invitation and event-level reaction edit/delete. Tests 6a34b432 cover multiple events and unchanged balances. Mobile CI 40590709765 SUCCESS; full build/browser 40590709842 PENDING. iPhone and VoiceOver NOT TESTED; production unchanged, PR #123 draft.
 - ONE NEXT ACTION: clear current full browser QA, address any failures, verify exact-source packages and obtain iPhone acceptance.
+
+
+## 2026-10-27 — Reaction management automated QA PASS
+- App/test head 6a34b432: full browser/parity run 40590709842 SUCCESS and mobile run 40590709765 SUCCESS. Browser log: 8 LIVE/DEMO × 320px/390px × light/dark, Log Dose 112 flows PASS, vial-source 48 assertions PASS and calculation diagnostic 80/80 (not clinical validation). Tests cover optional post-save reaction invitation and per-event edit/confirmed delete preserving original dose ID, other reactions and vial balances using fictional fixtures. Release artifact 12773443866 includes complete LIVE ZIP and standalone isolated full-app DEMO.
+- Cloudflare bot reports successful draft preview at https://23b89947.nexuspeplog.pages.dev for docs head 7a59039. Served-file byte-hash parity and real iPhone Safari/keyboard/VoiceOver NOT VERIFIED. PR #123 still draft and unmerged; production unchanged.
+- ONE NEXT ACTION: physical iPhone acceptance of newly saved-dose prompt, existing reaction Edit/Delete confirmation, keyboard and dismiss paths; correct any device findings before requesting release approval.
