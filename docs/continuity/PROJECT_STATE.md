@@ -1666,3 +1666,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - FIX CODED e5bb5d93: inline locale time formatting at the call site, preserving appearance and unchanged dose data; regression test 7097d07c in tools/validate-logdose-ui.mjs runs completed-dose action render in LIVE/DEMO 320/390 both themes and verifies time/control HTML. No storage, allocations or calculation changes.
 - Current-head browser/mobile QA and Cloudflare preview deployment PENDING; physical iPhone View details retest NOT TESTED. PR #123 stays DRAFT/UNMERGED; production unchanged.
 - **ONE NEXT ACTION:** inspect CI for commit 7097d07c, correct any test failure, confirm immutable preview deployment, and physically retest compound View details when today includes a recorded dose.
+
+
+## 2026-10-27 — Native timed reaction reminder requirement recorded
+- User requests timely post-dose prompt on future iOS/Android apps, e.g. “Would you like to record a reaction?” after a configurable delay. This improves discoverability but is not a substitute for one-tap entry on saved doses. Details in DECISIONS.md; suggested optional timing, notification privacy, snooze/dismiss, quiet hours and linking by dose ID are design proposals, not delivered features.
+- No notification code, platform registration, permission prompts, localStorage migration, background services or production deployment added. Existing draft PR #123 remains DRAFT/UNMERGED.
+- ONE NEXT ACTION: after resolving current web draft View Details physical acceptance, design/approve native timed reminder defaults and show iPhone/Android interaction; then implement on a separate scoped branch with permission, cancellation, offline/restart and notification-deep-link tests.
