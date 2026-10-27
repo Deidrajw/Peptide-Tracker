@@ -937,3 +937,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Blend component one-row layout regression
 - New automated bounding checks in `tools/validate-stash-actions.mjs` at 320/390 dark/light LIVE and isolated DEMO require combobox, mg and remove aligned on the same row with no overlap/viewport overflow. First run pending for commit `269f468d`. Physical iPhone Safari and VoiceOver NOT TESTED; existing blend history math remains protected.
+
+## 2026-10-26/27 — One-row Blend screenshot acceptance matrix
+- PASS automated app/test commit `269f468d`: mobile workflow 40426868694, full build/parity 40426868293, Stash Actions 8/8 LIVE+isolated DEMO configurations at 320/390 dark/light, grid same-row no-overlap assertion. PASS manually inspected four DEMO screenshots for row alignment and no overlap. FINDING: placeholder clipped in four images, materially at 320; fix `3bab1d9a` changes text to `Search…`, newest-head QA pending at 40427570891/40427570879. Physical iPhone Safari, keyboard and VoiceOver NOT TESTED. No release approval.
