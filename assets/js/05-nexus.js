@@ -608,6 +608,42 @@ function debounce(fn, wait) {
   return (...args) => { clearTimeout(t); t = setTimeout(()=>fn(...args), wait); };
 }
 
+// Post-dose reactions are recorded independently of administration and inventory.
+// Existing dose IDs remain authoritative; legacy symptoms/notes are never migrated.
+function nexusDoseReactionModal(compoundName, doseId) {
+  const getDose=()=>allPeptides()[compoundName]?.doses?.find(d=>String(d.id)===String(doseId));
+  const dose=getDose();
+  if(!dose){showErrorBanner("That saved dose could not be found. Nothing changed.");return;}
+  const history=Array.isArray(dose.reactions)?dose.reactions:[];
+  const m=openModal(`<div class="nx-reaction-editor">
+    <div class="nx-reaction-heading"><div><div class="nx-dose-kicker">AFTER THE DOSE</div><h2>Record reaction</h2><p>Optional · ${esc(compoundName)} · ${esc(String(dose.date||""))}</p></div><button type="button" id="x" aria-label="Close reaction form">✕</button></div>
+    <p class="nx-reaction-explain">Record what you noticed and when it happened. This is not a change to the administered dose or its inventory.</p>
+    ${history.length?`<div class="nx-reaction-history"><strong>Previously recorded (${history.length})</strong>${history.map(r=>`<p>${esc(r.label||"Reaction")} · ${esc(r.observedAt||"Time not specified")}</p>`).join("")}</div>`:""}
+    <label class="field-label" for="nx-reaction-label">REACTION</label>
+    <select class="inp" id="nx-reaction-label"><option value="">Select a reaction</option><option>Flushing / warmth</option><option>Head rush</option><option>Injection-site redness</option><option>Injection-site discomfort</option><option>Headache</option><option>Nausea</option><option>Other</option></select>
+    <label class="field-label" for="nx-reaction-time">WHEN DID YOU NOTICE IT?</label>
+    <input class="inp" type="datetime-local" id="nx-reaction-time" value="${esc(localDatetime())}">
+    <label class="field-label" for="nx-reaction-intensity">INTENSITY</label>
+    <select class="inp" id="nx-reaction-intensity"><option value="">Not specified</option><option value="1">Mild</option><option value="2">Moderate</option><option value="3">Severe</option></select>
+    <label class="field-label" for="nx-reaction-notes">NOTES (OPTIONAL)</label>
+    <textarea class="inp" id="nx-reaction-notes" rows="3" placeholder="What did you experience?"></textarea>
+    <p class="nx-reaction-explain">A reaction recorded after a dose does not establish what caused it.</p>
+    <div class="nx-reaction-actions"><button id="nx-reaction-cancel" type="button">Not now</button><button id="nx-reaction-save" type="button" class="btn-primary">Save reaction</button></div>
+  </div>`,"#A78BFA");
+  m.querySelector("#x").onclick=closeModal;
+  m.querySelector("#nx-reaction-cancel").onclick=closeModal;
+  m.querySelector("#nx-reaction-save").onclick=()=>{
+    const label=m.querySelector("#nx-reaction-label").value;
+    const observedAt=m.querySelector("#nx-reaction-time").value;
+    if(!label||!observedAt||!Number.isFinite(new Date(observedAt).getTime())){showErrorBanner("Choose a reaction and the time you noticed it.");return;}
+    const target=getDose();
+    if(!target){showErrorBanner("The original dose no longer exists. Nothing was saved.");return;}
+    if(!Array.isArray(target.reactions))target.reactions=[];
+    target.reactions.push({id:uid(),label,observedAt,recordedAt:new Date().toISOString(),intensity:Number(m.querySelector("#nx-reaction-intensity").value)||null,notes:m.querySelector("#nx-reaction-notes").value});
+    saveState();closeModal();render();
+  };
+}
+
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
@@ -666,7 +702,7 @@ function doseModal(name, existing, occTime) {
     <div class="nx-dose-head">
       <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
       <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
-      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div></div>
+      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div>${isEdit?`<button type="button" id="nx-record-reaction" class="nx-reaction-link">Record reaction ${(f.reactions||[]).length?`(${f.reactions.length})`:""}</button>`:""}</div></div>
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
@@ -720,8 +756,8 @@ function doseModal(name, existing, occTime) {
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     </section>
-    <details class="nx-dose-section nx-dose-optional" aria-label="Observations"${isEdit ? " open" : ""}>
-      <summary><span class="nx2-observation-title">Observations</span><span class="nx-dose-observations-hint">Optional · Add symptoms or a note</span></summary>
+    <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
+      <summary><span class="nx2-observation-title">Earlier dose observations</span><span class="nx-dose-observations-hint">Legacy entries · Editable</span></summary>
       <div class="nx-dose-optional-body">
       <p class="nx-dose-section-desc">This is a separate, optional record of how you felt. It is not part of the vial allocation or dose calculation.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
@@ -841,6 +877,8 @@ function doseModal(name, existing, occTime) {
   doseNext.onclick=()=>{const message=validateDoseStep();if(message){error.textContent=message;error.hidden=false;return;}doseUiStep=Math.min(doseUiMode==="guided"?2:1,doseUiStep+1);paintDoseUi();doseScroll.scrollTop=0;};
   paintDoseUi();
   m.querySelector("#x").onclick = closeModal;
+  const reactionLink=m.querySelector("#nx-record-reaction");
+  if(reactionLink)reactionLink.onclick=()=>nexusDoseReactionModal(name,f.id);
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
   m.querySelectorAll(".src-opt").forEach(b=>b.onclick=()=>{
     selectedSource = b.dataset.src==="fresh" ? "fresh" : +b.dataset.src;
@@ -1235,7 +1273,7 @@ function doseModal(name, existing, occTime) {
     }
 
     const spraysEl = m.querySelector("#sprays");
-    const dose = { id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
