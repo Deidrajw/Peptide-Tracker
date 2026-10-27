@@ -718,3 +718,8 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 - Apply DS2 lavender/neutral hierarchy to Profile's Add, align Stash opened-vial status next to its vial title and constrain Prepare Dose source amount controls without changing allocation/reconstitution math or logging behaviour. Design remains draft pending browser and physical iPhone review.
 
 - Supplements inline creation must also work in Daily Check-In, even when catalogue empty. New catalogue name is selected in unsaved Check-In draft; existing Check-In Save remains the only path recording day-specific supplement use. Historical logs preserved.
+
+
+## 2026-10-27 — Supplement search-first ordering and readable dose sources
+- In Check-In and Supplements logger, searching/browsing and selecting is primary; new supplement creation is fallback BELOW Browse/results and Selected today, not interposed between search and results. Retain search-as-you-type, multi-select, empty catalogue creation and date-specific history.
+- Log Dose editable source rows should never display a long numeric Kit/Vial ID as their primary label. Use compound + Vial sequence and open/finished status; preserve authoritative internal IDs in an optional collapsed disclosure labelled `Source identifiers` for support/traceability. Do not modify allocation IDs, math, source selection, dose confirmation or deductions. This addresses user-submitted physical Safari screenshot, pending acceptance.
