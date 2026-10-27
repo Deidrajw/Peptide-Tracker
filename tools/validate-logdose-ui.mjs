@@ -118,6 +118,11 @@ try {
     ensure(await page.locator('.nx-today-coming-up').count()===1 &&
       await page.locator('#nx-open-calendar').count()===1,
       'Coming up preview or Calendar action missing from Today');
+    // Browser fixture starts with onboarding modal mounted before fictional state
+    // replaces real initialization; dismiss only that fixture overlay before tapping.
+    await page.evaluate(()=>{document.querySelectorAll('.modal-bg').forEach(bg=>{
+      if(bg.querySelector('#ob-next'))bg.remove();
+    });});
     await page.locator('#nx-open-calendar').click();
     ensure(await page.evaluate(()=>tab==='calendar'),'Coming up Calendar action did not navigate to Calendar');
     await page.evaluate(()=>{tab='home';state._homeView='today';render();});
