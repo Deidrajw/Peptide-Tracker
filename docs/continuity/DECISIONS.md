@@ -628,3 +628,12 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 - Use **Add to Stash** as the final primary CTA for both creation flows (do not use Save Kit for only one). Keep Back/Continue button hierarchy, 16px minimum horizontal sheet/footer inset on both sides and consistent touch targets. All wizard primary buttons should share purposeful styling; avoid inconsistent glowing/3D shadow only on the final CTA. Prefer clean lavender primary controls with legible dark text, pressed/focus/disabled states.
 - User's real iPhone screenshots reveal different header spacing, step placement, review density, footer background, border/gradient, and nested-scroll indications across standard versus blend. Apply shared components/tokens rather than isolated overrides. Correct sheet-specific scrolling and keyboard/safe-area conflicts in this scoped UX parity task; **broader app-wide no-nested-scrolling audit remains separate unfinished work**.
 - **Status:** design APPROVED; implementation and post-change device QA not verified. Protect all saved records, storage key, single and blended kit accounting; no destructive migration, merge or deploy without explicit authorization.
+
+
+## 2026-10-26 — Approved preference and idea classification protocol
+**Status: APPROVED documentation workflow.** Classify all newly captured Nexus feedback under three clearly distinct categories:
+1. **Approved preferences / principles:** User explicitly approves a reusable design or interaction rule. Record date, scope, rationale, protected behaviors, and where else it should apply. Approval of a design is **not** authorization to merge or deploy.
+2. **Ideas to explore:** Brainstorms, tentative likes/dislikes, potential enhancements, alternatives or unanswered questions. Record as proposed, with relevant screens and a next evaluation criterion. Do **not** present as approved, coded or scheduled.
+3. **Implemented decisions:** Link exact code commit/PR, tests, source and deployment state. Do **not** equate coded with tested, merged, deployed or physical-iPhone accepted. Track those gates separately.
+
+**Practice:** Capture the underlying rule behind specific screenshots and comments, not merely the one-off correction. Keep user wording where useful, explain trade-offs and superseded choices, and never silently promote proposals to approval or claims of implementation. Cross-reference PROJECT_STATE for active priority and RELEASE_HISTORY/REGRESSION for verifiable evidence. Existing historical entries are not presumed exhaustively recategorized.
