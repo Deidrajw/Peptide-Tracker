@@ -595,3 +595,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26/27 — Guided Stash design acceptance candidate, not production approval
 - User's original screenshot complaints are addressed in draft source: consistent Goal-like three-step bar, no duplicated step counter, permanent Blend title and close, visible 48px purple Continue and final Review-only Save, native backing selectors hidden, full-width single editable compound combobox per blend component, unselected open-vial default. Verified browser screenshots at 390 dark/light and 320 dark Blend (artifact 12699630393). This is automated preview acceptance only; **user's physical iPhone signoff pending**. Existing inventory/save math remains canonical; no deployment permitted without explicit approval.
+
+## 2026-10-26 — Approved Blend Kit one-row compound composition
+- Each blend composition row displays editable searchable compound combobox, mg per vial and 44px remove on the **same horizontal line**, including narrow iPhone widths. Keep combobox sufficiently flexible to type and view options, mg compact, and custom Other field below only when selected. Layout-only; no changes to component math, saved records or ledger.
