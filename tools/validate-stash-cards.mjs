@@ -104,6 +104,12 @@ try{
 
     ensure(await page.locator('#scur option').count()>=15,'Regular Kit currency selector has incomplete options');
     await page.locator('#scur').selectOption('SGD');
+    ensure(await page.locator('#scost').evaluate(el=>{
+      const other=document.querySelector('#scur');
+      const a=el.getBoundingClientRect(),b=other.getBoundingClientRect();
+      return Math.abs(a.width-b.width)<=2&&Math.abs(a.top-b.top)<=2&&a.width>=90;
+    }),'Standard cost/currency fields are not equal-width peers');
+    ensure(await page.locator('#snotes').evaluate(el=>el.tagName==='TEXTAREA'),'Standard kit notes must be multiline');
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-step2-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#ssave').isHidden(),'Kit Save exposed on Step 2');
     await page.locator('#nx-kit-next').click();
