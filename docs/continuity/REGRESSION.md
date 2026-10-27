@@ -1143,3 +1143,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Added multi-kit assertion `ad5722ab`: two same-compound kits must render distinguishable `Kit 1` and `Kit 2` labels, with no raw storage IDs in primary editable rows; exact ID still accessible in optional source identifiers. Browser run PENDING, physical Safari not confirmed.
 
 - **FAIL** `40548324241`: test incorrectly required detailed allocation rows for a single-vial dose, though those rows appear only when additional allocation is needed. Correction `1d0d95a3` moves ID-disclosure assertion into multi-vial case. Preserve failed-run evidence and await corrected CI before PASS.
+
+
+## 2026-10-27 — Browser correction and preview acceptance status
+- Automated full build/browser `40549029521` **PASS** and mobile `40549029721` **PASS** at app head `e743c2fd`. Fixtures include LIVE/isolated full DEMO at 320px/390px in dark/light, supplement order search → Browse/results → Selected → Add new, first empty-catalogue creation and no auto-log, source-row multi-vial readable labels/kit ordinals, exact IDs in disclosure, single/multi-vial deduction and record identity preservation.
+- Previous browser `40548324241` **FAIL**: source details wrongly expected on single-vial default; correction `1d0d95a3` targets genuinely expanded multi-vial details. Preserve failure, don't misclassify as app bug.
+- Cloudflare bot reports preview commit `e743c2f` deployed successfully to `https://fd8194f6.nexuspeplog.pages.dev`; this is not independent browser-content hash parity. Physical iPhone review **NOT TESTED**. CI's primary production parity intentionally failed because production hasn't been updated.
