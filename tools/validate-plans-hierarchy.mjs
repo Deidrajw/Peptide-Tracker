@@ -230,6 +230,29 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#pm-edit').count()===1,'Manage existing editor missing');
  await page.locator('#x').click();
  await page.evaluate(()=>{state._plansSub='goals';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
+
+ // Goal status changes directly from ellipsis, without rewriting linked protocols or check-in history.
+ await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
+ ensure(await page.locator('.nx-goal-quick-status').count()===4,'Goal quick status options missing');
+ ensure(await page.locator('.nx-goal-quick-status').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'Goal quick status target undersized');
+ const beforeGoal=await page.evaluate(()=>({
+   protocol:JSON.stringify(state.protocols||[]),
+   doses:JSON.stringify(Object.values(state.peptides||{}).map(p=>p.doses||[])),
+   checkIns:JSON.stringify(state.dailyLogs||[]),
+   goalId:state.plans.goals[0].id
+ }));
+ await page.locator('.nx-goal-quick-status[data-status="planned"]').click();
+ ensure(await page.evaluate(before=>state.plans.goals[0].status==='planned'&&state.plans.goals[0].id===before.goalId&&
+   JSON.stringify(state.protocols||[])===before.protocol&&
+   JSON.stringify(Object.values(state.peptides||{}).map(p=>p.doses||[]))===before.doses&&
+   JSON.stringify(state.dailyLogs||[])===before.checkIns,beforeGoal),
+   'Quick status changed non-goal records or failed to update goal');
+ ensure(await page.locator('.nx-plan-2-goal').count()===1,'Planned goal disappeared from list');
+ await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
+ ensure(await page.locator('.nx-goal-quick-status[data-status="planned"]').getAttribute('aria-pressed')==='true','Quick status selected state not retained');
+ await page.locator('.nx-goal-quick-status[data-status="active"]').click();
+ ensure(await page.evaluate(()=>state.plans.goals[0].status==='active'),'Goal status could not be restored');
+
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
