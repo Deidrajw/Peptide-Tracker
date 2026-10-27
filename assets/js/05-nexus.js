@@ -721,7 +721,7 @@ function doseModal(name, existing, occTime) {
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Observations"${isEdit ? " open" : ""}>
-      <summary>Observations <span style="font-size:11px;color:var(--t3);font-weight:500;margin-left:auto">Optional</span></summary>
+      <summary>Observations <span class="nx-dose-observations-hint">Optional · Symptoms & notes</span></summary>
       <div class="nx-dose-optional-body">
       <p class="nx-dose-section-desc">Symptoms and notes associated with this entry.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
@@ -754,7 +754,7 @@ function doseModal(name, existing, occTime) {
   doseFooter.insertAdjacentElement("afterbegin",stepNav);
   const review=document.createElement("section");
   review.className="nx-dose-review-stage";
-  review.innerHTML='<h3>Review your entry</h3><div id="nx-dose-review-rows"></div><p>Recording remains subject to the existing source allocation and inventory validation. Check the calculation above before confirming.</p>';
+  review.innerHTML='<h3>Review your entry</h3><div id="nx-dose-review-rows"></div><details id="nx-dose-source-ids" class="nx-dose-source-ids" hidden><summary>Source identifiers <span>For your records</span></summary><div class="nx-dose-source-ids-body"></div></details><p>Recording remains subject to the existing source allocation and inventory validation. Check the calculation above before confirming.</p>';
   doseScroll.appendChild(review);
   let doseUiMode="quick",doseUiStep=0;
   const doseStepCaption=stepNav.querySelector("#nx-dose-step-caption");
@@ -779,9 +779,14 @@ function doseModal(name, existing, occTime) {
     const selectedKit=activeKit();
     const formatNative=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
-    const sourceLabel=selectedSource==="fresh"?(selectedKit?"Kit "+selectedKit.id+" · "+selectedKit.name:"Fresh from vial"):(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit+" · "+prepared.remainingCount+" available":"Prepared dose");
+    const sourceLabel=selectedSource==="fresh"?(selectedKit?selectedKit.name+" · "+(selectedKit.vialMg||"?")+c.unit+" vial":"Fresh from vial"):(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit+" · "+prepared.remainingCount+" available":"Prepared dose");
     const selectedVial=selectedKit ? getActiveVial(selectedKit) : null;
-    const selectedVialText=selectedVial?"Kit "+selectedKit.id+" · Vial "+selectedVial.id:"No selected open vial";
+    const selectedVialText=selectedVial?"Open vial · "+formatNative(getVialRemainingMg(selectedKit,selectedVial))+" remaining":"No selected open vial";
+    // Kit/vial IDs are essential for auditability, but not for choosing whether the
+    // entered dose is correct. Keep them available in an optional disclosure.
+    const sourceIds=[];
+    if(selectedKit)sourceIds.push(["Kit ID",String(selectedKit.id)]);
+    if(selectedVial)sourceIds.push(["Vial ID",String(selectedVial.id)]);
     const total=rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
     const nativeNeeded=doseToMg(Number(doseVal("dose")),c.unit);
     const ledger=rows.length && selectedSource==="fresh" && !isBlend && !isEdit
@@ -789,7 +794,9 @@ function doseModal(name, existing, occTime) {
           const kit=state.supplies.find(k=>k.id===r.kitId);
           const unitCount=kit?mgToUnitsForKit(Number(r.mg)||0,kit):null;
           const actualVial=kit ? (r.vialId ? (kit.vials||[]).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
-          const vialName=kit?"Kit "+kit.id+" · Vial "+(actualVial?.id||"unresolved"):"Unresolved source";
+          const vialName=kit?kit.name+" · "+(kit.vialMg||"?")+c.unit+" vial":"Unresolved source";
+          if(kit)sourceIds.push(["Source "+(i+1)+" kit ID",String(kit.id)]);
+          if(actualVial)sourceIds.push(["Source "+(i+1)+" vial ID",String(actualVial.id)]);
           return row("Source "+(i+1),vialName+" · "+formatNative(Number(r.mg)||0)+(unitCount!=null?" · "+unitCount.toFixed(1)+" syringe units":"")+(r.finished?" · already deducted":""));
         }).join("")+row("Total allocated",formatNative(total))+
         row("Allocation status",Math.abs(total-nativeNeeded)<0.01?"Matches entered dose":"Requires source reconciliation")
@@ -801,6 +808,9 @@ function doseModal(name, existing, occTime) {
       (selectedSource==="fresh"&&!isEdit?row("Selected vial",selectedVialText):"")+
       (ledger||row("Allocation",isEdit?"Original source retained":isBlend?"Blend vial deduction checked on confirmation":selectedSource==="fresh"?"Uses the selected open vial":"Prepared dose; no second vial deduction"))+
       (blendSummary?row("Blend components",blendSummary):"");
+    const details=review.querySelector("#nx-dose-source-ids");
+    details.hidden=sourceIds.length===0;
+    details.querySelector(".nx-dose-source-ids-body").innerHTML=sourceIds.map(([label,id])=>row(label,id)).join("");
     review.querySelector("p").textContent="Review only. The original Save handler rechecks current stock, vial allocations and blend components before recording. No inventory is deducted by opening this screen.";
   };
   const paintDoseUi=()=>{
