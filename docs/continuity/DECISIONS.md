@@ -655,3 +655,8 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 - User approves the rest of the current kit layout; avoid unrelated redesign. After completing attachment QA, **next screen priority: Supplies**.
 - **Future discovery, not yet approved for implementation:** Blend Composition & Dose Analytics should expose actual per-compound contributions from blend doses in relevant Stash, Log Dose, and history views. Audit current stored composition, recorded dose components and totals first; avoid double counting and protect historical logs. Do not conflate physical-vial deductions with per-component amounts.
 - Mandatory-fields and app-wide nested-scrolling audits remain separate unfinished priorities.
+
+
+## 2026-10-26 — Test results attachment visual correction (approved preview parity)
+- User explicitly rejected the plain blue `Upload test results` link and oversized, dry explanatory paragraph: it did not match the previously shown polished card preview. Preserve the approved Step 2 location beneath Notes and optional behavior, but render a unified bordered, padded card in both Standard and Blend Kit with outline upload icon, `Test results` title, `Optional` pill, concise COA description, full-width `Choose file` outlined 46px action, and subtle concise file limit help. Selected files retain meaningful name/remove/validation feedback. Do not claim image HEIC support or server upload. Do not change record storage semantics or inventory logic.
+- Draft PR #123 only, code `65ac266` and `7d36813`; CI/device acceptance pending. Supplies remains next screen after attachment QA. Mandatory-fields and app-wide nested-scrolling audits separate.
