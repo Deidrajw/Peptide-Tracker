@@ -2416,3 +2416,11 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-guided-blend-editor .nx-guided-stash-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;color:var(--t1);font-size:20px!important;line-height:1.25;font-weight:750!important;letter-spacing:-.02em}
 .nx-guided-blend-editor .nx-guided-stash-close{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:12px;color:var(--t2);font-size:24px}
 .nx-guided-blend-editor .nx-guided-stash-close:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+
+/* Blend selection needs full-width editable fields, not truncated search inputs. */
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 48px!important;column-gap:10px!important;row-gap:6px!important;padding:0 0 10px;margin-bottom:12px!important;border-bottom:1px solid var(--border-sub)}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row .nx-blend-compound-picker{grid-column:1/-1;min-width:0}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row .comp-mg-input{grid-column:1;max-width:160px;width:100%!important;min-height:46px}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row .comp-remove{grid-column:2;justify-self:end;min-width:44px;min-height:46px}
+.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row .comp-other{grid-column:1/-1}
+@media(max-width:390px){.nx-guided-blend-editor .nx-blend-wizard-panel .comp-row{grid-template-columns:minmax(0,1fr) 48px!important}}
