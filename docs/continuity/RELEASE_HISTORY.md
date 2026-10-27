@@ -703,3 +703,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Full-screen Blend search/review candidate validated (DRAFT, UNRELEASED)
 - Exact tested app commit dd26fdc9; merge-ref 723b06cb; GitHub Actions full build 40428711527 SUCCESS, artifact 12701700107 independently inspected. Source updates: floating max-five suggestion list, no row expansion; transparent footer; hierarchical Blend Review; full-viewport mobile editor replacing short nested-scrolling sheet. Complete isolated full-app DEMO 2,572,777 B; 21-file root-index LIVE ZIP 1,809,501 B. Visual screenshots inspected 320/390 dark/light search and Review. No accounting, storage or historical data change; actual iPhone test and other modal audits pending, PR draft/unmerged/undeployed.
+
+### 2026-10-26 — Approved compound browser foundation (DRAFT / NOT RELEASED)
+- Commits c7b4784b, 3ecc008d, a2a9d24a, dcc32a6e, ad2b74b3, c7b06b2a: full-library browse-all screen added to single and blend kit compound comboboxes, five-option popup, cross-screen helper and 320/390 LIVE+isolated DEMO browser tests. No live schema, vial math, dose history or inventory handler changes. Mobile QA pass 40430545528; full build, exact-source full-app artifacts and real iPhone acceptance pending. PR remains draft, unmerged, undeployed.
