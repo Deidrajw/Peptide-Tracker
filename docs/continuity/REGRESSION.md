@@ -1036,3 +1036,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **CODED/CI PENDING:** Step 2 attached PDF `View file` launches viewer iframe with download action, closes without clearing editor. Saved Stash regular and blend kits with attached image each show View file, launch image and close. Test in `validate-stash-cards.mjs` commit 3f55add.
 - **NOT TESTED on physical iPhone:** Safari native PDF rendering in in-app iframe, orientation, document zoom, safe-area, iOS file picker/keyboard, VoiceOver; opening unsupported file should not navigate externally or execute HTML.
 - No data migration; attachment stays under existing `testResultAttachment` shape. Broader mandatory-fields and nested-scroll audits separate.
+
+
+## 2026-10-26 — Kit file viewing / sticky footer tests
+- Full browser 40445814585 **PASS**, mobile 40445814594 **PASS** for View file in unsaved standard PDF and saved regular/blend images. Artifact 12707779675 source manifest 7b3ffbe, both ZIP CRC PASS and offline DEMO parity confirmed.
+- 320px Blend Step 2 screenshot revealed attachment card partially overlapped by sticky footer. CSS padding and explicit bottom-scroll unobscured test added in commits 708b6d2, f1827eb; **pending rerun**. Native iPhone PDF/keyboard/VoiceOver still NOT TESTED. Global scrolling audit is separate.
