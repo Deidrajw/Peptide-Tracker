@@ -44,7 +44,7 @@ try{
         return {due,paused,future,otherWeekday};
       }finally{state=before;tab=priorTab;renderBody();}
     });
-    check(/0\\s*of\\s*1/.test(firstDose.due),"First scheduled protocol dose missing from Today: "+JSON.stringify(firstDose));
+    check(/0\s*of\s*1/.test(firstDose.due),"First scheduled protocol dose missing from Today: "+JSON.stringify(firstDose));
     check([firstDose.paused,firstDose.future,firstDose.otherWeekday].every(v=>/No scheduled doses/.test(v)),
       "Paused/future/wrong-weekday protocol incorrectly scheduled: "+JSON.stringify(firstDose));
 
