@@ -38,13 +38,18 @@ try{
     });
     ensure(addMetrics.height>=44&&addMetrics.width>=170&&addMetrics.left>=addMetrics.containerLeft+12&&addMetrics.right<=addMetrics.containerRight-12,
       'Supplies CTA is clipped or below minimum touch target');
-    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-empty-'+kind+'-'+theme+'-'+width+'.png'});
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
+    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-empty-'+kind+'-'+theme+'-'+width+'.png'});
     await page.locator('#add-equipment').click();
     ensure(await page.locator('#eq-type').count()===1,'Supplies Add action did not open original form');
     ensure(await page.locator('.nx-equipment-form-heading').innerText()==='Add supply','Supply editor heading missing');
     ensure(await page.locator('#eq-save').innerText()==='Add to Supplies','Supply create CTA inconsistent');
     ensure(await page.locator('#eq-save').evaluate(el=>el.getBoundingClientRect().height>=44),'Supply save target too small');
+    const statusesFit=await page.locator('.modal:has(#eq-save) .eq-status-toggle').evaluateAll(buttons=>{
+      if(buttons.length!==2)return false;
+      return buttons.every(b=>{const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return r.width>=90&&r.height>=44&&r.left>=p.left-1&&r.right<=p.right+1;});
+    });
+    ensure(statusesFit,'Supply initial status buttons are clipped at narrow iPhone width');
     await page.screenshot({animations:'disabled',path:'dist/stash-supply-form-'+kind+'-'+theme+'-'+width+'.png'});
     await page.evaluate(()=>{
       closeModal();
