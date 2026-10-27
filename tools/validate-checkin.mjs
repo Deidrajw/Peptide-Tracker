@@ -41,6 +41,15 @@ try{
           supplementModal('2032-11-09');
         });
         assert(await page.locator('.modal #nx2-new-supp').count()===1,'Empty-list supplement logger still forces Profile');
+        const suppOrdering=await page.evaluate(()=>{
+          const modal=document.querySelector('.modal');
+          const pos=selector=>[...modal.querySelectorAll('*')].indexOf(modal.querySelector(selector));
+          return pos('#supp-search')<pos('#supp-toggle') &&
+            pos('#supp-toggle')<pos('#supp-results') &&
+            pos('#supp-results')<pos('#supp-selected-toggle') &&
+            pos('#supp-selected-toggle')<pos('#nx2-new-supp');
+        });
+        assert(suppOrdering,'Supplement Add control must follow search, results and selection');
         await page.locator('.modal #nx2-new-supp').fill('Fictional Vitamin B');
         await page.locator('.modal #nx2-add-supp').click();
         const beforeConfirm=await page.evaluate(()=>({
@@ -65,6 +74,12 @@ try{
         });
         assert(await page.locator('.modal #nx2-checkin-add-supp').count()===1,
           'Empty-catalogue Check-In supplement creation missing');
+        const checkinOrder=await page.evaluate(()=>{
+          const modal=document.querySelector('.modal');
+          const at=sel=>[...modal.querySelectorAll('*')].indexOf(modal.querySelector(sel));
+          return at('#supp-search')<at('#supp-results') && at('#supp-results')<at('#nx2-checkin-new-supp');
+        });
+        assert(checkinOrder,'Check-In add-new control must follow supplement search and results');
         await page.locator('.modal #nx2-checkin-new-supp').fill('Fictional Zinc');
         await page.locator('.modal #nx2-checkin-add-supp').click();
         const checkinInline=await page.evaluate(()=>({
