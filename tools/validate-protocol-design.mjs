@@ -6,6 +6,8 @@ const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version
 const demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');
 const results=[];
 if(!fs.existsSync(demo))throw Error('Missing full app DEMO artifact');
+if(!fs.readFileSync('assets/js/11-nexus.js','utf8').includes('nx-proto-firstlog-action'))throw Error('DS2 first-log action missing');
+if(!fs.readFileSync('assets/css/nexus-hybrid-preview.css','utf8').includes('.nx-proto-firstlog-action'))throw Error('DS2 first-log lavender styling missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 function check(pass,message){if(!pass)throw Error(message)}
 try{
