@@ -792,17 +792,18 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
   wrap.innerHTML='<div class="nx-kit-attachment-header"><span class="nx-kit-attachment-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span><span class="nx-kit-attachment-title">Test results</span><span class="nx-kit-attachment-optional">Optional</span></div>'+
     '<p class="nx-kit-attachment-description">Keep your kit’s test report or certificate of analysis (COA) together with its details.</p>'+
     '<div class="nx-kit-attachment-actions"><button type="button" class="nx-kit-attachment-choose"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Choose file</button>'+
-    '<button type="button" class="nx-kit-attachment-clear" hidden>Remove</button></div>'+
+    '<button type="button" class="nx-kit-attachment-view" hidden>View file</button><button type="button" class="nx-kit-attachment-clear" hidden>Remove</button></div>'+
     '<input type="file" class="nx-kit-attachment-input" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" hidden>'+
     '<p class="nx-kit-attachment-info" aria-live="polite">PDF, JPG, PNG or WebP · Max 750 KB</p>'+
     '<p class="nx-kit-attachment-error" role="alert" hidden></p>';
   const input=wrap.querySelector(".nx-kit-attachment-input");
-  const choose=wrap.querySelector(".nx-kit-attachment-choose"), clear=wrap.querySelector(".nx-kit-attachment-clear");
+  const choose=wrap.querySelector(".nx-kit-attachment-choose"), view=wrap.querySelector(".nx-kit-attachment-view"), clear=wrap.querySelector(".nx-kit-attachment-clear");
   const info=wrap.querySelector(".nx-kit-attachment-info"), error=wrap.querySelector(".nx-kit-attachment-error");
-  const refresh=()=>{clear.hidden=!value;info.textContent=pending?"Reading file…":value?
+  const refresh=()=>{clear.hidden=!value;view.hidden=!value;choose.lastChild.textContent=value?" Replace file":" Choose file";info.textContent=pending?"Reading file…":value?
     value.name+" · "+Math.ceil(value.size/1024)+" KB · attached to this kit":
     "PDF, JPG, PNG or WebP · Max 750 KB";};
   choose.onclick=()=>input.click();
+  view.onclick=()=>{if(value)nexusViewKitTestResult(value);};
   clear.onclick=()=>{serial++;pending=false;value=null;input.value="";error.hidden=true;refresh();};
   input.onchange=()=>{
     const file=input.files?.[0];if(!file)return;
@@ -825,6 +826,46 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
   modal.querySelector("#"+saveButtonId)?.insertAdjacentElement("beforebegin",wrap);
   refresh();
   return {getValue:()=>value,isPending:()=>pending};
+}
+
+// In-app local document viewer. Reuse the stored attachment data in both editor and Stash.
+// Blob URLs are temporary, never persisted or sent to a server.
+function nexusViewKitTestResult(item) {
+  const accepted={"application/pdf":"pdf","image/png":"image","image/jpeg":"image","image/webp":"image"};
+  if(!item || typeof item.dataUrl!=="string")return false;
+  const match=/^data:(application\/pdf|image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/.exec(item.dataUrl);
+  if(!match || !accepted[match[1]] || match[2].length>4*1024*1024)return false;
+  let url;
+  try {
+    const binary=atob(match[2]),bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    url=URL.createObjectURL(new Blob([bytes],{type:match[1]}));
+  } catch(e){return false;}
+  const overlay=document.createElement("div");
+  overlay.className="nx-kit-file-viewer";
+  overlay.setAttribute("role","dialog");overlay.setAttribute("aria-modal","true");overlay.setAttribute("aria-label","Test results preview");
+  overlay.innerHTML='<div class="nx-kit-file-viewer-header"><div class="nx-kit-file-viewer-name"></div><div class="nx-kit-file-viewer-actions"><a class="nx-kit-file-download">Download</a><button type="button" class="nx-kit-file-close" aria-label="Close test results viewer">Close</button></div></div><div class="nx-kit-file-viewer-content"></div>';
+  overlay.querySelector(".nx-kit-file-viewer-name").textContent=String(item.name||"Test results");
+  const link=overlay.querySelector(".nx-kit-file-download");
+  link.href=url;link.download=String(item.name||"test-results").replace(/[\\/<>:"|?*]/g,"_");
+  const content=overlay.querySelector(".nx-kit-file-viewer-content");
+  if(accepted[match[1]]==="image"){
+    const img=document.createElement("img");img.src=url;img.alt=String(item.name||"Attached test results");content.appendChild(img);
+  }else{
+    const frame=document.createElement("iframe");frame.src=url;frame.title="Attached PDF test results";content.appendChild(frame);
+  }
+  const prior=document.activeElement;
+  const dismiss=()=>{overlay.removeEventListener("keydown",onKey);overlay.remove();URL.revokeObjectURL(url);if(prior?.isConnected)prior.focus({preventScroll:true});};
+  const onKey=e=>{if(e.key==="Escape"){e.preventDefault();dismiss();}};
+  overlay.addEventListener("keydown",onKey);
+  overlay.querySelector(".nx-kit-file-close").onclick=dismiss;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".nx-kit-file-close").focus({preventScroll:true});
+  return true;
+}
+function nexusOpenSavedKitTestResult(kitId){
+  const item=(state.supplies||[]).find(s=>String(s.id)===String(kitId))?.testResultAttachment;
+  if(!nexusViewKitTestResult(item))showErrorBanner("This attachment cannot be previewed. Please check the saved file.");
 }
 
 // Only expose known local test-result formats. Never trust imported file URLs or HTML.
