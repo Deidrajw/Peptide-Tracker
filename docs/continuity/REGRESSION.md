@@ -1096,3 +1096,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - Added automated controls audit: Protocol Schedule step 4 Start date, Back/Continue, schedule chips/day/time/dose count at 44px; Goal step 1 target date label/calendar discoverability and step 3 optional symptom connection with no-history empty state; field persistence through steps. Browser CI and physical iPhone acceptance **NOT YET VERIFIED**. Do not mark PASS based on prior source.
 
 - **Fail/correction 2026-10-27:** full browser `40532933798` FAIL new rest-case assertion (3 slots instead of expected 2) because test manually wrote `{type:'rest'}` to compound phases, whereas app canonical sync uses `{isRest:true}`. Corrected fixture at `87044e09`. This is a test-data representation error, not evidence of a production rest-phase calculation defect. Latest corrected CI pending; preserve historical FAIL.
+
+
+## 2026-10-27 — Preview-vs-code discrepancy and real Protocol sync scenario
+- User reports Today still says no scheduled doses in the preview while Protocol shows first-log. This is a **reported fail on the current viewed preview**; deployed preview source SHA has not been verified, and the newer draft branch was not deployed there.
+- Code refinement `aa8472b` allows qualifying no-dose first occurrences from active **or in_progress** linked protocols rather than active-only. Test `ef7eb116` constructs a weekly activated Protocol and calls the actual `syncProtocolToCompoundData`, verifies Today first due and no synthetic dose, then changes status to `in_progress`. **PENDING CI**. Also preserve paused/future/wrong weekday, 2+1 distinct protocols, rest phases and Goal/Protocol wizard 320/390 test matrix.
+- Cloudflare preview deployment/unverified stale bundle: NOT TESTED from code CI. Physical Safari, local user data and overlapping multiple protocols per compound remain NOT TESTED. No merge/deployment.
