@@ -1542,8 +1542,14 @@ function equipmentView() {
     </div>`;
   };
 
-  let html = `<button id="add-equipment" style="width:100%;padding:10px;border-radius:10px;background:#7DF9C018;border:1px dashed #7DF9C055;color:#7DF9C0;font-size:12px;font-weight:600;margin-bottom:14px">+ Add Supply</button>`;
-  if (!items.length) { html += emptyState("No supplies tracked yet", "Add BAC water, syringes, wipes and other supplies — track usage and get a heads-up before you run out."); return html; }
+  // One clear add action: within the empty state until inventory exists, then above the list.
+  const supplyAddButton = '<button type="button" id="add-equipment" class="nx-supplies-add"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add supply</span></button>';
+  if (!items.length) return '<section class="nx-supplies-empty" aria-labelledby="nx-supplies-empty-title">'+
+    '<span class="nx-supplies-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M4 12h16M11 16h2"/></svg></span>'+
+    '<h2 id="nx-supplies-empty-title">Keep your supplies in one place</h2>'+
+    '<p>Track BAC water, syringes, wipes and more. Know what you have and when it’s time to restock.</p>'+
+    supplyAddButton+'</section>';
+  let html = '<div class="nx-supplies-toolbar">'+supplyAddButton+'</div>';
   liveItems.forEach(item=>{ html += renderSupplyCard(item); });
   if (doneItems.length) {
     const open = !!state._showDoneSupplies;
