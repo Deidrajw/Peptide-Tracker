@@ -1001,3 +1001,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL historical full-browser:** 40440638898 subsequently failed in Stash Cards because Kit Continue gradient was interpreted as transparent. Test updated at a781431d; rerun 40441021070 PENDING.
 - **Visual finding, requires follow-up:** reviewed CI Blend 320/390 dark/light step1, step2, review screenshots from artifact 12705638730; all show readable review content and primary action, but step1/2 footer is placed high with unused bottom viewport. Do not label full visual acceptance PASS.
 - **NOT TESTED:** native physical iPhone software keyboard and safe-area behavior, actual VoiceOver. App-wide scrolling audit remains separate.
+
+
+## 2026-10-26 — Kit currency parity / button inset acceptance pending
+- **CODED, NOT YET TESTED:** both standard/blend forms expose expanded currency codes; Blend persists chosen code instead of hard-coded CAD; edits retain currency and historical kit cost, without exchange-rate conversions. New kit defaults CAD. Verify create, review, save, edit and reload for non-CAD values in isolated DEMO.
+- **CODED, NOT YET TESTED:** 16px footer inset parity across Standard/Blend stages 1–3 and both themes at 320/390 widths; observe iOS keyboard and scroll. Existing blend composition/count/BAC/vial math and histories must not change.
+- **FEATURE LOG ONLY:** app-wide mandatory-field audit; current validations unchanged. App-wide no-nested-scrolling audit separate.
+- Last green 40441021070 full and 40441021069 mobile predate currency changes, so do not count as latest-head passes. Physical iPhone native keyboard/VoiceOver NOT TESTED.
