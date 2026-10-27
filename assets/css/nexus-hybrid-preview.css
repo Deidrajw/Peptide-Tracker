@@ -2948,3 +2948,26 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nexus-protocol-start .nx-proto-firstlog-title{font-size:12px;font-weight:700;color:var(--t1);line-height:1.45}
 .nexus-protocol-start .nx-proto-firstlog-action{min-height:44px;min-width:92px;flex-shrink:0;padding:10px 12px;border:0;border-radius:12px;background:#C6A6F2;color:#24182F;font-size:12px;font-weight:700}
 .nexus-protocol-start .nx-proto-firstlog-action:focus-visible{outline:2px solid var(--nx-hybrid-accent);outline-offset:2px}
+
+
+/* DS2 Today header: one accessible bell / Profile / theme action cluster.
+   Do not change header placement or buttons on other pages. */
+.nexus-screen-home .nx-today-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0;}
+.nexus-screen-home .nx-today-greeting{flex:1 1 auto;min-width:0;padding-top:2px;}
+.nexus-screen-home .nx-today-greeting .greet{overflow-wrap:anywhere;}
+.nexus-screen-home .nx-today-header-actions{display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;gap:6px;min-height:48px;}
+.nexus-screen-home .nx-today-header-actions>div:not(#nx-alert-trigger-slot){display:flex!important;align-items:center!important;gap:6px!important;margin:0!important;}
+.nexus-screen-home .nx-today-header-actions #nx-alert-trigger-slot{display:contents;}
+.nexus-screen-home .nx-today-header-actions #nx-open-alerts,
+.nexus-screen-home .nx-today-header-actions #profile-btn,
+.nexus-screen-home .nx-today-header-actions #theme-toggle{box-sizing:border-box;flex:0 0 44px!important;width:44px!important;min-width:44px!important;height:48px!important;min-height:48px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0!important;border-radius:14px!important;background:var(--surface-2)!important;border:1px solid var(--border)!important;color:var(--t2)!important;}
+.nexus-screen-home .nx-today-header-actions #profile-btn{position:relative;}
+.nexus-screen-home .nx-today-header-actions #profile-btn>span:not(.nx-profile-avatar-fallback){display:none!important;}
+.nexus-screen-home .nx-today-header-actions #profile-btn img,.nexus-screen-home .nx-today-header-actions .nx-profile-avatar-fallback{width:27px!important;height:27px!important;flex-shrink:0;}
+.nexus-screen-home .nx-today-header-actions #nx-open-alerts{overflow:visible!important;}
+.nexus-screen-home .nx-today-header-actions #nx-open-alerts .nx-alert-count{position:absolute!important;top:-5px;right:-5px;min-width:19px;height:19px;}
+.nexus-screen-home .nx-today-header-actions #theme-toggle svg{width:20px;height:20px;}
+.nexus-screen-home .nx-today-header-actions #profile-btn:focus-visible,
+.nexus-screen-home .nx-today-header-actions #theme-toggle:focus-visible,
+.nexus-screen-home .nx-today-header-actions #nx-open-alerts:focus-visible{outline:2px solid #A78BFA;outline-offset:3px;}
+@media(max-width:360px){.nexus-screen-home .nx-today-header-actions{gap:4px}.nexus-screen-home .nx-today-header-actions>div:not(#nx-alert-trigger-slot){gap:4px!important}.nexus-screen-home .nx-today-header-actions #nx-open-alerts,.nexus-screen-home .nx-today-header-actions #profile-btn,.nexus-screen-home .nx-today-header-actions #theme-toggle{width:44px!important;min-width:44px!important}}
