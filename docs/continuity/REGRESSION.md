@@ -1232,3 +1232,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Reaction invitation and individual event management QA GREEN
 - PASS automated: app/test head 6a34b432, full 40590709842, mobile 40590709765. Browser E2E 112 Log Dose flows in eight LIVE/DEMO viewport/theme combinations, including optional post-save invitation, reaction event edit preserving ID/recordedAt, confirmed delete of one reaction, unaffected sibling reactions, original dose ID and vial balances. Source-built full LIVE ZIP + isolated full-app DEMO artifact 12773443866. No actual production data.
 - NOT TESTED: physical iPhone Safari with on-screen keyboard, VoiceOver, independent Cloudflare served-asset hash parity; native reminder notifications NOT IMPLEMENTED. PR #123 draft/unmerged.
+
+
+## 2026-10-27 — DS2 unfinished scope (user correction)
+- OPEN / NOT ACCEPTED: Profile Supplements remove personal Notion import UI and dependent handler safely; Add action color consistency; inline Check-In supplement creation including empty catalogue, search/browse, no duplicate and no save-before-confirm; date-specific historical records must survive.
+- OPEN / NOT ACCEPTED: Stash segmented tab selected corners at 320/390 light/dark, Prepare Dose multi-source amount fields fit and keyboard avoidance, opened-vial status aligned with vial header/actions; source selection/allocations and saved vial balances unchanged.
+- Prior implementation notes are NOT full physical-device acceptance; focused browser and iPhone tests required before closing. Mandatory-fields and app-wide scrolling audits follow afterward.
