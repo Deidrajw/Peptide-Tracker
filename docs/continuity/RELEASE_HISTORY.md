@@ -817,3 +817,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 ### v0.9.20-beta — direct Record Reaction test milestone GREEN (DRAFT / NOT RELEASED)
 - Source/test head 85afbd03: browser/build run 40569926373 SUCCESS; mobile 40569926374 SUCCESS. Test suite confirms 8 LIVE/DEMO 320/390 light/dark cases and Log Dose 64 flows including Calendar and retrospective direct reaction, 3 reaction history, legacy note preservation, unchanged vial counts and original dose ID. All fictional/isolated data; no production data exercised.
 - CI artifact 12765770553 bundles full LIVE ZIP and isolated full-app DEMO. Cloudflare bot reports draft preview deployment https://32aef596.nexuspeplog.pages.dev for docs head a783546; raw served asset hashes and physical iPhone acceptance unverified. PR #123 remains draft/unmerged; no production release or migration.
+
+
+### DS2 v0.9.20-beta — compound View details render hotfix (DRAFT / NOT RELEASED)
+- User-reported draft-only render blocker: undefined fmtT when compound’s latest dose counts as taken today. Fixed at e5bb5d93 in assets/js/07-nexus.js, regression assertion at 7097d07c. No changes to saved data, math or source allocations. Browser/mobile QA, full DEMO/LIVE packages and Cloudflare preview for this head pending; physical iPhone not retested, PR #123 unmerged and production unchanged.
