@@ -610,28 +610,48 @@ function debounce(fn, wait) {
 
 // Post-dose reactions are recorded independently of administration and inventory.
 // Existing dose IDs remain authoritative; legacy symptoms/notes are never migrated.
-function nexusDoseReactionModal(compoundName, doseId) {
+// Reaction events are independent of dose administration and vial deductions.
+// Editing only replaces fields on the matching reaction; never mutates the dose record.
+function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
   const getDose=()=>allPeptides()[compoundName]?.doses?.find(d=>String(d.id)===String(doseId));
   const dose=getDose();
   if(!dose){showErrorBanner("That saved dose could not be found. Nothing changed.");return;}
   const history=Array.isArray(dose.reactions)?dose.reactions:[];
+  const editing=reactionId!=null ? history.find(r=>String(r.id)===String(reactionId)) : null;
+  if(reactionId!=null&&!editing){showErrorBanner("That reaction could not be found. Nothing changed.");return;}
+  const labels=["Flushing / warmth","Head rush","Injection-site redness","Injection-site discomfort","Headache","Nausea","Other"];
+  if(editing?.label&&!labels.includes(editing.label))labels.push(editing.label);
+  const valueTime=editing?.observedAt||localDatetime();
   const m=openModal(`<div class="nx-reaction-editor">
-    <div class="nx-reaction-heading"><div><div class="nx-dose-kicker">AFTER THE DOSE</div><h2>Record reaction</h2><p>Optional · ${esc(compoundName)} · ${esc(String(dose.date||""))}</p></div><button type="button" id="x" aria-label="Close reaction form">✕</button></div>
-    <p class="nx-reaction-explain">Record what you noticed and when it happened. This is not a change to the administered dose or its inventory.</p>
-    ${history.length?`<div class="nx-reaction-history"><strong>Previously recorded (${history.length})</strong>${history.map(r=>`<p>${esc(r.label||"Reaction")} · ${esc(r.observedAt||"Time not specified")}</p>`).join("")}</div>`:""}
+    <div class="nx-reaction-heading"><div><div class="nx-dose-kicker">AFTER THE DOSE</div><h2>${editing?"Edit reaction":"Record reaction"}</h2><p>Optional · ${esc(compoundName)} · ${esc(String(dose.date||""))}</p></div><button type="button" id="x" aria-label="Close reaction form">✕</button></div>
+    <p class="nx-reaction-explain">Record what you noticed and when it happened. Editing reactions does not change the administered dose or inventory.</p>
+    ${history.length?`<div class="nx-reaction-history"><strong>Previously recorded (${history.length})</strong>
+      ${history.map(r=>`<div class="nx-reaction-history-row"><div><strong>${esc(r.label||"Reaction")}</strong><p>${esc(r.observedAt||"Time not specified")}${r.intensity?" · "+(["","Mild","Moderate","Severe"][Number(r.intensity)]||""):""}</p>${r.notes?`<p>${esc(r.notes)}</p>`:""}</div><div class="nx-reaction-history-buttons"><button type="button" class="nx-reaction-edit" data-id="${esc(String(r.id))}" aria-label="Edit reaction ${esc(r.label||"Reaction")}">Edit</button><button type="button" class="nx-reaction-delete" data-id="${esc(String(r.id))}" aria-label="Delete reaction ${esc(r.label||"Reaction")}">Delete</button></div></div>`).join("")}</div>`:""}
     <label class="field-label" for="nx-reaction-label">REACTION</label>
-    <select class="inp" id="nx-reaction-label"><option value="">Select a reaction</option><option>Flushing / warmth</option><option>Head rush</option><option>Injection-site redness</option><option>Injection-site discomfort</option><option>Headache</option><option>Nausea</option><option>Other</option></select>
+    <select class="inp" id="nx-reaction-label"><option value="">Select a reaction</option>${labels.map(l=>`<option value="${esc(l)}"${editing?.label===l?" selected":""}>${esc(l)}</option>`).join("")}</select>
     <label class="field-label" for="nx-reaction-time">WHEN DID YOU NOTICE IT?</label>
-    <input class="inp" type="datetime-local" id="nx-reaction-time" value="${esc(localDatetime())}">
+    <input class="inp" type="datetime-local" id="nx-reaction-time" value="${esc(valueTime)}">
     <label class="field-label" for="nx-reaction-intensity">INTENSITY</label>
-    <select class="inp" id="nx-reaction-intensity"><option value="">Not specified</option><option value="1">Mild</option><option value="2">Moderate</option><option value="3">Severe</option></select>
+    <select class="inp" id="nx-reaction-intensity"><option value="">Not specified</option>${[1,2,3].map((n)=>`<option value="${n}"${Number(editing?.intensity)===n?" selected":""}>${["","Mild","Moderate","Severe"][n]}</option>`).join("")}</select>
     <label class="field-label" for="nx-reaction-notes">NOTES (OPTIONAL)</label>
-    <textarea class="inp" id="nx-reaction-notes" rows="3" placeholder="What did you experience?"></textarea>
-    <p class="nx-reaction-explain">A reaction recorded after a dose does not establish what caused it.</p>
-    <div class="nx-reaction-actions"><button id="nx-reaction-cancel" type="button">Not now</button><button id="nx-reaction-save" type="button" class="btn-primary">Save reaction</button></div>
+    <textarea class="inp" id="nx-reaction-notes" rows="3" placeholder="What did you experience?">${esc(editing?.notes||"")}</textarea>
+    <p class="nx-reaction-explain">Recording a reaction does not establish what caused it.</p>
+    <div class="nx-reaction-actions"><button id="nx-reaction-cancel" type="button">Not now</button><button id="nx-reaction-save" type="button" class="btn-primary">${editing?"Save changes":"Save reaction"}</button></div>
   </div>`,"#A78BFA");
   m.querySelector("#x").onclick=closeModal;
   m.querySelector("#nx-reaction-cancel").onclick=closeModal;
+  m.querySelectorAll(".nx-reaction-edit").forEach(button=>button.onclick=()=>nexusDoseReactionModal(compoundName,doseId,button.dataset.id));
+  m.querySelectorAll(".nx-reaction-delete").forEach(button=>button.onclick=()=>{
+    const id=button.dataset.id;
+    confirmAction("Delete this reaction? The original dose and vial balance will stay unchanged.",()=>{
+      const target=getDose();
+      if(!target || !Array.isArray(target.reactions) || !target.reactions.some(r=>String(r.id)===String(id))){
+        showErrorBanner("The reaction no longer exists. Nothing changed.");return;
+      }
+      target.reactions=target.reactions.filter(r=>String(r.id)!==String(id));
+      saveState();render();nexusDoseReactionModal(compoundName,doseId);
+    },{confirmLabel:"Delete reaction",cancelLabel:"Keep reaction",tone:"danger"});
+  });
   m.querySelector("#nx-reaction-save").onclick=()=>{
     const label=m.querySelector("#nx-reaction-label").value;
     const observedAt=m.querySelector("#nx-reaction-time").value;
@@ -639,9 +659,26 @@ function nexusDoseReactionModal(compoundName, doseId) {
     const target=getDose();
     if(!target){showErrorBanner("The original dose no longer exists. Nothing was saved.");return;}
     if(!Array.isArray(target.reactions))target.reactions=[];
-    target.reactions.push({id:uid(),label,observedAt,recordedAt:new Date().toISOString(),intensity:Number(m.querySelector("#nx-reaction-intensity").value)||null,notes:m.querySelector("#nx-reaction-notes").value});
+    const fields={label,observedAt,intensity:Number(m.querySelector("#nx-reaction-intensity").value)||null,notes:m.querySelector("#nx-reaction-notes").value};
+    if(editing){
+      const original=target.reactions.find(r=>String(r.id)===String(reactionId));
+      if(!original){showErrorBanner("The reaction no longer exists. Nothing changed.");return;}
+      Object.assign(original,fields);
+    } else target.reactions.push({id:uid(),...fields,recordedAt:new Date().toISOString()});
     saveState();closeModal();render();
   };
+}
+
+// A lightweight, skippable invitation; never schedules a notification.
+function nexusPostDoseReactionPrompt(compoundName,doseId){
+  const m=openModal(`<div class="nx-reaction-invite">
+    <div class="nx-dose-kicker">DOSE SAVED</div>
+    <h2>Would you like to record a reaction?</h2>
+    <p>You can record anything you noticed now, or come back later from Today, Calendar or History.</p>
+    <div class="nx-reaction-actions"><button id="nx-reaction-later" type="button">Not now</button><button id="nx-reaction-open" type="button" class="btn-primary">Record reaction</button></div>
+  </div>`,"#A78BFA");
+  m.querySelector("#nx-reaction-later").onclick=closeModal;
+  m.querySelector("#nx-reaction-open").onclick=()=>nexusDoseReactionModal(compoundName,doseId);
 }
 
 function doseModal(name, existing, occTime) {
@@ -1289,6 +1326,7 @@ function doseModal(name, existing, occTime) {
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
     saveState(); closeModal(); render();
+    if(!isEdit) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
 
