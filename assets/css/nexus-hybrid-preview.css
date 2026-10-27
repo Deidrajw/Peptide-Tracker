@@ -2571,3 +2571,15 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-stash-kit-editor #nx-kit-combobox-list{max-height:none!important;overflow:visible!important;position:absolute;
  left:0;top:calc(100% + 4px);z-index:120;width:100%;box-sizing:border-box;box-shadow:0 12px 24px #0004}
 .nx-stash-kit-editor .nx-kit-combobox{z-index:15}
+
+
+/* Shared compound library progression: five visible inline options, then a single-scroll full-screen browser. */
+.cpick-browse-all,.nx-proto-browse-all{
+  display:block;width:100%;min-height:48px;padding:12px 14px;text-align:left;
+  background:var(--surface-2);color:#bda2ef;font-size:14px;font-weight:700;
+  border:1px solid var(--border-sub);border-radius:10px;margin-top:8px;
+}
+.cpick-browse-all:focus-visible,.nx-proto-browse-all:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+#pb-clist{max-height:none!important;overflow:visible!important}
+.nx-plan-edit-field .cpick-search{min-height:48px;font-size:16px!important}
+.cpick-item,.pb-cadd{min-height:44px!important}
