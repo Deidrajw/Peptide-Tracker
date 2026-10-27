@@ -833,3 +833,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 - Data impact: none intended; no change to production storage, dose records, reaction events or inventory. Full new-head CI, exact-source artifacts, immutable Cloudflare preview and real iPhone acceptance PENDING. PR #123 draft/unmerged, no production deploy.
 
 - 2026-10-27 correction: browser run 40583259646 FAILED new Completed inclusion test, despite other suites passing. Fixed date-of-dose filter code ebd66e42; await replacement CI. No deployment or approval of failed build.
+
+
+### v0.9.20-beta — Completed/Coming up regression investigation (DRAFT / NOT RELEASED)
+- Previous full browser QA 40583699831 failed at Completed test expecting expanded action in collapsed card (test mismatch). Targeted test correction dff7ea52 validates both states, and 79c7bd35 tests Coming up → Calendar and revised nav. Full QA at new head PENDING. No migration, merge or production release.
