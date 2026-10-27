@@ -987,7 +987,7 @@ function addBlendKitModal(blendNameOrKit) {
         ["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],
         ["Expiry",m.querySelector("#bk-expiry")?.value+" days"],
         ["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],
-        ["Cost",m.querySelector("#bk-cost")?.value?((m.querySelector("#bk-currency")?.value||"CAD")+" "+m.querySelector("#bk-cost").value):"Not provided"],
+        ["Cost",m.querySelector("#bk-cost")?.value?((m.querySelector("#bk-currency")?.value||"CAD")+" "+(m.querySelector("#bk-currency")?.value==="CAD"?"$":"")+m.querySelector("#bk-cost").value):"Not provided"],
         ["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"]
       ];
       summary.innerHTML=
