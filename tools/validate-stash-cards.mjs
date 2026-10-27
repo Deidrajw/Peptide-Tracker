@@ -72,6 +72,10 @@ try{
     ensure(await page.locator('.nx-stash-kit-editor #ssave').isHidden(),'Kit Save exposed on Step 1');
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-step1-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#nx-kit-next').isVisible(),'Kit Continue missing');
+    ensure(await page.locator('#nx-kit-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&s.backgroundColor!=='rgba(0, 0, 0, 0)'&&s.color!==s.backgroundColor;}),'Kit Continue is not a prominent 44px action');
+    ensure(await page.locator('#sname').isHidden(),'Duplicate native Kit compound select visible');
+    ensure(await page.locator('#nx-kit-combobox-input').isVisible(),'Kit searchable compound field missing');
+    ensure(!(await page.locator('.nx-kit-wizard-progress').innerText()).includes('1 / 3'),'Duplicate Kit step count rendered');
     await page.evaluate(()=>{
       const name=document.querySelector('#sname');name.value='GHK-Cu';name.dispatchEvent(new Event('change',{bubbles:true}));
       document.querySelector('#stv').value='2';document.querySelector('#svmg').value='10';
