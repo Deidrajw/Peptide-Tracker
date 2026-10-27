@@ -45,6 +45,9 @@ try{
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
   ensure(await page.locator('#bk-save').isHidden(),'Blend Save visible before Review');
   ensure(await page.locator('#nx-blend-next').isVisible(),'Blend Continue missing on first step');
+  ensure(await page.locator('#nx-blend-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&s.backgroundColor!=='rgba(0, 0, 0, 0)';}),'Blend Continue is not a prominent 44px action');
+  ensure(await page.locator('.nx-guided-stash-title').isVisible(),'Persistent Blend title is missing');
+  ensure(await page.locator('.comp-select').first().isHidden(),'Duplicate native Blend component picker visible');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('role')==='combobox','Blend picker is not editable combobox');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('type')==='search','Blend picker is not searchable input');
   // Guided blend regression: no state mutation while navigating; single BAC field is
