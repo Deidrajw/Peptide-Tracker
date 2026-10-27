@@ -734,3 +734,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Supplies screenshot QA fixes (DRAFT / UNRELEASED)
 - Full-browser runs 40451096484 and 40451199358, mobile 40451199390 PASSED for preceding source; artifact 12710184475 manifest 506244fe, integrity verified. Screenshot review uncovered onboarding-overlay capture (test fixture) and narrow 320px initial-status chip clipping (UI issue). Scoped test and CSS corrections at commits 248e1c2 and ef9f6fe, now awaiting complete latest-head CI/artifact acceptance. No changes to supply data shape, quantities or history; no merge, deployment or production writes. Native iPhone acceptance remains not tested.
+
+
+### 2026-10-27 — Supplies corrected QA, still DRAFT/UNRELEASED
+- Corrected fictional onboarding-overlay screenshot issue and 320px Initial Status button clipping (commits 248e1c2, ef9f6fe). Automated full-browser `40452358905` and mobile `40452358894` SUCCESS. Artifact `12711520065` source manifest `727686bae253bb5ef4f3a1c2cd4c25234dbdf86a`, 21-file LIVE ZIP integrity and 17/17 application blob parity confirmed, full isolated DEMO equals offline ZIP index, screenshots reviewed at 320/390 dark/light. No schema or inventory math modification, no merge/deploy or production writes. Native iPhone keyboard/VoiceOver and complete stateful Supply save/use/restock acceptance remain unverified; PR #123 retained draft.
