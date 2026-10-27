@@ -2615,7 +2615,7 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
 .modal.nx-stash-kit-editor .nx-kit-wizard-footer,
 .modal.nx-guided-blend-editor .nx-blend-wizard-footer{
   box-sizing:border-box!important;padding:12px 16px max(14px,env(safe-area-inset-bottom))!important;
-  background:var(--surface)!important;border-top:1px solid var(--border-sub)!important;
+  background:transparent!important;border-top:1px solid var(--border-sub)!important;
   margin-left:-16px!important;margin-right:-16px!important;
 }
 .nx-stash-kit-editor .nx-kit-wizard-buttons,.nx-guided-blend-editor .nx-blend-wizard-actions{
