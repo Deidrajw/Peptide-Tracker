@@ -2754,3 +2754,40 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
     scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom));
   }
 }
+
+
+/* Kit Step 2 parity: consistent equal columns and matching field controls.
+   Keep all original field IDs, validation, save and inventory handlers. */
+.nx-stash-kit-editor .nx-kit-wizard-stage[data-step="1"]>div[style*="grid-template-columns"],
+.nx-guided-blend-editor .nx-kit-field-pair{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;margin-bottom:14px!important;min-width:0!important;
+}
+.nx-stash-kit-editor .nx-kit-wizard-stage[data-step="1"]>div[style*="grid-template-columns"]>div,
+.nx-guided-blend-editor .nx-kit-field-pair>div{
+  min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
+}
+.nx-stash-kit-editor .nx-kit-wizard-stage[data-step="1"] :is(#scost,#scur,#sbac,#sexp),
+.nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] :is(#bk-cost,#bk-currency,#bk-bac-edit,#bk-expiry){
+  display:block;width:100%!important;min-width:0!important;max-width:100%!important;
+  min-height:48px!important;box-sizing:border-box!important;
+  margin-bottom:0!important;
+}
+.nx-stash-kit-editor #snotes,
+.nx-guided-blend-editor #bk-notes{
+  display:block;width:100%!important;min-height:88px!important;
+  box-sizing:border-box!important;resize:vertical;font:inherit;font-size:16px!important;
+  line-height:1.45!important;border-radius:12px!important;
+}
+.nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] label:has(#bk-active){
+  min-height:48px!important;padding:10px 12px!important;gap:12px!important;
+  border:1px solid var(--border-sub)!important;border-radius:12px!important;
+  background:var(--surface-2)!important;color:var(--t1)!important;
+}
+.nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] #bk-active{
+  width:20px;height:20px;flex-shrink:0;
+}
+.nx-stash-kit-editor .nx-kit-wizard-stage[data-step="1"] .nx-kit-attachment,
+.nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment{
+  margin-top:16px!important;
+}
