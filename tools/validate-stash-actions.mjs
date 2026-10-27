@@ -47,6 +47,13 @@ try{
   ensure(await page.locator('#nx-blend-next').isVisible(),'Blend Continue missing on first step');
   ensure(await page.locator('#nx-blend-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&s.backgroundColor!=='rgba(0, 0, 0, 0)';}),'Blend Continue is not a prominent 44px action');
   ensure(await page.locator('.nx-guided-stash-title').isVisible(),'Persistent Blend title is missing');
+  const fullEditor=await page.locator('.nx-guided-blend-editor').evaluate(el=>{
+    const rect=el.getBoundingClientRect();
+    return {height:rect.height,viewport:window.innerHeight,width:rect.width,screen:window.innerWidth};
+  });
+  ensure(fullEditor.height>=fullEditor.viewport-25&&fullEditor.width<=fullEditor.screen+2,
+    'Blend editor should use one full-height mobile editing surface: '+JSON.stringify(fullEditor));
+
   ensure(await page.locator('.comp-select').first().isHidden(),'Duplicate native Blend component picker visible');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('role')==='combobox','Blend picker is not editable combobox');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('type')==='search','Blend picker is not searchable input');
