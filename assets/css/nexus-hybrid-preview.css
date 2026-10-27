@@ -2648,3 +2648,22 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
 .nx-guided-blend-editor .nx-blend-wizard-actions {
   padding-inline:0!important;min-width:0!important;
 }
+
+/* Shared kit wizard typography: visual parity without moving legacy fields or handlers. */
+.modal.nx-stash-kit-editor .nx-kit-editor-header{
+  margin-bottom:18px!important;
+}
+.modal.nx-stash-kit-editor .nx-kit-editor-eyebrow{
+  font-family:inherit!important;
+  font-size:20px!important;font-weight:750!important;line-height:1.25!important;
+  letter-spacing:-.02em!important;text-transform:none!important;color:var(--t1)!important;
+}
+.modal.nx-stash-kit-editor .nx-kit-editor-header #x,
+.modal.nx-guided-blend-editor .nx-guided-stash-close{
+  width:44px!important;height:44px!important;flex:0 0 44px!important;
+}
+.modal.nx-stash-kit-editor .nx-kit-wizard-step-heading,
+.modal.nx-guided-blend-editor .nx-blend-wizard-progress>strong{
+  font-size:14px!important;font-weight:700!important;line-height:1.4!important;
+  letter-spacing:0!important;color:var(--t1)!important;
+}
