@@ -1060,3 +1060,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Supplies empty-state and CTA regression
 - **CODED, CI PENDING**: Stash > Supplies empty view contains only one `#add-equipment` CTA inside accessible card, min-height 48px, consistent lavender button. Source handler continues to call `equipmentModal(null)`. Test across 320/390 dark/light and LIVE/isolated DEMO added in `validate-stash-cards.mjs` commit c6f1085.
 - **NOT TESTED**: native iPhone screen/VoiceOver, save/edit/restock/usage-history in populated Supplies; no changes to those workflows. Broader app-wide nested scroll and required field audits remain separate.
+
+
+## 2026-10-27 — Supplies form & populated cards regression (pending)
+- Prior empty-state full-browser 40450450037 FAIL was test-overlay interception; test fixture now dismisses fictional welcome modal before tapping Add Supply. Scoped Add/Edit Supply form/card style and wording coded. `validate-stash-cards.mjs` now checks empty CTA, original equipment form, 44px+ save, sample sealed BAC water card, two inventory actions, and screenshots at 320/390 light/dark for LIVE and isolated DEMO.
+- **PENDING** full CI and source-bundle inspection. **NOT TESTED** actual physical iPhone / keyboard / VoiceOver, real save/restock/consumption history end-to-end for latest UI. Do not infer pass. App-wide mandatory-fields and no-nested-scroll audits separately unfinished.
