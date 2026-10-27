@@ -900,10 +900,10 @@ function protocolBuilderModal(existing) {
         <input id="pb-csearch" type="search" class="inp" aria-label="Search compounds to add" placeholder="Search compounds…" autocomplete="off">
       </div>
       <div id="pb-clist" style="max-height:150px;overflow-y:auto;border:1px solid var(--border-sub);border-radius:8px;background:var(--surface-2)">
-        ${ALL_COMPOUNDS.slice(0,30).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">
+        ${ALL_COMPOUNDS.slice(0,5).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">
           ${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}
         </button>`;}).join("")}
-      </div>`;
+      </div><button type="button" id="pb-browse-all" class="nx-proto-browse-all">View all compounds</button>`;
     }
 
     if(curStep()==="Schedule") {
@@ -1043,11 +1043,17 @@ function protocolBuilderModal(existing) {
       rebuildModal();
     });
     m.querySelectorAll(".pb-cadd").forEach(b=>b.onclick=()=>toggleCompound(b.dataset.name));
+    m.querySelector("#pb-browse-all")?.addEventListener("click",()=>{
+      nexusBrowseAllCompounds(m,ALL_COMPOUNDS.map(name=>({name,value:name})),option=>{
+        toggleCompound(option.name);
+      });
+    });
+
     const cs=m.querySelector("#pb-csearch");
     if(cs) cs.oninput=()=>{
       const q=cs.value.toLowerCase();
       const list=m.querySelector("#pb-clist");
-      if(list) list.innerHTML=ALL_COMPOUNDS.filter(n=>n.toLowerCase().includes(q)||(LIBRARY.find(l=>l.name===n)?.aliases||[]).some(a=>a.toLowerCase().includes(q))).slice(0,25).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}</button>`;}).join("");
+      if(list) list.innerHTML=ALL_COMPOUNDS.filter(n=>n.toLowerCase().includes(q)||(LIBRARY.find(l=>l.name===n)?.aliases||[]).some(a=>a.toLowerCase().includes(q))).slice(0,5).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}</button>`;}).join("");
       m.querySelectorAll(".pb-cadd").forEach(b=>b.onclick=()=>toggleCompound(b.dataset.name));
     };
     m.querySelectorAll(".pb-route").forEach(b=>b.onchange=()=>{if(proto.compounds[+b.dataset.idx])proto.compounds[+b.dataset.idx].route=b.value;});
