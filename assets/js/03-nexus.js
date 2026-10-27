@@ -832,7 +832,7 @@ function addBlendKitModal(blendNameOrKit) {
 
     ${!isEdit?`<div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1"><label class="field-label">VIALS ON HAND</label><input id="bk-vials" type="number" min="1" class="inp" value="1"></div>
-      <div style="flex:1"><p class="hint" style="margin:8px 0">Set preparation details in the next step.</p></div>
+
     </div>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
     <div style="display:flex;gap:10px;margin-bottom:12px">
@@ -875,6 +875,17 @@ function addBlendKitModal(blendNameOrKit) {
     const summary=document.createElement("div");summary.className="nx-blend-wizard-summary";summary.setAttribute("aria-live","polite");
     panels[2].append(summary);
     contentRoot.append(progress,...panels);
+    // Keep one consistent Kit title and dismiss target visible across all stages.
+    const titleNode=panels[0].firstElementChild;
+    if(titleNode){
+      titleNode.classList.add("nx-guided-stash-title");
+      titleNode.textContent=isEdit?"Edit blend kit":"Add blend kit";
+      const dismiss=document.createElement("button");dismiss.type="button";dismiss.className="nx-guided-stash-close";
+      dismiss.setAttribute("aria-label","Close blend kit editor");dismiss.textContent="×";
+      dismiss.onclick=closeModal;titleNode.appendChild(dismiss);
+      contentRoot.insertBefore(titleNode,progress);
+    }
+
     const nav=document.createElement("div");nav.className="nx-blend-wizard-footer";
     nav.innerHTML='<p role="alert" class="nx-blend-wizard-error" hidden></p><div class="nx-blend-wizard-actions"><button type="button" id="nx-blend-back">Back</button><button type="button" id="nx-blend-next">Continue</button></div>';
     nav.querySelector(".nx-blend-wizard-actions").append(blendSave);
