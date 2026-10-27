@@ -109,6 +109,19 @@ try{
   ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment').isVisible(),'Blend test-result upload missing from Step 2');
   await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment-input').setInputFiles({name:'fictional-lab.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
   await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-lab.pdf'));
+  await page.locator('.nx-guided-blend-editor').evaluate(el=>{el.scrollTop=el.scrollHeight;});
+  const attachmentClear=await page.locator('.nx-kit-attachment').evaluate(el=>{
+    const footer=el.closest('.nx-guided-blend-editor')?.querySelector('.nx-blend-wizard-footer');
+    return !!footer && el.getBoundingClientRect().bottom<=footer.getBoundingClientRect().top+3;
+  });
+  ensure(attachmentClear,'Blend attachment remains obscured by sticky actions at bottom of Step 2');
+  ensure(await page.locator('.nx-kit-attachment-view').isVisible(),'Blend attachment preview button missing');
+  await page.locator('.nx-kit-attachment-view').click();
+  ensure(await page.locator('.nx-kit-file-viewer iframe').count()===1,'Blend PDF preview is missing');
+  await page.locator('.nx-kit-file-close').click();
+  ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Blend PDF preview failed to close');
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-attachment-'+mode+'-'+theme+'-'+width+'.png'});
+
   await page.locator('#bk-bac-edit').fill('2.5');
   await page.locator('#bk-vials').fill('3');
   await page.locator('#bk-cost').fill('190');
