@@ -136,6 +136,10 @@ try {
     ensure(await page.locator('#alloc-add-kit').count()===1,'Use another vial action absent');
     await page.locator('#alloc-add-kit').click();
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
+    const sourceNames=await page.locator('#alloc-rows .nx-hybrid-source-row > span:first-child').allInnerTexts();
+    ensure(sourceNames.length===2 && sourceNames.some(x=>x.includes('Kit 1')) &&
+      sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
+      'Multi-kit sources should use distinct human-readable ordinals: '+JSON.stringify(sourceNames));
     await page.locator('#nx-dose-step-next').click();
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Total allocated'),'Multi-vial Review omits structured source rows');
