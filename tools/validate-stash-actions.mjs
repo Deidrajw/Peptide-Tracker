@@ -50,6 +50,14 @@ try{
   ensure(await page.locator('.comp-select').first().isHidden(),'Duplicate native Blend component picker visible');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('role')==='combobox','Blend picker is not editable combobox');
   ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('type')==='search','Blend picker is not searchable input');
+  const oneLine=await page.locator('.comp-row').first().evaluate(row=>{
+    const p=row.querySelector('.nx-blend-compound-picker')?.getBoundingClientRect(),
+      mg=row.querySelector('.comp-mg-input')?.getBoundingClientRect(),
+      remove=row.querySelector('.comp-remove')?.getBoundingClientRect();
+    return Boolean(p&&mg&&remove&&Math.abs(p.top-mg.top)<12&&Math.abs(mg.top-remove.top)<12
+      &&p.right<=mg.left+2&&mg.right<=remove.left+2&&remove.right<=window.innerWidth+1);
+  });
+  ensure(oneLine,'Blend compound, mg and remove do not share one non-overlapping row');
   // Guided blend regression: no state mutation while navigating; single BAC field is
   // both the review source and the value the canonical #bk-save handler persists.
   await page.evaluate(()=>{closeModal();addBlendKitModal(null);});
