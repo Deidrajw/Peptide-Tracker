@@ -106,6 +106,9 @@ try{
   await page.locator('#nx-blend-next').click();
   ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"]').evaluate(el=>!el.hidden),'Preparation step not visible');
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-step2-'+mode+'-'+theme+'-'+width+'.png'});
+  ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment').isVisible(),'Blend test-result upload missing from Step 2');
+  await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment-input').setInputFiles({name:'fictional-lab.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
+  await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-lab.pdf'));
   await page.locator('#bk-bac-edit').fill('2.5');
   await page.locator('#bk-vials').fill('3');
   await page.locator('#bk-cost').fill('190');
@@ -116,6 +119,7 @@ try{
   ensure(await page.locator('.nx-blend-review-hero h3').innerText()==='QA Fixture Blend','Review missing prominent blend name');
   ensure(await page.locator('.nx-blend-review-total').innerText().then(t=>t.includes('15 mg')),'Review missing emphasized total strength');
   ensure(await page.locator('.nx-blend-review-component').count()===2,'Review missing component composition');
+  ensure((await page.locator('.nx-blend-wizard-summary').innerText()).includes('fictional-lab.pdf'),'Blend review missing selected test-results file');
   ensure(await page.locator('.nx-blend-wizard-footer').evaluate(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)'),
     'Blend sticky actions retain opaque dark background');
 
@@ -125,6 +129,8 @@ try{
   const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
   ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.currency==='USD'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
   ensure(recorded?.composition?.length===2&&recorded.composition[0].mg===10&&recorded.composition[1].mg===5,'Saved component amounts incorrect');
+  ensure(recorded?.testResultAttachment?.name==='fictional-lab.pdf'&&recorded.testResultAttachment.dataUrl.startsWith('data:application/pdf;base64,'),'Blend attachment not persisted');
+  ensure(await page.locator('.nx-kit-card .nx-kit-test-download').count()>=1,'Kit Details do not expose saved attachment');
   await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
   // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
   await page.evaluate(()=>{closeModal();doseModal('GHK-Cu');});
