@@ -1041,3 +1041,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Kit file viewing / sticky footer tests
 - Full browser 40445814585 **PASS**, mobile 40445814594 **PASS** for View file in unsaved standard PDF and saved regular/blend images. Artifact 12707779675 source manifest 7b3ffbe, both ZIP CRC PASS and offline DEMO parity confirmed.
 - 320px Blend Step 2 screenshot revealed attachment card partially overlapped by sticky footer. CSS padding and explicit bottom-scroll unobscured test added in commits 708b6d2, f1827eb; **pending rerun**. Native iPhone PDF/keyboard/VoiceOver still NOT TESTED. Global scrolling audit is separate.
+
+
+## 2026-10-27 — Standard/Blend Step 2 parity regression gate
+- User's physical screenshot review found mismatched Cost widths, inconsistent Cost+Currency grouping, label wording, Notes input types, open-vial checkbox treatment and Blend sticky footer overlap. Scoped markup/CSS corrections committed on draft PR #123.
+- **CODED, NOT YET PASSED:** automated equal-width (<=2px) Cost/Currency assertions, same-top alignment and TEXTAREA Notes assertions in both Kit browser suites, 320/390 dark/light, LIVE/isolated DEMO. Both share BAC+Expiry, Cost+Currency, Storage, Notes, attachment order. Must verify layout after keyboard opens on physical iPhone and ensure attachment can scroll clear of sticky footer.
+- **NOT TESTED** latest native Safari device, backup/restore and VoiceOver. No inventory logic or history changes. App-wide no-nested-scroll and mandatory-fields audits are separately unfinished.
