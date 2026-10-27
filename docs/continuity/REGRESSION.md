@@ -1065,3 +1065,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Supplies form & populated cards regression (pending)
 - Prior empty-state full-browser 40450450037 FAIL was test-overlay interception; test fixture now dismisses fictional welcome modal before tapping Add Supply. Scoped Add/Edit Supply form/card style and wording coded. `validate-stash-cards.mjs` now checks empty CTA, original equipment form, 44px+ save, sample sealed BAC water card, two inventory actions, and screenshots at 320/390 light/dark for LIVE and isolated DEMO.
 - **PENDING** full CI and source-bundle inspection. **NOT TESTED** actual physical iPhone / keyboard / VoiceOver, real save/restock/consumption history end-to-end for latest UI. Do not infer pass. App-wide mandatory-fields and no-nested-scroll audits separately unfinished.
+
+
+## 2026-10-27 — Supplies visual QA follow-up
+- **PASS earlier source:** full-browser runs 40451096484, 40451199358; mobile 40451199390. Artifact 12710184475: 21-file LIVE ZIP and full standalone/offline DEMO parity, CRC PASS; browser output covers 320/390 dark/light.
+- **VISUAL FAIL on earlier source:** empty-state screenshots were overlaid by fictitious onboarding modal; status chips cramped/clipped at 320. Fixed screenshot setup and CSS, added button-rectangle test commits 248e1c2 and ef9f6fe. Latest corrected run 40452358905 **PENDING**, do not claim current-head visual pass without reviewing screenshots.
+- **NOT TESTED:** native iPhone Safari keyboard, focus movement, screenreader, safe-area; latest UI end-to-end supply save, edit, restock and usage history. Separate mandatory fields, global nested scroll and Kit acceptance priorities unchanged.
