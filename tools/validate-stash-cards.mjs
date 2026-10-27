@@ -92,6 +92,9 @@ try{
     });
     await page.locator('#nx-kit-next').click();
     ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"]').evaluate(x=>!x.hidden),'Kit preparation step not reachable');
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"] .nx-kit-attachment').isVisible(),'Standard test-result upload missing from Step 2');
+    await page.locator('.nx-kit-attachment-input').setInputFiles({name:'fictional-coa.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
+    await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-coa.pdf'));
     ensure(await page.locator('#scur option').count()>=15,'Regular Kit currency selector has incomplete options');
     await page.locator('#scur').selectOption('SGD');
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-step2-'+kind+'-'+theme+'-'+width+'.png'});
@@ -100,6 +103,7 @@ try{
     ensure(await page.locator('.nx-kit-wizard-stage[data-step="2"]').evaluate(x=>!x.hidden),'Kit Review not reachable');
     await page.screenshot({animations:'disabled',path:'dist/stash-regular-review-'+kind+'-'+theme+'-'+width+'.png'});
     ensure(await page.locator('#ssave').isVisible(),'Kit Save absent on Review');
+    ensure((await page.locator('.nx-kit-wizard-summary').innerText()).includes('fictional-coa.pdf'),'Standard Review missing selected test-results file');
     ensure((await page.locator('.nx-kit-wizard-summary').innerText()).includes('SGD') || !await page.locator('#scost').inputValue(),'Kit Review omitted selected currency');
     ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Review Save target too small');
 
