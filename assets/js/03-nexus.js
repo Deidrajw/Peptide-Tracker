@@ -829,7 +829,7 @@ function nexusKitTestResultControl(modal, saveButtonId, initial) {
 // Only expose known local test-result formats. Never trust imported file URLs or HTML.
 function nexusDownloadKitTestResult(kitId) {
   const item=(state.supplies||[]).find(s=>String(s.id)===String(kitId))?.testResultAttachment;
-  if(!item || typeof item.dataUrl!=="string" || !/^data:(application\\/pdf|image\\/(png|jpeg|webp));base64,[A-Za-z0-9+/=]+$/.test(item.dataUrl)) return;
+  if(!item || typeof item.dataUrl!=="string" || !["data:application/pdf;base64,","data:image/png;base64,","data:image/jpeg;base64,","data:image/webp;base64,"].some(prefix=>item.dataUrl.startsWith(prefix)) || !/^[A-Za-z0-9+/=]+$/.test(item.dataUrl.split(",")[1]||"")) return;
   const a=document.createElement("a");
   a.href=item.dataUrl;a.download=String(item.name||"kit-test-results").replace(/[\\/\\\\<>:"|?*]/g,"_");
   document.body.appendChild(a);a.click();a.remove();
