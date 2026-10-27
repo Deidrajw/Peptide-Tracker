@@ -1223,3 +1223,7 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **PASS automated**: fresh app/test commit 3d4ae796; full/browser 40585602137 SUCCESS, mobile 40585601628 SUCCESS. Log Dose browser E2E 8 LIVE/DEMO × 320/390 × light/dark, 96 flows; Completed includes today record with expanded Record reaction, excludes historical-only record, Coming up section retained and View Calendar click changes to Calendar. Vial core 48 safety assertions, math diagnostic 80/80 (not clinical validation).
 - Full source-built LIVE ZIP, complete isolated standalone DEMO HTML / offline DEMO ZIP uploaded in artifact 12771971424. Previous browser failures 40583699831 (test expecting expanded action in collapsed card) and 40585053600 (fixture onboarding blocked Calendar) resolved in test; history kept.
 - **NOT TESTED** physical iPhone Safari interaction, keyboard, VoiceOver, real production records; Cloudflare served-file hash parity. PR #123 unmerged, primary production unchanged.
+
+
+## 2026-10-27 — Reaction edit/delete test gate
+- Targeted browser test 6a34b432 checks optional post-save invitation, edit preserves reaction identity and recorded timestamp, deletion removes one event after confirmation, and no change to original dose or inventory. Mobile 40590709765 PASS. Full browser 40590709842 pending; iPhone and VoiceOver NOT TESTED.
