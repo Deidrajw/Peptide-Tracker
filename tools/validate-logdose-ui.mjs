@@ -133,10 +133,34 @@ try {
     ensure(reactionSaved.entries[0].reactions[0].observedAt==='2032-11-07T21:05','Reaction observation timestamp missing');
     ensure(reactionSaved.entries[0].reactions[0].recordedAt,'Reaction entry timestamp missing');
     ensure(Math.abs(reactionSaved.kits[0].remaining[0]-3)<.01,'Reaction changed inventory');
+    // The Calendar saved-dose action must open reaction capture directly, not Edit Dose.
+    await page.evaluate(()=>dayDetailModal(state.peptides.Retatrutide.doses[0].date));
+    const calAction=page.locator('.cal-record-reaction[data-name="Retatrutide"]');
+    ensure(await calAction.count()===1,'Calendar saved dose missing direct reaction action');
+    await calAction.click();
+    ensure(await page.locator('.nx-reaction-editor').isVisible(),
+      'Calendar reaction action did not open standalone editor');
+    ensure(!(await page.locator('.nx2-dose-modal').isVisible()),
+      'Calendar reaction action incorrectly opened Edit Dose');
+    await page.locator('#nx-reaction-label').selectOption({label:'Head rush'});
+    await page.locator('#nx-reaction-time').fill('2032-11-07T22:15');
+    await page.locator('#nx-reaction-notes').fill('Fictional later observation');
+    await page.locator('#nx-reaction-save').click();
+    const fromCalendar=await stateSnapshot(page);
+    ensure(fromCalendar.entries.length===1 && fromCalendar.entries[0].id===originalId,
+      'Calendar reaction changed dose history or original dose ID');
+    ensure(fromCalendar.entries[0].reactions?.length===2 &&
+      fromCalendar.entries[0].reactions[0].label==='Flushing / warmth' &&
+      fromCalendar.entries[0].reactions[1].label==='Head rush',
+      'Calendar reaction failed to append without replacing previous event');
+    ensure(Math.abs(fromCalendar.kits[0].remaining[0]-3)<.01 &&
+      JSON.stringify(fromCalendar.kits)===JSON.stringify(reactionSaved.kits),
+      'Calendar reaction changed vial inventory');
+    verified.push('Calendar saved-dose reaction opens directly, appends history with zero deduction');
     await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
     await clickSave(page);
     const afterEdit=await stateSnapshot(page);
-    ensure(afterEdit.entries[0].reactions.length===1,'Subsequent dose edit erased reaction history');
+    ensure(afterEdit.entries[0].reactions.length===2,'Subsequent dose edit erased reaction history');
     verified.push('post-dose reaction timestamp, history & zero inventory changes');
     verified.push('single vial confirm/edit/original-ID and exact deduction');
 
