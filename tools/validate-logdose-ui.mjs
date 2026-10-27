@@ -108,6 +108,21 @@ try {
       !completedTab.historical.includes('nx-today-record-reaction'),
       'Completed tab incorrectly includes old historical dose');
     verified.push('Completed filter is today-only with saved-dose reaction action');
+    // Upcoming no longer needs a top tab. Keep the lower Coming up preview
+    // and its Calendar drill-down reachable from Today.
+    await page.evaluate(()=>{tab='home';state._homeView='today';render();});
+    ensure(await page.locator('.nexus-today-view-nav .hv-nav[data-view="completed"]').count()===1,
+      'Completed navigation tab missing from Today');
+    ensure(await page.locator('.nexus-today-view-nav .hv-nav[data-view="upcoming"]').count()===0,
+      'Redundant Upcoming top tab still exists');
+    ensure(await page.locator('.nx-today-coming-up').count()===1 &&
+      await page.locator('#nx-open-calendar').count()===1,
+      'Coming up preview or Calendar action missing from Today');
+    await page.locator('#nx-open-calendar').click();
+    ensure(await page.evaluate(()=>tab==='calendar'),'Coming up Calendar action did not navigate to Calendar');
+    await page.evaluate(()=>{tab='home';state._homeView='today';render();});
+    verified.push('Coming up preview remains and opens Calendar without Upcoming top tab');
+
 
 
 
