@@ -2544,3 +2544,30 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 }
 .nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-hero{padding:17px 16px!important;border:1px solid var(--bdr)!important}
 .nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-section{padding:0!important}
+
+
+/* Full-library browse is a separate primary surface, not a dropdown-within-a-scroller. */
+.nx-compound-browser{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
+  box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;
+  background:var(--bg,#211b2d);color:var(--t1);
+  padding:calc(env(safe-area-inset-top) + 12px) 18px calc(env(safe-area-inset-bottom) + 22px);}
+.nx-compound-browser-header{display:flex;align-items:center;gap:12px;margin:0 0 24px}
+.nx-compound-browser-header h2{font-size:21px;flex:1;line-height:1.3;margin:0}
+.nx-browser-back{min-width:48px;min-height:48px;border:1px solid var(--bdr);
+  background:var(--surface-2);color:var(--t1);border-radius:12px;font-size:20px}
+.nx-browser-label{display:block;font-size:13px;font-weight:650;color:var(--t2);margin-bottom:8px}
+#nx-browser-search{min-height:48px;font-size:16px;padding:12px;border-radius:12px;
+  background:var(--surface-2);color:var(--t1);border:1px solid var(--bdr);width:100%}
+.nx-browser-count{font-size:12px;color:var(--t3);margin:16px 0 8px}
+.nx-browser-items{display:grid;gap:0;align-content:start}
+.nx-browser-choice{display:block;text-align:left;width:100%;min-height:48px;padding:12px 8px;
+  background:transparent;border:0;border-bottom:1px solid var(--bdr);color:var(--t1);font-size:15px}
+.nx-browser-choice:focus-visible,.nx-browser-back:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+.nx-browser-empty{font-size:14px;color:var(--t3)}
+.nx-guided-blend-editor .nx-blend-browse-all,
+.nx-stash-kit-editor .nx-kit-browse-all{
+ display:block;width:100%;min-height:44px;text-align:left;padding:11px 12px;
+ border:0;border-top:1px solid var(--bdr);background:transparent;color:#bd9ef8;font-size:13px;font-weight:700}
+.nx-stash-kit-editor #nx-kit-combobox-list{max-height:none!important;overflow:visible!important;position:absolute;
+ left:0;top:calc(100% + 4px);z-index:120;width:100%;box-sizing:border-box;box-shadow:0 12px 24px #0004}
+.nx-stash-kit-editor .nx-kit-combobox{z-index:15}
