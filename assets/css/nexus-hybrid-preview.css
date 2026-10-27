@@ -2442,3 +2442,6 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-stash-kit-editor .nx-kit-wizard-summary>div>strong{font-size:13px!important;line-height:1.4!important;color:var(--t1)!important;text-align:right!important;overflow-wrap:anywhere!important;min-width:0!important}
 .nx-stash-kit-editor .nx-kit-wizard-review-note{font-size:13px!important;line-height:1.5!important;color:var(--t2)!important}
 .nx-guided-blend-editor .nx-blend-wizard-footer{position:sticky!important;bottom:0!important;z-index:8!important;padding:12px 0 max(12px,env(safe-area-inset-bottom))!important;background:var(--bg)!important}
+
+/* Backing blend select remains in DOM for original composition events, never visible/focusable. */
+.nx-guided-blend-editor .nx-blend-compound-picker>.comp-select{display:none!important}
