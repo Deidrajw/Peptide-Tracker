@@ -2047,6 +2047,20 @@ function renderUpcomingFullView(started) {
   }).join("");
 }
 
+// Completed means recorded or explicitly skipped TODAY, not all historical doses.
+// Retain the same compact/expanded card actions, including Record reaction.
+function renderCompletedFullView(started) {
+  const completed=started.filter(([name,data])=>isCompoundRelevantToday(getDoseStatus(name,data))==="completed");
+  completed.sort((a,b)=>{
+    const aDate=(a[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
+    const bDate=(b[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
+    return new Date(bDate)-new Date(aDate);
+  });
+  if(!completed.length)return `<div class="nx-completed-empty" role="status" style="padding:24px 16px;text-align:center;color:var(--t4);font-size:13px">No completed doses today. Once a dose is recorded, it will appear here.</div>`;
+  return `<div class="nexus-today-section-label" style="margin-bottom:10px">COMPLETED TODAY · ${completed.length}</div>`+
+    completed.map(([name,data])=>renderCompoundCardCompact(name,data,"completed")).join("");
+}
+
 function renderActiveFullView(started) {
   if (!started.length) return `<div style="text-align:center;padding:20px 0"><div style="color:var(--t4);font-size:13px;margin-bottom:10px">No active compounds yet.</div><button id="empty-setup-protocol" style="padding:9px 16px;border-radius:10px;background:#A78BFA;color:#fff;font-size:12px;font-weight:600">Set up your first protocol</button></div>`;
   return `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">${started.length} active</div>` + started.map(([n,d])=>renderCompoundCardCompact(n,d,"active")).join("");
