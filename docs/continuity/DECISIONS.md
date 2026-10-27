@@ -696,3 +696,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 ## 2026-10-27 — First-dose UX confirmation (draft QA, not deployment)
 - Preserve the decision that Protocol activation may generate scheduled Today occurrences before the first administration is recorded. The new test fixture verifies an active scheduled first dose is displayed without logging it, while pause/future/wrong-weekday cases remain absent. An automated PASS does not imply medical advice, a dose taken, a physical-device PASS, or authorization to deploy.
 - Maintain the unified Back/Continue convention and clearly labelled date and schedule inputs across Protocol and Goal; obtain visual acceptance before calling both wizards fully complete.
+
+
+## 2026-10-27 — Goal status should be editable without reopening full wizard
+- User requested quick Goal Planned → In progress changes from the ellipsis action sheet. Use four explicit actions with persisted canonical statuses `planned`, `active`, `paused`, `completed`; display `active` as “In progress” in this context, without renaming saved values. Only mutate the selected goal's `status`; never cascade to linked Protocols or dosage history without separate approval. Keep Edit/Delete available; use shared lavender DS2 visual treatment. Implementation is draft pending device/CI acceptance.
