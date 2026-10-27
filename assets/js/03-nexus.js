@@ -909,7 +909,7 @@ function addBlendKitModal(blendNameOrKit) {
     </div>
     <label for="bk-notes" class="field-label">KIT NOTES (OPTIONAL)</label>
     <textarea id="bk-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Storage, lot or other kit notes">${esc(existingKit?.notes||"")}</textarea>
-    <button id="bk-save" class="btn-primary" style="background:#C9A0FF">${isEdit?"Save Changes":"Save Kit"}</button>
+    <button id="bk-save" class="btn-primary" style="background:#C9A0FF">${isEdit?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
 
   wireRows();
