@@ -1679,3 +1679,9 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - No dose edit, save, vial deduction, stored history, permissions or notification code changed. Existing Calendar, History and retrospective Record reaction access retained. Post-save invitation is the visible action on completed Today card, not a blocking new modal. Native reminders remain a separate future scoped feature.
 - Status CODED on PR #123 draft; new-head full QA, artifact parity, Cloudflare preview and physical iPhone acceptance PENDING. Production unchanged.
 - ONE NEXT ACTION: verify CI at test/app commit 305481bc, validate immutable Cloudflare preview and physical iPhone Today completed-card reaction button, then fix any issues before merging/deploying.
+
+
+## 2026-10-27 — Top Today filter simplification (CODED, QA PENDING)
+- User asked to replace redundant top Upcoming with Completed because Coming up already exists below. Draft commits bf3ef4db (top tab and route), 61103bf9 (today-only completed view), e8c685fa (browser test including reaction and historical exclusions). Top view is Today/Active/Completed/All. Calendar is existing drill-down for Coming up dates. No persistent data migration, inventory math or dose edits.
+- QA: new-head browser/mobile runs PENDING; package integrity and real iPhone visual acceptance NOT TESTED. Preview deployment to check. PR #123 DRAFT, no production change.
+- **ONE NEXT ACTION:** verify e8c685fa latest CI, correct any failures, verify Cloudflare immutable preview, then test filter tab switching, completed dose reaction and Coming up → Calendar in real iPhone Safari (320/390 light/dark automation plus device).
