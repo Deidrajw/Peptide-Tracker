@@ -27,6 +27,21 @@ try{
       ];
       tab='stash';render();
     },theme);
+    // Supplies first-run UI uses one accessible action; established inventory keeps it.
+    await page.evaluate(()=>{state._stashSub='equipment';state.equipmentItems=[];render();});
+    ensure(await page.locator('.nx-supplies-empty').count()===1,'Supplies empty state missing');
+    ensure(await page.locator('#add-equipment').count()===1,'Supplies has duplicate add actions');
+    ensure(await page.locator('.nx-supplies-empty h2').innerText()==='Keep your supplies in one place','Supplies onboarding title incorrect');
+    const addMetrics=await page.locator('#add-equipment').evaluate(el=>{
+      const b=el.getBoundingClientRect(),root=el.closest('.nx-supplies-empty').getBoundingClientRect();
+      return {height:b.height,width:b.width,left:b.left,right:b.right,containerLeft:root.left,containerRight:root.right};
+    });
+    ensure(addMetrics.height>=44&&addMetrics.width>=170&&addMetrics.left>=addMetrics.containerLeft+12&&addMetrics.right<=addMetrics.containerRight-12,
+      'Supplies CTA is clipped or below minimum touch target');
+    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-empty-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.locator('#add-equipment').click();
+    ensure(await page.locator('#eq-type').count()===1,'Supplies Add action did not open original form');
+    await page.evaluate(()=>{closeModal();state._stashSub='kits';render();});
     const card=id=>page.locator('.nx-kit-card[data-kit-id="'+id+'"]');
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
