@@ -712,3 +712,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-26 — Compound browser expanded to Protocol and Plans (DRAFT/UNRELEASED)
 - Commits 8da177d2, 472c211b, 642b74d2, fd266141, cb1144af and 471fdeed implement reusable five-result and Browse All compound selector across Protocol Stack and Plans/Research multi-select, preserving original state and save paths; add browser regression tests and remove nested quick-list scroll. CI latest head pending, no source-matched artifacts inspected yet, no production data impact/migration/merge/deployment.
+
+### 2026-10-26 — Protocol/Plans compound picker cross-screen QA verified (DRAFT, NOT RELEASED)
+- Tested application source 471fdeed; GitHub Actions mobile 40432425967 and browser 40432426016 SUCCESS. Artifact 12703425376 manifest merge 15acd041 (parents main c1c95e1d and tested source 471fdeed), independent ZIP integrity PASS and extracted standalone full-app DEMO and 21-file LIVE ZIP. Independent Chromium 320/390 dark/light Protocol library browse/filter/selection passed 4/4. Production main unmodified; PR #123 draft/unmerged. No code fixes necessary for CI; physical iPhone keyboard acceptance, VoiceOver and global modal audit still incomplete.
