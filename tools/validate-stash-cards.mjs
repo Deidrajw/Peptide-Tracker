@@ -42,7 +42,24 @@ try{
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
     await page.locator('#add-equipment').click();
     ensure(await page.locator('#eq-type').count()===1,'Supplies Add action did not open original form');
-    await page.evaluate(()=>{closeModal();state._stashSub='kits';render();});
+    ensure(await page.locator('.nx-equipment-form-heading').innerText()==='Add supply','Supply editor heading missing');
+    ensure(await page.locator('#eq-save').innerText()==='Add to Supplies','Supply create CTA inconsistent');
+    ensure(await page.locator('#eq-save').evaluate(el=>el.getBoundingClientRect().height>=44),'Supply save target too small');
+    await page.screenshot({animations:'disabled',path:'dist/stash-supply-form-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.evaluate(()=>{
+      closeModal();
+      state.equipmentItems=[{id:88992,type:'BAC Water',brand:'Fictional',unitLabel:'bottle',unitSize:30,unitOfMeasure:'mL',
+        storageLocation:'fridge',units:[{id:88993,status:'sealed',consumed:0}],usageLog:[],notes:''}];
+      render();
+    });
+    ensure(await page.locator('#add-equipment').count()===1,'Add supply absent with inventory');
+    ensure(await page.locator('.nx-supply-kit-card').count()===1,'Populated supply card missing');
+    ensure(await page.locator('.nx-supply-actions>button').count()===2,'Supply card actions missing');
+    ensure(await page.locator('.nx-supply-actions>button').first().evaluate(el=>el.getBoundingClientRect().height>=44),'Supply action too small');
+    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-filled-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.evaluate(()=>{state.equipmentItems=[];state._stashSub='kits';render();});
+
+
     const card=id=>page.locator('.nx-kit-card[data-kit-id="'+id+'"]');
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
