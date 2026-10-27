@@ -995,19 +995,19 @@ function addBlendKitModal(blendNameOrKit) {
 
     </div>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
-    <div style="display:flex;gap:10px;margin-bottom:12px">
-      <div style="flex:1"><label class="field-label">STORAGE</label><select id="bk-storage" class="inp"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select></div>
-      <div style="flex:1"><label class="field-label">COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 180"></div>
+    <div class="nx-kit-field-pair">
+      <div><label for="bk-bac-edit" class="field-label">BAC WATER / VIAL (mL)</label><input id="bk-bac-edit" type="number" min="0.01" step="0.1" class="inp" value="${existingKit?.bacMl||""}" placeholder="At vial opening"></div>
+      <div><label for="bk-expiry" class="field-label">EXPIRY AFTER RECON (days)</label><input id="bk-expiry" type="number" min="1" step="1" class="inp" value="${existingKit?.expiryDays||28}"></div>
     </div>
-    <label for="bk-currency" class="field-label">CURRENCY</label>
-    <select id="bk-currency" class="inp" style="margin-bottom:12px">
-      ${[...new Set(["CAD","USD","GBP","EUR","AUD","NZD","CHF","JPY","CNY","HKD","SGD","INR","MXN","BRL","ZAR",existingKit?.currency||"CAD"])].filter(Boolean).map(v=>`<option value="${esc(v)}" ${(existingKit?.currency||"CAD")===v?"selected":""}>${esc(v)}</option>`).join("")}
-    </select>
-    <div style="display:flex;gap:10px;margin-bottom:12px">
-      <div style="flex:1;min-width:0"><label for="bk-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label><input id="bk-expiry" type="number" min="1" step="1" class="inp" value="${existingKit?.expiryDays||28}"></div>
-      <div style="flex:1;min-width:0"><label for="bk-bac-edit" class="field-label">BAC WATER (mL)</label><input id="bk-bac-edit" type="number" min="0.01" step="0.1" class="inp" value="${existingKit?.bacMl||""}" placeholder="At vial opening"></div>
+    <div class="nx-kit-field-pair">
+      <div><label for="bk-cost" class="field-label">TOTAL COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 200.00"></div>
+      <div><label for="bk-currency" class="field-label">CURRENCY</label><select id="bk-currency" class="inp">
+        ${[...new Set(["CAD","USD","GBP","EUR","AUD","NZD","CHF","JPY","CNY","HKD","SGD","INR","MXN","BRL","ZAR",existingKit?.currency||"CAD"])].filter(Boolean).map(v=>`<option value="${esc(v)}" ${(existingKit?.currency||"CAD")===v?"selected":""}>${esc(v)}</option>`).join("")}
+      </select></div>
     </div>
-    <label for="bk-notes" class="field-label">KIT NOTES (OPTIONAL)</label>
+    <label for="bk-storage" class="field-label">STORAGE LOCATION</label>
+    <select id="bk-storage" class="inp" style="margin-bottom:14px"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select>
+    <label for="bk-notes" class="field-label">NOTES (optional)</label>
     <textarea id="bk-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Storage, lot or other kit notes">${esc(existingKit?.notes||"")}</textarea>
     <button id="bk-save" class="btn-primary" style="background:#C9A0FF">${isEdit?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
