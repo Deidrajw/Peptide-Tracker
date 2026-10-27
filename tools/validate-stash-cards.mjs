@@ -39,6 +39,7 @@ try{
     ensure(addMetrics.height>=44&&addMetrics.width>=170&&addMetrics.left>=addMetrics.containerLeft+12&&addMetrics.right<=addMetrics.containerRight-12,
       'Supplies CTA is clipped or below minimum touch target');
     await page.screenshot({animations:'disabled',path:'dist/stash-supplies-empty-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
     await page.locator('#add-equipment').click();
     ensure(await page.locator('#eq-type').count()===1,'Supplies Add action did not open original form');
     await page.evaluate(()=>{closeModal();state._stashSub='kits';render();});
