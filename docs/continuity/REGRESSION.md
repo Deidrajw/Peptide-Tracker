@@ -1193,3 +1193,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - CI 40569926374 (mobile) SUCCESS; 40569926373 (full) SUCCESS at app/test head 85afbd03. Browser log: Log Dose E2E PASS 8 LIVE/DEMO 320px/390px light/dark configurations, 64 flows, including three independent timestamped reactions, direct Calendar and retrospective entry, preserved old notes, no duplicate dose and no inventory deduction. Other core suites passed; calculator math diagnostic 80/80 not clinical validation.
 - PASS (CI package validation): full-app standalone fictional DEMO, offline DEMO ZIP, complete LIVE ZIP uploaded as artifact 12765770553. Cloudflare bot preview commit a783546 reported successful https://32aef596.nexuspeplog.pages.dev; independent HTTP hash parity NOT VERIFIED.
 - NOT TESTED: physical iPhone Safari, real keyboard/VoiceOver, actual saved production data and full WCAG AA. User acceptance remains pending; production untouched.
+
+
+## 2026-10-27 — Compound details completed-dose render regression
+- FAIL (user screenshot): compound View details crashes with ReferenceError fmtT is not defined, replacing screen with global render error.
+- ROOT CAUSE: fmtT scoped inside getDoseStatus but invoked from renderCompoundActionArea taken_today branch in assets/js/07-nexus.js. FIX e5bb5d93 uses local toLocaleTimeString equivalent at call site.
+- Added browser guard at commit 7097d07c exercises taken_today completed-dose markup with fictional 3:03 PM dose in every LIVE/DEMO 320px/390px dark/light E2E case. Current-head CI PENDING, and physical Safari acceptance NOT TESTED. No production change.
