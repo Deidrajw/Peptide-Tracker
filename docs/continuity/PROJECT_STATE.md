@@ -1415,3 +1415,8 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - User's next screen priority after this: **Supplies**. Separately log future **Blend Composition & Dose Analytics** (per-compound breakdown in blend kit, dose confirmation/history, no double count); design/implementation not yet approved.
 - Prior typography CI was green; no new attachment-specific QA or native iPhone file picker testing verified in this turn. Draft PR #123 stays unmerged and undeployed. Mandatory-fields and app-wide no-nested-scrolling audits remain separate.
 - **ONE NEXT ACTION:** inspect and test existing attachment implementation end-to-end at 320/390 light/dark and iPhone file-picker, fix scoped issues, then review Supplies design.
+
+
+## 2026-10-26 — Attachment implementation source review
+- Confirmed both editors invoke the same `nexusKitTestResultControl`, positioned after Notes in the source; standard wizard moves the control into Step 2, blend wizard moves all pre-save details into Step 2. Standard review explicitly displays attachment filename; blend review must be checked for matching visibility. Both save paths store `testResultAttachment`, including edits. Existing implementation supports PDF/PNG/JPEG/WebP <=750 KB, not HEIC, and uses a data URL in kit JSON; quota and backup behavior require live verification.
+- No source edits or production data changes in this review. **NOT TESTED:** real file selection, create/edit/restore, physical iPhone, 320/390 screenshot acceptance for attachments. Next: add targeted automated attachment regression and review Supplies UI; do not claim release complete.
