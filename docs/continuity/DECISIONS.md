@@ -598,3 +598,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26 — Approved Blend Kit one-row compound composition
 - Each blend composition row displays editable searchable compound combobox, mg per vial and 44px remove on the **same horizontal line**, including narrow iPhone widths. Keep combobox sufficiently flexible to type and view options, mg compact, and custom Other field below only when selected. Layout-only; no changes to component math, saved records or ledger.
+
+## 2026-10-26/27 — One-row Blend visual detail decision
+- Required one horizontal row: editable searchable compound name, compact mg value, and 44px remove control. `269f468d` screenshots show aligned controls at 320/390 in both themes, but full compound search placeholder was clipped; shorten visible placeholder to `Search…` (draft `3bab1d9a`), keep accessibility name complete. Do not increase row width or stack mg. Acceptance contingent on latest screenshot and iPhone check.
