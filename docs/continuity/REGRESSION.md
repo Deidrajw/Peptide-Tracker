@@ -1174,3 +1174,10 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - FAIL (physical Safari before fix): header, close control and Quick/Guided segment disappear when scrolling within long Log Dose form; old preview 9c06830d, user screenshots.
 - PASS (automated): current fix/test commit 04530905, mobile workflow 40562669101 and full release/browser QA 40562669018. New E2E guard asserts mode switch and header are separate from scroll body and available after scrolling. Artifact 12761377615, 320/390 light/dark suites successful.
 - NOT TESTED: corrected immutable Cloudflare preview 4da04e4e in real iPhone Safari with on-screen keyboard, viewport zoom, Guided mode step switch and VoiceOver; no independent served asset hash parity. Production unchanged.
+
+
+## 2026-10-27 — Physical Safari Log Dose orphan-button / clipping incident
+- FAIL (real device and web screenshots): preview before HTML repair showed orphan chevron/close button between header and Dose source; source/administration cards misplaced, curved edges and footer scroll clipping. This supersedes prior green CI for this specific layout.
+- ROOT CAUSE: extra closing div in dose modal markup closed .nx-dose-head before #x; moving header out of .nx-dose-scroll also exposed malformed DOM nesting. Fixed code at 310ccb01, strengthened E2E guards at b61052cc for direct child header/close, scrolling section ancestry and bounding-box separation.
+- Mobile regression workflow 40566073856 SUCCESS for branch head a909e16. Full browser/artifact workflow 40566074048 running as of last check; no physical retest yet. Cloudflare bot reports branch preview 99754367 for a909e16; independently fetched asset bytes unverified.
+- PENDING real-device acceptance: exact preview shows x in header, no orphan control, source and administration cards fully rounded and aligned, one vertical body scroll, bottom review/actions unobstructed, keyboard and Quick/Guided switch work.
