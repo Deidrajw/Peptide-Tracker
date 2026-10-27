@@ -926,8 +926,25 @@ function addBlendKitModal(blendNameOrKit) {
       return "";
     };
     const review=()=>{
-      const rows=[["Blend",isEdit?existingKit.name:name||blendName],...composition.map(c=>[c.compound,c.mg+" mg per vial"]),["Total strength",composition.reduce((t,c)=>t+Number(c.mg||0),0)+" mg per vial"],["Vials",isEdit?"Existing vial counts unchanged":m.querySelector("#bk-vials")?.value],["Already open",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One vial":"No")],["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],["Expiry",m.querySelector("#bk-expiry")?.value+" days"],["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],["Cost",m.querySelector("#bk-cost")?.value?("CAD $"+m.querySelector("#bk-cost").value):"Not provided"],["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"]];
-      summary.innerHTML='<h3>Review blend inventory</h3><p>Confirm the component amounts per physical vial before saving.</p>'+rows.map(([k,v])=>'<div><span>'+safe(k)+'</span><strong>'+safe(v)+'</strong></div>').join("")+'<p class="nx-blend-review-caution">'+(isEdit?"Existing opened vial ratios and all historical doses remain unchanged. Only the future-vial template and kit details are updated.":"One physical blended vial is recorded per vial, not separate kits for each component.")+'</p>';
+      const total=composition.reduce((t,c)=>t+Number(c.mg||0),0);
+      const blendLabel=isEdit?existingKit.name:name||blendName;
+      const componentsHTML=composition.map((c,i)=>
+        '<div class="nx-blend-review-component"><span class="nx-blend-review-component-index">'+(i+1)+'</span><strong>'+safe(c.compound)+'</strong><span>'+safe(c.mg)+' mg</span></div>'
+      ).join("");
+      const details=[
+        ["Vials",isEdit?"Existing counts unchanged":m.querySelector("#bk-vials")?.value],
+        ["Open vial",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One open":"All sealed")],
+        ["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],
+        ["Expiry",m.querySelector("#bk-expiry")?.value+" days"],
+        ["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],
+        ["Cost",m.querySelector("#bk-cost")?.value?("CAD $"+m.querySelector("#bk-cost").value):"Not provided"],
+        ["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"]
+      ];
+      summary.innerHTML=
+        '<div class="nx-blend-review-hero"><span class="nx-blend-review-kicker">YOUR BLEND KIT</span><h3>'+safe(blendLabel)+'</h3><div class="nx-blend-review-total"><strong>'+safe(total)+' mg</strong><span>total per physical vial</span></div></div>'+
+        '<div class="nx-blend-review-section"><h4>What is in each vial?</h4><div class="nx-blend-review-components">'+componentsHTML+'</div></div>'+
+        '<div class="nx-blend-review-section"><h4>Inventory and preparation</h4><div class="nx-blend-review-facts">'+details.map(([k,v])=>'<div><span>'+safe(k)+'</span><strong>'+safe(v)+'</strong></div>').join("")+'</div></div>'+
+        '<p class="nx-blend-review-caution">'+(isEdit?"Existing opened vial ratios and all historical doses remain unchanged. Only the future-vial template and kit details are updated.":"One physical blended vial is recorded per vial, not separate kits for each component.")+'</p>';
     };
     const paint=()=>{
       panels.forEach((panel,i)=>{panel.hidden=i!==stage;});
