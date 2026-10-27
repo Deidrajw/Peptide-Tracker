@@ -2978,3 +2978,19 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
  box-sizing:border-box!important;height:48px!important;min-height:48px!important;max-height:none!important;
  padding:8px 10px!important;line-height:1.3!important;flex-shrink:0!important;
 }
+
+
+/* DS2 Log Dose: compact review source labels, optional traceability and calm observations. */
+.nx2-dose-modal .nx-dose-review-stage{padding:16px;border-radius:16px}
+.nx2-dose-modal #nx-dose-review-rows strong{max-width:61%;overflow-wrap:anywhere;line-height:1.45}
+.nx2-dose-modal .nx-dose-source-ids{border-top:1px solid var(--border-sub);margin-top:8px;padding-top:6px}
+.nx2-dose-modal .nx-dose-source-ids summary{min-height:48px;display:flex;align-items:center;gap:8px;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer}
+.nx2-dose-modal .nx-dose-source-ids summary span{margin-left:auto;font-size:11px;font-weight:450;color:var(--t4)}
+.nx2-dose-modal .nx-dose-source-ids-body{padding:0 0 8px}
+.nx2-dose-modal .nx-dose-source-ids-body>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:11px}
+.nx2-dose-modal .nx-dose-source-ids-body span{color:var(--t3)}
+.nx2-dose-modal .nx-dose-source-ids-body strong{max-width:65%;text-align:right;color:var(--t2);overflow-wrap:anywhere}
+.nx2-dose-modal .nx-dose-optional{overflow:visible}
+.nx2-dose-modal .nx-dose-optional>summary{min-height:48px;display:flex;align-items:center;gap:8px}
+.nx2-dose-modal .nx-dose-observations-hint{margin-left:auto;color:var(--t3);font-size:11px;font-weight:500;text-align:right}
+@media(max-width:360px){.nx2-dose-modal .nx-dose-observations-hint{font-size:10px}.nx2-dose-modal .nx-dose-review-stage{padding:12px}}
