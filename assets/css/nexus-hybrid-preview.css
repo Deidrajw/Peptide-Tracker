@@ -3101,3 +3101,26 @@ html[data-theme="light"] .nx-goal-wizard-panel #g-target{color-scheme:light;}
 .nx-reaction-history-buttons button{min-height:44px;min-width:44px;padding:7px 9px;border:1px solid var(--border-sub);border-radius:9px;background:var(--surface);color:var(--t2);font-size:12px;font-weight:650}
 .nx-reaction-history-buttons .nx-reaction-delete{color:var(--danger,#D76C78)}
 @media(max-width:360px){.nx-reaction-history-row{align-items:stretch;flex-direction:column}.nx-reaction-history-buttons button{flex:1}}
+
+
+/* DS2 screenshot correction: kit Overview/Vials/History is a pill segment, not legacy underlined tabs.
+   Legacy nexus.css uses !important on the exact panel selectors, so override at matching
+   scope/specificity rather than changing all tab systems. */
+body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tabs {
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:4px!important;padding:4px!important;overflow:hidden!important;
+ border:1px solid var(--border-sub)!important;border-radius:16px!important;
+ background:var(--surface-2)!important;box-shadow:none!important;
+}
+body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab {
+ min-width:0!important;min-height:44px!important;
+ border:1px solid transparent!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--t3)!important;
+}
+body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab[aria-selected="true"],
+body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab.active {
+ border:1px solid var(--border-sub)!important;border-radius:12px!important;
+ background:var(--surface)!important;color:var(--t1)!important;
+ box-shadow:0 2px 8px #100b201c!important;
+}
