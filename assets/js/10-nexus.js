@@ -1750,7 +1750,7 @@ function homeView() {
   // a second disclosure, duplicated count rows and unnecessary chevron.
   const thisWeekCardHtml=`<button type="button" id="opendigest" class="nx-week-report-link">Full weekly report <span aria-hidden="true">↗</span></button>`;
 
-  // PRIMARY NAV — Today/Active/Upcoming/All. Today is the default: what needs attention
+  // PRIMARY NAV — Today/Active/Completed/All. Future doses remain in Coming up below.
   // right now, not every active compound regardless of relevance.
   const homeViewKey = state._homeView || "today";
   const navBtn = (key,label,count) => `<button class="hv-nav" data-view="${key}" aria-pressed="${homeViewKey===key}" style="flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:600;background:${homeViewKey===key?"var(--surface-3)":"transparent"};border:1px solid ${homeViewKey===key?"var(--border)":"var(--border-sub)"};color:${homeViewKey===key?"var(--t1)":"var(--t4)"};min-height:36px">${label}${count?` ${count}`:""}</button>`;
@@ -1758,7 +1758,7 @@ function homeView() {
   html+=`<div class="nexus-today-view-nav">
     ${navBtn("today","Today")}
     ${navBtn("active","Active",started.length||"")}
-    ${navBtn("upcoming","Upcoming")}
+    ${navBtn("completed","Completed")}
     ${navBtn("all","All")}
     <button id="add-custom-compound" title="Add custom compound" style="min-width:44px;min-height:36px;padding:8px 10px;border-radius:9px;background:transparent;border:1px solid var(--border-sub);color:var(--t3);font-size:16px;flex-shrink:0">＋</button>
   </div>`;
@@ -1767,7 +1767,7 @@ function homeView() {
   // (renderCompoundCardCompact), so there's one place that fixes/breaks, not several.
   if (homeViewKey==="today") html += renderSinceLastVisit() + renderTodayCompoundSection(started);
   else if (homeViewKey==="active") html += renderActiveFullView(started);
-  else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
+  else if (homeViewKey==="completed") html += renderCompletedFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
   html += todayAttentionHtml; // hidden modal remains available without occupying Today layout
   // Daily tracking uses real dated records; the activity selection only changes the
