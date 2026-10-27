@@ -505,6 +505,10 @@ function wireBody() {
     const pd = (state.preparedDoses||[]).find(p=>String(p.id)===b.dataset.id);
     if (pd) administerSyringeModal(pd);
   });
+  document.querySelectorAll(".nx-history-reaction").forEach(b=>b.onclick=()=>{
+    const name=b.dataset.name,id=b.dataset.id;
+    if(allPeptides()[name]?.doses?.some(d=>String(d.id)===String(id)))nexusDoseReactionModal(name,id);
+  });
   document.querySelectorAll(".editdose").forEach(b=>b.onclick=()=>{
     const name=b.dataset.name; const id=+b.dataset.id;
     const tgt=PEPTIDES[name]?state.peptides:state.customPeptides;
