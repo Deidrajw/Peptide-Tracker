@@ -1199,3 +1199,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - FAIL (user screenshot): compound View details crashes with ReferenceError fmtT is not defined, replacing screen with global render error.
 - ROOT CAUSE: fmtT scoped inside getDoseStatus but invoked from renderCompoundActionArea taken_today branch in assets/js/07-nexus.js. FIX e5bb5d93 uses local toLocaleTimeString equivalent at call site.
 - Added browser guard at commit 7097d07c exercises taken_today completed-dose markup with fictional 3:03 PM dose in every LIVE/DEMO 320px/390px dark/light E2E case. Current-head CI PENDING, and physical Safari acceptance NOT TESTED. No production change.
+
+
+## 2026-10-27 — Today one-tap Record reaction gate
+- New completed-dose Today action must display Record reaction linked to the correct persisted dose ID, with More actions still functional; if no dose ID exists do not show stale link. Button must open standalone reaction editor without editing dose or deducting inventory. CSS wraps at 320px and uses 48px target. App commits 55232dd9/e8d5e762/2a1038e0; new browser assertions 6142ff10/305481bc.
+- PENDING: latest LIVE/DEMO 320/390 themes CI, correct click routing, responsive physical iPhone visuals, keyboard and VoiceOver. Existing Calendar/History/retrospective history, multiple reactions and vial balances protected by earlier passing automated suites. Do not infer production release from preview.
