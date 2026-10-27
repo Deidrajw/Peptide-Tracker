@@ -1116,3 +1116,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **FAIL observed** run `40536801200`: `Goal quick status target undersized` on new action sheet test; mobile run `40536801121` SUCCESS but did not gate this case. Fix commit `1011a58b` enforces 46px min touch target; CURRENT-HEAD browser/visual validation pending. Preserve failure evidence.
 
 - Goal status touch target: browser run `40536801200` FAIL on rendered button height (below 44px); fixed scoped 48px modal rule `6dec6a49`. Await current-head browser measurement PASS at 320/390 dark/light; do not silently upgrade historical failure.
+
+
+## 2026-10-27 — Log Dose Review + optional Observations (PENDING)
+- LIVE/isolated FULL DEMO × 320/390 × light/dark: open Log Dose with long kit/vial IDs, confirm primary Review displays human source without numeric identifiers, use `Source identifiers` disclosure to inspect exact kit/vial IDs; opening Review must not save dose or deduct inventory. Multi-vial per-source IDs are preserved; test prepared source, no open vial and edit. Long text wraps without horizontal overflow.
+- Confirm Observations collapsed for new Quick Log, accessible 48px summary, opens symptoms + notes + escalation, retains content across review/back and save/edit. Guard existing `validate-logdose-ui.mjs` real dose confirm/edit original ID, multi-vial insufficient stock, source chooser, drafts, prior inventory deductions and history; NEVER mark PASS without current-head CI and manual evidence. iPhone native keyboard / VoiceOver NOT TESTED.
