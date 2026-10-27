@@ -1137,3 +1137,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Physical Safari screenshot follow-up (PENDING)
 - Validate search typed `Vitamin` displays matches immediately below Browse all, not below Add. Order: search, Browse/Results, Selected today, Add new. Confirm empty-catalogue inline Add still works, duplicates select rather than duplicate, prior daily supplement history retained, light/dark and 320/390 without double-scrolling.
 - Validate Log Dose editable `Source 1` shows human-readable compound/vial label and no long kit ID. `Source identifiers` expands to exact Kit/Vial IDs, collapsed by default. Multi-vial rows have distinct traceable identities; editable draw amount/units/confirm/remove functionality and vial allocation/save history unchanged. Physical iPhone latest preview QA NOT TESTED. New source and DOM tests are not evidence of production deployment.
+
+- `validate-logdose-ui.mjs` at `ac503930` tests actual editable row readable label and collapsed exact Kit ID, prior to dose Review; user screenshot raw ID FAIL should not be promoted to PASS without current browser test and iPhone preview confirmation.
