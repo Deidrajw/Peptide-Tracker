@@ -108,7 +108,7 @@ function supplyModal(existing, presetName) {
     </select>
     <label class="field-label">NOTES (lot #, vendor…)</label>
     <input id="snotes" class="inp" value="${esc(f.notes||"")}" placeholder="e.g. Lot #ABC, ordered from XYZ" style="margin-bottom:18px">
-    <button id="ssave" class="btn-primary" style="background:#C9A0FF">Save Kit</button>
+    <button id="ssave" class="btn-primary" style="background:#C9A0FF">${existing?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
   m.classList.add("nx-stash-kit-editor");
