@@ -1702,3 +1702,8 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 - Application/filter code through ebd66e42; browser tests corrected dff7ea52 (collapsed/expanded Completed), 79c7bd35 (nav, Coming up → Calendar), 3d4ae796 (fixture-only onboarding overlay). Previous CI failures 40583699831 and 40585053600 retained in REGRESSION.md. Fresh full build/browser/parity workflow 40585602137 **SUCCESS**, mobile regression 40585601628 **SUCCESS**. Browser log: 8 LIVE/DEMO 320/390 light/dark configurations, Log Dose 96 flows PASS, core vial 48 assertions and math diagnostic 80/80. CI release artifact 12771971424 contains source-built LIVE ZIP and isolated complete DEMO; no real production data tested.
 - Cloudflare bot reports immutable draft preview https://2d04bd1c.nexuspeplog.pages.dev for docs commit f88ec7e, later doc commits may get their own preview. Direct HTTP served asset hash parity and physical iPhone Safari/VoiceOver NOT VERIFIED. PR #123 DRAFT/UNMERGED; production unchanged.
 - ONE NEXT ACTION: physically verify Today→Completed includes today's recorded dose, expand View Details→Record reaction, and Coming up→View Calendar on immutable preview. Record pass/fail and fix device issues before release approval.
+
+
+## 2026-10-27 — Reaction event management draft
+- Code e5b9b14f adds optional post-dose invitation and event-level reaction edit/delete. Tests 6a34b432 cover multiple events and unchanged balances. Mobile CI 40590709765 SUCCESS; full build/browser 40590709842 PENDING. iPhone and VoiceOver NOT TESTED; production unchanged, PR #123 draft.
+- ONE NEXT ACTION: clear current full browser QA, address any failures, verify exact-source packages and obtain iPhone acceptance.
