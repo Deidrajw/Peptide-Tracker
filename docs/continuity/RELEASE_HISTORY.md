@@ -766,3 +766,5 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Today header action alignment (DRAFT / NOT RELEASED)
 - Draft PR #123 Today home view now composes bell, Profile and theme as one header action group, reused IDs/handlers; Goal quick status and Protocol first-log updates carried forward. CSS light/dark + 320/390 touch alignment, browser action regression added. No schema change, production localStorage or dose history writes. Latest-head CI and isolated artifact verification pending, physical Safari/VoiceOver not tested. PR remains draft/unmerged; no production deployment.
+
+- QA corrective change `6dec6a49`: explicitly sets Goal quick-status touch options to 48px in modal, after failing rendered height assertion in browser run `40536801200`. Current-head outcome pending, production remains unchanged.
