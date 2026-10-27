@@ -785,6 +785,12 @@ function doseModal(name, existing, occTime) {
   chooser.className="nx-dose-mode-switch";
   chooser.innerHTML='<button type="button" data-dose-mode="quick" aria-pressed="true">Quick Log</button><button type="button" data-dose-mode="guided" aria-pressed="false">Guided Log</button>';
   doseHead.insertAdjacentElement("afterend",chooser);
+  // Keep title, close button and Quick / Guided mode visible while the form scrolls.
+  // Only the dose fields belong to the scrollport; the action footer stays separate.
+  const fixedDoseHeader=document.createElement("div");
+  fixedDoseHeader.className="nx-dose-fixed-header";
+  fixedDoseHeader.append(doseHead,chooser);
+  doseScroll.insertAdjacentElement("beforebegin",fixedDoseHeader);
   const stepNav=document.createElement("div");
   stepNav.className="nx-dose-step-nav";
   stepNav.innerHTML='<span id="nx-dose-step-caption" aria-live="polite"></span><div class="nx-dose-step-track"><span></span></div><div class="nx-dose-step-actions"><button type="button" id="nx-dose-step-back">Back</button><button type="button" id="nx-dose-step-next">Continue</button></div>';
