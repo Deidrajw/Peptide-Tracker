@@ -2791,3 +2791,11 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
 .nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment{
   margin-top:16px!important;
 }
+
+/* Reserve matching label space even when 'optional' wraps at 320px. */
+.nx-guided-blend-editor .nx-kit-field-pair>div>label,
+.nx-stash-kit-editor .nx-kit-wizard-stage[data-step="1"]>div[style*="grid-template-columns"]>div>label{
+  display:flex!important;align-items:flex-end!important;
+  min-height:34px!important;box-sizing:border-box!important;
+  line-height:1.25!important;white-space:normal!important;
+}
