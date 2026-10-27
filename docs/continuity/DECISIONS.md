@@ -700,3 +700,5 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-27 — Goal status should be editable without reopening full wizard
 - User requested quick Goal Planned → In progress changes from the ellipsis action sheet. Use four explicit actions with persisted canonical statuses `planned`, `active`, `paused`, `completed`; display `active` as “In progress” in this context, without renaming saved values. Only mutate the selected goal's `status`; never cascade to linked Protocols or dosage history without separate approval. Keep Edit/Delete available; use shared lavender DS2 visual treatment. Implementation is draft pending device/CI acceptance.
+
+- Approved audit direction (2026-10-27): Protocol `Ready for first log` is informational rather than success; avoid neon green. Use neutral title text and shared lavender CTA in both themes, without changing status semantics or log action. Implementation draft pending visual/contrast QA.
