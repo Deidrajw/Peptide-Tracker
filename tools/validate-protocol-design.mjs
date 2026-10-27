@@ -48,6 +48,17 @@ try{
     check((await field.getAttribute('placeholder')).includes('Search compounds'),'Search placeholder incorrect');
     check(!(await field.getAttribute('placeholder')).includes('🔍'),'Search emoji still present');
     check(await page.locator('.nx-proto-compound-search svg').count()===1,'Outline magnifier missing');
+
+    check(await page.locator('#pb-browse-all').count()===1,'Protocol full-library action missing');
+    await page.locator('#pb-browse-all').click();
+    check(await page.locator('.nx-compound-browser').isVisible(),'Protocol browser did not open');
+    check(await page.locator('.nx-browser-choice').count()>5,'Protocol full library truncated');
+    await page.locator('#nx-browser-search').fill('GHK-Cu');
+    check(await page.locator('.nx-browser-choice').count()===1,'Protocol library search filtering failed');
+    await page.locator('.nx-browser-choice').click();
+    check(await page.locator('.nx-compound-browser').count()===0,'Protocol full-library did not close');
+    check(await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).count()===1,'Protocol full-library selection did not update stack');
+    await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).locator('.pb-crem').click();
     await field.fill('GHK-Cu');
     const candidate=page.locator('.pb-cadd[data-name="GHK-Cu"]').first();
     check(await candidate.count()===1,'GHK-Cu search did not filter');
