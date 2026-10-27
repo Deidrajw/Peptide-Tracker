@@ -963,3 +963,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-26 — Protocol/Plans browse-all expansion awaiting CI
 - New tests in `tools/validate-protocol-design.mjs` verify Protocol Stack full library >5, GHK-Cu filter/choose and route/remove recovery; reusable Plans compound multi-select Browse All BPC-157 selection persists as selected pill. 320/390, dark/light, LIVE/DEMO environment checks are queued on newest application test head. Original Stash browser tests retained. Physical iPhone and VoiceOver NOT TESTED; protected dose/vial accounting unchanged by UI code.
+
+## 2026-10-26 — Latest Protocol/Plans browser run verified
+- PASS full-browser CI `40432426016`; PASS mobile CI `40432425967`; tested source `471fdeed`. Exact-source artifact 12703425376 downloaded and CRC checked: complete full-app DEMO and LIVE ZIP root structure, all 12 JS ordered. PASS independent Chromium standalone DEMO Protocol Browse All at 320/390 dark/light (4/4): 49 compounds visible, GHK-Cu filter to one, selection returns to Stack. PNG captures saved for each case. This is actual HTML renderer in browser emulation; physical iPhone Safari/on-screen keyboard/VoiceOver NOT TESTED. App-wide no-nested-scroll audit remains INCOMPLETE.
