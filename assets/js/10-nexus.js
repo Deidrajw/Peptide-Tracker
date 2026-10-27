@@ -1587,10 +1587,13 @@ function homeView() {
   // collection excluded compounds with no dose history, so Today incorrectly said
   // "No scheduled doses" even while Protocol prompted "Ready for first log".
   // Do not schedule unrelated unsaved compounds or future/paused protocols.
-  const firstDoseCandidates = notStarted.filter(([, record]) => {
-    const protocol = protocolForData(record);
-    return protocol?.status === "active" && !!protocol.startDate && protocol.startDate <= today;
-  });
+  const firstDoseCandidates = notStarted.filter(([name]) =>
+    (state.protocols || []).some(protocol =>
+      ["active", "in_progress"].includes(protocol.status) &&
+      !!protocol.startDate && protocol.startDate <= today &&
+      (protocol.compounds || []).some(compound => compound.name === name)
+    )
+  );
   const todaySlots = [...started, ...firstDoseCandidates].flatMap(([name, record]) => {
     const hasDoseHistory = (record.doses || []).length > 0;
     if (hasDoseHistory && !isCompoundRelevantToday(getDoseStatus(name, record))) return [];
