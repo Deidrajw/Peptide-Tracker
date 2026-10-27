@@ -66,6 +66,8 @@ try {
     });
     ensure(completedAction.includes('Dose completed') &&
       completedAction.includes('3:03') &&
+      completedAction.includes('nx-today-record-reaction') &&
+      completedAction.includes('data-id="91827"') &&
       completedAction.includes('More actions'),
       'Compound View details / completed-dose UI did not render a formatted local time');
     verified.push('compound completed-dose details render without undefined fmtT');
