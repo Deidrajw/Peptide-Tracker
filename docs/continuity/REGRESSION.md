@@ -947,3 +947,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-26 — Blend modal overlay, Review and app-wide scroll acceptance
 - Physical iPhone screenshot FAIL before patch: combobox results push following form rows, black footer strip, Review lacks hierarchy, scrollbars inside bottom sheet.
 - Pending new head test `e130934c`: popup position absolute/no row expansion, max five non-scrollable matches, correct searchable options, Review hero + prominent total mg and two components, transparent action footer, Review/Save backing values and no premature write. Run 320/390 dark/light LIVE/isolated DEMO; capture focused dropdown screenshot and review. Physical iPhone keyboard/VoiceOver and app-wide modal nested-scroll audit NOT TESTED. Never call no-nested-scroll policy globally complete until entire app audited.
+
+## 2026-10-26 — Full-screen Blend follow-up QA
+- Commit dd26fdc9 adds Playwright assertions that mobile Blend editor occupies the viewport height within 25 CSS pixels and does not overflow horizontally at 320/390 in LIVE/isolated DEMO dark/light. Alongside prior popup no-row-expansion, max-five suggestion and Review checks, latest CI result still pending. Physical iPhone keyboard, dropdown clipping, VoiceOver and full app-wide nested-scroll audit NOT TESTED.
