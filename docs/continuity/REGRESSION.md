@@ -1242,3 +1242,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-27 — Stash Overview/Vials/History pill corner regression
 - User-provided physical iPhone screenshot FAIL: selected Overview ends in square underlined lower edge despite rounded container. Source cause legacy `assets/css/nexus.css` `.nx-kit-detail-panel .nx-stash-tab` `border-radius:0!important` and selected `border-bottom:2px` overrode hybrid rules. Targeted CSS candidate 135848e adds stronger scoped selected round radius, removes underlining; browser test e97a2d5 checks computed top/bottom radii and bottom border in LIVE/DEMO 320/390 light/dark. Mobile CI 40600422891 SUCCESS; full browser 40600422694 PENDING at recording. Device retest NOT TESTED. Keep Draft PR #123 and production unchanged.
+
+
+## 2026-10-27 NEW STYLING GATE: dfe4df01 CSS-only changes. NOT TESTED current-head: Stash selected bottom corner/border, Trends accordions/ranges/library/drilldowns, Profile subtabs/settings/back, 320/390 both themes, iPhone/VoiceOver, full LIVE/DEMO parity. No claim of PASS; preserve history, supplements, storage, doses, vial math, and accepted Calendar/Plans/Supplies.
