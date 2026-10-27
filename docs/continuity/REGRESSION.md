@@ -1215,3 +1215,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-27 — Completed and Coming up browser gate expanded
 - Full QA 40583699831 FAILED at Completed tab action assertion after ebd66e42. Analysis: test searched for Record reaction in *collapsed* compact card, but app deliberately displays the action only in expanded View Details. Adjusted test dff7ea52 to assert collapsed disclosure and expanded Record reaction, plus historical-only exclusion. Added 79c7bd35 browser test for top Completed presence, top Upcoming absence, lower Coming up and working Calendar navigation. New-head CI pending; physical iPhone not tested. Retain failed-run record for traceability.
+
+- Browser 40585053600 FAILED added Coming up Calendar click: Playwright reported fixture onboarding modal intercepted pointer events; prior Completed expanded-card assertions cleared. Browser fixture correction at 3d4ae796 removes stale onboarding overlay only within test before clicking link. Fresh run PENDING; physical Safari still NOT TESTED.
