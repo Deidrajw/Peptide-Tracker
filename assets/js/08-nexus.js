@@ -661,7 +661,7 @@ function dayDetailModal(dateIso) {
       <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span>
       <span style="flex:1;min-width:0"><strong style="display:block;font-size:13px;font-weight:600">${esc(name)}</strong><span style="display:block;font-size:11px;color:var(--t4);margin-top:3px">${esc(String(dose.dose??'—'))} ${esc(unit)} · ${label12(timeKeyOf(dose.date))}</span></span>
       <span style="font-size:11px;color:var(--t3)">View / edit ›</span>
-    </button>`).join("")}
+    </button><button type="button" class="cal-record-reaction" data-name="${esc(name)}" data-id="${dose.id}" aria-label="Record reaction for ${esc(name)} at ${label12(timeKeyOf(dose.date))}" style="min-height:44px;width:100%;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650;margin:4px 0 12px">Record reaction${dose.reactions?.length?` (${dose.reactions.length})`:""}</button>`).join("")}
   </section>`:`<div style="margin:14px 0;font-size:12px;color:var(--t4)">No doses recorded for this date.</div>`;
 
   const m=openModal(`
@@ -705,6 +705,13 @@ function dayDetailModal(dateIso) {
     </div>
   `,"#7DF9C0");
   m.querySelector("#x").onclick=closeModal;
+  m.querySelectorAll(".cal-record-reaction").forEach(b=>b.onclick=()=>{
+    const name=b.dataset.name, id=b.dataset.id;
+    if(!(allPeptides()[name]?.doses||[]).some(d=>String(d.id)===String(id))){
+      showErrorBanner("This saved dose could not be found. No reaction was recorded.");return;
+    }
+    nexusDoseReactionModal(name,id);
+  });
   const al=m.querySelector("#addlog"); if(al)al.onclick=()=>{closeModal();dailyModal(null,dateIso);};
   const aw=m.querySelector("#addweight"); if(aw)aw.onclick=()=>{closeModal();weightModal();};
   const am=m.querySelector("#addmacro"); if(am)am.onclick=()=>{closeModal();macroModal(dateIso);};
