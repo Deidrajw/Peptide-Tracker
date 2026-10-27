@@ -2534,3 +2534,13 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
     overflow-y:auto!important;overscroll-behavior:contain!important;
   }
 }
+
+
+/* Keep legacy flat-summary direct-child rules from overriding the new Review sections. */
+.nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-hero,
+.nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-section{
+  display:block!important;align-items:initial!important;justify-content:initial!important;
+  border-bottom:0!important;
+}
+.nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-hero{padding:17px 16px!important;border:1px solid var(--bdr)!important}
+.nx-guided-blend-editor .nx-blend-wizard-summary>.nx-blend-review-section{padding:0!important}
