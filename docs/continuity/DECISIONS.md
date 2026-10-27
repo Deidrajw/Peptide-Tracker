@@ -601,3 +601,7 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-26/27 — One-row Blend visual detail decision
 - Required one horizontal row: editable searchable compound name, compact mg value, and 44px remove control. `269f468d` screenshots show aligned controls at 320/390 in both themes, but full compound search placeholder was clipped; shorten visible placeholder to `Search…` (draft `3bab1d9a`), keep accessibility name complete. Do not increase row width or stack mg. Acceptance contingent on latest screenshot and iPhone check.
+
+## 2026-10-26 — Global scrolling principle and Blend sheet feedback
+- User's actual iPhone preview screenshots explicitly reject dark rectangular footer backdrop, expanding in-flow compound results, and a flat verbose Review; require floating suggestion overlay (no added row height), clear visual component quantities, and footer visually continuous with sheet.
+- **App-wide approved principle:** avoid nested scrolling inside modals, popovers or other windows. Long content must use one primary page-level scroll surface or be split into digestible steps; preserve keyboard focus, safe-area and fixed primary action. Do NOT globally disable overflow on existing forms: audit screen by screen and convert long workflows to full-screen editor where necessary; do not clip fields.
