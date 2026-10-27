@@ -157,10 +157,40 @@ try {
       JSON.stringify(fromCalendar.kits)===JSON.stringify(reactionSaved.kits),
       'Calendar reaction changed vial inventory');
     verified.push('Calendar saved-dose reaction opens directly, appends history with zero deduction');
+    // Saved-dose retrospective offers Record reaction directly, with no dose editor.
+    await page.evaluate(()=>doseRetrospectiveModal('Retatrutide',state.peptides.Retatrutide.doses[0].id));
+    const retroAction=page.locator('.nx-reaction-link').filter({hasText:'Record reaction'});
+    ensure(await retroAction.isVisible(),'Saved-dose retrospective has no direct Record reaction control');
+    await retroAction.click();
+    ensure(await page.locator('.nx-reaction-editor').isVisible() &&
+      !(await page.locator('.nx2-dose-modal').isVisible()),
+      'Retrospective reaction incorrectly routed through dose editor');
+    await page.locator('#nx-reaction-label').selectOption({label:'Injection-site redness'});
+    await page.locator('#nx-reaction-time').fill('2032-11-08T09:00');
+    await page.locator('#nx-reaction-notes').fill('Fictional delayed site note');
+    await page.locator('#nx-reaction-save').click();
+    const fromRetro=await stateSnapshot(page);
+    ensure(fromRetro.entries.length===1 && fromRetro.entries[0].id===originalId &&
+      fromRetro.entries[0].reactions?.length===3,
+      'Retrospective reaction replaced history or created another dose');
+    ensure(JSON.stringify(fromRetro.kits)===JSON.stringify(fromCalendar.kits),
+      'Retrospective reaction deducted inventory');
+    verified.push('retrospective saved-dose direct action, 3 reactions, zero inventory deduction');
+
+    // Legacy observations remain on old saved entries; adding new reaction must not rewrite them.
+    await page.evaluate(()=>{
+      const d=state.peptides.Retatrutide.doses[0];
+      d.notes='Legacy historical note preserved';
+    });
     await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
+    ensure(await page.locator('.nx-dose-optional').isVisible(),
+      'Old saved entry with notes cannot access legacy observations');
     await clickSave(page);
     const afterEdit=await stateSnapshot(page);
-    ensure(afterEdit.entries[0].reactions.length===2,'Subsequent dose edit erased reaction history');
+    ensure(afterEdit.entries[0].notes==='Legacy historical note preserved',
+      'Editing dose erased legacy historical note');
+
+    ensure(afterEdit.entries[0].reactions.length===3,'Subsequent dose edit erased reaction history');
     verified.push('post-dose reaction timestamp, history & zero inventory changes');
     verified.push('single vial confirm/edit/original-ID and exact deduction');
 
