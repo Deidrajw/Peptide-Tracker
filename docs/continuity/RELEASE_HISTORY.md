@@ -772,3 +772,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Log Dose review readability (DRAFT / NOT DEPLOYED)
 - Draft PR #123 commits `befe2a2` (human-readable Review source and nested IDs disclosure), `b6d901b` (responsive scoped styling) and `988b315` (browser regression). Affects Log Dose Quick/Guided Review, Observations. Data impact: none by design; dose ID/source allocations, history, stock reconciliation and saves not rewritten; no storage/schema migration. Current-head 320/390 light/dark CI, source-matched LIVE ZIP and full DEMO, physical iPhone unverified at writing. PR unmerged, no production deployment.
+
+
+### 2026-10-27 — Supplements / vial details / Prepare source UI (DRAFT / NOT RELEASED)
+- Draft PR #123 commits `a9e54daf` inline daily supplement add, `15038801` Profile supplements cleanup, `86ae622a` retired Notion handler, `d24bbada` lavender inline styling, `647b1368` browser fixture, `84a00064` Stash vial detail hierarchy, `2eb7c11c`/`3da1a412` Prepare source responsive styling. No migration, no intentional changes to dosing, vial calculations, prior supplement histories or protocol source. Current-head CI + complete source-parity artifacts and physical iPhone QA pending. PR remains unmerged; no preview/production deployment confirmed.
