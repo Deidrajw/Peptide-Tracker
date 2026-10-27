@@ -281,6 +281,7 @@ function stashView() {
             ${s.cost?`<div><span>Purchase price</span><strong>${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(s.currency||"CAD")}</strong></div>`:""}
           </div>
           ${s.notes?`<div class="nx-kit-note"><div class="nx-kit-overview-label">KIT NOTE</div><p>${esc(s.notes)}</p></div>`:""}
+          ${s.testResultAttachment?.dataUrl?`<div class="nx-kit-note"><div class="nx-kit-overview-label">TEST RESULTS</div><button type="button" class="nx-kit-test-download" data-kit-id="${esc(s.id)}" style="min-height:44px;text-align:left;color:var(--accent);background:transparent;padding:10px 0">Download ${esc(s.testResultAttachment.name||"attached results")}</button></div>`:""}
           <div class="nx-kit-overview-actions">
             <button class="editsupply" data-id="${s.id}">Edit details</button>
             <button class="compound-intel-btn" data-name="${esc(s.name)}">Compound Intel</button>
