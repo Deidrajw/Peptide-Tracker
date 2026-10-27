@@ -1168,3 +1168,9 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 ## 2026-10-27 — Separate Record Reaction test gate (PENDING)
 - New dose form must not expose old Observations, while legacy saved symptoms and notes remain editable. Saved-dose Edit must expose Record Reaction independently; records link to same dose ID, distinguish observedAt/recordedAt and preserve intensity, notes, multiple reactions. Saving reaction must not create dose entry, alter vial inventory, source allocations, schedules or original history. Reopening dose Edit after reaction must preserve saved reaction history.
 - `tools/validate-logdose-ui.mjs` test code added for fresh/save/edit/reaction/re-edit and unchanged vial deductions. Current-head CI not yet verified, do not mark PASS. Browser 320px/390px light/dark, keyboard/safe area/VoiceOver, combo/blend historical edits, exact-source DEMO/LIVE packaging and physical iPhone acceptance remain gates.
+
+
+## 2026-10-27 — Log Dose header scroll regression correction
+- FAIL (physical Safari before fix): header, close control and Quick/Guided segment disappear when scrolling within long Log Dose form; old preview 9c06830d, user screenshots.
+- PASS (automated): current fix/test commit 04530905, mobile workflow 40562669101 and full release/browser QA 40562669018. New E2E guard asserts mode switch and header are separate from scroll body and available after scrolling. Artifact 12761377615, 320/390 light/dark suites successful.
+- NOT TESTED: corrected immutable Cloudflare preview 4da04e4e in real iPhone Safari with on-screen keyboard, viewport zoom, Guided mode step switch and VoiceOver; no independent served asset hash parity. Production unchanged.
