@@ -2667,3 +2667,43 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
   font-size:14px!important;font-weight:700!important;line-height:1.4!important;
   letter-spacing:0!important;color:var(--t1)!important;
 }
+
+
+/* Shared Step 2 attachment card: Standard Kit and Blend Kit. */
+.modal.nx-stash-kit-editor .nx-kit-attachment,
+.modal.nx-guided-blend-editor .nx-kit-attachment{
+  box-sizing:border-box;display:block;margin:16px 0 18px;padding:16px;
+  border:1px solid var(--border-sub,var(--bdr));border-radius:16px;
+  background:var(--surface-2,var(--surface));color:var(--t1);min-width:0;
+}
+.nx-kit-attachment .nx-kit-attachment-header{display:flex;align-items:center;gap:9px;min-width:0}
+.nx-kit-attachment .nx-kit-attachment-icon{
+  display:flex;align-items:center;justify-content:center;flex:0 0 36px;
+  width:36px;height:36px;border-radius:11px;background:rgba(167,139,250,.14);
+  color:var(--nx-lavender-strong,#b399f8)
+}
+.nx-kit-attachment .nx-kit-attachment-title{font-size:15px;font-weight:750;line-height:1.35;letter-spacing:-.01em}
+.nx-kit-attachment .nx-kit-attachment-optional{
+  margin-left:auto;flex-shrink:0;font-size:11px;color:var(--t3);
+  background:var(--surface);padding:4px 8px;border-radius:999px
+}
+.nx-kit-attachment .nx-kit-attachment-description{font-size:13px;line-height:1.5;color:var(--t2);margin:12px 0}
+.nx-kit-attachment .nx-kit-attachment-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nx-kit-attachment .nx-kit-attachment-choose{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;min-height:46px;padding:10px 14px;border:1px solid var(--border-sub,var(--bdr));
+  border-radius:12px;background:var(--surface);color:var(--t1);
+  font:inherit;font-size:14px;font-weight:700;cursor:pointer
+}
+.nx-kit-attachment .nx-kit-attachment-choose:active{background:rgba(167,139,250,.16)}
+.nx-kit-attachment .nx-kit-attachment-clear{
+  min-height:44px;padding:8px 12px;border-radius:10px;
+  font:inherit;font-size:13px;font-weight:650;background:transparent;color:var(--t2)
+}
+.nx-kit-attachment .nx-kit-attachment-choose:focus-visible,
+.nx-kit-attachment .nx-kit-attachment-clear:focus-visible{
+  outline:2px solid var(--nx-lavender-strong,#b399f8);outline-offset:3px
+}
+.nx-kit-attachment .nx-kit-attachment-info{font-size:11px;line-height:1.5;color:var(--t3);margin:10px 0 0;overflow-wrap:anywhere}
+.nx-kit-attachment .nx-kit-attachment-error{font-size:12px;line-height:1.4;color:var(--red,#ef7777);margin:8px 0 0}
+.nx-kit-attachment [hidden]{display:none!important}
