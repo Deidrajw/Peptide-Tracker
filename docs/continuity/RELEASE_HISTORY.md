@@ -848,3 +848,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### v0.9.20-beta Reaction management draft (NOT RELEASED)
 - Code e5b9b14f introduces optional post-save invitation and individual reaction edit/delete; responsive CSS 7e1a94f and targeted browser tests 6a34b432. Mobile 40590709765 PASS, full browser run 40590709842 pending. No migration; PR #123 draft and production unchanged.
+
+
+## 2026-10-27 DS2 v0.9.20-beta draft not released: dfe4df01 on PR #123 extends Trends and Profile/Settings visual styling only. No intended schema, data, clinical calculation or production changes. Current-head QA, source-built LIVE/DEMO packages, iPhone acceptance, Cloudflare parity INCOMPLETE. No merge or deployment authorized.
