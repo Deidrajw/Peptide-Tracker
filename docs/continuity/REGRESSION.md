@@ -1141,3 +1141,5 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - `validate-logdose-ui.mjs` at `ac503930` tests actual editable row readable label and collapsed exact Kit ID, prior to dose Review; user screenshot raw ID FAIL should not be promoted to PASS without current browser test and iPhone preview confirmation.
 
 - Added multi-kit assertion `ad5722ab`: two same-compound kits must render distinguishable `Kit 1` and `Kit 2` labels, with no raw storage IDs in primary editable rows; exact ID still accessible in optional source identifiers. Browser run PENDING, physical Safari not confirmed.
+
+- **FAIL** `40548324241`: test incorrectly required detailed allocation rows for a single-vial dose, though those rows appear only when additional allocation is needed. Correction `1d0d95a3` moves ID-disclosure assertion into multi-vial case. Preserve failed-run evidence and await corrected CI before PASS.
