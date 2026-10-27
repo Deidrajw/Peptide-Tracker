@@ -1227,3 +1227,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 ## 2026-10-27 — Reaction edit/delete test gate
 - Targeted browser test 6a34b432 checks optional post-save invitation, edit preserves reaction identity and recorded timestamp, deletion removes one event after confirmation, and no change to original dose or inventory. Mobile 40590709765 PASS. Full browser 40590709842 pending; iPhone and VoiceOver NOT TESTED.
+
+
+## 2026-10-27 — Reaction invitation and individual event management QA GREEN
+- PASS automated: app/test head 6a34b432, full 40590709842, mobile 40590709765. Browser E2E 112 Log Dose flows in eight LIVE/DEMO viewport/theme combinations, including optional post-save invitation, reaction event edit preserving ID/recordedAt, confirmed delete of one reaction, unaffected sibling reactions, original dose ID and vial balances. Source-built full LIVE ZIP + isolated full-app DEMO artifact 12773443866. No actual production data.
+- NOT TESTED: physical iPhone Safari with on-screen keyboard, VoiceOver, independent Cloudflare served-asset hash parity; native reminder notifications NOT IMPLEMENTED. PR #123 draft/unmerged.
