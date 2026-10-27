@@ -1485,7 +1485,7 @@ function equipmentView() {
         <div style="font-size:12px;color:var(--t4);margin-bottom:2px">${emptyCount} ${item.unitLabel}${emptyCount===1?"":"s"} completed</div>
         ${firstOpened?`<div style="font-size:11px;color:var(--t5)">First opened ${fmtDate(firstOpened)}${lastCompleted?` · last completed ${fmtDate(lastCompleted)}`:""}</div>`:""}
         <div style="font-size:11px;color:var(--t5);margin-bottom:12px">Total consumed: ${totalConsumed%1===0?totalConsumed:totalConsumed.toFixed(1)} ${item.unitOfMeasure}</div>
-        <button class="supply-restock" data-id="${item.id}" style="width:100%;padding:10px;border-radius:10px;background:#7DF9C015;border:1px solid #7DF9C044;color:#7DF9C0;font-size:13px;font-weight:600">+ Restock</button>
+        <button class="supply-restock" data-id="${item.id}" >+ Restock</button>
       </div>`;
     }
 
@@ -1586,7 +1586,7 @@ function equipmentModal(existing) {
   const hasHistory = !isNew && (!!activeUnit || emptyCount>0 || (e.usageLog||[]).length>0);
   const lockNote = `<span style="color:var(--t5);font-weight:400"> — locked, this supply already has usage history</span>`;
 
-  openModal(`<div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:16px">${isNew?"Add":"Edit"} Supply</div>
+  openModal(`<div class="nx-equipment-form-heading">${isNew?"Add supply":"Edit supply"}</div>
     <label class="field-label">TYPE</label>
     <select id="eq-type" class="inp" style="margin-bottom:12px">${EQ_TYPES.map(t=>`<option value="${t}" ${e.type===t?"selected":""}>${t}</option>`).join("")}</select>
     <label class="field-label">BRAND / NAME <span style="color:var(--t5);font-weight:400">(optional)</span></label>
@@ -1625,7 +1625,7 @@ function equipmentModal(existing) {
     <select id="eq-storage" class="inp" style="margin-bottom:12px">${["fridge","freezer","room_temp","unknown"].map(s=>`<option value="${s}" ${(e.storageLocation||"unknown")===s?"selected":""}>${{fridge:"Fridge",freezer:"Freezer",room_temp:"Room temp",unknown:"Unknown"}[s]}</option>`).join("")}</select>
     <label class="field-label">NOTES <span style="color:var(--t5);font-weight:400">(optional)</span></label>
     <textarea id="eq-notes" class="inp" style="min-height:50px;margin-bottom:16px">${esc(e.notes||"")}</textarea>
-    <button id="eq-save" class="btn-primary" style="background:#7DF9C0;color:#000">Save</button>`);
+    <button id="eq-save" class="btn-primary">${isNew?"Add to Supplies":"Save changes"}</button>`);
 
   document.querySelector("#eq-type").onchange = function() {
     if (hasHistory) return; // locked fields must not shift just because Type changed
