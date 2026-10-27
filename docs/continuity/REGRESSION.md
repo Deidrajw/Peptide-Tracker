@@ -1025,3 +1025,8 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 - **SOURCE VERIFIED, NOT TESTED:** existing optional test-result control in both standard and blend kit editors; check Step 2 placement beneath Notes, file picker, 750KB PDF/JPEG/PNG/WebP validation, invalid file handling, replace/remove, and async read/save races.
 - **NOT TESTED:** create/edit persistence, kit detail retrieval, backup/export/import restore, storage quota, 320/390 dark/light, physical iPhone picker/keyboard/safe areas. Do not mark PASS based solely on existing code.
 - Blend Composition & Dose Analytics future discovery only; verify component math, physical vial deductions and history totals separately. App-wide mandatory fields and nested-scroll audits remain separate.
+
+
+## 2026-10-26 — Test attachment card screenshot-driven correction
+- UI CODING COMPLETE on draft source commits 65ac266 / 7d36813: both Kit Step 2 flows share attachment card with outline icon, title/Optional, explanatory one-line-ish text, full-width Choose file and concise accepted types/750 KB hint. Existing file input and persistence code preserved.
+- NOT TESTED: updated-head browser screenshot 320/390 light/dark, tap/focus/screenreader, actual iPhone file picker, PDF/image validation, replacement/removal, save/edit, export/restore and storage quota. Keep separate from broader scrolling audit.
