@@ -1868,8 +1868,11 @@ function goalModal(existing) {
   move("#g-progress-settings",1);
   const symptom=m.querySelector("#g-evidence-symptom");
   if(symptom){const label=symptom.previousElementSibling;if(label&&label.parentElement===host)steps[2].appendChild(label);steps[2].appendChild(symptom);}
-  const evidenceNote=Array.from(host.children).find(el=>el.classList?.contains("nx-muted")&&el.textContent?.includes("Selected observations remain"));
+  const evidenceNote=Array.from(host.children).find(el=>(el.classList?.contains("nx-muted")&&el.textContent?.includes("Selected observations remain"))||el.classList?.contains("nx-goal-connection-empty"));
   if(evidenceNote)steps[2].appendChild(evidenceNote);
+  // A selector with only 'No Check-In connection' is not an actionable picker.
+  // Preserve the existing optional value and mapping, but disable the empty picker.
+  if(symptom && symptom.options.length===1) symptom.disabled=true;
   move("#g-target",0);move("#g-notes",2);
   const save=m.querySelector("#g-save");
   if(save){steps[3].appendChild(save);save.textContent=existing?"Save changes":"Add Goal";}
