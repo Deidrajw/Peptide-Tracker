@@ -44,3 +44,6 @@ Hybrid **Soft Depth + Porcelain + Obsidian precision**. Midnight-lavender dark t
 
 ## Next step
 Map actual navigation destinations and mark each child surface by exact route + visual conversion status; implement remaining Profile/Trends/More and other skipped subpages on draft PR #123. Production merge/deploy requires separate user authorization.
+
+
+## 2026-10-27 DS2 progress: CSS commit dfe4df01 adds Trends summaries/jump, Body Progress tabs, compound library, Pattern Explorer and Profile/Settings hero, subtabs, rows/icons responsive styling. CODED/NEEDS CHECK. Stash tab corner CSS fix present; latest automated result and physical iPhone acceptance still pending. Nexus/Insights/More, settings child pages, supplements and hidden sheets remain OPEN. Accepted Calendar/Plans/Supplies unchanged. Global a11y/type/scroll/navigation/motion LAST.
