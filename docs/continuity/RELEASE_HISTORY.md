@@ -821,3 +821,8 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### DS2 v0.9.20-beta — compound View details render hotfix (DRAFT / NOT RELEASED)
 - User-reported draft-only render blocker: undefined fmtT when compound’s latest dose counts as taken today. Fixed at e5bb5d93 in assets/js/07-nexus.js, regression assertion at 7097d07c. No changes to saved data, math or source allocations. Browser/mobile QA, full DEMO/LIVE packages and Cloudflare preview for this head pending; physical iPhone not retested, PR #123 unmerged and production unchanged.
+
+
+### v0.9.20-beta — Today Record reaction discoverability (DRAFT / NOT RELEASED)
+- One-tap button added to completed Today compound cards by 55232dd9, wired to existing saved-dose standalone reaction form in e8d5e762, scoped responsive CSS 2a1038e0, tests 6142ff10 and 305481bc. Optional action remains available after saving in Today; no blocking new post-save dialog. Existing dose math, inventory and storage unchanged. Native timed notification concept separate, NOT CODED.
+- CI, complete LIVE ZIP/isolated full-app DEMO artifact, Cloudflare latest-head deploy and physical iPhone acceptance PENDING. PR #123 draft/unmerged, production unchanged.
