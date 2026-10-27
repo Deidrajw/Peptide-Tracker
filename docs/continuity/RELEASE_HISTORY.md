@@ -752,3 +752,7 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ### 2026-10-27 — Expanded first-dose/wizard regression, code unchanged (DRAFT / UNRELEASED)
 - Test-only commits `d48a0003` and `8771ce94` extend Protocol browser suite for distinct concurrent active protocols, two same-day occurrences for one compound, rest phase and read-only summary; plus Protocol/Goal wizard tap geometry and navigation checks. No new app logic, schema or UI changes, no production data effect. CI pending at documentation write; real iPhone Safari/keyboard/VoiceOver not tested. PR #123 draft/unmerged, no production deployment.
+
+
+### 2026-10-27 — Preview discrepancy follow-up (DRAFT / NOT RELEASED)
+- User reports that preview does not reflect Today first-dose fix. Previously asserted passing CI did not establish deployed preview SHA or user real-case scheduling behaviour. Draft changes `aa8472b` extend zero-dose Today first-dose eligibility to linked active/in_progress protocols and `ef7eb116` adds test through Protocol sync. No dose/inventory writes or schema changes. Latest source QA/artifacts and Cloudflare branch preview deployment pending; PR #123 draft/unmerged, production untouched.
