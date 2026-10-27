@@ -2742,3 +2742,15 @@ div:has(> .cpick-browse-all):not(.nx-compound-browser){
 .nx-kit-file-viewer-content iframe{width:100%;height:100%;border:0;
   background:#fff;border-radius:7px}
 @media(max-width:350px){.nx-kit-file-viewer-header{padding:10px 12px}}
+
+
+/* Scoped Blend Step 2: let the final attachment clear the sticky action bar
+   at small iPhone heights. This is not the separate app-wide scroll audit. */
+@media(max-width:600px){
+  .nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"]{
+    padding-bottom:calc(100px + env(safe-area-inset-bottom))!important;
+  }
+  .nx-guided-blend-editor .nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment{
+    scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom));
+  }
+}
