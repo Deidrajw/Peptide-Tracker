@@ -930,6 +930,8 @@ function nxTrendsDetail(name, kind="dose") {
     .slice().sort((a,b)=>safeDate(b.date)-safeDate(a.date));
   const now=Date.now();
   const isBlend=kind==="dose"&&(state.supplies||[]).some(k=>k.isBlend&&k.name===name);
+  const confirmedHistory=isBlend?(state.supplies||[]).filter(k=>k.isBlend&&k.name===name)
+    .flatMap(k=>(k.blendHistoryAttributions||[]).filter(a=>a.status==="confirmed").map(a=>({kit:k,entry:a}))):[];
   const m=openModal(`<div class="nx-detail-head">
     <div><div class="nx-trends-eyebrow">Recorded evidence</div>
     <h2>${esc(name)}</h2><p>${kind==="symptom"?"Symptom reports":"Dose history"} · Exact entries and period comparison</p></div>
@@ -937,7 +939,8 @@ function nxTrendsDetail(name, kind="dose") {
     <div class="nx-detail-filter" role="group" aria-label="Select observation period">
     ${[["30","30 days"],["90","90 days"],["180","180 days"],["all","All"]].map(([v,l])=>`<button type="button" data-range="${v}" aria-pressed="${v==="90"}">${l}</button>`).join("")}</div>
     <div id="nx-detail-body" aria-live="polite"></div>
-    ${isBlend?'<button type="button" id="nx-blend-reconcile" style="width:100%;margin-top:12px;min-height:48px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1)">Review historical blend attribution</button>':''}
+    ${isBlend&&confirmedHistory.length?'<button type="button" id="nx-blend-review-attributions" style="width:100%;min-height:48px;margin-top:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1)">Review '+confirmedHistory.length+' confirmed historical attribution(s)</button>':''}
+        ${isBlend?'<button type="button" id="nx-blend-reconcile" style="width:100%;margin-top:12px;min-height:48px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1)">Review historical blend attribution</button>':''}
     <button id="nx-detail-done" class="btn-primary" style="width:100%;margin-top:14px">Done</button>
   `,c.color||"#A78BFA");
   m.classList.add("nx-trends-detail-modal");
@@ -1009,6 +1012,24 @@ function nxTrendsDetail(name, kind="dose") {
       };
       m.querySelectorAll(".nx-blend-dose-pick").forEach(b=>b.onclick=()=>{selectedDoseId=b.dataset.doseId;paint();});
       paint();
+      const review=m.querySelector("#nx-blend-review-attributions");
+      if(review)review.onclick=()=>{
+        const items=confirmedHistory.map(({kit,entry},i)=>'<label style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-sub)"><input type="radio" name="nx-revoke-choice" value="'+i+'"><span>'+esc(entry.from)+' — '+esc(entry.to)+' · '+esc(kit.name)+'<small style="display:block;color:var(--t3)">Confirmed '+esc(entry.confirmedAt||'unknown date')+'</small></span></label>').join('');
+        const audit=openModal('<h2 style="font-size:18px;margin-bottom:12px">Historical attribution records</h2><p style="font-size:12px;color:var(--t3)">Reversing an attribution only removes its interpretation from Trends; original doses and vial inventory are preserved.</p>'+items+'<div style="display:flex;gap:8px;margin-top:14px"><button id="nx-audit-close" style="flex:1;min-height:48px">Cancel</button><button id="nx-audit-reverse" class="btn-primary" style="flex:1;min-height:48px">Review reversal</button></div>');
+        audit.querySelector('#nx-audit-close').onclick=closeModal;
+        audit.querySelector('#nx-audit-reverse').onclick=()=>{
+          const index=Number(audit.querySelector('input[name="nx-revoke-choice"]:checked')?.value);
+          if(!Number.isInteger(index)||index<0||index>=confirmedHistory.length){showErrorBanner("Choose a historical attribution to reverse.");return;}
+          const {kit,entry}=confirmedHistory[index];closeModal();
+          confirmAction("Reverse the selected historical attribution? This will not change any saved dose or physical inventory record.",()=>{
+            const live=(state.supplies||[]).find(k=>String(k.id)===String(kit.id));
+            const existing=live?.blendHistoryAttributions?.find(a=>String(a.id)===String(entry.id));
+            if(!existing||existing.status!=="confirmed")return;
+            existing.status="reversed";existing.reversedAt=localDatetime();
+            saveState();closeModal();nxTrendsDetail(name,"dose");
+          },{tone:"warning",confirmLabel:"Reverse interpretation",cancelLabel:"Keep attribution"});
+        };
+      };
       const reconcile=m.querySelector("#nx-blend-reconcile");
       if(reconcile)reconcile.onclick=()=>nxReconcileBlendHistory(name,()=>{closeModal();nxTrendsDetail(name,"dose");});
     }
