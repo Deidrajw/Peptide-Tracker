@@ -2104,7 +2104,8 @@ function applyNexusSheetStructure(modal) {
   const candidate = last && last.tagName === 'DIV' && last.children.length >= 2 && last.children.length <= 3 &&
     Array.from(last.children).every(el => el.tagName === 'BUTTON') &&
     !last.querySelector('input,textarea,select') &&
-    !last.hasAttribute('id');
+    !last.hasAttribute('id') &&
+    !last.classList.contains('nx-ingredient-actions'); // Keep stacked Trends actions intact.
   if (candidate && !modal.querySelector('.nx-dose-footer')) {
     const footer = document.createElement('div'); footer.className = 'nx-unified-footer';
     while (last.firstChild) footer.appendChild(last.firstChild);
