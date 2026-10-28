@@ -1873,3 +1873,10 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Commit 5fbcc545 adds four specific action screenshot/assertion cases and Protocol Name focus assertion at 320/390 in light/dark, localhost isolated fictional Demo Mode, no save/real storage. Primary expected solid rgb(198,166,242), no gradient/shadow; focus expected contained visible ring. **NEW TEST RESULTS PENDING; no PASS claimed for new cases**. The Stash final Add to Stash already has prior dedicated capture.
 - Remaining exact photo matching: protocol Continue, onboarding Next, Stash Continue, Log Reconstitution, Stash final Add, Protocol Name focus. Browser emulation not physical Safari.
 - PR #123 draft, main/Cloudflare unchanged. No production user data touched. **ONE NEXT ACTION:** inspect new workflow and screenshot artifact, repair any fixture/test or actual UI failures, update regression and screen coverage; continue deeper button-role audit before global polish (last).
+
+
+## 2026-10-28 — Quick access icon screenshot follow-up
+- User physical screenshot identified off-centre/inconsistent symbols in Today Quick access, especially Compound history. Source root cause: eight font-dependent Unicode glyphs in `NX_QUICK_TOOLS` rendered with variable optical alignment.
+- Code `d874ddf1` replaces all eight shortcut glyphs with fixed 24px-viewBox inline outline SVG paths; CSS `a1283bcd` centres 20px SVGs within identical 38px icon tiles. All existing navigation IDs, click handlers, settings and saved data unchanged.
+- Browser test `01c30c60` validates the four displayed default Quick access SVGs are sized and geometrically centred for 320px/390px light/dark fictional local Demo Mode. NEW CI RESULTS PENDING; visual/device acceptance NOT TESTED. No production merge/deploy.
+- ONE NEXT ACTION: inspect current-head nested visual/mobile/build workflows and the Quick access screenshot pixels; then resume remaining nested button-role audit. Preserve accepted page layouts and leave global polish last.
