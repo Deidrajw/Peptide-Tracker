@@ -906,3 +906,7 @@ Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/acti
 
 ## 2026-10-27 Verified single-vial save-path QA
 Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose regression: 300mg requested with only 10mg available did not save or deduct; valid 2mg added one dose and left 8mg. No production storage writes. This is limited to one open vial, 390px Chromium; multi-vial, prepared-dose, edits and physical iPhone remain NOT TESTED. Detailed role audit updated at docs/design/DS2_BUTTON_ROLE_AUDIT.md. PR #123 draft/unmerged and not deployed. NEXT ACTION: add multi-vial and prepared-dose tests, then expand nested action classification.
+
+
+## 2026-10-27 v0.9.20-beta draft-only focused DS2 action pass
+fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradients/colour; Protocol first-log card stacked/full-width action; 0445f6b0 renames CTA 'Log first dose' without routing change; bd6c374e adds Protocol screenshot route to localhost fictional QA. No schema, inventory math or saved data changes. CI, exact-source artifacts, real iPhone and deep nested state screenshots pending; draft PR #123 unmerged, not deployed.
