@@ -55,3 +55,6 @@ User supplied 10 screenshots of CTAs: Add to Stash, kit wizard Continue, dose Co
 
 
 ## 2026-10-27 PRIMARY SHADE DEFECT CONFIRMED and corrected: script a1cf67c6 flagged Today's first dose chooser #today-dose-single at rgb(167,139,250) in 320/390 both themes, while semantic primary requires rgb(198,166,242). CSS override alone had not changed it due inline !important in assets/js/04-nexus.js. Corrected original markup at 9436f41e with background #C6A6F2, dark text, transparent border, no gradient/shadow, 13px radius. Run 40623977189 pending, do not call this PASS before new result.
+
+
+## 2026-10-27 Verified source-level correction 9436f41e: nested CI 40623977189 SUCCESS, evidence 12789125364 independently inspected. 128 screenshots=32 states×4 width/theme, 0 capture errors/overflow. Today initial Continue to dose log now rgb(198,166,242) in all 4 test contexts; Protocol Log first dose, Save reaction and Add to Stash final also same fill. Solid no-shadow treatment. Each role distinction remains primary/secondary/destructive/selection/disabled; contextual Today mint due dose remains separate open product decision. Physical iPhone not accepted; full app button parity incomplete.
