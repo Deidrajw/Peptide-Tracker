@@ -141,6 +141,34 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  }
  await context.close();
 }
+// Semantic classification is deliberately conservative: an unfamiliar label is
+// UNCLASSIFIED, never a purported colour defect. Selection and disabled states
+// are valid reasons for a different treatment. All records remain reviewable.
+function actionRole(button){
+ const label=String(button.text||'').toLowerCase();
+ const id=String(button.id||'').toLowerCase();
+ const cls=String(button.className||'').toLowerCase();
+ if(button.disabled)return 'disabled';
+ if(/^(nuke-data|del-)/.test(id)||/^(delete|remove all|erase|clear all|reset all)/.test(label))return 'destructive';
+ if(/tab|segmented|filter|toggle|chip|switch/.test(cls)||/^(quick log|guided log|day|week|month)$/.test(label))return 'selection';
+ if(/^(back|cancel|close|done|dismiss|not now|skip)$/.test(label)||/^(nx-(pe|st)-done|settings-detail-back|nx-.*-close)$/.test(id))return 'secondary';
+ if(/^(continue|confirm log|save|add|create|start|next|log dose|log a dose|send)$/.test(label)||/^(today-log-dose|add-goal|qa-addkit|add-supp|nx-kit-next)$/.test(id))return 'primary';
+ return 'unclassified';
+}
+const roleInventory=evidence.flatMap(e=>e.buttons.map(button=>({
+ screen:e.screen,width:e.width,theme:e.theme,role:actionRole(button),
+ ...button
+})));
+const roleSummary={};
+for(const button of roleInventory){
+ const role=button.role;
+ (roleSummary[role]??={count:0,styles:{}}).count++;
+ const style=[button.background,button.radius,button.shadow].join(' | ');
+ roleSummary[role].styles[style]=(roleSummary[role].styles[style]||0)+1;
+}
+await fs.writeFile(path.join(out,'button-role-audit.json'),
+ JSON.stringify({fixture:'fictional local demo',roles:roleSummary,observations:roleInventory,
+ note:'Unclassified and role-specific variants require human review; differences across distinct roles are not failures.'},null,2));
 await fs.writeFile(path.join(out,'action-inventory.json'),JSON.stringify({source:origin,generated:new Date().toISOString(),fixture:'built-in weight_loss fictional Demo Mode; local isolated context; saves disabled',fixtureEvidence,evidence},null,2));
 await browser.close();
 
