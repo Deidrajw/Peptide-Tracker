@@ -157,6 +157,26 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(!report.period||!report.mode||report.overflow||
       !report.text.includes('Ingredient A')||!report.text.includes('5.000 mg')||
       !report.text.includes('1.000 mg'))throw Error('Blend Trends fixture report mismatch '+JSON.stringify(report));
+   // Selected blend history must own the screen; the standalone summary must not replace it.
+   await page.evaluate(()=>{
+     state._nxHistorySelected='Fictional Three-Ingredient Blend';
+     state.peptides['Fictional Three-Ingredient Blend']={
+       doses:[{id:'ds2-history',date:localDatetime(),dose:'7',allocations:[
+         {kitId:'ds2-visual-blend',vialId:'ds2-visual-open',amount:7}]}]
+     };
+     tab='trends';render();
+   });
+   const selected=await page.evaluate(()=>({
+     title:document.querySelector('.nx-history-screen-back')?.textContent||'',
+     html:document.querySelector('.nx-compound-details')?.textContent||'',
+     duplicate:!!document.querySelector('#nx-blend-analytics')
+   }));
+   if(selected.duplicate||!selected.title.includes('All compounds')||!selected.html.includes('Ingredient A'))
+      throw Error('Blend selected compound history lost or incomplete: '+JSON.stringify(selected));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-selected-history.png`),
+     animations:'disabled'});
+   state._nxHistorySelected=null;
+   await page.evaluate(()=>{delete state.peptides['Fictional Three-Ingredient Blend'];render();});
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
      fullPage:true,animations:'disabled'});
    evidence.push({screen:'trends-blend-analytics',width,theme,overflow:false,buttons:[],error:null});
