@@ -1003,3 +1003,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — What's New canonical published-history archive, UNRELEASED
 - GitHub draft commits `b637c0e6` historical published v0.9.18/v0.9.19 archive based on dated Cloudflare-parity evidence, `c4c35f81` generator incorporation, `d71ae6f2` generated in-app notes, `c91bb91c` generated runtime, `f31e5f51` display integration, `a8962e0a` chronology fix, `9a1838ca` browser archive regression. No new app version or published entry created; candidate v0.9.20-beta stays `unverified`. No intended user data impact. Browser CI and complete exact-source LIVE/full-app DEMO artifacts pending; PR draft/unmerged, production untouched.
+
+## 2026-10-28 — Draft What's New test correction and QA checkpoint
+- `599f1de8` test-only change separates Demo Mode suppression from eligible published-user scenario. On this exact application source: nested visual audit `40776200367` SUCCESS (208 captures/0 errors/overflow), mobile forms `40776200395` SUCCESS, hybrid preview browser `40776192105` SUCCESS; source validation and exact-source packaging steps already passed inside in-progress build run `40776200351`, full run and download validation pending. No storage migration, PR #123 remains draft/unmerged, production unchanged, physical iPhone/VoiceOver untested.
