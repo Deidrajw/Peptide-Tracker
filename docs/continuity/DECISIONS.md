@@ -768,3 +768,6 @@ User explicitly approved the vertical phase timeline proposal. It replaces the f
 
 ## 2026-10-27 — Future UX ideas captured; NOT APPROVED FOR IMPLEMENTATION
 User asks to retain potential swipe left/right contextual actions (including swipe-to-delete), drag-and-drop, and a more capable Nexus Ask assistant with improved visual formatting, UI and UX. They are roadmap discovery ideas P-08/P-09/P-10, not a decision about which screens to change or an authorization for destructive gestures. Require preview and scope approval; use safe confirmations/Undo, accessible alternatives and prevent scroll conflicts. Preserve current DS2 priority, production data and existing app flows.
+
+
+## 2026-10-27 user clarifies DS2 review scope includes subpages accessible FROM other subpages, not only tabs or More first-level destinations. Follow paths recursively to details, editors, sheets, confirmation and empty/error states. Source inventory 85a604a9; no implicit acceptance from shared CSS or overall CI. Keep earlier accepted screens stable, perform global polish last, no merge/deploy without approval.
