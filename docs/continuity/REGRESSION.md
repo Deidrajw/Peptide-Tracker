@@ -1286,3 +1286,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 additional test gate 49271c54: Settings Data Management destructive rows require danger tone distinct from neutral navigation in 320/390 both themes; must verify that click still opens existing confirmation, never trigger real delete. Corrected screenshots 48e3293b still in progress. All visual acceptance not yet passed.
+
+
+## 2026-10-27 CORRECTED EVIDENCE: after first invalid overlay-covered screenshots, fixture 48e3293b now closes onboarding only in isolated localhost. Latest e00d802a nested run 40618241161 SUCCESS, 92 images inspected: 0 runner errors and 0 document overflow; four primary actions computed same #C6A6F2. Mobile regression 40618241156 SUCCESS. Does not prove modal action handling, keyboard/back, user data math or physical Safari. Inventory 300mg vs 10mg still NOT TESTED, block release claims until checked.
