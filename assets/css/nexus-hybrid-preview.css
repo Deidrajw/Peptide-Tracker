@@ -3165,3 +3165,32 @@ body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab.ac
  .nx2-page--profile .nx-profile-hero{gap:9px}
  .nx2-page--profile .nx-settings-icon{width:30px;min-width:30px;height:30px}
 }
+
+
+/* DS2 whole-app continuation: Nexus Ask/Journal/Learn/Explore and Settings detail surfaces.
+   Existing renderers and JS events remain unchanged; scope strictly visual. */
+.nx2-page--amino .nx-page-intro{margin:0 0 18px;max-width:640px}
+.nx2-page--amino .nx-page-intro p{font-size:13px;line-height:1.6;color:var(--t3)}
+.nx2-page--amino .nx-direct-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;margin-bottom:14px;border:1px solid var(--border-sub);background:var(--surface-2);border-radius:15px}
+.nx2-page--amino .nx-direct-nav button{box-sizing:border-box;min-width:0;min-height:46px;padding:9px 3px;background:transparent;border:1px solid transparent;border-radius:11px;color:var(--t3);font-size:12px;font-weight:650}
+.nx2-page--amino .nx-direct-nav button[aria-selected="true"]{border-color:var(--border-sub);background:var(--surface);color:var(--t1);box-shadow:0 2px 9px #11082014}
+.nx2-page--amino #amino-chat{box-sizing:border-box;min-width:0;padding:14px;border:1px solid var(--border-sub);border-radius:17px;background:var(--surface);scrollbar-gutter:stable}
+.nx2-page--amino .amino-suggest{box-sizing:border-box;min-height:44px!important;padding:10px 12px!important;border:1px solid var(--border-sub)!important;border-radius:12px!important;background:var(--surface-2)!important;color:var(--t2)!important;font-size:12px!important;line-height:1.4!important;text-align:left}
+.nx2-page--amino #amino-input{box-sizing:border-box;min-width:0;min-height:48px!important;background:var(--surface);color:var(--t1)}
+.nx2-page--amino #amino-send{min-height:48px!important;background:#c6a6f2!important;color:#24182f!important;font-weight:700!important;border-radius:12px}
+.nx2-page--amino #amino-clear{min-height:44px}
+.nx2-page--amino .nx-report-shortcut{min-height:48px!important;background:var(--surface-2)!important;border-radius:12px!important;line-height:1.4}
+.nx2-page--amino .nx-panel,.nx2-page--amino .app-acc,.nx2-page--amino .nx-privacy-card{border-radius:16px;min-width:0}
+.nx2-page--amino input,.nx2-page--amino textarea,.nx2-page--amino select{max-width:100%;box-sizing:border-box}
+.nx2-page--profile .nx-privacy-card{box-sizing:border-box;border:1px solid var(--border-sub);border-radius:15px;background:var(--surface);padding:15px;margin-bottom:10px;min-width:0}
+.nx2-page--profile .nx-privacy-card h3{font-size:14px;line-height:1.4;color:var(--t1);margin:0 0 7px}
+.nx2-page--profile .nx-privacy-card p{font-size:12px;line-height:1.6;color:var(--t3);margin:0}
+.nx2-page--profile input,.nx2-page--profile textarea,.nx2-page--profile select{max-width:100%;box-sizing:border-box}
+.nx2-page--profile .settings-row:focus-visible,.nx2-page--amino .nx-direct-nav button:focus-visible{outline:3px solid #b993e4;outline-offset:2px}
+.nx2-page--profile #settings-detail-back{background:var(--surface-2)!important;border:1px solid var(--border-sub)!important;margin-right:2px}
+@media(max-width:360px){
+ .nx2-page--amino #amino-chat{padding:10px}
+ .nx2-page--amino .nx-direct-nav button{font-size:11px}
+ .nx2-page--amino #amino-send{padding:10px 12px!important}
+ .nx2-page--profile .nx-privacy-card{padding:12px}
+}
