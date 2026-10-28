@@ -1334,3 +1334,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 
 ## 2026-10-27 EXPECTED VISUAL FAILURE CAUGHT: new explicit primary role audit 40623795341 FAIL because Today dose chooser Continue to dose log remained #A78BFA in all four viewport/theme states; direct inline JS source was stronger than previous CSS override. Source fixed at 9436f41e (assets/js/04-nexus.js), rerun 40623977189 pending. This is a genuine DS2 contrast/consistency failure, not data math; keep FAIL until new evidence PASS. Other Stash final Add to Stash screenshots passed 40623724305; Protocol/Reaction CTA passed 40623390625.
+
+
+## 2026-10-27 NEW SOURCE FIX VERIFIED: Run 40623977189 SUCCESS with 128 fictional-data screenshots, 0 errors/overflow; inspected artifact 12789125364. Previously failing Today's Continue to dose log button now rgb(198,166,242) in 320/390 dark/light, matching Kit Continue, Add to Stash, Reaction Save and Protocol first-log. Mobile CI 40623977210 SUCCESS. Full app parity/artifacts pending run 40623977248, physical iPhone and remaining nested flows NOT TESTED. Prior 40623795341 FAIL remains documented as failure corrected in 9436f41e.
