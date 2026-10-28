@@ -291,6 +291,34 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    protocolBuilderModal();
    for(let i=0;i<5;i++)document.querySelector('#pb-next')?.click();
  }, '#pb-name',true);
+ // Nested Stash outflow role checks: purely fictional record, no Save/Log clicks.
+ try {
+   const result=await page.evaluate(()=>{
+     closeModal();
+     const kit=state.supplies.find(x=>!x.isBlend);
+     if(!kit)throw Error('No fictional Stash kit');
+     kit.wasteLog=kit.wasteLog||[];
+     const tx={id:'ds2-audit-fictional-outflow',mg:1,reason:'fictional QA',date:localDate(),notes:''};
+     kit.wasteLog.push(tx);
+     editOutflowModal(kit.id,tx.id);
+     const btn=document.querySelector('#eo-save');
+     if(!btn)throw Error('Edit Outflow Save missing');
+     const cs=getComputedStyle(btn);
+     return {background:cs.backgroundColor,image:cs.backgroundImage,shadow:cs.boxShadow};
+   });
+   if(result.background!=='rgb(198, 166, 242)'||result.image!=='none'||result.shadow!=='none')
+     throw Error('Edit Outflow Save semantic mismatch '+JSON.stringify(result));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-stash-edit-outflow.png`),animations:'disabled'});
+   evidence.push({screen:'stash-edit-outflow',width,theme,overflow:false,buttons:[{id:'eo-save',background:result.background,shadow:result.shadow}],error:null});
+ }catch(err){evidence.push({screen:'stash-edit-outflow',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{closeModal();const kit=state.supplies.find(x=>!x.isBlend);if(kit)kit.wasteLog=(kit.wasteLog||[]).filter(x=>x.id!=='ds2-audit-fictional-outflow');});}
+ try {
+   await page.evaluate(()=>{const kit=state.supplies.find(x=>!x.isBlend);if(!kit)throw Error('Missing fictional kit');logWasteModal(kit.id);});
+   await page.locator('#waste-save').waitFor({state:'visible',timeout:4000});
+   await page.screenshot({path:path.join(out,`${width}-${theme}-stash-log-outflow.png`),animations:'disabled'});
+   evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>closeModal());}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
