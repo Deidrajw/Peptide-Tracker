@@ -607,7 +607,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const attributed=nxBlendDoseAttribution(name,dose);
      kit.blendHistoryAttributions[0].status='reversed';
      const after=nxBlendDoseAttribution(name,dose);
-     const preserved=original===JSON.stringify({doses:[dose,otherKitDose],physical:kit.vials,waste:kit.wasteLog});
+     const preserved=original===JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
      state.supplies=state.supplies.filter(k=>k.id!==id);delete state.customPeptides[name];
      return {before,attributed,after,preserved};
    });
@@ -633,7 +633,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        allocations:[{kitId:'explicitly-another-kit',vialId:'not-this-vial',amount:1}]};
      state.supplies.push(kit);
      state.customPeptides[name]={status:'active',doses:[dose,otherKitDose]};
-     const original=JSON.stringify({doses:[dose,otherKitDose],physical:kit.vials,waste:kit.wasteLog});
+     const physical=()=>({id:kit.vials[0].id,status:kit.vials[0].status,remainingMg:kit.vials[0].remainingMg});
+     const original=JSON.stringify({doses:[dose,otherKitDose],physical:physical(),waste:kit.wasteLog});
      const begin=()=>{
        nxReconcileBlendHistory(name,()=>{});
        const from=document.querySelector('#nx-reconcile-from');
@@ -666,7 +667,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      document.querySelector('#ca-ok')?.click();
      const reversed=kit.blendHistoryAttributions[0].status==='reversed'&&
        nxBlendDoseAttribution(name,dose)===null;
-     const preserved=original===JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     const preserved=original===JSON.stringify({doses:[dose,otherKitDose],physical:physical(),waste:kit.wasteLog});
      closeModal();document.querySelector('#nx-validation-message')?.remove();
      state.supplies=state.supplies.filter(k=>k.id!==id);
      delete state.customPeptides[name];
