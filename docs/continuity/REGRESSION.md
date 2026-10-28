@@ -1310,3 +1310,7 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 Full source-built CI proof: workflow 40619363343 SUCCESS and downloaded manifest 387e32814bd4320d3313b8d8dc7e93079e0d573a; browser 8/8 PASS; Log Dose end-to-end 8/8 PASS including insufficient open-stock cannot save partial; vial safety 8/8 PASS including 2-source insufficient and reversal; measurement 80/80 PASS, Check-In automated create/edit/intensity/date fields all reported PASS. Deep screenshot workflow 40619363394 PASS 112 views, zero overflow/errors and semantic CTA assertions. This is synthetic data, not the screenshot's exact 300mg on 10mg case or physical iPhone confirmation. Native file chooser/restore, destructive app actions, all nested editor states and saved user data unchanged (not exercised). Keep open until separate tests.
+
+
+## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
+Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
