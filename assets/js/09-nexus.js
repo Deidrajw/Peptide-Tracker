@@ -201,7 +201,7 @@ function trendsView() {
         <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
       </div>
       <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
-        ${enoughObservations?`<button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="symptom">Explore symptom records &amp; compare periods →</button>`+sub('syms','Recorded symptom frequency',sideEffectsSection(name,doses)):`<div class="nx-compound-caption">Symptom comparisons are hidden until at least three dated symptom observations are recorded. This does not establish causation.</div>`}
+        ${enoughObservations?`<button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="symptom">Explore symptom records &amp; compare periods <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;margin-left:8px"><path d="m9 18 6-6-6-6"/></svg></button>`+sub('syms','Recorded symptom frequency',sideEffectsSection(name,doses)):`<div class="nx-compound-caption">Symptom comparisons are hidden until at least three dated symptom observations are recorded. This does not establish causation.</div>`}
         ${siteRecorded?sub('sites','Recorded injection sites',siteTrackerSection(name,doses)):''}
         ${!siteRecorded&&isInjection?`<div class="nx-compound-caption">No injection sites have been recorded for this compound.</div>`:''}
         ${changes?`<div class="nx-compound-caption">${changes} recorded dose amount change${changes===1?'':'s'}. This history does not indicate whether a change is appropriate or safe.</div>`:''}
@@ -215,67 +215,8 @@ function trendsView() {
     </article>`;
   });
   if(!startedPeps.length) html+=`<div style="color:var(--t4);font-size:13px;text-align:center;padding:30px 0">Log your first dose to start seeing compound trends.</div>`;
-  // Blend analytics Phase 1: read-only reporting. A blend physical ledger is not
-  // independent per-ingredient administrations. Never synthesize historical ratios
-  // from today's editable kit composition.
-  const blendKits=(state.supplies||[]).filter(k=>k.isBlend);
-  if(blendKits.length && !state._nxHistorySelected){
-    const blendDays=Number(state._blendTrendDays)||0;
-    const blendMode=state._blendTrendMode==="administered"?"administered":"all";
-    const cutoff=blendDays>0?Date.now()-blendDays*86400000:0;
-    const blendCards=blendKits.map(kit=>{
-      const recipe=(kit.composition||[]).filter(c=>c.compound&&Number(c.mg)>0);
-      const recipeTotal=recipe.reduce((n,c)=>n+Number(c.mg),0);
-      const physicalEntries=(kit.doseLog||[]).filter(d=>
-        Number(d.totalMgDrawn)>0 && d.kind!=='reversed' &&
-        (!cutoff || (Date.parse(d.date)||0)>=cutoff) &&
-        (blendMode!=='administered'||d.kind==='administered')
-      );
-      const physicalMg=physicalEntries.reduce((n,d)=>n+Number(d.totalMgDrawn),0);
-      // Vial snapshots may be missing in older kit schemas. Show only totals that
-      // are explicitly attributable, and never backfill with a revised recipe.
-      const attributable=physicalEntries.filter(d=>{
-        const v=(kit.vials||[]).find(v=>String(v.id)===String(d.vialId));
-        return v && Array.isArray(v.composition) && v.composition.length>=2 &&
-          v.composition.every(c=>c.compound&&Number(c.mg)>0);
-      });
-      // Compute attributed ingredient draws only for physical vials with a saved
-      // opening-time recipe. Unattributed old entries remain explicitly unknown.
-      const componentTotals=new Map();
-      for(const d of attributable){
-        const v=(kit.vials||[]).find(v=>String(v.id)===String(d.vialId));
-        const total=v.composition.reduce((n,c)=>n+Number(c.mg),0);
-        if(total<=0)continue;
-        for(const c of v.composition){
-          const name=String(c.compound);
-          componentTotals.set(name,(componentTotals.get(name)||0)+Number(d.totalMgDrawn)*Number(c.mg)/total);
-        }
-      }
-      const componentHTML=[...componentTotals].map(([name,mg])=>
-        '<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0"><span>'+esc(name)+'</span><strong>'+mg.toFixed(3)+' mg</strong></div>'
-      ).join('');
-      const lines=recipe.map(c=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0"><span>'+esc(c.compound)+'</span><strong>'+Number(c.mg).toFixed(2)+' mg</strong></div>').join('');
-      return '<article class="nx-blend-trends-card" style="border:1px solid var(--border-sub);border-radius:15px;background:var(--surface-2);padding:15px;margin-top:10px">'+
-        '<h4 style="font-size:15px;color:var(--t1);margin:0 0 8px">'+esc(kit.name)+'</h4>'+
-        '<div style="font-size:12px;color:var(--t3);margin-bottom:10px">Current saved recipe · '+recipeTotal.toFixed(2)+' mg per physical vial</div>'+
-        (lines||'<p style="color:var(--t3)">No component recipe recorded.</p>')+
-        '<div style="border-top:1px solid var(--border-sub);padding-top:10px;margin-top:10px;color:var(--t2);font-size:12px">'+
-        physicalEntries.length+' physical blend ledger entries · '+physicalMg.toFixed(2)+' mg recorded as drawn</div>'+
-        (componentHTML?'<div style="margin-top:10px;font-size:12px;color:var(--t2)"><strong>Estimated ingredient contributions from verified vial recipes</strong>'+componentHTML+'</div>':'')+
-        '<p style="font-size:11px;line-height:1.5;color:var(--t3);margin:8px 0 0">'+
-        (attributable.length===physicalEntries.length&&physicalEntries.length
-          ? 'Vial composition snapshots available for recorded entries; per-component time-series validation is still pending.'
-          : 'Historical per-component totals unavailable for entries without a locked vial recipe. The current recipe is not applied retrospectively.')+
-        ' These are recorded amounts, not laboratory measurements.</p></article>';
-    }).join('');
-    html+='<section id="nx-blend-analytics" aria-label="Blend composition and recorded totals" style="margin-top:24px">'+
-      '<div class="nx-trends-section-caption">Blends</div><h3 style="font-size:18px;color:var(--t1);margin:7px 0">Blend composition &amp; history</h3>'+
-      '<p style="font-size:12px;color:var(--t3);line-height:1.5">One physical blend dose stays one dose. Estimates use locked physical-vial composition, not current recipes applied retrospectively.</p>'+
-      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px"><label style="font-size:12px;color:var(--t2)">Period <select id="nx-blend-period" aria-label="Blend analytics period" class="inp" style="min-height:44px;margin-top:5px"><option value="0"'+(!blendDays?' selected':'')+'>All time</option><option value="7"'+(blendDays===7?' selected':'')+'>7 days</option><option value="30"'+(blendDays===30?' selected':'')+'>30 days</option><option value="90"'+(blendDays===90?' selected':'')+'>90 days</option></select></label>'+
-      '<label style="font-size:12px;color:var(--t2)">Record type <select id="nx-blend-mode" aria-label="Blend analytics record type" class="inp" style="min-height:44px;margin-top:5px"><option value="all"'+(blendMode==='all'?' selected':'')+'>All physical draws</option><option value="administered"'+(blendMode==='administered'?' selected':'')+'>Administered only</option></select></label></div>'+
-      blendCards+'</section>';
-  }
-
+  // Blend composition remains in the kit and contextual compound details.
+  // Do not duplicate full composition cards at the bottom of Trends home.
   return html;
 }
 
@@ -968,7 +909,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend) {
   detail.querySelector("#nx-ingredient-close").onclick=closeModal;
   detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();nxTrendsDetail(returnBlend,"dose");};
   detail.querySelector("#nx-ingredient-intel").onclick=()=>{
-    closeModal();state._intelReturn={tab:"trends"};state._compoundIntel=ingredient;tab="amino";render();window.scrollTo(0,0);
+    closeModal();state._intelReturn={tab:"trends"};state._compoundIntel=ingredient;tab="trends";render();window.scrollTo(0,0);
   };
 }
 function nxTrendsDetail(name, kind="dose") {
