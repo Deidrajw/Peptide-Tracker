@@ -851,3 +851,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 
 ## 2026-10-27 DS2 v0.9.20-beta draft not released: dfe4df01 on PR #123 extends Trends and Profile/Settings visual styling only. No intended schema, data, clinical calculation or production changes. Current-head QA, source-built LIVE/DEMO packages, iPhone acceptance, Cloudflare parity INCOMPLETE. No merge or deployment authorized.
+
+
+## 2026-10-27 DS2 Nexus and Settings styling: draft commit bd26e3d6 extends scoped CSS for Nexus navigation, Ask/chat, Learn/Journal/Explore shared surfaces, Profile privacy cards, Settings details and narrow layouts. No JS logic/schema/production writes or calculator change. Prior commit dfe4df01 passed full workflow 40601194237 and mobile 40601194692; new-head QA, artifacts, Cloudflare parity and physical acceptance NOT VERIFIED. Unmerged, not released.
