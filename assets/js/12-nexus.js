@@ -1064,7 +1064,10 @@ function wireBody() {
     };
     nxLibrarySearch.dispatchEvent(new Event("input"));
   }
-  document.querySelectorAll(".nx-library-item").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
+  document.querySelectorAll(".nx-library-item:not(.nx-library-ingredient)").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
+  document.querySelectorAll(".nx-library-ingredient").forEach(b=>b.onclick=()=>{
+    nxIngredientHistoryDetail(b.dataset.nxCompound,null);
+  });
   const nxLibraryBack=document.getElementById("nx-library-back");
   if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();window.scrollTo({top:0,behavior:"instant"});};
 
