@@ -3422,3 +3422,37 @@ body .modal #today-dose-single.nexus-dose-continue{
  color:#24182f!important;border:1px solid transparent!important;
  border-radius:13px!important;box-shadow:none!important;font-weight:750!important;
 }
+
+
+/* DS2 photographed primary-action parity: same role, same fill. 2026-10-27.
+   Preserve click handlers, source allocation and existing accepted layouts. */
+body .modal #rvsave,
+body .modal.nx-stash-kit-editor #nx-kit-next,
+body .modal.nx-guided-blend-editor #nx-blend-next,
+body .modal.nx-guided-blend-editor #bk-save,
+body .nx-stash-kit-editor #nx-kit-next,
+body .nx-guided-blend-editor #nx-blend-next,
+body .nx-stash-kit-editor #ssave,
+body .nx-guided-blend-editor #bk-save {
+  background:#c6a6f2!important;
+  background-image:none!important;
+  color:#24182f!important;
+  border:1px solid transparent!important;
+  box-shadow:none!important;
+  border-radius:13px!important;
+  min-height:48px!important;
+  font-weight:750!important;
+}
+/* The Protocol Review input uses a legacy global outer ring, which gets clipped
+   against the wizard container. Draw the focus indicator INSIDE the field. */
+body .modal #pb-name.nx-pb-name {
+  box-sizing:border-box!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+body .modal #pb-name.nx-pb-name:focus,
+body .modal #pb-name.nx-pb-name:focus-visible {
+  outline:none!important;
+  box-shadow:inset 0 0 0 2px #c6a6f2!important;
+  border-color:#c6a6f2!important;
+}
