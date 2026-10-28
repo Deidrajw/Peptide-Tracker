@@ -33,7 +33,8 @@ const views=[
  ...['reminders','phasereminders','units','health','privacy','backup','datamanagement','usage','developer','appupdates']
  .map(detail=>({id:'settings-'+detail,tab:'profile',profile:'settings',detail}))
 ];
-const evidence=[];
+const evidence=[]; 
+const fixtureEvidence=[];
 for(const width of [320,390]) for(const theme of ['light','dark']){
  const context=await browser.newContext({viewport:{width,height:740},isMobile:true,hasTouch:true,deviceScaleFactor:1});
  await context.addInitScript(()=>{try{localStorage.clear()}catch{}});
@@ -46,9 +47,16 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    state.profile.onboardingDone=true;
    state.settings.lastSeenChangelog=CURRENT_CHANGELOG_VERSION;
    closeModal();
+   enterDemoMode('weight_loss');
+   if (!isDemoMode() || !state.supplies?.length || !state.dailyLogs?.length ||
+       !Object.keys(state.peptides||{}).length || !state.weightLogs?.length)
+     throw Error('Isolated fictional data fixture missing compound, inventory, check-in or weight records');
    render();
  });
  if(await page.locator('.nx-ob-intro').count()) throw Error('Onboarding overlay still blocks nested route audit');
+ const fictional=await page.evaluate(()=>({demo:isDemoMode(),kits:state.supplies.length,logs:state.dailyLogs.length,doses:Object.values(state.peptides||{}).reduce((n,p)=>n+(p.doses||[]).length,0)}));
+ if(!fictional.demo || !fictional.kits || !fictional.logs) throw Error('Not in populated isolated demo mode');
+ fixtureEvidence.push({width,theme,...fictional});
  // The app can show first-run onboarding above every route. Never count its overlay as a child screenshot.
  const onboardingVisible=await page.locator('text=Welcome to Nexus').first().isVisible().catch(()=>false);
  if(onboardingVisible){
@@ -133,7 +141,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  }
  await context.close();
 }
-await fs.writeFile(path.join(out,'action-inventory.json'),JSON.stringify({source:origin,generated:new Date().toISOString(),evidence},null,2));
+await fs.writeFile(path.join(out,'action-inventory.json'),JSON.stringify({source:origin,generated:new Date().toISOString(),fixture:'built-in weight_loss fictional Demo Mode; local isolated context; saves disabled',fixtureEvidence,evidence},null,2));
 await browser.close();
 
 const expectedPrimary='rgb(198, 166, 242)';
