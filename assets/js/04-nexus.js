@@ -1424,7 +1424,7 @@ function manageKitMenu(kitId) {
         ...(!isDone && sealed>0 ? [{id:isBlend?"blend-open":"open",name:"Open new vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
         ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the shared preparation and inventory flow",icon:"◌"}] : []),
         ...(hasOpen ? [{id:isBlend?"blend-finish":"finish-vial",name:"Finish this vial",desc:"Complete the current vial and reconcile remaining inventory",icon:"✓"}] : []),
-        ...(!isBlend && hasOpen ? [{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
+        ...(hasOpen ? [{id:isBlend?"blend-correct-open":"add-to-open",name:isBlend?"Correct open vial balance":"Add to open vial",desc:isBlend?"Record more existing blend remaining than estimated":"Record a physical addition with inventory accounting",icon:"+"}] : []),
         {id:isBlend?"blend-restock":"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
         ...(hasRecon ? [{id:isBlend?"blend-outflow":"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
       ]
@@ -1502,6 +1502,7 @@ function manageKitMenu(kitId) {
     else if(id==="prepare") prepareDosesModal(s.name);
     else if(id==="finish-vial") finishVialModal(kitId);
     else if(id==="add-to-open") addToOpenVialModal(kitId);
+    else if(id==="blend-correct-open") correctBlendOpenVialBalanceModal(kitId);
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
     else if(id==="blend-outflow") blendLogOutflowModal(kitId);
