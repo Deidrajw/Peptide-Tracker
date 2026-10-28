@@ -3242,3 +3242,22 @@ body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab.ac
  .nx2-page--amino .nx-journal-entry{padding:12px!important}
  .nx2-page--profile #dayrollover{max-width:54%;font-size:12px}
 }
+
+
+/* DS2 More destination sheet and legacy standalone Learn branch. */
+body .nexus-more-sheet{box-sizing:border-box;max-width:520px;width:min(100%,520px);padding:18px 18px calc(18px + env(safe-area-inset-bottom));background:var(--surface);color:var(--t1);border:1px solid var(--border-sub);border-radius:22px 22px 0 0;box-shadow:0 -16px 55px #100b2033}
+body .nexus-more-sheet .nexus-more-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+body .nexus-more-sheet .nexus-more-heading strong{font-size:19px;color:var(--t1)}
+body .nexus-more-sheet .nexus-more-close{min-width:44px;min-height:44px;border-radius:12px;background:var(--surface-2);color:var(--t1);border:1px solid var(--border-sub)}
+body .nexus-more-sheet>p{font-size:12px;line-height:1.5;color:var(--t3);margin:4px 0 14px}
+body .nexus-more-sheet .nexus-more-items{display:flex;flex-direction:column;gap:7px}
+body .nexus-more-sheet .nexus-more-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:60px;box-sizing:border-box;text-align:left;border:1px solid var(--border-sub);border-radius:13px;background:var(--surface-2);padding:11px 13px;color:var(--t1)}
+body .nexus-more-sheet .nexus-more-item>span:first-child{min-width:0;display:flex;flex-direction:column;gap:3px}
+body .nexus-more-sheet .nexus-more-item strong{font-size:13px;line-height:1.4}
+body .nexus-more-sheet .nexus-more-item small{font-size:11px;line-height:1.4;color:var(--t3);overflow-wrap:anywhere}
+body .nexus-more-sheet .nexus-more-item>span:last-child{font-size:18px;color:var(--t3)}
+.nx2-page--learn .greet{margin-bottom:16px}
+.nx2-page--learn .card,.nx2-page--learn .nx-panel{border-radius:16px;min-width:0;overflow-wrap:anywhere}
+.nx2-page--learn input,.nx2-page--learn select,.nx2-page--learn textarea{max-width:100%;box-sizing:border-box;min-height:44px}
+.nx2-page--learn button{max-width:100%}
+@media(max-width:360px){body .nexus-more-sheet{padding:14px 12px calc(14px + env(safe-area-inset-bottom))}}
