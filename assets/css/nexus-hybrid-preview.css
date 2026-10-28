@@ -3345,3 +3345,19 @@ body .modal.nx-dose-picker #today-dose-combo{
   border:1px solid transparent!important;box-shadow:none!important;
   font-weight:700!important;
 }
+
+
+/* DS2 child-action evidence: kit wizard Continue is primary navigation,
+   while Pattern/Symptom Explorer Done dismisses read-only information.
+   Remove arbitrary gradient/bright-primary mismatch without changing events. */
+body .modal #nx-kit-next{
+  min-height:48px!important;background:#c6a6f2!important;background-image:none!important;
+  color:#24182f!important;border:1px solid transparent!important;
+  border-radius:13px!important;box-shadow:none!important;font-weight:750!important;
+}
+body .modal #nx-kit-next:disabled{opacity:.45!important}
+body #nx-pe-done,body #nx-st-done{
+  min-height:48px!important;background:var(--surface-2)!important;background-image:none!important;
+  border:1px solid var(--border-sub)!important;color:var(--t1)!important;
+  border-radius:12px!important;box-shadow:none!important;font-weight:650!important;
+}
