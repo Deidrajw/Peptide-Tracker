@@ -162,3 +162,6 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 
 
 ## 2026-10-27 first complete Stash wizard final CTA visual proof: fictional fields progressed to Step 3 without saving, run 40623724305 SUCCESS and screenshot evidence show 'Add to Stash' solid #C6A6F2 in 320/390 light/dark, consistent with initial Continue and kit wizard Continue. Inline Today's Continue to dose log #A78BFA source identified; CSS f238e6d2 overrides to canonical primary token. Exact current-head tests a1cf67c6 pending as of writing. Protocol first-log and Reaction editor validated in earlier 40623390625. Physical iPhone sign-off and all nested buttons incomplete.
+
+
+## 2026-10-27 nested role audit found real unmatched Today chooser Continue primary #A78BFA on both viewport/theme sizes. CSS f238e6d2 insufficient because direct inline !important in 04-nexus.js; source fixed 9436f41e. New visual QA #40623977189 pending, so not visually accepted yet. Stash final Add to Stash wizard screenshot pass 40623724305 and Protocol/Reaction screenshot pass 40623390625 remain historical verified results.
