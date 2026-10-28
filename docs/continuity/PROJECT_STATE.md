@@ -1762,3 +1762,6 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 
 
 ## 2026-10-27 ROADMAP CAPTURE — P-08 swipe actions, P-09 drag-and-drop, P-10 more robust Nexus Ask assistant and improved conversation UI/UX added as discovery-only ideas to NEXUS_MASTER_ROADMAP.md (commit adb1934f) and DECISIONS.md (commit 6be2136c). No feature code changes, no tests required for documentation-only update, no merge or deployment. Current priority remains DS2 current-head browser/mobile and nested detail reviews. ONE NEXT ACTION: verify latest DS2 head CI and inspect unaccepted child screens; global a11y/type/forms/scroll/nav/motion last.
+
+
+## 2026-10-27 DEEP ROUTE AUDIT: recursive source-based inventory committed to docs/design/DS2_SCREEN_COVERAGE.md at 85a604a9. Covers More→Settings→Backup/restore, all Settings details, Supplements, Nexus Ask/Journal/Learn/Explore details, Trends Intel/Pattern Explorer/Chart detail, Stash vial actions, Plans nested editors and Today/Calendar record flows. Inline back glyph, emoji Explorer icons and one-off Settings styles are SOURCE RISKS, not screenshot FAIL. No visual/physical QA this checkpoint. PR #123 stays draft, production untouched. ONE NEXT ACTION: add isolated 320/390 dark/light screenshot traversal of actual nested screens and inspect results, then targeted DS2 fixes. Global polish LAST.
