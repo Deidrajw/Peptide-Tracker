@@ -843,14 +843,18 @@ function nxReconcileBlendHistory(name,onDone) {
     '<p style="font-size:13px;line-height:1.5;color:var(--t3)">If this exact formulation was already in use before it was recorded as a blend, confirm which dated records used it. This adds a labelled interpretation without changing dose records or inventory.</p>'+
     '<label class="field-label" for="nx-reconcile-kit">SOURCE KIT</label>'+
     '<select class="inp" id="nx-reconcile-kit" style="width:100%;margin-bottom:12px">'+kits.map(k=>'<option value="'+esc(String(k.id))+'">'+esc(k.name)+' · '+esc(String(k.vialMg))+' mg/vial</option>').join('')+'</select>'+
+    '<details class="nx-reconcile-date-options" style="margin-bottom:12px"><summary style="min-height:44px;padding:10px 0;color:var(--t2)">Refine historical date range (optional)</summary>'+
     '<label class="field-label" for="nx-reconcile-from">FIRST DATE INCLUDED</label><input class="inp" type="date" id="nx-reconcile-from" style="width:100%;margin-bottom:12px">'+
-    '<label class="field-label" for="nx-reconcile-to">LAST DATE INCLUDED</label><input class="inp" type="date" id="nx-reconcile-to" style="width:100%;margin-bottom:12px">'+
+    '<label class="field-label" for="nx-reconcile-to">LAST DATE INCLUDED</label><input class="inp" type="date" id="nx-reconcile-to" style="width:100%;margin-bottom:12px"></details>'+
     '<div id="nx-reconcile-preview" role="status" style="font-size:12px;color:var(--t2);padding:12px;background:var(--surface-2);border-radius:10px;margin-bottom:12px">Select dates to preview the records.</div>'+
     '<div style="display:flex;gap:8px"><button id="nx-reconcile-cancel" style="flex:1;min-height:48px">Cancel</button>'+
     '<button class="btn-primary" id="nx-reconcile-save" style="flex:1;min-height:48px">Review attribution</button></div>');
   m.querySelector("#nx-reconcile-cancel").onclick=closeModal;
   const kitSelect=m.querySelector("#nx-reconcile-kit"),from=m.querySelector("#nx-reconcile-from"),to=m.querySelector("#nx-reconcile-to");
   const original=(allPeptides()[name]?.doses||[]).filter(d=>d.date);
+  const candidateDates=original.filter(d=>!nxBlendDoseAttribution(name,d))
+    .map(d=>nxBlendHistoryCalendarDay(d.date)).filter(Boolean).sort();
+  if(candidateDates.length){from.value=candidateDates[0];to.value=candidateDates[candidateDates.length-1];}
   const refresh=()=>{
     const k=kits.find(x=>String(x.id)===kitSelect.value);
     const rows=original.filter(d=>{
@@ -868,6 +872,7 @@ function nxReconcileBlendHistory(name,onDone) {
     return rows;
   };
   [kitSelect,from,to].forEach(x=>x.onchange=refresh);
+  refresh();
   m.querySelector("#nx-reconcile-save").onclick=()=>{
     const k=kits.find(x=>String(x.id)===kitSelect.value),rows=refresh();
     const components=k?.composition||[],sum=components.reduce((n,x)=>n+Number(x.mg||0),0);
