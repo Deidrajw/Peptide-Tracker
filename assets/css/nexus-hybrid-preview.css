@@ -3311,3 +3311,24 @@ body .modal.nx-dose-picker #today-dose-combo{
   background-image:none!important;box-shadow:none!important;
   color:var(--t2)!important;font-weight:650!important;
 }
+
+
+/* DS2 semantic danger family: data-removal actions are not neutral navigation.
+   Purely visual; confirmation handlers, backups and storage semantics unchanged. */
+.nx2-page--profile button[id^="del-"],
+.nx2-page--profile #nuke-data{
+  box-sizing:border-box;min-height:48px!important;border-radius:12px!important;
+  background:rgba(255,77,77,.075)!important;border:1px solid rgba(255,112,112,.3)!important;
+  color:#f3a0a5!important;box-shadow:none!important;
+}
+.nx2-page--profile button[id^="del-"]>div:first-child,
+.nx2-page--profile #nuke-data>div:first-child{color:inherit!important;font-weight:650!important}
+.nx2-page--profile #nuke-data{
+  background:rgba(255,77,77,.14)!important;border-color:rgba(255,112,112,.5)!important;
+  color:#ffb0b4!important;
+}
+[data-theme="light"] .nx2-page--profile button[id^="del-"],
+[data-theme="light"] .nx2-page--profile #nuke-data{
+  color:#9b2637!important;background:rgba(196,42,58,.065)!important;
+  border-color:rgba(175,42,60,.32)!important;
+}
