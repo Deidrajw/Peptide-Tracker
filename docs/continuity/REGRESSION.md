@@ -1307,3 +1307,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 REACHABLE FICTIONAL FIXTURE AUDIT: first new fixture run 40619846887 FAIL for 4 App Updates route checks (320/390 light/dark), due to test assuming shared Settings back control while source uses dedicated #au-back. No evidence of app failure. Test corrected d66fd3e1; run 40619990770 pending. Other routes captured on fictional Demo Mode; role audit records per-screen computed styles. Do not claim complete child acceptance, save safety or real-device verification.
+
+
+## 2026-10-27 Full source-built CI proof: workflow 40619363343 SUCCESS and downloaded manifest 387e32814bd4320d3313b8d8dc7e93079e0d573a; browser 8/8 PASS; Log Dose end-to-end 8/8 PASS including insufficient open-stock cannot save partial; vial safety 8/8 PASS including 2-source insufficient and reversal; measurement 80/80 PASS, Check-In automated create/edit/intensity/date fields all reported PASS. Deep screenshot workflow 40619363394 PASS 112 views, zero overflow/errors and semantic CTA assertions. This is synthetic data, not the screenshot's exact 300mg on 10mg case or physical iPhone confirmation. Native file chooser/restore, destructive app actions, all nested editor states and saved user data unchanged (not exercised). Keep open until separate tests.
