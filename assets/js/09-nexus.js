@@ -162,33 +162,7 @@ function trendsView() {
     if(name!==state._nxHistorySelected) return;
     const c=cfg(name), doses=data.doses||[];
     const chronological=[...doses].sort((a,b)=>safeDate(a.date)-safeDate(b.date));
-    // For this selected blend, show estimated ingredients WITHIN each dated
-    // administered dose. Never apply today's editable kit recipe to old doses.
     const blendSources=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
-    const blendIngredientBreakdown=d=>{
-      const allocations=Array.isArray(d.allocations)?d.allocations:[];
-      const matched=allocations.map(a=>{
-        const kit=blendSources.find(k=>String(k.id)===String(a.kitId));
-        const vial=kit?.vials?.find(v=>String(v.id)===String(a.vialId));
-        if(!vial||!Array.isArray(vial.composition)||vial.composition.length<2)return null;
-        const total=vial.composition.reduce((n,x)=>n+Number(x.mg||0),0);
-        if(!(total>0))return null;
-        const drawn=doseToMg(a.amount,cfg(name).unit);
-        return vial.composition.map(x=>({name:x.compound,mg:drawn*Number(x.mg)/total}));
-      });
-      if(!matched.length||matched.some(x=>!x))return null;
-      const totals=new Map();
-      for(const part of matched)for(const x of part)totals.set(x.name,(totals.get(x.name)||0)+x.mg);
-      return [...totals].map(([component,mg])=>esc(component)+': '+mg.toFixed(3)+' mg').join(' · ');
-    };
-    const blendPerDose=blendSources.length?'<div class="nx-compound-details" style="padding:12px 0"><strong>Blend ingredients by recorded injection</strong>'+
-      [...doses].sort((a,b)=>safeDate(b.date)-safeDate(a.date)).slice(0,80).map(d=>{
-        const parts=blendIngredientBreakdown(d);
-        return '<div style="padding:9px 0;border-bottom:1px solid var(--border-sub);font-size:12px;line-height:1.5"><strong>'+esc(fmtDate(d.date))+' · '+esc(d.dose)+' '+esc(c.unit||'mg')+'</strong><div style="color:var(--t3)">'+
-          (parts||'Ingredient amount unavailable — original vial composition not verifiable')+'</div></div>';
-      }).join('')+
-      '<p style="color:var(--t4);font-size:11px">Estimated from saved physical-vial recipes, not laboratory measurements. One blend injection remains one dose.</p></div>':'';
-
     const last=chronological[chronological.length-1];
     const first=chronological[0];
     const validDoses=chronological.filter(d=>Number.isFinite(Number(d.dose)));
@@ -220,11 +194,10 @@ function trendsView() {
       </div>
       <div class="nx-compound-facts">${fact(String(doses.length),'Logged doses')}${fact(latest,'Latest dose')}${fact(String(changes),'Dose changes')}</div>
       <div class="nx-compound-main">
-        <div class="nx-compound-heading">Dose history</div>
-        ${blendPerDose}
+        <div class="nx-compound-heading" style="font-size:17px">Dose history</div>
         <div class="nx-compound-desc">Recorded dose amounts, in entry order. Step changes reflect logged amounts—not a modeled drug concentration.</div>
         ${escalationChart(doses,c)}
-        <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records &amp; compare periods →</button>
+        <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records${blendSources.length?" & ingredients":""} →</button>
         <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
       </div>
       <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
@@ -852,6 +825,95 @@ function nxPatternExplorer() {
   m.querySelector('#nx-pe-supp').onchange=redraw;
   m.querySelector('#nx-pe-window').onchange=redraw;
   redraw();
+}
+
+// Resolve individual ingredient estimates using only immutable vial composition or
+// a USER-CONFIRMED historical recipe with a bounded date range. Never rewrite doses.
+function nxBlendDoseAttribution(name,dose) {
+  const kits=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
+  if(!kits.length)return null;
+  const allocations=Array.isArray(dose.allocations)?dose.allocations:[];
+  const segments=[];
+  for(const a of allocations){
+    const k=kits.find(x=>String(x.id)===String(a.kitId));
+    const vial=k?.vials?.find(x=>String(x.id)===String(a.vialId));
+    const composition=vial?.composition;
+    if(!k||!Array.isArray(composition)||composition.length<2)return null;
+    const amount=doseToMg(a.amount,cfg(name).unit);
+    segments.push({composition,amount,source:"vial snapshot"});
+  }
+  if(!segments.length){
+    // No unique physical source: allow interpretation only when exactly one approved
+    // historical attribution covers this date for this named blend.
+    const t=safeDate(dose.date).getTime();
+    const matches=kits.flatMap(k=>(k.blendHistoryAttributions||[])
+      .filter(a=>a.status==="confirmed"&&t>=safeDate(a.from).getTime()&&t<=safeDate(a.to).getTime())
+      .map(a=>({composition:a.composition,amount:doseToMg(dose.dose,cfg(name).unit),source:"user-confirmed historical recipe"})));
+    if(matches.length!==1)return null;
+    segments.push(matches[0]);
+  }
+  const amounts=new Map();
+  for(const s of segments){
+    const total=s.composition.reduce((n,x)=>n+Number(x.mg||0),0);
+    if(!Number.isFinite(s.amount)||s.amount<=0||total<=0)return null;
+    for(const x of s.composition){
+      if(!x.compound||!(Number(x.mg)>0))return null;
+      amounts.set(x.compound,(amounts.get(x.compound)||0)+s.amount*Number(x.mg)/total);
+    }
+  }
+  return {items:[...amounts].map(([name,mg])=>({name,mg})),
+    provenance:segments.some(s=>s.source==="user-confirmed historical recipe")?"User-confirmed historical recipe":"Saved vial recipe"};
+}
+
+// Historical reconciliation creates an interpretation overlay only, not an
+// inventory event. User must confirm source kit and exact time window.
+function nxReconcileBlendHistory(name,onDone) {
+  const kits=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
+  const m=openModal('<h2 style="margin:0 0 12px;font-size:19px">Reconcile earlier blend records</h2>'+
+    '<p style="font-size:13px;line-height:1.5;color:var(--t3)">If this exact formulation was already in use before it was recorded as a blend, confirm which dated records used it. This adds a labelled interpretation without changing dose records or inventory.</p>'+
+    '<label class="field-label" for="nx-reconcile-kit">SOURCE KIT</label>'+
+    '<select class="inp" id="nx-reconcile-kit" style="width:100%;margin-bottom:12px">'+kits.map(k=>'<option value="'+esc(String(k.id))+'">'+esc(k.name)+' · '+esc(String(k.vialMg))+' mg/vial</option>').join('')+'</select>'+
+    '<label class="field-label" for="nx-reconcile-from">FIRST DATE INCLUDED</label><input class="inp" type="date" id="nx-reconcile-from" style="width:100%;margin-bottom:12px">'+
+    '<label class="field-label" for="nx-reconcile-to">LAST DATE INCLUDED</label><input class="inp" type="date" id="nx-reconcile-to" style="width:100%;margin-bottom:12px">'+
+    '<div id="nx-reconcile-preview" role="status" style="font-size:12px;color:var(--t2);padding:12px;background:var(--surface-2);border-radius:10px;margin-bottom:12px">Select dates to preview the records.</div>'+
+    '<div style="display:flex;gap:8px"><button id="nx-reconcile-cancel" style="flex:1;min-height:48px">Cancel</button>'+
+    '<button class="btn-primary" id="nx-reconcile-save" style="flex:1;min-height:48px">Review attribution</button></div>');
+  m.querySelector("#nx-reconcile-cancel").onclick=closeModal;
+  const kitSelect=m.querySelector("#nx-reconcile-kit"),from=m.querySelector("#nx-reconcile-from"),to=m.querySelector("#nx-reconcile-to");
+  const original=(allPeptides()[name]?.doses||[]).filter(d=>d.date);
+  const refresh=()=>{
+    const k=kits.find(x=>String(x.id)===kitSelect.value);
+    const rows=original.filter(d=>from.value&&to.value&&safeDate(d.date)>=safeDate(from.value)&&safeDate(d.date)<=new Date(to.value+"T23:59:59"));
+    m.querySelector("#nx-reconcile-preview").textContent=k&&from.value&&to.value?
+      rows.length+' recorded doses in period · '+(k.composition||[]).map(x=>x.compound+' '+x.mg+' mg').join(' · ')+
+      '. This recipe will be labelled user-confirmed, not independently verified.':'Select dates to preview the records.';
+    return rows;
+  };
+  [kitSelect,from,to].forEach(x=>x.onchange=refresh);
+  m.querySelector("#nx-reconcile-save").onclick=()=>{
+    const k=kits.find(x=>String(x.id)===kitSelect.value),rows=refresh();
+    const components=k?.composition||[],sum=components.reduce((n,x)=>n+Number(x.mg||0),0);
+    if(!k||!from.value||!to.value||from.value>to.value||!rows.length||components.length<2||
+       components.some(x=>!x.compound||!(Number(x.mg)>0))||Math.abs(sum-Number(k.vialMg))>.01){
+      showErrorBanner("Choose a valid kit, formulation and date range with recorded doses.");return;
+    }
+    const other=kits.flatMap(x=>(x.blendHistoryAttributions||[]).filter(a=>a.status==="confirmed"&&!(to.value<a.from||from.value>a.to)));
+    if(other.length){showErrorBanner("This period overlaps a previous confirmed attribution. Review existing history before proceeding.");return;}
+    const overlay={id:uid(),status:"confirmed",from:from.value,to:to.value,
+      composition:components.map(x=>({compound:x.compound,mg:Number(x.mg)})),
+      confirmedAt:localDatetime(),source:"user confirmation"};
+    closeModal();
+    confirmAction("Apply the displayed recipe to "+rows.length+" older blend record(s) between "+from.value+" and "+to.value+"? Original doses, physical inventory and vial history will not change.",()=>{
+      const live=(state.supplies||[]).find(x=>String(x.id)===String(k.id));
+      if(!live||!live.isBlend)return;
+      live.blendHistoryAttributions=live.blendHistoryAttributions||[];
+      if(live.blendHistoryAttributions.some(a=>a.status==="confirmed"&&!(overlay.to<a.from||overlay.from>a.to))){
+        showErrorBanner("A confirmation for this period already exists. Nothing was changed.");return;
+      }
+      live.blendHistoryAttributions.push(overlay);
+      saveState();if(typeof onDone==="function")onDone();
+    },{tone:"info",confirmLabel:"Confirm historical recipe",cancelLabel:"Keep unchanged"});
+  };
 }
 
 function nxTrendsDetail(name, kind="dose") {
