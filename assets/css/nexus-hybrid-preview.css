@@ -3403,3 +3403,13 @@ body .nexus-screen-protocols .proto-activate{
  color:#24182f!important;border-radius:13px!important;min-height:48px!important;
  border:1px solid transparent!important;box-shadow:none!important;
 }
+
+
+/* Stash Add/Edit final commit is the same primary role as Kit Continue. */
+body .modal.nx-stash-kit-editor #ssave{
+ background:#c6a6f2!important;background-image:none!important;
+ color:#24182f!important;border:1px solid transparent!important;
+ box-shadow:none!important;border-radius:13px!important;min-height:48px!important;
+ font-weight:750!important;
+}
+body .modal.nx-stash-kit-editor #ssave:disabled{opacity:.45!important}
