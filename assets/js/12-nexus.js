@@ -1036,6 +1036,7 @@ function wireBody() {
   };
   document.querySelectorAll(".chart-tap").forEach(el=>el.onclick=()=>chartDetailModal(el.dataset.kind, el.dataset.period));
   document.querySelectorAll(".nx-trends-open-detail").forEach(b=>b.onclick=()=>nxTrendsDetail(b.dataset.name,b.dataset.kind));
+  document.querySelectorAll(".nx-compound-blend-contributions").forEach(b=>b.onclick=()=>nxIngredientHistoryDetail(b.dataset.name,null));
   document.querySelectorAll(".nx-open-ingredient-overview").forEach(button=>button.onclick=()=>{
     nxIngredientHistoryDetail(button.dataset.name,null);
   });
