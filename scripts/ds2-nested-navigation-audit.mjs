@@ -40,6 +40,15 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  const page=await context.newPage();
  await page.goto(origin,{waitUntil:'domcontentloaded'});
  await page.waitForSelector('#app',{timeout:15000});
+ // Fresh isolated storage intentionally displays onboarding. Dismiss only in this
+ // ephemeral localhost context or the overlay hides all nested route screenshots.
+ await page.evaluate(()=>{
+   state.profile.onboardingDone=true;
+   state.settings.lastSeenChangelog=CURRENT_CHANGELOG_VERSION;
+   closeModal();
+   render();
+ });
+ if(await page.locator('.nx-ob-intro').count()) throw Error('Onboarding overlay still blocks nested route audit');
  // The app can show first-run onboarding above every route. Never count its overlay as a child screenshot.
  const onboardingVisible=await page.locator('text=Welcome to Nexus').first().isVisible().catch(()=>false);
  if(onboardingVisible){
