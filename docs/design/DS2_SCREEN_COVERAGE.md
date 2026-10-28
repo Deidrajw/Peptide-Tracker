@@ -47,3 +47,6 @@ Map actual navigation destinations and mark each child surface by exact route + 
 
 
 ## 2026-10-27 DS2 progress: CSS commit dfe4df01 adds Trends summaries/jump, Body Progress tabs, compound library, Pattern Explorer and Profile/Settings hero, subtabs, rows/icons responsive styling. CODED/NEEDS CHECK. Stash tab corner CSS fix present; latest automated result and physical iPhone acceptance still pending. Nexus/Insights/More, settings child pages, supplements and hidden sheets remain OPEN. Accepted Calendar/Plans/Supplies unchanged. Global a11y/type/scroll/navigation/motion LAST.
+
+
+## 2026-10-27 DS2 Nexus and Settings detail progress: commit bd26e3d6 extends existing Nexus Ask/Journal/Learn/Explore navigation, chat prompts, inputs, secondary panels, Profile privacy cards and Settings detail controls. CODED/NEEDS CHECK at 320/390 light/dark; child workflow and real iPhone acceptance remain OPEN. Source review found legacy _aminoSub='insights' normalizes to Ask; no functional route change made. Earlier dfe4df01 browser workflow 40601194237 and mobile 40601194692 SUCCESS; does not validate bd26e3d6. Stash corners still need physical acceptance. Global polish LAST.
