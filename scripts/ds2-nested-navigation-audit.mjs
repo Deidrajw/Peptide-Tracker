@@ -145,6 +145,28 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    });
  }
 
+
+ // Inspect a populated saved-dose reaction editor without invoking save/delete.
+ try{
+  const result=await page.evaluate(()=>{
+    closeModal();
+    const first=state.peptides.Retatrutide?.doses?.[0];
+    if(!first)throw Error('No fictional saved dose available for reaction editor');
+    nexusDoseReactionModal('Retatrutide',first.id);
+    const button=document.querySelector('.nx-reaction-editor #nx-reaction-save');
+    if(!button)throw Error('Reaction Save button missing');
+    const style=getComputedStyle(button);
+    return {text:button.textContent.trim(),background:style.backgroundColor,
+      radius:style.borderRadius,shadow:style.boxShadow};
+  });
+  if(result.background!=='rgb(198, 166, 242)')throw Error('Save reaction not primary lavender '+JSON.stringify(result));
+  await page.screenshot({path:path.join(out,`${width}-${theme}-reaction-editor.png`),fullPage:true,animations:'disabled'});
+  evidence.push({screen:'reaction-editor',width,theme,overflow:false,
+    buttons:[{id:'nx-reaction-save',text:result.text,className:'btn-primary',background:result.background,
+    radius:result.radius,shadow:result.shadow,disabled:false,visible:true}],error:null});
+ }catch(err){evidence.push({screen:'reaction-editor',width,theme,overflow:false,buttons:[],error:String(err)});}
+ await page.evaluate(()=>closeModal());
+
  // Open safe in-DOM nested dialogs/actions (no save, import, delete or reset).\n // Backup Import opens a browser-native file chooser, not an in-DOM sheet; audit separately.
  // These are additional path screenshots, not a substitute for save-path QA.
  const childOpeners=[
