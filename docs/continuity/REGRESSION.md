@@ -1251,3 +1251,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 
 ## 2026-10-27 STASH/DS2 EVIDENCE: Stash rounded-pill code guard e97a2d5 branch browser workflow 40600422694 SUCCESS, mobile 40600422891 SUCCESS. Following Trends/Profile styling dfe4df01 full workflow 40601194237 SUCCESS with browser QA 320/390 light/dark and artifacts, mobile 40601194692 SUCCESS. Exact rendered Stash pill screenshot and native iPhone acceptance not independently inspected in this session. New Nexus/Settings bd26e3d6 workflows pending; do not count earlier passes as current-head.
+
+
+## 2026-10-27: New styling 9ed589e6 NOT TESTED: Nexus Learn/Explore/Journal details, More, Settings backup/privacy and 320/390 light/dark. Prior bd26e3d6 full/mobile workflows PASS; do not infer current-head pass. Production data, history, math and accepted Calendar/Plans/Supplies untouched by intended CSS.
