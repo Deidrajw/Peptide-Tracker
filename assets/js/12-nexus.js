@@ -1269,6 +1269,7 @@ function appUpdatesView() {
       String(entry.version).replace(/^v/i,'')!==String(NEXUS_RELEASE.version).replace(/^v/i,''))
       .map(entry=>({...entry,publication:"legacy"}));
     const history=[...current,...verifiedArchive,...legacy.filter(entry=>!verifiedArchive.some(item=>String(item.version)===String(entry.version)))].sort((a,b)=>{
+      if(a.publication!==b.publication)return a.publication==='verified'?-1:1;
       const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
       if(av&&bv) { for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];} }
       return (Number(b.version)||0)-(Number(a.version)||0);
