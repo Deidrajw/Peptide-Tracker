@@ -1314,3 +1314,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 ## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
 Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
+
+
+## 2026-10-27 new targeted test (not yet PASS): isolated fictional Demo Mode one-vial 10mg source with 300mg request → no history/inventory change, followed by 2mg valid control → one saved dose, 8mg remains. Test script de42c0f3 and CI workflow 86e09376, run 40621540795 pending. Does not exercise multi-vial, prepared dose, dose edit, real user data or actual iPhone.
