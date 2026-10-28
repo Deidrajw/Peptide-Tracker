@@ -3538,3 +3538,7 @@ body .modal #nx-audit-reverse {
 body .nx-blend-date-list {display:block;width:100%;max-height:42vh;overflow-y:auto;overscroll-behavior:contain}
 body .nx-blend-date-list .nx-blend-dose-pick {font-size:14px!important}
 body .nx-blend-injection-detail .nx-blend-ingredient-link {font-size:14px!important}
+
+/* Explicit hidden state must override themed layout display declarations. */
+body .nx-blend-date-list[hidden],
+body #nx-blend-selected-dose[hidden] {display:none!important}
