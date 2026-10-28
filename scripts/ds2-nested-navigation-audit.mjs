@@ -82,8 +82,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    const reached=await page.evaluate(({tab:tabName,sub,profile,detail})=>{
      const pageRoot=document.querySelector('.nx2-page--'+tabName);
      if(!pageRoot)return false;
-     if(detail)return !!pageRoot.querySelector('#settings-detail-back') &&
-       pageRoot.textContent.trim().length>40;
+     if(detail)return !!pageRoot.querySelector(
+       detail==='appupdates'?'#au-back':'#settings-detail-back'
+     ) && pageRoot.textContent.trim().length>40;
      if(tabName==='amino')return !!pageRoot.querySelector('#as-'+sub+'[aria-selected="true"]');
      if(tabName==='profile'&&profile)return !!pageRoot.querySelector('.profile-subtab[data-tab="'+profile+'"]');
      return pageRoot.textContent.trim().length>20;
