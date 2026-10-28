@@ -3546,3 +3546,8 @@ body #nx-blend-selected-dose[hidden] {display:none!important}
 /* Trends injection drill-down: respect hidden panels despite inherited layout display rules. */
 body .modal #nx-blend-date-list[hidden],
 body .modal #nx-blend-selected-dose[hidden] { display:none!important; }
+
+/* Date rows use the existing sheet scroller — no second nested scroll region. */
+body .nx-blend-date-list:not([hidden]) {
+  max-height:none!important;overflow:visible!important;overscroll-behavior:auto!important;
+}
