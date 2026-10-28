@@ -882,3 +882,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 v0.9.20-beta DRAFT additional button hierarchy candidate: CSS 42560603 changes Stash kit wizard progression button to flat primary and Trends Pattern/Symptom Done informational buttons to neutral secondary; no event or calculation changes. Browser test 1d1d9679 excludes OS-native file picker from modal screenshots; run 40619001108 pass at previous CSS. New a00109b2 explicit semantic button assertions; current-head CI, full build artifacts, independent release parity, physical iPhone acceptance and 300mg/10mg stock validation incomplete. Draft/unmerged/not deployed.
+
+
+## 2026-10-27 v0.9.20-beta DRAFT verification checkpoint at code 1f9fda2b: GitHub Actions nested visual 40619363394 SUCCESS (112 screenshots: 28 states x 320/390 x dark/light), mobile 40619363338 SUCCESS. Semantic action variants match targeted DS2 roles; source unchanged for saved records, clinical math and storage by intended changes. Full build/parity 40619363343 pending at check; physical iPhone acceptance, complete nested flow inventory, LIVE/DEMO exact-source delivery and deployment NOT COMPLETE. PR #123 draft/unmerged, no production release.
