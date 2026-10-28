@@ -141,8 +141,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        vials:[{id:'ds2-visual-open',status:'open',vialMg:70,remainingMg:70,reconDate:localDatetime(),
          composition:[{compound:'Ingredient A',mg:50},{compound:'Ingredient B',mg:10},{compound:'Ingredient C',mg:10}]},
          {id:'ds2-visual-sealed',status:'sealed',vialMg:70,remainingMg:70}],
-       doseLog:[{id:'ds2-visual-dose',date:localDatetime(),kind:'administered',
-         vialId:'ds2-visual-open',totalMgDrawn:7}],
+       doseLog:[7,5,4,3].map((mg,i)=>({id:'ds2-visual-dose-'+i,
+         date:new Date(Date.now()-i*86400000*2).toISOString(),
+         kind:'administered',vialId:'ds2-visual-open',totalMgDrawn:mg})),
        wasteLog:[],balanceCorrections:[],reconHistory:[]
      });
      tab='trends';state._blendTrendDays=0;state._blendTrendMode='all';render();
@@ -161,8 +162,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    await page.evaluate(()=>{
      state._nxHistorySelected='Fictional Three-Ingredient Blend';
      state.customPeptides['Fictional Three-Ingredient Blend']={status:'active',
-       doses:[{id:'ds2-history',date:localDatetime(),dose:'7',allocations:[
-         {kitId:'ds2-visual-blend',vialId:'ds2-visual-open',amount:7}]}]
+       doses:[7,5,4,3].map((mg,i)=>({id:'ds2-history-'+i,
+         date:new Date(Date.now()-i*86400000*2).toISOString(),dose:String(mg),
+         allocations:[{kitId:'ds2-visual-blend',vialId:'ds2-visual-open',amount:mg}]}))
      };
      tab='trends';render();
    });
@@ -186,13 +188,25 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       reconciliation:!!document.querySelector('#nx-blend-reconcile'),
       overflow:document.documentElement.scrollWidth>innerWidth+2
    }));
-   if(explorer.title!=='Fictional Three-Ingredient Blend'||explorer.pickCount!==1||
+   if(explorer.title!=='Fictional Three-Ingredient Blend'||explorer.pickCount!==4||
       !explorer.detail.includes('Ingredient A')||!explorer.detail.includes('5.000 mg')||
       !explorer.summary.includes('Recorded blend doses')||
-      !explorer.summary.includes('7.000 mg')||
+      !explorer.summary.includes('19.000 mg')||
       !explorer.summary.includes('All injections attributed')||
       !explorer.reconciliation||explorer.overflow)
      throw Error('Blend chart-first injection explorer regression '+JSON.stringify(explorer));
+   // The period chart must show multiple saved injections; selecting an older
+   // injection changes derived components without creating new dose records.
+   const chart=await page.locator('.nx-trends-detail-modal').evaluate(el=>({
+     text:el.textContent||'',svg:!!el.querySelector('#nx-detail-body svg')
+   }));
+   if(!chart.svg||!chart.text.includes('19.000 mg'))
+     throw Error('Blend trend and cumulative totals missing '+JSON.stringify(chart));
+   await page.locator('.nx-blend-dose-pick').nth(1).click();
+   const selectedOlder=await page.locator('#nx-blend-selected-dose').innerText();
+   if(!selectedOlder.includes('5 mg')||!selectedOlder.includes('3.571 mg'))
+     throw Error('Older selected blend injection contribution incorrect '+selectedOlder);
+   await page.locator('.nx-blend-dose-pick').first().click();
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
    await page.evaluate(()=>closeModal());
    await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
