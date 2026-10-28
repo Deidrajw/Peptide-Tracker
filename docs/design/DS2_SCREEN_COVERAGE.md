@@ -142,3 +142,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 FICTIONAL DATA / ACTION ROLE GATE: built-in populated weight_loss Demo Mode established in fresh localhost context with saveState disabled and fictional compounds/kits/logs/weight. Route assertions added and App Updates special #au-back route test fixed (d66fd3e1). Initial stronger run 40619846887 had 4 App Updates test-assertion failures, not proven app faults. New run 40619990770 pending. New button-role-audit.json groups by primary / secondary / destructive / selection / disabled / unclassified and records computed background, radius and shadow by 320/390 light/dark; deviations only comparable within same semantic role. Actual deep log saves, native file imports and physical iPhone not tested.
+
+
+## 2026-10-27 artifact closure gate for implemented SCOPED styling: full build 40619363343 SUCCESS, artifact 12787100570, live exact-source 21 paths, full standalone demo fictional storage isolated according to manifest source 387e3281. 112 screenshot/action states pass semantic colours at 320/390 light/dark. Mark current sampled routes CODED/TESTED IN BROWSER, NOT ALL-SCREEN DS2 COMPLETE; deep editor saves, populated dose confirmation, back stack, real iPhone and global final pass remain OPEN. Never infer a child screen Pass from parent Pass.
