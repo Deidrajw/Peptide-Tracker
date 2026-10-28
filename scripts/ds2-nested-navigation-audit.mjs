@@ -182,11 +182,15 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       title:document.querySelector('.nx-trends-detail-modal h2')?.textContent||'',
       detail:document.querySelector('#nx-blend-selected-dose')?.textContent||'',
       pickCount:document.querySelectorAll('.nx-blend-dose-pick').length,
+      summary:document.querySelector('.nx-blend-period-summary')?.textContent||'',
       reconciliation:!!document.querySelector('#nx-blend-reconcile'),
       overflow:document.documentElement.scrollWidth>innerWidth+2
    }));
    if(explorer.title!=='Fictional Three-Ingredient Blend'||explorer.pickCount!==1||
       !explorer.detail.includes('Ingredient A')||!explorer.detail.includes('5.000 mg')||
+      !explorer.summary.includes('Recorded blend doses')||
+      !explorer.summary.includes('7.000 mg')||
+      !explorer.summary.includes('All injections attributed')||
       !explorer.reconciliation||explorer.overflow)
      throw Error('Blend chart-first injection explorer regression '+JSON.stringify(explorer));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
