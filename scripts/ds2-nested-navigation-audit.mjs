@@ -196,6 +196,22 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    await page.locator('#nx-blend-date-back').click();
    if(!await page.locator('#nx-blend-date-list').isVisible())throw Error('Back did not restore dated list');
    await page.locator('.nx-blend-dose-pick').first().click();
+   if(!await page.locator('.nx-blend-ingredient-link').first().isVisible())
+      throw Error('Injection ingredient links missing');
+   await page.locator('.nx-blend-ingredient-link').first().click();
+   const ingredientEvidence=await page.evaluate(()=>({
+     label:document.querySelector('.nx-trends-detail-modal h2')?.textContent||'',
+     rows:document.querySelector('.nx-detail-rows')?.textContent||'',
+     back:!!document.querySelector('#nx-ingredient-back'),
+     intel:!!document.querySelector('#nx-ingredient-intel')
+   }));
+   if(ingredientEvidence.label!=='Ingredient A'||!ingredientEvidence.rows.includes('From blend')||
+     !ingredientEvidence.rows.includes('5.000 mg')||!ingredientEvidence.back||!ingredientEvidence.intel)
+     throw Error('Derived ingredient history missing '+JSON.stringify(ingredientEvidence));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
+   await page.locator('#nx-ingredient-back').click();
+   if(!await page.locator('.nx-blend-dose-pick').first().isVisible())
+     throw Error('Ingredient Back did not restore injection history');
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
    await page.locator('.nx-blend-ingredient-link').first().click();
    const ingredientText=await page.locator('.nx-trends-detail-modal').innerText();
