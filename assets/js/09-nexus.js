@@ -829,6 +829,14 @@ function nxPatternExplorer() {
 
 // Resolve individual ingredient estimates using only immutable vial composition or
 // a USER-CONFIRMED historical recipe with a bounded date range. Never rewrite doses.
+// Historical attribution windows use local calendar dates (00:00–23:59).
+// safeDate(date-only) intentionally uses noon for displays and must NOT be used
+// as the starting instant for matching an entire date of recorded injections.
+function nxBlendHistoryCalendarDay(value){
+  const d=safeDate(value);
+  if(!d||!Number.isFinite(d.getTime()))return "";
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
 function nxBlendDoseAttribution(name,dose) {
   const kits=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
   if(!kits.length)return null;
@@ -843,9 +851,9 @@ function nxBlendDoseAttribution(name,dose) {
     if(Array.isArray(composition)&&composition.length>=2){
       segments.push({composition,amount,source:"vial snapshot"});
     }else if(allocations.length===1){
-      const t=safeDate(dose.date).getTime();
+      const day=nxBlendHistoryCalendarDay(dose.date);
       const approved=(k.blendHistoryAttributions||[]).filter(x=>x.status==="confirmed"&&
-        t>=safeDate(x.from).getTime()&&t<=new Date(x.to+"T23:59:59").getTime());
+        day!==""&&day>=x.from&&day<=x.to);
       if(approved.length!==1)return null;
       segments.push({composition:approved[0].composition,amount,source:"user-confirmed historical recipe"});
     }else return null;
@@ -853,9 +861,9 @@ function nxBlendDoseAttribution(name,dose) {
   if(!segments.length){
     // No unique physical source: allow interpretation only when exactly one approved
     // historical attribution covers this date for this named blend.
-    const t=safeDate(dose.date).getTime();
+    const day=nxBlendHistoryCalendarDay(dose.date);
     const matches=kits.flatMap(k=>(k.blendHistoryAttributions||[])
-      .filter(a=>a.status==="confirmed"&&t>=safeDate(a.from).getTime()&&t<=new Date(a.to+"T23:59:59").getTime())
+      .filter(a=>a.status==="confirmed"&&day!==""&&day>=a.from&&day<=a.to)
       .map(a=>({composition:a.composition,amount:doseToMg(dose.dose,cfg(name).unit),source:"user-confirmed historical recipe"})));
     if(matches.length!==1)return null;
     segments.push(matches[0]);
@@ -891,7 +899,8 @@ function nxReconcileBlendHistory(name,onDone) {
   const original=(allPeptides()[name]?.doses||[]).filter(d=>d.date);
   const refresh=()=>{
     const k=kits.find(x=>String(x.id)===kitSelect.value);
-    const rows=original.filter(d=>from.value&&to.value&&safeDate(d.date)>=safeDate(from.value)&&safeDate(d.date)<=new Date(to.value+"T23:59:59"));
+    const rows=original.filter(d=>{const day=nxBlendHistoryCalendarDay(d.date);
+      return day!==""&&from.value&&to.value&&day>=from.value&&day<=to.value;});
     m.querySelector("#nx-reconcile-preview").textContent=k&&from.value&&to.value?
       rows.length+' recorded doses in period · '+(k.composition||[]).map(x=>x.compound+' '+x.mg+' mg').join(' · ')+
       '. This recipe will be labelled user-confirmed, not independently verified.':'Select dates to preview the records.';
