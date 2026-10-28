@@ -231,6 +231,21 @@ function trendsView() {
         return v && Array.isArray(v.composition) && v.composition.length>=2 &&
           v.composition.every(c=>c.compound&&Number(c.mg)>0);
       });
+      // Compute attributed ingredient draws only for physical vials with a saved
+      // opening-time recipe. Unattributed old entries remain explicitly unknown.
+      const componentTotals=new Map();
+      for(const d of attributable){
+        const v=(kit.vials||[]).find(v=>String(v.id)===String(d.vialId));
+        const total=v.composition.reduce((n,c)=>n+Number(c.mg),0);
+        if(total<=0)continue;
+        for(const c of v.composition){
+          const name=String(c.compound);
+          componentTotals.set(name,(componentTotals.get(name)||0)+Number(d.totalMgDrawn)*Number(c.mg)/total);
+        }
+      }
+      const componentHTML=[...componentTotals].map(([name,mg])=>
+        '<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0"><span>'+esc(name)+'</span><strong>'+mg.toFixed(3)+' mg</strong></div>'
+      ).join('');
       const lines=recipe.map(c=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0"><span>'+esc(c.compound)+'</span><strong>'+Number(c.mg).toFixed(2)+' mg</strong></div>').join('');
       return '<article class="nx-blend-trends-card" style="border:1px solid var(--border-sub);border-radius:15px;background:var(--surface-2);padding:15px;margin-top:10px">'+
         '<h4 style="font-size:15px;color:var(--t1);margin:0 0 8px">'+esc(kit.name)+'</h4>'+
@@ -238,6 +253,7 @@ function trendsView() {
         (lines||'<p style="color:var(--t3)">No component recipe recorded.</p>')+
         '<div style="border-top:1px solid var(--border-sub);padding-top:10px;margin-top:10px;color:var(--t2);font-size:12px">'+
         physicalEntries.length+' physical blend ledger entries · '+physicalMg.toFixed(2)+' mg recorded as drawn</div>'+
+        (componentHTML?'<div style="margin-top:10px;font-size:12px;color:var(--t2)"><strong>Estimated ingredient contributions from verified vial recipes</strong>'+componentHTML+'</div>':'')+
         '<p style="font-size:11px;line-height:1.5;color:var(--t3);margin:8px 0 0">'+
         (attributable.length===physicalEntries.length&&physicalEntries.length
           ? 'Vial composition snapshots available for recorded entries; per-component time-series validation is still pending.'
