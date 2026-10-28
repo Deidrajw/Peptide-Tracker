@@ -2193,10 +2193,35 @@ document.addEventListener("keydown", e => { if(e.key === "Escape" && modalEl) { 
 // just observing "nothing responds" with no way to know why.
 let errBannerEl = null;
 function showErrorBanner(msg) {
+  // Expected validation is not a JavaScript exception. Keep feedback within the
+  // current modal rather than showing a developer/debugging alert.
+  const active=document.querySelector(".modal");
+  const existing=document.querySelector("#nx-validation-message");
+  if(existing)existing.remove();
+  if(active){
+    const notice=document.createElement("div");
+    notice.id="nx-validation-message";
+    notice.setAttribute("role","alert");
+    notice.style.cssText="margin:10px 0;padding:12px 14px;border-radius:10px;border:1px solid #e6a34a;background:rgba(230,163,74,.12);color:var(--t1);font-size:13px;line-height:1.45";
+    notice.textContent=String(msg);
+    const footer=active.querySelector(".btn-primary")?.parentElement;
+    if(footer)footer.insertBefore(notice,footer.firstChild);else active.appendChild(notice);
+    return;
+  }
+  // No modal: accessible, dismissible application-level validation toast.
+  const notice=document.createElement("div");
+  notice.id="nx-validation-message";
+  notice.setAttribute("role","alert");
+  notice.style.cssText="position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:16px;right:16px;z-index:99998;padding:12px 14px;border-radius:12px;border:1px solid #e6a34a;background:var(--surface);color:var(--t1);box-shadow:0 8px 26px #0003;font-size:13px";
+  notice.textContent=String(msg);
+  notice.onclick=()=>notice.remove();
+  document.body.appendChild(notice);
+}
+function showScriptErrorBanner(msg) {
   if (errBannerEl) errBannerEl.remove();
   errBannerEl = h(`<div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#3a0d0d;border-bottom:1px solid #ff7c7c66;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));font-family:monospace;font-size:11px;color:#ffb3b3;max-height:40vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">
-      <span style="font-weight:700;color:#ff7c7c">⚠ SCRIPT ERROR — tap to copy, then send to Claude</span>
+      <span style="font-weight:700;color:#ff7c7c">⚠ Unexpected application error — tap details to copy</span>
       <button id="err-x" style="flex-shrink:0;color:#ffb3b3;font-size:16px;background:transparent;border:none">✕</button>
     </div>
     <div id="err-text" style="white-space:pre-wrap;word-break:break-word">${esc(msg)}</div>
@@ -2208,10 +2233,10 @@ function showErrorBanner(msg) {
   document.body.appendChild(errBannerEl);
 }
 window.addEventListener("error", (e) => {
-  showErrorBanner(`${e.message}\n${e.filename||""}:${e.lineno||"?"}:${e.colno||"?"}\n${(e.error&&e.error.stack)||""}`);
+  showScriptErrorBanner(`${e.message}\n${e.filename||""}:${e.lineno||"?"}:${e.colno||"?"}\n${(e.error&&e.error.stack)||""}`);
 });
 window.addEventListener("unhandledrejection", (e) => {
-  showErrorBanner(`Unhandled promise rejection: ${(e.reason&&e.reason.message)||e.reason}\n${(e.reason&&e.reason.stack)||""}`);
+  showScriptErrorBanner(`Unhandled promise rejection: ${(e.reason&&e.reason.message)||e.reason}\n${(e.reason&&e.reason.stack)||""}`);
 });
 
 // One clear logging entry point. Existing individual dose modal and combo modal remain authoritative.
