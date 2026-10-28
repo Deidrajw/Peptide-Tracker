@@ -3261,3 +3261,37 @@ body .nexus-more-sheet .nexus-more-item>span:last-child{font-size:18px;color:var
 .nx2-page--learn input,.nx2-page--learn select,.nx2-page--learn textarea{max-width:100%;box-sizing:border-box;min-height:44px}
 .nx2-page--learn button{max-width:100%}
 @media(max-width:360px){body .nexus-more-sheet{padding:14px 12px calc(14px + env(safe-area-inset-bottom))}}
+
+
+/* DS2 action hierarchy v1 — same semantic action, same shade across dose entry stages.
+   Primary = progression or commit; secondary = back; mode switch = selection.
+   These overrides are visual-only: source allocation and save validators stay authoritative. */
+.nx2-dose-modal{--nx2-action-primary:#c6a6f2;--nx2-action-primary-ink:#24182f;--nx2-action-secondary:var(--surface-2);--nx2-action-outline:var(--border-sub)}
+body .modal.nx2-dose-modal #nx-dose-step-next,
+body .modal.nx2-dose-modal .nx-dose-footer #save{
+  box-sizing:border-box!important;min-height:48px!important;border:1px solid transparent!important;
+  border-radius:13px!important;background:var(--nx2-action-primary)!important;
+  background-image:none!important;color:var(--nx2-action-primary-ink)!important;
+  box-shadow:none!important;font-size:14px!important;font-weight:750!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+body .modal.nx2-dose-modal #nx-dose-step-back{
+  box-sizing:border-box!important;min-height:48px!important;border-radius:13px!important;
+  border:1px solid var(--nx2-action-outline)!important;background:var(--nx2-action-secondary)!important;
+  background-image:none!important;box-shadow:none!important;color:var(--t2)!important;font-weight:650!important;
+}
+body .modal.nx2-dose-modal #nx-dose-step-back:disabled{
+  opacity:.42!important;cursor:not-allowed!important;
+}
+body .modal.nx2-dose-modal #nx-dose-step-next:disabled,
+body .modal.nx2-dose-modal .nx-dose-footer #save:disabled{
+  opacity:.45!important;cursor:not-allowed!important;
+}
+body .modal.nx2-dose-modal .nx-dose-mode-switch button{
+  background:transparent!important;box-shadow:none!important;
+  color:var(--t2)!important;border:1px solid transparent!important;
+}
+body .modal.nx2-dose-modal .nx-dose-mode-switch button[aria-selected="true"]{
+  background:var(--surface-3)!important;border-color:var(--border-sub)!important;
+  color:var(--t1)!important;box-shadow:none!important;
+}
