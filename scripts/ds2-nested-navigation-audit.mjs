@@ -315,6 +315,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  try {
    await page.evaluate(()=>{const kit=state.supplies.find(x=>!x.isBlend);if(!kit)throw Error('Missing fictional kit');logWasteModal(kit.id);});
    await page.locator('#waste-save').waitFor({state:'visible',timeout:4000});
+   const warn=await page.locator('#waste-save').evaluate(el=>{const s=getComputedStyle(el);return {background:s.backgroundColor,color:s.color,image:s.backgroundImage,shadow:s.boxShadow};});
+   if(warn.background!=='rgb(166, 44, 74)'||warn.color!=='rgb(255, 255, 255)'||warn.image!=='none'||warn.shadow!=='none')
+     throw Error('Outflow danger role incorrect '+JSON.stringify(warn));
    await page.screenshot({path:path.join(out,`${width}-${theme}-stash-log-outflow.png`),animations:'disabled'});
    evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:String(err)});}
