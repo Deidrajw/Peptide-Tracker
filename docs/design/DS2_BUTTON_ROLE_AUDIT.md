@@ -49,3 +49,6 @@ User supplied 10 screenshots of CTAs: Add to Stash, kit wizard Continue, dose Co
 
 
 ## 2026-10-27 POST-FIX RENDER EVIDENCE: updated screenshot test 9c5f5c65 CI 40623390625 SUCCESS, with 124 screenshots = 31 route/action states × 320/390 × light/dark, including dedicated active/no-dose Protocol first-log and saved-dose Reaction editor. Downloaded artifact 12788965151. Protocol CTA 'Log first dose' uses #C6A6F2, radius 13px, no shadow across 4 combinations. Save reaction same computed style across 4 combinations. This validates named buttons only; remaining contextual variants, final Stash Add/Save stage and other nested actions unverified. Reaction editor screenshot exposes a raw ISO date in subtitle (separate formatting gap, not changed in button pass). No real iPhone testing.
+
+
+## 2026-10-27 screenshot CTA closure: found inline #A78BFA!important on #today-dose-single 'Continue to dose log' in 04-nexus.js, overridden to canonical solid #C6A6F2 (CSS f238e6d2). Stash final Add to Stash stage tested with fictional fields and no save; 40623724305 SUCCESS, 4/4 320/390 dark/light screenshots show #ssave solid rgb(198,166,242), 13px radius/no shadow. Primary semantic assertions expanded in script a1cf67c6 for chooser, Protocol first log, Reaction Save, Stash final Save. Most recent audit 40623795341 pending at checkpoint. Existing dose math/data unchanged.
