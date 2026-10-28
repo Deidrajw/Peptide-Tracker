@@ -583,7 +583,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const original=JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
      const before=nxBlendDoseAttribution(name,dose);
      kit.blendHistoryAttributions.push({id:'qa-attribution',status:'confirmed',
-       from:localDate(),to:localDate(),composition:kit.composition.map(v=>({...v}))});
+       from:realLocalDate(),to:realLocalDate(),composition:kit.composition.map(v=>({...v}))});
      const attributed=nxBlendDoseAttribution(name,dose);
      kit.blendHistoryAttributions[0].status='reversed';
      const after=nxBlendDoseAttribution(name,dose);
