@@ -1276,3 +1276,7 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 DEEP SCREEN CI: new GitHub Actions workflow a08f62f9 run 40617435379 queued at check. Scope screenshots and button computed properties across root and nested Settings/Nexus route states 320/390 light/dark. No completed test evidence yet. Log Dose chooser button shading updated d7a45b4b, step button normalization afced369; visual acceptance pending. Inventory scenario 300mg and sole 10mg source remains NOT TESTED.
+
+
+## 2026-10-27 CRITICAL AUDIT EVIDENCE CORRECTION
+Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and action-inventory.json). Direct inspection of 320-dark-settings-backup and 390-light-nexus-ask shows FIRST-RUN 'Welcome to Nexus' ONBOARDING MODAL covering intended routes. Inventory 972 buttons and 65 background/radius/shadow combinations therefore includes obstructed views and CANNOT certify 23 child routes or button hierarchy; 0 overflow is likewise not sufficient. Existing script used localStorage.clear() and failed to dismiss onboarding. Fix commit 279703c1 tries Skip and explicitly fails if overlay persists; re-run and inspect screenshot pixels before any PASS. Further need full action/modal traversal, isolated 300mg/10mg save guard test, button role taxonomy. No user data touched, no merge/deploy. ONE NEXT ACTION: verify fixed audit workflow run and inspect unblocked child screenshots; if blocked, set up fictional local fixture using actual onboarding flow.
