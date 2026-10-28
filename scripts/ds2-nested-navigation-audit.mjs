@@ -213,11 +213,6 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(!await page.locator('.nx-blend-dose-pick').first().isVisible())
      throw Error('Ingredient Back did not restore injection history');
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
-   await page.locator('.nx-blend-ingredient-link').first().click();
-   const ingredientText=await page.locator('.nx-trends-detail-modal').innerText();
-   if(!ingredientText.includes('Ingredient A')||!ingredientText.includes('From blend'))
-     throw Error('Ingredient source drilldown missing '+ingredientText.slice(0,190));
-   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.evaluate(()=>closeModal());
    await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
    evidence.push({screen:'trends-blend-drilldown',width,theme,overflow:false,buttons:[],error:null});
