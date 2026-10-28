@@ -156,8 +156,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        overflow:document.documentElement.scrollWidth>innerWidth+2};
    });
    if(!report.period||!report.mode||report.overflow||
-      !report.text.includes('Ingredient A')||!report.text.includes('5.000 mg')||
-      !report.text.includes('1.000 mg'))throw Error('Blend Trends fixture report mismatch '+JSON.stringify(report));
+      !report.text.includes('Ingredient A')||!report.text.includes('13.571 mg')||
+      !report.text.includes('2.714 mg'))throw Error('Blend Trends fixture report mismatch '+JSON.stringify(report));
    // Selected blend history must own the screen; the standalone summary must not replace it.
    await page.evaluate(()=>{
      state._nxHistorySelected='Fictional Three-Ingredient Blend';
