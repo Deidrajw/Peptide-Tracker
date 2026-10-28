@@ -2101,3 +2101,26 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 
 /* Ingredient history has exactly two summary metrics, unlike the three-metric dose explorer. */
 .nx-trends-detail-modal .nx-detail-counts.nx-ingredient-counts{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* 2026-10-28 iPhone feedback: history navigation should be light, not two full-width CTAs.
+   Leave the specialised action container in the sheet body (not the generic footer). */
+.nx-trends-detail-modal .nx-ingredient-actions{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:8px 12px;margin-top:16px;
+}
+.nx-trends-detail-modal .nx-ingredient-actions .nx-trends-back-action{
+  display:inline-flex;width:auto;max-width:100%;min-width:0;min-height:44px;
+  padding:9px 0;border:0;background:transparent;box-shadow:none;
+  color:var(--t2);font-size:13px;font-weight:650;justify-content:flex-start;
+}
+.nx-trends-detail-modal .nx-ingredient-actions .nx-trends-link-action{
+  display:inline-flex;width:auto;max-width:100%;min-width:0;min-height:44px;
+  padding:9px 12px;border:1px solid var(--border-sub);
+  border-radius:11px;background:var(--surface-2);color:var(--t1);
+  font-size:13px;font-weight:650;justify-content:center;
+}
+.nx-trends-detail-modal #nx-blend-date-back{
+  display:inline-flex;width:auto;max-width:100%;min-height:44px;
+  padding:8px 0;border:0;background:transparent;box-shadow:none;
+  color:var(--t2);font-size:13px;
+}
