@@ -149,3 +149,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 ## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
 Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
+
+
+## 2026-10-27 source transaction gate pending: scripts/ds2-dose-inventory-regression.mjs (de42c0f3) and workflow change 86e09376 test canonical one-open-vial 300mg versus 10mg insufficient stock with fictional isolated records and valid 2mg control. Expected no dose record or inventory change for shortfall, exactly one save and 2mg deduction for valid case. New CI 40621540795 in progress; no PASS claim. Need expand to multi-vial source allocations, prepared doses and nested action confirmation in subsequent QA. Global polish LAST.
