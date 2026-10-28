@@ -909,7 +909,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend) {
       if(item)blendRows.push({date:d.date,mg:item.mg,source:kit.name,provenance:attribution.provenance});
     }
   }
-  const rows=[...direct.map(d=>({date:d.date,mg:Number(d.dose)||0,source:"Direct",provenance:"Recorded dose"})),...blendRows]
+  const rows=[...direct.map(d=>({date:d.date,mg:doseToMg(d.dose,cfg(ingredient).unit||"mg"),source:"Direct",provenance:"Recorded dose"})),...blendRows]
     .filter(x=>x.date).sort((a,b)=>safeDate(b.date)-safeDate(a.date));
   const detail=openModal('<div class="nx-detail-head"><div><div class="nx-trends-eyebrow">Ingredient history</div><h2>'+esc(ingredient)+'</h2><p>Direct doses and estimated blend contributions are distinct.</p></div>'+
     '<button id="nx-ingredient-close" aria-label="Close ingredient history">✕</button></div>'+
