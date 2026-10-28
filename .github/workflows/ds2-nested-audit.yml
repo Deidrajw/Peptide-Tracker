@@ -1,0 +1,37 @@
+name: DS2 nested navigation visual audit
+on:
+  pull_request:
+    paths:
+      - 'assets/**'
+      - 'index.html'
+      - 'scripts/ds2-nested-navigation-audit.mjs'
+      - '.github/workflows/ds2-nested-audit.yml'
+  workflow_dispatch:
+jobs:
+  nested-screens:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser runner
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Start LOCAL app (never contact production)
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/nexus-audit-http.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+      - name: Capture child screens and computed action styles
+        env:
+          NEXUS_AUDIT_URL: http://127.0.0.1:4173
+        run: node scripts/ds2-nested-navigation-audit.mjs
+      - name: Upload nested screenshot and button inventory evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds2-nested-screen-evidence
+          path: artifacts/ds2-nested-audit/
+          if-no-files-found: warn
