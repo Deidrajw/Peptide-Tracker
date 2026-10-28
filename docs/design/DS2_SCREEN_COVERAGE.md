@@ -53,3 +53,6 @@ Map actual navigation destinations and mark each child surface by exact route + 
 
 
 ## 2026-10-27 verification refinement: Stash tab guard branch full browser workflow 40600422694 SUCCESS, mobile 40600422891 SUCCESS, but physical iPhone reacceptance open. Trends/Profile dfe4df01 full 40601194237 and mobile 40601194692 SUCCESS for automated suites; child-by-child visual acceptance remains open. Nexus/Settings bd26e3d6 new workflow pending. All future roadmap lanes preserved and global polish LAST.
+
+
+## 2026-10-27: CSS 9ed589e6 adds shared Nexus Learn/Explore/Journal card, accordion, input, and More panel styling plus Settings child card/control refinements. CODED, not visually accepted. Earlier bd26e3d6 browser 40614785248 PASS, mobile 40614785307 PASS. Current-head visual screenshots, hidden child routes and physical iPhone NOT TESTED. Global accessibility/typography/forms/scroll/navigation/motion LAST.
