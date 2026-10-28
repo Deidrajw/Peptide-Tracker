@@ -1325,3 +1325,6 @@ Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose r
 
 ## 2026-10-27 — Action hierarchy and Protocol first-log QA pending
 Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Protocol Activate/Log first dose must use same solid primary token #C6A6F2, no gradient; Back/informational Done neutral, selected controls distinct. JS 0445f6b0 first-log label only; original handler preserved. Script bd6c374e captures Protocol route and records whether conditional CTA present; if absent, dedicated active/no-dose fixture required before PASS. CI pending, physical iPhone not tested. Earlier one-vial inventory safety 40621540795 PASS remains separate.
+
+
+## 2026-10-27 BUTTON QA PASS LIMITED: 40623390625 nested screenshot run SUCCESS; 124 screenshots, all four 320/390 dark/light combinations show Protocol first-log CTA and Reaction editor Save fill rgb(198,166,242), radius 13px/no shadow. Mobile 40623390895 SUCCESS. No route/overflow failures reported by workflow. Stash final Add to Stash, prepared/multi-vial, physical Safari, destructive confirmation remain NOT TESTED. Reaction subtitle ISO date observed, separate UI issue. No production data accessed.
