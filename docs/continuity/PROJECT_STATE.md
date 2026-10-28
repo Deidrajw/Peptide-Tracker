@@ -1788,3 +1788,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 ACTUAL ARTIFACT INSPECTION: downloaded 40617435379 evidence (92 screenshots + action-inventory.json) and inspected 390px dark contact sheet; onboarding overlay blocks most child screens despite workflow SUCCESS. Mark visual audit INVALID/NOT VERIFIED. Fixed screenshot fixture at commit 48e3293b to bypass onboarding only on isolated localhost, new run 40617673780 queued. Next: download and inspect corrected screenshots, button styles, action interactions; safety 300mg vs 10mg still untested. PR #123 remains draft and production untouched.
+
+
+## 2026-10-27: 49271c54 DS2 semantic Settings danger action shading committed; 48e3293b corrected first-run onboarding obstruction in isolated screenshot runner. Earlier 40617435379 operational pass had INVALID screenshots (onboarding overlay), corrected run 40617673780 in progress at recording. Initial dose buttons afced369/d7a45b4b CSS-only. No production changes, PR #123 draft. ONE NEXT ACTION: inspect corrected rendered screenshots/variant inventory, verify source allocation safety with isolated 300mg request versus 10mg remaining.
