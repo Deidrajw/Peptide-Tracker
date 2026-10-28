@@ -899,8 +899,15 @@ function nxReconcileBlendHistory(name,onDone) {
   const original=(allPeptides()[name]?.doses||[]).filter(d=>d.date);
   const refresh=()=>{
     const k=kits.find(x=>String(x.id)===kitSelect.value);
-    const rows=original.filter(d=>{const day=nxBlendHistoryCalendarDay(d.date);
-      return day!==""&&from.value&&to.value&&day>=from.value&&day<=to.value;});
+    const rows=original.filter(d=>{
+      const day=nxBlendHistoryCalendarDay(d.date);
+      if(day===""||!from.value||!to.value||day<from.value||day>to.value)return false;
+      // Only legacy unlinked doses or one explicitly matching physical kit are
+      // eligible. A recorded allocation to another kit is never silently remapped.
+      const allocations=Array.isArray(d.allocations)?d.allocations:[];
+      return !allocations.length||(allocations.length===1&&
+        String(allocations[0].kitId)===String(k?.id));
+    });
     m.querySelector("#nx-reconcile-preview").textContent=k&&from.value&&to.value?
       rows.length+' recorded doses in period · '+(k.composition||[]).map(x=>x.compound+' '+x.mg+' mg').join(' · ')+
       '. This recipe will be labelled user-confirmed, not independently verified.':'Select dates to preview the records.';
