@@ -209,26 +209,34 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(ingredientEvidence.label!=='Ingredient A'||!ingredientEvidence.rows.includes('From blend')||
      !ingredientEvidence.rows.includes('5.000 mg')||!ingredientEvidence.back||!ingredientEvidence.intel)
      throw Error('Derived ingredient history missing '+JSON.stringify(ingredientEvidence));
-   // Actual layout contract on iPhone widths: Back and Intel must not compete
-   // as half-width actions; directional SVG icons must be explicit.
+   // Approved compact Intel layout: the contextual Back link remains lightweight,
+   // while Compound Intel is a small outlined control aligned on the right.
+   // Neither action may consume a full-width CTA or lose its touch target.
    const navStyle=await page.evaluate(()=>{
      const back=document.querySelector('#nx-ingredient-back');
      const intel=document.querySelector('#nx-ingredient-intel');
      const a=back?.getBoundingClientRect(),b=intel?.getBoundingClientRect();
+     const styles=el=>{const v=getComputedStyle(el);return {border:v.borderTopWidth,background:v.backgroundColor,display:v.display};};
      return {width:innerWidth,backW:a?.width,intelW:b?.width,
-       backY:a?.y,intelY:b?.y,backIcon:!!back?.querySelector('svg.nx-nav-icon'),
+       backX:a?.x,intelX:b?.x,backY:a?.y,intelY:b?.y,
+       backH:a?.height,intelH:b?.height,backStyle:styles(back),intelStyle:styles(intel),
+       backIcon:!!back?.querySelector('svg.nx-nav-icon'),
        intelIcon:!!intel?.querySelector('svg.nx-nav-icon'),
        backText:back?.textContent?.trim(),intelText:intel?.textContent?.trim(),
        summaryColumns:getComputedStyle(document.querySelector('.nx-ingredient-counts')).gridTemplateColumns,
        summaryCards:[...document.querySelectorAll('.nx-ingredient-counts > div')]
          .map(el=>({x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width}))};
    });
-   if(!navStyle.backIcon||!navStyle.intelIcon||navStyle.backW<220||
-     navStyle.intelW<220||Math.abs(navStyle.backW-navStyle.intelW)>2||
-     navStyle.intelY<=navStyle.backY||navStyle.backText!=='Back to injection'||
-     navStyle.intelText!=='Compound Intel'||navStyle.summaryCards.length!==2||
+   if(!navStyle.backIcon||!navStyle.intelIcon||
+     navStyle.backW<100||navStyle.backW>210||navStyle.intelW<105||navStyle.intelW>190||
+     navStyle.backH<44||navStyle.intelH<44||
+     Math.abs(navStyle.backY-navStyle.intelY)>4||
+     navStyle.backX>=navStyle.intelX||navStyle.intelX+navStyle.intelW>navStyle.width+1||
+     navStyle.backStyle.border!=='0px'||navStyle.intelStyle.border==='0px'||
+     navStyle.backText!=='Back to injection'||navStyle.intelText!=='Compound Intel'||
+     navStyle.summaryCards.length!==2||
      Math.abs(navStyle.summaryCards[0].width-navStyle.summaryCards[1].width)>2)
-     throw Error('Ingredient action alignment / directional icon mismatch '+JSON.stringify(navStyle));
+     throw Error('Compact Intel / Back row alignment mismatch '+JSON.stringify(navStyle));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.locator('#nx-ingredient-back').click();
    if(await page.locator('[data-range="all"]').getAttribute('aria-pressed')!=='true')
