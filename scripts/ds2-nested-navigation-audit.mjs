@@ -148,7 +148,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const seen=NEXUS_SEEN_RELEASE_KEY,later=NEXUS_RELEASE_LATER_KEY;
      const original={status:NEXUS_RELEASE.publicationStatus,version:NEXUS_RELEASE.version,
        changes:NEXUS_RELEASE.changes,seen:localStorage.getItem(seen),later:sessionStorage.getItem(later),
-       onboarding:state.profile.onboardingDone};
+       onboarding:state.profile.onboardingDone,demoFunction:isDemoMode};
      const check=(condition,message)=>{if(!condition)throw Error(message);};
      try{
        state.profile.onboardingDone=true;
@@ -156,6 +156,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        NEXUS_RELEASE.version='v99.1.0-beta';
        NEXUS_RELEASE.changes=[{title:'Fictional update',detail:'Test-only release'}];
        localStorage.removeItem(seen);sessionStorage.removeItem(later);
+       check(!shouldShowPublishedRelease(),'Demo Mode must not show production release');
+       isDemoMode=()=>false; // isolated fictional existing-user eligibility; restore in finally
        check(!!nxReleaseParts('v99.1.0-beta'),'Version parser rejected semver');
        check(nxIsReleaseNewer('v99.1.0-beta','v99.0.0-beta'),'Upgrade comparison failed');
        check(!nxIsReleaseNewer('v99.0.0-beta','v99.1.0-beta'),'Downgrade comparison failed');
@@ -177,7 +179,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        check(!shouldShowPublishedRelease(),'Unpublished candidate triggered prompt');
        return 'Pass: first launch, Later, next session, Got it, navigation, upgrade, unpublished gate';
      }finally{
-       closeModal(); NEXUS_RELEASE.publicationStatus=original.status;NEXUS_RELEASE.version=original.version;
+       closeModal(); isDemoMode=original.demoFunction; NEXUS_RELEASE.publicationStatus=original.status;NEXUS_RELEASE.version=original.version;
        NEXUS_RELEASE.changes=original.changes;state.profile.onboardingDone=original.onboarding;
        if(original.seen===null)localStorage.removeItem(seen);else localStorage.setItem(seen,original.seen);
        if(original.later===null)sessionStorage.removeItem(later);else sessionStorage.setItem(later,original.later);
