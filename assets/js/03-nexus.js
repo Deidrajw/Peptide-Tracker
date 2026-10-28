@@ -1243,6 +1243,46 @@ function getBlendOpenVialRemainingMg(kit) {
     (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
 }
 
+// Retire a physical blend kit without fabricating constituent dose events.
+// Uses a separate confirmation because original blend inventory is ledger-driven.
+// This operation is only invoked through explicit user action, never on app load.
+function finishBlendKitModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  if(!kit||kit.kitStatus==="done")return;
+  const vials=ensureKitVials(kit);
+  const toDiscard=vials.filter(v=>["open","active","sealed"].includes(v.status)).map(v=>{
+    const amount=["open","active"].includes(v.status)
+      ? getBlendOpenVialRemainingMg(kit)
+      : Math.max(0,Number(v.remainingMg??v.vialMg??kit.vialMg)||0);
+    return {id:v.id,amount};
+  });
+  const total=toDiscard.reduce((n,v)=>n+v.amount,0);
+  confirmAction("Finish this blend kit? "+total.toFixed(2)+" mg of remaining physical material will be recorded as discarded. Dose and component history will be preserved.",()=>{
+    const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+    if(!current||current.kitStatus==="done")return;
+    // Recalculate before mutating to avoid depending on a stale modal amount.
+    const active=ensureKitVials(current).filter(v=>["open","active","sealed"].includes(v.status));
+    const entries=active.map(v=>({v,
+      mg:["open","active"].includes(v.status)
+        ? getBlendOpenVialRemainingMg(current)
+        : Math.max(0,Number(v.remainingMg??v.vialMg??current.vialMg)||0)}));
+    current.wasteLog=current.wasteLog||[];
+    for(const entry of entries){
+      if(entry.mg>0.0001)current.wasteLog.push({
+        id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
+        mg:entry.mg,type:"waste",reason:"Blend kit marked done",
+        status:"active",vialId:entry.v.id,outflowKind:"blend_kit_retired"
+      });
+      entry.v.remainingMg=0;
+      entry.v.status="empty";
+    }
+    current.emptyVials=Math.max(Number(current.totalVials)||0,Number(current.emptyVials)||0);
+    current.reconDate=null;current.activeKit=false;current.kitStatus="done";
+    current.doneReason="Kit completed";
+    saveState();render();
+  },{tone:"warning",confirmLabel:"Finish kit",cancelLabel:"Keep kit open"});
+}
+
 // Explicit blend vial closure preserves mass balance before another vial opens.
 // Closing with leftovers records outflow; it never erases prior doses or kit history.
 function finishBlendVialModal(kitId) {
