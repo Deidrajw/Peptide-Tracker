@@ -431,6 +431,37 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>{closeModal();if(window.__ds2BlendFixtureId){state.supplies=state.supplies.filter(k=>k.id!==window.__ds2BlendFixtureId);delete window.__ds2BlendFixtureId;}});}
+ // Overdraw is expected validation, not a script exception. Check both UI and ledger.
+ try{
+   const out=await page.evaluate(()=>{
+     closeModal();
+     const kit={id:'ds2-overdraw',name:'Fictional Overdraw Blend',isBlend:true,
+       totalVials:1,vialMg:50,openedVials:1,emptyVials:0,
+       activeKit:true,reconDate:localDatetime(),
+       composition:[{compound:'A',mg:25},{compound:'B',mg:25}],
+       vials:[{id:'ds2-overdraw-vial',status:'open',vialMg:50,remainingMg:50,reconDate:localDatetime()}],
+       doseLog:[{id:'ds2-used',kind:'administered',vialId:'ds2-overdraw-vial',
+         totalMgDrawn:1.5,date:localDatetime()}],wasteLog:[]};
+     state.supplies.push(kit);
+     const prior=getBlendOpenVialRemainingMg(kit), count=kit.wasteLog.length;
+     blendLogOutflowModal(kit.id);
+     document.querySelector('#blend-out-mg').value='50';
+     document.querySelector('#blend-out-save').click();
+     const inline=document.querySelector('#nx-validation-message');
+     const err=document.querySelector('#err-text');
+     const result={prior,after:getBlendOpenVialRemainingMg(kit),
+       unchanged:kit.wasteLog.length===count,inline:inline?.textContent||'',
+       diagnosticVisible:!!err,modalOpen:!!document.querySelector('#blend-out-save')};
+     closeModal();state.supplies=state.supplies.filter(x=>x.id!==kit.id);
+     document.querySelector('#nx-validation-message')?.remove();
+     return result;
+   });
+   if(!out.unchanged||Math.abs(out.prior-48.5)>0.001||out.after!==out.prior||
+     !out.inline.includes('available balance')||out.diagnosticVisible||!out.modalOpen)
+       throw Error('Overdraw warning/ledger regression: '+JSON.stringify(out));
+   evidence.push({screen:'blend-outflow-overdraw-validation',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-outflow-overdraw-validation',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{closeModal();state.supplies=state.supplies.filter(k=>k.id!=='ds2-overdraw');document.querySelector('#nx-validation-message')?.remove();});}
  // Blend outflow cancellation: no physical ledger entries or saved history.
  try{
    const result=await page.evaluate(()=>{
