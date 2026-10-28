@@ -1546,3 +1546,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-10-28 — What's New lifecycle, partial code / NOT TESTED
 - Commit `f34a847f`: manual What's New close no longer writes legacy `lastSeenChangelog` or saves primary state. Source audit confirms published startup notice requires `NEXUS_RELEASE.publicationStatus==='published'`, while draft manifest is `unverified`. Full trigger-reproduction, multi-release chronological history, Later/Got it browser test, iPhone and package parity **NOT TESTED**. Do not mark Pass or announce candidate as published.
+
+## 2026-10-28 — What's New fictional lifecycle tests ADDED, OUTCOME PENDING
+- `5dc3d1df` adds Playwright 320px/390px light/dark fiction-only tests for parsing v99.1.0-beta, upgrade/downgrade, first published launch, Later suppressing same-session re-prompt, future session reprompt, Got it acknowledgement, navigation re-render, subsequent version and unverified gate; restores storage keys and manifest in finally. `1341376b` fixes double-escaped semver dots (previous parser could compare incorrectly). CI exact-head **IN PROGRESS**, do not claim Pass until logs checked. Browser != physical iPhone/VoiceOver. Existing legacy history provenance unverified.
