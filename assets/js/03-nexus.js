@@ -709,6 +709,9 @@ function computeSinceLastVisit() {
   return bullets.length ? bullets : null;
 }
 let state = migrate(loadState());
+// Navigation is transient: a full refresh must open the Trends homepage, not a previously viewed compound.
+// Do not persist this reset or change historical dose/inventory records.
+state._nxHistorySelected=null;
 let tab = "home";
 
 function allPeptides() {
