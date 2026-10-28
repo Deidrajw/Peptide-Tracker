@@ -895,7 +895,7 @@ function nxReconcileBlendHistory(name,onDone) {
       }
       live.blendHistoryAttributions.push(overlay);
       saveState();if(typeof onDone==="function")onDone();
-    },{tone:"info",confirmLabel:"Confirm historical recipe",cancelLabel:"Keep unchanged"});
+    },{tone:"primary",confirmLabel:"Confirm historical recipe",cancelLabel:"Keep unchanged"});
   };
 }
 
