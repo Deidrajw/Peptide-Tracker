@@ -1334,7 +1334,9 @@ function whatsNewModal(entries) {
     </div>
     <button id="wn-dismiss" class="btn-primary" style="background:#A78BFA;margin-top:6px">Got it</button>
   `, "#A78BFA");
-  const dismiss = () => { state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION; saveState(); closeModal(); };
+  // Manual history browsing is read-only: it must never acknowledge a published release
+  // or mutate the primary user data store. Only the published-release Got it action does that.
+  const dismiss = () => closeModal();
   m.querySelector("#x").onclick = dismiss;
   m.querySelector("#wn-dismiss").onclick = dismiss;
 }
