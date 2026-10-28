@@ -1254,3 +1254,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 
 ## 2026-10-27: New styling 9ed589e6 NOT TESTED: Nexus Learn/Explore/Journal details, More, Settings backup/privacy and 320/390 light/dark. Prior bd26e3d6 full/mobile workflows PASS; do not infer current-head pass. Production data, history, math and accepted Calendar/Plans/Supplies untouched by intended CSS.
+
+
+## 2026-10-27 DS2 child QA gate: SOURCE-CODED fdc1d608 and 81adc534, not yet regression PASS. Verify Nexus Journal filter/search/entry open, Explore item navigation/disabled, Learn search/detail/back, More sheet four links/close/backdrop/scroll, Settings unit/health/backup/data management/developer controls, 320/390 both themes, no horizontal overflow; check check-in/dose and all backup/storage protections. Old Insights routing maps to Ask; record as source finding, not a validated fix. Physical Safari and VoiceOver NOT TESTED. Global polish intentionally LAST.
