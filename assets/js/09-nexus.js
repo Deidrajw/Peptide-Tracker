@@ -978,6 +978,28 @@ function nxTrendsDetail(name, kind="dose") {
     const rows=kind==="dose"?current.doses.map(d=>({date:d.date,detail:`${d.dose} ${c.unit||""}`,note:d.site?`Site: ${d.site}`:"Recorded dose"}))
       :current.reports.map(r=>({date:r.date,detail:r.name,note:"Recorded symptom report"})).sort((a,b)=>safeDate(b.date)-safeDate(a.date));
     const safeRows=rows.slice(0,80);
+    // Summarize only saved administered records within the selected period.
+    // Unknown historic recipes stay un-attributed; never add them to component totals.
+    const periodIngredientTotals=new Map();
+    let attributedInjections=0,periodBlendMg=0;
+    if(isBlend)for(const d of current.doses){
+      const mg=doseToMg(d.dose,c.unit||"mg");
+      if(Number.isFinite(mg)&&mg>0)periodBlendMg+=mg;
+      const parts=nxBlendDoseAttribution(name,d);
+      if(!parts)continue;
+      attributedInjections++;
+      for(const item of parts.items)
+        periodIngredientTotals.set(item.name,(periodIngredientTotals.get(item.name)||0)+item.mg);
+    }
+    const periodCoverage=attributedInjections===current.doses.length?"All injections attributed":
+      attributedInjections+" of "+current.doses.length+" injections attributed";
+    const blendPeriodSummary=isBlend?'<section class="nx-blend-period-summary" style="margin:12px 0 18px;padding:14px;border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2)">'+
+      '<div style="font-size:16px;font-weight:750;color:var(--t1);margin-bottom:8px">Period summary</div>'+
+      '<div style="display:flex;justify-content:space-between;gap:8px"><span>Recorded blend doses</span><strong>'+periodBlendMg.toFixed(3)+' mg</strong></div>'+
+      '<div style="font-size:11px;color:var(--t3);margin:8px 0">'+esc(periodCoverage)+'</div>'+
+      [...periodIngredientTotals].map(([ingredient,mg])=>'<div style="display:flex;justify-content:space-between;gap:12px;padding:5px 0"><span>'+esc(ingredient)+'</span><strong>'+mg.toFixed(3)+' mg</strong></div>').join('')+
+      (attributedInjections<current.doses.length?'<div style="font-size:11px;color:var(--t3);margin-top:9px">Ingredient totals are partial because some older doses lack a confirmed recipe.</div>':'')+
+      '</section>':'';
     m.querySelector("#nx-detail-body").innerHTML=`
       <div class="nx-detail-counts">
         <div><span>Selected period</span><strong>${n}</strong><small>${label}</small></div>
@@ -987,6 +1009,7 @@ function nxTrendsDetail(name, kind="dose") {
       <div class="nx-detail-caution">Comparisons are counts of records, not normalized rates. Missing entries and differences in logging frequency can affect comparisons. A symptom report does not establish causation.</div>
       ${isBlend?`<div class="nx-detail-subtitle" style="font-size:17px">Recorded dose trend</div>
       ${current.doses.length>1?escalationChart(current.doses,c):'<div class="nx-chart-empty">Add more dated injections to see the trend.</div>'}
+      ${blendPeriodSummary}
       <div class="nx-detail-subtitle" style="font-size:17px">Select an injection <span>${rows.length} records</span></div>
       <div class="nx-blend-dose-picks" style="display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:thin">${current.doses.slice(0,80).map(d=>
         '<button type="button" class="nx-blend-dose-pick" data-dose-id="'+esc(String(d.id))+'" aria-pressed="'+String(String(d.id)===String(selectedDoseId))+
