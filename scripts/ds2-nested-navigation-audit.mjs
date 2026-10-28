@@ -230,8 +230,10 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(!navStyle.backIcon||!navStyle.intelIcon||
      navStyle.backW<100||navStyle.backW>210||navStyle.intelW<105||navStyle.intelW>190||
      navStyle.backH<44||navStyle.intelH<44||
-     Math.abs(navStyle.backY-navStyle.intelY)>4||
-     navStyle.backX>=navStyle.intelX||navStyle.intelX+navStyle.intelW>navStyle.width+1||
+     (width>=360
+       ? (Math.abs(navStyle.backY-navStyle.intelY)>4||navStyle.backX>=navStyle.intelX)
+       : (navStyle.intelY<navStyle.backY+navStyle.backH-1||navStyle.intelX<=navStyle.backX))||
+     navStyle.intelX+navStyle.intelW>navStyle.width+1||
      navStyle.backStyle.border!=='0px'||navStyle.intelStyle.border==='0px'||
      navStyle.backText!=='Back to injection'||navStyle.intelText!=='Compound Intel'||
      navStyle.summaryCards.length!==2||
