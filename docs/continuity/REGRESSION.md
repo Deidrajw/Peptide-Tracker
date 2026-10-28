@@ -1292,3 +1292,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 EXPANDED MODAL QA new script 528b3da1: six non-mutating opener screenshots for Log Dose chooser, Add Goal, Add Kit, Pattern Explorer, Symptom Timing and Import Backup; tests 320/390 both themes, button computed styles and horizontal overflow. Run 40618782970 pending at first check. No real import/delete/reset, no inventory transactions or physical iPhone checks. Browser script FAIL must not be relabeled as app FAIL without diagnosing selector/fixture.
+
+
+## 2026-10-27 expanded nested QA correction: first 116-case audit 40618782970 FAILED ONLY four Settings Import cases; source shows #nx-import-open triggers native file input click, not a DOM sheet. Excluded from screenshot-only modal requirement (1d1d9679). 112-case audit 40619001108 SUCCESS; none of these click any save/delete/restore. Additional semantic assert a00109b2 for primary CTA colours #C6A6F2 and informational Done neutral; latest run pending. Physical iPhone and actual allocation test Not Tested.
