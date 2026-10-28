@@ -870,3 +870,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 DS2 DRAFT: d7a45b4b initial dose chooser primary+secondary family; a08f62f9 adds PR/dispatch nested screenshot workflow with isolated localhost browser and no production writes. Current runs queued; screenshots not inspected. All changes unreleased, PR #123 unmerged; no data migrations. Full-app DEMO/LIVE ZIP independently downloadable exact-head packages INCOMPLETE.
+
+
+## 2026-10-27 unreleased DS2 CSS 49271c54 gives Settings per-category delete and full data wipe distinct restrained/strong danger treatment; no changes to JS, storage, migration or computations. Revised deep screenshot runner 48e3293b bypasses onboarding in isolated local context; rendered outcome and exact-head artifact status pending. No merge or deployment.
