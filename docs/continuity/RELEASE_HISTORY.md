@@ -997,3 +997,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — UNRELEASED draft source fix, historical blend history
 - `21ac2094` removes present-day kit ingredient prefilter from read-only Ingredient History so dated confirmed old formulations can contribute historical-only ingredients. `3ca0f351` adds a fictional dated historical-formulation browser regression. No schema migration or writes to user doses, allocations or inventory intended. Exact-head CI, source-matched new LIVE/DEMO packaging, physical Safari and VoiceOver are NOT YET VERIFIED. PR #123 remains draft, unmerged, no production deployment.
+
+## 2026-10-28 — UNRELEASED What's New lifecycle candidate
+- `f34a847f` manual history close no longer persists legacy main-state key; `1341376b` fixes semver parser and marks verified published vs earlier unverified legacy history; `5dc3d1df` adds isolated fictional lifecycle browser cases. Release candidate remains `v0.9.20-beta`, `release/release.json` publication `unverified`; no automatic draft popup. No storage migration or automatic history edits. Latest CI, packages and physical acceptance **PENDING**. Draft PR #123, not merged, primary production unchanged.
