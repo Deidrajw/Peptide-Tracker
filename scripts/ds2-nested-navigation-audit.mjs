@@ -189,7 +189,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       overflow:document.documentElement.scrollWidth>innerWidth+2
    }));
    if(explorer.title!=='Fictional Three-Ingredient Blend'||explorer.pickCount!==4||
-      !explorer.detail.includes('Ingredient A')||!explorer.detail.includes('5.000 mg')||
+      explorer.detail.trim()!==''||
       !explorer.summary.includes('Recorded blend doses')||
       !explorer.summary.includes('19.000 mg')||
       !explorer.summary.includes('All injections attributed')||
@@ -202,10 +202,15 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    }));
    if(!chart.svg||!chart.text.includes('19.000 mg'))
      throw Error('Blend trend and cumulative totals missing '+JSON.stringify(chart));
+   const datedRows=await page.locator('#nx-blend-date-list .nx-blend-dose-pick').count();
+   if(datedRows!==4)throw Error('Dated row list absent');
    await page.locator('.nx-blend-dose-pick').nth(1).click();
+   if(await page.locator('#nx-blend-date-list').isVisible())throw Error('Date list should hide in injection detail');
    const selectedOlder=await page.locator('#nx-blend-selected-dose').innerText();
    if(!selectedOlder.includes('5 mg')||!selectedOlder.includes('3.571 mg'))
      throw Error('Older selected blend injection contribution incorrect '+selectedOlder);
+   await page.locator('#nx-blend-date-back').click();
+   if(!await page.locator('#nx-blend-date-list').isVisible())throw Error('Back did not restore dated list');
    await page.locator('.nx-blend-dose-pick').first().click();
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
    await page.evaluate(()=>closeModal());
