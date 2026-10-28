@@ -1250,19 +1250,20 @@ function appUpdatesView() {
   const knownIssues = APP_ISSUES.filter(i=>i.status!=="Fixed");
   const fixedIssues = [...APP_ISSUES.filter(i=>i.status==="Fixed")].sort((a,b)=>(b.fixedVersion||0)-(a.fixedVersion||0));
 
-  // Opening What's New marks the current release as seen — Known Issues never gets this
-  // treatment since a status can change later and shouldn't silently look "already read".
-  if (tabKey === "whatsnew" && (state.settings.lastSeenChangelog||0) < CURRENT_CHANGELOG_VERSION) {
-    state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION; saveState();
-  }
+  // Browsing release history is read-only. Only "Got it" on a published release
+  // acknowledges it; viewing App Updates must never silently dismiss a notification.
 
   const tabBtn = (key,label,count) => `<button class="au-tab" data-tab="${key}" style="flex:1;padding:10px 6px;border-radius:9px;font-size:12px;font-weight:600;background:${tabKey===key?"var(--surface-3)":"transparent"};border:1px solid ${tabKey===key?"var(--border)":"transparent"};color:${tabKey===key?"var(--t1)":"var(--t4)"}">${label}${count?` <span style="color:${tabKey===key?"var(--t3)":"var(--t5)"}">${count}</span>`:""}</button>`;
 
   let content;
   if (tabKey === "whatsnew") {
-    content = CHANGELOG.map((entry,i)=>`
-      <div style="margin-bottom:20px;${i<CHANGELOG.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
-        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · V${entry.version}</div>
+    const published = typeof NEXUS_RELEASE!=="undefined" && NEXUS_RELEASE.publicationStatus==="published";
+    const publishedEntry = published ? [{version:NEXUS_RELEASE.version,date:"Published release",title:NEXUS_RELEASE.title,
+      items:(NEXUS_RELEASE.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))}] : [];
+    const history = [...publishedEntry,...CHANGELOG];
+    content = history.map((entry,i)=>`
+      <div style="margin-bottom:20px;${i<history.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
+        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · ${String(entry.version).startsWith("v")?"":"V"}${entry.version}</div>
         <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px">${esc(entry.title)}</div>
         ${entry.items.map(it=>`<div style="display:flex;gap:10px;margin-bottom:10px">
           <div style="font-size:15px;flex-shrink:0;line-height:1.4">${it.icon}</div>
@@ -1305,6 +1306,8 @@ function appUpdatesView() {
 }
 
 function whatsNewModal(entries) {
+  // The legacy manual changelog is available in App Updates; it must not
+  // trigger startup notices for unreleased development builds.
   const toShow = entries || CHANGELOG;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -1431,15 +1434,16 @@ function showOnboarding() {
 const NEXUS_SEEN_RELEASE_KEY = STORE_KEY + '-last-seen-published-release-v1';
 function shouldShowPublishedRelease() {
   if (typeof NEXUS_RELEASE==='undefined' || NEXUS_RELEASE.publicationStatus!=='published') return false;
-  if (!state.profile.onboardingDone) return false;
+  if (!state.profile.onboardingDone || (typeof isDemoMode==='function' && isDemoMode())) return false;
   try { return localStorage.getItem(NEXUS_SEEN_RELEASE_KEY)!==NEXUS_RELEASE.version; }
   catch { return false; }
 }
 function showPublishedReleaseModal() {
   if (!shouldShowPublishedRelease()) return;
-  const changes=NEXUS_RELEASE.changes.map(c=>'<div style="padding:10px 0;border-bottom:1px solid var(--border-sub)"><div style="font-weight:700;color:var(--t1)">'+esc(c.title)+'</div><div style="font-size:12px;color:var(--t3);line-height:1.5;margin-top:4px">'+esc(c.detail)+'</div></div>').join('');
+  const changes=(NEXUS_RELEASE.changes||[]).map(c=>'<div style="padding:10px 0;border-bottom:1px solid var(--border-sub)"><div style="font-weight:700;color:var(--t1)">'+esc(c.title)+'</div><div style="font-size:12px;color:var(--t3);line-height:1.5;margin-top:4px">'+esc(c.detail)+'</div></div>').join('');
   const modal=openModal('<div class="nx-release-whats-new"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">'+esc(NEXUS_RELEASE.version)+'</div><h2 style="color:var(--t1);font-size:21px;margin:8px 0">What’s new in Nexus</h2><p style="color:var(--t3);font-size:13px">'+esc(NEXUS_RELEASE.title)+'</p>'+changes+'<p style="color:var(--t3);font-size:11px;line-height:1.5">'+esc(NEXUS_RELEASE.dataImpact)+'</p><div style="display:flex;gap:10px;margin-top:18px"><button type="button" id="nx-release-later" class="btn-ghost" style="min-height:44px;flex:1">Later</button><button type="button" id="nx-release-dismiss" class="btn-primary" style="min-height:44px;flex:2">Got it</button></div></div>', '#A78BFA');
   modal.querySelector('#nx-release-later').onclick=()=>closeModal();
+  // Later defers to a future app launch, not another render/navigation event.
   modal.querySelector('#nx-release-dismiss').onclick=()=>{
     try { localStorage.setItem(NEXUS_SEEN_RELEASE_KEY,NEXUS_RELEASE.version); } catch(e){ console.warn('Unable to record seen Nexus release',e); }
     closeModal();
@@ -1461,5 +1465,4 @@ migrateToInventoryV2();
 saveState();
 if(!state.profile.onboardingDone){render();showOnboarding();}
 else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
-else if((typeof NEXUS_RELEASE==='undefined'||NEXUS_RELEASE.publicationStatus!=='published')&&(state.settings.lastSeenChangelog||0)<CURRENT_CHANGELOG_VERSION){render();whatsNewModal();}
 else render();
