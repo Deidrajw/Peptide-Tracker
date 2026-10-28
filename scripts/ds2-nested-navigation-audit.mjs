@@ -79,6 +79,16 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
     render();
    },{...v,tab:v.tab,themeName:theme});
    await page.waitForTimeout(100);
+   const reached=await page.evaluate(({tab:tabName,sub,profile,detail})=>{
+     const pageRoot=document.querySelector('.nx2-page--'+tabName);
+     if(!pageRoot)return false;
+     if(detail)return !!pageRoot.querySelector('#settings-detail-back') &&
+       pageRoot.textContent.trim().length>40;
+     if(tabName==='amino')return !!pageRoot.querySelector('#as-'+sub+'[aria-selected="true"]');
+     if(tabName==='profile'&&profile)return !!pageRoot.querySelector('.profile-subtab[data-tab="'+profile+'"]');
+     return pageRoot.textContent.trim().length>20;
+   },v);
+   if(!reached)throw Error('Requested route not actually rendered: '+v.id);
    const report=await page.evaluate(()=>{
      const getEl=e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {
        text:(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,90),
