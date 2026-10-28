@@ -1328,3 +1328,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 
 ## 2026-10-27 BUTTON QA PASS LIMITED: 40623390625 nested screenshot run SUCCESS; 124 screenshots, all four 320/390 dark/light combinations show Protocol first-log CTA and Reaction editor Save fill rgb(198,166,242), radius 13px/no shadow. Mobile 40623390895 SUCCESS. No route/overflow failures reported by workflow. Stash final Add to Stash, prepared/multi-vial, physical Safari, destructive confirmation remain NOT TESTED. Reaction subtitle ISO date observed, separate UI issue. No production data accessed.
+
+
+## 2026-10-27 visual QA: 40623724305 SUCCESS, Stash final wizard Add to Stash 4/4 viewport-theme primary fill #C6A6F2 with radius 13px and no shadow, no storage mutation. New a1cf67c6 test asserts additional Today dose chooser Continue, Protocol first-log, Reaction Save and Stash final Save; 40623795341 pending. One-vial fictional inventory safety previously passed #40621540795. Multi-vial, prepared dose, physical iPhone, exact deployment and all nested actions not tested.
