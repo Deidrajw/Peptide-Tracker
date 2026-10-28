@@ -884,14 +884,19 @@ function doseModal(name, existing, occTime) {
     const blendSummary=m.querySelector("#nx-blend-dose-breakdown")?.textContent?.trim()||"";
     review.querySelector("#nx-dose-review-rows").innerHTML=
       row("Compound",name)+row("Recorded amount",doseVal("dose")+" "+c.unit)+
-      row("Date & time",doseVal("date"))+row("Source",sourceLabel)+row("Site",doseVal("site"))+
+      row("Date & time",(()=>{const raw=doseVal("date");const parsed=new Date(raw);return raw&&!Number.isNaN(parsed.getTime())?parsed.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):raw;})())+row("Source",sourceLabel)+row("Site",doseVal("site"))+
       (selectedSource==="fresh"&&!isEdit?row("Selected vial",selectedVialText):"")+
       (ledger||row("Allocation",isEdit?"Original source retained":isBlend?"Blend vial deduction checked on confirmation":selectedSource==="fresh"?"Uses the selected open vial":"Prepared dose; no second vial deduction"))+
       (blendSummary?row("Blend components",blendSummary):"");
     const details=review.querySelector("#nx-dose-source-ids");
     details.hidden=sourceIds.length===0;
     details.querySelector(".nx-dose-source-ids-body").innerHTML=sourceIds.map(([label,id])=>row(label,id)).join("");
-    review.querySelector("p").textContent="Review only. The original Save handler rechecks current stock, vial allocations and blend components before recording. No inventory is deducted by opening this screen.";
+    const selectedVialMg=selectedVial?getVialRemainingMg(selectedKit,selectedVial):null;
+    const hasUnallocatedShortfall=selectedSource==="fresh"&&!isEdit&&!isBlend&&
+      ((rows.length && total+0.01<nativeNeeded) || (!rows.length && selectedVialMg!=null && selectedVialMg+0.01<nativeNeeded));
+    review.querySelector("p").textContent=hasUnallocatedShortfall
+      ?"Inventory review required: the visible open vial or current allocation does not cover the entered amount. Return to source allocation and select enough usable open-vial stock. Confirmation will revalidate inventory; no dose is recorded by opening review."
+      :"Review only. The original Save handler rechecks current stock, vial allocations and blend components before recording. The selected vial row shows one vial, not necessarily the full allocation. No inventory is deducted by opening this screen.";
   };
   const paintDoseUi=()=>{
     const guided=doseUiMode==="guided";
