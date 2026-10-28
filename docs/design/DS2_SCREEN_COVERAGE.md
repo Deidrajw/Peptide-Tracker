@@ -50,3 +50,6 @@ Map actual navigation destinations and mark each child surface by exact route + 
 
 
 ## 2026-10-27 DS2 Nexus and Settings detail progress: commit bd26e3d6 extends existing Nexus Ask/Journal/Learn/Explore navigation, chat prompts, inputs, secondary panels, Profile privacy cards and Settings detail controls. CODED/NEEDS CHECK at 320/390 light/dark; child workflow and real iPhone acceptance remain OPEN. Source review found legacy _aminoSub='insights' normalizes to Ask; no functional route change made. Earlier dfe4df01 browser workflow 40601194237 and mobile 40601194692 SUCCESS; does not validate bd26e3d6. Stash corners still need physical acceptance. Global polish LAST.
+
+
+## 2026-10-27 verification refinement: Stash tab guard branch full browser workflow 40600422694 SUCCESS, mobile 40600422891 SUCCESS, but physical iPhone reacceptance open. Trends/Profile dfe4df01 full 40601194237 and mobile 40601194692 SUCCESS for automated suites; child-by-child visual acceptance remains open. Nexus/Settings bd26e3d6 new workflow pending. All future roadmap lanes preserved and global polish LAST.
