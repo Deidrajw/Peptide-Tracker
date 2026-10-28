@@ -161,4 +161,5 @@ for(const width of [320,390])for(const theme of ['light','dark']){
 
 const failures=evidence.filter(x=>x.error||x.overflow);
 console.log(`Captured ${evidence.length} deep-route screenshots; errors/overflow ${failures.length}; evidence: ${out}`);
-if(semanticFailures.length){console.error('Semantic action hierarchy failures:',semanticFailures);process.exitCode=1;}\nif(failures.length){console.error(failures.map(x=>[x.screen,x.width,x.theme,x.error||'overflow']));process.exitCode=1;}
+if(semanticFailures.length){console.error('Semantic action hierarchy failures:',semanticFailures);process.exitCode=1;}
+if(failures.length){console.error(failures.map(x=>[x.screen,x.width,x.theme,x.error||'overflow']));process.exitCode=1;}
