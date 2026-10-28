@@ -20,6 +20,7 @@ const views=[
  {id:'today',tab:'home'},
  {id:'calendar',tab:'calendar'},
  {id:'plans',tab:'plans'},
+ {id:'protocols',tab:'protocols'},
  {id:'stash',tab:'stash'},
  {id:'trends',tab:'trends'},
  {id:'nexus-ask',tab:'amino',sub:'chat'},
@@ -106,6 +107,11 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   evidence.push({screen:v.id,width,theme,overflow,buttons,error:problem});
  }
 
+ // Protocol first-log CTA is conditional on fictional protocol status and dose history.
+ // Capture presence/absence explicitly so a missing fixture is not mistaken for styling acceptance.
+ const protocolCTA=evidence.find(x=>x.screen==='protocols'&&x.width===width&&x.theme===theme);
+ fixtureEvidence.push({width,theme,protocolFirstLogVisible:!!protocolCTA?.buttons.some(x=>x.className.includes('nx-proto-firstlog-action'))});
+ 
  // Open safe in-DOM nested dialogs/actions (no save, import, delete or reset).\n // Backup Import opens a browser-native file chooser, not an in-DOM sheet; audit separately.
  // These are additional path screenshots, not a substitute for save-path QA.
  const childOpeners=[
