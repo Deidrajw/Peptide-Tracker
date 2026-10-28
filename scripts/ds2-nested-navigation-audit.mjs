@@ -331,6 +331,36 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>closeModal());}
+ // Blend Kit action parity: inspect Finish Kit confirmation + cancellation without committing.
+ try {
+   const result=await page.evaluate(()=>{
+     closeModal();
+     let kit=(state.supplies||[]).find(k=>k.isBlend);
+     if(!kit){
+       kit={id:'ds2-fictional-blend-only',name:'QA Blend',isBlend:true,
+         composition:[{compound:'A',mg:5},{compound:'B',mg:5}],vialMg:10,totalVials:1,
+         vials:[{id:'ds2-fictional-vial',status:'sealed',vialMg:10,remainingMg:10}],
+         doseLog:[],wasteLog:[],reconHistory:[]};
+       state.supplies.push(kit);
+       window.__ds2BlendFixtureId=kit.id;
+     }
+     kit.kitStatus=null;
+     manageKitMenu(kit.id);
+     const entry=document.querySelector('[data-action="blend-finish-kit"]');
+     if(!entry)throw Error('Blend Finish This Kit menu action missing');
+     entry.click();
+     const cancel=document.querySelector('#ca-cancel');
+     const confirm=document.querySelector('#ca-ok');
+     if(!cancel||!confirm||!confirm.textContent.includes('Finish kit'))throw Error('Blend finish confirmation controls missing');
+     const before=JSON.stringify(kit.doseLog||[]);
+     cancel.click();
+     if(kit.kitStatus==='done'||JSON.stringify(kit.doseLog||[])!==before)throw Error('Cancel mutated blend history/state');
+     return {cancelled:true};
+   });
+   if(!result.cancelled)throw Error('Blend Finish Kit cancel did not work');
+   evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{closeModal();if(window.__ds2BlendFixtureId){state.supplies=state.supplies.filter(k=>k.id!==window.__ds2BlendFixtureId);delete window.__ds2BlendFixtureId;}});}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
