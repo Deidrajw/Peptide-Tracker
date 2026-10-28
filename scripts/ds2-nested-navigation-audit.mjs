@@ -281,7 +281,11 @@ const expectedPrimary='rgb(198, 166, 242)';
 const primaryActions=[
  ['today','today-log-dose'],['plans','add-goal'],
  ['stash','qa-addkit'],['supplements','add-supp'],
- ['stash-add-kit','nx-kit-next']
+ ['stash-add-kit','nx-kit-next'],
+ ['today-dose-chooser','today-dose-single'],
+ ['protocol-first-log','protocol-first-log'],
+ ['reaction-editor','nx-reaction-save'],
+ ['stash-final-save','ssave']
 ];
 const semanticFailures=[];
 for(const width of [320,390])for(const theme of ['light','dark']){
