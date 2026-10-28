@@ -1036,6 +1036,9 @@ function wireBody() {
   };
   document.querySelectorAll(".chart-tap").forEach(el=>el.onclick=()=>chartDetailModal(el.dataset.kind, el.dataset.period));
   document.querySelectorAll(".nx-trends-open-detail").forEach(b=>b.onclick=()=>nxTrendsDetail(b.dataset.name,b.dataset.kind));
+  document.querySelectorAll(".nx-open-ingredient-overview").forEach(button=>button.onclick=()=>{
+    nxIngredientHistoryDetail(button.dataset.name,null);
+  });
   const blendPeriod=document.querySelector("#nx-blend-period");
   if(blendPeriod)blendPeriod.onchange=()=>{state._blendTrendDays=Number(blendPeriod.value)||0;render();};
   const blendModeSelect=document.querySelector("#nx-blend-mode");
