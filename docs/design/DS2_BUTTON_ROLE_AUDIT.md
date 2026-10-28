@@ -38,3 +38,7 @@ These are *observations repeated across states and viewports*, not unique button
 
 ## Next test
 Expand the fixture-based nested click traversal, audit all action affordances against the documented role taxonomy, then test dose source inventory in an isolated fictional transaction. Maintain user-accepted Calendar, Protocol/Plans and Supplies layouts until there is a demonstrated defect. Global typography/accessibility/navigation/motion polish stays last.
+
+
+## 2026-10-27 — Single-vial fictional transaction verification
+CI run 40621540795 PASS for scripts/ds2-dose-inventory-regression.mjs. In localhost isolated Demo Mode, one open Retatrutide vial set to 10mg; 300mg save attempt does not add a record or deduct stock, and separate 2mg save adds exactly one record and deducts to 8mg. This is one-vial UI save path, not all multi-vial, prepared, edit, import or physical iPhone flows. Earlier NOT TESTED statement above is superseded only for these two cases. Next: classify remaining contextual controls and extend nested editor and multi-vial transaction QA.
