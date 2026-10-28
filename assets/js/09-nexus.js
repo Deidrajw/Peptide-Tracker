@@ -859,6 +859,8 @@ function nxReconcileBlendHistory(name,onDone) {
   const refresh=()=>{
     const k=kits.find(x=>String(x.id)===kitSelect.value);
     const rows=original.filter(d=>{
+      // Avoid re-attributing injections already backed by a vial recipe or prior confirmation.
+      if(nxBlendDoseAttribution(name,d))return false;
       const day=nxBlendHistoryCalendarDay(d.date);
       if(day===""||!from.value||!to.value||day<from.value||day>to.value)return false;
       // Only legacy unlinked doses or one explicitly matching physical kit are
