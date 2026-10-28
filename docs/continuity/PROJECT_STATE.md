@@ -1824,3 +1824,7 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 IN-PROGRESS inventory transaction QA: scripts/ds2-dose-inventory-regression.mjs at de42c0f3 uses isolated localhost Chromium built-in fictional Demo Mode and a single 10mg open Retatrutide vial. Tests 300mg requested dose must not append history or deduct stock and 2mg valid control must append one record/deduct 2mg. Wired into .github/workflows/ds2-nested-audit.yml at 86e09376. First run 40621540795 in progress at writing; PASS NOT YET VERIFIED. This tests only one-open-vial cases; multi-vial, prepared dose, edit and real iPhone are separate. No production data or deployment. ONE NEXT ACTION: inspect CI logs and correct test/app as evidence indicates; then inspect artifact/remaining nested action roles.
+
+
+## 2026-10-27 Verified single-vial save-path QA
+Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose regression: 300mg requested with only 10mg available did not save or deduct; valid 2mg added one dose and left 8mg. No production storage writes. This is limited to one open vial, 390px Chromium; multi-vial, prepared-dose, edits and physical iPhone remain NOT TESTED. Detailed role audit updated at docs/design/DS2_BUTTON_ROLE_AUDIT.md. PR #123 draft/unmerged and not deployed. NEXT ACTION: add multi-vial and prepared-dose tests, then expand nested action classification.
