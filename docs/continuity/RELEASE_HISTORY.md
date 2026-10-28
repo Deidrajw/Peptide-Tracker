@@ -922,3 +922,9 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 
 ## 2026-10-27 unreleased v0.9.20-beta DS2 CTA current verification: source 9436f41e + test a1cf67c6, nested CI #40623977189 SUCCESS with 128 fictional route/action screenshots 320/390 dark/light and 0 capture/overflow errors; action-inventory inspected. Mobile regression #40623977210 SUCCESS; full build/artifact #40623977248 pending. Data/storage/vial calculations unchanged; draft PR #123 not merged or deployed. Full-app DEMO/LIVE ZIP, physical iPhone and all-depth action coverage incomplete.
+
+
+## 2026-10-27 — VERIFIED REQUEST: BUTTON HIERARCHY + PROTOCOL FIRST-LOG
+- Latest source already contains targeted DS2 fix: primary solid lavender #C6A6F2 / dark ink #24182F, flat fill and aligned radii for Add to Stash, kit Continue, Today chooser Continue, reaction save, dose wizard Continue/Confirm; secondary/selection/danger remain differentiated by semantic role. Protocol 'Ready for first log' now stacks its context copy above a full-width lavender 'Log first dose' CTA (existing handler retained). This resolves user-screenshot discrepancy on draft branch, not production.
+- Verified GitHub Actions nested visual run 40623977189 **SUCCESS**, 128 fictional populated route/action screenshot cases (320/390 light/dark), including four targeted primary CTAs; mobile regression 40623977210 **SUCCESS**, build/parity artifact workflow 40623977248 **SUCCESS** checked after prior 'in progress' notes. These are browser CI, not physical iPhone acceptance or complete depth.
+- App logic, dose allocations, history, localStorage schema unchanged. Draft PR #123 not merged/deployed. Standalone full-app DEMO and LIVE ZIP independent download/pixel inspection still INCOMPLETE in this turn. ONE NEXT ACTION: download and inspect exact-head LIVE/DEMO artifacts then verify physical iPhone UI when available; continue residual nested button role coverage. Global polish LAST.
