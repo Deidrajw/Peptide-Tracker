@@ -895,3 +895,7 @@ Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional
 
 
 ## 2026-10-27 DS2 v0.9.20-beta candidate UNRELEASED: full build/parity QA 40619363343 SUCCESS at PR merge snapshot 387e32814bd4320d3313b8d8dc7e93079e0d573a corresponding to app code 1f9fda2b. Exact-source FULL_DEMO.html, OFFLINE DEMO ZIP, LIVE ZIP generated/validated via workflow artifact 12787100570. Mobile regression 40619363338 PASS; nested screenshots 40619363394 PASS 112 320/390 light/dark; Log Dose 8/8, vial safety 8/8, measurement math 80/80. User screenshot 300mg selected when visible vial 10mg remains unreproduced in this audit, no physical iPhone acceptance or production merge/deploy. CSS-only changes to button hierarchy, test/CI and docs; no intended data migration.
+
+
+## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
+Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
