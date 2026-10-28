@@ -589,9 +589,14 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const reopened=kit.kitStatus===null&&kit.doseLog.length===doseHistory&&kit.wasteLog.length===wasteHistory;
      state.supplies=state.supplies.filter(k=>k.id!==id);
      closeModal();
-     return {before,rejected,logged,after,retired,reopened,doseHistory,wasteHistory};
+     const ledgerMg=kit.doseLog.reduce((sum,d)=>sum+Number(d.totalMgDrawn||0),0);
+     const wasteMg=kit.wasteLog.reduce((sum,w)=>sum+Number(w.mg||0),0);
+     const conserved=Math.abs(kit.vials[0].vialMg-(after+ledgerMg+wasteMg))<0.001;
+     const sealedUnchanged=kit.vials[1].status==='sealed'&&kit.vials[1].remainingMg===10;
+     return {before,rejected,logged,after,retired,reopened,doseHistory,wasteHistory,
+       ledgerMg,wasteMg,conserved,sealedUnchanged};
    });
-   if(!tx.rejected||!tx.logged||Math.abs(tx.before-8)>.001||Math.abs(tx.after-5)>.001||!tx.retired||!tx.reopened)
+   if(!tx.rejected||!tx.logged||Math.abs(tx.before-8)>.001||Math.abs(tx.after-5)>.001||!tx.retired||!tx.reopened||!tx.conserved||!tx.sealedUnchanged||tx.ledgerMg!==2||tx.wasteMg!==3)
      throw Error('Blend transaction regression failure '+JSON.stringify(tx));
    evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:String(err)});}
