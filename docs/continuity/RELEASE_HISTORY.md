@@ -1012,3 +1012,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — Latest What's New QA correction, still UNRELEASED
 - After failed full build #40776896536, test-only commits `29c4066f`, `f8d16a48` mock eligible fictional non-Demo mode while preserving real Demo suppress safeguard; `2537ee40` adds hard-reload unpublished check to Plans browser matrix. No production app runtime changes or migration. Fresh full QA and artifact release clearance pending. PR #123 remains draft/unmerged, no deployment.
+
+## 2026-10-28 — Unreleased What's New test harness follow-up
+- Runtime source unchanged since `599f1de8`; browser test corrections `29c4066f`, `f8d16a48`, `2537ee40`, `4c5b23cd`, `a8292e57`. Failed build #40776896536 was due archived Plans popup assertion under Demo Mode. Current build #40777876259 and nested #40777876220 pending, mobile #40777876462 SUCCESS, hybrid preview #40777868652 SUCCESS. No merge/deployment, physical acceptance still blocked.
