@@ -2,6 +2,7 @@
   "version": "v0.9.20-beta",
   "channel": "beta",
   "publicationStatus": "unverified",
+  "publishedAt": null,
   "title": "One consistent kit experience",
   "changes": [
     {
@@ -38,5 +39,55 @@
     "Legacy kLOW kits created before blend metadata require explicit review; no automatic conversion is performed.",
     "Full physical iPhone/VoiceOver acceptance and visual audit of every app surface are pending.",
     "Cloudflare deployment for this candidate is not yet verified; do not present this version as published."
+  ],
+  "history": [
+    {
+      "version": "v0.9.19-beta",
+      "publishedAt": "2026-10-25",
+      "title": "Blend logging and iPhone refinements",
+      "sourceCommit": "955c904860b39c5c56472b07cd3521828d5d9d79",
+      "verification": "Cloudflare 16/16 app entry files, workflow 40162047192",
+      "changes": [
+        {
+          "title": "One blend-level dose record",
+          "detail": "New premixed blend doses are logged under the blend, preserving existing ingredient-level records."
+        },
+        {
+          "title": "Blend vial lifecycle",
+          "detail": "Opened and finished blend vials are represented in Stash, with explicit tracking of associated blend metadata."
+        },
+        {
+          "title": "Protocol and iPhone refinements",
+          "detail": "Updated Protocol phase and review input geometry for smaller screens."
+        }
+      ],
+      "dataImpact": "No automatic migration. Existing constituent doses were preserved."
+    },
+    {
+      "version": "v0.9.18-beta",
+      "publishedAt": "2026-10-24",
+      "title": "App experience, privacy and release foundations",
+      "sourceCommit": "623025665c549dadbe3fb467b6d556f5d44e7e34",
+      "verification": "Cloudflare 16/16 app entry files, workflow 40160165392",
+      "changes": [
+        {
+          "title": "Backup and restore protection",
+          "detail": "Added restore previews, typed confirmation and recovery safeguards."
+        },
+        {
+          "title": "Privacy and accessibility",
+          "detail": "Added Privacy & Data context, clearer navigation targets, focus and reduced-motion safeguards."
+        },
+        {
+          "title": "Calculation safety checks",
+          "detail": "Added input, capacity and syringe-unit validation checks."
+        },
+        {
+          "title": "What's New publication notices",
+          "detail": "Added published-release notices gated by deployment confirmation."
+        }
+      ],
+      "dataImpact": "No automatic data migration. Backup restoration requires explicit confirmation."
+    }
   ]
 }
