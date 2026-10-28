@@ -1248,3 +1248,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 
 ## 2026-10-27 DS2 new-head gate bd26e3d6: NOT TESTED at commit: Nexus Ask/Journal/Learn/Explore selection, assistant/user message contrast, suggestions, keyboard compose, Settings detail/back, privacy/backup, Stash selected pill, 320/390 dark/light and physical iPhone. Full/browser and mobile prior dfe4df01 PASS workflow statuses; no assumption of UI acceptance or new head PASS. Protect backups, stored history, math and user-accepted Calendar/Protocol/Supplies.
+
+
+## 2026-10-27 STASH/DS2 EVIDENCE: Stash rounded-pill code guard e97a2d5 branch browser workflow 40600422694 SUCCESS, mobile 40600422891 SUCCESS. Following Trends/Profile styling dfe4df01 full workflow 40601194237 SUCCESS with browser QA 320/390 light/dark and artifacts, mobile 40601194692 SUCCESS. Exact rendered Stash pill screenshot and native iPhone acceptance not independently inspected in this session. New Nexus/Settings bd26e3d6 workflows pending; do not count earlier passes as current-head.
