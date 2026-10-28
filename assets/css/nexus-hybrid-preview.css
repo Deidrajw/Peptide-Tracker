@@ -3508,3 +3508,33 @@ body .modal #waste-save {
   box-shadow:none!important;border-radius:13px!important;
   min-height:48px!important;width:100%!important;font-weight:750!important;
 }
+
+/* DS2 scoped Trends drill-down: consistent semantic navigation and button roles. */
+body .nx-compound-card .nx-compound-heading {
+  font-size:18px!important;font-weight:750!important;line-height:1.35!important;
+}
+body .nx-compound-card button.nx-trends-open-detail {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;min-height:48px!important;
+  padding:12px 16px!important;font-size:14px!important;font-weight:650!important;
+  color:var(--t1)!important;background:var(--surface-2)!important;
+  background-image:none!important;border:1px solid var(--border-sub)!important;
+  border-radius:13px!important;box-shadow:none!important;text-align:left!important;
+}
+body .nx-trends-detail-modal #nx-blend-review-attributions,
+body .nx-trends-detail-modal #nx-blend-reconcile {
+  min-height:48px!important;width:100%!important;background:var(--surface-2)!important;
+  background-image:none!important;border:1px solid var(--border-sub)!important;
+  color:var(--t1)!important;border-radius:13px!important;
+  box-shadow:none!important;font-size:14px!important;font-weight:650!important;
+}
+body .modal #nx-reconcile-save,
+body .modal #nx-audit-reverse {
+  background:#c6a6f2!important;background-image:none!important;
+  color:#24182f!important;border:1px solid transparent!important;
+  min-height:48px!important;border-radius:13px!important;
+  box-shadow:none!important;font-weight:750!important;
+}
+body .nx-blend-date-list {display:block;width:100%;max-height:42vh;overflow-y:auto;overscroll-behavior:contain}
+body .nx-blend-date-list .nx-blend-dose-pick {font-size:14px!important}
+body .nx-blend-injection-detail .nx-blend-ingredient-link {font-size:14px!important}
