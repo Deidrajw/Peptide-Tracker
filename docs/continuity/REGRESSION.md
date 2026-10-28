@@ -1289,3 +1289,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 CORRECTED EVIDENCE: after first invalid overlay-covered screenshots, fixture 48e3293b now closes onboarding only in isolated localhost. Latest e00d802a nested run 40618241161 SUCCESS, 92 images inspected: 0 runner errors and 0 document overflow; four primary actions computed same #C6A6F2. Mobile regression 40618241156 SUCCESS. Does not prove modal action handling, keyboard/back, user data math or physical Safari. Inventory 300mg vs 10mg still NOT TESTED, block release claims until checked.
+
+
+## 2026-10-27 EXPANDED MODAL QA new script 528b3da1: six non-mutating opener screenshots for Log Dose chooser, Add Goal, Add Kit, Pattern Explorer, Symptom Timing and Import Backup; tests 320/390 both themes, button computed styles and horizontal overflow. Run 40618782970 pending at first check. No real import/delete/reset, no inventory transactions or physical iPhone checks. Browser script FAIL must not be relabeled as app FAIL without diagnosing selector/fixture.
