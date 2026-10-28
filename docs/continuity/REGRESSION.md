@@ -1331,3 +1331,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 
 ## 2026-10-27 visual QA: 40623724305 SUCCESS, Stash final wizard Add to Stash 4/4 viewport-theme primary fill #C6A6F2 with radius 13px and no shadow, no storage mutation. New a1cf67c6 test asserts additional Today dose chooser Continue, Protocol first-log, Reaction Save and Stash final Save; 40623795341 pending. One-vial fictional inventory safety previously passed #40621540795. Multi-vial, prepared dose, physical iPhone, exact deployment and all nested actions not tested.
+
+
+## 2026-10-27 EXPECTED VISUAL FAILURE CAUGHT: new explicit primary role audit 40623795341 FAIL because Today dose chooser Continue to dose log remained #A78BFA in all four viewport/theme states; direct inline JS source was stronger than previous CSS override. Source fixed at 9436f41e (assets/js/04-nexus.js), rerun 40623977189 pending. This is a genuine DS2 contrast/consistency failure, not data math; keep FAIL until new evidence PASS. Other Stash final Add to Stash screenshots passed 40623724305; Protocol/Reaction CTA passed 40623390625.
