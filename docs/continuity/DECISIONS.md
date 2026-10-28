@@ -771,3 +771,6 @@ User asks to retain potential swipe left/right contextual actions (including swi
 
 
 ## 2026-10-27 user clarifies DS2 review scope includes subpages accessible FROM other subpages, not only tabs or More first-level destinations. Follow paths recursively to details, editors, sheets, confirmation and empty/error states. Source inventory 85a604a9; no implicit acceptance from shared CSS or overall CI. Keep earlier accepted screens stable, perform global polish last, no merge/deploy without approval.
+
+
+## 2026-10-27 USER-DIRECTED BUTTON CONSISTENCY: audit every page, nested child, modal and action button against semantic hierarchy; arbitrary gradients/grey/lavender variants are not acceptable. Different appearance must signal a distinct role (primary progression/commit, secondary/back, danger/destructive, selection, disabled). Physical Log Dose screenshot provided; provisional CSS action-family normalization afced369, pending visual acceptance. Keep data logic and selected source calculations unchanged; verify 300mg dose versus 10mg remaining before allowing release. Global a11y/motion/type/scroll sweep last.
