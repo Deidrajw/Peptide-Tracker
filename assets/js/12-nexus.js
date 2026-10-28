@@ -1036,6 +1036,10 @@ function wireBody() {
   };
   document.querySelectorAll(".chart-tap").forEach(el=>el.onclick=()=>chartDetailModal(el.dataset.kind, el.dataset.period));
   document.querySelectorAll(".nx-trends-open-detail").forEach(b=>b.onclick=()=>nxTrendsDetail(b.dataset.name,b.dataset.kind));
+  const blendPeriod=document.querySelector("#nx-blend-period");
+  if(blendPeriod)blendPeriod.onchange=()=>{state._blendTrendDays=Number(blendPeriod.value)||0;render();};
+  const blendModeSelect=document.querySelector("#nx-blend-mode");
+  if(blendModeSelect)blendModeSelect.onchange=()=>{state._blendTrendMode=blendModeSelect.value;render();};
   // calendar day taps + tooltips
   document.querySelectorAll(".calday").forEach(b=>b.onclick=()=>dayDetailModal(b.dataset.date));
   wireCalTips();
