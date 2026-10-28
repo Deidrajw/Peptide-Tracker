@@ -1009,3 +1009,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — What's New build failure and test correction, UNRELEASED
 - Exact app source `599f1de8`, build run `40776200351` FAIL at stale Plans release-notification test after source, release package, structure and preceding browser suites succeeded. Failed-run artifact #12854219443 may be inspected only as unapproved candidate. `68cf3356` test-only correction aligns `Later` with same-session suppression and future-session prompt; new CI not yet verified. No production merge/deploy, no user data/storage migration.
+
+## 2026-10-28 — Latest What's New QA correction, still UNRELEASED
+- After failed full build #40776896536, test-only commits `29c4066f`, `f8d16a48` mock eligible fictional non-Demo mode while preserving real Demo suppress safeguard; `2537ee40` adds hard-reload unpublished check to Plans browser matrix. No production app runtime changes or migration. Fresh full QA and artifact release clearance pending. PR #123 remains draft/unmerged, no deployment.
