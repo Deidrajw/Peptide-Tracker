@@ -1243,6 +1243,52 @@ function getBlendOpenVialRemainingMg(kit) {
     (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
 }
 
+// Blend-specific outflow: one physical blended vial; never write ingredient doses.
+// Whole-vial retirement uses the existing confirmed Finish Vial path.
+function blendLogOutflowModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  if(!kit || kit.kitStatus==="done")return;
+  const vial=getActiveVial(kit);
+  if(!vial){showErrorBanner("Open a blend vial before recording a partial outflow.");return;}
+  const remaining=getBlendOpenVialRemainingMg(kit);
+  const m=openModal('<h2 style="font-size:18px;margin:0 0 12px">Log blend outflow</h2>'+
+    '<p style="color:var(--t3);font-size:13px;line-height:1.5">Record material discarded or transferred from the open blended vial. Ingredients stay associated with one physical blend.</p>'+
+    '<p style="font-size:12px;color:var(--t2)">Available: '+remaining.toFixed(2)+' mg</p>'+
+    '<label class="field-label" for="blend-out-mg">AMOUNT (mg)</label>'+
+    '<input id="blend-out-mg" type="number" class="inp" min="0.01" step="0.01" style="width:100%;margin-bottom:12px">'+
+    '<label class="field-label" for="blend-out-reason">REASON</label>'+
+    '<select id="blend-out-reason" class="inp" style="width:100%;margin-bottom:14px"><option value="waste">Wasted / lost</option><option value="gifted">Given away</option><option value="testing">Sent for testing</option></select>'+
+    '<div style="display:flex;gap:10px"><button type="button" id="blend-out-cancel" style="flex:1;min-height:48px">Cancel</button><button type="button" id="blend-out-save" class="btn-primary" style="flex:1;min-height:48px">Review outflow</button></div>');
+  m.querySelector("#blend-out-cancel").onclick=closeModal;
+  m.querySelector("#blend-out-save").onclick=()=>{
+    const mg=Number(m.querySelector("#blend-out-mg").value),type=m.querySelector("#blend-out-reason").value;
+    const now=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+    const active=now && getActiveVial(now);
+    const available=active?getBlendOpenVialRemainingMg(now):0;
+    if(!Number.isFinite(mg)||mg<=0||mg>available+0.0001){
+      showErrorBanner("Enter a positive amount no greater than the open vial's available balance.");return;
+    }
+    const vialId=active.id;
+    closeModal();
+    confirmAction("Record "+mg.toFixed(2)+" mg of blend outflow? This removes physical inventory, not a separately administered dose.",()=>{
+      const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+      const v=current&&getActiveVial(current);
+      if(!v||String(v.id)!==String(vialId)||mg>getBlendOpenVialRemainingMg(current)+0.0001){
+        showErrorBanner("Inventory changed. Nothing was recorded.");return;
+      }
+      current.wasteLog=current.wasteLog||[];
+      current.wasteLog.push({id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
+        mg,type,reason:"Blend outflow",status:"active",vialId:v.id,outflowKind:"blend_open_partial"});
+      if(current.blendInventoryMode==="legacy-v2")v.remainingMg=Math.max(0,Number(v.remainingMg)-mg);
+      if(getBlendOpenVialRemainingMg(current)<=0.01){
+        v.status="empty";current.emptyVials=(current.emptyVials||0)+1;
+        current.reconDate=null;current.activeKit=false;
+      }
+      saveState();render();
+    },{tone:"warning",confirmLabel:"Record outflow",cancelLabel:"Cancel"});
+  };
+}
+
 // Retire a physical blend kit without fabricating constituent dose events.
 // Uses a separate confirmation because original blend inventory is ledger-driven.
 // This operation is only invoked through explicit user action, never on app load.
