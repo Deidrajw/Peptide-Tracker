@@ -1803,3 +1803,9 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 CURRENT VERIFIED TEST EVIDENCE: script 1f9fda2b nested screenshot workflow 40619363394 SUCCESS, 112 captures across 28 route/action states at 320/390 dark/light; inspected artifact 12785899054, zero JS capture failures/overflow, semantic CTA fills assertions pass. Mobile regression 40619363338 SUCCESS; full build/parity 40619363343 IN PROGRESS at checkpoint. CSS action changes 42560603 kit Continue primary, Pattern/Symptom Done secondary; earlier Today/Plans/Stash/Supplements primary normalized. Branch PR #123 remains draft/unmerged, production unaffected. Deep edit/save/confirm flow, actual populated Log Dose and 300mg vs 10mg stock validation, physical iPhone and all-screen parity INCOMPLETE. ONE NEXT ACTION: check full QA result and exact-head LIVE/DEMO artifacts, then add isolated nested editor and insufficient-inventory regression before acceptance; global polish LAST.
+
+
+## 2026-10-27 — User-directed isolated fictional deep-screen audit
+- New code aaaca022 (after 8c78d9d8, ef61fbf0) strengthens DS2 Playwright screenshot test with mandatory populated built-in Demo Mode, proof of reached route and semantic role inventory JSON. Localhost-only, fresh browser context; no live writes/import/sync. This is **CODED, NOT YET QA PASS**. Prior 112 screenshot run 40619363394 passed on unpopulated route states but cannot substitute for new fixture.
+- Current DRIFT CHECK: continue deep action screen coverage, compare shading within the same role, not across different semantic roles. Full-APP DEMO/LIVE exact-head delivery and physical iPhone acceptance INCOMPLETE. PR #123 DRAFT; no merge/deploy.
+- ONE NEXT ACTION: inspect newest CI and actual screenshot/button-role artifact, correct fixture/route failures, then test populated Log Dose 300mg vs 10mg inventory scenario in isolated non-mutating safety test.
