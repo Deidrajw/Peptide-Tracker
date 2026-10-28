@@ -160,7 +160,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    // Selected blend history must own the screen; the standalone summary must not replace it.
    await page.evaluate(()=>{
      state._nxHistorySelected='Fictional Three-Ingredient Blend';
-     state.peptides['Fictional Three-Ingredient Blend']={
+     state.customPeptides['Fictional Three-Ingredient Blend']={status:'active',
        doses:[{id:'ds2-history',date:localDatetime(),dose:'7',allocations:[
          {kitId:'ds2-visual-blend',vialId:'ds2-visual-open',amount:7}]}]
      };
@@ -175,7 +175,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       throw Error('Blend selected compound history lost or incomplete: '+JSON.stringify(selected));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-selected-history.png`),
      animations:'disabled'});
-   await page.evaluate(()=>{state._nxHistorySelected=null;delete state.peptides['Fictional Three-Ingredient Blend'];render();});
+   await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
      fullPage:true,animations:'disabled'});
    evidence.push({screen:'trends-blend-analytics',width,theme,overflow:false,buttons:[],error:null});
