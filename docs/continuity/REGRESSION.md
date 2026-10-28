@@ -1283,3 +1283,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 FALSE-GREEN QA CAUGHT: initial new nested screenshot workflow 40617435379 SUCCESS operationally but screenshots NOT VALID for child appearance because welcome/onboarding sheet covered foreground. 92 images, 0 script errors/overflow, but visual coverage failed. Test fixture fixed in 48e3293b, run 40617673780 queued. No user-screen PASS until overlay-free evidence inspected. Preserve previous automated main-screen checks separately.
+
+
+## 2026-10-27 additional test gate 49271c54: Settings Data Management destructive rows require danger tone distinct from neutral navigation in 320/390 both themes; must verify that click still opens existing confirmation, never trigger real delete. Corrected screenshots 48e3293b still in progress. All visual acceptance not yet passed.
