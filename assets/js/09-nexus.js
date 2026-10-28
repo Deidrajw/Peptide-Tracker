@@ -1380,6 +1380,9 @@ function openNewVialModal(supplyId, onDone) {
       const sealed=getSealedVials(entry);if(!sealed.length||getActiveVial(entry)){showErrorBanner("No available sealed vial to open.");return;}
       const vial=sealed[0],notes=m.querySelector("#rvn").value.trim();
       vial.status="open";vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
+      // Immutable recipe for this physical vial; later kit edits cannot rewrite it.
+      if(!Array.isArray(vial.composition) && Array.isArray(entry.composition))
+        vial.composition=entry.composition.map(x=>({compound:x.compound,mg:Number(x.mg)}));
       entry.bacMl=newBac;entry.expiryDays=expiryDays;entry.reconDate=reconTimestamp;entry.openedVials=(entry.openedVials||0)+1;entry.activeKit=true;
       entry.reconHistory=entry.reconHistory||[];
       entry.reconHistory.push({id:uid(),date:reconTimestamp,notes,vialId:vial.id,bacMl:newBac,expiryDays});
