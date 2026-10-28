@@ -1880,3 +1880,11 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Code `d874ddf1` replaces all eight shortcut glyphs with fixed 24px-viewBox inline outline SVG paths; CSS `a1283bcd` centres 20px SVGs within identical 38px icon tiles. All existing navigation IDs, click handlers, settings and saved data unchanged.
 - Browser test `01c30c60` validates the four displayed default Quick access SVGs are sized and geometrically centred for 320px/390px light/dark fictional local Demo Mode. NEW CI RESULTS PENDING; visual/device acceptance NOT TESTED. No production merge/deploy.
 - ONE NEXT ACTION: inspect current-head nested visual/mobile/build workflows and the Quick access screenshot pixels; then resume remaining nested button-role audit. Preserve accepted page layouts and leave global polish last.
+
+
+## 2026-10-28 — Quick access accepted; next deep-action audit
+- User confirmed the regenerated Quick access icons worked; mark **USER ACCEPTED for icon display**, limited to the screenshot-reviewed icon issue. Latest icon tests: nested workflow 40631718460 SUCCESS; mobile 40631718361 SUCCESS; build/parity 40631718395 was IN PROGRESS at verification. Physical acceptance of unrelated flows remains pending.
+- Source review identified next deep-action surfaces: `assets/js/09-nexus.js` `editOutflowModal` (line ~1059), `logWasteModal` (~1116), `openNewVialModal` (~1271), and `assets/js/11-nexus.js` protocol management `mp-delete` plus Plans `pm-delete`. These are **SOURCE IDENTIFIED, NOT rendered/accepted**.
+- Proposed next scoped sequence: inspect Stash edit-outflow/waste confirmation buttons and sheet layout first using isolated fictional data without saving, then test explicit destructive confirm/cancel semantics, then Protocol/Plans management sheets. Preserve inventory accounting and accepted parent screens; only fix reproduced defects.
+- No new app feature or CSS change in this checkpoint. Do not merge/deploy. Global accessibility, typography, required fields, scrolling, navigation and motion LAST.
+- ONE NEXT ACTION: add safe automated route captures for Stash edit-outflow and waste modals at 320/390 light/dark; inspect actual pixels and computed button roles before modifying styles.
