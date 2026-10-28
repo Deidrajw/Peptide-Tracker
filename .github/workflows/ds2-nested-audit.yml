@@ -5,6 +5,7 @@ on:
       - 'assets/**'
       - 'index.html'
       - 'scripts/ds2-nested-navigation-audit.mjs'
+      - 'scripts/ds2-dose-inventory-regression.mjs'
       - '.github/workflows/ds2-nested-audit.yml'
   workflow_dispatch:
 jobs:
@@ -28,6 +29,10 @@ jobs:
         env:
           NEXUS_AUDIT_URL: http://127.0.0.1:4173
         run: node scripts/ds2-nested-navigation-audit.mjs
+      - name: Verify fictional insufficient stock and valid-dose save paths
+        env:
+          NEXUS_AUDIT_URL: http://127.0.0.1:4173
+        run: node scripts/ds2-dose-inventory-regression.mjs
       - name: Upload nested screenshot and button inventory evidence
         if: always()
         uses: actions/upload-artifact@v4
