@@ -857,3 +857,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 
 ## 2026-10-27 DRAFT ONLY: 9ed589e6 shared DS2 styling of Nexus child surfaces, More panels, Settings child cards. CSS only, no data migration. Current-head QA, physical iPhone, standalone full DEMO and LIVE ZIP not independently verified; PR #123 unmerged and production unchanged.
+
+
+## 2026-10-27 DS2 unreleased candidate: fdc1d608 hybrid polish for Journal, Explore, Insights UI and Settings detail surfaces; 81adc534 More bottom sheet and Learn route CSS. Visual only, no intended persistence, schema or calculator change, no live deployment. Prior bd26e3d6 browser 40614785248 and mobile 40614785307 SUCCESS; new-head QA, standalone full DEMO/LIVE ZIP, iPhone acceptance and independent preview parity INCOMPLETE. PR #123 draft.
