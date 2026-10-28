@@ -3332,3 +3332,16 @@ body .modal.nx-dose-picker #today-dose-combo{
   color:#9b2637!important;background:rgba(196,42,58,.065)!important;
   border-color:rgba(175,42,60,.32)!important;
 }
+
+
+/* DS2 reviewed primary actions — same semantic priority, same colour.
+   Audited against 390px dark computed button inventory, not generic all-button reset.
+   Empty-state secondary actions and non-primary utilities retain their hierarchy. */
+#app .nx2-page--home #today-log-dose,
+#app .nx2-page--plans #add-goal,
+#app .nx2-page--stash #qa-addkit,
+#app .nx2-page--profile #add-supp{
+  background:#c6a6f2!important;background-image:none!important;color:#24182f!important;
+  border:1px solid transparent!important;box-shadow:none!important;
+  font-weight:700!important;
+}
