@@ -159,14 +159,14 @@ function trendsView() {
     }
   }
   const ingredientLinks=[...blendIngredientSources].filter(([name])=>!startedPeps.some(([tracked])=>tracked===name))
-    .map(([name,sources])=>'<button type="button" class="nx-library-item nx-library-ingredient" data-nx-compound="'+esc(name)+'"><span><strong>'+esc(name)+'</strong><span class="nx-library-meta" style="display:block">From blend · '+esc([...sources].join(', '))+'</span></span><span aria-hidden="true">›</span></button>').join('');
+    .map(([name,sources])=>'<button type="button" class="nx-library-item nx-library-ingredient" data-nx-compound="'+esc(name)+'"><span><strong>'+esc(name)+'</strong><span class="nx-library-meta" style="display:block">From blend · '+esc([...sources].join(', '))+'</span></span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>').join('');
   if(startedPeps.length || ingredientLinks) {
     const names=startedPeps.map(([name,data])=>({name,count:(data.doses||[]).length,last:[...(data.doses||[])].sort((a,b)=>safeDate(b.date)-safeDate(a.date))[0]?.date}));
     const selected=state._nxHistorySelected;
-    if(selected&&names.some(n=>n.name===selected)) html=`<div class="nx-library-head nx-history-screen-back"><button type="button" class="nx-library-back" id="nx-library-back">← All compounds</button><span class="nx-library-meta">Compound history</span></div>`;
+    if(selected&&names.some(n=>n.name===selected)) html=`<div class="nx-library-head nx-history-screen-back"><button type="button" class="nx-library-back" id="nx-library-back"><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>All compounds</span></button><span class="nx-library-meta">Compound history</span></div>`;
     else html+=`<section class="nx-library" id="nx-compound-library" aria-label="Compound history browser"><div class="nx-library-head"><h3>Compound History</h3><span class="nx-library-meta">${names.length+[...blendIngredientSources.keys()].filter(k=>!names.some(n=>n.name===k)).length} compounds</span></div>
       <input id="nx-library-search" class="nx-library-search" type="search" placeholder="Search compounds…" aria-label="Search compound history" value="${esc(state._nxHistoryQuery||'')}">
-      <div id="nx-library-list" class="nx-library-list">${names.map(item=>`<button type="button" class="nx-library-item ${selected===item.name?'is-active':''}" data-nx-compound="${esc(item.name)}"><span><strong>${esc(item.name)}</strong><span class="nx-library-meta" style="display:block">${item.count} logged doses · ${item.last?`Last ${esc(fmtShort(item.last))}`:'No date'}</span></span><span aria-hidden="true">›</span></button>`).join('')}${ingredientLinks}</div></section>`;
+      <div id="nx-library-list" class="nx-library-list">${names.map(item=>`<button type="button" class="nx-library-item ${selected===item.name?'is-active':''}" data-nx-compound="${esc(item.name)}"><span><strong>${esc(item.name)}</strong><span class="nx-library-meta" style="display:block">${item.count} logged doses · ${item.last?`Last ${esc(fmtShort(item.last))}`:'No date'}</span></span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>`).join('')}${ingredientLinks}</div></section>`;
 
   }
   startedPeps.forEach(([name,data])=>{
@@ -202,16 +202,16 @@ function trendsView() {
     html+=`<article class="nx-compound-card" aria-label="${nameId} recorded trends">
       <div class="nx-compound-top"><div class="nx-compound-mark" style="background:${c.color}"></div>
         <div style="flex:1;min-width:0"><div class="nx-compound-title">${nameId}</div><div class="nx-compound-meta">${doses.length} logged dose${doses.length===1?'':'s'} · Last logged ${latestDate}</div></div>
-        <button class="nx-compound-intel compound-intel-btn" data-name="${nameId}" aria-label="Open ${nameId} compound information">Details ›</button>
+        <button class="nx-compound-intel compound-intel-btn" data-name="${nameId}" aria-label="Open ${nameId} compound information">Details <svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
       <div class="nx-compound-facts">${fact(String(doses.length),'Logged doses')}${fact(latest,'Latest dose')}${fact(String(changes),'Dose changes')}</div>
       <div class="nx-compound-main">
         <div class="nx-compound-heading" style="font-size:17px">Dose history</div>
         <div class="nx-compound-desc">Recorded dose amounts, in entry order. Step changes reflect logged amounts—not a modeled drug concentration.</div>
         ${escalationChart(doses,c)}
-        <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records${blendSources.length?" & ingredients":""} →</button>
-        ${blendIngredientSources.has(name)?`<button type="button" class="nx-compound-blend-contributions" data-name="${nameId}" style="width:100%;min-height:48px;margin-top:8px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:14px;font-weight:650">View contributions from blends ›</button>`:""}
-        ${isBlendIngredient?'<button type="button" class="nx-open-ingredient-overview nx-trends-open-detail" data-name="'+nameId+'">View direct doses &amp; blend contributions ›</button>':''}
+        <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose"><span>Explore dose records${blendSources.length?" & ingredients":""}</span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+        
+        ${isBlendIngredient?'<button type="button" class="nx-open-ingredient-overview nx-trends-open-detail" data-name="'+nameId+'"><span>View direct doses &amp; blend contributions</span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>':''}
         <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
       </div>
       <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
@@ -928,7 +928,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend, returnDoseId=null, r
     '<div><span>Blend contributions</span><strong>'+blendRows.length+'</strong></div></div>'+
     '<div class="nx-detail-subtitle">Recorded history</div><div class="nx-detail-rows">'+
     (rows.length?rows.slice(0,100).map(x=>'<div class="nx-detail-row"><time>'+esc(fmtDate(x.date))+'</time><div><b>'+esc(x.mg.toFixed(3))+' mg</b><small>'+esc(x.source==="Direct"?"Direct":"From blend · "+x.source)+'</small></div></div>').join(''):'<p class="nx-chart-empty">No attributable records yet.</p>')+
-    '</div><div style="display:flex;gap:10px;margin-top:14px"><button id="nx-ingredient-back" style="flex:1;min-height:48px">'+(returnBlend?'Back to blend':'Back to compounds')+'</button><button id="nx-ingredient-intel" class="btn-primary" style="flex:1;min-height:48px">Compound Intel ›</button></div>');
+    '</div><div class="nx-ingredient-actions"><button type="button" id="nx-ingredient-back" class="nx-trends-back-action"><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>'+(returnBlend?'Back to injection':'Back to compounds')+'</span></button><button type="button" id="nx-ingredient-intel" class="nx-trends-link-action"><span>Compound Intel</span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>');
   detail.classList.add("nx-trends-detail-modal");
   detail.querySelector("#nx-ingredient-close").onclick=closeModal;
   detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();if(returnBlend)nxTrendsDetail(returnBlend,"dose",returnDoseId,returnRange);else{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);}};
@@ -1034,7 +1034,7 @@ function nxTrendsDetail(name, kind="dose", initialDoseId=null, initialRange="90"
         selected.hidden=false;selected.style.display="block";
         if(!d){selected.innerHTML='<div class="nx-chart-empty">No injections in this period.</div>';return;}
         const attributed=nxBlendDoseAttribution(name,d);
-        selected.innerHTML='<button type="button" id="nx-blend-date-back" style="min-height:48px;background:transparent;border:0;color:var(--t1);text-align:left">‹ All injection dates</button><section class="nx-blend-injection-detail" style="border:1px solid var(--border);border-radius:14px;background:var(--surface-2);padding:16px">'+
+        selected.innerHTML='<button type="button" id="nx-blend-date-back" class="nx-trends-back-action"><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>All injection dates</span></button><section class="nx-blend-injection-detail" style="border:1px solid var(--border);border-radius:14px;background:var(--surface-2);padding:16px">'+
           '<div style="font-size:12px;color:var(--t3)">Selected injection · '+esc(fmtDate(d.date))+'</div>'+
           '<h3 style="margin:7px 0 14px;font-size:22px;color:var(--t1)">'+esc(String(d.dose))+' '+esc(c.unit||'mg')+'</h3>'+
           (attributed?'<div style="font-size:13px;font-weight:700;margin-bottom:8px">Estimated ingredient amounts</div>'+
