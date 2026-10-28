@@ -174,6 +174,7 @@ function trendsView() {
     const c=cfg(name), doses=data.doses||[];
     const chronological=[...doses].sort((a,b)=>safeDate(a.date)-safeDate(b.date));
     const blendSources=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
+    const isBlendIngredient=(state.supplies||[]).some(k=>k.isBlend&&(k.composition||[]).some(x=>x.compound===name));
     const last=chronological[chronological.length-1];
     const first=chronological[0];
     const validDoses=chronological.filter(d=>Number.isFinite(Number(d.dose)));
@@ -209,6 +210,7 @@ function trendsView() {
         <div class="nx-compound-desc">Recorded dose amounts, in entry order. Step changes reflect logged amounts—not a modeled drug concentration.</div>
         ${escalationChart(doses,c)}
         <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records${blendSources.length?" & ingredients":""} →</button>
+        ${isBlendIngredient?'<button type="button" class="nx-open-ingredient-overview nx-trends-open-detail" data-name="'+nameId+'">View direct doses &amp; blend contributions ›</button>':''}
         <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
       </div>
       <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
