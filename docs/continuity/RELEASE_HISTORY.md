@@ -916,3 +916,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 
 ## 2026-10-27 draft-only CTA correction f238e6d2 removes inline Today dose chooser bright violet inconsistency by enforcing standard primary action treatment. Stash final step screenshot runner 1b8964cf 40623724305 PASS; expanded assertion a1cf67c6 current run pending. CSS only beyond Protocol label change earlier; no state/storage/algorithm changes, no deployment, no finished exact-source DEMO/LIVE delivery.
+
+
+## 2026-10-27 unreleased DS2 fix at 9436f41e: targeted Today dose chooser JS presentation-only inline style replacement, prompted by confirmed FAIL in nested CI #40623795341. Existing click action, localStorage and vial math unaffected. Current-head rerun #40623977189 pending; no merge/deployment.
