@@ -579,6 +579,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      confirm.click();
      const after=getBlendOpenVialRemainingMg(kit);
      const logged=kit.wasteLog.length===1 && kit.wasteLog[0].mg===3;
+     const preFinishConserved=Math.abs(10-(after+2+3))<0.001;
+     const preFinishSealed=kit.vials[1].status==='sealed'&&kit.vials[1].remainingMg===10;
      finishBlendKitModal(id);
      const finish=document.querySelector('#ca-ok');
      if(!finish)throw Error('Missing blend finish confirmation');
@@ -591,12 +593,19 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      closeModal();
      const ledgerMg=kit.doseLog.reduce((sum,d)=>sum+Number(d.totalMgDrawn||0),0);
      const wasteMg=kit.wasteLog.reduce((sum,w)=>sum+Number(w.mg||0),0);
-     const conserved=Math.abs(kit.vials[0].vialMg-(after+ledgerMg+wasteMg))<0.001;
-     const sealedUnchanged=kit.vials[1].status==='sealed'&&kit.vials[1].remainingMg===10;
+     // Finish Kit records the 5mg open-vial remainder AND the untouched
+     // 10mg sealed vial as explicit disposal; Reopen does not restore either.
+     const conserved=Math.abs(20-(ledgerMg+wasteMg))<0.001;
+     const retiredVials=kit.vials.every(v=>v.status==='empty'&&Number(v.remainingMg)===0);
+     const recordedRetirement=kit.wasteLog.filter(w=>w.outflowKind==='blend_kit_retired')
+       .map(w=>Number(w.mg)).sort((x,y)=>x-y);
      return {before,rejected,logged,after,retired,reopened,doseHistory,wasteHistory,
-       ledgerMg,wasteMg,conserved,sealedUnchanged};
+       ledgerMg,wasteMg,preFinishConserved,preFinishSealed,conserved,retiredVials,
+       recordedRetirement};
    });
-   if(!tx.rejected||!tx.logged||Math.abs(tx.before-8)>.001||Math.abs(tx.after-5)>.001||!tx.retired||!tx.reopened||!tx.conserved||!tx.sealedUnchanged||tx.ledgerMg!==2||tx.wasteMg!==3)
+   if(!tx.rejected||!tx.logged||Math.abs(tx.before-8)>.001||Math.abs(tx.after-5)>.001||!tx.retired||!tx.reopened||!tx.preFinishConserved||!tx.preFinishSealed||
+     !tx.conserved||!tx.retiredVials||tx.ledgerMg!==2||tx.wasteMg!==18||
+     JSON.stringify(tx.recordedRetirement)!=='[5,10]')
      throw Error('Blend transaction regression failure '+JSON.stringify(tx));
    evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:String(err)});}
