@@ -1000,3 +1000,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — UNRELEASED What's New lifecycle candidate
 - `f34a847f` manual history close no longer persists legacy main-state key; `1341376b` fixes semver parser and marks verified published vs earlier unverified legacy history; `5dc3d1df` adds isolated fictional lifecycle browser cases. Release candidate remains `v0.9.20-beta`, `release/release.json` publication `unverified`; no automatic draft popup. No storage migration or automatic history edits. Latest CI, packages and physical acceptance **PENDING**. Draft PR #123, not merged, primary production unchanged.
+
+## 2026-10-28 — What's New canonical published-history archive, UNRELEASED
+- GitHub draft commits `b637c0e6` historical published v0.9.18/v0.9.19 archive based on dated Cloudflare-parity evidence, `c4c35f81` generator incorporation, `d71ae6f2` generated in-app notes, `c91bb91c` generated runtime, `f31e5f51` display integration, `a8962e0a` chronology fix, `9a1838ca` browser archive regression. No new app version or published entry created; candidate v0.9.20-beta stays `unverified`. No intended user data impact. Browser CI and complete exact-source LIVE/full-app DEMO artifacts pending; PR draft/unmerged, production untouched.
