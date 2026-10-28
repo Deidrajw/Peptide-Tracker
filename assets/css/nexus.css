@@ -2098,3 +2098,6 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx2-page--trends .nx-compound-intel{display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .nx2-page--trends .nx-pe-actions button{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
 .nx2-page--trends .nx-pe-actions button>.nx-nav-icon{margin-left:auto}
+
+/* Ingredient history has exactly two summary metrics, unlike the three-metric dose explorer. */
+.nx-trends-detail-modal .nx-detail-counts.nx-ingredient-counts{grid-template-columns:repeat(2,minmax(0,1fr))}
