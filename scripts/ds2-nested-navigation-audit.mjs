@@ -175,8 +175,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       throw Error('Blend selected compound history lost or incomplete: '+JSON.stringify(selected));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-selected-history.png`),
      animations:'disabled'});
-   state._nxHistorySelected=null;
-   await page.evaluate(()=>{delete state.peptides['Fictional Three-Ingredient Blend'];render();});
+   await page.evaluate(()=>{state._nxHistorySelected=null;delete state.peptides['Fictional Three-Ingredient Blend'];render();});
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
      fullPage:true,animations:'disabled'});
    evidence.push({screen:'trends-blend-analytics',width,theme,overflow:false,buttons:[],error:null});
