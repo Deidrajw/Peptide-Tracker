@@ -11,9 +11,14 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const releasePopup=await page.evaluate(()=>{
    const previous=NEXUS_RELEASE.publicationStatus;
    const key=NEXUS_SEEN_RELEASE_KEY;
-   const old=localStorage.getItem(key),laterKey=NEXUS_RELEASE_LATER_KEY,oldLater=sessionStorage.getItem(laterKey);
+   const old=localStorage.getItem(key),laterKey=NEXUS_RELEASE_LATER_KEY,oldLater=sessionStorage.getItem(laterKey),originalIsDemoMode=isDemoMode;
    try{
      NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
+     if(isDemoMode()&&!(!shouldShowPublishedRelease()))throw Error('Demo Mode release suppression broken');
+     // The stand-alone full-app DEMO intentionally suppresses publication popups;
+     // test the fictional eligible-user path separately and restore the guard.
+     isDemoMode=()=>false;
+     sessionStorage.removeItem(laterKey);
      showPublishedReleaseModal();
      const first=document.querySelector('#nx-release-dismiss');
      if(!first)return false;
@@ -25,6 +30,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
      return localStorage.getItem(key)===NEXUS_RELEASE.version&&!shouldShowPublishedRelease();
    }finally{
      NEXUS_RELEASE.publicationStatus=previous;
+     isDemoMode=originalIsDemoMode;
      if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old);
      if(oldLater===null)sessionStorage.removeItem(laterKey);else sessionStorage.setItem(laterKey,oldLater);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
