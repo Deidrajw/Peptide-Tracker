@@ -168,13 +168,29 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    });
    const selected=await page.evaluate(()=>({
      title:document.querySelector('.nx-history-screen-back')?.textContent||'',
-     html:document.querySelector('.nx-compound-details')?.textContent||'',
+     main:document.querySelector('.nx-compound-card')?.textContent||'',
      duplicate:!!document.querySelector('#nx-blend-analytics')
    }));
-   if(selected.duplicate||!selected.title.includes('All compounds')||!selected.html.includes('Ingredient A'))
-      throw Error('Blend selected compound history lost or incomplete: '+JSON.stringify(selected));
+   if(selected.duplicate||!selected.title.includes('All compounds')||
+       !selected.main.includes('Explore dose records')||
+       selected.main.includes('Blend ingredients by recorded injection'))
+      throw Error('Blend compound parent UI regression: '+JSON.stringify(selected));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-selected-history.png`),
      animations:'disabled'});
+   await page.locator('.nx-trends-open-detail[data-kind="dose"]').click();
+   const explorer=await page.evaluate(()=>({
+      title:document.querySelector('.nx-trends-detail-modal h2')?.textContent||'',
+      detail:document.querySelector('#nx-blend-selected-dose')?.textContent||'',
+      pickCount:document.querySelectorAll('.nx-blend-dose-pick').length,
+      reconciliation:!!document.querySelector('#nx-blend-reconcile'),
+      overflow:document.documentElement.scrollWidth>innerWidth+2
+   }));
+   if(explorer.title!=='Fictional Three-Ingredient Blend'||explorer.pickCount!==1||
+      !explorer.detail.includes('Ingredient A')||!explorer.detail.includes('5.000 mg')||
+      !explorer.reconciliation||explorer.overflow)
+     throw Error('Blend chart-first injection explorer regression '+JSON.stringify(explorer));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
+   await page.evaluate(()=>closeModal());
    await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
      fullPage:true,animations:'disabled'});
