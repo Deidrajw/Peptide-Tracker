@@ -867,3 +867,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 ## 2026-10-27 — Log Dose review correction 03d83f64 (DRAFT)
 Source review found original non-blend Save path validates plan totals and available open-vial quantities, rolls back partial deductions upon shortfall and shows an error; screenshot alone did not prove dose was saved. The earlier review UI displayed only a selected vial balance, potentially misleading for a multi-vial dose, and unformatted ISO date. Commit 03d83f64 adds a review-stage warning when current plan/selected vial is short and formats date/time for readability. Underlying save, source allocation, inventory math and stored records unchanged. CURRENT-HEAD JS/browser and modal screenshot verification PENDING; caution: warning is informational, save guard remains authoritative. 320/390 light/dark nested screenshots and all action-style taxonomy review INCOMPLETE. PR #123 draft, production untouched.
+
+
+## 2026-10-27 DS2 DRAFT: d7a45b4b initial dose chooser primary+secondary family; a08f62f9 adds PR/dispatch nested screenshot workflow with isolated localhost browser and no production writes. Current runs queued; screenshots not inspected. All changes unreleased, PR #123 unmerged; no data migrations. Full-app DEMO/LIVE ZIP independently downloadable exact-head packages INCOMPLETE.
