@@ -2119,6 +2119,7 @@ function renderTabbar() {
       state._calOff = 0;
     }
     if (id === "plans") state._plansSub = "goals";
+    if (id === "trends") state._nxHistorySelected = null; // Fresh tab entry starts at Trends home.
     tab=id;
     state._guideOpen=null; state._discoverOpen=null;
     state._compoundIntel=null; state._intelReturn=null;
