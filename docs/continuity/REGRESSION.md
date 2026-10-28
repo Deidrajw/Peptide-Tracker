@@ -1304,3 +1304,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 - DS2 browser audit must use local-only fresh context, populated fictional Demo Mode and explicitly fail when fixture missing or a target child route did not render. Commit aaaca022; screenshot/role audit pending run.
 - Role inventory must distinguish primary / secondary / destructive / selection / disabled / unclassified. Count same-role appearance variants and inspect context before deciding defects. Screenshot runner must not interact with production, delete, import or save data.
 - Prior 112 screenshot run 40619363394 PASS applies to empty/default route capture only, not the new fictional-populated gate. Physical iPhone, nested editor flow, Log Dose 300mg-10mg allocation block NOT TESTED.
+
+
+## 2026-10-27 REACHABLE FICTIONAL FIXTURE AUDIT: first new fixture run 40619846887 FAIL for 4 App Updates route checks (320/390 light/dark), due to test assuming shared Settings back control while source uses dedicated #au-back. No evidence of app failure. Test corrected d66fd3e1; run 40619990770 pending. Other routes captured on fictional Demo Mode; role audit records per-screen computed styles. Do not claim complete child acceptance, save safety or real-device verification.
