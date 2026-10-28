@@ -774,3 +774,6 @@ User asks to retain potential swipe left/right contextual actions (including swi
 
 
 ## 2026-10-27 USER-DIRECTED BUTTON CONSISTENCY: audit every page, nested child, modal and action button against semantic hierarchy; arbitrary gradients/grey/lavender variants are not acceptable. Different appearance must signal a distinct role (primary progression/commit, secondary/back, danger/destructive, selection, disabled). Physical Log Dose screenshot provided; provisional CSS action-family normalization afced369, pending visual acceptance. Keep data logic and selected source calculations unchanged; verify 300mg dose versus 10mg remaining before allowing release. Global a11y/motion/type/scroll sweep last.
+
+
+## 2026-10-27 UX consistency refinement: Initial Dose chooser Continue/Combo and Quick/Guided Continue/Confirm/Back must share consistent semantic action colours; scoped CSS d7a45b4b and afced369 provide proposal, pending screenshot and iPhone acceptance. Automated button inventory CI added a08f62f9 to reveal deviations before approving broader tokens. No assumption that a blue/purple shade difference indicates functionality unless documented.
