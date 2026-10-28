@@ -11,19 +11,22 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const releasePopup=await page.evaluate(()=>{
    const previous=NEXUS_RELEASE.publicationStatus;
    const key=NEXUS_SEEN_RELEASE_KEY;
-   const old=localStorage.getItem(key);
+   const old=localStorage.getItem(key),laterKey=NEXUS_RELEASE_LATER_KEY,oldLater=sessionStorage.getItem(laterKey);
    try{
      NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
      showPublishedReleaseModal();
      const first=document.querySelector('#nx-release-dismiss');
      if(!first)return false;
      document.querySelector('#nx-release-later').click();
+     if(shouldShowPublishedRelease())return false; // Later defers for this app session
+     sessionStorage.removeItem(laterKey); // simulate a new app session, without real data writes
      if(!shouldShowPublishedRelease())return false;
      showPublishedReleaseModal();document.querySelector('#nx-release-dismiss').click();
      return localStorage.getItem(key)===NEXUS_RELEASE.version&&!shouldShowPublishedRelease();
    }finally{
      NEXUS_RELEASE.publicationStatus=previous;
      if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old);
+     if(oldLater===null)sessionStorage.removeItem(laterKey);else sessionStorage.setItem(laterKey,oldLater);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
    }
  });
