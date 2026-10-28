@@ -1426,7 +1426,7 @@ function manageKitMenu(kitId) {
         ...(hasOpen ? [{id:isBlend?"blend-finish":"finish-vial",name:"Finish this vial",desc:"Complete the current vial and reconcile remaining inventory",icon:"✓"}] : []),
         ...(!isBlend && hasOpen ? [{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
         {id:isBlend?"blend-restock":"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
-        ...(!isBlend && hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
+        ...(hasRecon ? [{id:isBlend?"blend-outflow":"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
       ]
     },
     {
@@ -1504,6 +1504,7 @@ function manageKitMenu(kitId) {
     else if(id==="add-to-open") addToOpenVialModal(kitId);
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
+    else if(id==="blend-outflow") blendLogOutflowModal(kitId);
     else if(id==="classify-premix") classifyLegacyPremixedKit(kitId);
     else if(id==="edit") { if(isBlend && s.blendInventoryMode!=="legacy-v2") addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
