@@ -860,3 +860,6 @@ DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` respo
 
 
 ## 2026-10-27 DS2 unreleased candidate: fdc1d608 hybrid polish for Journal, Explore, Insights UI and Settings detail surfaces; 81adc534 More bottom sheet and Learn route CSS. Visual only, no intended persistence, schema or calculator change, no live deployment. Prior bd26e3d6 browser 40614785248 and mobile 40614785307 SUCCESS; new-head QA, standalone full DEMO/LIVE ZIP, iPhone acceptance and independent preview parity INCOMPLETE. PR #123 draft.
+
+
+## 2026-10-27 UNRELEASED DS2 action hierarchy candidate: afced369 scoped Log Dose Quick/Guided primary/secondary/confirm shading; test scaffold 4c24b27 nested page screenshots and computed button inventory. No JS/save/storage or clinical dose math changes. New-head test runner has NOT RUN; exact-head CI, physical iPhone, demo/live ZIP parity and safety allocation test incomplete. Draft PR #123 unchanged; no merge/deployment.
