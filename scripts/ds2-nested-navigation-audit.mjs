@@ -569,6 +569,35 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      throw Error('Blend transaction regression failure '+JSON.stringify(tx));
    evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:String(err)});}
+ // Fictional retroactive conversion: original dose and physical ledger are immutable.
+ try{
+   const x=await page.evaluate(()=>{
+     closeModal();const name='Reconciliation QA Blend',id='reconcile-qa-kit';
+     const dose={id:'reconcile-qa-dose',date:localDatetime(),dose:2};
+     const kit={id,name,isBlend:true,vialMg:80,composition:[
+       {compound:'GHK-Cu',mg:50},{compound:'KPV',mg:10},
+       {compound:'TB-500',mg:10},{compound:'BPC-157',mg:10}],
+       vials:[{id:'old-qa-vial',status:'empty',vialMg:80,remainingMg:0}],
+       doseLog:[],wasteLog:[],blendHistoryAttributions:[]};
+     state.supplies.push(kit);state.customPeptides[name]={status:'active',doses:[dose]};
+     const original=JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     const before=nxBlendDoseAttribution(name,dose);
+     kit.blendHistoryAttributions.push({id:'qa-attribution',status:'confirmed',
+       from:localDate(),to:localDate(),composition:kit.composition.map(v=>({...v}))});
+     const attributed=nxBlendDoseAttribution(name,dose);
+     kit.blendHistoryAttributions[0].status='reversed';
+     const after=nxBlendDoseAttribution(name,dose);
+     const preserved=original===JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     state.supplies=state.supplies.filter(k=>k.id!==id);delete state.customPeptides[name];
+     return {before,attributed,after,preserved};
+   });
+   if(x.before!==null||x.after!==null||!x.preserved||
+      x.attributed?.provenance!=='User-confirmed historical recipe'||
+      x.attributed.items.length!==4||Math.abs(x.attributed.items[0].mg-1.25)>.0001||
+      x.attributed.items.slice(1).some(v=>Math.abs(v.mg-.25)>.0001))
+     throw Error('Historical attribution and reversal mismatch '+JSON.stringify(x));
+   evidence.push({screen:'blend-historical-reconciliation-and-reversal',width,theme,overflow:false,buttons:[],error:null});
+ }catch(e){evidence.push({screen:'blend-historical-reconciliation-and-reversal',width,theme,overflow:false,buttons:[],error:String(e)});}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
