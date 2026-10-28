@@ -162,6 +162,33 @@ function trendsView() {
     if(name!==state._nxHistorySelected) return;
     const c=cfg(name), doses=data.doses||[];
     const chronological=[...doses].sort((a,b)=>safeDate(a.date)-safeDate(b.date));
+    // For this selected blend, show estimated ingredients WITHIN each dated
+    // administered dose. Never apply today's editable kit recipe to old doses.
+    const blendSources=(state.supplies||[]).filter(k=>k.isBlend&&k.name===name);
+    const blendIngredientBreakdown=d=>{
+      const allocations=Array.isArray(d.allocations)?d.allocations:[];
+      const matched=allocations.map(a=>{
+        const kit=blendSources.find(k=>String(k.id)===String(a.kitId));
+        const vial=kit?.vials?.find(v=>String(v.id)===String(a.vialId));
+        if(!vial||!Array.isArray(vial.composition)||vial.composition.length<2)return null;
+        const total=vial.composition.reduce((n,x)=>n+Number(x.mg||0),0);
+        if(!(total>0))return null;
+        const drawn=doseToMg(a.amount,cfg(name).unit);
+        return vial.composition.map(x=>({name:x.compound,mg:drawn*Number(x.mg)/total}));
+      });
+      if(!matched.length||matched.some(x=>!x))return null;
+      const totals=new Map();
+      for(const part of matched)for(const x of part)totals.set(x.name,(totals.get(x.name)||0)+x.mg);
+      return [...totals].map(([component,mg])=>esc(component)+': '+mg.toFixed(3)+' mg').join(' · ');
+    };
+    const blendPerDose=blendSources.length?'<div class="nx-compound-details" style="padding:12px 0"><strong>Blend ingredients by recorded injection</strong>'+
+      [...doses].sort((a,b)=>safeDate(b.date)-safeDate(a.date)).slice(0,80).map(d=>{
+        const parts=blendIngredientBreakdown(d);
+        return '<div style="padding:9px 0;border-bottom:1px solid var(--border-sub);font-size:12px;line-height:1.5"><strong>'+esc(fmtDate(d.date))+' · '+esc(d.dose)+' '+esc(c.unit||'mg')+'</strong><div style="color:var(--t3)">'+
+          (parts||'Ingredient amount unavailable — original vial composition not verifiable')+'</div></div>';
+      }).join('')+
+      '<p style="color:var(--t4);font-size:11px">Estimated from saved physical-vial recipes, not laboratory measurements. One blend injection remains one dose.</p></div>':'';
+
     const last=chronological[chronological.length-1];
     const first=chronological[0];
     const validDoses=chronological.filter(d=>Number.isFinite(Number(d.dose)));
@@ -194,6 +221,7 @@ function trendsView() {
       <div class="nx-compound-facts">${fact(String(doses.length),'Logged doses')}${fact(latest,'Latest dose')}${fact(String(changes),'Dose changes')}</div>
       <div class="nx-compound-main">
         <div class="nx-compound-heading">Dose history</div>
+        ${blendPerDose}
         <div class="nx-compound-desc">Recorded dose amounts, in entry order. Step changes reflect logged amounts—not a modeled drug concentration.</div>
         ${escalationChart(doses,c)}
         <button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="dose">Explore dose records &amp; compare periods →</button>
@@ -218,7 +246,7 @@ function trendsView() {
   // independent per-ingredient administrations. Never synthesize historical ratios
   // from today's editable kit composition.
   const blendKits=(state.supplies||[]).filter(k=>k.isBlend);
-  if(blendKits.length){
+  if(blendKits.length && !state._nxHistorySelected){
     const blendDays=Number(state._blendTrendDays)||0;
     const blendMode=state._blendTrendMode==="administered"?"administered":"all";
     const cutoff=blendDays>0?Date.now()-blendDays*86400000:0;
