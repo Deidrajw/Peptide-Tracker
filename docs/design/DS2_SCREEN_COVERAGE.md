@@ -106,3 +106,7 @@ Evidence: three user-supplied screenshots of Cloudflare preview `e1d12e64.nexusp
 
 **Open QA:** Run script on the exact branch head and inspect screenshots, compare original full-app button classes and selectors, verify insufficient 300 mg/10 mg inventory scenario against isolated fixtures. Physical iPhone acceptance, current-head CI, full-app demo, LIVE ZIP, and production release remain INCOMPLETE.
 
+
+
+## 2026-10-27 — Log Dose review correction 03d83f64 (DRAFT)
+Source review found original non-blend Save path validates plan totals and available open-vial quantities, rolls back partial deductions upon shortfall and shows an error; screenshot alone did not prove dose was saved. The earlier review UI displayed only a selected vial balance, potentially misleading for a multi-vial dose, and unformatted ISO date. Commit 03d83f64 adds a review-stage warning when current plan/selected vial is short and formats date/time for readability. Underlying save, source allocation, inventory math and stored records unchanged. CURRENT-HEAD JS/browser and modal screenshot verification PENDING; caution: warning is informational, save guard remains authoritative. 320/390 light/dark nested screenshots and all action-style taxonomy review INCOMPLETE. PR #123 draft, production untouched.
