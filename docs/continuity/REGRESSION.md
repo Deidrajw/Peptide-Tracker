@@ -1245,3 +1245,6 @@ Physical iPhone tests must be attributed to a real device test, not inferred fro
 
 
 ## 2026-10-27 NEW STYLING GATE: dfe4df01 CSS-only changes. NOT TESTED current-head: Stash selected bottom corner/border, Trends accordions/ranges/library/drilldowns, Profile subtabs/settings/back, 320/390 both themes, iPhone/VoiceOver, full LIVE/DEMO parity. No claim of PASS; preserve history, supplements, storage, doses, vial math, and accepted Calendar/Plans/Supplies.
+
+
+## 2026-10-27 DS2 new-head gate bd26e3d6: NOT TESTED at commit: Nexus Ask/Journal/Learn/Explore selection, assistant/user message contrast, suggestions, keyboard compose, Settings detail/back, privacy/backup, Stash selected pill, 320/390 dark/light and physical iPhone. Full/browser and mobile prior dfe4df01 PASS workflow statuses; no assumption of UI acceptance or new head PASS. Protect backups, stored history, math and user-accepted Calendar/Protocol/Supplies.
