@@ -696,7 +696,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      state.supplies.push(kit);state.customPeptides[name]={status:'active',doses:[dose]};
      const before=JSON.stringify({dose,kitDoseLog:kit.doseLog,waste:kit.wasteLog,
        vialBalance:kit.vials[0].remainingMg});
-     const recipe='GHK-Cu: 50\\nKPV: 10\\nTB-500: 10\\nBPC-157: 10';
+     const recipe='GHK-Cu: 50\nKPV: 10\nTB-500: 10\nBPC-157: 10';
      const review=()=>{
        classifyLegacyPremixedKit(id);
        const field=document.querySelector('#legacy-blend-components');
