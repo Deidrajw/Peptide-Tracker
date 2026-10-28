@@ -407,6 +407,51 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       throw Error('Blend correction math/reversal check failed: '+JSON.stringify(test));
    evidence.push({screen:'blend-correct-balance-math',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-correct-balance-math',width,theme,overflow:false,buttons:[],error:String(err)});}
+ // Fictional blend transaction matrix: overspend rejected, confirmed outflow,
+ // finish retires remaining, reopen preserves ledger and does not resurrect waste.
+ try {
+   const tx=await page.evaluate(()=>{
+     closeModal();
+     const id='ds2-blend-tx-matrix',vialId='ds2-open';
+     const kit={id,name:'QA Blend Inventory',isBlend:true,totalVials:2,vialMg:10,
+       openedVials:1,emptyVials:0,activeKit:true,reconDate:localDatetime(),
+       composition:[{compound:'A',mg:7},{compound:'B',mg:3}],
+       vials:[{id:vialId,status:'open',vialMg:10,remainingMg:10,reconDate:localDatetime(),
+           composition:[{compound:'A',mg:7},{compound:'B',mg:3}]},
+         {id:'ds2-sealed',status:'sealed',vialMg:10,remainingMg:10}],
+       doseLog:[{id:'tx-admin',kind:'administered',vialId,totalMgDrawn:2,date:localDatetime()}],
+       wasteLog:[],reconHistory:[],balanceCorrections:[]};
+     state.supplies.push(kit);
+     const before=getBlendOpenVialRemainingMg(kit);
+     blendLogOutflowModal(id);
+     const input=document.querySelector('#blend-out-mg');
+     input.value='12';document.querySelector('#blend-out-save').click();
+     const rejected=kit.wasteLog.length===0 && getBlendOpenVialRemainingMg(kit)===before;
+     closeModal();
+     blendLogOutflowModal(id);
+     document.querySelector('#blend-out-mg').value='3';
+     document.querySelector('#blend-out-save').click();
+     const confirm=document.querySelector('#ca-ok');
+     if(!confirm)throw Error('Missing blend outflow confirmation');
+     confirm.click();
+     const after=getBlendOpenVialRemainingMg(kit);
+     const logged=kit.wasteLog.length===1 && kit.wasteLog[0].mg===3;
+     finishBlendKitModal(id);
+     const finish=document.querySelector('#ca-ok');
+     if(!finish)throw Error('Missing blend finish confirmation');
+     finish.click();
+     const retired=kit.kitStatus==='done',doseHistory=kit.doseLog.length;
+     const wasteHistory=kit.wasteLog.length;
+     kit.kitStatus=null; // The Reopen Kit handler restores active-list status, not physical stock.
+     const reopened=kit.kitStatus===null&&kit.doseLog.length===doseHistory&&kit.wasteLog.length===wasteHistory;
+     state.supplies=state.supplies.filter(k=>k.id!==id);
+     closeModal();
+     return {before,rejected,logged,after,retired,reopened,doseHistory,wasteHistory};
+   });
+   if(!tx.rejected||!tx.logged||Math.abs(tx.before-8)>.001||Math.abs(tx.after-5)>.001||!tx.retired||!tx.reopened)
+     throw Error('Blend transaction regression failure '+JSON.stringify(tx));
+   evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-transaction-matrix',width,theme,overflow:false,buttons:[],error:String(err)});}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
