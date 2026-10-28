@@ -909,7 +909,9 @@ function nxIngredientHistoryDetail(ingredient, returnBlend, returnDoseId=null, r
   const blendRows=[];
   const seenBlendNames=new Set();
   for(const kit of state.supplies||[]){
-    if(!kit.isBlend || !(kit.composition||[]).some(x=>x.compound===ingredient))continue;
+    // A historical confirmed formulation can contain an ingredient no longer in today's kit recipe.
+    // Evaluate each recorded dose's own provenance instead of filtering by current composition.
+    if(!kit.isBlend)continue;
     if(seenBlendNames.has(kit.name))continue;
     seenBlendNames.add(kit.name);
     const blend=allPeptides()[kit.name];
