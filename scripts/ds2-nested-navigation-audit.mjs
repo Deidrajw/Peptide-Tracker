@@ -140,6 +140,51 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'whats-new-gating',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'whats-new-gating',width,theme,overflow:false,buttons:[],error:String(err)});}
  
+ // Fictional published-version lifecycle. Restore every test key/manifest mutation.
+ try {
+   const lifecycle=await page.evaluate(()=>{
+     closeModal();
+     const seen=NEXUS_SEEN_RELEASE_KEY,later=NEXUS_RELEASE_LATER_KEY;
+     const original={status:NEXUS_RELEASE.publicationStatus,version:NEXUS_RELEASE.version,
+       changes:NEXUS_RELEASE.changes,seen:localStorage.getItem(seen),later:sessionStorage.getItem(later),
+       onboarding:state.profile.onboardingDone};
+     const check=(condition,message)=>{if(!condition)throw Error(message);};
+     try{
+       state.profile.onboardingDone=true;
+       NEXUS_RELEASE.publicationStatus='published';
+       NEXUS_RELEASE.version='v99.1.0-beta';
+       NEXUS_RELEASE.changes=[{title:'Fictional update',detail:'Test-only release'}];
+       localStorage.removeItem(seen);sessionStorage.removeItem(later);
+       check(!!nxReleaseParts('v99.1.0-beta'),'Version parser rejected semver');
+       check(nxIsReleaseNewer('v99.1.0-beta','v99.0.0-beta'),'Upgrade comparison failed');
+       check(!nxIsReleaseNewer('v99.0.0-beta','v99.1.0-beta'),'Downgrade comparison failed');
+       check(shouldShowPublishedRelease(),'First published launch did not prompt');
+       showPublishedReleaseModal();
+       check(!!document.querySelector('#nx-release-later'),'No Later control');
+       document.querySelector('#nx-release-later').click();
+       check(!shouldShowPublishedRelease(),'Later prompted again in same session');
+       render();check(!shouldShowPublishedRelease(),'Navigation rerender reprompted');
+       sessionStorage.removeItem(later); // next app session, no time-based timer
+       check(shouldShowPublishedRelease(),'Later did not return next session');
+       showPublishedReleaseModal();
+       document.querySelector('#nx-release-dismiss').click();
+       check(!shouldShowPublishedRelease(),'Got it did not acknowledge release');
+       render();check(!shouldShowPublishedRelease(),'Acknowledged release prompted on navigation');
+       NEXUS_RELEASE.version='v99.1.1-beta';
+       check(shouldShowPublishedRelease(),'New published upgrade did not prompt');
+       NEXUS_RELEASE.publicationStatus='unverified';
+       check(!shouldShowPublishedRelease(),'Unpublished candidate triggered prompt');
+       return 'Pass: first launch, Later, next session, Got it, navigation, upgrade, unpublished gate';
+     }finally{
+       closeModal(); NEXUS_RELEASE.publicationStatus=original.status;NEXUS_RELEASE.version=original.version;
+       NEXUS_RELEASE.changes=original.changes;state.profile.onboardingDone=original.onboarding;
+       if(original.seen===null)localStorage.removeItem(seen);else localStorage.setItem(seen,original.seen);
+       if(original.later===null)sessionStorage.removeItem(later);else sessionStorage.setItem(later,original.later);
+     }
+   });
+   evidence.push({screen:'whats-new-lifecycle',width,theme,overflow:false,buttons:[],error:null,result:lifecycle});
+ }catch(err){evidence.push({screen:'whats-new-lifecycle',width,theme,overflow:false,buttons:[],error:String(err)});}
+
  // Dedicated populated BLEND fixture, separately from the default regular kits:
  // verifies actual Trends ingredient reporting and blend Kit actions screenshot.
  try {
