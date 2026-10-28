@@ -167,6 +167,39 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  }catch(err){evidence.push({screen:'reaction-editor',width,theme,overflow:false,buttons:[],error:String(err)});}
  await page.evaluate(()=>closeModal());
 
+
+ // Stash final review action: reach step 3 using fictional fields, but NEVER save.
+ try {
+  const result=await page.evaluate(()=>{
+    closeModal();tab='stash';render();
+    document.querySelector('#qa-addkit')?.click();
+    const modal=document.querySelector('.modal.nx-stash-kit-editor');
+    if(!modal)throw Error('Add Kit modal not open');
+    const sel=modal.querySelector('#sname');
+    if(!sel)throw Error('Compound select missing');
+    const val=[...sel.options].find(o=>o.value==='Retatrutide')?.value;
+    if(!val)throw Error('Fictional Retatrutide not available in kit selector');
+    sel.value=val;sel.dispatchEvent(new Event('change',{bubbles:true}));
+    modal.querySelector('#stv').value='2';
+    modal.querySelector('#svmg').value='10';
+    const next=modal.querySelector('#nx-kit-next');
+    next.click();next.click();
+    const save=modal.querySelector('#ssave');
+    if(!save||save.hidden||getComputedStyle(save).display==='none')
+      throw Error('Did not reach visible Add to Stash final review');
+    const style=getComputedStyle(save);
+    return {text:save.textContent.trim(),background:style.backgroundColor,radius:style.borderRadius,
+      shadow:style.boxShadow};
+  });
+  if(result.background!=='rgb(198, 166, 242)'||result.shadow!=='none')
+    throw Error('Stash final Save CTA does not follow primary token '+JSON.stringify(result));
+  await page.screenshot({path:path.join(out,`${width}-${theme}-stash-final-save.png`),fullPage:true,animations:'disabled'});
+  evidence.push({screen:'stash-final-save',width,theme,overflow:false,
+    buttons:[{id:'ssave',className:'nx-kit-editor-save',text:result.text,background:result.background,
+      radius:result.radius,shadow:result.shadow,disabled:false,visible:true}],error:null});
+ }catch(err){evidence.push({screen:'stash-final-save',width,theme,overflow:false,buttons:[],error:String(err)});}
+ await page.evaluate(()=>closeModal());
+
  // Open safe in-DOM nested dialogs/actions (no save, import, delete or reset).\n // Backup Import opens a browser-native file chooser, not an in-DOM sheet; audit separately.
  // These are additional path screenshots, not a substitute for save-path QA.
  const childOpeners=[
