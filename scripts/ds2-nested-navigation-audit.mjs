@@ -244,6 +244,41 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   }catch(e){error=String(e);}
   evidence.push({screen:action.id,width,theme,overflow,buttons,error,opened});
  }
+ // Screenshot-specific primary actions and input focus: no persistent saves.
+ const verifyNamed=async (name, setup, selector, expectedFocus=false)=>{
+   try{
+     await page.evaluate(()=>{closeModal();tab='home';render();});
+     await page.evaluate(setup);
+     const control=page.locator(selector).first();
+     await control.waitFor({state:'visible',timeout:4000});
+     if(expectedFocus)await control.focus();
+     const style=await control.evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return {
+       background:s.backgroundColor,backgroundImage:s.backgroundImage,shadow:s.boxShadow,
+       color:s.color,radius:s.borderRadius,outline:s.outlineStyle,outlineOffset:s.outlineOffset,
+       boxShadow:s.boxShadow,rect:{x:r.x,width:r.width},viewport:innerWidth
+     }});
+     if(expectedFocus){
+       if(style.rect.x<0||style.rect.x+style.rect.width>width+1||style.boxShadow==='none')
+         throw Error('Protocol Name focused field has no contained visible focus or overflows '+JSON.stringify(style));
+     } else if(style.background!=='rgb(198, 166, 242)'||style.backgroundImage!=='none'||style.shadow!=='none')
+       throw Error('Same-role primary treatment mismatch '+JSON.stringify(style));
+     await page.screenshot({path:path.join(out,`${width}-${theme}-${name}.png`),animations:'disabled'});
+     evidence.push({screen:name,width,theme,overflow:false,buttons:[{id:selector,background:style.background,radius:style.radius,shadow:style.shadow}],error:null});
+   }catch(err){evidence.push({screen:name,width,theme,overflow:false,buttons:[],error:String(err)});}
+   finally{await page.evaluate(()=>closeModal());}
+ };
+ await verifyNamed('protocol-wizard-continue',()=>protocolBuilderModal(), '#pb-next');
+ await verifyNamed('onboarding-next',()=>showOnboarding(), '#ob-next');
+ await verifyNamed('stash-wizard-continue',()=>{tab='stash';render();document.querySelector('#qa-addkit')?.click()}, '#nx-kit-next');
+ await verifyNamed('log-reconstitution',()=>{
+   const s=state.supplies.find(x=>!x.isBlend && x.name);
+   if(!s)throw Error('Fictional single compound kit missing');
+   openNewVialModal(s.id);
+ }, '#rvsave');
+ await verifyNamed('protocol-name-focus',()=>{
+   protocolBuilderModal();
+   for(let i=0;i<5;i++)document.querySelector('#pb-next')?.click();
+ }, '#pb-name',true);
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
