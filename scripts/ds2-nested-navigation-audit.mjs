@@ -87,15 +87,14 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   evidence.push({screen:v.id,width,theme,overflow,buttons,error:problem});
  }
 
- // Explicitly open safe nested dialogs/actions (no save, import, delete or reset).
+ // Open safe in-DOM nested dialogs/actions (no save, import, delete or reset).\n // Backup Import opens a browser-native file chooser, not an in-DOM sheet; audit separately.
  // These are additional path screenshots, not a substitute for save-path QA.
  const childOpeners=[
   {id:'today-dose-chooser',tab:'home',selector:'#today-log-dose'},
   {id:'plans-add-goal',tab:'plans',selector:'#add-goal'},
   {id:'stash-add-kit',tab:'stash',selector:'#qa-addkit'},
   {id:'trends-pattern-sheet',tab:'trends',selector:'#nx-open-pattern'},
-  {id:'trends-symptom-sheet',tab:'trends',selector:'#nx-open-symptom-timing'},
-  {id:'settings-import-sheet',tab:'profile',detail:'backup',selector:'#nx-import-open'}
+  {id:'trends-symptom-sheet',tab:'trends',selector:'#nx-open-symptom-timing'}
  ];
  for(const action of childOpeners){
   let error=null,buttons=[],overflow=false,opened=false;
