@@ -91,6 +91,15 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      return pageRoot.textContent.trim().length>20;
    },v);
    if(!reached)throw Error('Requested route not actually rendered: '+v.id);
+   if(v.id==='trends'){
+     const blendState=await page.evaluate(()=>{
+       const kits=(state.supplies||[]).filter(x=>x.isBlend);
+       const section=document.querySelector('#nx-blend-analytics');
+       return {kits:kits.length,section:!!section,text:section?.textContent||''};
+     });
+     if(blendState.kits>0 && (!blendState.section||!blendState.text.includes('Blend composition')))
+       throw Error('Trends blend read-only reporting missing: '+JSON.stringify(blendState));
+   }
    if(v.id==='today'){
      const icons=await page.evaluate(()=>[...document.querySelectorAll('.nx-qa-tile .nx-qa-icon')].map(el=>{
        const outer=el.getBoundingClientRect(),svg=el.querySelector('svg');
