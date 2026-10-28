@@ -14,7 +14,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    const old=localStorage.getItem(key),laterKey=NEXUS_RELEASE_LATER_KEY,oldLater=sessionStorage.getItem(laterKey),originalIsDemoMode=isDemoMode;
    try{
      NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
-     if(isDemoMode()&&!(!shouldShowPublishedRelease()))throw Error('Demo Mode release suppression broken');
+     if(isDemoMode()&&shouldShowPublishedRelease())throw Error('Demo Mode release suppression broken');
      // The stand-alone full-app DEMO intentionally suppresses publication popups;
      // test the fictional eligible-user path separately and restore the guard.
      isDemoMode=()=>false;
