@@ -209,6 +209,22 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(ingredientEvidence.label!=='Ingredient A'||!ingredientEvidence.rows.includes('From blend')||
      !ingredientEvidence.rows.includes('5.000 mg')||!ingredientEvidence.back||!ingredientEvidence.intel)
      throw Error('Derived ingredient history missing '+JSON.stringify(ingredientEvidence));
+   // Actual layout contract on iPhone widths: Back and Intel must not compete
+   // as half-width actions; directional SVG icons must be explicit.
+   const navStyle=await page.evaluate(()=>{
+     const back=document.querySelector('#nx-ingredient-back');
+     const intel=document.querySelector('#nx-ingredient-intel');
+     const a=back?.getBoundingClientRect(),b=intel?.getBoundingClientRect();
+     return {width:innerWidth,backW:a?.width,intelW:b?.width,
+       backY:a?.y,intelY:b?.y,backIcon:!!back?.querySelector('svg.nx-nav-icon'),
+       intelIcon:!!intel?.querySelector('svg.nx-nav-icon'),
+       backText:back?.textContent?.trim(),intelText:intel?.textContent?.trim()};
+   });
+   if(!navStyle.backIcon||!navStyle.intelIcon||navStyle.backW<220||
+     navStyle.intelW<220||Math.abs(navStyle.backW-navStyle.intelW)>2||
+     navStyle.intelY<=navStyle.backY||navStyle.backText!=='Back to injection'||
+     navStyle.intelText!=='Compound Intel')
+     throw Error('Ingredient action alignment / directional icon mismatch '+JSON.stringify(navStyle));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.locator('#nx-ingredient-back').click();
    if(await page.locator('[data-range="all"]').getAttribute('aria-pressed')!=='true')
