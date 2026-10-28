@@ -1436,7 +1436,7 @@ function manageKitMenu(kitId) {
         ...(!isBlend?[{id:"classify-premix",name:"Mark as premixed blend",desc:"Preserve existing vials and dose history",icon:"▤"}]:[]),
         {id:"details",name:"Kit details & history",desc:"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
-        ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
+        ...(isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory management",icon:"↺"}] : [{id:isBlend?"blend-finish-kit":"finish-kit",name:"Finish this kit",desc:"Review and record completion of this physical kit",icon:"✓"}])
       ]
     },
     {
@@ -1461,6 +1461,7 @@ function manageKitMenu(kitId) {
     details:'<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h4"/>',
     intel:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
     reopen:'<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>',
+    "blend-finish-kit":'<path d="m5 12 5 5L20 7"/>',
     "finish-kit":'<path d="m5 12 5 5L20 7"/>',
     delete:'<path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v6M14 11v6"/>'
   };
@@ -1507,6 +1508,7 @@ function manageKitMenu(kitId) {
     else if(id==="edit") { if(isBlend && s.blendInventoryMode!=="legacy-v2") addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
+    else if(id==="blend-finish-kit") finishBlendKitModal(kitId);
     else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
     else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",()=>{
       const kit=state.supplies.find(x=>x.id===kitId);
