@@ -132,9 +132,10 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const html=appUpdatesView();
      const after=state.settings.lastSeenChangelog||0;
      return {before,after,releaseStatus,hasHistory:html.includes('App Updates'),
+       verifiedArchive:html.includes('v0.9.19-beta') && html.includes('v0.9.18-beta') && html.includes('Verified published'),
        prompt:shouldShowPublishedRelease()};
    });
-   if(updates.after!==updates.before||!updates.hasHistory||
+   if(updates.after!==updates.before||!updates.hasHistory||!updates.verifiedArchive||
      (updates.releaseStatus!=='published'&&updates.prompt))
      throw Error('Release history triggered or acknowledged incorrectly '+JSON.stringify(updates));
    evidence.push({screen:'whats-new-gating',width,theme,overflow:false,buttons:[],error:null});
