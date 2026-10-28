@@ -214,6 +214,42 @@ function trendsView() {
     </article>`;
   });
   if(!startedPeps.length) html+=`<div style="color:var(--t4);font-size:13px;text-align:center;padding:30px 0">Log your first dose to start seeing compound trends.</div>`;
+  // Blend analytics Phase 1: read-only reporting. A blend physical ledger is not
+  // independent per-ingredient administrations. Never synthesize historical ratios
+  // from today's editable kit composition.
+  const blendKits=(state.supplies||[]).filter(k=>k.isBlend);
+  if(blendKits.length){
+    const blendCards=blendKits.map(kit=>{
+      const recipe=(kit.composition||[]).filter(c=>c.compound&&Number(c.mg)>0);
+      const recipeTotal=recipe.reduce((n,c)=>n+Number(c.mg),0);
+      const physicalEntries=(kit.doseLog||[]).filter(d=>Number(d.totalMgDrawn)>0 && d.kind!=='reversed');
+      const physicalMg=physicalEntries.reduce((n,d)=>n+Number(d.totalMgDrawn),0);
+      // Vial snapshots may be missing in older kit schemas. Show only totals that
+      // are explicitly attributable, and never backfill with a revised recipe.
+      const attributable=physicalEntries.filter(d=>{
+        const v=(kit.vials||[]).find(v=>String(v.id)===String(d.vialId));
+        return v && Array.isArray(v.composition) && v.composition.length>=2 &&
+          v.composition.every(c=>c.compound&&Number(c.mg)>0);
+      });
+      const lines=recipe.map(c=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0"><span>'+esc(c.compound)+'</span><strong>'+Number(c.mg).toFixed(2)+' mg</strong></div>').join('');
+      return '<article class="nx-blend-trends-card" style="border:1px solid var(--border-sub);border-radius:15px;background:var(--surface-2);padding:15px;margin-top:10px">'+
+        '<h4 style="font-size:15px;color:var(--t1);margin:0 0 8px">'+esc(kit.name)+'</h4>'+
+        '<div style="font-size:12px;color:var(--t3);margin-bottom:10px">Current saved recipe · '+recipeTotal.toFixed(2)+' mg per physical vial</div>'+
+        (lines||'<p style="color:var(--t3)">No component recipe recorded.</p>')+
+        '<div style="border-top:1px solid var(--border-sub);padding-top:10px;margin-top:10px;color:var(--t2);font-size:12px">'+
+        physicalEntries.length+' physical blend ledger entries · '+physicalMg.toFixed(2)+' mg recorded as drawn</div>'+
+        '<p style="font-size:11px;line-height:1.5;color:var(--t3);margin:8px 0 0">'+
+        (attributable.length===physicalEntries.length&&physicalEntries.length
+          ? 'Vial composition snapshots available for recorded entries; per-component time-series validation is still pending.'
+          : 'Historical per-component totals unavailable for entries without a locked vial recipe. The current recipe is not applied retrospectively.')+
+        ' These are recorded amounts, not laboratory measurements.</p></article>';
+    }).join('');
+    html+='<section id="nx-blend-analytics" aria-label="Blend composition and recorded totals" style="margin-top:24px">'+
+      '<div class="nx-trends-section-caption">Blends</div><h3 style="font-size:18px;color:var(--t1);margin:7px 0">Blend composition &amp; history</h3>'+
+      '<p style="font-size:12px;color:var(--t3);line-height:1.5">One physical blend dose stays one dose. Ingredient contributions will be reported only when historical vial proportions can be verified.</p>'+
+      blendCards+'</section>';
+  }
+
   return html;
 }
 
