@@ -1258,15 +1258,21 @@ function appUpdatesView() {
   let content;
   if (tabKey === "whatsnew") {
     const published = typeof NEXUS_RELEASE!=="undefined" && NEXUS_RELEASE.publicationStatus==="published";
-    const publishedEntry = published ? [{version:NEXUS_RELEASE.version,date:"Published release",title:NEXUS_RELEASE.title,
-      items:(NEXUS_RELEASE.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))}] : [];
-    // A published manifest is authoritative. Do not show the same version twice
-    // when the legacy manually maintained changelog already contains it.
-    const history = [...publishedEntry,...CHANGELOG.filter(entry=>
-      !published || String(entry.version).replace(/^v/i,'')!==String(NEXUS_RELEASE.version).replace(/^v/i,''))];
+    const current = published ? [{version:NEXUS_RELEASE.version,date:NEXUS_RELEASE.publishedAt||"Verified published release",title:NEXUS_RELEASE.title,
+      publication:"verified",items:(NEXUS_RELEASE.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))}] : [];
+    // Only the publication-gated manifest is authoritative for the current release.
+    // Older manual notes are reference history, not proof of production publication.
+    const legacy = CHANGELOG.filter(entry=>!published ||
+      String(entry.version).replace(/^v/i,'')!==String(NEXUS_RELEASE.version).replace(/^v/i,''))
+      .map(entry=>({...entry,publication:"legacy"}));
+    const history=[...current,...legacy].sort((a,b)=>{
+      const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
+      if(av&&bv) { for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];} }
+      return Number(b.version)||0-(Number(a.version)||0);
+    });
     content = history.map((entry,i)=>`
       <div style="margin-bottom:20px;${i<history.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
-        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · ${String(entry.version).startsWith("v")?"":"V"}${entry.version}</div>
+        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · ${String(entry.version).startsWith("v")?"":"V"}${esc(String(entry.version))} · ${entry.publication==="verified"?"Verified published":"Earlier update notes"}</div>
         <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px">${esc(entry.title)}</div>
         ${entry.items.map(it=>`<div style="display:flex;gap:10px;margin-bottom:10px">
           <div style="font-size:15px;flex-shrink:0;line-height:1.4">${it.icon}</div>
@@ -1439,7 +1445,7 @@ function showOnboarding() {
 const NEXUS_SEEN_RELEASE_KEY = STORE_KEY + '-last-seen-published-release-v1';
 const NEXUS_RELEASE_LATER_KEY = STORE_KEY + '-deferred-published-release-session-v1';
 function nxReleaseParts(value) {
-  const match=String(value||'').match(/^v?(\d+)\\.(\d+)\\.(\d+)(?:-([a-z]+))?/i);
+  const match=String(value||'').match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([a-z]+))?/i);
   if(!match)return null;
   return [Number(match[1]),Number(match[2]),Number(match[3]),match[4]||''];
 }
@@ -1455,6 +1461,8 @@ function nxIsReleaseNewer(candidate, acknowledged) {
 function shouldShowPublishedRelease() {
   if (typeof NEXUS_RELEASE==='undefined' || NEXUS_RELEASE.publicationStatus!=='published') return false;
   if (!state.profile.onboardingDone || (typeof isDemoMode==='function' && isDemoMode())) return false;
+  // Never notify for an unpublished or empty release record.
+  if (!NEXUS_RELEASE.version || !Array.isArray(NEXUS_RELEASE.changes) || !NEXUS_RELEASE.changes.length) return false;
   try {
     if(sessionStorage.getItem(NEXUS_RELEASE_LATER_KEY)===NEXUS_RELEASE.version)return false;
     return nxIsReleaseNewer(NEXUS_RELEASE.version,localStorage.getItem(NEXUS_SEEN_RELEASE_KEY));
