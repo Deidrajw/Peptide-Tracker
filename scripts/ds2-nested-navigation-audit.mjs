@@ -86,6 +86,52 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   }catch(err){problem=String(err);}
   evidence.push({screen:v.id,width,theme,overflow,buttons,error:problem});
  }
+
+ // Explicitly open safe nested dialogs/actions (no save, import, delete or reset).
+ // These are additional path screenshots, not a substitute for save-path QA.
+ const childOpeners=[
+  {id:'today-dose-chooser',tab:'home',selector:'#today-log-dose'},
+  {id:'plans-add-goal',tab:'plans',selector:'#add-goal'},
+  {id:'stash-add-kit',tab:'stash',selector:'#qa-addkit'},
+  {id:'trends-pattern-sheet',tab:'trends',selector:'#nx-open-pattern'},
+  {id:'trends-symptom-sheet',tab:'trends',selector:'#nx-open-symptom-timing'},
+  {id:'settings-import-sheet',tab:'profile',detail:'backup',selector:'#nx-import-open'}
+ ];
+ for(const action of childOpeners){
+  let error=null,buttons=[],overflow=false,opened=false;
+  try{
+   opened=await page.evaluate(({tab:nextTab,detail,selector})=>{
+    closeModal();
+    document.querySelector('#nexus-more-panel')?.remove();
+    tab=nextTab;
+    state._profileTab='settings';
+    state._settingsDetail=detail||null;
+    render();
+    const target=document.querySelector(selector);
+    if(!target)throw Error('Opener not found: '+selector);
+    target.click();
+    return !!(document.querySelector('.modal')||document.querySelector('#nexus-more-panel'));
+   },action);
+   await page.waitForTimeout(180);
+   const shot=await page.evaluate(()=>{
+    const els=[...document.querySelectorAll('button')].filter(e=>{
+      const r=e.getBoundingClientRect(),s=getComputedStyle(e);
+      return r.width>0&&r.height>0&&s.visibility!=='hidden';
+    });
+    return {overflow:document.documentElement.scrollWidth>innerWidth+2,
+      buttons:els.map(e=>{const s=getComputedStyle(e);return {
+       text:(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,90),
+       id:e.id||null,className:typeof e.className==='string'?e.className.slice(0,100):'',
+       background:s.backgroundColor,color:s.color,border:s.borderColor,radius:s.borderRadius,
+       shadow:s.boxShadow,disabled:e.disabled,visible:true
+      }})};
+   });
+   overflow=shot.overflow;buttons=shot.buttons;
+   if(!opened)throw Error('No modal or sheet after opener '+action.selector);
+   await page.screenshot({path:path.join(out,`${width}-${theme}-${action.id}.png`),fullPage:true,animations:'disabled'});
+  }catch(e){error=String(e);}
+  evidence.push({screen:action.id,width,theme,overflow,buttons,error,opened});
+ }
  await context.close();
 }
 await fs.writeFile(path.join(out,'action-inventory.json'),JSON.stringify({source:origin,generated:new Date().toISOString(),evidence},null,2));
