@@ -1268,7 +1268,7 @@ function appUpdatesView() {
     const history=[...current,...legacy].sort((a,b)=>{
       const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
       if(av&&bv) { for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];} }
-      return Number(b.version)||0-(Number(a.version)||0);
+      return (Number(b.version)||0)-(Number(a.version)||0);
     });
     content = history.map((entry,i)=>`
       <div style="margin-bottom:20px;${i<history.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
