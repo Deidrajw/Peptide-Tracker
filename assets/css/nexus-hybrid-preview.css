@@ -3456,3 +3456,18 @@ body .modal #pb-name.nx-pb-name:focus-visible {
   box-shadow:inset 0 0 0 2px #c6a6f2!important;
   border-color:#c6a6f2!important;
 }
+
+
+/* The new-protocol and onboarding wizards have the same forward-action role. */
+body .modal #proto-builder-nav :is(#pb-next,#pb-activate),
+body .modal #ob-nav :is(#ob-next,#ob-done),
+body .modal :is(#ob-next,#ob-done) {
+  background:#c6a6f2!important;
+  background-image:none!important;
+  color:#24182f!important;
+  border:1px solid transparent!important;
+  border-radius:13px!important;
+  min-height:48px!important;
+  box-shadow:none!important;
+  font-weight:750!important;
+}
