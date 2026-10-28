@@ -574,7 +574,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    const x=await page.evaluate(()=>{
      closeModal();const name='Reconciliation QA Blend',id='reconcile-qa-kit';
      const dose={id:'reconcile-qa-dose',date:realLocalDate()+'T08:15:00',dose:2};
-     const kit={id,name,isBlend:true,vialMg:80,composition:[
+     const kit={id,name,isBlend:false,vialMg:80,composition:[
        {compound:'GHK-Cu',mg:50},{compound:'KPV',mg:10},
        {compound:'TB-500',mg:10},{compound:'BPC-157',mg:10}],
        vials:[{id:'old-qa-vial',status:'empty',vialMg:80,remainingMg:0}],
@@ -582,6 +582,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      state.supplies.push(kit);state.customPeptides[name]={status:'active',doses:[dose]};
      const original=JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
      const before=nxBlendDoseAttribution(name,dose);
+     // Simulate legacy single-compound kit reclassified as a physical blend.
+     kit.isBlend=true;
      kit.blendHistoryAttributions.push({id:'qa-attribution',status:'confirmed',
        from:realLocalDate(),to:realLocalDate(),composition:kit.composition.map(v=>({...v}))});
      const attributed=nxBlendDoseAttribution(name,dose);
