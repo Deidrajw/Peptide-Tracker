@@ -1462,15 +1462,18 @@ function onboardingChecklistCard() {
 // v0.5.4 — same-day entry point and evidence-first contextual comparison.
 
 // v0.5.5 — Local-first, customizable navigation. No health data in usage events.
+// Inline vector icons share a precise 24x24 coordinate system. These are fixed
+// source assets, never strings assembled from user-supplied data.
+const nxQuickSvg=(paths)=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+paths+'</svg>';
 const NX_QUICK_TOOLS=[
-  {id:"calc",label:"Dose calculator",hint:"Conversion tool",icon:"▦"},
-  {id:"changes",label:"What's changed?",hint:"Compare check-ins",icon:"↗"},
-  {id:"stash",label:"Inventory",hint:"Stock & kits",icon:"▤"},
-  {id:"supplies",label:"Supplies",hint:"Manage stock",icon:"▣"},
-  {id:"history",label:"Compound history",hint:"Recorded doses",icon:"◷"},
-  {id:"learn",label:"Learn",hint:"Guides & tools",icon:"◇"},
-  {id:"journal",label:"Journal",hint:"Your entries",icon:"▤"},
-  {id:"plans",label:"Plans",hint:"Goals & research",icon:"◎"}
+  {id:"calc",label:"Dose calculator",hint:"Conversion tool",icon:nxQuickSvg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2M8 18h2m4 0h2"/>')},
+  {id:"changes",label:"What's changed?",hint:"Compare check-ins",icon:nxQuickSvg('<path d="M4 17l6-6 4 4 6-8"/><path d="M14 7h6v6"/>')},
+  {id:"stash",label:"Inventory",hint:"Stock & kits",icon:nxQuickSvg('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 14h6"/>')},
+  {id:"supplies",label:"Supplies",hint:"Manage stock",icon:nxQuickSvg('<path d="M4 8l8-4 8 4v9l-8 4-8-4zM4 8l8 4 8-4M12 12v9"/>')},
+  {id:"history",label:"Compound history",hint:"Recorded doses",icon:nxQuickSvg('<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3.5 2"/>')},
+  {id:"learn",label:"Learn",hint:"Guides & tools",icon:nxQuickSvg('<path d="M12 6c-2-2-5-2-8-1v14c3-1 6-1 8 1 2-2 5-2 8-1V5c-3-1-6-1-8 1zM12 6v14"/>')},
+  {id:"journal",label:"Journal",hint:"Your entries",icon:nxQuickSvg('<rect x="5" y="3" width="15" height="18" rx="2"/><path d="M9 3v18M12 8h5M12 12h5M12 16h4"/>')},
+  {id:"plans",label:"Plans",hint:"Goals & research",icon:nxQuickSvg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>')}
 ];
 function nxQuickIds(){
   const ids=state.settings?.nxQuickAccess;
