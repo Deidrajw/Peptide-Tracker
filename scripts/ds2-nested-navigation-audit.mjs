@@ -121,6 +121,25 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   evidence.push({screen:v.id,width,theme,overflow,buttons,error:problem});
  }
 
+ // What's New must not acknowledge a release merely by opening App Updates.
+ // Draft/preview builds never trigger a published-release announcement.
+ try{
+   const updates=await page.evaluate(()=>{
+     closeModal();
+     const before=state.settings.lastSeenChangelog||0;
+     const releaseStatus=NEXUS_RELEASE.publicationStatus;
+     state._appUpdatesTab='whatsnew';
+     const html=appUpdatesView();
+     const after=state.settings.lastSeenChangelog||0;
+     return {before,after,releaseStatus,hasHistory:html.includes('App Updates'),
+       prompt:shouldShowPublishedRelease()};
+   });
+   if(updates.after!==updates.before||!updates.hasHistory||
+     (updates.releaseStatus!=='published'&&updates.prompt))
+     throw Error('Release history triggered or acknowledged incorrectly '+JSON.stringify(updates));
+   evidence.push({screen:'whats-new-gating',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'whats-new-gating',width,theme,overflow:false,buttons:[],error:String(err)});}
+ 
  // Dedicated populated BLEND fixture, separately from the default regular kits:
  // verifies actual Trends ingredient reporting and blend Kit actions screenshot.
  try {
