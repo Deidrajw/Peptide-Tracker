@@ -3471,3 +3471,23 @@ body .modal :is(#ob-next,#ob-done) {
   box-shadow:none!important;
   font-weight:750!important;
 }
+
+/* DS2 Quick access — fixed geometry for all shortcut pictograms.
+   SVG replaces font-dependent legacy Unicode icons, with optical centring. */
+#app .nx-qa-tile .nx-qa-icon {
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 38px!important;
+  width:38px!important;height:38px!important;
+  padding:0!important;
+  line-height:1!important;
+  border-radius:12px!important;
+  background:color-mix(in srgb,#a78bfa 16%,var(--surface-2))!important;
+  color:#b69be6!important;
+}
+#app .nx-qa-tile .nx-qa-icon svg {
+  display:block!important;width:20px!important;height:20px!important;
+  flex:none!important;vertical-align:middle!important;
+}
