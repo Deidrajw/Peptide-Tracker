@@ -74,3 +74,11 @@ User supplied 10 screenshots of CTAs: Add to Stash, kit wizard Continue, dose Co
 - Proposed next scoped sequence: inspect Stash edit-outflow/waste confirmation buttons and sheet layout first using isolated fictional data without saving, then test explicit destructive confirm/cancel semantics, then Protocol/Plans management sheets. Preserve inventory accounting and accepted parent screens; only fix reproduced defects.
 - No new app feature or CSS change in this checkpoint. Do not merge/deploy. Global accessibility, typography, required fields, scrolling, navigation and motion LAST.
 - ONE NEXT ACTION: add safe automated route captures for Stash edit-outflow and waste modals at 320/390 light/dark; inspect actual pixels and computed button roles before modifying styles.
+
+
+## 2026-10-28 — Stash outflow screenshot acceptance + danger/confirmation audit
+- GitHub nested run 40631961194 SUCCESS, artifact 12792185822 downloaded and 8 screenshots (Edit Outflow, Log Outflow × 320/390 × light/dark) inspected. Both sheets render in all four combinations; Edit Outflow Save Changes is flat primary lavender. Log Outflow `#waste-save` appeared lavender **despite** inline red request, a confirmed semantic-style defect.
+- Scoped correction `c345c8d5` assigns distinct caution/danger red `#a62c4a`, white label, no gradient/shadow to Log It only; test `32817090` adds computed colour assertion in all four browser variants. **Post-fix CI/visual QA pending**. No production writes or merge/deploy.
+- Close X exists in each modal; no labelled Cancel. Nested whole-vial selection sheet provides X but clicking a vial option directly commits an outflow, no separate Confirm step. DO NOT claim confirmation flow validated.
+- **SOURCE-DISCOVERED INVENTORY RISK (not corrected here):** `logWasteModal` partial-outflow branch accepts `mg > openVial.remainingMg`, clamps remaining to zero but records the larger requested amount; requires separate transactional validation and regression before release. This is an observed code-path risk, not a live-data incident. Avoid modifying inventory logic casually; preserve existing records and migrations.
+- Next audit priority: isolate and test partial overspend and whole-vial choice/cancel flow with fictional fixture, then assess confirmation/button hierarchy before Protocol/Plans management. Global polish last.
