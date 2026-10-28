@@ -780,3 +780,6 @@ User asks to retain potential swipe left/right contextual actions (including swi
 
 
 ## 2026-10-27 DS2 button visual proof: the same semantic primary fill #C6A6F2 is now applied to Today Log dose, Plans Add Goal, Stash Add Kit and Supplements Add; Log Dose chooser/step primary family aligned. Danger family differentiates destructive Settings actions from neutral navigation; full reset gets stronger red. Separate visual/semantic classification justified. Evidence 40618241161 computed styles and screenshots; native device acceptance pending. Keep nested modal confirmation and inventory validation separate from button visual proof.
+
+
+## 2026-10-27 DS2 action semantics clarified by real rendered child screenshot: Add Kit wizard Continue advances flow and is a primary lavender CTA; Trends Pattern Explorer/Symptom Timing Done merely dismisses read-only information and is neutral secondary. Implemented as CSS-only 42560603, pending exact-head evidence. Import Backup invokes native file chooser, so browser modal screenshot is not the right verification; requires dedicated file selection/confirmation test with isolated backup fixtures.
