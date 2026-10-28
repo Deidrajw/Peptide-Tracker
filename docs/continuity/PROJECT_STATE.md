@@ -1888,3 +1888,10 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Proposed next scoped sequence: inspect Stash edit-outflow/waste confirmation buttons and sheet layout first using isolated fictional data without saving, then test explicit destructive confirm/cancel semantics, then Protocol/Plans management sheets. Preserve inventory accounting and accepted parent screens; only fix reproduced defects.
 - No new app feature or CSS change in this checkpoint. Do not merge/deploy. Global accessibility, typography, required fields, scrolling, navigation and motion LAST.
 - ONE NEXT ACTION: add safe automated route captures for Stash edit-outflow and waste modals at 320/390 light/dark; inspect actual pixels and computed button roles before modifying styles.
+
+
+## 2026-10-28 — First remaining nested-action fix and QA scope
+- User accepted Quick access icon screenshot correction. Nested screenshot CI 40631718460 SUCCESS; mobile 40631718361 SUCCESS. Build 40631718395 was pending at previous check.
+- Deep Stash source review found `editOutflowModal` Save Changes (`#eo-save`) styled inline as neutral grey despite committing an edit. Commit `ee6925f7` scopes that button to the established solid primary lavender; no changed click handler or storage/math code. `logWasteModal` `#waste-save` is an inventory-changing warning action, retained red pending separate semantic review; do not silently make it primary.
+- Test `c172a367` adds isolated fictional edit-outflow and Log Outflow screenshot states to nested runner for 320/390 light/dark. It does not click Save/Log or touch production data. **NEW QA PENDING**, no screenshot/device PASS claimed.
+- Next: inspect exact-head CI and the two modal screenshot sets. If passing, review confirmation/cancel and risk-colour hierarchy in these sheets before Protocol/Plans delete menus. Keep PR #123 draft, production unchanged, accepted parent layouts untouched, global polish LAST.
