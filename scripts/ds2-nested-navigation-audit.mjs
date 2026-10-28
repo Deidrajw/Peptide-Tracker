@@ -640,13 +640,13 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      state.customPeptides[name]={status:'active',doses:[dose,otherKitDose]};
      const physical=()=>({id:kit.vials[0].id,status:kit.vials[0].status,remainingMg:kit.vials[0].remainingMg});
      const original=JSON.stringify({doses:[dose,otherKitDose],physical:physical(),waste:kit.wasteLog});
-     const begin=()=>{
+     const begin=(expectedCount=1)=>{
        nxReconcileBlendHistory(name,()=>{});
        const from=document.querySelector('#nx-reconcile-from');
        const to=document.querySelector('#nx-reconcile-to');
        from.value=day;to.value=day;
        from.dispatchEvent(new Event('change'));to.dispatchEvent(new Event('change'));
-       if(!document.querySelector('#nx-reconcile-preview')?.textContent.includes('1 recorded doses'))
+       if(!document.querySelector('#nx-reconcile-preview')?.textContent.includes(expectedCount+' recorded doses'))
          throw Error('Morning injection missing from reconciliation preview');
        document.querySelector('#nx-reconcile-save').click();
      };
@@ -658,7 +658,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const committed=kit.blendHistoryAttributions.length===1&&
        nxBlendDoseAttribution(name,dose)?.items?.[0]?.mg===1.25&&
        nxBlendDoseAttribution(name,otherKitDose)===null;
-     begin();
+     begin(0);
      const overlap=!!document.querySelector('#nx-validation-message')&&
        kit.blendHistoryAttributions.length===1&&!document.querySelector('#ca-ok');
      closeModal();document.querySelector('#nx-validation-message')?.remove();
