@@ -11,7 +11,20 @@ const lines=manifest.changes.map(c=>'- '+c.title+': '+c.detail);
 const heading=manifest.headline;
 const apple=heading+'\n'+lines.join('\n');
 const google=heading+'\n'+lines.join('\n');
-const inApp={version:manifest.version,channel:manifest.channel,publicationStatus:manifest.publication.status,title:heading,changes:manifest.changes,dataImpact:manifest.dataImpact,limitations:manifest.limitations||[]};
+const archive=JSON.parse(fs.readFileSync('release/published-history.json','utf8'));
+if(archive.schemaVersion!==1 || !Array.isArray(archive.releases))throw Error('Invalid published history');
+const seenVersions=new Set();
+for(const item of archive.releases) {
+  if(!/^v\d+\.\d+\.\d+(?:-[a-z][a-z0-9.-]*)?$/.test(item.version) ||
+     !item.publishedAt || !item.sourceCommit || !item.verification ||
+     !Array.isArray(item.changes) || !item.changes.length ||
+     seenVersions.has(item.version) || item.version===manifest.version)
+    throw Error('Invalid, duplicate or draft historical publication '+item.version);
+  seenVersions.add(item.version);
+}
+const inApp={version:manifest.version,channel:manifest.channel,publicationStatus:manifest.publication.status,publishedAt:manifest.publication.publishedAt,
+ title:heading,changes:manifest.changes,dataImpact:manifest.dataImpact,limitations:manifest.limitations||[],
+ history:archive.releases};
 const outputs={
   'release/generated/in-app.json':JSON.stringify(inApp,null,2)+'\n',
   'release/generated/apple-whats-new.txt':apple+'\n',
