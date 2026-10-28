@@ -1543,3 +1543,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-10-28 — Historical-only ingredient scenario added, NOT YET TESTED
 - Commit `3ca0f351` adds synthetic dated 2026-01-15 confirmed recipe Ingredient A 40mg + Ingredient D 30mg while current kit recipe excludes Ingredient D; 7mg older unallocated dose should resolve 3mg Ingredient D and appear in ingredient history. Exact new-head nested CI **PENDING / NOT TESTED**; do not report Pass. Prior 50eb4faa workflows remain historical prior-source evidence. Multi-vial/mixed-source reversal and real-data conservation remain release blockers.
+
+## 2026-10-28 — What's New lifecycle, partial code / NOT TESTED
+- Commit `f34a847f`: manual What's New close no longer writes legacy `lastSeenChangelog` or saves primary state. Source audit confirms published startup notice requires `NEXUS_RELEASE.publicationStatus==='published'`, while draft manifest is `unverified`. Full trigger-reproduction, multi-release chronological history, Later/Got it browser test, iPhone and package parity **NOT TESTED**. Do not mark Pass or announce candidate as published.
