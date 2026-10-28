@@ -128,6 +128,57 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   evidence.push({screen:v.id,width,theme,overflow,buttons,error:problem});
  }
 
+ // Dedicated populated BLEND fixture, separately from the default regular kits:
+ // verifies actual Trends ingredient reporting and blend Kit actions screenshot.
+ try {
+   await page.evaluate(()=>{
+     closeModal();
+     const id='ds2-visual-blend';
+     state.supplies.push({
+       id,name:'Fictional Three-Ingredient Blend',isBlend:true,totalVials:2,
+       vialMg:70,openedVials:1,emptyVials:0,reconDate:localDatetime(),activeKit:true,
+       composition:[{compound:'Ingredient A',mg:50},{compound:'Ingredient B',mg:10},{compound:'Ingredient C',mg:10}],
+       vials:[{id:'ds2-visual-open',status:'open',vialMg:70,remainingMg:70,reconDate:localDatetime(),
+         composition:[{compound:'Ingredient A',mg:50},{compound:'Ingredient B',mg:10},{compound:'Ingredient C',mg:10}]},
+         {id:'ds2-visual-sealed',status:'sealed',vialMg:70,remainingMg:70}],
+       doseLog:[{id:'ds2-visual-dose',date:localDatetime(),kind:'administered',
+         vialId:'ds2-visual-open',totalMgDrawn:7}],
+       wasteLog:[],balanceCorrections:[],reconHistory:[]
+     });
+     tab='trends';state._blendTrendDays=0;state._blendTrendMode='all';render();
+   });
+   await page.locator('#nx-blend-analytics').waitFor({state:'visible',timeout:4000});
+   const report=await page.evaluate(()=>{
+     const text=document.querySelector('#nx-blend-analytics')?.textContent||'';
+     return {text,period:!!document.querySelector('#nx-blend-period'),
+       mode:!!document.querySelector('#nx-blend-mode'),
+       overflow:document.documentElement.scrollWidth>innerWidth+2};
+   });
+   if(!report.period||!report.mode||report.overflow||
+      !report.text.includes('Ingredient A')||!report.text.includes('5.000 mg')||
+      !report.text.includes('1.000 mg'))throw Error('Blend Trends fixture report mismatch '+JSON.stringify(report));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
+     fullPage:true,animations:'disabled'});
+   evidence.push({screen:'trends-blend-analytics',width,theme,overflow:false,buttons:[],error:null});
+   await page.evaluate(()=>{
+     tab='stash';render();
+     manageKitMenu('ds2-visual-blend');
+   });
+   const menu=page.locator('.nx-stash-sheet');
+   await menu.waitFor({state:'visible',timeout:4000});
+   for(const id of ['blend-outflow','blend-correct-open','blend-finish-kit']){
+     if(!await menu.locator('[data-action="'+id+'"]').count())
+       throw Error('Blend action missing: '+id);
+   }
+   await page.screenshot({path:path.join(out,`${width}-${theme}-stash-blend-actions.png`),
+     animations:'disabled'});
+   evidence.push({screen:'stash-blend-actions',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-populated-visual',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{
+   closeModal();state.supplies=state.supplies.filter(k=>k.id!=='ds2-visual-blend');
+   state._blendTrendDays=0;state._blendTrendMode='all';render();
+ });}
+ 
  // Protocol first-log CTA is conditional on fictional protocol status and dose history.
  // Capture presence/absence explicitly so a missing fixture is not mistaken for styling acceptance.
  const protocolCTA=evidence.find(x=>x.screen==='protocols'&&x.width===width&&x.theme===theme);
