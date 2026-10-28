@@ -79,7 +79,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
 
  // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
  const releaseContrast=await page.evaluate(()=>{
-   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key),originalIsDemoMode=isDemoMode;
+   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key),originalIsDemoMode=isDemoMode,oldLater=sessionStorage.getItem(NEXUS_RELEASE_LATER_KEY);
    const luminance=(str)=>{
      const raw=str.match(/[0-9.]+/g)||[];
      if(raw.length<3)return null;
@@ -101,6 +101,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
      NEXUS_RELEASE.publicationStatus=old;
      isDemoMode=originalIsDemoMode;
      if(seen===null)localStorage.removeItem(key);else localStorage.setItem(key,seen);
+     if(oldLater===null)sessionStorage.removeItem(NEXUS_RELEASE_LATER_KEY);else sessionStorage.setItem(NEXUS_RELEASE_LATER_KEY,oldLater);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
    }
  });
