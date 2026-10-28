@@ -361,6 +361,24 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'blend-finish-kit-cancel',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>{closeModal();if(window.__ds2BlendFixtureId){state.supplies=state.supplies.filter(k=>k.id!==window.__ds2BlendFixtureId);delete window.__ds2BlendFixtureId;}});}
+ // Blend outflow cancellation: no physical ledger entries or saved history.
+ try{
+   const result=await page.evaluate(()=>{
+     closeModal();const kit=(state.supplies||[]).find(k=>k.isBlend);
+     if(!kit)return {skipped:'No fictional blend fixture'};
+     const v=getActiveVial(kit);
+     if(!v)return {skipped:'No open fictional blend vial'};
+     const before=(kit.wasteLog||[]).length;
+     blendLogOutflowModal(kit.id);
+     const cancel=document.querySelector('#blend-out-cancel');
+     if(!cancel)throw Error('Blend Log Outflow cancel missing');
+     cancel.click();
+     if((kit.wasteLog||[]).length!==before)throw Error('Blend outflow cancelled yet waste history changed');
+     return {cancelled:true};
+   });
+   evidence.push({screen:'blend-outflow-cancel',width,theme,overflow:false,buttons:[],error:null,fixture:result});
+ }catch(err){evidence.push({screen:'blend-outflow-cancel',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>closeModal());}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
