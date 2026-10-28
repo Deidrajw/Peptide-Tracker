@@ -783,3 +783,7 @@ User asks to retain potential swipe left/right contextual actions (including swi
 
 
 ## 2026-10-27 DS2 action semantics clarified by real rendered child screenshot: Add Kit wizard Continue advances flow and is a primary lavender CTA; Trends Pattern Explorer/Symptom Timing Done merely dismisses read-only information and is neutral secondary. Implemented as CSS-only 42560603, pending exact-head evidence. Import Backup invokes native file chooser, so browser modal screenshot is not the right verification; requires dedicated file selection/confirmation test with isolated backup fixtures.
+
+
+## 2026-10-27 — DS2 button role rule reaffirmed by user screenshots
+Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a coherent solid lavender action treatment unless semantics differ; do not vary gradients arbitrarily. Neutral secondary Back/Cancel/informational Done; destructive danger red; selection/disabled have distinct states. Protocol 'Ready for first log' is context not success status, so mint-framed compact CTA is redesigned to neutral vertically stacked card and full-width primary Log first dose. User request authorizes this focused Protocol change despite prior acceptance of other Protocol surfaces. No functional algorithm changes.
