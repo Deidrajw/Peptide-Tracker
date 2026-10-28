@@ -904,8 +904,11 @@ function nxReconcileBlendHistory(name,onDone) {
 function nxIngredientHistoryDetail(ingredient, returnBlend) {
   const direct=allPeptides()[ingredient]?.doses||[];
   const blendRows=[];
+  const seenBlendNames=new Set();
   for(const kit of state.supplies||[]){
     if(!kit.isBlend || !(kit.composition||[]).some(x=>x.compound===ingredient))continue;
+    if(seenBlendNames.has(kit.name))continue;
+    seenBlendNames.add(kit.name);
     const blend=allPeptides()[kit.name];
     if(!blend)continue;
     for(const d of blend.doses||[]){
