@@ -2124,3 +2124,17 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   padding:8px 0;border:0;background:transparent;box-shadow:none;
   color:var(--t2);font-size:13px;
 }
+
+/* Compact Intel at 320px: keep both actions compact and clearly separated.
+   Allow a deliberate two-row arrangement rather than accidental flex wrapping. */
+@media (max-width:359px){
+  .nx-trends-detail-modal .nx-ingredient-actions{
+    flex-direction:column;align-items:stretch;gap:0;
+  }
+  .nx-trends-detail-modal .nx-ingredient-actions .nx-trends-back-action{
+    align-self:flex-start;
+  }
+  .nx-trends-detail-modal .nx-ingredient-actions .nx-trends-link-action{
+    align-self:flex-end;
+  }
+}
