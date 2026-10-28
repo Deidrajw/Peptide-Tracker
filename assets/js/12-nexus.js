@@ -1064,9 +1064,9 @@ function wireBody() {
     };
     nxLibrarySearch.dispatchEvent(new Event("input"));
   }
-  document.querySelectorAll(".nx-library-item").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});});
+  document.querySelectorAll(".nx-library-item").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
   const nxLibraryBack=document.getElementById("nx-library-back");
-  if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});};
+  if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();window.scrollTo({top:0,behavior:"instant"});};
 
   document.querySelectorAll(".nx-trends-go").forEach(b=>b.onclick=()=>{
     const key=b.dataset.key;
