@@ -40,6 +40,15 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  const page=await context.newPage();
  await page.goto(origin,{waitUntil:'domcontentloaded'});
  await page.waitForSelector('#app',{timeout:15000});
+ // The app can show first-run onboarding above every route. Never count its overlay as a child screenshot.
+ const onboardingVisible=await page.locator('text=Welcome to Nexus').first().isVisible().catch(()=>false);
+ if(onboardingVisible){
+   const skip=page.getByRole('button',{name:/^Skip$/i});
+   if(await skip.count()) await skip.first().click();
+   await page.waitForTimeout(150);
+ }
+ if(await page.locator('text=Welcome to Nexus').first().isVisible().catch(()=>false))
+   throw Error('Audit blocked by first-run onboarding; cannot claim route screenshot coverage');
  for(const v of views){
   let problem=null, buttons=[], overflow=false;
   try{
