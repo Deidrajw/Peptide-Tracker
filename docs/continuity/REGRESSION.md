@@ -1298,3 +1298,9 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 EXPANDED NESTED PASS (LIMITED): run 40619363394 succeeded; 112 rendered screenshot captures and computed button checks, 0 capture errors/horizontal overflow, expected primary lavender and neutral informational Done in 320/390 dark/light. Mobile run 40619363338 SUCCESS. This only tests route states and 5 safe opener dialogs; 300mg selected against 10mg remaining, save/rollback/vial ledger, populated Quick/Guided/Review, native import, destructive confirmation, keyboard/back interactions and real iPhone remain NOT TESTED. Do not equate with global DS2 acceptance.
+
+
+## 2026-10-27 — Isolated fixture validation REQUIRED, new test coded not passed
+- DS2 browser audit must use local-only fresh context, populated fictional Demo Mode and explicitly fail when fixture missing or a target child route did not render. Commit aaaca022; screenshot/role audit pending run.
+- Role inventory must distinguish primary / secondary / destructive / selection / disabled / unclassified. Count same-role appearance variants and inspect context before deciding defects. Screenshot runner must not interact with production, delete, import or save data.
+- Prior 112 screenshot run 40619363394 PASS applies to empty/default route capture only, not the new fictional-populated gate. Physical iPhone, nested editor flow, Log Dose 300mg-10mg allocation block NOT TESTED.
