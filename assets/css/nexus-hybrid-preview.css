@@ -3213,3 +3213,32 @@ body #app .nexus-screen-stash .nx-kit-card .nx-kit-detail-panel .nx-stash-tab.ac
 .nx2-page--more :is(button,a){overflow-wrap:anywhere}
 .nx2-page--more :is(.settings-row,.nx-library-item){min-height:48px}
 @media(max-width:360px){.nx2-page--amino :is(.nx-library,.nx-pe-entry,.nx-privacy-card){padding:12px}.nx2-page--more :is(.nx-panel,.card){max-width:100%}}
+
+
+/* DS2 subpage completion candidate — Learn, Explore, Journal and Settings detail pages.
+   Scope: visual rules only, no modifications to data flow or stored user records. */
+.nx2-page--amino .nx-journal-filterbar{display:grid;grid-template-columns:1fr;gap:7px;padding:15px;margin:10px 0 14px;background:var(--surface);border:1px solid var(--border-sub);border-radius:16px}
+.nx2-page--amino .nx-journal-filterbar label{font-size:11px;letter-spacing:.04em;font-weight:700;color:var(--t3)}
+.nx2-page--amino #journal-search,.nx2-page--amino #journal-compound-filter{width:100%;min-height:48px;border-radius:11px;color:var(--t1);background:var(--surface-2)}
+.nx2-page--amino .nx-journal-entry{border-radius:16px!important;border:1px solid var(--border-sub)!important;padding:15px!important;background:var(--surface)!important;box-shadow:0 4px 16px #130b1c0a;overflow-wrap:anywhere}
+.nx2-page--amino .fe-item,.nx2-page--amino .fe-nolink{box-sizing:border-box;min-width:0;border-radius:13px!important;padding:13px 14px!important;line-height:1.5}
+.nx2-page--amino .fe-item{min-height:64px;cursor:pointer}
+.nx2-page--amino .fe-item:focus-visible{outline:3px solid #b993e4;outline-offset:2px}
+.nx2-page--amino .fe-nolink{opacity:.68}
+.nx2-page--amino .fe-item>div,.nx2-page--amino .fe-nolink>div{min-width:0;overflow-wrap:anywhere}
+.nx2-page--amino .insights-tab{min-height:44px!important;border-radius:11px!important}
+.nx2-page--amino .nx-library-item,.nx2-page--amino .discover-item,.nx2-page--amino .guide-item{min-height:48px;overflow-wrap:anywhere}
+.nx2-page--amino .nx-page-intro,.nx2-page--amino .nx-journal-entry{max-width:100%}
+.nx2-page--profile #wunit,.nx2-page--profile #munit-toggle,.nx2-page--profile #dayrollover{min-height:44px!important;border-radius:11px!important;color:var(--t1)!important}
+.nx2-page--profile #dayrollover{max-width:56%;white-space:normal}
+.nx2-page--profile #imp-health,.nx2-page--profile #exp,.nx2-page--profile #nx-import-open{min-height:48px!important;border-radius:12px!important;color:var(--t1)}
+.nx2-page--profile #imp-health{background:var(--surface-2)!important;border:1px solid var(--border-sub)!important}
+.nx2-page--profile #del-health-all,.nx2-page--profile #del-health-imported,.nx2-page--profile #del-activity,.nx2-page--profile #del-doses,.nx2-page--profile #del-logs,.nx2-page--profile #del-stash,.nx2-page--profile #del-workouts{box-sizing:border-box;min-height:56px!important;padding:13px 14px!important;border-radius:13px!important;color:var(--t2)!important;line-height:1.45}
+.nx2-page--profile #nuke-data{min-height:64px!important;border-radius:13px!important;padding:14px!important;line-height:1.45}
+.nx2-page--profile #open-demo-mode,.nx2-page--profile #load-multikit-test,.nx2-page--profile #open-reconciliation,.nx2-page--profile #force-vial-repair,.nx2-page--profile #export-debug-state{min-height:48px!important;border-radius:12px!important;line-height:1.5}
+.nx2-page--profile .nx-privacy-footnote{margin-top:14px;line-height:1.55;font-size:12px;color:var(--t3)}
+@media(max-width:360px){
+ .nx2-page--amino .nx-journal-filterbar{padding:12px}
+ .nx2-page--amino .nx-journal-entry{padding:12px!important}
+ .nx2-page--profile #dayrollover{max-width:54%;font-size:12px}
+}
