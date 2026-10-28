@@ -248,6 +248,39 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
       await page.locator('#nx-blend-date-list').isVisible())
      throw Error('Ingredient Back did not restore the selected injection '+restored);
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
+   // Historical recipe regression: ingredient D belongs only to an older, user-confirmed
+   // formulation, not the current kit or vial recipe. It must still appear in history.
+   const historical=await page.evaluate(()=>{
+     const kit=state.supplies.find(k=>k.id==='ds2-visual-blend');
+     const blend=state.customPeptides['Fictional Three-Ingredient Blend'];
+     const oldDate='2026-01-15T12:00:00';
+     kit.blendHistoryAttributions=[{
+       id:'ds2-historical-recipe',status:'confirmed',from:'2026-01-15',to:'2026-01-15',
+       composition:[{compound:'Ingredient A',mg:40},{compound:'Ingredient D',mg:30}],
+       confirmedAt:localDatetime(),source:'user confirmation'
+     }];
+     blend.doses.push({id:'ds2-old-recipe-dose',date:oldDate,dose:'7',allocations:[]});
+     const old=nxBlendDoseAttribution(kit.name,blend.doses.at(-1));
+     if(!old?.items?.some(i=>i.name==='Ingredient D'&&Math.abs(i.mg-3)<0.001))
+       throw Error('Historical D attribution missing: '+JSON.stringify(old));
+     closeModal();
+     nxIngredientHistoryDetail('Ingredient D',null);
+     return {text:document.querySelector('.nx-trends-detail-modal')?.textContent||'',
+       oldId:blend.doses.at(-1).id};
+   });
+   if(!historical.text.includes('Blend contributions')||
+      !historical.text.includes('3.000 mg')||
+      !historical.text.includes('From blend'))
+     throw Error('Historical-only ingredient omitted from read-only history '+JSON.stringify(historical));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-historical-blend-ingredient.png`),animations:'disabled'});
+   evidence.push({screen:'historical-blend-ingredient',width,theme,overflow:false,buttons:[],error:null});
+   await page.evaluate(()=>{
+     closeModal();
+     const kit=state.supplies.find(k=>k.id==='ds2-visual-blend');
+     delete kit.blendHistoryAttributions;
+     state.customPeptides['Fictional Three-Ingredient Blend'].doses=
+       state.customPeptides['Fictional Three-Ingredient Blend'].doses.filter(d=>d.id!=='ds2-old-recipe-dose');
+   });
    await page.evaluate(()=>closeModal());
    await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
    evidence.push({screen:'trends-blend-drilldown',width,theme,overflow:false,buttons:[],error:null});
