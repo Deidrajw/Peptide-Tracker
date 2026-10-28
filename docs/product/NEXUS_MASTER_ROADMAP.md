@@ -34,3 +34,14 @@ An item cannot become DONE because only code or CI is green.
 
 ## Next action
 Cross-link legacy decisions and issues to these product lanes, recover exact previously approved scope, and only then plan implementation sprints. Keep current PR #123 draft and do not deploy without explicit approval.
+
+
+## 2026-10-27 — Newly requested potential features (discovery only; not implementation approval)
+
+| ID | Potential feature | Expected value / examples | Status and safeguards |
+|---|---|---|---|
+| P-08 | Contextual swipe actions | Native-feeling left/right swipe on appropriate list rows to reveal actions such as Delete, Edit, Archive, Mark Complete; preview design by screen and determine whether left/right mapping should be consistent | IDEA — explore and prototype after current DS2 scope; never destructive on gesture alone; confirm or allow Undo, keep visible alternatives, protect existing records |
+| P-09 | Drag-and-drop interactions | Reorder relevant lists/cards, protocols or priorities where user-defined order makes sense; clarify draggable surfaces, touch handles and persistence rules | IDEA — not every list should be draggable; prevent accidental scroll conflicts, preserve existing ordering/history, accessible non-drag alternatives |
+| P-10 | Nexus Ask assistant capability and conversation UX | Evaluate more robust use of existing records/context, helpful follow-up questions, reliable handling of complex questions, clear provenance/uncertainty, readable message layout, suggestions, history and composer UX | IDEA / DISCOVERY — audit current Ask implementation and available backend/data before promising features; protect privacy, offline behaviour, user records and avoid unsupported clinical recommendations |
+
+**User intent:** capture these as *potential future things*, not approval to code, deploy or change the current design sprint. Next for each: inventory candidate screens and interaction examples, present UI previews and implementation tradeoffs, obtain scope approval. The current DS2 child-page verification remains the immediate priority; global a11y/typography/forms/scroll/navigation/motion stays last within DS2. Future onboarding/core workflows/personalization/platform expansion remain on the roadmap.
