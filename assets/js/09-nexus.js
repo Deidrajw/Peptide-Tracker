@@ -904,7 +904,7 @@ function nxReconcileBlendHistory(name,onDone) {
 
 // Read-only ingredient history, with direct administrations clearly distinguished
 // from calculated blend contributions. One blend injection is never duplicated.
-function nxIngredientHistoryDetail(ingredient, returnBlend) {
+function nxIngredientHistoryDetail(ingredient, returnBlend, returnDoseId=null) {
   const direct=allPeptides()[ingredient]?.doses||[];
   const blendRows=[];
   const seenBlendNames=new Set();
@@ -931,12 +931,12 @@ function nxIngredientHistoryDetail(ingredient, returnBlend) {
     '</div><div style="display:flex;gap:10px;margin-top:14px"><button id="nx-ingredient-back" style="flex:1;min-height:48px">'+(returnBlend?'Back to blend':'Back to compounds')+'</button><button id="nx-ingredient-intel" class="btn-primary" style="flex:1;min-height:48px">Compound Intel ›</button></div>');
   detail.classList.add("nx-trends-detail-modal");
   detail.querySelector("#nx-ingredient-close").onclick=closeModal;
-  detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();if(returnBlend)nxTrendsDetail(returnBlend,"dose");else{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);}};
+  detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();if(returnBlend)nxTrendsDetail(returnBlend,"dose",returnDoseId);else{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);}};
   detail.querySelector("#nx-ingredient-intel").onclick=()=>{
     closeModal();state._intelReturn={tab:"trends"};state._compoundIntel=ingredient;tab="trends";render();window.scrollTo(0,0);
   };
 }
-function nxTrendsDetail(name, kind="dose") {
+function nxTrendsDetail(name, kind="dose", initialDoseId=null) {
   const compound=allPeptides()[name]; if(!compound)return;
   const c=cfg(name), all=(compound.doses||[]).filter(d=>d.date&&Number.isFinite(safeDate(d.date).getTime()))
     .slice().sort((a,b)=>safeDate(b.date)-safeDate(a.date));
@@ -958,7 +958,7 @@ function nxTrendsDetail(name, kind="dose") {
   m.classList.add("nx-trends-detail-modal");
   m.querySelector("#nx-detail-close").onclick=closeModal;
   m.querySelector("#nx-detail-done").onclick=closeModal;
-  let range="90", selectedDoseId=null;
+  let range="90", selectedDoseId=initialDoseId;
   const getStart=(days)=>days==="all"?-Infinity:now-Number(days)*86400000;
   const inRange=(d,low,high)=>{const t=safeDate(d.date).getTime();return t>=low&&t<high;};
   const symName=s=>typeof s==="string"?s:(s&&s.name)||"Unspecified";
@@ -1048,11 +1048,12 @@ function nxTrendsDetail(name, kind="dose") {
         });
         selected.querySelectorAll(".nx-blend-ingredient-link").forEach(button=>button.onclick=()=>{
           const ingredient=button.dataset.ingredient;closeModal();
-          nxIngredientHistoryDetail(ingredient,name);
+          nxIngredientHistoryDetail(ingredient,name,selectedDoseId);
         });
       };
       m.querySelectorAll(".nx-blend-dose-pick").forEach(b=>b.onclick=()=>{selectedDoseId=b.dataset.doseId;paint();});
-      selected.hidden=true;selected.style.display="none";
+      if(initialDoseId && current.doses.some(d=>String(d.id)===String(initialDoseId)))paint();
+      else{selected.hidden=true;selected.style.display="none";}
       const review=m.querySelector("#nx-blend-review-attributions");
       if(review)review.onclick=()=>{
         const items=confirmedHistory.map(({kit,entry},i)=>'<label style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-sub)"><input type="radio" name="nx-revoke-choice" value="'+i+'"><span>'+esc(entry.from)+' — '+esc(entry.to)+' · '+esc(kit.name)+'<small style="display:block;color:var(--t3)">Confirmed '+esc(entry.confirmedAt||'unknown date')+'</small></span></label>').join('');
