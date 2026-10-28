@@ -3542,3 +3542,7 @@ body .nx-blend-injection-detail .nx-blend-ingredient-link {font-size:14px!import
 /* Explicit hidden state must override themed layout display declarations. */
 body .nx-blend-date-list[hidden],
 body #nx-blend-selected-dose[hidden] {display:none!important}
+
+/* Trends injection drill-down: respect hidden panels despite inherited layout display rules. */
+body .modal #nx-blend-date-list[hidden],
+body .modal #nx-blend-selected-dose[hidden] { display:none!important; }
