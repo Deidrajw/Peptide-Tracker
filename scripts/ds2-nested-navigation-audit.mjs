@@ -607,7 +607,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const attributed=nxBlendDoseAttribution(name,dose);
      kit.blendHistoryAttributions[0].status='reversed';
      const after=nxBlendDoseAttribution(name,dose);
-     const preserved=original===JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     const preserved=original===JSON.stringify({doses:[dose,otherKitDose],physical:kit.vials,waste:kit.wasteLog});
      state.supplies=state.supplies.filter(k=>k.id!==id);delete state.customPeptides[name];
      return {before,attributed,after,preserved};
    });
@@ -629,9 +629,11 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
        vials:[{id:'qa-old-vial',status:'finished',remainingMg:0}],
        doseLog:[],wasteLog:[],blendHistoryAttributions:[]};
      const dose={id:'qa-reconcile-dose',date:day+'T08:05:00',dose:2};
+     const otherKitDose={id:'qa-different-kit',date:day+'T09:05:00',dose:1,
+       allocations:[{kitId:'explicitly-another-kit',vialId:'not-this-vial',amount:1}]};
      state.supplies.push(kit);
-     state.customPeptides[name]={status:'active',doses:[dose]};
-     const original=JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     state.customPeptides[name]={status:'active',doses:[dose,otherKitDose]};
+     const original=JSON.stringify({doses:[dose,otherKitDose],physical:kit.vials,waste:kit.wasteLog});
      const begin=()=>{
        nxReconcileBlendHistory(name,()=>{});
        const from=document.querySelector('#nx-reconcile-from');
@@ -648,7 +650,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const cancelled=kit.blendHistoryAttributions.length===0;
      begin();document.querySelector('#ca-ok')?.click();
      const committed=kit.blendHistoryAttributions.length===1&&
-       nxBlendDoseAttribution(name,dose)?.items?.[0]?.mg===1.25;
+       nxBlendDoseAttribution(name,dose)?.items?.[0]?.mg===1.25&&
+       nxBlendDoseAttribution(name,otherKitDose)===null;
      begin();
      const overlap=!!document.querySelector('#nx-validation-message')&&
        kit.blendHistoryAttributions.length===1&&!document.querySelector('#ca-ok');
