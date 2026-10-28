@@ -919,3 +919,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 
 ## 2026-10-27 unreleased DS2 fix at 9436f41e: targeted Today dose chooser JS presentation-only inline style replacement, prompted by confirmed FAIL in nested CI #40623795341. Existing click action, localStorage and vial math unaffected. Current-head rerun #40623977189 pending; no merge/deployment.
+
+
+## 2026-10-27 unreleased v0.9.20-beta DS2 CTA current verification: source 9436f41e + test a1cf67c6, nested CI #40623977189 SUCCESS with 128 fictional route/action screenshots 320/390 dark/light and 0 capture/overflow errors; action-inventory inspected. Mobile regression #40623977210 SUCCESS; full build/artifact #40623977248 pending. Data/storage/vial calculations unchanged; draft PR #123 not merged or deployed. Full-app DEMO/LIVE ZIP, physical iPhone and all-depth action coverage incomplete.
