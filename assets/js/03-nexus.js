@@ -1211,11 +1211,12 @@ function classifyLegacyPremixedKit(kitId) {
 }
 function getBlendKitRemainingMg(kit) {
   if(kit.blendInventoryMode==="legacy-v2")return (kit.vials||[]).reduce((n,v)=>n+(["sealed","open","active"].includes(v.status)?Math.max(0,Number(v.remainingMg)||0):0),0);
-  const totalMg = (kit.totalVials||0) * (kit.vialMg||0);
+  const correctionMg=(kit.balanceCorrections||[]).filter(x=>x.status!=="reversed").reduce((n,x)=>n+(Number(x.mg)||0),0);
+  const totalMg = (kit.totalVials||0) * (kit.vialMg||0) + correctionMg;
   const totalUsedMg = (kit.doseLog||[]).reduce((a,d)=>a+(d.totalMgDrawn||0),0);
   const totalWasteMg = getKitActiveWasteMg(kit);
   const allVialsMarkedEmpty = (kit.totalVials||0)>0 && (kit.emptyVials||0)>=(kit.totalVials||0);
-  const emptyCapMg = Math.max(0, ((kit.totalVials||0)-(kit.emptyVials||0)) * (kit.vialMg||0));
+  const emptyCapMg = Math.max(0, ((kit.totalVials||0)-(kit.emptyVials||0)) * (kit.vialMg||0) + correctionMg);
   const ledgerRemMg = Math.max(0, totalMg-totalUsedMg-totalWasteMg);
   return allVialsMarkedEmpty ? 0 : Math.min(ledgerRemMg, emptyCapMg);
 }
@@ -1239,8 +1240,47 @@ function getBlendOpenVialRemainingMg(kit) {
     (w.vialId!=null ? String(w.vialId)===String(open.id) :
       (w.loggedAt ? new Date(w.loggedAt) : safeDate(w.date))>=safeDate(date)))
     .reduce((n,w)=>n+(Number(w.mg)||0),0);
+  const corrected=(kit.balanceCorrections||[]).filter(x=>x.status!=="reversed"&&String(x.vialId)===String(open.id))
+    .reduce((n,x)=>n+(Number(x.mg)||0),0);
   return Math.max(0,Math.min(getBlendKitRemainingMg(kit),
-    (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
+    (Number(open.vialMg)||Number(kit.vialMg)||0)+corrected-consumed-wasted));
+}
+
+// Balance correction: the vial physically held MORE of the existing blend than
+// originally estimated. No material is transferred, no sealed vial is consumed,
+// and no constituent-dose event is created. Original formulation is unchanged.
+function correctBlendOpenVialBalanceModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  const vial=kit&&getActiveVial(kit);
+  if(!vial||kit.kitStatus==="done"){showErrorBanner("Open a blend vial before correcting its remaining amount.");return;}
+  const before=getBlendOpenVialRemainingMg(kit);
+  const m=openModal('<h2 style="font-size:18px;margin:0 0 10px">Correct remaining blend amount</h2>'+
+    '<p style="font-size:13px;color:var(--t2);line-height:1.5">Found more material remaining than Nexus estimated? Record only the additional mg already in this vial. Nothing is physically added; the existing blend recipe and dose history stay unchanged.</p>'+
+    '<p style="font-size:12px;color:var(--t2)">Currently estimated: '+before.toFixed(3)+' mg</p>'+
+    '<label class="field-label" for="blend-correct-mg">ADDITIONAL MG FOUND</label>'+
+    '<input type="number" class="inp" id="blend-correct-mg" min="0.001" step="0.001" style="width:100%;margin-bottom:12px">'+
+    '<div style="display:flex;gap:8px"><button id="blend-correct-cancel" style="flex:1;min-height:48px">Cancel</button>'+
+    '<button id="blend-correct-review" class="btn-primary" style="flex:1;min-height:48px">Review correction</button></div>');
+  m.querySelector("#blend-correct-cancel").onclick=closeModal;
+  m.querySelector("#blend-correct-review").onclick=()=>{
+    const extra=Number(m.querySelector("#blend-correct-mg").value);
+    if(!Number.isFinite(extra)||extra<=0||extra>100000){showErrorBanner("Enter a valid positive correction in mg.");return;}
+    const vialId=vial.id;
+    closeModal();
+    confirmAction("Correct this open blend vial from "+before.toFixed(3)+" mg to approximately "+(before+extra).toFixed(3)+" mg? This does not log a dose or take material from a sealed vial.",()=>{
+      const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+      const open=current&&getActiveVial(current);
+      if(!open||String(open.id)!==String(vialId)||Math.abs(getBlendOpenVialRemainingMg(current)-before)>0.001){
+        showErrorBanner("The vial balance changed. No correction saved.");return;
+      }
+      current.balanceCorrections=current.balanceCorrections||[];
+      current.balanceCorrections.push({id:uid(),date:localDatetime(),vialId,mg:extra,
+        reason:"More blend remained in physical vial than previously estimated",status:"active"});
+      if(current.blendInventoryMode==="legacy-v2")
+        open.remainingMg=Math.round((Number(open.remainingMg||0)+extra)*1000)/1000;
+      saveState();render();
+    },{tone:"warning",confirmLabel:"Correct balance",cancelLabel:"Cancel"});
+  };
 }
 
 // Blend-specific outflow: one physical blended vial; never write ingredient doses.
