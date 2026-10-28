@@ -885,3 +885,7 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 v0.9.20-beta DRAFT verification checkpoint at code 1f9fda2b: GitHub Actions nested visual 40619363394 SUCCESS (112 screenshots: 28 states x 320/390 x dark/light), mobile 40619363338 SUCCESS. Semantic action variants match targeted DS2 roles; source unchanged for saved records, clinical math and storage by intended changes. Full build/parity 40619363343 pending at check; physical iPhone acceptance, complete nested flow inventory, LIVE/DEMO exact-source delivery and deployment NOT COMPLETE. PR #123 draft/unmerged, no production release.
+
+
+## 2026-10-27 — Unreleased DS2 QA-only update
+Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional Demo Mode fixture, reached-child-route checks and button semantic role/shading inventory. No app behaviour, storage schema, migration or production changes. Current-head CI/screenshots and full-app LIVE/DEMO independent deliverables PENDING; PR #123 unmerged/not deployed. 300mg requested dose against vial showing 10mg remains unresolved and blocks release acceptance.
