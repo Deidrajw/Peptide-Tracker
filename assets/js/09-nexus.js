@@ -838,16 +838,24 @@ function nxBlendDoseAttribution(name,dose) {
     const k=kits.find(x=>String(x.id)===String(a.kitId));
     const vial=k?.vials?.find(x=>String(x.id)===String(a.vialId));
     const composition=vial?.composition;
-    if(!k||!Array.isArray(composition)||composition.length<2)return null;
+    if(!k)return null;
     const amount=doseToMg(a.amount,cfg(name).unit);
-    segments.push({composition,amount,source:"vial snapshot"});
+    if(Array.isArray(composition)&&composition.length>=2){
+      segments.push({composition,amount,source:"vial snapshot"});
+    }else if(allocations.length===1){
+      const t=safeDate(dose.date).getTime();
+      const approved=(k.blendHistoryAttributions||[]).filter(x=>x.status==="confirmed"&&
+        t>=safeDate(x.from).getTime()&&t<=new Date(x.to+"T23:59:59").getTime());
+      if(approved.length!==1)return null;
+      segments.push({composition:approved[0].composition,amount,source:"user-confirmed historical recipe"});
+    }else return null;
   }
   if(!segments.length){
     // No unique physical source: allow interpretation only when exactly one approved
     // historical attribution covers this date for this named blend.
     const t=safeDate(dose.date).getTime();
     const matches=kits.flatMap(k=>(k.blendHistoryAttributions||[])
-      .filter(a=>a.status==="confirmed"&&t>=safeDate(a.from).getTime()&&t<=safeDate(a.to).getTime())
+      .filter(a=>a.status==="confirmed"&&t>=safeDate(a.from).getTime()&&t<=new Date(a.to+"T23:59:59").getTime())
       .map(a=>({composition:a.composition,amount:doseToMg(dose.dose,cfg(name).unit),source:"user-confirmed historical recipe"})));
     if(matches.length!==1)return null;
     segments.push(matches[0]);
