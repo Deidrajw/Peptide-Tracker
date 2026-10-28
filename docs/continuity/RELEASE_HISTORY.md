@@ -910,3 +910,6 @@ Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose r
 
 ## 2026-10-27 v0.9.20-beta draft-only focused DS2 action pass
 fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradients/colour; Protocol first-log card stacked/full-width action; 0445f6b0 renames CTA 'Log first dose' without routing change; bd6c374e adds Protocol screenshot route to localhost fictional QA. No schema, inventory math or saved data changes. CI, exact-source artifacts, real iPhone and deep nested state screenshots pending; draft PR #123 unmerged, not deployed.
+
+
+## 2026-10-27 DRAFT-only screen/button refinement: fb05e322, 5f0be242, 0445f6b0 style/label Protocol first-log and Stash/Reaction named CTA family; 3820d731/9c5f5c65 extend populated fictional screenshot assertions. CI 40623390625 screenshot PASS with 124 captures, mobile 40623390895 PASS; full build workflow 40623390612 pending at record. No storage/migration/math change, no approved release/merge/Cloudflare deploy, full-app demo/live packages not delivered.
