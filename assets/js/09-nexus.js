@@ -1019,7 +1019,8 @@ function nxTrendsDetail(name, kind="dose") {
       const paint=()=>{
         const d=current.doses.find(x=>String(x.id)===String(selectedDoseId));
         m.querySelector("#nx-blend-date-list").hidden=true;
-        selected.hidden=false;
+        m.querySelector("#nx-blend-date-list").style.display="none";
+        selected.hidden=false;selected.style.display="block";
         if(!d){selected.innerHTML='<div class="nx-chart-empty">No injections in this period.</div>';return;}
         const attributed=nxBlendDoseAttribution(name,d);
         selected.innerHTML='<button type="button" id="nx-blend-date-back" style="min-height:48px;background:transparent;border:0;color:var(--t1);text-align:left">‹ All injection dates</button><section class="nx-blend-injection-detail" style="border:1px solid var(--border);border-radius:14px;background:var(--surface-2);padding:16px">'+
@@ -1030,7 +1031,9 @@ function nxTrendsDetail(name, kind="dose") {
             '<p style="font-size:11px;color:var(--t3);line-height:1.45">Source: '+esc(attributed.provenance)+'</p>'
           :'<p style="font-size:12px;line-height:1.5;color:var(--t3)">Ingredient amounts are not yet attributed to this historical injection. Its original dose remains intact.</p>')+'</section>';
         selected.querySelector("#nx-blend-date-back")?.addEventListener("click",()=>{
-          selected.hidden=true;selected.innerHTML="";m.querySelector("#nx-blend-date-list").hidden=false;
+          selected.hidden=true;selected.style.display="none";selected.innerHTML="";
+          m.querySelector("#nx-blend-date-list").hidden=false;
+          m.querySelector("#nx-blend-date-list").style.display="";
         });
         selected.querySelectorAll(".nx-blend-ingredient-link").forEach(button=>button.onclick=()=>{
           const ingredient=button.dataset.ingredient;closeModal();
@@ -1038,7 +1041,7 @@ function nxTrendsDetail(name, kind="dose") {
         });
       };
       m.querySelectorAll(".nx-blend-dose-pick").forEach(b=>b.onclick=()=>{selectedDoseId=b.dataset.doseId;paint();});
-      selected.hidden=true;
+      selected.hidden=true;selected.style.display="none";
       const review=m.querySelector("#nx-blend-review-attributions");
       if(review)review.onclick=()=>{
         const items=confirmedHistory.map(({kit,entry},i)=>'<label style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-sub)"><input type="radio" name="nx-revoke-choice" value="'+i+'"><span>'+esc(entry.from)+' — '+esc(entry.to)+' · '+esc(kit.name)+'<small style="display:block;color:var(--t3)">Confirmed '+esc(entry.confirmedAt||'unknown date')+'</small></span></label>').join('');
