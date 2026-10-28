@@ -892,3 +892,6 @@ Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional
 
 
 ## 2026-10-27 QA-only draft: commits 8c78d9d8, ef61fbf0, aaaca022, d66fd3e1 add populated isolated demo fixture, button role inventory and actual-route assertions, with dedicated App Updates back-button support. No UI/data/clinical algorithm changes, no deployment. Current-head nested CI pending; full-app artifacts and inventory safety acceptance incomplete.
+
+
+## 2026-10-27 DS2 v0.9.20-beta candidate UNRELEASED: full build/parity QA 40619363343 SUCCESS at PR merge snapshot 387e32814bd4320d3313b8d8dc7e93079e0d573a corresponding to app code 1f9fda2b. Exact-source FULL_DEMO.html, OFFLINE DEMO ZIP, LIVE ZIP generated/validated via workflow artifact 12787100570. Mobile regression 40619363338 PASS; nested screenshots 40619363394 PASS 112 320/390 light/dark; Log Dose 8/8, vial safety 8/8, measurement math 80/80. User screenshot 300mg selected when visible vial 10mg remains unreproduced in this audit, no physical iPhone acceptance or production merge/deploy. CSS-only changes to button hierarchy, test/CI and docs; no intended data migration.
