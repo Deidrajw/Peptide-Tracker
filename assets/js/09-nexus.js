@@ -924,7 +924,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend, returnDoseId=null, r
     .filter(x=>x.date).sort((a,b)=>safeDate(b.date)-safeDate(a.date));
   const detail=openModal('<div class="nx-detail-head"><div><div class="nx-trends-eyebrow">Ingredient history</div><h2>'+esc(ingredient)+'</h2><p>Direct doses and estimated blend contributions are distinct.</p></div>'+
     '<button id="nx-ingredient-close" aria-label="Close ingredient history">✕</button></div>'+
-    '<div class="nx-detail-counts"><div><span>Direct records</span><strong>'+direct.length+'</strong></div>'+
+    '<div class="nx-detail-counts nx-ingredient-counts"><div><span>Direct records</span><strong>'+direct.length+'</strong></div>'+
     '<div><span>Blend contributions</span><strong>'+blendRows.length+'</strong></div></div>'+
     '<div class="nx-detail-subtitle">Recorded history</div><div class="nx-detail-rows">'+
     (rows.length?rows.slice(0,100).map(x=>'<div class="nx-detail-row"><time>'+esc(fmtDate(x.date))+'</time><div><b>'+esc(x.mg.toFixed(3))+' mg</b><small>'+esc(x.source==="Direct"?"Direct":"From blend · "+x.source)+'</small></div></div>').join(''):'<p class="nx-chart-empty">No attributable records yet.</p>')+
