@@ -1006,3 +1006,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — Draft What's New test correction and QA checkpoint
 - `599f1de8` test-only change separates Demo Mode suppression from eligible published-user scenario. On this exact application source: nested visual audit `40776200367` SUCCESS (208 captures/0 errors/overflow), mobile forms `40776200395` SUCCESS, hybrid preview browser `40776192105` SUCCESS; source validation and exact-source packaging steps already passed inside in-progress build run `40776200351`, full run and download validation pending. No storage migration, PR #123 remains draft/unmerged, production unchanged, physical iPhone/VoiceOver untested.
+
+## 2026-10-28 — What's New build failure and test correction, UNRELEASED
+- Exact app source `599f1de8`, build run `40776200351` FAIL at stale Plans release-notification test after source, release package, structure and preceding browser suites succeeded. Failed-run artifact #12854219443 may be inspected only as unapproved candidate. `68cf3356` test-only correction aligns `Later` with same-session suppression and future-session prompt; new CI not yet verified. No production merge/deploy, no user data/storage migration.
