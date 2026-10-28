@@ -921,6 +921,7 @@ function nxTrendsDetail(name, kind="dose") {
   const c=cfg(name), all=(compound.doses||[]).filter(d=>d.date&&Number.isFinite(safeDate(d.date).getTime()))
     .slice().sort((a,b)=>safeDate(b.date)-safeDate(a.date));
   const now=Date.now();
+  const isBlend=kind==="dose"&&(state.supplies||[]).some(k=>k.isBlend&&k.name===name);
   const m=openModal(`<div class="nx-detail-head">
     <div><div class="nx-trends-eyebrow">Recorded evidence</div>
     <h2>${esc(name)}</h2><p>${kind==="symptom"?"Symptom reports":"Dose history"} · Exact entries and period comparison</p></div>
@@ -928,12 +929,13 @@ function nxTrendsDetail(name, kind="dose") {
     <div class="nx-detail-filter" role="group" aria-label="Select observation period">
     ${[["30","30 days"],["90","90 days"],["180","180 days"],["all","All"]].map(([v,l])=>`<button type="button" data-range="${v}" aria-pressed="${v==="90"}">${l}</button>`).join("")}</div>
     <div id="nx-detail-body" aria-live="polite"></div>
+    ${isBlend?'<button type="button" id="nx-blend-reconcile" style="width:100%;margin-top:12px;min-height:48px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1)">Review historical blend attribution</button>':''}
     <button id="nx-detail-done" class="btn-primary" style="width:100%;margin-top:14px">Done</button>
   `,c.color||"#A78BFA");
   m.classList.add("nx-trends-detail-modal");
   m.querySelector("#nx-detail-close").onclick=closeModal;
   m.querySelector("#nx-detail-done").onclick=closeModal;
-  let range="90";
+  let range="90", selectedDoseId=null;
   const getStart=(days)=>days==="all"?-Infinity:now-Number(days)*86400000;
   const inRange=(d,low,high)=>{const t=safeDate(d.date).getTime();return t>=low&&t<high;};
   const symName=s=>typeof s==="string"?s:(s&&s.name)||"Unspecified";
@@ -963,12 +965,45 @@ function nxTrendsDetail(name, kind="dose") {
         <div><span>Observed days</span><strong>${current.days}</strong><small>days with dose or check-in records</small></div>
       </div>
       <div class="nx-detail-caution">Comparisons are counts of records, not normalized rates. Missing entries and differences in logging frequency can affect comparisons. A symptom report does not establish causation.</div>
-      <div class="nx-detail-subtitle">Exact recorded entries <span>${rows.length}${rows.length>80?" · first 80 shown":""}</span></div>
+      ${isBlend?`<div class="nx-detail-subtitle" style="font-size:17px">Recorded dose trend</div>
+      ${current.doses.length>1?escalationChart(current.doses,c):'<div class="nx-chart-empty">Add more dated injections to see the trend.</div>'}
+      <div class="nx-detail-subtitle" style="font-size:17px">Select an injection <span>${rows.length} records</span></div>
+      <div class="nx-blend-dose-picks" style="display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:thin">${current.doses.slice(0,80).map(d=>
+        '<button type="button" class="nx-blend-dose-pick" data-dose-id="'+esc(String(d.id))+'" aria-pressed="'+String(String(d.id)===String(selectedDoseId))+
+        '" style="min-width:105px;min-height:48px;flex-shrink:0;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);padding:8px">'+esc(fmtShort(d.date))+' · '+esc(String(d.dose))+' '+esc(c.unit||'mg')+'</button>').join('')}</div>
+      <div id="nx-blend-selected-dose" aria-live="polite"></div>
+      <div class="nx-detail-caution" style="margin-top:12px">Ingredient amounts are mathematical estimates from recorded recipes, not laboratory measurements or dosing recommendations.</div>`
+      :`<div class="nx-detail-subtitle">Exact recorded entries <span>${rows.length}${rows.length>80?" · first 80 shown":""}</span></div>
       ${safeRows.length?`<div class="nx-detail-rows">${safeRows.map(r=>`<div class="nx-detail-row">
         <time>${esc(fmtDate(r.date))}</time><div><b>${esc(r.detail)}</b><small>${esc(r.note)}</small></div>
       </div>`).join("")}</div>`:`<div class="nx-chart-empty">No ${label} in this period.</div>`}
-      ${kind==="dose"&&current.doses.length>1?`<div class="nx-detail-subtitle">Recorded dose timeline</div>${escalationChart(current.doses,c)}`:""}
+      ${kind==="dose"&&current.doses.length>1?`<div class="nx-detail-subtitle">Recorded dose timeline</div>${escalationChart(current.doses,c)}`:""}`}
       <div class="nx-chart-note">All values are from saved records. This view does not calculate treatment effects, safety, or dosing readiness.</div>`;
+    if(isBlend){
+      if(!current.doses.some(d=>String(d.id)===String(selectedDoseId)))selectedDoseId=current.doses[0]?.id||null;
+      const selected=m.querySelector("#nx-blend-selected-dose");
+      const paint=()=>{
+        const d=current.doses.find(x=>String(x.id)===String(selectedDoseId));
+        m.querySelectorAll(".nx-blend-dose-pick").forEach(b=>{
+          const active=b.dataset.doseId===String(selectedDoseId);
+          b.setAttribute("aria-pressed",String(active));b.style.borderColor=active?"#b795ec":"var(--border)";
+          b.style.background=active?"var(--surface-3)":"var(--surface-2)";
+        });
+        if(!d){selected.innerHTML='<div class="nx-chart-empty">No injections in this period.</div>';return;}
+        const attributed=nxBlendDoseAttribution(name,d);
+        selected.innerHTML='<section class="nx-blend-injection-detail" style="border:1px solid var(--border);border-radius:14px;background:var(--surface-2);padding:16px">'+
+          '<div style="font-size:12px;color:var(--t3)">Selected injection · '+esc(fmtDate(d.date))+'</div>'+
+          '<h3 style="margin:7px 0 14px;font-size:22px;color:var(--t1)">'+esc(String(d.dose))+' '+esc(c.unit||'mg')+'</h3>'+
+          (attributed?'<div style="font-size:13px;font-weight:700;margin-bottom:8px">Estimated ingredient amounts</div>'+
+            attributed.items.map(x=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--border-sub)"><span>'+esc(x.name)+'</span><strong>'+x.mg.toFixed(3)+' mg</strong></div>').join('')+
+            '<p style="font-size:11px;color:var(--t3);line-height:1.45">Source: '+esc(attributed.provenance)+'</p>'
+          :'<p style="font-size:12px;line-height:1.5;color:var(--t3)">Ingredient amounts are not yet attributed to this historical injection. Its original dose remains intact.</p>')+'</section>';
+      };
+      m.querySelectorAll(".nx-blend-dose-pick").forEach(b=>b.onclick=()=>{selectedDoseId=b.dataset.doseId;paint();});
+      paint();
+      const reconcile=m.querySelector("#nx-blend-reconcile");
+      if(reconcile)reconcile.onclick=()=>nxReconcileBlendHistory(name,()=>{closeModal();nxTrendsDetail(name,"dose");});
+    }
   };
   m.querySelectorAll("[data-range]").forEach(b=>b.onclick=()=>{range=b.dataset.range;show();});
   show();
