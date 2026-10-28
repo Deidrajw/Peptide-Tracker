@@ -1295,3 +1295,6 @@ Downloaded GitHub Actions artifact 12785791789 from run 40617435379 (92 PNGs and
 
 
 ## 2026-10-27 expanded nested QA correction: first 116-case audit 40618782970 FAILED ONLY four Settings Import cases; source shows #nx-import-open triggers native file input click, not a DOM sheet. Excluded from screenshot-only modal requirement (1d1d9679). 112-case audit 40619001108 SUCCESS; none of these click any save/delete/restore. Additional semantic assert a00109b2 for primary CTA colours #C6A6F2 and informational Done neutral; latest run pending. Physical iPhone and actual allocation test Not Tested.
+
+
+## 2026-10-27 EXPANDED NESTED PASS (LIMITED): run 40619363394 succeeded; 112 rendered screenshot captures and computed button checks, 0 capture errors/horizontal overflow, expected primary lavender and neutral informational Done in 320/390 dark/light. Mobile run 40619363338 SUCCESS. This only tests route states and 5 safe opener dialogs; 300mg selected against 10mg remaining, save/rollback/vial ledger, populated Quick/Guided/Review, native import, destructive confirmation, keyboard/back interactions and real iPhone remain NOT TESTED. Do not equate with global DS2 acceptance.
