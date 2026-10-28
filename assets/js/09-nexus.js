@@ -918,7 +918,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend) {
     '</div><div style="display:flex;gap:10px;margin-top:14px"><button id="nx-ingredient-back" style="flex:1;min-height:48px">Back to blend</button><button id="nx-ingredient-intel" class="btn-primary" style="flex:1;min-height:48px">Compound Intel ›</button></div>');
   detail.classList.add("nx-trends-detail-modal");
   detail.querySelector("#nx-ingredient-close").onclick=closeModal;
-  detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();nxTrendsDetail(returnBlend,"dose");};
+  detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();if(returnBlend)nxTrendsDetail(returnBlend,"dose");else{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);}};
   detail.querySelector("#nx-ingredient-intel").onclick=()=>{
     closeModal();state._intelReturn={tab:"trends"};state._compoundIntel=ingredient;tab="trends";render();window.scrollTo(0,0);
   };
