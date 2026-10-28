@@ -116,3 +116,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 
 ## 2026-10-27 QA FINDING: first nested screenshot workflow 40617435379 completed SUCCESS with 92 screenshots/4 viewport-theme pairs and zero script errors/overflow, but inspected contact sheet revealed ONBOARDING OVERLAY obscuring most pages! Thus NESTED VISUAL VALIDATION FAIL/INVALID; 'PASS' is runner-only, not screen QA. Fixed isolated fixture script at 48e3293b to mark onboarding complete and close overlay before captures; new workflow 40617673780 queued at check. Re-inspect actual screenshot images and computed button variants before marking any child PASS. The first evidence zip contains 92 images but must NOT be considered screen acceptance.
+
+
+## 2026-10-27 source and computed style audit: Settings data-removal actions (#del-*) previously used neutral surface identical in family to standard navigation while #nuke-data used danger. Commit 49271c54 now gives individual data deletion a restrained danger treatment and full wipe stronger danger treatment in both themes; no handler/storage changes. Source justification: different consequences deserve distinct visual semantics. Await corrected overlay-free route screenshots and full current-head CI; physical iPhone and all modal descendants NOT TESTED.
