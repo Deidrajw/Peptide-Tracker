@@ -219,10 +219,17 @@ function trendsView() {
   // from today's editable kit composition.
   const blendKits=(state.supplies||[]).filter(k=>k.isBlend);
   if(blendKits.length){
+    const blendDays=Number(state._blendTrendDays)||0;
+    const blendMode=state._blendTrendMode==="administered"?"administered":"all";
+    const cutoff=blendDays>0?Date.now()-blendDays*86400000:0;
     const blendCards=blendKits.map(kit=>{
       const recipe=(kit.composition||[]).filter(c=>c.compound&&Number(c.mg)>0);
       const recipeTotal=recipe.reduce((n,c)=>n+Number(c.mg),0);
-      const physicalEntries=(kit.doseLog||[]).filter(d=>Number(d.totalMgDrawn)>0 && d.kind!=='reversed');
+      const physicalEntries=(kit.doseLog||[]).filter(d=>
+        Number(d.totalMgDrawn)>0 && d.kind!=='reversed' &&
+        (!cutoff || (Date.parse(d.date)||0)>=cutoff) &&
+        (blendMode!=='administered'||d.kind==='administered')
+      );
       const physicalMg=physicalEntries.reduce((n,d)=>n+Number(d.totalMgDrawn),0);
       // Vial snapshots may be missing in older kit schemas. Show only totals that
       // are explicitly attributable, and never backfill with a revised recipe.
@@ -262,7 +269,9 @@ function trendsView() {
     }).join('');
     html+='<section id="nx-blend-analytics" aria-label="Blend composition and recorded totals" style="margin-top:24px">'+
       '<div class="nx-trends-section-caption">Blends</div><h3 style="font-size:18px;color:var(--t1);margin:7px 0">Blend composition &amp; history</h3>'+
-      '<p style="font-size:12px;color:var(--t3);line-height:1.5">One physical blend dose stays one dose. Ingredient contributions will be reported only when historical vial proportions can be verified.</p>'+
+      '<p style="font-size:12px;color:var(--t3);line-height:1.5">One physical blend dose stays one dose. Estimates use locked physical-vial composition, not current recipes applied retrospectively.</p>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px"><label style="font-size:12px;color:var(--t2)">Period <select id="nx-blend-period" aria-label="Blend analytics period" class="inp" style="min-height:44px;margin-top:5px"><option value="0"'+(!blendDays?' selected':'')+'>All time</option><option value="7"'+(blendDays===7?' selected':'')+'>7 days</option><option value="30"'+(blendDays===30?' selected':'')+'>30 days</option><option value="90"'+(blendDays===90?' selected':'')+'>90 days</option></select></label>'+
+      '<label style="font-size:12px;color:var(--t2)">Record type <select id="nx-blend-mode" aria-label="Blend analytics record type" class="inp" style="min-height:44px;margin-top:5px"><option value="all"'+(blendMode==='all'?' selected':'')+'>All physical draws</option><option value="administered"'+(blendMode==='administered'?' selected':'')+'>Administered only</option></select></label></div>'+
       blendCards+'</section>';
   }
 
