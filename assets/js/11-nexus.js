@@ -1621,7 +1621,7 @@ function protocolsView() {
       ${timelinePct!==null?`<div class="nx-proto-compact-track" role="progressbar" aria-label="Planned protocol timeline elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${timelinePct}"><span style="width:${timelinePct}%"></span></div>`:""}
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
         <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
-        <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">+ Log dose</button>
+        <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">Log first dose</button>
       </div>`:""}
       ${(p.status==="draft"||p.status==="planned")?`<button class="proto-activate" data-id="${p.id}" style="width:100%;margin-top:10px;padding:10px;border-radius:9px;background:#A78BFA;color:#fff;font-size:12px;font-weight:700">▶ Activate</button>`:""}
     </div>`;
