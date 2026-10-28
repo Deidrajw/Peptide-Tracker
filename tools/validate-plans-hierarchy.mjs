@@ -79,7 +79,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
 
  // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
  const releaseContrast=await page.evaluate(()=>{
-   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
+   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key),originalIsDemoMode=isDemoMode;
    const luminance=(str)=>{
      const raw=str.match(/[0-9.]+/g)||[];
      if(raw.length<3)return null;
@@ -88,7 +88,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    };
    const ratio=(a,b)=>{let x=luminance(a),y=luminance(b);return x===null||y===null?0:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
    try{
-     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);showPublishedReleaseModal();
+     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
+     isDemoMode=()=>false; // fictional eligible user for accessibility geometry test
+     sessionStorage.removeItem(NEXUS_RELEASE_LATER_KEY);
+     showPublishedReleaseModal();
      return ['#nx-release-later','#nx-release-dismiss'].map(sel=>{
        const el=document.querySelector(sel),cs=el&&getComputedStyle(el),rect=el&&el.getBoundingClientRect();
        const bg=cs?.backgroundColor,fg=cs?.color;
@@ -96,6 +99,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
      });
    } finally {
      NEXUS_RELEASE.publicationStatus=old;
+     isDemoMode=originalIsDemoMode;
      if(seen===null)localStorage.removeItem(key);else localStorage.setItem(key,seen);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
    }
