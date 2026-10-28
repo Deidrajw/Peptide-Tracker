@@ -52,3 +52,6 @@ User supplied 10 screenshots of CTAs: Add to Stash, kit wizard Continue, dose Co
 
 
 ## 2026-10-27 screenshot CTA closure: found inline #A78BFA!important on #today-dose-single 'Continue to dose log' in 04-nexus.js, overridden to canonical solid #C6A6F2 (CSS f238e6d2). Stash final Add to Stash stage tested with fictional fields and no save; 40623724305 SUCCESS, 4/4 320/390 dark/light screenshots show #ssave solid rgb(198,166,242), 13px radius/no shadow. Primary semantic assertions expanded in script a1cf67c6 for chooser, Protocol first log, Reaction Save, Stash final Save. Most recent audit 40623795341 pending at checkpoint. Existing dose math/data unchanged.
+
+
+## 2026-10-27 PRIMARY SHADE DEFECT CONFIRMED and corrected: script a1cf67c6 flagged Today's first dose chooser #today-dose-single at rgb(167,139,250) in 320/390 both themes, while semantic primary requires rgb(198,166,242). CSS override alone had not changed it due inline !important in assets/js/04-nexus.js. Corrected original markup at 9436f41e with background #C6A6F2, dark text, transparent border, no gradient/shadow, 13px radius. Run 40623977189 pending, do not call this PASS before new result.
