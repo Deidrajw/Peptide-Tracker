@@ -379,6 +379,34 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'blend-outflow-cancel',width,theme,overflow:false,buttons:[],error:null,fixture:result});
  }catch(err){evidence.push({screen:'blend-outflow-cancel',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>closeModal());}
+ // Isolated blend balance correction: use a local fictional kit, never call Save.
+ try {
+   const test=await page.evaluate(()=>{
+     closeModal();
+     const id='ds2-balance-fixture';
+     const kit={id,name:'Fictional Balance Blend',isBlend:true,kitStatus:null,
+       vialMg:10,totalVials:1,openedVials:1,emptyVials:0,activeKit:true,
+       reconDate:localDatetime(),composition:[{compound:'A',mg:7},{compound:'B',mg:3}],
+       vials:[{id:'ds2-balance-vial',status:'open',vialMg:10,remainingMg:10,reconDate:localDatetime(),composition:[{compound:'A',mg:7},{compound:'B',mg:3}]}],
+       doseLog:[],wasteLog:[],balanceCorrections:[]};
+     state.supplies.push(kit);
+     const initial=getBlendOpenVialRemainingMg(kit);
+     kit.balanceCorrections.push({id:'ds2-correction',vialId:'ds2-balance-vial',mg:2,status:'active'});
+     const after=getBlendOpenVialRemainingMg(kit);
+     const total=getBlendKitRemainingMg(kit);
+     kit.doseLog.push({id:'ds2-draw',vialId:'ds2-balance-vial',date:localDatetime(),totalMgDrawn:3,kind:'administered'});
+     const drawn=getBlendOpenVialRemainingMg(kit);
+     const recipe=JSON.stringify(kit.vials[0].composition);
+     kit.balanceCorrections[0].status='reversed';
+     const reversed=getBlendOpenVialRemainingMg(kit);
+     state.supplies=state.supplies.filter(k=>k.id!==id);
+     return {initial,after,total,drawn,reversed,recipe};
+   });
+   if(Math.abs(test.initial-10)>.001||Math.abs(test.after-12)>.001||Math.abs(test.total-12)>.001||
+      Math.abs(test.drawn-9)>.001||Math.abs(test.reversed-7)>.001||!test.recipe.includes('A'))
+      throw Error('Blend correction math/reversal check failed: '+JSON.stringify(test));
+   evidence.push({screen:'blend-correct-balance-math',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-correct-balance-math',width,theme,overflow:false,buttons:[],error:String(err)});}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
