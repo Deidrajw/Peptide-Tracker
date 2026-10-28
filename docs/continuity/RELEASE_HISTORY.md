@@ -889,3 +889,6 @@ Source review found original non-blend Save path validates plan totals and avail
 
 ## 2026-10-27 — Unreleased DS2 QA-only update
 Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional Demo Mode fixture, reached-child-route checks and button semantic role/shading inventory. No app behaviour, storage schema, migration or production changes. Current-head CI/screenshots and full-app LIVE/DEMO independent deliverables PENDING; PR #123 unmerged/not deployed. 300mg requested dose against vial showing 10mg remains unresolved and blocks release acceptance.
+
+
+## 2026-10-27 QA-only draft: commits 8c78d9d8, ef61fbf0, aaaca022, d66fd3e1 add populated isolated demo fixture, button role inventory and actual-route assertions, with dedicated App Updates back-button support. No UI/data/clinical algorithm changes, no deployment. Current-head nested CI pending; full-app artifacts and inventory safety acceptance incomplete.
