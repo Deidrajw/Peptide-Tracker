@@ -680,6 +680,49 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    state.supplies=state.supplies.filter(k=>k.id!=='qa-reconcile-ui-kit');
    delete state.customPeptides['QA Legacy Conversion Blend'];
  });}
+ // Actual Stash legacy-to-blend classification: cancel, confirm, unchanged
+ // recorded administrations, outflow history, physical vial balance.
+ try{
+   const conversion=await page.evaluate(()=>{
+     closeModal();
+     const id='qa-legacy-convert',name='QA Legacy To Blend';
+     const kit={id,name,isBlend:false,vialMg:80,totalVials:1,openedVials:1,
+       emptyVials:0,activeKit:true,reconDate:localDatetime(),
+       vials:[{id:'qa-convert-vial',status:'open',vialMg:80,remainingMg:40,
+         reconDate:localDatetime(),sequenceNumber:1}],
+       doseLog:[],wasteLog:[{id:'qa-convert-waste',mg:1,vialId:'qa-convert-vial'}]};
+     const dose={id:'qa-convert-dose',dose:2,date:localDatetime(),
+       allocations:[{kitId:id,vialId:'qa-convert-vial',amount:2}]};
+     state.supplies.push(kit);state.customPeptides[name]={status:'active',doses:[dose]};
+     const before=JSON.stringify({dose,kitDoseLog:kit.doseLog,waste:kit.wasteLog,
+       vialBalance:kit.vials[0].remainingMg});
+     const recipe='GHK-Cu: 50\\nKPV: 10\\nTB-500: 10\\nBPC-157: 10';
+     const review=()=>{
+       classifyLegacyPremixedKit(id);
+       const field=document.querySelector('#legacy-blend-components');
+       if(!field)throw Error('Legacy classification sheet missing');
+       field.value=recipe;document.querySelector('#legacy-blend-confirm').click();
+       if(!document.querySelector('#ca-ok'))throw Error('Classification confirmation missing');
+     };
+     review();document.querySelector('#ca-cancel').click();
+     const cancelled=!kit.isBlend;
+     review();document.querySelector('#ca-ok').click();
+     const converted=kit.isBlend===true&&kit.blendInventoryMode==='legacy-v2'&&
+       kit.composition.length===4&&kit.composition.reduce((n,v)=>n+v.mg,0)===80;
+     const preserved=before===JSON.stringify({dose,kitDoseLog:kit.doseLog,waste:kit.wasteLog,
+       vialBalance:kit.vials[0].remainingMg});
+     closeModal();state.supplies=state.supplies.filter(x=>x.id!==id);
+     delete state.customPeptides[name];
+     return {cancelled,converted,preserved};
+   });
+   if(!conversion.cancelled||!conversion.converted||!conversion.preserved)
+     throw Error('Actual legacy kit conversion safety mismatch '+JSON.stringify(conversion));
+   evidence.push({screen:'legacy-kit-classification-cancel-confirm-preserve',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'legacy-kit-classification-cancel-confirm-preserve',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{
+   closeModal();state.supplies=state.supplies.filter(k=>k.id!=='qa-legacy-convert');
+   delete state.customPeptides['QA Legacy To Blend'];
+ });}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
