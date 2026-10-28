@@ -56,3 +56,6 @@ Map actual navigation destinations and mark each child surface by exact route + 
 
 
 ## 2026-10-27: CSS 9ed589e6 adds shared Nexus Learn/Explore/Journal card, accordion, input, and More panel styling plus Settings child card/control refinements. CODED, not visually accepted. Earlier bd26e3d6 browser 40614785248 PASS, mobile 40614785307 PASS. Current-head visual screenshots, hidden child routes and physical iPhone NOT TESTED. Global accessibility/typography/forms/scroll/navigation/motion LAST.
+
+
+## 2026-10-27 DS2 child-surface candidate: fdc1d608 styles Nexus Journal filters/cards, Explore feature rows, Insights tab controls and Settings unit, health import, backup, data management and developer controls. 81adc534 styles actual More bottom destination sheet and standalone Learn route. Nexus uses Ask/Journal/Learn/Explore under amino and More contains Trends, Plans, Nexus and Profile & Settings. CODED / NEEDS CHECK; not user-accepted. Source discovered older _aminoSub=insights maps to Ask, and some Explore links point there; functional/navigation review deferred, not silently changed. Existing accepted Calendar/Plans/Supplies stay protected, global audit LAST.
