@@ -573,7 +573,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  try{
    const x=await page.evaluate(()=>{
      closeModal();const name='Reconciliation QA Blend',id='reconcile-qa-kit';
-     const dose={id:'reconcile-qa-dose',date:localDatetime(),dose:2};
+     const dose={id:'reconcile-qa-dose',date:realLocalDate()+'T08:15:00',dose:2};
      const kit={id,name,isBlend:true,vialMg:80,composition:[
        {compound:'GHK-Cu',mg:50},{compound:'KPV',mg:10},
        {compound:'TB-500',mg:10},{compound:'BPC-157',mg:10}],
