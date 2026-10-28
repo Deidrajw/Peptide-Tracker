@@ -144,8 +144,8 @@ function trendsView() {
   // Exploratory comparisons belong to Trends, not to an individual compound.
   html+=`<section class="nx-pe-entry" aria-label="Pattern Explorer"><div class="nx-trends-eyebrow">Optional exploration</div>
     <h3>Pattern Explorer</h3><p>Explore supplement check-ins or symptom timing using exact dated records and clear data-coverage limits.</p>
-    <div class="nx-pe-actions"><button type="button" id="nx-open-pattern">Supplement patterns →</button>
-    <button type="button" id="nx-open-symptom-timing">Symptom timing →</button></div></section>`;
+    <div class="nx-pe-actions"><button type="button" id="nx-open-pattern"><span>Supplement patterns</span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    <button type="button" id="nx-open-symptom-timing"><span>Symptom timing</span><svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div></section>`;
 
   // Per-compound sections
   const startedPeps=Object.entries(aps).filter(([,d])=>(d.doses||[]).length>0);
@@ -215,7 +215,7 @@ function trendsView() {
         <div class="nx-compound-caption">First logged ${first?fmtDate(first.date):'—'} · Last logged ${last?fmtDate(last.date):'—'}</div>
       </div>
       <details class="nx-compound-details"><summary>Observations ${enoughObservations?'':'· Limited records'}</summary><div class="nx-compound-details-body">
-        ${enoughObservations?`<button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="symptom">Explore symptom records &amp; compare periods <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;margin-left:8px"><path d="m9 18 6-6-6-6"/></svg></button>`+sub('syms','Recorded symptom frequency',sideEffectsSection(name,doses)):`<div class="nx-compound-caption">Symptom comparisons are hidden until at least three dated symptom observations are recorded. This does not establish causation.</div>`}
+        ${enoughObservations?`<button type="button" class="nx-trends-open-detail" data-name="${nameId}" data-kind="symptom">Explore symptom records &amp; compare periods <svg class="nx-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>`+sub('syms','Recorded symptom frequency',sideEffectsSection(name,doses)):`<div class="nx-compound-caption">Symptom comparisons are hidden until at least three dated symptom observations are recorded. This does not establish causation.</div>`}
         ${siteRecorded?sub('sites','Recorded injection sites',siteTrackerSection(name,doses)):''}
         ${!siteRecorded&&isInjection?`<div class="nx-compound-caption">No injection sites have been recorded for this compound.</div>`:''}
         ${changes?`<div class="nx-compound-caption">${changes} recorded dose amount change${changes===1?'':'s'}. This history does not indicate whether a change is appropriate or safe.</div>`:''}
