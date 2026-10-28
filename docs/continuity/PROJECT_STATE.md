@@ -1756,3 +1756,6 @@ User approved vertical phase timeline. Implemented roadmap markup at `e87e984b` 
 
 
 ## 2026-10-27: New DS2 child-surface CSS 9ed589e6 on draft PR #123 for Nexus Learn/Explore/Journal, More panels and Settings detail shared surfaces. Prior bd26e3d6 browser 40614785248 and mobile 40614785307 PASS. Current-head CI and visual inspection pending; no merge or deployment. NEXT ACTION: review 320/390 light/dark screenshots of new head and map remaining More child routes. Full-app DEMO and LIVE ZIP new-head delivery INCOMPLETE.
+
+
+## 2026-10-27 ACTIVE DS2 CHILD SURFACE CHECKPOINT: verified bd26e3d6 browser run 40614785248 SUCCESS and mobile 40614785307 SUCCESS. New fdc1d608 scoped Journal/Explore/Settings detail CSS and 81adc534 More sheet/standalone Learn CSS are on draft PR #123. New-head tests/artifact parity, 320/390 rendered review, physical Safari/VoiceOver NOT YET VERIFIED. No JS state/storage/data changes intended. Main compared SHA c1c95e1d, branch ahead. roadmap index preserved and accepted Calendar/Plans/Supplies untouched. ONE NEXT ACTION: inspect current-head browser/mobile QA and screenshots for Learn/Explore/Settings/More, resolve failures, then continue any remaining nested dialogs before global last-pass a11y/type/forms/scroll/nav/motion. Do not merge/deploy.
