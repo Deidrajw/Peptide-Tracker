@@ -237,7 +237,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  }catch(err){evidence.push({screen:'blend-populated-visual',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>{
    closeModal();state.supplies=state.supplies.filter(k=>k.id!=='ds2-visual-blend');
-   state._blendTrendDays=0;state._blendTrendMode='all';render();
+   state._nxHistorySelected=null;tab='trends';state._blendTrendDays=0;state._blendTrendMode='all';render();
  });}
  
  // Protocol first-log CTA is conditional on fictional protocol status and dose history.
