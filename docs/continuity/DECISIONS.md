@@ -777,3 +777,6 @@ User asks to retain potential swipe left/right contextual actions (including swi
 
 
 ## 2026-10-27 UX consistency refinement: Initial Dose chooser Continue/Combo and Quick/Guided Continue/Confirm/Back must share consistent semantic action colours; scoped CSS d7a45b4b and afced369 provide proposal, pending screenshot and iPhone acceptance. Automated button inventory CI added a08f62f9 to reveal deviations before approving broader tokens. No assumption that a blue/purple shade difference indicates functionality unless documented.
+
+
+## 2026-10-27 DS2 button visual proof: the same semantic primary fill #C6A6F2 is now applied to Today Log dose, Plans Add Goal, Stash Add Kit and Supplements Add; Log Dose chooser/step primary family aligned. Danger family differentiates destructive Settings actions from neutral navigation; full reset gets stronger red. Separate visual/semantic classification justified. Evidence 40618241161 computed styles and screenshots; native device acceptance pending. Keep nested modal confirmation and inventory validation separate from button visual proof.
