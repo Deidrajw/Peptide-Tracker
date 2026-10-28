@@ -618,6 +618,65 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      throw Error('Historical attribution and reversal mismatch '+JSON.stringify(x));
    evidence.push({screen:'blend-historical-reconciliation-and-reversal',width,theme,overflow:false,buttons:[],error:null});
  }catch(e){evidence.push({screen:'blend-historical-reconciliation-and-reversal',width,theme,overflow:false,buttons:[],error:String(e)});}
+ // Reconciliation UI: cancel, apply, overlap rejection, and reverse. Fictional only.
+ try{
+   const x=await page.evaluate(()=>{
+     closeModal();
+     const id='qa-reconcile-ui-kit',name='QA Legacy Conversion Blend',day=realLocalDate();
+     const kit={id,name,isBlend:true,vialMg:80,composition:[
+       {compound:'GHK-Cu',mg:50},{compound:'KPV',mg:10},
+       {compound:'TB-500',mg:10},{compound:'BPC-157',mg:10}],
+       vials:[{id:'qa-old-vial',status:'finished',remainingMg:0}],
+       doseLog:[],wasteLog:[],blendHistoryAttributions:[]};
+     const dose={id:'qa-reconcile-dose',date:day+'T08:05:00',dose:2};
+     state.supplies.push(kit);
+     state.customPeptides[name]={status:'active',doses:[dose]};
+     const original=JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     const begin=()=>{
+       nxReconcileBlendHistory(name,()=>{});
+       const from=document.querySelector('#nx-reconcile-from');
+       const to=document.querySelector('#nx-reconcile-to');
+       from.value=day;to.value=day;
+       from.dispatchEvent(new Event('change'));to.dispatchEvent(new Event('change'));
+       if(!document.querySelector('#nx-reconcile-preview')?.textContent.includes('1 recorded doses'))
+         throw Error('Morning injection missing from reconciliation preview');
+       document.querySelector('#nx-reconcile-save').click();
+     };
+     begin();
+     if(!document.querySelector('#ca-cancel'))throw Error('Confirmation missing');
+     document.querySelector('#ca-cancel').click();
+     const cancelled=kit.blendHistoryAttributions.length===0;
+     begin();document.querySelector('#ca-ok')?.click();
+     const committed=kit.blendHistoryAttributions.length===1&&
+       nxBlendDoseAttribution(name,dose)?.items?.[0]?.mg===1.25;
+     begin();
+     const overlap=!!document.querySelector('#nx-validation-message')&&
+       kit.blendHistoryAttributions.length===1&&!document.querySelector('#ca-ok');
+     closeModal();document.querySelector('#nx-validation-message')?.remove();
+     nxTrendsDetail(name,'dose');
+     const review=document.querySelector('#nx-blend-review-attributions');
+     if(!review)throw Error('Audit review entry missing');
+     review.click();
+     const choice=document.querySelector('input[name="nx-revoke-choice"]');
+     if(!choice)throw Error('Reversal choice missing');
+     choice.checked=true;document.querySelector('#nx-audit-reverse').click();
+     document.querySelector('#ca-ok')?.click();
+     const reversed=kit.blendHistoryAttributions[0].status==='reversed'&&
+       nxBlendDoseAttribution(name,dose)===null;
+     const preserved=original===JSON.stringify({dose,physical:kit.vials,waste:kit.wasteLog});
+     closeModal();document.querySelector('#nx-validation-message')?.remove();
+     state.supplies=state.supplies.filter(k=>k.id!==id);
+     delete state.customPeptides[name];
+     return {cancelled,committed,overlap,reversed,preserved};
+   });
+   if(Object.values(x).some(v=>!v))throw Error('Historical reconciliation UI integrity mismatch '+JSON.stringify(x));
+   evidence.push({screen:'blend-reconciliation-confirm-cancel-overlap-reverse',width,theme,overflow:false,buttons:[],error:null});
+ }catch(err){evidence.push({screen:'blend-reconciliation-confirm-cancel-overlap-reverse',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{
+   closeModal();document.querySelector('#nx-validation-message')?.remove();
+   state.supplies=state.supplies.filter(k=>k.id!=='qa-reconcile-ui-kit');
+   delete state.customPeptides['QA Legacy Conversion Blend'];
+ });}
  await context.close();
 }
 // Semantic classification is deliberately conservative: an unfamiliar label is
