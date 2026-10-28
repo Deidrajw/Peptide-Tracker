@@ -1437,7 +1437,7 @@ function showOnboarding() {
 const NEXUS_SEEN_RELEASE_KEY = STORE_KEY + '-last-seen-published-release-v1';
 const NEXUS_RELEASE_LATER_KEY = STORE_KEY + '-deferred-published-release-session-v1';
 function nxReleaseParts(value) {
-  const match=String(value||'').match(/^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:-([a-z]+))?/i);
+  const match=String(value||'').match(/^v?(\d+)\\.(\d+)\\.(\d+)(?:-([a-z]+))?/i);
   if(!match)return null;
   return [Number(match[1]),Number(match[2]),Number(match[3]),match[4]||''];
 }
