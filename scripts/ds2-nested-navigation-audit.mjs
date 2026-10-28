@@ -135,6 +135,30 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
 }
 await fs.writeFile(path.join(out,'action-inventory.json'),JSON.stringify({source:origin,generated:new Date().toISOString(),evidence},null,2));
 await browser.close();
+
+const expectedPrimary='rgb(198, 166, 242)';
+const primaryActions=[
+ ['today','today-log-dose'],['plans','add-goal'],
+ ['stash','qa-addkit'],['supplements','add-supp'],
+ ['stash-add-kit','nx-kit-next']
+];
+const semanticFailures=[];
+for(const width of [320,390])for(const theme of ['light','dark']){
+ for(const [screen,id] of primaryActions){
+  const entry=evidence.find(x=>x.screen===screen&&x.width===width&&x.theme===theme);
+  const button=entry?.buttons.find(x=>x.id===id);
+  if(!button)semanticFailures.push(`${width}/${theme} ${screen}: missing ${id}`);
+  else if(button.background!==expectedPrimary)semanticFailures.push(`${width}/${theme} ${screen}: ${id} fill ${button.background} != ${expectedPrimary}`);
+ }
+ for(const screen of ['trends-pattern-sheet','trends-symptom-sheet']){
+  const entry=evidence.find(x=>x.screen===screen&&x.width===width&&x.theme===theme);
+  const id=screen==='trends-pattern-sheet'?'nx-pe-done':'nx-st-done';
+  const button=entry?.buttons.find(x=>x.id===id);
+  if(!button)semanticFailures.push(`${width}/${theme} ${screen}: missing ${id}`);
+  else if(button.background===expectedPrimary)semanticFailures.push(`${width}/${theme} ${screen}: informational Done incorrectly has primary fill`);
+ }
+}
+
 const failures=evidence.filter(x=>x.error||x.overflow);
 console.log(`Captured ${evidence.length} deep-route screenshots; errors/overflow ${failures.length}; evidence: ${out}`);
-if(failures.length){console.error(failures.map(x=>[x.screen,x.width,x.theme,x.error||'overflow']));process.exitCode=1;}
+if(semanticFailures.length){console.error('Semantic action hierarchy failures:',semanticFailures);process.exitCode=1;}\nif(failures.length){console.error(failures.map(x=>[x.screen,x.width,x.theme,x.error||'overflow']));process.exitCode=1;}
