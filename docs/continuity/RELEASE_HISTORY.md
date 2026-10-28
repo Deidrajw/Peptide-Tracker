@@ -899,3 +899,6 @@ Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional
 
 ## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
 Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
+
+
+## 2026-10-27 unreleased QA-only: targeted fictitious one-vial Log Dose stock test added (de42c0f3) and wired into nested screenshot workflow (86e09376). No application JS/CSS modifications, migration, production writes or deployment. 300mg vs 10mg safety result pending CI 40621540795, and full LIVE/DEMO release parity and device acceptance remain incomplete.
