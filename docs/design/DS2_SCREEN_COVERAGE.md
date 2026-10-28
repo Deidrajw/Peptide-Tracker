@@ -165,3 +165,6 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 
 
 ## 2026-10-27 nested role audit found real unmatched Today chooser Continue primary #A78BFA on both viewport/theme sizes. CSS f238e6d2 insufficient because direct inline !important in 04-nexus.js; source fixed 9436f41e. New visual QA #40623977189 pending, so not visually accepted yet. Stash final Add to Stash wizard screenshot pass 40623724305 and Protocol/Reaction screenshot pass 40623390625 remain historical verified results.
+
+
+## 2026-10-27 DS2 USER CTA VISUAL VERIFICATION: #40623977189 nested workflow SUCCESS, 128 screenshots across 320/390 light/dark, 32 route/action states including Today dose chooser, Protocol active/no-dose first log, Reaction Save editor, Stash final Add to Stash. Actual action-inventory shows all four primary CTAs use rgb(198,166,242) in every viewport/theme, no capture or overflow error. Source fix 9436f41e replaced inline !important old brighter #A78BFA on Today chooser, after regression 40623795341 FAIL. 40623977210 mobile regression SUCCESS. Physical Safari, all modal descendants and save paths still incomplete; no merge/deploy.
