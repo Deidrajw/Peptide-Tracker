@@ -91,15 +91,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      return pageRoot.textContent.trim().length>20;
    },v);
    if(!reached)throw Error('Requested route not actually rendered: '+v.id);
-   if(v.id==='trends'){
-     const blendState=await page.evaluate(()=>{
-       const kits=(state.supplies||[]).filter(x=>x.isBlend);
-       const section=document.querySelector('#nx-blend-analytics');
-       return {kits:kits.length,section:!!section,text:section?.textContent||''};
-     });
-     if(blendState.kits>0 && (!blendState.section||!blendState.text.includes('Blend composition')))
-       throw Error('Trends blend read-only reporting missing: '+JSON.stringify(blendState));
-   }
+   if(v.id==='trends' && await page.locator('#nx-blend-analytics').count())
+     throw Error('Deprecated Blend home ledger visible');
    if(v.id==='today'){
      const icons=await page.evaluate(()=>[...document.querySelectorAll('.nx-qa-tile .nx-qa-icon')].map(el=>{
        const outer=el.getBoundingClientRect(),svg=el.querySelector('svg');
@@ -148,16 +141,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      });
      tab='trends';state._blendTrendDays=0;state._blendTrendMode='all';render();
    });
-   await page.locator('#nx-blend-analytics').waitFor({state:'visible',timeout:4000});
-   const report=await page.evaluate(()=>{
-     const text=document.querySelector('#nx-blend-analytics')?.textContent||'';
-     return {text,period:!!document.querySelector('#nx-blend-period'),
-       mode:!!document.querySelector('#nx-blend-mode'),
-       overflow:document.documentElement.scrollWidth>innerWidth+2};
-   });
-   if(!report.period||!report.mode||report.overflow||
-      !report.text.includes('Ingredient A')||!report.text.includes('13.571 mg')||
-      !report.text.includes('2.714 mg'))throw Error('Blend Trends fixture report mismatch '+JSON.stringify(report));
+   if(await page.locator('#nx-blend-analytics').count())throw Error('Deprecated Blend home ledger visible');
    // Selected blend history must own the screen; the standalone summary must not replace it.
    await page.evaluate(()=>{
      state._nxHistorySelected='Fictional Three-Ingredient Blend';
@@ -213,11 +197,14 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    if(!await page.locator('#nx-blend-date-list').isVisible())throw Error('Back did not restore dated list');
    await page.locator('.nx-blend-dose-pick').first().click();
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-dose-explorer.png`),animations:'disabled'});
+   await page.locator('.nx-blend-ingredient-link').first().click();
+   const ingredientText=await page.locator('.nx-trends-detail-modal').innerText();
+   if(!ingredientText.includes('Ingredient A')||!ingredientText.includes('From blend'))
+     throw Error('Ingredient source drilldown missing '+ingredientText.slice(0,190));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.evaluate(()=>closeModal());
    await page.evaluate(()=>{state._nxHistorySelected=null;delete state.customPeptides['Fictional Three-Ingredient Blend'];render();});
-   await page.screenshot({path:path.join(out,`${width}-${theme}-trends-blend-analytics.png`),
-     fullPage:true,animations:'disabled'});
-   evidence.push({screen:'trends-blend-analytics',width,theme,overflow:false,buttons:[],error:null});
+   evidence.push({screen:'trends-blend-drilldown',width,theme,overflow:false,buttons:[],error:null});
    await page.evaluate(()=>{
      tab='stash';render();
      manageKitMenu('ds2-visual-blend');
