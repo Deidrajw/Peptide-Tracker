@@ -1317,3 +1317,7 @@ Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/acti
 
 
 ## 2026-10-27 new targeted test (not yet PASS): isolated fictional Demo Mode one-vial 10mg source with 300mg request → no history/inventory change, followed by 2mg valid control → one saved dose, 8mg remains. Test script de42c0f3 and CI workflow 86e09376, run 40621540795 pending. Does not exercise multi-vial, prepared dose, dose edit, real user data or actual iPhone.
+
+
+## 2026-10-27 Verified single-vial save-path QA
+Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose regression: 300mg requested with only 10mg available did not save or deduct; valid 2mg added one dose and left 8mg. No production storage writes. This is limited to one open vial, 390px Chromium; multi-vial, prepared-dose, edits and physical iPhone remain NOT TESTED. Detailed role audit updated at docs/design/DS2_BUTTON_ROLE_AUDIT.md. PR #123 draft/unmerged and not deployed. NEXT ACTION: add multi-vial and prepared-dose tests, then expand nested action classification.
