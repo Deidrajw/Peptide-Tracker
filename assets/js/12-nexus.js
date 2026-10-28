@@ -1262,10 +1262,13 @@ function appUpdatesView() {
       publication:"verified",items:(NEXUS_RELEASE.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))}] : [];
     // Only the publication-gated manifest is authoritative for the current release.
     // Older manual notes are reference history, not proof of production publication.
+    const verifiedArchive = (typeof NEXUS_RELEASE!=="undefined" && Array.isArray(NEXUS_RELEASE.history))
+      ? NEXUS_RELEASE.history.map(entry=>({version:entry.version,date:entry.publishedAt,
+          title:entry.title,publication:"verified",items:(entry.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))})) : [];
     const legacy = CHANGELOG.filter(entry=>!published ||
       String(entry.version).replace(/^v/i,'')!==String(NEXUS_RELEASE.version).replace(/^v/i,''))
       .map(entry=>({...entry,publication:"legacy"}));
-    const history=[...current,...legacy].sort((a,b)=>{
+    const history=[...current,...verifiedArchive,...legacy.filter(entry=>!verifiedArchive.some(item=>String(item.version)===String(entry.version)))].sort((a,b)=>{
       const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
       if(av&&bv) { for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];} }
       return (Number(b.version)||0)-(Number(a.version)||0);
