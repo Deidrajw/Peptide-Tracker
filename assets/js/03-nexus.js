@@ -1403,10 +1403,10 @@ function logBlendDoseModal(kitId) {
 }
 
 function confirmAction(msg, cb, opts={}) {
-  const toneColor = {danger:"#ff4d4d", success:"#7DF9C0", info:"#8AB4FF", warning:"#F9C87D"}[opts.tone] || "#ff4d4d";
+  const toneColor = {danger:"#ff4d4d", success:"#7DF9C0", info:"#8AB4FF", warning:"#F9C87D",primary:"#C6A6F2"}[opts.tone] || "#ff4d4d";
   const confirmLabel = opts.confirmLabel || "Delete";
   const cancelLabel = opts.cancelLabel || "Cancel";
-  const confirmText = (opts.tone==="success"||opts.tone==="warning") ? "#000" : "#fff";
+  const confirmText = (opts.tone==="success"||opts.tone==="warning"||opts.tone==="primary") ? "#000" : "#fff";
   const m = openModal(`<div style="padding:8px">
     <div style="font-size:14px;color:var(--t1);margin-bottom:14px;line-height:1.5">${esc(msg)}</div>
     <div style="display:flex;gap:8px">
