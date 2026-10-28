@@ -218,12 +218,16 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      return {width:innerWidth,backW:a?.width,intelW:b?.width,
        backY:a?.y,intelY:b?.y,backIcon:!!back?.querySelector('svg.nx-nav-icon'),
        intelIcon:!!intel?.querySelector('svg.nx-nav-icon'),
-       backText:back?.textContent?.trim(),intelText:intel?.textContent?.trim()};
+       backText:back?.textContent?.trim(),intelText:intel?.textContent?.trim(),
+       summaryColumns:getComputedStyle(document.querySelector('.nx-ingredient-counts')).gridTemplateColumns,
+       summaryCards:[...document.querySelectorAll('.nx-ingredient-counts > div')]
+         .map(el=>({x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width}))};
    });
    if(!navStyle.backIcon||!navStyle.intelIcon||navStyle.backW<220||
      navStyle.intelW<220||Math.abs(navStyle.backW-navStyle.intelW)>2||
      navStyle.intelY<=navStyle.backY||navStyle.backText!=='Back to injection'||
-     navStyle.intelText!=='Compound Intel')
+     navStyle.intelText!=='Compound Intel'||navStyle.summaryCards.length!==2||
+     Math.abs(navStyle.summaryCards[0].width-navStyle.summaryCards[1].width)>2)
      throw Error('Ingredient action alignment / directional icon mismatch '+JSON.stringify(navStyle));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.locator('#nx-ingredient-back').click();
