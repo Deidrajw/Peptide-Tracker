@@ -926,7 +926,7 @@ function nxIngredientHistoryDetail(ingredient, returnBlend) {
     '<div><span>Blend contributions</span><strong>'+blendRows.length+'</strong></div></div>'+
     '<div class="nx-detail-subtitle">Recorded history</div><div class="nx-detail-rows">'+
     (rows.length?rows.slice(0,100).map(x=>'<div class="nx-detail-row"><time>'+esc(fmtDate(x.date))+'</time><div><b>'+esc(x.mg.toFixed(3))+' mg</b><small>'+esc(x.source==="Direct"?"Direct":"From blend · "+x.source)+'</small></div></div>').join(''):'<p class="nx-chart-empty">No attributable records yet.</p>')+
-    '</div><div style="display:flex;gap:10px;margin-top:14px"><button id="nx-ingredient-back" style="flex:1;min-height:48px">Back to blend</button><button id="nx-ingredient-intel" class="btn-primary" style="flex:1;min-height:48px">Compound Intel ›</button></div>');
+    '</div><div style="display:flex;gap:10px;margin-top:14px"><button id="nx-ingredient-back" style="flex:1;min-height:48px">'+(returnBlend?'Back to blend':'Back to compounds')+'</button><button id="nx-ingredient-intel" class="btn-primary" style="flex:1;min-height:48px">Compound Intel ›</button></div>');
   detail.classList.add("nx-trends-detail-modal");
   detail.querySelector("#nx-ingredient-close").onclick=closeModal;
   detail.querySelector("#nx-ingredient-back").onclick=()=>{closeModal();if(returnBlend)nxTrendsDetail(returnBlend,"dose");else{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);}};
