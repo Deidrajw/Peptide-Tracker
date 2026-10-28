@@ -91,6 +91,18 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      return pageRoot.textContent.trim().length>20;
    },v);
    if(!reached)throw Error('Requested route not actually rendered: '+v.id);
+   if(v.id==='today'){
+     const icons=await page.evaluate(()=>[...document.querySelectorAll('.nx-qa-tile .nx-qa-icon')].map(el=>{
+       const outer=el.getBoundingClientRect(),svg=el.querySelector('svg');
+       if(!svg)return {error:'Shortcut lacks SVG'};
+       const inner=svg.getBoundingClientRect();
+       return {outerW:outer.width,outerH:outer.height,svgW:inner.width,svgH:inner.height,
+         offsetX:Math.abs(inner.left+inner.width/2-outer.left-outer.width/2),
+         offsetY:Math.abs(inner.top+inner.height/2-outer.top-outer.height/2)};
+     }));
+     if(icons.length!==4||icons.some(x=>x.error||x.outerW!==38||x.outerH!==38||x.svgW!==20||x.svgH!==20||x.offsetX>1||x.offsetY>1))
+       throw Error('Quick-access icons inconsistent or off centre: '+JSON.stringify(icons));
+   }
    const report=await page.evaluate(()=>{
      const getEl=e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {
        text:(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,90),
