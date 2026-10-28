@@ -152,3 +152,7 @@ Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/acti
 
 
 ## 2026-10-27 source transaction gate pending: scripts/ds2-dose-inventory-regression.mjs (de42c0f3) and workflow change 86e09376 test canonical one-open-vial 300mg versus 10mg insufficient stock with fictional isolated records and valid 2mg control. Expected no dose record or inventory change for shortfall, exactly one save and 2mg deduction for valid case. New CI 40621540795 in progress; no PASS claim. Need expand to multi-vial source allocations, prepared doses and nested action confirmation in subsequent QA. Global polish LAST.
+
+
+## 2026-10-27 — Screenshot-led Protocol and action consistency
+User identified inconsistent shading on Stash Add, wizard Continue, Save reaction, dose Continue/Confirm and Protocol 'Ready for first log'. Targeted CSS fb05e322 / 5f0be242 unifies named primary gradient versus solid and redesigns Protocol first-log from small right CTA in mint-bordered row to vertically stacked neutral info section with full-width primary CTA; JS 0445f6b0 changes only label to 'Log first dose'. No math/storage modifications. Script bd6c374e adds Protocol route screenshot in fictional demo, records whether conditional first-log card exists. Latest CI pending. Physical screenshots user-supplied are pre-fix evidence; post-fix real iPhone untested.
