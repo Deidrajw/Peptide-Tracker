@@ -195,6 +195,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      throw Error('Older selected blend injection contribution incorrect '+selectedOlder);
    await page.locator('#nx-blend-date-back').click();
    if(!await page.locator('#nx-blend-date-list').isVisible())throw Error('Back did not restore dated list');
+   await page.locator('[data-range="all"]').click();
    await page.locator('.nx-blend-dose-pick').first().click();
    if(!await page.locator('.nx-blend-ingredient-link').first().isVisible())
       throw Error('Injection ingredient links missing');
@@ -210,6 +211,8 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      throw Error('Derived ingredient history missing '+JSON.stringify(ingredientEvidence));
    await page.screenshot({path:path.join(out,`${width}-${theme}-trends-ingredient-history.png`),animations:'disabled'});
    await page.locator('#nx-ingredient-back').click();
+   if(await page.locator('[data-range="all"]').getAttribute('aria-pressed')!=='true')
+     throw Error('Ingredient Back lost the selected All period');
    const restored=await page.locator('#nx-blend-selected-dose').innerText();
    if(!restored.includes('7 mg')||!restored.includes('5.000 mg')||
       await page.locator('#nx-blend-date-list').isVisible())
