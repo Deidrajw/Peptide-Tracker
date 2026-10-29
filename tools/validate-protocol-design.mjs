@@ -33,6 +33,11 @@ try{
         state.protocols=[proto];
         const alerts=()=>buildReminders().filter(x=>x.type==="phase").map(x=>x.title);
         const first=alerts();
+        // A seven-day phase warning must not compete with a Phase 1 starts-today
+        // alert. Use a 2-week opening phase to test the pure upcoming transition.
+        proto.compounds[0].phases=[phase(2),phase()];
+        proto.startDate=addDays(today,-7);const inSeven=alerts();
+        proto.compounds[0].phases=[phase(),phase()];
         proto.startDate=addDays(today,-6);const nextDay=alerts();
         proto.startDate=addDays(today,-7);const transition=alerts();
         proto.compounds[0].phases=[phase()];
@@ -45,11 +50,11 @@ try{
         const stateBefore=JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
         alerts();
         const unchanged=stateBefore===JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
-        return {first,nextDay,transition,seven,one,ended,paused,completed,future,unchanged};
+        return {first,inSeven,nextDay,transition,seven,one,ended,paused,completed,future,unchanged};
       } finally {state=previous;}
     });
     check(protocolAlerts.first.some(x=>x.includes("Phase 1 starts today")) &&
-      protocolAlerts.first.some(x=>x.includes("phase change in 7 days")),
+      protocolAlerts.inSeven.some(x=>x.includes("phase change in 7 days")),
       "Protocol Phase 1/7-day transition alert missing: "+JSON.stringify(protocolAlerts));
     check(protocolAlerts.nextDay.some(x=>x.includes("enters Phase 2 tomorrow")) &&
       protocolAlerts.transition.some(x=>x.includes("enters Phase 2 today")),
