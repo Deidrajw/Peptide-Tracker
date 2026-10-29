@@ -1012,9 +1012,11 @@ function doseModal(name, existing, occTime) {
     selectedKitId = b.dataset.kit;
     selectedVialId = b.dataset.vial;
     m.querySelectorAll(".kit-opt").forEach(o=>{ const on=o.dataset.kit===String(selectedKitId)&&o.dataset.vial===String(selectedVialId);o.setAttribute("aria-pressed",String(on)); o.style.background=on?c.color+"22":"var(--surface-2)"; o.style.borderColor=on?c.color:"var(--border)"; o.style.color=on?c.color:"var(--t3)"; });
-    // Switching source kit invalidates whatever rows were seeded against the previous
-    // one — clear and let renderAllocPanel reseed against the newly chosen vial.
-    rows = [];
+    // Only discard a provisional, not-yet-confirmed allocation from a different
+    // physical source. Confirmed draws and exact-vial rows restored after opening
+    // another vial must never vanish when selecting the active source.
+    rows = rows.filter(r=>r.finished ||
+      (String(r.kitId)===String(selectedKitId) && String(r.vialId)===String(selectedVialId)));
     renderAllocPanel();
   });
 
@@ -1126,8 +1128,17 @@ function doseModal(name, existing, occTime) {
       // actual amount locked into this row, exactly like "Open New Vial" mid-dose.
       const i = +b.dataset.i, r = rows[i], kit = state.supplies.find(s=>s.id===r.kitId);
       if (!kit) return;
-      const vial = getActiveVial(kit);
-      if (!vial) return;
+      // Each allocation row is a physical source. When multiple vials are open,
+      // getActiveVial(kit) can point at a DIFFERENT vial from the one shown.
+      // Never confirm a draw against an arbitrary kit-level default.
+      const vial = r.vialId
+        ? ensureKitVials(kit).find(v=>String(v.id)===String(r.vialId))
+        : getActiveVial(kit);
+      if (!vial || !["open","active"].includes(vial.status) ||
+          getVialRemainingMg(kit,vial)<=(0.001)){
+        showErrorBanner("The selected source vial is no longer open with usable material. No inventory was changed.");
+        return;
+      }
       const target = parseFloat(r.mg)||0;
       state._pendingDoseDraft = {
         name, id:f.id, dose:m.querySelector("#dose").value, date:m.querySelector("#date").value,
