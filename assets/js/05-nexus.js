@@ -735,11 +735,22 @@ function doseModal(name, existing, occTime) {
   // 30mg-vial kit both open at once). Defaults to the person's last choice for this
   // compound, or the one with least remaining if there's no memory yet; the picker below
   // lets them override per-dose, and the choice is remembered again on save.
-  const eligibleSources = getEligibleSourceKits(name, initialMethod);
-  let selectedKitId = eligibleSources[0]?.kit.id ?? null;
-  const activeKit = () => selectedKitId!=null ? state.supplies.find(s=>s.id===selectedKitId && eligibleSources.some(x=>String(x.kit.id)===String(s.id))) : null;
-  const otherKitsWithStock = () => state.supplies.filter(s=>s.name===name && getKitRemainingMg(s)>0.001);
+  // A physical source is KIT + VIAL, never kit alone. Do not infer which of two
+  // open vials the person intends to use. Never include nasal-reserved vial in SubQ.
+  const eligibleSources = (state.supplies||[]).filter(k=>k.name===name && k.activeKit &&
+      !!(k.preparationMethod||k.administrationMethod||k.route) &&
+      nexusExplicitAdminMethod(k.preparationMethod||k.administrationMethod||k.route)===initialMethod)
+    .flatMap(kit=>{migrateKitToV2(kit);return (kit.vials||[])
+      .filter(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01 &&
+        (!v.intendedUse||v.intendedUse==="undecided"||v.intendedUse===initialMethod))
+      .map(vial=>({kit,vial}));});
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
+  let selectedKitId = needsKitPicker?null:(eligibleSources[0]?.kit.id ?? null);
+  let selectedVialId = needsKitPicker?null:(eligibleSources[0]?.vial.id ?? null);
+  const selectedPhysicalSource = () => eligibleSources.find(x=>String(x.kit.id)===String(selectedKitId)&&String(x.vial.id)===String(selectedVialId))||null;
+  const activeKit = () => selectedPhysicalSource()?.kit||null;
+  const activeVial = () => selectedPhysicalSource()?.vial||null;
+  const otherKitsWithStock = () => state.supplies.filter(s=>s.name===name && getKitRemainingMg(s)>0.001);
 
   const m = openModal(`
     <div class="nx-dose-form">
@@ -773,7 +784,7 @@ function doseModal(name, existing, occTime) {
     <div id="kit-picker" style="margin-bottom:14px;${needsKitPicker&&selectedSource==="fresh"?"":"display:none"}">
       <label class="field-label">WHICH VIAL</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-        ${eligibleSources.map(({kit,vial})=>`<button class="kit-opt" data-kit="${kit.id}" style="padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${selectedKitId===kit.id?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">${esc(kit.vialMg||"?")}${c.unit}/vial · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)}${c.unit} left</button>`).join("")}
+        ${eligibleSources.map(({kit,vial})=>`<button type="button" class="kit-opt" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" aria-pressed="${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)}" style="padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">Kit ${esc(String(kit.name))} · Vial ${esc(String(vial.sequenceNumber||vial.id))} · ${esc(String(vial.intendedUse||initialMethod))} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)}${esc(c.unit)} available</button>`).join("")}
       </div>
     </div>
     </section>
@@ -875,7 +886,7 @@ function doseModal(name, existing, occTime) {
     const formatNative=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
     const sourceLabel=selectedSource==="fresh"?(selectedKit?selectedKit.name+" · "+(selectedKit.vialMg||"?")+c.unit+" vial":"Fresh from vial"):(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit+" · "+prepared.remainingCount+" available":"Prepared dose");
-    const selectedVial=selectedKit ? getActiveVial(selectedKit) : null;
+    const selectedVial=selectedKit ? activeVial() : null;
     const selectedVialText=selectedVial?"Open vial · "+formatNative(getVialRemainingMg(selectedKit,selectedVial))+" remaining":"No selected open vial";
     // Kit/vial IDs are essential for auditability, but not for choosing whether the
     // entered dose is correct. Keep them available in an optional disclosure.
@@ -953,8 +964,9 @@ function doseModal(name, existing, occTime) {
     renderAllocPanel();
   });
   m.querySelectorAll(".kit-opt").forEach(b=>b.onclick=()=>{
-    selectedKitId = +b.dataset.kit;
-    m.querySelectorAll(".kit-opt").forEach(o=>{ const on=+o.dataset.kit===selectedKitId; o.style.background=on?c.color+"22":"var(--surface-2)"; o.style.borderColor=on?c.color:"var(--border)"; o.style.color=on?c.color:"var(--t3)"; });
+    selectedKitId = b.dataset.kit;
+    selectedVialId = b.dataset.vial;
+    m.querySelectorAll(".kit-opt").forEach(o=>{ const on=o.dataset.kit===String(selectedKitId)&&o.dataset.vial===String(selectedVialId);o.setAttribute("aria-pressed",String(on)); o.style.background=on?c.color+"22":"var(--surface-2)"; o.style.borderColor=on?c.color:"var(--border)"; o.style.color=on?c.color:"var(--t3)"; });
     // Switching source kit invalidates whatever rows were seeded against the previous
     // one — clear and let renderAllocPanel reseed against the newly chosen vial.
     rows = [];
@@ -980,7 +992,7 @@ function doseModal(name, existing, occTime) {
     // that silently included unopened backups — the same gap already fixed in Prepare
     // Dose. It matters even more now: consumeCompoundInventory only ever draws from the
     // truly open vial, so this trigger must agree with what will actually happen on save.
-    const akVial = ak ? getActiveVial(ak) : null;
+    const akVial = ak ? activeVial() : null;
     const akRemaining = akVial ? getVialRemainingMg(ak, akVial) : 0;
     const shortBy = neededMg - akRemaining;
 
@@ -1309,7 +1321,7 @@ function doseModal(name, existing, occTime) {
       const neededMg = doseToMg(doseAmtStr, c.unit);
       const plan = rows.length
         ? rows.filter(r=>(parseFloat(r.mg)||0)>0).map(r=>({kitId:r.kitId, vialId:r.vialId, mg:parseFloat(r.mg)||0, finished:!!r.finished}))
-        : [{kitId:ak.id, mg:neededMg}];
+        : [{kitId:ak.id, vialId:selectedVialId, mg:neededMg}];
       const plannedMg = plan.reduce((a,st)=>a+st.mg,0);
       // Never save a dose larger than its confirmed source allocations.
       // This must happen before changing vial remainingMg or the dose history.
@@ -1340,7 +1352,7 @@ function doseModal(name, existing, occTime) {
         // reasoning as everywhere else this session: an unpinned lookup falls back to
         // "whatever's open right now," which is only correct when nothing's been pinned.
         migrateKitToV2(k);
-        const vial = step.vialId ? ensureKitVials(k).find(v=>v.id===step.vialId) : kitOpenVialV2(k);
+        const vial = step.vialId ? ensureKitVials(k).find(v=>String(v.id)===String(step.vialId)&&["open","active"].includes(v.status)) : ((k.vials||[]).filter(v=>["open","active"].includes(v.status)&&Number(v.remainingMg)>0.01).length===1?kitOpenVialV2(k):null);
         if (!vial) { shortfall = { kitName: k.name, needed: step.mg, available: 0 }; break; }
         const take = Math.min(step.mg, vial.remainingMg);
         vial.remainingMg = Math.round((vial.remainingMg-take)*100)/100;
@@ -1768,7 +1780,7 @@ function prepareDosesModal(name) {
     const ak = activeKit();
     const akRemaining = ak ? getKitRemainingMg(ak) : 0;
     const shortBy = totalMg - akRemaining;
-    const akVial = ak ? getActiveVial(ak) : null;
+    const akVial = ak ? activeVial() : null;
     const vialCap = akVial ? getVialRemainingMg(ak, akVial) : 0;
     if (!rows.length && totalMg>0) {
       // Scoped to the OPEN VIAL specifically, not the kit's total (sealed backups included).
