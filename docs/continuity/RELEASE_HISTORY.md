@@ -1082,3 +1082,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ## 2026-10-29 — PR #124 formulation-aware inventory (DRAFT, NOT RELEASED)
 - Additive oral capsule/nasal bottle model, guarded create and audited balance adjustment; Stash creation/display/edit controls and isolated fictional browser/node regressions. Existing vial records and historical dose logs not rewritten; no conversion, sync or real transfer controls. Exact-source LIVE/DEMO builder updated for added script.
 - At implementation checkpoint, CI on new code is still running; browser results not to be marked pass. Previous head a403d6d had full browser/mobile/nested runs SUCCESS. Draft PR unmerged, Cloudflare production not deployed or source-parity-verified, physical iPhone not accepted. Standalone artifacts from new code not locally downloaded/verified.
+
+
+## 2026-10-29 — Draft PR #124 validation checkpoint (UNRELEASED)
+- Stash capsule/nasal additive inventory build 4484dc5d passed full browser, mobile and nested-navigation CI (runs 40891595782, 40891595812, 40891595726). Artifact 12906345167 from build. Browser emulation does not equal physical iPhone acceptance.
+- Additional 44px and 320/390 overflow assertions committed c8507b74; exact new-head tests pending. Route-specific deduction is proposed only in docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md; no production merge, deploy, stock migration, or dose deduction activation.
