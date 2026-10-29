@@ -2011,17 +2011,35 @@ function nexusAddFormulationModal(type,existingId=null){
   const m=openModal(`<section class="nx-form-stock-editor">
     <div class="nx-form-stock-editor-head"><strong>${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
     <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
-    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" list="nx-form-compound-list" autocomplete="off" placeholder="Search or enter compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or enter compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden style="max-height:192px;overflow-y:auto;border-radius:12px;margin:6px 0 12px"></div>
     ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
      <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" value="${existing?existing.mgPerCapsule:""}" placeholder="Labelled strength" ${existing?"readonly":""}>`:
-     raw?`<label class="field-label" for="nx-form-mg">MASS REMAINING (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}">`:
-     topical?`<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
+     raw?`<label class="field-label" for="nx-form-mg">${existing?"MASS REMAINING":"MASS"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}">`:
+     topical?`<label class="field-label" for="nx-form-volume">${existing?"VOLUME REMAINING":"VOLUME"} (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
      `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
-      <label class="field-label" for="nx-form-mg">AMOUNT REMAINING (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
+      <label class="field-label" for="nx-form-mg">${existing?"AMOUNT REMAINING":"AMOUNT"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
     <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
     <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
   m.querySelector("#x").onclick=closeModal;
+  // Native datalist results were unreliable in iPhone browsers: provide visible tap choices.
+  const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
+  const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
+  function refreshCompoundMatches(){
+    if(existing)return;
+    const query=compoundInput.value.trim().toLocaleLowerCase();
+    const matches=candidates.filter(name=>name.toLocaleLowerCase().includes(query)).slice(0,30);
+    matchList.replaceChildren();
+    for(const name of matches){
+      const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
+      option.style.cssText="display:block;width:100%;min-height:44px;text-align:left;padding:10px 14px;background:var(--surface);color:var(--t1);border:1px solid var(--border-sub);border-radius:8px;margin:3px 0";
+      option.addEventListener("click",()=>{compoundInput.value=name;matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false")});
+      matchList.append(option);
+    }
+    matchList.hidden=!matches.length;
+    compoundInput.setAttribute("aria-expanded",String(!!matches.length));
+  }
+  if(!existing){compoundInput.addEventListener("focus",refreshCompoundMatches);compoundInput.addEventListener("input",refreshCompoundMatches);}
   m.querySelector("#nx-form-save").onclick=()=>{
     try{
       if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
@@ -2049,7 +2067,15 @@ function nexusAddFormulationModal(type,existingId=null){
       if(_demoActive){
         state=globalThis.NexusFormulationStock[operation](state,input).next;
       }else{
-        const {next}=globalThis.NexusFormulationStock[commit](state,input,{
+        // Rebase onto the saved snapshot only when inventory itself is unchanged.
+        // Other in-memory UI drafts/settings must not cause a false inventory conflict.
+        const savedRaw=localStorage.getItem(STORE_KEY);
+        if(!savedRaw)throw Error("Saved inventory unavailable");
+        const saved=JSON.parse(savedRaw);
+        if(JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[])||
+           JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
+          throw Error("Inventory changed in another view. Reopen this form to review the latest inventory.");
+        const {next}=globalThis.NexusFormulationStock[commit](saved,input,{
           read:()=>localStorage.getItem(STORE_KEY),
           write:value=>localStorage.setItem(STORE_KEY,value)
         });
