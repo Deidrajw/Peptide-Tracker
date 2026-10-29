@@ -132,7 +132,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      const html=appUpdatesView();
      const after=state.settings.lastSeenChangelog||0;
      return {before,after,releaseStatus,hasHistory:html.includes('App Updates'),
-       verifiedArchive:html.includes('v0.9.19-beta') && html.includes('v0.9.18-beta') && html.includes('Verified published'),
+       verifiedArchive:html.includes('v0.9.19-beta') && html.includes('v0.9.18-beta') && html.includes('Verified production releases') && html.includes('Earlier development notes') && html.includes('Update #89') && !html.includes('V89'),
        prompt:shouldShowPublishedRelease()};
    });
    if(updates.after!==updates.before||!updates.hasHistory||!updates.verifiedArchive||
