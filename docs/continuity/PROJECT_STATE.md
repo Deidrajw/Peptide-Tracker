@@ -2356,3 +2356,11 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Fixed omitted requirement in draft PR #124: removed Combo Dose symptom picker and wiring, passed explicit empty symptom collection for newly logged combo doses. Historical records not rewritten, and preexisting ephemeral values not purged. Added fictional browser assertion for no symptom picker and preservation of historical temporary selection. Exact-head CI pending.
 - Prior full build failure on fd40e886: fictional unlabelled route fixture inherited SubQ. Corrected in test by explicitly removing preparationMethod. No production-route relaxation. Separate capsules/nasal/injectable Stash inventory still INCOMPLETE.
 - NEXT: Verify latest build/browser and mobile CI; fix failures before formulation-aware Stash implementation. Draft PR unmerged; no production deployment or transfer enablement.
+
+
+## 2026-10-29 — Formulation-aware Stash implementation checkpoint (draft PR #124)
+- Main observed da585ab3; PR #124 draft/unmerged. Prior head a403d6d passed full browser, mobile and nested-navigation CI.
+- New additive state.formulationStocks: oral capsule bottles and nasal bottles with explicit container identity, count or volume/amount, distinct from state.supplies/vials. Stash offers Add Capsules, Add Nasal Bottle and audited Adjust controls. No legacy conversion, mass-to-activity/spray inference, dose auto-deduction, transfer enablement or historical rewrite.
+- Pure helper assets/js/nexus-formulation-stock.js validates new containers and immutable adjustments; guarded full snapshot save rejects stale/failed writes and swaps memory only after readback. Exact-source index/build builder include module. Fictional Node tests and 320/390 light/dark LIVE/DEMO browser test added. New browser run previously failed because fictional onboarding overlay intercepted Stash buttons; test setup corrected. Latest CI PENDING verification.
+- Known limitations: existing ordinary synchronous saveState writers do not share exclusive Web Locks; transfer controls explicitly disabled. Capsule/nasal stock are inventory-only until separately authorised route-specific dose flow. Primary Cloudflare deployment unchanged/unverified. Physical iPhone acceptance incomplete.
+- NEXT: verify latest full CI on exact head and fix remaining failures; do not merge/deploy without approval.
