@@ -39,5 +39,32 @@
   kit.preparationTransfers.push(entry);dest.transactions.push(entry);
   return {next,event:entry};
  }
- return {plan};
+ // Persist a complete validated state in exactly one storage write.
+ // Detect stale tabs / mutated storage before attempting the write.
+ // No in-memory state swap is performed here: the caller swaps only on success.
+ function commit(current,tx,{read,write}){
+  if(typeof read!=="function"||typeof write!=="function")fail("Storage adapter required");
+  const observed=read();
+  if(typeof observed!=="string"||!observed.length)fail("No saved inventory snapshot");
+  let stored;
+  try{stored=JSON.parse(observed)}catch{fail("Saved inventory unreadable")}
+  if(JSON.stringify(stored)!==JSON.stringify(current))fail("Saved inventory changed; reload before transfer");
+  const planned=plan(current,tx);
+  const next=planned.next;
+  const source=current.supplies.find(k=>String(k.id)===String(tx.sourceKitId));
+  const updated=next.supplies.find(k=>String(k.id)===String(tx.sourceKitId));
+  const beforeTotal=source.vials.reduce((sum,v)=>sum+v.remainingMg,0);
+  const afterTotal=updated.vials.reduce((sum,v)=>sum+v.remainingMg,0);
+  if(!Number.isFinite(beforeTotal)||!Number.isFinite(afterTotal)||
+     Math.abs((beforeTotal-afterTotal)-planned.event.amountMg)>1e-6)fail("Canonical inventory debit mismatch");
+  const beforeDestination=current.preparations.find(p=>p.id===tx.destinationPreparationId);
+  const afterDestination=next.preparations.find(p=>p.id===tx.destinationPreparationId);
+  if(Math.abs((afterDestination.remainingMg-beforeDestination.remainingMg)-planned.event.amountMg)>1e-6)fail("Destination credit mismatch");
+  // A second pre-write check closes ordinary stale-tab windows; callers must
+  // still prohibit concurrent writers while this synchronous operation executes.
+  if(read()!==observed)fail("Saved inventory changed during transfer");
+  write(JSON.stringify(next)); // throws on quota/security failures; no state mutation
+  return planned;
+ }
+ return {plan,commit};
 });
