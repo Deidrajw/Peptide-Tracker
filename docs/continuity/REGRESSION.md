@@ -1688,3 +1688,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Fictional Node tests validate oral capsule vs nasal bottle separation, duplicate IDs, negative/fractional stock rejection, preserved original supplies/peptide history, immutable audited balance adjustments, duplicate adjustment replay and thrown/stale/readback-failed storage saves.
 - Playwright LIVE/DEMO test added for 320/390px light/dark: Stash Add Capsules, Add Nasal, Adjust capsule count and original vial stock immutability. Earlier run 40890957999 failed because fictional onboarding overlay intercepted + Capsules. Test fixture now dismisses onboarding modal and demo banner before tapping; rerun pending.
 - No physical iPhone test, no production data writes, no dosage or spray conversions; transfers remain disabled. Mark final full-browser result only from exact-head CI.
+
+
+## 2026-10-29 — Full QA and iPhone-width formulation touch audit
+- Full build/browser run 40891595782 SUCCESS on 4484dc5d. Mobile form 40891595812 SUCCESS; DS2 nested-navigation 40891595726 SUCCESS. Release artifact 12906345167 exists. No Cloudflare production deployment asserted.
+- Added 320px and 390px fictional LIVE/DEMO checks for formulation section horizontal overflow and 44px minimum buttons including Adjust at c8507b74. Latest new-head CI PENDING, not falsely marked Pass.
+- Physical iPhone Safari tap, modal keyboard/safe-area and VoiceOver acceptance **NOT TESTED**; user testing required once a verified isolated preview is accessible. Transfer/dose deduction controls disabled.
