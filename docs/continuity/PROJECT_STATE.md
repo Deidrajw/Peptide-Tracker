@@ -2383,3 +2383,9 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 ## 2026-10-29 — Verified WebKit checkpoint
 - Separate WebKit formulation QA run 40893001058 completed SUCCESS on implementation/test commit 1374fbaa. This is iPhone-viewport Safari-engine emulation in GitHub Actions, **not** physical iPhone acceptance. Chromium full release run 40891595782 SUCCESS on prior Stash commit 4484dc5d; additional exact-head full CI was still in progress at this checkpoint.
 - Route-specific deduction plan is documented at docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md; inventory-only Stash editing remains enabled solely on unmerged draft code. Transfer and auto-deduction controls remain disabled. NEXT: obtain physical iPhone preview acceptance, then implement guarded pure dose planner after coordinated persistence design.
+
+
+## 2026-10-29 — User UI correction supersedes PR #124 Stash design
+- User rejected standalone Other formulations section and Add Capsule/Nasal controls as incorrect architecture; **NOT APPROVED FOR RELEASE**. New design must be kit-first with source-specific vial/container purposes and capsule/raw/topical kit variants. Existing formulationStocks entries must be retained and not silently attributed to a kit. Do not merge/deploy current Stash version. Work on replacement preview before shipping.
+- Log Dose targeted correction coded in 05-nexus.js: keep six method buttons, restore detailed SITE dropdown; nasal note is local/hidden outside Nasal instead of persistent global banner. CSS and fictional browser assertion updated. Latest CI PENDING.
+- Source branch PR #124 draft/unmerged, Cloudflare unchanged. Cross-tab shared writer and real transfer controls INCOMPLETE. NEXT: obtain approval of kit-first replacement architecture preview, implement non-destructive phased transition, rerun exact-head CI and physical iPhone acceptance.
