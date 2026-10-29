@@ -1,3 +1,6 @@
+## 2026-10-29 — Exact-vial allocation safeguard (not yet accepted)
+- `40622ae6` adds fail-closed behaviour for >1 open vial without vial ID and unknown supplied ID; preserves single-open-vial compatibility. Must test with fictional vials: two open different methods, ambiguous call leaves stock/history unchanged; ID-specific call debits only named vial; invalid ID fails; previously recorded allocation ID remains unchanged. CI pending, physical iPhone not tested. Do not mark multiple-vial workflow Pass until Stash, preparation and dose source picker wired and accepted.
+
 ## 2026-10-29 — Contextual warning dismissal
 - Code `60f6aa0f` clears validation notice on modal close. PENDING automated and iPhone test: trigger warning, close sheet or navigate to another form, assert notice absent; confirm no existing inventory or dose history changed. Multiple open vials and linked-preparation flow NOT IMPLEMENTED.
 
