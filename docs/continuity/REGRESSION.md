@@ -1704,3 +1704,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — WebKit evidence confirmed
 - WebKit Stash workflow 40893001058 on 1374fbaa **SUCCESS**, exercising fictional LIVE/DEMO 320/390 light/dark capsule/nasal Add and Adjust, isolated vial inventory and 44px/overflow checks. This proves automated Safari-engine coverage only; physical iPhone/VoiceOver **NOT TESTED**.
 - Full Chromium/browser CI 40891595782 on 4484dc5d **SUCCESS**; exact latest-head full browser CI still pending. No merge, no deployment and no production data changes.
+
+
+## 2026-10-29 — Explicit UX correction regression
+- Log Dose method 3x2 button grid retained; site selection changed back to native dropdown with full SubQ/IM regions, legacy site options preserved in edit flow. Browser assertion now checks site option selection and temporary Nasal-specific warning hides on switching method. Code commit 6b941cac, test 78783c6e. Exact-head CI PENDING.
+- Standalone Other formulations Stash section explicitly rejected; replacement kit-centred UX not yet implemented. Protect existing data including formulationStocks and legacy kit/vial IDs; full browser/device tests for replacement NOT TESTED.
