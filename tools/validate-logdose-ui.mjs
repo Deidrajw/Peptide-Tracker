@@ -71,6 +71,7 @@ try {
       const unknown=window.__fixtureKit(9333,5),unlabelled=window.__fixtureKit(9334,4);
       subq.preparationMethod='SubQ';nasal.preparationMethod='Nasal';
       unknown.preparationMethod='Unknown';
+      delete unlabelled.preparationMethod; // factory defaults SubQ; explicitly test absent metadata
       state.supplies=[subq,nasal,unknown,unlabelled];
       const result={
         subq:getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id),
