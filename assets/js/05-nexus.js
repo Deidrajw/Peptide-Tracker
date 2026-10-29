@@ -104,7 +104,7 @@ function comboDoseModal() {
       <button id="combo-date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
     <label class="field-label" for="combo-method">DOSING METHOD</label><select id="combo-method" class="inp" required style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(state._comboMethod)||"Subcutaneous")}</select>
-    <div id="combo-site-wrap"><label class="field-label" for="combo-site">INJECTION SITE (OPTIONAL)</label><select id="combo-site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    <div id="combo-site-wrap"><label class="field-label" for="combo-site">INJECTION SITE (OPTIONAL)</label><select id="combo-site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>${SITES.map(s=>`<option${s===state._comboSite?" selected":""}>${esc(s)}</option>`).join("")}</select></div>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE (shared)</label><div id="combo-sym" style="margin-bottom:14px"></div>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
@@ -721,7 +721,7 @@ function doseModal(name, existing, occTime) {
   })();
   const f = existing
     ? { ...existing, symptoms: existing.symptoms||[] }
-    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site??(nexusInjectableMethod(doseMethod)?suggestedSite:""), method:doseMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
+    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site??"", method:doseMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
   const isEdit = !!existing;
   const occLabel = (occIndex>=0 && cData.dosesPerDay>1) ? ` — ${occIndex===0?"MORNING":occIndex===getOccurrenceTimes(cData).length-1?"EVENING":"DOSE "+(occIndex+1)}` : "";
   state._pendingDoseDraft = null; // consumed — cleared unless we re-save it below on "Open New Vial"
@@ -1603,7 +1603,7 @@ function administerSyringeModal(pd) {
     <label class="field-label" for="adm-method">DOSING METHOD</label>
     <select id="adm-method" class="inp" style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(state._admMethod)||"Subcutaneous")}</select>
     <label class="field-label" for="adm-site">INJECTION SITE (OPTIONAL)</label>
-    <select id="adm-site" class="inp" style="margin-bottom:16px">${SITES.map(s=>`<option${s===(state._admSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    <select id="adm-site" class="inp" style="margin-bottom:16px"><option value="">Not recorded</option>${SITES.map(s=>`<option${s===state._admSite?" selected":""}>${esc(s)}</option>`).join("")}</select>
     <div style="margin-bottom:16px">
       ${components.map(c=>{ const cc=cfg(c.compoundName); return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--surface-2)"><div style="width:6px;height:6px;border-radius:50%;background:${cc.color}"></div><span style="font-size:13px;color:var(--t2);flex:1">${esc(c.compoundName)}</span><span style="font-size:12px;color:${cc.color}">${c.amount}${c.unit||cc.unit}</span></div>`; }).join("")}
     </div>
