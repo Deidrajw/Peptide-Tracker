@@ -2321,3 +2321,10 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Added fictional rollback/replay tests and workflow invocation, commits `0dc96f7a`, `28f667a9`, `335aa117`. **CI results pending confirmation; never claim test PASS before run evidence.** This is a safety boundary prototype, not atomic persistent storage or end-to-end integration.
 - INCOMPLETE: canonical reconciliation/reporting of transfers, Stash preparation editor, Log Dose connection, durable commit rollback, full browser matrix, full-app packaging, physical iPhone. No merge/deployment or production data change.
 - ONE NEXT ACTION: reconcile transfer entries with canonical kit accounting and implement guarded persistence in Stash before enabling any committed transfer.
+
+
+## 2026-10-29 — Guarded browser transfer boundary (PR #124, draft)
+- Verified source main `da585ab3` at PR baseline; transfer development branch checkpoint `e47e0db9`. Existing `nexusCommitPreparationTransfer` now runs the pure bridge commit within an exclusive `navigator.locks` request, rejects unsupported lock APIs, rechecks stored state, writes and verifies saved snapshot, then swaps in-memory state. It has no exposed transfer UI; never call from an unlocked path.
+- This is partial concurrency protection ONLY: ordinary `saveState` and preparation creation still write outside the lock, so other tab/app writers are not serialised. A complete shared-writer protocol is still REQUIRED before exposing controls. Cross-device/cloud atomicity is not provided by localStorage.
+- Earlier scripted fictional bridge tests are committed, but latest CI at `e47e0db9` was in progress when checked; do not mark PASS. Source-only inspection is not browser execution. Full-app DEMO / LIVE ZIP and physical iPhone acceptance NOT VERIFIED.
+- **ONE NEXT ACTION:** make all inventory-mutating writers participate in a compatible exclusive lock or choose a transactional persistence layer, then run latest CI and fictional cross-tab collision/browser regressions before enabling transfer UI. No merge/deploy without explicit approval.
