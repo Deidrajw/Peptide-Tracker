@@ -306,7 +306,7 @@ function stashView() {
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
               const num=v.sequenceNumber||"—";
-              return `<div class="nx-kit-list-row nx-kit-vial-row">
+              return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
                   <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
