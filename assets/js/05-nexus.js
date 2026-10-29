@@ -683,10 +683,14 @@ function nexusPostDoseReactionPrompt(compoundName,doseId){
 
 // A dose's recorded administration method is historical, not a mutable compound setting.
 const NEXUS_ADMIN_METHODS = ["SubQ","IM","IV","Oral","Nasal","Topical"];
-function nexusAdminMethod(value) {
+function nexusExplicitAdminMethod(value) {
   const aliases = { "subcutaneous":"SubQ","sc":"SubQ","sq":"SubQ","intramuscular":"IM","intravenous":"IV","intranasal":"Nasal","po":"Oral" };
   const raw=String(value||"").trim(),normalized=aliases[raw.toLowerCase()]||raw;
-  return NEXUS_ADMIN_METHODS.includes(normalized)?normalized:"SubQ";
+  return NEXUS_ADMIN_METHODS.includes(normalized)?normalized:null;
+}
+function nexusAdminMethod(value) {
+  // Preserve legacy default for compound UI only, never source eligibility.
+  return nexusExplicitAdminMethod(value)||"SubQ";
 }
 function nexusAdminSites(method) {
   return {SubQ:["Abdomen — upper L","Abdomen — upper R","Abdomen — lower L","Abdomen — lower R","Abdomen — upper middle","Abdomen — lower middle","Left thigh","Right thigh","Left flank","Right flank","Left upper arm","Right upper arm","Left delt","Right delt","Left glute","Right glute","Near injury site"],IM:["Deltoid — L (IM)","Deltoid — R (IM)","Vastus lateralis — L (IM)","Vastus lateralis — R (IM)","Ventrogluteal — L (IM)","Ventrogluteal — R (IM)","Left delt","Right delt","Left glute","Right glute"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
