@@ -1649,3 +1649,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Ordinary `saveState` now captures the storage snapshot, refuses a changed stored snapshot, verifies readback, and updates its baseline; guarded transfer updates the baseline after successful commit. Existing `saveState` still catches errors and shows a warning rather than returning success, and does not acquire a shared browser lock. **This is partial coordination, not proven cross-tab atomicity. Keep transfer UI disabled.**
 - Prior CI release-artifacts run 40820258068 FAILED in `tools/validate-trust-ui.mjs:139`: premixed blend dose expected one blend record and one ledger entry, observed zero. Do not mark browser regression PASS; investigate blend flow before merge.
 - Latest changes have not yet been tested by CI. Fictional integrity tests and complete regression matrix PENDING. No production merge/deploy, no real data migration.
+
+
+## 2026-10-29 — Blend optional-site candidate fix
+- Release browser regression failed at `tools/validate-trust-ui.mjs:139`, expected one premixed blend dose and ledger entry but observed zero. In `assets/js/05-nexus.js`, blend save handler read `#site.value` unconditionally despite optional administration-site UI. Changed to optional read (`?.value || ''`) in `efef69ee`; **candidate root cause only, CI rerun required**. Historical doses not migrated or modified.
+- Ordinary saves currently have stale-write detection/readback but do not acquire the transfer's exclusive Web Lock; full shared coordination remains **INCOMPLETE**, transfer controls disabled. Browser/full suite and exact-head artifacts **NOT VERIFIED**.
