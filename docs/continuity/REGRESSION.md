@@ -1661,3 +1661,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Original detailed SubQ and IM site choices had been collapsed in the new selector. Restored detailed sites and legacy edit values at 23d8b667. Browser/iPhone tests PENDING.
 - Fictional blend fixture lacked explicit route label and was ineligible under new route filtering. Labelled fictional fixture SubQ at 13579680 without relaxing production route validation. CI rerun PENDING.
 - Full shared locks for synchronous saveState and transfers are NOT IMPLEMENTED. Transfer controls disabled. Formulation-specific capsule/route inventory NOT IMPLEMENTED. Full QA, full-app DEMO/LIVE source packages and physical iPhone acceptance remain INCOMPLETE.
+
+
+## 2026-10-29 — Additional method/source regressions
+- Release browser QA on 1f3c5f5e: check-in, 8x 320/390 theme browser matrix, 96 vial-source assertions passed, then FAILED at validate-logdose-ui.mjs:182 optional source ID disclosure. Test fixture source was unlabelled and therefore filtered. Fixed fictional fixture route to SubQ at 96ed8e; CI for corrected head pending.
+- Method-scoped getEligibleSourceKits(name, method) and dose modal selection implemented at 1bbf23e / 55d886f; new fictional 320/390 tests assert same-compound SubQ and Nasal open vials do not co-mingle (f4fb8d9). Execution on updated head pending.
+- Safety gate for internal preparation transfer explicitly disabled 119d81b until coordinated writer protocol verified. Ordinary synchronous saveState cannot acquire async Web Locks without changing save timing; no claim of full coordination or real-data testing.
