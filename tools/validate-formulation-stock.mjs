@@ -74,12 +74,20 @@ try {
     const demoName='Fictional Source Selector';
     state.customPeptides=state.customPeptides||{};
     state.customPeptides[demoName]={enabled:true,route:'SubQ',doses:[]};
-    state.supplies.push({id:992211,name:demoName,activeKit:true,preparationMethod:'SubQ',vialMg:10,
-      totalVials:2,openedVials:2,vials:[
+    state.supplies.push({id:992211,name:demoName,activeKit:true,preparationMethod:'SubQ',vialMg:10,bacMl:2,
+      totalVials:2,openedVials:1,vials:[
         {id:'source-a',sequenceNumber:1,status:'open',vialMg:10,remainingMg:7,intendedUse:'SubQ'},
-        {id:'source-b',sequenceNumber:2,status:'open',vialMg:10,remainingMg:9,intendedUse:'SubQ'}]});
-    doseModal(demoName);
+        {id:'source-b',status:'sealed',vialMg:10,remainingMg:10}]});
+    openNewVialModal(992211);
+    document.querySelector('#rv-purpose').value='SubQ';
+    document.querySelector('#rvsave').click();
   });
+  const afterOpen=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>({id:v.id,status:v.status,remainingMg:v.remainingMg,sequenceNumber:v.sequenceNumber})));
+  assert.equal(afterOpen.length,2);
+  assert.deepEqual(afterOpen.map(v=>v.status),['open','open'],'Opening Vial 2 must leave Vial 1 open');
+  assert.deepEqual(afterOpen.map(v=>v.remainingMg),[7,10],'Opening second vial must retain both individual quantities');
+  assert.equal(afterOpen[1].sequenceNumber,2,'Second physical vial must have independent sequence');
+  await page.evaluate(()=>doseModal('Fictional Source Selector'));
   const physicalChoices=page.locator('.kit-opt[data-kit="992211"]');
   assert.equal(await physicalChoices.count(),2,'Two vials in same kit must have separate source choices');
   assert.deepEqual(await physicalChoices.evaluateAll(items=>items.map(b=>b.dataset.vial)),['source-a','source-b']);
@@ -87,7 +95,7 @@ try {
   await physicalChoices.nth(1).click();
   assert.equal(await physicalChoices.nth(1).getAttribute('aria-pressed'),'true','Explicit source selection must mark only chosen vial');
   const untouchedSources=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg));
-  assert.deepEqual(untouchedSources,[7,9],'Selecting a vial must not debit either balance');
+  assert.deepEqual(untouchedSources,[7,10],'Selecting a vial must not debit either balance');
   await page.evaluate(()=>{
     document.querySelector('#dose').value='1';
     document.querySelector('#save').click();
@@ -97,7 +105,7 @@ try {
     const d=state.customPeptides['Fictional Source Selector'].doses;
     return {balances:k.vials.map(v=>v.remainingMg),doses:d.map(x=>({allocations:x.allocations,kitId:x.kitId}))};
   });
-  assert.deepEqual(exactCommitted.balances,[7,8],'Dose must deduct only selected second vial');
+  assert.deepEqual(exactCommitted.balances,[7,9],'Dose must deduct only selected second vial');
   assert.equal(exactCommitted.doses.length,1,'One dose should be saved');
   assert.equal(String(exactCommitted.doses[0].allocations?.[0]?.vialId),'source-b','Dose ledger must retain exact vial ID');
   await page.evaluate(()=>{
@@ -112,7 +120,7 @@ try {
     return {balances:kit.vials.map(v=>v.remainingMg),plans:kit.linkedPreparationPlans,
       formulations:(state.formulationStocks||[]).filter(x=>x.sourceKitId===992211)};
   });
-  assert.deepEqual(planCheck.balances,[7,8],'Linked preparation plan must never debit original vial');
+  assert.deepEqual(planCheck.balances,[7,9],'Linked preparation plan must never debit original vial');
   assert.equal(planCheck.plans.length,1);
   assert.equal(planCheck.plans[0].sourceVialId,'source-a','Plan must link exact original source');
   assert.equal(planCheck.plans[0].status,'planned-no-transfer');
