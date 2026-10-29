@@ -38,7 +38,7 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
  await page.locator('#dose').fill(String(amount));
  await page.locator('#dose').dispatchEvent('input');
  await page.waitForTimeout(650);
- await page.locator('#nx-dose-step-next').click();
+ await page.locator('.nx-dose-inline-review > summary').click();
  await page.locator('#nx-dose-review-rows').waitFor({state:'visible'});
  const review=await page.locator('.nx-dose-review-stage').innerText();
  await page.locator('#save').click();
