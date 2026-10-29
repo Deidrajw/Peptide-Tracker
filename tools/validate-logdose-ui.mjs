@@ -73,6 +73,46 @@ try {
     page.on('dialog',async d=>d.accept());
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await seed(page,theme);let verified=[];
+    // Privacy-safe reproduction of uploaded legacy inventory shape: one OPEN vial
+    // with an actual positive balance but no vial/kit administration-method label.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(787,2.95,2);
+      delete kit.preparationMethod;delete kit.route;delete kit.administrationMethod;
+      delete kit.vials[0].intendedUse;
+      state.supplies=[kit];
+      state.peptides.Retatrutide.doses=[];
+      doseModal('Retatrutide');
+    });
+    const unlabelled=page.locator('.nx-confirm-legacy-vial');
+    ensure(await unlabelled.count()===1,'Unlabelled usable open vial not offered for explicit method confirmation');
+    ensure((await page.locator('.nx-dose-source-legacy').innerText()).includes('2.95'),
+      'Legacy vial balance obscured or misrepresented as zero');
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
+      'Unlabelled vial incorrectly called insufficient inventory');
+    await unlabelled.first().click();
+    const afterConfirm=await page.evaluate(()=>({
+      method:state.supplies[0].vials[0].intendedUse,
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length
+    }));
+    ensure(afterConfirm.method==='SubQ' && afterConfirm.remaining===2.95 && afterConfirm.history===0,
+      'Explicit method confirmation mutated dose balance/history or failed to label exact vial: '+JSON.stringify(afterConfirm));
+    await setDose(page,1);
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
+      'Labelled vial with sufficient balance still shows shortfall');
+    await clickSave(page);
+    const saved=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      allocations:state.peptides.Retatrutide.doses.at(-1)?.allocations
+    }));
+    ensure(Math.abs(saved.remaining-1.95)<0.001 && saved.history===1 &&
+      saved.allocations?.some(a=>String(a.vialId)===String(10787)),
+      'Confirmed legacy exact-source dose failed single vial deduction: '+JSON.stringify(saved));
+    verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
+    await page.evaluate(()=>{closeModal();});
+    await seed(page,theme);
+
     const routeIsolation=await page.evaluate(()=>{
       const subq=window.__fixtureKit(9331,8),nasal=window.__fixtureKit(9332,7);
       const unknown=window.__fixtureKit(9333,5),unlabelled=window.__fixtureKit(9334,4);
