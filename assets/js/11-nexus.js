@@ -2120,6 +2120,12 @@ function renderTabbar() {
     }
     if (id === "plans") state._plansSub = "goals";
     if (id === "trends") state._nxHistorySelected = null; // Fresh tab entry starts at Trends home.
+    // A fresh Profile visit should not resurrect the last Settings subpage.
+    // Keep normal in-page Settings Back navigation and all saved profile data.
+    if (id === "profile") {
+      state._profileTab = "profile";
+      state._settingsDetail = null;
+    }
     tab=id;
     state._guideOpen=null; state._discoverOpen=null;
     state._compoundIntel=null; state._intelReturn=null;
