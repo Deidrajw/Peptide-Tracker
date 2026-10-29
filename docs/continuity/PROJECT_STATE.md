@@ -2345,3 +2345,8 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Full browser QA earlier failed optional source IDs disclosure because its fictional fixture lacked a route label; fixture was labelled SubQ at commit 96ed8e. Additional 320/390 route-isolation assertions added f4fb8d9; latest CI must be reverified.
 - Unapproved 3x2 administration buttons and new capsule/route-specific supply creation remain DESIGN PROPOSALS ONLY. Do not merge/deploy without approval.
 - NEXT: Inspect full browser CI and correct genuine failures; plan deliberate persistence refactor with synchronous semantics protected; implement distinct formulations with isolated fictional data and no migration.
+
+
+## 2026-10-29 — Approved selector implementation checkpoint
+- User approved 3x2 administration method buttons and grouped detailed site buttons. Implemented on draft PR #124 in 05-nexus.js and nexus.css; existing underlying method/site form values retained and synchronised for save. Test assertions added in validate-logdose-ui.mjs for method switching and site selection. Exact-head CI still pending. No production deployment.
+- Separate capsule/nasal/vial Stash stock and coordinated cross-tab writes remain INCOMPLETE; transfer controls explicitly gated off. NEXT: verify CI for selector, correct failures, then address inventory formulation and persistence safely.
