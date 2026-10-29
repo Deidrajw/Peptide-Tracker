@@ -899,3 +899,8 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-10-28/29 — User accepts isolated iPhone orphan-source warning UI
 - User reported 12/12 PASS on physical iPhone fictional historical prepared-dose blocked-deletion preview, including modal fit, legible warning, cancellation, preserved batch and vial balances, light/dark. Treat as acceptance of **this tested safety interaction**, not blanket DS2 release authorization, clinical accuracy, VoiceOver signoff or permission to merge/deploy. Preserve fail-closed behavior and historical records.
+
+## 2026-10-28 — Profile/Settings fresh-entry navigation and Compound History scrolling (ACCEPTED, NOT RELEASED)
+- User approved Profile/Settings opening the overview on fresh entry through main navigation; normal Back within Settings remains intact. This is a view-state reset, not browser reload, storage reset or destructive migration. Implemented `441d22a0`.
+- User accepted the Compound History single-scroll sheet and bottom actions on physical iPhone (4/4 focused test including Profile/Settings); implemented CSS fix `fb601b97`. Preserve single primary vertical scroll per sheet where practical; do not assume PWA/Capacitor packaging fixes nested scrolling automatically.
+- These approvals are scoped to the tested interactions and do not authorize merging/deploying PR #123 or revising accepted Calendar, Plans and Supplies designs.
