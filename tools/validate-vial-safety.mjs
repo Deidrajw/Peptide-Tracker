@@ -104,7 +104,26 @@ try {
       'Prepared-dose deletion returned more/less than the three unused syringes');
     list.push('prepared batch deletion returns only unused share');
 
-    // (6) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
+    // (6) Prepared batch funded from TWO distinct open vials. Only unused
+    // fractions return to their original vial IDs; consumed share stays spent.
+    const pa=kit(9005,0),pb=kit(9006,0);
+    pa.vials[0].status='empty';pb.vials[0].status='empty';
+    state.supplies=[pa,pb];
+    const splitPrepared={id:8102,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:pa.id,vialId:pa.vials[0].id,amount:4},
+        {kitId:pb.id,vialId:pb.vials[0].id,amount:6}
+      ]};
+    state.preparedDoses=[splitPrepared];
+    assert(deletePreparedDose(splitPrepared)===true,'Split prepared batch deletion rejected');
+    assert(near(pa.vials[0].remainingMg,2.4)&&near(pb.vials[0].remainingMg,3.6),
+      'Split prepared refund did not conserve the exact unused shares');
+    assert(pa.vials[0].status==='open'&&pb.vials[0].status==='open',
+      'Split prepared refund failed to reopen original empty vials');
+    assert(state.preparedDoses.length===0,'Split prepared batch record not removed');
+    list.push('two-vial prepared deletion conserves exact unused share per source');
+
+    // (7) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
     // over/under deductions in compound preparations.
     assert(near(doseToMg(250,'mcg'),.25)&&near(mgToUnit(.25,'mcg'),250)
       &&near(doseToMg(2,'mg'),2),'Native-unit conversion drift');
@@ -119,4 +138,4 @@ try {
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
-console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*6+' safety assertions');
+console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*7+' safety assertions');
