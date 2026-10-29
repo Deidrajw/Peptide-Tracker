@@ -2328,3 +2328,12 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - This is partial concurrency protection ONLY: ordinary `saveState` and preparation creation still write outside the lock, so other tab/app writers are not serialised. A complete shared-writer protocol is still REQUIRED before exposing controls. Cross-device/cloud atomicity is not provided by localStorage.
 - Earlier scripted fictional bridge tests are committed, but latest CI at `e47e0db9` was in progress when checked; do not mark PASS. Source-only inspection is not browser execution. Full-app DEMO / LIVE ZIP and physical iPhone acceptance NOT VERIFIED.
 - **ONE NEXT ACTION:** make all inventory-mutating writers participate in a compatible exclusive lock or choose a transactional persistence layer, then run latest CI and fictional cross-tab collision/browser regressions before enabling transfer UI. No merge/deploy without explicit approval.
+
+
+## 2026-10-29 PR #124 current checkpoint
+- Main observed da585ab3; draft PR #124 remains unmerged and undeployed.
+- Detailed SubQ/IM site list restored with legacy edit labels at 23d8b667. Six-button method layout is a preview choice, not implemented.
+- Injectable vial, nasal bottle and oral capsule must become separate physical stock identities, not interchangeable; this expansion is NOT IMPLEMENTED.
+- Premixed browser fixture newly labels its fictional stock SubQ at 13579680; CI verification PENDING. Historical records unchanged.
+- Synchronous ordinary saves have stale write/readback guard. Only transfer boundary uses Web Locks; complete shared coordination INCOMPLETE. Transfer UI disabled.
+- NEXT: Verify new CI and resolve failures, then complete all-writer coordination and formulation-safe source accounting before enabling controls.
