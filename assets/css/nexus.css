@@ -2149,6 +2149,9 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 }
 
 /* PR #124: accessible, compact administration method and site selectors */
+/* PR #124 iPhone: unselected method controls must remain legible in light mode. */
+[data-theme="light"] .nx-method-option:not(.is-selected){background:var(--surface,#fff) !important;color:var(--t1,#242033) !important;border-color:var(--line,#d6d0e3)}
+
 .nx-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 16px}
 .nx-method-option,.nx-site-option,.nx-site-region{font:inherit;min-width:0;min-height:44px;border:1px solid var(--border,var(--line,#8d8d9b));border-radius:12px;background:var(--card,var(--bg2,#252735));color:var(--t1,inherit);cursor:pointer;padding:9px 7px;text-align:center;line-height:1.35;overflow-wrap:anywhere}
 .nx-method-option.is-selected,.nx-site-option.is-selected,.nx-site-region.is-selected{background:var(--accent-soft,rgba(167,139,250,.15));border-color:var(--accent,#a78bfa);color:var(--t1,inherit);font-weight:700}
