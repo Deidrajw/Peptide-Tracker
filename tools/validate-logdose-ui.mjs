@@ -78,10 +78,12 @@ try {
         nasal:getEligibleSourceKits('Retatrutide','Nasal').map(x=>x.kit.id),
         oral:getEligibleSourceKits('Retatrutide','Oral').map(x=>x.kit.id)
       };
+      subq.vials[0].intendedUse='nasal-source';
+      result.reservedSubq=getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id);
       state.supplies=[];
       return result;
     });
-    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"nasal":[9332],"oral":[]}',
+    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"nasal":[9332],"oral":[],"reservedSubq":[]}',
       'Route-labelled open vials were combined or unlabelled stock guessed: '+JSON.stringify(routeIsolation));
     verified.push('same compound separate SubQ/nasal physical stock remains route-isolated');
     // Regression: compound View details/taken-today action must not throw ReferenceError fmtT.
