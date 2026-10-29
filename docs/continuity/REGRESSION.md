@@ -1694,3 +1694,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Full build/browser run 40891595782 SUCCESS on 4484dc5d. Mobile form 40891595812 SUCCESS; DS2 nested-navigation 40891595726 SUCCESS. Release artifact 12906345167 exists. No Cloudflare production deployment asserted.
 - Added 320px and 390px fictional LIVE/DEMO checks for formulation section horizontal overflow and 44px minimum buttons including Adjust at c8507b74. Latest new-head CI PENDING, not falsely marked Pass.
 - Physical iPhone Safari tap, modal keyboard/safe-area and VoiceOver acceptance **NOT TESTED**; user testing required once a verified isolated preview is accessible. Transfer/dose deduction controls disabled.
+
+
+## 2026-10-29 — Added WebKit iPhone-emulation regression
+- New .github/workflows/nexus-formulation-webkit.yml runs standalone full-app DEMO and LIVE local fictional Stash Add/Adjust tests across widths 320/390 and light/dark with WebKit. Test started on commit 1374fbaa run 40893001058; no pass claim until completion.
+- Tests include minimum 44px actions/Adjust touch targets, no 320/390 horizontal overflow, no legacy vial mutation and correct capsule/nasal balances. Real iPhone Safari keyboard, safe-area, VoiceOver and home-screen PWA behaviour remain NOT TESTED.
