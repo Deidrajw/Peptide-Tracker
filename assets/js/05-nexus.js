@@ -1131,9 +1131,10 @@ function doseModal(name, existing, occTime) {
       // Each allocation row is a physical source. When multiple vials are open,
       // getActiveVial(kit) can point at a DIFFERENT vial from the one shown.
       // Never confirm a draw against an arbitrary kit-level default.
+      const openChoices=ensureKitVials(kit).filter(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.001);
       const vial = r.vialId
-        ? ensureKitVials(kit).find(v=>String(v.id)===String(r.vialId))
-        : getActiveVial(kit);
+        ? openChoices.find(v=>String(v.id)===String(r.vialId))
+        : openChoices.length===1 ? openChoices[0] : null;
       if (!vial || !["open","active"].includes(vial.status) ||
           getVialRemainingMg(kit,vial)<=(0.001)){
         showErrorBanner("The selected source vial is no longer open with usable material. No inventory was changed.");
