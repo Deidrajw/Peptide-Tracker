@@ -60,7 +60,13 @@ function adherenceCalendar() {
 
 // ─── Dosing Timeline ──────────────────────────────────────────────────────────
 
-function supplyModal(existing, presetName) {
+function supplyModal(existing, presetName, forceVials=false) {
+  // Every general Add Kit action starts at one common package-form choice.
+  // Calls from existing dose/vial flows with presetName retain the old editor.
+  if(!existing && !presetName && !forceVials) {
+    nexusKitFormPicker();
+    return;
+  }
   const f = existing ? {...existing} : {
     id:uid(), name:presetName||"", totalVials:"", vialMg:"",
     bacMl:"", reconDate:"", expiryDays:"", cost:"", currency:"CAD", notes:""
