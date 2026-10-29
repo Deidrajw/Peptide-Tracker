@@ -893,3 +893,6 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-10-28 — Prepared-batch deletion must fail closed on missing exact source
 - Preserve prepared batch and source allocations if an unused prepared dose explicitly references a kit or vial absent from current inventory; do not silently delete it or guess a replacement vial. Show error prompting review. Do not retroactively rewrite historical records. Retain legitimate legacy source fallback only where the record does not contain a usable explicit vial ID. Implemented as draft candidate `4968983c`, subject to full fictional and iPhone regression acceptance before any release.
+
+## 2026-10-28 — Legacy prepared attribution must not guess an active vial
+- User-directed safety constraint: preserve historic prepared doses and associated stock; do not silently credit a currently open vial when the old record lacks exact original `vialId` or allocations. Draft candidate `0ad1f6cb` blocks ambiguous unused prepared-batch deletion with visible warning, retaining old records for future source reconciliation and preserving explicit-linked paths. This narrows the earlier legacy fallback deliberately; no implicit retrospective auto-assignment, destructive migration, production merge or deployment approved. Test `af1b789b` pending CI and physical Safari acceptance.
