@@ -1,3 +1,6 @@
+## 2026-10-29 — Suggested-allocation ambiguous source regression
+- Source `6d6d9639`: `suggestAllocation` returns null when any candidate kit has two positive-balance open vials, instead of emitting allocations from first vial. Requires fictional test for two-open-vial rejection and single-vial unaffected, plus verification that user-facing picker supplies exact source ID before enabling two-open functionality. Tests for new commit PENDING. Do not confuse fail-closed guard with completed UX.
+
 ## 2026-10-29 — Exact-vial allocation safeguard (not yet accepted)
 - `40622ae6` adds fail-closed behaviour for >1 open vial without vial ID and unknown supplied ID; preserves single-open-vial compatibility. Must test with fictional vials: two open different methods, ambiguous call leaves stock/history unchanged; ID-specific call debits only named vial; invalid ID fails; previously recorded allocation ID remains unchanged. CI pending, physical iPhone not tested. Do not mark multiple-vial workflow Pass until Stash, preparation and dose source picker wired and accepted.
 
