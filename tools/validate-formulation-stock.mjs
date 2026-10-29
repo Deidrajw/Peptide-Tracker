@@ -18,6 +18,15 @@ try {
    const banner=document.querySelector('#demo-banner');if(banner)banner.style.display='none';
    tab='stash';render();
   },theme);
+  const layout=await page.locator('.nx-form-stock').evaluate(section=>{
+    const viewport=document.documentElement.clientWidth;
+    const controls=[...section.querySelectorAll('#nx-add-capsules,#nx-add-nasal')];
+    return {viewport,right:section.getBoundingClientRect().right,
+      widths:controls.map(x=>x.getBoundingClientRect().width),
+      heights:controls.map(x=>x.getBoundingClientRect().height)};
+  });
+  assert.ok(layout.right<=layout.viewport+2,'Stash formulation card overflows viewport: '+JSON.stringify(layout));
+  assert.ok(layout.heights.every(h=>h>=44),'Stash action below 44px touch target: '+JSON.stringify(layout));
   const before=await page.evaluate(()=>JSON.stringify(state.supplies));
   assert.equal(await page.locator('#nx-add-capsules').count(),1);
   await page.locator('#nx-add-capsules').click();
@@ -34,6 +43,14 @@ try {
   await page.locator('.nx-form-edit').first().click();
   await page.locator('#nx-form-count').fill('27');
   await page.locator('#nx-form-save').click();
+  const editForm=await page.locator('.nx-form-stock-editor').count();
+  assert.equal(editForm,0,'Adjustment modal did not close');
+  const touch=await page.locator('.nx-form-edit').first().evaluate(el=>({
+    height:el.getBoundingClientRect().height,
+    right:el.getBoundingClientRect().right,
+    viewport:document.documentElement.clientWidth
+  }));
+  assert.ok(touch.height>=44&&touch.right<=touch.viewport+2,'Adjustment control touch/overflow regression: '+JSON.stringify(touch));
   const after=await page.evaluate(()=>({
    stock:state.formulationStocks,
    demo:isDemoMode(),
