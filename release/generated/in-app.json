@@ -43,7 +43,7 @@
     {
       "key": "prepared-source",
       "title": "Protect historical prepared doses from uncertain refunds",
-      "detail": "Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial.",
+      "detail": "Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial. User-reported isolated physical iPhone warning acceptance passed 12/12 checks.",
       "screen": "Stash / Prepared doses",
       "kind": "fix"
     },
@@ -66,7 +66,7 @@
   "limitations": [
     "Some legacy prepared batches lack exact historical source IDs and require manual review before deletion or inventory return.",
     "User-reported physical iPhone acceptance covers the isolated orphan-source warning (12/12), not every screen or VoiceOver.",
-    "Light-mode automated contrast scan identifies 58 candidates needing validated background-aware WCAG AA triage; broad accessibility acceptance remains pending.",
+    "Light-mode contrast scan flagged 58 candidate text elements; background-aware WCAG AA triage is still pending and has not been declared compliant.",
     "The manifest is a release candidate only: publication status remains unverified until approved merge, Cloudflare asset parity and a follow-up publication update."
   ],
   "history": [
