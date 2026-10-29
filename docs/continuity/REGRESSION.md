@@ -1,3 +1,6 @@
+## 2026-10-29 — Legacy shortfall test updated for explicit source contract
+- Run 40913124098 FAILED (not a safe release) because old `openDose` helper expected automatic first-kit source. In new correct UX the source is intentionally unselected when there are multiple candidates. Test helper `4c6cf6ee` now explicitly taps first kit-opt; separate `validate-formulation-stock.mjs` checks no auto-default. Browser 40913649295, WebKit 40913649202 and nested 40913649436 SUCCESS on updated test commit; full release run 40913649262 PENDING. No physical iPhone test or production deployment.
+
 ## 2026-10-29 — Multi-open end-to-end browser/WebKit proof
 - c95e439d fictional validator now opens second vial using `openNewVialModal` instead of pre-seeding it open, checks both remain open and individual balances, selects Vial2 for one dose, checks exact history source and sibling balance, and creates linked Vial1 nasal plan without transfer. Browser 40913124073 SUCCESS, WebKit 40913124222 SUCCESS, nested 40913124963 SUCCESS; physical iPhone NOT TESTED. Full artifact 40913124098 still building at checkpoint. Caveat: blends retain conservative single-open guard and legacy syringe Prepare Doses rejects ambiguous same-kit sources.
 
