@@ -1,3 +1,7 @@
+## 2026-10-29 — PR124 exact-vial UI and linked preparation plan (DRAFT, NOT A RELEASE)
+- Implementation on feature/dose-administration-method-20261029: source linked no-transfer preparation plan (fa88b464/8ae43d30), Log Dose exact kit-vial selector (6489e538/2fad1b6f/5e41c990), fictional UI assertion (bc9a8c77). Existing historical doses/vials not migrated; no stock transfer or new route-specific deduction.
+- Validation: latest CI PENDING; full-app source-equivalent DEMO/LIVE and real iPhone NOT YET VERIFIED. Branch preview unaccepted; production not merged/deployed.
+
 # Nexus — Release History
 
 > Append-only history. Chat version labels may not correspond to GitHub releases. Verify PRs, SHA and Pages workflow before asserting deployed. Never rewrite earlier entries to hide errors.
