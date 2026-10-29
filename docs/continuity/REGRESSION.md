@@ -1,3 +1,9 @@
+## 2026-10-29 — Physical iPhone acceptance failures, PR #124 (unreleased)
+- User reported: Add Kit compound search FAIL; save blocked by `Inventory changed; reload before editing`; newly acquired products incorrectly labelled Remaining; global stale open-vial warning; open second vial blocked; two separate workflows required (existing-kit source-linked preparation vs newly purchased product).
+- Log Dose: light-mode inactive administration method buttons illegibly dark; SubQ site dropdown included previously recorded `Vastus lateralis — L (IM)`.
+- Implemented on draft PR: 05-nexus.js 530b4849 prevents method-incompatible legacy site from appearing as an active choice, without editing persisted historical doses; nexus.css 0503087f light-mode inactive methods use theme surface/text.
+- SOURCE-ONLY CHANGES; exact-head CI, live-browser verification, real-iPhone reacceptance NOT TESTED. Remaining Add Kit/vial/preparation defects OPEN. No production deployment, transfer or route-specific deduction enabled.
+
 # Nexus — Regression Matrix
 
 > Reusable acceptance criteria, NOT proof of execution. Each release must supply an interactive in-chat Pass/Fail/Not Tested checklist with Copy Results. Date and link evidence for every actual test; never assume a Pass.
