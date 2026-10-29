@@ -28,8 +28,10 @@ try {
   await page.locator('#nx-form-volume').fill('7');
   await page.locator('#nx-form-mg').fill('10');
   await page.locator('#nx-form-save').click();
+  await page.locator('.nx-form-edit').first().click();
+  await page.locator('#nx-form-count').fill('27');
+  await page.locator('#nx-form-save').click();
   const after=await page.evaluate(()=>({
-   sameSupplies:JSON.stringify(state.supplies)===window.__formStockBefore,
    stock:state.formulationStocks,
    demo:isDemoMode(),
    visible:document.querySelectorAll('.nx-form-stock-item').length
@@ -40,7 +42,8 @@ try {
   assert.equal(after.demo,true,'fictional test escaped demo mode');
   assert.equal(after.visible,2);
   assert.deepEqual(after.stock.map(x=>x.containerType),['capsule-bottle','nasal-bottle']);
-  assert.equal(after.stock[0].remainingCount,30);
+  assert.equal(after.stock[0].remainingCount,27);
+  assert.equal(after.stock[0].transactions[0].before.remainingCount,30);
   assert.equal(after.stock[1].remainingMl,7);
   assert.equal(after.stock[1].mgPerSpray,null);
   results.push({width,theme,kind,result:'PASS'});
