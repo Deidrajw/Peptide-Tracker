@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {chromium} from 'playwright';
+import {chromium,webkit} from 'playwright';
 const version=JSON.parse(fs.readFileSync('release/release.json','utf8')).version;
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const engine=process.env.NEXUS_BROWSER==='webkit'?webkit:chromium;
+const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
 const results=[];
 try {
  for(const width of [320,390])for(const theme of ['light','dark'])for(const kind of ['live','demo']){
@@ -70,4 +71,4 @@ try {
   await ctx.close();
  }
 } finally {await browser.close();}
-console.log('PASS: additive capsule and nasal Stash controls, untouched legacy kits in '+results.length+' LIVE/DEMO viewport/theme sessions');
+console.log('PASS: '+engine.name()+' additive capsule and nasal Stash controls, untouched legacy kits in '+results.length+' LIVE/DEMO viewport/theme sessions');
