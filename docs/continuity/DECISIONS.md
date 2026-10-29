@@ -927,3 +927,8 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-10-29 — Combo Dose symptoms removal reaffirmed
 - User confirmed symptoms must be absent from Log Combo Dose, matching the regular Log Dose simplification. Do not show a symptom picker or capture temporary combo symptom selections when saving new combo entries. Never delete or rewrite historical dose symptoms or Check-In data. Preserve date/site/notes, multi-compound amounts, favourites, inventory debits, and dose history.
+
+
+## 2026-10-29 — Separate formulation inventory implementation boundary
+- Non-destructive formulation-aware Stash inventory may be added as new records separate from existing vial kits. Capsule bottles track count and labelled mg per capsule; nasal bottles track remaining mL and known mg, with mg-per-spray unset absent verified conversion. All record IDs and existing vial histories remain unchanged.
+- Adjustment controls must audit before/after balance, never fabricate an administration or deduct a separate vial. No implicit conversion/migration from old supply records. Explicit route-specific Log Dose deductions and physical transfer controls are not authorised by this inventory-only work; preserve transfer safety gate.
