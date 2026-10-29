@@ -1069,3 +1069,11 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ### PR #124 — Preparation atomic planner candidate (2026-10-29; NOT A RELEASE)
 - Main baseline `da585ab3`; draft branch feature/dose-administration-method-20261029. Pure copy-based vial-to-nasal-bottle transfer planner with explicit origin/target IDs, migration fail-closed and duplicate/replay guards. Fictional test added and workflow hooked; CI result pending.
 - Screens: no new committed UI. Data impact: none in production; no migration or live writes. Incomplete: canonical reconciliation, durable persistence, Stash editor, Log Dose, full-app artifacts and browser/iPhone QA. Not merged or deployed.
+
+
+## 2026-10-29 — Draft PR #124 checkpoint (NOT RELEASED)
+- Branch changes: restored SubQ/IM granular administration-site values in dose editor, preserving previously recorded site labels; corrected two fictional CI fixtures to declare explicit SubQ inventory route instead of relaxing source eligibility; added granular-site regression assertions.
+- Active route/formulation work: injectables, nasal bottles and capsules must become distinct inventory types. This is not yet implemented, and no historical stock reclassification has been performed.
+- Transfer bridge retains canonical debit/credit and guarded storage validation. Ordinary synchronous saves use stale-state/readback guards but cannot participate in an asynchronous Web Lock without changing persistence timing; internal transfer callable is explicitly fail-closed until coordination is resolved.
+- CI evidence: pre-fix release browser run 40820869183 failed blend recording; nested run 40820869207 failed fictional valid-dose. After isolated fixture correction, mobile and nested navigation jobs succeeded on 1f3c5f5e; full browser job was still in progress. Later granular-site assertions require fresh CI validation.
+- Release: PROPOSED/CODED only. PR #124 remains DRAFT and UNMERGED; LIVE/DEMO artifacts and primary deployment NOT VERIFIED; no physical iPhone acceptance. No production data changes.
