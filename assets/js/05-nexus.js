@@ -742,7 +742,7 @@ function doseModal(name, existing, occTime) {
   // 30mg-vial kit both open at once). Defaults to the person's last choice for this
   // compound, or the one with least remaining if there's no memory yet; the picker below
   // lets them override per-dose, and the choice is remembered again on save.
-  const eligibleSources = getEligibleSourceKits(name).filter(({kit})=>matchesMethod(kit));
+  const eligibleSources = getEligibleSourceKits(name, initialMethod);
   let selectedKitId = eligibleSources[0]?.kit.id ?? null;
   const activeKit = () => selectedKitId!=null ? state.supplies.find(s=>s.id===selectedKitId && eligibleSources.some(x=>String(x.kit.id)===String(s.id))) : null;
   const otherKitsWithStock = () => state.supplies.filter(s=>s.name===name && getKitRemainingMg(s)>0.001);
