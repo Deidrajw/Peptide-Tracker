@@ -1334,6 +1334,35 @@ function getProtocolPhaseInfo(p, c) {
 
 // Phase-aware timeline summary: use existing pause-aware phase dates, never
 // infer a countdown from the number of compounds or logged administrations.
+// Post-protocol follow-up is informational: logging a dose never reactivates a protocol.
+function nexusPostProtocolDoseFollowup(name,dose){
+  if(!dose||dose.asNeeded||!Array.isArray(state.protocols))return false;
+  const date=dayKey(dose.date);
+  const eligible=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>c.name===name)).map(p=>{
+    const component=(p.compounds||[]).find(c=>c.name===name);
+    const info=getProtocolPhaseInfo(p,component);
+    const end=info?.phases?.[info.phases.length-1]?.endDate||null;
+    const ended=!!end&&date>=end;
+    return {p,end,eligible:(ended || (p.status==="completed"&&(!end||date>=end)))&&p.status!=="archived"};
+  }).filter(x=>x.eligible).sort((a,b)=>String(b.end||"").localeCompare(String(a.end||"")));
+  const chosen=eligible[0];if(!chosen)return false;
+  const key=String(chosen.p.id)+"|"+name;
+  if((state.protocolDoseFollowupAcknowledged||{})[key])return false;
+  const m=openModal(`<section class="nx-postprotocol-followup">
+    <div class="nx-form-stock-editor-head"><strong>Protocol follow-up</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <h2 style="font-size:20px;margin:8px 0">You're still logging ${esc(name)}</h2>
+    <p class="hint">Your previous protocol, ${esc(chosen.p.name||name)}, has ${chosen.p.status==="completed"?"been marked completed":"reached the end of its schedule"}. Your dose has already been saved. Would you like to update the protocol or start another?</p>
+    <button type="button" id="nexus-followup-update" class="btn-primary" style="min-height:48px">Update existing protocol</button>
+    <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
+    <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
+  </section>`,"#A78BFA");
+  const dismiss=()=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();saveState();closeModal();};
+  m.querySelector("#x").onclick=dismiss;
+  m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
+  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss();protocolBuilderModal(chosen.p);};
+  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss();protocolBuilderModal();};
+  return true;
+}
 function protocolCountdownSummary(p) {
   if (p.status==="completed") return {label:"Completed", detail:"Marked complete"};
   const entries=(p.compounds||[]).map(c=>getProtocolPhaseInfo(p,c)).filter(Boolean);
