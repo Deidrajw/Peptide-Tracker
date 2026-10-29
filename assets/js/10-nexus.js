@@ -1999,7 +1999,7 @@ document.addEventListener('click',e=>{
  */
 function nexusKitFormPicker(){
  const forms=[["vial","Vials","Individual vials, reconstitution and remaining mg"],["capsule-bottle","Capsules","Capsule count and labelled strength"],["raw-powder","Raw powder","Powder mass, no vial calculations"],["topical-container","Topical","Product container and remaining volume"],["nasal-bottle","Nasal spray","Purchased spray bottle; homemade preparations start from a vial"]];
- const html='<section class="nx-kit-type-picker"><div class="nx-form-stock-editor-head"><strong>ADD KIT</strong><button id="x" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
+ const html='<section class="nx-kit-type-picker"><div class="nx-form-stock-editor-head"><strong>ADD KIT</strong><button id="x" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" style="min-height:80px;display:flex;flex-direction:column;padding:12px" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
  const m=openModal(html,"#A78BFA");m.querySelector("#x").onclick=closeModal;
  m.querySelectorAll("[data-kit-form]").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.kitForm;closeModal();if(type==="vial")supplyModal(null,null,true);else nexusAddFormulationModal(type);});
 }
