@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -28,6 +30,15 @@ jobs:
           grep -Fq "<title>Nexus · ${release_version}</title>" index.html
           node tools/validate-recon-safety.mjs
           node tools/validate-ux-consistency.mjs
+      - name: Gate stale release notes against changed application source
+        shell: bash
+        run: |
+          node tools/check-release-readiness.mjs --self-test
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            node tools/check-release-readiness.mjs --candidate
+          else
+            node tools/check-release-readiness.mjs --production
+          fi
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
       - name: Compare primary Cloudflare Pages files with source (required after merge)
