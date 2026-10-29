@@ -103,7 +103,8 @@ function comboDoseModal() {
       <input id="combo-date" type="datetime-local" class="inp" value="${esc(state._comboDate||localDatetime())}" style="flex:1">
       <button id="combo-date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    <label class="field-label">INJECTION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px">${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    <label class="field-label" for="combo-method">DOSING METHOD</label><select id="combo-method" class="inp" required style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(state._comboMethod)||"Subcutaneous")}</select>
+    <div id="combo-site-wrap"><label class="field-label" for="combo-site">INJECTION SITE (OPTIONAL)</label><select id="combo-site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE (shared)</label><div id="combo-sym" style="margin-bottom:14px"></div>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
@@ -213,6 +214,9 @@ function comboDoseModal() {
     btn.setAttribute("role","checkbox");btn.setAttribute("aria-checked",String(sel.includes(btn.dataset.n)));
     btn.style.minHeight="44px";
   });
+  const comboMethod=m.querySelector("#combo-method");
+  const syncComboSite=()=>{m.querySelector("#combo-site-wrap").hidden=!nexusInjectableMethod(comboMethod.value);};
+  comboMethod.addEventListener("change",syncComboSite);syncComboSite();
   const comboDateNowBtn = m.querySelector("#combo-date-now");
   if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
   try {
@@ -225,7 +229,9 @@ function comboDoseModal() {
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
-        const site = m.querySelector("#combo-site").value;
+        const method=nexusDoseMethod(m.querySelector("#combo-method").value);
+        if(!nexusInjectableMethod(method)){showErrorBanner("Combo doses are a shared syringe. Select an injectable method; log nasal, oral or topical doses individually.");return;}
+        const site=m.querySelector("#combo-site").value;
         const notes = m.querySelector("#combo-notes").value;
         const comboId = uid();
         const items = sel.map(name => ({ name, doseVal: (m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)||{}).value || "" }));
@@ -234,7 +240,7 @@ function comboDoseModal() {
           const {name, doseVal, unit, have, noOpenVial, kitId, hasSealedBackup} = result.shortfall;
           // Preserve everything typed so far regardless of which path below is taken, so
           // nothing is lost if the person has to come back to this combo.
-          state._comboDate = date; state._comboSite = site; state._comboNotes = notes;
+          state._comboDate = date; state._comboSite = site; state._comboMethod=method; state._comboNotes = notes;
           state._comboDoses = state._comboDoses||{};
           items.forEach(it=>{ state._comboDoses[it.name] = it.doseVal; });
           const kit = kitId!=null ? state.supplies.find(s=>s.id===kitId) : null;
@@ -275,6 +281,7 @@ function comboDoseModal() {
           return;
         }
         result.doses.forEach(({name, dose})=>{
+          dose.method=method;
           const builtin = !!PEPTIDES[name];
           const tgt = builtin ? state.peptides : state.customPeptides;
           if (!tgt[name]) tgt[name] = { status:"active", scheduleDays:cfg(name).defaultSchedule, doses:[] };
@@ -286,7 +293,7 @@ function comboDoseModal() {
           const favName = (nameInput?.value||"").trim() || sel.join(" + ");
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
-        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = ""; state._comboSymptoms = [];
+        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboMethod=null; state._comboNotes = ""; state._comboSymptoms = [];
         saveState(); closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
     };
@@ -1593,7 +1600,9 @@ function administerSyringeModal(pd) {
       <input id="adm-date" type="datetime-local" class="inp" value="${esc(localDatetime())}" style="flex:1">
       <button id="adm-date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    <label class="field-label">INJECTION SITE</label>
+    <label class="field-label" for="adm-method">DOSING METHOD</label>
+    <select id="adm-method" class="inp" style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(state._admMethod)||"Subcutaneous")}</select>
+    <label class="field-label" for="adm-site">INJECTION SITE (OPTIONAL)</label>
     <select id="adm-site" class="inp" style="margin-bottom:16px">${SITES.map(s=>`<option${s===(state._admSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
     <div style="margin-bottom:16px">
       ${components.map(c=>{ const cc=cfg(c.compoundName); return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--surface-2)"><div style="width:6px;height:6px;border-radius:50%;background:${cc.color}"></div><span style="font-size:13px;color:var(--t2);flex:1">${esc(c.compoundName)}</span><span style="font-size:12px;color:${cc.color}">${c.amount}${c.unit||cc.unit}</span></div>`; }).join("")}
@@ -1606,8 +1615,10 @@ function administerSyringeModal(pd) {
   if (admDateNowBtn) admDateNowBtn.onclick = () => { m.querySelector("#adm-date").value = localDatetime(); };
   m.querySelector("#save").onclick = () => {
     const date = m.querySelector("#adm-date").value;
+    const method=nexusDoseMethod(m.querySelector("#adm-method").value);
+    if(!nexusInjectableMethod(method)){showErrorBanner("Prepared syringes require an injectable method. Nothing was saved.");return;}
     const site = m.querySelector("#adm-site").value;
-    state._admSite = site;
+    state._admSite = site;state._admMethod=method;
     const syringeId = pd.id;
     const batchCount = pd.count||1;
     components.forEach(comp => {
@@ -1621,7 +1632,7 @@ function administerSyringeModal(pd) {
       // claiming the full batch amount left inventory here, when only half of it did —
       // the rest is still sitting in the still-unadministered syringe(s).
       const perSyringeAllocations = (comp.allocations||[]).map(a=>({...a, amount: Math.round((a.amount/batchCount)*100)/100}));
-      const dose = { id: uid(), date, dose: comp.amount, site, symptoms:[], notes:"", escalation:false, kitId:null, allocations: perSyringeAllocations, fromPreparedId: pd.id, syringeId };
+      const dose = { id: uid(), date, dose: comp.amount, site, method, symptoms:[], notes:"", escalation:false, kitId:null, allocations: perSyringeAllocations, fromPreparedId: pd.id, syringeId };
       tgt[comp.compoundName].doses.push(dose);
       const fulfilled = (tgt[comp.compoundName].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(date));
       if (fulfilled) fulfilled.doseId = dose.id;
@@ -2236,7 +2247,9 @@ function quickLogDose(name, occTime) {
     allocations = [{ kitId: activeKit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) }];
     kitId = null;
   }
-  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:suggestedSite, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
+  const quickMethod=nexusDoseMethod(cData.route);
+  if(!quickMethod){doseModal(name,null,occTime);return;}
+  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:nexusInjectableMethod(quickMethod)?suggestedSite:"", method:quickMethod, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
   const builtin = !!PEPTIDES[name];
   const tgt = builtin ? state.peptides : state.customPeptides;
   if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
