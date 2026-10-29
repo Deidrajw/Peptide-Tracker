@@ -1265,25 +1265,40 @@ function appUpdatesView() {
     const verifiedArchive = (typeof NEXUS_RELEASE!=="undefined" && Array.isArray(NEXUS_RELEASE.history))
       ? NEXUS_RELEASE.history.map(entry=>({version:entry.version,date:entry.publishedAt,
           title:entry.title,publication:"verified",items:(entry.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))})) : [];
-    const legacy = CHANGELOG.filter(entry=>!published ||
-      String(entry.version).replace(/^v/i,'')!==String(NEXUS_RELEASE.version).replace(/^v/i,''))
-      .map(entry=>({...entry,publication:"legacy"}));
-    const history=[...current,...verifiedArchive,...legacy.filter(entry=>!verifiedArchive.some(item=>String(item.version)===String(entry.version)))].sort((a,b)=>{
-      if(a.publication!==b.publication)return a.publication==='verified'?-1:1;
-      const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
-      if(av&&bv) { for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];} }
-      return (Number(b.version)||0)-(Number(a.version)||0);
-    });
-    content = history.map((entry,i)=>`
-      <div style="margin-bottom:20px;${i<history.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
-        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · ${String(entry.version).startsWith("v")?"":"V"}${esc(String(entry.version))} · ${entry.publication==="verified"?"Verified published":"Earlier update notes"}</div>
-        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px">${esc(entry.title)}</div>
-        ${entry.items.map(it=>`<div style="display:flex;gap:10px;margin-bottom:10px">
-          <div style="font-size:15px;flex-shrink:0;line-height:1.4">${it.icon}</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:2px">${esc(it.title)}</div>
-          <div style="font-size:11.5px;color:var(--t4);line-height:1.5">${esc(it.desc)}</div></div>
+    const legacy = CHANGELOG.map(entry=>({...entry,publication:"legacy"}));
+    const verified = [...current,...verifiedArchive]
+      .filter((entry,i,arr)=>arr.findIndex(other=>String(other.version)===String(entry.version))===i)
+      .sort((a,b)=>{
+        const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
+        if(av&&bv)for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];}
+        return String(b.date||"").localeCompare(String(a.date||""));
+      });
+    const renderUpdate = (entry, verifiedRelease) => `
+      <article class="nx-update-entry" style="padding:15px 0;border-bottom:1px solid var(--border-sub)">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:5px">
+          ${verifiedRelease ? esc(entry.version) : "Update #" + esc(String(entry.version))} · ${esc(entry.date||"Date not recorded")}
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px;line-height:1.35">${esc(entry.title)}</div>
+        ${entry.items.map(it=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+          <span aria-hidden="true" style="width:7px;height:7px;min-width:7px;border-radius:50%;background:var(--t3);margin-top:7px"></span>
+          <div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:3px">${esc(it.title)}</div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.5">${esc(it.desc)}</div></div>
         </div>`).join("")}
-      </div>`).join("");
+      </article>`;
+    content = `
+      <div style="font-size:12px;line-height:1.55;color:var(--t3);margin-bottom:16px">
+        New releases are announced once they are verified as published. If you choose Later, the reminder waits for another app session; Got it marks that version as read. Draft previews and Demo Mode never trigger announcements.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px">Verified production releases</div>
+      ${verified.length ? verified.map(entry=>renderUpdate(entry,true)).join("") :
+        '<p style="font-size:12px;color:var(--t3)">No verified production releases recorded yet.</p>'}
+      <details class="nx-legacy-update-archive" style="margin-top:16px">
+        <summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:13px;font-weight:650;color:var(--t2)">
+          Earlier development notes · ${legacy.length} entries
+        </summary>
+        <p style="font-size:12px;line-height:1.5;color:var(--t3)">Archived internal update numbers are not public app versions. Their publication dates were not independently verified.</p>
+        ${legacy.map(entry=>renderUpdate(entry,false)).join("")}
+      </details>`;
   } else if (tabKey === "fixed") {
     content = fixedIssues.length ? fixedIssues.map(iss=>`
       <div style="padding:12px 0;border-bottom:1px solid var(--border-sub)">
