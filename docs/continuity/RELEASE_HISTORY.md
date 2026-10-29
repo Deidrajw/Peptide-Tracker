@@ -1048,3 +1048,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — v0.9.20-beta legacy source attribution protection — DRAFT / NOT RELEASED
 - Candidate source `0ad1f6cb` prevents unused historical prepared batches from being deleted/refunded to a merely currently-open vial when source provenance is absent. Test `af1b789b` adds isolated fictional 96-assertion target. New CI not yet confirmed; no schema migration, historical edits, merge, live deployment or physical iPhone acceptance. Prior 72/72 was for predecessor `f70b5c26`, not current source.
+
+## 2026-10-28/29 — v0.9.20-beta isolated historical warning-preview artifact candidate (NOT RELEASED)
+- `4c5c6988` builder generates extra standalone full-app orphan warning HTML + iPhone ZIP without modifying LIVE assets, `c93b1bac` adds real-modal browser test. CI not yet verified. Fictional storage isolated/no network, no schema migration or historical data change. Draft PR #123 unmerged; Cloudflare production unchanged.
