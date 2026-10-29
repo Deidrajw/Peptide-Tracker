@@ -1,3 +1,6 @@
+## 2026-10-29 — Contextual warning dismissal
+- Code `60f6aa0f` clears validation notice on modal close. PENDING automated and iPhone test: trigger warning, close sheet or navigate to another form, assert notice absent; confirm no existing inventory or dose history changed. Multiple open vials and linked-preparation flow NOT IMPLEMENTED.
+
 ## 2026-10-29 — Add Kit targeted remediation tests pending
 - Source commit 57dce9b6: iPhone compound list via visible 44px buttons, creation labels distinguish initial amount from remaining stock, and commit rebases on persisted state after comparing inventory arrays. NEED automated tests for picker selection/free text, stale same-inventory state, changed inventory rejection, and preservation of unrelated persisted records. CI/physical iPhone not yet passed; no claim of atomic cross-tab safety.
 
