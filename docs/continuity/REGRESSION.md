@@ -1600,3 +1600,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-10-28/29 — Isolated orphan-warning Safari fixture (candidate, results pending)
 - `4c5c6988` builds a source-matched standalone in-memory full-app Safari fixture and ZIP with missing historical vial ID, original vial 0mg and currently open vial 7mg. `c93b1bac` adds browser assertion that actual confirmation opens, blocked-delete warning is visible, dialog stays open and count/balances remain unchanged in 320/390px and light/dark. No real Safari iPhone/VoiceOver test, no validated hosted fixture; CI pending. Production state untouched.
+
+## 2026-10-28/29 — Isolated orphan warning artifact validated in GitHub CI and local extraction
+- Full run #40805671460 SUCCESS on `c93b1bac`: isolated orphan preview automated 8 configurations PASS, core vial source 96/96 PASS, Log Dose 112 flows PASS. CI artifact #12868362089 downloaded and extracted; standalone orphan HTML byte-identical to ZIP `index.html`; ZIP integrity PASS and memory-only storage, fictional banner and QA fixture markers present. **Physical Safari / VoiceOver: NOT TESTED**. Dark light-theme audit 58 light candidate contrasts need manual confirmation; production host byte parity expected mismatch on unmerged draft.
