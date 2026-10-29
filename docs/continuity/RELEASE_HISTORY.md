@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 exact-vial/source-plan checkpoint (NOT RELEASED)
+- Coded same-kit two-open non-blend source picker, exact vial dose allocation, named opened-vial mid-dose continuation and attached in-kit no-transfer preparation plans. Latest application source dab844ab; exact-head browser/artifact CI PENDING, prior 2680aba5 browser run 40912034303 SUCCESS. Data: additive linkedPreparationPlans only, no destructive migration/transfer, no route-specific non-vial deduction, historical IDs preserved. Draft PR, unmerged and not deployed; iPhone retest pending.
+
 ## 2026-10-29 — PR124 exact-vial UI and linked preparation plan (DRAFT, NOT A RELEASE)
 - Implementation on feature/dose-administration-method-20261029: source linked no-transfer preparation plan (fa88b464/8ae43d30), Log Dose exact kit-vial selector (6489e538/2fad1b6f/5e41c990), fictional UI assertion (bc9a8c77). Existing historical doses/vials not migrated; no stock transfer or new route-specific deduction.
 - Validation: latest CI PENDING; full-app source-equivalent DEMO/LIVE and real iPhone NOT YET VERIFIED. Branch preview unaccepted; production not merged/deployed.
