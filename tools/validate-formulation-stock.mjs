@@ -126,6 +126,31 @@ try {
   assert.equal(planCheck.plans[0].status,'planned-no-transfer');
   assert.equal(planCheck.formulations.length,0,'No unvalidated bottle stock must be created');
   await page.evaluate(()=>closeModal());
+  // Post-protocol follow-up is optional UI, never a condition of dose persistence.
+  const followup=await page.evaluate(()=>{
+    state.protocols=[{id:84921,name:'Completed fictional cycle',startDate:'2026-01-01',
+      status:'completed',compounds:[{name:'Fictional Source Selector',phases:[{type:'dose',durationWeeks:1}]}]}];
+    const existingCount=state.customPeptides['Fictional Source Selector'].doses.length;
+    const prn=nexusPostProtocolDoseFollowup('Fictional Source Selector',
+      {id:'prn-example',date:'2026-10-29T12:00',asNeeded:true});
+    const shown=nexusPostProtocolDoseFollowup('Fictional Source Selector',
+      {id:'standalone-example',date:'2026-10-29T12:00',asNeeded:false});
+    const visible=!!document.querySelector('#nexus-followup-dismiss');
+    document.querySelector('#nexus-followup-dismiss')?.click();
+    const acknowledged=!!state.protocolDoseFollowupAcknowledged?.['84921|Fictional Source Selector'];
+    const repeated=nexusPostProtocolDoseFollowup('Fictional Source Selector',
+      {id:'another-example',date:'2026-10-29T12:05',asNeeded:false});
+    return {prn,shown,visible,acknowledged,repeated,existingCount,
+      currentCount:state.customPeptides['Fictional Source Selector'].doses.length,
+      protocolStatus:state.protocols[0].status};
+  });
+  assert.equal(followup.prn,false,'PRN doses must not trigger protocol follow-up');
+  assert.equal(followup.shown,true,'Completed protocol should trigger follow-up');
+  assert.equal(followup.visible,true,'Follow-up actions not visible');
+  assert.equal(followup.acknowledged,true,'Dismiss acknowledgement not persisted');
+  assert.equal(followup.repeated,false,'Acknowledged follow-up must not repeatedly nag');
+  assert.equal(followup.currentCount,followup.existingCount,'Notice must not alter dose history');
+  assert.equal(followup.protocolStatus,'completed','Notice must not reactivate protocol');
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
  }
