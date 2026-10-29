@@ -494,9 +494,10 @@ try {
     ensure(sourceNames.length===2 && sourceNames.some(x=>x.includes('Kit 1')) &&
       sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
       'Multi-kit sources should use distinct human-readable ordinals: '+JSON.stringify(sourceNames));
-    await page.locator('#nx-dose-step-next').click();
+    await page.locator('.nx-dose-inline-review > summary').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Total allocated'),'Multi-vial Review omits structured source rows');
+    ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Allocated'),'Multi-vial Review omits structured source rows');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     const splitIds=page.locator('#nx-dose-source-ids');
     await splitIds.locator('summary').click();
@@ -521,7 +522,8 @@ try {
     });
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
-    await page.locator('#nx-dose-step-next').click();
+    await page.locator('.nx-dose-inline-review > summary').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preparedReview.includes('Prepared dose')&&preparedReview.includes('8109')===false,'Prepared review source is unclear');
     await clickSave(page);
