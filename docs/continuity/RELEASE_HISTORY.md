@@ -1,3 +1,6 @@
+## 2026-10-29 — Draft PR124 final same-kit safety source checkpoint (NOT RELEASED)
+- Latest application commit 3693c899: previously implemented exact-vial Log Dose, independent non-blend open-vial handling, per-vial linked non-transfer preparation plans, and legacy Prepare Doses fail-closed multiple-source guard. No historical data migration, no transfer or route-specific formulation deductions. CI/DEMO/LIVE latest source parity and iPhone acceptance pending. PR draft/unmerged, Cloudflare production unchanged by this session.
+
 ## 2026-10-29 — PR124 exact-vial/source-plan checkpoint (NOT RELEASED)
 - Coded same-kit two-open non-blend source picker, exact vial dose allocation, named opened-vial mid-dose continuation and attached in-kit no-transfer preparation plans. Latest application source dab844ab; exact-head browser/artifact CI PENDING, prior 2680aba5 browser run 40912034303 SUCCESS. Data: additive linkedPreparationPlans only, no destructive migration/transfer, no route-specific non-vial deduction, historical IDs preserved. Draft PR, unmerged and not deployed; iPhone retest pending.
 
