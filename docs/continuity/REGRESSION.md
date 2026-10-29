@@ -1618,3 +1618,7 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-10-28 — Production parity attempt (BLOCKED, not FAIL)
 - Source main index structure PASS: expected v0.9.20-beta title, 12 ordered JS scripts, four CSS links. Live primary Cloudflare homepage, /assets/js/12-nexus.js and /assets/css/nexus.css: BLOCKED (web cache miss/inaccessible; container DNS resolution failure). No byte/hash parity and no deployment timestamp. Post-merge GitHub commit-status query returned no statuses and workflow query no runs: NOT VERIFIED. Previously exact PR-head CI PASS and focused physical iPhone user 4/4 PASS remain valid for their tested source only.
+
+## 2026-10-29 — What's New automatic launch NOT DISPLAYED (user-reported)
+- User observed no What's New when launching Nexus after approved PR #123 merge. Source examination: `NEXUS_RELEASE.publicationStatus='unverified'` in `02-nexus.js`; `shouldShowPublishedRelease()` in `12-nexus.js` returns false unless `published`. This is expected under currently unverified publication, but end-to-end published-release notification remains INCOMPLETE, not PASS.
+- Live Cloudflare verification still BLOCKED via web; do not conflate source inspection with live asset proof. Isolated published-mode and real iPhone published-popup acceptance remain NOT TESTED here. No production data changed.
