@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 Quick Log ambiguous-vial safety
+- Commit 9aca8d6c: Quick Log inspects all positive-balance open vials inside selected kit and returns to full Dose modal when count >1; avoids silently deducting first active vial. Multiple-vial Stash opening and full source picker remain NOT IMPLEMENTED, so full feature NOT ACCEPTED. No live transfer, dosing conversion, merge or deployment. Prior commit 6d6d9639 CI was partially complete at observation; new code CI pending. Next: explicit vial source picker and preserved dose allocation IDs, then linked in-kit preparation.
+
 ## 2026-10-29 — PR #124 suggested-allocation second safety gate
 - Source commit `6d6d9639` prevents `suggestAllocation` from silently selecting the first vial when a kit has more than one positive-balance open vial; returns no proposed allocation instead. Prior explicit vialId gate remains in `consumeCompoundInventory`. This is interim FAIL-CLOSED domain safety, NOT multi-open UI acceptance. User-facing picker, opening second vial, linked homemade preparation and complete LIVE/DEMO QA remain INCOMPLETE. Four previous CI runs 40910012095/40910012142/40910012111 SUCCESS; 40910012592 was still in progress when checked. No merge/deploy.
 
