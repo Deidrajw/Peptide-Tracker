@@ -2038,6 +2038,12 @@ function prepareDosesModal(name) {
   renderAllocPanel();
 
   m.querySelector("#pd-save").onclick = () => {
+    // The legacy syringe preparation screen lacks its own same-kit vial chooser.
+    // Stop before touching inventory rather than consuming the first of two open vials.
+    if((state.supplies||[]).some(k=>k.name===name&&!k.isBlend &&
+      (k.vials||[]).filter(v=>["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0.01).length>1)){
+      showErrorBanner("This kit has multiple open vials. Choose the exact source vial in Stash; this preparation flow cannot safely infer one yet.");return;
+    }
     const amt = m.querySelector("#pd-amt").value;
     if (!state.preparedDoses) state.preparedDoses = [];
     // All kits—including premixed blends—use this same Prepare sheet. Blends
