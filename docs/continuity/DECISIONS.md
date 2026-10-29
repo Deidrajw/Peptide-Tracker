@@ -912,3 +912,10 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 - Defer interactive body map to a later UX sprint; require accessible text alternative and simple regions before fine left/right granularity.
 - Consider floating Log Dose only on Today and selected tracking pages after safe-area, keyboard, bottom-nav and sticky-action collision tests; no globally persistent FAB approved.
 - Atomic transfer and source-integrity work remains higher priority. Do not merge/deploy PR #124 without explicit approval.
+
+## 2026-10-29 — Administration-site depth, method controls, and separate formulations
+- Restore granular SubQ site positions (upper/lower left/right/middle abdomen, left/right limbs and other previously available regions) and separate named IM regions. Preserve legacy site labels during edits; do not rewrite historical doses.
+- Preferred design direction for review: six 44px+ method buttons in a 3×2 segmented grid (SubQ, IM, IV, Oral, Nasal, Topical) rather than another dropdown; this is a **preview direction**, not an approved major redesign or implemented control.
+- Supply identity must include **formulation and physical container**, not just compound name: e.g. the same compound as an injectable vial, a nasal preparation/bottle and oral capsules must have individually selectable, non-fungible stock pools. Do not treat capsules as vials or infer mg-to-capsule or nasal-to-injection conversions. Preserve original kit IDs and historical allocation references.
+- Block dose saves if requested route/formulation lacks an eligible explicit stock source. Do not silently substitute a vial, bottle or capsule; keep separate active containers and transactions.
+- Real transfer controls remain disabled pending coordinated persistence and full CI verification. No merge/deploy without approval.
