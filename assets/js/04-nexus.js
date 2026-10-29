@@ -2278,6 +2278,9 @@ function closeModal(reason) {
   const dismissed = reason === "backdrop" || reason === "escape";
   const onDismiss = dismissed ? modalEl._nexusOnUserDismiss : null;
   const prior=nexusPriorFocus;
+  // Validation belongs to the dismissed screen, not the next sheet or navigation destination.
+  const staleValidation=document.getElementById("nx-validation-message");
+  if(staleValidation)staleValidation.remove();
   modalEl.remove(); modalEl=null; nexusPriorFocus=null;
   if (prior && prior.isConnected && typeof prior.focus === "function") try { prior.focus({preventScroll:true}); } catch(e) {}
   if (typeof onDismiss === "function") onDismiss();
