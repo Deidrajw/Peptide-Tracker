@@ -1218,6 +1218,20 @@ function deletePreparedDose(pd) {
   // unused stock cannot be restored to that exact kit/vial. The missing-source
   // state is preserved for user review instead of silently discarding history.
   const unusedCount=Number(pd.remainingCount)||0;
+  // Older prepared records sometimes have no exact vial provenance. Do not
+  // infer the original source from today's open vial, or erase an unknown
+  // allocation: retain the record for explicit historical reconciliation.
+  if(unusedCount>0){
+    const components=getSyringeComponents(pd);
+    const ambiguous=components.length===0 || components.some(comp=>
+      !Array.isArray(comp.allocations) || comp.allocations.length===0 ||
+      comp.allocations.some(a=>a.kitId==null ||
+        (a.vialId==null && !a.ledgerId)));
+    if(ambiguous){
+      showErrorBanner("Original prepared-dose source is unverified. Deletion was blocked; review historical vial attribution before changing inventory.");
+      return false;
+    }
+  }
   if(unusedCount>0){
     const missing=getSyringeComponents(pd).some(comp=>(comp.allocations||[]).some(a=>{
       const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
