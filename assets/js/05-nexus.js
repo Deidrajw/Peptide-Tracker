@@ -870,7 +870,7 @@ function doseModal(name, existing, occTime) {
   doseScroll.insertAdjacentElement("beforebegin",fixedDoseHeader);
   const review=document.createElement("details");
   review.className="nx-dose-review-stage nx-dose-inline-review";
-  review.innerHTML='<summary>Review details before saving</summary><div id="nx-dose-review-rows"></div><p>Inventory and source allocation are checked again on confirmation.</p>';
+  review.innerHTML='<summary>Review details before saving</summary><div id="nx-dose-review-rows"></div><details id="nx-dose-source-ids" hidden><summary>Source identifiers</summary><div class="nx-dose-source-ids-body"></div></details><p>Inventory and source allocation are checked again on confirmation.</p>';
   doseScroll.appendChild(review);
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
@@ -879,7 +879,7 @@ function doseModal(name, existing, occTime) {
     const vial=kit?activeVial():null;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
     const sourceName=selectedSource==="fresh"
-      ?(vial?(kit.name+" · "+(vial.label||vial.name||"open vial")+" · "+String(vial.id)):"Open vial not selected")
+      ?(vial?(kit.name+" · "+(vial.label||vial.name||"open vial")):"Open vial not selected")
       :(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit:"Prepared dose");
     const allocated=rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
     review.querySelector("#nx-dose-review-rows").innerHTML=
@@ -888,7 +888,11 @@ function doseModal(name, existing, occTime) {
       row("Source",sourceName)+
       (selectedSource==="fresh"&&!isEdit&&!isBlend?
         row("Allocated",mgToUnit(allocated,c.unit).toFixed(2)+" "+c.unit)+
-        rows.map((r,i)=>row("Vial "+(i+1),String(r.vialId||"Not selected")+" · "+mgToUnit(Number(r.mg)||0,c.unit).toFixed(2)+" "+c.unit)).join(""):"");
+        rows.map((r,i)=>row("Source "+(i+1),mgToUnit(Number(r.mg)||0,c.unit).toFixed(2)+" "+c.unit)).join(""):"");
+    const ids=review.querySelector("#nx-dose-source-ids");
+    const idRows=rows.map((r,i)=>row("Source "+(i+1)+" vial ID",r.vialId||"Unspecified")).join("");
+    ids.hidden=!kit&&!rows.length;
+    ids.querySelector(".nx-dose-source-ids-body").innerHTML=(kit?row("Kit ID",kit.id):"")+(vial?row("Vial ID",vial.id):"")+idRows;
   };
   review.addEventListener("toggle",()=>{if(review.open)updateDoseReview();});
   doseScroll.addEventListener("input",()=>{if(review.open)updateDoseReview();});
