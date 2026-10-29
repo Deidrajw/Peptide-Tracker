@@ -1064,3 +1064,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — v0.9.20-beta post-merge production verification BLOCKED
 - GitHub merge `6737d9c7` confirmed. Expected main index title Nexus · v0.9.20-beta, scripts 01–12 and four CSS assets verified from repository. Live Cloudflare page, JS and CSS requests could not resolve through container DNS; web retrieval unavailable. No independent Cloudflare deployment SHA, live asset parity, publication timestamp or post-merge workflow result obtained. Release manifest remains `publication.status=unverified`; **not certified deployed**.
+
+
+### PR #124 — Preparation atomic planner candidate (2026-10-29; NOT A RELEASE)
+- Main baseline `da585ab3`; draft branch feature/dose-administration-method-20261029. Pure copy-based vial-to-nasal-bottle transfer planner with explicit origin/target IDs, migration fail-closed and duplicate/replay guards. Fictional test added and workflow hooked; CI result pending.
+- Screens: no new committed UI. Data impact: none in production; no migration or live writes. Incomplete: canonical reconciliation, durable persistence, Stash editor, Log Dose, full-app artifacts and browser/iPhone QA. Not merged or deployed.
