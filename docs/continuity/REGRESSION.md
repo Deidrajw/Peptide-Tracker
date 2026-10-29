@@ -1,3 +1,6 @@
+## 2026-10-29 — Post-protocol PRN/active overlap edge cases
+- New source fixes 7bc3474e / 13dcdd9d: Quick Log preserves explicitly prior PRN intent, and older-ended protocol does not nag when a newer active same-compound phase covers the logged date. Source code inspected; dedicated browser assertions for these two edge cases and final exact-head CI still pending, not Pass. Check post-save preservation, no repeated acknowledgement, undo and protocol status. Physical iPhone NOT TESTED.
+
 ## 2026-10-29 — Post-protocol dose-followup test matrix (pending CI)
 - Code `740d6d3e`, `b2755558`, `767b8c25`, `0133d843`, `4725c4f8`; fictional browser assertions `c548369e`: PRN dose returns no reminder; completed protocol and continued dose opens actions; Not now stores per protocol/compound acknowledgement; repeated dose does not nag; dose count and completed protocol status remain unchanged. Run in source-equivalent LIVE/full DEMO × 320/390 × light/dark; CI PENDING. Also inspect manually: no protocol existing should not prompt, paused/active should not prompt before end, schedule-elapsed should prompt, Check-In/Calendar dose records unaffected, Quick Log undo preserved, reaction invitation after dismissal.
 
