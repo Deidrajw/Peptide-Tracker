@@ -1345,6 +1345,17 @@ function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
     const ended=!!end&&date>=end;
     return {p,end,eligible:(ended || (p.status==="completed"&&(!end||date>=end)))&&p.status!=="archived"};
   }).filter(x=>x.eligible).sort((a,b)=>String(b.end||"").localeCompare(String(a.end||"")));
+  // A newer active same-compound protocol covering this dose takes precedence over
+  // older completed protocols; don't nag when dosing is already covered by a plan.
+  const coveredByCurrent=(state.protocols||[]).some(p=>
+    p.status!=="completed"&&p.status!=="archived"&&p.status!=="paused"&&
+    (p.compounds||[]).some(c=>{
+      if(c.name!==name)return false;
+      const info=getProtocolPhaseInfo(p,c);
+      return !!info&&!info.done&&!info.notStartedYet &&
+        info.phases?.some(ph=>date>=ph.startDate&&date<ph.endDate);
+    }));
+  if(coveredByCurrent)return false;
   const chosen=eligible[0];if(!chosen)return false;
   const key=String(chosen.p.id)+"|"+name;
   if((state.protocolDoseFollowupAcknowledged||{})[key])return false;
