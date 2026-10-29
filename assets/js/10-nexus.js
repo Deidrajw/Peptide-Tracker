@@ -1259,6 +1259,13 @@ function buildReminders() {
         // duration still ahead (daysLeft equals the whole new phase's length, never 0) —
         // counting down could structurally never catch this moment. index>0 excludes the
         // very first phase, which has no "previous" phase to describe a change from.
+        if (info.current.startDate===today && info.index===0) {
+          r(`pstart_${proto.id}_${comp.name}_${info.current.startDate}_0`,"phase",1,"📅",
+            `${comp.name} Phase 1 starts today`,
+            `Your first planned phase begins today. Review its schedule and record doses when taken.`,
+            c2.color,"protocol|"+comp.name,"View Protocol");
+          return;
+        }
         if (info.current.startDate===today && info.index>0) {
           const prev = info.phases[info.index-1], cur = info.current;
           const prevIsRest = prev.type!=="dose", curIsRest = cur.type!=="dose";
@@ -1272,7 +1279,7 @@ function buildReminders() {
         // TOMORROW / 3-DAYS-OUT — forward-looking via info.next, unchanged from before.
         if (!info.next) return;
         const daysUntil = info.daysLeft;
-        if (![1,3].includes(daysUntil)) return;
+        if (![1,3,7].includes(daysUntil)) return;
         const cur = info.current, next = info.next;
         const curIsRest = cur.type!=="dose", nextIsRest = next.type!=="dose";
         const describeChange = () => {
@@ -1288,12 +1295,12 @@ function buildReminders() {
           if (enteringRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins tomorrow`,`Your active dosing ends tomorrow.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${next.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+2} tomorrow`,`Your dose changes from ${cur.dose||"—"} to ${next.dose||"—"} ${c2.unit}.`,c2.color,"protocol|"+comp.name,"View Protocol");
-        } else if (daysUntil===3) {
+        } else if (daysUntil===3 || daysUntil===7) {
           const changeDesc = describeChange();
-          const detail = enteringRest ? `Your active dosing ends in 3 days. Rest phase begins ${fmtDate(next.startDate)}.`
-            : exitingRest ? `Your rest phase ends in 3 days. Dosing resumes ${fmtDate(next.startDate)} at ${next.dose||"—"} ${c2.unit}.`
-            : `Phase change in 3 days.${changeDesc?" "+changeDesc+".":""}`;
-          r(idBase+"_soon","phase",3, enteringRest?"⏸":exitingRest?"▶":"📈", `${comp.name} phase change in 3 days`, detail, c2.color,"protocol|"+comp.name,"View Protocol");
+          const detail = enteringRest ? `Your active dosing ends in ${daysUntil} days. Rest phase begins ${fmtDate(next.startDate)}.`
+            : exitingRest ? `Your rest phase ends in ${daysUntil} days. Dosing resumes ${fmtDate(next.startDate)} at ${next.dose||"—"} ${c2.unit}.`
+            : `Phase change in ${daysUntil} days.${changeDesc?" "+changeDesc+".":""}`;
+          r(idBase+"_soon","phase",3, enteringRest?"⏸":exitingRest?"▶":"📈", `${comp.name} phase change in ${daysUntil} days`, detail, c2.color,"protocol|"+comp.name,"View Protocol");
         }
       });
     });
