@@ -980,7 +980,7 @@ function nxTrendsDetail(name, kind="dose", initialDoseId=null, initialRange="90"
     const count=(x)=>kind==="dose"?x.doses.length:x.reports.length;
     const n=count(current), p=previous?count(previous):null;
     const label=kind==="dose"?"doses":"symptom reports";
-    const rows=kind==="dose"?current.doses.map(d=>({date:d.date,detail:`${d.dose} ${c.unit||""}`,note:d.site?`Site: ${d.site}`:"Recorded dose"}))
+    const rows=kind==="dose"?current.doses.map(d=>({date:d.date,detail:`${d.dose} ${c.unit||""}`,note:[d.method?`Method: ${d.method}`:"",d.site?`Site: ${d.site}`:""].filter(Boolean).join(" · ")||"Recorded dose"}))
       :current.reports.map(r=>({date:r.date,detail:r.name,note:"Recorded symptom report"})).sort((a,b)=>safeDate(b.date)-safeDate(a.date));
     const safeRows=rows.slice(0,80);
     // Summarize only saved administered records within the selected period.
