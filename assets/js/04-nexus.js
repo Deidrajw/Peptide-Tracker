@@ -1943,7 +1943,9 @@ function nexusPreviewPreparationTransaction(input) {
 // Committed transfers are intentionally unavailable in DEMO mode and until a
 // complete validated snapshot can be persisted through one storage write.
 // Internal guarded boundary only. No UI invokes this until full release QA.
+const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false; // Release safety gate; do not enable until all writers share atomic coordination.
 async function nexusCommitPreparationTransfer(input) {
+  if (!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED) throw Error('Preparation transfers are not enabled until all state writers share the inventory lock');
   if (_demoActive) throw Error("Transfers unavailable in demo mode");
   if (!globalThis.NexusPreparationBridge) throw Error("Preparation bridge unavailable");
   if (!input || !input.id) throw Error("Explicit transaction required");
