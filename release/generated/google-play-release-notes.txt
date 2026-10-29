@@ -1,5 +1,9 @@
-One consistent kit experience
-- Premixed blends use the regular Stash kit design: Premixed and single-compound kits share the same card renderer, inventory heading, Open New Vial action, Prepare entry and Overview/Vials/History disclosure.
-- One Open New Vial workflow: Both kit types use the same reconstitution form. Premixed composition and vial transactions remain linked to their source kit.
-- One Log Dose workflow: Premixed blends use the standard logging form, with a compact composition breakdown and one blend dose event instead of duplicate ingredient administrations.
-- Premixed inventory transaction safeguards: Blend inventory uses vial-ID ledger allocations for preparation and logging, with confirmation checks and historical record protections.
+A more consistent Nexus, with safer inventory history
+- Refined navigation and visual hierarchy: Unified the iPhone-first screen hierarchy, navigation rows, disclosures, button geometry and sheet actions across Today, Trends, Profile, Settings and related detail screens.
+- Calendar day logs and all logs: Added the approved Calendar day-view and All Logs workflow while preserving logged dates, details, history and editing.
+- Cleaner Protocol and Plans cards: Reduced card density, refined disclosure and action placement, and preserved existing protocol schedules, histories and actions.
+- Unified kit and Supplies experience: Aligned premixed and standard kit cards, vial details, inventory actions, supply presentation and guided editing to the approved design language.
+- Consistent blend dosing and inventory links: Kept premixed blends in standard Log Dose and kit workflows with explicit source transaction tracking and preserved historical ingredient associations.
+- Protect historical prepared doses from uncertain refunds: Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial.
+- Clearer What's New and update history: Consolidated in-app release history presentation and prepared notices that appear only for verified published releases.
+- More consistent touch targets and contrast safeguards: Improved selected buttons, modal actions, spacing and focus presentation; light-theme contrast triage and VoiceOver acceptance remain incomplete.
