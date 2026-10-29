@@ -2147,3 +2147,14 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   overflow:visible;
   overscroll-behavior:auto;
 }
+
+/* PR #124: accessible, compact administration method and site selectors */
+.nx-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 16px}
+.nx-method-option,.nx-site-option,.nx-site-region{font:inherit;min-width:0;min-height:44px;border:1px solid var(--border,var(--line,#8d8d9b));border-radius:12px;background:var(--card,var(--bg2,#252735));color:var(--t1,inherit);cursor:pointer;padding:9px 7px;text-align:center;line-height:1.35;overflow-wrap:anywhere}
+.nx-method-option.is-selected,.nx-site-option.is-selected,.nx-site-region.is-selected{background:var(--accent-soft,rgba(167,139,250,.15));border-color:var(--accent,#a78bfa);color:var(--t1,inherit);font-weight:700}
+.nx-method-option:focus-visible,.nx-site-option:focus-visible,.nx-site-region:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+.nx-site-region-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:4px 0 9px}
+.nx-site-region{padding:8px 14px;white-space:nowrap;flex-shrink:0}
+.nx-site-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}
+.nx-site-choice-grid[hidden]{display:none}
+@media(max-width:350px){.nx-method-grid{gap:6px}.nx-method-option{padding:8px 3px;font-size:12px}.nx-site-option{font-size:12px}}
