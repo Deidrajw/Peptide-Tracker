@@ -76,6 +76,20 @@ function stashView() {
     <button id="qa-addkit">＋ Add kit</button><button id="qa-prepare">Prepare</button><button id="qa-planner">Planner</button>
   </div>`;
 
+  // Additive stock: capsule bottles and nasal bottles are separate from
+  // legacy vial kits. No dose deductions or implicit conversions are enabled.
+  const otherStock=Array.isArray(state.formulationStocks)?state.formulationStocks:[];
+  html+=`<section class="nx-form-stock" aria-label="Other formulations">
+    <div class="nx-form-stock-heading"><div><strong>Other formulations</strong><p>Capsules and nasal bottles are tracked separately from injectable vials.</p></div></div>
+    <div class="nx-form-stock-actions"><button type="button" id="nx-add-capsules">+ Capsules</button><button type="button" id="nx-add-nasal">+ Nasal bottle</button></div>
+    ${otherStock.length?otherStock.map(x=>{
+      const oral=x.containerType==="capsule-bottle";
+      const amount=oral?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`:`${x.remainingMl} mL · ${x.remainingMg} mg remaining`;
+      return `<div class="nx-form-stock-item" data-formulation-id="${esc(String(x.id))}"><span><strong>${esc(x.compound)}</strong><small>${oral?"Oral · Capsules":"Nasal · Bottle"}</small></span><span class="nx-form-stock-count">${esc(amount)}</span></div>`;
+    }).join(""):`<p class="nx-form-stock-empty">No capsule or nasal containers recorded.</p>`}
+    <p class="nx-form-stock-note">Inventory only. Log Dose will not deduct these containers until route-specific tracking is validated.</p>
+  </section>`;
+  
   // ── Prepared (conditional) ───────────────────────────────────────────────
   const readyPrepared = (state.preparedDoses||[]).filter(pd=>(pd.remainingCount||0)>0);
   if (readyPrepared.length) {
@@ -1977,3 +1991,45 @@ document.addEventListener('click',e=>{
  if(btn.id==='nx-shopping-from-stash'){tab='plans';state._plansSub='shopping';render();window.scrollTo(0,0);}
 });
 
+
+/* Isolated formulation stock editor. Never converts existing kits or vials.
+ * Saves one complete state snapshot and swaps in-memory state only after readback.
+ */
+function nexusAddFormulationModal(type){
+  if(!["capsule-bottle","nasal-bottle"].includes(type))return;
+  const oral=type==="capsule-bottle";
+  const m=openModal(`<section class="nx-form-stock-editor">
+    <div class="nx-form-stock-editor-head"><strong>Add ${oral?"capsules":"nasal bottle"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <p class="hint">This creates a separate physical inventory record; existing vial records are untouched.</p>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" placeholder="Compound name" required>
+    ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="30">
+     <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" placeholder="Labelled strength">`:
+     `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" placeholder="Bottle contents">
+      <label class="field-label" for="nx-form-mg">AMOUNT REMAINING (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" placeholder="Known amount">`}
+    <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
+    <button type="button" id="nx-form-save" class="btn-primary">Save container</button>
+  </section>`, "#A78BFA");
+  m.querySelector("#x").onclick=closeModal;
+  m.querySelector("#nx-form-save").onclick=()=>{
+    try{
+      const input={id:"form-"+uid(),compound:m.querySelector("#nx-form-name").value.trim(),containerType:type,method:oral?"Oral":"Nasal"};
+      if(oral){input.count=Number(m.querySelector("#nx-form-count").value);input.mgPerCapsule=Number(m.querySelector("#nx-form-strength").value);}
+      else {input.volumeMl=Number(m.querySelector("#nx-form-volume").value);input.quantityMg=Number(m.querySelector("#nx-form-mg").value);}
+      if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
+      if(_demoActive){
+        state=globalThis.NexusFormulationStock.add(state,input).next;
+      }else{
+        const {next}=globalThis.NexusFormulationStock.commitAdd(state,input,{
+          read:()=>localStorage.getItem(STORE_KEY),
+          write:value=>localStorage.setItem(STORE_KEY,value)
+        });
+        state=next;_nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+      }
+      closeModal();render();
+    }catch(e){showErrorBanner("Container not saved: "+e.message);}
+  };
+}
+document.addEventListener("click",e=>{
+  if(e.target.closest?.("#nx-add-capsules"))nexusAddFormulationModal("capsule-bottle");
+  if(e.target.closest?.("#nx-add-nasal"))nexusAddFormulationModal("nasal-bottle");
+});
