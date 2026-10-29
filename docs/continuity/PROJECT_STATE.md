@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 Add Kit save/search source checkpoint
+- Application commit 57dce9b6: replaced datalist-only compound discovery with tap-selectable filtered candidates on iPhone, changed new raw/topical/nasal stock entry labels from Remaining to initial Amount/Volume/Mass, and rebased additive formulation commits on the saved snapshot only if existing supplies/formulationStocks equal the editor's in-memory inventory. Preserves unrelated persisted state; fails closed on a changed inventory. Exact-head CI and physical iPhone testing PENDING. Multiple-open-vial and linked preparations remain INCOMPLETE. No merge/deploy.
+
 ## CURRENT PR #124 HOTFIX STATUS — 2026-10-29
 - Draft PR #124 `feature/dose-administration-method-20261029`; main baseline da585ab3; source checkpoint 1ac65914 superseded by 530b4849 (Log Dose site selector) and 0503087f (light-theme method contrast). UNMERGED; no production deployment authorization.
 - USER iPhone evidence: dark unselected method buttons in light mode; SubQ site selector includes legacy IM-only value; new product compound search nonfunctional; save reports stale inventory; field labels incorrectly say Remaining; warning survives unrelated navigation; cannot open multiple same-kit vials.
