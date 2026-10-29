@@ -1682,3 +1682,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Combo Dose omission regression
 - Combo Dose previously included a shared symptom picker and passed state._comboSymptoms to planAndApplyComboDoses. Removed picker/UI wiring, pass [] for new dose symptom annotations, preserve existing symptom data. Added fictional regression asserting no combo-sym and no change to previous temporary symptom values. Full CI still PENDING.
 - Full build at fd40e886 FAILED fictional method isolation: expected only 9331 SubQ but 9334 was also included because the test factory automatically labelled all vials SubQ; fixed fixture by deleting the label before the unlabelled-case assertion. Exact updated build verification PENDING.
+
+
+## 2026-10-29 — Formulation Stash regression additions
+- Fictional Node tests validate oral capsule vs nasal bottle separation, duplicate IDs, negative/fractional stock rejection, preserved original supplies/peptide history, immutable audited balance adjustments, duplicate adjustment replay and thrown/stale/readback-failed storage saves.
+- Playwright LIVE/DEMO test added for 320/390px light/dark: Stash Add Capsules, Add Nasal, Adjust capsule count and original vial stock immutability. Earlier run 40890957999 failed because fictional onboarding overlay intercepted + Capsules. Test fixture now dismisses onboarding modal and demo banner before tapping; rerun pending.
+- No physical iPhone test, no production data writes, no dosage or spray conversions; transfers remain disabled. Mark final full-browser result only from exact-head CI.
