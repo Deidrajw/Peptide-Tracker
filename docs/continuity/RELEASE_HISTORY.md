@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 browser and WebKit test evidence (DRAFT/UNRELEASED)
+- Source c95e439d (test-only final change after application 3693c899): second-vial opening through actual modal, route-compatible Log Dose source selection, independent balance/history, and no-transfer linked plan verified by browser 40913124073, WebKit 40913124222, nested 40913124963, all SUCCESS. Release artifact run 40913124098 unfinished, physical iPhone retest not accepted, production not touched. Never imply full release.
+
 ## 2026-10-29 — Draft PR124 final same-kit safety source checkpoint (NOT RELEASED)
 - Latest application commit 3693c899: previously implemented exact-vial Log Dose, independent non-blend open-vial handling, per-vial linked non-transfer preparation plans, and legacy Prepare Doses fail-closed multiple-source guard. No historical data migration, no transfer or route-specific formulation deductions. CI/DEMO/LIVE latest source parity and iPhone acceptance pending. PR draft/unmerged, Cloudflare production unchanged by this session.
 
