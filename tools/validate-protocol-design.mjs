@@ -19,6 +19,50 @@ try{
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
+    // Source-backed fictional protocol reminders: day boundaries, pauses and
+    // non-destructive manual completion. Run in LIVE and standalone DEMO.
+    const protocolAlerts=await page.evaluate(()=>{
+      const previous=JSON.parse(JSON.stringify(state));
+      try {
+        const name=Object.keys(PEPTIDES)[0],today=localDate();
+        const phase=(weeks=1)=>({type:"dose",durationWeeks:weeks,dose:1});
+        state.peptides={};state.customPeptides={};state.supplies=[];
+        state.settings.phaseRemindersEnabled=true;
+        const proto={id:"qa-reminder-protocol",name:"Fictional reminder schedule",status:"active",
+          startDate:today,compounds:[{name,phases:[phase(),phase()]}]};
+        state.protocols=[proto];
+        const alerts=()=>buildReminders().filter(x=>x.type==="phase").map(x=>x.title);
+        const first=alerts();
+        proto.startDate=addDays(today,-6);const nextDay=alerts();
+        proto.startDate=addDays(today,-7);const transition=alerts();
+        proto.compounds[0].phases=[phase()];
+        proto.startDate=today;const seven=alerts();
+        proto.startDate=addDays(today,-6);const one=alerts();
+        proto.startDate=addDays(today,-7);const ended=alerts();
+        proto.status="paused";proto.pausedAt=today;const paused=alerts();
+        proto.status="completed";const completed=alerts();
+        proto.status="active";proto.startDate=addDays(today,1);const future=alerts();
+        const stateBefore=JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
+        alerts();
+        const unchanged=stateBefore===JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
+        return {first,nextDay,transition,seven,one,ended,paused,completed,future,unchanged};
+      } finally {state=previous;}
+    });
+    check(protocolAlerts.first.some(x=>x.includes("Phase 1 starts today")) &&
+      protocolAlerts.first.some(x=>x.includes("phase change in 7 days")),
+      "Protocol Phase 1/7-day transition alert missing: "+JSON.stringify(protocolAlerts));
+    check(protocolAlerts.nextDay.some(x=>x.includes("phase change")) &&
+      protocolAlerts.transition.some(x=>x.includes("enters Phase 2 today")),
+      "Phase transition day alerts missing: "+JSON.stringify(protocolAlerts));
+    check(protocolAlerts.seven.some(x=>x.includes("ends in 7 days")) &&
+      protocolAlerts.one.some(x=>x.includes("ends in 1 day")) &&
+      protocolAlerts.ended.some(x=>x.includes("protocol schedule ended")),
+      "Protocol 7-day/1-day/end-day reminders missing: "+JSON.stringify(protocolAlerts));
+    check(!protocolAlerts.paused.length && !protocolAlerts.completed.length &&
+      protocolAlerts.future.some(x=>x.includes("Phase 1 starts tomorrow")) &&
+      protocolAlerts.unchanged,
+      "Protocol pause/completion/future/non-destructive reminder regression: "+JSON.stringify(protocolAlerts));
+
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
