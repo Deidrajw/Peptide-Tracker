@@ -30,6 +30,8 @@ jobs:
           grep -Fq "<title>Nexus · ${release_version}</title>" index.html
           node --check assets/js/nexus-preparation-ledger.js
           node --check assets/js/nexus-preparation-bridge.js
+          node --check assets/js/nexus-formulation-stock.js
+          node tests/formulation-stock.test.cjs
           node tests/preparation-ledger.test.cjs
           node tests/preparation-bridge.test.cjs
           node tools/validate-recon-safety.mjs
