@@ -947,7 +947,7 @@ function kitOwnedVialCount(kit) { const vials = ensureKitVials(kit); return vial
 // Auto-empties a vial the instant it's driven to ~0 — no separate "finish" step.
 // Returns a plan/result rather than throwing when short, so the caller decides whether
 // to prompt for the next vial or block the transaction outright.
-function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
+function consumeCompoundInventory({ kit, amountMg, reason, transactionId, vialId }) {
   // Premixed blends are one physical preparation with one total-mg outflow. The
   // existing ledger remains authoritative; no independent component stock writes.
   if(kit.isBlend){
@@ -978,7 +978,16 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
   migrateKitToV2(kit); // lazy, per-kit only — never touches any other kit
   const allocations = [];
   let remaining = Math.round(amountMg*100)/100;
-  const openVial = kitOpenVialV2(kit);
+  // Multiple open vials require explicit physical-source identity. Legacy single-open
+  // callers remain compatible; ambiguous calls MUST NOT change any balance.
+  const openChoices=(kit.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&Number(v.remainingMg)>0.01);
+  if(openChoices.length>1&&!vialId) {
+    return {transactionId:transactionId||uid(),totalMg:amountMg,allocations:[],remainingNeeded:remaining,committed:false,reason:"exact-vial-required",hasSealedVial:kitSealedVialsV2(kit).length>0};
+  }
+  const openVial=vialId?openChoices.find(v=>String(v.id)===String(vialId)):openChoices[0]||null;
+  if(vialId&&!openVial) {
+    return {transactionId:transactionId||uid(),totalMg:amountMg,allocations:[],remainingNeeded:remaining,committed:false,reason:"source-not-open",hasSealedVial:kitSealedVialsV2(kit).length>0};
+  }
   if (openVial && remaining > 0.001) {
     const take = Math.min(remaining, openVial.remainingMg);
     if (take > 0.001) {
