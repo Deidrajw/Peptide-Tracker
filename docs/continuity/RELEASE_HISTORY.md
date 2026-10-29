@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 single-screen Log Dose candidate fully automated-tested (NOT RELEASED)
+- App/test source e50873c, CI generated merge f11ad0f; full 40973779952, mobile 40973779992, nested 40973780138 and WebKit 40973780112 all SUCCESS. Release artifact #12942405718 downloaded, archive and LIVE ZIP CRC pass, LIVE index/css/05/10 JS Git blob SHA match GitHub branch, contains complete in-memory fictional DEMO and root-path LIVE ZIP (24 files). No data migration. Not merged, not deployed, no personal iPhone test for this candidate. Physical acceptance remains.
+
 ## 2026-10-29 — Single-screen Log Dose coded on PR124 (NOT RELEASED)
 - Draft commits fd6520b, 2397043, test 5160747 remove UI-only Quick/Guided/Review-step navigation from normal dose modal, expose optional inline review with hidden source IDs, retain original source math and Save handler. NEW HEAD CI NOT VERIFIED; matching LIVE/DEMO downloads not yet generated/validated; physical iPhone acceptance pending. No migrations, merge or deploy; production remains main da585ab3 / prior v0.9.20-beta.
 
