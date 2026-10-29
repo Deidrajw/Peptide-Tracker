@@ -689,7 +689,7 @@ function nexusAdminMethod(value) {
   return NEXUS_ADMIN_METHODS.includes(normalized)?normalized:"SubQ";
 }
 function nexusAdminSites(method) {
-  return {SubQ:["Abdomen","Thigh","Upper arm"],IM:["Deltoid","Thigh","Gluteal"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
+  return {SubQ:["Abdomen — upper L","Abdomen — upper R","Abdomen — lower L","Abdomen — lower R","Abdomen — upper middle","Abdomen — lower middle","Left thigh","Right thigh","Left flank","Right flank","Left upper arm","Right upper arm","Left delt","Right delt","Left glute","Right glute","Near injury site"],IM:["Deltoid — L (IM)","Deltoid — R (IM)","Vastus lateralis — L (IM)","Vastus lateralis — R (IM)","Ventrogluteal — L (IM)","Ventrogluteal — R (IM)","Left delt","Right delt","Left glute","Right glute"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
 }
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
@@ -1140,7 +1140,8 @@ function doseModal(name, existing, occTime) {
     const options=nexusAdminSites(methodInput.value);
     const previous=siteInput.value||f.site||"";
     siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(site)+'</option>').join("");
-    siteInput.value=options.includes(previous)?previous:"";
+    if(previous&&!options.includes(previous)&&f.site===previous)siteInput.add(new Option(previous+" (previously recorded)",previous));
+    siteInput.value=options.includes(previous)||f.site===previous?previous:"";
   };
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
