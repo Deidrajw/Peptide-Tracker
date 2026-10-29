@@ -914,7 +914,8 @@ const expectedPrimary='rgb(198, 166, 242)';
 const primaryActions=[
  ['today','today-log-dose'],['plans','add-goal'],
  ['stash','qa-addkit'],['supplements','add-supp'],
- ['stash-add-kit','nx-kit-next'],
+ // Unified Add Kit first shows five form choices; the primary Continue action
+ // appears only after Vials is selected and is covered by stash-wizard-continue.
  ['today-dose-chooser','today-dose-single'],
  ['protocol-first-log','protocol-first-log'],
  ['reaction-editor','nx-reaction-save'],
