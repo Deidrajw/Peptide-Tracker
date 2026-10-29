@@ -1335,7 +1335,7 @@ function getProtocolPhaseInfo(p, c) {
 // Phase-aware timeline summary: use existing pause-aware phase dates, never
 // infer a countdown from the number of compounds or logged administrations.
 // Post-protocol follow-up is informational: logging a dose never reactivates a protocol.
-function nexusPostProtocolDoseFollowup(name,dose){
+function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
   if(!dose||dose.asNeeded||!Array.isArray(state.protocols))return false;
   const date=dayKey(dose.date);
   const eligible=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>c.name===name)).map(p=>{
@@ -1356,11 +1356,11 @@ function nexusPostProtocolDoseFollowup(name,dose){
     <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
     <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
   </section>`,"#A78BFA");
-  const dismiss=()=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();saveState();closeModal();};
+  const dismiss=(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();saveState();closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
   m.querySelector("#x").onclick=dismiss;
   m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
-  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss();protocolBuilderModal(chosen.p);};
-  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss();protocolBuilderModal();};
+  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss(false);protocolBuilderModal(chosen.p);};
+  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss(false);protocolBuilderModal();};
   return true;
 }
 function protocolCountdownSummary(p) {
