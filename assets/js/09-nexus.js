@@ -1556,6 +1556,14 @@ function openNewVialModal(supplyId, onDone) {
       </div>
       <div id="rv-conc-preview" style="font-size:11px;color:var(--t4);margin-top:8px;text-align:center"></div>
     </div>
+    <label class="field-label" for="rv-purpose">INTENDED USE · THIS VIAL ONLY</label>
+    <select id="rv-purpose" class="inp" style="margin-bottom:10px;min-height:46px">
+      <option value="undecided">Decide later</option>
+      <option value="SubQ">Injectable · SubQ</option>
+      <option value="IM">Injectable · IM</option>
+      <option value="nasal-source">Plan a nasal preparation from this vial</option>
+    </select>
+    <p id="rv-purpose-note" class="hint" style="margin-bottom:14px">This labels the selected vial only. It does not transfer any quantity or create a nasal bottle.</p>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
     <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
@@ -1602,7 +1610,7 @@ function openNewVialModal(supplyId, onDone) {
     if(entry.isBlend){
       const sealed=getSealedVials(entry);if(!sealed.length||getActiveVial(entry)){showErrorBanner("No available sealed vial to open.");return;}
       const vial=sealed[0],notes=m.querySelector("#rvn").value.trim();
-      vial.status="open";vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
+      vial.status="open";vial.intendedUse=m.querySelector("#rv-purpose").value;vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
       // Immutable recipe for this physical vial; later kit edits cannot rewrite it.
       if(!Array.isArray(vial.composition) && Array.isArray(entry.composition))
         vial.composition=entry.composition.map(x=>({compound:x.compound,mg:Number(x.mg)}));
@@ -1618,7 +1626,8 @@ function openNewVialModal(supplyId, onDone) {
       // the way openNewVialModal's own inline bookkeeping and reconstituteVialModal's
       // vials[]-based bookkeeping just did. No more forced deactivation of other same-name
       // kits here — multiple can now be open at once, by explicit confirmation above.
-      activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
+      const openedVial=activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
+      openedVial.intendedUse=m.querySelector("#rv-purpose").value;
       saveState(); closeModal(); render();
       if(typeof onDone==='function')onDone(getActiveVial(entry));
     });
