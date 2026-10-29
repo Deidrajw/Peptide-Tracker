@@ -24,3 +24,10 @@ The repository currently has a **canonical manifest + synchronization checks**, 
 
 ## App Store policy proposal — not an approved destructive change
 Keep the historical beta notes in GitHub for traceability. Public first-release history should be curated to real public releases (possibly starting with 1.0.0); avoid displaying internal `Update #N` entries as app versions in store notes. Preserve the existing web release history unless a separate product decision approves changing its visibility. No data purge.
+
+## Enforced stale-note gate (draft branch PR #123, 2026-10-28)
+- `tools/check-release-readiness.mjs --self-test` runs six deterministic positive/negative checks (stale source, meaningful note/version update, docs-only changes, incomplete note, false published claim).
+- `--candidate` validates the release record and **warns** if user-visible files have changed without a note/version update; it does not block design-only draft PRs from obtaining previews. It requires a Git diff against the current merge base where available.
+- `--production` **fails** if changed `index.html`, `assets/js/*-nexus.js`, `assets/css/*.css` or icons do not have both a new version and changed release notes compared with the Git base. Missing Git diff evidence is a hard failure. Documentation-only updates are allowed without an app version increment.
+- `.github/workflows/nexus-release-validation.yml` uses full Git checkout history and invokes this gate for all release build jobs; PRs use candidate mode, pushes to `main` or `release/**` use strict production mode.
+- **Boundary:** a GitHub Actions status by itself cannot always prevent a separately configured Cloudflare auto-deployment after a merge. Require branch protections/Cloudflare deployment controls and explicit approval; the strict gate is an auditable release-readiness signal, not independent proof that every production deploy was blocked. It cannot independently judge whether a human-authored changelog lists every feature; PM review remains mandatory.
