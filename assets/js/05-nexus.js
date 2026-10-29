@@ -216,14 +216,6 @@ function comboDoseModal() {
 
   try {
     m.querySelector("#save").onclick = () => {
-    // Until route-specific source switching and transfer ledgers are complete,
-    // refuse mismatched routes rather than silently draw from another vial.
-    if (!isEdit && methodInput.value!==initialMethod) {
-      showErrorBanner("Changing the administration method requires a new route-matched source. No dose or inventory was saved.");return;
-    }
-    if (!isEdit && selectedSource==="fresh" && !activeKit()) {
-      showErrorBanner("Select a source explicitly labelled for this administration method. Unlabelled or incompatible vials cannot be deducted.");return;
-    }
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
@@ -1259,6 +1251,14 @@ function doseModal(name, existing, occTime) {
         allocations,fromPreparedId};
       tgt.doses.push(dose);
       saveState();closeModal();render();return;
+    }
+    // A dose cannot silently switch preparations or consume an unlabelled vial.
+    // Keep the existing dose/edit ledger unchanged on validation failure.
+    if (!isEdit && methodInput.value!==initialMethod) {
+      showErrorBanner("Changing the administration method requires selecting a compatible preparation. No dose or inventory was saved.");return;
+    }
+    if (!isEdit && selectedSource==="fresh" && !activeKit()) {
+      showErrorBanner("No compatible labelled open vial. No dose or inventory was saved.");return;
     }
     const ak = activeKit();
     // Remember this choice for next time — the whole point of the picker above is that a
