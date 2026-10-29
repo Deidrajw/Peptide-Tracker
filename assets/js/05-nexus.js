@@ -1140,8 +1140,10 @@ function doseModal(name, existing, occTime) {
     const options=nexusAdminSites(methodInput.value);
     const previous=siteInput.value||f.site||"";
     siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(site)+'</option>').join("");
-    if(previous&&!options.includes(previous)&&f.site===previous)siteInput.add(new Option(previous+" (previously recorded)",previous));
-    siteInput.value=options.includes(previous)||f.site===previous?previous:"";
+    const sameRecordedMethod=methodInput.value===initialMethod;
+    if(previous&&!options.includes(previous)&&sameRecordedMethod&&f.site===previous)
+      siteInput.add(new Option(previous+" (previously recorded)",previous));
+    siteInput.value=options.includes(previous)||(sameRecordedMethod&&f.site===previous)?previous:"";
   };
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
