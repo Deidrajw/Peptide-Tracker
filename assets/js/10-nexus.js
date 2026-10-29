@@ -1210,12 +1210,17 @@ function buildReminders() {
   // pausing means "don't quietly progress," which extends to not alerting about
   // transitions that aren't actually approaching in real terms.
   if (state.settings.phaseRemindersEnabled!==false) {
-    (state.protocols||[]).filter(proto=>["active","in_progress"].includes(proto.status)).forEach(proto=>{
+    (state.protocols||[]).filter(proto=>["active","in_progress","planned"].includes(proto.status)).forEach(proto=>{
       (proto.compounds||[]).forEach(comp=>{
         const info = getProtocolPhaseInfo(proto, comp);
         if (!info) return;
         const c2 = cfg(comp.name);
         const today = localDate();
+        // Planned protocols may alert about their upcoming first phase, but an
+        // overdue unactivated plan must not impersonate active progression.
+        if (proto.status==="planned" &&
+            !info.notStartedYet &&
+            !(info.current?.startDate===today && info.index===0)) return;
         const phases = info.phases||[];
         const first = phases[0], last = phases[phases.length-1];
         if (!first || !last) return;
