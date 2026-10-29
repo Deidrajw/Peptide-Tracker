@@ -8,13 +8,19 @@
   if(!input||typeof input.id!=="string"||!input.id.trim())fail("Container ID required");
   if(typeof input.compound!=="string"||!input.compound.trim())fail("Compound required");
   const type=input.containerType,method=input.method;
-  if(!["capsule-bottle","nasal-bottle"].includes(type))fail("Unsupported container");
-  if((type==="capsule-bottle"&&method!=="Oral")||(type==="nasal-bottle"&&method!=="Nasal"))fail("Container/method mismatch");
+  if(!["capsule-bottle","nasal-bottle","raw-powder","topical-container"].includes(type))fail("Unsupported container");
+  if((type==="capsule-bottle"&&method!=="Oral")||(type==="nasal-bottle"&&method!=="Nasal")||(type==="raw-powder"&&method!=="Unassigned")||(type==="topical-container"&&method!=="Topical"))fail("Container/method mismatch");
   const entry={id:input.id,compound:input.compound.trim(),containerType:type,method,transactions:[]};
   if(type==="capsule-bottle"){
    if(!Number.isSafeInteger(input.count)||input.count<0)fail("Invalid capsule count");
    if(!finite(input.mgPerCapsule)||input.mgPerCapsule<=0)fail("Positive mg per capsule required");
    entry.remainingCount=input.count;entry.mgPerCapsule=input.mgPerCapsule;
+  } else if(type==="raw-powder"){
+   if(!finite(input.quantityMg)||input.quantityMg<0)fail("Invalid raw powder mass");
+   entry.remainingMg=input.quantityMg;
+  } else if(type==="topical-container"){
+   if(!finite(input.volumeMl)||input.volumeMl<0)fail("Invalid topical volume");
+   entry.remainingMl=input.volumeMl;
   } else {
    if(!finite(input.volumeMl)||input.volumeMl<0)fail("Invalid bottle volume");
    if(!finite(input.quantityMg)||input.quantityMg<0)fail("Invalid nasal quantity");
@@ -56,6 +62,12 @@
    if(!Number.isSafeInteger(remainingCount)||remainingCount<0)fail("Invalid capsule balance");
    before={remainingCount:item.remainingCount};
    item.remainingCount=remainingCount;after={remainingCount};
+  }else if(item.containerType==="raw-powder"){
+   if(!finite(remainingMg)||remainingMg<0)fail("Invalid raw powder balance");
+   before={remainingMg:item.remainingMg};item.remainingMg=remainingMg;after={remainingMg};
+  }else if(item.containerType==="topical-container"){
+   if(!finite(remainingMl)||remainingMl<0)fail("Invalid topical balance");
+   before={remainingMl:item.remainingMl};item.remainingMl=remainingMl;after={remainingMl};
   }else if(item.containerType==="nasal-bottle"){
    if(!finite(remainingMl)||remainingMl<0||!finite(remainingMg)||remainingMg<0)fail("Invalid nasal balance");
    before={remainingMl:item.remainingMl,remainingMg:item.remainingMg};
