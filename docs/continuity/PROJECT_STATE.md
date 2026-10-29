@@ -2350,3 +2350,9 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 ## 2026-10-29 — Approved selector implementation checkpoint
 - User approved 3x2 administration method buttons and grouped detailed site buttons. Implemented on draft PR #124 in 05-nexus.js and nexus.css; existing underlying method/site form values retained and synchronised for save. Test assertions added in validate-logdose-ui.mjs for method switching and site selection. Exact-head CI still pending. No production deployment.
 - Separate capsule/nasal/vial Stash stock and coordinated cross-tab writes remain INCOMPLETE; transfer controls explicitly gated off. NEXT: verify CI for selector, correct failures, then address inventory formulation and persistence safely.
+
+
+## 2026-10-29 — Combo Dose follow-up
+- Fixed omitted requirement in draft PR #124: removed Combo Dose symptom picker and wiring, passed explicit empty symptom collection for newly logged combo doses. Historical records not rewritten, and preexisting ephemeral values not purged. Added fictional browser assertion for no symptom picker and preservation of historical temporary selection. Exact-head CI pending.
+- Prior full build failure on fd40e886: fictional unlabelled route fixture inherited SubQ. Corrected in test by explicitly removing preparationMethod. No production-route relaxation. Separate capsules/nasal/injectable Stash inventory still INCOMPLETE.
+- NEXT: Verify latest build/browser and mobile CI; fix failures before formulation-aware Stash implementation. Draft PR unmerged; no production deployment or transfer enablement.
