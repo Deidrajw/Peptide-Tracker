@@ -804,7 +804,7 @@ function doseModal(name, existing, occTime) {
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <label class="field-label" for="dose-method">DOSING METHOD</label><select id="dose-method" class="inp" required style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(f.method))}</select><div id="dose-site-wrap"><label class="field-label" for="site">INJECTION SITE (OPTIONAL)</label><select id="site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>$1</select></div>
+    <label class="field-label" for="dose-method">DOSING METHOD</label><select id="dose-method" class="inp" required style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(f.method))}</select><div id="dose-site-wrap"><label class="field-label" for="site">INJECTION SITE (OPTIONAL)</label><select id="site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select></div>
     ${!isEdit&&recent.length?`<div id="dose-site-guidance" class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
@@ -2193,6 +2193,8 @@ function quickLogDose(name, occTime) {
   if((state.supplies||[]).some(k=>k.name===name&&k.isBlend))return doseModal(name,null,occTime);
   const cData = allPeptides()[name] || {};
   const doseHistory = [...(cData.doses||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const quickMethod=nexusDoseMethod(cData.route);
+  if(!quickMethod){doseModal(name,null,occTime);return;}
   if (!occTime && cData.dosesPerDay>1) {
     const pending = getDayOccurrenceSummary(cData, localDate()).pending;
     if (pending.length>1) { doseModal(name); return; } // ambiguous — which occurrence? Don't guess.
@@ -2247,8 +2249,6 @@ function quickLogDose(name, occTime) {
     allocations = [{ kitId: activeKit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) }];
     kitId = null;
   }
-  const quickMethod=nexusDoseMethod(cData.route);
-  if(!quickMethod){doseModal(name,null,occTime);return;}
   const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:nexusInjectableMethod(quickMethod)?suggestedSite:"", method:quickMethod, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
   const builtin = !!PEPTIDES[name];
   const tgt = builtin ? state.peptides : state.customPeptides;
