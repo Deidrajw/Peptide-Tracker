@@ -821,6 +821,7 @@ function doseModal(name, existing, occTime) {
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select>
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
+    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 10px;font-size:13px;color:var(--t3);min-height:44px"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> As needed (PRN) · No protocol follow-up</label>
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
@@ -1397,7 +1398,7 @@ function doseModal(name, existing, occTime) {
     }
 
     const spraysEl = m.querySelector("#sprays");
-    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, method:methodInput.value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, method:methodInput.value, asNeeded:m.querySelector("#nx-dose-as-needed").checked, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
@@ -1406,7 +1407,7 @@ function doseModal(name, existing, occTime) {
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
     saveState(); closeModal(); render();
-    if(!isEdit) nexusPostDoseReactionPrompt(name,dose.id);
+    if(!isEdit && !nexusPostProtocolDoseFollowup(name,dose)) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
 
@@ -2316,7 +2317,8 @@ function quickLogDose(name, occTime) {
   const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
   if (fulfilled) fulfilled.doseId = dose.id;
   saveState(); render();
-  showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
+  const postProtocolShown=nexusPostProtocolDoseFollowup(name,dose);
+  if(!postProtocolShown) showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
     if (fulfilled) fulfilled.doseId = null;
