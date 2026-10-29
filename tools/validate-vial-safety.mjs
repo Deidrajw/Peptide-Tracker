@@ -165,6 +165,50 @@ try {
     list.push('orphaned prepared deletion UI preserves dialog, batch and source warning');
 
 
+    // (8) Legacy records cannot be refunded to whichever vial is open now.
+    // This includes old kit-only attribution, a changed open vial and absent
+    // allocations. These are historical uncertainties, not recoverable IDs.
+    const legacyKit=kit(9010,0);
+    legacyKit.vials[0].status='empty';
+    legacyKit.vials.push({id:'new-open-vial',status:'open',vialMg:10,
+      remainingMg:7,sequenceNumber:2,reconDate:'2026-10-27T08:00:00'});
+    legacyKit.openedVials=2;legacyKit.totalVials=2;
+    state.supplies=[legacyKit];
+    const oldVial=legacyKit.vials[0],currentVial=legacyKit.vials[1];
+    const oldRecord={id:8110,compound:'Retatrutide',amountEach:2,
+      unit:'mg',count:5,remainingCount:3,
+      allocations:[{kitId:legacyKit.id,amount:10}]};
+    state.preparedDoses=[oldRecord];
+    assert(deletePreparedDose(oldRecord)===false,
+      'Legacy kit-only record was deleted without vial attribution');
+    assert(state.preparedDoses[0]===oldRecord &&
+      near(oldVial.remainingMg,0)&&near(currentVial.remainingMg,7),
+      'Legacy refund incorrectly credited the changed active vial');
+    list.push('legacy missing vialId with changed active vial blocks and conserves stock');
+
+    const noAllocation={id:8111,compound:'Retatrutide',amountEach:2,
+      unit:'mg',count:5,remainingCount:3};
+    state.preparedDoses=[noAllocation];
+    assert(deletePreparedDose(noAllocation)===false,
+      'Legacy prepared batch with absent allocations was removed');
+    assert(state.preparedDoses[0]===noAllocation &&
+      near(oldVial.remainingMg,0)&&near(currentVial.remainingMg,7),
+      'Absent allocations caused an inventory mutation');
+    list.push('legacy absent allocations preserve prepared batch and inventory');
+
+    // The blocked state must also be visible through the actual confirmation.
+    deletePreparedDoseModal(oldRecord);
+    const legacyConfirm=document.querySelector('#confirm');
+    assert(legacyConfirm,'Legacy deletion confirmation missing');
+    legacyConfirm.click();
+    assert(document.querySelector('#confirm') &&
+      document.body.textContent.includes('source is unverified') &&
+      state.preparedDoses[0]===noAllocation &&
+      near(currentVial.remainingMg,7),
+      'Legacy confirmation failed to display warning or preserve data');
+    closeModal();
+    list.push('legacy blocked-delete dialog displays provenance warning');
+
     // (8) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
     // over/under deductions in compound preparations.
     assert(near(doseToMg(250,'mcg'),.25)&&near(mgToUnit(.25,'mcg'),250)
@@ -180,4 +224,4 @@ try {
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
-console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*9+' safety assertions');
+console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*12+' safety assertions');
