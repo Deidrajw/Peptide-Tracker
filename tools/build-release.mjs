@@ -6,7 +6,7 @@ const VERSION = JSON.parse(fs.readFileSync('release/release.json','utf8')).versi
 execFileSync(process.execPath, ['tools/generate-release-notes.mjs', '--check'], {stdio:'inherit'});
 const DIST = 'dist';
 const ORDERED_APP_JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
-const JS = [...ORDERED_APP_JS.slice(0,3), 'assets/js/nexus-preparation-ledger.js', 'assets/js/nexus-preparation-bridge.js', ...ORDERED_APP_JS.slice(3)];
+const JS = [...ORDERED_APP_JS.slice(0,3), 'assets/js/nexus-preparation-ledger.js', 'assets/js/nexus-preparation-bridge.js', 'assets/js/nexus-formulation-stock.js', ...ORDERED_APP_JS.slice(3)];
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css', 'assets/css/nexus-hybrid-preview.css'];
 const ICONS = ['assets/icons/nexus-icon-180.png', 'assets/icons/nexus-icon-192.png', 'assets/icons/nexus-icon-512.png', 'assets/icons/nexus-icon-1024.png'];
 const LIVE_FILES = ['index.html', ...CSS, ...JS, ...ICONS];
