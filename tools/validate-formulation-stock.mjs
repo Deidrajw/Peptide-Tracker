@@ -88,6 +88,18 @@ try {
   assert.equal(await physicalChoices.nth(1).getAttribute('aria-pressed'),'true','Explicit source selection must mark only chosen vial');
   const untouchedSources=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg));
   assert.deepEqual(untouchedSources,[7,9],'Selecting a vial must not debit either balance');
+  await page.evaluate(()=>{
+    document.querySelector('#dose').value='1';
+    document.querySelector('#save').click();
+  });
+  const exactCommitted=await page.evaluate(()=>{
+    const k=state.supplies.find(k=>k.id===992211);
+    const d=state.customPeptides['Fictional Source Selector'].doses;
+    return {balances:k.vials.map(v=>v.remainingMg),doses:d.map(x=>({allocations:x.allocations,kitId:x.kitId}))};
+  });
+  assert.deepEqual(exactCommitted.balances,[7,8],'Dose must deduct only selected second vial');
+  assert.equal(exactCommitted.doses.length,1,'One dose should be saved');
+  assert.equal(String(exactCommitted.doses[0].allocations?.[0]?.vialId),'source-b','Dose ledger must retain exact vial ID');
   await page.evaluate(()=>closeModal());
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
