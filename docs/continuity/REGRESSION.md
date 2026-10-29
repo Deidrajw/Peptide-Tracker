@@ -1,3 +1,6 @@
+## 2026-10-29 — Quick Log fail-closed safeguard
+- 9aca8d6c prevents direct Quick Log inventory debit when selected kit has >1 open vial with >0.01 mg. Needs fictional browser regression for two-open source and single-open normal Quick Log, no unintended history append, no silent amount deduction. Source-only verification; CI and physical iPhone NOT TESTED. Full intended multiple-open workflow blocked pending explicit picker.
+
 ## 2026-10-29 — Suggested-allocation ambiguous source regression
 - Source `6d6d9639`: `suggestAllocation` returns null when any candidate kit has two positive-balance open vials, instead of emitting allocations from first vial. Requires fictional test for two-open-vial rejection and single-vial unaffected, plus verification that user-facing picker supplies exact source ID before enabling two-open functionality. Tests for new commit PENDING. Do not confuse fail-closed guard with completed UX.
 
