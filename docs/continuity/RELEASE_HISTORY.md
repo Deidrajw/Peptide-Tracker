@@ -1051,3 +1051,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28/29 — v0.9.20-beta isolated historical warning-preview artifact candidate (NOT RELEASED)
 - `4c5c6988` builder generates extra standalone full-app orphan warning HTML + iPhone ZIP without modifying LIVE assets, `c93b1bac` adds real-modal browser test. CI not yet verified. Fictional storage isolated/no network, no schema migration or historical data change. Draft PR #123 unmerged; Cloudflare production unchanged.
+
+## 2026-10-28 — v0.9.20-beta DS2 candidate final QA and iPhone acceptance (NOT RELEASED)
+- Draft PR #123 application source `441d22a0847e536cbb5a0e6bc27463b74e2de34d` (Compound History scroll `fb601b97`; Profile fresh-entry overview `441d22a0`); main base `c1c95e1d`. No merge/deployment SHA or production publication.
+- Full/parity CI #40812666592 PASS, mobile #40812666510 PASS, nested navigation #40812666504 PASS; release artifact #12870988417 downloaded and exact-source LIVE ZIP + isolated fictional full-app DEMO verified. Nested evidence #12870992426 reviewed.
+- Physical iPhone focused retest user reported 4/4 PASS: history single scroll, bottom actions, fresh Profile entry, Settings Back; notes None. No destructive migration or intentional localStorage changes. Whole-app VoiceOver and live-data acceptance not established; preview URL source identity and production deployment not independently verified. Release status: approval review, draft/unmerged/undeployed.
