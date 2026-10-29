@@ -1087,3 +1087,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ## 2026-10-29 — Draft PR #124 validation checkpoint (UNRELEASED)
 - Stash capsule/nasal additive inventory build 4484dc5d passed full browser, mobile and nested-navigation CI (runs 40891595782, 40891595812, 40891595726). Artifact 12906345167 from build. Browser emulation does not equal physical iPhone acceptance.
 - Additional 44px and 320/390 overflow assertions committed c8507b74; exact new-head tests pending. Route-specific deduction is proposed only in docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md; no production merge, deploy, stock migration, or dose deduction activation.
+
+
+## 2026-10-29 — PR #124 Add Kit redesign checkpoint (NOT RELEASED)
+- Replaced rejected standalone formulation controls with single Add Kit form selector (Vials/Capsules/Raw Powder/Topical/purchased Nasal Spray). Non-vial physical products render as regular Stash cards; source vial intended-use metadata added to Open New Vial; no transfer or dose deductions enabled.
+- Existing vial stock, dose history, capsule/nasal formulationStocks and backups retain their IDs/data; no implicit source attribution or destructive migration. Tests updated for button targets, kit cards, nasal-reserved vial isolation and raw/topical balances. Exact-head full QA still pending; production not merged/deployed; physical iPhone untested.
