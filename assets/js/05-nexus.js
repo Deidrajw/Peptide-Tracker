@@ -99,7 +99,6 @@ function comboDoseModal() {
     </div>
     <label class="field-label">INJECTION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px">${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
-    <label class="field-label">SYMPTOMS AFTER THIS DOSE (shared)</label><div id="combo-sym" style="margin-bottom:14px"></div>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
       <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
       <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
@@ -113,16 +112,6 @@ function comboDoseModal() {
   // presents as "the whole modal is unresponsive" with zero indication why. Now a
   // failure in one block surfaces via showErrorBanner but doesn't take the rest down.
   try { m.querySelector("#x").onclick = closeModal; } catch(e) { showErrorBanner("comboDoseModal #x wiring: "+e.message); }
-
-  try {
-    if (!state._comboSymptoms) state._comboSymptoms = [];
-    const symBox = m.querySelector("#combo-sym");
-    const renderComboSym = () => {
-      symBox.innerHTML = symptomPickerHTML(state._comboSymptoms, "#A78BFA");
-      wireSymptomPicker(symBox, state._comboSymptoms, "#A78BFA", renderComboSym);
-    };
-    renderComboSym();
-  } catch(e) { showErrorBanner("comboDoseModal symptom picker wiring: "+e.message); }
 
   try {
     document.querySelectorAll(".use-prepared-syringe").forEach(btn=>btn.onclick=()=>{
@@ -185,7 +174,7 @@ function comboDoseModal() {
     const btn=e.target.closest(".combo-compound-toggle");
     if(!btn)return;
     // Only replace the selection and amount sections, never the whole modal.
-    // In-progress date, site, notes, symptoms, keyboard and scroll stay intact.
+    // In-progress date, site, notes, keyboard and scroll stay intact.
     state._comboDoses=state._comboDoses||{};
     m.querySelectorAll(".combo-dose-input").forEach(inp=>{state._comboDoses[inp.dataset.n]=inp.value;});
     const n=btn.dataset.n;
@@ -223,7 +212,7 @@ function comboDoseModal() {
         const notes = m.querySelector("#combo-notes").value;
         const comboId = uid();
         const items = sel.map(name => ({ name, doseVal: (m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)||{}).value || "" }));
-        const result = planAndApplyComboDoses(items, date, site, notes, comboId, state._comboSymptoms||[]);
+        const result = planAndApplyComboDoses(items, date, site, notes, comboId, []);
         if (!result.ok) {
           const {name, doseVal, unit, have, noOpenVial, kitId, hasSealedBackup} = result.shortfall;
           // Preserve everything typed so far regardless of which path below is taken, so
@@ -280,7 +269,7 @@ function comboDoseModal() {
           const favName = (nameInput?.value||"").trim() || sel.join(" + ");
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
-        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = ""; state._comboSymptoms = [];
+        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
         saveState(); closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
     };
