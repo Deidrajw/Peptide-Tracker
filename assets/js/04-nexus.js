@@ -1214,6 +1214,23 @@ function deletePreparedDose(pd) {
     showErrorBanner("This prepared blend has no exact vial transaction link. Deletion was blocked to protect inventory.");
     return false;
   }
+  // A prepared record with an explicit source must never be deleted while its
+  // unused stock cannot be restored to that exact kit/vial. The missing-source
+  // state is preserved for user review instead of silently discarding history.
+  const unusedCount=Number(pd.remainingCount)||0;
+  if(unusedCount>0){
+    const missing=getSyringeComponents(pd).some(comp=>(comp.allocations||[]).some(a=>{
+      const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+      if(!kit)return true;
+      if(kit.isBlend)return false; // exact blend ledger checked above
+      migrateKitToV2(kit);
+      return a.vialId!=null && !(kit.vials||[]).some(v=>String(v.id)===String(a.vialId) && Number.isFinite(Number(v.remainingMg)));
+    }));
+    if(missing){
+      showErrorBanner("A prepared dose's original source vial is missing. Deletion was blocked to preserve inventory history.");
+      return false;
+    }
+  }
   const totalCount = pd.count || 1;
   const remainingCount = pd.remainingCount || 0;
   const shareRemaining = totalCount>0 ? remainingCount/totalCount : 0;
