@@ -727,7 +727,7 @@ function doseModal(name, existing, occTime) {
   // already drawn before the vial ran out), otherwise starts empty and is only populated
   // once the typed dose amount exceeds what the active vial alone can cover.
   let rows = draft?.rows ? draft.rows.map(r=>({...r})) : [];
-  let multiMode = !!draft;
+  let multiMode = !!(draft?.rows||[]).some(r=>r.finished || (draft.rows||[]).length>1);
 
   // Which kit a "fresh from vial" dose actually draws from. Previously this was
   // unconditionally "whichever kit has activeKit===true" — fine when only one kit could
@@ -774,9 +774,9 @@ function doseModal(name, existing, occTime) {
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
-    <section class="nx-dose-section" aria-label="Dose source">
-      <div class="nx-dose-section-title">Dose source</div>
-      <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Select the prepared dose or vial used for this entry."}</p>
+    <section class="nx-dose-section" aria-label="Dose source" style="${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length?"display:none":""}">
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"How was this dose prepared?":"Confirm dose source"}</div>
+      <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Only choose a source when more than one is possible. Each saved dose keeps its exact source."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
       <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
@@ -808,7 +808,7 @@ function doseModal(name, existing, occTime) {
     </div>
     </section>
     <section class="nx-dose-section" aria-label="Administration details">
-      <div class="nx-dose-section-title">Administration details</div>
+      <div class="nx-dose-section-title">Dose details</div>
       <p class="nx-dose-section-desc">Review the amount, date and administration site.</p>
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
@@ -825,6 +825,7 @@ function doseModal(name, existing, occTime) {
     <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
+    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" style="font-size:12px;color:var(--t3);padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px;margin:4px 0 12px"><span style="color:#7DF9C0">✓</span> Inventory ready · ${esc("Vial "+String(eligibleSources[0].vial.sequenceNumber||"open"))} · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} available</div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
@@ -1017,6 +1018,9 @@ function doseModal(name, existing, occTime) {
     // another vial must never vanish when selecting the active source.
     rows = rows.filter(r=>r.finished ||
       (String(r.kitId)===String(selectedKitId) && String(r.vialId)===String(selectedVialId)));
+    // A provisional row from the previous choice is not a confirmed draw.
+    // Selecting another fully sufficient vial must clear its stale shortfall.
+    if (!rows.some(r=>r.finished) && rows.length<=1) { rows=[]; multiMode=false; }
     renderAllocPanel();
   });
 
@@ -1050,8 +1054,22 @@ function doseModal(name, existing, occTime) {
     const akVial = ak ? activeVial() : null;
     const akRemaining = akVial ? getVialRemainingMg(ak, akVial) : 0;
     const shortBy = neededMg - akRemaining;
-
+    const lockedDraw = rows.some(r=>r.finished);
+    // An old draft can contain a provisional allocation smaller than the edited
+    // dose. Never present that stale amount as a real shortage once the chosen
+    // exact vial is known to cover the entire dose. Locked/confirmed draws are
+    // retained for proper multi-vial reconciliation.
+    if (!lockedDraw && akVial && shortBy<=0.001 && rows.length<=1) {
+      rows=[];multiMode=false;panel.innerHTML="";
+      const toggle=m.querySelector("#toggle-multi");
+      if(toggle)toggle.textContent="+ Use multiple vials";
+      return;
+    }
     if (!multiMode && shortBy <= 0.001) { panel.innerHTML=""; return; }
+    if (rows.length===1 && !rows[0].finished && akVial &&
+        String(rows[0].kitId)===String(ak.id) && String(rows[0].vialId)===String(akVial.id)) {
+      rows[0].mg=Math.round(Math.min(neededMg,akRemaining)*100)/100;
+    }
 
     // Seed rows the first time the panel becomes relevant. Scoped to the OPEN VIAL
     // specifically, same reasoning as the trigger above — suggestAllocation sums a kit's
