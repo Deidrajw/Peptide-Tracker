@@ -55,14 +55,14 @@ function renderPhaseRemindersDetail() {
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;margin-bottom:14px">
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:22px">📈</span>
-      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — you'll see in-app alerts before and when a protocol phase changes":"Off — no phase-transition alerts"}</div></div>
+      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — phase starts, changes and protocol-end reviews":"Off — no protocol schedule alerts"}</div></div>
       ${enabled
         ? `<button id="disablephaserem" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:7px 14px;font-size:12px">Turn off</button>`
         : `<button id="enablephaserem" style="background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Enable</button>`}
     </div>
   </div>
   <div style="font-size:11px;color:var(--t5);line-height:1.6;padding:0 4px">
-    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Fires 3 days before a phase transition, and on the transition day itself, for any compound with a multi-phase protocol configured. Automatically derived from each protocol's phase durations — nothing to set up per-compound.
+    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Reminders appear 7, 3 or 1 day before applicable phase changes, when Phase 1 or another phase starts, and 7 or 1 day before a protocol's scheduled end. When an active protocol's schedule has elapsed, a review alert stays visible until you act on its status. An elapsed schedule is <b>not</b> automatically marked Completed, and no dose or history is changed. Paused protocols don't generate reminders. Dates are derived from each protocol's saved phases and pause adjustments.
   </div>`;
 }
 
