@@ -1699,3 +1699,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Added WebKit iPhone-emulation regression
 - New .github/workflows/nexus-formulation-webkit.yml runs standalone full-app DEMO and LIVE local fictional Stash Add/Adjust tests across widths 320/390 and light/dark with WebKit. Test started on commit 1374fbaa run 40893001058; no pass claim until completion.
 - Tests include minimum 44px actions/Adjust touch targets, no 320/390 horizontal overflow, no legacy vial mutation and correct capsule/nasal balances. Real iPhone Safari keyboard, safe-area, VoiceOver and home-screen PWA behaviour remain NOT TESTED.
+
+
+## 2026-10-29 — WebKit evidence confirmed
+- WebKit Stash workflow 40893001058 on 1374fbaa **SUCCESS**, exercising fictional LIVE/DEMO 320/390 light/dark capsule/nasal Add and Adjust, isolated vial inventory and 44px/overflow checks. This proves automated Safari-engine coverage only; physical iPhone/VoiceOver **NOT TESTED**.
+- Full Chromium/browser CI 40891595782 on 4484dc5d **SUCCESS**; exact latest-head full browser CI still pending. No merge, no deployment and no production data changes.
