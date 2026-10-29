@@ -1030,3 +1030,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — DS2 safety test-only candidate, NOT RELEASED
 - `56dc3f16` adds fictional prepared-dose two-vial partial-refund conservation assertions to existing full LIVE/DEMO 320/390 light/dark safety matrix; no runtime/source calculation changes or saved-data migration. New exact-source CI pending, draft PR #123 remains unmerged and production unchanged. Existing release-readiness gate remains strict on main/release, warning on draft; not a substitute for verified human notes and Cloudflare parity.
+
+## 2026-10-28 — DS2 prepared-dose orphan-source safety fix, draft only
+- Runtime `4968983c` blocks removal of unused prepared batch with missing explicit source kit/vial; fictional negative tests `b8ca5abf`, following two-vial partial refund test `56dc3f16`. No storage schema/data migration or live writes intended. Full build, exact-source LIVE/isolated DEMO artifacts and protected-flow verification **PENDING**. PR #123 draft/unmerged, primary Cloudflare production unchanged.
