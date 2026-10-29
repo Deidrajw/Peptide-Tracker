@@ -4,6 +4,6 @@ A more consistent Nexus, with safer inventory history
 - Cleaner Protocol and Plans cards: Reduced card density, refined disclosure and action placement, and preserved existing protocol schedules, histories and actions.
 - Unified kit and Supplies experience: Aligned premixed and standard kit cards, vial details, inventory actions, supply presentation and guided editing to the approved design language.
 - Consistent blend dosing and inventory links: Kept premixed blends in standard Log Dose and kit workflows with explicit source transaction tracking and preserved historical ingredient associations.
-- Protect historical prepared doses from uncertain refunds: Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial.
+- Protect historical prepared doses from uncertain refunds: Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial. User-reported isolated physical iPhone warning acceptance passed 12/12 checks.
 - Clearer What's New and update history: Consolidated in-app release history presentation and prepared notices that appear only for verified published releases.
 - More consistent touch targets and contrast safeguards: Improved selected buttons, modal actions, spacing and focus presentation; light-theme contrast triage and VoiceOver acceptance remain incomplete.
