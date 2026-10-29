@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 continued dosing with PRN exception (DRAFT, NOT RELEASED)
+- Added after-save informational follow-up for completed/elapsed same-compound protocol, explicit per-dose PRN flag, Update existing / Start new / Not now, per-protocol+compound acknowledgement, preserved Quick Log undo and reaction invitation. No protocol migration, no dose inventory alteration, no production merge/deployment. Fictional browser regression c548369e added; CI pending. Compact Stash redesign remains proposed/not coded.
+
 ## 2026-10-29 — PR124 release QA success and artifact inspection (DRAFT, NOT RELEASED)
 - Full build 40913649262 SUCCESS after legacy shortfall test adjusted to explicit source selection. Artifact id 12915741154 downloaded: standalone full-app fictional DEMO, exact-source LIVE root ZIP, build manifest and browser evidence; six sampled live source files Git blob match PR branch. Artifact manifest source commit 55d3ba21; latest head 555f5a1b is documentation-only. No production deploy and primary hosting parity false by design. Physical iPhone acceptance PENDING; route-specific transfers/deductions disabled. Status: TESTED AUTOMATED/PR DRAFT, NOT MERGED OR DEPLOYED.
 
