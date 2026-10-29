@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 release QA success and artifact inspection (DRAFT, NOT RELEASED)
+- Full build 40913649262 SUCCESS after legacy shortfall test adjusted to explicit source selection. Artifact id 12915741154 downloaded: standalone full-app fictional DEMO, exact-source LIVE root ZIP, build manifest and browser evidence; six sampled live source files Git blob match PR branch. Artifact manifest source commit 55d3ba21; latest head 555f5a1b is documentation-only. No production deploy and primary hosting parity false by design. Physical iPhone acceptance PENDING; route-specific transfers/deductions disabled. Status: TESTED AUTOMATED/PR DRAFT, NOT MERGED OR DEPLOYED.
+
 ## 2026-10-29 — PR124 CI recovery checkpoint (NOT RELEASED)
 - Full build 40913124098 FAILED outdated shortfall UI assertion (no explicit source selection). Corrected regression at 4c6cf6ee; targeted browser 40913649295, WebKit 40913649202 and nested 40913649436 passed; full build 40913649262 still running at checkpoint. Preview bot reports commit 4c6cf6e deployed to Cloudflare branch preview but independent verification unavailable. Never imply production merged or certified release.
 
