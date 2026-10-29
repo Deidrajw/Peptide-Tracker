@@ -1001,7 +1001,9 @@ function doseModal(name, existing, occTime) {
       date:m.querySelector("#date")?.value||f.date,site:m.querySelector("#site")?.value||f.site,
       notes:m.querySelector("#notes")?.value||f.notes,
       escalation:!!m.querySelector("#esc")?.checked,symptoms:f.symptoms,
-      rows:[]
+      // A mid-draw method confirmation must not discard already-confirmed
+      // source allocations from the earlier Open a sealed vial handoff.
+      rows:rows.map(r=>({...r}))
     };
     vial.intendedUse=initialMethod;
     saveState();closeModal();doseModal(name);
