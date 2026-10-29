@@ -2337,3 +2337,11 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Premixed browser fixture newly labels its fictional stock SubQ at 13579680; CI verification PENDING. Historical records unchanged.
 - Synchronous ordinary saves have stale write/readback guard. Only transfer boundary uses Web Locks; complete shared coordination INCOMPLETE. Transfer UI disabled.
 - NEXT: Verify new CI and resolve failures, then complete all-writer coordination and formulation-safe source accounting before enabling controls.
+
+
+## 2026-10-29 — PR #124 source-route hardening checkpoint
+- Separate SubQ/Nasal open vials of the same name are now filtered by explicit kit method using getEligibleSourceKits(name, method), and Log Dose calls the method-aware helper. Oral remains ineligible for those vial routes. No automatic reclassification of legacy source labels.
+- Transfer boundary is now explicitly disabled by NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED=false until all writers share one safe coordination strategy. Ordinary saveState remains synchronous; Web Locks cannot synchronously coordinate its writes without an architectural change. No production transfer UI enabled.
+- Full browser QA earlier failed optional source IDs disclosure because its fictional fixture lacked a route label; fixture was labelled SubQ at commit 96ed8e. Additional 320/390 route-isolation assertions added f4fb8d9; latest CI must be reverified.
+- Unapproved 3x2 administration buttons and new capsule/route-specific supply creation remain DESIGN PROPOSALS ONLY. Do not merge/deploy without approval.
+- NEXT: Inspect full browser CI and correct genuine failures; plan deliberate persistence refactor with synchronous semantics protected; implement distinct formulations with isolated fictional data and no migration.
