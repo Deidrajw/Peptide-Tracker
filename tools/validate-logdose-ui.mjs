@@ -37,7 +37,14 @@ async function stateSnapshot(page){return page.evaluate(()=>({
   draft:state._pendingDoseDraft
 }));}
 async function setDose(page,amount){await page.locator('#dose').fill(String(amount));}
-async function openDose(page){await page.evaluate(()=>doseModal('Retatrutide'));}
+async function openDose(page){
+  await page.evaluate(()=>doseModal('Retatrutide'));
+  // This legacy regression intentionally starts with the first source. The current
+  // product requires a tap when multiple eligible physical vials are available.
+  // Distinct-vial no-default behaviour is asserted separately in formulation QA.
+  const choices=page.locator('.kit-opt');
+  if(await choices.count()>1)await choices.first().click();
+}
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
   const next=modal.locator('#nx-dose-step-next');
