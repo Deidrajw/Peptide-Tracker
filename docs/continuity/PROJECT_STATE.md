@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 contextual warning hotfix
+- Commit `60f6aa0f`: closing a modal clears its `nx-validation-message`, preventing an open-vial warning from surviving into unrelated screens. SOURCE IMPLEMENTED; CI and iPhone retest pending. Multiple-open-vial restriction intentionally retained until exact-source allocation routing is safe; lifting guard alone would risk debiting wrong vial. No merge/deploy.
+
 ## 2026-10-29 — PR124 Add Kit save/search source checkpoint
 - Application commit 57dce9b6: replaced datalist-only compound discovery with tap-selectable filtered candidates on iPhone, changed new raw/topical/nasal stock entry labels from Remaining to initial Amount/Volume/Mass, and rebased additive formulation commits on the saved snapshot only if existing supplies/formulationStocks equal the editor's in-memory inventory. Preserves unrelated persisted state; fails closed on a changed inventory. Exact-head CI and physical iPhone testing PENDING. Multiple-open-vial and linked preparations remain INCOMPLETE. No merge/deploy.
 
