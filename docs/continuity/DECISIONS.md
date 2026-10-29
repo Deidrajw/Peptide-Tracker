@@ -919,3 +919,7 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 - Supply identity must include **formulation and physical container**, not just compound name: e.g. the same compound as an injectable vial, a nasal preparation/bottle and oral capsules must have individually selectable, non-fungible stock pools. Do not treat capsules as vials or infer mg-to-capsule or nasal-to-injection conversions. Preserve original kit IDs and historical allocation references.
 - Block dose saves if requested route/formulation lacks an eligible explicit stock source. Do not silently substitute a vial, bottle or capsule; keep separate active containers and transactions.
 - Real transfer controls remain disabled pending coordinated persistence and full CI verification. No merge/deploy without approval.
+
+
+## 2026-10-29 — Approved administration selector
+- User explicitly approved the 3x2 administration method button layout with grouped detailed site buttons (SubQ, IM, IV, Oral, Nasal, Topical). Approval applies to the selector UI, **not** merging/deploying PR #124, not a capsule data migration, and not enabling transfers. Preserve historical per-dose site text and granular left/right site positions.
