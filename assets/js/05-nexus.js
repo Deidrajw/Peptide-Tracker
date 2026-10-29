@@ -1061,7 +1061,7 @@ function doseModal(name, existing, occTime) {
       const target = parseFloat(r.mg)||0;
       state._pendingDoseDraft = {
         name, id:f.id, dose:m.querySelector("#dose").value, date:m.querySelector("#date").value,
-        site:m.querySelector("#site").value, notes:m.querySelector("#notes").value,
+        site:m.querySelector("#site").value, method:m.querySelector("#dose-method").value, notes:m.querySelector("#notes").value,
         escalation:m.querySelector("#esc").checked, symptoms:f.symptoms, rows: rows.map(r2=>({...r2})),
       };
       closeModal();
@@ -1084,7 +1084,7 @@ function doseModal(name, existing, occTime) {
       const draftRows = rows.map(r=>({...r}));
       state._pendingDoseDraft = {
         name, id:f.id, dose:m.querySelector("#dose").value, date:m.querySelector("#date").value,
-        site:m.querySelector("#site").value, notes:m.querySelector("#notes").value,
+        site:m.querySelector("#site").value, method:m.querySelector("#dose-method").value, notes:m.querySelector("#notes").value,
         escalation:m.querySelector("#esc").checked, symptoms:f.symptoms, rows: draftRows,
       };
       closeModal();
@@ -1156,6 +1156,9 @@ function doseModal(name, existing, occTime) {
   renderAllocPanel();
 
   m.querySelector("#save").onclick = () => {
+    const method=nexusDoseMethod(m.querySelector("#dose-method").value);
+    if(!method){showErrorBanner("Choose a dosing method. Nothing was saved.");return;}
+    const injectionSite=nexusInjectableMethod(method)?m.querySelector("#site").value:"";
     const doseAmtStr = m.querySelector("#dose").value;
     if (!doseAmtStr.trim() || !Number.isFinite(Number(doseAmtStr)) || Number(doseAmtStr) <= 0) {
       showErrorBanner("Enter a valid amount greater than zero before confirming. Nothing was saved.");
@@ -1331,9 +1334,6 @@ function doseModal(name, existing, occTime) {
       allocations = realAllocations; kitId = null;
     }
 
-    const method=nexusDoseMethod(m.querySelector("#dose-method").value);
-    if(!method){showErrorBanner("Choose a dosing method. Nothing was saved.");return;}
-    const injectionSite=nexusInjectableMethod(method)?m.querySelector("#site").value:"";
     const spraysEl = m.querySelector("#sprays");
     const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:injectionSite, method, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
