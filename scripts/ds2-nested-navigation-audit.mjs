@@ -436,6 +436,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
   const result=await page.evaluate(()=>{
     closeModal();tab='stash';render();
     document.querySelector('#qa-addkit')?.click();
+    document.querySelector('[data-kit-form="vial"]')?.click(); // choose Vials inside unified Add Kit
     const modal=document.querySelector('.modal.nx-stash-kit-editor');
     if(!modal)throw Error('Add Kit modal not open');
     const sel=modal.querySelector('#sname');
@@ -532,7 +533,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  };
  await verifyNamed('protocol-wizard-continue',()=>protocolBuilderModal(), '#pb-next');
  await verifyNamed('onboarding-next',()=>showOnboarding(), '#ob-next');
- await verifyNamed('stash-wizard-continue',()=>{tab='stash';render();document.querySelector('#qa-addkit')?.click()}, '#nx-kit-next');
+ await verifyNamed('stash-wizard-continue',()=>{tab='stash';render();document.querySelector('#qa-addkit')?.click();document.querySelector('[data-kit-form="vial"]')?.click()}, '#nx-kit-next');
  await verifyNamed('log-reconstitution',()=>{
    const s=state.supplies.find(x=>!x.isBlend && x.name);
    if(!s)throw Error('Fictional single compound kit missing');
