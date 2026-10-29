@@ -374,3 +374,685 @@
 ### 2026-10-25 — v0.9.20-beta UX hierarchy patch — MERGED; DEPLOYMENT UNVERIFIED
 - PR #119 squash merge SHA `3ef22b98326fc54777dbbef8ca9b013082f8f9fb` includes adaptive Stash kit actions/empty state and compact vial ellipsis, injection-site guidance relocation, corrected multi-vial button with 20px horizontal/12px vertical padding, compact Combo favourites selector, and compound Trends dedicated detail/back; targeted browser fixture updates.
 - User preview iPhone acceptance for displayed changes recorded. CI mobile `40212593190` PASS, release browser and packaging `40212593263` PASS. Application version remains 0.9.20-beta; no destructive migration. Main merge is proven, Cloudflare Production source parity PENDING. The specific old expanded blend-card parity and app-wide divider/contrast PR #118 remain separately unresolved.
+
+
+### 2026-10-25 — Hybrid Design System 2.0 preview (UNRELEASED CANDIDATE)
+- Draft PR #123; experimental CSS, source-derived standalone full-app preview, branch-only builder support and browser QA. Main/Cloudflare unaffected. Version still v0.9.20-beta; this entry is *not a release* or deployed version. No data schema change. Build/browser results pending latest CI; full artifact parity and isolated storage require verification before approval.
+
+
+### 2026-10-25 — Hybrid Today screen source-level redesign (UNRELEASED)
+- Design draft PR #123: Today presentation in `assets/js/10-nexus.js` + experimental CSS; responsive progress ring uses existing schedule percentage, Check-In action event classes preserved. All historical data and JS calculations unchanged. Workflow results pending. This is not a deployed release.
+
+
+### 2026-10-25 — Phase 2 Stash hybrid visual preview (UNRELEASED)
+- Draft PR #123 visual-only Stash CSS commit `157a4128`; layered inventory summary, elevated kit/vial surfaces, action control hierarchy and two themes. Source math/data unchanged. Branch-only; CI and design approval pending; not a versioned production release.
+
+
+### 2026-10-25 — Hybrid Stash refinement pass 2 (UNRELEASED)
+- Draft PR #123 code `e29cb50f` / `5134978f`: native-style category segments, toned-down Inventory Overview and kit gradients, structured Needs Attention list, modal styling baseline. No data migration or logic change. Latest-head QA pending. Not merged or deployed; production unaffected.
+
+
+### 2026-10-25 — Visual cleanup candidate (NOT RELEASED)
+- Design PR #123 commit `7fa1a893`: reduced kit-button shadow, paired Today CTA consistency, Needs Attention rail removed. Visual-only CSS; no migrations. Latest-head tests pending, no production deployment.
+
+
+### 2026-10-25 — Kit-card action hierarchy Phase 2D (UNRELEASED)
+- Draft PR #123 commits `bba65429` and `ac9a4f27`: remove persistent Prepare button from Stash cards, retain menu Prepare and global shortcut; responsive two-action card styling. Data impact none; branch-only candidate pending QA. No production changes.
+
+
+### 2026-10-25 — Inventory source allocation clarity (UNRELEASED)
+- Draft PR #123 source commits `3875da06`/`74228713`: numbered source labels, kit identity and explicit Draw confirmation wording, CSS grouping. Previous Stash open-card test updated `3dc44b22`. Math and persistence logic unchanged; testing and design approval pending. No production deployment.
+
+
+### 2026-10-25 — Stash modal audit / responsive control preview (UNRELEASED)
+- Draft PR #123 audit doc `1a2c3540`, CSS `0bd28df5`: larger Prepare count hit targets, readable concentration output and 50px buttons. No data changes; latest-head QA/visual signoff pending. No production merge or deployment.
+
+
+### 2026-10-25 — Today lower-page visual refinement (UNRELEASED)
+- Draft PR #123 CSS commit `287cd89d`: schedule nav, compact cards, facts, actions and chevrons. Functional renderer/recorded data unchanged. Expanded rich card parity and iPhone visual validation still incomplete; no merge/deploy.
+
+
+### 2026-10-25 — Today expanded/tracking/week visuals (UNRELEASED)
+- Design PR #123 commits `685a6aab` and `593e6d19`: expanded compound presentation hook and scoped style treatment for expanded cards, tracking and weekly disclosure. Does not alter dose logic or saved records. Browser visual/functional QA pending; no release.
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- 2026-10-25 Today expanded detail hierarchy coded at 464e07de + fd66a187; branch-only, not merged, not deployed. No storage or math migrations. Exact-head QA and release artifacts INCOMPLETE.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- PR #123 preview commits cf74e60b and 6ff6ec2c: Today expanded card gained segmented Insights, History, Details; moved site rotation notice into Insights and removed rotation emoji. No intended dose data, schedule, storage or math changes; no merge or deployment; exact-head test/artifact status NOT VERIFIED.
+
+
+### Today compact action cleanup
+- 2026-10-25 PR #123 CODED / NOT MERGED: Today UX clarity follow-up, commits c0124a0, d969527, 8b27bab. Affects compact card disclosure/action row and expanded history menu/helper. No dose math, localStorage migration, or production user data writes. LIVE ZIP / FULL isolated DEMO artifacts and latest head QA still INCOMPLETE. No Cloudflare deployment.
+
+
+### Log Dose preview trial
+- 2026-10-25 PR #123 preview-only code 2dfae668: conditional expanded Log Dose presentation, no changes to doseModal or storage. Browser and physical iPhone NOT TESTED, deployment unverified; no merge to main.
+
+
+### 2026-10-25 — Log Dose preview release checkpoint
+- 2026-10-25 — DESIGN PREVIEW CODED / CLOUDFLARE PREVIEW DEPLOYED / PRODUCTION UNCHANGED. PR #123 commits 0819acc1, 9fe7803. Today compact scheduled dose CTA, overdue entry, completed state and conditional action styling. No localStorage schema or accounting logic migrations intended. Cloudflare reports success at 9fe7803; preview https://fce7e142.nexuspeplog.pages.dev. Exact-head full browser/iPhone acceptance INCOMPLETE. GitHub LIVE/DEMO bundles must be validated against final branch head before release.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 preview-only PR #123 commits 4c1ba682, 56f215c8, 59c6e7b6: expanded Today overdue de-duplication, visual timing/data hierarchy, per-occurrence labels and hit targets, completed-state notice. No persistent schema, calculation or inventory edits intended. QA NOT TESTED at this head. LIVE ZIP/isolated FULL DEMO INCOMPLETE; Cloudflare and merge not verified/authorized.
+
+
+### 2026-10-25 — Critical preview syntax hotfix
+- 2026-10-25 unreleased preview hotfix on draft PR #123: `77de882432af2ec48a0d44b3342af13f5b68df26` repairs missing `}` in `assets/js/08-nexus.js` expanded completed-dose presentation. Data impact: none intended; source code-only syntax correction. V8 syntax parse of scripts 07-12 PASS; browser UX, builds, Cloudflare deploy, physical iPhone NOT TESTED. No merge or production release. Standalone DEMO and LIVE ZIP INCOMPLETE.
+
+
+### 2026-10-25 — Today card milestone consolidation
+- 2026-10-25 — Draft PR #123 unmerged Today-card consolidation: `5ef99dea` heading/insight cleanup, `91cf8bce` Today invariant test, `99c12afc` CI gate. Data impact none intended; source assertions 14/14 pass by independent string inspection, but browser startup, runtime flows and physical iPhone are not yet validated. LIVE ZIP, full-app standalone DEMO INCOMPLETE. Not deployed to production.
+
+
+### Today milestone — source-derived QA gate (2026-10-25)
+- 2026-10-25 draft PR #123: 5ef99dea improved expanded text presentation; 91cf8bce + 99c12afc added Today source-invariant CI; b397ac12 + 0513998a changed preview QA to generate and test exact-source isolated full-app demo. Data impact: no migration or dose engine changes. V8 source parse PASS (12/12), source invariants 14/14 reviewed. Latest CI/browser, artifacts and deployment not verified. Not released.
+
+
+### Today disclosure / typography parity (2026-10-25)
+- 2026-10-25 draft PR #123 continued: shared disclosure/typography changes 1b4feb9f, 12da3fa7, 6405c0db, 853e58e3, b9cc9a7a, 4c52a898; tests 87a32f82, 5d555d70, 6fee66f0. Impact: Today compact, paused compact, expanded cards. Data changes: none intended; no schedule, dose, ledger or inventory algorithm modifications. JS syntax checks PASS; full browser/cross-theme parity and iPhone NOT TESTED. DEMO/LIVE artifacts not delivered; no production release.
+
+
+### Today grouped correction pass — 2026-10-25
+2026-10-25 PR #123 draft changes c38b9a0 and bdb0da6: Today expanded disclosure CSS, insight grouping, Intel button, record-grounded protocol review copy. No dose math, localStorage, history or migration changes intended. JS 08 syntax checked by V8. Browser QA, 320/390 screenshots, full-app artifacts and Cloudflare preview NOT VERIFIED. Not released.
+
+
+### 2026-10-25 — Root disclosure and Insight cleanup
+- 2026-10-25 unmerged design PR #123 commits 77a86a43, e2245f91, 74409b57, 353b2a31: remove legacy double-chevron generator, reconcile nested insights CSS, update current-source invariant, neutralize speculative phase descriptions. Changes affect Today display and QA only; no changes to stored records, dosing engine or inventory. JavaScript parse PASS for changed module; full browser regression pending; DEMO/LIVE artifacts INCOMPLETE; Cloudflare preview and production deployment not verified/authorized.
+
+
+### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
+- 2026-10-25 draft PR #123 corrections d4174ac0 (source of duplicate generated-chevron in nexus-disclosures.css), b6222ea9 (remove unnecessary outer Insights border and per-entry dividers), f65255af (CI guard checks). No application storage, history or dose math changes. Browser visual pass and physical iPhone NOT VERIFIED. LIVE ZIP and full isolated DEMO artifacts INCOMPLETE. No release.
+
+
+### 2026-10-25 — Compact Today divider correction
+- 2026-10-25 PR #123 unmerged preview correction: 73ec2a05 targeted compact-card divider CSS; 4208fe9b source regression assertion. No storage, dose, or inventory logic changes. Browser rendered QA NOT TESTED at this commit. DEMO HTML/LIVE ZIP INCOMPLETE; no production release.
+
+
+### 2026-10-25 — Unreleased candidate: Today 2.0 (DRAFT, NOT A RELEASE)
+- PR #123 design/design-system-2-preview-20261025, ongoing implementation based on user-approved interactive Today design.
+- Source commits include Protocol regression test replacement `0ea163c`, saved tracking + activity sections `8e14733`, handlers `73dc37b`, styling `b0dcf5f`, upcoming `3c8e952`.
+- Changes to Today and test suite; optional non-destructive settings preference addition, no dose/inventory/storage migration.
+- Status: coded; not verified as fully passing, not merged, not deployed, physical iPhone not tested. Release artifacts/manifest and final version-to-commit mapping INCOMPLETE until passing CI and authorized release.
+
+
+### 2026-10-25 — PR #123 continued; unreleased hybrid Today candidate
+- Additional candidate commits: `ebfd769` weekly reporting consolidated under Your Activity, `07c3d42` period persistence on rerender, `e11a69f` reschedule/canonical week collection and adhoc exclusion, `9f9aafc` Protocol History tab test parity, `29d81b1` Stash selector QA parity. No version bump or live release authorized.
+- Release/artifact state INCOMPLETE pending exact-head green full-app tests and independent package review. CI pass on individual suites does not supersede failed full workflow. Cloudflare not deployed by these commits; real iPhone untested.
+
+
+### 2026-10-26 — PR #123 Today pre-release QA candidate (NOT DEPLOYED)
+- QA/code corrections: 3f128dc (relocated weekly disclosure test), ef600d1 (restore exact CSS path), 640d594 (default-dark computed-gradient and 320/390 bounds assertions).
+- Full GitHub Actions build & parity run 40267178763 PASS; mobile form regression run 40267178912 PASS. Downloaded artifact 12627006318 independently inspected for LIVE ZIP complete 21 files and standalone full-app DEMO inline CSS/JS. Local Chromium screenshots for Today 320/390 both themes verified gradient and tap/action behavior, not physical iPhone.
+- Version metadata unchanged v0.9.20-beta (unverified publication). Draft PR #123 remains open, no merge, no Cloudflare production deploy. No production storage/data migration. Final release commit, version bump, deployment verification and real-device acceptance remain INCOMPLETE.
+
+
+### 2026-10-26 — Calendar 2.0 initial implementation, UNRELEASED
+- Draft PR #123: `ef93fc2` Calendar Week/Month activity overview, `060c583` categorized selected-day source-backed records, `5480de2` Calendar hub CSS, `9ed4c89` eight-case browser QA assertions. Affected Calendar screen, zero destructive migrations, Today weekly pulse unchanged.
+- Candidate NOT a release: tests, final packages, iPhone, merge and deployment still incomplete.
+
+
+### 2026-10-26 — Calendar 2.0 candidate validated, NOT RELEASED
+- Source commits: `ef93fc2` activity hub, `060c583` categorized day records, `5480de2` visual styles, `9ed4c89` browser tests, `ce2b54e` cross-month week integrity. Test updates `4f63119`, `137adc0`, `ed0fc8c` align protected Today controls with approved compact weekly pulse.
+- 320/390 dark/light LIVE/DEMO full QA run `40273196256` PASS, mobile run `40273196254` PASS; download artifact #12629580963 inspected (full 21-file LIVE package + standalone isolated full DEMO). No production migrations. Version metadata remains v0.9.20-beta; no new release label authorized.
+- Draft PR #123 open/unmerged, Cloudflare preview/production parity and physical iPhone remain NOT VERIFIED. Calendar analytics trending/filtering/history edit UX remains subsequent implementation before sign-off.
+
+
+### 2026-10-26 — Calendar Logs Day/All candidate, UNRELEASED
+- PR #123 draft: `e465049` source-backed Day/All log journal with outline icons, `044f9c7` handlers, `6d921a0` Calendar selected-date handoff, `5c7e241` responsive styles, `aa84611` browser QA extension. No historical data rewrite or schema migration, existing editing handlers preserved. Full QA and LIVE/DEMO package acceptance pending; no merge or production deployment.
+
+
+### 2026-10-26 — Logs Day View navigation candidate (unreleased)
+- Commits `25b5124` date controls, `bcb8cd7` handler, `8d2c616` styling, `5167a87` browser tests; builds on existing Day/All journal. No saved data migration; candidate on draft PR #123. Latest full build/isolated DEMO artifacts and preview deployment not yet verified; no merge/release.
+
+
+### 2026-10-26 — Logs candidate QA verified, NOT DEPLOYED
+- Candidate at `5167a87`: complete QA workflow `40275552699` and mobile `40275552720` PASS. Artifact #12630341125 inspected: complete root LIVE ZIP, standalone isolated full app DEMO. No storage migration. PR #123 remains draft, no production deployment/Cloudflare parity confirmation. Final version remains v0.9.20-beta pending approved release.
+
+
+### 2026-10-26 — Logs current candidate QA evidence, still UNRELEASED
+- Latest tested PR head `3eb6bf4`, full pipeline `40276022471` PASS, mobile forms `40276022466` PASS, exact-source artifact #12630810614 inspected: 21-file LIVE ZIP, self-contained isolated DEMO, 16 log screenshots across viewports/themes and LIVE/DEMO. Existing version metadata v0.9.20-beta; no schema changes or saved-data migration. Draft PR #123 unmerged; Cloudflare deployment and physical iPhone not verified.
+
+
+### 2026-10-26 — PR #123 Calendar Logs validation checkpoint (DRAFT, NOT RELEASED)
+- PR #123 head `d6e3dfc4bf60592c7eb7296aa3038785d40fbef7`; source main base `c1c95e1da2749c3aa8c4459b81a04fc51d9b7f7e` at observation. User-approved Calendar Logs Day View + All Logs coded on design branch; not merged or deployed.
+- Mobile forms workflow 40334643562 PASS; full release workflow 40334643538 exact-source build/required files steps PASS, browser matrix still in progress and downloadable artifacts unavailable at observation. Physical iPhone NOT TESTED. No production data touched; migration effect requires final source review. This entry records QA progress only, not a new release.
+
+
+### 2026-10-26 — PR #123 optical patch (CODED; NOT RELEASED)
+- Scoped Add Log plus-only, tile centering/wrapping, and Today This week label gap to hybrid CSS. New automated mobile matrix assertions added. Branch commits `799f254` CSS and `bf5a4b1` test. No saved-data migration or business logic changes. New CI, artifacts, physical iPhone approval and deployment **PENDING**. Draft PR #123 remains unmerged.
+
+
+### 2026-10-26 — Sprint 01 physical iPhone acceptance (CONDITIONAL, NOT RELEASED)
+- User reported PASS WITH MINOR VISUAL ISSUES and requested Calendar Month icon modifications. Exact correction pending clarification and implementation. Full browser/build workflow 40339121469 PASS, mobile workflow 40339121261 PASS at pre-doc head 375b8879. No Sprint 01 final acceptance or production release claim. No app code or data migration in this docs-only checkpoint; PR #123 stays draft/unmerged.
+
+
+### 2026-10-26 — Sprint 02 Stash card visual patch (DRAFT; UNRELEASED)
+- Commit `76f232d` adds long-kit-name wrapping, 44px Manage action, focus outlines and narrower-tab labeling in hybrid CSS. Affected: Stash kit cards only. Data impact: none (CSS only). **New-head QA and physical iPhone checks pending;** no LIVE/DEMO artifact claim for this commit, no merge/deployment.
+
+
+### 2026-10-26 — Sprint 02A Protocol visual refinement (DRAFT; NOT RELEASED)
+- Prior head `137306ab`: workflows mobile 40341448639 PASS, browser/build 40341448649 PASS, validating prior Stash patch.
+- Protocol CSS commit `6479eea`: improved card spacing and long-name wrapping, minimum 44px controls, keyboard-visible focus and compact viewport styling. Affected: Protocol cards and existing disclosure/actions; no JS, business logic, storage or migration changes. Latest-head QA, complete LIVE/DEMO artifacts, physical iPhone and deployment **pending**. Draft PR #123 not merged.
+
+
+### 2026-10-26 — Sprint 02 vial form layout (CODED, UNRELEASED)
+- Commits `d21f2cf` (shared form grid class) and `e6eacc6` (responsive field layout and visible confirm/focus). Affected: Stash Open New Vial sheet for blends and singles. No data migration or business-logic change. Fresh-head CI/browser and physical iPhone tests **NOT YET VERIFIED**. Draft PR #123; no deployment.
+
+
+### 2026-10-26 — Sprint 02A Protocol + Plans actual implementation (DRAFT, NOT RELEASED)
+- `3d318602` actual Protocol card markup current phase/schedule and collapsed goal details; Goals/Research styling hooks. `0f1fd7eb` hybrid responsive Protocol/Plans CSS. `3063af12` Manage sheet header structure for Protocol and Plans; `666e2483` shared accessible action sheet styling. Affected: Protocol cards/details/action sheets and Plans Goals/Research cards/action sheets. Existing navigation and handlers retained. No data migration. QA and same-source release artifact verification **PENDING**; production untouched.
+
+
+### 2026-10-26 — Protocol interior features (DRAFT, NOT RELEASED)
+- Verified current draft source includes `protocolCountdownSummary`, `protocolCompletionCelebration`, and compound `phaseRoadmapModal`, with existing phase alert configuration. `177e25fa` corrects paused roadmap marker day. Data impact: none from marker correction. Latest-head tests, full-app packages and physical iPhone QA incomplete; no deployment.
+
+
+### 2026-10-26 — Protocol interior enhancement candidate (DRAFT / UNRELEASED)
+- Commits `de2ee577`, `6cdd1174`, `7b0c2b9`, `94b66f88`: per-protocol countdown from existing phase data, in-card per-compound roadmap shortcuts and current phase interior, post-confirmation completion celebration (reduced-motion support), existing in-app phase reminder ID collision fix. Screens: Protocol cards, phase roadmap modal, completion modal, in-app notifications. No storage migration or inventory/dose math modifications. QA, FULL DEMO HTML/LIVE ZIP and physical iPhone tests PENDING. Draft PR #123 unmerged, no deployment.
+
+
+## 2026-10-26 — Approved vertical phase timeline
+DRAFT UNRELEASED: `e87e984b` vertical compound roadmap HTML and `8ecc6caf` responsive CSS. Visual-only; no data migrations. QA/latest-head DEMO/LIVE artifacts pending; no deployment.
+
+
+### 2026-10-26 — Expanded Protocol detail refinement (DRAFT, UNRELEASED)
+- `fd6fda06`: remove duplicated mini Gantt/route pill/dose-status cluster and show current compound phase progress rows; `23f3d666`: mobile responsive CSS; `da015ec0`: Plans Research ellipsis contrast adjustment after browser QA 40351719788 failed assertion at validate-plans-hierarchy.mjs:180. Affected: Protocol expanded card and Plans Research ellipsis styling. Data impact: none expected (markup/CSS only). Latest-head browser/mobile QA and exact-source full-app artifacts pending, physical iPhone untested, PR #123 unmerged/deployment unchanged.
+
+
+### 2026-10-26 — Protocol dedicated overview (DRAFT, NOT RELEASED)
+- `89f33fbe`: actual Overview/Compound/Completion detail surface and phase-aware progress ring; `be3fa15f`: list card View protocol overview action; `3c10f974`: action binding; `c8353f0e`: responsive CSS. Preview concept source is user-approved, implementation and exact-source parity NOT TESTED. No data schema or dose migration. Latest-head CI/real iPhone/full-app standalone DEMO/LIVE ZIP incomplete; PR #123 unmerged.
+
+
+### 2026-10-26 — Protocol detail status semantics (DRAFT)
+- `5764db48`: fix detail Overview active status `In progress` and paused status precedence over elapsed schedule. Presentation only, no user data migration. Latest-head QA, full-app DEMO/LIVE ZIP, physical iPhone validation incomplete; PR #123 draft and production unchanged.
+
+
+### 2026-10-26 — Protocol list/Overview IA cleanup (DRAFT, NOT RELEASED)
+- `ed6b984a` removes duplicated Compound/Completion tabs and list-card expanded details, preserves Overview with compound roadmap and Manage action. `48784383` computes list progress using pause-aware scheduled phase dates; `0d3a3d33` compact card CSS. Affected: Protocol list and dedicated detail navigation. No schema or recorded dose/history changes. QA, user iPhone acceptance, standalone full DEMO/LIVE ZIP, merge/deployment incomplete.
+
+
+### 2026-10-26 — Navigation QA corrective commits (DRAFT, UNRELEASED)
+- `49484971`: replace obsolete Protocol chevron regression assertion with approved end-to-end navigation journey in 8 LIVE/DEMO × 320/390 × light/dark contexts. `80289b93`: Plans Research management control background selector specificity fix. No schema/data changes. New CI and full-app artifacts pending at documentation time; no merge/deployment.
+
+
+### 2026-10-26 — Sprint 2A QA candidate verified (DRAFT, NOT RELEASED)
+- Verified PR head `17112406`, merge SHA `c6885efd`: mobile run 40359787123 SUCCESS, build/parity run 40359787121 SUCCESS. GitHub artifact 12667882258 contains 2.49 MB standalone FULL DEMO HTML, 0.88 MB offline DEMO ZIP, 1.79 MB 21-file LIVE ZIP and QA evidence; manifest reports ephemeral demo storage and no sync, physical iPhone untested. Browser matrix 8 cases and amended chevron navigation 8/8 PASS; Plans Research contrast 8/8 PASS. Cloudflare mismatch expected because draft not deployed. Commit `b155134c` adds screenshot capture; latest-head screenshot run pending. No data migration, merge, deployment, or published version bump.
+
+
+### 2026-10-26 — Screenshot visual QA refinement (DRAFT)
+- Successful merge-ref test `2adf5eea` completed mobile and full-browser suites, produced full DEMO HTML, 21-file LIVE ZIP, offline demo ZIP and 16 Protocol screen captures. Inspecting captures revealed opening-frame fade/blur, so `2d67b356` adds 450ms settling and bounds checks to visual QA; latest-head visual validation pending. Application data/code unchanged by test correction. PR draft, no release.
+
+
+### 2026-10-26 — Sprint 02A validated DEMO candidate (DRAFT / NOT DEPLOYED)
+- Test merge source `08bd02b7`, PR branch head `ae49c851`: GitHub browser/build 40361824665 SUCCESS; GitHub artifact 12668996607 contains COMPLETE isolated standalone FULL DEMO HTML, offline full-app DEMO ZIP, 21-file LIVE ZIP, QA reports, and 16 320/390 light/dark LIVE/DEMO Protocol screenshots. Downloaded and verified archive integrity. Screenshot settle test `2d67b356` validated final state. No code/schema/data migration; stored production history untouched. Physical iPhone review, VoiceOver, and Cloudflare/GitHub Pages deployment NOT performed. Version manifest still `v0.9.20-beta` as draft baseline; not a new published release.
+
+
+### 2026-10-26 — Plans/Protocol contextual navigation (DRAFT)
+- `3b692b1e`: Goals Connections linked protocol action opens Protocol Overview; singular compound count fixed. Existing Protocol Overview linked-goal path retained. No schema/data changes. Latest-head QA/artifacts pending; no merge/deploy.
+
+### 2026-10-26 — Goals-first Plans UI (DRAFT / UNRELEASED)
+- PR #123; commits `8393d955` and `1ead81b6`. Affected Plans → Goals list: title/status/date hierarchy, honest measurement summary and progress track, connected-protocol count, unified details target, 320px adaptation.
+- Progress is read-only from existing `progressModel` and comparable recorded weight logs; no saved state/schema/measurement/dose migration. Original goal detail navigation and management remain.
+- QA for new head, complete full-app DEMO/LIVE packages, iPhone and VoiceOver all **NOT VERIFIED**. Draft/unmerged; Cloudflare remains unchanged.
+
+### 2026-10-26 — Goals visual density correction (DRAFT)
+- `457652a8`, `f5be4806`: remove duplicate Plans counts, shorten repeat progress copy and tighten Goal cards while retaining detail/management handlers. No data schema change; newest-head QA/artifacts and iPhone acceptance pending. Not deployed.
+
+
+### 2026-10-26 Approved Goals preview restored (DRAFT)
+- Commits d98d7b78 and 7727191f restore originally accepted spacious Goals card in place of compact experiment. No migration. New-head QA pending; not deployed.
+
+### 2026-10-26 — Goal Add/Edit four-stage wizard (DRAFT / UNRELEASED)
+- PR #123: `23aa6e04` wizard markup reusing existing controls; `d7a8026c` hybrid theme/step styling; `a44cdcb8` preserve unsaved progress method choices. No intended schema or localStorage migration. Existing save handler still writes only on final Save. Latest-head QA/source-parity artifacts and physical acceptance incomplete. Log Dose unchanged; not deployed.
+
+### 2026-10-26 — Goal wizard QA harness correction, DRAFT
+- Commit `c9b6782c` changes Plans browser test to navigate wizard steps before field selection and saving. Pre-patch build/parity workflow 40386863855 FAILED (hidden Connections input). Other suites passed, but full release QA not passed. No production merge/deployment, new-head retest pending.
+
+### 2026-10-26 — Goal wizard automated acceptance candidate (DRAFT, NOT DEPLOYED)
+- Tested PR #123 head `701c6c7e`, workflows 40389965572 full build/Plans/browser SUCCESS, 40389965592 mobile SUCCESS, 40389962603 hybrid SUCCESS. Artifact 12684590713 contains builder-produced full-app LIVE/standalone fictional DEMO/offline demo packages; internal build assertions PASS, independent extraction pending. Data schema migration none intended. Physical iPhone/VoiceOver and contrast-wide acceptance pending; PR draft/unmerged and production unchanged.
+
+### 2026-10-26 — Quick/Guided Log Dose UI (DRAFT / UNRELEASED)
+- `56d0b7ef` existing dose form step-navigation and `69dace51` styling. No intended dose schema or storage changes, existing `#save` remains authoritative. Full separate Quick review and source allocation evidence in Guided review require further implementation. New-head CI, packages, Safari/VoiceOver incomplete. No merge/deploy.
+
+### 2026-10-26 — Log Dose Review gate + validation (DRAFT)
+- `2649a11a` implements separate Quick final Review and Guided final Review, positive amount/date Continue validation and original Save visibility gate; `c0b882d0` styles sticky step controls and errors. No migration or intended dose math change; automated/physical verification pending, no merge/deploy.
+
+### 2026-10-26 — Draft Log Dose source-review iteration (UNRELEASED)
+- `3fe3f1a9` structured allocation review, `631c36a8` browser regression helper follows final Review, `14981bf6` visual refinement. No storage change. New-head full QA, exact-source artifacts, manual mobile testing pending. No merge/deploy.
+
+### 2026-10-26 — DRAFT source identity review (NOT RELEASED)
+- `8abba0bb` source ID/selected vial/prepared batch readout; `fb8a7c40` browser assertions. No storage migration, no production release; latest-head QA and source-matched artifacts pending.
+
+### 2026-10-26 — Goals Add Goal top placement (DRAFT / UNRELEASED)
+- `efbbd544`: moves existing Add Goal action to top of Goals section and removes bottom duplicate; `7706e8f7`: responsive 46px header styling. No schema or persistent data changes. New-head automated/mobile/physical QA pending; no merge/deploy. Next: Research and Shopping design audit.
+
+### 2026-10-26 — Research card density and Shopping action placement (DRAFT / UNRELEASED)
+- `5a060265` Research header/card semantic structure and single Intel chevron, `dd654713` chevron-free Show/Hide notes disclosure, `fca17f95` Shopping top Add Item, `cbd286c4` hybrid spacing/focus CSS, `477e6e59` and `d860c2d9` research browser assertions. No persistent schema modification and existing Add/Edit/Intel/inventory actions retained. Latest-head CI, full-app DEMO, LIVE ZIP and physical iPhone signoff INCOMPLETE. PR #123 draft/unmerged.
+
+### 2026-10-26 — Plans Goals-default and single Research separator (DRAFT)
+- `d794a215` More→Plans defaults Goals; `daf9acdb` generic quick Plans same; `af4cd980` single Intel divider; `d4a5b488` regression assertions. Existing source data, add/edit forms and workflows untouched; no storage migration. Prior head `1d0815d4` full/mobile/hybrid success, new-head QA and exact-source packages pending. No merge/deployment.
+
+### 2026-10-26 — Research/Shopping Add/Edit visual parity (DRAFT, UNRELEASED)
+- `d4a55d5e` shared labelled modal markup; `23064980` spacing, 46px form fields, 48px sticky save, theme colors, focus and reduced motion; `9ddfac17` regression assertions. Saved field definitions and original save code retained, no schema change. Prior `c7ffe1bb` all three QA workflows SUCCESS, latest commit QA and artifacts not verified. No merge or production deployment.
+
+### 2026-10-26 — Stash kit editor parity polish (DRAFT / UNRELEASED)
+- `9cfb316e`, `8a223e78`, `bdd7532c`, `9b03db6c` add form styling hooks, SVG navigation, light border polish and validation assertions without changing inventory handler math or data schema. New-head QA, complete artifacts, and physical iPhone NOT VERIFIED. PR #123 remains draft/unmerged; no production deploy.
+
+### 2026-10-26 — Proposed guided Add/Edit Kit and Prepared screens redesign (DESIGN ONLY)
+- User-requested design study and Stash secondary-screen audit; no new kit/prepared workflow implementation, schema migration, merge, or deployment. Retain same original inventory/save calculations. Draft PR #123 remains unmerged.
+
+### 2026-10-26 — Stash guided wizard source reconciliation (DRAFT / NOT RELEASED)
+- PR #123 branch head `5a9d6c7a` already contains three-step ordinary Kit wizard and searchable compound picker in `assets/js/07-nexus.js`; previously documented as merely proposed. Found during code review; no new app code, storage migration, merge or deployment in this documentation update.
+- Current-head PR workflows 40417820123 mobile and 40417820282 build/parity SUCCESS. Artifact 12696280782 exists but extraction and source integrity unverified; real-device/VoiceOver and blend parity NOT TESTED. Separate authoritative inventory handler remains. Proposed design not accepted as finished.
+
+### 2026-10-26 — Guided Blend Kit and browse selector (CODED DRAFT / NOT RELEASED)
+- PR #123 `design/design-system-2-preview-20261025`: commits `8f47c431`, `c28302e9`, `0af72826` add 3-stage blend editor layout and screenshot-inspired compound browse/search picker with responsive CSS. Reuses `#bk-save` inventory pathway and in-memory composition input values; intended no data schema or storage migration. Existing opened vial and recorded dose accounting must be verified, not assumed.
+- Current-head CI, exact full-app DEMO/LIVE ZIP, physical iPhone and a11y tests PENDING. PR stays DRAFT/UNMERGED/UNDEPLOYED; no Cloudflare production change authorized.
+
+## 2026-10-26 — Guided blend workflow acceptance follow-up
+- User approved the three-step guided Blend Kit workflow and the screenshot-style dropdown with embedded search. Current source `assets/js/03-nexus.js` already includes a three-step blend wizard and component dropdown search, preserving original `#bk-save` handler. Review uncovered two BAC inputs on new blends (`#bk-bac` and `#bk-bac-edit`) with potentially divergent displayed review/save semantics. Existing edit must preserve opened-vial ratios and historical allocations. Do not merge/deploy until targeted validation, UI acceptance, and full-app artifact inspection. Next action: reconcile BAC UI and test blend save and history at 320/390 light/dark.
+
+### 2026-10-26 — Guided Blend BAC single-source fix (CODED DRAFT; NOT RELEASED)
+- PR #123 commits d87600cb, b1586e20 and 6407d532. Remove duplicated creation BAC field and reconcile `#bk-bac-edit` between Review and authoritative `#bk-save`; add cost/notes Review, and test create/review/save with fictional 10 mg + 5 mg blend. No intended schema migration, production writes, per-component accounting or history edits. Latest-head CI and independent DEMO/LIVE artifact validation pending; no merge/deploy or real iPhone acceptance.
+
+### 2026-10-26 — Guided Stash iPhone rejection corrective branch changes (CODED DRAFT; NOT RELEASED)
+- Physical iPhone screenshots show substantial UI failures in Add Kit and Blend: duplicated select, broken step count/action hierarchy, premature Save and default opened blend vial. User rejected the design. Targeted fixes on draft PR #123 regular Kit staged save/combobox, Blend editable combo + sealed default, consistent CSS, progress count removal and browser regression assertions. No planned data migration, authoritative inventory handler/maths unchanged. Newest-head QA and exact-source full-app DEMO/LIVE artifacts NOT VERIFIED; no merge or deployment.
+
+### 2026-10-26 — Guided Kit corrective QA fails (DRAFT, NOT RELEASED)
+- Source UI fixes at `b8f8f2db` mobile run `40421697072` PASS, full build/parity `40421697164` FAIL at browser QA step. Exact error not retrieved; release artifacts not verified, physical iPhone acceptance outstanding, no merge/deployment. Draft PR #123 remains open.
+
+### 2026-10-26 — Stash test harness correction (DRAFT, unreleased)
+- `6d209ed5` updates outdated card QA for guided Kit staged Save: hidden before Review, visible and >=44px on Review. Triggered after full build `40421697164` failed on hidden-button sizing; preceding Stash Actions, Combo, Log Dose, vial-source checks passed in that run. New-head CI and artifacts pending; production unchanged.
+
+### 2026-10-26 — Guided Stash correction automated candidate (DRAFT / NOT RELEASED)
+- At `6d209ed5`, GitHub mobile workflow 40422263763 SUCCESS and browser build 40422263758 SUCCESS after test updated to navigate to Kit Review; original authoritative inventory handlers unchanged. New later test-only commits ed77a3e7 and dac2ba4a capture 320/390 × dark/light × LIVE/DEMO real Kit/Blend step screenshots. Their CI and images pending independent inspection. Production unchanged; no iPhone acceptance or merge/deploy.
+
+### 2026-10-26 — Candidate package inspection (NOT RELEASED)
+- Successful source build 40422263758 at app/test SHA 6d209ed5 produced artifact 12698436592. Downloaded and verified 21-file ZIP, root index, standalone full-app DEMO, manifest source merge ref 7203418d, and Stash Actions/Cards QA reports 8/8 each. Physical iPhone acceptance not achieved; new screenshot-run CI pending; no merge/deployment.
+
+### 2026-10-26 — Guided Stash visual rejection follow-up (DRAFT, NOT RELEASED)
+- Inspected actual browser captures from preceding Actions artifact 12698781391 and discovered poor button hierarchy, unstyled ordinary review rows and wasted Blend preparation space despite passing automation. Targeted draft CSS/markup changes 83d374c3, be382d87, 4d34e265; screenshot settling and CSS regression 7eb10d09, e29d2443, 5129b2d3, 5f210026. No intended schema, stored record or inventory math changes. Full build/visual tests on latest app source and independent full-app LIVE/DEMO checks pending; PR #123 unmerged and production unchanged.
+
+## 2026-10-26 — Guided Stash screenshot-led polish (DRAFT)
+- Inspected actual source-generated 390px dark Kit/Blend screenshots from artifact `12698781391` (run `40422827201`, SUCCESS): regular Review values collide with labels; Step 2 Continue renders as a text link; Blend footer also has detached Continue styling. New CSS commit `4a1e090b` makes Continue a 48px full-width lavender button, Back a 48px secondary control, Review a two-column wrapped label/value grid, and normalizes Blend sticky footer. No data model or save-handler change.
+- This is a corrective UI candidate, NOT approved on physical iPhone. Re-run newest-head CI, inspect 320/390 both themes and actual step screenshots. No merge/deploy without user approval.
+- **ONE NEXT ACTION:** Inspect newest-head browser screenshot artifact for action visibility, scroll, keyboard and review readability; confirm iPhone user acceptance before merge.
+
+### 2026-10-26/27 — Guided Kit/Blend screenshot-led corrective candidate (DRAFT, NOT RELEASED)
+- PR #123 at head `455404bb`, baseline main `c1c95e1`; tested PR merge ref `d4e0ff1d`. Changes: unify stage progress and sticky 48px CTA; conceal native backing compound selects, expose one editable browse/search field; sealed blend default; consistent persistent Blend header; separate legible Kit Review rows, full-width Blend compound search fields and concise instructions. Existing authoritative `#ssave` and `#bk-save`, inventory ID/schema/history and component allocations untouched; no migration intended.
+- Tested: mobile Actions `40424506766` SUCCESS, full build and eight-configuration browser parity `40424506746` SUCCESS. Downloaded artifact `12699630393`: version display remains `v0.9.20-beta` draft baseline, 21-file root-index LIVE ZIP 1,807,846 B, isolated standalone complete DEMO 2,564,463 B, 112 screenshots; manifest source `d4e0ff1d` matches PR merge-ref. Independently inspected 390 dark/light regular/blend Step 1/2/Review and 320 dark Blend Step 1. Physical iPhone/VoiceOver and exhaustive blend ledger refund testing NOT VERIFIED. Branch remains draft, unmerged, undeployed; no production data modified.
+
+### 2026-10-26 — Blend component one-row UI (CODED DRAFT / UNRELEASED)
+- PR #123 `a9a3643e` stylesheet now places compound search, per-vial mg and remove in one responsive row; `269f468d` adds multi-viewport browser assertion. No data migration/inventory math modification. QA and artifacts pending; production unchanged.
+
+### 2026-10-26/27 — One-row Blend browser-tested candidate, clipped-placeholder correction (DRAFT/UNRELEASED)
+- Exact app/test commit `269f468d`: mobile 40426868694 and full-browser 40426868293 SUCCESS; artifact 12700776008 downloaded and checked: complete full-app DEMO, 21-file root-index LIVE ZIP, Stash Actions 8/8; four 320/390 dark/light Blend step-one screenshots independently inspected and same-row layout correct. Review exposed truncated placeholder, so later draft commit `3bab1d9a` uses shorter `Search…`, with latest CI pending (40427570891, 40427570879). Authoritative blend math/storage untouched; PR draft/unmerged/undeployed, no physical iPhone acceptance.
+
+### 2026-10-26/27 — One-row Blend candidate verified in browser (DRAFT/NOT RELEASED)
+- Code `a9a3643e`, browser assertion `269f468d`, compact placeholder `3bab1d9a`. Full-browser workflow `40427570891` SUCCESS with 320/390 × dark/light × LIVE/DEMO 8/8 Stash Actions; artifact `12700422861` extracted and independently verified ZIPs/source and four screenshots. Four-way visual shows compound, mg, remove aligned horizontally and `Search…` readable. No schema or authoritative inventory math changes. Mobile current-head `40427570879` awaiting outcome; physical iPhone signoff/VoiceOver outstanding. PR #123 remains DRAFT/UNMERGED/UNDEPLOYED.
+
+### 2026-10-26 — Blend popup and Review UX follow-up (DRAFT; unreleased)
+- Draft commits 416e6217, 7720cef8, 0ad6d4c8 and e130934c address an expanding compound list, opaque footer backdrop and flat Blend Review. Floating suggestions show up to five items with no list scrollbar; Review prioritizes blend identity, total mg and individual components. Additional mobile browser checks added. Production inventory handlers and data schema unchanged. Physical iPhone feedback and an app-wide nested-scroll audit remain outstanding. No merge or deployment.
+
+### 2026-10-26 — Blend full-screen mobile editing candidate (DRAFT, not released)
+- Commits 6db7acf7, 767c2ae8 and dd26fdc9 add full-viewport Blend editor for narrow phones, fix grouped Review CSS override and assert mobile modal geometry. This builds on floating picker / Review hierarchy revisions without changing blend IDs, storage schema or inventory accounting. Latest source QA and visual screenshots pending; no merge/deployment.
+
+### 2026-10-26 — Full-screen Blend search/review candidate validated (DRAFT, UNRELEASED)
+- Exact tested app commit dd26fdc9; merge-ref 723b06cb; GitHub Actions full build 40428711527 SUCCESS, artifact 12701700107 independently inspected. Source updates: floating max-five suggestion list, no row expansion; transparent footer; hierarchical Blend Review; full-viewport mobile editor replacing short nested-scrolling sheet. Complete isolated full-app DEMO 2,572,777 B; 21-file root-index LIVE ZIP 1,809,501 B. Visual screenshots inspected 320/390 dark/light search and Review. No accounting, storage or historical data change; actual iPhone test and other modal audits pending, PR draft/unmerged/undeployed.
+
+### 2026-10-26 — Approved compound browser foundation (DRAFT / NOT RELEASED)
+- Commits c7b4784b, 3ecc008d, a2a9d24a, dcc32a6e, ad2b74b3, c7b06b2a: full-library browse-all screen added to single and blend kit compound comboboxes, five-option popup, cross-screen helper and 320/390 LIVE+isolated DEMO browser tests. No live schema, vial math, dose history or inventory handler changes. Mobile QA pass 40430545528; full build, exact-source full-app artifacts and real iPhone acceptance pending. PR remains draft, unmerged, undeployed.
+
+### 2026-10-26 — Full-library browsing QA candidate validated (DRAFT / UNRELEASED)
+- Application/test SHA c7b06b2a passed mobile 40430545528 and full browser 40430545381. Artifact 12702105755 exact-source full-app DEMO (2,578,053 B) and root LIVE ZIP (1,810,764 B; 21 valid files, ordered JS) independently downloaded/inspected; merge-source manifest 8069de53 parent is c7b06b2a. Independent Chromium browse-all tests also passed 4/4 at 320/390 dark/light, 45 fictional compounds, filter/choose, backing state unchanged except user selection. No migration, active production storage write, PR merge or deployment; physical iPhone and broader app-wide picker rollout remain pending.
+
+### 2026-10-26 — Compound browser expanded to Protocol and Plans (DRAFT/UNRELEASED)
+- Commits 8da177d2, 472c211b, 642b74d2, fd266141, cb1144af and 471fdeed implement reusable five-result and Browse All compound selector across Protocol Stack and Plans/Research multi-select, preserving original state and save paths; add browser regression tests and remove nested quick-list scroll. CI latest head pending, no source-matched artifacts inspected yet, no production data impact/migration/merge/deployment.
+
+### 2026-10-26 — Protocol/Plans compound picker cross-screen QA verified (DRAFT, NOT RELEASED)
+- Tested application source 471fdeed; GitHub Actions mobile 40432425967 and browser 40432426016 SUCCESS. Artifact 12703425376 manifest merge 15acd041 (parents main c1c95e1d and tested source 471fdeed), independent ZIP integrity PASS and extracted standalone full-app DEMO and 21-file LIVE ZIP. Independent Chromium 320/390 dark/light Protocol library browse/filter/selection passed 4/4. Production main unmodified; PR #123 draft/unmerged. No code fixes necessary for CI; physical iPhone keyboard acceptance, VoiceOver and global modal audit still incomplete.
+
+
+### 2026-10-26 — Kit creation currency and footer parity (DRAFT / UNRELEASED)
+- User screenshot feedback prompted unified Standard/Blend footer insets and expanded cost-currency selector for both kit workflows. Standard previously supported CAD/USD/GBP/EUR/AUD while Blend hardcoded CAD and lacked a selector.
+- Draft branch code commits aaea7807 (blend input), 27675f3 (standard currency list), 7d1fad2 (footer inset), 4e7c685 (CAD display preservation). Validation updated in 7d19ea0 and 8307987 to cover non-CAD Blend save and selector choices. User requested a separate future mandatory-fields audit; no required-field migrations or new constraints implemented.
+- Last previously completed full browser workflow 40441021070 SUCCESS and mobile 40441021069 SUCCESS **predate** these edits; latest workflow 40441896108 and mobile 40441896055 require status verification. Source-matched updated LIVE ZIP/isolated DEMO, native iPhone keyboard and visual reacceptance not yet confirmed. PR #123 stays draft, no merge or deployment. No existing data migration, kit math change or production write.
+
+
+### 2026-10-27 — Standard/Blend Kit Step 2 parity (DRAFT / UNRELEASED)
+- Draft PR #123 adds unified Cost/Currency paired layout, BAC water/Expiry pairing and common ordering, multiline Notes, matched optional labels, open-vial toggle treatment and 320px equal-width label alignment. Recent code includes `02e0ce9`, `f0bca60`, `551c13b`, and `9d3e54f`; tests `7dba19a` and `c131144`.
+- Source-matched full-browser 40448545857 **SUCCESS** and mobile 40448545887 **SUCCESS**; artifact 12708814792 manifest source `fb6d089edf98b48d8e4b1ad2afc2be3357d9c9cf` with validated 21-file LIVE ZIP and standalone/offline full-app DEMO parity. No migration, production storage writes, merge or deployment. Blend Test Results initially partially behind sticky footer despite scroll-to-clear passing; real iPhone keyboard/safe-area approval outstanding. Mandatory fields/global nested scroll audits separately unfinished.
+
+
+### 2026-10-27 — Supplies empty state + form/card hierarchy (DRAFT, NOT RELEASED)
+- Draft PR #123 implemented user-approved compact empty Supplies state (5d85c6e, eaa92a3) and continuation into Add/Edit Supply form/populated-card styling (cb49d73, 5a8f1b6), tests (c6f1085, 49e2298, 327141d). Prior empty-state full CI failed due welcome overlay intercepting test click; corrected fixture on draft. No storage schema changes, changes to unit history, consumption, restock, forecaster or save actions. Latest head CI and artifacts unverified as of this documentation, no deployment or merge.
+
+
+### 2026-10-27 — Supplies screenshot QA fixes (DRAFT / UNRELEASED)
+- Full-browser runs 40451096484 and 40451199358, mobile 40451199390 PASSED for preceding source; artifact 12710184475 manifest 506244fe, integrity verified. Screenshot review uncovered onboarding-overlay capture (test fixture) and narrow 320px initial-status chip clipping (UI issue). Scoped test and CSS corrections at commits 248e1c2 and ef9f6fe, now awaiting complete latest-head CI/artifact acceptance. No changes to supply data shape, quantities or history; no merge, deployment or production writes. Native iPhone acceptance remains not tested.
+
+
+### 2026-10-27 — Supplies corrected QA, still DRAFT/UNRELEASED
+- Corrected fictional onboarding-overlay screenshot issue and 320px Initial Status button clipping (commits 248e1c2, ef9f6fe). Automated full-browser `40452358905` and mobile `40452358894` SUCCESS. Artifact `12711520065` source manifest `727686bae253bb5ef4f3a1c2cd4c25234dbdf86a`, 21-file LIVE ZIP integrity and 17/17 application blob parity confirmed, full isolated DEMO equals offline ZIP index, screenshots reviewed at 320/390 dark/light. No schema or inventory math modification, no merge/deploy or production writes. Native iPhone keyboard/VoiceOver and complete stateful Supply save/use/restock acceptance remain unverified; PR #123 retained draft.
+
+
+### 2026-10-27 — First-dose Today and wizard polish (DRAFT / UNRELEASED)
+- Draft PR #123 commits `b538f0f` (Today first-dose inclusion), `b1302de` (Back/Continue, start/target date labels), `20df1d9` and `1d2d412` (Protocol schedule groups/touch styling), `06c0617` and `9924be2` (Goal Check-In connection empty state). Preserves existing storage/schema, protocol sync, dose history and inventory handlers; no migration or production data mutation.
+- Affected: Today hero summary, New Protocol Schedule/navigation, Add/Edit Goal wizard. At documentation time current-head browser/mobile CI, standalone full-app DEMO/LIVE ZIP and real-device acceptance are **INCOMPLETE**; do not inherit passes from older releases. PR unmerged, undeployed; production unchanged.
+
+
+### 2026-10-27 — First-dose scheduling/wizard preview QA verified (DRAFT / NOT DEPLOYED)
+- Browser/build run `40529783789` **SUCCESS**, mobile form run `40529783780` **SUCCESS** for test head `370a826e`; exact-source CI artifact `12746621222` (21-file LIVE ZIP, full standalone/offline DEMO equality, 320/390 dark/light Protocol browser suite 8/8). First-dose regression fixture verified Today `0 of 1` when eligible, absent when paused/future/other weekday. An earlier test-escape FAIL `40529630932` was corrected, not erased.
+- Affected screens: Today hero, Protocol Schedule/Back-Continue, Add/Edit Goal/optional Check-In connection. Data impact: no migration or production write; canonical dose history and inventory code unchanged. Remaining limitations: physical Safari, keyboard, VoiceOver, full Goal wizard visual acceptance, more advanced multi-protocol scenarios. PR #123 draft/unmerged, no Cloudflare production deployment or user release signoff.
+
+
+### 2026-10-27 — Expanded first-dose/wizard regression, code unchanged (DRAFT / UNRELEASED)
+- Test-only commits `d48a0003` and `8771ce94` extend Protocol browser suite for distinct concurrent active protocols, two same-day occurrences for one compound, rest phase and read-only summary; plus Protocol/Goal wizard tap geometry and navigation checks. No new app logic, schema or UI changes, no production data effect. CI pending at documentation write; real iPhone Safari/keyboard/VoiceOver not tested. PR #123 draft/unmerged, no production deployment.
+
+
+### 2026-10-27 — Preview discrepancy follow-up (DRAFT / NOT RELEASED)
+- User reports that preview does not reflect Today first-dose fix. Previously asserted passing CI did not establish deployed preview SHA or user real-case scheduling behaviour. Draft changes `aa8472b` extend zero-dose Today first-dose eligibility to linked active/in_progress protocols and `ef7eb116` adds test through Protocol sync. No dose/inventory writes or schema changes. Latest source QA/artifacts and Cloudflare branch preview deployment pending; PR #123 draft/unmerged, production untouched.
+
+
+### 2026-10-27 — Goal quick-status action sheet (DRAFT / NOT RELEASED)
+- Draft PR #123 commits `e7f3df6` (status options and save), `9e055e1` (light/dark action sheet styling) and `4c32d42` (browser regression). Affects Plans > Goals ellipsis only. Existing saved goal schema/status values retained, no data migration, linked protocols/check-ins/history/inventory untouched by code; current-head CI and iPhone acceptance pending, no preview deployment verified. PR unmerged and production unchanged.
+
+- Additional draft styling (2026-10-27): `acda2604`/`1c636bca` remove neon green from Protocol first-log status and align CTA to DS2 lavender, source check `172c1f07`. No data or handler changes; QA pending, not released.
+
+
+### 2026-10-27 — Today header action alignment (DRAFT / NOT RELEASED)
+- Draft PR #123 Today home view now composes bell, Profile and theme as one header action group, reused IDs/handlers; Goal quick status and Protocol first-log updates carried forward. CSS light/dark + 320/390 touch alignment, browser action regression added. No schema change, production localStorage or dose history writes. Latest-head CI and isolated artifact verification pending, physical Safari/VoiceOver not tested. PR remains draft/unmerged; no production deployment.
+
+- QA corrective change `6dec6a49`: explicitly sets Goal quick-status touch options to 48px in modal, after failing rendered height assertion in browser run `40536801200`. Current-head outcome pending, production remains unchanged.
+
+
+### 2026-10-27 — Log Dose review readability (DRAFT / NOT DEPLOYED)
+- Draft PR #123 commits `befe2a2` (human-readable Review source and nested IDs disclosure), `b6d901b` (responsive scoped styling) and `988b315` (browser regression). Affects Log Dose Quick/Guided Review, Observations. Data impact: none by design; dose ID/source allocations, history, stock reconciliation and saves not rewritten; no storage/schema migration. Current-head 320/390 light/dark CI, source-matched LIVE ZIP and full DEMO, physical iPhone unverified at writing. PR unmerged, no production deployment.
+
+
+### 2026-10-27 — Supplements / vial details / Prepare source UI (DRAFT / NOT RELEASED)
+- Draft PR #123 commits `a9e54daf` inline daily supplement add, `15038801` Profile supplements cleanup, `86ae622a` retired Notion handler, `d24bbada` lavender inline styling, `647b1368` browser fixture, `84a00064` Stash vial detail hierarchy, `2eb7c11c`/`3da1a412` Prepare source responsive styling. No migration, no intentional changes to dosing, vial calculations, prior supplement histories or protocol source. Current-head CI + complete source-parity artifacts and physical iPhone QA pending. PR remains unmerged; no preview/production deployment confirmed.
+
+- Draft extension: `78bafc1d` adds supplement-creation control in Check-In; `36b81eea` adds no-auto-log browser coverage. Prior records and save validation untouched. CI pending; not deployed.
+
+
+### 2026-10-27 — Screenshot-driven Supplements and source-identity correction (DRAFT / UNRELEASED)
+- PR #123 commits `4b8eaa67` reorder supplement add under search/browse/selected and replace main editable Log Dose Kit ID with readable source label plus optional IDs disclosure; `8df3711a` scoped source layout; `801b62a6` supplement order regression assertion. Screens: Check-In Supplements, standalone Supplements logger, Log Dose source details. Data impact: none by design; internal kit/vial IDs preserved and no migration. CI/full-app packages/device retest pending; PR draft, not merged/deployed.
+
+
+### 2026-10-27 — DS2 screenshot fixes QA clearance and preview (DRAFT / NOT RELEASED)
+- App head `e743c2fd` of draft PR #123 passed browser/package workflow `40549029521` and mobile workflow `40549029721`. Generated full-app LIVE ZIP (21 files) and ephemeral standalone/offline DEMO with application blob parity checks. Cloudflare bot confirms successful **preview** deployment `https://fd8194f6.nexuspeplog.pages.dev` for `e743c2f` (stable branch alias `https://design-design-system-2-previ.nexuspeplog.pages.dev`). No production merge/deployment, no migration and no change to production localStorage. Physical iPhone acceptance remains outstanding; preview files not independently fetched for hash comparison.
+
+
+### v0.9.20-beta DS2 iPhone corrections — CODED ON DRAFT, NOT RELEASED (2026-10-27)
+- Branch `design/design-system-2-preview-20261025`, PR #123 DRAFT and UNMERGED, baseline main `c1c95e1d`.
+- Code `f2b31d2e`, style `aaf3998b`, tests `f39458e7`: unified search/Add combobox in Check-In and Supplements logger, standalone Add removed; Source identifiers disclosure full-width beneath source actions; existing separate optional Observations disclosure preserved.
+- No planned production data migration, storage-key change, catalogue auto-log, allocation ID remapping, vial maths change or live user writes.
+- Actions on `f39458e7`: mobile `40555517593` SUCCESS; full browser `40555517407` FAILURE at obsolete test DOM nesting assumption after disclosure relocation. Test locator fixed `e14d78e3`, current-head rerun PENDING; retain historical failure.
+- Cloudflare bot reports immutable preview `https://bbdc78c4.nexuspeplog.pages.dev` for `f39458e7`; independently rendered content parity and physical iPhone acceptance UNVERIFIED. Full-app release artifact available from failed Actions run 40555517407 but NOT release-cleared until green CI and exact-source review. LIVE ZIP / complete isolated DEMO current-head delivery INCOMPLETE. No merge or production deployment.
+
+
+### DS2 v0.9.20-beta latest-head test milestone — TESTED IN CI, UNMERGED (2026-10-27)
+- PR #123 checked branch head `63a6a863`; full build/browser `40557050146` SUCCESS, mobile `40557050089` SUCCESS, hybrid preview `40557040475` SUCCESS. Source test-fix `e14d78e3` now validated.
+- Actions artifact `12758495941`: complete source-based LIVE ZIP, standalone full-app fictional DEMO HTML, offline browser-opening DEMO ZIP. CI manifest source commit `bdd95f87753b21585b6bdf5b4821cd13686347f2` (GitHub synthetic merge SHA); branch byte-for-byte equivalence not independently established here.
+- Automated matrix checks include 320/390 light/dark LIVE/DEMO; Check-In, Log Dose (40 flows), Protocol, vial source (48), stash/blends, other protected pages, math diagnostic 80/80; clinical safety and WCAG-AA independent acceptance not implied.
+- Data impact: no intended schema migration or production writes. PR remains draft/unmerged, Cloudflare exact app asset fetch and physical iPhone validation pending; no production release.
+
+
+### v0.9.20-beta post-dose reactions — PARTIALLY CODED, QA PENDING (2026-10-27)
+- PR #123 draft branch, source commits `126ca799` (isolated reaction form/event on dose), `06177e4b` (scoped accessibility CSS), `24b98949` (end-to-end regression additions).
+- Removes visible legacy Observations from new dose form and retains legacy fields on prior saved entries with data; new reaction records `observedAt` and `recordedAt` separately, `intensity`, `notes` on the existing dose ID. Existing inventory/dose math not intentionally changed. No destructive migration.
+- Saved-dose Edit provides Record Reaction. Saved-dose action menu and post-save entry not implemented; cannot claim full approved UX complete. Tests/current-head artifacts, Cloudflare served hashes, iPhone and VoiceOver **PENDING/NOT TESTED**. Version candidate unchanged, no merge or production deploy.
+
+
+### DS2 v0.9.20-beta — direct Record Reaction entry points (DRAFT / NOT RELEASED)
+- App head 9d8ad41e adds Record reaction to compound dose-history row, saved-dose retrospective detail and Calendar day detail without opening Edit Dose. Existing standalone reaction form appends distinct events to same dose, preserving vial deductions and dose data. App-head mobile 40569192074 and full 40569192089 SUCCESS.
+- Stronger targeted test commit 85afbd03 adds retrospective, three reactions, note-history and zero-deduction assertions; current-head CI PENDING. Cloudflare bot preview for app head https://d8c3286f.nexuspeplog.pages.dev reported successful, but no independent served-asset hash comparison or real iPhone acceptance. Complete FULL DEMO/LIVE artifact availability to verify from current-head CI; no merge, no production deployment, no schema migration.
+
+
+### v0.9.20-beta — direct Record Reaction test milestone GREEN (DRAFT / NOT RELEASED)
+- Source/test head 85afbd03: browser/build run 40569926373 SUCCESS; mobile 40569926374 SUCCESS. Test suite confirms 8 LIVE/DEMO 320/390 light/dark cases and Log Dose 64 flows including Calendar and retrospective direct reaction, 3 reaction history, legacy note preservation, unchanged vial counts and original dose ID. All fictional/isolated data; no production data exercised.
+- CI artifact 12765770553 bundles full LIVE ZIP and isolated full-app DEMO. Cloudflare bot reports draft preview deployment https://32aef596.nexuspeplog.pages.dev for docs head a783546; raw served asset hashes and physical iPhone acceptance unverified. PR #123 remains draft/unmerged; no production release or migration.
+
+
+### DS2 v0.9.20-beta — compound View details render hotfix (DRAFT / NOT RELEASED)
+- User-reported draft-only render blocker: undefined fmtT when compound’s latest dose counts as taken today. Fixed at e5bb5d93 in assets/js/07-nexus.js, regression assertion at 7097d07c. No changes to saved data, math or source allocations. Browser/mobile QA, full DEMO/LIVE packages and Cloudflare preview for this head pending; physical iPhone not retested, PR #123 unmerged and production unchanged.
+
+
+### v0.9.20-beta — Today Record reaction discoverability (DRAFT / NOT RELEASED)
+- One-tap button added to completed Today compound cards by 55232dd9, wired to existing saved-dose standalone reaction form in e8d5e762, scoped responsive CSS 2a1038e0, tests 6142ff10 and 305481bc. Optional action remains available after saving in Today; no blocking new post-save dialog. Existing dose math, inventory and storage unchanged. Native timed notification concept separate, NOT CODED.
+- CI, complete LIVE ZIP/isolated full-app DEMO artifact, Cloudflare latest-head deploy and physical iPhone acceptance PENDING. PR #123 draft/unmerged, production unchanged.
+
+
+### v0.9.20-beta — Today navigation filter cleanup (DRAFT / NOT RELEASED)
+- Top navigation Upcoming replaced with Completed (bf3ef4db, 61103bf9); Completed shows only compounds completed today using existing status logic with the same compact and expanded cards / Record reaction action. Existing lower Coming up preview and Calendar drill-down kept. Browser regression assertion e8c685fa protects current-day inclusion and historical exclusion.
+- Data impact: none intended; no change to production storage, dose records, reaction events or inventory. Full new-head CI, exact-source artifacts, immutable Cloudflare preview and real iPhone acceptance PENDING. PR #123 draft/unmerged, no production deploy.
+
+- 2026-10-27 correction: browser run 40583259646 FAILED new Completed inclusion test, despite other suites passing. Fixed date-of-dose filter code ebd66e42; await replacement CI. No deployment or approval of failed build.
+
+
+### v0.9.20-beta — Completed/Coming up regression investigation (DRAFT / NOT RELEASED)
+- Previous full browser QA 40583699831 failed at Completed test expecting expanded action in collapsed card (test mismatch). Targeted test correction dff7ea52 validates both states, and 79c7bd35 tests Coming up → Calendar and revised nav. Full QA at new head PENDING. No migration, merge or production release.
+
+- 2026-10-27: 40585053600 full browser FAILED newly added Coming up → Calendar click because fixture onboarding modal intercepted; test-only correction at 3d4ae796. No application code or production data changed. Full rerun pending.
+
+
+### v0.9.20-beta — Today Completed + Coming up automated QA passed (DRAFT / NOT RELEASED)
+- App/filter code up to ebd66e42; regression fixture correction 3d4ae796. CI mobile 40585601628 and full/browser 40585602137 both SUCCESS. 8 LIVE/DEMO 320/390 light/dark configurations; Log Dose 96 E2E flows, including Completed filter, saved-dose Record reaction, historical exclusion, Coming up → Calendar. Full LIVE ZIP and fictional isolated complete DEMO artifact 12771971424 generated and uploaded.
+- Cloudflare bot reports draft preview https://2d04bd1c.nexuspeplog.pages.dev at source/doc commit f88ec7e. Physical iPhone UX and independent served asset hash comparison not verified; no production deployment, merge, migration or saved data modification.
+
+
+### v0.9.20-beta Reaction management draft (NOT RELEASED)
+- Code e5b9b14f introduces optional post-save invitation and individual reaction edit/delete; responsive CSS 7e1a94f and targeted browser tests 6a34b432. Mobile 40590709765 PASS, full browser run 40590709842 pending. No migration; PR #123 draft and production unchanged.
+
+
+## 2026-10-27 DS2 v0.9.20-beta draft not released: dfe4df01 on PR #123 extends Trends and Profile/Settings visual styling only. No intended schema, data, clinical calculation or production changes. Current-head QA, source-built LIVE/DEMO packages, iPhone acceptance, Cloudflare parity INCOMPLETE. No merge or deployment authorized.
+
+
+## 2026-10-27 DS2 Nexus and Settings styling: draft commit bd26e3d6 extends scoped CSS for Nexus navigation, Ask/chat, Learn/Journal/Explore shared surfaces, Profile privacy cards, Settings details and narrow layouts. No JS logic/schema/production writes or calculator change. Prior commit dfe4df01 passed full workflow 40601194237 and mobile 40601194692; new-head QA, artifacts, Cloudflare parity and physical acceptance NOT VERIFIED. Unmerged, not released.
+
+
+## 2026-10-27 DRAFT ONLY: 9ed589e6 shared DS2 styling of Nexus child surfaces, More panels, Settings child cards. CSS only, no data migration. Current-head QA, physical iPhone, standalone full DEMO and LIVE ZIP not independently verified; PR #123 unmerged and production unchanged.
+
+
+## 2026-10-27 DS2 unreleased candidate: fdc1d608 hybrid polish for Journal, Explore, Insights UI and Settings detail surfaces; 81adc534 More bottom sheet and Learn route CSS. Visual only, no intended persistence, schema or calculator change, no live deployment. Prior bd26e3d6 browser 40614785248 and mobile 40614785307 SUCCESS; new-head QA, standalone full DEMO/LIVE ZIP, iPhone acceptance and independent preview parity INCOMPLETE. PR #123 draft.
+
+
+## 2026-10-27 UNRELEASED DS2 action hierarchy candidate: afced369 scoped Log Dose Quick/Guided primary/secondary/confirm shading; test scaffold 4c24b27 nested page screenshots and computed button inventory. No JS/save/storage or clinical dose math changes. New-head test runner has NOT RUN; exact-head CI, physical iPhone, demo/live ZIP parity and safety allocation test incomplete. Draft PR #123 unchanged; no merge/deployment.
+
+
+## 2026-10-27 — Log Dose review correction 03d83f64 (DRAFT)
+Source review found original non-blend Save path validates plan totals and available open-vial quantities, rolls back partial deductions upon shortfall and shows an error; screenshot alone did not prove dose was saved. The earlier review UI displayed only a selected vial balance, potentially misleading for a multi-vial dose, and unformatted ISO date. Commit 03d83f64 adds a review-stage warning when current plan/selected vial is short and formats date/time for readability. Underlying save, source allocation, inventory math and stored records unchanged. CURRENT-HEAD JS/browser and modal screenshot verification PENDING; caution: warning is informational, save guard remains authoritative. 320/390 light/dark nested screenshots and all action-style taxonomy review INCOMPLETE. PR #123 draft, production untouched.
+
+
+## 2026-10-27 DS2 DRAFT: d7a45b4b initial dose chooser primary+secondary family; a08f62f9 adds PR/dispatch nested screenshot workflow with isolated localhost browser and no production writes. Current runs queued; screenshots not inspected. All changes unreleased, PR #123 unmerged; no data migrations. Full-app DEMO/LIVE ZIP independently downloadable exact-head packages INCOMPLETE.
+
+
+## 2026-10-27 unreleased DS2 CSS 49271c54 gives Settings per-category delete and full data wipe distinct restrained/strong danger treatment; no changes to JS, storage, migration or computations. Revised deep screenshot runner 48e3293b bypasses onboarding in isolated local context; rendered outcome and exact-head artifact status pending. No merge or deployment.
+
+
+## 2026-10-27 UNRELEASED DS2 screenshot and button evidence at e00d802a: 40618241161 nested Playwright visual SUCCESS (92 route-state screenshots 320/390 light/dark) after correcting invalid onboarding-overlay capture. Downloaded artifact 12785574088, reviewed actual rendered results and computed button styling. Four top-level primary actions share #C6A6F2; deletion controls use differentiated danger family. Mobile #40618241156 SUCCESS. Full build #40618241138 pending on record; full app DEMO/LIVE ZIP delivery, deep modal safety and native iPhone QA incomplete. No schema/data changes, merge or deployment.
+
+
+## 2026-10-27 DRAFT-only QA augmentation 528b3da1 adds six safe action-modal screenshot cases and keeps server localhost-only. New CI pending. No app logic/data migration or production deployment. Exact-head full LIVE/DEMO build and parity not independently inspected; release not complete.
+
+
+## 2026-10-27 v0.9.20-beta DRAFT additional button hierarchy candidate: CSS 42560603 changes Stash kit wizard progression button to flat primary and Trends Pattern/Symptom Done informational buttons to neutral secondary; no event or calculation changes. Browser test 1d1d9679 excludes OS-native file picker from modal screenshots; run 40619001108 pass at previous CSS. New a00109b2 explicit semantic button assertions; current-head CI, full build artifacts, independent release parity, physical iPhone acceptance and 300mg/10mg stock validation incomplete. Draft/unmerged/not deployed.
+
+
+## 2026-10-27 v0.9.20-beta DRAFT verification checkpoint at code 1f9fda2b: GitHub Actions nested visual 40619363394 SUCCESS (112 screenshots: 28 states x 320/390 x dark/light), mobile 40619363338 SUCCESS. Semantic action variants match targeted DS2 roles; source unchanged for saved records, clinical math and storage by intended changes. Full build/parity 40619363343 pending at check; physical iPhone acceptance, complete nested flow inventory, LIVE/DEMO exact-source delivery and deployment NOT COMPLETE. PR #123 draft/unmerged, no production release.
+
+
+## 2026-10-27 — Unreleased DS2 QA-only update
+Test script commits 8c78d9d8 / ef61fbf0 / aaaca022 add populated local fictional Demo Mode fixture, reached-child-route checks and button semantic role/shading inventory. No app behaviour, storage schema, migration or production changes. Current-head CI/screenshots and full-app LIVE/DEMO independent deliverables PENDING; PR #123 unmerged/not deployed. 300mg requested dose against vial showing 10mg remains unresolved and blocks release acceptance.
+
+
+## 2026-10-27 QA-only draft: commits 8c78d9d8, ef61fbf0, aaaca022, d66fd3e1 add populated isolated demo fixture, button role inventory and actual-route assertions, with dedicated App Updates back-button support. No UI/data/clinical algorithm changes, no deployment. Current-head nested CI pending; full-app artifacts and inventory safety acceptance incomplete.
+
+
+## 2026-10-27 DS2 v0.9.20-beta candidate UNRELEASED: full build/parity QA 40619363343 SUCCESS at PR merge snapshot 387e32814bd4320d3313b8d8dc7e93079e0d573a corresponding to app code 1f9fda2b. Exact-source FULL_DEMO.html, OFFLINE DEMO ZIP, LIVE ZIP generated/validated via workflow artifact 12787100570. Mobile regression 40619363338 PASS; nested screenshots 40619363394 PASS 112 320/390 light/dark; Log Dose 8/8, vial safety 8/8, measurement math 80/80. User screenshot 300mg selected when visible vial 10mg remains unreproduced in this audit, no physical iPhone acceptance or production merge/deploy. CSS-only changes to button hierarchy, test/CI and docs; no intended data migration.
+
+
+## 2026-10-27 FINAL FICTIONAL-DATA EVIDENCE
+Local-only built-in Demo Mode run 40619990770 SUCCESS: 112 screenshot route/action states at 320/390 light/dark; verified 2 fictional kits, 54 check-ins and 27 doses; zero capture errors or document overflow. Semantic action-role breakdown in docs/design/DS2_BUTTON_ROLE_AUDIT.md, commit fcbf5bf3. Current review does not cover all editor paths, native file import, 300mg-versus-10mg source safety, real iPhone or full-app artifact release. Mobile CI 40619990814 SUCCESS. No production deployment/merge.
+
+
+## 2026-10-27 unreleased QA-only: targeted fictitious one-vial Log Dose stock test added (de42c0f3) and wired into nested screenshot workflow (86e09376). No application JS/CSS modifications, migration, production writes or deployment. 300mg vs 10mg safety result pending CI 40621540795, and full LIVE/DEMO release parity and device acceptance remain incomplete.
+
+
+## 2026-10-27 Verified single-vial save-path QA
+Run 40621540795 SUCCESS for isolated localhost fictional Demo Mode UI Log Dose regression: 300mg requested with only 10mg available did not save or deduct; valid 2mg added one dose and left 8mg. No production storage writes. This is limited to one open vial, 390px Chromium; multi-vial, prepared-dose, edits and physical iPhone remain NOT TESTED. Detailed role audit updated at docs/design/DS2_BUTTON_ROLE_AUDIT.md. PR #123 draft/unmerged and not deployed. NEXT ACTION: add multi-vial and prepared-dose tests, then expand nested action classification.
+
+
+## 2026-10-27 v0.9.20-beta draft-only focused DS2 action pass
+fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradients/colour; Protocol first-log card stacked/full-width action; 0445f6b0 renames CTA 'Log first dose' without routing change; bd6c374e adds Protocol screenshot route to localhost fictional QA. No schema, inventory math or saved data changes. CI, exact-source artifacts, real iPhone and deep nested state screenshots pending; draft PR #123 unmerged, not deployed.
+
+
+## 2026-10-27 DRAFT-only screen/button refinement: fb05e322, 5f0be242, 0445f6b0 style/label Protocol first-log and Stash/Reaction named CTA family; 3820d731/9c5f5c65 extend populated fictional screenshot assertions. CI 40623390625 screenshot PASS with 124 captures, mobile 40623390895 PASS; full build workflow 40623390612 pending at record. No storage/migration/math change, no approved release/merge/Cloudflare deploy, full-app demo/live packages not delivered.
+
+
+## 2026-10-27 draft-only CTA correction f238e6d2 removes inline Today dose chooser bright violet inconsistency by enforcing standard primary action treatment. Stash final step screenshot runner 1b8964cf 40623724305 PASS; expanded assertion a1cf67c6 current run pending. CSS only beyond Protocol label change earlier; no state/storage/algorithm changes, no deployment, no finished exact-source DEMO/LIVE delivery.
+
+
+## 2026-10-27 unreleased DS2 fix at 9436f41e: targeted Today dose chooser JS presentation-only inline style replacement, prompted by confirmed FAIL in nested CI #40623795341. Existing click action, localStorage and vial math unaffected. Current-head rerun #40623977189 pending; no merge/deployment.
+
+
+## 2026-10-27 unreleased v0.9.20-beta DS2 CTA current verification: source 9436f41e + test a1cf67c6, nested CI #40623977189 SUCCESS with 128 fictional route/action screenshots 320/390 dark/light and 0 capture/overflow errors; action-inventory inspected. Mobile regression #40623977210 SUCCESS; full build/artifact #40623977248 pending. Data/storage/vial calculations unchanged; draft PR #123 not merged or deployed. Full-app DEMO/LIVE ZIP, physical iPhone and all-depth action coverage incomplete.
+
+
+## 2026-10-27 — VERIFIED REQUEST: BUTTON HIERARCHY + PROTOCOL FIRST-LOG
+- Latest source already contains targeted DS2 fix: primary solid lavender #C6A6F2 / dark ink #24182F, flat fill and aligned radii for Add to Stash, kit Continue, Today chooser Continue, reaction save, dose wizard Continue/Confirm; secondary/selection/danger remain differentiated by semantic role. Protocol 'Ready for first log' now stacks its context copy above a full-width lavender 'Log first dose' CTA (existing handler retained). This resolves user-screenshot discrepancy on draft branch, not production.
+- Verified GitHub Actions nested visual run 40623977189 **SUCCESS**, 128 fictional populated route/action screenshot cases (320/390 light/dark), including four targeted primary CTAs; mobile regression 40623977210 **SUCCESS**, build/parity artifact workflow 40623977248 **SUCCESS** checked after prior 'in progress' notes. These are browser CI, not physical iPhone acceptance or complete depth.
+- App logic, dose allocations, history, localStorage schema unchanged. Draft PR #123 not merged/deployed. Standalone full-app DEMO and LIVE ZIP independent download/pixel inspection still INCOMPLETE in this turn. ONE NEXT ACTION: download and inspect exact-head LIVE/DEMO artifacts then verify physical iPhone UI when available; continue residual nested button role coverage. Global polish LAST.
+
+
+## 2026-10-28 — Blend analytics Phase 1 on draft PR #123
+- User approved blends appearing in Trends, and requested continuing blend kit feature parity. Existing per-component physical recipe data and physical draw ledger verified; historic locked vial ratios not consistently retrievable in all schemas. To avoid incorrect retrospective ingredient totals, commit `287e8ca4` adds a **read-only** Blend composition & history section within Trends, showing each blend's current recorded recipe, physical blend draw count and total mg drawn, with explicit unavailable historic constituent attribution when a locked snapshot is missing. Does not create duplicate ingredient dose entries, dose calculations, or saved-data writes. This is a first reporting surface, **NOT COMPLETE** per-compound over-time totals.
+- Test `af2bab34` adds fictional-data Trends rendering assertion at 320/390 light/dark. Current CI and screenshot review pending, physical Safari untested. Later stages: preserve vial-level snapshots when opened; ledger-derived ingredient amounts per dose, aggregate time windows and source attribution; blend Log Outflow/Finish Kit/Reopen Kit/Add to Open handling with physical inventory ledger regression. These are still REQUIRED/INCOMPLETE, not deferred approval requests.
+- PR #123 draft/unmerged, production unchanged. Next action: verify new Trends screenshot and build/mobile/nested QA, then implement blend-aware menu transaction workflows and historical-safe constituent reporting. Global app polish LAST.
+
+
+## 2026-10-28 — Blend transactions and ingredient reporting implementation checkpoint
+- Verified prior app head `5b599835`: build/parity 40633892291 SUCCESS, mobile 40633892297 SUCCESS, nested 40633892309 SUCCESS. These predate new changes and do NOT prove latest updates.
+- Draft-only new code: `651e4bbd` adds dedicated blend `Log Outflow` with positive/available mg guards, explicit warning confirmation, physical waste ledger and no duplicate constituent dose. `6352b6e6` exposes it in blend Kit actions. `096b3f0d` saves an immutable copy of kit composition on a blend vial at its new opening; never retroactively infers composition of existing vials. `7aef09de` computes estimated ingredient amounts in Trends solely for physical blend ledger entries with saved per-vial snapshots; unlinked historic rows are excluded/marked unavailable, original blend draws remain one physical event. `dfe743cd` adds fictional cancel check to nested audit.
+- **INCOMPLETE/SAFETY BLOCKER:** blend `Add to Open Vial` is NOT implemented: existing physical blend ledger total/open-vial balance must support merging sealed and external material with precise volume/strength accounting; no regular-kit handler reuse. Blend finish/reopen full transaction and historical ratio changes also need strong validation; existing test only covers cancel. Latest CI and artifacts after these commits NOT YET VERIFIED. Do not claim release completeness, physical acceptance, production write or deployment. Keep PR #123 DRAFT.
+- ONE NEXT ACTION: inspect latest branch CI; add isolated blend outflow commit/overspend, finish/reopen and composition-snapshot per-vial regression, then safely design/implement Add to Open Vial mass-balance without rewriting history. Global polish LAST.
+
+
+## 2026-10-28 — User clarifies Add to Open Vial means CORRECT FOUND REMAINING (blend)
+- User explicitly corrected the interpretation: no physical substance is added or mixed; actual open-vial remainder is greater than expected. This supersedes prior mass-mixing blocker for this use case. Existing ordinary-kit `Add to open vial` wording remains unchanged; blend menu now says **Correct open vial balance** to avoid implying physical addition.
+- `9602572c` implements explicit confirmed positive balance correction on the currently open blend vial with `balanceCorrections[]` transaction ledger, no sealed vial deduction, no component/dose event, and no changes to immutable vial recipe. `3f21ee05` exposes the action on blend menu; legacy-v2 path adjusts direct physical vial balance. Balance derivation counts active corrections only. `20efc274` adds fictional correction/consumption/reversal math checks.
+- `76195155` and `ade739c0` add Trends blend period filtering (7/30/90/all) and administered-only versus all physical draws; contributions continue to require original vial composition snapshots, and old unverified histories are not backfilled. `6be513ee` adds fictional blend transaction matrix for rejection, valid outflow, finish and reopen preservation, without live data access.
+- Latest source changes and new exact-source QA **NOT YET VERIFIED**; no production deployment/merge. Remaining risks: existing historical data lacking vial snapshots; blend transaction undo and reopened-state presentation; full iPhone 320/390 light/dark/keyboard acceptance, new LIVE/DEMO packaging, and analytics data parity. Test/inspect before claiming passes.
+- ONE NEXT ACTION: read new CI workflow outcomes and screenshots, repair any failing transaction tests or source issues, then complete package QA and physical preview acceptance. Global accessibility/typography/scroll/navigation/motion LAST.
+
+
+## 2026-10-28 — Release candidate artifact byte-level parity VERIFIED, no deployment
+- Build workflow #40637795436 completed SUCCESS (mobile #40637795363 SUCCESS; nested #40637795575 SUCCESS). Downloaded exact CI artifact #12794665751. Artifact ZIP CRC PASS. Manifest version v0.9.20-beta, workflow PR merge-source SHA `00d21e7f91586f9b4b2ec4199c91c66d8d026a83`; this is a synthetic workflow checkout, NOT branch SHA.
+- Extracted LIVE ZIP with exact 21 manifest paths: root index.html, 4 CSS, 12 ordered JS, 4 icons. ZIP CRC PASS. Independently compared all 21 Git blob hashes byte-for-byte with current draft application files; all MATCH. Branch head before docs: 818131c7498ab326ea565b9cf0fd5ec68487e17a. Compare `f08e9be9..818131c7` confirms only `scripts/ds2-nested-navigation-audit.mjs` and 3 continuity MD files changed; app source unchanged.
+- Standalone full-app DEMO HTML present ~2.69 MB, inline JS (no external script src), memory-only localStorage/sessionStorage substitution with explicit fail-closed assertion, fictional buildDemoState, sync disabled. Offline demo ZIP CRC PASS includes index.html + instructions. Browser results: LIVE and DEMO 320/390 dark/light 8/8 PASS in automated Chromium. Not native iPhone proof. Both LIVE and DEMO files were extracted from SAME CI artifact and exact app source.
+- Cloudflare parity manifest verified=false as expected for unmerged draft; production main c1c95e1d unchanged. Full release artifacts now AVAILABLE/VERIFIED for application content; physical iPhone acceptance, deep manual workflow sign-off, merge, Pages/Cloudflare deployment INCOMPLETE. No production data writes. User explicitly prohibited merge/deploy without approval.
+- ONE NEXT ACTION (ASSISTANT): provide exact-source LIVE and DEMO downloads, request hands-on iPhone acceptance for current preview, then seek explicit release approval separately. USER ACTION NEEDED only for physical iPhone acceptance and later merge/deploy decision. Global polish LAST.
+
+
+## 2026-10-28 — Approved historical blend explorer: reversible attribution checkpoint
+- Verified prior implementation on branch: `b63497ca` non-destructive `blendHistoryAttributions[]` confirmation, `f80f9e54` chart-first Explore Dose Records child screen, `d768390b` inclusive dates/one-vial mapping. Parent inline 80-row blend ledger removed. These commits predate current turn, not new work.
+- NEW commit `c995a493`: add auditable review and explicit reversal UI for user-confirmed historical date ranges. Reversal changes only `blendHistoryAttributions[].status` to `reversed` with timestamp; does NOT edit dose events, physical inventory, composition snapshots or original transaction histories. NEW `90aba392`: isolated fictional 2mg old dose and 80mg 50/10/10/10 recipe tests attribution 1.25/.25/.25/.25, then reversal to unknown, with immutable dose/vial/waste ledger. Script only; execution status PENDING.
+- Risks: multi-kit/vial ambiguous histories intentionally remain unknown; date-range confirmation requires review; no automatic destructive migration. UI transaction confirmation/overlap/cancel and legacy conversion edges still need deeper browser tests. FULL-app LIVE/DEMO refreshed for these changes INCOMPLETE; physical iPhone acceptance NOT TESTED. PR #123 remains DRAFT, no merge/deploy.
+- ONE NEXT ACTION (ASSISTANT): check branch CI for 90aba392, inspect chart-first screenshot and regression evidence, repair failures; then update release artifacts and device acceptance separately. USER ACTION: Nothing needed right now. Global polish LAST.
+
+
+## 2026-10-28 — VERIFICATION: chart-first blend explorer and historical reconciliation candidate
+- Verified app source on draft branch (app JS/CSS unchanged after source commit `99c2c864`); tests through `cbbdd18b`. Nested GitHub Actions #40641541861 **SUCCESS**, artifact #12795234120 downloaded/inspected: ZIP CRC PASS; 196 evidence observations, zero `error` and zero overflow across 320/390 light/dark. Tests PASS: 4 fictional injections (7/5/4/3 mg), chart and 19.000mg period total, 13.571/2.714/2.714mg ingredient coverage, selected 5mg injection -> 3.571mg Ingredient A; 2mg historical legacy dose -> 1.25/.25/.25/.25mg; Stash legacy kit classification Cancel/Confirm preserving saved dose, waste and physical vial mg; reconciliation Cancel/Confirm/date overlap/other-kit exclusion/reversal, preserved dose & waste logs; morning date boundaries. Mobile regression #40641541769 **SUCCESS**.
+- Build/parity #40641541756 **SUCCESS**, artifact #12796340141 downloaded: outer ZIP CRC PASS, LIVE ZIP CRC PASS, 21/21 Git blob hashes match current draft app assets and ordered scripts. Standalone 2.70MB full-app DEMO has inline resources and memory-only local/session storage fail-closed, disabled network; Offline DEMO ZIP CRC PASS; LIVE/DEMO 320/390 light/dark 8/8 browser checks PASS. Manifest `v0.9.20-beta`, synthetic workflow merge SHA `f91c348b...` not branch head; direct Git hash comparison independently establishes application-content parity. Cloudflare parity false as expected for unmerged draft.
+- Physical iPhone acceptance of new explorer and real historical data **NOT TESTED**; actual KLOW/Deadpool historical recipes are not silently inferred. Before old-record component estimates appear, user must opt in to kit/date/recipe confirmation; ambiguity remains unknown. No destructive migration, no original dose/ledger rewrite, no production user storage touched in tests.
+- GitHub PR #123 remains DRAFT/unmerged, main `c1c95e1d` unchanged, no deployment. **ONE NEXT ACTION (ASSISTANT):** hand off refreshed source-matched LIVE and isolated full-app DEMO files with an exact physical iPhone acceptance checklist; after user acceptance, seek separate explicit permission to merge/deploy. **USER ACTION:** preview the explorer and opt-in reconciliation on physical iPhone when ready; no action required immediately. Global polish LAST.
+
+
+## 2026-10-28 — Trends drilldown iteration: source/QA handoff (DRAFT, NOT DEPLOYED)
+- Approved UX implemented as targeted source changes on PR #123: chronological vertical dose-date rows, separate injection detail, tappable ingredient direct/from-blend history, independent Intel action, labeled contribution browser entries, fresh Trends home on tab entry, page top on compound navigation, removal of redundant bottom Blend composition section, scoped DS2 semantic button styling and chevron, no nested date scroller, optional date refinement after automatic whole-history candidate discovery. Historical reconciliation remains explicitly opt-in and reversible; no old doses or physical inventory modified.
+- Source hardening: `nxIngredientHistoryDetail` avoids double-counting the same blend name across multiple kits; direct unit values converted to mg, and already-attributed historic doses excluded from reconciliation candidates. No stored data migration. Protect previously accepted Calendar, Plans and Supplies.
+- First nested workflow #40704187987 FAILED due date-list `[hidden]` overridden by authored CSS; source corrected at `9ebd57b6`. Follow-up nested #40704880841 SUCCESS; downloaded artifact #12823228513: ZIP CRC PASS, 196 observations, zero recorded errors; eight 320/390 light/dark explorer and ingredient-history screenshots present/inspected. Later nested #40705326292 SUCCESS and mobile #40705326516 SUCCESS, both preceding final wording/logic changes; final post-hardening head QA NOT YET VERIFIED. Current full-app LIVE/DEMO build for this source INCOMPLETE until exact-head workflow artifact available. Physical iPhone NOT TESTED. No merge or Cloudflare deployment approved.
+- ONE NEXT ACTION (ASSISTANT): verify latest automated nested/mobile/build results, inspect exact current screenshots and artifact LIVE/DEMO parity, then request physical iPhone acceptance. USER ACTION: nothing now; review on iPhone only when ready. Global polish remains LAST.
+
+
+## 2026-10-28 — v0.9.20-beta Compact Intel draft UX checkpoint (NOT RELEASED)
+- PR #123 `design/design-system-2-preview-20261025` application SHA `50eb4faaf39a8fb5cb978d7f121210606624f17d`, main PR base `c1c95e1d`. Changes: compact secondary Back and outlined Compound Intel single-line footer replacing earlier full-width actions; unified Trends chevrons; balanced two-stat ingredient summary; no data/storage migrations or dose/inventory/calculation changes. Affected screens: More → Trends → Compound History → blend injection → ingredient history and return navigation.
+- User iPhone visual design acceptance: **APPROVED** (“perfect looks good”), **not** full iOS regression acceptance. Cloudflare preview deployment for `50eb4fa` bot-confirmed https://a86e0d00.nexuspeplog.pages.dev/ ; production **NOT** merged/deployed, DRAFT PR.
+- CI exact application SHA: nested 196 screenshot/navigational + fictional inventory #40770526500 SUCCESS; mobile forms #40770526570 SUCCESS. Build + LIVE/DEMO parity #40770526457 still IN PROGRESS at last verification, no artifact published; exact-source standalone full DEMO HTML, DEMO ZIP, LIVE ZIP **INCOMPLETE**. User historical conservation/provenance and full physical Safari/VoiceOver release gates remain **NOT TESTED**.
+- **Next:** unblock/verify build job, download exact-source artifacts, validate contents/isolation and update continuity. No release version bump or production release claimed.
+
+
+## 2026-10-28 — FINAL EVIDENCE: Compact Intel QA + artifact parity VERIFIED (draft)
+- User accepted Compact Intel visual design on physical iPhone (“perfect looks good”). This is **scoped visual approval**, not full iOS/VoiceOver acceptance and not merge/deploy authorisation.
+- **Verified app source:** draft PR #123 application commit `50eb4faaf39a8fb5cb978d7f121210606624f17d`; main base `c1c95e1d`; PR draft/unmerged. Cloudflare bot successfully deployed this commit to **draft preview only** https://a86e0d00.nexuspeplog.pages.dev/ . Production Cloudflare parity report in artifact `Nexus_CLOUDFLARE_PARITY.json` has `verified:false` / mismatched root index, EXPECTED because draft was not promoted to production. Do not mistake this for a failed source package.
+- **All exact-app-code QA successful:** #40770526570 mobile form SUCCESS; #40770526500 nested navigation visual SUCCESS (196 screens 320/390 light/dark, 0 overflow/errors; fictional insufficient/vial deduction passes); #40770526457 build and parity SUCCESS after previously pending browser QA. Built browser results 8/8 LIVE/DEMO PASS and vial safety results 8/8 configurations PASS. Downloaded workflow release artifact ID **12852152849** (`Nexus-release-artifacts`) and screenshot evidence ID **12851898105**.
+- **Artifact validation performed independently on extracted ZIP**: archive CRC PASS; standalone `Nexus_v0.9.20-beta_FULL_DEMO.html` ~2.7 MB, NO external script tags, inline full application with fictional demo `buildDemoState`, `localStorage` / `sessionStorage` replaced with ephemeral memory and fail-closed validation, `fetch`/XHR/beacon disabled. Offline zip CRC PASS, exactly HTML+README, inner `index.html` byte-for-byte equal to standalone HTML. LIVE ZIP CRC PASS, exactly 21/21 expected root/asset files (index, 4 CSS, ordered 01–12 JS, 4 icons), zero missing/extras. **Every LIVE ZIP file's Git blob SHA-1 matched the actual `50eb4faa` GitHub file SHA (21/21)**, proving PR-head source parity despite build manifest recording internally generated combined source SHA `e18b1a4f41728fbafe35c4d505e928a68c4e2cea`; do not misrepresent synthetic build SHA as PR HEAD. Local Pages source parity `verified:true`; production Cloudflare remains distinct and intentionally unchanged.
+- **Release delivery status:** in-chat preview DELIVERED; standalone full-app isolated DEMO HTML and offline ZIP VERIFIED; exact-source LIVE ZIP VERIFIED; release notes/QA in docs VERIFIED; GitHub draft PR UPDATED; automated checks PASSED; **merge and production deploy ON HOLD by user's explicit instruction**. Physical full-app iPhone functional checks, VoiceOver and real personal inventory/historical attribution acceptance **NOT TESTED / remain release gates**; no user backup imported or production storage altered.
+- **ONE NEXT ACTION:** finish user-facing exact-source handoff and review remaining inventory/provenance acceptance gate without altering production; keep PR #123 draft. **USER NEXT ACTION: Nothing needed immediately**; compact design visual review already accepted. Separate explicit approval is required before any production merge/deployment.
+
+## 2026-10-28 — UNRELEASED draft source fix, historical blend history
+- `21ac2094` removes present-day kit ingredient prefilter from read-only Ingredient History so dated confirmed old formulations can contribute historical-only ingredients. `3ca0f351` adds a fictional dated historical-formulation browser regression. No schema migration or writes to user doses, allocations or inventory intended. Exact-head CI, source-matched new LIVE/DEMO packaging, physical Safari and VoiceOver are NOT YET VERIFIED. PR #123 remains draft, unmerged, no production deployment.
+
+## 2026-10-28 — UNRELEASED What's New lifecycle candidate
+- `f34a847f` manual history close no longer persists legacy main-state key; `1341376b` fixes semver parser and marks verified published vs earlier unverified legacy history; `5dc3d1df` adds isolated fictional lifecycle browser cases. Release candidate remains `v0.9.20-beta`, `release/release.json` publication `unverified`; no automatic draft popup. No storage migration or automatic history edits. Latest CI, packages and physical acceptance **PENDING**. Draft PR #123, not merged, primary production unchanged.
+
+## 2026-10-28 — What's New canonical published-history archive, UNRELEASED
+- GitHub draft commits `b637c0e6` historical published v0.9.18/v0.9.19 archive based on dated Cloudflare-parity evidence, `c4c35f81` generator incorporation, `d71ae6f2` generated in-app notes, `c91bb91c` generated runtime, `f31e5f51` display integration, `a8962e0a` chronology fix, `9a1838ca` browser archive regression. No new app version or published entry created; candidate v0.9.20-beta stays `unverified`. No intended user data impact. Browser CI and complete exact-source LIVE/full-app DEMO artifacts pending; PR draft/unmerged, production untouched.
+
+## 2026-10-28 — Draft What's New test correction and QA checkpoint
+- `599f1de8` test-only change separates Demo Mode suppression from eligible published-user scenario. On this exact application source: nested visual audit `40776200367` SUCCESS (208 captures/0 errors/overflow), mobile forms `40776200395` SUCCESS, hybrid preview browser `40776192105` SUCCESS; source validation and exact-source packaging steps already passed inside in-progress build run `40776200351`, full run and download validation pending. No storage migration, PR #123 remains draft/unmerged, production unchanged, physical iPhone/VoiceOver untested.
+
+## 2026-10-28 — What's New build failure and test correction, UNRELEASED
+- Exact app source `599f1de8`, build run `40776200351` FAIL at stale Plans release-notification test after source, release package, structure and preceding browser suites succeeded. Failed-run artifact #12854219443 may be inspected only as unapproved candidate. `68cf3356` test-only correction aligns `Later` with same-session suppression and future-session prompt; new CI not yet verified. No production merge/deploy, no user data/storage migration.
+
+## 2026-10-28 — Latest What's New QA correction, still UNRELEASED
+- After failed full build #40776896536, test-only commits `29c4066f`, `f8d16a48` mock eligible fictional non-Demo mode while preserving real Demo suppress safeguard; `2537ee40` adds hard-reload unpublished check to Plans browser matrix. No production app runtime changes or migration. Fresh full QA and artifact release clearance pending. PR #123 remains draft/unmerged, no deployment.
+
+## 2026-10-28 — Unreleased What's New test harness follow-up
+- Runtime source unchanged since `599f1de8`; browser test corrections `29c4066f`, `f8d16a48`, `2537ee40`, `4c5b23cd`, `a8292e57`. Failed build #40776896536 was due archived Plans popup assertion under Demo Mode. Current build #40777876259 and nested #40777876220 pending, mobile #40777876462 SUCCESS, hybrid preview #40777868652 SUCCESS. No merge/deployment, physical acceptance still blocked.
+
+## 2026-10-28 — v0.9.20-beta What's New overhaul: DRAFT automated QA PASS, NOT DEPLOYED
+- Runtime fix `1341376b` repairs semantic-version comparison, `f34a847f` makes manual history read-only, `b637c0e6`/`c4c35f81`/`c91bb91c` establish verified v0.9.18/v0.9.19 canonical historical release archive in generated notes, `f31e5f51`/`a8962e0a` show chronological published-first App Updates with legacy notes distinguished. Synthetic lifecycle tests `5dc3d1df`, `599f1de8`; latest test-only correctness through `a8292e57` preserves Demo Mode and checks unpublished hard reload. Final GitHub build #40777876259 **SUCCESS**, nested #40777876220 SUCCESS, mobile #40777876462 SUCCESS, hybrid #40777868652 SUCCESS. Artifact #12855962516 includes exact-version full LIVE ZIP, isolated standalone FULL DEMO HTML and offline DEMO ZIP; GitHub pipeline integrity and 8 live/demo configurations PASS. No localStorage schema migration, dose or inventory rewrite. Full physical iPhone/VoiceOver and real-user integrity acceptance NOT TESTED. PR #123 draft, unmerged; **NO PRODUCTION DEPLOYMENT**. Publication stays `unverified` until approved release and independent Cloudflare parity.
+
+## 2026-10-28 — v0.9.20-beta draft What's New visual consistency refinement, NOT RELEASED
+- User's physical iPhone feedback on previous preview `757f68e`: 8/8 preview checks PASS; no automatic notice (expected because publication `unverified`); noted emoji/new-style mismatch and inconsistent old numeric labels. Draft `69399ef1` unifies release-history visual rows, displays verified `v0.9.18/19-beta` versions, distinguishes archived numeric legacy Update #N and adds transparent popup logic copy. `27be794a` updates fictional-history test. No destructive deletion, storage migration, personal record changes or production deployment; new-head CI and new design physical acceptance pending. Public App Store release-history curation remains proposed, not authorized.
+
+## 2026-10-28 — What's New physical visual acceptance, UNRELEASED
+- User confirmed revised preview What's New screen looks fine on physical iPhone; automatic popup NOT physically tested, because candidate `v0.9.20-beta` stays `unverified` (correctly silent). Latest application source head before docs `7d73889c` passed GitHub mobile #40796526082, nested #40796526234, full build/parity #40796526094, hybrid #40796519629. Cloudflare preview bot reports `b9cede6b` deployed; direct served hash comparison not independently available. Added release maintenance contract `docs/product/WHATS_NEW_RELEASE_PROCESS.md` in `6e3f712a`. No version bump, user data change, merge or production deployment. Popup triggered on physically published update remains NOT TESTED.
+
+## 2026-10-28 — Release readiness gate CODED/CI PARTIAL, UNRELEASED
+- `a06bff39` adds source-diff/manifest consistency readiness CLI and six synthetic tests; `da88994a` integrates into build workflow with strict main/release versus warning PR mode, including complete Git history; `36acb33c` documents Cloudflare deployment and human-completeness limitations. No runtime state/visual/calculator changes. CI gate step #40797868119 PASS; broad source-matched build/nested still pending at checkpoint. Draft PR #123 not merged, primary Cloudflare production not deployed and user data untouched.
+
+## 2026-10-28 — DS2 safety test-only candidate, NOT RELEASED
+- `56dc3f16` adds fictional prepared-dose two-vial partial-refund conservation assertions to existing full LIVE/DEMO 320/390 light/dark safety matrix; no runtime/source calculation changes or saved-data migration. New exact-source CI pending, draft PR #123 remains unmerged and production unchanged. Existing release-readiness gate remains strict on main/release, warning on draft; not a substitute for verified human notes and Cloudflare parity.
+
+## 2026-10-28 — DS2 prepared-dose orphan-source safety fix, draft only
+- Runtime `4968983c` blocks removal of unused prepared batch with missing explicit source kit/vial; fictional negative tests `b8ca5abf`, following two-vial partial refund test `56dc3f16`. No storage schema/data migration or live writes intended. Full build, exact-source LIVE/isolated DEMO artifacts and protected-flow verification **PENDING**. PR #123 draft/unmerged, primary Cloudflare production unchanged.
+
+## 2026-10-28 — v0.9.20-beta DS2 source verification checkpoint, UNRELEASED
+- Full CI #40798440095 PASS on original 56-check split-prepared vial regression `56dc3f16`; artifact #12864843167 includes complete LIVE/isolated DEMO candidate packages. Subsequent fail-closed prepared-source integrity fix `4968983c` and 64-check expanded test `b8ca5abf` are NEWER than this pass; latest build #40798876625 still running. No production deployment/merge, no user data touched; external clinical/device acceptance not implied.
+
+## 2026-10-28 — v0.9.20-beta prepared-dose source fail-closed protection — DRAFT QA PASS, NOT DEPLOYED
+- Runtime `4968983c` retains prepared batch with unused inventory when an explicitly referenced kit or vial is missing; tests `56dc3f16` and `b8ca5abf` verify two-vial partial refund conservation and missing-source refusal. Exact code/test source `b8ca5abf` full workflow #40798876625 SUCCESS: 64 fictional vial safety cases in eight LIVE/DEMO viewport/theme contexts, Plans 8, broad browser 8, math diagnostics 80/80; artifact #12864798683 with LIVE ZIP/standalone full-app DEMO/offline ZIP. Nested/mobile/hybrid checks SUCCESS. No intended migration, primary production unchanged; PR #123 unmerged, physical Safari and historical-data acceptance pending. No release is published.
+
+## 2026-10-28 — DS2 inventory safety verification checkpoint, draft only
+- Exact source `ccd3b032` full #40799634203 SUCCESS, 64 fictional vial-source assertions PASS across eight LIVE/DEMO device/theme variants, source-matched full packages artifact #12865312949. New test-only `f70b5c26` extends to blocked deletion confirmation dialog + visible warning, target 72 cases; full #40801104052 pending at checkpoint. No runtime/source changes in this step, no data migration, production unchanged, PR #123 unmerged.
+
+## 2026-10-28 — DS2 blocked prepared-deletion UI regression exact-source PASS — NOT RELEASED
+- Test-only `f70b5c26` verified in full #40801104052 SUCCESS, 72/72 fictional vial safety assertions in eight source-matched LIVE/DEMO viewport/theme cases. Complete candidate files/artifact #12866491578 validated in GitHub CI. No feature runtime edit, schema change, saved data change, merge or deployment. Production Cloudflare remained unchanged; published release status is still unverified.
+
+## 2026-10-28 — v0.9.20-beta legacy source attribution protection — DRAFT / NOT RELEASED
+- Candidate source `0ad1f6cb` prevents unused historical prepared batches from being deleted/refunded to a merely currently-open vial when source provenance is absent. Test `af1b789b` adds isolated fictional 96-assertion target. New CI not yet confirmed; no schema migration, historical edits, merge, live deployment or physical iPhone acceptance. Prior 72/72 was for predecessor `f70b5c26`, not current source.
+
+## 2026-10-28/29 — v0.9.20-beta isolated historical warning-preview artifact candidate (NOT RELEASED)
+- `4c5c6988` builder generates extra standalone full-app orphan warning HTML + iPhone ZIP without modifying LIVE assets, `c93b1bac` adds real-modal browser test. CI not yet verified. Fictional storage isolated/no network, no schema migration or historical data change. Draft PR #123 unmerged; Cloudflare production unchanged.
+
+## 2026-10-28 — v0.9.20-beta DS2 candidate final QA and iPhone acceptance (NOT RELEASED)
+- Draft PR #123 application source `441d22a0847e536cbb5a0e6bc27463b74e2de34d` (Compound History scroll `fb601b97`; Profile fresh-entry overview `441d22a0`); main base `c1c95e1d`. No merge/deployment SHA or production publication.
+- Full/parity CI #40812666592 PASS, mobile #40812666510 PASS, nested navigation #40812666504 PASS; release artifact #12870988417 downloaded and exact-source LIVE ZIP + isolated fictional full-app DEMO verified. Nested evidence #12870992426 reviewed.
+- Physical iPhone focused retest user reported 4/4 PASS: history single scroll, bottom actions, fresh Profile entry, Settings Back; notes None. No destructive migration or intentional localStorage changes. Whole-app VoiceOver and live-data acceptance not established; preview URL source identity and production deployment not independently verified. Release status: approval review, draft/unmerged/undeployed.

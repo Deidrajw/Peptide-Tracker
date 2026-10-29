@@ -97,19 +97,46 @@ function supplyModal(existing, presetName) {
     </div>
     <div id="sconc" style="margin-bottom:14px"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div><label class="field-label">TOTAL COST</label><input id="scost" type="number" step="0.01" class="inp" value="${esc(f.cost||"")}" placeholder="e.g. 200.00" style="margin-bottom:14px"></div>
+      <div><label class="field-label">TOTAL COST (optional)</label><input id="scost" type="number" step="0.01" class="inp" value="${esc(f.cost||"")}" placeholder="e.g. 200.00" style="margin-bottom:14px"></div>
       <div><label class="field-label">CURRENCY</label><select id="scur" class="inp" style="margin-bottom:14px">
-        ${["CAD","USD","GBP","EUR","AUD"].map(c=>`<option${c===f.currency?" selected":""}>${c}</option>`).join("")}
+        ${[...new Set(["CAD","USD","GBP","EUR","AUD","NZD","CHF","JPY","CNY","HKD","SGD","INR","MXN","BRL","ZAR",f.currency])].filter(Boolean).map(c=>`<option${c===f.currency?" selected":""}>${c}</option>`).join("")}
       </select></div>
     </div>
     <label class="field-label">STORAGE LOCATION</label>
     <select id="sloc" class="inp" style="margin-bottom:14px">
       ${["unknown","fridge","freezer","room_temp"].map(v=>`<option value="${v}"${(f.storageLocation||"unknown")===v?" selected":""}>${{unknown:"Unknown",fridge:"Fridge / Refrigerator",freezer:"Freezer",room_temp:"Room Temperature"}[v]}</option>`).join("")}
     </select>
-    <label class="field-label">NOTES (lot #, vendor…)</label>
-    <input id="snotes" class="inp" value="${esc(f.notes||"")}" placeholder="e.g. Lot #ABC, ordered from XYZ" style="margin-bottom:18px">
-    <button id="ssave" class="btn-primary" style="background:#C9A0FF">SAVE KIT</button>
+    <label for="snotes" class="field-label">NOTES (optional)</label>
+    <textarea id="snotes" class="inp" rows="2" placeholder="Storage, lot or other kit notes" style="margin-bottom:18px">${esc(f.notes||"")}</textarea>
+    <button id="ssave" class="btn-primary" style="background:#C9A0FF">${existing?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
+  const kitTestResult=nexusKitTestResultControl(m,"ssave",existing?.testResultAttachment);
+  // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
+  m.classList.add("nx-stash-kit-editor");
+  const originalTitle=m.querySelector(".mono");
+  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");
+    originalTitle.textContent=existing?"Edit kit":"Add kit";
+    const intro=document.createElement("p");intro.className="nx-kit-editor-intro";intro.textContent=existing?"Update kit details without changing vial quantities or history.":"Record a kit and its vial details. You can open a vial later.";
+    originalTitle.parentElement.insertAdjacentElement("afterend",intro);
+  }
+  const openLabel=m.querySelector("#shasopen")?.closest("label");
+  if(openLabel)openLabel.classList.add("nx-kit-editor-open-toggle");
+  const openFields=m.querySelector("#sopen-fields");
+  if(openFields)openFields.classList.add("nx-kit-editor-open-fields");
+  const controls=["sname","stv","svmg","srecon","sremaining","sbac","sexp","scost","scur","sloc","snotes"];
+  controls.forEach(id=>{
+    const control=m.querySelector("#"+id);
+    if(!control)return;
+    const previous=control.previousElementSibling;
+    if(previous?.matches("label.field-label")){
+      previous.htmlFor=id;
+      previous.classList.add("nx-kit-editor-label");
+    }
+  });
+  const saveAction=m.querySelector("#ssave");
+  if(saveAction){saveAction.classList.add("nx-kit-editor-save");const footer=document.createElement("div");footer.className="nx-kit-editor-footer";saveAction.parentNode.insertBefore(footer,saveAction);footer.appendChild(saveAction);}
+  const blendSwitch=m.querySelector("#sw-blend");
+  if(blendSwitch)blendSwitch.classList.add("nx-kit-editor-blend-switch");
   m.querySelector("#x").onclick = closeModal;
   const swBlend = m.querySelector("#sw-blend");
   if (swBlend) swBlend.onclick = () => { closeModal(); addBlendKitModal(null); };
@@ -124,6 +151,7 @@ function supplyModal(existing, presetName) {
   m.querySelector("#sbac").oninput = updateConc;
   updateConc();
   m.querySelector("#ssave").onclick = () => {
+    if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const name=m.querySelector("#sname").value.trim(); if(!name||name==="— select compound —") return;
     const bacMl = +m.querySelector("#sbac").value||0;
     const expiryDays = +m.querySelector("#sexp").value||28;
@@ -138,7 +166,7 @@ function supplyModal(existing, presetName) {
       // is preserved exactly as-is by simply not overwriting them, rather than the old
       // behavior of blindly re-deriving them from two raw count fields on every edit,
       // which could silently drift out of sync with the kit's actual vial state.
-      const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes };
+      const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes, testResultAttachment:kitTestResult.getValue() };
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
       saveState(); closeModal(); render();
       return;
@@ -167,6 +195,7 @@ function supplyModal(existing, presetName) {
       reconDate: hasOpen ? openReconDate : null,
       activeKit: hasOpen,
       storageLocation, cost, currency, notes,
+      testResultAttachment:kitTestResult.getValue(),
       vials,
     };
     const finishCreate = () => {
@@ -186,6 +215,106 @@ function supplyModal(existing, presetName) {
     // sealed new kit isn't opening anything, so there's nothing to confirm.
     if (hasOpen) confirmOpenIfOtherKitOpen(rec, finishCreate); else finishCreate();
   };
+
+  // Guided presentation over the ORIGINAL fields and authoritative Save handler.
+  // The original input nodes stay in the DOM; no independent inventory write occurs.
+  const body=m.querySelector(".nx-unified-body")||m;
+  const wizardIntro=body.querySelector(".nx-kit-editor-intro");
+  const editorFooter=m.querySelector(".nx-kit-editor-footer");
+  const allNodes=Array.from(body.children).filter(n=>n!==wizardIntro&&n!==editorFooter);
+  const stages=[0,1,2].map(i=>{const el=document.createElement("section");el.className="nx-kit-wizard-stage";el.dataset.step=String(i);el.hidden=i!==0;return el;});
+  let stageIndex=0;
+  allNodes.forEach(node=>{
+    if(node.querySelector?.("#ssave")||node.id==="ssave")return;
+    stages[stageIndex].appendChild(node);
+    if(node.querySelector?.("#stv")||node.id==="stv")stageIndex=1;
+  });
+  stages.forEach(el=>body.appendChild(el));
+  const review=stages[2];
+  review.innerHTML='<div class="nx-kit-wizard-summary" aria-live="polite"></div><p class="nx-kit-wizard-review-note">Confirm these details before saving. Existing vial and dose history remains protected.</p>';
+  const stepHeader=document.createElement("div");
+  stepHeader.className="nx-kit-wizard-progress";
+  stepHeader.innerHTML='<div class="nx-kit-wizard-step-heading"><span id="nx-kit-step-label">Step 1 of 3 · Kit details</span></div><div class="nx-kit-wizard-track"><span></span></div>';
+  body.insertBefore(stepHeader,stages[0]);
+  const nav=document.createElement("div");nav.className="nx-kit-wizard-navigation";
+  nav.innerHTML='<p class="nx-kit-wizard-error" role="alert" hidden></p><div class="nx-kit-wizard-buttons"><button type="button" id="nx-kit-back">Back</button><button type="button" id="nx-kit-next">Continue</button></div>';
+  if(editorFooter){editorFooter.classList.add("nx-kit-wizard-footer");editorFooter.appendChild(nav);nav.querySelector(".nx-kit-wizard-buttons").appendChild(saveAction);m.appendChild(editorFooter);}
+  const back=m.querySelector("#nx-kit-back"),next=m.querySelector("#nx-kit-next"),error=m.querySelector(".nx-kit-wizard-error");
+  let currentStep=0;
+  const read=id=>m.querySelector("#"+id)?.value||"";
+  const escReview=v=>String(v??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  const updateReview=()=>{
+    const count=existing?f.totalVials:Math.max(1,Number(read("stv"))||1);
+    const mg=existing?f.vialMg:Number(read("svmg"));
+    const isOpen=existing?!!getActiveVial(existing):!!m.querySelector("#shasopen")?.checked;
+    const activeCount=isOpen?1:0;
+    const fieldPairs=[["Compound",existing?f.name:read("sname")],["Vial count",count],["Strength per vial",mg+" mg"],["Initially open",isOpen?"Yes":"No"],["Sealed vials",existing?getSealedVials(existing).length:Math.max(0,count-activeCount)],["BAC water per vial",read("sbac")?read("sbac")+" mL":"Not provided"],["Expiry after recon",read("sexp")?read("sexp")+" days":"Default 28 days"],["Storage",m.querySelector("#sloc")?.selectedOptions[0]?.textContent||"Unknown"],["Cost",read("scost")?(read("scost")+" "+read("scur")):"Not provided"],["Notes",read("snotes")||"None"],["Test results",kitTestResult.getValue()?.name||"None"]];
+    const compound=existing?f.name:read("sname");
+    const summary=review.querySelector(".nx-kit-wizard-summary");
+    summary.innerHTML='<div class="nx-kit-review-hero"><span class="nx-kit-review-kicker">YOUR KIT</span><h3>'+escReview(compound)+'</h3><div class="nx-kit-review-total"><strong>'+escReview(mg)+' mg</strong><span>per physical vial</span></div></div>'+
+      '<div class="nx-kit-review-section"><h4>Inventory and preparation</h4><div class="nx-kit-review-facts">'+fieldPairs.slice(1).map(([label,val])=>'<div><span>'+escReview(label)+'</span><strong>'+escReview(val)+'</strong></div>').join("")+'</div></div>';
+  };
+  const validate=()=>{
+    if(currentStep===0&&!existing){
+      if(!read("sname"))return "Select a compound before continuing.";
+      const number=Number(read("stv")), strength=Number(read("svmg"));
+      if(!Number.isInteger(number)||number<1)return "Enter a positive whole number of vials.";
+      if(!Number.isFinite(strength)||strength<=0)return "Enter a positive mg amount per vial.";
+    }
+    if(currentStep===1&&m.querySelector("#shasopen")?.checked){
+      const rem=read("sremaining");
+      if(rem!==""&&(!Number.isFinite(Number(rem))||Number(rem)<0||doseToMg(Number(rem),cfg(read("sname")).unit)>Number(read("svmg"))))return "Remaining amount must be between zero and one full vial.";
+    }
+    return "";
+  };
+  const paint=()=>{
+    stages.forEach((el,i)=>{el.hidden=i!==currentStep;});
+    stepHeader.querySelector("#nx-kit-step-label").textContent="Step "+(currentStep+1)+" of 3 · "+["Kit details","Preparation & storage","Review & save"][currentStep];
+    stepHeader.querySelector(".nx-kit-wizard-track span").style.width=((currentStep+1)/3*100)+"%";
+    back.hidden=currentStep===0;next.hidden=currentStep===2;
+    saveAction.hidden=currentStep!==2;
+    saveAction.style.setProperty("display",currentStep===2?"block":"none","important");
+    next.style.setProperty("display",currentStep===2?"none":"block","important");
+    if(currentStep===2)updateReview();
+    error.hidden=true;
+    body.scrollTop=0;
+  };
+  back.onclick=()=>{currentStep=Math.max(0,currentStep-1);paint();};
+  next.onclick=()=>{const msg=validate();if(msg){error.textContent=msg;error.hidden=false;return;}currentStep=Math.min(2,currentStep+1);paint();};
+  const originalSelect=m.querySelector("#sname");
+  if(originalSelect){
+    const field=originalSelect.parentElement;
+    const combo=document.createElement("div");combo.className="nx-kit-combobox";
+    combo.innerHTML='<input id="nx-kit-combobox-input" class="inp" type="search" role="combobox" aria-autocomplete="list" aria-label="Compound · type to search or browse" aria-expanded="false" aria-controls="nx-kit-combobox-list" autocomplete="off" placeholder="Search or choose compound"><div id="nx-kit-combobox-list" role="listbox" hidden></div>';
+    originalSelect.insertAdjacentElement("afterend",combo);
+    originalSelect.classList.add("nx-kit-original-select");
+    const input=combo.querySelector("input"),list=combo.querySelector('[role="listbox"]');
+    const options=[...originalSelect.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value}));
+    input.value=originalSelect.selectedOptions[0]?.value?originalSelect.selectedOptions[0].textContent:"";
+    if(existing){input.readOnly=true;input.setAttribute("aria-label","Compound (locked for existing kit)");}
+    const closeList=()=>{list.hidden=true;input.setAttribute("aria-expanded","false");};
+    const showOptions=()=>{
+      if(existing)return;
+      const q=input.value.toLowerCase().trim();
+      const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,5);
+      list.replaceChildren();
+      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.textContent=o.name;b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
+      const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";
+      browse.textContent="View all compounds";
+      browse.onpointerdown=e=>e.preventDefault();
+      browse.onclick=()=>{closeList();nexusBrowseAllCompounds(m,options,o=>{
+        originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
+        input.value=o.name;
+      });};
+      list.appendChild(browse);
+      list.hidden=false;input.setAttribute("aria-expanded","true");
+    };
+    input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
+    list.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();closeList();input.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const bs=[...list.querySelectorAll('[role="option"]')],i=bs.indexOf(document.activeElement);bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
+    combo.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!combo.contains(document.activeElement))closeList();});});
+  }
+  paint();
+
 }
 
 // ─── Health import modal ─────────────────────────────────────────────────────────
@@ -1622,7 +1751,17 @@ function getDoseStatus(name, data) {
 const OVERDUE_AGED_DAYS = 3;
 function renderCompoundActionArea(name, data, c, doses, doseStatus) {
   const isDue = doseStatus && ["due_now","due_later_today","overdue"].includes(doseStatus.status);
+  const showScheduledLog = !!doseStatus?.showLogBtn;
   const isAgedOverdue = doseStatus?.status === "overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS);
+  if (doseStatus?.status === "taken_today") {
+    const recorded = doses[0];
+    const recordedTime = recorded?.date ? ` · ${esc(new Date(recorded.date).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}))}` : "";
+    return `<div class="nx-today-completion-actions">
+      <div class="nx-today-completion-status" role="status"><span class="nx-today-completion-icon" aria-hidden="true">✓</span><span><strong>Dose completed</strong><small>Scheduled entry recorded${recordedTime}</small></span></div>
+      ${recorded?.id!=null?`<button type="button" class="nx-today-record-reaction" data-name="${esc(name)}" data-id="${esc(String(recorded.id))}" aria-label="Record reaction for most recent ${esc(name)} dose">Record reaction</button>`:""}
+      <button class="moremenu nx-today-completion-more" data-name="${esc(name)}" aria-expanded="false" aria-label="More actions for ${esc(name)}">More actions</button>
+    </div>`;
+  }
   if (doseStatus?.status === "skipped") {
     return `<div style="margin-bottom:8px">
       <div style="display:flex;align-items:baseline;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;margin-bottom:6px">
@@ -1631,7 +1770,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
       </div>
       <div style="display:flex;gap:8px">
         <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.skippedDate)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Undo Skip</button>
-        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More actions" aria-label="More actions for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:12px;font-weight:650;line-height:1.2">More actions</button>
       </div>
     </div>`;
   }
@@ -1644,7 +1783,7 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
       <div style="display:flex;gap:8px">
         <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid #A78BFA44;border-radius:9px;color:#A78BFA;font-size:11px;font-weight:600">↺ Reschedule again</button>
         <button class="skipdose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Skip / Miss</button>
-        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More actions" aria-label="More actions for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:12px;font-weight:650;line-height:1.2">More actions</button>
       </div>
     </div>`;
   }
@@ -1653,19 +1792,19 @@ function renderCompoundActionArea(name, data, c, doses, doseStatus) {
     return `<div style="margin-bottom:8px">
       ${isAgedOverdue
         ? `<button class="whathappened" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="width:100%;min-height:44px;background:#F9C87D22;border:1px solid #F9C87D66;color:#F9C87D;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">⚠ WHAT HAPPENED?</button>`
-        : `<button class="logdose" data-name="${esc(name)}" style="width:100%;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">+ LOG DOSE</button>`}
-      <div style="display:flex;gap:8px">
-        <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid #A78BFA44;border-radius:9px;color:#A78BFA;font-size:11px;font-weight:600">↺ Reschedule</button>
-        ${isOverdue
-          ? `<button class="resolveoverdue" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Resolve overdue</button>`
-          : `<button class="skipdose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:40px;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:11px;font-weight:600">Skip / Miss</button>`}
-        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        : showScheduledLog ? `<button class="logdose" data-name="${esc(name)}" style="width:100%;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px;margin-bottom:6px">+ LOG DOSE</button>` : ""}
+      <div class="nx-dose-contextual-actions" style="display:flex;gap:8px">
+        ${isAgedOverdue ? "" : isOverdue
+          ? `<button class="resolveoverdue" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:44px;background:transparent;border:1px solid var(--border-sub);border-radius:10px;color:var(--t3);font-size:12px;font-weight:600">Resolve overdue</button>`
+          : `<button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="flex:1;min-height:44px;background:transparent;border:1px solid var(--border-sub);border-radius:10px;color:var(--t3);font-size:12px;font-weight:600">Reschedule</button>`}
+        <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More actions" aria-label="More actions for ${esc(name)}" style="min-width:44px;min-height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:9px;color:var(--t4);font-size:12px;font-weight:650;line-height:1.2">More actions</button>
       </div>
     </div>`;
   }
-  return `<div style="display:flex;gap:8px;align-items:stretch;margin-bottom:8px">
-      <button class="logdose" data-name="${esc(name)}" style="flex:1;min-height:44px;background:${c.color};color:#000;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12px;letter-spacing:1px">+ LOG DOSE</button>
-      <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More options" aria-label="More options for ${esc(name)}" style="min-width:44px;min-height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t4);font-size:16px;line-height:1"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+  // A completed, upcoming or paused occurrence should not imply another scheduled dose.
+  // Unscheduled and retrospective logging remains available via existing app workflows.
+  return `<div class="nx-dose-secondary-only" style="display:flex;gap:8px;align-items:stretch;margin-bottom:8px">
+      <button class="moremenu" aria-expanded="false" data-name="${esc(name)}" title="More actions" aria-label="More actions for ${esc(name)}" style="min-width:44px;min-height:44px;flex:1;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;color:var(--t3);font-size:12px;font-weight:600">More actions ···</button>
     </div>`;
 }
 
@@ -1680,6 +1819,12 @@ function isCompoundRelevantToday(doseStatus) {
   if (doseStatus.status==="skipped" && doseStatus.skippedDate && dayKey(doseStatus.skippedDate)===today) return "completed";
   if (doseStatus.status==="rescheduled" && doseStatus.rescheduledTo && dayKey(doseStatus.rescheduledTo)===today) return "needs_action";
   return null;
+}
+
+// Shared visual content for compact and expanded Today disclosures.
+// Keep both states structurally identical; only the label and chevron direction change.
+function nxTodayDisclosureInner(expanded) {
+  return `<span class="nx-today-disclosure-text">${expanded?"Hide details":"View details"}</span><svg class="nx-today-disclosure-icon${expanded?" nx-today-disclosure-icon-up":""}" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
 }
 
 function renderCompoundCardCompact(name, data, view, isUpNext) {
@@ -1701,12 +1846,12 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   if (isExpanded) return peptideCardHTML(name, data, {showCollapseChevron:true, view});
 
   if (status === "paused") {
-    return `<div class="card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
-      <div class="compound-compact-tap" data-name="${esc(name)}" data-view="${esc(view)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
+    return `<div class="card nx-compound-card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
+      <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
         <div style="width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0"></div>
-        <span style="font-size:14px;font-weight:600;color:var(--t2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
+        <span class="nx-today-compound-name" style="flex:1;min-width:0">${esc(name)}</span>
         ${statusBadge("⏸ Paused","warning")}
-        <span class="nx-compound-chevron" aria-hidden="true"></span>
+        <span class="nx-compact-disclosure nx-today-disclosure" aria-hidden="true">${nxTodayDisclosureInner(false)}</span>
       </div>
       <button class="resumepep" data-name="${esc(name)}" style="width:100%;min-height:36px;margin-top:8px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;font-size:11px;font-weight:600">▶ Resume</button>
     </div>`;
@@ -1723,7 +1868,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   // reserved for cases with no better description available.
   let attentionLabel = null;
   if (trough) attentionLabel = "Winding Down";
-  else if (siteWarn) attentionLabel = "Site rotation";
+  else if (siteWarn) attentionLabel = `Repeated site use · ${siteWarn.countInLast5} of last 5`;
   else if (escalation && escalation.signal==="may_be_ready") attentionLabel = "Protocol review";
 
   // Via scheduleLabel (phase-aware) rather than re-deriving from the top-level fields — this
@@ -1742,22 +1887,24 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   const lastDateLabel = last ? fmtShort(dayKey(new Date(last.date).getTime())) : "No recorded dose";
   const dueBadge = doseStatus.status==="overdue" ? "Overdue" : doseStatus.status==="taken_today" ? "Logged" : doseStatus.status==="due_now" || doseStatus.status==="due_later_today" ? "Due today" : doseStatus.status==="rescheduled" ? "Rescheduled" : doseStatus.status==="skipped" ? "Skipped" : "Upcoming";
   return `<div class="card nx-compound-card" style="margin-bottom:9px;${isUpNext?`box-shadow:0 0 0 1px ${statusColor}33`:""}">
-    <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-label="Expand ${esc(name)} details" style="cursor:pointer">
+    <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="cursor:pointer">
       <div class="nx-card-top"><div>
-        <div class="nx-card-title"><strong>${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
+        <div class="nx-card-title"><strong class="nx-today-compound-name">${esc(name)}</strong><span class="nx-card-status" style="border-color:${statusColor}55;color:${statusColor}">${esc(dueBadge)}</span></div>
         <div class="nx-card-frequency">${esc(freqLabel)}</div>
-      </div><span class="nx-compound-chevron" aria-hidden="true"></span></div>
+      </div><span class="nx-compact-disclosure nx-today-disclosure" aria-hidden="true">${nxTodayDisclosureInner(false)}</span></div>
       <div class="nx-card-facts">
         <div><div class="nx-card-fact-label">Last recorded</div><div class="nx-card-fact-value">${esc(lastDateLabel)}${doseAmount?` · ${doseAmount}`:""}</div></div>
         <div><div class="nx-card-fact-label">Next scheduled</div><div class="nx-card-fact-value">${esc(nextDateLabel)}</div></div>
       </div>
       ${attentionLabel?`<div style="font-size:11px;color:var(--t4);margin-top:9px">${esc(attentionLabel)}</div>`:""}
     </div>
-    <div class="nx-compound-actions">
-      ${doseStatus.showLogBtn?`<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`:""}
-      ${doseStatus.nextDueStr && !["taken_today","skipped"].includes(doseStatus.status)?`<button class="rescheduledose nx-compound-secondary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}">Reschedule</button>`:""}
-      <button class="nx-open-compound-history nx-compound-secondary" data-name="${esc(name)}" data-view="${esc(view)}" aria-label="Open ${esc(name)} dose history">History</button>
-    </div>
+    ${doseStatus.status==="taken_today" ? `<div class="nx-compound-completed" role="status"><span aria-hidden="true">✓</span> Scheduled entry recorded</div>` : ""}
+    ${doseStatus.showLogBtn || (doseStatus.nextDueStr && !["taken_today","skipped","overdue"].includes(doseStatus.status)) ? `<div class="nx-compound-actions">
+      ${doseStatus.showLogBtn ? (doseStatus.status==="overdue" && (doseStatus.daysLate>=OVERDUE_AGED_DAYS || (doseStatus.hoursLate||0)/24>=OVERDUE_AGED_DAYS)
+        ? `<button class="whathappened nx-compound-primary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}" style="--nx-compound-accent:${c.color}">What happened?</button>`
+        : `<button class="logdose nx-compound-primary" data-name="${esc(name)}" style="--nx-compound-accent:${c.color}">Log dose</button>`) : ""}
+      ${doseStatus.nextDueStr && !["taken_today","skipped","overdue"].includes(doseStatus.status)?`<button class="rescheduledose nx-compound-secondary" data-name="${esc(name)}" data-date="${esc(doseStatus.nextDueStr)}">Reschedule</button>`:""}
+    </div>` : ""}
   </div>`;
 }
 
@@ -1870,7 +2017,7 @@ function renderTodayCompoundSection(started) {
   if (!needsAction.length && !completed.length) {
     out += `<div style="text-align:center;padding:16px 0;color:var(--t4);font-size:13px">Nothing due today.</div>`;
   }
-  out += renderUpcomingPreview(started);
+  // Single prospective schedule preview now lives at the bottom of Today in homeView().
   return out;
 }
 
@@ -1898,6 +2045,20 @@ function renderUpcomingFullView(started) {
     return `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:16px 0 8px">${esc(label)}</div>
     ${evs.map(e=>renderCompoundCardCompact(e.n, e.d, "upcoming")).join("")}`;
   }).join("");
+}
+
+// Completed means recorded or explicitly skipped TODAY, not all historical doses.
+// Retain the same compact/expanded card actions, including Record reaction.
+function renderCompletedFullView(started) {
+  const completed=started.filter(([name,data])=>(data.doses||[]).some(d=>doseDayFor(data,d)===localDate()) || isCompoundRelevantToday(getDoseStatus(name,data))==="completed");
+  completed.sort((a,b)=>{
+    const aDate=(a[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
+    const bDate=(b[1].doses||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0]?.date||"";
+    return new Date(bDate)-new Date(aDate);
+  });
+  if(!completed.length)return `<div class="nx-completed-empty" role="status" style="padding:24px 16px;text-align:center;color:var(--t4);font-size:13px">No completed doses today. Once a dose is recorded, it will appear here.</div>`;
+  return `<div class="nexus-today-section-label" style="margin-bottom:10px">COMPLETED TODAY · ${completed.length}</div>`+
+    completed.map(([name,data])=>renderCompoundCardCompact(name,data,"completed")).join("");
 }
 
 function renderActiveFullView(started) {

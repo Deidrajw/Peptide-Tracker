@@ -104,7 +104,112 @@ try {
       'Prepared-dose deletion returned more/less than the three unused syringes');
     list.push('prepared batch deletion returns only unused share');
 
-    // (6) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
+    // (6) Prepared batch funded from TWO distinct open vials. Only unused
+    // fractions return to their original vial IDs; consumed share stays spent.
+    const pa=kit(9005,0),pb=kit(9006,0);
+    pa.vials[0].status='empty';pb.vials[0].status='empty';
+    state.supplies=[pa,pb];
+    const splitPrepared={id:8102,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:pa.id,vialId:pa.vials[0].id,amount:4},
+        {kitId:pb.id,vialId:pb.vials[0].id,amount:6}
+      ]};
+    state.preparedDoses=[splitPrepared];
+    assert(deletePreparedDose(splitPrepared)===true,'Split prepared batch deletion rejected');
+    assert(near(pa.vials[0].remainingMg,2.4)&&near(pb.vials[0].remainingMg,3.6),
+      'Split prepared refund did not conserve the exact unused shares');
+    assert(pa.vials[0].status==='open'&&pb.vials[0].status==='open',
+      'Split prepared refund failed to reopen original empty vials');
+    assert(state.preparedDoses.length===0,'Split prepared batch record not removed');
+    list.push('two-vial prepared deletion conserves exact unused share per source');
+
+    // (7) An orphaned explicit source must not delete a partly unused
+    // prepared batch or silently refund into an unrelated kit.
+    const orphanKit=kit(9007,4);
+    state.supplies=[orphanKit];
+    const originalOrphanBalance=orphanKit.vials[0].remainingMg;
+    const orphan={id:8103,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:999999,vialId:'missing-vial',amount:10}]};
+    state.preparedDoses=[orphan];
+    assert(deletePreparedDose(orphan)===false,
+      'Prepared batch with missing explicit source was deleted');
+    assert(state.preparedDoses.length===1 && state.preparedDoses[0]===orphan &&
+      near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'Orphan source failed to preserve both batch and unrelated stock');
+    const missingVial={id:8104,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:orphanKit.id,vialId:'not-a-real-vial',amount:10}]};
+    state.preparedDoses=[missingVial];
+    assert(deletePreparedDose(missingVial)===false,
+      'Prepared batch with missing vial ID was deleted');
+    assert(state.preparedDoses.length===1 &&
+      near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'Missing-vial deletion altered unrelated inventory or prepared history');
+    list.push('missing kit/vial source blocks deletion and preserves batch');
+    // UI-level guard: confirming deletion of an orphaned prepared batch
+    // must leave the dialog open, preserve data, and show the warning.
+    deletePreparedDoseModal(missingVial);
+    const confirm=document.querySelector('#confirm');
+    assert(confirm,'Prepared-dose confirmation control was not rendered');
+    confirm.click();
+    assert(state.preparedDoses.length===1 && state.preparedDoses[0]===missingVial,
+      'UI confirmation deleted an orphaned prepared batch');
+    assert(near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'UI confirmation modified unrelated inventory');
+    assert(document.querySelector('#confirm'),
+      'Blocked deletion unexpectedly dismissed the confirmation');
+    assert(document.body.textContent.includes("original source vial is missing"),
+      'Missing-source UI warning not visible');
+    closeModal();
+    list.push('orphaned prepared deletion UI preserves dialog, batch and source warning');
+
+
+    // (8) Legacy records cannot be refunded to whichever vial is open now.
+    // This includes old kit-only attribution, a changed open vial and absent
+    // allocations. These are historical uncertainties, not recoverable IDs.
+    const legacyKit=kit(9010,0);
+    legacyKit.vials[0].status='empty';
+    legacyKit.vials.push({id:'new-open-vial',status:'open',vialMg:10,
+      remainingMg:7,sequenceNumber:2,reconDate:'2026-10-27T08:00:00'});
+    legacyKit.openedVials=2;legacyKit.totalVials=2;
+    state.supplies=[legacyKit];
+    const oldVial=legacyKit.vials[0],currentVial=legacyKit.vials[1];
+    const oldRecord={id:8110,compound:'Retatrutide',amountEach:2,
+      unit:'mg',count:5,remainingCount:3,
+      allocations:[{kitId:legacyKit.id,amount:10}]};
+    state.preparedDoses=[oldRecord];
+    assert(deletePreparedDose(oldRecord)===false,
+      'Legacy kit-only record was deleted without vial attribution');
+    assert(state.preparedDoses[0]===oldRecord &&
+      near(oldVial.remainingMg,0)&&near(currentVial.remainingMg,7),
+      'Legacy refund incorrectly credited the changed active vial');
+    list.push('legacy missing vialId with changed active vial blocks and conserves stock');
+
+    const noAllocation={id:8111,compound:'Retatrutide',amountEach:2,
+      unit:'mg',count:5,remainingCount:3};
+    state.preparedDoses=[noAllocation];
+    assert(deletePreparedDose(noAllocation)===false,
+      'Legacy prepared batch with absent allocations was removed');
+    assert(state.preparedDoses[0]===noAllocation &&
+      near(oldVial.remainingMg,0)&&near(currentVial.remainingMg,7),
+      'Absent allocations caused an inventory mutation');
+    list.push('legacy absent allocations preserve prepared batch and inventory');
+
+    // The blocked state must also be visible through the actual confirmation.
+    deletePreparedDoseModal(oldRecord);
+    const legacyConfirm=document.querySelector('#confirm');
+    assert(legacyConfirm,'Legacy deletion confirmation missing');
+    legacyConfirm.click();
+    assert(document.querySelector('#confirm') &&
+      document.body.textContent.includes('source is unverified') &&
+      state.preparedDoses[0]===noAllocation &&
+      near(currentVial.remainingMg,7),
+      'Legacy confirmation failed to display warning or preserve data');
+    closeModal();
+    list.push('legacy blocked-delete dialog displays provenance warning');
+
+    // (8) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
     // over/under deductions in compound preparations.
     assert(near(doseToMg(250,'mcg'),.25)&&near(mgToUnit(.25,'mcg'),250)
       &&near(doseToMg(2,'mg'),2),'Native-unit conversion drift');
@@ -113,10 +218,37 @@ try {
     return {assertions:list,caseCount:list.length,version:document.title};
   },{theme});
   if(exceptions.length)throw Error('Browser JS exception: '+exceptions.join('; '));
+  // Real full-app, standalone offline fixture for iPhone acceptance; no test-only
+  // state injection here. The built HTML must open its actual confirmation UI.
+  const fixture=path.resolve('dist/Nexus_'+VERSION+'_ORPHAN_WARNING_FULL_DEMO.html');
+  if(!fs.existsSync(fixture))throw Error('Source-matched orphan iPhone demo missing');
+  const qa=await ctx.newPage();
+  const qaErrors=[];
+  qa.on('pageerror',e=>qaErrors.push(e.message));
+  await qa.goto('file://'+fixture,{waitUntil:'load'});
+  await qa.waitForSelector('#confirm',{timeout:8000});
+  const check=await qa.evaluate(({theme})=>{
+    document.documentElement.dataset.theme=theme;
+    const before=window.__NEXUS_ORPHAN_QA__?.snapshot();
+    if(!window.__NEXUS_FULL_APP_DEMO__||!before||
+       before.count!==1||before.originalMg!==0||before.currentMg!==7)
+      throw Error('Orphan preview is not isolated or initial fixture is wrong');
+    document.querySelector('#confirm').click();
+    const after=window.__NEXUS_ORPHAN_QA__.snapshot();
+    if(!document.querySelector('#confirm')||
+       !document.body.textContent.includes('source is unverified')||
+       after.count!==before.count||after.originalMg!==before.originalMg||
+       after.currentMg!==before.currentMg)
+      throw Error('Orphan iPhone preview warning/stock invariants failed');
+    return true;
+  },{theme});
+  if(!check||qaErrors.length)throw Error('Orphan preview browser error '+qaErrors.join(';'));
+  await qa.close();
   results.push({kind,width,theme,...evidence,result:'PASS'});
   await ctx.close();
  }
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
-console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*6+' safety assertions');
+console.log('Standalone orphan-warning iPhone preview PASS: 8 LIVE/DEMO viewport/theme configurations (fictional browser only)');
+console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*12+' safety assertions');

@@ -6,6 +6,8 @@ const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version
 const demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');
 const results=[];
 if(!fs.existsSync(demo))throw Error('Missing full app DEMO artifact');
+if(!fs.readFileSync('assets/js/11-nexus.js','utf8').includes('nx-proto-firstlog-action'))throw Error('DS2 first-log action missing');
+if(!fs.readFileSync('assets/css/nexus-hybrid-preview.css','utf8').includes('.nx-proto-firstlog-action'))throw Error('DS2 first-log lavender styling missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 function check(pass,message){if(!pass)throw Error(message)}
 try{
@@ -17,6 +19,163 @@ try{
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
+    // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
+    await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
+
+    // Today DS2 header: all three actions share one vertical rail at 320/390.
+    // Existing trigger IDs and handlers remain usable in both themes.
+    const header=await page.evaluate(()=>{
+      const ids=["#nx-open-alerts","#profile-btn","#theme-toggle"];
+      const nodes=ids.map(id=>document.querySelector(id));
+      if(nodes.some(n=>!n))return {missing:ids.filter((_,i)=>!nodes[i])};
+      const rects=nodes.map(n=>n.getBoundingClientRect());
+      const parent=document.querySelector(".nx-today-header-actions");
+      return {inside:nodes.every(n=>parent?.contains(n)),centres:rects.map(r=>r.top+r.height/2),
+        heights:rects.map(r=>r.height),overflow:document.documentElement.scrollWidth>innerWidth+1};
+    });
+    check(header.inside && !header.overflow && header.heights.every(h=>h>=44) &&
+      Math.max(...header.centres)-Math.min(...header.centres)<=2,
+      "Today header alignment failed: "+JSON.stringify(header));
+    await page.locator("#theme-toggle").click();
+    check(await page.evaluate(()=>document.documentElement.dataset.theme==="light") === (theme==="dark"),
+      "Today theme action did not toggle");
+    await page.locator("#theme-toggle").click();
+    await page.locator("#profile-btn").click();
+    check(await page.evaluate(()=>tab==="profile"),"Today Profile action did not navigate");
+    await page.evaluate(()=>{tab="home";renderBody();});
+    await page.locator("#nx-open-alerts").click();
+    check(await page.locator("#nx-alert-overlay").count()===1,"Today alert action did not open inbox");
+    await page.evaluate(()=>{closeModal();renderBody();});
+
+
+    // Regression: activation must not require a first dose log before Today schedules it.
+    // Isolate fictional test data and restore the fixture before existing UX assertions.
+    const firstDose=await page.evaluate(()=>{
+      const before=JSON.parse(JSON.stringify(state)),priorTab=tab;
+      try {
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const name=Object.keys(PEPTIDES)[0],today=localDate();
+        const weekday=new Date(today+"T12:00:00").getDay();
+        initCompoundTracking(name);
+        const data=state.peptides[name];
+        data.status="active";data.doses=[];data.scheduleWeekdays=[weekday];
+        data.dosesPerDay=1;data.times=["08:00"];
+        const protocol={id:"qa-first-dose",name:"Fictional weekly schedule",status:"active",startDate:today,compounds:[{name}]};
+        state.protocols=[protocol];tab="home";renderBody();
+        const due=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.status="paused";renderBody();
+        const paused=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.status="active";protocol.startDate=addDays(today,7);renderBody();
+        const future=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        protocol.startDate=today;data.scheduleWeekdays=[(weekday+1)%7];renderBody();
+        const otherWeekday=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        return {due,paused,future,otherWeekday};
+      }finally{state=before;tab=priorTab;renderBody();}
+    });
+    check(/0\s*of\s*1/.test(firstDose.due),"First scheduled protocol dose missing from Today: "+JSON.stringify(firstDose));
+    check([firstDose.paused,firstDose.future,firstDose.otherWeekday].every(v=>/No scheduled doses/.test(v)),
+      "Paused/future/wrong-weekday protocol incorrectly scheduled: "+JSON.stringify(firstDose));
+
+
+    // Additional first-dose invariants: multiple active compounds, multi-dose,
+    // unrelated no-dose compound excluded, rest phase and read-only rendering.
+    const extended=await page.evaluate(()=>{
+      const original=JSON.parse(JSON.stringify(state)),oldTab=tab;
+      try{
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const names=Object.keys(PEPTIDES).slice(0,3),today=localDate();
+        const dow=new Date(today+"T12:00:00").getDay();
+        for(const name of names){initCompoundTracking(name);const d=state.peptides[name];d.status="active";d.doses=[];d.scheduleWeekdays=[dow];d.dosesPerDay=1;d.times=["08:00"];}
+        const first=state.peptides[names[0]],second=state.peptides[names[1]];
+        first.dosesPerDay=2;first.times=["08:00","20:00"];
+        state.protocols=[
+          {id:"qa-a",name:"Fictional A",status:"active",startDate:today,compounds:[{name:names[0]}]},
+          {id:"qa-b",name:"Fictional B",status:"active",startDate:today,compounds:[{name:names[1]}]}
+        ];
+        tab="home";
+        const snapshot=JSON.stringify({doses:names.map(n=>state.peptides[n].doses),protocols:state.protocols});
+        renderBody();
+        const combined=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        const unchanged=JSON.stringify({doses:names.map(n=>state.peptides[n].doses),protocols:state.protocols})===snapshot;
+        second.phases=[{type:"rest",isRest:true,durationWeeks:1}];second.startDate=today;
+        renderBody();
+        const rest=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        return {combined,rest,unchanged};
+      } finally {state=original;tab=oldTab;renderBody();}
+    });
+    check(/0\s*of\s*3/.test(extended.combined),"Two protocols/multiple daily slots not represented once each: "+JSON.stringify(extended));
+    check(/0\s*of\s*2/.test(extended.rest),"Rest-phase occurrence unexpectedly counted: "+JSON.stringify(extended));
+    check(extended.unchanged,"Rendering Today mutated protocol or dosing records");
+
+    // Wizard parity and tap geometry in both themes/widths.
+    await page.evaluate(()=>protocolBuilderModal());
+    for(let k=0;k<3;k++) await page.locator("#pb-next").click();
+    check((await page.locator("#proto-builder-count").innerText()).trim()==="4/6","Protocol Schedule step not reached");
+    check(await page.locator("#pb-start").count()===1,"Protocol start date control missing");
+    check((await page.locator("#pb-next").innerText()).trim()==="Continue","Protocol wizard action differs from Continue");
+    const dimensions=await page.evaluate(()=>{
+      const ids=["#pb-start",".pb-sched",".pb-day",".pb-dpinc",".pb-dpdec",".pb-time","#pb-next"];
+      return ids.map(id=>({id,heights:[...document.querySelectorAll(id)].map(n=>n.getBoundingClientRect().height)}));
+    });
+    check(dimensions.every(x=>x.heights.length&&x.heights.every(h=>h>=43.5)),
+      "Protocol schedule control smaller than 44px: "+JSON.stringify(dimensions));
+    await page.evaluate(()=>closeModal());
+    await page.evaluate(()=>goalModal());
+    check(await page.locator("#nx-g-step-label").count()===1,"Goal wizard missing");
+    check(await page.locator("#g-target").count()===1,"Goal target date missing");
+    const target=page.locator("#g-target");
+    check((await target.getAttribute("aria-label")||"").includes("calendar"),"Goal date calendar not discoverable");
+    await page.locator("#g-name").fill("Fictional QA goal");
+    await page.locator("#nx-g-next").click();
+    await page.locator("#nx-g-next").click();
+    check((await page.locator("#nx-g-step-label").innerText()).includes("Connections"),"Goal Connections step unavailable");
+    const choiceCount=await page.locator("#g-evidence-symptom option").count();
+    if(choiceCount===1)check(await page.locator("#g-evidence-symptom").isDisabled(),"Empty Goal connection picker is misleading");
+    check((await page.locator("#nx-g-next").innerText()).trim()==="Continue","Goal step action differs from Continue");
+    await page.evaluate(()=>closeModal());
+
+
+    // Exercise the same schedule synchronisation called by saving/activating
+    // a real Protocol; old tests assigned compound scheduling fields directly.
+    const synced=await page.evaluate(()=>{
+      const original=JSON.parse(JSON.stringify(state)),oldTab=tab;
+      try{
+        state.peptides={};state.customPeptides={};state.protocols=[];
+        const today=localDate(),weekday=new Date(today+"T12:00:00").getDay();
+        const name=Object.keys(PEPTIDES)[0];
+        const proto={
+          id:"qa-synced-protocol",name:"Fictional synced first dose",
+          status:"active",startDate:today,compounds:[{name}],
+          schedule:{type:"Weekly",days:[weekday],dosesPerDay:1,times:["08:00"]}
+        };
+        state.protocols=[proto];syncProtocolToCompoundData(proto);
+        tab="home";renderBody();
+        const active=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        proto.status="in_progress";renderBody();
+        const inProgress=document.querySelector(".nexus-today-big")?.textContent?.trim()||"";
+        const doseCount=(state.peptides[name]?.doses||[]).length;
+        return {active,inProgress,doseCount};
+      }finally{state=original;tab=oldTab;renderBody();}
+    });
+    check(/0\s*of\s*1/.test(synced.active)&&/0\s*of\s*1/.test(synced.inProgress)&&synced.doseCount===0,
+      "Synced activation/first dose not reflected in Today without inventory writes: "+JSON.stringify(synced));
+
+    const tracking=page.locator('.nx-daily-tracking');
+    check(await tracking.count()===1,'Daily tracking disclosure missing');
+    check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
+    await tracking.locator('summary').click();
+    check(await tracking.evaluate(el=>el.open),'Daily tracking cannot expand');
+    check(await tracking.locator('.nx-track-select').count()===4,'Tracking preferences missing');
+    const weightCheckbox=tracking.locator('.nx-track-select[data-activity="weight"]');
+    await weightCheckbox.check();
+    check(await page.evaluate(()=>state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
+    check(await page.locator('.nx-today-activity.nx-week-pulse').count()===1,'Compact weekly pulse missing');
+    check(await page.locator('.nx-today-activity .nx-activity-period').count()===0,'Retired activity periods unexpectedly reappeared');
+    check(await page.locator('.nx-today-activity .nx-week-score').count()===1,'Weekly pulse score missing');
+    check(await page.locator('.nx-today-coming-up').count()===1,'Coming Up section missing');
+    await page.locator('#nx-open-calendar').click();
+    check(await page.locator('h1.greet').first().innerText().then(s=>s.includes('Calendar')),'View Calendar failed to navigate');
+    await page.evaluate(()=>{tab='home';render()});
     await page.evaluate(()=>protocolBuilderModal());
     check((await page.locator('#proto-builder-count').textContent()).trim()==='1/6','New Protocol opens at 1/6');
     await page.locator('#proto-builder-body #pb-next').count(); // Back/Next live in footer.
@@ -30,6 +189,17 @@ try{
     check((await field.getAttribute('placeholder')).includes('Search compounds'),'Search placeholder incorrect');
     check(!(await field.getAttribute('placeholder')).includes('🔍'),'Search emoji still present');
     check(await page.locator('.nx-proto-compound-search svg').count()===1,'Outline magnifier missing');
+
+    check(await page.locator('#pb-browse-all').count()===1,'Protocol full-library action missing');
+    await page.locator('#pb-browse-all').click();
+    check(await page.locator('.nx-compound-browser').isVisible(),'Protocol browser did not open');
+    check(await page.locator('.nx-browser-choice').count()>5,'Protocol full library truncated');
+    await page.locator('#nx-browser-search').fill('GHK-Cu');
+    check(await page.locator('.nx-browser-choice').count()===1,'Protocol library search filtering failed');
+    await page.locator('.nx-browser-choice').click();
+    check(await page.locator('.nx-compound-browser').count()===0,'Protocol full-library did not close');
+    check(await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).count()===1,'Protocol full-library selection did not update stack');
+    await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).locator('.pb-crem').click();
     await field.fill('GHK-Cu');
     const candidate=page.locator('.pb-cadd[data-name="GHK-Cu"]').first();
     check(await candidate.count()===1,'GHK-Cu search did not filter');
@@ -39,6 +209,21 @@ try{
     check(await select.count()===1,'Route selection missing after add');
     await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).locator('.pb-crem').click();
     check(await page.locator('.nx-proto-stack-selected').filter({hasText:'GHK-Cu'}).count()===0,'Remove from stack failed');
+    await page.evaluate(()=>{
+      const selected=[];
+      const modal=openModal('<div id="nx-picker-qa"></div>');
+      const root=modal.querySelector('#nx-picker-qa');
+      const refresh=()=>{root.innerHTML=compoundPickerHTML(selected,'nxqa');wireCompoundPicker(root,selected,'nxqa',refresh);};
+      refresh();
+    });
+    check(await page.locator('.cpick-browse-all[data-picker="nxqa"]').count()===1,'Plans reusable picker missing browse-all');
+    await page.locator('.cpick-browse-all[data-picker="nxqa"]').click();
+    check(await page.locator('.nx-compound-browser').isVisible(),'Plans full-library did not open');
+    await page.locator('#nx-browser-search').fill('BPC-157');
+    check(await page.locator('.nx-browser-choice').count()===1,'Plans full-library search failed');
+    await page.locator('.nx-browser-choice').click();
+    check(await page.locator('.cpick-remove[data-name="BPC-157"]').count()===1,'Plans multi-select lost full-library choice');
+
     await page.evaluate(()=>closeModal());
 
     await page.evaluate(()=>{
@@ -53,7 +238,7 @@ try{
     });
     const fixture=page.locator('#nx-proto-design-fixture');
     if(width===320){
-      const titleMetrics=await fixture.locator('.nx-expanded-compound-head > span.mono').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
+      const titleMetrics=await fixture.locator('.nx-expanded-compound-head > .nx-expanded-name').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
       check(titleMetrics.scroll<=titleMetrics.client+1,'320px compound title still truncated: '+JSON.stringify(titleMetrics));
       const timing=await fixture.locator('.nx-compound-timing-row').evaluate(el=>{
         const a=el.firstElementChild?.getBoundingClientRect(),b=el.querySelector('.nx-compound-timing-details')?.getBoundingClientRect();
@@ -61,14 +246,22 @@ try{
       });
       check(Math.abs(timing.ringTop-timing.summaryTop)<24,'320px ring and Last/Next wrapped: '+JSON.stringify(timing));
     }
-    const summary=fixture.locator('.nx-compound-insights summary');
-    check(await summary.count()===1,'Timing insights missing from sample Retatrutide card');
-    check((await fixture.locator('.nx-compound-insights').getAttribute('open'))===null,'Insights should default collapsed');
-    await summary.click();
-    check(await fixture.locator('.nx-compound-insights').evaluate(el=>el.open),'Insights disclosure not expanded');
-    check(await fixture.locator('.nx-compound-insights-body').innerText().then(s=>s.includes('Day')),'Original timeline insight missing');
+    // Hybrid Today replaces the old timing <details> with three radio-backed panels.
+    const insights=fixture.locator('.nx-compound-info-tabs');
+    check(await insights.count()===1,'Hybrid compound information tabs missing');
+    check(await fixture.locator('.nx-info-insights').count()===1,'Insights panel missing');
+    check(await fixture.locator('.nx-info-insights').innerText().then(s=>s.includes('At a glance')),'Record-grounded insights missing');
+    check(await fixture.locator('.nx-info-history').count()===1,'History panel missing');
+    check(await fixture.locator('.nx-info-details').count()===1,'Details panel missing');
+    check(await fixture.locator('.nx-compound-tab-radio:checked').count()===1,'Exactly one information segment must be selected');
+    await fixture.locator('label[for^="nx-history-"]').first().click();
+    check(await fixture.locator('input[id^="nx-history-"]').isChecked(),'History segment cannot be selected');
+    await fixture.locator('label[for^="nx-details-"]').first().click();
+    check(await fixture.locator('input[id^="nx-details-"]').isChecked(),'Details segment cannot be selected');
+    await fixture.locator('label[for^="nx-insights-"]').first().click();
+    check(await fixture.locator('input[id^="nx-insights-"]').isChecked(),'Insights segment cannot be reselected');
     const menu=fixture.locator('.moremenu');
-    check(await menu.locator('svg').count()===1,'Outline ellipsis missing');
+    check(await menu.count()===1 && !!(await menu.getAttribute('aria-label')),'Accessible compound menu trigger missing');
     await menu.click();
     check((await menu.getAttribute('aria-expanded'))==='true','More menu accessibility state missing');
     const box=page.locator('body > .morebox.nx-compound-sheet-open');
@@ -87,7 +280,7 @@ try{
     check((await page.evaluate(()=>document.body.style.overflow))==='hidden','Body scroll not locked');
     const hdr=box.locator('.nx-compound-sheet-heading strong');
     check((await hdr.textContent()).trim()==='Retatrutide','Sheet title not compound-specific');
-    for(const selector of ['.histtoggle','.ics-export','.tunetoggle','.colorpick','.resetcolor','.pausepep','.archivepep']){
+    for(const selector of ['.ics-export','.tunetoggle','.colorpick','.resetcolor','.pausepep','.archivepep']){
       check(await box.locator(selector).count()===1,'Missing contextual action '+selector);
     }
     check(await box.locator('.nx-compound-menu-icon').count()>=5,'Missing outline menu icons');
@@ -104,10 +297,8 @@ try{
     await menu.click();
     await page.locator('.nx-compound-sheet-scrim').click({position:{x:8,y:8}});
     check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'Backdrop did not dismiss menu');
-    await menu.click();
-    await page.locator('body > .morebox .histtoggle').click();
-    check((await page.locator('body > .morebox.nx-compound-sheet-open').count())===0,'History action did not dismiss sheet');
-    check(await fixture.locator('.histbox').isVisible(),'History action lost existing handler');
+    // Hybrid History has a dedicated information segment, not a duplicate sheet action.
+    check(await fixture.locator(".nx-info-history .histtoggle").count()===1,"Full history action missing from History panel");
     await menu.click();
     await page.locator('body > .morebox .tunetoggle').click();
     check(await fixture.locator('.tunebox').isVisible(),'Schedule settings action lost handler');

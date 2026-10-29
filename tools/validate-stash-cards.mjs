@@ -27,14 +27,52 @@ try{
       ];
       tab='stash';render();
     },theme);
+    // Supplies first-run UI uses one accessible action; established inventory keeps it.
+    await page.evaluate(()=>{state._stashSub='equipment';state.equipmentItems=[];render();});
+    ensure(await page.locator('.nx-supplies-empty').count()===1,'Supplies empty state missing');
+    ensure(await page.locator('#add-equipment').count()===1,'Supplies has duplicate add actions');
+    ensure(await page.locator('.nx-supplies-empty h2').innerText()==='Keep your supplies in one place','Supplies onboarding title incorrect');
+    const addMetrics=await page.locator('#add-equipment').evaluate(el=>{
+      const b=el.getBoundingClientRect(),root=el.closest('.nx-supplies-empty').getBoundingClientRect();
+      return {height:b.height,width:b.width,left:b.left,right:b.right,containerLeft:root.left,containerRight:root.right};
+    });
+    ensure(addMetrics.height>=44&&addMetrics.width>=170&&addMetrics.left>=addMetrics.containerLeft+12&&addMetrics.right<=addMetrics.containerRight-12,
+      'Supplies CTA is clipped or below minimum touch target');
+    await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
+    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-empty-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.locator('#add-equipment').click();
+    ensure(await page.locator('#eq-type').count()===1,'Supplies Add action did not open original form');
+    ensure(await page.locator('.nx-equipment-form-heading').innerText()==='Add supply','Supply editor heading missing');
+    ensure(await page.locator('#eq-save').innerText()==='Add to Supplies','Supply create CTA inconsistent');
+    ensure(await page.locator('#eq-save').evaluate(el=>el.getBoundingClientRect().height>=44),'Supply save target too small');
+    const statusesFit=await page.locator('.modal:has(#eq-save) .eq-status-toggle').evaluateAll(buttons=>{
+      if(buttons.length!==2)return false;
+      return buttons.every(b=>{const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return r.width>=90&&r.height>=44&&r.left>=p.left-1&&r.right<=p.right+1;});
+    });
+    ensure(statusesFit,'Supply initial status buttons are clipped at narrow iPhone width');
+    await page.screenshot({animations:'disabled',path:'dist/stash-supply-form-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.evaluate(()=>{
+      closeModal();
+      state.equipmentItems=[{id:88992,type:'BAC Water',brand:'Fictional',unitLabel:'bottle',unitSize:30,unitOfMeasure:'mL',
+        storageLocation:'fridge',units:[{id:88993,status:'sealed',consumed:0}],usageLog:[],notes:''}];
+      render();
+    });
+    ensure(await page.locator('#add-equipment').count()===1,'Add supply absent with inventory');
+    ensure(await page.locator('.nx-supply-kit-card').count()===1,'Populated supply card missing');
+    ensure(await page.locator('.nx-supply-actions>button').count()===2,'Supply card actions missing');
+    ensure(await page.locator('.nx-supply-actions>button').first().evaluate(el=>el.getBoundingClientRect().height>=44),'Supply action too small');
+    await page.screenshot({animations:'disabled',path:'dist/stash-supplies-filled-'+kind+'-'+theme+'-'+width+'.png'});
+    await page.evaluate(()=>{state.equipmentItems=[];state._stashSub='kits';render();});
+
+
     const card=id=>page.locator('.nx-kit-card[data-kit-id="'+id+'"]');
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
     ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
-    ensure(await card(99001).locator('.nx-kit-actions-two>button').count()===2,'Sealed standard kit should show two equal-width actions');
-    ensure(await card(99003).locator('.nx-kit-actions-two>button').count()===2,'Sealed blend kit should show two actions');
-    ensure(await card(99002).locator('.nx-kit-actions-three:not(.nx-kit-actions-two)>button').count()===3,'Open vial should show three actions');
+    ensure(await card(99001).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed standard kit should show primary action and Kit details');
+    ensure(await card(99003).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed blend kit should show primary action and Kit details');
+    ensure(await card(99002).locator('.nx-hybrid-two-actions>button').count()===2,'Open vial should show contextual action and details');
     ensure(await card(99001).locator('.nx-kit-primary-empty').isVisible(),'No-vial state must be prominent');
     ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
     ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
@@ -45,6 +83,20 @@ try{
     ensure(await card(99002).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('30') && x.includes('50')),'Open vial remaining display wrong');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').getAttribute('aria-valuenow')==='60','Open vial percentage wrong');
     ensure(await card(99003).locator('.manage-kit-btn').count()>=1,'v0.9.9 blend actions were lost');
+    // Regression for real iPhone screenshot: selected Overview/Vials/History
+    // must be a rounded pill, never legacy squared underlined tabs.
+    const tabGeometry=await card(99002).locator('.nx-stash-tabs').evaluate(group=>{
+      const tab=group.querySelector('.nx-stash-tab[aria-selected="true"]');
+      const g=getComputedStyle(group),t=getComputedStyle(tab);
+      return {containerRadius:parseFloat(g.borderTopLeftRadius),containerBottom:parseFloat(g.borderBottomLeftRadius),
+        selectedRadius:parseFloat(t.borderBottomLeftRadius),selectedTop:parseFloat(t.borderTopLeftRadius),
+        selectedBottomBorder:parseFloat(t.borderBottomWidth),containerOverflow:g.overflow};
+    });
+    ensure(tabGeometry.containerRadius>=12 && tabGeometry.containerBottom>=12 &&
+      tabGeometry.selectedRadius>=8 && tabGeometry.selectedTop>=8 &&
+      tabGeometry.selectedBottomBorder<=1.1,
+      'Stash Overview selected tab still square/underlined: '+JSON.stringify(tabGeometry));
+
 
     for(const id of [99001,99002,99003]){
       const parity=await card(id).locator('.nx-kit-heading-unified').evaluate(header=>{
@@ -62,6 +114,83 @@ try{
     await card(99002).locator('.nx-kit-detail-button').click();
     ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
+    const before=await page.evaluate(()=>JSON.stringify(state.supplies));
+    await page.evaluate(()=>supplyModal());
+    ensure(await page.locator('.nx-stash-kit-editor').count()===1,'Kit editor styling hook missing');
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').count()===1,'Original Save handler target missing');
+    ensure(await page.locator('.nx-stash-kit-editor #sname').count()===1 && await page.locator('.nx-stash-kit-editor #stv').count()===1 && await page.locator('.nx-stash-kit-editor #svmg').count()===1 && await page.locator('.nx-stash-kit-editor #sbac').count()===1 && await page.locator('.nx-stash-kit-editor #sloc').count()===1,'Kit fields lost');
+    // The guided editor hides Save until final Review. Test the real journey,
+    // rather than treating the intentionally hidden step-1 Save as zero-size UI.
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').isHidden(),'Kit Save exposed on Step 1');
+    ensure(await page.locator('#nx-kit-combobox-input').count()===1,'Kit searchable field missing');
+    await page.locator('#nx-kit-combobox-input').fill('GHK');
+    ensure(await page.locator('.nx-kit-browse-all').isVisible(),'Regular Kit browse-all missing');
+    await page.locator('.nx-kit-browse-all').click();
+    ensure(await page.locator('.nx-compound-browser').isVisible(),'Regular Kit full-library view missing');
+    ensure(await page.locator('.nx-browser-choice').count()>5,'Regular Kit full library truncated');
+    await page.locator('#nx-browser-search').fill('GHK-Cu');
+    await page.locator('.nx-browser-choice').first().click();
+    ensure(await page.locator('#sname').inputValue()==='GHK-Cu','Regular Kit browse selection not retained');
+
+    await page.screenshot({animations:'disabled',path:'dist/stash-regular-step1-'+kind+'-'+theme+'-'+width+'.png'});
+    ensure(await page.locator('#nx-kit-next').isVisible(),'Kit Continue missing');
+    ensure(await page.locator('#nx-kit-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&(s.backgroundImage!=='none'||(s.backgroundColor!=='rgba(0, 0, 0, 0)'&&s.backgroundColor!=='transparent'))&&s.color!==s.backgroundColor;}),'Kit Continue is not a prominent 44px action');
+    ensure(await page.locator('#sname').isHidden(),'Duplicate native Kit compound select visible');
+    ensure(await page.locator('#nx-kit-combobox-input').isVisible(),'Kit searchable compound field missing');
+    ensure(!(await page.locator('.nx-kit-wizard-progress').innerText()).includes('1 / 3'),'Duplicate Kit step count rendered');
+    await page.evaluate(()=>{
+      const name=document.querySelector('#sname');name.value='GHK-Cu';name.dispatchEvent(new Event('change',{bubbles:true}));
+      document.querySelector('#stv').value='2';document.querySelector('#svmg').value='10';
+    });
+    await page.locator('#nx-kit-next').click();
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"]').evaluate(x=>!x.hidden),'Kit preparation step not reachable');
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="1"] .nx-kit-attachment').isVisible(),'Standard test-result upload missing from Step 2');
+    await page.locator('.nx-kit-attachment-input').setInputFiles({name:'fictional-coa.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
+    await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-coa.pdf'));
+    ensure(await page.locator('.nx-kit-attachment-view').isVisible(),'Uploaded standard kit attachment is not previewable');
+    await page.locator('.nx-kit-attachment-view').click();
+    ensure(await page.locator('.nx-kit-file-viewer iframe').count()===1,'PDF preview is missing inside standard editor');
+    ensure(await page.locator('.nx-kit-file-download').getAttribute('download')==='fictional-coa.pdf','PDF viewer missing download');
+    await page.locator('.nx-kit-file-close').click();
+    ensure(await page.locator('.nx-kit-file-viewer').count()===0,'PDF viewer did not close');
+
+    ensure(await page.locator('#scur option').count()>=15,'Regular Kit currency selector has incomplete options');
+    await page.locator('#scur').selectOption('SGD');
+    ensure(await page.locator('#scost').evaluate(el=>{
+      const other=document.querySelector('#scur');
+      const a=el.getBoundingClientRect(),b=other.getBoundingClientRect();
+      return Math.abs(a.width-b.width)<=2&&Math.abs(a.top-b.top)<=2&&a.width>=90;
+    }),'Standard cost/currency fields are not equal-width peers');
+    ensure(await page.locator('#snotes').evaluate(el=>el.tagName==='TEXTAREA'),'Standard kit notes must be multiline');
+    await page.screenshot({animations:'disabled',path:'dist/stash-regular-step2-'+kind+'-'+theme+'-'+width+'.png'});
+    ensure(await page.locator('#ssave').isHidden(),'Kit Save exposed on Step 2');
+    await page.locator('#nx-kit-next').click();
+    ensure(await page.locator('.nx-kit-wizard-stage[data-step="2"]').evaluate(x=>!x.hidden),'Kit Review not reachable');
+    await page.screenshot({animations:'disabled',path:'dist/stash-regular-review-'+kind+'-'+theme+'-'+width+'.png'});
+    ensure(await page.locator('#ssave').isVisible(),'Kit Save absent on Review');
+    ensure((await page.locator('.nx-kit-wizard-summary').innerText()).includes('fictional-coa.pdf'),'Standard Review missing selected test-results file');
+    ensure((await page.locator('.nx-kit-wizard-summary').innerText()).includes('SGD') || !await page.locator('#scost').inputValue(),'Kit Review omitted selected currency');
+    ensure(await page.locator('.nx-stash-kit-editor #ssave').evaluate(x=>x.getBoundingClientRect().height)>=44,'Kit Review Save target too small');
+
+    await page.evaluate(()=>closeModal());
+    ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===before,'Kit editor presentation unexpectedly mutated inventory');
+    // Saved Stash attachment access must work for both regular and blend kits.
+    await page.evaluate(()=>{
+      const sample={name:'sample.png',type:'image/png',size:68,dataUrl:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+nFfoAAAAASUVORK5CYII='};
+      state.supplies.find(x=>x.id===99001).testResultAttachment={...sample};
+      state.supplies.find(x=>x.id===99003).testResultAttachment={...sample};
+      render();
+    });
+    for(const id of [99001,99003]){
+      await card(id).locator('.nx-kit-detail-button').click();
+      ensure(await card(id).locator('.nx-kit-test-view').isVisible(),'Saved kit missing View file '+id);
+      await card(id).locator('.nx-kit-test-view').click();
+      ensure(await page.locator('.nx-kit-file-viewer img').count()===1,'Image preview missing for kit '+id);
+      ensure(await page.locator('.nx-kit-file-download').getAttribute('download')==='sample.png','Viewer download wrong for kit '+id);
+      await page.locator('.nx-kit-file-close').click();
+      ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Viewer failed to close for kit '+id);
+    }
+
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();

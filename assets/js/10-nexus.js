@@ -46,9 +46,9 @@ function stashView() {
   const SORT_LABELS = {attention:"Needs Attention first",expiry:"Expiry soonest",remaining_low:"Remaining: low → high",remaining_high:"Remaining: high → low",remaining_pct_low:"Remaining %: low → high",remaining_pct_high:"Remaining %: high → low",doses_left:"Fewest doses left",recon_recent:"Most recently reconstituted",recon_oldest:"Oldest reconstituted",last_used:"Most recently used",name_az:"Name A–Z",name_za:"Name Z–A",cost_high:"Cost high → low",cost_low:"Cost low → high"};
 
   const stashSub = state._stashSub || "kits";
-  const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn" data-sub="${id}"`, padding:"9px"});
+  const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn ${stashSub===id?"active":""}" aria-pressed="${stashSub===id}" data-sub="${id}"`, padding:"9px"});
   let html = `<h1 class="serif greet">Stash</h1>
-  <div style="display:flex;gap:6px;margin-bottom:16px">
+  <div class="nx-hybrid-stash-segment" role="group" aria-label="Stash category">
     ${stashSubBtn("kits","Compound kits")}
     ${stashSubBtn("equipment","Supplies")}
   </div>
@@ -81,7 +81,7 @@ function stashView() {
   if (readyPrepared.length) {
     html += `<button id="open-prepared-list" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#A78BFA0d;border:1px solid #A78BFA33;margin-bottom:14px">
       <span style="font-size:13px;color:#A78BFA;font-weight:600">Prepared · ${readyPrepared.length} ${readyPrepared.length===1?"syringe":"syringes"} ready</span>
-      <span style="color:#A78BFA">›</span>
+      <svg class="nx-stash-prepared-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
     </button>`;
   }
 
@@ -109,15 +109,15 @@ function stashView() {
     });
   });
   if (invNotices.length) {
-    html += `<div style="margin-bottom:16px">
-      <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">NEEDS ATTENTION</div>
-      ${invNotices.map(n=>`<div style="background:#F9C87D0d;border:1px solid #F9C87D33;border-radius:10px;padding:12px 14px;margin-bottom:8px">
+    html += `<section class="nx-hybrid-attention" aria-label="Needs attention">
+      <div class="nx-hybrid-attention-head"><span class="nx-hybrid-attention-dot" aria-hidden="true"></span> NEEDS ATTENTION <span class="nx-hybrid-attention-count">${invNotices.length}</span></div>
+      ${invNotices.map(n=>`<div class="nx-hybrid-attention-row">
         <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${esc(n.name)}</div>
         <div style="font-size:12px;color:var(--t3)">${esc(n.text)}</div>
         ${n.sub?`<div style="font-size:12px;color:#F9C87D">${esc(n.sub)}</div>`:""}
-        <button class="inv-notice-action" data-kind="${n.kind}" data-kit="${n.kitId||""}" data-name="${esc(n.name)}" style="margin-top:8px;font-size:11px;font-weight:600;color:#F9C87D;background:transparent;border:none;padding:0">${esc(n.action)} →</button>
+        <button class="inv-notice-action" data-kind="${n.kind}" data-kit="${n.kitId||""}" data-name="${esc(n.name)}" style="margin-top:8px;font-size:11px;font-weight:600;color:#F9C87D;background:transparent;border:none;padding:0">${esc(n.action)}</button>
       </div>`).join("")}
-    </div>`;
+    </section>`;
   }
 
   html += `<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR KITS</div>
@@ -259,9 +259,8 @@ function stashView() {
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
-      <div class="nx-kit-actions nx-kit-actions-three ${displayOpenMg!==null?"":"nx-kit-actions-two"}">
+      <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions ${action?"":"nx-hybrid-detail-only"}">
         ${action?`<button class="${action.cls}" data-id="${s.id}">${action.label}</button>`:""}
-        ${displayOpenMg!==null?`<button class="preparedoses" data-name="${esc(s.name)}" aria-label="Prepare ${esc(s.name)} doses">Prepare</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
@@ -282,6 +281,7 @@ function stashView() {
             ${s.cost?`<div><span>Purchase price</span><strong>${parseFloat(s.cost).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(s.currency||"CAD")}</strong></div>`:""}
           </div>
           ${s.notes?`<div class="nx-kit-note"><div class="nx-kit-overview-label">KIT NOTE</div><p>${esc(s.notes)}</p></div>`:""}
+          ${s.testResultAttachment?.dataUrl?`<div class="nx-kit-note"><div class="nx-kit-overview-label">TEST RESULTS</div><div class="nx-kit-file-record"><span class="nx-kit-file-record-name">${esc(s.testResultAttachment.name||"Attached test results")}</span><button type="button" class="nx-kit-test-view" data-kit-id="${esc(s.id)}">View file</button><button type="button" class="nx-kit-test-download" data-kit-id="${esc(s.id)}">Download</button></div></div>`:""}
           <div class="nx-kit-overview-actions">
             <button class="editsupply" data-id="${s.id}">Edit details</button>
             <button class="compound-intel-btn" data-name="${esc(s.name)}">Compound Intel</button>
@@ -954,6 +954,21 @@ function getWeekInstances(weekKeys) {
     }
   });
   activeCompounds.forEach(([n,d])=>(d.doses||[]).forEach(dd=>{ const k=dayKey(dd.date); if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n); }));
+  // An occurrence moved to a non-cadence day is still scheduled. Include both
+  // original and destination dates so getDayOccurrences can resolve the chain
+  // without inventing or double-counting slots.
+  activeCompounds.forEach(([n,d])=>(d.reschedules||[]).forEach(move=>{
+    [move.originalDate,move.newDate].filter(Boolean).forEach(date=>{
+      const k=dayKey(date);
+      if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n);
+    });
+  }));
+  activeCompounds.forEach(([n,d])=>(d.skips||[]).forEach(event=>{
+    if(!event.date) return;
+    const k=dayKey(event.date);
+    if(weekKeys.includes(k)) (cadenceDays[k]=cadenceDays[k]||new Set()).add(n);
+  }));
+
 
   const dayInstances = {};
   weekKeys.forEach(k=>{
@@ -1193,7 +1208,7 @@ function buildReminders() {
         if (info.current.startDate===today && info.index>0) {
           const prev = info.phases[info.index-1], cur = info.current;
           const prevIsRest = prev.type!=="dose", curIsRest = cur.type!=="dose";
-          const idBase = `ptransition_${comp.name}_${cur.startDate}`;
+          const idBase = `ptransition_${proto.id}_${comp.name}_${cur.startDate}`;
           if (!prevIsRest && curIsRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins today`,`Your active dosing ends. No doses will be scheduled during this rest period.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (prevIsRest && !curIsRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes today`,`Next phase: ${cur.dose||"—"} ${c2.unit} · ${cur.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+1} today`,`New dose: ${cur.dose||"—"} ${c2.unit}`,c2.color,"protocol|"+comp.name,"View Protocol");
@@ -1214,7 +1229,7 @@ function buildReminders() {
         };
         const enteringRest = !curIsRest && nextIsRest;
         const exitingRest = curIsRest && !nextIsRest;
-        const idBase = `ptransition_${comp.name}_${next.startDate}`;
+        const idBase = `ptransition_${proto.id}_${comp.name}_${next.startDate}`;
         if (daysUntil===1) {
           if (enteringRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins tomorrow`,`Your active dosing ends tomorrow.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${next.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
@@ -1447,15 +1462,18 @@ function onboardingChecklistCard() {
 // v0.5.4 — same-day entry point and evidence-first contextual comparison.
 
 // v0.5.5 — Local-first, customizable navigation. No health data in usage events.
+// Inline vector icons share a precise 24x24 coordinate system. These are fixed
+// source assets, never strings assembled from user-supplied data.
+const nxQuickSvg=(paths)=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+paths+'</svg>';
 const NX_QUICK_TOOLS=[
-  {id:"calc",label:"Dose calculator",hint:"Conversion tool",icon:"▦"},
-  {id:"changes",label:"What's changed?",hint:"Compare check-ins",icon:"↗"},
-  {id:"stash",label:"Inventory",hint:"Stock & kits",icon:"▤"},
-  {id:"supplies",label:"Supplies",hint:"Manage stock",icon:"▣"},
-  {id:"history",label:"Compound history",hint:"Recorded doses",icon:"◷"},
-  {id:"learn",label:"Learn",hint:"Guides & tools",icon:"◇"},
-  {id:"journal",label:"Journal",hint:"Your entries",icon:"▤"},
-  {id:"plans",label:"Plans",hint:"Goals & research",icon:"◎"}
+  {id:"calc",label:"Dose calculator",hint:"Conversion tool",icon:nxQuickSvg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2M8 18h2m4 0h2"/>')},
+  {id:"changes",label:"What's changed?",hint:"Compare check-ins",icon:nxQuickSvg('<path d="M4 17l6-6 4 4 6-8"/><path d="M14 7h6v6"/>')},
+  {id:"stash",label:"Inventory",hint:"Stock & kits",icon:nxQuickSvg('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 14h6"/>')},
+  {id:"supplies",label:"Supplies",hint:"Manage stock",icon:nxQuickSvg('<path d="M4 8l8-4 8 4v9l-8 4-8-4zM4 8l8 4 8-4M12 12v9"/>')},
+  {id:"history",label:"Compound history",hint:"Recorded doses",icon:nxQuickSvg('<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3.5 2"/>')},
+  {id:"learn",label:"Learn",hint:"Guides & tools",icon:nxQuickSvg('<path d="M12 6c-2-2-5-2-8-1v14c3-1 6-1 8 1 2-2 5-2 8-1V5c-3-1-6-1-8 1zM12 6v14"/>')},
+  {id:"journal",label:"Journal",hint:"Your entries",icon:nxQuickSvg('<rect x="5" y="3" width="15" height="18" rx="2"/><path d="M9 3v18M12 8h5M12 12h5M12 16h4"/>')},
+  {id:"plans",label:"Plans",hint:"Goals & research",icon:nxQuickSvg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>')}
 ];
 function nxQuickIds(){
   const ids=state.settings?.nxQuickAccess;
@@ -1481,7 +1499,7 @@ function nxQuickGo(id){
   if(id==="stash"||id==="supplies"){tab="stash";state._stashSub=id==="supplies"?"equipment":"kits";render();window.scrollTo(0,0);return;}
   if(id==="history"){tab="trends";state._trendsOpen={...(state._trendsOpen||{}),compound:true};render();window.scrollTo(0,0);requestAnimationFrame(()=>{const el=document.querySelector("#nx-compound-library");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});});return;}
   if(id==="learn"||id==="journal"){tab="amino";state._aminoSub=id;render();window.scrollTo(0,0);return;}
-  if(id==="plans"){tab="plans";render();window.scrollTo(0,0);}
+  if(id==="plans"){state._plansSub="goals";tab="plans";render();window.scrollTo(0,0);}
 }
 function nxQuickCustomize(){
   const selected=new Set(nxQuickIds());
@@ -1564,12 +1582,24 @@ function homeView() {
   const started=sortActiveCards(Object.entries(aps).filter(e=>isActive(e)&&hasStarted(e)));
   const notStarted=Object.entries(aps).filter(e=>isActive(e)&&!hasStarted(e));
   const paused=Object.entries(aps).filter(e=>isPaused(e));
-  let html=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div></div>`;
+  let html=`<div class="nx-today-header"><div class="nx-today-greeting"><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div><div class="nx-today-header-actions"><div id="nx-alert-trigger-slot"></div></div></div>`;
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
   // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
   // Never infer completion from inventory, and never change any schedule or dose record.
-  const todaySlots = started.flatMap(([name, record]) => {
-    if (!isCompoundRelevantToday(getDoseStatus(name, record))) return [];
+  // Include first-dose occurrences for active protocols. Previously the 'started'
+  // collection excluded compounds with no dose history, so Today incorrectly said
+  // "No scheduled doses" even while Protocol prompted "Ready for first log".
+  // Do not schedule unrelated unsaved compounds or future/paused protocols.
+  const firstDoseCandidates = notStarted.filter(([name]) =>
+    (state.protocols || []).some(protocol =>
+      ["active", "in_progress"].includes(protocol.status) &&
+      !!protocol.startDate && protocol.startDate <= today &&
+      (protocol.compounds || []).some(compound => compound.name === name)
+    )
+  );
+  const todaySlots = [...started, ...firstDoseCandidates].flatMap(([name, record]) => {
+    const hasDoseHistory = (record.doses || []).length > 0;
+    if (hasDoseHistory && !isCompoundRelevantToday(getDoseStatus(name, record))) return [];
     return getDayOccurrences(record, today).filter(slot => slot.status !== "paused");
   });
   const scheduledCount = todaySlots.length;
@@ -1577,17 +1607,17 @@ function homeView() {
   const pendingCount = todaySlots.filter(slot => ["overdue", "due_now", "due_later_today", "upcoming"].includes(slot.status)).length;
   const progressPct = scheduledCount ? Math.round(takenCount / scheduledCount * 100) : 0;
   html += `<section class="nexus-today-hero" aria-label="Today's scheduled dose overview">
-    <div class="nexus-today-eyebrow">TODAY</div>
+    <div class="nexus-today-eyebrow"><span class="nx-hybrid-eyebrow-dot" aria-hidden="true"></span> TODAY <span class="nx-hybrid-eyebrow-side">DAILY SUMMARY</span></div>
     <div class="nexus-today-hero-row">
       <div><div class="nexus-today-big">${scheduledCount ? `${takenCount} <span>of ${scheduledCount}</span>` : `No scheduled doses`}</div>
-        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div>
+        <div class="nexus-today-sub">${scheduledCount ? `logged · ${pendingCount} remaining` : `Nothing scheduled for today`}</div></div><div class="nx-hybrid-hero-orbit" style="--nx-progress:${progressPct}%" aria-hidden="true"><span class="nx-hybrid-orbit-core">${scheduledCount ? Math.round(progressPct) + "%" : "—"}</span></div>
       
     </div>
     ${scheduledCount ? `<div class="nexus-today-track" role="progressbar" aria-label="Scheduled doses logged" aria-valuemin="0" aria-valuemax="${scheduledCount}" aria-valuenow="${takenCount}"><div style="width:${progressPct}%"></div></div>` : ``}
     
   </section>`;
   html+=`<div class="nexus-today-actions nexus-today-actions-b4"><button type="button" id="today-log-dose" class="nexus-today-action-primary">＋ Log dose</button><button type="button" class="${todayLog?"editdaily":"qa-daily"} nexus-today-action-secondary" data-id="${todayLog?todayLog.id:""}">${todayLog?"Edit check-in":"＋ New check-in"}</button></div>`;
-  html+=`<section aria-label="Daily check-in status" style="margin:12px 0 18px;padding:16px;background:var(--surface);border:1px solid var(--border-sub);border-radius:16px;display:flex;align-items:center;gap:12px"><span aria-hidden="true" style="font-size:24px;color:var(--t2)">${todayLog?"✓":"○"}</span><span style="flex:1;min-width:0"><strong style="font-size:14px;color:var(--t1)">Daily check-in</strong><span style="display:block;margin-top:4px;font-size:12px;color:var(--t3)">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed today"}</span></span><button type="button" class="${todayLog?"editdaily":"qa-daily"}" data-id="${todayLog?todayLog.id:""}" style="padding:10px 13px;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t2);font-size:12px">${todayLog?"Edit":"Check in"}</button></section>`;
+  html+=`<section aria-label="Daily check-in status" class="nx-hybrid-checkin"><span class="nx-hybrid-checkin-symbol" aria-hidden="true">${todayLog?"✓":"○"}</span><span style="flex:1;min-width:0"><strong style="font-size:14px;color:var(--t1)">Daily check-in</strong><span style="display:block;margin-top:4px;font-size:12px;color:var(--t3)">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed today"}</span></span><button type="button" class="${todayLog?"editdaily":"qa-daily"} nx-hybrid-checkin-cta" data-id="${todayLog?todayLog.id:""}">${todayLog?"Edit":"Check in"}</button></section>`;
   html+=nxQuickAccessView();
   const hasWeightThisWeek = state.weightLogs.some(w=>{ const d=safeDate(w.date); return d>=weekStart; });
   const hasMeasureThisWeek = state.measurementLogs.some(m=>{ const d=safeDate(m.date); return d>=weekStart; });
@@ -1628,35 +1658,38 @@ function homeView() {
   const needsAttnItems = groupedItems.filter(i=>!i.isInfo);
   const forYouItems = groupedItems.filter(i=>i.isInfo);
   const renderGroupCard = (item, idx, total) => item.isRem
-    ?`<div style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:${item.color}0d;border-bottom:${idx<total-1?"1px solid var(--surface-2)":"none"}">
-        <div class="reminder-card" data-action="${esc(item.action)}" data-name="${esc(item.title.split(" ")[0])}" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer">
+    ?`<div class="nx-alert-item" style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:${item.color}0d;border-bottom:${idx<total-1?"1px solid var(--surface-2)":"none"}">
+        <label class="nx-alert-choice-wrap"><input type="checkbox" class="nx-alert-choice" data-id="${esc(item.id)}" aria-label="Select ${esc(item.title)}"></label>\n        <div class="reminder-card" data-action="${esc(item.action)}" data-name="${esc(item.title.split(" ")[0])}" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer">
           <div style="font-size:16px;flex-shrink:0">${item.icon}</div>
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t1)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.actionLabel?`<div style="font-size:10px;color:${item.color};background:${item.color}18;border:1px solid ${item.color}33;border-radius:6px;padding:3px 7px;white-space:nowrap;flex-shrink:0">${esc(item.actionLabel)}</div>`:""}
         </div>
         <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`
-    :`<div style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--surface-2);border-bottom:${idx<total-1?"1px solid var(--surface)":"none"}">
-        <div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0">
+    :`<div class="nx-alert-item" style="display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--surface-2);border-bottom:${idx<total-1?"1px solid var(--surface)":"none"}">
+        <label class="nx-alert-choice-wrap"><input type="checkbox" class="nx-alert-choice" data-id="${esc(item.id)}" aria-label="Select ${esc(item.title)}"></label>\n        <div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0">
           <div style="font-size:16px;flex-shrink:0">${item.icon}</div>
           <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--t2)">${esc(item.title)}</div><div style="font-size:11px;color:var(--t4)">${esc(item.detail)}</div></div>
           ${item.btnClass?`<button class="${item.btnClass}" style="background:${item.color}18;border:1px solid ${item.color}44;color:${item.color};border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;flex-shrink:0">${item.btnLabel}</button>`:""}
         </div>
         <button class="snooze-item" data-id="${esc(item.id)}" title="Manage alert" aria-label="Manage this alert" style="flex-shrink:0;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-sub);border-radius:8px;color:var(--t4);font-size:13px">⋯</button>
       </div>`;
-  const renderGroup = (items, icon, label) => items.length ? `<details class="app-detail" style="margin-bottom:14px" ${items.length<=1?"open":""}>
-      <summary>
-        <span style="font-size:14px">${icon}</span>
-        <span style="font-size:12px;font-weight:600;color:var(--t2);flex:1">${label}</span>
-        <span style="font-size:11px;color:var(--t4)">${items.length} item${items.length===1?"":"s"}</span>
-        
-      </summary>
-      <div class="app-detail-body" style="padding:0;overflow:hidden">
-        ${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}
-      </div>
-    </details>` : "";
+  // Alert inbox: alerts remain actionable and managed, but no longer push the schedule off screen.
   const dismissedCount=Object.keys(dismissedReminders).length;
-  const todayAttentionHtml = renderGroup(needsAttnItems, "🔔", "Needs attention") + renderGroup(forYouItems, "✨", "For you") + (dismissedCount ? `<div class="nexus-dismissed-alerts"><button type="button" id="restore-dismissed-alerts">Manage dismissed alerts (${dismissedCount})</button></div>` : "");
+  const alertCount=needsAttnItems.length+forYouItems.length;
+  const renderAlertSection=(items,label)=>items.length?`<section class="nx-alert-section"><h3>${label}<span>${items.length}</span></h3><div class="nx-alert-items">${items.map((item,idx)=>renderGroupCard(item,idx,items.length)).join("")}</div></section>`:"";
+  const todayAttentionHtml=`<div class="nx-alert-overlay" id="nx-alert-overlay" hidden>
+    <button type="button" class="nx-alert-scrim" id="nx-alert-dismiss" aria-label="Close notifications"></button>
+    <section class="nx-alert-sheet" role="dialog" aria-modal="true" aria-labelledby="nx-alert-heading" tabindex="-1">
+      <div class="nx-alert-handle" aria-hidden="true"></div>
+      <div class="nx-alert-heading"><div><h2 id="nx-alert-heading">Needs attention</h2><p>${alertCount} active notice${alertCount===1?"":"s"}</p></div><div class="nx-alert-heading-actions"><button type="button" id="nx-alert-manage">Manage</button><button type="button" id="nx-alert-close" aria-label="Close notifications">Close</button></div></div><div class="nx-alert-managebar"><button type="button" id="nx-alert-select-all">Select all</button><span id="nx-alert-selected-count" aria-live="polite">0 selected</span><button type="button" id="nx-alert-clear-selected" disabled>Clear selected</button></div>
+      <div class="nx-alert-scroll">${renderAlertSection(needsAttnItems,"Action needed")}${renderAlertSection(forYouItems,"For you")}
+      ${alertCount?"":'<p class="nx-alert-empty">You’re all caught up.</p>'}
+      <button type="button" id="nx-alert-clear-all" class="nx-alert-restore" ${alertCount?"":"disabled"}>Clear all notices</button>\n      ${dismissedCount?`<button type="button" id="restore-dismissed-alerts" class="nx-alert-restore">Manage dismissed alerts (${dismissedCount})</button>`:""}</div>
+    </section>
+  </div>`;
+  const alertTriggerHtml=`<button type="button" class="nx-alert-trigger" id="nx-open-alerts" aria-label="Needs attention, ${alertCount} notices" aria-haspopup="dialog" aria-controls="nx-alert-overlay"><span class="nx-alert-bell" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><span class="nx-alert-count">${alertCount}</span></button>`;
+  html=html.replace('<div id="nx-alert-trigger-slot"></div>',alertTriggerHtml);
 
   // THIS WEEK — merged schedule strip + summary
   // (dosingTimeline now embedded in Today card above)
@@ -1681,8 +1714,10 @@ function homeView() {
   Object.entries(weekInstances2).forEach(([k,list])=>{
     if (k>todayStr2) return;
     list.forEach(s=>{
+      if(s.adhoc || s.status==="paused") return;
       if (s.status==="taken") wkTaken++;
-      else if (s.status==="overdue" || s.status==="missed") wkMissed++;
+      else if (s.status==="missed") wkMissed++;
+      else if (s.status==="overdue") wkPending++;
       else if (s.status==="skipped") wkSkipped++;
       else if (k===todayStr2 && ["due_now","due_later_today"].includes(s.status)) wkPending++;
     });
@@ -1707,23 +1742,18 @@ function homeView() {
     [wkTaken,"Completed","#7DF9C0"],
     ...(wkSkipped>0?[[wkSkipped,"Skipped","var(--t4)"]]:[]),
     [wkMissed,"Missed",wkMissed>0?"#FF7C7C":"var(--t4)"],
-    [wkPending,"Pending Today","var(--t3)"],
+    [wkPending,"Unresolved","var(--t3)"],
   ].map(([v,l,c])=>`<span style="color:${c};font-weight:600">${v}</span><span style="color:var(--t5);font-size:10px"> ${l}</span>`).join(`<span style="color:var(--border-sub);margin:0 6px">·</span>`);
   // The seven-day strip is collapsible — This Week's one job is a compact overview
   // (statsLine below), and the day-by-day grid is the "more detail" layer under it, not
   // something that needs to be visible every time. Session-only preference: doesn't
   // persist across app restarts, and never auto-expands on its own.
   const weekExpanded = !!state._weekExpanded;
-  const thisWeekCardHtml=`<section class="nexus-week-card nexus-week-quiet nx-today-text-disclosure" aria-label="Weekly progress">
-    <div class="nexus-quiet-header"><button type="button" id="week-toggle" class="nexus-quiet-toggle" aria-expanded="${weekExpanded}" aria-controls="nexus-week-expanded" aria-label="${weekExpanded?"Hide":"Show"} weekly details"><span class="nexus-quiet-copy"><h3>This week</h3><p>${wkTaken} completed · ${wkMissed} missed${wkPending ? ` · ${wkPending} due today` : ``}</p></span><span class="nx-today-disclosure-label" aria-hidden="true">${weekExpanded?"Hide details":"View details"}</span></button></div>
-    <div id="nexus-week-expanded" ${weekExpanded?"":"hidden"}>
-      <div class="nexus-week-expanded-top"><span>${weekRangeLabel}</span><button type="button" id="opendigest" class="nexus-text-action">Full report →</button></div>
-      <div class="nexus-week-metrics" aria-label="Weekly dose outcomes"><div><strong>${wkTaken}</strong><span>Completed</span></div><div><strong>${wkPending}</strong><span>Due today</span></div><div><strong>${wkMissed}</strong><span>Missed</span></div></div>
-      ${wkSkipped>0?`<p class="nexus-week-footnote">${wkSkipped} skipped this week</p>`:""}
-      ${weekExpanded?weekScheduleStrip():""}
-    </div>
-  </section>`;
-  // PRIMARY NAV — Today/Active/Upcoming/All. Today is the default: what needs attention
+  // The top weekly card owns these numbers. One direct Full report action avoids
+  // a second disclosure, duplicated count rows and unnecessary chevron.
+  const thisWeekCardHtml=`<button type="button" id="opendigest" class="nx-week-report-link">Full weekly report <span aria-hidden="true">↗</span></button>`;
+
+  // PRIMARY NAV — Today/Active/Completed/All. Future doses remain in Coming up below.
   // right now, not every active compound regardless of relevance.
   const homeViewKey = state._homeView || "today";
   const navBtn = (key,label,count) => `<button class="hv-nav" data-view="${key}" aria-pressed="${homeViewKey===key}" style="flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:600;background:${homeViewKey===key?"var(--surface-3)":"transparent"};border:1px solid ${homeViewKey===key?"var(--border)":"var(--border-sub)"};color:${homeViewKey===key?"var(--t1)":"var(--t4)"};min-height:36px">${label}${count?` ${count}`:""}</button>`;
@@ -1731,7 +1761,7 @@ function homeView() {
   html+=`<div class="nexus-today-view-nav">
     ${navBtn("today","Today")}
     ${navBtn("active","Active",started.length||"")}
-    ${navBtn("upcoming","Upcoming")}
+    ${navBtn("completed","Completed")}
     ${navBtn("all","All")}
     <button id="add-custom-compound" title="Add custom compound" style="min-width:44px;min-height:36px;padding:8px 10px;border-radius:9px;background:transparent;border:1px solid var(--border-sub);color:var(--t3);font-size:16px;flex-shrink:0">＋</button>
   </div>`;
@@ -1740,14 +1770,66 @@ function homeView() {
   // (renderCompoundCardCompact), so there's one place that fixes/breaks, not several.
   if (homeViewKey==="today") html += renderSinceLastVisit() + renderTodayCompoundSection(started);
   else if (homeViewKey==="active") html += renderActiveFullView(started);
-  else if (homeViewKey==="upcoming") html += renderUpcomingFullView(started);
+  else if (homeViewKey==="completed") html += renderCompletedFullView(started);
   else html += renderAllFullView(started, notStarted, paused);
-  html += todayAttentionHtml; // contextual alerts appear after the schedule, not between progress and schedule
-  html+=`<details class="nexus-today-details nx-today-text-disclosure"><summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">${todayLog?"Check-in complete":"Check-in pending"} · ${todaySupp?.taken?.length||0} supplements logged</span></span><span class="nx-today-disclosure-label" aria-hidden="true">View tracking</span></summary><div class="nexus-today-details-body" style="padding:8px 16px 14px"><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Check-in<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed"}</div></div><button type="button" class="${todayLog?"editdaily":"qa-daily"}" data-id="${todayLog?todayLog.id:""}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayLog?"Edit":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Supplements<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todaySupp?.taken?.length?todaySupp.taken.length+" taken":"Not logged"}</div></div><button type="button" class="${"qa-supp"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todaySupp?.taken?.length?"Edit":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Weight<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayWeight?esc(todayWeight.weight)+" "+esc(state.settings.weightUnit):"Not logged"}</div></div><button type="button" class="${"qa-weight"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayWeight?"Update":"Log"}</button></div><div style="display:flex;align-items:center;gap:10px;min-height:56px;border-bottom:1px solid var(--border-sub)"><div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--t1)">Nutrition<div style="font-size:12px;font-weight:400;color:var(--t3);margin-top:3px">${todayMacro?.calories?esc(todayMacro.calories)+" kcal":"Not logged"}</div></div><button type="button" class="${"qa-macro"}" style="min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:12px">${todayMacro?.calories?"Edit":"Log"}</button></div></div></details>`;
+  html += todayAttentionHtml; // hidden modal remains available without occupying Today layout
+  // Daily tracking uses real dated records; the activity selection only changes the
+  // progress denominator, never whether an entry exists. Persist settings, not synthetic logs.
+  const trackingItems=[
+    {id:"checkin",label:"Daily check-in",recorded:!!todayLog,detail:todayLog?"Recorded"+(mood?" · "+esc(mood.label):""):"Not recorded",button:todayLog?"Edit":"Log",cls:todayLog?"editdaily":"qa-daily",extra:' data-id="'+(todayLog?.id||"")+'"'},
+    {id:"supplements",label:"Supplements",recorded:!!(todaySupp?.taken?.length),detail:todaySupp?.taken?.length?todaySupp.taken.length+" taken":"Not recorded",button:todaySupp?.taken?.length?"Edit":"Log",cls:"qa-supp",extra:""},
+    {id:"weight",label:"Weight",recorded:!!todayWeight,detail:todayWeight?esc(todayWeight.weight)+" "+esc(state.settings.weightUnit||"lbs"):"Not recorded",button:todayWeight?"Update":"Log",cls:"qa-weight",extra:""},
+    {id:"nutrition",label:"Nutrition",recorded:!!todayMacro?.calories,detail:todayMacro?.calories?esc(todayMacro.calories)+" kcal":"Not recorded",button:todayMacro?.calories?"Edit":"Log",cls:"qa-macro",extra:""}
+  ];
+  const configured=Array.isArray(state.settings.todayTrackingActivities)?state.settings.todayTrackingActivities:["checkin","supplements"];
+  const selectedTracking=trackingItems.filter(t=>configured.includes(t.id));
+  const recordedTracking=selectedTracking.filter(t=>t.recorded).length;
+  const trackingPct=selectedTracking.length?Math.round(recordedTracking/selectedTracking.length*100):null;
+  html+=`<details class="nexus-today-details nx-today-text-disclosure nx-daily-tracking">
+    <summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">${selectedTracking.length?`${recordedTracking} of ${selectedTracking.length} recorded · ${trackingPct}%`:"Choose activities to track"} · ${todayLog?"Check-in saved":"Check-in pending"}</span></span><span class="nx-today-disclosure-label" aria-hidden="true">View tracking</span></summary>
+    <div class="nexus-today-details-body nx-daily-tracking-body">
+      ${selectedTracking.length?`<div class="nx-daily-track-progress" role="progressbar" aria-label="Selected daily tracking activities recorded" aria-valuemin="0" aria-valuemax="${selectedTracking.length}" aria-valuenow="${recordedTracking}"><span style="width:${trackingPct}%"></span></div>`:""}
+      ${trackingItems.map(t=>`<div class="nx-daily-tracking-row"><label class="nx-track-preference"><input type="checkbox" class="nx-track-select" data-activity="${t.id}" ${configured.includes(t.id)?"checked":""} aria-label="Include ${t.label} in daily tracking progress"><span class="nx-daily-track-name">${t.label}</span></label><span class="nx-daily-track-status">${t.recorded?"✓ ":""}${t.detail}</span><button type="button" class="${t.cls} nx-track-action" ${t.extra}>${t.button}</button></div>`).join("")}
+      <p class="nx-daily-track-note">Choose what counts toward your daily tracking progress. Recorded statuses come from saved entries.</p>
+    </div>
+  </details>`;
+  // The activity report reads the same canonical instance collection used by Calendar.
+  // A completed occurrence and an additional unscheduled dose record are not equivalent.
+  const todayInstanceRows=(getWeekInstances([today])[today]||[]).filter(slot=>!slot.adhoc);
+  const weekInstanceRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc);
+  const countStatus=(rows,name)=>rows.filter(x=>x.status===name).length;
+  // Weekly metrics are the same canonical scheduled-occurrence counts as the existing reports.
+  // The Today hero already owns today's counts, so do not duplicate them here.
+  const elapsedWeekRows=weekKeys2.filter(key=>key<=today).flatMap(key=>weekInstances2[key]||[]).filter(slot=>!slot.adhoc&&slot.status!=="paused");
+  const weekDone=elapsedWeekRows.filter(slot=>slot.status==="taken").length;
+  const weekOpen=elapsedWeekRows.filter(slot=>["overdue","due_now","due_later_today","upcoming"].includes(slot.status)).length;
+  const weekSkipped=elapsedWeekRows.filter(slot=>slot.status==="skipped").length;
+  const weekTotal=elapsedWeekRows.length;
+  const weekPercent=weekTotal?Math.round(weekDone/weekTotal*100):null;
+  // Today owns the daily hero; Calendar owns detailed weekly outcome analytics.
+  // This small pulse only reports elapsed-week scheduled completion, never future doses.
+  html+=`<section class="nx-today-activity nx-week-pulse" aria-label="This week">
+    <div class="nx-today-activity-head"><div><h3>This week</h3><p class="nx-activity-sub">${weekTotal?`${weekDone} of ${weekTotal} scheduled occurrences completed so far`:"No scheduled occurrences so far"}</p></div>
+      <div class="nx-week-score"><strong>${weekPercent===null?"—":weekPercent+"%"}</strong><span>so far</span></div></div>
+    ${weekTotal?`<div class="nx-daily-track-progress" role="progressbar" aria-label="This week's scheduled occurrences completed" aria-valuemin="0" aria-valuemax="${weekTotal}" aria-valuenow="${weekDone}"><span style="width:${weekPercent}%"></span></div>`:""}
+  </section>`;
 
+  // Coming Up is prospective; the week report above is retrospective. Never render
+  // finished, skipped or moved occurrences as future scheduled actions.
+  const upcomingKeys=[...Array(14)].map((_,i)=>addDays(today,i+1));
+  const upcomingByDay=getWeekInstances(upcomingKeys);
+  const forthcoming=upcomingKeys.flatMap(key=>(upcomingByDay[key]||[])
+    .filter(slot=>slot.status==="upcoming" && !slot.adhoc && slot.pep)
+    .map(slot=>({name:slot.pep,date:key,time:slot.time,explicit:hasExplicitTimes(aps[slot.pep]),status:slot.status})))
+    .sort((a,b)=>(a.date+"T"+a.time).localeCompare(b.date+"T"+b.time)).slice(0,3);
+  const upcomingDateLabel=date=>new Date(date+"T12:00:00").toLocaleDateString("en-CA",{weekday:"short",month:"short",day:"numeric"});
+  const upcomingTimeLabel=time=>{const [hour,min]=time.split(":").map(Number);return (hour%12||12)+":"+String(min).padStart(2,"0")+(hour>=12?" PM":" AM");};
+  html+=`<section class="nx-today-coming-up" aria-label="Coming up"><h3>Coming up</h3>
+    ${forthcoming.length?forthcoming.map(e=>`<div class="nx-coming-row"><div><div class="nx-coming-row-name">${esc(e.name)}</div><div class="nx-coming-row-date">${upcomingDateLabel(e.date)}${e.explicit?" · "+upcomingTimeLabel(e.time):" · Time not set"}</div></div><span class="nx-coming-row-status">Scheduled</span></div>`).join(""):`<p class="nx-activity-sub">No upcoming scheduled occurrences found.</p>`}
+    <button type="button" id="nx-open-calendar" class="nx-coming-calendar">View Calendar →</button></section>`;
   // This Week recedes below the actual compound/dose list — it's a secondary weekly
   // summary, not the thing Today exists to answer.
-  html += thisWeekCardHtml;
+  // Weekly drill-down now lives within Your Activity → This week, not as a duplicate card.
   return html;
 }
 

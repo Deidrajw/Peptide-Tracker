@@ -33,6 +33,52 @@ try{
           state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
           document.documentElement.dataset.theme=t;
         },theme);
+        // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
+        // Preserve historical records; catalogue addition does not itself save a taken log.
+        await page.evaluate(()=>{
+          state.settings.supplements=[];
+          state.supplementLogs=[];
+          supplementModal('2032-11-09');
+        });
+        assert(await page.locator('.modal #nx2-new-supp').count()===0,'Duplicate supplement input remains');
+        await page.locator('.modal #supp-search').fill('Fictional Vitamin B');
+        assert(await page.locator('.modal [data-add-search="modal"]').count()===1,'Unified Add search action absent');
+        await page.locator('.modal [data-add-search="modal"]').click();
+        const beforeConfirm=await page.evaluate(()=>({
+          catalog:state.settings.supplements.includes('Fictional Vitamin B'),
+          logged:(state.supplementLogs||[]).some(l=>dayKey(l.date)==='2032-11-09')
+        }));
+        assert(beforeConfirm.catalog&&!beforeConfirm.logged,'Inline supplement entry must not auto-log a taken supplement');
+        await page.locator('.modal #suppsave').click();
+        const afterConfirm=await page.evaluate(()=>({
+          logged:(state.supplementLogs||[]).find(l=>dayKey(l.date)==='2032-11-09')?.taken||[]
+        }));
+        assert(afterConfirm.logged.includes('Fictional Vitamin B'),'Inline supplement selection did not persist on explicit Save');
+        await page.evaluate(()=>{
+          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!=='2032-11-09');
+          render();
+        });
+        // Empty-catalogue Daily Check-In also permits inline supplement creation.
+        await page.evaluate(()=>{
+          state.settings.supplements=[];
+          dailyModal(null);
+        });
+        assert(await page.locator('.modal #nx2-checkin-new-supp').count()===0,'Check-In duplicate supplement input remains');
+        await page.locator('.modal #supp-search').fill('Fictional Zinc');
+        assert(await page.locator('.modal [data-add-search="checkin"]').count()===1,'Check-In unified Add action absent');
+        await page.locator('.modal [data-add-search="checkin"]').click();
+        const checkinInline=await page.evaluate(()=>({
+          catalog:state.settings.supplements.includes('Fictional Zinc'),
+          saved:(state.supplementLogs||[]).some(l=>(l.taken||[]).includes('Fictional Zinc'))
+        }));
+        assert(checkinInline.catalog&&!checkinInline.saved,
+          'Check-In catalogue addition must not implicitly write taken history');
+        await page.evaluate(()=>{
+          closeModal();
+          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          render();
+        });
         const before=await snapshot(page,testDay);
         assert(!before.entries.length,'Fixture already has chosen test date');
         await page.evaluate(date=>dailyModal(null,date),testDay);

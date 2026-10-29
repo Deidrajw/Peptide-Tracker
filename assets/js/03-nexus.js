@@ -709,6 +709,14 @@ function computeSinceLastVisit() {
   return bullets.length ? bullets : null;
 }
 let state = migrate(loadState());
+// Navigation is transient: a full refresh must open the Trends homepage, not a previously viewed compound.
+// Do not persist this reset or change historical dose/inventory records.
+state._nxHistorySelected=null;
+// On a real page/app refresh, begin Profile/Settings at its overview rather than
+// restoring a previously visited detail. Keep in-session navigation untouched.
+state._settingsDetail=null;
+state._profileTab="profile";
+state._profileReturn=null;
 let tab = "home";
 
 function allPeptides() {
@@ -742,6 +750,141 @@ function initCompoundTracking(name) {
     state.customPeptides[name] = { status:"active", scheduleDays:7, doses:[] };
   }
 }
+
+// Full-library compound browser: independent full-screen route; parent editor remains
+// mounted, so Back and selection preserve form values and authoritative Save handlers.
+function nexusBrowseAllCompounds(modal, options, choose, initialQuery="") {
+  const host=modal.closest(".modal-bg");
+  if(!host)return;
+  const viewer=document.createElement("section");
+  viewer.className="nx-compound-browser";
+  viewer.setAttribute("role","dialog");viewer.setAttribute("aria-modal","true");
+  viewer.setAttribute("aria-label","All compounds");
+  viewer.innerHTML='<div class="nx-compound-browser-header"><button type="button" class="nx-browser-back" aria-label="Back to kit editor">←</button><h2>All compounds</h2><span></span></div><label class="nx-browser-label" for="nx-browser-search">Search compounds</label><input id="nx-browser-search" type="search" autocomplete="off" placeholder="Type to filter compounds"><p class="nx-browser-count" aria-live="polite"></p><div class="nx-browser-items"></div>';
+  const back=viewer.querySelector(".nx-browser-back"),search=viewer.querySelector("#nx-browser-search"),
+    count=viewer.querySelector(".nx-browser-count"),items=viewer.querySelector(".nx-browser-items");
+  const priorFocus=document.activeElement;
+  // Do not destroy, re-create or save parent form while selecting.
+  const prevDisplay=modal.style.display;modal.style.display="none";
+  host.appendChild(viewer);
+  const cleanup=()=>{
+    viewer.remove();modal.style.display=prevDisplay;
+    if(priorFocus?.isConnected)priorFocus.focus({preventScroll:true});
+  };
+  back.onclick=cleanup;
+  viewer.onkeydown=e=>{if(e.key==="Escape"){e.stopPropagation();cleanup();}};
+  const render=()=>{
+    const q=search.value.trim().toLocaleLowerCase();
+    const matching=options.filter(o=>o.name.toLocaleLowerCase().includes(q));
+    count.textContent=matching.length+" compound"+(matching.length===1?"":"s");
+    items.replaceChildren();
+    for(const option of matching){
+      const b=document.createElement("button");b.type="button";b.className="nx-browser-choice";
+      b.textContent=option.name;b.onclick=()=>{cleanup();choose(option);};
+      items.appendChild(b);
+    }
+    if(!matching.length){const empty=document.createElement("p");empty.className="nx-browser-empty";empty.textContent="No matching compounds";items.appendChild(empty);}
+  };
+  search.value=initialQuery;search.oninput=render;render();
+  search.focus({preventScroll:true});
+}
+
+// Optional kit test-result attachment. Small files are embedded in the existing
+// kit JSON so ordinary Nexus exports/restores preserve them; no server upload.
+function nexusKitTestResultControl(modal, saveButtonId, initial) {
+  const MAX_BYTES=750*1024;
+  const allowed=["application/pdf","image/png","image/jpeg","image/webp"];
+  let value=initial||null, pending=false, serial=0;
+  const wrap=document.createElement("section");
+  wrap.className="nx-kit-attachment";
+  wrap.innerHTML='<div class="nx-kit-attachment-header"><span class="nx-kit-attachment-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span><span class="nx-kit-attachment-title">Test results</span><span class="nx-kit-attachment-optional">Optional</span></div>'+
+    '<p class="nx-kit-attachment-description">Keep your kit’s test report or certificate of analysis (COA) together with its details.</p>'+
+    '<div class="nx-kit-attachment-actions"><button type="button" class="nx-kit-attachment-choose"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Choose file</button>'+
+    '<button type="button" class="nx-kit-attachment-view" hidden>View file</button><button type="button" class="nx-kit-attachment-clear" hidden>Remove</button></div>'+
+    '<input type="file" class="nx-kit-attachment-input" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" hidden>'+
+    '<p class="nx-kit-attachment-info" aria-live="polite">PDF, JPG, PNG or WebP · Max 750 KB</p>'+
+    '<p class="nx-kit-attachment-error" role="alert" hidden></p>';
+  const input=wrap.querySelector(".nx-kit-attachment-input");
+  const choose=wrap.querySelector(".nx-kit-attachment-choose"), view=wrap.querySelector(".nx-kit-attachment-view"), clear=wrap.querySelector(".nx-kit-attachment-clear");
+  const info=wrap.querySelector(".nx-kit-attachment-info"), error=wrap.querySelector(".nx-kit-attachment-error");
+  const refresh=()=>{clear.hidden=!value;view.hidden=!value;choose.lastChild.textContent=value?" Replace file":" Choose file";info.textContent=pending?"Reading file…":value?
+    value.name+" · "+Math.ceil(value.size/1024)+" KB · attached to this kit":
+    "PDF, JPG, PNG or WebP · Max 750 KB";};
+  choose.onclick=()=>input.click();
+  view.onclick=()=>{if(value)nexusViewKitTestResult(value);};
+  clear.onclick=()=>{serial++;pending=false;value=null;input.value="";error.hidden=true;refresh();};
+  input.onchange=()=>{
+    const file=input.files?.[0];if(!file)return;
+    const requested=++serial;pending=false;error.hidden=true;
+    const ext=file.name.split(".").pop()?.toLowerCase()||"";
+    if(file.size>MAX_BYTES||file.size===0||!allowed.includes(file.type)||!["pdf","png","jpg","jpeg","webp"].includes(ext)){
+      error.textContent="Choose a PDF or image smaller than 750 KB.";error.hidden=false;input.value="";refresh();return;
+    }
+    pending=true;refresh();
+    const reader=new FileReader();
+    reader.onload=()=>{if(serial!==requested)return;pending=false;
+      if(typeof reader.result!=="string"||!reader.result.startsWith("data:")){
+        error.textContent="This file could not be read.";error.hidden=false;
+      }else value={name:file.name,type:file.type,size:file.size,dataUrl:reader.result,addedAt:new Date().toISOString()};
+      refresh();input.value="";
+    };
+    reader.onerror=()=>{if(serial!==requested)return;pending=false;error.textContent="This file could not be read.";error.hidden=false;refresh();input.value="";};
+    reader.readAsDataURL(file);
+  };
+  modal.querySelector("#"+saveButtonId)?.insertAdjacentElement("beforebegin",wrap);
+  refresh();
+  return {getValue:()=>value,isPending:()=>pending};
+}
+
+// In-app local document viewer. Reuse the stored attachment data in both editor and Stash.
+// Blob URLs are temporary, never persisted or sent to a server.
+function nexusViewKitTestResult(item) {
+  const accepted={"application/pdf":"pdf","image/png":"image","image/jpeg":"image","image/webp":"image"};
+  if(!item || typeof item.dataUrl!=="string")return false;
+  const match=/^data:(application\/pdf|image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/.exec(item.dataUrl);
+  if(!match || !accepted[match[1]] || match[2].length>4*1024*1024)return false;
+  let url;
+  try {
+    const binary=atob(match[2]),bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    url=URL.createObjectURL(new Blob([bytes],{type:match[1]}));
+  } catch(e){return false;}
+  const overlay=document.createElement("div");
+  overlay.className="nx-kit-file-viewer";
+  overlay.setAttribute("role","dialog");overlay.setAttribute("aria-modal","true");overlay.setAttribute("aria-label","Test results preview");
+  overlay.innerHTML='<div class="nx-kit-file-viewer-header"><div class="nx-kit-file-viewer-name"></div><div class="nx-kit-file-viewer-actions"><a class="nx-kit-file-download">Download</a><button type="button" class="nx-kit-file-close" aria-label="Close test results viewer">Close</button></div></div><div class="nx-kit-file-viewer-content"></div>';
+  overlay.querySelector(".nx-kit-file-viewer-name").textContent=String(item.name||"Test results");
+  const link=overlay.querySelector(".nx-kit-file-download");
+  link.href=url;link.download=String(item.name||"test-results").replace(/[\\/<>:"|?*]/g,"_");
+  const content=overlay.querySelector(".nx-kit-file-viewer-content");
+  if(accepted[match[1]]==="image"){
+    const img=document.createElement("img");img.src=url;img.alt=String(item.name||"Attached test results");content.appendChild(img);
+  }else{
+    const frame=document.createElement("iframe");frame.src=url;frame.title="Attached PDF test results";content.appendChild(frame);
+  }
+  const prior=document.activeElement;
+  const dismiss=()=>{overlay.removeEventListener("keydown",onKey);overlay.remove();URL.revokeObjectURL(url);if(prior?.isConnected)prior.focus({preventScroll:true});};
+  const onKey=e=>{if(e.key==="Escape"){e.preventDefault();dismiss();}};
+  overlay.addEventListener("keydown",onKey);
+  overlay.querySelector(".nx-kit-file-close").onclick=dismiss;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".nx-kit-file-close").focus({preventScroll:true});
+  return true;
+}
+function nexusOpenSavedKitTestResult(kitId){
+  const item=(state.supplies||[]).find(s=>String(s.id)===String(kitId))?.testResultAttachment;
+  if(!nexusViewKitTestResult(item))showErrorBanner("This attachment cannot be previewed. Please check the saved file.");
+}
+
+// Only expose known local test-result formats. Never trust imported file URLs or HTML.
+function nexusDownloadKitTestResult(kitId) {
+  const item=(state.supplies||[]).find(s=>String(s.id)===String(kitId))?.testResultAttachment;
+  if(!item || typeof item.dataUrl!=="string" || !["data:application/pdf;base64,","data:image/png;base64,","data:image/jpeg;base64,","data:image/webp;base64,"].some(prefix=>item.dataUrl.startsWith(prefix)) || !/^[A-Za-z0-9+/=]+$/.test(item.dataUrl.split(",")[1]||"")) return;
+  const a=document.createElement("a");
+  a.href=item.dataUrl;a.download=String(item.name||"kit-test-results").replace(/[\\/\\\\<>:"|?*]/g,"_");
+  document.body.appendChild(a);a.click();a.remove();
+}
+
 function addBlendKitModal(blendNameOrKit) {
   // Editing an existing blend kit was previously impossible: the Stash card's own Edit
   // button always opened the single-compound supplyModal regardless of isBlend, whose
@@ -782,6 +925,61 @@ function addBlendKitModal(blendNameOrKit) {
       composition[i].compound = sel.value === "__other__" ? "" : sel.value;
       rebuild();
     });
+
+    // Browse/search combo follows the approved screenshot; native select remains
+    // authoritative for component state and all existing change handling.
+    m.querySelectorAll(".comp-select").forEach(sel=>{
+      const wrapper=document.createElement("div");wrapper.className="nx-blend-compound-picker";
+      sel.parentNode.insertBefore(wrapper,sel);
+      wrapper.appendChild(sel);
+      const trigger=document.createElement("input");trigger.type="search";trigger.className="nx-blend-compound-trigger";trigger.placeholder="Search…";trigger.setAttribute("role","combobox");trigger.setAttribute("aria-autocomplete","list");
+      trigger.setAttribute("aria-label","Choose blend compound");trigger.setAttribute("aria-expanded","false");
+      const popup=document.createElement("div");popup.className="nx-blend-compound-popup";popup.hidden=true;
+      const results=document.createElement("div");results.className="nx-blend-compound-results";
+      results.id="nx-blend-options-"+sel.dataset.i;results.setAttribute("role","listbox");
+      trigger.setAttribute("aria-controls",results.id);
+      popup.append(results);wrapper.append(trigger,popup);
+      const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
+      const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
+      // Floating overlay: never adds height to a composition row or creates a second scroll surface.
+      const position=()=>{
+        const rect=trigger.getBoundingClientRect();
+        const viewport=window.visualViewport;
+        const top=viewport?.offsetTop||0,height=viewport?.height||window.innerHeight;
+        const below=top+height-rect.bottom,above=rect.top-top;
+        popup.classList.toggle("nx-combo-above",below<190&&above>below);
+      };
+      const render=()=>{
+        results.replaceChildren();
+        const q=trigger.value.trim().toLowerCase();
+        const matches=[...sel.options].filter(o=>o.value&&o.textContent.toLowerCase().includes(q));
+        matches.slice(0,5).forEach(opt=>{
+          const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;
+          button.className="nx-blend-compound-option";button.setAttribute("role","option");
+          button.onpointerdown=e=>e.preventDefault();
+          button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};
+          results.appendChild(button);
+        });
+
+        if(!matches.length){const empty=document.createElement("p");empty.className="nx-blend-combo-hint";empty.textContent="No matching compounds";results.appendChild(empty);}
+        const browse=document.createElement("button");browse.type="button";browse.className="nx-blend-browse-all";
+        browse.textContent="View all compounds";
+        browse.onpointerdown=e=>e.preventDefault();
+        browse.onclick=()=>{close();nexusBrowseAllCompounds(m,[...sel.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value})),option=>{
+          sel.value=option.value;trigger.value=option.name;sel.dispatchEvent(new Event("change",{bubbles:true}));
+        },"");};
+        results.appendChild(browse);
+        position();
+      };
+      const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
+      trigger.value=sel.value?label():"";
+      trigger.onfocus=open;
+      trigger.oninput=()=>{sel.value="";composition[+sel.dataset.i].compound="";open();};
+      trigger.onkeydown=e=>{if(e.key==="Escape"){close();trigger.blur();}if(e.key==="ArrowDown"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.focus();}if(e.key==="Enter"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.click();}};
+      results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
+      wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
+    });
+
     m.querySelectorAll(".comp-other").forEach(inp => inp.oninput = () => { composition[+inp.dataset.i].compound = inp.value.trim(); });
     m.querySelectorAll(".comp-mg-input").forEach(inp => inp.oninput = () => {
       composition[+inp.dataset.i].mg = parseFloat(inp.value)||0;
@@ -792,7 +990,7 @@ function addBlendKitModal(blendNameOrKit) {
 
   const m = openModal(`
     <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">${isEdit?"Edit "+esc(name):isCustomNew?"Create Custom Blend":"Add "+esc(blendName)}</div>
-    <div class="hint" style="margin-bottom:14px">${isEdit?"Correcting the composition only changes vials opened from now on — vials you've already activated keep the ratio they were opened with, so past inventory math doesn't shift under you.":"This tracks as ONE physical vial with a fixed compound ratio — not separate kits for each compound. "+(isCustomNew?"Name it whatever you'd call it, list every compound in the vial and how many mg of each.":"Confirm the composition matches your actual vial's label — suppliers vary.")}</div>
+    <div class="hint" style="margin-bottom:14px">${isEdit?"Correcting the composition only changes vials opened from now on — vials you've already activated keep the ratio they were opened with, so past inventory math doesn't shift under you.":"One vial contains multiple compounds. "+(isCustomNew?"Enter each compound and its amount per vial.":"Confirm the composition matches your actual vial's label — suppliers vary.")}</div>
     ${isCustomNew?`<label class="field-label">BLEND NAME</label><input id="bk-name" type="text" class="inp" placeholder="e.g. Deadpool" value="${esc(name)}" style="margin-bottom:14px">`:""}
     ${isEdit?`<label class="field-label">BLEND NAME</label><input type="text" class="inp" value="${esc(name)}" disabled style="margin-bottom:4px;opacity:0.6"><div style="font-size:10px;color:var(--t5);margin-bottom:14px">Renaming isn't supported here yet — it would orphan this compound's existing dose history. Delete and recreate if you truly need a different name.</div>`:""}
     <label class="field-label">COMPOSITION PER VIAL</label>
@@ -802,18 +1000,22 @@ function addBlendKitModal(blendNameOrKit) {
 
     ${!isEdit?`<div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1"><label class="field-label">VIALS ON HAND</label><input id="bk-vials" type="number" min="1" class="inp" value="1"></div>
-      <div style="flex:1"><label class="field-label">BAC WATER (mL)</label><input id="bk-bac" type="number" step="0.1" class="inp" placeholder="e.g. 2"></div>
+
     </div>
-    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" checked style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
-    <div style="display:flex;gap:10px;margin-bottom:12px">
-      <div style="flex:1"><label class="field-label">STORAGE</label><select id="bk-storage" class="inp"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select></div>
-      <div style="flex:1"><label class="field-label">COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 180"></div>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--t3)"><input id="bk-active" type="checkbox" style="accent-color:#C9A0FF"> One vial is already reconstituted / in use</label>`:`<div style="font-size:10.5px;color:var(--t5);margin-bottom:12px">Vials, reconstitution, and BAC water are managed from Manage Kit (Add Vials, Reconstitute, Finish Vial) — not here.</div>`}
+    <div class="nx-kit-field-pair">
+      <div><label for="bk-bac-edit" class="field-label">BAC WATER / VIAL (mL)</label><input id="bk-bac-edit" type="number" min="0.01" step="0.1" class="inp" value="${existingKit?.bacMl||""}" placeholder="At vial opening"></div>
+      <div><label for="bk-expiry" class="field-label">EXPIRY AFTER RECON (days)</label><input id="bk-expiry" type="number" min="1" step="1" class="inp" value="${existingKit?.expiryDays||28}"></div>
     </div>
-    <div style="display:flex;gap:10px;margin-bottom:12px">
-      <div style="flex:1;min-width:0"><label for="bk-expiry" class="field-label">EXPIRY AFTER RECON (DAYS)</label><input id="bk-expiry" type="number" min="1" step="1" class="inp" value="${existingKit?.expiryDays||28}"></div>
-      <div style="flex:1;min-width:0"><label for="bk-bac-edit" class="field-label">BAC WATER (mL)</label><input id="bk-bac-edit" type="number" min="0.01" step="0.1" class="inp" value="${existingKit?.bacMl||""}" placeholder="At vial opening"></div>
+    <div class="nx-kit-field-pair">
+      <div><label for="bk-cost" class="field-label">TOTAL COST (optional)</label><input id="bk-cost" type="number" step="0.01" class="inp" value="${existingKit?.cost?esc(existingKit.cost):""}" placeholder="e.g. 200.00"></div>
+      <div><label for="bk-currency" class="field-label">CURRENCY</label><select id="bk-currency" class="inp">
+        ${[...new Set(["CAD","USD","GBP","EUR","AUD","NZD","CHF","JPY","CNY","HKD","SGD","INR","MXN","BRL","ZAR",existingKit?.currency||"CAD"])].filter(Boolean).map(v=>`<option value="${esc(v)}" ${(existingKit?.currency||"CAD")===v?"selected":""}>${esc(v)}</option>`).join("")}
+      </select></div>
     </div>
-    <label for="bk-notes" class="field-label">KIT NOTES (OPTIONAL)</label>
+    <label for="bk-storage" class="field-label">STORAGE LOCATION</label>
+    <select id="bk-storage" class="inp" style="margin-bottom:14px"><option value="fridge" ${existingKit?.storageLocation==="fridge"?"selected":""}>Fridge</option><option value="freezer" ${existingKit?.storageLocation==="freezer"?"selected":""}>Freezer</option><option value="room_temp" ${existingKit?.storageLocation==="room_temp"?"selected":""}>Room temp</option></select>
+    <label for="bk-notes" class="field-label">NOTES (optional)</label>
     <textarea id="bk-notes" class="inp" rows="2" style="margin-bottom:14px" placeholder="Storage, lot or other kit notes">${esc(existingKit?.notes||"")}</textarea>
     <button id="bk-save" class="btn-primary" style="background:#C9A0FF">${isEdit?"Save Changes":"Add to Stash"}</button>
   `, "#C9A0FF");
@@ -824,7 +1026,99 @@ function addBlendKitModal(blendNameOrKit) {
   const nameInput = m.querySelector("#bk-name");
   if (nameInput) nameInput.oninput = () => { name = nameInput.value.trim(); };
 
+
+  // Nexus 2.0 guided blend editor: presentation only. The original #bk-save
+  // handler below remains the sole authorized inventory mutation path.
+  m.classList.add("nx-guided-blend-editor");
+  const kitTestResult=nexusKitTestResultControl(m,"bk-save",existingKit?.testResultAttachment);
+  const blendSave=m.querySelector("#bk-save");
+  const contentRoot=blendSave.parentElement;
+  const nodes=[...contentRoot.children];
+  const compositionEnd=contentRoot.querySelector("#comp-total");
+  const compEndIndex=nodes.indexOf(compositionEnd);
+  const detailsStart=nodes.findIndex(node=>node.contains?.(m.querySelector("#bk-vials"))||node.contains?.(m.querySelector("#bk-storage"))||node.textContent?.includes("Vials, reconstitution, and BAC water are managed"));
+  if(compEndIndex>=0&&detailsStart>compEndIndex&&blendSave){
+    const panels=[0,1,2].map(i=>{const el=document.createElement("section");el.className="nx-blend-wizard-panel";el.dataset.step=String(i);el.hidden=i!==0;return el;});
+    nodes.slice(0,compEndIndex+1).forEach(el=>panels[0].appendChild(el));
+    nodes.slice(detailsStart,nodes.indexOf(blendSave)).forEach(el=>panels[1].appendChild(el));
+    // In case of intervening nodes, retain them rather than dropping data fields.
+    nodes.slice(compEndIndex+1,detailsStart).forEach(el=>panels[1].prepend(el));
+    const progress=document.createElement("div");progress.className="nx-blend-wizard-progress";
+    progress.innerHTML='<strong id="nx-blend-step-label">Step 1 of 3 · Blend details</strong><div class="nx-blend-wizard-track"><i></i></div>';
+    const summary=document.createElement("div");summary.className="nx-blend-wizard-summary";summary.setAttribute("aria-live","polite");
+    panels[2].append(summary);
+    contentRoot.append(progress,...panels);
+    // Keep one consistent Kit title and dismiss target visible across all stages.
+    const titleNode=panels[0].firstElementChild;
+    if(titleNode){
+      titleNode.classList.add("nx-guided-stash-title");
+      titleNode.textContent=isEdit?"Edit blend kit":"Add blend kit";
+      const dismiss=document.createElement("button");dismiss.type="button";dismiss.className="nx-guided-stash-close";
+      dismiss.setAttribute("aria-label","Close blend kit editor");dismiss.textContent="×";
+      dismiss.onclick=closeModal;titleNode.appendChild(dismiss);
+      contentRoot.insertBefore(titleNode,progress);
+    }
+
+    const nav=document.createElement("div");nav.className="nx-blend-wizard-footer";
+    nav.innerHTML='<p role="alert" class="nx-blend-wizard-error" hidden></p><div class="nx-blend-wizard-actions"><button type="button" id="nx-blend-back">Back</button><button type="button" id="nx-blend-next">Continue</button></div>';
+    nav.querySelector(".nx-blend-wizard-actions").append(blendSave);
+    contentRoot.append(nav);
+    const back=nav.querySelector("#nx-blend-back"),next=nav.querySelector("#nx-blend-next"),err=nav.querySelector(".nx-blend-wizard-error");
+    let stage=0;
+    const safe=v=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+    const validateStep=()=>{
+      if(stage===0){
+        const selected=composition.filter(c=>c.compound&&Number.isFinite(Number(c.mg))&&Number(c.mg)>0);
+        if(!isEdit&&isCustomNew&&!name.trim())return "Enter a blend name.";
+        if(selected.length!==composition.length||selected.length<2)return "Choose at least two compounds and enter a positive mg amount for each.";
+        if(new Set(selected.map(c=>c.compound.toLowerCase())).size!==selected.length)return "Each compound can appear only once in a blend.";
+      }
+      if(stage===1){
+        if(!isEdit){const n=Number(m.querySelector("#bk-vials")?.value);if(!Number.isSafeInteger(n)||n<1)return "Enter a positive whole number of vials.";}
+        const ex=Number(m.querySelector("#bk-expiry")?.value),water=Number(m.querySelector("#bk-bac-edit")?.value);
+        if(!Number.isSafeInteger(ex)||ex<1||ex>3650||!Number.isFinite(water)||water<0)return "Check expiry days and BAC water.";
+      }
+      return "";
+    };
+    const review=()=>{
+      const total=composition.reduce((t,c)=>t+Number(c.mg||0),0);
+      const blendLabel=isEdit?existingKit.name:name||blendName;
+      const componentsHTML=composition.map((c,i)=>
+        '<div class="nx-blend-review-component"><span class="nx-blend-review-component-index">'+(i+1)+'</span><strong>'+safe(c.compound)+'</strong><span>'+safe(c.mg)+' mg</span></div>'
+      ).join("");
+      const details=[
+        ["Vials",isEdit?"Existing counts unchanged":m.querySelector("#bk-vials")?.value],
+        ["Open vial",isEdit?"Existing vial states unchanged":(m.querySelector("#bk-active")?.checked?"One open":"All sealed")],
+        ["Storage",m.querySelector("#bk-storage")?.selectedOptions?.[0]?.textContent||""],
+        ["Expiry",m.querySelector("#bk-expiry")?.value+" days"],
+        ["BAC water",(m.querySelector("#bk-bac-edit")?.value||"0")+" mL"],
+        ["Cost",m.querySelector("#bk-cost")?.value?((m.querySelector("#bk-currency")?.value||"CAD")+" "+(m.querySelector("#bk-currency")?.value==="CAD"?"$":"")+m.querySelector("#bk-cost").value):"Not provided"],
+        ["Notes",m.querySelector("#bk-notes")?.value.trim()||"None"],
+        ["Test results",kitTestResult.getValue()?.name||"None"]
+      ];
+      summary.innerHTML=
+        '<div class="nx-blend-review-hero"><span class="nx-blend-review-kicker">YOUR BLEND KIT</span><h3>'+safe(blendLabel)+'</h3><div class="nx-blend-review-total"><strong>'+safe(total)+' mg</strong><span>total per physical vial</span></div></div>'+
+        '<div class="nx-blend-review-section"><h4>What is in each vial?</h4><div class="nx-blend-review-components">'+componentsHTML+'</div></div>'+
+        '<div class="nx-blend-review-section"><h4>Inventory and preparation</h4><div class="nx-blend-review-facts">'+details.map(([k,v])=>'<div><span>'+safe(k)+'</span><strong>'+safe(v)+'</strong></div>').join("")+'</div></div>'+
+        '<p class="nx-blend-review-caution">'+(isEdit?"Existing opened vial ratios and all historical doses remain unchanged. Only the future-vial template and kit details are updated.":"One physical blended vial is recorded per vial, not separate kits for each component.")+'</p>';
+    };
+    const paint=()=>{
+      panels.forEach((panel,i)=>{panel.hidden=i!==stage;});
+      progress.querySelector("#nx-blend-step-label").textContent="Step "+(stage+1)+" of 3 · "+["Blend details","Preparation & storage","Review & save"][stage];
+
+      progress.querySelector("i").style.width=((stage+1)/3*100)+"%";
+      back.hidden=stage===0;next.hidden=stage===2;blendSave.hidden=stage!==2;err.hidden=true;
+      blendSave.style.setProperty("display",stage===2?"block":"none","important");
+      next.style.setProperty("display",stage===2?"none":"block","important");
+      if(stage===2)review();
+    };
+    back.onclick=()=>{stage=Math.max(0,stage-1);paint();};
+    next.onclick=()=>{const problem=validateStep();if(problem){err.textContent=problem;err.hidden=false;return;}stage=Math.min(2,stage+1);paint();};
+    paint();
+  }
+
   m.querySelector("#bk-save").onclick = () => {
+    if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const finalName = isEdit ? existingKit.name : (isCustomNew ? name.trim() : blendName);
     if (!finalName) { showErrorBanner("Give this blend a name first."); return; }
     const validComponents = composition.filter(c => c.compound && (+c.mg||0) > 0);
@@ -840,18 +1134,21 @@ function addBlendKitModal(blendNameOrKit) {
       existingKit.vialMg = totalMg;
       existingKit.storageLocation = m.querySelector("#bk-storage").value;
       existingKit.cost = m.querySelector("#bk-cost").value;
+      existingKit.currency = m.querySelector("#bk-currency")?.value || existingKit.currency || "CAD";
       const expiry=Number(m.querySelector("#bk-expiry").value);
       const bac=Number(m.querySelector("#bk-bac-edit").value);
       if(!Number.isSafeInteger(expiry)||expiry<1||expiry>3650||(!Number.isFinite(bac))||bac<0){showErrorBanner("Check blend expiry and BAC water amounts.");return;}
       existingKit.expiryDays=expiry;existingKit.bacMl=bac;
       existingKit.notes=m.querySelector("#bk-notes").value.trim();
+      existingKit.testResultAttachment=kitTestResult.getValue();
       initCompoundTracking(isEdit ? existingKit.name : finalName);
       saveState(); closeModal(); render();
       return;
     }
 
     const totalVials = Math.max(1, parseInt(m.querySelector("#bk-vials").value)||1);
-    const bacMl = parseFloat(m.querySelector("#bk-bac").value)||0;
+    // The single visible BAC field is shared by Review and the authoritative save pathway.
+    const bacMl = Number(m.querySelector("#bk-bac-edit").value)||0;
     const oneActive = m.querySelector("#bk-active").checked;
     const kit = {
       id: uid(), name: finalName, isBlend: true, composition: validComponents.map(c=>({...c})),
@@ -859,7 +1156,8 @@ function addBlendKitModal(blendNameOrKit) {
       openedVials: oneActive?1:0, emptyVials: 0,
       reconDate: oneActive?localDate():null, expiryDays: Math.max(1,parseInt(m.querySelector("#bk-expiry").value,10)||28),
       activeKit: oneActive, storageLocation: m.querySelector("#bk-storage").value,
-      cost: m.querySelector("#bk-cost").value, currency: "CAD", notes: m.querySelector("#bk-notes").value.trim(),
+      cost: m.querySelector("#bk-cost").value, currency: m.querySelector("#bk-currency")?.value || "CAD", notes: m.querySelector("#bk-notes").value.trim(),
+      testResultAttachment: kitTestResult.getValue(),
       doseLog: [], wasteLog: [], reconHistory: oneActive?[{id:uid(), date:localDate(), notes:""}]:[],
     };
     if (!state.supplies) state.supplies = [];
@@ -921,11 +1219,12 @@ function classifyLegacyPremixedKit(kitId) {
 }
 function getBlendKitRemainingMg(kit) {
   if(kit.blendInventoryMode==="legacy-v2")return (kit.vials||[]).reduce((n,v)=>n+(["sealed","open","active"].includes(v.status)?Math.max(0,Number(v.remainingMg)||0):0),0);
-  const totalMg = (kit.totalVials||0) * (kit.vialMg||0);
+  const correctionMg=(kit.balanceCorrections||[]).filter(x=>x.status!=="reversed").reduce((n,x)=>n+(Number(x.mg)||0),0);
+  const totalMg = (kit.totalVials||0) * (kit.vialMg||0) + correctionMg;
   const totalUsedMg = (kit.doseLog||[]).reduce((a,d)=>a+(d.totalMgDrawn||0),0);
   const totalWasteMg = getKitActiveWasteMg(kit);
   const allVialsMarkedEmpty = (kit.totalVials||0)>0 && (kit.emptyVials||0)>=(kit.totalVials||0);
-  const emptyCapMg = Math.max(0, ((kit.totalVials||0)-(kit.emptyVials||0)) * (kit.vialMg||0));
+  const emptyCapMg = Math.max(0, ((kit.totalVials||0)-(kit.emptyVials||0)) * (kit.vialMg||0) + correctionMg);
   const ledgerRemMg = Math.max(0, totalMg-totalUsedMg-totalWasteMg);
   return allVialsMarkedEmpty ? 0 : Math.min(ledgerRemMg, emptyCapMg);
 }
@@ -949,8 +1248,133 @@ function getBlendOpenVialRemainingMg(kit) {
     (w.vialId!=null ? String(w.vialId)===String(open.id) :
       (w.loggedAt ? new Date(w.loggedAt) : safeDate(w.date))>=safeDate(date)))
     .reduce((n,w)=>n+(Number(w.mg)||0),0);
+  const corrected=(kit.balanceCorrections||[]).filter(x=>x.status!=="reversed"&&String(x.vialId)===String(open.id))
+    .reduce((n,x)=>n+(Number(x.mg)||0),0);
   return Math.max(0,Math.min(getBlendKitRemainingMg(kit),
-    (Number(open.vialMg)||Number(kit.vialMg)||0)-consumed-wasted));
+    (Number(open.vialMg)||Number(kit.vialMg)||0)+corrected-consumed-wasted));
+}
+
+// Balance correction: the vial physically held MORE of the existing blend than
+// originally estimated. No material is transferred, no sealed vial is consumed,
+// and no constituent-dose event is created. Original formulation is unchanged.
+function correctBlendOpenVialBalanceModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  const vial=kit&&getActiveVial(kit);
+  if(!vial||kit.kitStatus==="done"){showErrorBanner("Open a blend vial before correcting its remaining amount.");return;}
+  const before=getBlendOpenVialRemainingMg(kit);
+  const m=openModal('<h2 style="font-size:18px;margin:0 0 10px">Correct remaining blend amount</h2>'+
+    '<p style="font-size:13px;color:var(--t2);line-height:1.5">Found more material remaining than Nexus estimated? Record only the additional mg already in this vial. Nothing is physically added; the existing blend recipe and dose history stay unchanged.</p>'+
+    '<p style="font-size:12px;color:var(--t2)">Currently estimated: '+before.toFixed(3)+' mg</p>'+
+    '<label class="field-label" for="blend-correct-mg">ADDITIONAL MG FOUND</label>'+
+    '<input type="number" class="inp" id="blend-correct-mg" min="0.001" step="0.001" style="width:100%;margin-bottom:12px">'+
+    '<div style="display:flex;gap:8px"><button id="blend-correct-cancel" style="flex:1;min-height:48px">Cancel</button>'+
+    '<button id="blend-correct-review" class="btn-primary" style="flex:1;min-height:48px">Review correction</button></div>');
+  m.querySelector("#blend-correct-cancel").onclick=closeModal;
+  m.querySelector("#blend-correct-review").onclick=()=>{
+    const extra=Number(m.querySelector("#blend-correct-mg").value);
+    if(!Number.isFinite(extra)||extra<=0||extra>100000){showErrorBanner("Enter a valid positive correction in mg.");return;}
+    const vialId=vial.id;
+    closeModal();
+    confirmAction("Correct this open blend vial from "+before.toFixed(3)+" mg to approximately "+(before+extra).toFixed(3)+" mg? This does not log a dose or take material from a sealed vial.",()=>{
+      const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+      const open=current&&getActiveVial(current);
+      if(!open||String(open.id)!==String(vialId)||Math.abs(getBlendOpenVialRemainingMg(current)-before)>0.001){
+        showErrorBanner("The vial balance changed. No correction saved.");return;
+      }
+      current.balanceCorrections=current.balanceCorrections||[];
+      current.balanceCorrections.push({id:uid(),date:localDatetime(),vialId,mg:extra,
+        reason:"More blend remained in physical vial than previously estimated",status:"active"});
+      if(current.blendInventoryMode==="legacy-v2")
+        open.remainingMg=Math.round((Number(open.remainingMg||0)+extra)*1000)/1000;
+      saveState();render();
+    },{tone:"warning",confirmLabel:"Correct balance",cancelLabel:"Cancel"});
+  };
+}
+
+// Blend-specific outflow: one physical blended vial; never write ingredient doses.
+// Whole-vial retirement uses the existing confirmed Finish Vial path.
+function blendLogOutflowModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  if(!kit || kit.kitStatus==="done")return;
+  const vial=getActiveVial(kit);
+  if(!vial){showErrorBanner("Open a blend vial before recording a partial outflow.");return;}
+  const remaining=getBlendOpenVialRemainingMg(kit);
+  const m=openModal('<h2 style="font-size:18px;margin:0 0 12px">Log blend outflow</h2>'+
+    '<p style="color:var(--t3);font-size:13px;line-height:1.5">Record material discarded or transferred from the open blended vial. Ingredients stay associated with one physical blend.</p>'+
+    '<p style="font-size:12px;color:var(--t2)">Available: '+remaining.toFixed(2)+' mg</p>'+
+    '<label class="field-label" for="blend-out-mg">AMOUNT (mg)</label>'+
+    '<input id="blend-out-mg" type="number" class="inp" min="0.01" step="0.01" style="width:100%;margin-bottom:12px">'+
+    '<label class="field-label" for="blend-out-reason">REASON</label>'+
+    '<select id="blend-out-reason" class="inp" style="width:100%;margin-bottom:14px"><option value="waste">Wasted / lost</option><option value="gifted">Given away</option><option value="testing">Sent for testing</option></select>'+
+    '<div style="display:flex;gap:10px"><button type="button" id="blend-out-cancel" style="flex:1;min-height:48px">Cancel</button><button type="button" id="blend-out-save" class="btn-primary" style="flex:1;min-height:48px">Review outflow</button></div>');
+  m.querySelector("#blend-out-cancel").onclick=closeModal;
+  m.querySelector("#blend-out-save").onclick=()=>{
+    const mg=Number(m.querySelector("#blend-out-mg").value),type=m.querySelector("#blend-out-reason").value;
+    const now=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+    const active=now && getActiveVial(now);
+    const available=active?getBlendOpenVialRemainingMg(now):0;
+    if(!Number.isFinite(mg)||mg<=0||mg>available+0.0001){
+      showErrorBanner("Enter a positive amount no greater than the open vial's available balance.");return;
+    }
+    const vialId=active.id;
+    closeModal();
+    confirmAction("Record "+mg.toFixed(2)+" mg of blend outflow? This removes physical inventory, not a separately administered dose.",()=>{
+      const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+      const v=current&&getActiveVial(current);
+      if(!v||String(v.id)!==String(vialId)||mg>getBlendOpenVialRemainingMg(current)+0.0001){
+        showErrorBanner("Inventory changed. Nothing was recorded.");return;
+      }
+      current.wasteLog=current.wasteLog||[];
+      current.wasteLog.push({id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
+        mg,type,reason:"Blend outflow",status:"active",vialId:v.id,outflowKind:"blend_open_partial"});
+      if(current.blendInventoryMode==="legacy-v2")v.remainingMg=Math.max(0,Number(v.remainingMg)-mg);
+      if(getBlendOpenVialRemainingMg(current)<=0.01){
+        v.status="empty";current.emptyVials=(current.emptyVials||0)+1;
+        current.reconDate=null;current.activeKit=false;
+      }
+      saveState();render();
+    },{tone:"warning",confirmLabel:"Record outflow",cancelLabel:"Cancel"});
+  };
+}
+
+// Retire a physical blend kit without fabricating constituent dose events.
+// Uses a separate confirmation because original blend inventory is ledger-driven.
+// This operation is only invoked through explicit user action, never on app load.
+function finishBlendKitModal(kitId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+  if(!kit||kit.kitStatus==="done")return;
+  const vials=ensureKitVials(kit);
+  const toDiscard=vials.filter(v=>["open","active","sealed"].includes(v.status)).map(v=>{
+    const amount=["open","active"].includes(v.status)
+      ? getBlendOpenVialRemainingMg(kit)
+      : Math.max(0,Number(v.remainingMg??v.vialMg??kit.vialMg)||0);
+    return {id:v.id,amount};
+  });
+  const total=toDiscard.reduce((n,v)=>n+v.amount,0);
+  confirmAction("Finish this blend kit? "+total.toFixed(2)+" mg of remaining physical material will be recorded as discarded. Dose and component history will be preserved.",()=>{
+    const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
+    if(!current||current.kitStatus==="done")return;
+    // Recalculate before mutating to avoid depending on a stale modal amount.
+    const active=ensureKitVials(current).filter(v=>["open","active","sealed"].includes(v.status));
+    const entries=active.map(v=>({v,
+      mg:["open","active"].includes(v.status)
+        ? getBlendOpenVialRemainingMg(current)
+        : Math.max(0,Number(v.remainingMg??v.vialMg??current.vialMg)||0)}));
+    current.wasteLog=current.wasteLog||[];
+    for(const entry of entries){
+      if(entry.mg>0.0001)current.wasteLog.push({
+        id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
+        mg:entry.mg,type:"waste",reason:"Blend kit marked done",
+        status:"active",vialId:entry.v.id,outflowKind:"blend_kit_retired"
+      });
+      entry.v.remainingMg=0;
+      entry.v.status="empty";
+    }
+    current.emptyVials=Math.max(Number(current.totalVials)||0,Number(current.emptyVials)||0);
+    current.reconDate=null;current.activeKit=false;current.kitStatus="done";
+    current.doneReason="Kit completed";
+    saveState();render();
+  },{tone:"warning",confirmLabel:"Finish kit",cancelLabel:"Keep kit open"});
 }
 
 // Explicit blend vial closure preserves mass balance before another vial opens.
@@ -987,10 +1411,10 @@ function logBlendDoseModal(kitId) {
 }
 
 function confirmAction(msg, cb, opts={}) {
-  const toneColor = {danger:"#ff4d4d", success:"#7DF9C0", info:"#8AB4FF", warning:"#F9C87D"}[opts.tone] || "#ff4d4d";
+  const toneColor = {danger:"#ff4d4d", success:"#7DF9C0", info:"#8AB4FF", warning:"#F9C87D",primary:"#C6A6F2"}[opts.tone] || "#ff4d4d";
   const confirmLabel = opts.confirmLabel || "Delete";
   const cancelLabel = opts.cancelLabel || "Cancel";
-  const confirmText = (opts.tone==="success"||opts.tone==="warning") ? "#000" : "#fff";
+  const confirmText = (opts.tone==="success"||opts.tone==="warning"||opts.tone==="primary") ? "#000" : "#fff";
   const m = openModal(`<div style="padding:8px">
     <div style="font-size:14px;color:var(--t1);margin-bottom:14px;line-height:1.5">${esc(msg)}</div>
     <div style="display:flex;gap:8px">

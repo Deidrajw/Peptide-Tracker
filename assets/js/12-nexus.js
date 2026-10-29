@@ -134,18 +134,18 @@ function wireBody() {
           "Dose logging":()=>{tab="home";render();window.scrollTo(0,0);},
           "Daily check-in":()=>{tab="home";render();window.scrollTo(0,0);},
           "Custom symptoms":()=>{tab="home";render();window.scrollTo(0,0);},
-          "Weight + measurements":()=>{tab="trends";render();window.scrollTo(0,0);},
+          "Weight + measurements":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
           "Macros":()=>{tab="home";render();window.scrollTo(0,0);},
           "Kit tracking":()=>{tab="stash";render();window.scrollTo(0,0);},
           "Reconstitution math":()=>{tab="stash";render();window.scrollTo(0,0);},
           "Supply forecasting":()=>{tab="stash";render();window.scrollTo(0,0);},
           "BAC Water Guide":()=>{tab="stash";render();window.scrollTo(0,0);},
           "Expiry warnings":()=>{tab="stash";render();window.scrollTo(0,0);},
-          "Plasma accumulation model":()=>{tab="trends";render();window.scrollTo(0,0);},
-          "Phase indicators":()=>{tab="trends";render();window.scrollTo(0,0);},
-          "Dose retrospectives":()=>{tab="trends";render();window.scrollTo(0,0);},
-          "Symptom frequency chart":()=>{tab="trends";render();window.scrollTo(0,0);},
-          "Weight + body comp trends":()=>{tab="trends";render();window.scrollTo(0,0);},
+          "Plasma accumulation model":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
+          "Phase indicators":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
+          "Dose retrospectives":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
+          "Symptom frequency chart":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
+          "Weight + body comp trends":()=>{state._nxHistorySelected=null;tab="trends";render();window.scrollTo(0,0);},
           "Hero insight":()=>{tab="amino";state._aminoSub="insights";render();window.scrollTo(0,0);},
           "What Changed":()=>{tab="amino";state._aminoSub="insights";render();window.scrollTo(0,0);},
           "Patterns Discovered":()=>{tab="amino";state._aminoSub="insights";render();window.scrollTo(0,0);},
@@ -180,14 +180,6 @@ function wireBody() {
     saveState();render();
   });
   document.querySelectorAll(".qa-supp").forEach(b=>b.onclick=()=>supplementModal());
-  const NOTION_SUPPS=["Psyllium Husk","Peppermint Oil (Enteric)","Betaine HCl","Slippery Elm","Papaya Enzyme","Magnesium Citrate","Electrolyte Gummies","Taurine","L-Carnitine","Acetyl L-Carnitine","Berberine HCl","R-Lipoic Acid","Resveratrol","Myo-Inositol","Yohimbine","Magnesium Glycinate + Ashwagandha","Liposomal Magnesium Glycinate","Ionic Magnesium Liquid","Melatonin","Ashwagandha Melatonin/L-Theanine","Vitamin C","Omega-3 Fish Oil","Odorless Garlic","Ginger Root","Creatine (Creapure)","Lactase Enzyme","Caffeine + Green Tea","EGCG (Green Tea Extract)","Caffeine","CLA","Cayenne","Immune Gummies","Hair Skin Nails Gummies","C-Burn","Calm Caps","PMS Gummies","Women's Probiotic","Women's Probiotic + Cranberry","Women's Prebiotic & Probiotic","Bloat & Gas Probiotic","Metabolic Boost Pre-Pro-Postbiotic","Cranberry Gummies","Prenatal Vitamin","Lysine","Maca Root + Ashwagandha","Glucosamine Chondroitin MSM + Turmeric","Gentle Reset Cleanse","Liquid Chlorophyll","Fennel Seed","Diabetic Formula","Melatonin (Mixed Berry)"];
-  const lns=$("#load-notion-supps"); if(lns) lns.onclick=()=>{
-    if(!state.settings.supplements) state.settings.supplements=[];
-    let added=0;
-    NOTION_SUPPS.forEach(s=>{ if(!state.settings.supplements.includes(s)){state.settings.supplements.push(s);added++;} });
-    saveState(); renderBody();
-    lns.textContent=`✓ ${added} added`;
-  };
   const tlt=$("#timeline-toggle"); if(tlt) tlt.onclick=()=>{state._timelineOpen=!state._timelineOpen;renderBody();};
   const as=$("#add-supp"); if(as) as.onclick=()=>{
     const inp=document.getElementById("new-supp"); const v=(inp?.value||"").trim();
@@ -340,42 +332,87 @@ function wireBody() {
     doseModal(b.dataset.name);
   });
   document.querySelectorAll(".manage-proto-btn").forEach(b=>b.onclick=()=>manageProtocolMenu(b.dataset.id));
+  document.querySelectorAll(".nx-proto-view-overview").forEach(b=>b.onclick=()=>nexusProtocolDetails(b.dataset.id));
+  document.querySelectorAll(".nx-journal-mode").forEach(b=>b.onclick=()=>{state._logsMode=b.dataset.mode;renderBody();});
+  document.querySelectorAll(".nx-journal-filter").forEach(b=>b.onclick=()=>{state._logsFilter=b.dataset.type;renderBody();});
+  const journalSearch=$("#nx-journal-search");
+  if(journalSearch)journalSearch.oninput=()=>{
+    // Live filtering preserves the keyboard and input focus, unlike renderBody() on change.
+    // Filtering never modifies historical logs or the chosen Calendar date.
+    state._logsSearch=journalSearch.value;
+    const q=journalSearch.value.trim().toLocaleLowerCase();
+    let visibleDays=0;
+    document.querySelectorAll(".nx-journal-day").forEach(day=>{
+      let n=0;
+      day.querySelectorAll(".nx-journal-row").forEach(row=>{
+        const searchable=row.querySelector(".nx-journal-main");
+        const match=!q||(searchable&&searchable.textContent.toLocaleLowerCase().includes(q));
+        row.hidden=!match;
+        if(match)n++;
+      });
+      day.hidden=n===0;
+      if(n)visibleDays++;
+      const count=day.querySelector(".nx-journal-date > span");
+      if(count)count.textContent=n+" "+(n===1?"entry":"entries");
+    });
+    const empty=$("#nx-journal-search-empty");
+    if(empty)empty.hidden=visibleDays!==0;
+  };
+  const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
+  const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
+  document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
+  document.querySelectorAll(".nx-journal-more").forEach(b=>b.onclick=()=>{
+    const panel=document.getElementById(b.dataset.panel);if(!panel)return;
+    panel.hidden=!panel.hidden;b.setAttribute("aria-expanded",String(!panel.hidden));
+  });
   const pcm=$("#pcal-month"); if(pcm) pcm.onclick=()=>{state._protoCalSub="month";renderBody();};
   const pcl=$("#pcal-logs"); if(pcl) pcl.onclick=()=>{state._protoCalSub="logs";renderBody();};
   const cp=$("#cal-prev"); if(cp) cp.onclick=()=>{state._calOff=(state._calOff||0)-1;renderBody();};
   const cn=$("#cal-next"); if(cn) cn.onclick=()=>{state._calOff=(state._calOff||0)+1;renderBody();};
   const calPausedToggle = document.getElementById("cal-show-paused");
   if(calPausedToggle) calPausedToggle.onchange = () => { state._calShowPaused=calPausedToggle.checked; renderBody(); };
-  document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
-    document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
-    const date=b.dataset.date;
-    const evs=[];
+  const weekTab=$("#pcal-week");if(weekTab)weekTab.onclick=()=>{state._protoCalSub="week";renderBody();};
+  const renderCalendarDay=(date)=>{
+    const box=$("#cal-day-detail");if(!box)return;
+    state._calSelectedDate=date;
+    const grouped={completed:[],scheduled:[],wellness:[]};
     const aps2=allPeptides();
-    // Same canonical getDayOccurrences() as everywhere else — this is what correctly
-    // labels Placenta AM vs PM as separate instances, and surfaces a rescheduled MOTS-c
-    // occurrence on its actual EFFECTIVE date rather than only where it was originally
-    // logged.
     Object.entries(aps2).filter(([,d])=>(d.doses||[]).length&&(d.status||"active")==="active").forEach(([name,d])=>{
-      const slots = getDayOccurrences(d, date).filter(slot => state._calShowPaused || slot.status !== "paused");
-      const multi = slots.length>1;
-      slots.forEach((s,i)=>{
-        const label = multi ? `${name} ${i===0?"AM":i===slots.length-1?"PM":"#"+(i+1)}` : name;
-        const unit = cfg(name).unit;
-        if (s.status==="taken") evs.push({icon:"✓",text:`${label} — Taken${s.dose.dose?` · ${s.dose.dose}${unit}`:""}${s.dose.site?" · "+s.dose.site:""}`});
-        else if (s.status==="skipped") evs.push({icon:"⊘",text:`${label} — Skipped`});
-        else if (s.status==="moved") evs.push({icon:"↺",text:`${label} — Moved to another day`});
-        else if (s.status==="overdue") evs.push({icon:"✗",text:`${label} — Overdue (was due ${s.time})`});
-        else evs.push({icon:"○",text:`${label} — ${date>=localDate()?"Scheduled":"Scheduled · not logged"} ${s.time}`});
+      const slots=getDayOccurrences(d,date).filter(x=>state._calShowPaused||x.status!=="paused");
+      slots.forEach((slot,index)=>{
+        const unit=cfg(name).unit;
+        const label=slots.length>1?name+" · "+(index+1):name;
+        const done=slot.status==="taken";
+        const desc=done?("Recorded"+(slot.dose?.dose?" · "+slot.dose.dose+" "+unit:"")+(slot.dose?.site?" · "+slot.dose.site:""))
+          :slot.status==="moved"?"Rescheduled":slot.status==="skipped"?"Skipped":slot.status==="overdue"?"Overdue · unresolved":"Scheduled"+(slot.time?" · "+slot.time:"");
+        (done?grouped.completed:grouped.scheduled).push({label,desc,status:slot.status});
       });
     });
-    state.dailyLogs.filter(l=>dayKey(l.date)===date).forEach(l=>{const syms=(l.symptoms||[]).map(s=>typeof s==="string"?s:s.name);evs.push({icon:"📋",text:`Check-in · Mood ${l.mood||"-"}${syms.length?" · "+syms.slice(0,3).join(", "):""}${l.notes?" · "+l.notes:""}`});});
-    state.weightLogs.filter(l=>dayKey(l.date)===date).forEach(l=>evs.push({icon:"⚖️",text:`Weight: ${l.weight} ${state.settings.weightUnit}`}));
-    (state.measurementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>evs.push({icon:"📏",text:`Measurement${l.waist?" · Waist: "+l.waist:""}${l.hips?" · Hips: "+l.hips:""}`}));
-    const detail=document.getElementById("cal-day-detail");
-    if(detail) detail.innerHTML=evs.length?`<div class="card" style="border-color:#A78BFA22"><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">${fmtDate(date)}</div>${evs.map(e=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--surface-2)"><span>${e.icon}</span><span style="font-size:12px;color:var(--t2)">${esc(e.text)}</span></div>`).join("")}</div>`:"";});
-  if(tab==="calendar" && state._protoCalSub!=="logs") {
+    state.dailyLogs.filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Daily check-in",desc:"Mood: "+(l.mood||"Not specified")}));
+    state.weightLogs.filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Weight",desc:l.weight+" "+(state.settings.weightUnit||"lbs")}));
+    (state.measurementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Measurements",desc:[l.waist?"Waist: "+l.waist:"",l.hips?"Hips: "+l.hips:""].filter(Boolean).join(" · ")||"Recorded"}));
+    (state.supplementLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Supplements",desc:(l.taken||[]).length+" recorded"}));
+    (state.macroLogs||[]).filter(l=>dayKey(l.date)===date).forEach(l=>grouped.wellness.push({label:"Nutrition",desc:l.calories?l.calories+" kcal":"Recorded"}));
+    const active=state._calDayCategory||"completed";
+    const names={completed:"Completed",scheduled:"Scheduled / unresolved",wellness:"Wellness"};
+    const buttons=Object.keys(names).map(key=>`<button type="button" class="nx-cal-category ${active===key?"on":""}" data-category="${key}" aria-pressed="${active===key}"><strong>${grouped[key].length}</strong><span>${names[key]}</span></button>`).join("");
+    const items=grouped[active].map(r=>`<div class="nx-cal-history-row"><div><strong>${esc(r.label)}</strong><span>${esc(r.desc)}</span></div></div>`).join("");
+    box.innerHTML=`<section class="nx-cal-day-panel"><div class="nx-cal-day-head"><h3>${esc(fmtDate(date))}</h3><span>Selected day</span></div><div class="nx-cal-categories">${buttons}</div><button type="button" id="nx-open-day-logs" class="nx-cal-open-logs">View full day history</button><div class="nx-cal-history-list">${items||'<p class="nx-cal-empty">No records in this category.</p>'}</div></section>`;
+    box.querySelectorAll(".nx-cal-category").forEach(btn=>btn.onclick=()=>{state._calDayCategory=btn.dataset.category;renderCalendarDay(date);});
+    const wholeDay=box.querySelector("#nx-open-day-logs");
+    if(wholeDay)wholeDay.onclick=()=>{state._logsMode="day";state._logsDate=date;state._protoCalSub="logs";renderBody();};
+
+  };
+  document.querySelectorAll(".cal-day").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".cal-day").forEach(el=>el.classList.toggle("nexus-cal-selected",el===b));
+    renderCalendarDay(b.dataset.date);
+  });
+  if(tab==="calendar" && state._protoCalSub!=="logs"){
+    const preferred=state._calSelectedDate;
+    const current=document.querySelector(`.cal-day[data-date="${preferred}"]`);
     const todayButton=document.querySelector(`.cal-day[data-date="${localDate()}"]`);
-    if(todayButton) todayButton.click();
+    const choice=current||todayButton||document.querySelector(".cal-day[data-date]");
+    if(choice)choice.click();
   }
   document.querySelectorAll(".proto-edit").forEach(b=>b.onclick=()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
@@ -389,6 +426,15 @@ function wireBody() {
   const eag=$("#empty-add-goal"); if(eag) eag.onclick=()=>goalModal();
   const ar=$("#add-research"); if(ar) ar.onclick=()=>researchModal();
   const ear=$("#empty-add-research"); if(ear) ear.onclick=()=>researchModal();
+  document.querySelectorAll(".nx-research-note-toggle").forEach(button=>button.onclick=()=>{
+    const body=document.getElementById(button.getAttribute("aria-controls"));
+    if(!body)return;
+    const opening=body.hidden;
+    body.hidden=!opening;
+    button.setAttribute("aria-expanded",String(opening));
+    const label=button.querySelector("span");
+    if(label)label.textContent=opening?"Hide personal notes":"Show personal notes";
+  });
   const ap=$("#add-protocol"); if(ap) ap.onclick=()=>protocolModal();
   const ash=$("#add-shopping"); if(ash) ash.onclick=()=>shoppingModal();
   const eash=$("#empty-add-shopping"); if(eash) eash.onclick=()=>shoppingModal();
@@ -458,6 +504,17 @@ function wireBody() {
   document.querySelectorAll(".use-matching-syringe").forEach(b=>b.onclick=()=>{
     const pd = (state.preparedDoses||[]).find(p=>String(p.id)===b.dataset.id);
     if (pd) administerSyringeModal(pd);
+  });
+  document.querySelectorAll(".nx-today-record-reaction").forEach(b=>b.onclick=()=>{
+    const name=b.dataset.name,id=b.dataset.id;
+    if(!(allPeptides()[name]?.doses||[]).some(d=>String(d.id)===String(id))){
+      showErrorBanner("This saved dose could not be found. No reaction was recorded.");return;
+    }
+    nexusDoseReactionModal(name,id);
+  });
+  document.querySelectorAll(".nx-history-reaction").forEach(b=>b.onclick=()=>{
+    const name=b.dataset.name,id=b.dataset.id;
+    if(allPeptides()[name]?.doses?.some(d=>String(d.id)===String(id)))nexusDoseReactionModal(name,id);
   });
   document.querySelectorAll(".editdose").forEach(b=>b.onclick=()=>{
     const name=b.dataset.name; const id=+b.dataset.id;
@@ -682,6 +739,86 @@ function wireBody() {
   // within the same page, not navigation to a different screen, so jumping to the top
   // would be jarring and wrong.
   const preserveScroll = (fn) => { const y = window.scrollY; fn(); requestAnimationFrame(()=>window.scrollTo(0,y)); };
+  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=()=>preserveScroll(()=>{
+    const allowed=["checkin","supplements","weight","nutrition"];
+    const selected=Array.isArray(state.settings.todayTrackingActivities)?[...state.settings.todayTrackingActivities]:["checkin","supplements"];
+    const next=new Set(selected.filter(id=>allowed.includes(id)));
+    if(el.checked) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
+    state.settings.todayTrackingActivities=allowed.filter(id=>next.has(id));
+    saveState(); render();
+    const panel=document.querySelector(".nx-daily-tracking");
+    if(panel)panel.open=true;
+  }));
+  document.querySelectorAll(".nx-activity-period").forEach(btn=>btn.onclick=()=>{
+    state._todayActivityPeriod=btn.dataset.period;
+    document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
+    document.querySelectorAll(".nx-activity-panel").forEach(el=>{el.hidden=el.dataset.activityPanel!==btn.dataset.period;});
+  });
+  // Alert inbox is a transient bottom sheet; maintain focus/scroll and use existing
+  // reminder action and snooze handlers. Never modify the underlying notices.
+  const alertOverlay=$("#nx-alert-overlay"),alertOpen=$("#nx-open-alerts");
+  if(alertOverlay&&alertOpen){
+    let returnFocus=null;
+    const closeAlerts=()=>{
+      alertOverlay.hidden=true;
+      document.body.classList.remove("nx-alert-modal-open");
+      alertOpen.setAttribute("aria-expanded","false");
+      if(returnFocus&&returnFocus.isConnected)returnFocus.focus();
+    };
+    alertOpen.setAttribute("aria-expanded","false");
+    alertOpen.onclick=()=>{
+      returnFocus=document.activeElement;
+      alertOverlay.hidden=false;
+      document.body.classList.add("nx-alert-modal-open");
+      alertOpen.setAttribute("aria-expanded","true");
+      alertOverlay.querySelector(".nx-alert-sheet")?.focus();
+    };
+    const manage=$("#nx-alert-manage"),all=$("#nx-alert-select-all"),selected=$("#nx-alert-clear-selected"),clearAll=$("#nx-alert-clear-all"),counter=$("#nx-alert-selected-count");
+    const choices=()=>[...alertOverlay.querySelectorAll(".nx-alert-choice")];
+    const refresh=()=>{
+      const n=choices().filter(x=>x.checked).length;
+      if(counter)counter.textContent=n+" selected";
+      if(selected)selected.disabled=n===0;
+      if(all)all.textContent=n===choices().length && n>0?"Deselect all":"Select all";
+    };
+    if(manage)manage.onclick=()=>{
+      const on=alertOverlay.classList.toggle("nx-alert-managing");
+      manage.textContent=on?"Cancel":"Manage";
+      if(!on)choices().forEach(x=>x.checked=false);
+      refresh();
+    };
+    choices().forEach(x=>x.onchange=refresh);
+    if(all)all.onclick=()=>{
+      const next=!choices().every(x=>x.checked);
+      choices().forEach(x=>x.checked=next);
+      refresh();
+    };
+    const dismissIds=ids=>{
+      const existing=state.settings.dismissedReminders||{};
+      ids.forEach(id=>{if(id)existing[id]=Date.now();});
+      state.settings.dismissedReminders=existing;
+      saveState();closeAlerts();render();
+    };
+    if(selected)selected.onclick=()=>{
+      const ids=choices().filter(x=>x.checked).map(x=>x.dataset.id);
+      if(ids.length){closeAlerts();confirmAction("Clear "+ids.length+" selected notice"+(ids.length===1?"":"s")+"? You can restore them later.",()=>dismissIds(ids));}
+    };
+    if(clearAll)clearAll.onclick=()=>{
+      const ids=choices().map(x=>x.dataset.id);
+      if(ids.length){closeAlerts();confirmAction("Clear all "+ids.length+" notices? You can restore them later.",()=>dismissIds(ids));}
+    };
+    ["nx-alert-close","nx-alert-dismiss"].forEach(id=>{const b=$("#"+id);if(b)b.onclick=closeAlerts;});
+    alertOverlay.onkeydown=e=>{
+      if(e.key==="Escape"){e.preventDefault();closeAlerts();}
+      if(e.key==="Tab"){
+        const nodes=[...alertOverlay.querySelectorAll('button:not([disabled]),[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.getClientRects().length);
+        if(!nodes.length)return;
+        const first=nodes[0],last=nodes[nodes.length-1];
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    };
+  }
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
   document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
   // History is a direct action: expand and reveal records in one tap, without the ellipsis.
@@ -723,6 +860,7 @@ function wireBody() {
     state._homeView = "upcoming";
     render();
   }));
+  const todayCalendar=$("#nx-open-calendar"); if(todayCalendar) todayCalendar.onclick=()=>{ tab="calendar"; render(); window.scrollTo(0,0); };
   const viewUp=$("#view-upcoming"); if(viewUp) viewUp.onclick=()=>preserveScroll(()=>{ state._homeView="upcoming"; render(); });
   document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._allStatusFilter=b.dataset.status; saveState(); render(); }));
   // pause/resume/delete compound
@@ -772,6 +910,7 @@ function wireBody() {
   });
   const sfb=document.getElementById("stash-filter-btn"); if(sfb) sfb.onclick=stashFilterModal;
   document.querySelectorAll(".phase-bar-seg").forEach(b=>b.onclick=()=>phaseRoadmapModal(isNaN(+b.dataset.proto)?b.dataset.proto:+b.dataset.proto, b.dataset.comp));
+  document.querySelectorAll(".nx-protocol-open-phase").forEach(b=>b.onclick=()=>phaseRoadmapModal(isNaN(+b.dataset.proto)?b.dataset.proto:+b.dataset.proto, b.dataset.comp));
   const ssb=document.getElementById("stash-sort-btn"); if(ssb) ssb.onclick=stashSortModal;
   document.querySelectorAll(".opennewvial").forEach(b=>b.onclick=()=>openNewVialModal(+b.dataset.id));
   document.querySelectorAll(".openblendvial").forEach(b=>b.onclick=()=>openBlendVialModal(+b.dataset.id));
@@ -782,6 +921,8 @@ function wireBody() {
   document.querySelectorAll(".finishvial").forEach(b=>b.onclick=()=>finishVialModal(+b.dataset.id));
   document.querySelectorAll(".vial-actions-btn").forEach(b=>b.onclick=()=>vialActionsMenu(+b.dataset.kit, +b.dataset.vial));
   // Stash detail tabs are presentation-only: never recalculate or save inventory.
+  document.querySelectorAll(".nx-kit-test-view").forEach(button=>button.onclick=()=>nexusOpenSavedKitTestResult(button.dataset.kitId));
+  document.querySelectorAll(".nx-kit-test-download").forEach(button=>button.onclick=()=>nexusDownloadKitTestResult(button.dataset.kitId));
   document.querySelectorAll(".nx-kit-detail-button").forEach(button=>{
     button.onclick=()=>{
       const panel=document.getElementById(button.getAttribute("aria-controls"));
@@ -895,6 +1036,14 @@ function wireBody() {
   };
   document.querySelectorAll(".chart-tap").forEach(el=>el.onclick=()=>chartDetailModal(el.dataset.kind, el.dataset.period));
   document.querySelectorAll(".nx-trends-open-detail").forEach(b=>b.onclick=()=>nxTrendsDetail(b.dataset.name,b.dataset.kind));
+  document.querySelectorAll(".nx-compound-blend-contributions").forEach(b=>b.onclick=()=>nxIngredientHistoryDetail(b.dataset.name,null));
+  document.querySelectorAll(".nx-open-ingredient-overview").forEach(button=>button.onclick=()=>{
+    nxIngredientHistoryDetail(button.dataset.name,null);
+  });
+  const blendPeriod=document.querySelector("#nx-blend-period");
+  if(blendPeriod)blendPeriod.onchange=()=>{state._blendTrendDays=Number(blendPeriod.value)||0;render();};
+  const blendModeSelect=document.querySelector("#nx-blend-mode");
+  if(blendModeSelect)blendModeSelect.onchange=()=>{state._blendTrendMode=blendModeSelect.value;render();};
   // calendar day taps + tooltips
   document.querySelectorAll(".calday").forEach(b=>b.onclick=()=>dayDetailModal(b.dataset.date));
   wireCalTips();
@@ -919,9 +1068,12 @@ function wireBody() {
     };
     nxLibrarySearch.dispatchEvent(new Event("input"));
   }
-  document.querySelectorAll(".nx-library-item").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});});
+  document.querySelectorAll(".nx-library-item:not(.nx-library-ingredient)").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
+  document.querySelectorAll(".nx-library-ingredient").forEach(b=>b.onclick=()=>{
+    nxIngredientHistoryDetail(b.dataset.nxCompound,null);
+  });
   const nxLibraryBack=document.getElementById("nx-library-back");
-  if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();document.getElementById("nx-compound-library")?.scrollIntoView({block:"start"});};
+  if(nxLibraryBack)nxLibraryBack.onclick=()=>{state._nxHistorySelected=null;renderBody();window.scrollTo({top:0,behavior:"instant"});};
 
   document.querySelectorAll(".nx-trends-go").forEach(b=>b.onclick=()=>{
     const key=b.dataset.key;
@@ -1098,26 +1250,55 @@ function appUpdatesView() {
   const knownIssues = APP_ISSUES.filter(i=>i.status!=="Fixed");
   const fixedIssues = [...APP_ISSUES.filter(i=>i.status==="Fixed")].sort((a,b)=>(b.fixedVersion||0)-(a.fixedVersion||0));
 
-  // Opening What's New marks the current release as seen — Known Issues never gets this
-  // treatment since a status can change later and shouldn't silently look "already read".
-  if (tabKey === "whatsnew" && (state.settings.lastSeenChangelog||0) < CURRENT_CHANGELOG_VERSION) {
-    state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION; saveState();
-  }
+  // Browsing release history is read-only. Only "Got it" on a published release
+  // acknowledges it; viewing App Updates must never silently dismiss a notification.
 
   const tabBtn = (key,label,count) => `<button class="au-tab" data-tab="${key}" style="flex:1;padding:10px 6px;border-radius:9px;font-size:12px;font-weight:600;background:${tabKey===key?"var(--surface-3)":"transparent"};border:1px solid ${tabKey===key?"var(--border)":"transparent"};color:${tabKey===key?"var(--t1)":"var(--t4)"}">${label}${count?` <span style="color:${tabKey===key?"var(--t3)":"var(--t5)"}">${count}</span>`:""}</button>`;
 
   let content;
   if (tabKey === "whatsnew") {
-    content = CHANGELOG.map((entry,i)=>`
-      <div style="margin-bottom:20px;${i<CHANGELOG.length-1?"padding-bottom:20px;border-bottom:1px solid var(--border-sub)":""}">
-        <div class="mono" style="font-size:10px;color:#A78BFA;letter-spacing:1.5px;margin-bottom:2px">${esc((entry.date||"").toUpperCase())} · V${entry.version}</div>
-        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px">${esc(entry.title)}</div>
-        ${entry.items.map(it=>`<div style="display:flex;gap:10px;margin-bottom:10px">
-          <div style="font-size:15px;flex-shrink:0;line-height:1.4">${it.icon}</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:2px">${esc(it.title)}</div>
-          <div style="font-size:11.5px;color:var(--t4);line-height:1.5">${esc(it.desc)}</div></div>
+    const published = typeof NEXUS_RELEASE!=="undefined" && NEXUS_RELEASE.publicationStatus==="published";
+    const current = published ? [{version:NEXUS_RELEASE.version,date:NEXUS_RELEASE.publishedAt||"Verified published release",title:NEXUS_RELEASE.title,
+      publication:"verified",items:(NEXUS_RELEASE.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))}] : [];
+    // Only the publication-gated manifest is authoritative for the current release.
+    // Older manual notes are reference history, not proof of production publication.
+    const verifiedArchive = (typeof NEXUS_RELEASE!=="undefined" && Array.isArray(NEXUS_RELEASE.history))
+      ? NEXUS_RELEASE.history.map(entry=>({version:entry.version,date:entry.publishedAt,
+          title:entry.title,publication:"verified",items:(entry.changes||[]).map(c=>({icon:"",title:c.title,desc:c.detail}))})) : [];
+    const legacy = CHANGELOG.map(entry=>({...entry,publication:"legacy"}));
+    const verified = [...current,...verifiedArchive]
+      .filter((entry,i,arr)=>arr.findIndex(other=>String(other.version)===String(entry.version))===i)
+      .sort((a,b)=>{
+        const av=nxReleaseParts(a.version),bv=nxReleaseParts(b.version);
+        if(av&&bv)for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];}
+        return String(b.date||"").localeCompare(String(a.date||""));
+      });
+    const renderUpdate = (entry, verifiedRelease) => `
+      <article class="nx-update-entry" style="padding:15px 0;border-bottom:1px solid var(--border-sub)">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:5px">
+          ${verifiedRelease ? esc(entry.version) : "Update #" + esc(String(entry.version))} · ${esc(entry.date||"Date not recorded")}
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px;line-height:1.35">${esc(entry.title)}</div>
+        ${entry.items.map(it=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+          <span aria-hidden="true" style="width:7px;height:7px;min-width:7px;border-radius:50%;background:var(--t3);margin-top:7px"></span>
+          <div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:3px">${esc(it.title)}</div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.5">${esc(it.desc)}</div></div>
         </div>`).join("")}
-      </div>`).join("");
+      </article>`;
+    content = `
+      <div style="font-size:12px;line-height:1.55;color:var(--t3);margin-bottom:16px">
+        New releases are announced once they are verified as published. If you choose Later, the reminder waits for another app session; Got it marks that version as read. Draft previews and Demo Mode never trigger announcements.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px">Verified production releases</div>
+      ${verified.length ? verified.map(entry=>renderUpdate(entry,true)).join("") :
+        '<p style="font-size:12px;color:var(--t3)">No verified production releases recorded yet.</p>'}
+      <details class="nx-legacy-update-archive" style="margin-top:16px">
+        <summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:13px;font-weight:650;color:var(--t2)">
+          Earlier development notes · ${legacy.length} entries
+        </summary>
+        <p style="font-size:12px;line-height:1.5;color:var(--t3)">Archived internal update numbers are not public app versions. Their publication dates were not independently verified.</p>
+        ${legacy.map(entry=>renderUpdate(entry,false)).join("")}
+      </details>`;
   } else if (tabKey === "fixed") {
     content = fixedIssues.length ? fixedIssues.map(iss=>`
       <div style="padding:12px 0;border-bottom:1px solid var(--border-sub)">
@@ -1153,6 +1334,8 @@ function appUpdatesView() {
 }
 
 function whatsNewModal(entries) {
+  // The legacy manual changelog is available in App Updates; it must not
+  // trigger startup notices for unreleased development builds.
   const toShow = entries || CHANGELOG;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -1176,7 +1359,9 @@ function whatsNewModal(entries) {
     </div>
     <button id="wn-dismiss" class="btn-primary" style="background:#A78BFA;margin-top:6px">Got it</button>
   `, "#A78BFA");
-  const dismiss = () => { state.settings.lastSeenChangelog = CURRENT_CHANGELOG_VERSION; saveState(); closeModal(); };
+  // Manual history browsing is read-only: it must never acknowledge a published release
+  // or mutate the primary user data store. Only the published-release Got it action does that.
+  const dismiss = () => closeModal();
   m.querySelector("#x").onclick = dismiss;
   m.querySelector("#wn-dismiss").onclick = dismiss;
 }
@@ -1277,17 +1462,40 @@ function showOnboarding() {
 
 // Only a verified, explicitly published release may prompt. Draft/unverified builds stay silent.
 const NEXUS_SEEN_RELEASE_KEY = STORE_KEY + '-last-seen-published-release-v1';
+const NEXUS_RELEASE_LATER_KEY = STORE_KEY + '-deferred-published-release-session-v1';
+function nxReleaseParts(value) {
+  const match=String(value||'').match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([a-z]+))?/i);
+  if(!match)return null;
+  return [Number(match[1]),Number(match[2]),Number(match[3]),match[4]||''];
+}
+function nxIsReleaseNewer(candidate, acknowledged) {
+  if(!acknowledged)return true;
+  const a=nxReleaseParts(candidate),b=nxReleaseParts(acknowledged);
+  if(!a||!b)return candidate!==acknowledged;
+  for(let i=0;i<3;i++){if(a[i]!==b[i])return a[i]>b[i];}
+  // Final release follows beta for identical version numbers.
+  if(a[3]!==b[3])return !a[3];
+  return false;
+}
 function shouldShowPublishedRelease() {
   if (typeof NEXUS_RELEASE==='undefined' || NEXUS_RELEASE.publicationStatus!=='published') return false;
-  if (!state.profile.onboardingDone) return false;
-  try { return localStorage.getItem(NEXUS_SEEN_RELEASE_KEY)!==NEXUS_RELEASE.version; }
-  catch { return false; }
+  if (!state.profile.onboardingDone || (typeof isDemoMode==='function' && isDemoMode())) return false;
+  // Never notify for an unpublished or empty release record.
+  if (!NEXUS_RELEASE.version || !Array.isArray(NEXUS_RELEASE.changes) || !NEXUS_RELEASE.changes.length) return false;
+  try {
+    if(sessionStorage.getItem(NEXUS_RELEASE_LATER_KEY)===NEXUS_RELEASE.version)return false;
+    return nxIsReleaseNewer(NEXUS_RELEASE.version,localStorage.getItem(NEXUS_SEEN_RELEASE_KEY));
+  } catch { return false; }
 }
 function showPublishedReleaseModal() {
   if (!shouldShowPublishedRelease()) return;
-  const changes=NEXUS_RELEASE.changes.map(c=>'<div style="padding:10px 0;border-bottom:1px solid var(--border-sub)"><div style="font-weight:700;color:var(--t1)">'+esc(c.title)+'</div><div style="font-size:12px;color:var(--t3);line-height:1.5;margin-top:4px">'+esc(c.detail)+'</div></div>').join('');
+  const changes=(NEXUS_RELEASE.changes||[]).map(c=>'<div style="padding:10px 0;border-bottom:1px solid var(--border-sub)"><div style="font-weight:700;color:var(--t1)">'+esc(c.title)+'</div><div style="font-size:12px;color:var(--t3);line-height:1.5;margin-top:4px">'+esc(c.detail)+'</div></div>').join('');
   const modal=openModal('<div class="nx-release-whats-new"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">'+esc(NEXUS_RELEASE.version)+'</div><h2 style="color:var(--t1);font-size:21px;margin:8px 0">What’s new in Nexus</h2><p style="color:var(--t3);font-size:13px">'+esc(NEXUS_RELEASE.title)+'</p>'+changes+'<p style="color:var(--t3);font-size:11px;line-height:1.5">'+esc(NEXUS_RELEASE.dataImpact)+'</p><div style="display:flex;gap:10px;margin-top:18px"><button type="button" id="nx-release-later" class="btn-ghost" style="min-height:44px;flex:1">Later</button><button type="button" id="nx-release-dismiss" class="btn-primary" style="min-height:44px;flex:2">Got it</button></div></div>', '#A78BFA');
-  modal.querySelector('#nx-release-later').onclick=()=>closeModal();
+  modal.querySelector('#nx-release-later').onclick=()=>{
+    try { sessionStorage.setItem(NEXUS_RELEASE_LATER_KEY,NEXUS_RELEASE.version); } catch(e){ console.warn('Unable to defer Nexus release for this session',e); }
+    closeModal();
+  };
+  // Later defers to a future app launch, not another render/navigation event.
   modal.querySelector('#nx-release-dismiss').onclick=()=>{
     try { localStorage.setItem(NEXUS_SEEN_RELEASE_KEY,NEXUS_RELEASE.version); } catch(e){ console.warn('Unable to record seen Nexus release',e); }
     closeModal();
@@ -1309,5 +1517,4 @@ migrateToInventoryV2();
 saveState();
 if(!state.profile.onboardingDone){render();showOnboarding();}
 else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
-else if((typeof NEXUS_RELEASE==='undefined'||NEXUS_RELEASE.publicationStatus!=='published')&&(state.settings.lastSeenChangelog||0)<CURRENT_CHANGELOG_VERSION){render();whatsNewModal();}
 else render();

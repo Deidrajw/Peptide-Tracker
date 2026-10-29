@@ -11,7 +11,20 @@ try {
   const pg=await ctx.newPage(),errors=[];
   pg.on("pageerror",e=>errors.push(e.message));
   await pg.goto(mode==="live"?"http://127.0.0.1:8777/":"file://"+demo,{waitUntil:"domcontentloaded"});
-  await pg.evaluate(t=>{state=buildDemoState("weight_loss");state.profile.onboardingDone=true;document.documentElement.dataset.theme=t;tab="home";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());},theme);
+  await pg.evaluate(t=>{state=buildDemoState("weight_loss");state.profile.onboardingDone=true;if(t==="dark")delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme="light";tab="home";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());},theme);
+  // Match the runtime theme contract: dark mode removes data-theme rather than setting "dark".
+  const todayHero=await pg.locator('.nexus-today-hero').evaluate(el=>({
+    bg:getComputedStyle(el).backgroundImage,
+    orbDisplay:getComputedStyle(el,'::before').display,
+    maxX:el.getBoundingClientRect().right,
+    width:window.innerWidth
+  }));
+  assert(todayHero.maxX<=todayHero.width+1,'Today hero overflows viewport '+JSON.stringify(todayHero));
+  if(theme==='dark'){
+    assert(todayHero.bg.includes('68, 52, 81') && todayHero.bg.includes('48, 38, 61'),
+      'Approved dark gradient not applied '+todayHero.bg);
+    assert(todayHero.orbDisplay==='none','Dark Today upper-right decorative glow remains visible');
+  }
   const inspect=async sel=>{
     const el=pg.locator(sel).first();
     assert(await el.count()>0,"missing "+sel);
@@ -40,21 +53,178 @@ try {
   await inspectTextDisclosure(".nexus-today-details>summary","View tracking");
   if(await pg.locator(".nexus-lookahead>summary").count())
     await inspectTextDisclosure(".nexus-lookahead>summary","View schedule");
-  if(await pg.locator(".nexus-week-card .nexus-quiet-toggle").count())
-    await inspectTextDisclosure(".nexus-week-card .nexus-quiet-toggle","View details");
+  // Weekly disclosure was intentionally relocated under Your Activity > This week.
+  // Switch the real segmented control before measuring the visible tap target.
+  // Today has one weekly summary and a direct report action, not another disclosure.
+  assert(await pg.locator('.nx-week-pulse .nx-week-score').count()===1,'Compact weekly pulse score missing');
+  assert(await pg.locator('.nx-week-pulse .nx-week-report-link').count()===0,'Retired weekly report button unexpectedly returned');
+  assert(await pg.locator('.nx-week-compact .nexus-week-card').count()===0,'Duplicate weekly card remains');
+  const headerBell=pg.locator('.nx-today-header #nx-open-alerts');
+  assert(await headerBell.count()===1,'Top-right alerts trigger missing');
+  assert(await headerBell.evaluate(el=>el.getBoundingClientRect().height)>=44,'Alerts trigger too small');
+  await headerBell.click();
+  assert(await pg.locator('#nx-alert-overlay').isVisible(),'Alerts sheet failed to open');
+  await pg.locator('#nx-alert-close').click();
+  assert(await pg.locator('#nx-alert-overlay').isHidden(),'Alerts sheet failed to close');
   const daily=pg.locator(".nexus-today-details").first();
   await daily.locator("summary").click();
   assert(await daily.evaluate(x=>x.open),"Today disclosure failed");
   await pg.evaluate(()=>{tab="protocols";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
-  await inspect(".nexus-protocol-details>summary");
-  await pg.locator(".nexus-protocol-details>summary").first().click();
-  assert(await pg.locator(".nexus-protocol-details").first().evaluate(x=>x.open),"protocol details not open");
+  // Approved Sprint 02A IA: compact Protocol list -> Overview -> compound vertical timeline.
+  // The old inline Schedule & phases disclosure was intentionally removed.
+  assert(await pg.locator(".nexus-protocol-details>summary").count()===0,"Retired Protocol disclosure returned");
+  assert(await pg.locator(".nx-proto-view-overview").count()>0,"Protocol overview entry missing");
+  await pg.locator(".nx-proto-view-overview").first().click();
+  assert(await pg.locator(".nx-proto-detail-page").isVisible(),"Protocol Overview did not open");
+  assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Protocol progress ring missing");
+  assert(await pg.locator(".nx-proto-detail-compound").count()>0,"Protocol compound drilldowns missing");
+  assert(await pg.locator(".nx-proto-detail-tabs").count()===0,"Redundant Protocol detail tabs returned");
+  await pg.waitForTimeout(450); // allow bottom-sheet entrance motion and backdrop fade to settle
+  assert(await pg.locator(".nx-proto-detail-page").evaluate(e=>{const r=e.getBoundingClientRect();return r.top<innerHeight && r.bottom>0 && r.width<=innerWidth+1}),"Protocol Overview sheet not onscreen after transition");
+  await pg.screenshot({path:"dist/protocol-overview-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
+  await pg.locator(".nx-proto-detail-compound").first().click();
+  assert(await pg.locator(".nx-phase-vertical-timeline").isVisible(),"Compound phase timeline failed to open");
+  await pg.waitForTimeout(450); // capture the visible roadmap, not its opening frame
+  assert(await pg.locator(".nx-phase-vertical-timeline").evaluate(e=>{const r=e.getBoundingClientRect();return r.top<innerHeight && r.bottom>0}),"Phase timeline not onscreen after transition");
+  await pg.screenshot({path:"dist/protocol-phase-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
+  assert(await pg.locator(".nx-phase-return").count()===1,"Phase roadmap back control missing");
+  await pg.locator(".nx-phase-return").click();
+  assert(await pg.locator(".nx-proto-detail-page").isVisible(),"Timeline did not return to Overview");
+  assert(await pg.locator(".nx-proto-detail-ring").count()===1,"Overview not restored after phase roadmap");
+  await pg.locator(".nx-proto-detail-close").click();
+  assert(await pg.locator(".nx-proto-detail-page").count()===0,"Protocol overview failed to close");
+  // Cross-navigation with fictional goal association: read-only navigation, no persistence.
+  await pg.evaluate(()=>{
+    const p=state.protocols?.[0];if(!p)throw Error("No demo protocol fixture");
+    const linked={id:"qa-protocol-linked-goal",name:"Fictional linked goal",category:"Personal",status:"active",progressModel:{type:"exploratory"}};
+    state.plans=state.plans||{goals:[],research:[],shopping:[]};
+    state.plans.goals=[...(state.plans.goals||[]).filter(g=>String(g.id)!==linked.id),linked];
+    p.linkedGoalId=linked.id;tab="protocols";render();
+  });
+  await pg.locator(".nx-proto-view-overview").first().click();
+  assert(await pg.locator(".nx-proto-linked-goal").count()===1,"Linked goal entry missing from Overview");
+  await pg.locator(".nx-proto-linked-goal").click();
+  assert(await pg.evaluate(()=>tab==="plans" && state._plansSub==="goals"),"Linked goal did not navigate to Plans Goals");
+  assert(await pg.locator(".nx-goal-detail").isVisible(),"Linked goal detail did not open");
+  assert((await pg.locator(".nx-goal-detail").innerText()).includes("Fictional linked goal"),"Linked goal navigation opened wrong goal");
+  await pg.locator("#nx-goal-detail-close").click();
   await pg.evaluate(()=>{tab="stash";render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
   const kitSummary=pg.locator(".nx-kit-card details>summary").first();
   if (await kitSummary.count()) {
     const info=await kitSummary.evaluate(e=>({svg:e.querySelectorAll("svg").length,triangle:e.textContent.includes("▸"),height:e.getBoundingClientRect().height}));
     assert(info.svg===0&&!info.triangle&&info.height>=44,"Stash disclosure duplication");
   }
+  // Calendar 2.0: actual source rendering at both widths and themes.
+  await pg.evaluate(()=>{tab="calendar";state._protoCalSub="month";state._calOff=0;render();document.querySelectorAll(".modal-bg").forEach(x=>x.remove());});
+  assert(await pg.locator(".nx-cal-hub").count()===1,"Calendar activity overview missing");
+  assert(await pg.locator(".nx-cal-hub-stats > div").count()===3,"Calendar outcome metrics missing");
+  assert(await pg.locator(".cal-day").count()>=28,"Calendar current-month grid missing");
+  await pg.locator(".cal-day").first().click();
+  assert(await pg.locator(".nx-cal-category").count()===3,"Categorized day history missing");
+  await pg.locator('.nx-cal-category[data-category="scheduled"]').click();
+  assert((await pg.locator('.nx-cal-category[data-category="scheduled"]').getAttribute("aria-pressed"))==="true","Scheduled category selection failed");
+  await pg.locator("#pcal-week").click();
+  assert(await pg.locator(".cal-day").count()>=4,"Calendar Week view missing");
+  assert(await pg.locator(".nx-cal-hub").count()===1,"Calendar Week summary missing");
+  await pg.locator("#pcal-month").click();
+  assert(await pg.locator(".cal-day").count()>=28,"Calendar Month restore failed");
+  // The selected date must open the full journal without losing its date.
+  await pg.locator(".cal-day").first().click();
+  const selectedCalendarDate=await pg.locator(".cal-day.nexus-cal-selected").first().getAttribute("data-date");
+  await pg.locator("#nx-open-day-logs").click();
+  assert(await pg.locator(".nx-journal").count()===1,"Logs journal missing");
+
+  // Add Log is a plus-only trigger; its popup is an aligned 2-column grid.
+  const addTrigger=pg.locator("#nx-add-log-toggle");
+  assert(await addTrigger.locator("svg").count()===1,"Add Log must have exactly one plus icon");
+  const pseudo=await addTrigger.evaluate(e=>({
+    before:getComputedStyle(e,"::before").content,
+    after:getComputedStyle(e,"::after").content
+  }));
+  assert(["none","normal"].includes(pseudo.after)&&["none","normal"].includes(pseudo.before),"Add Log has a decorative chevron "+JSON.stringify(pseudo));
+  await addTrigger.click();
+  const menu=pg.locator("#nx-add-log-menu");
+  assert(await menu.isVisible(),"Add Log menu did not open");
+  const tiles=await menu.locator("button").evaluateAll(items=>items.map(e=>{
+    const box=e.getBoundingClientRect(),style=getComputedStyle(e);
+    return {width:box.width,scrollWidth:e.scrollWidth,text:e.textContent.trim(),align:style.textAlign,justify:style.justifyContent};
+  }));
+  assert(tiles.length===5&&tiles.every(t=>t.scrollWidth<=t.width+2 && t.align==="center" && t.justify==="center"),"Add Log tile overflow/alignment "+JSON.stringify(tiles));
+  assert(await menu.evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(" ").length===2),"Add Log popup must use two columns");
+  await addTrigger.click();
+  assert(await menu.isHidden(),"Add Log did not collapse");
+
+  assert(await pg.locator("#nx-journal-date").inputValue()===selectedCalendarDate,"Selected day not carried into Logs");
+  assert(await pg.locator(".nx-journal-mode").count()===2,"Day/All modes missing");
+  assert(await pg.locator(".nx-journal").count()===1,"Day journal failed");
+  // Full-day view must retain ALL record types, not inherit the All Logs filter.
+  // The date chooser is explicit and never mutates underlying saved history.
+  await pg.evaluate(()=>{
+    const all=[
+      {id:"qa-checkin",date:"2026-10-24",mood:"good",symptoms:[],notes:"QA only"},
+    ];
+    state._logsMode="day"; state._logsDate="2026-10-24";
+    state._logsFilter="Weight"; state._logsSearch="unmatched-hidden-query";
+    state.dailyLogs=all;
+    state.weightLogs=[{id:"qa-weight",date:"2026-10-24",weight:180}];
+    state.measurementLogs=[{id:"qa-measure",date:"2026-10-24",waist:30}];
+    state.macroLogs=[{id:"qa-nutrition",date:"2026-10-24",calories:1600,protein:120}];
+    state.supplementLogs=[{id:"qa-supplement",date:"2026-10-24",taken:["Vitamin D"]}];
+    render();
+  });
+  assert(await pg.locator(".nx-journal-row").count()>=5,"Complete-day journal omitted saved wellness categories");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Check-in"}).count()===1,"Check-in missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Weight"}).count()===1,"Weight missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Nutrition"}).count()===1,"Nutrition missing from full-day view");
+  assert(await pg.locator(".nx-journal-row").filter({hasText:"Supplements"}).count()===1,"Supplements missing from full-day view");
+  const firstRow=pg.locator(".nx-journal-row").first();
+  await firstRow.locator(".nx-journal-more").click();
+  assert(await firstRow.locator(".nx-journal-extra").isVisible(),"Record details cannot expand");
+  assert((await firstRow.locator(".nx-journal-more").getAttribute("aria-expanded"))==="true","Record details ARIA not updated");
+  await firstRow.locator(".nx-journal-more").click();
+  assert(await firstRow.locator(".nx-journal-extra").isHidden(),"Record details cannot collapse");
+  await pg.evaluate(()=>{state=buildDemoState("weight_loss");state._logsMode="day";state._logsDate=localDate();state._protoCalSub="logs";tab="calendar";render();});
+  // Replacing the complete fixture redraws Calendar and closes the transient journal.
+  // Reopen using the real UI before exercising All Logs; do not assume the overlay survives reset.
+  if (!await pg.locator(".nx-journal").count()) {
+    await pg.locator(".cal-day").first().click();
+    await pg.locator("#nx-open-day-logs").click();
+  }
+  assert(await pg.locator(".nx-journal").count()===1,"Journal cannot reopen after fixture reset");
+  assert(await pg.locator('.nx-journal-mode[data-mode="all"]').count()===1,"All Logs mode missing after fixture reset");
+
+  await pg.screenshot({path:"dist/logs-day-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
+  await pg.locator('.nx-journal-mode[data-mode="all"]').click();
+  assert(await pg.locator(".nx-journal-filter").count()===7,"All Logs type filtering missing");
+  assert(await pg.locator(".nx-journal-row").count()>0,"All Logs fictional fixture has no records");
+  assert(await pg.locator(".nx-journal-mark svg").count()>0,"Outline log icons missing");
+  // Search must filter immediately, preserve focus, and restore rows when cleared.
+  const historySearch=pg.locator("#nx-journal-search");
+  assert(await historySearch.count()===1,"History search missing");
+  const allLogRows=await pg.locator(".nx-journal-row:visible").count();
+  await historySearch.fill("unmatchable-journal-query-9348");
+  assert(await pg.locator(".nx-journal-row:visible").count()===0,"Live search failed to hide unmatched records");
+  assert(await pg.locator("#nx-journal-search-empty").isVisible(),"Live search empty state missing");
+  assert(await historySearch.evaluate(el=>document.activeElement===el),"Typing moved focus from search field");
+  await historySearch.fill("");
+  assert(await pg.locator(".nx-journal-row:visible").count()===allLogRows,"Clearing search failed to restore history");
+  assert(await pg.locator("#nx-journal-search-empty").isHidden(),"Search empty state still visible after clear");
+  await pg.screenshot({path:"dist/logs-all-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
+  await pg.locator('.nx-journal-filter[data-type="Weight"]').click();
+  assert(await pg.locator('.nx-journal-filter[data-type="Weight"]').evaluate(el=>el.classList.contains("on")),"Weight filter failed");
+  await pg.locator('.nx-journal-mode[data-mode="day"]').click();
+  const chosenBefore=await pg.locator("#nx-journal-date").inputValue();
+  await pg.locator('.nx-journal-day-step[data-offset="-1"]').click();
+  const previousDate=await pg.locator("#nx-journal-date").inputValue();
+  assert(previousDate!==chosenBefore,"Previous day failed to change selected date");
+  await pg.locator('.nx-journal-day-step[data-offset="1"]').click();
+  assert(await pg.locator("#nx-journal-date").inputValue()===chosenBefore,"Next day failed to restore selected date");
+  await pg.locator("#nx-journal-today").click();
+  assert(await pg.locator("#nx-journal-date").inputValue()===await pg.evaluate(()=>localDate()),"Today date picker action failed");
+  await pg.evaluate(()=>{state._protoCalSub="month";render();});
+  const calWidth=await pg.locator(".nx-cal-hub").evaluate(el=>({width:el.getBoundingClientRect().width,left:el.getBoundingClientRect().left,screen:innerWidth}));
+  assert(calWidth.left>=-1 && calWidth.left+calWidth.width<=calWidth.screen+2,"Calendar 2.0 horizontal overflow "+JSON.stringify(calWidth));
+  await pg.screenshot({path:"dist/calendar-hub-"+mode+"-"+theme+"-"+width+".png",fullPage:false});
   assert(errors.length===0,"page errors "+errors.join(";"));
   results.push({mode,width,theme,status:"PASS"});await ctx.close();
  }

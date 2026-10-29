@@ -6,7 +6,7 @@ const VERSION = JSON.parse(fs.readFileSync('release/release.json','utf8')).versi
 execFileSync(process.execPath, ['tools/generate-release-notes.mjs', '--check'], {stdio:'inherit'});
 const DIST = 'dist';
 const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
-const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css'];
+const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css', 'assets/css/nexus-hybrid-preview.css'];
 const ICONS = ['assets/icons/nexus-icon-180.png', 'assets/icons/nexus-icon-192.png', 'assets/icons/nexus-icon-512.png', 'assets/icons/nexus-icon-1024.png'];
 const LIVE_FILES = ['index.html', ...CSS, ...JS, ...ICONS];
 const missing = LIVE_FILES.filter(file => !fs.existsSync(file));
@@ -90,6 +90,55 @@ const liveFile = path.join(DIST, 'Nexus_' + VERSION + '_LIVE_GitHub.zip');
 fs.writeFileSync(demoFile, demo, 'utf8');
 // A standalone 1.8MB HTML file is often displayed as an inert attachment inside
 // messaging/document viewers rather than opened in a full JavaScript browser.
+// Exact-source isolated historical deletion-warning fixture for physical Safari acceptance.
+// Only changes the standalone in-memory FULL DEMO. No production route or storage writes.
+const orphanBoot = 'sinceLastVisitSummary = computeSinceLastVisit();';
+const orphanFixture = String.raw`
+  (function(){
+    const sampleKit={
+      id:990077, name:'Retatrutide', activeKit:true, vialMg:10, totalVials:2,
+      openedVials:2, _vialsBackfilled:true, _vialsRepaired:true,
+      vials:[
+        {id:'fictional-original-vial',status:'empty',vialMg:10,remainingMg:0,sequenceNumber:1,reconDate:'2026-10-15T08:00:00'},
+        {id:'fictional-current-vial',status:'open',vialMg:10,remainingMg:7,sequenceNumber:2,reconDate:'2026-10-27T08:00:00'}
+      ],wasteLog:[]
+    };
+    state.supplies=[sampleKit];
+    state.preparedDoses=[{
+      id:990078,compound:'Retatrutide',amountEach:2,unit:'mg',count:5,
+      remainingCount:3,allocations:[{kitId:990077,amount:10}],
+      createdAt:'2026-10-15T08:00:00'
+    }];
+    window.__NEXUS_ORPHAN_QA__ = {
+      initialStock:7,
+      openWarning:()=>{
+        const record=state.preparedDoses.find(p=>p.id===990078);
+        if(record)deletePreparedDoseModal(record);
+      },
+      snapshot:()=>({
+        count:state.preparedDoses.length,
+        originalMg:state.supplies[0]?.vials[0]?.remainingMg,
+        currentMg:state.supplies[0]?.vials[1]?.remainingMg
+      })
+    };
+    window.addEventListener('load',()=>window.__NEXUS_ORPHAN_QA__.openWarning(),{once:true});
+  })();
+`;
+if(!demo.includes(orphanBoot)) throw Error('Orphan fixture bootstrap anchor missing');
+let orphanDemo=demo.replace(orphanBoot,orphanFixture+'\n'+orphanBoot);
+orphanDemo=orphanDemo.replace('FICTIONAL FULL-APP DEMO — No live data',
+  'FICTIONAL LEGACY SOURCE WARNING TEST — No live data');
+orphanDemo=orphanDemo.replace('</head>','<meta name="nexus-qa-fixture" content="legacy-prepared-missing-vial-id">\n</head>');
+const orphanDemoFile=path.join(DIST,'Nexus_'+VERSION+'_ORPHAN_WARNING_FULL_DEMO.html');
+fs.writeFileSync(orphanDemoFile,orphanDemo,'utf8');
+const orphanZip=path.join(DIST,'Nexus_'+VERSION+'_ORPHAN_WARNING_IPHONE_OPEN_ME.zip');
+execFileSync('python3',['-c',[
+  'import zipfile,sys',
+  "with zipfile.ZipFile(sys.argv[1],'w',compression=zipfile.ZIP_DEFLATED) as z:",
+  " z.write(sys.argv[2],'index.html')",
+  " z.writestr('README_OPEN_FIRST.txt',sys.argv[3])"
+].join('\n'),orphanZip,orphanDemoFile,
+  'NEXUS — FICTIONAL HISTORICAL PREPARED-DOSE WARNING TEST\nOpen index.html in Safari after extracting. The delete confirmation opens automatically. Tap Delete & Return to Vial; expect source-unverified warning and dialog stays open. No real records, persistent storage, imports or sync. This is not the production application.']);
 // Ship the SAME isolated DEMO as index.html inside an easy-to-extract ZIP too.
 // This adds a delivery option, not a separate reconstructed app.
 const offlineDemoZip = path.join(DIST, 'Nexus_' + VERSION + '_OFFLINE_FULL_DEMO_OPEN_ME.zip');
@@ -125,6 +174,8 @@ const manifest = {
  live_zip: path.basename(liveFile),
  standalone_demo: path.basename(demoFile),
  offline_demo_zip: path.basename(offlineDemoZip),
+ orphan_warning_demo: path.basename(orphanDemoFile),
+ orphan_warning_zip: path.basename(orphanZip),
  demo_storage: 'ephemeral in-memory only',
  demo_fixture: 'buildDemoState(weight_loss)',
  demo_sync: 'disabled',

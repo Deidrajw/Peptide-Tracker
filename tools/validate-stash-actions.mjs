@@ -43,6 +43,114 @@ try{
   ensure(await snap()===before,'Viewing blend actions changed inventory');
   await page.locator('.nx-stash-action[data-action="edit"]').click();
   ensure(await page.locator('#bk-save').count()===1,'Blend editor form did not open');
+  ensure(await page.locator('#bk-save').isHidden(),'Blend Save visible before Review');
+  ensure(await page.locator('#nx-blend-next').isVisible(),'Blend Continue missing on first step');
+  ensure(await page.locator('#nx-blend-next').evaluate(el=>{const s=getComputedStyle(el),b=el.getBoundingClientRect();return b.height>=44&&(s.backgroundImage!=='none' || (s.backgroundColor!=='rgba(0, 0, 0, 0)'&&s.backgroundColor!=='transparent'));}),'Blend Continue is not a prominent 44px action');
+  ensure(await page.locator('.nx-guided-stash-title').isVisible(),'Persistent Blend title is missing');
+  const fullEditor=await page.locator('.nx-guided-blend-editor').evaluate(el=>{
+    const rect=el.getBoundingClientRect();
+    return {height:rect.height,viewport:window.innerHeight,width:rect.width,screen:window.innerWidth};
+  });
+  ensure(fullEditor.height>=fullEditor.viewport-25&&fullEditor.width<=fullEditor.screen+2,
+    'Blend editor should use one full-height mobile editing surface: '+JSON.stringify(fullEditor));
+
+  ensure(await page.locator('.comp-select').first().isHidden(),'Duplicate native Blend component picker visible');
+  ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('role')==='combobox','Blend picker is not editable combobox');
+  ensure(await page.locator('.nx-blend-compound-trigger').first().getAttribute('type')==='search','Blend picker is not searchable input');
+  const oneLine=await page.locator('.comp-row').first().evaluate(row=>{
+    const p=row.querySelector('.nx-blend-compound-picker')?.getBoundingClientRect(),
+      mg=row.querySelector('.comp-mg-input')?.getBoundingClientRect(),
+      remove=row.querySelector('.comp-remove')?.getBoundingClientRect();
+    return Boolean(p&&mg&&remove&&Math.abs(p.top-mg.top)<12&&Math.abs(mg.top-remove.top)<12
+      &&p.right<=mg.left+2&&mg.right<=remove.left+2&&remove.right<=window.innerWidth+1);
+  });
+  ensure(oneLine,'Blend compound, mg and remove do not share one non-overlapping row');
+  // Guided blend regression: no state mutation while navigating; single BAC field is
+  // both the review source and the value the canonical #bk-save handler persists.
+  await page.evaluate(()=>{closeModal();addBlendKitModal(null);});
+  ensure(await page.locator('#bk-bac').count()===0,'Obsolete duplicate BAC field still exists');
+  ensure(await page.locator('#bk-bac-edit').count()===1,'Canonical blend BAC field missing');
+  ensure(await page.locator('#nx-blend-next').count()===1,'Guided blend navigation missing');
+  ensure(!(await page.locator('#bk-active').isChecked()),'New blend unexpectedly opens first vial by default');
+  ensure(await page.locator('#bk-save').isHidden(),'New blend Save visible before Review');
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-step1-'+mode+'-'+theme+'-'+width+'.png'});
+  await page.locator('.nx-blend-compound-trigger').first().fill('BPC');
+  ensure(await page.locator('.nx-blend-compound-option').count()>0,'Blend combobox search did not return options');
+  const pickerLayout=await page.locator('.comp-row').first().evaluate(row=>{
+    const menu=row.querySelector('.nx-blend-compound-popup'),results=row.querySelector('.nx-blend-compound-results');
+    const a=row.getBoundingClientRect(),b=menu.getBoundingClientRect(),css=getComputedStyle(menu);
+    return {rowHeight:a.height,menuHeight:b.height,position:css.position,scrollable:results.scrollHeight>results.clientHeight+2,count:results.querySelectorAll('button').length};
+  });
+  ensure(pickerLayout.position==='absolute'&&pickerLayout.rowHeight<100&&!pickerLayout.scrollable&&pickerLayout.count<=5,
+    'Compound suggestions stretch row or create nested scrolling: '+JSON.stringify(pickerLayout));
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-search-'+mode+'-'+theme+'-'+width+'.png'});
+
+
+  await page.locator('.nx-blend-browse-all').first().click();
+  ensure(await page.locator('.nx-compound-browser').isVisible(),'Blend full-library screen missing');
+  ensure(await page.locator('.nx-compound-browser .nx-browser-choice').count()>5,'Blend browser is not showing complete library');
+  await page.locator('#nx-browser-search').fill('BPC-157');
+  ensure(await page.locator('.nx-browser-choice').count()===1,'Blend full-library search failed');
+  await page.locator('.nx-browser-choice').first().click();
+  ensure(await page.locator('.nx-compound-browser').count()===0,'Blend browser did not close after selection');
+  ensure(await page.locator('.comp-select').first().inputValue()==='BPC-157','Blend browser did not update native backing value');
+  await page.locator('#bk-name').fill('QA Fixture Blend');
+  await page.evaluate(()=>{
+    const selects=[...document.querySelectorAll('.comp-select')];
+    selects[0].value='BPC-157';selects[0].dispatchEvent(new Event('change',{bubbles:true}));
+    const refreshed=[...document.querySelectorAll('.comp-select')];
+    refreshed[1].value='TB-500';refreshed[1].dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await page.locator('.comp-mg-input').nth(0).fill('10');
+  await page.locator('.comp-mg-input').nth(1).fill('5');
+  await page.locator('#nx-blend-next').click();
+  ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"]').evaluate(el=>!el.hidden),'Preparation step not visible');
+  ensure(await page.locator('#bk-cost').evaluate(el=>{
+    const other=document.querySelector('#bk-currency');
+    const a=el.getBoundingClientRect(),b=other.getBoundingClientRect();
+    return Math.abs(a.width-b.width)<=2&&Math.abs(a.top-b.top)<=2&&a.width>=90;
+  }),'Blend cost/currency fields are not equal-width peers');
+  ensure(await page.locator('#bk-notes').evaluate(el=>el.tagName==='TEXTAREA'),'Blend notes must be multiline');
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-step2-'+mode+'-'+theme+'-'+width+'.png'});
+  ensure(await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment').isVisible(),'Blend test-result upload missing from Step 2');
+  await page.locator('.nx-blend-wizard-panel[data-step="1"] .nx-kit-attachment-input').setInputFiles({name:'fictional-lab.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nQA sample only')});
+  await page.waitForFunction(()=>document.querySelector('.nx-kit-attachment-info')?.textContent.includes('fictional-lab.pdf'));
+  await page.locator('.nx-guided-blend-editor .nx-unified-body').evaluate(el=>{el.scrollTop=el.scrollHeight;});
+  const attachmentClear=await page.locator('.nx-kit-attachment').evaluate(el=>{
+    const footer=el.closest('.nx-guided-blend-editor')?.querySelector('.nx-blend-wizard-footer');
+    return !!footer && el.getBoundingClientRect().bottom<=footer.getBoundingClientRect().top+3;
+  });
+  ensure(attachmentClear,'Blend attachment remains obscured by sticky actions at bottom of Step 2');
+  ensure(await page.locator('.nx-kit-attachment-view').isVisible(),'Blend attachment preview button missing');
+  await page.locator('.nx-kit-attachment-view').click();
+  ensure(await page.locator('.nx-kit-file-viewer iframe').count()===1,'Blend PDF preview is missing');
+  await page.locator('.nx-kit-file-close').click();
+  ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Blend PDF preview failed to close');
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-attachment-'+mode+'-'+theme+'-'+width+'.png'});
+
+  await page.locator('#bk-bac-edit').fill('2.5');
+  await page.locator('#bk-vials').fill('3');
+  await page.locator('#bk-cost').fill('190');
+  ensure(await page.locator('#bk-currency option').count()>=15,'Blend currency selector has incomplete options');
+  await page.locator('#bk-currency').selectOption('USD');
+  await page.locator('#nx-blend-next').click();
+  ensure(await page.locator('.nx-blend-wizard-summary').innerText().then(t=>t.includes('2.5 mL')&&t.includes('USD 190')),'Review differs from entered BAC/cost');
+  ensure(await page.locator('.nx-blend-review-hero h3').innerText()==='QA Fixture Blend','Review missing prominent blend name');
+  ensure(await page.locator('.nx-blend-review-total').innerText().then(t=>t.includes('15 mg')),'Review missing emphasized total strength');
+  ensure(await page.locator('.nx-blend-review-component').count()===2,'Review missing component composition');
+  ensure((await page.locator('.nx-blend-wizard-summary').innerText()).includes('fictional-lab.pdf'),'Blend review missing selected test-results file');
+  ensure(await page.locator('.nx-blend-wizard-footer').evaluate(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)'),
+    'Blend sticky actions retain opaque dark background');
+
+  await page.screenshot({animations:'disabled',path:'dist/stash-blend-review-'+mode+'-'+theme+'-'+width+'.png'});
+  ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
+  await page.locator('#bk-save').click();
+  const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
+  ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.currency==='USD'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
+  ensure(recorded?.composition?.length===2&&recorded.composition[0].mg===10&&recorded.composition[1].mg===5,'Saved component amounts incorrect');
+  ensure(recorded?.testResultAttachment?.name==='fictional-lab.pdf'&&recorded.testResultAttachment.dataUrl.startsWith('data:application/pdf;base64,'),'Blend attachment not persisted');
+  ensure(await page.locator('.nx-kit-card .nx-kit-test-download').count()>=1,'Kit Details do not expose saved attachment');
+  await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
   // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
   await page.evaluate(()=>{closeModal();doseModal('GHK-Cu');});
   const multi=await page.locator('#toggle-multi').evaluate(el=>{

@@ -608,6 +608,79 @@ function debounce(fn, wait) {
   return (...args) => { clearTimeout(t); t = setTimeout(()=>fn(...args), wait); };
 }
 
+// Post-dose reactions are recorded independently of administration and inventory.
+// Existing dose IDs remain authoritative; legacy symptoms/notes are never migrated.
+// Reaction events are independent of dose administration and vial deductions.
+// Editing only replaces fields on the matching reaction; never mutates the dose record.
+function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
+  const getDose=()=>allPeptides()[compoundName]?.doses?.find(d=>String(d.id)===String(doseId));
+  const dose=getDose();
+  if(!dose){showErrorBanner("That saved dose could not be found. Nothing changed.");return;}
+  const history=Array.isArray(dose.reactions)?dose.reactions:[];
+  const editing=reactionId!=null ? history.find(r=>String(r.id)===String(reactionId)) : null;
+  if(reactionId!=null&&!editing){showErrorBanner("That reaction could not be found. Nothing changed.");return;}
+  const labels=["Flushing / warmth","Head rush","Injection-site redness","Injection-site discomfort","Headache","Nausea","Other"];
+  if(editing?.label&&!labels.includes(editing.label))labels.push(editing.label);
+  const valueTime=editing?.observedAt||localDatetime();
+  const m=openModal(`<div class="nx-reaction-editor">
+    <div class="nx-reaction-heading"><div><div class="nx-dose-kicker">AFTER THE DOSE</div><h2>${editing?"Edit reaction":"Record reaction"}</h2><p>Optional · ${esc(compoundName)} · ${esc(String(dose.date||""))}</p></div><button type="button" id="x" aria-label="Close reaction form">✕</button></div>
+    <p class="nx-reaction-explain">Record what you noticed and when it happened. Editing reactions does not change the administered dose or inventory.</p>
+    ${history.length?`<div class="nx-reaction-history"><strong>Previously recorded (${history.length})</strong>
+      ${history.map(r=>`<div class="nx-reaction-history-row"><div><strong>${esc(r.label||"Reaction")}</strong><p>${esc(r.observedAt||"Time not specified")}${r.intensity?" · "+(["","Mild","Moderate","Severe"][Number(r.intensity)]||""):""}</p>${r.notes?`<p>${esc(r.notes)}</p>`:""}</div><div class="nx-reaction-history-buttons"><button type="button" class="nx-reaction-edit" data-id="${esc(String(r.id))}" aria-label="Edit reaction ${esc(r.label||"Reaction")}">Edit</button><button type="button" class="nx-reaction-delete" data-id="${esc(String(r.id))}" aria-label="Delete reaction ${esc(r.label||"Reaction")}">Delete</button></div></div>`).join("")}</div>`:""}
+    <label class="field-label" for="nx-reaction-label">REACTION</label>
+    <select class="inp" id="nx-reaction-label"><option value="">Select a reaction</option>${labels.map(l=>`<option value="${esc(l)}"${editing?.label===l?" selected":""}>${esc(l)}</option>`).join("")}</select>
+    <label class="field-label" for="nx-reaction-time">WHEN DID YOU NOTICE IT?</label>
+    <input class="inp" type="datetime-local" id="nx-reaction-time" value="${esc(valueTime)}">
+    <label class="field-label" for="nx-reaction-intensity">INTENSITY</label>
+    <select class="inp" id="nx-reaction-intensity"><option value="">Not specified</option>${[1,2,3].map((n)=>`<option value="${n}"${Number(editing?.intensity)===n?" selected":""}>${["","Mild","Moderate","Severe"][n]}</option>`).join("")}</select>
+    <label class="field-label" for="nx-reaction-notes">NOTES (OPTIONAL)</label>
+    <textarea class="inp" id="nx-reaction-notes" rows="3" placeholder="What did you experience?">${esc(editing?.notes||"")}</textarea>
+    <p class="nx-reaction-explain">Recording a reaction does not establish what caused it.</p>
+    <div class="nx-reaction-actions"><button id="nx-reaction-cancel" type="button">Not now</button><button id="nx-reaction-save" type="button" class="btn-primary">${editing?"Save changes":"Save reaction"}</button></div>
+  </div>`,"#A78BFA");
+  m.querySelector("#x").onclick=closeModal;
+  m.querySelector("#nx-reaction-cancel").onclick=closeModal;
+  m.querySelectorAll(".nx-reaction-edit").forEach(button=>button.onclick=()=>nexusDoseReactionModal(compoundName,doseId,button.dataset.id));
+  m.querySelectorAll(".nx-reaction-delete").forEach(button=>button.onclick=()=>{
+    const id=button.dataset.id;
+    confirmAction("Delete this reaction? The original dose and vial balance will stay unchanged.",()=>{
+      const target=getDose();
+      if(!target || !Array.isArray(target.reactions) || !target.reactions.some(r=>String(r.id)===String(id))){
+        showErrorBanner("The reaction no longer exists. Nothing changed.");return;
+      }
+      target.reactions=target.reactions.filter(r=>String(r.id)!==String(id));
+      saveState();render();nexusDoseReactionModal(compoundName,doseId);
+    },{confirmLabel:"Delete reaction",cancelLabel:"Keep reaction",tone:"danger"});
+  });
+  m.querySelector("#nx-reaction-save").onclick=()=>{
+    const label=m.querySelector("#nx-reaction-label").value;
+    const observedAt=m.querySelector("#nx-reaction-time").value;
+    if(!label||!observedAt||!Number.isFinite(new Date(observedAt).getTime())){showErrorBanner("Choose a reaction and the time you noticed it.");return;}
+    const target=getDose();
+    if(!target){showErrorBanner("The original dose no longer exists. Nothing was saved.");return;}
+    if(!Array.isArray(target.reactions))target.reactions=[];
+    const fields={label,observedAt,intensity:Number(m.querySelector("#nx-reaction-intensity").value)||null,notes:m.querySelector("#nx-reaction-notes").value};
+    if(editing){
+      const original=target.reactions.find(r=>String(r.id)===String(reactionId));
+      if(!original){showErrorBanner("The reaction no longer exists. Nothing changed.");return;}
+      Object.assign(original,fields);
+    } else target.reactions.push({id:uid(),...fields,recordedAt:new Date().toISOString()});
+    saveState();closeModal();render();
+  };
+}
+
+// A lightweight, skippable invitation; never schedules a notification.
+function nexusPostDoseReactionPrompt(compoundName,doseId){
+  const m=openModal(`<div class="nx-reaction-invite">
+    <div class="nx-dose-kicker">DOSE SAVED</div>
+    <h2>Would you like to record a reaction?</h2>
+    <p>You can record anything you noticed now, or come back later from Today, Calendar or History.</p>
+    <div class="nx-reaction-actions"><button id="nx-reaction-later" type="button">Not now</button><button id="nx-reaction-open" type="button" class="btn-primary">Record reaction</button></div>
+  </div>`,"#A78BFA");
+  m.querySelector("#nx-reaction-later").onclick=closeModal;
+  m.querySelector("#nx-reaction-open").onclick=()=>nexusDoseReactionModal(compoundName,doseId);
+}
+
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
@@ -666,7 +739,7 @@ function doseModal(name, existing, occTime) {
     <div class="nx-dose-head">
       <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
       <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
-      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div></div>
+      <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div>${isEdit?`<button type="button" id="nx-record-reaction" class="nx-reaction-link">Record reaction ${(f.reactions||[]).length?`(${f.reactions.length})`:""}</button>`:""}</div>
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
@@ -719,14 +792,15 @@ function doseModal(name, existing, occTime) {
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
+    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
-    <details class="nx-dose-section nx-dose-optional" aria-label="Observations"${isEdit ? " open" : ""}>
-      <summary>Observations <span style="font-size:11px;color:var(--t3);font-weight:500;margin-left:auto">Optional</span></summary>
+    <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
+      <summary><span class="nx2-observation-title">Earlier dose observations</span><span class="nx-dose-observations-hint">Legacy entries · Editable</span></summary>
       <div class="nx-dose-optional-body">
-      <p class="nx-dose-section-desc">Symptoms and notes associated with this entry.</p>
+      <p class="nx-dose-section-desc">This is a separate, optional record of how you felt. It is not part of the vial allocation or dose calculation.</p>
     <label class="field-label">SYMPTOMS AFTER THIS DOSE</label><div id="sym" style="margin-bottom:14px"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(f.notes||"")}</textarea>
-    <label style="display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:13px;color:var(--t3)"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> This dose is an escalation</label>
+
       </div>
     </details>
     </div><!-- scrollable dose form -->
@@ -738,7 +812,122 @@ function doseModal(name, existing, occTime) {
   `, c.color);
   // Apply the existing responsive/accessible dose modal rules to EVERY normal entry.
   m.classList.add("nx2-dose-modal");
+  // UI-only Quick / Guided navigation; original source, validation, math,
+  // draft restoration, and final #save handler are unchanged.
+  const doseScroll=m.querySelector(".nx-dose-scroll");
+  const doseFooter=m.querySelector(".nx-dose-footer");
+  const doseHead=m.querySelector(".nx-dose-head");
+  const sections=[...m.querySelectorAll(".nx-dose-scroll > .nx-dose-section")];
+  const chooser=document.createElement("div");
+  chooser.className="nx-dose-mode-switch";
+  chooser.innerHTML='<button type="button" data-dose-mode="quick" aria-pressed="true">Quick Log</button><button type="button" data-dose-mode="guided" aria-pressed="false">Guided Log</button>';
+  doseHead.insertAdjacentElement("afterend",chooser);
+  // Keep title, close button and Quick / Guided mode visible while the form scrolls.
+  // Only the dose fields belong to the scrollport; the action footer stays separate.
+  const fixedDoseHeader=document.createElement("div");
+  fixedDoseHeader.className="nx-dose-fixed-header";
+  fixedDoseHeader.append(doseHead,chooser);
+  doseScroll.insertAdjacentElement("beforebegin",fixedDoseHeader);
+  const stepNav=document.createElement("div");
+  stepNav.className="nx-dose-step-nav";
+  stepNav.innerHTML='<span id="nx-dose-step-caption" aria-live="polite"></span><div class="nx-dose-step-track"><span></span></div><div class="nx-dose-step-actions"><button type="button" id="nx-dose-step-back">Back</button><button type="button" id="nx-dose-step-next">Continue</button></div>';
+  doseFooter.insertAdjacentElement("afterbegin",stepNav);
+  const review=document.createElement("section");
+  review.className="nx-dose-review-stage";
+  review.innerHTML='<h3>Review your entry</h3><div id="nx-dose-review-rows"></div><details id="nx-dose-source-ids" class="nx-dose-source-ids" hidden><summary>Source identifiers <span>For your records</span></summary><div class="nx-dose-source-ids-body"></div></details><p>Recording remains subject to the existing source allocation and inventory validation. Check the calculation above before confirming.</p>';
+  doseScroll.appendChild(review);
+  let doseUiMode="quick",doseUiStep=0;
+  const doseStepCaption=stepNav.querySelector("#nx-dose-step-caption");
+  const doseBack=stepNav.querySelector("#nx-dose-step-back");
+  const doseNext=stepNav.querySelector("#nx-dose-step-next");
+  const saveButton=m.querySelector("#save");
+  const reviewNote=m.querySelector(".nx-dose-review-note");
+  const error=document.createElement("p");error.className="nx-dose-step-error";error.setAttribute("role","alert");error.hidden=true;stepNav.insertAdjacentElement("beforebegin",error);
+  const doseVal=id=>m.querySelector("#"+id)?.value||"";
+  const validateDoseStep=()=>{
+    const amount=Number(doseVal("dose"));
+    const date=doseVal("date");
+    if(!date)return "Choose a date and time before continuing.";
+    if(!Number.isFinite(amount)||amount<=0)return "Enter a valid amount greater than zero before continuing.";
+    if(doseUiMode==="guided" && doseUiStep===1 && selectedSource==="fresh" && needsKitPicker && !activeKit())return "Select a source vial before continuing.";
+    return "";
+  };
+  const updateDoseReview=()=>{
+    const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
+    // Review the same in-memory allocation rows used by the authoritative save path.
+    // This is a read-only preview, not another inventory calculation or mutation.
+    const selectedKit=activeKit();
+    const formatNative=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
+    const prepared=preparedBatches.find(p=>p.id===selectedSource);
+    const sourceLabel=selectedSource==="fresh"?(selectedKit?selectedKit.name+" · "+(selectedKit.vialMg||"?")+c.unit+" vial":"Fresh from vial"):(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit+" · "+prepared.remainingCount+" available":"Prepared dose");
+    const selectedVial=selectedKit ? getActiveVial(selectedKit) : null;
+    const selectedVialText=selectedVial?"Open vial · "+formatNative(getVialRemainingMg(selectedKit,selectedVial))+" remaining":"No selected open vial";
+    // Kit/vial IDs are essential for auditability, but not for choosing whether the
+    // entered dose is correct. Keep them available in an optional disclosure.
+    const sourceIds=[];
+    if(selectedKit)sourceIds.push(["Kit ID",String(selectedKit.id)]);
+    if(selectedVial)sourceIds.push(["Vial ID",String(selectedVial.id)]);
+    const total=rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
+    const nativeNeeded=doseToMg(Number(doseVal("dose")),c.unit);
+    const ledger=rows.length && selectedSource==="fresh" && !isBlend && !isEdit
+      ? rows.map((r,i)=>{
+          const kit=state.supplies.find(k=>k.id===r.kitId);
+          const unitCount=kit?mgToUnitsForKit(Number(r.mg)||0,kit):null;
+          const actualVial=kit ? (r.vialId ? (kit.vials||[]).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
+          const vialName=kit?kit.name+" · "+(kit.vialMg||"?")+c.unit+" vial":"Unresolved source";
+          if(kit)sourceIds.push(["Source "+(i+1)+" kit ID",String(kit.id)]);
+          if(actualVial)sourceIds.push(["Source "+(i+1)+" vial ID",String(actualVial.id)]);
+          return row("Source "+(i+1),vialName+" · "+formatNative(Number(r.mg)||0)+(unitCount!=null?" · "+unitCount.toFixed(1)+" syringe units":"")+(r.finished?" · already deducted":""));
+        }).join("")+row("Total allocated",formatNative(total))+
+        row("Allocation status",Math.abs(total-nativeNeeded)<0.01?"Matches entered dose":"Requires source reconciliation")
+      : "";
+    const blendSummary=m.querySelector("#nx-blend-dose-breakdown")?.textContent?.trim()||"";
+    review.querySelector("#nx-dose-review-rows").innerHTML=
+      row("Compound",name)+row("Recorded amount",doseVal("dose")+" "+c.unit)+
+      row("Date & time",(()=>{const raw=doseVal("date");const parsed=new Date(raw);return raw&&!Number.isNaN(parsed.getTime())?parsed.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):raw;})())+row("Source",sourceLabel)+row("Site",doseVal("site"))+
+      (selectedSource==="fresh"&&!isEdit?row("Selected vial",selectedVialText):"")+
+      (ledger||row("Allocation",isEdit?"Original source retained":isBlend?"Blend vial deduction checked on confirmation":selectedSource==="fresh"?"Uses the selected open vial":"Prepared dose; no second vial deduction"))+
+      (blendSummary?row("Blend components",blendSummary):"");
+    const details=review.querySelector("#nx-dose-source-ids");
+    details.hidden=sourceIds.length===0;
+    details.querySelector(".nx-dose-source-ids-body").innerHTML=sourceIds.map(([label,id])=>row(label,id)).join("");
+    const selectedVialMg=selectedVial?getVialRemainingMg(selectedKit,selectedVial):null;
+    const hasUnallocatedShortfall=selectedSource==="fresh"&&!isEdit&&!isBlend&&
+      ((rows.length && total+0.01<nativeNeeded) || (!rows.length && selectedVialMg!=null && selectedVialMg+0.01<nativeNeeded));
+    review.querySelector("p").textContent=hasUnallocatedShortfall
+      ?"Inventory review required: the visible open vial or current allocation does not cover the entered amount. Return to source allocation and select enough usable open-vial stock. Confirmation will revalidate inventory; no dose is recorded by opening review."
+      :"Review only. The original Save handler rechecks current stock, vial allocations and blend components before recording. The selected vial row shows one vial, not necessarily the full allocation. No inventory is deducted by opening this screen.";
+  };
+  const paintDoseUi=()=>{
+    const guided=doseUiMode==="guided";
+    chooser.querySelectorAll("button").forEach(btn=>{const on=btn.dataset.doseMode===doseUiMode;btn.setAttribute("aria-pressed",String(on));btn.classList.toggle("is-selected",on);});
+    const finalStep=guided?2:1;
+    const atReview=doseUiStep===finalStep;
+    error.hidden=true;
+    stepNav.hidden=false;review.hidden=!atReview;
+    doseStepCaption.textContent=guided?"Step "+(doseUiStep+1)+" of 3 · "+["Dose details","Source allocation","Review"][doseUiStep]:"Step "+(doseUiStep+1)+" of 2 · "+["Quick entry","Review"][doseUiStep];
+    stepNav.querySelector(".nx-dose-step-track span").style.width=((doseUiStep+1)/(finalStep+1)*100)+"%";
+    doseBack.disabled=doseUiStep===0;doseNext.hidden=atReview;
+    if(guided){
+      doseStepCaption.textContent="Step "+(doseUiStep+1)+" of 3 · "+["Dose details","Source allocation","Review"][doseUiStep];
+      stepNav.querySelector(".nx-dose-step-track span").style.width=((doseUiStep+1)/3*100)+"%";
+      doseBack.disabled=doseUiStep===0;doseNext.hidden=doseUiStep===2;
+      sections.forEach((el,i)=>{el.hidden=doseUiStep===2||((doseUiStep===0)?i===0:i!==0);});
+      saveButton.hidden=!atReview;
+    }else{
+      sections.forEach(el=>{el.hidden=atReview;});
+      saveButton.hidden=!atReview;
+    }
+    if(reviewNote)reviewNote.textContent=atReview?"Confirm the source, entered amount and calculated allocation before recording.":"Complete the fields, then review the entry before recording.";
+    if(atReview)updateDoseReview();
+  };
+  chooser.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{doseUiMode=btn.dataset.doseMode;doseUiStep=0;paintDoseUi();});
+  doseBack.onclick=()=>{doseUiStep=Math.max(0,doseUiStep-1);paintDoseUi();doseScroll.scrollTop=0;};
+  doseNext.onclick=()=>{const message=validateDoseStep();if(message){error.textContent=message;error.hidden=false;return;}doseUiStep=Math.min(doseUiMode==="guided"?2:1,doseUiStep+1);paintDoseUi();doseScroll.scrollTop=0;};
+  paintDoseUi();
   m.querySelector("#x").onclick = closeModal;
+  const reactionLink=m.querySelector("#nx-record-reaction");
+  if(reactionLink)reactionLink.onclick=()=>nexusDoseReactionModal(name,f.id);
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
   m.querySelectorAll(".src-opt").forEach(b=>b.onclick=()=>{
     selectedSource = b.dataset.src==="fresh" ? "fresh" : +b.dataset.src;
@@ -809,7 +998,7 @@ function doseModal(name, existing, occTime) {
           <div class="nx-allocation-metric"><small>Short by</small><strong style="color:#F9C87D">${fmt(shortBy)} ${c.unit}</strong></div>
         </div>`
         : `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Sources for this dose</div>`}
-        <div class="nx-shortfall-step">Step 1 · Allocate the dose</div>
+        <div class="nx-shortfall-step">Step 1 · Review sources and amounts</div>
         <div class="nx-shortfall-progress" role="progressbar" aria-label="Dose amount allocated" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0)))}"><div style="width:${Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0))}%"></div></div>
         <div class="nx-shortfall-status" aria-live="polite">${remaining>0.01?`${fmt(remaining)} ${c.unit} still needs a source.`:remaining < -0.01?`Allocation exceeds the requested dose by ${fmt(Math.abs(remaining))} ${c.unit}.`:`✓ Allocation matches the requested dose.`}</div>
         <div id="alloc-rows">
@@ -817,19 +1006,23 @@ function doseModal(name, existing, occTime) {
             const kit = state.supplies.find(s=>s.id===r.kitId);
             const units = kit ? mgToUnitsForKit(parseFloat(r.mg)||0, kit) : null;
             const kitFinished = kit && !kit.activeKit && !!r.finished;
-            const kitLabel = kit ? (kitFinished?"Finished vial":kit.activeKit?"Current vial":kit.reconDate?"Open vial":"Vial") : "Vial";
+            const sourceVial=kit ? (r.vialId ? ensureKitVials(kit).find(v=>String(v.id)===String(r.vialId)) : getActiveVial(kit)) : null;
+            const matchingKits=kit ? state.supplies.filter(k=>k.name===kit.name) : [];
+            const kitOrdinal=matchingKits.length>1 ? "Kit "+(matchingKits.findIndex(k=>String(k.id)===String(kit.id))+1)+" · " : "";
+            const vialState=kitFinished?"finished":sourceVial?.status==="sealed"?"sealed":"open";
+            const kitLabel=kit ? `${kit.name||name} · ${kitOrdinal}${sourceVial?.sequenceNumber!=null?"Vial "+sourceVial.sequenceNumber:"Open vial"} (${vialState})` : "Source vial";
             const kitHasStock = kit && !kitFinished && getKitRemainingMg(kit)>0.001;
-            return `<div class="nx-alloc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
+            return `<div class="nx-alloc-row nx-hybrid-source-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">Source ${i+1} · ${esc(kitLabel)}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
-              ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm what you actually drew from this vial" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Draw</button>`:""}
-              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button>
-            </div>`;
+              ${kitHasStock?`<button class="alloc-draw" data-i="${i}" title="Confirm the amount actually obtained from this source vial" aria-label="Confirm draw from source ${i+1}" style="font-size:9px;color:#F9C87D;background:#F9C87D14;border:1px solid #F9C87D33;border-radius:5px;padding:4px 6px;white-space:nowrap">Confirm draw</button>`:""}
+              <button class="alloc-remove" data-i="${i}" style="color:var(--t5);font-size:13px;background:transparent;border:none;padding:2px 4px">✕</button></div><details class="nx2-source-identifiers"><summary>Source identifiers</summary><div class="nx2-source-id-hint">These numbers are internal inventory references, not labels printed on the vial.</div><div>Kit ID: ${esc(String(kit?.id??"Unavailable"))}</div><div>Vial ID: ${esc(String(sourceVial?.id??r.vialId??"Unavailable"))}</div></details>
+            `;
           }).join("")}
         </div>
-        <div class="nx-allocation-help">Use <strong>Draw</strong> to confirm what you actually obtained from each vial. If the draw is short, Nexus will ask you to reconcile the difference. Multiple sources still create <strong>one dose record</strong>.</div>
+        <div class="nx-allocation-help">Use <strong>Confirm draw</strong> to record what you actually obtained from each listed source vial. If the draw is short, Nexus will ask you to reconcile the difference. Multiple sources still create <strong>one dose record</strong>.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-sub)">
           <span style="font-size:11px;color:var(--t4)">Total: <b style="color:${Math.abs(remaining)<0.01?"#7DF9C0":"var(--t2)"}">${fmt(totalAllocated)}${c.unit}</b> / ${fmt(neededMg)}${c.unit}</span>
           ${Math.abs(remaining)<0.01?`<span style="font-size:11px;color:#7DF9C0">✓ Matches dose</span>`:remaining>0?`<span style="font-size:11px;color:#F9C87D">${fmt(remaining)}${c.unit} still needed</span>`:`<span style="font-size:11px;color:#FF7C7C">${fmt(Math.abs(remaining))}${c.unit} over</span>`}
@@ -1129,7 +1322,7 @@ function doseModal(name, existing, occTime) {
     }
 
     const spraysEl = m.querySelector("#sprays");
-    const dose = { id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
@@ -1138,6 +1331,7 @@ function doseModal(name, existing, occTime) {
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
     saveState(); closeModal(); render();
+    if(!isEdit) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
 
@@ -1632,8 +1826,8 @@ function prepareDosesModal(name) {
             const isTrulyCurrent = kit && kit.activeKit && rvial && getActiveVial(kit)?.id===rvial.id;
             const kitLabel = kit ? (kitFinished?"Finished vial": isTrulyCurrent?"Current vial": rvial?`Vial${rvial.sequenceNumber?" "+rvial.sequenceNumber:""}`:(kit.reconDate?"Open vial":"Vial")) : "Vial";
             const kitHasStock = kit && !kitFinished && rvial && getVialRemainingMg(kit, rvial)>0.001;
-            return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:11px;color:${kitFinished?"var(--t5)":"var(--t3)"};flex:1;min-width:0">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
+            return `<div class="nx2-prepare-source-row">
+              <span class="nx2-prepare-source-label" style="color:${kitFinished?"var(--t5)":"var(--t3)"}">${esc(kitLabel)}${kitFinished?" ✓":""}</span>
               <input type="number" step="0.01" class="alloc-mg-input inp" data-i="${i}" value="${mgToUnit(parseFloat(r.mg)||0, c.unit)}" ${kitFinished?"disabled":""} style="width:78px;height:32px;padding:0 8px;font-size:12px;${kitFinished?"opacity:0.6":""}">
               <span style="font-size:10px;color:var(--t5);width:34px">${c.unit}</span>
               ${units!=null?`<span style="font-size:10px;color:var(--t5);min-width:50px">${units.toFixed(1)}u</span>`:`<span style="width:50px"></span>`}
@@ -2201,10 +2395,12 @@ function dailyModal(existing, prefillDate) {
     <div id="compound-tag-section"></div>
     <div id="compound-notes-section"></div>
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
-    ${(state.settings.supplements||[]).length?`
+    ${`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
-    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>`:""}
+
+    <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>
+    `}
     <button id="save" class="btn-primary" style="background:${color}">SAVE CHECK-IN</button>
   `, color);
   nexusConfigureCheckinSheet(m, ["save"]);
@@ -2282,7 +2478,7 @@ function dailyModal(existing, prefillDate) {
   const suppDate2=f.date||localDate();
   const suppTaken2=new Set(state.supplementLogs.find(l=>dayKey(l.date)===suppDate2)?.taken||[]);
   let suppSelectionTouched=false;
-  const suppLibrary=state.settings.supplements||[];
+  const suppLibrary=state.settings.supplements || (state.settings.supplements=[]);
   const suppSearch=m.querySelector("#supp-search");
   const suppSelected=m.querySelector("#supp-chips");
   const suppResults=m.querySelector("#supp-results");
@@ -2304,8 +2500,14 @@ function dailyModal(existing, prefillDate) {
     const visible=suppDropdownOpen||!!q;
     suppResults.hidden=!visible; suppResults.style.display=visible?"block":"none";
     suppToggle.setAttribute("aria-expanded",String(visible));
-    suppResults.innerHTML=matches.map(n=>`<button type="button" class="supp-add" data-name="${esc(n)}" aria-pressed="${suppTaken2.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:11px 12px;min-height:44px;border-bottom:1px solid var(--border-sub);color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${suppTaken2.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
+    suppResults.innerHTML=matches.map(n=>`<button type="button" class="supp-add" data-name="${esc(n)}" aria-pressed="${suppTaken2.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:11px 12px;min-height:44px;border-bottom:1px solid var(--border-sub);color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${suppTaken2.has(n)?"✓":"＋"}</span></button>`).join("")+
+      (q&&!suppLibrary.some(n=>n.toLocaleLowerCase()===q)?`<button type="button" class="nx2-add-search-match" data-add-search="checkin">Add “${esc(suppSearch.value.trim())}” as a new supplement</button>`:"")+
+      (!matches.length&&!q?'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No supplements yet. Type a name to add one.</span>':"");
     suppResults.querySelectorAll(".supp-add").forEach(b=>b.onclick=()=>{if(suppTaken2.has(b.dataset.name))suppTaken2.delete(b.dataset.name);else suppTaken2.add(b.dataset.name);suppSelectionTouched=true;renderSuppSearch();});
+    suppResults.querySelector('[data-add-search="checkin"]')?.addEventListener("click",()=>{
+      addSupplementFromSearch(suppSearch.value,n=>{suppTaken2.add(n);suppSelectionTouched=true;suppSelectedOpen=true;});
+      suppSearch.value="";suppDropdownOpen=false;renderSuppSearch();
+    });
   };
   if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};renderSuppSearch();}
   const suppDateInput=m.querySelector("#date");
@@ -2335,24 +2537,28 @@ function dailyModal(existing, prefillDate) {
 }
 
 // ─── Macro modal ──────────────────────────────────────────────────────────────
+function addSupplementFromSearch(query, onSelect) {
+  const name=String(query||"").trim();
+  if(!name)return null;
+  const catalogue=state.settings.supplements || (state.settings.supplements=[]);
+  let known=catalogue.find(v=>v.toLocaleLowerCase()===name.toLocaleLowerCase());
+  if(!known){known=name;catalogue.push(name);catalogue.sort((a,b)=>a.localeCompare(b));saveState();}
+  onSelect(known);
+  return known;
+}
+
 function supplementModal(prefillDate) {
   const today = prefillDate || localDate();
   const existing = state.supplementLogs.find(l=>dayKey(l.date)===today);
-  const supps = state.settings.supplements||[];
+  const supps = state.settings.supplements || (state.settings.supplements=[]);
   const taken = new Set(existing?.taken||[]);
-  if(!supps.length) {
-    openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="mono" style="font-size:13px;color:#C8FF9C;letter-spacing:1.5px">SUPPLEMENTS</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-      <div style="font-size:13px;color:var(--t3);margin-bottom:16px">No supplements set up yet. Add your supplements in Profile first.</div>
-      <button id="goprofile" class="btn-primary" style="background:#C8FF9C;color:#1a1728">Go to Profile</button>`,"#C8FF9C");
-    document.querySelector(".modal #x").onclick=closeModal;
-    document.querySelector(".modal #goprofile").onclick=()=>{closeModal();tab="profile";render();window.scrollTo(0,0);};
-    return;
-  }
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
+
     
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span aria-hidden="true" style="font-size:23px;line-height:1">⌄</span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div>
     <button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600;margin:8px 0"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-selected" style="margin-bottom:12px" hidden></div>
+    
     <button id="suppsave" class="btn-primary" style="background:#C8FF9C;color:#1A1728">Save supplements</button>`,"#C8FF9C");
   const modal=document.querySelector(".modal");
   modal.querySelector("#x").onclick=closeModal;
@@ -2370,8 +2576,14 @@ function supplementModal(prefillDate) {
     const q=input.value.trim().toLocaleLowerCase();
     const matches=supps.filter(n=>n.toLocaleLowerCase().includes(q));
     const visible=dropdownOpen||!!q;results.hidden=!visible;results.style.display=visible?"block":"none";toggle.setAttribute("aria-expanded",String(visible));
-    results.innerHTML=matches.map(n=>`<button type="button" class="add" data-name="${esc(n)}" aria-pressed="${taken.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;text-align:left;border-bottom:1px solid var(--border-sub);padding:10px;color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${taken.has(n)?"✓":"＋"}</span></button>`).join("")||'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No matches</span>';
+    results.innerHTML=matches.map(n=>`<button type="button" class="add" data-name="${esc(n)}" aria-pressed="${taken.has(n)}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;text-align:left;border-bottom:1px solid var(--border-sub);padding:10px;color:var(--t1)"><span>${esc(n)}</span><span aria-hidden="true">${taken.has(n)?"✓":"＋"}</span></button>`).join("")+
+      (q&&!supps.some(n=>n.toLocaleLowerCase()===q)?`<button type="button" class="nx2-add-search-match" data-add-search="modal">Add “${esc(input.value.trim())}” as a new supplement</button>`:"")+
+      (!matches.length&&!q?'<span style="display:block;padding:12px;font-size:12px;color:var(--t4)">No supplements yet. Type a name to add one.</span>':"");
     results.querySelectorAll(".add").forEach(b=>b.onclick=()=>{if(taken.has(b.dataset.name))taken.delete(b.dataset.name);else taken.add(b.dataset.name);paint();});
+    results.querySelector('[data-add-search="modal"]')?.addEventListener("click",()=>{
+      addSupplementFromSearch(input.value,n=>{taken.add(n);selectedOpen=true;});
+      input.value="";dropdownOpen=false;paint();
+    });
   };
   input.oninput=()=>{dropdownOpen=true;paint();};paint();
   modal.querySelector("#suppsave").onclick=()=>{

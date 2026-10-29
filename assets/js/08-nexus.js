@@ -22,9 +22,9 @@ function peptideCardHTML(name, data, opts={}) {
     return `<div class="card" style="border-color:#F9C87D33;opacity:0.85">
       <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:8px;height:8px;border-radius:50%;background:#555"></div>
-        <span class="mono" style="font-size:15px;color:var(--t3);letter-spacing:1.5px;flex:1">${esc(name.toUpperCase())}</span>
+        <span class="nx-expanded-name nx-today-compound-name" style="flex:1">${esc(name)}</span>
         ${statusBadge("⏸ Paused", "warning")}
-        ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0"></button>`:""}
+        ${opts.showCollapseChevron?`<button class="compound-collapse-btn nx-today-disclosure" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0">${nxTodayDisclosureInner(true)}</button>`:""}
       </div>
       <div style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:12px">
         ${data.pausedAt?`Paused ${fmtDate(data.pausedAt)}`:""}${data.pauseNote?` · <span style="font-style:italic">${esc(data.pauseNote)}</span>`:""}
@@ -82,23 +82,23 @@ function peptideCardHTML(name, data, opts={}) {
     isResting?statusBadge(`⏸ Rest phase${doseStatus.restWeek?` · wk ${doseStatus.restWeek}/${doseStatus.restTotalWeeks}`:""}`,"warning"):"",
     currentPh&&!trough&&!isProtoPaused?statusBadge(currentPh.label, currentPh.color):"",
     trough?statusBadge("Winding Down", "#ff8c00"):"",
-    od?statusBadge("Overdue", "danger"):"",
+    ""
   ].filter(Boolean).join("");
-  return `<div class="card" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
+  return `<div class="card nx-hybrid-expanded-compound" style="border-color:${trough?"#ff8c0044":sensitivityWindow?c.color+"55":c.color+"22"};box-shadow:${trough?"0 0 20px #ff8c0015":`0 0 20px ${c.color}08`}">
     <div class="nx-expanded-compound-head" style="display:flex;align-items:center;gap:10px;margin-bottom:${badges?"6":"16"}px">
       <div style="width:8px;height:8px;border-radius:50%;background:${c.color};box-shadow:0 0 8px ${c.color};flex-shrink:0"></div>
-      <span class="mono" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name.toUpperCase())}</span>
-      <button class="compound-intel-btn" data-name="${esc(name)}" style="color:${c.color};font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid ${c.color}33;background:${c.color}10;flex-shrink:0">Intel ›</button>
-      ${opts.showCollapseChevron?`<button class="compound-collapse-btn" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Collapse ${esc(name)}" title="Collapse" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0"></button>`:""}
+      <span class="nx-expanded-name nx-today-compound-name" style="font-size:15px;color:var(--t1);letter-spacing:1.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span>
+      
+      ${opts.showCollapseChevron?`<button class="compound-collapse-btn nx-today-disclosure" data-name="${esc(name)}" data-view="${esc(opts.view||'active')}" aria-label="Hide ${esc(name)} details" title="Hide details" style="min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--t5);font-size:14px;background:transparent;border:none;padding:0;flex-shrink:0">${nxTodayDisclosureInner(true)}</button>`:""}
     </div>
     ${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-left:18px">${badges}</div>`:""}
     ${doseStatus.recentSkip?`<div style="font-size:11px;color:var(--t4);margin-bottom:10px;padding-left:18px">✕ Skipped ${esc(fmtDate(doseStatus.recentSkip.date))}${doseStatus.recentSkip.reason?` · ${esc(doseStatus.recentSkip.reason)}`:""} <button class="undoskip" data-name="${esc(name)}" data-date="${esc(doseStatus.recentSkip.date)}" style="color:var(--t4);text-decoration:underline;background:none;border:none;font-size:11px;padding:0;margin-left:4px">Undo</button></div>`:""}
-    <div class="nx-compound-timing-row" style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">${ring}<div class="nx-compound-timing-details" style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:170px">
-      <div style="display:flex;gap:20px;flex-wrap:wrap">${(()=>{const nextDueDisplay=doseStatus.nextDueStr?fmtShort(doseStatus.nextDueStr):doseStatus.nextDueMs?fmtShort(new Date(doseStatus.nextDueMs)):"—";return [["LAST",last?fmtShort(last.date):"—"],["NEXT",nextDueDisplay]]})().map(([l,v])=>`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div style="font-size:15px;color:var(--t2);font-weight:600;margin-top:2px">${v}</div></div>`).join("")}</div>
-      <div style="font-size:11px;color:var(--t5)">${since!=null?(Math.round(since*10)/10)+"d since last dose":""}${doses.length?` · ${doses.length} dose${doses.length===1?"":"s"} logged`:""}${protocolDays!==null?` · ${protocolDays}d on protocol`:""}</div>
-      ${(()=>{ const tv=getTimingVariance(data); if(!tv) return ""; const mag=Math.abs(tv.avgMinutes); const dir=tv.avgMinutes>0?"after":"before"; return mag<5 ? `<div style="font-size:10px;color:var(--t5)">Usually logged right around the planned time (${tv.sampleSize} doses)</div>` : `<div style="font-size:10px;color:var(--t5)">Usually logged ~${mag} min ${dir} the planned time (${tv.sampleSize} doses)</div>`; })()}
-      ${last&&last.dose?`<div style="font-size:11px;color:var(--t4)">Last: <span style="color:${c.color}">${esc(last.dose)} ${c.unit}</span>${last.site?` · ${esc(last.site)}`:""}</div>`:""}
-    </div></div>
+    <section class="nx-compound-timing-row" aria-label="Dose schedule and timing" style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">${ring}<div class="nx-compound-timing-details" style="flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:170px">
+      <div class="nx-expanded-facts" style="display:flex;gap:20px;flex-wrap:wrap">${(()=>{const nextDueDisplay=doseStatus.nextDueStr?fmtShort(doseStatus.nextDueStr):doseStatus.nextDueMs?fmtShort(new Date(doseStatus.nextDueMs)):"—";return [["LAST",last?fmtShort(last.date):"—"],["NEXT",nextDueDisplay]]})().map(([l,v])=>`<div class="nx-expanded-fact"><div class="mono nx-expanded-fact-label" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div class="nx-expanded-fact-value" style="font-size:15px;color:var(--t2);font-weight:600;margin-top:2px">${v}${l==="LAST" && last?.dose ? `<small class="nx-expanded-last-dose">${esc(last.dose)} ${esc(c.unit)}</small>` : ""}</div></div>`).join("")}</div>
+      
+      
+      
+    </div></section>
     ${(data.dosesPerDay>1) ? (()=>{
       // Multi-dose-per-day: LAST/NEXT above is a whole-day summary. This strip shows
       // each of TODAY's individual occurrence slots — AM ✓ · PM due 8 PM — each
@@ -108,43 +108,68 @@ function peptideCardHTML(name, data, opts={}) {
       if (!todaySlots.length) return "";
       const fmtOccT = dt=>dt.toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"});
       const label12 = t=>{const [h,m]=t.split(":").map(Number); const ap=h>=12?"PM":"AM"; const h12=h%12||12; return `${h12}:${String(m).padStart(2,"0")} ${ap}`;};
-      const slotLabel = i => i===0?"Morning":i===todaySlots.length-1?"Evening":`Dose ${i+1}`;
+      const slotLabel = (slot,i) => { const hour=Number(slot.time?.split(":")[0]); return Number.isFinite(hour) ? (hour<12?"Morning":hour<17?"Afternoon":"Evening") : `Dose ${i+1}`; };
       return `<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:10px 12px;margin-bottom:14px">
-        <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">TODAY'S DOSES</div>
+        <h3 class="nx-today-slots-title">Today's doses</h3>
         ${todaySlots.map((s,i)=>{
           const statusColor = s.status==="taken"?"#7DF9C0":s.status==="skipped"?"var(--t5)":s.status==="moved"?"#A78BFA":s.status==="missed"?"var(--t5)":s.status==="overdue"?"#FF7C7C":s.status==="due_now"?"#F9C87D":s.status==="paused"?"var(--t4)":"var(--t3)";
           const statusText = s.status==="taken"?`✓ Logged ${fmtOccT(new Date(s.dose.date))}`:s.status==="skipped"?"Skipped":s.status==="moved"?"Moved":s.status==="missed"?"Missed":s.status==="overdue"?"Overdue":s.status==="due_now"?"Due now":s.status==="paused"?"Paused":`Due ${label12(s.time)}`;
           const canAct = ["due_now","overdue","due_later_today","upcoming"].includes(s.status);
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<todaySlots.length-1?"border-bottom:1px solid var(--border-sub)":""}">
-            <span style="font-size:11px;color:var(--t3);width:56px;flex-shrink:0">${esc(slotLabel(i))}</span>
-            <span style="font-size:12px;color:${statusColor};flex:1">${statusText}</span>
-            ${canAct?`<button class="logdose" data-name="${esc(name)}" data-occ-time="${esc(s.dateTime)}" style="font-size:10px;color:${c.color};background:${c.color}18;border:1px solid ${c.color}44;border-radius:6px;padding:3px 8px">Log</button>
-            <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Reschedule this dose" style="width:26px;height:26px;flex-shrink:0;background:transparent;border:1px solid var(--border-sub);border-radius:6px;color:#A78BFA;font-size:11px">↺</button>
-            <button class="skipdose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Skip this dose" style="width:26px;height:26px;flex-shrink:0;background:transparent;border:1px solid var(--border-sub);border-radius:6px;color:var(--t4);font-size:11px">⊘</button>`:""}
+          return `<div class="nx-today-slot-row" style="${i<todaySlots.length-1?"border-bottom:1px solid var(--border-sub)":""}">
+            <span class="nx-today-slot-period">${esc(slotLabel(s,i))}</span>
+            <span class="nx-today-slot-status" style="color:${statusColor}">${statusText}</span>
+            ${canAct?`<div class="nx-today-slot-actions"><button class="logdose" data-name="${esc(name)}" data-occ-time="${esc(s.dateTime)}" aria-label="Log ${esc(slotLabel(s,i).toLowerCase())} dose">Log</button>
+            <button class="rescheduledose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Reschedule this dose" aria-label="Reschedule ${esc(slotLabel(s,i).toLowerCase())} dose">Reschedule</button>
+            <button class="skipdose" data-name="${esc(name)}" data-date="${esc(s.dateTime)}" title="Skip this dose" aria-label="Skip ${esc(slotLabel(s,i).toLowerCase())} dose">Skip</button></div>`:""}
           </div>`;
         }).join("")}
       </div>`;
     })() : ""}
-    ${nxInsightCount ? `<details class="nx-compound-insights nx-no-chevron"><summary aria-label="Show ${nxInsightCount} timing and dose review insights">
-      <span class="nx-insights-emblem" aria-hidden="true">i</span><span class="nx-insights-title">Insights <span>(${nxInsightCount})</span></span>
-      <span class="nx-insights-preview">Timing and dose review</span><span class="nx-insights-chevron" aria-hidden="true"></span>
-    </summary><div class="nx-compound-insights-body">` : ""}
+    <div class="nx-compound-info-tabs" aria-label="Compound information">
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-insights-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" checked>
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-history-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">
+      <input type="radio" class="nx-compound-tab-radio" name="nx-info-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}" id="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">
+      <div class="nx-info-segments" role="group" aria-label="Select information view">
+        <label for="nx-insights-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Insights${nxInsightCount || siteWarn? ` <span class="nx-info-count">(${nxInsightCount+Number(!!siteWarn)})</span>` : ""}</label>
+        <label for="nx-history-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">History</label>
+        <label for="nx-details-${esc(name).replace(/[^a-zA-Z0-9_-]/g,'-')}">Details</label>
+      </div>
+      <div class="nx-info-panel nx-info-insights">
+        <div class="nx-insight-summary"><span class="nx-insight-eyebrow">At a glance</span><strong>${od?"An occurrence needs attention":isProtoPaused?"Protocol paused":isResting?"Rest period":currentPh?.label||"Scheduled tracking"}</strong><span>${since!=null?`${Math.round(since*10)/10} days since your last entry`:"No dose entries recorded"}${doseStatus.nextDueStr?` · Next scheduled ${esc(fmtShort(doseStatus.nextDueStr))}`:""}</span></div>
+        ${(()=>{const tv=getTimingVariance(data);if(!tv)return "";const mag=Math.abs(tv.avgMinutes),dir=tv.avgMinutes>0?"after":"before";return `<div class="nx-insight-fact"><strong>Logging time pattern</strong><span>${mag<5?"Usually logged near the scheduled time":`Usually logged about ${mag} minutes ${dir} the scheduled time`} · ${tv.sampleSize} records</span></div>`;})()}
+        ${nxInsightCount || siteWarn || getTimingVariance(data) ? "" : '<p class="nx-info-empty">No additional insights for this schedule.</p>'}
+    <div class="nx-insight-list">
     ${currentPh&&!trough&&!sensitivityWindow?`<div style="background:${currentPh.color}0d;border:1px solid ${currentPh.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${currentPh.color}">${
-      currentPh.id==="activation"  ? `⚡ Activation — compound is absorbing. Plasma levels rising from zero. No strong effects yet; any sensation at the injection site is normal.` :
-      currentPh.id==="rising"      ? `📈 Taking Effect — levels building toward peak. Appetite suppression and food noise quieting typically begin here. Log what you notice — this is your baseline.` :
-      currentPh.id==="peak"        ? `🎯 Peak Effect — estimated peak concentration. Appetite suppression and food noise at their strongest. Metabolic rate most elevated above baseline. Avoid undereating.` :
-      currentPh.id==="cruise"      ? `🛳 Cruise Phase — levels stable near peak, effects consistent. This is your steadiest window — good time to assess how you feel at this dose.` :
+      currentPh.id==="activation"  ? `Activation phase — current phase label from this protocol. Compare recorded symptoms and dose history for your own pattern.` :
+      currentPh.id==="rising"      ? `Rising phase — compare your tracked check-ins and previous entries to identify any changes you noticed.` :
+      currentPh.id==="peak"        ? `Peak phase — this is a schedule-derived phase label, not a measurement of concentration or effect. Review your recorded observations.` :
+      currentPh.id==="cruise"      ? `Cruise phase — view your recent dose and check-in records to compare changes across this interval.` :
       currentPh.label
     }</div>`:""}
-    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">💡 Day ${Math.floor(since)+1} — still at or near peak plasma levels, but this is your noted sensitivity window. Log any appetite or food noise changes — this is your highest-value comparison data.</div>`:""}
-    ${trough?`<div style="background:#ff8c0011;border:1px solid #ff8c0033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff8c00">📉 Day ${Math.floor(since)+1} — plasma levels are falling (winding down phase). Appetite and food noise may be returning. Log symptoms to build your trough pattern.</div>`:""}
-    ${escalation&&escalation.signal==="may_be_ready"?`<div style="background:#7DF9C011;border:1px solid #7DF9C033;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7DF9C0">📈 <b>Escalation check:</b> ${escalation.weeksAtDose.toFixed(1)} weeks at dose — you may be ready to discuss an increase with your clinician.</div>`:""}
-    ${nxInsightCount ? `</div></details>` : ""}
-    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D">🔄 <b>Rotate your site</b> — ${esc(siteWarn.site)} used ${siteWarn.countInLast5}× in your last 5 shots. Repeated use risks lipohypertrophy.</div>`:""}
+    ${sensitivityWindow?`<div style="background:${c.color}0d;border:1px solid ${c.color}33;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:${c.color}">Day ${Math.floor(since)+1} since the last recorded dose. This interval was flagged for review; compare your tracked observations.</div>`:""}
+    ${trough?`<div><b>Timing window</b><span class="nx-insight-secondary">Day ${Math.floor(since)+1} since the last recorded dose. Compare recent check-ins to see whether your experience has changed.</span></div>`:""}
+    ${escalation&&escalation.signal==="may_be_ready"?`<div class="nx-insight-review"><b>Time at recorded dose</b><span class="nx-insight-secondary">${escalation.weeksAtDose.toFixed(1)} weeks recorded at this dose. Compare dose history and your check-ins to review changes over time.</span></div>`:""}
+
+    ${siteWarn?`<div style="background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#F9C87D"><b>Site rotation</b><span class="nx-insight-secondary">${esc(siteWarn.site)} · ${siteWarn.countInLast5} of your last 5 recorded administrations. Review the full site history to compare locations.</span></div>`:""}
+    </div>      </div>
+      <div class="nx-info-panel nx-info-history">
+        <div class="nx-info-panel-title">Recent records · ${doses.length} total</div>
+        ${doses.length ? [...doses].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4).map(d=>`<div class="nx-info-history-row"><span>${esc(fmtShort(d.date))}</span><strong>${esc(String(d.dose||"—"))} ${esc(c.unit||"")}</strong></div>`).join("") : '<p class="nx-info-empty">No dose records yet.</p>'}
+        <button class="histtoggle nx-info-history-action" data-name="${esc(name)}">View complete dose history</button>
+      </div>
+      <div class="nx-info-panel nx-info-details">
+        ${since!=null?`<div class="nx-info-history-row"><span>Since last recorded dose</span><strong>${Math.round(since*10)/10} days</strong></div>`:""}
+        <div class="nx-info-panel-title">Schedule information</div>
+        <div class="nx-info-history-row"><span>Recorded doses</span><strong>${doses.length}</strong></div>
+        <div class="nx-info-history-row"><span>Days on protocol</span><strong>${protocolDays==null?"—":protocolDays}</strong></div>
+        ${last&&last.site?`<div class="nx-info-history-row"><span>Last recorded site</span><strong>${esc(last.site)}</strong></div>`:""}
+        <button class="compound-intel-btn nx-info-history-action nx-intel-cta" data-name="${esc(name)}" aria-label="Open ${esc(name)} compound Intel">Open compound Intel <span aria-hidden="true">↗</span></button>
+      </div>
+    </div>
     ${renderCompoundActionArea(name, data, c, doses, doseStatus)}
 
     <div class="morebox" data-name="${esc(name)}" style="display:none;margin-top:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
-      <button class="histtoggle" data-name="${esc(name)}" title="Dose history" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("history")}History <span style="color:var(--t5);font-weight:400">(${doses.length})</span></button>
+      
       <button class="ics-export" data-name="${esc(name)}" title="Add to calendar" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("calendar")}Add to Calendar</button>
       <button class="tunetoggle" data-name="${esc(name)}" title="Schedule settings" style="width:100%;min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;padding:0 14px;background:transparent;border:none;border-bottom:1px solid var(--border-sub);color:var(--t3);font-size:12px;font-weight:600">${nxCompoundMenuIcon("settings")}Schedule Settings</button>
       <div style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border-bottom:1px solid var(--border-sub)">
@@ -254,10 +279,10 @@ function peptideCardHTML(name, data, opts={}) {
     </div>
     <div class="histbox nx-dose-history" data-name="${esc(name)}" style="display:none;margin-top:16px;border-top:1px solid var(--border-sub);padding-top:14px">
       <div class="nx-dose-history-title"><strong>${doses.length} recorded doses</strong><span>Newest first</span></div>
-      ${doses.map((d,i)=>`<div class="nx-dose-history-record ${i>=5?"nx-dose-history-extra":""}" style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface-2);align-items:flex-start"><div style="width:2px;align-self:stretch;background:${c.color}44;border-radius:2px"></div><div class="doseretro" data-name="${esc(name)}" data-id="${d.id}" style="flex:1;min-width:0;cursor:pointer"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px"><span style="font-size:12px;color:var(--t2)">${fmtDT(d.date)}</span>${d.dose?`<span style="font-size:11px;color:${c.color}">${esc(d.dose)} ${c.unit}</span>`:""}${d.site?`<span style="font-size:10px;color:var(--t4)">${esc(d.site)}</span>`:""}</div>${d.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic">${esc(d.notes)}</div>`:""}${d.allocations&&d.allocations.length>1?`<div style="font-size:10px;color:#A78BFA;margin-top:3px">Source: ${d.allocations.length} vials · ${d.allocations.map(a=>{const k=state.supplies.find(s=>s.id===a.kitId);return `${a.amount}${c.unit}${k?" ("+(k.activeKit?"current":"other")+")":""}`;}).join(", ")}</div>`:""}${d.syringeId?`<button class="view-syringe" data-syringe="${d.syringeId}" style="display:block;font-size:10px;color:#A78BFA;margin-top:3px;background:transparent;border:none;padding:0">💉 Mixed syringe · ${(()=>{const pd=(state.preparedDoses||[]).find(p=>p.id===d.syringeId);return pd?getSyringeComponents(pd).length:"?";})()} compounds · View details ›</button>`:""}</div><button class="editdose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 7px;flex-shrink:0;min-width:38px;text-align:center">Edit</button><button class="deldose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t5);font-size:13px;flex-shrink:0">✕</button></div>`).join("")}
+      ${doses.map((d,i)=>`<div class="nx-dose-history-record ${i>=5?"nx-dose-history-extra":""}" style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface-2);align-items:flex-start"><div style="width:2px;align-self:stretch;background:${c.color}44;border-radius:2px"></div><div class="doseretro" data-name="${esc(name)}" data-id="${d.id}" style="flex:1;min-width:0;cursor:pointer"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px"><span style="font-size:12px;color:var(--t2)">${fmtDT(d.date)}</span>${d.dose?`<span style="font-size:11px;color:${c.color}">${esc(d.dose)} ${c.unit}</span>`:""}${d.site?`<span style="font-size:10px;color:var(--t4)">${esc(d.site)}</span>`:""}</div>${d.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic">${esc(d.notes)}</div>`:""}${d.allocations&&d.allocations.length>1?`<div style="font-size:10px;color:#A78BFA;margin-top:3px">Source: ${d.allocations.length} vials · ${d.allocations.map(a=>{const k=state.supplies.find(s=>s.id===a.kitId);return `${a.amount}${c.unit}${k?" ("+(k.activeKit?"current":"other")+")":""}`;}).join(", ")}</div>`:""}${d.syringeId?`<button class="view-syringe" data-syringe="${d.syringeId}" style="display:block;font-size:10px;color:#A78BFA;margin-top:3px;background:transparent;border:none;padding:0">💉 Mixed syringe · ${(()=>{const pd=(state.preparedDoses||[]).find(p=>p.id===d.syringeId);return pd?getSyringeComponents(pd).length:"?";})()} compounds · View details ›</button>`:""}</div><button class="nx-history-reaction" type="button" data-name="${esc(name)}" data-id="${d.id}" aria-label="Record reaction for ${esc(name)} dose" style="min-height:44px;min-width:44px;color:var(--t2);font-size:11px;font-weight:650;border:1px solid var(--border);border-radius:8px;padding:8px">Reaction${(d.reactions||[]).length?` (${d.reactions.length})`:""}</button><button class="editdose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 7px;flex-shrink:0;min-width:38px;text-align:center">Edit</button><button class="deldose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t5);font-size:13px;flex-shrink:0">✕</button></div>`).join("")}
       ${doses.length>5?`<button class="nx-dose-history-more" type="button" aria-expanded="false" data-count="${doses.length}">Show all ${doses.length} doses</button>`:""}
     </div>
-    <div style="font-size:10px;color:var(--t4);text-align:center;margin-top:4px">Tap a dose to see what happened after it</div>
+    
   </div>`;
 }
 
@@ -481,6 +506,10 @@ function doseRetrospectiveModal(name, doseId) {
     : `<div style="font-size:11px;color:var(--t5);text-align:center;padding:10px 0">Not enough cycle history yet to compare this dose to your average.</div>`}
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
+  const action=document.createElement("button");
+  action.type="button";action.className="nx-reaction-link";action.textContent="Record reaction"+(dose.reactions?.length?" ("+dose.reactions.length+")":"");
+  action.onclick=()=>nexusDoseReactionModal(name,dose.id);
+  m.appendChild(action);
 }
 
 function phaseDetailModal(phase) {
@@ -632,7 +661,7 @@ function dayDetailModal(dateIso) {
       <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span>
       <span style="flex:1;min-width:0"><strong style="display:block;font-size:13px;font-weight:600">${esc(name)}</strong><span style="display:block;font-size:11px;color:var(--t4);margin-top:3px">${esc(String(dose.dose??'—'))} ${esc(unit)} · ${label12(timeKeyOf(dose.date))}</span></span>
       <span style="font-size:11px;color:var(--t3)">View / edit ›</span>
-    </button>`).join("")}
+    </button><button type="button" class="cal-record-reaction" data-name="${esc(name)}" data-id="${dose.id}" aria-label="Record reaction for ${esc(name)} at ${label12(timeKeyOf(dose.date))}" style="min-height:44px;width:100%;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650;margin:4px 0 12px">Record reaction${dose.reactions?.length?` (${dose.reactions.length})`:""}</button>`).join("")}
   </section>`:`<div style="margin:14px 0;font-size:12px;color:var(--t4)">No doses recorded for this date.</div>`;
 
   const m=openModal(`
@@ -676,6 +705,13 @@ function dayDetailModal(dateIso) {
     </div>
   `,"#7DF9C0");
   m.querySelector("#x").onclick=closeModal;
+  m.querySelectorAll(".cal-record-reaction").forEach(b=>b.onclick=()=>{
+    const name=b.dataset.name, id=b.dataset.id;
+    if(!(allPeptides()[name]?.doses||[]).some(d=>String(d.id)===String(id))){
+      showErrorBanner("This saved dose could not be found. No reaction was recorded.");return;
+    }
+    nexusDoseReactionModal(name,id);
+  });
   const al=m.querySelector("#addlog"); if(al)al.onclick=()=>{closeModal();dailyModal(null,dateIso);};
   const aw=m.querySelector("#addweight"); if(aw)aw.onclick=()=>{closeModal();weightModal();};
   const am=m.querySelector("#addmacro"); if(am)am.onclick=()=>{closeModal();macroModal(dateIso);};
@@ -717,7 +753,7 @@ function weeklyView() {
         <div style="font-size:8px;color:${today?"#7DF9C0":"#444"};margin-top:3px">${d.date.getDate()}</div>
       </div>`;
     }).join("")}</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${top.length?12:0}px">${[["SHOTS",shots],["WEIGH-INS",dd.filter(d=>d.weight).length],["CHECK-INS",dd.filter(d=>d.daily).length]].map(([l,v])=>`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px">${l}</div><div style="font-size:16px;font-weight:700;color:var(--t2)">${v}</div></div>`).join("")}</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${top.length?12:0}px">${[["SHOTS",shots],["WEIGH-INS",dd.filter(d=>d.weight).length],["CHECK-INS",dd.filter(d=>d.daily).length]].map(([l,v])=>`<div><div class="nx-expanded-fact-label">${l}</div><div style="font-size:16px;font-weight:700;color:var(--t2)">${v}</div></div>`).join("")}</div>
     ${top.length?`<div><div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:6px">MOST LOGGED SYMPTOMS</div><div style="display:flex;gap:6px;flex-wrap:wrap">${top.map(([n,c])=>`<span class="pill" style="background:rgba(255,255,255,.05);color:var(--t3);border:1px solid #2e2e2e">${esc(n)} ×${c}</span>`).join("")}</div></div>`:""}
   </div>`;
   return html;
@@ -797,101 +833,76 @@ function monthView() {
 }
 
 function logsView() {
-  // Collect all dates that have ANY data (not just check-ins)
-  const allDates = new Set([
-    ...state.dailyLogs.map(l=>dayKey(l.date)),
-    ...state.weightLogs.map(w=>dayKey(w.date)),
-    ...state.measurementLogs.map(m=>dayKey(m.date)),
-    ...state.macroLogs.map(m=>dayKey(m.date)),
-    ...(state.supplementLogs||[]).map(s=>dayKey(s.date)),
-  ]);
-  const sortedDates = [...allDates].sort((a,b)=>b.localeCompare(a));
-
-  return `<div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">＋ Add log <span aria-hidden="true">⌄</span></button>
-  <div id="nx-add-log-menu" class="nx-add-log-menu" hidden>
-    <button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Macros</button><button class="qa-supp" type="button">Supplements</button>
-  </div></div>
-  ${!sortedDates.length?`<div style="color:var(--t4);font-size:13px;text-align:center;padding:40px 0">No logs yet. Choose Add log to start.</div>`:""}
-  ${sortedDates.map(dk=>{
-    const l    = state.dailyLogs.find(x=>dayKey(x.date)===dk);
-    const wt   = state.weightLogs.find(x=>dayKey(x.date)===dk);
-    const meas = state.measurementLogs.find(x=>dayKey(x.date)===dk);
-    const macro= state.macroLogs.find(x=>dayKey(x.date)===dk);
-    const supp = (state.supplementLogs||[]).find(x=>dayKey(x.date)===dk);
-    const mood = l?MOODS.find(m=>m.v===l.mood):null;
-    const updates = l?(l.updates||[]).sort((a,b)=>new Date(a.time)-new Date(b.time)):[];
-    const isToday = dk===localDate();
-    const dateLabel = fmtDate(dk);
-    const dataRow = (icon,color,content,editBtn,delBtn) =>
-      `<div class="nx-log-entry">
-        <span class="nx-log-entry-icon" aria-hidden="true">${icon}</span>
-        <div class="nx-log-entry-content">${content}</div>
-        <div class="nx-log-entry-actions">${editBtn}${delBtn}</div>
-      </div>`;
-    const editBtnHtml = (cls,id) => `<button class="${cls}" data-id="${id}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`;
-    const delBtnHtml  = (cls,id) => `<button class="${cls}" data-id="${id}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`;
-
-    const entryCount=[!!l,!!wt,!!meas,!!macro,!!(supp?.taken?.length)].filter(Boolean).length;
-    return `<article class="nx-log-day">
-      <div class="nx-log-day-header">
-        <div class="nx-log-day-title">${dateLabel}${isToday?`<span class="nx-log-today">Today</span>`:""}</div>
-        <span class="nx-log-day-count">${entryCount} ${entryCount===1?"entry":"entries"}</span>
-      </div>
-      <div class="nx-log-day-body">
-
-      ${l?dataRow(
-        mood?mood.emoji:"🔘", mood?mood.color:"var(--t3)",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Check-in</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
-          <span style="font-size:13px;font-weight:600;color:${mood?mood.color:"var(--t2)"}">${mood?mood.label:"—"}</span>
-          ${l.compound?`<span style="font-size:10px;color:var(--t4)">· ${esc(l.compound)}</span>`:""}
-          ${updates.length?`<span class="pill" style="background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;font-size:10px">＋${updates.length}</span>`:""}
-        </div>
-        ${l.symptoms&&l.symptoms.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px">${l.symptoms.map(s=>`<span class="pill" style="background:var(--surface-2);color:var(--t3);border:1px solid var(--border);font-size:10px">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div>`:""}
-        ${l.notes?`<div style="font-size:11px;color:var(--t3);font-style:italic">"${esc(l.notes)}"</div>`:""}`,
-        isToday
-          ? `<button class="opentodaysheet" data-id="${l.id}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">View</button>`
-          : editBtnHtml("editdaily",l.id),
-        delBtnHtml("deldaily",l.id)
-      ):""}
-
-      ${wt?dataRow("⚖","#8AB4FF",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Weight</div><span style="font-size:13px;font-weight:650;color:#8AB4FF">${esc(wt.weight)} ${state.settings.weightUnit}</span>${wt.notes?` <span style="font-size:11px;color:var(--t4);font-style:italic">"${esc(wt.notes)}"</span>`:""}`,
-        editBtnHtml("editweight",wt.id), delBtnHtml("delweight",wt.id)
-      ):""}
-
-      ${meas?dataRow("📏","#FF9CC8",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Measurements</div><div style="display:flex;gap:12px;flex-wrap:wrap">${MEASURES.filter(([k])=>meas[k]).map(([k,l,col])=>`<span style="font-size:12px;color:${col}">${l}: <b>${esc(meas[k])}</b> ${state.settings.measureUnit}</span>`).join("")}</div>${meas.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(meas.notes)}"</div>`:""}`,
-        editBtnHtml("editmeasure",meas.id), delBtnHtml("delmeasure",meas.id)
-      ):""}
-
-      ${macro?dataRow("🍽","#F9C87D",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Nutrition</div><div style="display:flex;gap:10px;flex-wrap:wrap">${[["Calories",macro.calories,"kcal","#F9C87D"],["Protein",macro.protein,"g","#C8FF9C"],["Carbs",macro.carbs,"g","#9CC8FF"],["Fat",macro.fat,"g","#FFB84D"]].filter(([,v])=>v).map(([n,v,u,c])=>`<span style="font-size:12px;color:${c}">${n}: <b>${esc(v)}</b> ${u}</span>`).join("")}</div>${macro.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:3px">"${esc(macro.notes)}"</div>`:""}`,
-        editBtnHtml("editmacro",macro.id), delBtnHtml("delmacro",macro.id)
-      ):""}
-
-      ${supp?.taken?.length?dataRow("💊","#C8FF9C",
-        `<div style="font-size:10px;color:var(--t4);margin-bottom:3px">Supplements</div><div style="display:flex;gap:6px;flex-wrap:wrap">${supp.taken.map(s=>`<span class="pill" style="background:#C8FF9C18;color:#C8FF9C;border:1px solid #C8FF9C33;font-size:11px">${esc(s)}</span>`).join("")}</div>`,
-        `<button class="edit-supp-log" data-date="${dk}" style="border:1px solid var(--border);border-radius:5px;color:var(--t3);font-size:10px;padding:2px 7px">Edit</button>`,
-        `<button class="del-supp-log" data-date="${dk}" style="color:var(--t5);font-size:13px;padding:2px 5px">✕</button>`
-      ):""}
-
-      ${updates.length?`<details class="nx-log-updates"><summary>${updates.length} check-in ${updates.length===1?"update":"updates"} <span aria-hidden="true">⌄</span></summary><div class="nx-log-updates-content">
-        ${updates.map(u=>`<div class="nx-log-update">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:10px;color:#A78BFA;margin-bottom:4px">${new Date(u.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"})}</div>
-            ${u.symptoms&&u.symptoms.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px">${u.symptoms.map(s=>`<span class="pill" style="background:var(--surface-2);color:var(--t3);border:1px solid var(--border);font-size:10px">${esc(typeof s==="string"?s:s.name+" "+"•".repeat(s.intensity||1))}</span>`).join("")}</div>`:""}
-            ${u.notes?`<div style="font-size:11px;color:var(--t3);font-style:italic">"${esc(u.notes)}"</div>`:""}
-          </div>
-          <button class="edit-update" data-uid="${u.id}" data-lid="${l&&l.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:2px 7px;align-self:flex-start;margin-right:4px">✏</button>
-          <button class="del-update" data-uid="${u.id}" data-lid="${l&&l.id}" style="color:var(--t5);font-size:13px;align-self:flex-start">✕</button>
-        </div>`).join("")}
-        ${isToday?`<button class="opentodaysheet" data-id="${l&&l.id}" style="width:100%;font-size:11px;color:#A78BFA;padding:5px 12px;border-radius:7px;background:#A78BFA18;border:1px solid #A78BFA44;margin-top:4px">＋ Add update</button>`:""}
-      </div></details>`:""}
-      </div>
-    </article>`;
-  }).join("")}`;
+  const icon=(name)=>{const paths={
+    "clipboard-check":'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M9 12l2 2 4-4"/>',
+    "scale":'<path d="M5 4h14a2 2 0 0 1 2 2v13H3V6a2 2 0 0 1 2-2Z"/><path d="M9 10a3 3 0 0 1 6 0M12 10l2-2"/>',
+    "ruler":'<path d="m3 17 14-14 4 4L7 21zM8 12l3 3M12 8l3 3"/>',
+    "utensils":'<path d="M4 3v8a4 4 0 0 0 8 0V3M8 3v18M19 3v18M16 9h3"/>',
+    "pill":'<path d="m10 4 10 10a5 5 0 0 1-7 7L3 11a5 5 0 0 1 7-7ZM8 16l8-8"/>',
+    "syringe":'<path d="m4 20 6-6M14 3l7 7M11 6l7 7M13 4l7 7M7 10l7 7-3 3-7-7z"/>',
+    "plus":'<path d="M12 5v14M5 12h14"/>',
+    "ellipsis":'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>'
+  };return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths["clipboard-check"])+'</svg>';};
+  const byDate={};
+  const put=(date,type,label,detail,actions="",extra="",time="")=>{
+    const key=dayKey(date);if(!key)return;
+    (byDate[key] ||= []).push({type,label,detail,actions,extra,time});
+  };
+  const actionButtons=(cls,del,id,date)=>{
+    const attr=date?'data-date="'+esc(date)+'"':'data-id="'+esc(id)+'"';
+    return '<button type="button" class="'+cls+'" '+attr+'>Edit</button><button type="button" class="'+del+'" '+attr+'>Delete</button>';
+  };
+  (state.dailyLogs||[]).forEach(l=>{
+    const mood=MOODS.find(m=>m.v===l.mood);
+    const symptoms=(l.symptoms||[]).map(v=>typeof v==="string"?v:v.name).filter(Boolean);
+    const updates=(l.updates||[]);
+    put(l.date,"Check-in",mood?mood.label:"Check-in recorded",symptoms.length?symptoms.length+" symptoms recorded":"Daily reflection recorded",
+      (dayKey(l.date)===localDate()?'<button class="opentodaysheet" data-id="'+esc(l.id)+'">View / edit</button>':'<button class="editdaily" data-id="'+esc(l.id)+'">Edit</button>')+'<button class="deldaily" data-id="'+esc(l.id)+'">Delete</button>',
+      (l.notes?'<p>'+esc(l.notes)+'</p>':'')+(symptoms.length?'<p>Symptoms: '+esc(symptoms.join(", "))+'</p>':'')+
+      updates.map(u=>'<div class="nx-journal-update"><span>'+esc(u.time?new Date(u.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}):"Update")+'</span><p>'+esc(u.notes||"Symptom update")+'</p><button class="edit-update" data-lid="'+esc(l.id)+'" data-uid="'+esc(u.id)+'">Edit update</button><button class="del-update" data-lid="'+esc(l.id)+'" data-uid="'+esc(u.id)+'">Delete update</button></div>').join(""),
+      l.date);
+  });
+  (state.weightLogs||[]).forEach(w=>put(w.date,"Weight",w.weight+" "+(state.settings.weightUnit||"lb"),"Weight recorded",actionButtons("editweight","delweight",w.id),w.notes?'<p>'+esc(w.notes)+'</p>':""));
+  (state.measurementLogs||[]).forEach(m=>put(m.date,"Measurements","Body measurements","Measurements recorded",actionButtons("editmeasure","delmeasure",m.id),
+    '<p>'+MEASURES.filter(([k])=>m[k]!=null&&m[k]!=="").map(([k,label])=>esc(label)+": "+esc(m[k])).join(" · ")+'</p>'));
+  (state.macroLogs||[]).forEach(m=>put(m.date,"Nutrition",(m.calories||0)+" kcal","Protein "+(m.protein||0)+" g · Carbs "+(m.carbs||0)+" g",actionButtons("editmacro","delmacro",m.id),
+    m.notes?'<p>'+esc(m.notes)+'</p>':""));
+  (state.supplementLogs||[]).forEach(m=>{if(!(m.taken||[]).length)return;const k=dayKey(m.date);put(m.date,"Supplements",(m.taken||[]).length+" supplements recorded",(m.taken||[]).slice(0,3).join(" · "),
+    '<button class="edit-supp-log" data-date="'+esc(k)+'">Edit</button><button class="del-supp-log" data-date="'+esc(k)+'">Delete</button>',
+    '<p>'+esc((m.taken||[]).join(", "))+'</p>');});
+  // Dose events belong in Full Day History as well as Calendar. They are read-only
+  // here; existing dose-history editing is preserved in its original workflow.
+  Object.entries(allPeptides()).forEach(([name,compound])=>{
+    (compound.doses||[]).forEach(d=>{
+      if(!d.date)return;
+      const unit=cfg(name).unit||"";
+      put(d.date,"Dose",name,(d.dose?d.dose+" "+unit+" · ":"")+"Recorded dose","",
+        '<p>'+esc([d.site?"Site: "+d.site:"",d.notes||""].filter(Boolean).join(" · ")||"View compound history for full dose details.")+'</p>');
+    });
+  });
+  const allDates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  const mode=state._logsMode||"day";
+  const chosen=state._logsDate||localDate();
+  const filter=state._logsFilter||"All";
+  const search=(state._logsSearch||"").trim().toLowerCase();
+  const matches=(e)=>!search||[e.type,e.label,e.detail].some(v=>String(v||"").toLowerCase().includes(search));
+  const types=["All","Dose","Check-in","Weight","Measurements","Nutrition","Supplements"];
+  const row=(entry,index,date)=>{
+    const symbol={"Dose":"syringe","Check-in":"clipboard-check","Weight":"scale","Measurements":"ruler","Nutrition":"utensils","Supplements":"pill"}[entry.type];
+    const id="nx-journal-"+date+"-"+index;
+    return '<div class="nx-journal-row"><div class="nx-journal-mark">'+icon(symbol)+'</div><div class="nx-journal-main"><div class="nx-journal-line"><strong>'+esc(entry.type)+'</strong><span>'+esc(entry.time?new Date(entry.time).toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit"}):date)+'</span></div><div class="nx-journal-title">'+esc(entry.label)+'</div><div class="nx-journal-desc">'+esc(entry.detail)+'</div><div class="nx-journal-extra" id="'+id+'" hidden>'+entry.extra+'<div class="nx-journal-actions">'+entry.actions+'</div></div></div><button type="button" class="nx-journal-more" data-panel="'+id+'" aria-label="View '+esc(entry.type)+' details" aria-expanded="false">'+icon("ellipsis")+'</button></div>';
+  };
+  const renderDate=(date)=>{
+    const items=(byDate[date]||[]).filter(e=>mode==="day"||((filter==="All"||e.type===filter)&&matches(e)));
+    return '<section class="nx-journal-day"><div class="nx-journal-date"><h3>'+esc(fmtDate(date))+'</h3><span>'+items.length+' entr'+(items.length===1?'y':'ies')+'</span></div><div class="nx-journal-rows">'+(items.map((e,i)=>row(e,i,date)).join("")||'<p class="nx-journal-empty">No records for this date.</p>')+'</div></section>';
+  };
+  const visible=allDates.filter(date=>byDate[date].some(e=>(filter==="All"||e.type===filter)&&matches(e)));
+  return '<div class="nx-journal" aria-label="Activity logs"><div class="nx-journal-top"><div><h2>Activity logs</h2><p>Your complete personal history</p></div><div class="nx-log-add-wrap"><button type="button" id="nx-add-log-toggle" class="nx-add-log-btn" aria-expanded="false" aria-controls="nx-add-log-menu">'+icon("plus")+' Add log</button><div id="nx-add-log-menu" class="nx-add-log-menu" hidden><button class="qa-daily" type="button">Check-in</button><button class="qa-weight" type="button">Weight</button><button class="qa-measure" type="button">Measurements</button><button class="qa-macro" type="button">Nutrition</button><button class="qa-supp" type="button">Supplements</button></div></div></div>'+
+  '<div class="seg nx-journal-modes"><button type="button" class="nx-journal-mode '+(mode==="day"?"on":"")+'" data-mode="day">Day view</button><button type="button" class="nx-journal-mode '+(mode==="all"?"on":"")+'" data-mode="all">All logs</button></div>'+
+  (mode==="day"?'<div class="nx-journal-picker"><label for="nx-journal-date">View a whole day</label><input type="date" id="nx-journal-date" value="'+esc(chosen)+'"><button type="button" id="nx-journal-today">Today</button><button type="button" class="nx-journal-day-step" data-offset="-1" aria-label="Previous day">Previous</button><button type="button" class="nx-journal-day-step" data-offset="1" aria-label="Next day">Next</button></div>'+renderDate(chosen)
+  :'<label class="nx-journal-search-label" for="nx-journal-search">Search your history</label><input id="nx-journal-search" class="nx-journal-search" type="search" placeholder="Search records" value="'+esc(state._logsSearch||"") +'" autocomplete="off"><div class="nx-journal-filters" role="group" aria-label="Filter logs">'+types.map(type=>'<button type="button" data-type="'+type+'" class="nx-journal-filter '+(filter===type?"on":"")+'">'+type+'</button>').join("")+'</div>'+(visible.length?visible.map(renderDate).join(""):'')+'<p id="nx-journal-search-empty" class="nx-journal-empty" '+(visible.length?'hidden':'')+'>No matching entries.</p>')+
+  '</div>';
 }
-
 
 function learnContent() {
   const sub = state._learnSub || "guides";

@@ -1214,6 +1214,37 @@ function deletePreparedDose(pd) {
     showErrorBanner("This prepared blend has no exact vial transaction link. Deletion was blocked to protect inventory.");
     return false;
   }
+  // A prepared record with an explicit source must never be deleted while its
+  // unused stock cannot be restored to that exact kit/vial. The missing-source
+  // state is preserved for user review instead of silently discarding history.
+  const unusedCount=Number(pd.remainingCount)||0;
+  // Older prepared records sometimes have no exact vial provenance. Do not
+  // infer the original source from today's open vial, or erase an unknown
+  // allocation: retain the record for explicit historical reconciliation.
+  if(unusedCount>0){
+    const components=getSyringeComponents(pd);
+    const ambiguous=components.length===0 || components.some(comp=>
+      !Array.isArray(comp.allocations) || comp.allocations.length===0 ||
+      comp.allocations.some(a=>a.kitId==null ||
+        (a.vialId==null && !a.ledgerId)));
+    if(ambiguous){
+      showErrorBanner("Original prepared-dose source is unverified. Deletion was blocked; review historical vial attribution before changing inventory.");
+      return false;
+    }
+  }
+  if(unusedCount>0){
+    const missing=getSyringeComponents(pd).some(comp=>(comp.allocations||[]).some(a=>{
+      const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
+      if(!kit)return true;
+      if(kit.isBlend)return false; // exact blend ledger checked above
+      migrateKitToV2(kit);
+      return a.vialId!=null && !(kit.vials||[]).some(v=>String(v.id)===String(a.vialId) && Number.isFinite(Number(v.remainingMg)));
+    }));
+    if(missing){
+      showErrorBanner("A prepared dose's original source vial is missing. Deletion was blocked to preserve inventory history.");
+      return false;
+    }
+  }
   const totalCount = pd.count || 1;
   const remainingCount = pd.remainingCount || 0;
   const shareRemaining = totalCount>0 ? remainingCount/totalCount : 0;
@@ -1424,9 +1455,9 @@ function manageKitMenu(kitId) {
         ...(!isDone && sealed>0 ? [{id:isBlend?"blend-open":"open",name:"Open new vial",desc:"Open or reconstitute an available sealed vial",icon:"+"}] : []),
         ...(hasRecon ? [{id:"prepare",name:"Prepare doses",desc:"Use the shared preparation and inventory flow",icon:"◌"}] : []),
         ...(hasOpen ? [{id:isBlend?"blend-finish":"finish-vial",name:"Finish this vial",desc:"Complete the current vial and reconcile remaining inventory",icon:"✓"}] : []),
-        ...(!isBlend && hasOpen ? [{id:"add-to-open",name:"Add to open vial",desc:"Record a physical addition with inventory accounting",icon:"+"}] : []),
+        ...(hasOpen ? [{id:isBlend?"blend-correct-open":"add-to-open",name:isBlend?"Correct open vial balance":"Add to open vial",desc:isBlend?"Record more existing blend remaining than estimated":"Record a physical addition with inventory accounting",icon:"+"}] : []),
         {id:isBlend?"blend-restock":"restock",name:"Add vials",desc:"Add sealed inventory to this existing kit",icon:"+"},
-        ...(!isBlend && hasRecon ? [{id:"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
+        ...(hasRecon ? [{id:isBlend?"blend-outflow":"outflow",name:"Log outflow",desc:"Record unused, transferred or discarded amount",icon:"↗"}] : [])
       ]
     },
     {
@@ -1436,7 +1467,7 @@ function manageKitMenu(kitId) {
         ...(!isBlend?[{id:"classify-premix",name:"Mark as premixed blend",desc:"Preserve existing vials and dose history",icon:"▤"}]:[]),
         {id:"details",name:"Kit details & history",desc:"Inventory, vial and dose history",icon:"▤"},
         ...(!isBlend ? [{id:"intel",name:"Compound intel",desc:"View existing compound insights",icon:"ⓘ"}] : []),
-        ...(isBlend ? [] : isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory",icon:"↺"}] : [{id:"finish-kit",name:"Finish this kit",desc:"Record completion or discard using existing checks",icon:"✓"}])
+        ...(isDone ? [{id:"reopen",name:"Reopen kit",desc:"Return a finished kit to inventory management",icon:"↺"}] : [{id:isBlend?"blend-finish-kit":"finish-kit",name:"Finish this kit",desc:"Review and record completion of this physical kit",icon:"✓"}])
       ]
     },
     {
@@ -1461,6 +1492,7 @@ function manageKitMenu(kitId) {
     details:'<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h4"/>',
     intel:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
     reopen:'<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>',
+    "blend-finish-kit":'<path d="m5 12 5 5L20 7"/>',
     "finish-kit":'<path d="m5 12 5 5L20 7"/>',
     delete:'<path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v6M14 11v6"/>'
   };
@@ -1501,12 +1533,15 @@ function manageKitMenu(kitId) {
     else if(id==="prepare") prepareDosesModal(s.name);
     else if(id==="finish-vial") finishVialModal(kitId);
     else if(id==="add-to-open") addToOpenVialModal(kitId);
+    else if(id==="blend-correct-open") correctBlendOpenVialBalanceModal(kitId);
     else if(id==="restock") addVialsModal(kitId);
     else if(id==="outflow") logWasteModal(kitId);
+    else if(id==="blend-outflow") blendLogOutflowModal(kitId);
     else if(id==="classify-premix") classifyLegacyPremixedKit(kitId);
     else if(id==="edit") { if(isBlend && s.blendInventoryMode!=="legacy-v2") addBlendKitModal(s); else supplyModal(s); }
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
+    else if(id==="blend-finish-kit") finishBlendKitModal(kitId);
     else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
     else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",()=>{
       const kit=state.supplies.find(x=>x.id===kitId);
@@ -2100,7 +2135,8 @@ function applyNexusSheetStructure(modal) {
   const candidate = last && last.tagName === 'DIV' && last.children.length >= 2 && last.children.length <= 3 &&
     Array.from(last.children).every(el => el.tagName === 'BUTTON') &&
     !last.querySelector('input,textarea,select') &&
-    !last.hasAttribute('id');
+    !last.hasAttribute('id') &&
+    !last.classList.contains('nx-ingredient-actions'); // Keep stacked Trends actions intact.
   if (candidate && !modal.querySelector('.nx-dose-footer')) {
     const footer = document.createElement('div'); footer.className = 'nx-unified-footer';
     while (last.firstChild) footer.appendChild(last.firstChild);
@@ -2189,10 +2225,35 @@ document.addEventListener("keydown", e => { if(e.key === "Escape" && modalEl) { 
 // just observing "nothing responds" with no way to know why.
 let errBannerEl = null;
 function showErrorBanner(msg) {
+  // Expected validation is not a JavaScript exception. Keep feedback within the
+  // current modal rather than showing a developer/debugging alert.
+  const active=document.querySelector(".modal");
+  const existing=document.querySelector("#nx-validation-message");
+  if(existing)existing.remove();
+  if(active){
+    const notice=document.createElement("div");
+    notice.id="nx-validation-message";
+    notice.setAttribute("role","alert");
+    notice.style.cssText="margin:10px 0;padding:12px 14px;border-radius:10px;border:1px solid #e6a34a;background:rgba(230,163,74,.12);color:var(--t1);font-size:13px;line-height:1.45";
+    notice.textContent=String(msg);
+    const footer=active.querySelector(".btn-primary")?.parentElement;
+    if(footer)footer.insertBefore(notice,footer.firstChild);else active.appendChild(notice);
+    return;
+  }
+  // No modal: accessible, dismissible application-level validation toast.
+  const notice=document.createElement("div");
+  notice.id="nx-validation-message";
+  notice.setAttribute("role","alert");
+  notice.style.cssText="position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:16px;right:16px;z-index:99998;padding:12px 14px;border-radius:12px;border:1px solid #e6a34a;background:var(--surface);color:var(--t1);box-shadow:0 8px 26px #0003;font-size:13px";
+  notice.textContent=String(msg);
+  notice.onclick=()=>notice.remove();
+  document.body.appendChild(notice);
+}
+function showScriptErrorBanner(msg) {
   if (errBannerEl) errBannerEl.remove();
   errBannerEl = h(`<div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#3a0d0d;border-bottom:1px solid #ff7c7c66;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));font-family:monospace;font-size:11px;color:#ffb3b3;max-height:40vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">
-      <span style="font-weight:700;color:#ff7c7c">⚠ SCRIPT ERROR — tap to copy, then send to Claude</span>
+      <span style="font-weight:700;color:#ff7c7c">⚠ Unexpected application error — tap details to copy</span>
       <button id="err-x" style="flex-shrink:0;color:#ffb3b3;font-size:16px;background:transparent;border:none">✕</button>
     </div>
     <div id="err-text" style="white-space:pre-wrap;word-break:break-word">${esc(msg)}</div>
@@ -2204,10 +2265,10 @@ function showErrorBanner(msg) {
   document.body.appendChild(errBannerEl);
 }
 window.addEventListener("error", (e) => {
-  showErrorBanner(`${e.message}\n${e.filename||""}:${e.lineno||"?"}:${e.colno||"?"}\n${(e.error&&e.error.stack)||""}`);
+  showScriptErrorBanner(`${e.message}\n${e.filename||""}:${e.lineno||"?"}:${e.colno||"?"}\n${(e.error&&e.error.stack)||""}`);
 });
 window.addEventListener("unhandledrejection", (e) => {
-  showErrorBanner(`Unhandled promise rejection: ${(e.reason&&e.reason.message)||e.reason}\n${(e.reason&&e.reason.stack)||""}`);
+  showScriptErrorBanner(`Unhandled promise rejection: ${(e.reason&&e.reason.message)||e.reason}\n${(e.reason&&e.reason.stack)||""}`);
 });
 
 // One clear logging entry point. Existing individual dose modal and combo modal remain authoritative.
@@ -2225,7 +2286,7 @@ function todayLogDosePicker() {
     )).map(([n])=>n),...blendNames])];
   const m=openModal(`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px"><div><div class="mono" style="font-size:11px;letter-spacing:1px;color:var(--t4)">TODAY</div><h2 style="font-size:20px;color:var(--t1);margin:3px 0">Log a dose</h2></div><button type="button" id="x" aria-label="Close" style="font-size:20px;color:var(--t3)">✕</button></div>
     <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Choose a compound or log multiple compounds together.</p>
-    ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#A78BFA!important;color:#211630!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid #A78BFA;border-radius:12px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
+    ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#C6A6F2!important;background-image:none!important;box-shadow:none!important;color:#24182F!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid transparent;border-radius:13px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
     ${names.length>=2 ? `<button type="button" id="today-dose-combo" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t1);background:var(--surface-2);font-weight:600">Log combo dose →</button>` : ""}
   `,"#A78BFA");
   m.classList.add("nx-dose-picker");

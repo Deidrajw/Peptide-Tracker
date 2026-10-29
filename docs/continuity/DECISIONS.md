@@ -285,3 +285,622 @@
 
 ### 2026-10-25 — Preview-approved UI hierarchy released to GitHub main
 - User accepted PR #119 iPhone preview following targeted `Use multiple vials` 20px inline/12px block padding override against legacy #toggle-multi selector, plus visually compact 28px vial ellipsis within 44px touch target. PR merged to main at 3ef22b98326fc54777dbbef8ca9b013082f8f9fb; version retained v0.9.20-beta. Production parity remains separate signoff, not implied by GitHub merge.
+
+
+### 2026-10-25 — Hybrid design proposal, preview authorization only
+- User chose Hybrid (Soft Depth dark/violet, Porcelain warm-ivory light, Obsidian precision for dense data) and authorized building a source-derived full-app preview. They explicitly prohibited merge/deployment pending approval.
+- Use a branch-only fourth stylesheet, preserve existing JS/data schema and all five navigation destinations; no entitlement, sync, onboarding consent gate or medical calculation changes in this visual sprint. Keep unmerged #118/#110 separate. Browser CI cannot replace user physical-device signoff.
+
+
+### 2026-10-25 — User feedback mandates component-level visual differentiation
+- User rejected overly subtle hybrid CSS-only styling and asked to actually implement earlier proposals. Replace actual Today component hierarchy, progress visualization, cards, actions and schedule grouping on existing design branch, while retaining all event classes/IDs and stored logic. Physical design acceptance remains pending. No production deployment approval.
+
+
+### 2026-10-25 — Stash follows user-liked Today 2.0 depth
+- User confirmed meaningful Today progress and approved continuing next screen: Stash. Visual work only on draft PR #123; use original Stash markup/classes/actions, preserve 28px ellipsis in 44px target, kit/vial math, status, details tabs and blend records. No production deployment or blanket design-system signoff.
+
+
+### 2026-10-25 — Stash polish direction confirmed
+- Keep Hybrid but avoid decorative localized top-right glows in kit cards and Inventory Overview. Favor smooth low-contrast matte gradients and hierarchy over spotlight effects.
+- Model Compound kits / Supplies after a native-style two-segment switcher (Nexus-original styling), preserving route/tab logic.
+- Keep Needs Attention information but visually soften into compact rows; do not hide alerts or change their triggers.
+- Apply coherent action-sheet foundation first, then inspect each kit modal for header, save, keyboard, scroll, focus, math and light contrast. Production deployment still prohibited.
+
+
+### 2026-10-25 — Visual feedback on action hierarchy and attention
+- Keep kit actions rounded with little/no elevation inside already elevated cards. Today Log Dose may remain primary and Check-In secondary, but geometry/spacing/type must match. Remove amber left rail from Needs Attention; use neutral rows and plum review link. Distinct design from alert urgency semantics.
+- Inventory Resolution allocation confusion is a separate UX workflow task; do not silently alter source-vial allocations, single dose record, Draw confirmations or inventory deduction math.
+
+
+### 2026-10-25 — Kit-card two-action design approved for preview
+- User prefers one context-sensitive inventory action plus a visible Kit Details disclosure. Prepare Doses should stay accessible from existing kit ellipsis sheet and top Stash Prepare control, not appear as a third equally weighted persistent button. Never show Open New Vial if existing conditions do not permit it, and do not change calculations or preparation behaviour.
+
+
+### 2026-10-25 — Inventory Resolution design scope after full-app gate
+- User requested clearer vial source allocation without changing math/ledger. Number and distinguish source rows, label confirm-draw more explicitly, preserve existing editable mg allocations, calculated units, draft flow, multi-vial depletion, undo and exactly one administered dose. Do not assume duplicate 'current vial' rows mean duplicate physical inventory without evidence. No automatic allocation changes authorized.
+
+
+### 2026-10-25 — Stash modal priority and safety boundary
+- Prepare Dose and Open New Vial must get individual UI audits for hierarchy, field size, live concentration, source identity, keyboard, overflow, safe-area sticky confirmation and blend/standard parity. Preserve existing formulas, vial ledger, saved drafts, one-dose semantics and validations; CSS may improve target sizes and readability without rewriting arithmetic. No production deployment approval.
+
+
+### 2026-10-25 — Today full-screen scope reminder
+- User approves finishing Today visual redesign including schedule selector, compact AND expanded compound cards, alerts, insights, actions, tracking and weekly detail. Never erase expanded insights/history to imitate a cleaner compact card. Prioritize these protected workflows and outstanding Stash modals before moving to Protocol/Plans. Keep Hybrid visual identity across modes; preview only.
+
+
+### 2026-10-25 — Today complete coverage reiteration
+- User explicitly wants original entire-app redesign not forgotten; finish lower Today including expanded compound, insights and alerts, tracking disclosure, week summary and all actions before Protocol/Plans. Preserve richer expanded information rather than reducing it to compact scan card. No production merge/deploy approval.
+
+
+### 2026-10-25 — Today expanded-card follow-up
+- PR #123 preview only: group existing Last/Next facts in equal-width surface while preserving schedule calculations, insights, site notices and actions. Intel receives plain label and aria label. Not production-approved.
+
+
+### 2026-10-25 — Segmented Today information follow-up
+- Approved direction via user screenshot: pill-shaped segmented Insights / History / Details in expanded Today compounds. Keep status and primary logging visible; supporting notices under Insights and site rotation text without emoji. Preview-coded only, iPhone acceptance pending.
+
+
+### Today compact action cleanup
+- 2026-10-25 approved preview-only: compact compound disclosure explicitly says View details; expanded card uses existing Insights/History/Details for history; no repeated card-level History CTA. Compact action row adapts to present actions, site warning says repeated-site count rather than generic Site rotation, obsolete history instruction removed. Preserve history edit/view and overdue/reschedule handlers. Do not merge/deploy.
+
+
+### Log Dose preview trial
+- 2026-10-25 user approved trial of calmer Log Dose action hierarchy on PR #123. Scheduled action should reflect getDoseStatus.showLogBtn; no duplicate scheduled Log Dose in completed/upcoming/paused states. Preserve separate unscheduled/retrospective entry routes and overdue resolution.
+
+
+### 2026-10-25 — Log Dose preview release checkpoint
+- 2026-10-25 — Approved preview-only Log Dose UX: show scheduled Log Dose when occurrence is actionable; show What happened? for older overdue situations, completed-state readout after recorded scheduled dose, with available controls filling the row. Keep unscheduled/retroactive logging and other existing logging flows discoverable; preserve drafts/source allocations/math. Cloudflare preview deployment approval does not authorize merge or production deployment.
+
+
+### 2026-10-25 — Today expanded screenshot audit
+- 2026-10-25 user feedback: use matching compact/expanded compound typography and disclosures; status should appear once, preserve overdue context; align ring with date facts; keep immediately useful Last/Next only, move long-running statistics to Details and logging pattern to Insights; give Today doses normal heading and minimum 44px actions; show Taken today confirmation when a single daily occurrence is recorded. Approved as design refinement only; no deployment authorized.
+
+
+### 2026-10-25 — Critical preview syntax hotfix
+- 2026-10-25 blocker response: syntax errors that stop preview startup take priority over UX polish; apply minimal source edit only, never reset production localStorage or change dose data. The `Taken today` timestamp must close both JavaScript interpolations correctly. Validation requires source JS parse plus browser startup; parse alone is not enough. PR #123 remains preview-only.
+
+
+### 2026-10-25 — Today card milestone consolidation
+- 2026-10-25 Consolidated milestone decision: stop presenting individual card polish commits as acceptance. Preserve one labelled compact/expanded disclosure, a single overdue status, history inside tabs, context-sensitive dose action, no duplicate History CTA, and 44px+ touch targets. Keep calculation and persistence code unchanged. Validate the entire card-state matrix before advancing to Daily Tracking. No production approval.
+
+
+### Today milestone — source-derived QA gate (2026-10-25)
+- Preview test policy: source-specific Today changes must be tested against a FULL APP DEMO rebuilt from the exact design-branch head, never a stale checked-in demo snapshot. Card UX acceptance means state-complete testing and user visual approval, not source string assertions alone. PR #123 remains draft.
+
+
+### Today disclosure / typography parity (2026-10-25)
+- 2026-10-25: compact/expanded View details and Hide details are ONE shared UI: `nxTodayDisclosureInner(expanded)` text plus same outline SVG, with only label/rotation differing; both wrapped in `.nx-today-disclosure`. Same `.nx-today-compound-name` class for typography in both states, including paused compact card. No ellipsis reintroduced. Design preview code, not yet user accepted or merged.
+
+
+### Today grouped correction pass — 2026-10-25
+Today insights must be record-grounded, not imply pharmacokinetic certainty or suggest escalation. A phase countdown should only appear when an actual dated phase boundary exists. Completed-dose main action uses existing Dose completed / Scheduled entry recorded, not an additional Log Dose CTA. One chevron per disclosure, Intel must read as a button.
+
+
+### 2026-10-25 — Today visual reset based on iPhone screenshot
+- 2026-10-25 user rejected stacked insight boxes and generic Wear Off Window / Protocol review wording. Use one calm segmented surface with typography and whitespace rather than nested cards; avoid duplicating overdue state between ring and insight summary as much as practicable. Scope native system-font stack to Today compound cards during preview, subject to visual acceptance. Legacy pseudo chevron must be suppressed by selector valid independent of screen ancestry; do not add a second chevron. Do not invent phase countdowns absent actual schedules.
+
+
+### 2026-10-25 — Root disclosure and Insight cleanup
+- 2026-10-25 root-level correction: legacy `.compound-collapse-btn::after` pseudo icon must exclude `.nx-today-disclosure` rather than append endless override rules. Insights content should be a single unboxed surface using typographic grouping, not nested mini-cards. Pharmacokinetic or treatment-effect claims must not be presented as if derived from tracked records. No invented countdown until actual dated milestone source verified. Preview only, not approved for merge.
+
+
+### 2026-10-25 — Root cause of persistent duplicate chevron / insight borders
+- 2026-10-25 clear user direction: eliminate decorative bordered container around Insights and unnecessary per-row dividers; preserve pill-shaped segmented control. Shared View/Hide details must show exactly one SVG chevron; inspect all ordered CSS layers including nexus-disclosures.css, not just base and preview. No production merge/deploy.
+
+
+### 2026-10-25 — Compact Today divider correction
+- Compact Today compound cards should not contain horizontal separator rails between heading, last/next facts and context. Use spacing and typographic hierarchy; do not alter the outer card boundary or unrelated surfaces.
+
+
+### 2026-10-25 — Today Daily Tracking and Activity design direction approved
+- **Approval:** User explicitly liked and approved the interactive Today proposal (compact expandable Daily Tracking, Today / This Week numerical Your Activity report, short Coming Up list with View Calendar). This is **design approval for implementation and review**, NOT permission to merge PR #123 or deploy to production.
+- **Daily Tracking:** collapsed by default, shows saved-record-derived recorded/pending state; progress denominator includes user-selected tracking activities, not all possible activities. Preserve editable Check-In, searchable multi-select Supplements, Weight and Nutrition.
+- **Activity:** retain motivating completion count and progress indicator; scheduled occurrence completion is distinct from total actual dose records, future items are not 'missed', unresolved / skipped / rescheduled remain distinct, multiple same-day occurrences cannot double-count. Today / This Week views use consistent metrics shared with later Calendar 2.0.
+- **Coming Up:** 2–3 meaningful upcoming occurrences with date/compound/time and grounded status, Calendar navigation; no redundant week strip or completed items repeated.
+- **Weekly:** compact retrospective summary integrated coherently with Activity, separate from future Coming Up.
+- **Design:** midnight lavender/porcelain, minimal borders, readable hierarchy, 44–48px targets, both themes at 320/390, reduced motion; retain functionality and data protections.
+- **Implementation status:** not yet implemented or accepted on physical iPhone. Keep draft PR #123 unmerged, production unchanged pending explicit release approval.
+
+
+### 2026-10-25 — Today 2.0 implementation details (DRAFT PR #123)
+- Approved UI direction implemented for review using existing saved dailyLogs, supplementLogs, weightLogs and macroLogs, and canonical `getWeekInstances` / `getDayOccurrences` for scheduled occurrence reporting.
+- Tracking selection is a preference only, under `state.settings.todayTrackingActivities` (array of `checkin`, `supplements`, `weight`, `nutrition`). Defaults to Check-In + Supplements where absent; toggles must never synthesize activity entries or change historical logs.
+- Scheduled completion excludes `adhoc` events, keeps explicit skipped/moved/missed distinct from unresolved overdue, and reports only elapsed week dates; planned future occurrences are in Coming Up, not "missed".
+- Explicit scheduled times shown only when configured; no fabricated 8 AM default is presented as user-intended. No dose engine or inventory schema changes. This remains CODED / AWAITING TEST, not accepted or approved for production.
+
+
+### 2026-10-25 — Dark Today hero intensity adjustment
+- **User feedback:** previous dark hero gradient too aggressive. Approved direction: calmer, low-contrast obsidian-violet panel; use lavender as an accent for progress ring, bar and action, not as the main card fill. Implemented for draft review only at `0ae00f2`; do not infer release approval.
+
+
+### 2026-10-25 — Today dark-mode hero: no decorative corner orb
+- User identified top-right glow as aggressive in screenshot. **Approved targeted correction:** eliminate the decorative `::before` radial orb in dark mode while retaining the quiet dark card gradient, progress ring, and lavender data accents. No global lighting changes, light-mode change or production merge approval.
+
+
+### 2026-10-25 — Today dark hero gradient refinement
+- User rejected the nearly flat dark surface after removing the concentrated upper-right glow. Approved direction: retain a visibly graduated full-card dark gradient, matching light mode's even gradient distribution, without a circular spotlight. Implemented dark linear gradient #443451 → #382B46 at 64% → #30263D in draft PR #123; corner orb stays disabled. Light-theme CSS and progress accents unchanged. No release approval.
+
+
+### 2026-10-25 — Actual dark-mode selector (verified)
+- Nexus dark theme is represented by the ABSENCE of `html[data-theme]`, while light explicitly uses `data-theme="light"` in assets/js/01-nexus.js. For theme-specific Today CSS, use `html:not([data-theme="light"])` for dark instead of `html[data-theme="dark"]`, unless theme bootstrapping is separately migrated with testing. This fixes the incorrectly applied hero override without touching stored theme choice.
+
+
+### 2026-10-26 — Today information hierarchy and Needs Attention UX approved
+- User approved replacement of duplicated **Your Activity** Today/This Week segment with a compact **This Week** report, retaining actual scheduled-occurrence metrics and optional weekly drill-down without duplicating Daily Summary.
+- User approved removing the redundant upper **Coming up** preview. Exactly one **Coming up** section should remain on Today (below reporting), grounded in the schedule engine.
+- User selected **Option A** for Needs Attention: a compact, visible alert chip (with actionable count) that opens a polished iPhone bottom sheet, rather than the current 9-item inline expansion. Sheet groups actionable notices by urgency/type, retains real existing actions/navigation (Stash, Protocol, Check-In, Calendar) and management/dismissal/snooze behavior. Distinguish urgent safety-related notices from ordinary reminders; never hide critical alerts solely because the list is collapsed.
+- Design approval is authorization to implement and test on **draft PR #123**, not approval to merge or deploy. Preserve production storage, reminders and calculation logic. Physical iPhone, parity package and full regression still required after changes.
+
+
+### 2026-10-26 — Calendar 2.0 tracking hub and Today boundary APPROVED
+- Calendar becomes Schedule & Activity Hub with week/month outcome summaries, progress trends, navigable grid, categorized selected-day history (Completed, Scheduled/Unresolved, Wellness), and searchable chronological logs. Remove the current undifferentiated compound wall; preserve every dose, schedule, check-in, weight, supplement, nutrition and edit route. Calendar remains current-month by default; numeric weight across months stays available. Do not count future/unresolved events as missed.
+- Today stays action-focused: daily hero, quick log actions, Daily Tracking, one Coming Up, bell alerts, and only a compact This Week pulse. Detailed weekly metrics and trends belong to Calendar. Today and Calendar must use the same saved-history/schedule outcome computation, without modifying stored historical records.
+- User approved design direction, NOT merge or production release. Implement on draft PR #123, test with isolated full-app DEMO and exact-source LIVE ZIP at 320/390 both themes before acceptance.
+
+
+### 2026-10-26 — Calendar Logs interaction pattern APPROVED
+- Day View displays every available saved event on one date (check-ins with updates, weights, measurements, macros, supplements, recorded doses). A date picker and Today shortcut enable navigation; entering from a Calendar selected day preselects that date. All Logs spans dates and applies optional type filters. Consistent outline SVG icons replace emojis. Dense Edit/Delete buttons move inside optional record details using existing app edit/delete handlers, preserving history and data integrity. Dose read-only summary in journal keeps existing compound history as editor; no new destructive flows. No data schema migration. Design approval is not permission to merge/deploy.
+
+
+### 2026-10-26 — Logs full-day UX approved
+- Logs support **Day View** for all record types on a date and **All Logs** for cross-date type filtering. Selected Calendar day must open full history for that date. Use consistent outline SVG icons instead of emojis. Previous/Today/Next and date picker must remain accessible at mobile widths. Keep existing dose-history and check-in update editing paths, saved dates, supplement selections and delete-confirmation safeguards; no destructive migrations. Design approval does not authorize merge/deployment.
+
+
+## 2026-10-26 — Calendar Logs approved implementation boundary
+- User confirms **Calendar Logs Day View + All Logs approved and implemented** on draft PR #123 branch. Approved implementation does **not** authorize merging or deploying.
+- Preserve historical day-specific records, editors and dose history without rewriting stored dates, localStorage or production accounts. Keep draft PR and isolate full-app DEMO fictional data. Physical iPhone signoff and comprehensive 320/390 light/dark browser verification remain separate gates.
+
+
+## 2026-10-26 — Approved Add Log / weekly score optical fixes
+- APPROVED targeted visual patch on draft PR #123. Add Log uses plus icon only; eliminate redundant chevron. Popup tiles horizontally/vertically center labels; Measurements must not escape bounds; Supplements stays full-width. Today This week must show a perceptible gap in `29% so far`. Retain layout intent, real handlers, saved records, 44px actions, light/dark and mobile sizing. No merge or deployment authorization.
+
+
+## 2026-10-26 — Calendar Month icons require minor Sprint 01 follow-up
+- **User feedback recorded, design choice unresolved:** physical iPhone Sprint 01 passed with minor visual issues specifically in the **Calendar Month icons**. Exact change not specified; no replacement icon set or appearance is approved yet. Do not change other Calendar workflows or saved records as part of icon follow-up. Keep PR #123 draft; release approval not provided.
+
+
+## 2026-10-26 — Sprint 02 draft Stash visual kickoff
+- Sprint 02 Protocol hierarchy design preview was presented; user authorized continuation (“let's go”), **not release**. First code scope is CSS-only Stash card accessibility / compact text treatment on draft PR #123; preserve exact existing Manage, Kit details, Overview/Vials/History behaviors and vial/dose calculations. No approval to merge/deploy.
+
+
+## 2026-10-26 — Sprint 02A Protocol implementation boundary
+- User requested to continue after Protocol card preview. Approved direction: improve hierarchy and accessibility without changing status, saved phases, scheduling, compound calculations, first-dose/activate functionality or the Manage bottom sheet. CSS-only change `6479eea` implements long-name wrapping, 44px Manage/primary targets, focused detail summary and restrained card treatment. No data/schema migration; still requires latest-head QA and real iPhone preview acceptance. PR remains draft, unmerged and undeployed.
+
+
+## 2026-10-26 — Shared Open New Vial form, Sprint 02
+- Existing blend and non-blend open-vial buttons both reach `openNewVialModal`; keep this canonical handler. Approved Sprint 02 continuation permits scoped visual layout and accessibility correction only: responsive two-column grid at iPhone widths, BAC water full-width, readable inputs/confirm action. Do not change vial allocation, blend math, validation, history or storage. PR #123 remains draft; no merge/deploy approval.
+
+
+## 2026-10-26 — Sprint 02A Protocol + Plans must precede Stash
+- User clarified approved Protocol/Plans visual proposal was a request to **implement** the Protocol/Plans changes, not to move directly to Stash. Respect feature priority. Protocol cards now foreground status, phase and schedule with purpose/linked goal in existing details. Plans goal/research cards get consistent design hierarchy, and Protocol/Plans Manage sheets gain explicit headings and accessible close buttons. Preserve existing handlers, timeline, goal detail, Intel, edit/pause/resume/history and existing calculation/storage semantics. Earlier Stash draft edits remain but no further Stash work before Protocol acceptance. No merge/deploy approval.
+
+
+## 2026-10-26 Protocol interior ideas — USER PROPOSALS, NOT IMPLEMENTED. Requested: celebration animation on completion; notification when phase changes; countdown of protocol days; current phase displayed in compound details. Source already supports in-app phase transition alerts (3 days, 1 day, transition day), not closed-app push. Existing getProtocolPhaseInfo function is pause-aware and authoritative. Preview designs before behavioral changes; completion only on explicit action with reduced-motion alternative and no replay; decide how a protocol-wide countdown handles differing compound durations. No deployment approval.
+
+
+## 2026-10-26 — Protocol interior implementation and pause parity
+- User approved proceeding with four Protocol enhancements. Current draft source contains countdown, completion celebration and compound roadmap; existing phase alert settings/notifications reused rather than adding browser push. Roadmap visual phase markers must use the pausedAt effective day when paused, matching `getProtocolPhaseInfo`; commit `177e25fa`. Keep PR draft and do not deploy without separate authorization.
+
+
+## 2026-10-26 — Approved Protocol interior behaviors (draft implementation)
+- Completion celebration is a one-time visual response to explicitly confirmed Mark completed, never on screen refresh; reduced-motion static checkmark. Existing saved doses/phases unaffected.
+- Reuse existing in-app transition alerts at 3 days, 1 day and phase start; IDs include protocol ID and compound to prevent same-compound collisions across protocols. No promise of closed-app push notifications.
+- Protocol countdown uses the latest computed phase end of all compounds with known start and phases, respecting accumulated pauses; paused, not started, scheduled elapsed, and manually completed states are explicit. Each compound shows its own current phase and roadmap with existing pause-aware source-of-truth. No automatic complete state change, no dose logic changes. Draft PR only.
+
+
+## 2026-10-26 — User Protocol details feedback, design pending
+- User dislikes pill/timing/active-dosing cluster under Schedule & phases and present flat phase roadmap; wants redesigned surfaces. Also requests better Create/Edit builder and optional notification when recorded compound use continues after scheduled protocol phases. These are **design requests, not final approval of proposed layout**.
+- Distinguish schedule elapsed from user-confirmed protocol completion; never mark complete automatically. Explicit future scheduled activity is not proof of dose administration. Do not infer medical advice or automatically extend/copy dosing. Validate historical record association before prompting, respect dismissal, preserve localStorage, existing data and manual pause/resume.
+- Possible post-pause stale filter rendering is an observation to reproduce, not a confirmed defect diagnosis. Keep PR draft and production unchanged.
+
+
+## 2026-10-26 — Approved vertical phase timeline
+User explicitly approved the vertical phase timeline proposal. It replaces the flat phase list, emphasizes current stage, and distinguishes completed/current/upcoming. Keep existing phase dates and pause-aware calculation. Other proposed expanded-card, elapsed schedule prompt and builder redesign remain unapproved/not coded.
+
+
+## 2026-10-26 — Simplify expanded Protocol compound content after approved roadmap
+- User approved vertical phase timeline and said continue. Replace duplicate mini Gantt, route pill, and active-dosing text in expanded Schedule & phases with one coherent per-compound progress row linking to the existing approved vertical roadmap. Preserve schedule cadence and goal details, and avoid equating planned phases with administered doses. No new storage or dosage behavior. PR remains draft.
+
+
+## 2026-10-26 — Dedicated Protocol Overview screen approved
+- User explicitly clarified the approved screenshot: detail navigation with Overview / Compound / Completion segmented tabs, a ring countdown and estimated scheduled end, a compound/phase card list, and optional phase alert explanation. This is the intended **Protocol detail screen**, separate from lightweight list cards; do not replace it with only card expansion. The initial draft implementation uses a sheet and preserves the approved vertical compound roadmap, existing Manage actions, data history and phase math. The prior compact list card remains entry context. Product equivalence and physical iPhone signoff are still pending; no merge/deploy.
+
+
+## 2026-10-26 — Approved Protocol information architecture de-duplication
+- User approved simpler Protocol navigation. Protocol list must be compact with only name/status, short timeline progress and next actions. Dedicated Overview is source for ring countdown, estimated schedule end and compound progress. Tapping a compound opens approved vertical timeline. Remove duplicated Compound tab and status-only Completion tab; retain completion/pause/edit and other existing actions via Manage. List must not expose another Schedule & phases expansion. Progress is derived from canonical pause-aware timeline, never a placeholder. Approval does not authorize merge/deploy.
+
+
+## 2026-10-26 — Regression contract updated for approved Protocol IA
+- Tests must verify the current approved compact Protocol list → dedicated Overview → vertical phase timeline/back navigation; do not require the removed inline Schedule & phases disclosure. Protected Today/Calendar/Stash behaviors and dose logs remain tested. Plans Research ellipsis must visibly contrast from its parent card; override the higher-specificity `#app` rule rather than masking test failure.
+
+
+## 2026-10-26 — Protocol artifact provenance and acceptance
+- An Actions `pull_request` build uses the tested PR merge ref (not branch head) and its merge SHA is the build manifest source_commit; compare it with PR merge_commit_sha before calling builds exact-source. User acceptance must inspect extracted full isolated standalone DEMO and actual 320/390 light/dark browser screenshots; automated tests are not physical iPhone checks. Keep PR draft and Cloudflare unchanged.
+
+
+## 2026-10-26 — Contextual Plans/Protocol navigation approved
+- Keep Protocol list compact; Protocol Overview links directly to an associated goal, not a generic Plans button. Goals Connections links back to existing Protocol Overview. No shortcut when a goal is unlinked. Never infer goal progress from protocol activity. User approved design, not deployment.
+
+ 
+## 2026-10-26 — Next-chat Plans priority confirmed
+- User accepted moving on to Plans. Start with **Goals** and contextual relationships to Protocol, then Research and Shopping. A goal's Connections should point to its genuine linked protocol; Protocol Overview should point to its actual linked goal. Avoid generic navigation buttons, duplicated content, status inference, automatic goal progress or medical recommendations. Preserve standalone Goals/Research/Shopping flows.
+- Design approval to proceed is not an instruction to merge/deploy. Current PR #123 stays draft; source and tests must be reverified in next chat.
+
+## 2026-10-26 — Goals-first progress hierarchy (approved direction, draft implementation)
+- Show goal identity, status, real progress evidence, target date, connections, and detail navigation. Numeric percent appears only with comparable saved weight records, configured source, valid baseline and target; subjective, milestones and exploratory goals show descriptive states, not fabricated completion. No protocol-to-goal causality or automatic status inference.
+- Preserve Goal detail Overview/Connections/Activity, management actions, linked Protocol Overview route and Check-In original-record links. CSS/markup changes in draft PR #123 only; no release approval.
+
+## 2026-10-26 — Goal density refinement
+- User rejected earlier Goals card pass as visually unchanged. Approved direction is less redundant summary, fewer stacked labels and more compact hierarchy; preserve accessible 44px controls and actual evidence. Draft implementation only, user visual acceptance pending.
+
+## 2026-10-26 — Original Goals preview is approved visual reference
+- User provided two screenshots of the original in-chat Goals preview and rejected the subsequent compact experiment. Preserve original spacious card hierarchy (title, status, target, meaningful progress, linked protocol, View goal details) and original detail sections. Do not independently reimagine or compact an already-approved preview. `d98d7b78`, `7727191f` are draft restoration commits; real UI acceptance pending.
+
+## 2026-10-26 — Approved Add/Edit Goal four-step wizard
+- Approved design: one persistent bottom-sheet modal, four stages Basics / Progress / Connections / Review, Back/Continue and final Save, existing Goal data and Check-In associations preserved, no intermediate persisted writes. Reuse same wizard for Add and Edit. Implemented draft, browser/device acceptance pending.
+- Log Dose: quick vs guided concept approved for exploration; **not authorized as a dose accounting change**. Design and validate separately; preserve source selection, drafts, blend splits and inventory confirmation.
+
+## 2026-10-26 — Log Dose Quick/Guided design proposal (not coded)
+- Quick Log should reduce repeated entry for known routine doses while ALWAYS exposing compound, route, amount, vial source, calculated units and deductions for explicit confirmation. No silent recording or silently chosen source. Guided Log splits (1) compound/amount, (2) vial/source and allocation, (3) final review with per-vial and per-component breakdown for blends. Preserve original state, drafts, source selection, dose history, insufficient-inventory blocking and editing. User has approved design exploration, not merge/deploy or bypass of validation. Hybrid Soft Depth + Porcelain + Obsidian Precision styling.
+
+## 2026-10-26 — Log Dose implementation boundary
+- Approved Quick Log / Guided Log layout; first code pass uses one existing `doseModal` and single `#save` handler, no independent calculator or storage path. Guided stage navigation does not persist dose; preserve existing logic and user-entered values while changing stages. Do not conflate implemented mode switching with full approved quick-review parity: Quick separate review is not yet coded and must be validated before approval. Both themes use Soft Depth / Porcelain / Obsidian Precision.
+
+## 2026-10-26 — Log Dose final confirmation requirement
+- Every mode must explicitly reach Review before record Save becomes available. Step errors are visible and anchored near sticky footer. Preserve original validated Save logic; UI prevalidation for amount/date must not become a new independent inventory calculator. Quick uses 2 steps; Guided uses 3. User-approved visual direction unchanged. Audit checklist must be compact, avoid warped per-row controls.
+
+## 2026-10-26 — Ledger truth and safe wording
+- Render in-memory allocation rows in Review rather than copied DOM text; label as read-only preview and retain original save-time vial/stock checks. Never claim a blend is deducted until original Save validates it. Native unit conversion is required for each displayed vial allocation. Use 46px sticky actions and reduced-motion preferences.
+
+## 2026-10-26 — Source identification in Review
+- Show actual selected open vial ID (not generic `open`), identify prepared batch amount and count, display per-vial rows from the existing allocation records; never invent blend-specific deductions before authoritative save calculation.
+
+## 2026-10-26 — Approved Goals header action and next design focus
+- User approved moving Add Goal above goal cards after Plans subnavigation. Keep the current Goal wizard/editing logic, goals data and visual system; remove bottom duplicate only. Approved next design sequence: Research UI/UX audit and preview first; Shopping audit next. Do not treat visual discussion as release authorization. Research remains an existing queue with status, Intel, reason/notes and management; Shopping remains Needed/Ordered/Received with categories, quantities and goal links; retain all actions and data.
+
+## 2026-10-26 — Approved Research and Shopping UI: single-chevron rule
+- User approved refined Research card, and explicitly prohibited double chevrons (notes + Compound Intel). Research uses one right-pointing chevron only on Compound Intel; personal notes use a 44px labeled Show/Hide button with notebook outline icon and aria-expanded, no chevron. Keep research management ellipsis and original bottom action sheet; original compound picker, status, reason, goal, notes, edit/delete and Intel remain. Add Research and Add Item moved to top like Goals. Shopping keeps Needed/Ordered/Received and original add/edit/delete without new status automation.
+
+## 2026-10-26 — Plans default and single Intel divider
+- Approved by user: normal entry into Plans from More (or generic Plans quick action) defaults to Goals every time. Explicit Research Queue / Shopping List shortcuts and manual sub-tab switching remain functional. Research card has exactly one separator above Compound Intel, exactly one Intel chevron, and no notes chevron. Preserve all records and navigation destinations.
+
+## 2026-10-26 — Research and Shopping form design
+- User approved aligning the Add/Edit Research and Add/Edit Item modals with premium Nexus styling without adding wizard steps or modifying records. Keep both single-page; reuse original compound picker, values, field IDs, status options, linked goal/protocol choices and save handlers. Visible field labels, one header close action and one sticky Save primary action; no emoji category labels. User-approved one-chevron-per-Research-card rule and Plans→Goals default retained.
+
+## 2026-10-26 — Stash parity polish implementation scope
+- The existing Stash hierarchy stays authoritative, including active/frozen kits, open vial and blend math, prepared batches, history and deductions. Add/Edit Kit receives presentation-only header, associated labels, one sticky primary action, touch/focus and reduced redundant panel depth. Prepared list uses one outline chevron. Needs-attention actions gain a 44px minimum. Existing separate blend editor unchanged until source-faithful parity tests; never silently convert formats or fields.
+
+## 2026-10-26 — User-requested Stash workflow redesign direction (design proposed, approval pending)
+- User requests guided Add/Edit Kit similar to Log Dose (reduce scrolling), searchable compound combobox, Prepared Doses redesign, and complete Stash secondary-screen visual consistency audit. Proposed three-step Kit Details → Preparation & Storage → Review & Save. Existing blend editor must receive consistent experience without flattening component-level vial math. Do not alter inventory identifiers, existing vial accounting, prepared allocations, history or storage; no destructive migration. Proposal not yet coded or approved as exact interaction design.
+
+## 2026-10-26 — Stash guided wizard approval boundary clarified
+- Source audit found guided ordinary kit editor and searchable compound combobox already coded on draft PR #123 despite previous DESIGN ONLY handoff. Treat code as **draft candidate, not approved or accepted**; review exact interaction and validation before extending changes.
+- Keep ordinary kit `#ssave` and separate blend-kit authoritative handlers, original element IDs, vial-count/strength edit restrictions, per-component accounting, review-only navigation and no intermediate persistence. Do not merge or deploy without explicit approval.
+
+## 2026-10-26 — Approved compound selection visual for guided Blend Kit
+- User selected dark screenshot style: labelled Compound field, selected value with a single chevron; an expanded bordered browse surface containing Search compounds input and vertically stacked matching choices. Retain type-to-search and keyboard/VoiceOver accessibility. Apply this pattern to ordinary and blend kit selectors as alignment work, not to reimplement calculation logic.
+- Approved continuation of a 3-step guided Add/Edit Blend Kit presentation in PR #123. The original `#bk-save`, component composition, existing-vial locked ratio, historic allocations, and single physical inventory representation remain authoritative. This is approval to implement in draft, not permission to merge/deploy.
+
+## 2026-10-26 — Guided blend workflow acceptance follow-up
+- User approved the three-step guided Blend Kit workflow and the screenshot-style dropdown with embedded search. Current source `assets/js/03-nexus.js` already includes a three-step blend wizard and component dropdown search, preserving original `#bk-save` handler. Review uncovered two BAC inputs on new blends (`#bk-bac` and `#bk-bac-edit`) with potentially divergent displayed review/save semantics. Existing edit must preserve opened-vial ratios and historical allocations. Do not merge/deploy until targeted validation, UI acceptance, and full-app artifact inspection. Next action: reconcile BAC UI and test blend save and history at 320/390 light/dark.
+
+## 2026-10-26 — Approved guided Blend BAC single-source interpretation
+- A blend has one BAC-water-per-vial input in Preparation & storage (`#bk-bac-edit`), and final Review must display the exact value the existing authoritative `#bk-save` will persist for a new kit. The old duplicate new-kit `#bk-bac` field is removed. Preserve the existing composition and history protections. Code is draft; not release approval.
+
+## 2026-10-26 — User rejected guided Stash UI, approved pattern reaffirmed
+- Physical iPhone screenshots explicitly REJECT the current ordinary and blend kit UI. The source-faithful acceptance requirement is one searchable editable combobox per compound (type OR browse same field, no double native select), same stepper geometry as approved Goal wizard without redundant `1 / 3`, single sticky Continue/Back or final Save—not both, and *new blend open vial defaults false*. Match approved modal typography/safe-area and eliminate isolated blue text actions. Keep original inventory accounting and draft PR; new corrective code awaits visual/functional acceptance.
+
+## 2026-10-26 — iPhone visual feedback overrides green CI screenshots
+- User rejected detached blue Continue, double compound controls and poor step/content hierarchy. Source-faithful iPhone screenshots are design acceptance evidence; automated functional PASS is insufficient. Follow previously approved Goals hierarchy with one persistent modal header, one step label/progress bar, one strong sticky Continue/Save CTA and readable review rows; unique editable combobox instead of native+search duplicates. Blank/sealed default for new blend, preserve canonical handlers. User has not yet approved post-fix screenshots; PR stays draft.
+
+## 2026-10-26/27 — Guided Stash design acceptance candidate, not production approval
+- User's original screenshot complaints are addressed in draft source: consistent Goal-like three-step bar, no duplicated step counter, permanent Blend title and close, visible 48px purple Continue and final Review-only Save, native backing selectors hidden, full-width single editable compound combobox per blend component, unselected open-vial default. Verified browser screenshots at 390 dark/light and 320 dark Blend (artifact 12699630393). This is automated preview acceptance only; **user's physical iPhone signoff pending**. Existing inventory/save math remains canonical; no deployment permitted without explicit approval.
+
+## 2026-10-26 — Approved Blend Kit one-row compound composition
+- Each blend composition row displays editable searchable compound combobox, mg per vial and 44px remove on the **same horizontal line**, including narrow iPhone widths. Keep combobox sufficiently flexible to type and view options, mg compact, and custom Other field below only when selected. Layout-only; no changes to component math, saved records or ledger.
+
+## 2026-10-26/27 — One-row Blend visual detail decision
+- Required one horizontal row: editable searchable compound name, compact mg value, and 44px remove control. `269f468d` screenshots show aligned controls at 320/390 in both themes, but full compound search placeholder was clipped; shorten visible placeholder to `Search…` (draft `3bab1d9a`), keep accessibility name complete. Do not increase row width or stack mg. Acceptance contingent on latest screenshot and iPhone check.
+
+## 2026-10-26 — Global scrolling principle and Blend sheet feedback
+- User's actual iPhone preview screenshots explicitly reject dark rectangular footer backdrop, expanding in-flow compound results, and a flat verbose Review; require floating suggestion overlay (no added row height), clear visual component quantities, and footer visually continuous with sheet.
+- **App-wide approved principle:** avoid nested scrolling inside modals, popovers or other windows. Long content must use one primary page-level scroll surface or be split into digestible steps; preserve keyboard focus, safe-area and fixed primary action. Do NOT globally disable overflow on existing forms: audit screen by screen and convert long workflows to full-screen editor where necessary; do not clip fields.
+
+## 2026-10-26 — Blend editor uses mobile full-page editing surface
+- To meet the app-wide no-nested-scrolling principle, prefer a full-screen mobile workflow for long guided Blend editing instead of a partial-height sheet with internal scrollbar. Keep one primary editing scroll surface, a sticky primary action, keyboard-safe suggestions that overlay without increasing form height, and iOS safe area support. Treat other modal conversions as a separate systematic audit; don't globally hide content or disable scroll.
+
+## 2026-10-26 — Compound combobox type, suggestions, browse-all (USER APPROVED)
+- One editable field allows searching, tapping for five quick alphabetical suggestions, and a **View all compounds** action opening a full-screen searchable library (one primary scroll only, no nested scrolling). Selection returns to the original form/step without clearing entered vials or mg. Native select remains authoritative backing control where legacy handlers use it. First rollout ordinary Stash Kit + Blend Kit on draft PR #123; broader Protocol/Plans/global picker standard approved in principle but needs per-flow implementation/QA.
+
+## 2026-10-26 — Shared compound browser rollout implementation
+- Approved quick five-result and full-library Browse All is now implemented in draft Stash single/blend editors, Protocol Stack and reusable Plans/Research/Protocol Idea compound multi-select. Existing selection arrays and route/goal/save handlers are authoritative. Browser returns to editor without a separate record write. Quick result lists must not scroll inside a scrolling window. Other compound filters are not automatically converted without separate audit.
+
+
+## 2026-10-26 — Shared kit creation review and actions (user-requested)
+- **Status:** Approved refinement, implementation on draft PR #123; not deployed or real-device accepted.
+- Both standard and blend kit creation use a consistent three-step progress label, final step `Review & save`, review hero and two-column inventory/preparation facts. Blend additionally lists its compound composition; standard highlights its single compound and strength per physical vial. New-kit primary action uses **Save Kit** for both, while edits retain Save Changes.
+- Continue and Save use one subtle primary lavender depth treatment with 16px horizontal footer insets; Back remains secondary. Avoid full-bleed bottom action backgrounds. No business logic or storage migration permitted for presentation consistency.
+
+
+## 2026-10-26 — Unified standard/blend Add Kit UI, user-approved
+- **Approval:** User approved the unified Step 3 review design in chat after comparing real iPhone screenshots of standard Add Kit and Blend Kit on Cloudflare preview. Approval is for UI/UX parity, **not** for PR merge or production deployment.
+- Both workflows use `Step 3 of 3 · Review & save`, the same progress treatment, consistent heading, one unified review-card hierarchy and grouped `Inventory and preparation` details. Blends additionally show composition and total mg per physical vial; standard kits show the regular compound/strength information. Preserve each workflow's actual data semantics, validations, calculations, editing and vial histories.
+- Use **Add to Stash** as the final primary CTA for both creation flows (do not use Save Kit for only one). Keep Back/Continue button hierarchy, 16px minimum horizontal sheet/footer inset on both sides and consistent touch targets. All wizard primary buttons should share purposeful styling; avoid inconsistent glowing/3D shadow only on the final CTA. Prefer clean lavender primary controls with legible dark text, pressed/focus/disabled states.
+- User's real iPhone screenshots reveal different header spacing, step placement, review density, footer background, border/gradient, and nested-scroll indications across standard versus blend. Apply shared components/tokens rather than isolated overrides. Correct sheet-specific scrolling and keyboard/safe-area conflicts in this scoped UX parity task; **broader app-wide no-nested-scrolling audit remains separate unfinished work**.
+- **Status:** design APPROVED; implementation and post-change device QA not verified. Protect all saved records, storage key, single and blended kit accounting; no destructive migration, merge or deploy without explicit authorization.
+
+
+## 2026-10-26 — Approved preference and idea classification protocol
+**Status: APPROVED documentation workflow.** Classify all newly captured Nexus feedback under three clearly distinct categories:
+1. **Approved preferences / principles:** User explicitly approves a reusable design or interaction rule. Record date, scope, rationale, protected behaviors, and where else it should apply. Approval of a design is **not** authorization to merge or deploy.
+2. **Ideas to explore:** Brainstorms, tentative likes/dislikes, potential enhancements, alternatives or unanswered questions. Record as proposed, with relevant screens and a next evaluation criterion. Do **not** present as approved, coded or scheduled.
+3. **Implemented decisions:** Link exact code commit/PR, tests, source and deployment state. Do **not** equate coded with tested, merged, deployed or physical-iPhone accepted. Track those gates separately.
+
+**Practice:** Capture the underlying rule behind specific screenshots and comments, not merely the one-off correction. Keep user wording where useful, explain trade-offs and superseded choices, and never silently promote proposals to approval or claims of implementation. Cross-reference PROJECT_STATE for active priority and RELEASE_HISTORY/REGRESSION for verifiable evidence. Existing historical entries are not presumed exhaustively recategorized.
+
+
+## 2026-10-26 — Add Kit UX feedback: currency parity and required-field discovery
+- **Approved direction (user visual feedback):** Standard and Blend creation should present consistent Continue/back/final-action insets and styling, including 16px horizontal space around footer buttons. Intro copy in standard Add Kit may remain near the top; do not move or delete merely to force parity. Blend uniquely requires composition; otherwise group equivalent kit details consistently.
+- **Approved functional parity:** Blend Kit must allow selecting a currency like standard Add Kit. Both offer expanded available currency codes: CAD, USD, GBP, EUR, AUD, NZD, CHF, JPY, CNY, HKD, SGD, INR, MXN, BRL, ZAR; retain historical currency codes on editing. New kits default CAD. No exchange-rate conversions or changes to historical costs.
+- **IDEA TO EXPLORE / SEPARATE FEATURE LOG:** User requested an app-wide **mandatory/required fields audit**. Audit forms screen-by-screen (especially Standard/Blend Kit) for essentials, clear optional labels, validation, visible required markers and inline error feedback. Define exact required fields and legacy edit/import behavior before implementation. Do not add mandatory validation across existing workflows without review/approval; preserve backward compatibility and existing stored records.
+- **STATUS:** currency selector and UI styling coded on draft PR #123, pending browser/native iPhone checks. Mandatory-fields audit only logged, NOT approved field-by-field, implemented or deployed. Separate app-wide scrolling audit remains unfinished.
+
+
+## 2026-10-26 — Standard/Blend Kit title typography parity (APPROVED)
+- User compared actual screenshots: regular `Add kit` rendered as a small tracked/monospace label while `Add blend kit` used a prominent bold heading. Both are equivalent creation workflows and should use the same 20px/750-weight/1.25-line-height title hierarchy, normal letter spacing, matching 44px close controls, and 14px/700 step labels. Keep wording specific to kit/blend and retain standard intro at top as user accepted it. No data or inventory logic changes. CSS fix committed to draft PR #123 at `2852088a5f83e8312b6a6767dc2efdac0f62d1c7`. This is approved design, **not authorization to merge/deploy**.
+
+
+## 2026-10-26 — User-approved optional kit test results and blend analytics discovery
+- User requests **optional Upload test results** on **Step 2 · Preparation & storage** in both standard Add Kit and Add Blend Kit, ideally beneath Notes, with consistent UX. Existing code in `assets/js/03-nexus.js` already defines `nexusKitTestResultControl` and inserts it before the save action in both workflows, storing small attachments as `testResultAttachment` on kit records; do not create a second attachment system. Verify the attachment appears in step 2 after wizard DOM moves nodes, survives create/edit/export/restore, and is viewable later. PDF/JPG/PNG/WebP <=750KB currently supported; HEIC is not. Attachment storage limits and browser quota must be assessed before expansion.
+- User approves the rest of the current kit layout; avoid unrelated redesign. After completing attachment QA, **next screen priority: Supplies**.
+- **Future discovery, not yet approved for implementation:** Blend Composition & Dose Analytics should expose actual per-compound contributions from blend doses in relevant Stash, Log Dose, and history views. Audit current stored composition, recorded dose components and totals first; avoid double counting and protect historical logs. Do not conflate physical-vial deductions with per-component amounts.
+- Mandatory-fields and app-wide nested-scrolling audits remain separate unfinished priorities.
+
+
+## 2026-10-26 — Test results attachment visual correction (approved preview parity)
+- User explicitly rejected the plain blue `Upload test results` link and oversized, dry explanatory paragraph: it did not match the previously shown polished card preview. Preserve the approved Step 2 location beneath Notes and optional behavior, but render a unified bordered, padded card in both Standard and Blend Kit with outline upload icon, `Test results` title, `Optional` pill, concise COA description, full-width `Choose file` outlined 46px action, and subtle concise file limit help. Selected files retain meaningful name/remove/validation feedback. Do not claim image HEIC support or server upload. Do not change record storage semantics or inventory logic.
+- Draft PR #123 only, code `65ac266` and `7d36813`; CI/device acceptance pending. Supplies remains next screen after attachment QA. Mandatory-fields and app-wide nested-scrolling audits separate.
+
+
+## 2026-10-26 — Kit attachment must be reopenable, not download-only (USER REQUIREMENT)
+- User explicitly clarified the core reason to upload test results: **open and view the saved file later**. A filename/download-only Stash action was insufficient.
+- Coded on draft PR #123: both Standard and Blend Step 2 attachment cards expose `View file` after selection, and saved Stash Kit details expose a `View file` action alongside Download. Shared in-app full-screen PDF/image viewer uses temporary local Blob URLs, native PDF frame or image display, close/return, optional download. Does not modify inventory, attachment record schema, history or storage.
+- Preview supported PDF, JPEG, PNG and WebP only; unsupported/imported file blocked. No HEIC support or server upload. Browser runtime + native iPhone Safari PDF viewing/safe-area still acceptance gates, not assumed passing.
+- After attachment acceptance, review Supplies screen. Mandatory-fields and app-wide nested scroll audits remain separate unfinished priorities.
+
+
+## 2026-10-27 — Step 2 Kit/Blend consistency audit from physical iPhone screenshots
+- User confirmed persistent unequal-looking Cost field widths and broader Standard vs Blend layout mismatch, asked assistant to enumerate actual differences and enforce consistency. **Approved reusable principle:** equivalent Step 2 input groups must use the same field order, paired widths, labels, input height, multiline Notes and actions, except truly blend-specific data. The user previously approved keeping Standard Kit's introduction at top, so do not remove it solely to make headers identical.
+- Scope implemented on draft #123: Blend Step 2 now orders BAC+Expiry, Total Cost+Currency, Storage, Notes, Test Results, rather than Storage+Cost and standalone currency; grid uses `repeat(2,minmax(0,1fr))` shared with standard; cost+currency controls use equal width. Standard Notes is now multiline; both labels standardized to TOTAL COST (optional), STORAGE LOCATION, NOTES (optional). Blend open-vial checkbox styled as full-width selection. No change to underlying field IDs, values, validators or inventory mutation handlers.
+- Required-fields audit and app-wide nested scrolling still separately unfinished. Physical iPhone acceptance of this exact UI pending; no merge/deploy approval.
+
+
+## 2026-10-27 — Supplies empty-state UX (targeted design improvement)
+- User identified Stash > Supplies as the next screen for review; screenshot shows a thin green dashed “+ Add Supply” button, weak floating empty-state copy, and excessive blank space. **User direction:** align Add Supply CTA and empty-state UI with the rest of the app, preserving existing inventory behavior.
+- Targeted draft design implemented on PR #123: when no supplies exist, show a single compact centered empty-state card with outline inventory icon, short inviting title, purposeful explanatory copy, and one accessible lavender **Add supply** CTA. Once inventory exists, keep the same add action above the inventory list. No duplicate calls to action in the empty view; button ID `add-equipment` and `equipmentModal(null)` remain unchanged.
+- Scope limited to initial empty presentation and CTA styling; no saved supply schema, consumption, forecasting, reconstitution, editing or delete logic changed. Await visual approval and current-head CI. Mandatory-fields and app-wide nested-scroll audits remain separate unfinished priorities. No merge or production deploy authorization.
+
+
+## 2026-10-27 — Supplies form and populated-card visual alignment (user approved continuation)
+- User approved Supplies empty-state direction and explicitly requested continuing to the **Add Supply form and populated Supplies cards**. Preserve current equipment types, pack units, open/sealed state, BAC water use-by, consumption forecasting, history, restock and editing semantics.
+- Draft PR #123 UI work: Add/Edit Supply heading brought into shared 20px hierarchy, create action `Add to Supplies` / edit `Save changes`, lavender primary actions, equal-width paired fields, 48px touch controls, multiline Notes, existing unit/status fields and logic preserved. Populated supply cards receive unified rounded surface, outlined secondary Details and lavender primary action, consistent spacing and accessible focus treatment. No destructive data changes, nor release approval.
+- App-wide mandatory-fields and nested-scrolling audits remain independent priorities. Historical kit iPhone keyboard/attachment acceptance still outstanding.
+
+
+## 2026-10-27 — Wizard navigation and first-dose Today principle (user requested)
+- User approved investigating/fixing Today-versus-active-Protocol first-dose visibility, then upgrading Protocol and Goal wizards together. Design System 2.0 navigation standard: **Back** for prior step, **Continue** for advancing intermediate steps, explicit final actions (Save Draft, Activate, Save changes/Add Goal). Do not mix “Next →” with “Continue” for equivalent navigation.
+- An active protocol's scheduled first occurrence should be visible on Today even before any logged dose, if due on that date; no fabricated dose record or premature inventory deduction. Future-start, paused and wrong-weekday protocols must not generate a due-today item. Use canonical occurrence logic; verify edge cases before release.
+- Protocol Schedule uses labelled groups and touch-friendly controls; Goal's optional target date is visibly labelled and Check-In connection shows an honest empty state when no observed symptoms exist. Preserve all choices and existing save/data mapping. This code is **draft pending QA**, not a released/fully accepted design.
+
+
+## 2026-10-27 — First-dose UX confirmation (draft QA, not deployment)
+- Preserve the decision that Protocol activation may generate scheduled Today occurrences before the first administration is recorded. The new test fixture verifies an active scheduled first dose is displayed without logging it, while pause/future/wrong-weekday cases remain absent. An automated PASS does not imply medical advice, a dose taken, a physical-device PASS, or authorization to deploy.
+- Maintain the unified Back/Continue convention and clearly labelled date and schedule inputs across Protocol and Goal; obtain visual acceptance before calling both wizards fully complete.
+
+
+## 2026-10-27 — Goal status should be editable without reopening full wizard
+- User requested quick Goal Planned → In progress changes from the ellipsis action sheet. Use four explicit actions with persisted canonical statuses `planned`, `active`, `paused`, `completed`; display `active` as “In progress” in this context, without renaming saved values. Only mutate the selected goal's `status`; never cascade to linked Protocols or dosage history without separate approval. Keep Edit/Delete available; use shared lavender DS2 visual treatment. Implementation is draft pending device/CI acceptance.
+
+- Approved audit direction (2026-10-27): Protocol `Ready for first log` is informational rather than success; avoid neon green. Use neutral title text and shared lavender CTA in both themes, without changing status semantics or log action. Implementation draft pending visual/contrast QA.
+
+
+## 2026-10-27 — Today header grouped controls (draft design decision)
+- Group existing Needs Attention bell, Profile and light/dark theme toggle on one aligned Today header rail, replacing separate top-row/Profile placement on Today only. Retain icons, action handlers, alert badge, profile update dot and non-Today header; do not duplicate actions. Three 44×48px touch targets, safe responsive spacing, outline/focus and accessible labels. Avoid touching schedule/dose state or storage. Approval remains subject to visual iPhone review.
+
+
+## 2026-10-27 — Dose Review source labels and observations disclosure
+- Present *readable source identity first* in Log Dose Review (compound name, vial size/remaining, prepared-dose description), while retaining exact kit/vial and multi-source IDs in an opt-in disclosure for auditability. Never suppress source traceability or change which source is deducted. Explicit dose confirmation continues to invoke original validation/allocation/save code; entering Review is read-only.
+- Keep Observations optional and progressive (collapsed in Quick Log, expanded when editing existing record) so symptoms, notes and escalation remain available without extending the default form. Don't lose entered observations when changing Quick/Guided mode or navigating steps. Approved as part of DS2 continuation, pending device/browser acceptance.
+
+
+## 2026-10-27 — Supplements and Stash details DS2
+- Remove the legacy `Import from Notion` canned supplement action from the public-facing Profile screen. Never delete an existing supplement or historical supplement log as part of removing the importer. Allow a new supplement to be created in the daily Supplements logging sheet, even with an empty catalogue; adding the name saves it to the catalogue and selects it, but recording it as taken still requires the existing explicit Save supplements confirmation.
+- Apply DS2 lavender/neutral hierarchy to Profile's Add, align Stash opened-vial status next to its vial title and constrain Prepare Dose source amount controls without changing allocation/reconstitution math or logging behaviour. Design remains draft pending browser and physical iPhone review.
+
+- Supplements inline creation must also work in Daily Check-In, even when catalogue empty. New catalogue name is selected in unsaved Check-In draft; existing Check-In Save remains the only path recording day-specific supplement use. Historical logs preserved.
+
+
+## 2026-10-27 — Supplement search-first ordering and readable dose sources
+- In Check-In and Supplements logger, searching/browsing and selecting is primary; new supplement creation is fallback BELOW Browse/results and Selected today, not interposed between search and results. Retain search-as-you-type, multi-select, empty catalogue creation and date-specific history.
+- Log Dose editable source rows should never display a long numeric Kit/Vial ID as their primary label. Use compound + Vial sequence and open/finished status; preserve authoritative internal IDs in an optional collapsed disclosure labelled `Source identifiers` for support/traceability. Do not modify allocation IDs, math, source selection, dose confirmation or deductions. This addresses user-submitted physical Safari screenshot, pending acceptance.
+
+- If multiple kits of one compound exist, distinct human-facing kit ordinals (`Kit 1`, `Kit 2`) are needed in addition to vial sequence; neither ordinal replaces persistent IDs. Technical IDs in disclosure must explain why they exist. Never use bare timestamp-length IDs as user-facing kit labels.
+
+
+## 2026-10-27 — Unified supplement combobox / source identifiers / observations (draft implementation)
+- User-approved targeted direction: one search-and-select multi-select for supplements with explicit Add “name” in unmatched results; remove redundant standalone Add input. Catalogue creation selects only the current unsaved entry and **must never log taken** until separate Save. Preserve date-specific history and duplicates by case-insensitive matching.
+- Technical kit/vial identifiers are disclosed in a full-width row below source action controls; underlying authoritative IDs, allocation and maths are unchanged. Human-readable kit/vial labels remain primary.
+- Observations is a separately labeled optional collapsed section in Log Dose; symptoms, intensity and notes remain available, independent of dose save. New mandatory wizard step is NOT approved. Physical iPhone acceptance pending. Draft PR #123 must not merge or deploy without explicit authorization.
+
+
+## 2026-10-27 — Reaction vs Check-In architecture APPROVED, partial implementation
+- User-approved direction: Log Dose captures administration facts only. Separate optional Record Reaction captures an event observed at/after a dose (actual observedAt and recordedAt, intensity, note), linked to persistent dose ID. Daily Check-In remains the place for delayed or ongoing experiences such as perceived sleep, appetite, energy and recovery. Never infer a specific compound caused a symptom or outcome solely from temporal association.
+- Protect prior dose symptoms, notes, escalation, history, backups and inventory. Legacy observations are not auto-migrated or deleted. A dose can have multiple reaction events, and a reaction must not deduct inventory or create an additional dose.
+- **Approved target:** Record Reaction from dose detail and saved-dose action menu, optionally after save, including hours/days later. **Partially coded** access from saved-dose Edit; context menu and after-save invitation pending, as are reaction edit/delete design and device acceptance. Keep PR #123 draft, unmerged, production unchanged.
+
+
+## 2026-10-27 — Timed Record Reaction prompts for future native iOS/Android (USER-REQUESTED DIRECTION)
+- After a confirmed and saved dose, offer an opt-in delayed notification inviting the user to record a reaction. This is a **reminder to observe**, not a claim that the compound should cause an effect. Notification opens Record Reaction pre-linked to the exact persistent dose ID. Do not require reactions to complete a dose or edit inventory when a reaction is saved.
+- UX proposal pending timing/default approval: enable notifications contextually and only with explicit platform permission; suggested scheduling presets 15 min, 30 min, 1 hour, next day and custom per-compound/user setting; optional no prompt, snooze and dismiss, quiet hours and notification grouping. Keep a persistent one-tap Record Reaction action on Today/saved dose; reminders cannot be the sole access path. Avoid displaying sensitive compound names on lock screen by default; users may opt in to descriptive labels.
+- Native iOS should use device local notifications, Android should use the platform's scheduled notifications with runtime notification permission (and avoid restricted exact-alarm permissions where not necessary). Reschedule or cancel pending reminders on edits/deletions; prevent duplicate notifications; account for time zones, device reboot and app data restore. Native scheduling not implemented in web PR #123.
+- Current web/PWA is a separate capability: iPhone web push requires a Home Screen web app and server push; no assumption that closed Safari can run a client-only timer. No remote notification endpoint or production notification permission introduced. **Status: proposed native feature specification; not coded, QA NOT TESTED, deployment NOT AUTHORIZED.**
+
+
+## 2026-10-27 — Today navigation: Completed replaces redundant Upcoming (USER-DIRECTED, CODED ON DRAFT)
+- The top schedule filter becomes **Today · Active · Completed · All**, keeping plus/Add distinct. User found top Upcoming redundant with the dedicated lower Coming up preview, which already links to Calendar for complete future dates. Today remains needs-action first plus its own Completed Today section; Active retains every active compound; Completed is only today's completed/taken or explicitly skipped occurrences, not historical records; All retains status filtering. Calendar and coming-up remain the future schedule access path. Existing recorded doses, source allocations and reaction history unchanged.
+- Keep compound card design/actions consistent across view contexts. Completed cards retain direct Record reaction for a recorded dose. Change is approved as filter direction; physical iPhone UI acceptance still pending and PR #123 remains DRAFT/UNMERGED.
+
+
+## 2026-10-27 — Post-dose reaction invitation and event management (APPROVED / CODED ON DRAFT)
+- New single-compound Log Dose save displays an optional, skippable post-save invitation: **Would you like to record a reaction?** Not now closes it; Record reaction opens standalone editor linked to the just-saved dose ID. Invitation must not save a reaction or deduct inventory; no prompt when merely editing an existing dose. User retains manual Today/Calendar/History access. No timed browser notifications; native iOS/Android reminders remain future separate implementation.
+- Saved reaction history displays Edit/Delete per event. Edit preserves event ID and original recordedAt, changes only label/observedAt/intensity/notes; Delete requires explicit confirmation and removes only the chosen reaction. Dose event, all other reactions, source allocations, history and vial balances preserved. No automatic migration. Physical iPhone UI approval pending.
+
+
+## 2026-10-27 — Design System 2.0 unfinished work ordering (USER CORRECTION)
+- Keep Profile/Supplements and Stash/Prepare Dose as OPEN user-directed workstreams, despite partially implemented source and earlier test coverage. Prioritize these before broad form/scroll consistency audits. No new green actions, Notion personal importer, clipped Stash pill corners, hidden source amount fields or detached opened-vial status. Preserve supplement history, vial math, source IDs and all saved records. PR #123 draft and unmerged until explicit release approval.
+
+
+## 2026-10-27 — Whole-app DS2, accepted screens and future sprint retention (USER DIRECTED)
+- User confirms Calendar, Protocol/Plans and Supplies are **okay for now**, so avoid unrequested redesign. Design System 2.0 must cover **every subpage** as well as primary tabs: especially Trends/Nexus/Insights, Profile/Settings/Supplements, More/Learn/Intel and hidden sheets. Use approved hybrid Soft Depth + Porcelain + Obsidian. Track all child routes in docs/design/DS2_SCREEN_COVERAGE.md; no implicit Done without acceptance.
+- Put accessibility/VoiceOver, required fields, app-wide scrolling, typography, navigation, motion/reduced-motion and consistency testing **LAST** in the DS2 styling sequence; retain as tracked commitments, not discarded.
+- Separate long-horizon product roadmap (core workflow design, onboarding, personalization, platform expansion to iOS/Android and future functionality) in docs/product/NEXUS_MASTER_ROADMAP.md. Do not overwrite with the current sprint. Screenshot shows squared selected Stash kit detail tabs: draft CSS repair 135848e and automated guard e97a2d5; native iPhone acceptance pending.
+
+
+## 2026-10-27 — Future UX ideas captured; NOT APPROVED FOR IMPLEMENTATION
+User asks to retain potential swipe left/right contextual actions (including swipe-to-delete), drag-and-drop, and a more capable Nexus Ask assistant with improved visual formatting, UI and UX. They are roadmap discovery ideas P-08/P-09/P-10, not a decision about which screens to change or an authorization for destructive gestures. Require preview and scope approval; use safe confirmations/Undo, accessible alternatives and prevent scroll conflicts. Preserve current DS2 priority, production data and existing app flows.
+
+
+## 2026-10-27 user clarifies DS2 review scope includes subpages accessible FROM other subpages, not only tabs or More first-level destinations. Follow paths recursively to details, editors, sheets, confirmation and empty/error states. Source inventory 85a604a9; no implicit acceptance from shared CSS or overall CI. Keep earlier accepted screens stable, perform global polish last, no merge/deploy without approval.
+
+
+## 2026-10-27 USER-DIRECTED BUTTON CONSISTENCY: audit every page, nested child, modal and action button against semantic hierarchy; arbitrary gradients/grey/lavender variants are not acceptable. Different appearance must signal a distinct role (primary progression/commit, secondary/back, danger/destructive, selection, disabled). Physical Log Dose screenshot provided; provisional CSS action-family normalization afced369, pending visual acceptance. Keep data logic and selected source calculations unchanged; verify 300mg dose versus 10mg remaining before allowing release. Global a11y/motion/type/scroll sweep last.
+
+
+## 2026-10-27 UX consistency refinement: Initial Dose chooser Continue/Combo and Quick/Guided Continue/Confirm/Back must share consistent semantic action colours; scoped CSS d7a45b4b and afced369 provide proposal, pending screenshot and iPhone acceptance. Automated button inventory CI added a08f62f9 to reveal deviations before approving broader tokens. No assumption that a blue/purple shade difference indicates functionality unless documented.
+
+
+## 2026-10-27 DS2 button visual proof: the same semantic primary fill #C6A6F2 is now applied to Today Log dose, Plans Add Goal, Stash Add Kit and Supplements Add; Log Dose chooser/step primary family aligned. Danger family differentiates destructive Settings actions from neutral navigation; full reset gets stronger red. Separate visual/semantic classification justified. Evidence 40618241161 computed styles and screenshots; native device acceptance pending. Keep nested modal confirmation and inventory validation separate from button visual proof.
+
+
+## 2026-10-27 DS2 action semantics clarified by real rendered child screenshot: Add Kit wizard Continue advances flow and is a primary lavender CTA; Trends Pattern Explorer/Symptom Timing Done merely dismisses read-only information and is neutral secondary. Implemented as CSS-only 42560603, pending exact-head evidence. Import Backup invokes native file chooser, so browser modal screenshot is not the right verification; requires dedicated file selection/confirmation test with isolated backup fixtures.
+
+
+## 2026-10-27 — DS2 button role rule reaffirmed by user screenshots
+Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a coherent solid lavender action treatment unless semantics differ; do not vary gradients arbitrarily. Neutral secondary Back/Cancel/informational Done; destructive danger red; selection/disabled have distinct states. Protocol 'Ready for first log' is context not success status, so mint-framed compact CTA is redesigned to neutral vertically stacked card and full-width primary Log first dose. User request authorizes this focused Protocol change despite prior acceptance of other Protocol surfaces. No functional algorithm changes.
+
+
+## 2026-10-28 — USER REQUIREMENT: blend kit action parity and component reporting
+- User explicitly requires blend kits to expose the applicable management actions available to ordinary kits; missing `Log outflow`, `Finish this kit`, `Reopen kit`, `Add to open vial` (when physically valid), and constituent `Compound intel` are FUNCTIONAL GAPS, not acceptable intentional omissions. `Mark as premixed blend` is logically inapplicable to a kit already a blend. Do not wire blend menus to standard handlers without validating blend physical ledger, component proportions and historical records. Keep PR #123 draft, no merge/deploy.
+- User additionally requests dose-level and aggregate constituent reporting: per-vial recipe, per-dose amount of each ingredient, cumulative constituent totals, reporting by period and blend, source-vial attribution, and clear difference between blend-wide inventory deductions and analytic components. UI destinations: blend Kit details, dose review/history, Trends/Insights. Do NOT create separate physical inventory kits or duplicate administered dose events.
+- Current code evidence: `assets/js/03-nexus.js` blend kit records save `composition` [{compound,mg}] and physical vial mg; `assets/js/05-nexus.js` blend doses are recorded with isBlendDose/allocations and ledger consumption. Existing `docs/continuity/DECISIONS.md` 2026-10-26 calls broader composition analytics future discovery; THIS entry supersedes that approval-status description: now REQUESTED/REQUIRED, not verified implemented. Validate historic ratio snapshots and legacy-v2 kit migrations before calculating prior doses; display unresolvable history as unknown, never fabricate.
+- Accepted kit layouts protected; use existing details panels/new child reporting surfaces. Target tests: 320/390 light/dark, multi-vial ratios, old composition edits, partial/whole outflows, idempotent ledger, reversals, insufficient stock, archive/reopen, historical reporting without double-count. Physical iPhone acceptance separate. Global polish LAST.
+- ONE NEXT ACTION: implement blend-aware outflow/finish/reopen paths with fictional transaction regression first, then build and verify ingredient contribution reporting. Do not claim either completed until rendered tests pass.
+
+
+## 2026-10-28 — Blend parity phase 1 code (DRAFT, QA NOT YET VERIFIED)
+- User confirmed blend ingredient totals should appear in Trends and approved continuing implementation. On PR #123, `287e8ca4` adds read-only Blend composition & history cards in Trends, displaying saved composition and physical blend-ledger draw counts/total mg. It does NOT infer constituent exposure from unversioned historic recipes, write separate dose records, or modify inventory. Test `af2bab34` checks the section on 320/390 light/dark fictional browser states.
+- Stash blend-menu parity begins with `d517cbe7`: blends now show Finish This Kit, and finished blends show Reopen Kit. `1ac22ae9` adds a blend-specific confirmation that records remaining material as outflow and retires physical vials while preserving original logs. `84a7d05c` adds fictional confirmation/cancel UI test, not the full commit/restore transactional test. No real data touched. **All code is unmerged and post-change test results pending**; do not treat as accepted.
+- Required incomplete scope: Log Outflow and Add To Open Vial for blends with safe ledger semantics, per-vial composition snapshots, accurate per-component dose/time reporting, historical unknown cases, outflow undo and finish/reopen transaction regression. Do not use standard kit handlers blindly or double count physical stock. Full release DEMO/LIVE parity and physical iPhone acceptance outstanding. Global polish LAST.
+- ONE NEXT ACTION: inspect latest nested/mobile/build QA, repair failures, add explicit blend finish transaction/idempotence and inventory integrity tests, then proceed to blend outflow and constituent analytics.
+
+
+## 2026-10-28 — User clarifies Add to Open Vial means CORRECT FOUND REMAINING (blend)
+- User explicitly corrected the interpretation: no physical substance is added or mixed; actual open-vial remainder is greater than expected. This supersedes prior mass-mixing blocker for this use case. Existing ordinary-kit `Add to open vial` wording remains unchanged; blend menu now says **Correct open vial balance** to avoid implying physical addition.
+- `9602572c` implements explicit confirmed positive balance correction on the currently open blend vial with `balanceCorrections[]` transaction ledger, no sealed vial deduction, no component/dose event, and no changes to immutable vial recipe. `3f21ee05` exposes the action on blend menu; legacy-v2 path adjusts direct physical vial balance. Balance derivation counts active corrections only. `20efc274` adds fictional correction/consumption/reversal math checks.
+- `76195155` and `ade739c0` add Trends blend period filtering (7/30/90/all) and administered-only versus all physical draws; contributions continue to require original vial composition snapshots, and old unverified histories are not backfilled. `6be513ee` adds fictional blend transaction matrix for rejection, valid outflow, finish and reopen preservation, without live data access.
+- Latest source changes and new exact-source QA **NOT YET VERIFIED**; no production deployment/merge. Remaining risks: existing historical data lacking vial snapshots; blend transaction undo and reopened-state presentation; full iPhone 320/390 light/dark/keyboard acceptance, new LIVE/DEMO packaging, and analytics data parity. Test/inspect before claiming passes.
+- ONE NEXT ACTION: read new CI workflow outcomes and screenshots, repair any failing transaction tests or source issues, then complete package QA and physical preview acceptance. Global accessibility/typography/scroll/navigation/motion LAST.
+
+
+## 2026-10-28 — User iPhone screenshot: Trends blend detail routing + validation alert (DRAFT FIX)
+- Physical iPhone screenshot showed selected blend (KLOW) rendered with separate full-width Blend composition & history cards rather than only compound-centric dose history, and `Log blend outflow` attempted 50mg with 48.50mg available showing a red `SCRIPT ERROR — send to Claude` banner. Overdraw rejection is expected; banner classification and outdated Claude wording are defects.
+- `517f6a4d` separates normal `showErrorBanner` validation (inline alert within modal / toast outside) from `showScriptErrorBanner` for actual uncaught errors, removes Claude reference. `9ca4348e` hides standalone Blend Analytics section when compound selected and adds estimated per-injection ingredient values within selected compound Dose history, sourced from dose allocations + locked physical-vial composition only. Missing trusted snapshot explicitly shows unavailable; old dose history unchanged. `a9010959`/`c48b92aa` add selected-blend route regression fixture; no production writes.
+- This is CODED, **new CI/screenshots and physical retest NOT VERIFIED**. The current injection-level display is inside selected compound's Dose history, not yet a full replacement of all historical detail screens. More holistic Trends IA to be revisited after tests, without altering accepted parent layouts.
+- ONE NEXT ACTION: inspect latest nested/browser/mobile CI and actual selected-blend screenshots; fix regressions. Verify validation warning stays in modal, no Claude copy anywhere in source. Preserve PR #123 draft, production untouched, no merge/deploy. Global polish last.
+
+
+## 2026-10-28 — Explicit assistant/user action ownership in every Nexus update (APPROVED)
+- Every progress, QA, design and release response must clearly distinguish **What I'm doing / What I'll do next (assistant-owned)** from **What I need you to do (user-owned)**. Never phrase an assistant's next task as if the user must initiate it; if no user action is needed, explicitly state **Nothing needed from you right now**. Use **Decision needed from you** only when approval or a choice is genuinely required. Label planned, coded, tested, verified, and deployed distinctly.
+- For release gating, assistant owns GitHub checks, code, artifacts and automated browser testing; user owns physical iPhone hands-on acceptance and explicit approval to merge/deploy. Don't request repeated confirmations or imply background execution without automation.
+
+
+## 2026-10-28 — User REJECTED inline blend injection ledger design; replacement PREVIEW REQUIRED
+- Physical iPhone screenshots reject `Blend ingredients by recorded injection` as long repeated text on the selected compound Trends parent page. Also reject small Dose history heading and repeated 'unavailable' message under each injection; information belongs in dedicated `Explore dose records` child detail, with a scannable chart, date/range exploration, selected injection and ingredient contribution details. Parent selected compound should have a concise preview/summary and prominent link, not another 80-row ledger. Treat old inline approach as superseded; preview new child screen before redesign implementation approval, preserve accepted parent layouts otherwise.
+- Current source `assets/js/09-nexus.js` 168-190 requires `dose.allocations[]` linking to a specific `kit.vials[].composition`; `kit.composition` displayed correctly in Stash is a CURRENT RECIPE, not proof of original composition for every historical vial. Source `assets/js/09-nexus.js` history does not currently backfill older records. Do not silently infer retroactive per-injection totals or rewrite history. Investigate historical dose/kit links and offer an explicit user-confirmed vial/period recipe attribution workflow with evidence and previews; show one summarized provenance warning rather than repeating unknown per row. No data migration approved.
+- New UX proposal status PROPOSED/NOT IMPLEMENTED. No merge/deploy. NEXT ASSISTANT ACTION: create interactive child-screen proposal and inspect matching storage/mapping code, then implement only after approval. USER ACTION: review/approve proposed layout and any retrospective attribution separately.
+
+
+## 2026-10-28 — User-approved chart-first blend explorer + opt-in historical reconciliation
+- User APPROVED replacing the rejected inline 80-row ingredient ledger with a dedicated chart-first `Explore dose records` detail surface: period filters, recorded dose trend, selectable dated injection, and ingredient breakdown in selected detail. Parent compound history must remain compact; user requested a narrative from older blend records, including ordinary kit later marked as premixed blend.
+- Code: `b63497ca` adds per-dose attribution resolver and explicit date-scoped historical recipe review/confirmation saved as `kit.blendHistoryAttributions[]` only after user approval; original dose events/allocations and physical inventory are not mutated. `f80f9e54` removes huge parent ledger and adds chart-first selected-injection explorer with a reconciliation entry. `d768390b` fixes date-range inclusivity and permits a previously allocated single legacy vial to use a confirmed recipe where physical vial snapshot absent. Saved-vial snapshot still takes precedence. Histories with ambiguous multi-vial attribution remain unknown; inferred values labelled **user-confirmed**, not laboratory-verified.
+- Test `bc7deed1` updates nested suite to check compact parent, chart-first modal, selected injection ingredient values, 320/390 light/dark, and no overflow. **New post-change CI and physical Safari not yet verified**. Future regression needed for historical attribution confirmation, cancel, non-overlap, linked/unlinked legacy doses, and persistence; no destructive migration authorized.
+- Existing production main untouched, PR #123 stays draft, no merge/deploy. Exact-source LIVE/DEMO artifacts and physical iPhone acceptance for this change INCOMPLETE.
+- ONE NEXT ACTION (ASSISTANT): verify new CI, inspect chart-first screenshots and add isolated reconciliation regression; remediate failures. USER ACTION: nothing now; preview acceptance and historical confirmation will be requested when candidate passes.
+
+
+## 2026-10-28 — APPROVED: chart-first blend dose explorer and historical reconciliation
+- User explicitly APPROVES chart-first Explore Dose Records child view, selected-injection ingredient breakdown, compact parent compound card, and historical blend reconciliation. This supersedes repeated inline injection list. Maintain one physical injection as one dose; ingredient contributions are derived components, not extra administrations.
+- Support legacy ordinary-compound kits converted later into blends via Stash. Reconciliation must map historical doses to actual kit/vial/date ranges, preserve original ledger and amounts, show evidence/confidence, request user confirmation for ambiguous composition/period, and keep an audit trail; never silently apply current recipe retroactively. Permit correction/reversal without destructive overwrite, avoid double-counting in Trends, and distinguish measured/recorded vs estimated. Protect localStorage and backups. Approved direction is not blanket permission to overwrite historical records.
+- User explicitly wants a narrative over time: chart total blend doses and ingredient contributions, with filters and an inspectable injection detail; provenance warnings concise and contextual. Keep PR #123 draft and production unchanged until separate merge/deploy approval.
+
+
+## 2026-10-28 — Physical iPhone UX feedback: redesign SECOND ITERATION (user direction, preview pending)
+- User rejects horizontal date-pill scrolling within Explore Dose Records as clunky. Prefer a chronological date list / date rows, tap a date to drill into that injection's estimated constituent amounts (one additional tap acceptable); keep chart and date navigation legible without a horizontally scrolling selection rail. Review before shipping.
+- User wants constituent compound names (GHK-Cu/KPV/TB-500/BPC-157 etc.) navigable to Intel and an aggregated compound history view that includes contributions from blends, explicitly labeled 'from KLOW/Deadpool'; distinguish independently administered doses from derivative ingredient contributions to prevent double counting. Current separate Blend composition & history at bottom of Trends is considered redundant/unhelpful; move to relevant compound/detail flows or remove in proposed design.
+- Navigation defects reported on physical Safari: selecting a compound scrolls into middle/down instead of starting at top; leaving/reopening Trends or refreshing retains last `_nxHistorySelected` instead of resetting to Trends home. Source `assets/js/12-nexus.js` uses `renderBody()` then `#nx-compound-library?.scrollIntoView()` which is absent on selected screen; fix navigation ownership and reset selected route on new Trends tab entry, while preserving temporary in-flow back behaviour.
+- Design-system issues: `Explore symptom records & compare periods` uses a forward arrow, inconsistent text size/hierarchy with related accordion rows and standardized chevrons; historical-attribution review buttons are neutral/blue rather than aligned with DS2 button roles. Correct by semantic roles; no unrelated global polish.
+- User wants reconciliation accessed as one 'Review full historical records' entry point, auto-detect dated candidate records and preview summary/ambiguities; avoid requiring manual date-from/date-to as default. Require explicit confirmation per plausible historical formulation/period, and preserve auditable reversal. Never automatically rewrite all 41 historic doses from today's recipe.
+- Status: UX DIRECTION CAPTURED, NEW SCREEN DESIGN PROPOSAL NOT YET ACCEPTED/IMPLEMENTED. Do not undo currently functioning features until replacement preview accepted. Maintain PR #123 draft, production unchanged.
+
+
+## 2026-10-28 — APPROVED: compound drill-down navigation with distinct Intel action
+- Approved flow: **Trends → Compound History → Select compound → Explore Dose Records → Tap dated injection row → Injection Details → Tap ingredient → Ingredient Compound History**, where **Intel** is a separate clearly labelled action from that compound-history screen (not an automatic substitution for history). Support direct doses and labelled derived contributions “From KLOW/Deadpool” without duplicate administered events.
+- Child screens start scrolled to top, use clear Back destination; entering Trends fresh or after refresh starts at Trends home, not last selected compound. No horizontal date-pill carousel. Blend history reconciles through a single whole-history review entry point, with user confirmation for ambiguous historical provenance; original records never overwritten.
+- This approval is for navigation and information architecture, not permission to merge/deploy or destructively migrate saved data. Preserve accepted other layouts and current functionality; implementation and real-iPhone verification pending. Global polish remains scheduled last.
+
+
+## 2026-10-28 — Trends navigation consistency (IMPLEMENTED ON DRAFT; pending iPhone acceptance)
+- Adopt one local Trends navigation grammar: right-aligned 18px outline chevron means moving into a destination/detail; left-aligned outline back chevron means returning; icons and labels are vertically centred on at least 48px targets. Do not use alternating text glyphs (`›`, `→`, `‹`) for equivalent drill-down actions.
+- Ingredient History has two separate full-width secondary actions, ordered Back to injection/compounds and Compound Intel, rather than a half-width text Back competing with a prominent purple CTA. Remove duplicate links to the same ingredient history from a compound card. Based on user's physical iPhone screenshots and request for consistent alignment, pending retest; global design-system polish remains last and accepted Calendar/Plans/Supplies are unchanged.
+
+
+## 2026-10-28 — APPROVED: Compact Intel replaces full-width Ingredient History actions
+- User explicitly selected **Compact Intel** instead of full-width footer buttons, then reviewed the updated Cloudflare draft on physical iPhone and responded “perfect looks good”. **Approved design**: Back to injection/compounds as subtle, left-aligned text navigation with left chevron; Compound Intel as a compact outlined right-aligned action with right chevron in the same horizontal row. Preserve at least 44px touch targets and clear baseline/spacing at 320 and 390px, both themes. Two equally sized summary cards; preserve source and history navigation. This **supersedes** the 2026-10-28 earlier full-width stacked Back and Intel footer decision in this file (retain old entry as historical).
+- Current draft SHA `50eb4faa`; compact layout regression succeeded in #40770526500. Approval applies to this visual design only and does not authorise PR merge, production deployment, data migration or wholesale design revisions.
+
+## 2026-10-28 — Historical composition and reporting safeguard
+- **Status:** existing user-approved preservation principle; targeted engineering correction CODED, QA pending.
+- Ingredient History must derive contributions from saved vial composition snapshots or uniquely user-confirmed date-bounded historical recipes, not filter older dose records through today's kit ingredient list. Report user-confirmed provenance without pretending independent verification. No destructive retrospective edits, attribution auto-confirmation, dose-event rewrites or physical stock migration. Commits `21ac2094`, `3ca0f351` on draft PR #123; release approval NOT granted.
+
+## 2026-10-28 — Mandatory explicit next action and user action in every Nexus response
+- **User-directed non-negotiable communication rule:** Every Nexus development response, including Session Brief, milestone/progress update, answer to a product/design request, and Session Completion Report, must explicitly state **WHAT I WILL DO NEXT** with specific work/actions, and **WHAT I NEED FROM YOU** with an exact requested action and reason. When no user action is needed, say exactly **Nothing needed right now.** Do not bury either requirement in narrative or omit them because the answer is brief. Never imply background work or deployment approval. Include these headings in future chat handoffs and response templates.
+
+## 2026-10-28 — What's New publication gate and history accuracy
+- User requested reliable release-triggered What's New and thorough chronological update history. Only the generated `NEXUS_RELEASE` publication status may trigger an automatic announcement; draft/unverified code remains silent. Manual App Updates reading never acknowledges a release or writes main saved state. `Later` defers to a future session; `Got it` acknowledges that version independently. Historical `CHANGELOG` entries without verified publication metadata are explicitly labelled **Earlier update notes**, never misrepresented as independently verified production releases. Pending: migrate authoritative historical releases into the manifest once exact publication provenance is verified, not invented. No production merge/deploy without approval.
+
+## 2026-10-28 — Published release history archive is canonical
+- Use `release/published-history.json` for independently verified older published releases, compiled into runtime and in-app generated notes by `tools/generate-release-notes.mjs`. Include documented version, date, actual source commit, verification evidence, user-facing changes and data impact; never infer draft/merged-only candidate was published. Keep earlier `CHANGELOG` notes visible but label as older notes with no independently verified publication provenance. The current release must be `published` in canonical `release/release.json` (with deployment evidence) to trigger a notice. Preserve old localStorage and never silently acknowledge based on reading history.
+
+## 2026-10-28 — What's New historic presentation and Store-launch proposal
+- User feedback after 8/8 real iPhone preview checks: unify legacy emoji and new plain note rows; standardize public semantic versions; clarify why automatic popup does not display for unpublished preview. Implemented draft preference: icon-free text hierarchy for all What's New entries; verified publications display canonical v0.x.y-beta, earlier raw CHANGELOG numeric indices labelled Update #N in a collapsed Earlier development notes archive, explicitly NOT certified public app versions. App Updates explains published first-launch and Later/Got it rules. Preserve historic source records; no deletion. **Proposed for App Store (not approved):** keep internal history in repository but present a curated public release history/onboarding notes in the consumer build, not dozens of pre-store beta development entries. Do not destructively delete notes without separate user approval.
+
+## 2026-10-28 — What's New visual acceptance and release-update requirement
+- User accepted the new icon-free, consistently versioned What's New history on a physical iPhone. Treat **visual presentation approved**, not approval to merge, deploy, remove early history, or evidence that automatic popup was seen. A draft `unverified` manifest correctly prevents automatic popup. Existing fictional isolated browser QA covers simulated published release.
+- Durable release discipline: each user-facing production deployment must have a curated and synchronized canonical manifest and verified publishing follow-up. The current generator synchronizes notes **only after manifest content is supplied**; it is not an autonomous release-changelog writer. Full procedure at `docs/product/WHATS_NEW_RELEASE_PROCESS.md`. App Store public-history curation remains proposed; do not delete archived beta notes without separate decision.
+
+## 2026-10-28 — Strict stale-release-note CI gate, no automatic false publishing
+- Approve principle of enforceable release-note readiness without fabricating human-authored release notes. Draft PR checks may warn on unchanged release version/notes, whereas release/main CI fails if user-facing application files change with no new version and notes; checks are against previous Git source, not a calendar timer. Maintain publication `unverified` until separately approved and independently verified live deployment. Script `tools/check-release-readiness.mjs`, wired to `.github/workflows/nexus-release-validation.yml`. This is an engineering safeguard, not proof that Cloudflare could not deploy a failing build or that changelog covers every feature; human review and host parity remain gates. User-approved Calendar/Plans/Supplies/What's New designs unaffected.
+
+## 2026-10-28 — Prepared-batch deletion must fail closed on missing exact source
+- Preserve prepared batch and source allocations if an unused prepared dose explicitly references a kit or vial absent from current inventory; do not silently delete it or guess a replacement vial. Show error prompting review. Do not retroactively rewrite historical records. Retain legitimate legacy source fallback only where the record does not contain a usable explicit vial ID. Implemented as draft candidate `4968983c`, subject to full fictional and iPhone regression acceptance before any release.
+
+## 2026-10-28 — Legacy prepared attribution must not guess an active vial
+- User-directed safety constraint: preserve historic prepared doses and associated stock; do not silently credit a currently open vial when the old record lacks exact original `vialId` or allocations. Draft candidate `0ad1f6cb` blocks ambiguous unused prepared-batch deletion with visible warning, retaining old records for future source reconciliation and preserving explicit-linked paths. This narrows the earlier legacy fallback deliberately; no implicit retrospective auto-assignment, destructive migration, production merge or deployment approved. Test `af1b789b` pending CI and physical Safari acceptance.
+
+## 2026-10-28/29 — User accepts isolated iPhone orphan-source warning UI
+- User reported 12/12 PASS on physical iPhone fictional historical prepared-dose blocked-deletion preview, including modal fit, legible warning, cancellation, preserved batch and vial balances, light/dark. Treat as acceptance of **this tested safety interaction**, not blanket DS2 release authorization, clinical accuracy, VoiceOver signoff or permission to merge/deploy. Preserve fail-closed behavior and historical records.
+
+## 2026-10-28 — Profile/Settings fresh-entry navigation and Compound History scrolling (ACCEPTED, NOT RELEASED)
+- User approved Profile/Settings opening the overview on fresh entry through main navigation; normal Back within Settings remains intact. This is a view-state reset, not browser reload, storage reset or destructive migration. Implemented `441d22a0`.
+- User accepted the Compound History single-scroll sheet and bottom actions on physical iPhone (4/4 focused test including Profile/Settings); implemented CSS fix `fb601b97`. Preserve single primary vertical scroll per sheet where practical; do not assume PWA/Capacitor packaging fixes nested scrolling automatically.
+- These approvals are scoped to the tested interactions and do not authorize merging/deploying PR #123 or revising accepted Calendar, Plans and Supplies designs.

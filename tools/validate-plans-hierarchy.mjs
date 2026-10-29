@@ -5,25 +5,37 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
  await page.evaluate(t=>{state=buildDemoState('weight_loss');state.profile.onboardingDone=true;state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());},theme);
+ // Allow the approved 250ms theme background transition to settle before contrast sampling.
+ // Immediate reads mix light-mode text with the outgoing dark-mode surface.
+ await page.waitForTimeout(400);
 
  const status=JSON.parse(fs.readFileSync('release/release.json','utf8')).publication.status;
  ensure(await page.evaluate(expected=>typeof NEXUS_RELEASE==='object'&&NEXUS_RELEASE.version===document.title.replace('Nexus · ','')&&NEXUS_RELEASE.publicationStatus===expected&&(expected==='published'||!shouldShowPublishedRelease()),status),'Runtime publication status must match manifest; unpublished release must stay silent');
  const releasePopup=await page.evaluate(()=>{
    const previous=NEXUS_RELEASE.publicationStatus;
    const key=NEXUS_SEEN_RELEASE_KEY;
-   const old=localStorage.getItem(key);
+   const old=localStorage.getItem(key),laterKey=NEXUS_RELEASE_LATER_KEY,oldLater=sessionStorage.getItem(laterKey),originalIsDemoMode=isDemoMode;
    try{
      NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
+     if(isDemoMode()&&shouldShowPublishedRelease())throw Error('Demo Mode release suppression broken');
+     // The stand-alone full-app DEMO intentionally suppresses publication popups;
+     // test the fictional eligible-user path separately and restore the guard.
+     isDemoMode=()=>false;
+     sessionStorage.removeItem(laterKey);
      showPublishedReleaseModal();
      const first=document.querySelector('#nx-release-dismiss');
      if(!first)return false;
      document.querySelector('#nx-release-later').click();
+     if(shouldShowPublishedRelease())return false; // Later defers for this app session
+     sessionStorage.removeItem(laterKey); // simulate a new app session, without real data writes
      if(!shouldShowPublishedRelease())return false;
      showPublishedReleaseModal();document.querySelector('#nx-release-dismiss').click();
      return localStorage.getItem(key)===NEXUS_RELEASE.version&&!shouldShowPublishedRelease();
    }finally{
      NEXUS_RELEASE.publicationStatus=previous;
+     isDemoMode=originalIsDemoMode;
      if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old);
+     if(oldLater===null)sessionStorage.removeItem(laterKey);else sessionStorage.setItem(laterKey,oldLater);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
    }
  });
@@ -60,17 +72,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
        if(rect.width<2||rect.height<2||cs.display==='none'||cs.visibility!=='visible'||Number(cs.opacity)<.2)continue;
        const ink=parse(cs.color);if(!ink)continue;
        const bg=bgFor(el),fg=over(ink,bg),value=ratio(fg,bg);
-       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100});
+       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100,foreground:cs.color,background:'rgb('+bg.slice(0,3).map(v=>Math.round(v)).join(',')+')',fontSize:cs.fontSize,fontWeight:cs.fontWeight,rect:{x:Math.round(rect.x),y:Math.round(rect.y),w:Math.round(rect.width),h:Math.round(rect.height)}});
      }
    }}finally{tab=previous;render();}
-   return {tabs:tabs.length,total:out.length,candidates:out.slice(0,45)};
+   return {tabs:tabs.length,total:out.length,candidates:out};
  });
- if(mode==='demo'&&width===390)console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));
+ if(mode==='demo'&&width===390){console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));fs.writeFileSync('dist/Nexus_'+VERSION+'_CONTRAST_ELEMENT_EVIDENCE_'+theme+'.json',JSON.stringify({version:VERSION,mode,width,theme,audit:themeAudit},null,2));}
 
 
  // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
  const releaseContrast=await page.evaluate(()=>{
-   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key);
+   const old=NEXUS_RELEASE.publicationStatus,key=NEXUS_SEEN_RELEASE_KEY,seen=localStorage.getItem(key),originalIsDemoMode=isDemoMode,oldLater=sessionStorage.getItem(NEXUS_RELEASE_LATER_KEY);
    const luminance=(str)=>{
      const raw=str.match(/[0-9.]+/g)||[];
      if(raw.length<3)return null;
@@ -79,7 +91,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    };
    const ratio=(a,b)=>{let x=luminance(a),y=luminance(b);return x===null||y===null?0:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
    try{
-     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);showPublishedReleaseModal();
+     NEXUS_RELEASE.publicationStatus='published';localStorage.removeItem(key);
+     isDemoMode=()=>false; // fictional eligible user for accessibility geometry test
+     sessionStorage.removeItem(NEXUS_RELEASE_LATER_KEY);
+     showPublishedReleaseModal();
      return ['#nx-release-later','#nx-release-dismiss'].map(sel=>{
        const el=document.querySelector(sel),cs=el&&getComputedStyle(el),rect=el&&el.getBoundingClientRect();
        const bg=cs?.backgroundColor,fg=cs?.color;
@@ -87,7 +102,9 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
      });
    } finally {
      NEXUS_RELEASE.publicationStatus=old;
+     isDemoMode=originalIsDemoMode;
      if(seen===null)localStorage.removeItem(key);else localStorage.setItem(key,seen);
+     if(oldLater===null)sessionStorage.removeItem(NEXUS_RELEASE_LATER_KEY);else sessionStorage.setItem(NEXUS_RELEASE_LATER_KEY,oldLater);
      document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
    }
  });
@@ -164,6 +181,38 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('.nx-plan-head .manage-plan-btn svg.nx-unified-more-svg').count()===1,'Management outline SVG missing');
 
  ensure(await page.locator('.nx-research-title').count()===1,'Research compound title hierarchy missing');
+ ensure(await page.locator('#add-research').count()===1,'Top Add Research missing or duplicated');
+ ensure(await page.locator('.nx-research-page-header #add-research').count()===1,'Add Research not at top of queue');
+ ensure(await page.locator('.nx-research-card .nx-plan-link-icon').count()===1,'Research card must have exactly one visible navigation chevron');
+ ensure(await page.locator('.nx-research-note-toggle svg path').count()===1,'Notes toggle icon unexpected: use notebook, not a chevron');
+ ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='false','Notes should start collapsed');
+ ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes initially visible');
+ await page.locator('.nx-research-note-toggle').click();
+ ensure(await page.locator('.nx-research-note-body').isVisible(),'Research notes did not expand');
+ ensure(await page.locator('.nx-research-note-toggle').getAttribute('aria-expanded')==='true','Research notes missing expanded aria state');
+ await page.locator('.nx-research-note-toggle').click();
+ ensure(await page.locator('.nx-research-note-body').isHidden(),'Research notes failed to collapse');
+ const dividers=await page.locator('.nx-research-card').first().evaluate(card=>{
+   const wrapper=card.querySelector('.nx-plan-secondary'),button=card.querySelector('.nx-plan-intel');
+   return {wrapper:getComputedStyle(wrapper).borderTopWidth,button:getComputedStyle(button).borderTopWidth};
+ });
+ ensure(dividers.wrapper==='1px'&&dividers.button==='0px','Research Intel has double divider: '+JSON.stringify(dividers));
+ await page.locator('.nexus-tabbar-v2 button[data-tab="more"]').click();
+ await page.locator('.nexus-more-item').filter({hasText:'Plans'}).click();
+ ensure(await page.locator('.plans-sub[data-sub="goals"]').getAttribute('aria-selected')==='true','Opening Plans from More must default to Goals');
+ await page.locator('.plans-sub[data-sub="research"]').click();
+ ensure(await page.locator('.plans-sub[data-sub="research"]').getAttribute('aria-selected')==='true','Research subtab should stay navigable');
+ await page.locator('.nexus-tabbar-v2 button[data-tab="more"]').click();
+ await page.locator('.nexus-more-item').filter({hasText:'Plans'}).click();
+ ensure(await page.locator('.plans-sub[data-sub="goals"]').getAttribute('aria-selected')==='true','Returning to Plans must reset to Goals');
+ await page.locator('.plans-sub[data-sub="research"]').click();
+ await page.locator('#add-research').click();
+ ensure(await page.locator('#rcomp-picker').count()===1&&await page.locator('#r-status').count()===1&&await page.locator('#r-reason').count()===1&&await page.locator('#r-goal').count()===1&&await page.locator('#r-notes').count()===1,'Research editor lost required fields');
+ ensure(await page.locator('.nx-plan-research-edit .nx-plan-edit-header h2').innerText().then(t=>t.includes('research')),'Research editor title missing');
+ ensure(await page.locator('.nx-plan-research-edit .nx-plan-edit-fields > .nx-plan-edit-field').count()===5,'Research field group count changed');
+ ensure(await page.locator('.nx-plan-research-edit label[for="r-status"]').count()===1,'Research status not visibly labelled');
+ ensure(await page.locator('.nx-plan-research-edit #r-save').evaluate(e=>e.getBoundingClientRect().height)>=44,'Research save action too small');
+ await page.locator('#x').click();
 
  const headRules=async(sel)=>page.locator(sel).first().evaluate(el=>{
    const title=el.querySelector('.nx-card-status'),button=el.querySelector('button.manage-plan-btn,button.manage-proto-btn,button.nx-kit-header-manage');
@@ -198,6 +247,29 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#pm-edit').count()===1,'Manage existing editor missing');
  await page.locator('#x').click();
  await page.evaluate(()=>{state._plansSub='goals';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
+
+ // Goal status changes directly from ellipsis, without rewriting linked protocols or check-in history.
+ await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
+ ensure(await page.locator('.nx-goal-quick-status').count()===4,'Goal quick status options missing');
+ ensure(await page.locator('.nx-goal-quick-status').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'Goal quick status target undersized');
+ const beforeGoal=await page.evaluate(()=>({
+   protocol:JSON.stringify(state.protocols||[]),
+   doses:JSON.stringify(Object.values(state.peptides||{}).map(p=>p.doses||[])),
+   checkIns:JSON.stringify(state.dailyLogs||[]),
+   goalId:state.plans.goals[0].id
+ }));
+ await page.locator('.nx-goal-quick-status[data-status="planned"]').click();
+ ensure(await page.evaluate(before=>state.plans.goals[0].status==='planned'&&state.plans.goals[0].id===before.goalId&&
+   JSON.stringify(state.protocols||[])===before.protocol&&
+   JSON.stringify(Object.values(state.peptides||{}).map(p=>p.doses||[]))===before.doses&&
+   JSON.stringify(state.dailyLogs||[])===before.checkIns,beforeGoal),
+   'Quick status changed non-goal records or failed to update goal');
+ ensure(await page.locator('.nx-plan-2-goal').count()===1,'Planned goal disappeared from list');
+ await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
+ ensure(await page.locator('.nx-goal-quick-status[data-status="planned"]').getAttribute('aria-pressed')==='true','Quick status selected state not retained');
+ await page.locator('.nx-goal-quick-status[data-status="active"]').click();
+ ensure(await page.evaluate(()=>state.plans.goals[0].status==='active'),'Goal status could not be restored');
+
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
@@ -209,7 +281,12 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
  await page.evaluate(()=>{state.dailyLogs=[{id:'sym1',date:'2026-10-18',notes:'Skin felt calmer today',symptoms:[{name:'Skin irritation',intensity:2}],updates:[{time:'2026-10-18T18:00:00',notes:'Later unrelated update'}]},{id:'sym2',date:'2026-10-20',notes:'Unrelated headache reflection',symptoms:[{name:'Headache',intensity:4}]}];goalModal(state.plans.goals[0]);});
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
+ await page.locator('#nx-g-next').click(); // Progress -> Connections
+ ensure(await page.locator('#g-evidence-symptom').isVisible(),'Connections field must be visible');
  await page.locator('#g-evidence-symptom').selectOption('Skin irritation');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].evidenceSymptom==='Skin irritation'&&state.dailyLogs.length===2),'Evidence selection or original Check-In history mutated');
  await page.locator('.nx-open-goal').first().click();
@@ -231,33 +308,50 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.evaluate(()=>closeModal()); // Close the original Check-In modal opened via source link.
 
  await page.evaluate(()=>{state.weightLogs=[{id:'w1',date:'2026-10-01',weight:190},{id:'w2',date:'2026-10-20',weight:185}];state.settings.weightUnit='lbs';goalModal(state.plans.goals[0]);});
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('numeric');
  await page.locator('#g-p-baseline').fill('200');
  await page.locator('#g-p-target').fill('180');
  await page.locator('#g-p-unit').fill('lb');
  await page.locator('#g-p-source').selectOption('weightLogs');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.source==='weightLogs'&&state.weightLogs.length===2),'Numeric model save or weight history preservation failed');
  await page.locator('.nx-open-goal').first().click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('185')&&t.includes('75%')),'Goal weight progress did not use latest dated record');
  await page.locator('#nx-goal-detail-close').click();
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('subjective');
  await page.locator('#g-p-rating').selectOption('4');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.rating===4),'Subjective rating save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('milestones');
  await page.locator('#g-p-milestones').fill(['One','Two'].join(String.fromCharCode(10)));
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.milestones.length===2),'Milestones save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
+ await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('exploratory');
+ while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.type==='exploratory'&&state.plans.goals[0].notes==='Fictional note'),'Exploratory save or legacy notes preservation failed');
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
  ensure(await page.locator('.nx-shopping-row .manage-plan-btn').count()===1,'Shopping edit menu lost');
+ await page.locator('#add-shopping').click();
+ ensure(await page.locator('.nx-plan-shopping-edit .nx-plan-edit-fields > .nx-plan-edit-field').count()===6,'Shopping editor missing field groups');
+ ensure(await page.locator('.nx-plan-shopping-edit #s-item').count()===1&&await page.locator('#s-cat').count()===1&&await page.locator('#s-status').count()===1&&await page.locator('#s-qty').count()===1&&await page.locator('#s-goal').count()===1&&await page.locator('#s-notes').count()===1,'Shopping editor missing original fields');
+ ensure(await page.locator('.nx-plan-shopping-edit #s-save').evaluate(e=>e.getBoundingClientRect().height)>=44,'Shopping save action too small');
+ await page.locator('.nx-plan-shopping-edit #x').click();
 
  await page.evaluate(()=>{state.protocols=[{id:'qa-proto',name:'Fictional Protocol',status:'draft',compounds:[],schedule:{type:'weekly'}}];tab='protocols';render();});
  ensure(await page.locator('.nexus-protocol-card-head .nx-card-status').count()===1,'Protocol status must be in title stack');
@@ -270,6 +364,12 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(protoHeader,'Protocol title/status/ellipsis visual parity failed');
 
  ensure(errors.length===0,'Exceptions: '+errors.join('; '));
- results.push({mode,width,theme,status:'PASS'});await ctx.close();
+ // Actual hard reload: the unpublished draft must not reopen a release notice.
+ // This runs only on isolated localhost LIVE and offline fictional DEMO contexts.
+ await page.reload({waitUntil:'domcontentloaded'});
+ const reloadGate=await page.evaluate(()=>NEXUS_RELEASE.publicationStatus!=='published' &&
+   !shouldShowPublishedRelease() && !document.querySelector('#nx-release-dismiss'));
+ ensure(reloadGate,'Unpublished release unexpectedly prompted after hard reload');
+ results.push({mode,width,theme,status:'PASS',unpublishedHardReload:'PASS'});await ctx.close();
 }}finally{await browser.close()}
 fs.writeFileSync('dist/Nexus_'+VERSION+'_PLANS_QA.json',JSON.stringify({version:VERSION,results},null,2));console.log('Plans hierarchy QA PASS: '+results.length);

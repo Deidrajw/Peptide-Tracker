@@ -301,9 +301,9 @@ function renderSupplementsTabContent() {
   </div>
   <div style="display:flex;gap:8px;margin-bottom:10px">
     <input id="new-supp" class="inp" placeholder="e.g. Metamucil, Vitamin C" style="flex:1;padding:10px;font-size:13px">
-    <button id="add-supp" style="background:#C8FF9C18;border:1px solid #C8FF9C44;color:#C8FF9C;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600">Add</button>
+    <button id="add-supp" class="nx2-supp-add">Add</button>
   </div>
-  <button id="load-notion-supps" style="width:100%;font-size:12px;color:#C8FF9C;background:#C8FF9C15;border:1px solid #C8FF9C33;border-radius:8px;padding:10px">↓ Import from Notion</button>`;
+  <p class="nx2-supp-catalogue-note">Your supplement list is saved locally. Existing daily history stays intact when you edit this list.</p>`;
 }
 
 function exportData() {
@@ -624,7 +624,7 @@ function compoundPickerHTML(selected=[], pickerId="cpick") {
     ${selected.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${selected.map(c=>`<span class="pill cpick-remove" data-name="${esc(c)}" data-picker="${pickerId}" style="background:#7DF9C022;color:#7DF9C0;border:1px solid #7DF9C044;cursor:pointer">${esc(c)} ✕</span>`).join("")}</div>`:""}
     <input class="cpick-search inp" data-picker="${pickerId}" placeholder="🔍 Search compounds…" value="${esc(state[`_cpickQ_${pickerId}`]||"")}" style="width:100%;margin-bottom:6px;padding:7px 10px;font-size:12px">
     <div style="max-height:160px;overflow-y:auto;border:1px solid var(--border-sub);border-radius:8px;background:var(--surface-2)">
-      ${filtered.slice(0,30).map(n=>{
+      ${filtered.slice(0,5).map(n=>{
         const isSel=selected.includes(n);
         const lib=LIBRARY.find(l=>l.name===n);
         const alias=lib?.aliases?.[0]||"";
@@ -632,8 +632,9 @@ function compoundPickerHTML(selected=[], pickerId="cpick") {
           <span style="font-weight:${isSel?"600":"400"}">${isSel?"✓ ":""}${esc(n)}</span>${alias?`<span style="font-size:10px;color:var(--t5);margin-left:6px">${esc(alias)}</span>`:""}
         </button>`;
       }).join("")}
-      ${filtered.length>30?`<div style="padding:8px 12px;font-size:10px;color:var(--t5)">Type to narrow — ${filtered.length} total</div>`:""}
+      ${filtered.length>5?`<div style="padding:8px 12px;font-size:11px;color:var(--t5)">Type to narrow · ${filtered.length} matches</div>`:""}
       ${filtered.length===0?`<div style="padding:8px 12px;font-size:11px;color:var(--t5)">No match. <button class="cpick-custom" data-picker="${pickerId}" data-q="${esc(q)}" style="color:#7DF9C0;background:none;border:none;text-decoration:underline;font-size:11px">Add "${esc(q)}"</button></div>`:""}
+      <button type="button" class="cpick-browse-all" data-picker="${pickerId}">View all compounds</button>
     </div>
   </div>`;
 }
@@ -649,6 +650,18 @@ function wireCompoundPicker(container, selected, pickerId, onChange) {
   });
   const cl=container.querySelector(`.cpick-clear[data-picker="${pickerId}"]`); if(cl) cl.onclick=()=>{ selected.length=0; onChange(selected); };
   const s=container.querySelector(`.cpick-search[data-picker="${pickerId}"]`); if(s) s.oninput=()=>{ state[`_cpickQ_${pickerId}`]=s.value; onChange(selected); };
+  const browse=container.querySelector(`.cpick-browse-all[data-picker="${pickerId}"]`);
+  if(browse)browse.onclick=()=>{
+    const modal=container.closest(".modal");
+    if(!modal)return;
+    const opts=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(l=>l.name),...Object.keys(state.customPeptides||{})])].sort().map(name=>({name,value:name}));
+    nexusBrowseAllCompounds(modal,opts,option=>{
+      const i=selected.indexOf(option.name);
+      if(i<0)selected.push(option.name);else selected.splice(i,1);
+      state[`_cpickQ_${pickerId}`]="";
+      onChange(selected);
+    });
+  };
   const cc=container.querySelector(`.cpick-custom[data-picker="${pickerId}"]`); if(cc) cc.onclick=()=>{
     const name=(cc.dataset.q||"").trim(); if(!name) return;
     if(!selected.includes(name)) selected.push(name);
@@ -834,10 +847,10 @@ function protocolBuilderModal(existing) {
     const isLast=step===STEPS.length-1;
     const isFirst=step===0;
     return `<div style="display:flex;gap:8px">
-      <button id="pb-prev" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:${isFirst?"var(--t5)":"var(--t2)"};font-size:13px;pointer-events:${isFirst?"none":"auto"}">← Back</button>
+      <button id="pb-prev" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:${isFirst?"var(--t5)":"var(--t2)"};font-size:13px;pointer-events:${isFirst?"none":"auto"}">Back</button>
       ${isLast?`<button id="pb-save-draft" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px">Save Draft</button>
       <button id="pb-activate" style="flex:1;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">▶ Activate</button>`
-      :`<button id="pb-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">Next →</button>`}
+      :`<button id="pb-next" style="flex:2;padding:11px;border-radius:10px;background:#A78BFA;color:#fff;font-size:13px;font-weight:700">Continue</button>`}
     </div>`;
   }
 
@@ -887,10 +900,10 @@ function protocolBuilderModal(existing) {
         <input id="pb-csearch" type="search" class="inp" aria-label="Search compounds to add" placeholder="Search compounds…" autocomplete="off">
       </div>
       <div id="pb-clist" style="max-height:150px;overflow-y:auto;border:1px solid var(--border-sub);border-radius:8px;background:var(--surface-2)">
-        ${ALL_COMPOUNDS.slice(0,30).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">
+        ${ALL_COMPOUNDS.slice(0,5).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">
           ${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}
         </button>`;}).join("")}
-      </div>`;
+      </div><button type="button" id="pb-browse-all" class="nx-proto-browse-all">View all compounds</button>`;
     }
 
     if(curStep()==="Schedule") {
@@ -903,25 +916,25 @@ function protocolBuilderModal(existing) {
         const dpw=s.dosesPerDay*(s.days?.length||1);
         return`<div class="pb-comp-sched" data-ci="${ci}" style="${ci>-1?"background:var(--surface-3);border-radius:8px;padding:10px;margin-bottom:8px":""}">
           ${ci>-1?`<div style="font-size:11px;font-weight:600;color:#A78BFA;margin-bottom:8px">${esc(proto.compounds[ci]?.name)}</div>`:""}
-          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
-            ${["Daily","Every Other Day","3x/Week","Weekdays","Weekly"].map(sc=>`<button class="pb-sched" data-ci="${ci}" data-s="${sc}" style="padding:4px 10px;border-radius:99px;font-size:10px;background:${s.type===sc?"#A78BFA22":"transparent"};border:1px solid ${s.type===sc?"#A78BFA":"var(--border)"};color:${s.type===sc?"#A78BFA":"var(--t3)"}">${sc}</button>`).join("")}
+          <div class="nx-proto-schedule-label">Repeat pattern</div><div class="nx-proto-patterns">
+            ${["Daily","Every Other Day","3x/Week","Weekdays","Weekly"].map(sc=>`<button class="pb-sched" data-ci="${ci}" data-s="${sc}" style="min-height:44px;padding:8px 12px;border-radius:99px;font-size:12px;background:${s.type===sc?"#A78BFA22":"transparent"};border:1px solid ${s.type===sc?"#A78BFA":"var(--border)"};color:${s.type===sc?"#A78BFA":"var(--t3)"}">${sc}</button>`).join("")}
           </div>
-          <div style="display:flex;gap:4px;justify-content:center;margin-bottom:8px">
-            ${DAYS_OF_WEEK.map((d,i)=>`<button class="pb-day" data-ci="${ci}" data-i="${i}" style="width:32px;height:32px;border-radius:50%;font-size:10px;font-weight:600;background:${(s.days||[]).includes(i)?"#A78BFA":"var(--surface-2)"};color:${(s.days||[]).includes(i)?"#fff":"var(--t3)"};border:1px solid ${(s.days||[]).includes(i)?"#A78BFA":"var(--border)"}">${d}</button>`).join("")}
+          <div class="nx-proto-schedule-label">Days of the week</div><div class="nx-proto-days">
+            ${DAYS_OF_WEEK.map((d,i)=>`<button class="pb-day" data-ci="${ci}" data-i="${i}" style="width:44px;height:44px;border-radius:50%;font-size:12px;font-weight:600;background:${(s.days||[]).includes(i)?"#A78BFA":"var(--surface-2)"};color:${(s.days||[]).includes(i)?"#fff":"var(--t3)"};border:1px solid ${(s.days||[]).includes(i)?"#A78BFA":"var(--border)"}">${d}</button>`).join("")}
           </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-            <span style="font-size:11px;color:var(--t3);flex:1">Doses per day</span>
-            <button class="pb-dpdec" data-ci="${ci}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:16px">−</button>
+          <div class="nx-proto-dose-count">
+            <span class="nx-proto-dose-count-label">Doses per day</span>
+            <button class="pb-dpdec" data-ci="${ci}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:18px">−</button>
             <span style="font-size:14px;font-weight:700;min-width:20px;text-align:center">${s.dosesPerDay}</span>
             <button class="pb-dpinc" data-ci="${ci}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:16px">+</button>
           </div>
-          ${Array.from({length:s.dosesPerDay},(_,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--t4)">${s.dosesPerDay>1?"Dose "+(i+1):"Time"}</span><input type="time" class="pb-time inp" data-ci="${ci}" data-i="${i}" value="${s.times[i]||"08:00"}" style="height:32px;padding:0 8px;width:110px"></div>`).join("")}
-          <div style="font-size:10px;color:var(--t5);margin-top:4px">→ ${dpw} dose${dpw!==1?"s":""}/week</div>
+          ${Array.from({length:s.dosesPerDay},(_,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--t4)">${s.dosesPerDay>1?"Dose "+(i+1):"Time"}</span><input type="time" class="pb-time inp" data-ci="${ci}" data-i="${i}" value="${s.times[i]||"08:00"}" style="min-height:44px;padding:0 10px;width:132px;max-width:58%"></div>`).join("")}
+          <div class="nx-proto-frequency-note">${dpw} dose${dpw!==1?"s":""} per week</div>
         </div>`;
       };
 
       return prog+`
-      <input id="pb-start" class="inp" type="date" value="${proto.startDate}" style="width:100%;margin-bottom:12px">
+      <label for="pb-start" class="nx-hybrid-field-label">Start date</label><input id="pb-start" class="inp" type="date" value="${proto.startDate}" style="width:100%;min-height:48px;margin-bottom:12px">
       ${multiComp?`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface-2);border-radius:8px;margin-bottom:10px">
         <span style="font-size:12px;color:var(--t2)">Same schedule for all compounds</span>
         <label style="position:relative;display:inline-block;width:38px;height:22px"><input type="checkbox" id="pb-same-sched" ${sameForAll?"checked":""} style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${sameForAll?"#A78BFA":"var(--border)"};border-radius:11px;transition:.2s"></span></label>
@@ -1030,11 +1043,17 @@ function protocolBuilderModal(existing) {
       rebuildModal();
     });
     m.querySelectorAll(".pb-cadd").forEach(b=>b.onclick=()=>toggleCompound(b.dataset.name));
+    m.querySelector("#pb-browse-all")?.addEventListener("click",()=>{
+      nexusBrowseAllCompounds(m,ALL_COMPOUNDS.map(name=>({name,value:name})),option=>{
+        toggleCompound(option.name);
+      });
+    });
+
     const cs=m.querySelector("#pb-csearch");
     if(cs) cs.oninput=()=>{
       const q=cs.value.toLowerCase();
       const list=m.querySelector("#pb-clist");
-      if(list) list.innerHTML=ALL_COMPOUNDS.filter(n=>n.toLowerCase().includes(q)||(LIBRARY.find(l=>l.name===n)?.aliases||[]).some(a=>a.toLowerCase().includes(q))).slice(0,25).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}</button>`;}).join("");
+      if(list) list.innerHTML=ALL_COMPOUNDS.filter(n=>n.toLowerCase().includes(q)||(LIBRARY.find(l=>l.name===n)?.aliases||[]).some(a=>a.toLowerCase().includes(q))).slice(0,5).map(n=>{const sel=proto.compounds.find(c=>c.name===n);const lib=LIBRARY.find(l=>l.name===n);return`<button class="pb-cadd" data-name="${esc(n)}" style="width:100%;text-align:left;padding:7px 12px;border:none;border-bottom:1px solid var(--surface-3);background:${sel?"#A78BFA10":"transparent"};color:${sel?"#A78BFA":"var(--t2)"};font-size:12px">${sel?"✓ ":""}${esc(n)}${lib?.tags?.length?`<span style="font-size:9px;color:var(--t5);margin-left:6px">${lib.tags.slice(0,2).join(" · ")}</span>`:""}</button>`;}).join("");
       m.querySelectorAll(".pb-cadd").forEach(b=>b.onclick=()=>toggleCompound(b.dataset.name));
     };
     m.querySelectorAll(".pb-route").forEach(b=>b.onchange=()=>{if(proto.compounds[+b.dataset.idx])proto.compounds[+b.dataset.idx].route=b.value;});
@@ -1173,6 +1192,7 @@ function protocolCalendarView() {
   const calSub = state._protoCalSub||"month";
   const subBar=`<div class="seg nx-cal-segment" style="margin-bottom:14px">
     <button id="pcal-month" class="${calSub==="month"?"on":""}" onclick="">Month</button>
+    <button id="pcal-week" class="${calSub==="week"?"on":""}" onclick="">Week</button>
     <button id="pcal-logs" class="${calSub==="logs"?"on":""}" onclick="">Logs</button>
   </div>`;
 
@@ -1193,6 +1213,25 @@ function protocolCalendarView() {
     [day, slots.filter(slot => showPaused || slot.status !== "paused")]
   ));
 
+  // Both overview and day history consume the canonical monthly occurrence collection.
+  // Future dates do not count as missed; paused and ad-hoc entries never inflate the denominator.
+  const weekAnchor=state._calSelectedDate&&state._calSelectedDate.startsWith(year+"-"+String(month+1).padStart(2,"0"))
+    ?state._calSelectedDate:todayStr.startsWith(year+"-"+String(month+1).padStart(2,"0"))?todayStr:`${year}-${String(month+1).padStart(2,"0")}-01`;
+  const weekStart=startOfWeek(new Date(weekAnchor+"T12:00:00"));
+  const weekDates=[...Array(7)].map((_,i)=>addDays(calendarDayKey(weekStart.toISOString()),i));
+  const weekInstances=calSub==="week"?getWeekInstances(weekDates):null;
+  const periodKeys=calSub==="week"?weekDates:Object.keys(monthInstances);
+  const periodRows=periodKeys.filter(k=>k<=todayStr).flatMap(k=>((weekInstances||monthInstances)[k]||[]).filter(x=>!x.adhoc&&x.status!=="paused"));
+  const complete=periodRows.filter(x=>x.status==="taken").length;
+  const missed=periodRows.filter(x=>x.status==="missed").length;
+  const unresolved=periodRows.filter(x=>["overdue","due_now","due_later_today","upcoming"].includes(x.status)).length;
+  const eligible=complete+missed;
+  const rate=eligible?Math.round(100*complete/eligible):null;
+  const overview=`<section class="nx-cal-hub" aria-label="Schedule and activity overview">
+    <div class="nx-cal-hub-head"><div><h2>Schedule &amp; activity</h2><p>${calSub==="week"?"Selected week":monthLabel} · ${eligible?"Resolved outcomes":"In progress"}</p></div><div class="nx-cal-hub-score"><strong>${rate===null?"—":rate+"%"}</strong><span>of resolved outcomes completed</span></div></div>
+    <div class="nx-cal-hub-stats"><div><strong>${complete}</strong><span>Completed</span></div><div><strong>${missed}</strong><span>Missed</span></div><div><strong>${unresolved}</strong><span>Unresolved</span></div></div>
+    <p class="nx-cal-hub-note">Future doses are planned, not missed. Tap a day to explore records.</p>
+  </section>`;
   // Day-cell auxiliary data (check-ins, weight) stays a simple date lookup — only the
   // dose/occurrence side needs the canonical engine.
   const dayData={};
@@ -1203,10 +1242,10 @@ function protocolCalendarView() {
 
   const dayCell=(day)=>{
     if(!day) return `<div></div>`;
-    const k=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const k=typeof day==="string"?day:`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     const d=dayData[k]||{};
     const isToday=k===todayStr;
-    const slots=monthInstances[k]||[];
+    const slots=(weekInstances||monthInstances)[k]||[];
     // A fixed status vocabulary scales regardless of the number of compounds.
     const loggedCount = slots.filter(s=>s.status==="taken").length;
     const upcomingCount = slots.filter(s=>["pending","due_now","due_later_today","upcoming","overdue"].includes(s.status)).length;
@@ -1217,7 +1256,7 @@ function protocolCalendarView() {
     const weightLabel = weightNum === null ? '' : weightNum.toFixed(1);
     const dayDescription = [loggedCount+' logged',upcomingCount+' scheduled',mood?'Check-in '+mood.label:'',weightLabel?'Weight '+weightLabel+' pounds':''].filter(Boolean).join(', ');
     return `<button class="cal-day nx-cal-compact-day" data-date="${k}" aria-label="${k}: ${dayDescription}" ${isToday?'data-today="true"':''}>
-      <span class="nx-cal-day-number">${day}</span>
+      <span class="nx-cal-day-number">${typeof day==="string"?Number(day.slice(-2)):day}</span>
       <span class="nx-cal-day-signals">
         ${loggedCount?`<span class="nx-cal-log-count" title="${loggedCount} logged">${loggedCount}</span>`:''}
         ${upcomingCount?`<span class="nx-cal-scheduled" title="${upcomingCount} scheduled"></span>`:''}
@@ -1229,10 +1268,10 @@ function protocolCalendarView() {
   };
 
   const cells=[];
-  for(let i=0;i<firstDay;i++) cells.push(null);
-  for(let d=1;d<=daysInMonth;d++) cells.push(d);
+  if(calSub==="week"){weekDates.forEach(k=>cells.push(k));}
+  else {for(let i=0;i<firstDay;i++) cells.push(null);for(let d=1;d<=daysInMonth;d++) cells.push(d);}
 
-  return subBar+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+  return subBar+overview+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <button id="cal-prev" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">‹</button>
     <span style="font-size:14px;font-weight:600;color:var(--t1)">${monthLabel}</span>
     <button id="cal-next" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">›</button>
@@ -1293,35 +1332,117 @@ function getProtocolPhaseInfo(p, c) {
   return { index:idx, isRest: cur.type!=="dose", weekInPhase, totalWeeks: cur.durationWeeks||4, daysLeft, current:cur, next, phases:phaseDates, isPaused: p.status==="paused" };
 }
 
-function phaseRoadmapModal(protocolId, compoundName) {
+// Phase-aware timeline summary: use existing pause-aware phase dates, never
+// infer a countdown from the number of compounds or logged administrations.
+function protocolCountdownSummary(p) {
+  if (p.status==="completed") return {label:"Completed", detail:"Marked complete"};
+  const entries=(p.compounds||[]).map(c=>getProtocolPhaseInfo(p,c)).filter(Boolean);
+  const endDates=entries.map(info=>info.phases?.[info.phases.length-1]?.endDate).filter(Boolean);
+  if(!endDates.length) return {label:"Not scheduled",detail:"Add a start date and phases"};
+  const latest=endDates.reduce((a,b)=>a>b?a:b);
+  if(p.status==="paused") return {label:"Paused",detail:"Countdown resumes with protocol"};
+  const days=Math.max(0,Math.round((new Date(latest+"T12:00")-new Date(localDate()+"T12:00"))/86400000));
+  if(entries.every(info=>info.done)) return {label:"0 days",detail:"Schedule elapsed · not automatically completed"};
+  if(entries.every(info=>info.notStartedYet)) return {label:"Not started",detail:"Scheduled end "+fmtDate(addDays(latest,-1))};
+  return {label:days+" "+(days===1?"day":"days"),detail:"Until scheduled end · "+fmtDate(addDays(latest,-1))};
+}
+
+function protocolCompletionCelebration(name) {
+  const m=openModal(`<div class="nx-protocol-celebration" role="status" aria-live="polite">
+    <div class="nx-protocol-celebration-mark" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10 24 10 10 19-21"/></svg></div>
+    <h2>Protocol completed</h2>
+    <p>${esc(name)} has been marked completed. Your past doses and phase records are preserved.</p>
+    <button class="btn-primary" id="nx-protocol-celebration-close" type="button">Done</button>
+  </div>`, "#A78BFA");
+  m.querySelector("#nx-protocol-celebration-close").onclick=closeModal;
+}
+
+// Sprint 02A — dedicated Protocol detail surface from the approved Overview / Compound / Completion design.
+// Presentation-only until an existing explicit action is invoked; uses canonical phase dates.
+function nexusProtocolDetails(protocolId, initialTab="overview") {
+  const p=(state.protocols||[]).find(x=>String(x.id)===String(protocolId));if(!p)return;
+  const phaseInfos=(p.compounds||[]).map(c=>({compound:c,info:getProtocolPhaseInfo(p,c)}));
+  const ends=phaseInfos.map(x=>x.info?.phases?.at(-1)?.endDate).filter(Boolean);
+  const lastEnd=ends.length?ends.reduce((a,b)=>a>b?a:b):null;
+  const firstDay=p.startDate?addDays(p.startDate,Number(p.pauseDaysAccumulated)||0):null; // Same effective start as getProtocolPhaseInfo
+  const frozenDay=p.status==="paused"&&p.pausedAt?dayKey(p.pausedAt):localDate();
+  const remaining=lastEnd?Math.max(0,Math.round((new Date(lastEnd+"T12:00")-new Date(frozenDay+"T12:00"))/86400000)):null;
+  const total=firstDay&&lastEnd?Math.max(1,Math.round((new Date(lastEnd+"T12:00")-new Date(firstDay+"T12:00"))/86400000)):null;
+  const elapsed=total!==null&&remaining!==null?Math.max(0,Math.min(total,total-remaining)):null;
+  const pct=total?Math.round(elapsed/total*100):0;
+  const ended=Boolean(lastEnd && frozenDay>=lastEnd && p.status!=="paused");
+  const label=p.status==="completed"?"Completed":p.status==="paused"?"Paused":ended?"Schedule ended":p.status==="active"||p.status==="in_progress"?"In progress":p.status==="planned"?"Planned":p.status==="draft"?"Not started":"Not started";
+  // Goal links are opt-in associations, not evidence that a protocol caused goal progress.
+  const linkedGoal=p.linkedGoalId?(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId)):null;
+  const overviewRows=phaseInfos.map(({compound:c,info})=>{
+    const stage=info?.current?("Phase "+(info.index+1)+" of "+info.phases.length+" · "+(info.isRest?"Rest":"Dosing")):info?.done?"Schedule ended":info?.notStartedYet?"Not started":"No phase dates";
+    const detail=info?.current?("Week "+info.weekInPhase+" of "+info.totalWeeks+" · "+info.daysLeft+" days until next phase"):info?.done?"Review completed phases":"Open phase roadmap";
+    const fill=info?.done?100:info?.current?Math.max(0,Math.min(100,Math.round(100*(1-info.daysLeft/(info.totalWeeks*7))))):0;
+    return '<button type="button" class="nx-proto-detail-compound" data-proto-comp="'+esc(c.name)+'"><span class="nx-proto-detail-compound-head"><strong>'+esc(c.name)+'</strong><span aria-hidden="true">›</span></span><span>'+esc(stage)+'</span>'+(info?.current||info?.done?'<span class="nx-proto-detail-bar" aria-hidden="true"><span style="width:'+fill+'%"></span></span>':"")+'<small>'+esc(detail)+'</small></button>';
+  }).join("");
+  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
+  m.querySelector(".nx-proto-detail-close").onclick=closeModal;
+  const show=(view)=>{
+
+    const body=m.querySelector("#nx-proto-detail-body");
+    if(view==="overview"){
+      const ring=remaining===null?"—":String(remaining);
+      body.innerHTML='<section class="nx-proto-detail-hero"><div class="nx-proto-detail-kicker"><span>'+esc(label)+'</span><span>'+(elapsed===null?"Timeline not set":"Day "+elapsed+" of "+total)+'</span></div><div class="nx-proto-detail-hero-main"><div class="nx-proto-detail-ring" style="--nx-progress:'+pct+'%"><strong>'+ring+'</strong><small>'+(remaining===null?"days":"days left")+'</small></div><div class="nx-proto-detail-finish"><span>ESTIMATED SCHEDULE END</span><strong>'+(lastEnd?esc(fmtDate(addDays(lastEnd,-1))):"Not scheduled")+'</strong><p>'+(total?pct+"% of planned timeline elapsed":"Add dates and phases to see progress")+'</p><small>'+(p.status==="paused"?"Countdown frozen while paused":ended?"Planned schedule ended · protocol status managed separately":"Changes to dates or pauses affect this estimate")+'</small></div></div></section><div class="nx-proto-detail-title"><strong>Compounds and phases</strong><span>'+phaseInfos.length+(phaseInfos.length===1?' compound':' compounds')+'</span></div><div class="nx-proto-detail-compound-list">'+(overviewRows||'<p>No compounds added</p>')+'</div>'+(linkedGoal?'<div class="nx-proto-linked-goal-section"><div class="nx-proto-detail-title"><strong>Linked goal</strong></div><button type="button" class="nx-proto-linked-goal"><span class="nx-proto-goal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="nx-proto-goal-copy"><strong>'+esc(linkedGoal.name)+'</strong><small>'+esc(linkedGoal.status||"Active")+' goal · View in Plans</small></span><svg class="nx-proto-goal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>':'')+'<button type="button" class="nx-proto-detail-notice">Manage protocol</button>';
+      body.querySelectorAll("[data-proto-comp]").forEach(b=>b.onclick=()=>phaseRoadmapModal(p.id,b.dataset.protoComp,true));
+      body.querySelector(".nx-proto-detail-notice").onclick=()=>manageProtocolMenu(String(p.id));
+      body.querySelector(".nx-proto-linked-goal")?.addEventListener("click",()=>{
+        // Use existing Plans navigator and original goal detail; never copy/modify goal data.
+        closeModal();tab="plans";state._plansSub="goals";render();window.scrollTo(0,0);
+        goalDetailModal(linkedGoal.id);
+      });
+
+
+    }
+  };
+  show("overview");
+}
+
+function phaseRoadmapModal(protocolId, compoundName, returnToDetails=false) {
   const p = state.protocols.find(x=>x.id===protocolId); if(!p) return;
   const c = (p.compounds||[]).find(x=>x.name===compoundName); if(!c) return;
   const cc = cfg(compoundName);
   const info = getProtocolPhaseInfo(p, c);
   const phases = info ? info.phases : (c.phases||[]).map(ph=>({...ph, startDate:null, endDate:null}));
-  const today = localDate();
+  // Match the canonical pause-aware phase position; do not advance the roadmap while paused.
+  const today = (p.status==="paused" && p.pausedAt) ? dayKey(p.pausedAt) : localDate();
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:${cc.color};letter-spacing:1.5px">${esc(compoundName.toUpperCase())} — PHASE ROADMAP</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-phase-roadmap-header">
+      ${returnToDetails?`<button type="button" class="nx-phase-return" aria-label="Back to compound details"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>`:""}
+      <span class="nx-phase-roadmap-title">${esc(compoundName)} · Phase timeline</span>
+      <button id="x" class="nx-phase-roadmap-close" aria-label="Close phase timeline">✕</button>
     </div>
-    ${phases.map((ph,i)=>{
-      const isPast = ph.endDate && today>=ph.endDate;
-      const isCurrent = ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate;
-      const isFuture = !isPast && !isCurrent;
-      const label = ph.type==="dose" ? `${ph.dose||"—"}${cc.unit||"mg"}` : "Rest";
-      const status = isPast ? "✓" : isCurrent ? "— Next".replace("Next","Now") : "";
-      return `<div style="padding:12px 0;border-bottom:1px solid var(--surface-2);opacity:${isFuture&&!isCurrent?0.6:1}">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-          <span style="font-size:13px;font-weight:700;color:${isCurrent?cc.color:"var(--t1)"}">Phase ${i+1}${isPast?" ✓":isCurrent?" — Now":""}</span>
-        </div>
-        <div style="font-size:12px;color:${ph.type==="dose"?cc.color:"var(--t4)"};margin-bottom:2px">${label} · ${ph.durationWeeks||4} weeks</div>
-        <div style="font-size:11px;color:var(--t5)">${ph.startDate?`${fmtDate(ph.startDate)} – ${fmtDate(addDays(ph.endDate,-1))}`:"Date unavailable"}</div>
-      </div>`;
-    }).join("")}
-    ${!info?`<div class="hint" style="margin-top:12px">This protocol doesn't have a start date set, so exact phase dates can't be calculated yet.</div>`:""}
+    ${info?.current?`<section class="nx-protocol-phase-current" aria-label="Current compound phase">
+      <span class="nx-protocol-phase-eyebrow">CURRENT PHASE</span>
+      <strong>Phase ${info.index+1} of ${phases.length} · ${info.isRest?"Rest":"Dosing"}</strong>
+      <div>Week ${info.weekInPhase} of ${info.totalWeeks} · ${info.daysLeft} days left in this phase${info.isPaused?" · Paused":""}</div>
+      ${info.next?`<div>Next: ${info.next.type==="dose"?"Dosing":"Rest"} · ${fmtDate(info.next.startDate)}</div>`:""}
+    </section>`:info?.done?`<div class="nx-protocol-phase-current">All scheduled phases have elapsed.</div>`:info?.notStartedYet?`<div class="nx-protocol-phase-current">Not started · first phase begins ${fmtDate(phases[0].startDate)}</div>`:""}
+    <div class="nx-phase-vertical-timeline" aria-label="Compound phase timeline">
+     ${phases.map((ph,i)=>{
+       const isPast=Boolean(ph.endDate && today>=ph.endDate);
+       const isCurrent=Boolean(ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate);
+       const stateLabel=isPast?"Completed":isCurrent?(info?.isPaused?"Paused here":"Current"):"Upcoming";
+       const label=ph.type==="dose"?"Dosing":"Rest";
+       const duration=Number(ph.durationWeeks)||4;
+       return `<div class="nx-phase-timeline-row ${isCurrent?"is-current":isPast?"is-past":"is-upcoming"}">
+         <div class="nx-phase-timeline-rail" aria-hidden="true"><span class="nx-phase-timeline-dot">${isPast?"✓":isCurrent?"●":""}</span>${i<phases.length-1?'<span class="nx-phase-timeline-line"></span>':""}</div>
+         <div class="nx-phase-timeline-content">
+           <div class="nx-phase-timeline-heading"><strong>Phase ${i+1} · ${label}</strong><span>${stateLabel}</span></div>
+           <div class="nx-phase-timeline-meta">${duration} ${duration===1?"week":"weeks"}${ph.type==="dose"&&ph.dose?` · ${esc(String(ph.dose))}${esc(cc.unit||"mg")}`:""}</div>
+           <div class="nx-phase-timeline-date">${ph.startDate&&ph.endDate?`${fmtDate(ph.startDate)} – ${fmtDate(addDays(ph.endDate,-1))}`:"Dates unavailable"}</div>
+         </div>
+       </div>`;
+     }).join("")}
+     </div>
+     ${!info?`<div class="hint" style="margin-top:12px">This protocol doesn't have a start date set, so exact phase dates can't be calculated yet.</div>`:""}
   `, cc.color);
   m.querySelector("#x").onclick = closeModal;
+  if(returnToDetails) m.querySelector(".nx-phase-return").onclick=()=>nexusProtocolDetails(protocolId,"compound");
 }
 
 // Protocol lifecycle + edit/delete actions — previously an always-visible Edit pill and ✕
@@ -1331,9 +1452,9 @@ function phaseRoadmapModal(protocolId, compoundName) {
 function manageProtocolMenu(protoId) {
   const p = state.protocols?.find(x=>String(x.id)===String(protoId)); if(!p) return;
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:15px;font-weight:600;color:var(--t1)">Manage ${esc(p.name)}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-sprint2-action-head">
+      <div class="nx-sprint2-action-heading"><span class="nx-sprint2-action-eyebrow">PROTOCOL ACTIONS</span><strong>Manage ${esc(p.name)}</strong></div>
+      <button type="button" id="x" class="nx-sprint2-action-close" aria-label="Close protocol actions">✕</button>
     </div>
     <button id="mp-edit" class="sheet-row">Edit protocol<div class="sub">Change compounds, schedule, or phases</div></button>
     ${p.status==="in_progress"?`<button id="mp-pause" class="sheet-row">Pause protocol<div class="sub">Temporarily stop — phase timing picks up where it left off on resume</div></button>
@@ -1348,7 +1469,7 @@ function manageProtocolMenu(protoId) {
   if (pauseBtn) pauseBtn.onclick = () => { closeModal(); pauseProtocol(p); saveState(); renderBody(); };
   const completeBtn = m.querySelector("#mp-complete");
   if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", () => {
-    p.status="completed"; saveState(); renderBody();
+    p.status="completed"; saveState(); renderBody(); protocolCompletionCelebration(p.name);
   }, { confirmLabel: "Complete", cancelLabel: "Cancel", tone: "success" }); };
   const resumeBtn = m.querySelector("#mp-resume");
   if (resumeBtn) resumeBtn.onclick = () => { closeModal(); resumeProtocol(p); saveState(); renderBody(); };
@@ -1468,28 +1589,39 @@ function protocolsView() {
     const compounds = p.compounds||[];
     const names = compounds.map(c=>c.name).filter(Boolean);
     const shortNames = names.slice(0,2).map(esc).join(" · ") + (names.length>2 ? ` · +${names.length-2} more` : "");
-    return `<div class="card nexus-protocol-card" style="border-color:${sc.color}33;margin-bottom:10px">
+    const countdown=protocolCountdownSummary(p);
+    const phaseEntries=compounds.map(c=>compoundPhaseStatus(p,c)).filter(Boolean);
+    const phaseEnds=phaseEntries.map(info=>info.phases?.[info.phases.length-1]?.endDate).filter(Boolean);
+    const lastPhaseEnd=phaseEnds.length?phaseEnds.reduce((a,b)=>a>b?a:b):null;
+    const effectiveStart=p.startDate?addDays(p.startDate,Number(p.pauseDaysAccumulated)||0):null;
+    const timelineDay=p.status==="paused"&&p.pausedAt?dayKey(p.pausedAt):localDate();
+    const timelineTotal=effectiveStart&&lastPhaseEnd?Math.max(1,Math.round((new Date(lastPhaseEnd+"T12:00")-new Date(effectiveStart+"T12:00"))/86400000)):null;
+    const timelineElapsed=timelineTotal!==null?Math.max(0,Math.min(timelineTotal,Math.round((new Date(timelineDay+"T12:00")-new Date(effectiveStart+"T12:00"))/86400000))):null;
+    const timelinePct=timelineTotal!==null?Math.round(timelineElapsed/timelineTotal*100):null;
+    const phaseInfo=compounds.length ? compoundPhaseStatus(p,compounds[0]) : null;
+    const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
+    const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
+    const phaseTotal=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.totalWeeks)?phaseInfo.totalWeeks:null;
+    const firstCompoundData=fc?allPeptides()[fc]:null;
+    const firstDoseStatus=fc&&firstCompoundData?getDoseStatus(fc,firstCompoundData):null;
+    const nextScheduledCaption=firstDoseStatus?.nextDueStr?fmtDate(firstDoseStatus.nextDueStr):"See schedule";
+    const phaseCaption=phaseInfo?.done?"Phases complete":phaseInfo?.isRest?"Rest phase":phaseWeek&&phaseTotal?`Week ${phaseWeek} of ${phaseTotal}`:"See schedule";
+    const startCaption=p.startDate?`Started ${fmtDate(p.startDate)}`:"Start date not set";
+    const goalRef=p.linkedGoalId?(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId)):null;
+    return `<div class="card nexus-protocol-card nx-protocol-2-card" style="border-color:${sc.color}33;margin-bottom:10px">
       <div class="nexus-protocol-card-head">
         <div style="flex:1;min-width:0">
           <div class="nx-proto-title">${esc(p.name)}</div><div class="nx-card-status">${statusBadge(sc.label, sc.color)}</div>
-          ${p.goal?`<div class="nexus-protocol-muted">${esc(p.goal)}</div>`:""}
-          ${p.linkedGoalId?(()=>{const g=(state.plans?.goals||[]).find(g=>String(g.id)===String(p.linkedGoalId));return g?`<div class="nexus-protocol-muted">Goal: ${esc(g.name)}</div>`:`<div class="nexus-protocol-muted">Linked goal unavailable · edit to relink</div>`;})():""}
         </div>
         <button class="manage-proto-btn icon-btn" data-id="${p.id}" aria-label="Manage ${esc(p.name)} protocol" title="Manage protocol"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nexus-protocol-summary">${shortNames||"No compounds added"}</div>
-      <div class="nexus-protocol-meta">${compounds.length} ${compounds.length===1?"compound":"compounds"}${p.startDate?` · Started ${fmtDate(p.startDate)}`:""}</div>
-      <details class="nexus-protocol-details">
-        <summary><span>Schedule &amp; phases</span></summary>
-        <div class="nexus-protocol-details-body">
-          <div class="nexus-protocol-timeline">${miniGantt(p)}</div>
-          <div class="nexus-protocol-meta" style="margin-bottom:10px">${p.schedule?.type||"Weekly"} · ${p.schedule?.dosesPerDay||1}×/day</div>
-          ${compounds.map(c=>`<div class="nexus-protocol-compound"><span class="pill" style="background:#A78BFA18;color:#A78BFA;border:1px solid #A78BFA33">${esc(c.name)} · ${esc(c.route||"SubQ")}</span>${compoundDetailRow(p,c)}</div>`).join("")}
-        </div>
-      </details>
+      <button type="button" class="nx-proto-view-overview" data-id="${p.id}">View overview <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="nx-proto-compact-progress"><span>${esc(countdown.detail)}</span><strong>${esc(countdown.label)}</strong></div>
+      ${timelinePct!==null?`<div class="nx-proto-compact-track" role="progressbar" aria-label="Planned protocol timeline elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${timelinePct}"><span style="width:${timelinePct}%"></span></div>`:""}
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
-        <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#7DF9C0">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
-        <button class="proto-log-first" data-name="${esc(fc)}" style="padding:9px 12px;border-radius:8px;background:#7DF9C0;color:#000;font-size:12px;font-weight:700;flex-shrink:0">+ Log dose</button>
+        <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
+        <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">Log first dose</button>
       </div>`:""}
       ${(p.status==="draft"||p.status==="planned")?`<button class="proto-activate" data-id="${p.id}" style="width:100%;margin-top:10px;padding:10px;border-radius:9px;background:#A78BFA;color:#fff;font-size:12px;font-weight:700">▶ Activate</button>`:""}
     </div>`;
@@ -1512,14 +1644,27 @@ function managePlanItemMenu(type, id) {
   const label = type==="goal"?"goal":type==="research"?"research item":"shopping item";
   const itemName = item.name || item.compound || item.item || label;
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:15px;font-weight:600;color:var(--t1)">${esc(itemName)}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-sprint2-action-head">
+      <div class="nx-sprint2-action-heading"><span class="nx-sprint2-action-eyebrow">PLAN ACTIONS</span><strong>${esc(itemName)}</strong></div>
+      <button type="button" id="x" class="nx-sprint2-action-close" aria-label="Close plan actions">✕</button>
     </div>
+    ${type==="goal"?`<div class="nx-goal-status-section"><div class="nx-goal-status-heading">Change status</div><div class="nx-goal-status-options" role="group" aria-label="Change goal status">
+      ${[["planned","Planned"],["active","In progress"],["paused","Paused"],["completed","Completed"]].map(([value,title])=>`<button type="button" class="nx-goal-quick-status" data-status="${value}" aria-pressed="${(item.status||"active")===value}">${esc(title)}${(item.status||"active")===value?` <span aria-hidden="true">✓</span>`:""}</button>`).join("")}
+    </div><p class="nx-goal-status-note">Only this goal's status changes. Linked protocols and existing logs are unaffected.</p></div>`:""}
     <button id="pm-edit" class="sheet-row">Edit</button>
     <button id="pm-delete" class="sheet-row danger">Delete<div class="sub">Removes this ${esc(label)} — cannot be undone</div></button>
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
+  if(type==="goal"){
+    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=()=>{
+      const next=button.dataset.status;
+      if(!["planned","active","paused","completed"].includes(next))return;
+      const current=state.plans?.goals?.find(goal=>String(goal.id)===String(id));
+      if(!current)return;
+      if((current.status||"active")!==next){current.status=next;saveState();}
+      closeModal();renderBody();
+    });
+  }
   m.querySelector("#pm-edit").onclick = () => {
     closeModal();
     if(type==="goal") goalModal(item);
@@ -1560,10 +1705,10 @@ function goalDetailModal(goalId) {
   const content=()=>active==="overview"
     ? '<div class="nx-goal-detail-section"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:7px">'+el(modelLabel)+'</div><div class="nx-muted" style="margin-bottom:14px">'+modelSummary()+'</div><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL CONTEXT</div><div style="font-size:13px;line-height:1.6;color:var(--t2)">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</div>'+(g.targetDate?'<div class="nx-muted" style="margin-top:10px">Target date: '+el(fmtDate(g.targetDate))+'</div>':'')+(g.notes?'<div class="nx-muted" style="margin-top:10px">'+el(g.notes)+'</div>':'')+'<div class="nx-muted" style="margin-top:12px">Progress tracking will appear here once a measurement or review method is configured. No progress is inferred from protocol activity alone.</div></div>'
     :active==="connections"
-    ? '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">LINKED PROTOCOLS</div>'+(linked.length?linked.map(p=>'<div style="padding:12px 0;border-bottom:1px solid var(--border-sub)"><div style="font-size:13px;color:var(--t1);font-weight:650">'+el(p.name)+'</div><div class="nx-muted">'+el(p.status||'draft')+' · Linked by personal goal ID</div></div>').join(''):'<div class="nx-muted" role="status">No protocols linked yet. Edit a protocol and choose this goal in its Review step.</div>')+'<div class="nx-muted" style="margin-top:12px">Connections provide context, not evidence of treatment effectiveness.</div>'
+    ? '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">LINKED PROTOCOLS</div>'+(linked.length?linked.map(p=>'<button type="button" class="nx-goal-open-protocol" data-protocol-id="'+el(String(p.id))+'" style="width:100%;min-height:54px;text-align:left;padding:12px;border:1px solid var(--border-sub);background:var(--surface-2);border-radius:12px;margin-bottom:9px;color:var(--t1)"><span style="display:flex;align-items:center;justify-content:space-between;gap:8px"><strong style="font-size:13px">'+el(p.name)+'</strong><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="nx-muted" style="display:block;margin-top:4px">'+el(p.status||'draft')+' · View protocol overview</span></button>').join(''):'<div class="nx-muted" role="status">No protocols linked yet. Edit a protocol and choose this goal in its Review step.</div>')+'<div class="nx-muted" style="margin-top:12px">Connections provide context, not evidence of treatment effectiveness.</div>'
     : '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL ACTIVITY · CHECK-IN</div>'+checkInEvidence()+'<div class="nx-muted" style="margin-top:12px">Other Journal sources and contextual Insights are planned separately. Reflections are read from original Check-Ins, not copied into Goals.</div>';
   const modal=openModal('<div class="nx-goal-detail" style="padding-bottom:8px"><div style="display:flex;gap:10px;align-items:start;margin-bottom:14px"><div style="flex:1;min-width:0"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">GOAL DETAILS</div><div style="font-size:19px;font-weight:700;color:var(--t1);margin-top:4px">'+el(g.name)+'</div><div class="nx-muted">'+el(g.category||'Personal goal')+' · '+el(g.status||'active')+'</div></div><button id="nx-goal-detail-close" aria-label="Close goal details" style="min-height:44px;min-width:44px;border-radius:12px;color:var(--t2);background:var(--surface-2);border:1px solid var(--border)">×</button></div><div style="display:flex;gap:6px;margin-bottom:16px" role="tablist" aria-label="Goal details sections">'+['overview','connections','activity'].map(t=>'<button class="nx-goal-detail-tab" role="tab" data-tab="'+t+'" style="min-height:44px;flex:1;border-radius:10px;font-size:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t2)">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div><div id="nx-goal-detail-content" role="tabpanel"></div></div>','#A78BFA');
-  const paint=()=>{modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{const chosen=b.dataset.tab===active;b.setAttribute('aria-selected',chosen);b.style.background=chosen?'#A78BFA22':'var(--surface-2)';b.style.borderColor=chosen?'#A78BFA':'var(--border)';});modal.querySelector('#nx-goal-detail-content').innerHTML=content();modal.querySelectorAll('.nx-goal-checkin-source').forEach(b=>{b.onclick=()=>{const source=(state.dailyLogs||[]).find(l=>String(l.id)===b.dataset.checkinId);if(source){closeModal();dailyModal(source);}};});};
+  const paint=()=>{modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{const chosen=b.dataset.tab===active;b.setAttribute('aria-selected',chosen);b.style.background=chosen?'#A78BFA22':'var(--surface-2)';b.style.borderColor=chosen?'#A78BFA':'var(--border)';});modal.querySelector('#nx-goal-detail-content').innerHTML=content();modal.querySelectorAll('.nx-goal-checkin-source').forEach(b=>{b.onclick=()=>{const source=(state.dailyLogs||[]).find(l=>String(l.id)===b.dataset.checkinId);if(source){closeModal();dailyModal(source);}};});modal.querySelectorAll('.nx-goal-open-protocol').forEach(b=>{b.onclick=()=>{const id=b.dataset.protocolId;closeModal();tab="protocols";render();window.scrollTo(0,0);nexusProtocolDetails(id);};});};
   modal.querySelector('#nx-goal-detail-close').onclick=closeModal;
   modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>b.onclick=()=>{active=b.dataset.tab;paint();});
   paint();
@@ -1584,24 +1729,51 @@ function plansView() {
   const manageBtn=(type,id)=>`<button class="manage-plan-btn icon-btn" data-type="${type}" data-id="${id}" aria-label="Manage ${type}" title="Manage" style="width:44px;height:44px;min-width:44px;border-radius:11px;flex:0 0 44px"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>`;
   let content="";
 
+  const goalSummary=(g)=>{
+    const pm=g.progressModel||{type:"exploratory"};
+    if(pm.type==="numeric"){
+      const start=Number(pm.baseline),target=Number(pm.target);
+      const unit=String(pm.unit||"").trim();
+      const appUnit=String(state.settings?.weightUnit||"lbs").toLowerCase();
+      const sameUnit=(["lb","lbs"].includes(unit.toLowerCase())&&["lb","lbs"].includes(appUnit))||(unit.toLowerCase()==="kg"&&appUnit==="kg");
+      const recorded=pm.source==="weightLogs"&&sameUnit?(state.weightLogs||[]).filter(w=>w.date&&Number(w.weight)>0).sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0]:null;
+      const current=recorded?Number(recorded.weight):null;
+      const valid=Number.isFinite(start)&&Number.isFinite(target)&&start!==target&&current!==null;
+      const ratio=valid?(current-start)/(target-start):null;
+      const percent=ratio===null?null:Math.max(0,Math.min(100,Math.round(ratio*100)));
+      return {label:"Measurable target",detail:current===null?"No comparable recorded measurement":("Latest: "+current+" "+unit+" · Target: "+target+" "+unit),percent};
+    }
+    if(pm.type==="subjective")return {label:"Personal rating",detail:pm.rating?"Self-rating: "+pm.rating+" / 5":"No rating recorded yet",percent:null};
+    if(pm.type==="milestones")return {label:"Milestones",detail:(pm.milestones||[]).length+" milestones planned · completion not yet tracked",percent:null};
+    return {label:"Exploratory review",detail:"Reflection-based · no automatic percentage",percent:null};
+  };
+  const goalCard=(g)=>{
+    const sm=goalSummary(g);
+    const linked=(state.protocols||[]).filter(p=>String(p.linkedGoalId||"")===String(g.id));
+    return `<article class="nx-plan-item nx-plan-2-goal nx-goal-v2">
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><div class="nx-goal-v2-meta">${esc(g.category||"Personal goal")}${g.targetDate?" · Target "+esc(fmtDate(g.targetDate)):" · Target not set"}</div></div>${manageBtn("goal",g.id)}</div>
+      <div class="nx-goal-v2-progress"><div class="nx-goal-v2-row"><strong>${esc(sm.label)}</strong>${sm.percent!==null?`<span>${sm.percent}%</span>`:""}</div><div class="nx-goal-v2-detail">${esc(sm.detail)}</div>
+      ${sm.percent!==null?`<div class="nx-goal-v2-track" role="progressbar" aria-label="Measurement progress toward goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${sm.percent}"><span style="width:${sm.percent}%"></span></div>`:""}</div>
+      ${linked.length?`<div class="nx-goal-v2-connected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg><span>${linked.length} linked protocol${linked.length===1?"":"s"}</span></div>`:""}
+      <button type="button" class="nx-open-goal nx-goal-v2-open" data-id="${esc(String(g.id))}">View goal details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </article>`;
+  };
   if(sub==="goals"){
     const active=goals.filter(g=>!g.status||g.status==="active");
     const other=goals.filter(g=>g.status&&g.status!=="active");
-    content=`${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
-    ${active.map(g=>`<div class="nx-plan-item">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-plan-item-title">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status||"active",goalStatus)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="margin-top:2px;min-height:44px;padding:8px 0;color:#A78BFA;background:transparent;text-align:left;font-size:12px;font-weight:650">View goal</button><div class="nx-plan-item-sub">${esc(g.category||"")}${g.targetDate?` · Target: ${fmtDate(g.targetDate)}`:""}</div></div>${manageBtn("goal",g.id)}</div>
-
-    </div>`).join("")}
-    ${other.length?`<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin:12px 0 6px">OTHER GOALS</div>${other.map(g=>`<div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--t2)">${esc(g.name)}</div><div class="nx-card-status">${statusPill(g.status,goalStatus)}</div><button type="button" class="nx-open-goal" data-id="${esc(String(g.id))}" style="display:block;min-height:44px;padding:8px 0;color:#A78BFA;font-size:12px;background:transparent">View goal</button><div style="font-size:10px;color:var(--t4)">${esc(g.category||"")}</div></div>${manageBtn("goal",g.id)}</div>`).join("")}`:""}
-    <button id="add-goal" class="btn-primary" style="width:100%;margin-top:10px;background:#7DF9C0;color:#000">＋ Add Goal</button>`;
+    content=`<div class="nx-goals-page-header"><div><h2>Goals</h2><p>Personal milestones and connected progress</p></div><button type="button" id="add-goal" class="nx-goals-header-add" aria-label="Add Goal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Goal</span></button></div>${!goals.length?emptyState("No goals set yet", "Add a goal to connect your compounds to a purpose.", {id:"empty-add-goal", label:"+ Add Goal"}):""}
+    ${active.map(goalCard).join("")}
+    ${other.length?`<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin:16px 0 8px">OTHER GOALS</div>${other.map(goalCard).join("")}`:""}
+    `;
   } else if(sub==="research"){
-    content=`${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
-    ${research.map(r=>`<div class="nx-research-card" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:15px;padding:16px;margin-bottom:10px">
-      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-research-title">${esc(r.compound)}</div><div class="nx-card-status">${statusPill(r.status||"researching",resStatus)}</div>${r.goal?`<div style="font-size:10px;color:var(--t4)">→ ${esc(r.goal)}</div>`:""}</div>${manageBtn("research",r.id)}</div>
-      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>${r.reason?`<div class="nx-research-reason-label">RESEARCH REASON</div><div class="nx-research-reason">${esc(r.reason)}</div>`:`<div class="nx-research-empty">No research reason added yet.</div>`}
-      ${r.notes?`<div class="nx-research-note">${esc(r.notes)}</div>`:""}
-    </div>`).join("")}
-    <button id="add-research" class="btn-primary" style="width:100%;margin-top:10px;background:#F9C87D;color:#000">＋ Add to Research Queue</button>`;
+    content=`<div class="nx-goals-page-header nx-research-page-header"><div><h2>Research</h2><p>Your personal research queue</p></div><button id="add-research" type="button" class="nx-goals-header-add" aria-label="Add Research"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Research</span></button></div>
+    ${!research.length?emptyState("No compounds researched yet", "Compounds you're considering or researching appear here.", {id:"empty-add-research", label:"+ Add Research", color:"#8AB4FF"}):""}
+    ${research.map(r=>`<article class="nx-research-card nx-plan-2-research nx-research-v3">
+      <div class="nx-plan-head"><div style="flex:1;min-width:0"><div class="nx-research-title">${esc(r.compound)}</div><div class="nx-card-status">${statusPill(r.status||"researching",resStatus)}</div>${r.goal?`<div class="nx-research-goal">Linked goal · ${esc(r.goal)}</div>`:""}</div>${manageBtn("research",r.id)}</div>
+      <div class="nx-research-reason-label">RESEARCH REASON</div><div class="nx-research-reason">${r.reason?esc(r.reason):"No research reason added yet."}</div>
+      ${r.notes?`<div class="nx-research-notes"><button type="button" class="nx-research-note-toggle" aria-expanded="false" aria-controls="nx-research-note-${esc(String(r.id))}" data-id="${esc(String(r.id))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h6"/></svg><span>Show personal notes</span></button><div class="nx-research-note-body" id="nx-research-note-${esc(String(r.id))}" hidden>${esc(r.notes)}</div></div>`:""}
+      <div class="nx-plan-secondary"><button class="compound-intel-btn nx-plan-intel" data-name="${esc(r.compound)}" aria-label="View Intel for ${esc(r.compound)}">Compound intel <svg class="nx-plan-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+    </article>`).join("")}`;
   } else if(sub==="shopping"){
     const needed=shopping.filter(s=>!s.status||s.status==="needed");
     const ordered=shopping.filter(s=>s.status==="ordered");
@@ -1612,13 +1784,13 @@ function plansView() {
       ${manageBtn("shopping",s.id)}
     </div>`;
     const grp=(label,col,items)=>items.length?`<div class="mono" style="font-size:9px;color:${col};letter-spacing:1.5px;margin-bottom:4px;margin-top:10px">${label}</div><div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;padding:0 12px">${items.map(row).join("")}</div>`:"";
-    content=`${!shopping.length?emptyState("Your procurement list is empty", "Add items you need to order or restock.", {id:"empty-add-shopping", label:"+ Add Item", color:"#F9C87D"}):""}
+    content=`<div class="nx-goals-page-header nx-shopping-page-header"><div><h2>Shopping</h2><p>Needed, ordered and received</p></div><button type="button" id="add-shopping" class="nx-goals-header-add" aria-label="Add Item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add Item</span></button></div>${!shopping.length?emptyState("Your procurement list is empty", "Add items you need to order or restock.", {id:"empty-add-shopping", label:"+ Add Item", color:"#F9C87D"}):""}
     ${grp("NEEDED","#F9C87D",needed)}${grp("ORDERED","#8AB4FF",ordered)}${grp("RECEIVED","#7DF9C0",received)}
-    <button id="add-shopping" class="btn-primary" style="width:100%;margin-top:12px;background:var(--surface-3);color:var(--t1);border:1px solid var(--border)">＋ Add Item</button>`;
+    `;
   }
 
   return `<div class="nx-page-intro"><h1 class="serif greet">Plans</h1><p>Track your goals, research queue, and shopping needs.</p></div>
-  <div class="nx-plan-summary"><div><strong>${goals.filter(g=>!g.status||g.status==="active").length}</strong><span>Active goals</span></div><div><strong>${research.length}</strong><span>Research items</span></div><div><strong>${shopping.filter(s=>!s.status||s.status==="needed").length}</strong><span>To purchase</span></div></div>
+  
   <nav class="nx-plan-nav" aria-label="Plans sections">
     ${subBtn("goals","Goals",goals.filter(g=>!g.status||g.status==="active").length||"")}
     ${subBtn("research","Research",research.length||"")}
@@ -1632,7 +1804,7 @@ function goalModal(existing) {
   const compNames=Object.keys(allPeptidesIncArchived());
   let selC=g.compounds?[...g.compounds]:[];
   const refresh=()=>{m.querySelectorAll(".goal-comp").forEach(b=>{const sel=selC.includes(b.dataset.name);b.style.background=sel?"#A78BFA22":"transparent";b.style.borderColor=sel?"#A78BFA":"var(--border)";b.style.color=sel?"#A78BFA":"var(--t4)";});};
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:#7DF9C0;letter-spacing:1px">${existing?"EDIT":"ADD"} GOAL</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
+  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:var(--nx-hybrid-accent,#A78BFA);letter-spacing:1px">${existing?"EDIT":"ADD"} GOAL</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
     <input id="g-name" class="inp" placeholder="Goal name *" value="${esc(g.name)}" style="width:100%;margin-bottom:8px">
     <select id="g-cat" class="inp" style="width:100%;margin-bottom:8px"><option value="">Category...</option>${GOAL_CATS.map(c=>`<option${g.category===c?" selected":""}>${c}</option>`).join("")}</select>
     <select id="g-status" class="inp" style="width:100%;margin-bottom:8px"><option value="active"${g.status==="active"?" selected":""}>Active</option><option value="planned"${g.status==="planned"?" selected":""}>Planned</option><option value="paused"${g.status==="paused"?" selected":""}>Paused</option><option value="completed"${g.status==="completed"?" selected":""}>Completed</option></select>
@@ -1645,11 +1817,11 @@ function goalModal(existing) {
     </select>
     <div id="g-progress-settings" style="padding:10px 0 12px"></div>
     <label for="g-evidence-symptom" style="display:block;font-size:12px;color:var(--t3);margin-bottom:6px">Check-In symptom connection (optional)</label>
-    <select id="g-evidence-symptom" class="inp" style="width:100%;min-height:44px;margin-bottom:8px"><option value="">No Check-In connection</option>${[...new Set((state.dailyLogs||[]).flatMap(l=>(l.symptoms||[]).map(v=>typeof v==="string"?v:v?.name).filter(Boolean)))].sort().map(n=>`<option value="${esc(n)}"${g.evidenceSymptom===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
-    <div class="nx-muted" style="font-size:11px;margin-bottom:10px">Selected observations remain in their original Check-In history.</div>
-    <input id="g-target" class="inp" type="date" value="${g.targetDate||""}" style="width:100%;margin-bottom:8px">
+    <select id="g-evidence-symptom" class="inp" style="width:100%;min-height:48px;margin-bottom:8px"><option value="">No Check-In connection</option>${[...new Set((state.dailyLogs||[]).flatMap(l=>(l.symptoms||[]).map(v=>typeof v==="string"?v:v?.name).filter(Boolean)))].sort().map(n=>`<option value="${esc(n)}"${g.evidenceSymptom===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
+    ${(state.dailyLogs||[]).some(l=>(l.symptoms||[]).some(v=>typeof v==="string"&&v.trim()||v?.name))?`<div class="nx-muted" style="font-size:11px;margin-bottom:10px">Selected observations remain in their original Check-In history.</div>`:`<div class="nx-goal-connection-empty" role="status">No symptoms in Check-In history yet. This connection is optional; you can add one later.</div>`}
+    <label for="g-target" class="nx-hybrid-field-label">Target date <span>(optional)</span></label><input id="g-target" class="inp" type="date" aria-label="Target date, opens calendar" value="${g.targetDate||""}" style="width:100%;min-height:48px;margin-bottom:8px">
     <textarea id="g-notes" class="inp" placeholder="Notes" style="width:100%;min-height:60px;resize:vertical;margin-bottom:14px">${esc(g.notes||"")}</textarea>
-    <button id="g-save" class="btn-primary" style="background:#7DF9C0;color:#000">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
+    <button id="g-save" class="btn-primary">${existing?"Save changes":"Add Goal"}</button>`,"#7DF9C0");
 
   const model=g.progressModel||{};
   const progressSettings=m.querySelector("#g-progress-settings");
@@ -1664,10 +1836,80 @@ function goalModal(existing) {
       ? '<label for="g-p-milestones" style="display:block;font-size:11px;color:var(--t3);margin-bottom:5px">Milestones (one per line)</label><textarea id="g-p-milestones" class="inp" style="width:100%;min-height:75px" placeholder="e.g. Establish a routine">'+esc((model.milestones||[]).join("\n"))+'</textarea>'
       : '<p class="nx-muted">Use your notes, reviews, and connected observations to explore progress. No artificial score is assigned.</p>';
   };
-  m.querySelector("#g-progress-type").addEventListener("change",renderProgressSettings);
+  // Preserve in-progress progress configurations when switching methods.
+  const progressDrafts={};
+  const readProgressDraft=(type)=>{
+    const read=id=>m.querySelector("#"+id)?.value;
+    if(type==="numeric")return {baseline:read("g-p-baseline"),target:read("g-p-target"),unit:read("g-p-unit"),source:read("g-p-source")};
+    if(type==="subjective")return {rating:read("g-p-rating")};
+    if(type==="milestones")return {milestones:read("g-p-milestones")};
+    return {};
+  };
+  const writeProgressDraft=(type,draft)=>{
+    const ids=type==="numeric"?{baseline:"g-p-baseline",target:"g-p-target",unit:"g-p-unit",source:"g-p-source"}:type==="subjective"?{rating:"g-p-rating"}:type==="milestones"?{milestones:"g-p-milestones"}:{};
+    Object.keys(ids).forEach(key=>{const el=m.querySelector("#"+ids[key]);if(el&&draft[key]!==undefined)el.value=draft[key];});
+  };
+  let priorProgressType=m.querySelector("#g-progress-type").value;
+  m.querySelector("#g-progress-type").addEventListener("change",()=>{
+    progressDrafts[priorProgressType]=readProgressDraft(priorProgressType);
+    renderProgressSettings();
+    const newType=m.querySelector("#g-progress-type").value;
+    if(progressDrafts[newType])writeProgressDraft(newType,progressDrafts[newType]);
+    priorProgressType=newType;
+  });
   renderProgressSettings();
   m.querySelector("#x").onclick=closeModal;
   m.querySelectorAll(".goal-comp").forEach(b=>b.onclick=()=>{const n=b.dataset.name,i=selC.indexOf(n);i>=0?selC.splice(i,1):selC.push(n);refresh();});
+  // Four-stage Goal wizard: move existing form controls without changing their IDs,
+  // data mapping, or final save handler. Hidden stages stay mounted so edits persist.
+  const wizard=document.createElement("div");
+  wizard.className="nx-goal-wizard";
+  wizard.innerHTML='<div class="nx-goal-wizard-top"><span id="nx-g-step-label" aria-live="polite">Step 1 of 4 · Basics</span><div class="nx-goal-wizard-track" aria-hidden="true"><span id="nx-g-step-fill"></span></div></div><div id="nx-g-wizard-panels"></div><div class="nx-goal-wizard-footer"><button type="button" id="nx-g-back">Back</button><button type="button" id="nx-g-next">Continue</button></div>';
+  const panels=wizard.querySelector("#nx-g-wizard-panels");
+  const host=m.querySelector("#g-name").parentElement;
+  const steps=[document.createElement("section"),document.createElement("section"),document.createElement("section"),document.createElement("section")];
+  const labels=["Basics","Progress","Connections","Review"];
+  steps.forEach((panel,i)=>{panel.className="nx-goal-wizard-panel";panel.setAttribute("aria-label",labels[i]);panel.hidden=i!==0;panels.appendChild(panel);});
+  const move=(selector,to)=>{const el=m.querySelector(selector);if(el)steps[to].appendChild(el);};
+  move("#g-name",0);move("#g-cat",0);move("#g-status",0);
+  // Capture the existing compound label and chip group, not only the buttons.
+  const chip=m.querySelector(".goal-comp");
+  if(chip){const group=chip.parentElement;const label=group.previousElementSibling;if(label&&label.parentElement===host)steps[2].appendChild(label);steps[2].appendChild(group);}
+  move("#g-metrics",1);
+  const method=m.querySelector("#g-progress-type");
+  if(method){const label=method.previousElementSibling;if(label&&label.parentElement===host)steps[1].appendChild(label);steps[1].appendChild(method);}
+  move("#g-progress-settings",1);
+  const symptom=m.querySelector("#g-evidence-symptom");
+  if(symptom){const label=symptom.previousElementSibling;if(label&&label.parentElement===host)steps[2].appendChild(label);steps[2].appendChild(symptom);}
+  const evidenceNote=Array.from(host.children).find(el=>(el.classList?.contains("nx-muted")&&el.textContent?.includes("Selected observations remain"))||el.classList?.contains("nx-goal-connection-empty"));
+  if(evidenceNote)steps[2].appendChild(evidenceNote);
+  // A selector with only 'No Check-In connection' is not an actionable picker.
+  // Preserve the existing optional value and mapping, but disable the empty picker.
+  if(symptom && symptom.options.length===1) symptom.disabled=true;
+  move("#g-target",0);move("#g-notes",2);
+  const save=m.querySelector("#g-save");
+  if(save){steps[3].appendChild(save);save.textContent=existing?"Save changes":"Add Goal";}
+  host.appendChild(wizard);
+  let currentStep=0;
+  const review=document.createElement("div");review.className="nx-goal-wizard-review";steps[3].insertBefore(review,save);
+  const paintWizard=()=>{
+    steps.forEach((panel,i)=>{panel.hidden=i!==currentStep;});
+    wizard.querySelector("#nx-g-step-label").textContent="Step "+(currentStep+1)+" of 4 · "+labels[currentStep];
+    wizard.querySelector("#nx-g-step-fill").style.width=((currentStep+1)*25)+"%";
+    wizard.querySelector("#nx-g-back").disabled=currentStep===0;
+    wizard.querySelector("#nx-g-next").hidden=currentStep===3;
+    if(currentStep===3){
+      const field=id=>m.querySelector("#"+id)?.value||"";
+      const row=(label,value)=>'<div><span>'+label+'</span><strong>'+esc(String(value||"Not set"))+'</strong></div>';
+      review.innerHTML=row("Goal",field("g-name"))+row("Category",field("g-cat"))+row("Status",field("g-status"))+row("Progress",field("g-progress-type"))+row("Target date",field("g-target"))+row("Compounds",selC.length?selC.join(", "):"None linked")+row("Check-In symptom",field("g-evidence-symptom"));
+    }
+  };
+  wizard.querySelector("#nx-g-back").onclick=()=>{currentStep=Math.max(0,currentStep-1);paintWizard();};
+  wizard.querySelector("#nx-g-next").onclick=()=>{
+    if(currentStep===0&&!m.querySelector("#g-name").value.trim()){m.querySelector("#g-name").focus();return;}
+    currentStep=Math.min(3,currentStep+1);paintWizard();
+  };
+  paintWizard();
   m.querySelector("#g-save").onclick=()=>{
     const name=(m.querySelector("#g-name").value||"").trim();if(!name)return;
     const type=m.querySelector("#g-progress-type").value;
@@ -1690,13 +1932,16 @@ function researchModal(existing) {
   const goalNames=(state.plans?.goals||[]).map(g=>g.name);
   let selComp=r.compound?[r.compound]:[];
   state._cpickQ_rcomp="";
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:#F9C87D;letter-spacing:1px">${existing?"EDIT":"ADD"} RESEARCH</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-    <div id="rcomp-picker">${compoundPickerHTML(selComp,"rcomp")}</div>
-    <select id="r-status" class="inp" style="width:100%;margin-bottom:8px"><option value="researching"${r.status==="researching"?" selected":""}>Researching</option><option value="considering"${r.status==="considering"?" selected":""}>Considering</option><option value="planned"${r.status==="planned"?" selected":""}>Planned</option><option value="not now"${r.status==="not now"?" selected":""}>Not now</option></select>
-    <input id="r-reason" class="inp" placeholder="Why interested?" value="${esc(r.reason||"")}" style="width:100%;margin-bottom:8px">
-    <select id="r-goal" class="inp" style="width:100%;margin-bottom:8px"><option value="">Link to goal...</option>${goalNames.map(g=>`<option${r.goal===g?" selected":""}>${esc(g)}</option>`).join("")}</select>
-    <textarea id="r-notes" class="inp" placeholder="Notes" style="width:100%;min-height:55px;resize:vertical;margin-bottom:14px">${esc(r.notes||"")}</textarea>
-    <button id="r-save" class="btn-primary" style="background:#F9C87D;color:#000">${existing?"Save":"Add"}</button>`,"#F9C87D");
+  const m=openModal(`<div class="nx-plan-edit-header"><div><span class="nx-plan-edit-eyebrow">PLANS · RESEARCH</span><h2>${existing?"Edit research":"Add research"}</h2><p>Organize a compound you're exploring.</p></div><button type="button" id="x" class="nx-plan-edit-close" aria-label="Close research editor">×</button></div>
+    <div class="nx-plan-edit-fields">
+      <div class="nx-plan-edit-field"><label for="rcomp-picker">Compound <span aria-hidden="true">*</span></label><div id="rcomp-picker">${compoundPickerHTML(selComp,"rcomp")}</div></div>
+      <div class="nx-plan-edit-field"><label for="r-status">Research status</label><select id="r-status" class="inp"><option value="researching"${r.status==="researching"?" selected":""}>Researching</option><option value="considering"${r.status==="considering"?" selected":""}>Considering</option><option value="planned"${r.status==="planned"?" selected":""}>Planned</option><option value="not now"${r.status==="not now"?" selected":""}>Not now</option></select></div>
+      <div class="nx-plan-edit-field"><label for="r-reason">Research reason</label><input id="r-reason" class="inp" placeholder="Why are you interested?" value="${esc(r.reason||"")}"></div>
+      <div class="nx-plan-edit-field"><label for="r-goal">Related goal <small>Optional</small></label><select id="r-goal" class="inp"><option value="">No linked goal</option>${goalNames.map(g=>`<option${r.goal===g?" selected":""}>${esc(g)}</option>`).join("")}</select></div>
+      <div class="nx-plan-edit-field"><label for="r-notes">Personal notes <small>Optional</small></label><textarea id="r-notes" class="inp" placeholder="Capture useful context and questions">${esc(r.notes||"")}</textarea></div>
+    </div>
+    <div class="nx-plan-edit-footer"><button type="button" id="r-save" class="btn-primary">${existing?"Save changes":"Add research"}</button></div>`,"#A78BFA");
+  m.classList.add("nx-plan-edit-modal","nx-plan-research-edit");
   m.querySelector("#x").onclick=closeModal;
   const rp=m.querySelector("#rcomp-picker");
   const refreshR=()=>{rp.innerHTML=compoundPickerHTML(selComp,"rcomp");wireCompoundPicker(rp,selComp,"rcomp",refreshR);};
@@ -1738,14 +1983,17 @@ function protocolModal(existing) {
 function shoppingModal(existing) {
   const s=existing||{id:uid(),item:"",category:"supply",status:"needed",qty:"",goal:"",notes:""};
   const linkedNames=[...(state.plans?.goals||[]).map(g=>g.name),...(state.protocols||[]).map(p=>p.name)];
-  const m=openModal(`<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="mono" style="font-size:12px;color:var(--t2);letter-spacing:1px">${existing?"EDIT":"ADD"} ITEM</span><button id="x" style="color:var(--t4);font-size:18px">✕</button></div>
-    <input id="s-item" class="inp" placeholder="Item name *" value="${esc(s.item)}" style="width:100%;margin-bottom:8px">
-    <select id="s-cat" class="inp" style="width:100%;margin-bottom:8px"><option value="compound"${s.category==="compound"?" selected":""}>💊 Compound</option><option value="supply"${s.category==="supply"?" selected":""}>🧪 Supply</option><option value="equipment"${s.category==="equipment"?" selected":""}>🔧 Equipment</option></select>
-    <select id="s-status" class="inp" style="width:100%;margin-bottom:8px"><option value="needed"${s.status==="needed"?" selected":""}>Needed</option><option value="ordered"${s.status==="ordered"?" selected":""}>Ordered</option><option value="received"${s.status==="received"?" selected":""}>Received</option></select>
-    <input id="s-qty" class="inp" placeholder="Quantity (optional)" value="${esc(s.qty||"")}" style="width:100%;margin-bottom:8px">
-    <select id="s-goal" class="inp" style="width:100%;margin-bottom:8px"><option value="">Link to goal/protocol (optional)</option>${linkedNames.map(n=>`<option${s.goal===n?" selected":""}>${esc(n)}</option>`).join("")}</select>
-    <textarea id="s-notes" class="inp" placeholder="Notes" style="width:100%;min-height:50px;resize:vertical;margin-bottom:14px">${esc(s.notes||"")}</textarea>
-    <button id="s-save" class="btn-primary" style="background:var(--surface-3);color:var(--t1);border:1px solid var(--border)">${existing?"Save":"Add Item"}</button>`,"var(--t3)");
+  const m=openModal(`<div class="nx-plan-edit-header"><div><span class="nx-plan-edit-eyebrow">PLANS · SHOPPING</span><h2>${existing?"Edit item":"Add item"}</h2><p>Keep track of what you need and receive.</p></div><button type="button" id="x" class="nx-plan-edit-close" aria-label="Close item editor">×</button></div>
+    <div class="nx-plan-edit-fields">
+      <div class="nx-plan-edit-field"><label for="s-item">Item name <span aria-hidden="true">*</span></label><input id="s-item" class="inp" placeholder="What do you need?" value="${esc(s.item)}"></div>
+      <div class="nx-plan-edit-field"><label for="s-cat">Category</label><select id="s-cat" class="inp"><option value="compound"${s.category==="compound"?" selected":""}>Compound</option><option value="supply"${s.category==="supply"?" selected":""}>Supply</option><option value="equipment"${s.category==="equipment"?" selected":""}>Equipment</option></select></div>
+      <div class="nx-plan-edit-field"><label for="s-status">Order status</label><select id="s-status" class="inp"><option value="needed"${s.status==="needed"?" selected":""}>Needed</option><option value="ordered"${s.status==="ordered"?" selected":""}>Ordered</option><option value="received"${s.status==="received"?" selected":""}>Received</option></select></div>
+      <div class="nx-plan-edit-field"><label for="s-qty">Quantity <small>Optional</small></label><input id="s-qty" class="inp" placeholder="e.g. 2" value="${esc(s.qty||"")}"></div>
+      <div class="nx-plan-edit-field"><label for="s-goal">Related goal or protocol <small>Optional</small></label><select id="s-goal" class="inp"><option value="">No connection</option>${linkedNames.map(n=>`<option${s.goal===n?" selected":""}>${esc(n)}</option>`).join("")}</select></div>
+      <div class="nx-plan-edit-field"><label for="s-notes">Notes <small>Optional</small></label><textarea id="s-notes" class="inp" placeholder="Any details to remember">${esc(s.notes||"")}</textarea></div>
+    </div>
+    <div class="nx-plan-edit-footer"><button type="button" id="s-save" class="btn-primary">${existing?"Save changes":"Add item"}</button></div>`,"#A78BFA");
+  m.classList.add("nx-plan-edit-modal","nx-plan-shopping-edit");
   m.querySelector("#x").onclick=closeModal;
   m.querySelector("#s-save").onclick=()=>{
     const item=(m.querySelector("#s-item").value||"").trim();if(!item)return;
@@ -1778,12 +2026,14 @@ function renderBody() {
       ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>'
       : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   const hasUnseenUpdate = CURRENT_CHANGELOG_VERSION > (state.settings.lastSeenChangelog||0);
-  const profileBtn = tab==="profile" ? "" : `<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px"><button id="profile-btn" style="position:relative;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:20px;padding:4px 12px 4px 4px;font-size:12px;display:flex;align-items:center;gap:6px">
+  const profileBtn = tab==="profile" ? "" : `<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px"><button id="profile-btn" aria-label="Open profile" title="Profile" style="position:relative;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);border-radius:20px;padding:4px 12px 4px 4px;font-size:12px;display:flex;align-items:center;gap:6px">
   ${state.profile.avatar
     ?`<img src="${state.profile.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`
     :`<span class="nx-profile-avatar-fallback" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`}
-  <span style="color:var(--t3)">Profile</span>${hasUnseenUpdate?`<span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#A78BFA;border:1.5px solid var(--bg)"></span>`:""}</button><button id="theme-toggle" title="Toggle light/dark">${themeIcon}</button></div>`;
-  app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${profileBtn}${inner}</div>`;
+  <span style="color:var(--t3)">Profile</span>${hasUnseenUpdate?`<span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#A78BFA;border:1.5px solid var(--bg)"></span>`:""}</button><button id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle light/dark">${themeIcon}</button></div>`;
+  // Keep the existing Profile/theme controls and handlers; Today groups them with Alerts.
+  if(tab==="home") inner=inner.replace('<div class="nx-today-header-actions">','<div class="nx-today-header-actions">'+profileBtn);
+  app.innerHTML = `<div id="body" class="nexus-screen-${tab}">${tab==="home"?"":profileBtn}${inner}</div>`;
   wireBody();
 }
 
@@ -1867,6 +2117,14 @@ function renderTabbar() {
     if (id === 'calendar') {
       state._protoCalSub = 'month';
       state._calOff = 0;
+    }
+    if (id === "plans") state._plansSub = "goals";
+    if (id === "trends") state._nxHistorySelected = null; // Fresh tab entry starts at Trends home.
+    // A fresh Profile visit should not resurrect the last Settings subpage.
+    // Keep normal in-page Settings Back navigation and all saved profile data.
+    if (id === "profile") {
+      state._profileTab = "profile";
+      state._settingsDetail = null;
     }
     tab=id;
     state._guideOpen=null; state._discoverOpen=null;
