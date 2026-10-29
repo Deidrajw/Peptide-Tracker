@@ -116,6 +116,8 @@ try{
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
     const before=await page.evaluate(()=>JSON.stringify(state.supplies));
     await page.evaluate(()=>supplyModal());
+    ensure(await page.locator('.nx-kit-type-choice').count()===5,'Unified Add Kit form options missing');
+    await page.locator('[data-kit-form="vial"]').click();
     ensure(await page.locator('.nx-stash-kit-editor').count()===1,'Kit editor styling hook missing');
     ensure(await page.locator('.nx-stash-kit-editor #ssave').count()===1,'Original Save handler target missing');
     ensure(await page.locator('.nx-stash-kit-editor #sname').count()===1 && await page.locator('.nx-stash-kit-editor #stv').count()===1 && await page.locator('.nx-stash-kit-editor #svmg').count()===1 && await page.locator('.nx-stash-kit-editor #sbac').count()===1 && await page.locator('.nx-stash-kit-editor #sloc').count()===1,'Kit fields lost');
