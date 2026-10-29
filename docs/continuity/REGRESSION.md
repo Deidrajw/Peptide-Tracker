@@ -1,3 +1,6 @@
+## 2026-10-29 — Exact-vial browser test checkpoint
+- Run 40911647051 browser completed SUCCESS on bc9a8c77. This includes newly authored fictional exact-vial selection checks alongside browser workflow; per-run detailed assertions not independently downloaded. WebKit 40911646998 and nested 40911647244 still running. Physical iPhone not accepted; no transfer testing. No release.
+
 ## 2026-10-29 — Draft PR124 exact-vial UI regression, source only
 - `bc9a8c77` adds browser fictional assertion at 320/390 widths, light/dark, LIVE and isolated DEMO: two open same-kit SubQ vials are separate `kit-opt` buttons, neither is preselected, selecting vial #2 uses its exact ID and does not consume either balance. Browser CI on this change PENDING (do not mark Pass yet).
 - `fa88b464`, `8ae43d30` link no-transfer preparation plans to existing kit/vial, not fabricated bottle/quantity. Missing tests for save failures, restored history, alternate routes, simultaneous open/close, dose confirmation and blend gating. iPhone acceptance BLOCKED.
