@@ -1033,3 +1033,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — DS2 prepared-dose orphan-source safety fix, draft only
 - Runtime `4968983c` blocks removal of unused prepared batch with missing explicit source kit/vial; fictional negative tests `b8ca5abf`, following two-vial partial refund test `56dc3f16`. No storage schema/data migration or live writes intended. Full build, exact-source LIVE/isolated DEMO artifacts and protected-flow verification **PENDING**. PR #123 draft/unmerged, primary Cloudflare production unchanged.
+
+## 2026-10-28 — v0.9.20-beta DS2 source verification checkpoint, UNRELEASED
+- Full CI #40798440095 PASS on original 56-check split-prepared vial regression `56dc3f16`; artifact #12864843167 includes complete LIVE/isolated DEMO candidate packages. Subsequent fail-closed prepared-source integrity fix `4968983c` and 64-check expanded test `b8ca5abf` are NEWER than this pass; latest build #40798876625 still running. No production deployment/merge, no user data touched; external clinical/device acceptance not implied.
