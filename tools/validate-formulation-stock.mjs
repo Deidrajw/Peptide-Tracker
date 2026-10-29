@@ -19,24 +19,25 @@ try {
    const banner=document.querySelector('#demo-banner');if(banner)banner.style.display='none';
    tab='stash';render();
   },theme);
-  const layout=await page.locator('.nx-form-stock').evaluate(section=>{
+  const before=await page.evaluate(()=>JSON.stringify(state.supplies));
+  await page.evaluate(()=>supplyModal(null,null));
+  assert.equal(await page.locator('.nx-kit-type-choice').count(),5,'One Add Kit flow requires five product forms');
+  const layout=await page.locator('.nx-kit-type-picker').evaluate(section=>{
     const viewport=document.documentElement.clientWidth;
-    const controls=[...section.querySelectorAll('#nx-add-capsules,#nx-add-nasal')];
+    const controls=[...section.querySelectorAll('.nx-kit-type-choice')];
     return {viewport,right:section.getBoundingClientRect().right,
-      widths:controls.map(x=>x.getBoundingClientRect().width),
       heights:controls.map(x=>x.getBoundingClientRect().height)};
   });
-  assert.ok(layout.right<=layout.viewport+2,'Stash formulation card overflows viewport: '+JSON.stringify(layout));
-  assert.ok(layout.heights.every(h=>h>=44),'Stash action below 44px touch target: '+JSON.stringify(layout));
-  const before=await page.evaluate(()=>JSON.stringify(state.supplies));
-  assert.equal(await page.locator('#nx-add-capsules').count(),1);
-  await page.locator('#nx-add-capsules').click();
+  assert.ok(layout.right<=layout.viewport+2,'Add Kit chooser overflow: '+JSON.stringify(layout));
+  assert.ok(layout.heights.every(h=>h>=44),'Kit form below 44px target: '+JSON.stringify(layout));
+  await page.locator('[data-kit-form="capsule-bottle"]').click();
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-count').fill('30');
   await page.locator('#nx-form-strength').fill('5');
   await page.locator('#nx-form-save').click();
-  assert.equal(await page.locator('.nx-form-stock-item').count(),1,'capsules card missing');
-  await page.locator('#nx-add-nasal').click();
+  assert.equal(await page.locator('.nx-form-kit-card').count(),1,'capsules kit card missing');
+  await page.evaluate(()=>supplyModal(null,null));
+  await page.locator('[data-kit-form="nasal-bottle"]').click();
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-volume').fill('7');
   await page.locator('#nx-form-mg').fill('10');
@@ -55,7 +56,7 @@ try {
   const after=await page.evaluate(()=>({
    stock:state.formulationStocks,
    demo:isDemoMode(),
-   visible:document.querySelectorAll('.nx-form-stock-item').length
+   visible:document.querySelectorAll('.nx-form-kit-card').length
   }));
   // Compare original vial state from first snapshot, never infer formulations from kits.
   const current=await page.evaluate(()=>JSON.stringify(state.supplies));
@@ -71,4 +72,4 @@ try {
   await ctx.close();
  }
 } finally {await browser.close();}
-console.log('PASS: '+engine.name()+' additive capsule and nasal Stash controls, untouched legacy kits in '+results.length+' LIVE/DEMO viewport/theme sessions');
+console.log('PASS: '+engine.name()+' unified Add Kit chooser, capsule/nasal kit cards and untouched vial stock in '+results.length+' fictional LIVE/DEMO sessions');
