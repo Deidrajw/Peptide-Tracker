@@ -1942,19 +1942,27 @@ function nexusPreviewPreparationTransaction(input) {
 }
 // Committed transfers are intentionally unavailable in DEMO mode and until a
 // complete validated snapshot can be persisted through one storage write.
-function nexusCommitPreparationTransfer(input) {
+// Internal guarded boundary only. No UI invokes this until full release QA.
+async function nexusCommitPreparationTransfer(input) {
   if (_demoActive) throw Error("Transfers unavailable in demo mode");
-  if (!globalThis.NexusPreparationBridge) throw Error("Atomic preparation bridge unavailable");
+  if (!globalThis.NexusPreparationBridge) throw Error("Preparation bridge unavailable");
   if (!input || !input.id) throw Error("Explicit transaction required");
-  const before=state;
-  // Snapshot validation, canonical vial debit, destination credit and stale-tab
-  // checks all run before a single storage write. No saveState() swallow here.
-  const {next,event}=globalThis.NexusPreparationBridge.commit(before,input,{
-    read:()=>localStorage.getItem(STORE_KEY),
-    write:serialized=>localStorage.setItem(STORE_KEY,serialized)
+  // Browser-local synchronous storage is not compare-and-swap. Require the
+  // browser's cross-tab exclusive lock, and perform the freshness check and
+  // durable readback while holding that lock. Other Nexus state writers are
+  // not yet migrated to this lock: keep real transfer controls disabled.
+  if (!navigator.locks || typeof navigator.locks.request !== "function")
+    throw Error("Exclusive inventory lock unavailable; transfer blocked");
+  return navigator.locks.request(STORE_KEY + ":inventory-transfer", {mode:"exclusive"}, () => {
+    if (_demoActive) throw Error("Transfers unavailable in demo mode");
+    const before=state;
+    const {next,event}=globalThis.NexusPreparationBridge.commit(before,input,{
+      read:()=>localStorage.getItem(STORE_KEY),
+      write:serialized=>localStorage.setItem(STORE_KEY,serialized)
+    });
+    state=next; // swap only following successful persistence/readback
+    return event;
   });
-  state=next;
-  return event;
 }
 function getEligibleSourceKits(name) {
   return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
