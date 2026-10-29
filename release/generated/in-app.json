@@ -1,73 +1,30 @@
 {
-  "version": "v0.9.20-beta",
+  "version": "v0.9.21-beta",
   "channel": "beta",
   "publicationStatus": "unverified",
   "publishedAt": null,
-  "title": "A more consistent Nexus, with safer inventory history",
+  "title": "Dosing method tracking for every administration",
   "changes": [
     {
-      "key": "ds2-navigation",
-      "title": "Refined navigation and visual hierarchy",
-      "detail": "Unified the iPhone-first screen hierarchy, navigation rows, disclosures, button geometry and sheet actions across Today, Trends, Profile, Settings and related detail screens.",
-      "screen": "Navigation",
-      "kind": "improvement"
+      "key": "dosing-method",
+      "title": "Record how each dose was taken",
+      "detail": "Added Subcutaneous, IM, IV, Oral, Nasal and Topical dosing methods separately from optional injection site in Log Dose, combo doses and prepared syringe logging. Methods appear in dose histories and calendar details.",
+      "screen": "Today / Log Dose / History",
+      "kind": "feature"
     },
     {
-      "key": "calendar-logs",
-      "title": "Calendar day logs and all logs",
-      "detail": "Added the approved Calendar day-view and All Logs workflow while preserving logged dates, details, history and editing.",
-      "screen": "Calendar",
-      "kind": "improvement"
-    },
-    {
-      "key": "plans",
-      "title": "Cleaner Protocol and Plans cards",
-      "detail": "Reduced card density, refined disclosure and action placement, and preserved existing protocol schedules, histories and actions.",
-      "screen": "Protocols / Plans",
-      "kind": "improvement"
-    },
-    {
-      "key": "stash",
-      "title": "Unified kit and Supplies experience",
-      "detail": "Aligned premixed and standard kit cards, vial details, inventory actions, supply presentation and guided editing to the approved design language.",
-      "screen": "Stash / Supplies",
-      "kind": "improvement"
-    },
-    {
-      "key": "blend",
-      "title": "Consistent blend dosing and inventory links",
-      "detail": "Kept premixed blends in standard Log Dose and kit workflows with explicit source transaction tracking and preserved historical ingredient associations.",
-      "screen": "Today / Stash",
-      "kind": "fix"
-    },
-    {
-      "key": "prepared-source",
-      "title": "Protect historical prepared doses from uncertain refunds",
-      "detail": "Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial. User-reported isolated physical iPhone warning acceptance passed 12/12 checks.",
-      "screen": "Stash / Prepared doses",
-      "kind": "fix"
-    },
-    {
-      "key": "whats-new",
-      "title": "Clearer What's New and update history",
-      "detail": "Consolidated in-app release history presentation and prepared notices that appear only for verified published releases.",
-      "screen": "More / App Updates",
-      "kind": "improvement"
-    },
-    {
-      "key": "accessibility",
-      "title": "More consistent touch targets and contrast safeguards",
-      "detail": "Improved selected buttons, modal actions, spacing and focus presentation; a stabilized computed-colour audit found zero sub-4.5:1 text contrast candidates across nine main screens in both themes at 390px. Broader VoiceOver and whole-app device acceptance remain untested.",
-      "screen": "Across Nexus",
+      "key": "historical-data",
+      "title": "Preserved existing records",
+      "detail": "Past dose records remain unchanged when a method was not recorded; edits can explicitly add a method. Dose source, inventory calculations, historical associations and backups are preserved.",
+      "screen": "Dose history / Inventory",
       "kind": "improvement"
     }
   ],
-  "dataImpact": "No destructive migrations or historical record rewrites. Existing production browser storage, check-ins, schedules, logged doses, prepared batches, vial histories, protocols, backups and settings remain protected. Ambiguous historical source allocations are preserved and unsafe prepared-batch deletion is blocked.",
+  "dataImpact": "Non-destructive additive dose.method field on newly recorded or explicitly edited doses. Existing saved doses, personal history, inventory source allocations, protocols and browser storage remain intact; missing legacy methods are not inferred.",
   "limitations": [
-    "Some legacy prepared batches lack exact historical source IDs and require manual review before deletion or inventory return.",
-    "User-reported physical iPhone acceptance covers the isolated orphan-source warning (12/12), not every screen or VoiceOver.",
-    "Earlier 58 light-mode contrast candidates did not reproduce after theme-transition stabilization; the corrected scan found zero candidates across nine main screens at 390px in both themes. This is not blanket WCAG, keyboard or VoiceOver acceptance.",
-    "The manifest is a release candidate only: publication status remains unverified until approved merge, Cloudflare asset parity and a follow-up publication update."
+    "Legacy dose entries without a recorded method remain unspecified until edited.",
+    "The combo and prepared-syringe flows are injectable-only; oral, nasal and topical administrations use individual Log Dose.",
+    "Production publication, automatic What's New popup, physical iPhone acceptance and Cloudflare parity require independent verification after approved deployment."
   ],
   "history": [
     {
