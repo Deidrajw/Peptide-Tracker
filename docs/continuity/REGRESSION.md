@@ -1,3 +1,7 @@
+## 2026-10-29 — Release artifacts and iPhone acceptance gate
+- GitHub full run 40913649262 SUCCESS. Artifact 12915741154 downloaded and ZIP integrity checked; root index and 23 referenced CSS/JS/icon paths packaged. LIVE ZIP blob SHA matched PR branch for index.html, nexus.css, 04,05,09,10 JS. Full standalone DEMO included and manifest identifies ephemeral isolated storage (not a physical runtime security audit). Browser/WebKit/nested passed separate runs 40913649295/40913649202/40913649436.
+- Physical iPhone tests PENDING: open second vial within existing non-blend kit while first stays open, independent intended uses, explicit exact vial selection, dose history source attribution, in-kit linked no-transfer preparation plan, independent Add Kit purchased nasal/capsule, warning dismissal, light theme and IM/SubQ site compatibility. Block blend simultaneous open and legacy Prepare Doses ambiguous source. No production acceptance claimed.
+
 ## 2026-10-29 — Legacy shortfall test updated for explicit source contract
 - Run 40913124098 FAILED (not a safe release) because old `openDose` helper expected automatic first-kit source. In new correct UX the source is intentionally unselected when there are multiple candidates. Test helper `4c6cf6ee` now explicitly taps first kit-opt; separate `validate-formulation-stock.mjs` checks no auto-default. Browser 40913649295, WebKit 40913649202 and nested 40913649436 SUCCESS on updated test commit; full release run 40913649262 PENDING. No physical iPhone test or production deployment.
 
