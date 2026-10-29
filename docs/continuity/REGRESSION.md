@@ -1672,3 +1672,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Unknown-route fail-closed guard
 - Source eligibility now uses nexusExplicitAdminMethod: unknown method labels return null, unlike nexusAdminMethod legacy display fallback SubQ. Prevents unknown/unlabelled stock from silently appearing as injectable SubQ. Fictional route isolation suite now seeds simultaneous SubQ, Nasal, Unknown and unlabelled open vials and expects only the exact corresponding known route (commits af98f36e, 0813a555, b0da45d8).
 - Latest full CI for this exact source head still pending. Ordinary synchronous saves have not migrated to shared Web Locks; preparation transfer enabled flag remains false. No production data changes.
+
+
+## 2026-10-29 — Selector UI regression coverage added
+- Added fictional LIVE/DEMO browser checks for six admin method buttons, SubQ abdominal site selection, switch to IM region options, and synchronised canonical method/site values. UI implementation includes 44px targets, keyboard focus and 320px/390px sizing. These are assertions committed, **NOT verified passing until CI reports**.
+- Historical saved doses and data schema unchanged. No merge/deployment, no real transfer controls.
