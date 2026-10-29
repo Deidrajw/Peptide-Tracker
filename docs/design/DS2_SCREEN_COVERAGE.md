@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 source selection/kit preparation mobile coverage
+- Log Dose explicit same-kit physical vial buttons (kit, vial number, use, balance, 48px targets), no ambiguous default. Existing kit Vials panel adds linked no-transfer Create Preparation action that wraps at narrow iPhone widths. Existing purchased product Add Kit remains separate. Chromium fictional 320/390 light/dark LIVE/DEMO browser run 40912034303 SUCCESS at 2680aba5; newest CSS/source exact-head browser and physical iPhone not yet accepted.
+
 ## 2026-10-29 — PR #124 Stash/Log Dose exact-source preview
 - Stash existing-vial Create Preparation writes only no-transfer plan linked by kitId/vialId. Log Dose two eligible same-kit vials display individual 48px source choices, with explicit selection rather than first-vial inference. Browser and iPhone coverage not yet accepted, full app unchanged on production. Preserve prior DS2 styling; follow up on in-kit preparation detail and linked history QA.
 
