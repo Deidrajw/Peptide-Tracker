@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 follow-up notification addenda (DRAFT, not released)
+- Coded post-protocol informational in-app nudge, per-dose PRN exemption and non-destructive protocol acknowledgement. Added Quick Log PRN carryover 7bc3474e and active replacement protocol suppression 13dcdd9d. New CI pending, Stash card redesign not implemented/approved, real iPhone pending, branch draft/unmerged/no production deployment.
+
 ## 2026-10-29 — PR124 continued dosing with PRN exception (DRAFT, NOT RELEASED)
 - Added after-save informational follow-up for completed/elapsed same-compound protocol, explicit per-dose PRN flag, Update existing / Start new / Not now, per-protocol+compound acknowledgement, preserved Quick Log undo and reaction invitation. No protocol migration, no dose inventory alteration, no production merge/deployment. Fictional browser regression c548369e added; CI pending. Compact Stash redesign remains proposed/not coded.
 
