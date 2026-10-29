@@ -1077,3 +1077,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 - Transfer bridge retains canonical debit/credit and guarded storage validation. Ordinary synchronous saves use stale-state/readback guards but cannot participate in an asynchronous Web Lock without changing persistence timing; internal transfer callable is explicitly fail-closed until coordination is resolved.
 - CI evidence: pre-fix release browser run 40820869183 failed blend recording; nested run 40820869207 failed fictional valid-dose. After isolated fixture correction, mobile and nested navigation jobs succeeded on 1f3c5f5e; full browser job was still in progress. Later granular-site assertions require fresh CI validation.
 - Release: PROPOSED/CODED only. PR #124 remains DRAFT and UNMERGED; LIVE/DEMO artifacts and primary deployment NOT VERIFIED; no physical iPhone acceptance. No production data changes.
+
+
+## 2026-10-29 — PR #124 formulation-aware inventory (DRAFT, NOT RELEASED)
+- Additive oral capsule/nasal bottle model, guarded create and audited balance adjustment; Stash creation/display/edit controls and isolated fictional browser/node regressions. Existing vial records and historical dose logs not rewritten; no conversion, sync or real transfer controls. Exact-source LIVE/DEMO builder updated for added script.
+- At implementation checkpoint, CI on new code is still running; browser results not to be marked pass. Previous head a403d6d had full browser/mobile/nested runs SUCCESS. Draft PR unmerged, Cloudflare production not deployed or source-parity-verified, physical iPhone not accepted. Standalone artifacts from new code not locally downloaded/verified.
