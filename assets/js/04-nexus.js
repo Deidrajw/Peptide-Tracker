@@ -288,7 +288,8 @@ function auditKitLedger(kit) {
     ? kit.vials.reduce((a,v)=>a+(v.remainingMg!=null?v.remainingMg:0),0)
     : getKitRemainingMg(kit);
 
-  const accountedMg = administeredDirectMg + preparedTotalMg + outflowMg + remainingMg;
+  const preparationTransferMg = (kit.preparationTransfers||[]).filter(t=>t.kind==='transfer').reduce((sum,t)=>sum+(Number(t.amountMg)||0),0);
+  const accountedMg = administeredDirectMg + preparedTotalMg + outflowMg + preparationTransferMg + remainingMg;
   const diffMg = Math.round((startingMg-accountedMg)*100)/100;
 
   return {
@@ -298,6 +299,7 @@ function auditKitLedger(kit) {
     administeredFromPreparedMg: Math.round(administeredFromPreparedMg*100)/100,
     preparedTotalMg: Math.round(preparedTotalMg*100)/100,
     outflowMg: Math.round(outflowMg*100)/100,
+    preparationTransferMg: Math.round(preparationTransferMg*100)/100,
     adjustmentMg: Math.round(adjustmentMg*100)/100,
     untaggedHistoricalMg: Math.round(untaggedHistoricalMg*100)/100,
     remainingMg: Math.round(remainingMg*100)/100,
@@ -332,6 +334,7 @@ function inventoryReconciliationModal() {
           Administered (direct): ${r.administeredDirectMg}mg<br>
           Prepared (ever drawn): ${r.preparedTotalMg}mg <span style="color:var(--t5)">— includes ${r.administeredFromPreparedMg}mg since administered</span><br>
           Outflow/waste: ${r.outflowMg}mg<br>
+          Prepared-container transfers: ${r.preparationTransferMg}mg<br>
           ${r.adjustmentMg>0?`<span style="color:var(--t5)">Manual corrections applied: ${r.adjustmentMg}mg (already reflected in remaining, not a balance input)</span><br>`:""}
           Remaining: ${r.remainingMg}mg<br>
           <b style="color:${Math.abs(r.diffMg)>0.05?"#F9C87D":"var(--t3)"}">Difference: ${r.diffMg}mg ${Math.abs(r.diffMg)<=0.05?"✓":""}</b>
@@ -1936,6 +1939,27 @@ function nexusPreviewPreparationTransaction(input) {
   // Preview only: no saveState, no existing vial deduction. A real transfer
   // must reconcile the canonical kit ledger before these values can be saved.
   return {event,preparations:copy};
+}
+// Committed transfers are intentionally unavailable in DEMO mode and until a
+// complete validated snapshot can be persisted through one storage write.
+function nexusCommitPreparationTransfer(input) {
+  if (_demoActive) throw Error("Transfers unavailable in demo mode");
+  if (!globalThis.NexusPreparationBridge) throw Error("Atomic preparation bridge unavailable");
+  if (!input || !input.id) throw Error("Explicit transaction required");
+  const before=state;
+  const {next,event}=globalThis.NexusPreparationBridge.plan(before,input);
+  const beforeKit=(before.supplies||[]).find(k=>String(k.id)===String(input.sourceKitId));
+  const afterKit=(next.supplies||[]).find(k=>String(k.id)===String(input.sourceKitId));
+  if (!beforeKit || !afterKit) throw Error("Kit not found");
+  const beforeAmount=getKitRemainingMg(beforeKit);
+  const afterAmount=(afterKit.vials||[]).reduce((sum,v)=>sum+(Number(v.remainingMg)||0),0);
+  if (Math.abs((beforeAmount-afterAmount)-event.amountMg)>0.00001) throw Error("Inventory debit mismatch");
+  // Fail closed: only swap live in-memory state after the full snapshot is persisted.
+  // localStorage.setItem is atomic per key; quota/security errors must propagate.
+  const serialized=JSON.stringify(next);
+  localStorage.setItem(STORE_KEY,serialized);
+  state=next;
+  return event;
 }
 function getEligibleSourceKits(name) {
   return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
