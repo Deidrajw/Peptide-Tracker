@@ -69,12 +69,12 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
        if(rect.width<2||rect.height<2||cs.display==='none'||cs.visibility!=='visible'||Number(cs.opacity)<.2)continue;
        const ink=parse(cs.color);if(!ink)continue;
        const bg=bgFor(el),fg=over(ink,bg),value=ratio(fg,bg);
-       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100});
+       if(value<4.5)out.push({tab:name,tag:el.tagName,cls:String(el.className||'').slice(0,65),text:direct.slice(0,65),ratio:Math.round(value*100)/100,foreground:cs.color,background:'rgb('+bg.slice(0,3).map(v=>Math.round(v)).join(',')+')',fontSize:cs.fontSize,fontWeight:cs.fontWeight,rect:{x:Math.round(rect.x),y:Math.round(rect.y),w:Math.round(rect.width),h:Math.round(rect.height)}});
      }
    }}finally{tab=previous;render();}
-   return {tabs:tabs.length,total:out.length,candidates:out.slice(0,45)};
+   return {tabs:tabs.length,total:out.length,candidates:out};
  });
- if(mode==='demo'&&width===390)console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));
+ if(mode==='demo'&&width===390){console.log('THEME CONTRAST AUDIT '+theme+' '+JSON.stringify(themeAudit));fs.writeFileSync('dist/Nexus_'+VERSION+'_CONTRAST_ELEMENT_EVIDENCE_'+theme+'.json',JSON.stringify({version:VERSION,mode,width,theme,audit:themeAudit},null,2));}
 
 
  // Verify rendered visibility and WCAG AA text contrast, not merely click handlers.
