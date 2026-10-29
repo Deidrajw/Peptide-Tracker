@@ -1213,9 +1213,45 @@ function buildReminders() {
     (state.protocols||[]).filter(proto=>["active","in_progress"].includes(proto.status)).forEach(proto=>{
       (proto.compounds||[]).forEach(comp=>{
         const info = getProtocolPhaseInfo(proto, comp);
-        if (!info || info.done || info.notStartedYet) return;
+        if (!info) return;
         const c2 = cfg(comp.name);
         const today = localDate();
+        const phases = info.phases||[];
+        const first = phases[0], last = phases[phases.length-1];
+        if (!first || !last) return;
+        const daysTo = date => Math.round((new Date(date+"T12:00")-new Date(today+"T12:00"))/86400000);
+        // All alerts are derived from the existing pause-adjusted phase dates.
+        // They never update a stored protocol status, dose, or inventory record.
+        if (info.notStartedYet) {
+          const days = daysTo(first.startDate);
+          if ([7,1,0].includes(days)) {
+            const when = days===0?"starts today":days===1?"starts tomorrow":"starts in 7 days";
+            r(`pstart_${proto.id}_${comp.name}_${first.startDate}_${days}`,"phase",days===0?1:3,"📅",
+              `${comp.name} Phase 1 ${when}`,
+              `Scheduled start: ${fmtDate(first.startDate)}. Review your protocol before beginning.`,
+              c2.color,"protocol|"+comp.name,"View Protocol");
+          }
+          return;
+        }
+        if (info.done) {
+          // At elapsed schedule, surface a persistent review item, not a false
+          // automatic 'Completed' status. Manual completion remains the user's choice.
+          r(`pend_${proto.id}_${comp.name}_${last.endDate}`,"phase",1,"📋",
+            `${comp.name} protocol schedule ended`,
+            `Scheduled end: ${fmtDate(last.endDate)}. Review or update your protocol; its recorded status and history are unchanged.`,
+            c2.color,"protocol|"+comp.name,"Review Protocol");
+          return;
+        }
+        const remainingProtocolDays = daysTo(last.endDate);
+        // Phase endDate is exclusive: the first day after the final planned day
+        // is the schedule-ended day. 7/1-day reminders refer to that boundary.
+        if ([7,1].includes(remainingProtocolDays)) {
+          r(`pend_soon_${proto.id}_${comp.name}_${last.endDate}_${remainingProtocolDays}`,
+            "phase",remainingProtocolDays===1?2:3,"📅",
+            `${comp.name} protocol ends in ${remainingProtocolDays} day${remainingProtocolDays===1?"":"s"}`,
+            `Scheduled end: ${fmtDate(last.endDate)}. Your plan will need review when the schedule ends.`,
+            c2.color,"protocol|"+comp.name,"View Protocol");
+        }
 
         // TODAY — detected by comparing today's date directly against the current
         // phase's own startDate, NOT by counting daysLeft down to 0. On the actual
