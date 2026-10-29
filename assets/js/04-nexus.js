@@ -1947,17 +1947,12 @@ function nexusCommitPreparationTransfer(input) {
   if (!globalThis.NexusPreparationBridge) throw Error("Atomic preparation bridge unavailable");
   if (!input || !input.id) throw Error("Explicit transaction required");
   const before=state;
-  const {next,event}=globalThis.NexusPreparationBridge.plan(before,input);
-  const beforeKit=(before.supplies||[]).find(k=>String(k.id)===String(input.sourceKitId));
-  const afterKit=(next.supplies||[]).find(k=>String(k.id)===String(input.sourceKitId));
-  if (!beforeKit || !afterKit) throw Error("Kit not found");
-  const beforeAmount=getKitRemainingMg(beforeKit);
-  const afterAmount=(afterKit.vials||[]).reduce((sum,v)=>sum+(Number(v.remainingMg)||0),0);
-  if (Math.abs((beforeAmount-afterAmount)-event.amountMg)>0.00001) throw Error("Inventory debit mismatch");
-  // Fail closed: only swap live in-memory state after the full snapshot is persisted.
-  // localStorage.setItem is atomic per key; quota/security errors must propagate.
-  const serialized=JSON.stringify(next);
-  localStorage.setItem(STORE_KEY,serialized);
+  // Snapshot validation, canonical vial debit, destination credit and stale-tab
+  // checks all run before a single storage write. No saveState() swallow here.
+  const {next,event}=globalThis.NexusPreparationBridge.commit(before,input,{
+    read:()=>localStorage.getItem(STORE_KEY),
+    write:serialized=>localStorage.setItem(STORE_KEY,serialized)
+  });
   state=next;
   return event;
 }
