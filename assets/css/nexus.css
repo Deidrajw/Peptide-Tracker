@@ -2171,3 +2171,7 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-form-stock-editor{display:grid;gap:10px}.nx-form-stock-editor-head{display:flex;align-items:center;justify-content:space-between}.nx-form-stock-editor-head strong{font-size:17px;color:var(--t1)}.nx-form-stock-editor-head button{min-height:44px;min-width:44px;color:var(--t1)}
 .nx-form-stock-editor .inp{min-height:44px}.nx-form-stock-editor .btn-primary{min-height:48px}
 @media(max-width:350px){.nx-form-stock-item{align-items:flex-start;flex-direction:column;gap:4px}.nx-form-stock-count{text-align:left}}
+
+.nx-form-stock-item .nx-form-edit{min-height:44px;min-width:64px;padding:8px 11px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
+.nx-form-stock-item .nx-form-edit:focus-visible,.nx-form-stock-actions button:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+@media(max-width:350px){.nx-form-stock-item .nx-form-edit{align-self:flex-start}}
