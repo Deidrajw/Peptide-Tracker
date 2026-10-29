@@ -2138,3 +2138,12 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
     align-self:flex-end;
   }
 }
+
+/* iPhone acceptance: ingredient history must use the modal's single scroll container.
+   The generic 300px .nx-detail-rows scroller nested inside the scrolling modal
+   caused a second independent scroll gesture. Scope to this sheet only. */
+.nx-trends-detail-modal .nx-detail-rows{
+  max-height:none;
+  overflow:visible;
+  overscroll-behavior:auto;
+}
