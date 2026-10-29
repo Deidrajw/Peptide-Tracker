@@ -13,6 +13,9 @@ try {
    if(!isDemoMode())enterDemoMode('weight_loss');
    document.documentElement.dataset.theme=theme;
    state.profile.onboardingDone=true;
+   // Dismiss fictional onboarding overlay before testing direct Stash taps.
+   document.querySelectorAll('.modal-bg').forEach(bg=>{if(bg.querySelector('#ob-next'))bg.remove();});
+   const banner=document.querySelector('#demo-banner');if(banner)banner.style.display='none';
    tab='stash';render();
   },theme);
   const before=await page.evaluate(()=>JSON.stringify(state.supplies));
