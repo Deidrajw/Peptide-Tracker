@@ -22,6 +22,8 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
    let kit=state.supplies.find(k=>k.name==='Retatrutide');
    if(!kit)throw Error('Fictional source kit missing');
    state.supplies=[kit];
+   // Fictional test source is explicitly labelled: route inference is never allowed.
+   kit.preparationMethod='SubQ';
    migrateKitToV2(kit);
    const vial=kitOpenVialV2(kit);
    if(!vial)throw Error('No fictional open vial');
