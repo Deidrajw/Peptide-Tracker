@@ -1,3 +1,6 @@
+## 2026-10-29 — Standing QA delivery requirement
+- Each manual test must be an actionable, reproducible iPhone scenario, not only a title + Pass/Fail. Use `docs/qa/IPHONE_MANUAL_TEST_PLAYBOOK.md`, with initial state, navigation, setup, actions, expected results, reset, and Pass/Fail/Not Tested/Blocked plus Copy Results. PR124 detailed cases 1–7 are recorded there. This is DOCUMENTATION, not new physical testing evidence.
+
 ## 2026-10-29 — PR124 single-screen matching artifact full QA PASS
 - Four workflows for source e50873c: full 40973779952 SUCCESS; mobile 40973779992 SUCCESS; nested 40973780138 SUCCESS; WebKit 40973780112 SUCCESS. Full release artifact 12942405718 downloaded and CRC-tested. Nested LIVE ZIP 24 files root index, CSS and JS; 4 sampled Git blob IDs match draft branch. LOG_DOSE_END_TO_END reports PASS across eight LIVE/DEMO, 320/390, dark/light combinations; VIAL_SAFETY_REGRESSION reports PASS. Physical iPhone new single-screen acceptance NOT TESTED. Source manifest demo_storage='ephemeral in-memory only', demo_sync='disabled'; no production writes attempted. Confirm actual iPhone draft recovery and precise vial attribution separately. No release approval.
 
