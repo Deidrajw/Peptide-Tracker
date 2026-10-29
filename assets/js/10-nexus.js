@@ -76,20 +76,6 @@ function stashView() {
     <button id="qa-addkit">＋ Add kit</button><button id="qa-prepare">Prepare</button><button id="qa-planner">Planner</button>
   </div>`;
 
-  // Additive stock: capsule bottles and nasal bottles are separate from
-  // legacy vial kits. No dose deductions or implicit conversions are enabled.
-  const otherStock=Array.isArray(state.formulationStocks)?state.formulationStocks:[];
-  html+=`<section class="nx-form-stock" aria-label="Other formulations">
-    <div class="nx-form-stock-heading"><div><strong>Other formulations</strong><p>Capsules and nasal bottles are tracked separately from injectable vials.</p></div></div>
-    <div class="nx-form-stock-actions"><button type="button" id="nx-add-capsules">+ Capsules</button><button type="button" id="nx-add-nasal">+ Nasal bottle</button></div>
-    ${otherStock.length?otherStock.map(x=>{
-      const oral=x.containerType==="capsule-bottle";
-      const amount=oral?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`:`${x.remainingMl} mL · ${x.remainingMg} mg remaining`;
-      return `<div class="nx-form-stock-item" data-formulation-id="${esc(String(x.id))}"><span><strong>${esc(x.compound)}</strong><small>${oral?"Oral · Capsules":"Nasal · Bottle"}</small></span><span class="nx-form-stock-count">${esc(amount)}</span><button type="button" class="nx-form-edit" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} inventory">Adjust</button></div>`;
-    }).join(""):`<p class="nx-form-stock-empty">No capsule or nasal containers recorded.</p>`}
-    <p class="nx-form-stock-note">Inventory only. Log Dose will not deduct these containers until route-specific tracking is validated.</p>
-  </section>`;
-  
   // ── Prepared (conditional) ───────────────────────────────────────────────
   const readyPrepared = (state.preparedDoses||[]).filter(pd=>(pd.remainingCount||0)>0);
   if (readyPrepared.length) {
@@ -373,6 +359,21 @@ function stashView() {
   const liveEntries = entries.filter(s=>s.kitStatus!=="done");
   const doneEntries = entries.filter(s=>s.kitStatus==="done");
   const renderAnyKitCard = s => renderKitCard(s);
+  // Physical non-vial packages appear alongside kits, not in a separate
+  // "Other formulations" section. Existing standalone records remain unmodified.
+  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).map(x=>{
+    const typeNames={"capsule-bottle":"Capsules","nasal-bottle":"Nasal spray","raw-powder":"Raw powder","topical-container":"Topical"};
+    const amount=x.containerType==="capsule-bottle"
+      ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
+      :x.containerType==="nasal-bottle" ?`${x.remainingMl} mL · ${x.remainingMg} mg`
+      :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
+    return `<div class="card nx-kit-card nx-form-kit-card" data-formulation-id="${esc(String(x.id))}">
+      <div class="nx-kit-heading"><span class="nx-kit-title-stack"><strong class="nx-kit-card-title">${esc(x.compound)}</strong><span class="nx-card-status">${esc(typeNames[x.containerType]||"Other package")}</span></span>
+      <button type="button" class="nx-form-edit" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
+      <div class="nx-form-kit-amount">${esc(amount)}</div>
+      <p class="nx-form-kit-hint">${x.sourceKitId?"Linked source kit":"Independent package"} · Inventory only, no automatic dose deductions</p>
+    </div>`;
+  }).join("");
   const GROUP_LABELS_STATUS = {attention:"NEEDS ATTENTION",active:"ACTIVE",stored:"STORED"};
   const GROUP_LABELS_INV = {active:"ACTIVE",sealed:"STORED / SEALED"};
   if (group==="status" || group==="inventory_state") {
@@ -407,6 +408,7 @@ function stashView() {
     if (open) doneEntries.forEach(s=>{ html+=renderAnyKitCard(s); });
   }
 
+  html+=packageCards;
   html+=`<button id="addvial" style="width:100%;padding:12px;border-radius:12px;background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;font-size:13px;font-weight:600">+ Add Kit</button>`;
   html += `<div style="margin:18px 0 6px;padding:15px;border-radius:14px;background:var(--surface);border:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><strong style="font-size:14px;color:var(--t1)">Need to replenish?</strong><p style="font-size:12px;color:var(--t3);margin:5px 0 0">Your shopping list is linked here for convenience.</p></div><button type="button" id="nx-shopping-from-stash" style="min-height:44px;padding:10px 15px;border-radius:10px;background:#A78BFA20;border:1px solid #A78BFA66;color:var(--t1);font-size:13px;font-weight:600">Open shopping list →</button></div>`;
   return html;
