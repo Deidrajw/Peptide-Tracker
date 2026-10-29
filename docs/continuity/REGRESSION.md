@@ -1709,3 +1709,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Explicit UX correction regression
 - Log Dose method 3x2 button grid retained; site selection changed back to native dropdown with full SubQ/IM regions, legacy site options preserved in edit flow. Browser assertion now checks site option selection and temporary Nasal-specific warning hides on switching method. Code commit 6b941cac, test 78783c6e. Exact-head CI PENDING.
 - Standalone Other formulations Stash section explicitly rejected; replacement kit-centred UX not yet implemented. Protect existing data including formulationStocks and legacy kit/vial IDs; full browser/device tests for replacement NOT TESTED.
+
+
+## 2026-10-29 — Unified Add Kit and per-vial intended-use regression
+- New fictional Add Kit test enters via supplyModal(null,null), asserts five physical forms, 44px+ chooser targets, then adds capsule kit and purchased nasal spray kit, adjusts a capsule balance and checks no legacy vial changes across LIVE/DEMO, 320/390, light/dark, Chromium/WebKit.
+- Earlier run 40896650468 FAILED iPhone-width form button height 40; WebKit 40896650641 FAILED height 43. New run 40896852592 reached Adjust control and FAILED height 17. Form buttons now explicitly min-height 80px, Adjust explicitly 46px. Exact revised CI NOT YET VERIFIED.
+- New route-isolation assertion ensures a vial labelled intendedUse=nasal-source is ineligible for SubQ logging; no history rewrite, transfer or automatic stock deduction. Shared write lock still INCOMPLETE.
