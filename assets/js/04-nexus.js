@@ -1975,7 +1975,7 @@ function getEligibleSourceKits(name, method) {
       if(s.name!==name || !s.activeKit) return false;
       if(method==null) return true;
       const labelled=s.preparationMethod||s.administrationMethod||s.route;
-      return !!labelled && nexusAdminMethod(labelled)===method;
+      return !!labelled && nexusExplicitAdminMethod(labelled)===method;
     })
     .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
     .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01);
