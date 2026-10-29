@@ -2364,3 +2364,10 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Pure helper assets/js/nexus-formulation-stock.js validates new containers and immutable adjustments; guarded full snapshot save rejects stale/failed writes and swaps memory only after readback. Exact-source index/build builder include module. Fictional Node tests and 320/390 light/dark LIVE/DEMO browser test added. New browser run previously failed because fictional onboarding overlay intercepted Stash buttons; test setup corrected. Latest CI PENDING verification.
 - Known limitations: existing ordinary synchronous saveState writers do not share exclusive Web Locks; transfer controls explicitly disabled. Capsule/nasal stock are inventory-only until separately authorised route-specific dose flow. Primary Cloudflare deployment unchanged/unverified. Physical iPhone acceptance incomplete.
 - NEXT: verify latest full CI on exact head and fix remaining failures; do not merge/deploy without approval.
+
+
+## 2026-10-29 — Formulation Stash validation / dose ledger handoff
+- Verified PR #124 remains draft and unmerged. Full release artifacts run 40891595782 SUCCESS on code head 4484dc5d, alongside mobile 40891595812 SUCCESS and nested navigation 40891595726 SUCCESS. Artifact 12906345167 produced for that commit (not proof of deployment).
+- Added 320/390 horizontal-overflow and 44px touch-target assertions for new Stash controls at c8507b74; exact-head CI pending. Browser checks are Chromium mobile emulation, **not** real iPhone Safari/VoiceOver acceptance. Do not mark physical test PASS.
+- Proposed route-specific oral/nasal/injectable deduction design recorded at docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md, including explicit source ID, count vs mL/mg, no guessed spray conversion, transaction replay/rollback safety and shared-write blocker. No dose-deduction controls enabled. Existing vial/historical records preserved.
+- **ONE NEXT ACTION:** Confirm CI for latest exact head, then verify isolated preview on physical iPhone before proposing gated route-specific dose planner implementation. No merge/deploy without user approval.
