@@ -1615,3 +1615,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-28 — Approved merge gate and deployment verification hold
 - Exact PR head `8c3fbf9c` CI PASS full #40813703596, mobile #40813703634, nested #40813703782. Guarded merge PASS, merge SHA `6737d9c7`, PR #123 closed/merged. Focused physical iPhone user-reported PASS 4/4 retained from `441d22a0`.
 - Production Cloudflare index/CSS/JS, deployment commit and post-merge browser parity: BLOCKED / NOT VERIFIED (web cache miss and container DNS failure). Release certification held; no claim that Cloudflare has deployed merged files or changed users' saved data.
+
+## 2026-10-28 — Production parity attempt (BLOCKED, not FAIL)
+- Source main index structure PASS: expected v0.9.20-beta title, 12 ordered JS scripts, four CSS links. Live primary Cloudflare homepage, /assets/js/12-nexus.js and /assets/css/nexus.css: BLOCKED (web cache miss/inaccessible; container DNS resolution failure). No byte/hash parity and no deployment timestamp. Post-merge GitHub commit-status query returned no statuses and workflow query no runs: NOT VERIFIED. Previously exact PR-head CI PASS and focused physical iPhone user 4/4 PASS remain valid for their tested source only.
