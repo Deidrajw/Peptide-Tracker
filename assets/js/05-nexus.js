@@ -708,6 +708,10 @@ function doseModal(name, existing, occTime) {
   const lastDoseAmt = draft?.dose || occAmt || doseHistory[0]?.dose || "";
   const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||cData.route);
   const isNasal = initialMethod === "Nasal";
+  // Route-specific source eligibility is intentionally strict: unlabelled inventory
+  // cannot be guessed safe for nasal or injectable use.
+  const sourceMethod = kit => nexusAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route||"");
+  const matchesMethod = kit => !!(kit.preparationMethod||kit.administrationMethod||kit.route) && sourceMethod(kit)===initialMethod;
   const siteList = sitesFor(cData);
   const suggestedSite = (() => {
     if (!recent.length) return siteList[0];
@@ -738,10 +742,10 @@ function doseModal(name, existing, occTime) {
   // 30mg-vial kit both open at once). Defaults to the person's last choice for this
   // compound, or the one with least remaining if there's no memory yet; the picker below
   // lets them override per-dose, and the choice is remembered again on save.
-  let selectedKitId = defaultSourceKit(name)?.kit.id ?? null;
+  const eligibleSources = getEligibleSourceKits(name).filter(({kit})=>matchesMethod(kit));
+  let selectedKitId = eligibleSources[0]?.kit.id ?? null;
   const activeKit = () => selectedKitId!=null ? state.supplies.find(s=>s.id===selectedKitId) : state.supplies.find(s=>s.name===name && s.activeKit);
   const otherKitsWithStock = () => state.supplies.filter(s=>s.name===name && getKitRemainingMg(s)>0.001);
-  const eligibleSources = getEligibleSourceKits(name);
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
 
   const m = openModal(`
