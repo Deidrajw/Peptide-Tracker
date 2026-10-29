@@ -47,10 +47,13 @@ try{
         proto.status="paused";proto.pausedAt=today;const paused=alerts();
         proto.status="completed";const completed=alerts();
         proto.status="active";proto.startDate=addDays(today,1);const future=alerts();
+        proto.status="planned";const plannedFuture=alerts();
+        proto.startDate=today;const plannedStart=alerts();
+        proto.startDate=addDays(today,-2);const plannedOverdue=alerts();
         const stateBefore=JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
         alerts();
         const unchanged=stateBefore===JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
-        return {first,inSeven,nextDay,transition,seven,one,ended,paused,completed,future,unchanged};
+        return {first,inSeven,nextDay,transition,seven,one,ended,paused,completed,future,plannedFuture,plannedStart,plannedOverdue,unchanged};
       } finally {state=previous;}
     });
     check(protocolAlerts.first.some(x=>x.includes("Phase 1 starts today")) &&
@@ -65,7 +68,9 @@ try{
       "Protocol 7-day/1-day/end-day reminders missing: "+JSON.stringify(protocolAlerts));
     check(!protocolAlerts.paused.length && !protocolAlerts.completed.length &&
       protocolAlerts.future.some(x=>x.includes("Phase 1 starts tomorrow")) &&
-      protocolAlerts.unchanged,
+      protocolAlerts.plannedFuture.some(x=>x.includes("Phase 1 starts tomorrow")) &&
+      protocolAlerts.plannedStart.some(x=>x.includes("Phase 1 starts today")) &&
+      !protocolAlerts.plannedOverdue.length && protocolAlerts.unchanged,
       "Protocol pause/completion/future/non-destructive reminder regression: "+JSON.stringify(protocolAlerts));
 
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
