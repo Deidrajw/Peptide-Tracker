@@ -47,23 +47,13 @@ async function openDose(page){
 }
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
-  const next=modal.locator('#nx-dose-step-next');
-  for(let i=0;i<3 && !(await modal.locator('#save').isVisible());i++){
-    ensure(await next.isVisible(),'Continue unavailable before review');
-    await next.click();
-    if(!(await modal.locator('#save').isVisible()) && !(await next.isVisible()))break;
+  ensure(await modal.locator('#save').isVisible(),'Single-screen confirmation unavailable');
+  await modal.locator('#save').click();
+  const prompt=page.locator('.nx-reaction-invite');
+  if(await prompt.count()){
+    ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
+    await prompt.locator('#nx-reaction-later').click();
   }
-  if(await modal.locator('#save').isVisible()){
-    await modal.locator('#save').click();
-    // New doses have a skippable invitation; edits must not show it.
-    const prompt=page.locator('.nx-reaction-invite');
-    if(await prompt.count()){
-      ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
-      await prompt.locator('#nx-reaction-later').click();
-    }
-  }
-  // Invalid entry must remain unsaved on Entry, with feedback from step validation.
-  else ensure(await modal.locator('.nx-dose-step-error').isVisible(),'Invalid entry lacks step validation feedback');
 }
 try {
   for(const width of [320,390])for(const theme of ['dark','light'])for(const kind of ['live','demo']){
@@ -314,33 +304,23 @@ try {
     ensure(layout.bodyHeight>80 && layout.bodyTop>=layout.headerBottom-2 &&
       layout.bodyBottom<=layout.footerTop+2,
       'Scroll body overlaps sticky header/footer: '+JSON.stringify(layout));
-    ensure(await fixedHeader.locator('.nx-dose-head').count()===1 &&
-      await fixedHeader.locator('.nx-dose-mode-switch').count()===1,
-      'Quick/Guided selector incorrectly lives inside the scrolling fields');
+    ensure(await fixedHeader.locator('.nx-dose-head').count()===1,'Sticky dose header missing');
+    ensure(await page.locator('.nx-dose-mode-switch, .nx-dose-step-nav').count()===0,
+      'Legacy Quick/Guided step navigation still visible');
     await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=el.scrollHeight});
-    ensure(await fixedHeader.locator('[data-dose-mode="quick"]').isVisible() &&
-      await fixedHeader.locator('[data-dose-mode="guided"]').isVisible(),
-      'Quick / Guided mode switch disappears after body scrolling');
-    await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=0});
-    ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
-    ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
+    ensure(await page.locator('.nx2-dose-modal #save').isVisible(),'Single screen footer confirm missing');
     await setDose(page,2);
     await page.waitForTimeout(650);
-    // DS2 review must show useful source labels while retaining full traceability.
-    await page.locator('#nx-dose-step-next').click();
-    ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review stage missing');
+    await page.locator('.nx-dose-inline-review > summary').click();
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
-      'Raw kit/vial IDs leaked into primary Review rows: '+preview);
+      'Raw source IDs leaked into primary review: '+preview);
     const idDetails=page.locator('#nx-dose-source-ids');
-    ensure(await idDetails.count()===1 && await idDetails.isVisible(),
-      'Optional source IDs disclosure missing');
+    ensure(await idDetails.count()===1,'Optional source audit disclosure missing');
     await idDetails.locator('summary').click();
-    ensure((await idDetails.innerText()).includes('9101'),'Traceable source ID missing from disclosure');
-    ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,
-      'Opening Review unexpectedly persisted a dose');
-    await page.locator('#nx-dose-step-back').click();
-    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'New Log Dose still exposes old observations');
+    ensure((await idDetails.innerText()).includes('9101'),'Audit ID missing from disclosure');
+    ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
+    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
     await clickSave(page);
     let first=await stateSnapshot(page);
     ensure(first.entries.length===1,'Single vial confirmation failed to create one dose');
