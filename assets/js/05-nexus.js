@@ -2309,7 +2309,7 @@ function quickLogDose(name, occTime) {
     allocations = [{ kitId: activeKit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) }];
     kitId = null;
   }
-  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:suggestedSite, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
+  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:suggestedSite, asNeeded:doseHistory[0]?.asNeeded===true, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
   const builtin = !!PEPTIDES[name];
   const tgt = builtin ? state.peptides : state.customPeptides;
   if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
