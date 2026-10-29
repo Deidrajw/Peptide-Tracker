@@ -147,6 +147,23 @@ try {
       near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
       'Missing-vial deletion altered unrelated inventory or prepared history');
     list.push('missing kit/vial source blocks deletion and preserves batch');
+    // UI-level guard: confirming deletion of an orphaned prepared batch
+    // must leave the dialog open, preserve data, and show the warning.
+    deletePreparedDoseModal(missingVial);
+    const confirm=document.querySelector('#confirm');
+    assert(confirm,'Prepared-dose confirmation control was not rendered');
+    confirm.click();
+    assert(state.preparedDoses.length===1 && state.preparedDoses[0]===missingVial,
+      'UI confirmation deleted an orphaned prepared batch');
+    assert(near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'UI confirmation modified unrelated inventory');
+    assert(document.querySelector('#confirm'),
+      'Blocked deletion unexpectedly dismissed the confirmation');
+    assert(document.body.textContent.includes("original source vial is missing"),
+      'Missing-source UI warning not visible');
+    closeModal();
+    list.push('orphaned prepared deletion UI preserves dialog, batch and source warning');
+
 
     // (8) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
     // over/under deductions in compound preparations.
@@ -163,4 +180,4 @@ try {
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
-console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*8+' safety assertions');
+console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*9+' safety assertions');
