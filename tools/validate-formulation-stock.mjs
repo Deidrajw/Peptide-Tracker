@@ -100,6 +100,23 @@ try {
   assert.deepEqual(exactCommitted.balances,[7,8],'Dose must deduct only selected second vial');
   assert.equal(exactCommitted.doses.length,1,'One dose should be saved');
   assert.equal(String(exactCommitted.doses[0].allocations?.[0]?.vialId),'source-b','Dose ledger must retain exact vial ID');
+  await page.evaluate(()=>{
+    closeModal();
+    nexusCreateLinkedPreparation(992211,'source-a');
+    document.querySelector('#nx-linked-kind').value='nasal';
+    document.querySelector('#nx-linked-notes').value='Fictional preparation plan';
+    document.querySelector('#nx-linked-save').click();
+  });
+  const planCheck=await page.evaluate(()=>{
+    const kit=state.supplies.find(k=>k.id===992211);
+    return {balances:kit.vials.map(v=>v.remainingMg),plans:kit.linkedPreparationPlans,
+      formulations:(state.formulationStocks||[]).filter(x=>x.sourceKitId===992211)};
+  });
+  assert.deepEqual(planCheck.balances,[7,8],'Linked preparation plan must never debit original vial');
+  assert.equal(planCheck.plans.length,1);
+  assert.equal(planCheck.plans[0].sourceVialId,'source-a','Plan must link exact original source');
+  assert.equal(planCheck.plans[0].status,'planned-no-transfer');
+  assert.equal(planCheck.formulations.length,0,'No unvalidated bottle stock must be created');
   await page.evaluate(()=>closeModal());
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
