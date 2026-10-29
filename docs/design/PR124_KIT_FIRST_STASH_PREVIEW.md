@@ -29,3 +29,10 @@ E. Run Node + 320/390 Chromium/WebKit LIVE/isolated DEMO tests, user physical iP
 
 ## Explicit user decision
 Approve a single Add Kit wizard with form choices **Vials / Capsules / Raw / Topical**, and an **Open Vial → intended use → optional nasal preparation review** path. Keep the method as a recording property, not a dose/stock transfer by itself. 
+
+
+## 2026-10-29 — User approval and implementation update
+- User APPROVED the unified **existing Add Kit** selector with five products/forms: Vials, Capsules, Raw Powder, Topical, purchased Nasal Spray. The same compound may be purchased in different forms; a capsule package (e.g. SLU-PP) is entered without pretending to be a vial. Physical kit/package terminology is flexible; no extra add buttons in Stash.
+- Purchased nasal spray is added directly as its own product package. Homemade nasal spray must begin at Open New Vial on the exact source kit/vial. Initial per-vial intended-use selector is implemented, but remains a non-transferring designation; validated source debit → bottle credit and linked nasal bottle are NOT IMPLEMENTED.
+- Implementation commits on PR #124: single Add Kit gateway and five descriptive choices, integrated package cards instead of separate Other formulations, raw/topical additive inventory model, compound searchable/free text, 80px+ selection targets and 46px Adjust, revised deep navigation audit. Exact-head CI pending; no merge/deploy.
+- Prior initial status of this document as PREVIEW superseded **only for the approved five-form Add Kit direction**. The linked homemade nasal transfer experience requires separate data-integrity testing and approval before activation.
