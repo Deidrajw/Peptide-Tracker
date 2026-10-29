@@ -1,0 +1,27 @@
+name: Nexus formulation WebKit validation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  formulation-webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build complete fictional app demo
+        run: node tools/build-release.mjs
+      - name: Install WebKit browser dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps webkit
+      - name: Validate Stash in WebKit iPhone viewport emulation
+        run: |
+          python3 -m http.server 8777 --bind 127.0.0.1 >/tmp/nexus-formulation-webkit-server.log 2>&1 &
+          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:8777/ >/dev/null && break; sleep 1; done
+          NEXUS_BROWSER=webkit node tools/validate-formulation-stock.mjs
