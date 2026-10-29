@@ -2158,3 +2158,16 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-site-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}
 .nx-site-choice-grid[hidden]{display:none}
 @media(max-width:350px){.nx-method-grid{gap:6px}.nx-method-option{padding:8px 3px;font-size:12px}.nx-site-option{font-size:12px}}
+
+/* Additive Stash formulation inventory — no legacy kit/card CSS overrides */
+.nx-form-stock{margin:12px 0 18px;padding:15px;border:1px solid var(--border-sub);border-radius:16px;background:var(--surface)}
+.nx-form-stock-heading strong{font-size:15px;color:var(--t1)}
+.nx-form-stock-heading p,.nx-form-stock-note,.nx-form-stock-empty{font-size:12px;line-height:1.5;color:var(--t3);margin:5px 0 12px}
+.nx-form-stock-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.nx-form-stock-actions button{min-height:46px;border-radius:12px;padding:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--t1);font-size:13px;font-weight:650}
+.nx-form-stock-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border-sub)}
+.nx-form-stock-item strong,.nx-form-stock-item small{display:block}.nx-form-stock-item strong{font-size:13px;color:var(--t1)}.nx-form-stock-item small,.nx-form-stock-count{font-size:12px;color:var(--t3)}
+.nx-form-stock-count{text-align:right;font-variant-numeric:tabular-nums}
+.nx-form-stock-editor{display:grid;gap:10px}.nx-form-stock-editor-head{display:flex;align-items:center;justify-content:space-between}.nx-form-stock-editor-head strong{font-size:17px;color:var(--t1)}.nx-form-stock-editor-head button{min-height:44px;min-width:44px;color:var(--t1)}
+.nx-form-stock-editor .inp{min-height:44px}.nx-form-stock-editor .btn-primary{min-height:48px}
+@media(max-width:350px){.nx-form-stock-item{align-items:flex-start;flex-direction:column;gap:4px}.nx-form-stock-count{text-align:left}}
