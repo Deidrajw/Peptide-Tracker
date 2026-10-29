@@ -712,6 +712,11 @@ let state = migrate(loadState());
 // Navigation is transient: a full refresh must open the Trends homepage, not a previously viewed compound.
 // Do not persist this reset or change historical dose/inventory records.
 state._nxHistorySelected=null;
+// On a real page/app refresh, begin Profile/Settings at its overview rather than
+// restoring a previously visited detail. Keep in-session navigation untouched.
+state._settingsDetail=null;
+state._profileTab="profile";
+state._profileReturn=null;
 let tab = "home";
 
 function allPeptides() {
