@@ -23,7 +23,7 @@ async function seed(page, theme) {
         sequenceNumber:1,reconDate:'2026-10-20T09:00:00'}];
       for(let i=0;i<sealed;i++)vials.push({id:20000+id+i,status:'sealed',
         vialMg:10,remainingMg:10,sequenceNumber:i+2});
-      return {id,name:'Retatrutide',activeKit:true,totalVials:1+sealed,
+      return {id,name:'Retatrutide',preparationMethod:'SubQ',activeKit:true,totalVials:1+sealed,
         openedVials:1,vialMg:10,bacMl:2,_vialsBackfilled:true,
         _vialsRepaired:true,vials,wasteLog:[]};
     };
