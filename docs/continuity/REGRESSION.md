@@ -1715,3 +1715,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - New fictional Add Kit test enters via supplyModal(null,null), asserts five physical forms, 44px+ chooser targets, then adds capsule kit and purchased nasal spray kit, adjusts a capsule balance and checks no legacy vial changes across LIVE/DEMO, 320/390, light/dark, Chromium/WebKit.
 - Earlier run 40896650468 FAILED iPhone-width form button height 40; WebKit 40896650641 FAILED height 43. New run 40896852592 reached Adjust control and FAILED height 17. Form buttons now explicitly min-height 80px, Adjust explicitly 46px. Exact revised CI NOT YET VERIFIED.
 - New route-isolation assertion ensures a vial labelled intendedUse=nasal-source is ineligible for SubQ logging; no history rewrite, transfer or automatic stock deduction. Shared write lock still INCOMPLETE.
+
+
+## 2026-10-29 — Unified Add Kit DS2 test reconciliation
+- DS2 audit 40897763612 FAIL had 4 x missing nx-kit-next on first Add Kit chooser; this is an outdated assertion, since Continue is inside Vials editor after selecting its product form. Updated scripts/ds2-nested-navigation-audit.mjs to enter Vials for its wizard/final-save screenshots and to omit ungrounded primary-CTA expectation on form-choice screen (commit fcb459a2). Next run PENDING.
+- Formulation WebKit run 40897763578 SUCCESS and mobile 40897763656 SUCCESS on a90bc116. Full browser on that commit in progress. Exact latest-head pass not yet established. Real iPhone NOT TESTED; no production data changes.
