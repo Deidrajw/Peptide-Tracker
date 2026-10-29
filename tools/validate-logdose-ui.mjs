@@ -68,8 +68,10 @@ try {
     await seed(page,theme);let verified=[];
     const routeIsolation=await page.evaluate(()=>{
       const subq=window.__fixtureKit(9331,8),nasal=window.__fixtureKit(9332,7);
+      const unknown=window.__fixtureKit(9333,5),unlabelled=window.__fixtureKit(9334,4);
       subq.preparationMethod='SubQ';nasal.preparationMethod='Nasal';
-      state.supplies=[subq,nasal];
+      unknown.preparationMethod='Unknown';
+      state.supplies=[subq,nasal,unknown,unlabelled];
       const result={
         subq:getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id),
         nasal:getEligibleSourceKits('Retatrutide','Nasal').map(x=>x.kit.id),
