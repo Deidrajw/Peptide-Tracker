@@ -1,3 +1,6 @@
+## 2026-10-29 — Same-kit exact source and linked preparation regression
+- Browser 40912034303 SUCCESS at test commit 2680aba5: scripted fictional 320/390 light/dark LIVE/DEMO selection of two open Vials in same kit, explicit choice of second vial, precise dose deduction of second source only (7mg/9mg becomes 7mg/8mg), one dose history allocation sourceVialId=source-b; linked nasal preparation plan references source-a without debiting or generating available nasal stock. Later changes af2afbd8, 015a0b87, ec82d9e5, dab844ab need fresh CI. No real iPhone acceptance. Blend two-open remains blocked by ledger safety.
+
 ## 2026-10-29 — Exact-vial browser test checkpoint
 - Run 40911647051 browser completed SUCCESS on bc9a8c77. This includes newly authored fictional exact-vial selection checks alongside browser workflow; per-run detailed assertions not independently downloaded. WebKit 40911646998 and nested 40911647244 still running. Physical iPhone not accepted; no transfer testing. No release.
 
