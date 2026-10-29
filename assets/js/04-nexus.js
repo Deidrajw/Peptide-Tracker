@@ -1961,6 +1961,7 @@ async function nexusCommitPreparationTransfer(input) {
       write:serialized=>localStorage.setItem(STORE_KEY,serialized)
     });
     state=next; // swap only following successful persistence/readback; other writers still need shared locking
+    _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
     return event;
   });
 }
