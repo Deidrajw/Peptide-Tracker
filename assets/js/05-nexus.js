@@ -809,10 +809,15 @@ function doseModal(name, existing, occTime) {
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <label class="field-label" for="nx-dose-method">ADMINISTRATION METHOD</label>
-    <select id="nx-dose-method" class="inp" style="margin-bottom:14px">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method==="SubQ"?"Subcutaneous (SubQ)":method==="IM"?"Intramuscular (IM)":method==="IV"?"Intravenous (IV)":method}</option>`).join("")}</select>
-    <label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
-    <select id="site" class="inp" style="margin-bottom:14px"></select>
+    <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
+    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
+      ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
+    </div>
+    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
+    <div class="field-label" id="nx-site-label">ADMINISTRATION SITE · OPTIONAL</div>
+    <div class="nx-site-region-row" role="group" aria-label="Site region"></div>
+    <div class="nx-site-choice-grid" role="group" aria-labelledby="nx-site-label"></div>
+    <select id="site" aria-label="Administration site (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></select>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
@@ -1149,6 +1154,43 @@ function doseModal(name, existing, occTime) {
       siteInput.add(new Option(previous+" (previously recorded)",previous));
     siteInput.value=options.includes(previous)||(sameRecordedMethod&&f.site===previous)?previous:"";
   };
+  const siteRegionRow=m.querySelector(".nx-site-region-row");
+  const siteChoiceGrid=m.querySelector(".nx-site-choice-grid");
+  const methodButtons=[...m.querySelectorAll("[data-admin-method]")];
+  const siteGroups=method=>({
+    SubQ:{"Abdomen":nexusAdminSites("SubQ").filter(x=>x.startsWith("Abdomen")),"Limbs":nexusAdminSites("SubQ").filter(x=>/thigh|arm|delt/i.test(x)),"Other":nexusAdminSites("SubQ").filter(x=>!/Abdomen|thigh|arm|delt/i.test(x))},
+    IM:{"Deltoid":nexusAdminSites("IM").filter(x=>/Deltoid|delt/i.test(x)),"Thigh":nexusAdminSites("IM").filter(x=>/Vastus/i.test(x)),"Gluteal":nexusAdminSites("IM").filter(x=>/Glute|ventro/i.test(x))},
+    Nasal:{"Nostril":nexusAdminSites("Nasal")},
+    Topical:{"Area":nexusAdminSites("Topical")}
+  })[method]||{};
+  let selectedRegion="";
+  function renderAdminButtons(){
+    methodButtons.forEach(btn=>{
+      const selected=btn.dataset.adminMethod===methodInput.value;
+      btn.classList.toggle("is-selected",selected);
+      btn.setAttribute("aria-pressed",String(selected));
+    });
+    const groups=siteGroups(methodInput.value),regions=Object.keys(groups);
+    const currentSite=siteInput.value;
+    if(!regions.includes(selectedRegion)||!groups[selectedRegion]?.includes(currentSite))
+      selectedRegion=regions.find(r=>groups[r].includes(currentSite))||regions[0]||"";
+    siteRegionRow.innerHTML=regions.length>1?regions.map(r=>`<button type="button" class="nx-site-region${r===selectedRegion?" is-selected":""}" data-region="${esc(r)}" aria-pressed="${r===selectedRegion}">${esc(r)}</button>`).join(""):"";
+    const values=[...(groups[selectedRegion]||[])];
+    if(currentSite&&!values.includes(currentSite)&&!nexusAdminSites(methodInput.value).includes(currentSite))
+      values.push(currentSite); // exact stored legacy value when editing
+    siteChoiceGrid.innerHTML=values.map(v=>`<button type="button" class="nx-site-option${v===currentSite?" is-selected":""}" data-site="${esc(v)}" aria-pressed="${v===currentSite}">${esc(v)}</button>`).join("");
+    siteChoiceGrid.hidden=!values.length;
+    siteRegionRow.querySelectorAll("[data-region]").forEach(btn=>btn.onclick=()=>{
+      selectedRegion=btn.dataset.region;siteInput.value="";renderAdminButtons();
+    });
+    siteChoiceGrid.querySelectorAll("[data-site]").forEach(btn=>btn.onclick=()=>{
+      siteInput.value=siteInput.value===btn.dataset.site?"":btn.dataset.site;renderAdminButtons();
+    });
+  }
+  methodButtons.forEach(btn=>btn.onclick=()=>{
+    methodInput.value=btn.dataset.adminMethod;
+    methodInput.dispatchEvent(new Event("change",{bubbles:true}));
+  });
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
     // calculate sprays from an injectable configuration or vice versa.
@@ -1156,8 +1198,10 @@ function doseModal(name, existing, occTime) {
       showErrorBanner("Nasal spray-count conversion is available only when the compound's configured route is Nasal. Record an amount directly or configure the compound first.");
     }
     refreshAdminSites();
+    renderAdminButtons();
   };
   refreshAdminSites();
+  renderAdminButtons();
   const spraysInput = m.querySelector("#sprays");
   if (spraysInput) {
     spraysInput.oninput = () => {
