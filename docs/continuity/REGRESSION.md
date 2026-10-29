@@ -1667,3 +1667,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Release browser QA on 1f3c5f5e: check-in, 8x 320/390 theme browser matrix, 96 vial-source assertions passed, then FAILED at validate-logdose-ui.mjs:182 optional source ID disclosure. Test fixture source was unlabelled and therefore filtered. Fixed fictional fixture route to SubQ at 96ed8e; CI for corrected head pending.
 - Method-scoped getEligibleSourceKits(name, method) and dose modal selection implemented at 1bbf23e / 55d886f; new fictional 320/390 tests assert same-compound SubQ and Nasal open vials do not co-mingle (f4fb8d9). Execution on updated head pending.
 - Safety gate for internal preparation transfer explicitly disabled 119d81b until coordinated writer protocol verified. Ordinary synchronous saveState cannot acquire async Web Locks without changing save timing; no claim of full coordination or real-data testing.
+
+
+## 2026-10-29 — Unknown-route fail-closed guard
+- Source eligibility now uses nexusExplicitAdminMethod: unknown method labels return null, unlike nexusAdminMethod legacy display fallback SubQ. Prevents unknown/unlabelled stock from silently appearing as injectable SubQ. Fictional route isolation suite now seeds simultaneous SubQ, Nasal, Unknown and unlabelled open vials and expects only the exact corresponding known route (commits af98f36e, 0813a555, b0da45d8).
+- Latest full CI for this exact source head still pending. Ordinary synchronous saves have not migrated to shared Web Locks; preparation transfer enabled flag remains false. No production data changes.
