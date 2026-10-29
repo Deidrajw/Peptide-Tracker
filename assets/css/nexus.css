@@ -2175,3 +2175,7 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-form-stock-item .nx-form-edit{min-height:44px;min-width:64px;padding:8px 11px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
 .nx-form-stock-item .nx-form-edit:focus-visible,.nx-form-stock-actions button:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
 @media(max-width:350px){.nx-form-stock-item .nx-form-edit{align-self:flex-start}}
+
+/* Route-specific guidance is ephemeral; selecting another method hides it. */
+.nx-nasal-method-note{font-size:12px;line-height:1.45;color:var(--t3);padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);margin:-5px 0 14px}
+.nx-nasal-method-note[hidden]{display:none!important}
