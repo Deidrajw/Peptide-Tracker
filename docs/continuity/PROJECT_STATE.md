@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 exact-vial fail-closed first step
+- Application commit `40622ae6`: `consumeCompoundInventory` now accepts optional `vialId`; when multiple vials are open in one kit, requests without an exact ID return `committed:false` and make no deduction. Unknown/non-open vial IDs also reject. Single-open-vial legacy behaviour preserved. This is a protective domain change, NOT yet a working multi-open UI. Current open-next restriction remains until source picker and all legacy consumers are audited. Source-linked preparation remains incomplete, transfers and route-specific deductions disabled. Exact-head CI pending. Next: explicit vial selection in Stash and Log Dose, with fictional regression and source-identical DEMO/LIVE build. No merge or production deploy.
+
 ## 2026-10-29 — PR124 contextual warning hotfix
 - Commit `60f6aa0f`: closing a modal clears its `nx-validation-message`, preventing an open-vial warning from surviving into unrelated screens. SOURCE IMPLEMENTED; CI and iPhone retest pending. Multiple-open-vial restriction intentionally retained until exact-source allocation routing is safe; lifting guard alone would risk debiting wrong vial. No merge/deploy.
 
