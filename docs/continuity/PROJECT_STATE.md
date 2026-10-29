@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 e50873c rerun: three green, full browser pending
+- Main da585ab3 unchanged, draft PR124 unmerged. On e50873c: mobile 40973779992 SUCCESS, nested 40973780138 SUCCESS, WebKit 40973780112 SUCCESS, full release browser 40973779952 still IN PROGRESS at 320/390 light/dark on last verification. No exact-head artifact available, no same-source LIVE/DEMO parity or physical iPhone acceptance. Older 936a20a artifact is stale. NEXT: verify 40973779952, fix any failure, download exact-source artifact, verify ZIP and isolated full-app DEMO before iPhone retest. No merge or deploy.
+
 ## 2026-10-29 — Single-screen exact-head CI failures investigated; fixes committed, rerun pending
 - Source/test head e50873c after 1e0b922: prior full CI 40972864709 FAIL in Log Dose inline review assertion (empty immediate review text); nested CI 40972864690 FAIL because legacy script sought removed #nx-dose-step-next; mobile 40972864724 SUCCESS, WebKit 40972864766 SUCCESS. Test fixes wait for review content and update nested test to use inline review. New-head CI and exact-source release artifact NOT YET VERIFIED; previous artifact is stale. No merge/deploy. ONE NEXT ACTION: verify rerun, fix remaining failures and download matching LIVE/DEMO artifact for iPhone testing.
 
