@@ -896,3 +896,6 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-10-28 — Legacy prepared attribution must not guess an active vial
 - User-directed safety constraint: preserve historic prepared doses and associated stock; do not silently credit a currently open vial when the old record lacks exact original `vialId` or allocations. Draft candidate `0ad1f6cb` blocks ambiguous unused prepared-batch deletion with visible warning, retaining old records for future source reconciliation and preserving explicit-linked paths. This narrows the earlier legacy fallback deliberately; no implicit retrospective auto-assignment, destructive migration, production merge or deployment approved. Test `af1b789b` pending CI and physical Safari acceptance.
+
+## 2026-10-28/29 — User accepts isolated iPhone orphan-source warning UI
+- User reported 12/12 PASS on physical iPhone fictional historical prepared-dose blocked-deletion preview, including modal fit, legible warning, cancellation, preserved batch and vial balances, light/dark. Treat as acceptance of **this tested safety interaction**, not blanket DS2 release authorization, clinical accuracy, VoiceOver signoff or permission to merge/deploy. Preserve fail-closed behavior and historical records.
