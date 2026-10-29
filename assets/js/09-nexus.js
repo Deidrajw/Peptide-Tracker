@@ -1532,7 +1532,8 @@ function openNewVialModal(supplyId, onDone) {
   const c = cfg(s.name);
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
-  const vialNum = ((s.reconHistory||[]).length)+1;
+  // Label the actual next physical vial, including when a sibling remains open.
+  const vialNum = Math.max(0,...(s.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">OPEN NEW VIAL</span>
