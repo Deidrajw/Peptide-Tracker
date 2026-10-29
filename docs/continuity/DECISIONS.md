@@ -923,3 +923,7 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-10-29 — Approved administration selector
 - User explicitly approved the 3x2 administration method button layout with grouped detailed site buttons (SubQ, IM, IV, Oral, Nasal, Topical). Approval applies to the selector UI, **not** merging/deploying PR #124, not a capsule data migration, and not enabling transfers. Preserve historical per-dose site text and granular left/right site positions.
+
+
+## 2026-10-29 — Combo Dose symptoms removal reaffirmed
+- User confirmed symptoms must be absent from Log Combo Dose, matching the regular Log Dose simplification. Do not show a symptom picker or capture temporary combo symptom selections when saving new combo entries. Never delete or rewrite historical dose symptoms or Check-In data. Preserve date/site/notes, multi-compound amounts, favourites, inventory debits, and dose history.
