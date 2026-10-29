@@ -1967,8 +1967,16 @@ async function nexusCommitPreparationTransfer(input) {
     return event;
   });
 }
-function getEligibleSourceKits(name) {
-  return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
+function getEligibleSourceKits(name, method) {
+  // An explicit route is required for route-scoped dose selection. Distinct
+  // SubQ / nasal kits of the same compound are NEVER interchangeable stock.
+  // Omitted method retains the legacy unscoped helper for other callers.
+  return (state.supplies||[]).filter(s=>{
+      if(s.name!==name || !s.activeKit) return false;
+      if(method==null) return true;
+      const labelled=s.preparationMethod||s.administrationMethod||s.route;
+      return !!labelled && nexusAdminMethod(labelled)===method;
+    })
     .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
     .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01);
 }
