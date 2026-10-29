@@ -176,6 +176,20 @@ try {
     await page.locator('.nx-method-option[data-admin-method="SubQ"]').click();
     await page.locator('#x').click();
     verified.push('six 3x2 method buttons, region/site selection and saved value synchronisation');
+    // Log Combo Dose must not solicit symptoms; legacy symptom data must survive.
+    const historicalSymptoms=await page.evaluate(()=>{
+      state._comboSymptoms=[{name:'Fictional historical symptom',intensity:2}];
+      const before=JSON.stringify(state._comboSymptoms);
+      comboDoseModal();
+      return {before,after:JSON.stringify(state._comboSymptoms)};
+    });
+    ensure(historicalSymptoms.before===historicalSymptoms.after,
+      'Opening Combo Dose modified previously retained symptom data');
+    ensure(await page.locator('#combo-sym').count()===0 &&
+      await page.getByText('SYMPTOMS AFTER THIS DOSE (shared)').count()===0,
+      'Combo Dose still exposes the removed symptom picker');
+    await page.locator('#x').click();
+    verified.push('Combo Dose has no symptom picker and historical symptom data remains unchanged');
     // A: Actual user confirmation, same recorded ID preserved after edit,
     // reapply edited amount to the original open vial only.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
