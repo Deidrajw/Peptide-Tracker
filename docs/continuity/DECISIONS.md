@@ -1,3 +1,6 @@
+## 2026-10-29 — Preparation plan status clarification
+- Approved distinct workflows remain: purchased product via Add Kit vs existing vial via in-kit Create Preparation. PR124's first linked plan is explicitly `planned-no-transfer`: no physical transfer, volume, mg conversion or administered nasal stock recorded. This intermediate plan does NOT replace a future validated source-debit/bottle-credit workflow; do not show as prepared dose or available bottle. Preserve all old inventory and dose records; no merge/deploy approval.
+
 # Nexus — Approved Decisions
 
 > Durable UX, product and engineering decisions. Distinguish implemented, approved, proposed and superseded; never treat new suggestions as approvals. Add date, rationale and source PR when available.
