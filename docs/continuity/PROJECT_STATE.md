@@ -2371,3 +2371,10 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Added 320/390 horizontal-overflow and 44px touch-target assertions for new Stash controls at c8507b74; exact-head CI pending. Browser checks are Chromium mobile emulation, **not** real iPhone Safari/VoiceOver acceptance. Do not mark physical test PASS.
 - Proposed route-specific oral/nasal/injectable deduction design recorded at docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md, including explicit source ID, count vs mL/mg, no guessed spray conversion, transaction replay/rollback safety and shared-write blocker. No dose-deduction controls enabled. Existing vial/historical records preserved.
 - **ONE NEXT ACTION:** Confirm CI for latest exact head, then verify isolated preview on physical iPhone before proposing gated route-specific dose planner implementation. No merge/deploy without user approval.
+
+
+## 2026-10-29 — iPhone-oriented formulation validation follow-up
+- Route-specific deductions are PROPOSED ONLY in docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md, with immutable atomic dose/stock event, explicit container method/ID, oral capsule count, nasal conversion gating and no cross-route fallback. Real controls still disabled.
+- Added 320/390 overflow and 44px tap target checks in tools/validate-formulation-stock.mjs (c8507b74). Added separate WebKit (Safari engine) GitHub Actions workflow at 1374fbaa, testing 320/390 light/dark LIVE/DEMO fictional stock. CI run 40893001058 began in progress; outcome pending. Browser WebKit emulation is NOT physical iPhone acceptance.
+- Prior full Chromium/browser suite on 4484dc5d SUCCESS run 40891595782 with artifact 12906345167. No production deployment or source parity asserted.
+- NEXT: check exact-head WebKit/Chromium CI, fix any failures; then request one physical iPhone Safari preview acceptance when an isolated accessible preview is verified. Do not merge/deploy without explicit approval.
