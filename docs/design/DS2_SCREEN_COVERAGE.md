@@ -1,3 +1,6 @@
+## 2026-10-29 — PR #124 Stash/Log Dose exact-source preview
+- Stash existing-vial Create Preparation writes only no-transfer plan linked by kitId/vialId. Log Dose two eligible same-kit vials display individual 48px source choices, with explicit selection rather than first-vial inference. Browser and iPhone coverage not yet accepted, full app unchanged on production. Preserve prior DS2 styling; follow up on in-kit preparation detail and linked history QA.
+
 # Nexus Design System 2.0 — Complete Surface Coverage Register
 **Updated:** 2026-10-27 | **PR:** #123 DRAFT / UNMERGED | **Purpose:** track EVERY screen and subpage; no automatic completion from a passing test.
 
