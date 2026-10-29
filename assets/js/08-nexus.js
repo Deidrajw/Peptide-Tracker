@@ -877,7 +877,7 @@ function logsView() {
       if(!d.date)return;
       const unit=cfg(name).unit||"";
       put(d.date,"Dose",name,(d.dose?d.dose+" "+unit+" · ":"")+"Recorded dose","",
-        '<p>'+esc([d.site?"Site: "+d.site:"",d.notes||""].filter(Boolean).join(" · ")||"View compound history for full dose details.")+'</p>');
+        '<p>'+esc([d.method?"Method: "+d.method:"",d.site?"Site: "+d.site:"",d.notes||""].filter(Boolean).join(" · ")||"View compound history for full dose details.")+'</p>');
     });
   });
   const allDates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
