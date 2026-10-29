@@ -1,3 +1,7 @@
+## 2026-10-29 — Final protocol reminder gap, new tests REQUIRED (NOT TESTED)
+- Existing code 10-nexus.js skips done phase timelines and returns early when there is no next phase; final-phase/protocol end advance alert absent. Add tests for final phase 3d/1d/end day/after end, last phase transitioning to protocol end, pause-date shifts, multiple compounds with different ending dates, archived/completed exclusion, snooze/acknowledge, stored in_progress vs derived Schedule ended, non-destructive protocol history, and per-dose PRN exemption. No PASS claim for these new tests.
+- Exact-head PR124 build at d42fd3cb: full release 40932209177 SUCCESS, WebKit 40932208627 SUCCESS, mobile 40932208817 SUCCESS, nested 40932208482 SUCCESS. Artifact #12922869213, manifest test-merge SHA b276f67f, LIVE ZIP 24 paths, 5 Git blob comparisons PASS, 320/390 light/dark browser QA PASS. Physical iPhone NOT TESTED. Cloudflare production parity intentionally NOT VERIFIED for unmerged PR.
+
 ## 2026-10-29 — Post-protocol PRN/active overlap edge cases
 - New source fixes 7bc3474e / 13dcdd9d: Quick Log preserves explicitly prior PRN intent, and older-ended protocol does not nag when a newer active same-compound phase covers the logged date. Source code inspected; dedicated browser assertions for these two edge cases and final exact-head CI still pending, not Pass. Check post-save preservation, no repeated acknowledgement, undo and protocol status. Physical iPhone NOT TESTED.
 
