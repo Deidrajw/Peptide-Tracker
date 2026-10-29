@@ -123,7 +123,32 @@ try {
     assert(state.preparedDoses.length===0,'Split prepared batch record not removed');
     list.push('two-vial prepared deletion conserves exact unused share per source');
 
-    // (7) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
+    // (7) An orphaned explicit source must not delete a partly unused
+    // prepared batch or silently refund into an unrelated kit.
+    const orphanKit=kit(9007,4);
+    state.supplies=[orphanKit];
+    const originalOrphanBalance=orphanKit.vials[0].remainingMg;
+    const orphan={id:8103,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:999999,vialId:'missing-vial',amount:10}]};
+    state.preparedDoses=[orphan];
+    assert(deletePreparedDose(orphan)===false,
+      'Prepared batch with missing explicit source was deleted');
+    assert(state.preparedDoses.length===1 && state.preparedDoses[0]===orphan &&
+      near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'Orphan source failed to preserve both batch and unrelated stock');
+    const missingVial={id:8104,compound:'Retatrutide',amountEach:2,unit:'mg',
+      count:5,remainingCount:3,allocations:[
+        {kitId:orphanKit.id,vialId:'not-a-real-vial',amount:10}]};
+    state.preparedDoses=[missingVial];
+    assert(deletePreparedDose(missingVial)===false,
+      'Prepared batch with missing vial ID was deleted');
+    assert(state.preparedDoses.length===1 &&
+      near(orphanKit.vials[0].remainingMg,originalOrphanBalance),
+      'Missing-vial deletion altered unrelated inventory or prepared history');
+    list.push('missing kit/vial source blocks deletion and preserves batch');
+
+    // (8) Canonical unit bridge is reversible for mcg and mg, avoiding 1000x
     // over/under deductions in compound preparations.
     assert(near(doseToMg(250,'mcg'),.25)&&near(mgToUnit(.25,'mcg'),250)
       &&near(doseToMg(2,'mg'),2),'Native-unit conversion drift');
@@ -138,4 +163,4 @@ try {
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
-console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*7+' safety assertions');
+console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*8+' safety assertions');
