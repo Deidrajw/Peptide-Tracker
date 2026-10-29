@@ -127,6 +127,10 @@ try {
       'Multiple open vials not exposed as exact physical sources');
     await page.locator('.kit-opt[data-vial="38888"]').click();
     await setDose(page,4);
+    // The shipped dose editor intentionally debounces allocation rendering by
+    // 500 ms while typing. Wait for that existing behaviour rather than asserting
+    // against the stale first-render panel.
+    await page.locator('#alloc-panel .alloc-draw').first().waitFor({state:'visible',timeout:5000});
     ensure(await page.locator('#alloc-panel .alloc-draw').count()>0,
       'Exact source allocation omitted Confirm draw');
     await page.locator('#alloc-panel .alloc-draw').first().click();
