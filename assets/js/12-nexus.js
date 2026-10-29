@@ -383,7 +383,7 @@ function wireBody() {
         const unit=cfg(name).unit;
         const label=slots.length>1?name+" · "+(index+1):name;
         const done=slot.status==="taken";
-        const desc=done?("Recorded"+(slot.dose?.dose?" · "+slot.dose.dose+" "+unit:"")+(slot.dose?.site?" · "+slot.dose.site:""))
+        const desc=done?("Recorded"+(slot.dose?.dose?" · "+slot.dose.dose+" "+unit:"")+(slot.dose?.method?" · "+slot.dose.method:"")+(slot.dose?.site?" · "+slot.dose.site:""))
           :slot.status==="moved"?"Rescheduled":slot.status==="skipped"?"Skipped":slot.status==="overdue"?"Overdue · unresolved":"Scheduled"+(slot.time?" · "+slot.time:"");
         (done?grouped.completed:grouped.scheduled).push({label,desc,status:slot.status});
       });
