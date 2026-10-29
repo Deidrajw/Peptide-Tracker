@@ -1188,7 +1188,7 @@ function doseModal(name, existing, occTime) {
     if(isBlend){
       const raw=Number(doseAmtStr),neededMg=doseToMg(raw,c.unit);
       if(!Number.isFinite(neededMg)||neededMg<=0){showErrorBanner("Invalid blend amount.");return;}
-      const inputDate=m.querySelector("#date").value,site=m.querySelector("#site").value;
+      const inputDate=m.querySelector("#date").value,site=m.querySelector("#site")?.value||"";
       const notes=m.querySelector("#notes").value,symptoms=f.symptoms;
       const tgt=state.customPeptides[name]||(state.customPeptides[name]={enabled:true,scheduleDays:7,doses:[]});
       tgt.doses=tgt.doses||[];
