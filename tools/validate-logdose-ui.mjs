@@ -112,6 +112,30 @@ try {
     verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
     await page.evaluate(()=>{closeModal();});
     await seed(page,theme);
+    // Two physical open vials in ONE kit: Confirm draw must use the row's
+    // exact vial ID, never a kit-level first-open guess.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(888,0.5,0);
+      kit.vials.push({id:38888,status:'open',vialMg:10,remainingMg:3,
+        sequenceNumber:2,intendedUse:'SubQ',reconDate:'2026-10-25T09:00:00'});
+      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      doseModal('Retatrutide');
+      window.__qaRealDraw=drawFromVialModal;window.__qaDrawId=null;
+      drawFromVialModal=function(kit,vial){window.__qaDrawId=vial.id;};
+    });
+    ensure(await page.locator('.kit-opt').count()===2,
+      'Multiple open vials not exposed as exact physical sources');
+    await page.locator('.kit-opt[data-vial="38888"]').click();
+    await setDose(page,4);
+    ensure(await page.locator('#alloc-panel .alloc-draw').count()>0,
+      'Exact source allocation omitted Confirm draw');
+    await page.locator('#alloc-panel .alloc-draw').first().click();
+    const exactDraw=await page.evaluate(()=>window.__qaDrawId);
+    ensure(exactDraw===38888,
+      'Confirm draw targeted a different physical vial: '+String(exactDraw));
+    await page.evaluate(()=>{drawFromVialModal=window.__qaRealDraw;closeModal();});
+    verified.push('multiple-open-vials-confirm-draw-targets-exact-vial-id');
+    await seed(page,theme);
 
     const routeIsolation=await page.evaluate(()=>{
       const subq=window.__fixtureKit(9331,8),nasal=window.__fixtureKit(9332,7);
