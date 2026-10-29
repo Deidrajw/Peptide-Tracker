@@ -66,6 +66,21 @@ try {
     page.on('dialog',async d=>d.accept());
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await seed(page,theme);let verified=[];
+    const routeIsolation=await page.evaluate(()=>{
+      const subq=window.__fixtureKit(9331,8),nasal=window.__fixtureKit(9332,7);
+      subq.preparationMethod='SubQ';nasal.preparationMethod='Nasal';
+      state.supplies=[subq,nasal];
+      const result={
+        subq:getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id),
+        nasal:getEligibleSourceKits('Retatrutide','Nasal').map(x=>x.kit.id),
+        oral:getEligibleSourceKits('Retatrutide','Oral').map(x=>x.kit.id)
+      };
+      state.supplies=[];
+      return result;
+    });
+    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"nasal":[9332],"oral":[]}',
+      'Route-labelled open vials were combined or unlabelled stock guessed: '+JSON.stringify(routeIsolation));
+    verified.push('same compound separate SubQ/nasal physical stock remains route-isolated');
     // Regression: compound View details/taken-today action must not throw ReferenceError fmtT.
     const completedAction=await page.evaluate(()=>{
       const entry={id:91827,date:'2026-10-27T15:03',dose:'2.5',site:'Abdomen'};
