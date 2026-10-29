@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 CI recovery checkpoint (NOT RELEASED)
+- Full build 40913124098 FAILED outdated shortfall UI assertion (no explicit source selection). Corrected regression at 4c6cf6ee; targeted browser 40913649295, WebKit 40913649202 and nested 40913649436 passed; full build 40913649262 still running at checkpoint. Preview bot reports commit 4c6cf6e deployed to Cloudflare branch preview but independent verification unavailable. Never imply production merged or certified release.
+
 ## 2026-10-29 — PR124 browser and WebKit test evidence (DRAFT/UNRELEASED)
 - Source c95e439d (test-only final change after application 3693c899): second-vial opening through actual modal, route-compatible Log Dose source selection, independent balance/history, and no-transfer linked plan verified by browser 40913124073, WebKit 40913124222, nested 40913124963, all SUCCESS. Release artifact run 40913124098 unfinished, physical iPhone retest not accepted, production not touched. Never imply full release.
 
