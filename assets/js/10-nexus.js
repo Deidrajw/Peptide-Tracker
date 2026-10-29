@@ -85,7 +85,7 @@ function stashView() {
     ${otherStock.length?otherStock.map(x=>{
       const oral=x.containerType==="capsule-bottle";
       const amount=oral?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`:`${x.remainingMl} mL · ${x.remainingMg} mg remaining`;
-      return `<div class="nx-form-stock-item" data-formulation-id="${esc(String(x.id))}"><span><strong>${esc(x.compound)}</strong><small>${oral?"Oral · Capsules":"Nasal · Bottle"}</small></span><span class="nx-form-stock-count">${esc(amount)}</span></div>`;
+      return `<div class="nx-form-stock-item" data-formulation-id="${esc(String(x.id))}"><span><strong>${esc(x.compound)}</strong><small>${oral?"Oral · Capsules":"Nasal · Bottle"}</small></span><span class="nx-form-stock-count">${esc(amount)}</span><button type="button" class="nx-form-edit" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} inventory">Adjust</button></div>`;
     }).join(""):`<p class="nx-form-stock-empty">No capsule or nasal containers recorded.</p>`}
     <p class="nx-form-stock-note">Inventory only. Log Dose will not deduct these containers until route-specific tracking is validated.</p>
   </section>`;
@@ -1995,31 +1995,45 @@ document.addEventListener('click',e=>{
 /* Isolated formulation stock editor. Never converts existing kits or vials.
  * Saves one complete state snapshot and swaps in-memory state only after readback.
  */
-function nexusAddFormulationModal(type){
+function nexusAddFormulationModal(type,existingId=null){
   if(!["capsule-bottle","nasal-bottle"].includes(type))return;
   const oral=type==="capsule-bottle";
+  const existing=existingId==null?null:(state.formulationStocks||[]).find(x=>String(x.id)===String(existingId)&&x.containerType===type);
+  if(existingId!=null&&!existing)return;
   const m=openModal(`<section class="nx-form-stock-editor">
-    <div class="nx-form-stock-editor-head"><strong>Add ${oral?"capsules":"nasal bottle"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
-    <p class="hint">This creates a separate physical inventory record; existing vial records are untouched.</p>
-    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" placeholder="Compound name" required>
-    ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="30">
-     <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" placeholder="Labelled strength">`:
-     `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" placeholder="Bottle contents">
-      <label class="field-label" for="nx-form-mg">AMOUNT REMAINING (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" placeholder="Known amount">`}
+    <div class="nx-form-stock-editor-head"><strong>${existing?"Adjust":"Add"} ${oral?"capsules":"nasal bottle"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" placeholder="Compound name" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required>
+    ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
+     <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" value="${existing?existing.mgPerCapsule:""}" placeholder="Labelled strength" ${existing?"readonly":""}>`:
+     `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
+      <label class="field-label" for="nx-form-mg">AMOUNT REMAINING (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
     <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
-    <button type="button" id="nx-form-save" class="btn-primary">Save container</button>
+    <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
   m.querySelector("#x").onclick=closeModal;
   m.querySelector("#nx-form-save").onclick=()=>{
     try{
-      const input={id:"form-"+uid(),compound:m.querySelector("#nx-form-name").value.trim(),containerType:type,method:oral?"Oral":"Nasal"};
-      if(oral){input.count=Number(m.querySelector("#nx-form-count").value);input.mgPerCapsule=Number(m.querySelector("#nx-form-strength").value);}
-      else {input.volumeMl=Number(m.querySelector("#nx-form-volume").value);input.quantityMg=Number(m.querySelector("#nx-form-mg").value);}
       if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
-      if(_demoActive){
-        state=globalThis.NexusFormulationStock.add(state,input).next;
+      const input=existing
+        ?{id:existing.id,transactionId:"adjust-"+uid()}
+        :{id:"form-"+uid(),compound:m.querySelector("#nx-form-name").value.trim(),containerType:type,method:oral?"Oral":"Nasal"};
+      if(oral){
+        const rawCount=m.querySelector("#nx-form-count").value;
+        if(rawCount.trim()==="")throw Error("Enter the capsule count");
+        if(existing)input.remainingCount=Number(rawCount);
+        else {input.count=Number(rawCount);input.mgPerCapsule=Number(m.querySelector("#nx-form-strength").value);}
       }else{
-        const {next}=globalThis.NexusFormulationStock.commitAdd(state,input,{
+        const rawVolume=m.querySelector("#nx-form-volume").value,rawMg=m.querySelector("#nx-form-mg").value;
+        if(rawVolume.trim()===""||rawMg.trim()==="")throw Error("Enter volume and amount");
+        if(existing){input.remainingMl=Number(rawVolume);input.remainingMg=Number(rawMg);}
+        else {input.volumeMl=Number(rawVolume);input.quantityMg=Number(rawMg);}
+      }
+      const operation=existing?"edit":"add",commit=existing?"commitEdit":"commitAdd";
+      if(_demoActive){
+        state=globalThis.NexusFormulationStock[operation](state,input).next;
+      }else{
+        const {next}=globalThis.NexusFormulationStock[commit](state,input,{
           read:()=>localStorage.getItem(STORE_KEY),
           write:value=>localStorage.setItem(STORE_KEY,value)
         });
@@ -2032,4 +2046,6 @@ function nexusAddFormulationModal(type){
 document.addEventListener("click",e=>{
   if(e.target.closest?.("#nx-add-capsules"))nexusAddFormulationModal("capsule-bottle");
   if(e.target.closest?.("#nx-add-nasal"))nexusAddFormulationModal("nasal-bottle");
+  const edit=e.target.closest?.("[data-formulation-edit]");
+  if(edit){const stock=(state.formulationStocks||[]).find(x=>String(x.id)===edit.dataset.formulationEdit);if(stock)nexusAddFormulationModal(stock.containerType,stock.id);}
 });
