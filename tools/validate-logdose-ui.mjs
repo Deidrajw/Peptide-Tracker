@@ -165,15 +165,19 @@ try {
       'Approved six-method button grid missing');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
       'SubQ not marked as selected');
-    await page.locator('.nx-site-region[data-region="Abdomen"]').click();
-    await page.locator('.nx-site-option[data-site="Abdomen — lower L"]').click();
+    await page.locator('#site').selectOption('Abdomen — lower L');
     ensure(await page.locator('#site').inputValue()==='Abdomen — lower L',
       'SubQ site button did not synchronise saved site value');
     await page.locator('.nx-method-option[data-admin-method="IM"]').click();
     ensure(await page.locator('#nx-dose-method').inputValue()==='IM' &&
-      await page.locator('.nx-site-option[data-site="Deltoid — L (IM)"]').count()===1,
+      await page.locator('#site option[value="Deltoid — L (IM)"]').count()===1,
       'Method switching failed to update IM regions and canonical value');
+    await page.locator('.nx-method-option[data-admin-method="Nasal"]').click();
+    ensure(await page.locator('#nx-nasal-method-note').isVisible(),
+      'Nasal guidance did not appear within administration fields');
     await page.locator('.nx-method-option[data-admin-method="SubQ"]').click();
+    ensure(await page.locator('#nx-nasal-method-note').isHidden(),
+      'Nasal guidance persisted after switching out of nasal mode');
     await page.locator('#x').click();
     verified.push('six 3x2 method buttons, region/site selection and saved value synchronisation');
     // Log Combo Dose must not solicit symptoms; legacy symptom data must survive.
