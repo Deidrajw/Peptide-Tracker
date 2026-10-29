@@ -218,10 +218,37 @@ try {
     return {assertions:list,caseCount:list.length,version:document.title};
   },{theme});
   if(exceptions.length)throw Error('Browser JS exception: '+exceptions.join('; '));
+  // Real full-app, standalone offline fixture for iPhone acceptance; no test-only
+  // state injection here. The built HTML must open its actual confirmation UI.
+  const fixture=path.resolve('dist/Nexus_'+VERSION+'_ORPHAN_WARNING_FULL_DEMO.html');
+  if(!fs.existsSync(fixture))throw Error('Source-matched orphan iPhone demo missing');
+  const qa=await ctx.newPage();
+  const qaErrors=[];
+  qa.on('pageerror',e=>qaErrors.push(e.message));
+  await qa.goto('file://'+fixture,{waitUntil:'load'});
+  await qa.waitForSelector('#confirm',{timeout:8000});
+  const check=await qa.evaluate(({theme})=>{
+    document.documentElement.dataset.theme=theme;
+    const before=window.__NEXUS_ORPHAN_QA__?.snapshot();
+    if(!window.__NEXUS_FULL_APP_DEMO__||!before||
+       before.count!==1||before.originalMg!==0||before.currentMg!==7)
+      throw Error('Orphan preview is not isolated or initial fixture is wrong');
+    document.querySelector('#confirm').click();
+    const after=window.__NEXUS_ORPHAN_QA__.snapshot();
+    if(!document.querySelector('#confirm')||
+       !document.body.textContent.includes('source is unverified')||
+       after.count!==before.count||after.originalMg!==before.originalMg||
+       after.currentMg!==before.currentMg)
+      throw Error('Orphan iPhone preview warning/stock invariants failed');
+    return true;
+  },{theme});
+  if(!check||qaErrors.length)throw Error('Orphan preview browser error '+qaErrors.join(';'));
+  await qa.close();
   results.push({kind,width,theme,...evidence,result:'PASS'});
   await ctx.close();
  }
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/Nexus_'+VERSION+'_VIAL_SAFETY_REGRESSION.json',JSON.stringify(results,null,2));
+console.log('Standalone orphan-warning iPhone preview PASS: 8 LIVE/DEMO viewport/theme configurations (fictional browser only)');
 console.log('Nexus vial-source core regression PASS: '+results.length+' LIVE/DEMO viewport/theme combinations, '+results.length*12+' safety assertions');
