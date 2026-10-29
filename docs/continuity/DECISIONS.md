@@ -904,3 +904,11 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 - User approved Profile/Settings opening the overview on fresh entry through main navigation; normal Back within Settings remains intact. This is a view-state reset, not browser reload, storage reset or destructive migration. Implemented `441d22a0`.
 - User accepted the Compound History single-scroll sheet and bottom actions on physical iPhone (4/4 focused test including Profile/Settings); implemented CSS fix `fb601b97`. Preserve single primary vertical scroll per sheet where practical; do not assume PWA/Capacitor packaging fixes nested scrolling automatically.
 - These approvals are scoped to the tested interactions and do not authorize merging/deploying PR #123 or revising accepted Calendar, Plans and Supplies designs.
+
+
+## 2026-10-29 — Administration units and deferred discovery UX reaffirmed
+- Preserve per-dose mg/mcg display choice; normalize mass arithmetic to mg (250 mcg = 0.25 mg), retain the selected display unit with the record. IU is biological activity and MUST remain separate unless a verified product-specific potency conversion is explicitly available; never infer universal IU-to-mass conversion. This is an approved requirement, not proof of implementation.
+- Existing historical blend reconciliation remains protected. Show its entry point only in eligible compound empty-history contexts; attribution must never fabricate a new dose or deduct physical stock a second time.
+- Defer interactive body map to a later UX sprint; require accessible text alternative and simple regions before fine left/right granularity.
+- Consider floating Log Dose only on Today and selected tracking pages after safe-area, keyboard, bottom-nav and sticky-action collision tests; no globally persistent FAB approved.
+- Atomic transfer and source-integrity work remains higher priority. Do not merge/deploy PR #124 without explicit approval.
