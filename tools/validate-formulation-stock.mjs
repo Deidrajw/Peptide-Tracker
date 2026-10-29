@@ -68,6 +68,27 @@ try {
   assert.equal(after.stock[0].transactions[0].before.remainingCount,30);
   assert.equal(after.stock[1].remainingMl,7);
   assert.equal(after.stock[1].mgPerSpray,null);
+  // Two open physical vials of one kit must be independently selectable.
+  // No physical transfer or dose is written merely by changing the selected vial.
+  await page.evaluate(()=>{
+    const demoName='Fictional Source Selector';
+    state.customPeptides=state.customPeptides||{};
+    state.customPeptides[demoName]={enabled:true,route:'SubQ',doses:[]};
+    state.supplies.push({id:992211,name:demoName,activeKit:true,preparationMethod:'SubQ',vialMg:10,
+      totalVials:2,openedVials:2,vials:[
+        {id:'source-a',sequenceNumber:1,status:'open',vialMg:10,remainingMg:7,intendedUse:'SubQ'},
+        {id:'source-b',sequenceNumber:2,status:'open',vialMg:10,remainingMg:9,intendedUse:'SubQ'}]});
+    doseModal(demoName);
+  });
+  const physicalChoices=page.locator('.kit-opt[data-kit="992211"]');
+  assert.equal(await physicalChoices.count(),2,'Two vials in same kit must have separate source choices');
+  assert.deepEqual(await physicalChoices.evaluateAll(items=>items.map(b=>b.dataset.vial)),['source-a','source-b']);
+  assert.equal(await physicalChoices.evaluateAll(items=>items.filter(b=>b.getAttribute('aria-pressed')==='true').length),0,'Ambiguous kit/vial source must not be preselected');
+  await physicalChoices.nth(1).click();
+  assert.equal(await physicalChoices.nth(1).getAttribute('aria-pressed'),'true','Explicit source selection must mark only chosen vial');
+  const untouchedSources=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg));
+  assert.deepEqual(untouchedSources,[7,9],'Selecting a vial must not debit either balance');
+  await page.evaluate(()=>closeModal());
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
  }
