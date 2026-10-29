@@ -890,7 +890,7 @@ function doseModal(name, existing, occTime) {
         row("Allocated",mgToUnit(allocated,c.unit).toFixed(2)+" "+c.unit)+
         rows.map((r,i)=>row("Source "+(i+1),mgToUnit(Number(r.mg)||0,c.unit).toFixed(2)+" "+c.unit)).join(""):"");
     const ids=review.querySelector("#nx-dose-source-ids");
-    const idRows=rows.map((r,i)=>row("Source "+(i+1)+" vial ID",r.vialId||"Unspecified")).join("");
+    const idRows=rows.map((r,i)=>row("Source "+(i+1)+" kit ID",r.kitId||"Unspecified")+row("Source "+(i+1)+" vial ID",r.vialId||"Unspecified")).join("");
     ids.hidden=!kit&&!rows.length;
     ids.querySelector(".nx-dose-source-ids-body").innerHTML=(kit?row("Kit ID",kit.id):"")+(vial?row("Vial ID",vial.id):"")+idRows;
   };
