@@ -222,3 +222,7 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 ## 2026-10-29 — Draft PR #124 new Stash formulation surfaces
 - New Other formulations Stash section, Add Capsules modal, Add Nasal Bottle modal and audited Adjust forms coded. Uses existing DS2 card spacing and 44px controls; full browser 320/390 light/dark tests pending. These are additional additive inventory records, not existing vial kit redesigns. Physical iPhone acceptance NOT TESTED.
 - Existing Stash kit details/Inventory and historical vials remain approved and untouched; no medical-safety conversion or new route deductions. Do not merge/deploy absent release approval.
+
+
+## 2026-10-29 — Add Kit form architecture (draft PR #124)
+- Approved UX: Stash Add Kit launches a single five-choice form selection with explanatory card-buttons; Vials retains approved editor, others create form-specific package cards in normal kit list. Separate Other formulations section removed. Open New Vial has per-vial non-transferring intended-use selection. CSS target 44px+ controls at 320px/390px, light/dark. Browser CI pending; physical iPhone acceptance required. No merge/deployment.
