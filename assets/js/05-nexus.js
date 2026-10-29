@@ -2269,6 +2269,10 @@ function quickLogDose(name, occTime) {
     const cc = cfg(name);
     const neededMg = doseToMg(lastDoseAmt, cc.unit);
     migrateKitToV2(activeKit);
+    // Quick Log must not infer a physical source when two vials are open in one kit.
+    if((activeKit.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&getVialRemainingMg(activeKit,v)>0.01).length>1){
+      doseModal(name,null,occTime);return;
+    }
     const vial = kitOpenVialV2(activeKit);
     // No open vial at all (needs reconstituting) is treated the same as "not enough" —
     // both need the full flow to resolve properly, not a silent unaccounted quick-log.
