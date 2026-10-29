@@ -747,6 +747,15 @@ function doseModal(name, existing, occTime) {
           nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
         return use===initialMethod;
       }).map(vial=>({kit,vial}));});
+  // Legacy inventory imported before method-labelled vials existed may have real
+  // open stock without a route label. Show it for explicit confirmation; never
+  // silently assume SubQ/Nasal/IM compatibility or report its balance as zero.
+  const unlabelledOpenSources = (state.supplies||[]).filter(k=>k.name===name && k.activeKit)
+    .flatMap(kit=>(kit.vials||[]).filter(v=>
+      ["open","active"].includes(v.status) && getVialRemainingMg(kit,v)>0.01 &&
+      !(v.intendedUse && v.intendedUse!=="undecided") &&
+      !nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route)
+    ).map(vial=>({kit,vial})));
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
   let selectedKitId = needsKitPicker?null:(eligibleSources[0]?.kit.id ?? null);
   let selectedVialId = needsKitPicker?null:(eligibleSources[0]?.vial.id ?? null);
@@ -771,11 +780,18 @@ function doseModal(name, existing, occTime) {
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
       <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
-        ? "No open vial linked. Logging this dose will not deduct inventory."
+        ? (unlabelledOpenSources.length?"Open inventory found, but administration method is not confirmed. Choose the correct vial below.":"No compatible open vial. Nothing will be deducted until a source is selected.")
         : eligibleSources.length===1
           ? `Open ${esc(eligibleSources[0].kit.vialMg||"?")}${esc(c.unit)} vial · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)}${esc(c.unit)} remaining`
           : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
     </div>` : ""}
+    ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
+      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Open vial needs method confirmation</div>
+      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">Your saved vial balance is intact. Nexus cannot assume that an older unlabeled vial is prepared for ${esc(initialMethod)}. Only confirm a vial you know is appropriate for this method.</p>
+      ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
+        Confirm ${esc(kit.name)} · Vial ${esc(vial.sequenceNumber||"?")} (${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left) for ${esc(initialMethod)}
+      </button>`).join("")}
+    </div>`:""}
     ${isEdit ? `<div class="nx-dose-source-readout"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>Existing dose record</strong><small>Original source information stays linked to this dose.</small></div></div>` : ""}
     ${preparedBatches.length?`<div id="source-picker" style="margin-bottom:14px">
       <label class="field-label">SOURCE</label>
@@ -967,6 +983,29 @@ function doseModal(name, existing, occTime) {
     if (kp) kp.style.display = (needsKitPicker && selectedSource==="fresh") ? "" : "none";
     renderAllocPanel();
   });
+  m.querySelectorAll(".nx-confirm-legacy-vial").forEach(b=>b.onclick=()=>{
+    const kit=state.supplies.find(k=>String(k.id)===b.dataset.kit);
+    const vial=kit?.vials?.find(v=>String(v.id)===b.dataset.vial);
+    if(!kit||!vial||!["open","active"].includes(vial.status)||getVialRemainingMg(kit,vial)<=0.01){
+      showErrorBanner("That vial is no longer open and available. No inventory changed.");return;
+    }
+    // Confirming a physical source is a user action, not a legacy migration.
+    // Never overwrite an incompatible method or a previously confirmed route.
+    const existingUse=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+      nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
+    if(existingUse&&existingUse!==initialMethod){
+      showErrorBanner("This vial is already labelled for another method. No inventory changed.");return;
+    }
+    state._pendingDoseDraft={
+      name,id:f.id,method:initialMethod,dose:m.querySelector("#dose")?.value||f.dose,
+      date:m.querySelector("#date")?.value||f.date,site:m.querySelector("#site")?.value||f.site,
+      notes:m.querySelector("#notes")?.value||f.notes,
+      escalation:!!m.querySelector("#esc")?.checked,symptoms:f.symptoms,
+      rows:[]
+    };
+    vial.intendedUse=initialMethod;
+    saveState();closeModal();doseModal(name);
+  });
   m.querySelectorAll(".kit-opt").forEach(b=>b.onclick=()=>{
     selectedKitId = b.dataset.kit;
     selectedVialId = b.dataset.vial;
@@ -994,6 +1033,10 @@ function doseModal(name, existing, occTime) {
       return;
     }
     const ak = activeKit();
+    if(!ak && unlabelledOpenSources.length){
+      panel.innerHTML='<p role="status" style="padding:12px;border:1px solid var(--border-sub);border-radius:10px;color:var(--t2)">Open inventory is recorded, but the administration method is unconfirmed. Choose and confirm the exact vial in Dose source above; no stock has been deducted.</p>';
+      return;
+    }
     // "Current vial" must mean the OPEN vial specifically — not the kit's total including
     // sealed reserve that hasn't been reconstituted yet. getKitRemainingMg is correctly
     // kit-wide (that's its job), but using it here mislabeled "Current vial" with a number
