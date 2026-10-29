@@ -62,7 +62,7 @@ function renderPhaseRemindersDetail() {
     </div>
   </div>
   <div style="font-size:11px;color:var(--t5);line-height:1.6;padding:0 4px">
-    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Reminders appear 7, 3 or 1 day before applicable phase changes, when Phase 1 or another phase starts, and 7 or 1 day before a protocol's scheduled end. When an active protocol's schedule has elapsed, a review alert stays visible until you act on its status. An elapsed schedule is <b>not</b> automatically marked Completed, and no dose or history is changed. Paused protocols don't generate reminders. Dates are derived from each protocol's saved phases and pause adjustments.
+    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Reminders appear 7, 3 or 1 day before applicable phase changes, when Phase 1 or another phase starts, and 7 or 1 day before a protocol's scheduled end. When an active protocol's schedule has elapsed, a review alert appears until dismissed, snoozed or resolved by updating its status. An elapsed schedule is <b>not</b> automatically marked Completed, and no dose or history is changed. Paused protocols don't generate reminders. Dates are derived from each protocol's saved phases and pause adjustments.
   </div>`;
 }
 
