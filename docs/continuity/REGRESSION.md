@@ -1,3 +1,6 @@
+## 2026-10-29 — Source-linked in-kit preparation plan (unverified)
+- Source `fa88b464`, `8ae43d30`: Create preparation appears per open vial and records `linkedPreparationPlans` on existing kit referencing exact sourceKitId and sourceVialId; list shows plan on that vial. No amount credited/debited, no conversion, no global formulationStock created. Require tests for two vials separate plan ancestry, preservation of all original vial/historical records, stale/closed-vial rejection, navigation/44px/320/390 dark/light, save failure handling. CI/physical iPhone NOT TESTED. Do not mark a physical nasal preparation or cross-route deductions complete.
+
 ## 2026-10-29 — Quick Log fail-closed safeguard
 - 9aca8d6c prevents direct Quick Log inventory debit when selected kit has >1 open vial with >0.01 mg. Needs fictional browser regression for two-open source and single-open normal Quick Log, no unintended history append, no silent amount deduction. Source-only verification; CI and physical iPhone NOT TESTED. Full intended multiple-open workflow blocked pending explicit picker.
 
