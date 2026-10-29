@@ -1,3 +1,9 @@
+// Administration method is distinct from optional injection site. Historical records stay unchanged.
+const NEXUS_DOSE_METHODS=["Subcutaneous","IM","IV","Oral","Nasal","Topical"];
+function nexusDoseMethod(value){return ({subq:"Subcutaneous",sq:"Subcutaneous",sc:"Subcutaneous",subcutaneous:"Subcutaneous",im:"IM",intramuscular:"IM",iv:"IV",intravenous:"IV",oral:"Oral",nasal:"Nasal",topical:"Topical"})[String(value||"").trim().toLowerCase()]||"";}
+function nexusInjectableMethod(v){return ["Subcutaneous","IM","IV"].includes(v);}
+function nexusDoseMethodOptions(v){return '<option value="">Choose method…</option>'+NEXUS_DOSE_METHODS.map(x=>'<option value="'+x+'"'+(x===v?' selected':'')+'>'+x+'</option>').join("");}
+
 function comboDoseModal() {
   const aps = allPeptides();
   // Combo dose is specifically "compounds drawn into one syringe and injected together"
@@ -697,6 +703,7 @@ function doseModal(name, existing, occTime) {
   const draft = state._pendingDoseDraft && state._pendingDoseDraft.name===name ? state._pendingDoseDraft : null;
   const lastDoseAmt = draft?.dose || occAmt || doseHistory[0]?.dose || "";
   const isNasal = cData.route === "Nasal";
+  const doseMethod=existing?nexusDoseMethod(existing.method):(nexusDoseMethod(draft?.method)||nexusDoseMethod(cData.route));
   const siteList = sitesFor(cData);
   const suggestedSite = (() => {
     if (!recent.length) return siteList[0];
@@ -707,7 +714,7 @@ function doseModal(name, existing, occTime) {
   })();
   const f = existing
     ? { ...existing, symptoms: existing.symptoms||[] }
-    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site||suggestedSite, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
+    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site??(nexusInjectableMethod(doseMethod)?suggestedSite:""), method:doseMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
   const isEdit = !!existing;
   const occLabel = (occIndex>=0 && cData.dosesPerDay>1) ? ` — ${occIndex===0?"MORNING":occIndex===getOccurrenceTimes(cData).length-1?"EVENING":"DOSE "+(occIndex+1)}` : "";
   state._pendingDoseDraft = null; // consumed — cleared unless we re-save it below on "Open New Vial"
@@ -771,7 +778,7 @@ function doseModal(name, existing, occTime) {
     </section>
     <section class="nx-dose-section" aria-label="Administration details">
       <div class="nx-dose-section-title">Administration details</div>
-      <p class="nx-dose-section-desc">Review the amount, date and administration site.</p>
+      $1Review the amount, date and dosing method. Injection site is optional.$2
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
@@ -790,8 +797,8 @@ function doseModal(name, existing, occTime) {
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
-    ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
+    <label class="field-label" for="dose-method">DOSING METHOD</label><select id="dose-method" class="inp" required style="margin-bottom:14px">${nexusDoseMethodOptions(nexusDoseMethod(f.method))}</select><div id="dose-site-wrap"><label class="field-label" for="site">INJECTION SITE (OPTIONAL)</label><select id="site" class="inp" style="margin-bottom:14px"><option value="">Not recorded</option>$1</select></div>
+    ${!isEdit&&recent.length?`<div id="dose-site-guidance" class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
@@ -925,6 +932,9 @@ function doseModal(name, existing, occTime) {
   doseBack.onclick=()=>{doseUiStep=Math.max(0,doseUiStep-1);paintDoseUi();doseScroll.scrollTop=0;};
   doseNext.onclick=()=>{const message=validateDoseStep();if(message){error.textContent=message;error.hidden=false;return;}doseUiStep=Math.min(doseUiMode==="guided"?2:1,doseUiStep+1);paintDoseUi();doseScroll.scrollTop=0;};
   paintDoseUi();
+  const methodSelect=m.querySelector("#dose-method");
+  const updateSite=()=>{const on=nexusInjectableMethod(methodSelect.value);m.querySelector("#dose-site-wrap").hidden=!on;const guide=m.querySelector("#dose-site-guidance");if(guide)guide.hidden=!on;};
+  methodSelect.addEventListener("change",updateSite);updateSite();
   m.querySelector("#x").onclick = closeModal;
   const reactionLink=m.querySelector("#nx-record-reaction");
   if(reactionLink)reactionLink.onclick=()=>nexusDoseReactionModal(name,f.id);
@@ -1164,7 +1174,7 @@ function doseModal(name, existing, occTime) {
         }
         const old=tgt.doses.find(x=>x.id===f.id);
         if(!old){showErrorBanner("Original blend record not found.");return;}
-        Object.assign(old,{date:inputDate,site,notes,symptoms,escalation:m.querySelector("#esc").checked});
+        Object.assign(old,{date:inputDate,site:injectionSite,method,notes,symptoms,escalation:m.querySelector("#esc").checked});
         saveState();closeModal();render();return;
       }
       const id=uid(),allocations=[];
@@ -1211,7 +1221,7 @@ function doseModal(name, existing, occTime) {
         }
         allocations.push(...committed.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId})));
       }
-      const dose={id,date:inputDate,dose:String(raw),site,notes,symptoms,
+      const dose={id,date:inputDate,dose:String(raw),site:injectionSite,method,notes,symptoms,
         escalation:m.querySelector("#esc").checked,isBlendDose:true,
         blendSource:allocations[0]?.kitId||blendKits[0]?.id,
         allocations,fromPreparedId};
@@ -1321,8 +1331,11 @@ function doseModal(name, existing, occTime) {
       allocations = realAllocations; kitId = null;
     }
 
+    const method=nexusDoseMethod(m.querySelector("#dose-method").value);
+    if(!method){showErrorBanner("Choose a dosing method. Nothing was saved.");return;}
+    const injectionSite=nexusInjectableMethod(method)?m.querySelector("#site").value:"";
     const spraysEl = m.querySelector("#sprays");
-    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:injectionSite, method, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
