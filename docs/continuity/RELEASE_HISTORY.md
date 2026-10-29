@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 verified build and end-reminder audit (DRAFT, not released)
+- Application head d42fd3cb confirmed, workflows 40932209177 / 40932208627 / 40932208817 / 40932208482 SUCCESS. Release artifact #12922869213 verified: standalone fictional in-memory full DEMO, 24-file root LIVE ZIP, 320/390 light/dark browser checks, CI test-merge source b276f67f, application blob parity against PR head (index/CSS/05/10/11). User identified end-of-RETA notification/status gap: current phase reminders skip final boundary, protocol may persist in_progress despite elapsed scheduled timeline. Fix NOT CODED; no changed user data, no merge/deploy, no physical iPhone acceptance.
+
 ## 2026-10-29 — PR124 follow-up notification addenda (DRAFT, not released)
 - Coded post-protocol informational in-app nudge, per-dose PRN exemption and non-destructive protocol acknowledgement. Added Quick Log PRN carryover 7bc3474e and active replacement protocol suppression 13dcdd9d. New CI pending, Stash card redesign not implemented/approved, real iPhone pending, branch draft/unmerged/no production deployment.
 
