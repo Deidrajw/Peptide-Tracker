@@ -2378,3 +2378,8 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Added 320/390 overflow and 44px tap target checks in tools/validate-formulation-stock.mjs (c8507b74). Added separate WebKit (Safari engine) GitHub Actions workflow at 1374fbaa, testing 320/390 light/dark LIVE/DEMO fictional stock. CI run 40893001058 began in progress; outcome pending. Browser WebKit emulation is NOT physical iPhone acceptance.
 - Prior full Chromium/browser suite on 4484dc5d SUCCESS run 40891595782 with artifact 12906345167. No production deployment or source parity asserted.
 - NEXT: check exact-head WebKit/Chromium CI, fix any failures; then request one physical iPhone Safari preview acceptance when an isolated accessible preview is verified. Do not merge/deploy without explicit approval.
+
+
+## 2026-10-29 — Verified WebKit checkpoint
+- Separate WebKit formulation QA run 40893001058 completed SUCCESS on implementation/test commit 1374fbaa. This is iPhone-viewport Safari-engine emulation in GitHub Actions, **not** physical iPhone acceptance. Chromium full release run 40891595782 SUCCESS on prior Stash commit 4484dc5d; additional exact-head full CI was still in progress at this checkpoint.
+- Route-specific deduction plan is documented at docs/product/NEXUS_FORMULATION_DOSE_LEDGER_PLAN.md; inventory-only Stash editing remains enabled solely on unmerged draft code. Transfer and auto-deduction controls remain disabled. NEXT: obtain physical iPhone preview acceptance, then implement guarded pure dose planner after coordinated persistence design.
