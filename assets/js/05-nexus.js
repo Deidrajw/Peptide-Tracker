@@ -1138,9 +1138,8 @@ function doseModal(name, existing, occTime) {
     const previous=siteInput.value||f.site||"";
     siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(site)+'</option>').join("");
     const sameRecordedMethod=methodInput.value===initialMethod;
-    if(previous&&!options.includes(previous)&&sameRecordedMethod&&f.site===previous)
-      siteInput.add(new Option(previous+" (previously recorded)",previous));
-    siteInput.value=options.includes(previous)||(sameRecordedMethod&&f.site===previous)?previous:"";
+    // Historical site text remains on the saved dose; incompatible sites are not selectable for the active method.
+    siteInput.value=options.includes(previous)?previous:"";
   };
   const methodButtons=[...m.querySelectorAll("[data-admin-method]")];
   function renderAdminButtons(){
