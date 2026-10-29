@@ -1045,3 +1045,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — DS2 blocked prepared-deletion UI regression exact-source PASS — NOT RELEASED
 - Test-only `f70b5c26` verified in full #40801104052 SUCCESS, 72/72 fictional vial safety assertions in eight source-matched LIVE/DEMO viewport/theme cases. Complete candidate files/artifact #12866491578 validated in GitHub CI. No feature runtime edit, schema change, saved data change, merge or deployment. Production Cloudflare remained unchanged; published release status is still unverified.
+
+## 2026-10-28 — v0.9.20-beta legacy source attribution protection — DRAFT / NOT RELEASED
+- Candidate source `0ad1f6cb` prevents unused historical prepared batches from being deleted/refunded to a merely currently-open vial when source provenance is absent. Test `af1b789b` adds isolated fictional 96-assertion target. New CI not yet confirmed; no schema migration, historical edits, merge, live deployment or physical iPhone acceptance. Prior 72/72 was for predecessor `f70b5c26`, not current source.
