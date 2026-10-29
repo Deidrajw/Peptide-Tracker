@@ -1,3 +1,7 @@
+## 2026-10-29 — Draft PR124 exact-vial UI regression, source only
+- `bc9a8c77` adds browser fictional assertion at 320/390 widths, light/dark, LIVE and isolated DEMO: two open same-kit SubQ vials are separate `kit-opt` buttons, neither is preselected, selecting vial #2 uses its exact ID and does not consume either balance. Browser CI on this change PENDING (do not mark Pass yet).
+- `fa88b464`, `8ae43d30` link no-transfer preparation plans to existing kit/vial, not fabricated bottle/quantity. Missing tests for save failures, restored history, alternate routes, simultaneous open/close, dose confirmation and blend gating. iPhone acceptance BLOCKED.
+
 ## 2026-10-29 — Source-linked in-kit preparation plan (unverified)
 - Source `fa88b464`, `8ae43d30`: Create preparation appears per open vial and records `linkedPreparationPlans` on existing kit referencing exact sourceKitId and sourceVialId; list shows plan on that vial. No amount credited/debited, no conversion, no global formulationStock created. Require tests for two vials separate plan ancestry, preservation of all original vial/historical records, stale/closed-vial rejection, navigation/44px/320/390 dark/light, save failure handling. CI/physical iPhone NOT TESTED. Do not mark a physical nasal preparation or cross-route deductions complete.
 
