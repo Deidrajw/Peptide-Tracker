@@ -67,7 +67,7 @@ try{
         assert.equal(await page.evaluate(()=>[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).some(k=>k.includes('-before-manual-restore-'))),true,'pre-restore copy');
         // Single-vial premixed blend regression, in fully isolated fictional DEMO.
         await page.evaluate(()=>{
-          const kit={id:975310,name:'QA Premixed Blend',isBlend:true,
+          const kit={id:975310,name:'QA Premixed Blend',isBlend:true,preparationMethod:'SubQ',
             composition:[{compound:'QA A',mg:10},{compound:'QA B',mg:10},{compound:'QA C',mg:10}],
             totalVials:2,vialMg:30,openedVials:0,emptyVials:0,activeKit:false,
             reconDate:null,bacMl:0,expiryDays:28,notes:'',doseLog:[],wasteLog:[],reconHistory:[]};
