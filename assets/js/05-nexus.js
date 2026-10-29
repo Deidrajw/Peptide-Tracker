@@ -1407,7 +1407,7 @@ function doseModal(name, existing, occTime) {
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
     saveState(); closeModal(); render();
-    if(!isEdit && !nexusPostProtocolDoseFollowup(name,dose)) nexusPostDoseReactionPrompt(name,dose.id);
+    if(!isEdit && !nexusPostProtocolDoseFollowup(name,dose,true)) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
 
