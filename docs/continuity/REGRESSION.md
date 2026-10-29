@@ -1654,3 +1654,10 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Blend optional-site candidate fix
 - Release browser regression failed at `tools/validate-trust-ui.mjs:139`, expected one premixed blend dose and ledger entry but observed zero. In `assets/js/05-nexus.js`, blend save handler read `#site.value` unconditionally despite optional administration-site UI. Changed to optional read (`?.value || ''`) in `efef69ee`; **candidate root cause only, CI rerun required**. Historical doses not migrated or modified.
 - Ordinary saves currently have stale-write detection/readback but do not acquire the transfer's exclusive Web Lock; full shared coordination remains **INCOMPLETE**, transfer controls disabled. Browser/full suite and exact-head artifacts **NOT VERIFIED**.
+
+
+## 2026-10-29 Regression follow-up
+- Run 40820869183 browser FAILED: blend 0 and ledger 0 vs expected 1. Run 40820869207 nested screens FAILED at valid-dose save; mobile 40820869205 SUCCESS.
+- Original detailed SubQ and IM site choices had been collapsed in the new selector. Restored detailed sites and legacy edit values at 23d8b667. Browser/iPhone tests PENDING.
+- Fictional blend fixture lacked explicit route label and was ineligible under new route filtering. Labelled fictional fixture SubQ at 13579680 without relaxing production route validation. CI rerun PENDING.
+- Full shared locks for synchronous saveState and transfers are NOT IMPLEMENTED. Transfer controls disabled. Formulation-specific capsule/route inventory NOT IMPLEMENTED. Full QA, full-app DEMO/LIVE source packages and physical iPhone acceptance remain INCOMPLETE.
