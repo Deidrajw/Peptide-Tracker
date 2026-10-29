@@ -1,3 +1,6 @@
+## 2026-10-29 — Add Kit targeted remediation tests pending
+- Source commit 57dce9b6: iPhone compound list via visible 44px buttons, creation labels distinguish initial amount from remaining stock, and commit rebases on persisted state after comparing inventory arrays. NEED automated tests for picker selection/free text, stale same-inventory state, changed inventory rejection, and preservation of unrelated persisted records. CI/physical iPhone not yet passed; no claim of atomic cross-tab safety.
+
 ## 2026-10-29 — Physical iPhone acceptance failures, PR #124 (unreleased)
 - User reported: Add Kit compound search FAIL; save blocked by `Inventory changed; reload before editing`; newly acquired products incorrectly labelled Remaining; global stale open-vial warning; open second vial blocked; two separate workflows required (existing-kit source-linked preparation vs newly purchased product).
 - Log Dose: light-mode inactive administration method buttons illegibly dark; SubQ site dropdown included previously recorded `Vastus lateralis — L (IM)`.
