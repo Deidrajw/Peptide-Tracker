@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 inventory fix CI-verified, NOT RELEASED
+- Draft source 14cad5da (vial confirmation app fix d1040e77), CI test merge 67dc7014, full build 40955096642 SUCCESS, artifact #12932968493 downloaded and inspected; LIVE ZIP 24 root files and six Git blob parity checks, isolated full-app DEMO in-memory/no sync; eight LIVE/DEMO viewport/theme Log Dose scenarios PASS, other mobile/WebKit/nested CI SUCCESS. Physical iPhone acceptance pending; primary Cloudflare deployment unchanged, PR draft/unmerged. No data migration or live inventory/history writes. Compact Stash cards next proposed visual preview, not approved.
+
 ## 2026-10-29 — PR124 legacy-vial eligibility blocker (DRAFT, NOT RELEASED)
 - Physical iPhone found positive open vial inventory but Log Dose emitted 0mg source and false shortage. Privately inspected an uploaded backup; established that absence of administration-method metadata excludes legacy OPEN vials in new route filter. Targeted work-in-progress commits a52999a, d5e360c add explicit per-vial method confirmation + draft preservation, 81d6907 adds fictional fictional 6.75-to-5.50mg exact source regression; no personal JSON in repository, no automatic balance migration. Full build/WebKit pending, no new verified artifact or physical acceptance. Main remains da585ab3, PR124 draft/unmerged/undeployed.
 
