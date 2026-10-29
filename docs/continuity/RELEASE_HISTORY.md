@@ -1027,3 +1027,6 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-28 — Release readiness gate CODED/CI PARTIAL, UNRELEASED
 - `a06bff39` adds source-diff/manifest consistency readiness CLI and six synthetic tests; `da88994a` integrates into build workflow with strict main/release versus warning PR mode, including complete Git history; `36acb33c` documents Cloudflare deployment and human-completeness limitations. No runtime state/visual/calculator changes. CI gate step #40797868119 PASS; broad source-matched build/nested still pending at checkpoint. Draft PR #123 not merged, primary Cloudflare production not deployed and user data untouched.
+
+## 2026-10-28 — DS2 safety test-only candidate, NOT RELEASED
+- `56dc3f16` adds fictional prepared-dose two-vial partial-refund conservation assertions to existing full LIVE/DEMO 320/390 light/dark safety matrix; no runtime/source calculation changes or saved-data migration. New exact-source CI pending, draft PR #123 remains unmerged and production unchanged. Existing release-readiness gate remains strict on main/release, warning on draft; not a substitute for verified human notes and Cloudflare parity.
