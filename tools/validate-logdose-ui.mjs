@@ -312,6 +312,7 @@ try {
     await setDose(page,2);
     await page.waitForTimeout(650);
     await page.locator('.nx-dose-inline-review > summary').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
