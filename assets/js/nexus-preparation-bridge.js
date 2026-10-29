@@ -53,8 +53,8 @@
   const next=planned.next;
   const source=current.supplies.find(k=>String(k.id)===String(tx.sourceKitId));
   const updated=next.supplies.find(k=>String(k.id)===String(tx.sourceKitId));
-  const beforeTotal=source.vials.reduce((sum,v)=>sum+v.remainingMg,0);
-  const afterTotal=updated.vials.reduce((sum,v)=>sum+v.remainingMg,0);
+  const beforeTotal=source.vials.reduce((sum,v)=>sum+(Number.isFinite(v.remainingMg)?v.remainingMg:NaN),0);
+  const afterTotal=updated.vials.reduce((sum,v)=>sum+(Number.isFinite(v.remainingMg)?v.remainingMg:NaN),0);
   if(!Number.isFinite(beforeTotal)||!Number.isFinite(afterTotal)||
      Math.abs((beforeTotal-afterTotal)-planned.event.amountMg)>1e-6)fail("Canonical inventory debit mismatch");
   const beforeDestination=current.preparations.find(p=>p.id===tx.destinationPreparationId);
@@ -63,7 +63,9 @@
   // A second pre-write check closes ordinary stale-tab windows; callers must
   // still prohibit concurrent writers while this synchronous operation executes.
   if(read()!==observed)fail("Saved inventory changed during transfer");
-  write(JSON.stringify(next)); // throws on quota/security failures; no state mutation
+  const serialized=JSON.stringify(next);
+  write(serialized); // throws on quota/security failures; no state mutation
+  if(read()!==serialized)fail("Transfer save verification failed; reload inventory before retry");
   return planned;
  }
  return {plan,commit};
