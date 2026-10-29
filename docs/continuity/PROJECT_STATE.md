@@ -1,3 +1,9 @@
+## CURRENT PR #124 HOTFIX STATUS — 2026-10-29
+- Draft PR #124 `feature/dose-administration-method-20261029`; main baseline da585ab3; source checkpoint 1ac65914 superseded by 530b4849 (Log Dose site selector) and 0503087f (light-theme method contrast). UNMERGED; no production deployment authorization.
+- USER iPhone evidence: dark unselected method buttons in light mode; SubQ site selector includes legacy IM-only value; new product compound search nonfunctional; save reports stale inventory; field labels incorrectly say Remaining; warning survives unrelated navigation; cannot open multiple same-kit vials.
+- Two distinct REQUIRED flows: (A) existing Stash kit → select exact vial → create linked preparation, no actual stock transfer enabled; (B) Stash Add Kit → independently purchase/add vial kit, capsule, nasal spray, raw powder, topical. Multiple simultaneous open vials with separate intended uses. Preserve all historical supplies, vial IDs, formulation stocks and dosing allocations.
+- DONE source fixes: compatible site choices without rewriting stored historical dose; light-mode inactive method buttons readable by theme. NOT TESTED exact-head yet. NEXT: fix Add Kit compound lookup/save guard and warning lifecycle, then multi-vial selection and linked preparation preview with isolated tests. USER ACTION: nothing until verified iPhone preview. No merge/deploy.
+
 # Nexus — Project State
 
 ## CURRENT PRIORITY SNAPSHOT — 2026-10-27 (supersedes historical next-action headings)
