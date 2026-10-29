@@ -1597,3 +1597,6 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-10-28 — Legacy prepared-dose source-attribution cases added, NOT YET VERIFIED
 - Runtime `0ad1f6cb`, fictional test `af1b789b`: (1) legacy allocation missing vialId with replacement open vial must block refund/deletion; (2) missing allocations must preserve prepared record and both vial balances; (3) actual delete confirmation must keep dialog open and show unverified-source message. Existing exact-vial refunds and orphan-source tests remain. 8 mode/viewport/theme configurations × 12 named scenarios = 96 expected; result **NOT TESTED / CI PENDING**. Physical Safari warning layout, VoiceOver and real historical provenance **NOT TESTED**. No live-data testing authorized.
+
+## 2026-10-28/29 — Isolated orphan-warning Safari fixture (candidate, results pending)
+- `4c5c6988` builds a source-matched standalone in-memory full-app Safari fixture and ZIP with missing historical vial ID, original vial 0mg and currently open vial 7mg. `c93b1bac` adds browser assertion that actual confirmation opens, blocked-delete warning is visible, dialog stays open and count/balances remain unchanged in 320/390px and light/dark. No real Safari iPhone/VoiceOver test, no validated hosted fixture; CI pending. Production state untouched.
