@@ -1,3 +1,6 @@
+## 2026-10-29 — Multi-open end-to-end browser/WebKit proof
+- c95e439d fictional validator now opens second vial using `openNewVialModal` instead of pre-seeding it open, checks both remain open and individual balances, selects Vial2 for one dose, checks exact history source and sibling balance, and creates linked Vial1 nasal plan without transfer. Browser 40913124073 SUCCESS, WebKit 40913124222 SUCCESS, nested 40913124963 SUCCESS; physical iPhone NOT TESTED. Full artifact 40913124098 still building at checkpoint. Caveat: blends retain conservative single-open guard and legacy syringe Prepare Doses rejects ambiguous same-kit sources.
+
 ## 2026-10-29 — Final exact-source remediation check pending
 - 178ab552 restores Prepare Doses local vial resolver; 015a0b87 labels next opened physical vial by sequence; ec82d9e5 prevents misleading allocation shortfall before source choice; dab844ab wraps preparation action at 320px; 3693c899 blocks legacy syringe preparation when more than one open same-kit source exists. Must verify normal Prepare Doses still functions with one vial, two-open path fails before stock writes and no unintended dose history changes; blend-specific opening remains blocked. CI on final application commit 3693c899 PENDING.
 
