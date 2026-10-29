@@ -54,7 +54,7 @@ function showSaveWarning() {
 // Ordinary callers remain synchronous; reject stale snapshots rather than overwrite
 // a transfer from another tab. A transfer's exclusive lock is not shared by
 // legacy synchronous writers, so real transfer controls remain disabled.
-let _nexusLastSavedSnapshot = null;
+let _nexusLastSavedSnapshot = (()=>{try{return localStorage.getItem(STORE_KEY)}catch{return null}})();
 function saveState() {
   if(_demoActive) return; // never write demo data to localStorage
   try {
