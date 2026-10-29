@@ -216,6 +216,14 @@ function comboDoseModal() {
 
   try {
     m.querySelector("#save").onclick = () => {
+    // Until route-specific source switching and transfer ledgers are complete,
+    // refuse mismatched routes rather than silently draw from another vial.
+    if (!isEdit && methodInput.value!==initialMethod) {
+      showErrorBanner("Changing the administration method requires a new route-matched source. No dose or inventory was saved.");return;
+    }
+    if (!isEdit && selectedSource==="fresh" && !activeKit()) {
+      showErrorBanner("Select a source explicitly labelled for this administration method. Unlabelled or incompatible vials cannot be deducted.");return;
+    }
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
@@ -744,7 +752,7 @@ function doseModal(name, existing, occTime) {
   // lets them override per-dose, and the choice is remembered again on save.
   const eligibleSources = getEligibleSourceKits(name).filter(({kit})=>matchesMethod(kit));
   let selectedKitId = eligibleSources[0]?.kit.id ?? null;
-  const activeKit = () => selectedKitId!=null ? state.supplies.find(s=>s.id===selectedKitId) : state.supplies.find(s=>s.name===name && s.activeKit);
+  const activeKit = () => selectedKitId!=null ? state.supplies.find(s=>s.id===selectedKitId && eligibleSources.some(x=>String(x.kit.id)===String(s.id))) : null;
   const otherKitsWithStock = () => state.supplies.filter(s=>s.name===name && getKitRemainingMg(s)>0.001);
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
 
