@@ -369,7 +369,7 @@ function stashView() {
       :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
     return `<div class="card nx-kit-card nx-form-kit-card" data-formulation-id="${esc(String(x.id))}">
       <div class="nx-kit-heading"><span class="nx-kit-title-stack"><strong class="nx-kit-card-title">${esc(x.compound)}</strong><span class="nx-card-status">${esc(typeNames[x.containerType]||"Other package")}</span></span>
-      <button type="button" class="nx-form-edit" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
+      <button type="button" class="nx-form-edit" style="min-height:46px;min-width:68px;padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
       <div class="nx-form-kit-amount">${esc(amount)}</div>
       <p class="nx-form-kit-hint">${x.sourceKitId?"Linked source kit":"Independent package"} · Inventory only, no automatic dose deductions</p>
     </div>`;
