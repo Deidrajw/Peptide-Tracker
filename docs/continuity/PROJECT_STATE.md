@@ -2396,3 +2396,9 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Open New Vial includes optional per-vial intended use (SubQ/IM/nasal source/decide later). Choosing nasal source labels the exact vial but makes NO transfer or nasal bottle. Route eligibility blocks a nasal-reserved vial for SubQ. Transfer controls remain disabled and shared synchronous writer coordination remains unresolved.
 - CI: prior unified Add Kit run failed 320px hit target (40/43px) and later Adjust button (17px); explicit 80px chooser/46px Adjust target fixes committed. Exact latest-head full Chromium/WebKit/mobile checks pending. Approved DS2 kit flow/historical records preserved. Draft PR not merged/deployed.
 - NEXT: verify exact-head CI, fix remaining failures, then validate real iPhone preview and source-linked nasal transfer contract before enabling deductions. No user action or release approval required now.
+
+
+## 2026-10-29 — Unified Add Kit QA follow-up
+- Latest implementation includes single five-option Add Kit chooser, kit-list package cards, searchable compound field, per-vial intended-use option with NO actual transfer, and matching raw/topical/capsule/purchased nasal data constraints. Method/site fix remains native site dropdown. No historical records converted.
+- Earlier workflow runs failed 320px hit targets (form buttons 40/43px, Adjust 17px); fixed with explicit min-height on controls. DS2 nested audit later failed because its old expectation treated Add Kit entry as Vial editor; updated audit to choose Vials for old editor checks and to stop expecting Continue at the first form-selection step (fcb459a2). Latest exact-head CI PENDING; no merge/deployment.
+- NEXT: verify latest CI, resolve any genuine remaining regressions, then physical iPhone review in isolated preview. No user action needed now.
