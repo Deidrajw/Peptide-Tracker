@@ -309,7 +309,8 @@ function stashView() {
               return `<div class="nx-kit-list-row nx-kit-vial-row">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
-                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left</div>
+                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
+                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)).map(p=>`<div class="nx-kit-list-meta">Linked ${esc(p.kind)} preparation · Plan only, no stock transferred</div>`).join("")}
                 </div>
                 ${isActive?`<button type="button" class="nx-kit-create-preparation" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" style="min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface);color:var(--t1)">Create preparation</button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
