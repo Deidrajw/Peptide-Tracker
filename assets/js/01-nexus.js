@@ -50,11 +50,24 @@ function showSaveWarning() {
   warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
   document.body.appendChild(warning);
 }
+// All ordinary writes and preparation transfers use this single storage key.
+// Ordinary callers remain synchronous; reject stale snapshots rather than overwrite
+// a transfer from another tab. A transfer's exclusive lock is not shared by
+// legacy synchronous writers, so real transfer controls remain disabled.
+let _nexusLastSavedSnapshot = null;
 function saveState() {
   if(_demoActive) return; // never write demo data to localStorage
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-  catch(e) { console.error('Nexus save failed', e); showSaveWarning(); }
+  try {
+    const observed=localStorage.getItem(STORE_KEY);
+    if(_nexusLastSavedSnapshot!==null && observed!==_nexusLastSavedSnapshot)
+      throw Error("Nexus storage changed in another tab; reload before saving");
+    const serialized=JSON.stringify(state);
+    localStorage.setItem(STORE_KEY,serialized);
+    if(localStorage.getItem(STORE_KEY)!==serialized) throw Error("Nexus save readback mismatch");
+    _nexusLastSavedSnapshot=serialized;
+  } catch(e) { console.error('Nexus save failed',e); showSaveWarning(); }
 }
+
 
 function enterDemoMode(scenario) {
   if(_demoActive) return;
