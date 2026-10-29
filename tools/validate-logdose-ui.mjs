@@ -113,6 +113,27 @@ try {
     verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
     await page.evaluate(()=>{closeModal();});
     await seed(page,theme);
+    // A source chosen from two OPEN vials with ample stock must NOT inherit a
+    // provisional 2mg allocation when the requested dose is 4mg. This reproduces
+    // the iPhone report: selected vial shows ample mg but Step 1 says 2mg missing.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(998,4,0);
+      kit.vials.push({id:39998,status:'open',vialMg:10,remainingMg:9,
+        sequenceNumber:2,intendedUse:'SubQ'});
+      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      state._pendingDoseDraft={name:'Retatrutide',dose:'4',date:localDatetime(),
+        method:'SubQ',rows:[{kitId:998,vialId:39998,mg:2}]};
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.kit-opt').count()===2,'Expected explicit choice of two open vials');
+    await page.locator('.kit-opt[data-vial="39998"]').click();
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('still needs a source'),
+      'Stale provisional source allocation falsely reports shortage against sufficient vial');
+    ensure((await page.locator('#nx-dose-inventory-status').count())===0,
+      'Multiple eligible open vials must not show single-source automatic inventory ready');
+    verified.push('sufficient-selected-vial-clears-stale-provisional-shortfall');
+    await page.evaluate(()=>closeModal());
+    await seed(page,theme);
     // Two physical open vials in ONE kit: Confirm draw must use the row's
     // exact vial ID, never a kit-level first-open guess.
     await page.evaluate(()=>{
