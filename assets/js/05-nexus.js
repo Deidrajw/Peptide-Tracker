@@ -737,13 +737,16 @@ function doseModal(name, existing, occTime) {
   // lets them override per-dose, and the choice is remembered again on save.
   // A physical source is KIT + VIAL, never kit alone. Do not infer which of two
   // open vials the person intends to use. Never include nasal-reserved vial in SubQ.
-  const eligibleSources = (state.supplies||[]).filter(k=>k.name===name && k.activeKit &&
-      !!(k.preparationMethod||k.administrationMethod||k.route) &&
-      nexusExplicitAdminMethod(k.preparationMethod||k.administrationMethod||k.route)===initialMethod)
+  const eligibleSources = (state.supplies||[]).filter(k=>k.name===name && k.activeKit)
     .flatMap(kit=>{migrateKitToV2(kit);return (kit.vials||[])
-      .filter(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01 &&
-        (!v.intendedUse||v.intendedUse==="undecided"||v.intendedUse===initialMethod))
-      .map(vial=>({kit,vial}));});
+      .filter(v=>{
+        if(!["open","active"].includes(v.status)||getVialRemainingMg(kit,v)<=0.01)return false;
+        // Explicit per-vial use wins over the kit default. A vial reserved to prepare a
+        // nasal bottle is not a nasal-administered source until a transfer is validated.
+        const use=v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
+          nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
+        return use===initialMethod;
+      }).map(vial=>({kit,vial}));});
   const needsKitPicker = !isEdit && eligibleSources.length > 1;
   let selectedKitId = needsKitPicker?null:(eligibleSources[0]?.kit.id ?? null);
   let selectedVialId = needsKitPicker?null:(eligibleSources[0]?.vial.id ?? null);
