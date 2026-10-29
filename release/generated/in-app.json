@@ -3,42 +3,71 @@
   "channel": "beta",
   "publicationStatus": "unverified",
   "publishedAt": null,
-  "title": "One consistent kit experience",
+  "title": "A more consistent Nexus, with safer inventory history",
   "changes": [
     {
-      "key": "shared-kits",
-      "title": "Premixed blends use the regular Stash kit design",
-      "detail": "Premixed and single-compound kits share the same card renderer, inventory heading, Open New Vial action, Prepare entry and Overview/Vials/History disclosure.",
-      "screen": "Stash",
+      "key": "ds2-navigation",
+      "title": "Refined navigation and visual hierarchy",
+      "detail": "Unified the iPhone-first screen hierarchy, navigation rows, disclosures, button geometry and sheet actions across Today, Trends, Profile, Settings and related detail screens.",
+      "screen": "Navigation",
+      "kind": "improvement"
+    },
+    {
+      "key": "calendar-logs",
+      "title": "Calendar day logs and all logs",
+      "detail": "Added the approved Calendar day-view and All Logs workflow while preserving logged dates, details, history and editing.",
+      "screen": "Calendar",
+      "kind": "improvement"
+    },
+    {
+      "key": "plans",
+      "title": "Cleaner Protocol and Plans cards",
+      "detail": "Reduced card density, refined disclosure and action placement, and preserved existing protocol schedules, histories and actions.",
+      "screen": "Protocols / Plans",
+      "kind": "improvement"
+    },
+    {
+      "key": "stash",
+      "title": "Unified kit and Supplies experience",
+      "detail": "Aligned premixed and standard kit cards, vial details, inventory actions, supply presentation and guided editing to the approved design language.",
+      "screen": "Stash / Supplies",
+      "kind": "improvement"
+    },
+    {
+      "key": "blend",
+      "title": "Consistent blend dosing and inventory links",
+      "detail": "Kept premixed blends in standard Log Dose and kit workflows with explicit source transaction tracking and preserved historical ingredient associations.",
+      "screen": "Today / Stash",
       "kind": "fix"
     },
     {
-      "key": "shared-vial-form",
-      "title": "One Open New Vial workflow",
-      "detail": "Both kit types use the same reconstitution form. Premixed composition and vial transactions remain linked to their source kit.",
-      "screen": "Stash",
+      "key": "prepared-source",
+      "title": "Protect historical prepared doses from uncertain refunds",
+      "detail": "Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial.",
+      "screen": "Stash / Prepared doses",
       "kind": "fix"
     },
     {
-      "key": "shared-dose-form",
-      "title": "One Log Dose workflow",
-      "detail": "Premixed blends use the standard logging form, with a compact composition breakdown and one blend dose event instead of duplicate ingredient administrations.",
-      "screen": "Today",
-      "kind": "fix"
+      "key": "whats-new",
+      "title": "Clearer What's New and update history",
+      "detail": "Consolidated in-app release history presentation and prepared notices that appear only for verified published releases.",
+      "screen": "More / App Updates",
+      "kind": "improvement"
     },
     {
-      "key": "blend-accounting",
-      "title": "Premixed inventory transaction safeguards",
-      "detail": "Blend inventory uses vial-ID ledger allocations for preparation and logging, with confirmation checks and historical record protections.",
-      "screen": "Stash",
-      "kind": "fix"
+      "key": "accessibility",
+      "title": "More consistent touch targets and contrast safeguards",
+      "detail": "Improved selected buttons, modal actions, spacing and focus presentation; light-theme contrast triage and VoiceOver acceptance remain incomplete.",
+      "screen": "Across Nexus",
+      "kind": "improvement"
     }
   ],
-  "dataImpact": "No automatic migration or history rewrite. New premixed doses remain under their blend name. Existing ingredient and vial records are preserved; ambiguous historical blend conversions remain intentionally unmodified.",
+  "dataImpact": "No destructive migrations or historical record rewrites. Existing production browser storage, check-ins, schedules, logged doses, prepared batches, vial histories, protocols, backups and settings remain protected. Ambiguous historical source allocations are preserved and unsafe prepared-batch deletion is blocked.",
   "limitations": [
-    "Legacy kLOW kits created before blend metadata require explicit review; no automatic conversion is performed.",
-    "Full physical iPhone/VoiceOver acceptance and visual audit of every app surface are pending.",
-    "Cloudflare deployment for this candidate is not yet verified; do not present this version as published."
+    "Some legacy prepared batches lack exact historical source IDs and require manual review before deletion or inventory return.",
+    "User-reported physical iPhone acceptance covers the isolated orphan-source warning (12/12), not every screen or VoiceOver.",
+    "Light-mode automated contrast scan identifies 58 candidates needing validated background-aware WCAG AA triage; broad accessibility acceptance remains pending.",
+    "The manifest is a release candidate only: publication status remains unverified until approved merge, Cloudflare asset parity and a follow-up publication update."
   ],
   "history": [
     {
