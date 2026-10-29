@@ -1909,6 +1909,34 @@ function getTotalUsableMg(compoundName) {
 // same compound at once (e.g. a 10mg-vial kit and a 30mg-vial kit open simultaneously).
 // activeKit no longer implies "the only one" — it just means "currently open," and a
 // compound can have several.
+// Preparation bridge: new records are opt-in. Never infer route from a legacy kit,
+// or reinterpret previously logged doses. Transfer transactions are NOT committed
+// against existing vial ledgers until the two ledgers share one atomic boundary.
+function nexusPreparationForKit(kit, method) {
+  const p=(state.preparations||[]).find(p=>String(p.sourceKitId)===String(kit.id)&&p.method===method&&p.containerType==="vial");
+  return p||null;
+}
+function nexusEligiblePreparedSources(name, method) {
+  return (state.preparations||[]).filter(p=>p.compound===name&&p.method===method&&
+    Number.isFinite(p.remainingMg)&&p.remainingMg>0&&
+    (method!=="Nasal"||p.containerType==="nasal-bottle"));
+}
+function nexusCreatePreparationRecord(input) {
+  if(!globalThis.NexusPreparationLedger)throw Error("Preparation ledger unavailable");
+  const p=globalThis.NexusPreparationLedger.createPreparation(input);
+  if((state.preparations||[]).some(x=>String(x.id)===String(p.id)))throw Error("Duplicate preparation");
+  state.preparations=state.preparations||[];
+  state.preparations.push(p);saveState();
+  return p;
+}
+function nexusPreviewPreparationTransaction(input) {
+  if(!globalThis.NexusPreparationLedger)throw Error("Preparation ledger unavailable");
+  const copy=JSON.parse(JSON.stringify(state.preparations||[]));
+  const event=globalThis.NexusPreparationLedger.transact(copy,input);
+  // Preview only: no saveState, no existing vial deduction. A real transfer
+  // must reconcile the canonical kit ledger before these values can be saved.
+  return {event,preparations:copy};
+}
 function getEligibleSourceKits(name) {
   return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
     .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
