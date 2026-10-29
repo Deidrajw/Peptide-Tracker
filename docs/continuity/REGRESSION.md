@@ -1677,3 +1677,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Selector UI regression coverage added
 - Added fictional LIVE/DEMO browser checks for six admin method buttons, SubQ abdominal site selection, switch to IM region options, and synchronised canonical method/site values. UI implementation includes 44px targets, keyboard focus and 320px/390px sizing. These are assertions committed, **NOT verified passing until CI reports**.
 - Historical saved doses and data schema unchanged. No merge/deployment, no real transfer controls.
+
+
+## 2026-10-29 — Combo Dose omission regression
+- Combo Dose previously included a shared symptom picker and passed state._comboSymptoms to planAndApplyComboDoses. Removed picker/UI wiring, pass [] for new dose symptom annotations, preserve existing symptom data. Added fictional regression asserting no combo-sym and no change to previous temporary symptom values. Full CI still PENDING.
+- Full build at fd40e886 FAILED fictional method isolation: expected only 9331 SubQ but 9334 was also included because the test factory automatically labelled all vials SubQ; fixed fixture by deleting the label before the unlabelled-case assertion. Exact updated build verification PENDING.
