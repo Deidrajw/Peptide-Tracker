@@ -1,3 +1,6 @@
+## 2026-10-29 — Final exact-source remediation check pending
+- 178ab552 restores Prepare Doses local vial resolver; 015a0b87 labels next opened physical vial by sequence; ec82d9e5 prevents misleading allocation shortfall before source choice; dab844ab wraps preparation action at 320px; 3693c899 blocks legacy syringe preparation when more than one open same-kit source exists. Must verify normal Prepare Doses still functions with one vial, two-open path fails before stock writes and no unintended dose history changes; blend-specific opening remains blocked. CI on final application commit 3693c899 PENDING.
+
 ## 2026-10-29 — Same-kit exact source and linked preparation regression
 - Browser 40912034303 SUCCESS at test commit 2680aba5: scripted fictional 320/390 light/dark LIVE/DEMO selection of two open Vials in same kit, explicit choice of second vial, precise dose deduction of second source only (7mg/9mg becomes 7mg/8mg), one dose history allocation sourceVialId=source-b; linked nasal preparation plan references source-a without debiting or generating available nasal stock. Later changes af2afbd8, 015a0b87, ec82d9e5, dab844ab need fresh CI. No real iPhone acceptance. Blend two-open remains blocked by ledger safety.
 
