@@ -1783,7 +1783,7 @@ function prepareDosesModal(name) {
     const ak = activeKit();
     const akRemaining = ak ? getKitRemainingMg(ak) : 0;
     const shortBy = totalMg - akRemaining;
-    const akVial = ak ? activeVial() : null;
+    const akVial = ak ? getActiveVial(ak) : null;
     const vialCap = akVial ? getVialRemainingMg(ak, akVial) : 0;
     if (!rows.length && totalMg>0) {
       // Scoped to the OPEN VIAL specifically, not the kit's total (sealed backups included).
