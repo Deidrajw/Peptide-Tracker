@@ -2317,13 +2317,13 @@ function quickLogDose(name, occTime) {
   const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
   if (fulfilled) fulfilled.doseId = dose.id;
   saveState(); render();
-  const postProtocolShown=nexusPostProtocolDoseFollowup(name,dose);
-  if(!postProtocolShown) showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
+  showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
     if (fulfilled) fulfilled.doseId = null;
     saveState(); render();
   });
+  nexusPostProtocolDoseFollowup(name,dose);
 }
 
 
