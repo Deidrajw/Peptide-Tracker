@@ -65,6 +65,15 @@ try{
         await page.locator('#nx-import-confirm').click();
         assert.equal(await page.evaluate(()=>state.profile.name),'Fictional Restore QA','confirmed restore');
         assert.equal(await page.evaluate(()=>[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).some(k=>k.includes('-before-manual-restore-'))),true,'pre-restore copy');
+        // Route-specific sites stay granular; do not regress to three generic regions.
+        const granularSites=await page.evaluate(()=>({
+          subq:nexusAdminSites('SubQ'),im:nexusAdminSites('IM'),oral:nexusAdminSites('Oral')
+        }));
+        for(const site of ['Abdomen — upper L','Abdomen — lower R','Abdomen — lower middle'])
+          assert.ok(granularSites.subq.includes(site),'SubQ detail preserved: '+site);
+        for(const site of ['Deltoid — L (IM)','Vastus lateralis — R (IM)','Ventrogluteal — L (IM)'])
+          assert.ok(granularSites.im.includes(site),'IM detail preserved: '+site);
+        assert.deepEqual(granularSites.oral,[],'Oral doses have no injection site');
         // Single-vial premixed blend regression, in fully isolated fictional DEMO.
         await page.evaluate(()=>{
           const kit={id:975310,name:'QA Premixed Blend',isBlend:true,preparationMethod:'SubQ',
