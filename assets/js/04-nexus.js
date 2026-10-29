@@ -2021,7 +2021,13 @@ function suggestAllocation(compoundName, neededAmount, unit) {
   // exactly the same overstatement already found and fixed for Log Dose and Prepare
   // Dose's own row population, just one level removed — this is the shared function all
   // four of those (and Mixed Syringe's add/re-select) ultimately call through.
-  const kits = (state.supplies||[]).filter(k=>k.name===compoundName && k.activeKit)
+  // Do not silently infer a first vial when a kit has two physical open sources.
+  // Until explicit vial selection is wired into the editor, return insufficient/ambiguous,
+  // rather than constructing allocations against the wrong vial.
+  const candidateKits=(state.supplies||[]).filter(k=>k.name===compoundName && k.activeKit);
+  if(candidateKits.some(k=>(k.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&getVialRemainingMg(k,v)>0.001).length>1))
+    return null;
+  const kits = candidateKits
     .map(k=>({ kit:k, vial: getActiveVial(k) }))
     .filter(x=>x.vial && getVialRemainingMg(x.kit, x.vial)>0.001)
     .sort((a,b)=>getVialRemainingMg(a.kit,a.vial)-getVialRemainingMg(b.kit,b.vial));
