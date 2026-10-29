@@ -51,7 +51,7 @@ try{
     check(protocolAlerts.first.some(x=>x.includes("Phase 1 starts today")) &&
       protocolAlerts.first.some(x=>x.includes("phase change in 7 days")),
       "Protocol Phase 1/7-day transition alert missing: "+JSON.stringify(protocolAlerts));
-    check(protocolAlerts.nextDay.some(x=>x.includes("phase change")) &&
+    check(protocolAlerts.nextDay.some(x=>x.includes("enters Phase 2 tomorrow")) &&
       protocolAlerts.transition.some(x=>x.includes("enters Phase 2 today")),
       "Phase transition day alerts missing: "+JSON.stringify(protocolAlerts));
     check(protocolAlerts.seven.some(x=>x.includes("ends in 7 days")) &&
