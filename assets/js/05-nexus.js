@@ -681,6 +681,16 @@ function nexusPostDoseReactionPrompt(compoundName,doseId){
   m.querySelector("#nx-reaction-open").onclick=()=>nexusDoseReactionModal(compoundName,doseId);
 }
 
+// A dose's recorded administration method is historical, not a mutable compound setting.
+const NEXUS_ADMIN_METHODS = ["SubQ","IM","IV","Oral","Nasal","Topical"];
+function nexusAdminMethod(value) {
+  const aliases = { "subcutaneous":"SubQ","sc":"SubQ","sq":"SubQ","intramuscular":"IM","intravenous":"IV","intranasal":"Nasal","po":"Oral" };
+  const raw=String(value||"").trim(),normalized=aliases[raw.toLowerCase()]||raw;
+  return NEXUS_ADMIN_METHODS.includes(normalized)?normalized:"SubQ";
+}
+function nexusAdminSites(method) {
+  return {SubQ:["Abdomen","Thigh","Upper arm"],IM:["Deltoid","Thigh","Gluteal"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
+}
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
@@ -696,7 +706,8 @@ function doseModal(name, existing, occTime) {
   // just because the current vial ran out partway through drawing it up.
   const draft = state._pendingDoseDraft && state._pendingDoseDraft.name===name ? state._pendingDoseDraft : null;
   const lastDoseAmt = draft?.dose || occAmt || doseHistory[0]?.dose || "";
-  const isNasal = cData.route === "Nasal";
+  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||cData.route);
+  const isNasal = initialMethod === "Nasal";
   const siteList = sitesFor(cData);
   const suggestedSite = (() => {
     if (!recent.length) return siteList[0];
@@ -707,7 +718,7 @@ function doseModal(name, existing, occTime) {
   })();
   const f = existing
     ? { ...existing, symptoms: existing.symptoms||[] }
-    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site||suggestedSite, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
+    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site||suggestedSite, method:initialMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
   const isEdit = !!existing;
   const occLabel = (occIndex>=0 && cData.dosesPerDay>1) ? ` — ${occIndex===0?"MORNING":occIndex===getOccurrenceTimes(cData).length-1?"EVENING":"DOSE "+(occIndex+1)}` : "";
   state._pendingDoseDraft = null; // consumed — cleared unless we re-save it below on "Open New Vial"
@@ -790,7 +801,10 @@ function doseModal(name, existing, occTime) {
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <label class="field-label">${siteLabelFor(cData)}</label><select id="site" class="inp" style="margin-bottom:14px">${siteList.map(s=>`<option${s===f.site?" selected":""}>${esc(s)}</option>`).join("")}</select>
+    <label class="field-label" for="nx-dose-method">ADMINISTRATION METHOD</label>
+    <select id="nx-dose-method" class="inp" style="margin-bottom:14px">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method==="SubQ"?"Subcutaneous (SubQ)":method==="IM"?"Intramuscular (IM)":method==="IV"?"Intravenous (IV)":method}</option>`).join("")}</select>
+    <label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
+    <select id="site" class="inp" style="margin-bottom:14px"></select>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
@@ -1117,6 +1131,22 @@ function doseModal(name, existing, occTime) {
   dateInp.addEventListener("input", refreshCountsFor); dateInp.addEventListener("change", refreshCountsFor);
   if (dateNowBtn) dateNowBtn.onclick = () => { m.querySelector("#date").value = localDatetime(); refreshCountsFor(); };
   refreshCountsFor();
+  const methodInput=m.querySelector("#nx-dose-method"), siteInput=m.querySelector("#site");
+  const refreshAdminSites=()=>{
+    const options=nexusAdminSites(methodInput.value);
+    const previous=siteInput.value||f.site||"";
+    siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(site)+'</option>').join("");
+    siteInput.value=options.includes(previous)?previous:"";
+  };
+  methodInput.onchange=()=>{
+    // Nasal spray conversion is currently a compound-level mode. Never silently
+    // calculate sprays from an injectable configuration or vice versa.
+    if(methodInput.value==="Nasal" && !isNasal) {
+      showErrorBanner("Nasal spray-count conversion is available only when the compound's configured route is Nasal. Record an amount directly or configure the compound first.");
+    }
+    refreshAdminSites();
+  };
+  refreshAdminSites();
   const spraysInput = m.querySelector("#sprays");
   if (spraysInput) {
     spraysInput.oninput = () => {
@@ -1164,7 +1194,7 @@ function doseModal(name, existing, occTime) {
         }
         const old=tgt.doses.find(x=>x.id===f.id);
         if(!old){showErrorBanner("Original blend record not found.");return;}
-        Object.assign(old,{date:inputDate,site,notes,symptoms,escalation:m.querySelector("#esc").checked});
+        Object.assign(old,{date:inputDate,site,method:methodInput.value,notes,symptoms,escalation:m.querySelector("#esc").checked});
         saveState();closeModal();render();return;
       }
       const id=uid(),allocations=[];
@@ -1211,7 +1241,7 @@ function doseModal(name, existing, occTime) {
         }
         allocations.push(...committed.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId})));
       }
-      const dose={id,date:inputDate,dose:String(raw),site,notes,symptoms,
+      const dose={id,date:inputDate,dose:String(raw),site,method:methodInput.value,notes,symptoms,
         escalation:m.querySelector("#esc").checked,isBlendDose:true,
         blendSource:allocations[0]?.kitId||blendKits[0]?.id,
         allocations,fromPreparedId};
@@ -1322,7 +1352,7 @@ function doseModal(name, existing, occTime) {
     }
 
     const spraysEl = m.querySelector("#sprays");
-    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, method:methodInput.value, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
