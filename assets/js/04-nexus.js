@@ -1978,7 +1978,8 @@ function getEligibleSourceKits(name, method) {
       return !!labelled && nexusExplicitAdminMethod(labelled)===method;
     })
     .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
-    .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01);
+    .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01 &&
+      (!method || !x.vial.intendedUse || x.vial.intendedUse==="undecided" || x.vial.intendedUse===method));
 }
 // Which kit to default to when more than one is eligible: the person's own last choice
 // for this compound, if it's still valid — otherwise the one with the LEAST remaining, a
