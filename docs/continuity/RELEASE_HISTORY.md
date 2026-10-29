@@ -1,3 +1,6 @@
+## 2026-10-29 — Single-screen Log Dose coded on PR124 (NOT RELEASED)
+- Draft commits fd6520b, 2397043, test 5160747 remove UI-only Quick/Guided/Review-step navigation from normal dose modal, expose optional inline review with hidden source IDs, retain original source math and Save handler. NEW HEAD CI NOT VERIFIED; matching LIVE/DEMO downloads not yet generated/validated; physical iPhone acceptance pending. No migrations, merge or deploy; production remains main da585ab3 / prior v0.9.20-beta.
+
 ## 2026-10-29 — PR124 progressive disclosure Log Dose + user-reported allocation blocker (DRAFT)
 - User approved simplified single-screen intent, conditional exact-source auto selection, contextual inventory; physical iPhone retest still FAIL for existing open vial / BLOCKED history integrity. Targeted 05-nexus.js 53e2ddeb removes permanent source section for one eligible vial and prevents stale provisional 2mg allocation against full sufficient selected vial, protecting confirmed rows. Fictional regression 936a20a added. Full UI conversion not finished, no deployed package; exact-head CI pending 40963691257, 40963691267, 40963691316, 40963691309. No data migrations, user backup in repo, merge or Cloudflare production deployment. Compact Stash cards remain requested but unapproved design.
 
