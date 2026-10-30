@@ -318,10 +318,9 @@ function stashView() {
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
                   <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
-                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)).map(p=>`<div class="nx-stash-plan-status"><span>Planned · ${esc(p.kind||"Other")}</span><small>No stock transferred</small></div>`).join("")}
+                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer").map(p=>`<div class="nx-stash-plan-status"><span>Plan saved · ${esc(p.kind||"Other")}</span><small>Vial inventory unchanged</small></div>`).join("")}
                 </div>
-                ${isActive && rem>0.01 && !(v.intendedUse && v.intendedUse!=="undecided") && !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)?`<button type="button" class="nx-stash-set-vial-method" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Set administration method for vial ${num}">Set method</button>`:""}
-                ${isActive?`<button type="button" class="nx-kit-create-preparation" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" style="min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface);color:var(--t1)">${(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id))?"View preparation plan":"Plan preparation"}</button>`:""}
+                ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
               </div>`;
             };
@@ -2157,7 +2156,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
  const m=openModal(`<section class="nx-form-stock-editor nx-prep-plan-sheet" aria-label="Vial preparation plan">
   <div class="nx-form-stock-editor-head"><strong>${existing?"Preparation plan":"Plan a preparation"}</strong><button id="x" type="button" aria-label="Close preparation plan">✕</button></div>
   <div class="nx-prep-plan-source">${kitName} · Vial ${number}</div>
-  <div class="nx-prep-plan-state" role="status"><strong>${existing?"Plan saved · No stock transferred":"Planning only"}</strong><span>${existing?"The source vial and its balance have not changed.":"This step records your intention; it does not create a prepared dose or bottle."}</span></div>
+  <div class="nx-prep-plan-state" role="status"><strong>${existing?"Preparation plan saved":"Planning only"}</strong><span>${existing?"Your vial inventory is unchanged. No prepared stock was created.":"Save what you're planning. Your vial inventory won't change until an actual preparation is recorded."}</span></div>
   <div id="nx-prep-plan-read" ${existing?"":"hidden"}>
     <div class="nx-prep-plan-row"><span>Preparation</span><strong id="nx-prep-plan-kind-value">${existing?esc(kindName(existing.kind)):""}</strong></div>
     <div class="nx-prep-plan-row"><span>Notes</span><strong id="nx-prep-plan-notes-value">${existing?esc(existing.notes||"None"):""}</strong></div>
@@ -2174,7 +2173,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
   </div>
   <div class="nx-prep-plan-next">
     <div class="nx-prep-plan-step">WHAT HAPPENS NEXT?</div>
-    <p>A saved plan is a reference in Stash. To record an administration method for an unlabeled legacy vial, use <strong>Set method</strong> in the Vials tab. A measured vial-to-preparation stock transfer is not yet available from this plan.</p>
+    <p>This saves your plan, not a completed preparation. When you actually prepare stock, Nexus will need a separate inventory record. You can set a vial's administration method from its <strong>⋯ actions</strong> menu.</p>
   </div>
   ${existing?'<button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-edit-action">Edit plan</button>':""}
   <button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-done">Back to vial</button>
