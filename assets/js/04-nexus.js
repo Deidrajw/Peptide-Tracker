@@ -1964,50 +1964,34 @@ function nexusPreviewPreparationTransaction(input) {
 // Internal guarded boundary only. No UI invokes this until full release QA.
 const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false; // Release safety gate; do not enable until all writers share atomic coordination.
 async function nexusCommitPreparationTransfer(input) {
-  if (!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED) throw Error('Preparation transfers are not enabled until all state writers share the inventory lock');
-  if (_demoActive) throw Error("Transfers unavailable in demo mode");
-  if (!globalThis.NexusPreparationBridge) throw Error("Preparation bridge unavailable");
-  if (!input || !input.id) throw Error("Explicit transaction required");
-  // Browser-local synchronous storage is not compare-and-swap. Require the
-  // browser's cross-tab exclusive lock, and perform the freshness check and
-  // durable readback while holding that lock. Other Nexus state writers are
-  // not yet migrated to this lock: keep real transfer controls disabled.
-  if (!navigator.locks || typeof navigator.locks.request !== "function")
-    throw Error("Exclusive inventory lock unavailable; transfer blocked");
-  return navigator.locks.request(STORE_KEY + ":inventory-transfer", {mode:"exclusive"}, () => {
-    if (_demoActive) throw Error("Transfers unavailable in demo mode");
-    const before=state;
-    const {next,event}=globalThis.NexusPreparationBridge.commit(before,input,{
-      read:()=>localStorage.getItem(STORE_KEY),
-      write:serialized=>localStorage.setItem(STORE_KEY,serialized)
-    });
-    state=next; // swap only following successful persistence/readback; other writers still need shared locking
-    _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
-    return event;
-  });
+  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)throw Error("Preparation transfers remain safety-gated");
+  if(_demoActive)throw Error("Transfers unavailable in demo mode");
+  if(!globalThis.NexusPreparationBridge||!input?.id)throw Error("Explicit preparation transfer required");
+  const writer=nexusWriter();
+  const result=await writer.transaction(state,snapshot=>globalThis.NexusPreparationBridge.plan(snapshot,input));
+  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  return result.event;
 }
+
 // PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
 // but live controls remain disabled until every state writer shares the same
 // cross-tab transaction coordination. Never silently bypass this release gate.
 const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
 async function nexusCommitPreparedNasalOperation(operation) {
   if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
-    throw Error("Prepared nasal stock logging is not enabled until shared state-write coordination and iPhone acceptance");
+    throw Error("Prepared nasal logging is disabled pending shared-writer cross-tab acceptance");
   if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
-  if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared source transaction engine unavailable");
-  if(!navigator.locks||typeof navigator.locks.request!=="function")
-    throw Error("Exclusive inventory writer unavailable; nothing saved");
-  return navigator.locks.request(STORE_KEY+":inventory-transfer",{mode:"exclusive"},()=>{
-    const before=state;
-    const result=globalThis.NexusPreparedDoseTransaction.commit(before,operation,{
-      read:()=>localStorage.getItem(STORE_KEY),
-      write:serialized=>localStorage.setItem(STORE_KEY,serialized)
-    });
-    state=result.next;
-    _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
-    return result;
+  if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
+  const writer=nexusWriter();
+  const result=await writer.transaction(state,snapshot=>{
+    if(operation?.type==="dose")return globalThis.NexusPreparedDoseTransaction.planDose(snapshot,operation.tx);
+    if(operation?.type==="reverse")return globalThis.NexusPreparedDoseTransaction.reverseDose(snapshot,operation.tx);
+    throw Error("Unsupported prepared transaction");
   });
+  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  return result;
 }
+
 function getEligibleSourceKits(name, method) {
   // An explicit route is required for route-scoped dose selection. Distinct
   // SubQ / nasal kits of the same compound are NEVER interchangeable stock.
