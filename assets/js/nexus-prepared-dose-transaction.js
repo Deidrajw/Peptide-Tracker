@@ -78,7 +78,8 @@
       compound:tx.compound,method:"Nasal",sourceKind:"formulation-container",
       sourceContainerId:s.id,sprays:tx.sprays,amountMg:mg,volumeMl:ml,
       mgPerSpray:s.mgPerSpray,mlPerSpray:s.mlPerSpray,
-      nativeUnit:tx.nativeUnit,date:tx.date
+      nativeUnit:tx.nativeUnit,date:tx.date,
+      doseSnapshot:clone(dose) // prevent undo from silently discarding subsequent edits/reactions
     };
     s.remainingMg=afterMg;s.remainingMl=afterMl;s.transactions.push(event);
     history.doses.push(dose);
@@ -104,6 +105,8 @@
     const history=entryFor(next,compound);
     const matches=history.doses.filter(d=>same(d.id,doseId)&&d.preparedTransactionId===transactionId&&same(d.sourceContainerId,sourceId));
     if(matches.length!==1)fail("Exact historical dose mismatch; cannot reverse");
+    if(!e.doseSnapshot||JSON.stringify(matches[0])!==JSON.stringify(e.doseSnapshot))
+      fail("Dose changed since administration; review its edits and reactions before reversing");
     if(!finite(s.remainingMg)||!finite(s.remainingMl)||s.remainingMg<0||s.remainingMl<0)fail("Invalid stock before reversal");
     s.remainingMg=round(s.remainingMg+e.amountMg);
     s.remainingMl=round(s.remainingMl+e.volumeMl);
