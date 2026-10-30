@@ -36,6 +36,8 @@ jobs:
           node tests/preparation-bridge.test.cjs
           node --check assets/js/nexus-use-source-eligibility.js
           node tests/use-source-eligibility.test.cjs
+          node --check assets/js/nexus-prepared-dose-transaction.js
+          node tests/prepared-dose-transaction.test.cjs
           node tools/validate-recon-safety.mjs
           node tools/validate-ux-consistency.mjs
       - name: Gate stale release notes against changed application source
