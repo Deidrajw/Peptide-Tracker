@@ -276,12 +276,12 @@ try {
 
 
 
-    // Approved administration UI: six tap targets, grouped site selection and
+    // Administration form preserves six original routes plus Other; site selection and
     // method changes must keep native storage fields synchronised.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
     await openDose(page);
-    ensure(await page.locator('.nx-method-option').count()===6,
-      'Approved six-method button grid missing');
+    ensure(await page.locator('.nx-method-option').count()===7,
+      'Seven saved-route options including Other should remain available');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
       'SubQ not marked as selected');
     await page.locator('#site').selectOption('Abdomen — lower L');
