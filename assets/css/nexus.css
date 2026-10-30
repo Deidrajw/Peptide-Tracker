@@ -2258,3 +2258,21 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-stash-method-prompt .nx-stash-go-vial-method{flex-shrink:0;min-height:44px;border-radius:10px;padding:9px 12px;border:1px solid var(--border);background:var(--surface);color:var(--t1);font-size:12px;font-weight:650}
 .nx-stash-set-vial-method{min-height:44px;border-radius:10px;padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--t1);font-weight:650}
 @media(max-width:359px){.nx-stash-method-prompt{align-items:stretch;flex-direction:column}.nx-stash-method-prompt .nx-stash-go-vial-method{width:100%}}
+
+/* PR124 — distinguish planning from actual vial transfer; simple iPhone sheet. */
+.nx-stash-plan-status{display:flex;flex-direction:column;gap:2px;padding:8px 0}
+.nx-stash-plan-status span{font-size:12px;color:var(--t3)}
+.nx-prep-plan-sheet{display:flex;flex-direction:column;gap:12px}
+.nx-prep-plan-source{font-size:13px;color:var(--t2);font-weight:600}
+.nx-prep-plan-state{display:flex;flex-direction:column;gap:5px;background:var(--surface-2);border-radius:13px;padding:14px}
+.nx-prep-plan-state strong{font-size:13px;color:var(--t1)}
+.nx-prep-plan-state span{font-size:12px;line-height:1.5;color:var(--t3)}
+.nx-prep-plan-step{font-size:11px;letter-spacing:.06em;font-weight:750;color:var(--t2);margin:8px 0}
+.nx-prep-plan-row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border-sub)}
+.nx-prep-plan-row span{font-size:13px;color:var(--t3)}
+.nx-prep-plan-row strong{font-size:13px;text-align:right;color:var(--t1);overflow-wrap:anywhere}
+.nx-prep-plan-next{background:var(--surface-2);border-radius:12px;padding:13px}
+.nx-prep-plan-next p{margin:0;font-size:12px;line-height:1.55;color:var(--t2)}
+.nx-prep-plan-sheet .nx-prep-plan-secondary{border:1px solid var(--border-sub);border-radius:11px;min-height:46px;background:var(--surface);color:var(--t1);font-size:13px;font-weight:650}
+.nx-prep-plan-sheet #nx-linked-save{min-height:48px;width:100%;margin-top:12px}
+.nx-kit-create-preparation{min-height:44px!important}
