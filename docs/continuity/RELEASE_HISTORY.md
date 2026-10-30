@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 guarded prepared nasal operation boundary, NOT RELEASED
+- Development-only executeExclusive in assets/js/nexus-prepared-dose-transaction.js, commit 8dbf9bfa; added fictional Node one-write/undo/stale/quota/readback tests 40f2d869, wired into two CI workflows at 1daea05f/d5f7e34a, corrected stale lockout test sequencing 48ca4187. No UI activation, storage migration or historical records touched, preserved stock ledger, demonstration remains isolated. Prior 16673efc exact-source full archive 13008115990 CRC verified, full browser and safety tests SUCCESS. New-code CI pending. Status CODED, NOT LIVE, PR DRAFT/UNMERGED/UNDEPLOYED; iPhone NOT TESTED.
+
 ## 2026-10-30 — PR124 Stash formulation exclusive writer candidate, NOT RELEASED
 - Application commit 8cef8157 migrated Stash Add/Edit to awaited browser Web Lock transaction; static guard 1244e29c, Node stale two-tab/ledger/vial preservation tests b82b8265, Chromium actual Stash Save browser test d58e75b6. Dedicated safety CI 41117925738 SUCCESS on b82b8265; new exact-head browser CI pending. No storage migration, no production write, no merge/deploy, prepared nasal/transfer controls OFF. Physical iPhone NOT TESTED.
 

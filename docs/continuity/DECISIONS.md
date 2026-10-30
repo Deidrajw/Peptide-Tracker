@@ -1,3 +1,6 @@
+## 2026-10-30 — Prepared-source live activation still gated after exclusive execution scaffold
+- Code 8dbf9bfa implements exclusive planner execution with default-off enabled=false, accepting only supported dose/reverse under shared coordinator.transaction; initial state mutation and success UI are caller responsibilities only after verified durable result. This is a safe, narrow implementation of existing approved prepared-source work, NOT approval to enable live nasal stock deductions, to change existing sync writer API, or to merge/deploy. The flagged cross-tab sync/async race remains an explicit release blocker. Regression test 40f2d869, test lockout correction 48ca4187.
+
 ## 2026-10-30 — Staged exclusive writer migration begins with Stash formulation Add/Edit
 - Preserve existing UI and in-memory DEMO, but real Stash formulation stock Add/Edit must await exclusive cross-tab writer.transaction, disable Save while pending, assign state only after verified storage readback, and retain form on failure. Existing synchronous saveState remains for protected legacy callers until safely migrated. Neither prepared nasal administration nor actual vial transfer may be enabled by this partial conversion; no merge/deploy approval inferred.
 
