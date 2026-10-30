@@ -1637,6 +1637,7 @@ function planAddToOpenVial(snapshot, input) {
   if(!Number.isFinite(after.remainingMg)||!Number.isFinite(after.vialMg))
     throw Error("Invalid resulting vial amount");
   vial.remainingMg=after.remainingMg;vial.vialMg=after.vialMg;
+  const targetAfterSnapshot=JSON.parse(JSON.stringify(vial));
   const sourceCopy=source?JSON.parse(JSON.stringify(source)):null;
   if(source){
     kit.vials=kit.vials.filter(v=>String(v.id)!==String(source.id));
@@ -1647,7 +1648,8 @@ function planAddToOpenVial(snapshot, input) {
     mg:-amount,type:"addition",status:"active",vialId:vial.id,
     reason:`Added ${amount}mg to open vial${source?" from exact sealed vial":""}`,
     notes:"",sourceSealedVialId:source?source.id:null,
-    sourceSealedVialSnapshot:sourceCopy,stockBefore:before,stockAfter:after});
+    sourceSealedVialSnapshot:sourceCopy,stockBefore:before,stockAfter:after,
+    targetAfterSnapshot});
   return {next,eventId:input.eventId};
 }
 function planUndoAddToOpenVial(snapshot,input){
@@ -1666,6 +1668,8 @@ function planUndoAddToOpenVial(snapshot,input){
   if(Number(vial.remainingMg)!==Number(event.stockAfter.remainingMg)||
      Number(vial.vialMg)!==Number(event.stockAfter.vialMg))
     throw Error("Vial balance changed; automatic undo blocked");
+  if(!event.targetAfterSnapshot||JSON.stringify(vial)!==JSON.stringify(event.targetAfterSnapshot))
+    throw Error("Vial details changed; automatic undo blocked");
   // Do not undo an older addition over later operations on the same vial.
   if(events.slice(idx+1).some(e=>String(e.vialId)===String(event.vialId)&&e.status!=="reversed"))
     throw Error("Later vial events exist; automatic undo blocked");
@@ -1691,11 +1695,15 @@ function planUndoAddToOpenVial(snapshot,input){
 
 function addToOpenVialModal(kitId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const vial = getActiveVial(s);
-  if (!vial) { showErrorBanner("No open vial to add to — open one first."); return; }
-  const c = cfg(s.name);
-  const sealedCount = ensureKitVials(s).filter(v=>v.status==="sealed").length;
+  // Do not invoke the legacy read-time migration/repair while opening a
+  // stock-mutating form: those paths still save synchronously outside Web Locks.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before an exclusive stock change.");return;
+  }
+  const vial=s.vials.find(v=>v.status==="active"||v.status==="open");
+  if(!vial){showErrorBanner("No open vial to add to — open one first.");return;}
+  const c=cfg(s.name);
+  const sealedCount=s.vials.filter(v=>v.status==="sealed").length;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADD TO OPEN VIAL</span>
