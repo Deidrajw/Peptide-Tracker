@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 shared writer contract, explicit remaining concurrency limitation
+- Existing synchronous user-facing saveState and history flows may not silently become asynchronous without full API/caller audit. Implement one shared guarded gateway now: synchronous legacy saves and explicit backup replacement/erase use strict last-observed raw snapshot + readback; async prepared transactions require navigator.locks exclusive and cannot commit until fresh state validation. A standalone user-approved merge/deploy is not inferred. This is **not** proof of true cross-tab atomicity for synchronous calls; keep prepared nasal and measured transfers disabled. No storage migration, blind restore rollback or retroactive history edits. Production key remains peptide-tracker-html-v1.
+
 ## 2026-10-30 — Reversal of edited prepared dose must fail closed
 - An administration's inverse stock operation may not discard newly added notes, symptoms, reactions or later changes to its dose record. Planner now stores a snapshot on creation and rejects reversal after any record change (7905e9e5, test 3a33dd7f). User must intentionally reconcile records through a future coordinated editor. This does not enable live prepared nasal deductions or authorize migration, merger or deployment.
 

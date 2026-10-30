@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 guarded shared storage gateway coded, NOT RELEASED
+- New pure writer coordinator c7c70bfe; Node race/stale/quota/rollback tests e3cdba1f, 73a18b17 and 65a4009f; integrations for regular saves, inventory form add/edit, confirmed restore/onboarding and erase, prepared-source gated operations. Build includes new module; direct-writer CI guard 0b4fbe44/49d886b9. Dedicated fast safety CI run 41099075003 SUCCESS on application branch e7581fc9, including complete LIVE/isolated full-app DEMO construction and checkout parity. Full browser source-e7581fc9 workflow 41099074857 pending; 320/390 light/dark and physical iPhone acceptance NOT YET VERIFIED. No production data migration/overwrite; primary Cloudflare not deployed, draft PR124 unmerged; route-specific prepared stock logging disabled due remaining sync/cross-tab lock limitation.
+
 ## 2026-10-30 — PR124 prepared nasal transaction history guard + tests, NOT RELEASED
 - App source updated 7905e9e5 and test 3a33dd7f for fail-closed inverse after dose record edits/reactions; acceptance checklist fae5ad39 added. Full-app build and source validation of candidate #41095238842 PASS at workflow step level, browser step IN PROGRESS; mobile/WebKit/nested SUCCESS. No production migration, no live UI enablement, no merge/deploy, no physical acceptance.
 

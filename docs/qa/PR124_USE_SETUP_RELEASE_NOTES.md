@@ -1,3 +1,6 @@
+## 2026-10-30 — Shared guarded writer development update (NOT RELEASED)
+Version v0.9.20-beta development; no release tag. New coordinator and guarded save/restore/Stash/erase boundaries coded with exact-source async inventory transaction API, fail-closed stale/readback and two-tab simulation tests. Dedicated safety CI 41099075003 PASS. Full browser QA and downloadable new-head LIVE/isolated DEMO pending; physical iPhone NOT TESTED. Critical unresolved: synchronous legacy saves do NOT own cross-tab browser Web Locks, so stock-backed prepared nasal logging and actual measured transfers stay explicitly disabled. No production storage migration/writes, merge or deploy.
+
 ## 2026-10-30 — Atomic prepared-source transaction candidate (NOT RELEASED)
 Version v0.9.20-beta development; new pure nasal-dose transaction planner + reverse, exact source and one-state persistence, with regression suite and 25-file source builder. UI/writer disabled pending shared lock across legacy sync saves, product-specific verified bottle calibration and physical iPhone acceptance. No migration, no legacy vial changes, no merge/deploy. Source b0340e3a; new-head CI awaiting outcomes. Earlier full 41084097074 SUCCESS (fixture correction). Detailed status in continuity.
 
