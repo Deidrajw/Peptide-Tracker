@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 targeted Log Dose UX preview (NOT RELEASED)
+- Draft app commit 2f31ff6, QA test 1159aa3. Reword one-time legacy method confirmation and remove misleading technical explanation, flatten nested source audit into single Review entry accordion, move unchanged PRN checkbox under optional protocol settings. No inventory math/storage migration/history modification. New exact-head CI and artifacts pending; not merged, not deployed, not physical-iPhone accepted.
+
 ## 2026-10-29 — PR124 single-screen Log Dose candidate fully automated-tested (NOT RELEASED)
 - App/test source e50873c, CI generated merge f11ad0f; full 40973779952, mobile 40973779992, nested 40973780138 and WebKit 40973780112 all SUCCESS. Release artifact #12942405718 downloaded, archive and LIVE ZIP CRC pass, LIVE index/css/05/10 JS Git blob SHA match GitHub branch, contains complete in-memory fictional DEMO and root-path LIVE ZIP (24 files). No data migration. Not merged, not deployed, no personal iPhone test for this candidate. Physical acceptance remains.
 
