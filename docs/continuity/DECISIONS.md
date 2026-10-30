@@ -1,3 +1,6 @@
+## 2026-10-30 — CI fixture correction is not a change to route/source eligibility
+- Stash touch-target audit fixture explicitly labels its test-only GHK-Cu open vial SubQ (commit 5bd5a204). The app must continue to hide multi-vial selection for incompatible/unconfirmed stock. Prior approved no-guess route/source and planned-not-prepared rules remain unchanged; no merge/deploy approval.
+
 ## 2026-10-30 — PR124 narrow prepared-dose UX correction; no new product decision
 - Existing approved routine Log Dose means that when a unique valid prepared source is auto-selected it must show the associated saved amount without requiring a second tap. Source db756749 changes display initialization only, preserving draft/edit and all save-time validation. This is not approval to use a plan as stock, to activate nasal stock debits, to alter historical records, or to merge/deploy.
 
