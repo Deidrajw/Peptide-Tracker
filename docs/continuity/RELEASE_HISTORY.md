@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 integrated Use Setup candidate, NOT RELEASED
+- Additive use preference + dose-unit selector + backed/untracked mode + compact Stash candidate coded (commits 54961dc, df4cca9, da964e0, b5875ab, fbc4313, 64831b4, ac0d213, b95b3a7, 50d15a7, 2ab7dd0, b5b8534, 2552815). Test selectors updated to match visible dose input (1991add, 640103a, 46766df); new fictional regression appended a4a80a3. No existing saved records changed; new schema fields additive only. Mobile/WebKit/nested CI pass at 46766df; full/browser and artifacts pending; physical device not accepted. Nasal prepared stock logging and parallel use configurations remain incomplete. Draft PR124, no merge or Cloudflare deployment. See docs/qa/PR124_USE_SETUP_RELEASE_NOTES.md.
+
 ## 2026-10-30 — PR124 staged UX candidate QA recovered, NOT RELEASED
 - Full source-8a28433a browser workflow 41004313957 SUCCESS, artifact 12955052803, full LIVE archive and isolated standalone DEMO CRC PASS; 24/24 exact GitHub blob source parity; VUX-01..06 partial/full browser evidence as documented in REGRESSION, VUX-07/08 incomplete and physical iPhone NOT TESTED. No production migration, merge or deployment. Previous v0.9.20-beta remains production baseline until approved release.
 
