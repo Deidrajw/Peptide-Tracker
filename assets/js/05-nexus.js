@@ -1437,7 +1437,7 @@ function doseModal(name, existing, occTime) {
       tgt[name].doses.push(dose);
       const fulfilled=(tgt[name].reschedules||[]).find(r=>!r.doseId&&dayKey(r.newDate)===dayKey(dose.date));
       if(fulfilled)fulfilled.doseId=dose.id;
-      saveState();closeModal();render();
+      if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();
       if(!editingUntracked&&!nexusPostProtocolDoseFollowup(name,dose,true))nexusPostDoseReactionPrompt(name,dose.id);
       return;
     }
@@ -1455,7 +1455,7 @@ function doseModal(name, existing, occTime) {
         const old=tgt.doses.find(x=>x.id===f.id);
         if(!old){showErrorBanner("Original blend record not found.");return;}
         Object.assign(old,{date:inputDate,site,method:methodInput.value,notes,symptoms,escalation:m.querySelector("#esc").checked});
-        saveState();closeModal();render();return;
+        if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
       }
       const id=uid(),allocations=[];
       let fromPreparedId;
@@ -1506,7 +1506,7 @@ function doseModal(name, existing, occTime) {
         blendSource:allocations[0]?.kitId||blendKits[0]?.id,
         allocations,fromPreparedId};
       tgt.doses.push(dose);
-      saveState();closeModal();render();return;
+      if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
     }
     // A dose cannot silently switch preparations or consume an unlabelled vial.
     // Keep the existing dose/edit ledger unchanged on validation failure.
@@ -1631,7 +1631,7 @@ function doseModal(name, existing, occTime) {
     tgt[name].doses.push(dose);
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
-    saveState(); closeModal(); render();
+    if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;} closeModal(); render();
     if(!isEdit && !nexusPostProtocolDoseFollowup(name,dose,true)) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
