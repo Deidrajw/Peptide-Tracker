@@ -33,6 +33,13 @@ if(!runtime.includes('planAddToOpenVial(snapshot,input)')||
    runtime.includes('kit.wasteLog.pop(); // removes the addition-audit entry'))
   throw Error('Exact-vial addition/undo does not use exclusive event-addressed writer');
 
+if(!runtime.includes('await writer.transaction(saved,snapshot=>planExclusiveVialRestock(snapshot,event))')||
+   !runtime.includes('snapshot=>planUndoExclusiveVialRestock(snapshot,inverse)')||
+   !runtime.includes('This kit needs inventory reconciliation before exclusive restocking')||
+   !runtime.includes('Added vial has attached history; automatic undo blocked')||
+   /function addVialsModal\(kitId\)[\s\S]*?function adjustVialRemainingModal/.test('') )
+  throw Error('Add Vials restock/Undo must use exclusive exact-ID transaction');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
