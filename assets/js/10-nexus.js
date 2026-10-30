@@ -312,6 +312,7 @@ function stashView() {
                   <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
                   ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)).map(p=>`<div class="nx-kit-list-meta">Linked ${esc(p.kind)} preparation · Plan only, no stock transferred</div>`).join("")}
                 </div>
+                ${isActive && rem>0.01 && !(v.intendedUse && v.intendedUse!=="undecided") && !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)?`<button type="button" class="nx-stash-set-vial-method" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Set administration method for vial ${num}">Set method</button>`:""}
                 ${isActive?`<button type="button" class="nx-kit-create-preparation" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" style="min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface);color:var(--t1)">Create preparation</button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
               </div>`;
@@ -2166,4 +2167,51 @@ document.addEventListener("click",e=>{
   if(e.target.closest?.("#nx-add-nasal"))nexusAddFormulationModal("nasal-bottle");
   const edit=e.target.closest?.("[data-formulation-edit]");
   if(edit){const stock=(state.formulationStocks||[]).find(x=>String(x.id)===edit.dataset.formulationEdit);if(stock)nexusAddFormulationModal(stock.containerType,stock.id);}
+});
+
+/* Explicit one-time legacy vial identification lives in Stash.
+ * Never infer a method from the compound name or debit stock in setup. */
+function nexusStashSetLegacyVialMethod(kitId,vialId){
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+  if(!kit)return;
+  const vial=(kit.vials||[]).find(v=>String(v.id)===String(vialId));
+  if(!vial || !["open","active"].includes(vial.status) || !(getVialRemainingMg(kit,vial)>0.01))return;
+  const resolved=nexusExplicitAdminMethod(vial.intendedUse)||nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
+  if(resolved){showErrorBanner("This vial already has a confirmed administration method.");return;}
+  const n=vial.sequenceNumber||"?";
+  const m=openModal(`
+    <div class="nx-stash-method-sheet">
+      <div class="nx-stash-method-header">
+        <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2>How is this vial used?</h2><p>${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
+        <button type="button" id="nx-stash-method-close" aria-label="Close without changes">✕</button>
+      </div>
+      <p class="nx-stash-method-explain">This older vial has no saved method. Select the method you actually prepared it for. Confirming will not change its remaining amount or past dose history.</p>
+      <fieldset class="nx-stash-method-choices"><legend>Administration method</legend>
+        ${NEXUS_ADMIN_METHODS.map(method=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(method)}"><span>${esc(method)}</span></label>`).join("")}
+      </fieldset>
+      <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm vial method</button>
+    </div>`);
+  m.querySelector("#nx-stash-method-close").onclick=closeModal;
+  m.querySelectorAll('input[name="nx-stash-vial-use"]').forEach(input=>input.onchange=()=>{
+    m.querySelector("#nx-stash-method-confirm").disabled=false;
+  });
+  m.querySelector("#nx-stash-method-confirm").onclick=()=>{
+    const method=m.querySelector('input[name="nx-stash-vial-use"]:checked')?.value;
+    if(!NEXUS_ADMIN_METHODS.includes(method))return;
+    // Re-read source by its exact identifiers before committing.
+    const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+    const target=(current?.vials||[]).find(v=>String(v.id)===String(vialId));
+    if(!target || !["open","active"].includes(target.status) || !(getVialRemainingMg(current,target)>0.01)){
+      showErrorBanner("This vial has changed. Reopen its details before confirming.");return;
+    }
+    if(nexusExplicitAdminMethod(target.intendedUse) || nexusExplicitAdminMethod(current.preparationMethod||current.administrationMethod||current.route)){
+      showErrorBanner("A method was already confirmed. No changes made.");return;
+    }
+    target.intendedUse=method;
+    saveState();closeModal();render();
+  };
+}
+document.addEventListener("click",e=>{
+  const btn=e.target.closest?.(".nx-stash-set-vial-method");
+  if(btn)nexusStashSetLegacyVialMethod(btn.dataset.kitId,btn.dataset.vialId);
 });
