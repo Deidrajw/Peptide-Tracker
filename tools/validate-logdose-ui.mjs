@@ -47,8 +47,8 @@ async function openDose(page){
 }
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
-  ensure(await modal.locator('#save').isVisible(),'Single-screen confirmation unavailable');
-  await modal.locator('#save').click();
+  if(await modal.locator('#nx-dose-review-open').isVisible())await modal.locator('#nx-dose-review-open').click();
+  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
   const prompt=page.locator('.nx-reaction-invite');
   if(await prompt.count()){
     ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
@@ -308,18 +308,18 @@ try {
     ensure(await page.locator('.nx-dose-mode-switch, .nx-dose-step-nav').count()===0,
       'Legacy Quick/Guided step navigation still visible');
     await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=el.scrollHeight});
-    ensure(await page.locator('.nx2-dose-modal #save').isVisible(),'Single screen footer confirm missing');
+    ensure(await page.locator('.nx2-dose-modal #nx-dose-review-open').isVisible(),'Entry screen review action missing');
     await setDose(page,2);
     await page.waitForTimeout(650);
-    await page.locator('.nx-dose-inline-review > summary').click();
+    await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
-    const idDetails=page.locator('#nx-dose-source-ids');
-    ensure(await idDetails.count()===1,'Optional source audit disclosure missing');
-    ensure(await idDetails.isVisible(),'Source audit rows hidden inside review');
-    ensure((await idDetails.innerText()).includes('9101'),'Audit ID missing from disclosure');
+    ensure(!(await page.locator('#nx-dose-review-rows').innerText()).includes('9101'),'Internal source ID shown in user review');
+    await page.locator('#nx-dose-review-back').click();
+    ensure((await page.locator('#dose').inputValue())==='2','Back did not preserve dose draft');
+    await page.locator('#nx-dose-review-open').click();
     ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
     ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
     await clickSave(page);
@@ -494,15 +494,14 @@ try {
     ensure(sourceNames.length===2 && sourceNames.some(x=>x.includes('Kit 1')) &&
       sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
       'Multi-kit sources should use distinct human-readable ordinals: '+JSON.stringify(sourceNames));
-    await page.locator('.nx-dose-inline-review > summary').click();
+    await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Allocated'),'Multi-vial Review omits structured source rows');
+    ensure(splitReview.includes('Inventory'),'Multi-vial Review omits inventory source summary');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
-    const splitIds=page.locator('#nx-dose-source-ids');
-    ensure(await splitIds.isVisible(),'Multi-vial source audit rows missing');
-    const auditIds=await splitIds.innerText();
-    ensure(auditIds.includes('9104')&&auditIds.includes('9105'),'Multi-vial Review loses selected kit identity in source identifiers');
+    ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
+    const auditIds=await page.evaluate(()=>rows?.map(r=>r.kitId));
+    ensure(auditIds?.length===2,'Multi-vial ledger lost distinct physical source allocations');
     await clickSave(page);
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
@@ -522,7 +521,7 @@ try {
     });
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
-    await page.locator('.nx-dose-inline-review > summary').click();
+    await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
     const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preparedReview.includes('Prepared dose')&&preparedReview.includes('8109')===false,'Prepared review source is unclear');
