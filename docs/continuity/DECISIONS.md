@@ -1,3 +1,6 @@
+## 2026-10-30 — Reversal of edited prepared dose must fail closed
+- An administration's inverse stock operation may not discard newly added notes, symptoms, reactions or later changes to its dose record. Planner now stores a snapshot on creation and rejects reversal after any record change (7905e9e5, test 3a33dd7f). User must intentionally reconcile records through a future coordinated editor. This does not enable live prepared nasal deductions or authorize migration, merger or deployment.
+
 ## 2026-10-30 — Approved implementation scope versus safety-gated live preparedness
 - User requested completion of prepared-source transaction path. Implementing pure stock/record transactional planner, guarded one-write persistence and inverse operation on draft PR124 is allowed, while enabling it in real logging is explicitly deferred until legacy saveState and all state writers share cross-tab atomic coordination. Real prepared nasal deductions remain gated false; no migration or retroactive history overwrite. Source-specific validated mgPerSpray plus mlPerSpray must both exist, and preparation plans never count as prepared stock. The corrected full browser CI 41084097074 passes prior fixture fix. No merge/deployment authorized.
 

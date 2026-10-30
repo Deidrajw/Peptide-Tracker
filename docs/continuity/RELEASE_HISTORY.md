@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 prepared nasal transaction history guard + tests, NOT RELEASED
+- App source updated 7905e9e5 and test 3a33dd7f for fail-closed inverse after dose record edits/reactions; acceptance checklist fae5ad39 added. Full-app build and source validation of candidate #41095238842 PASS at workflow step level, browser step IN PROGRESS; mobile/WebKit/nested SUCCESS. No production migration, no live UI enablement, no merge/deploy, no physical acceptance.
+
 ## 2026-10-30 — PR124 prepared nasal transaction planner coded but DISABLED, NOT RELEASED
 - Corrected full browser 41084097074 SUCCESS at source 5bd5a204. Added prepared nasal one-state transaction module 349e86a3, fictional test suite f5e5d1bf, index/complete release builder and CI script inclusion (1874ff7, 1bafdbf, 8bd0449), fail-closed browser writer boundary b0340e3a. Model covers exact container debit of both mg and mL, historical per-dose source link, replay/shortage/cross-route rejection, reversal, guarded one-write persistence and pre-write snapshot validation. No changes to legacy vial counts and no production storage/schema migration. Live prepared nasal dose logging disabled until shared concurrency design; tests/complete-source artifact for new head pending at doc commit. PR draft, unmerged, undeployed, iPhone NOT TESTED.
 
