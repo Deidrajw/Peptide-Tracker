@@ -2218,3 +2218,10 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx2-dose-modal .nx-dose-footer #nx-dose-review-open,
 .nx2-dose-modal .nx-dose-footer #save{min-height:48px;width:100%}
 @media(max-width:359px){.nx2-dose-modal .nx-dose-confirm-screen{padding:16px 14px 22px}.nx2-dose-modal .nx-dose-confirm-heading h2{font-size:23px}}
+
+/* PR124: quiet single-vial inventory feedback; reveal choices only for ambiguity */
+.nx2-dose-modal .nx-dose-stock-status{display:flex;align-items:center;gap:7px;min-height:32px;margin:0 0 12px;padding:3px 2px;color:var(--t2);font-size:12px;font-weight:600;line-height:1.35}
+.nx2-dose-modal .nx-dose-stock-status>span{display:inline-grid;place-items:center;flex-shrink:0;width:17px;height:17px;border-radius:50%;background:color-mix(in srgb,var(--accent,#a78bfa) 14%,transparent);color:var(--t1);font-size:11px}
+.nx2-dose-modal .nx-dose-stock-status small{margin-inline-start:auto;color:var(--t3);font-size:11px;font-weight:400;font-variant-numeric:tabular-nums}
+.nx2-dose-modal .nx-dose-source-exception .nx-dose-section-title{font-size:15px;letter-spacing:-.01em;font-weight:700}
+.nx2-dose-modal .nx-dose-source-exception .kit-opt{min-height:48px;text-align:left;line-height:1.4}
