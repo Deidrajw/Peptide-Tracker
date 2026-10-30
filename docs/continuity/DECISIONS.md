@@ -1,3 +1,6 @@
+## 2026-10-30 — Staged exclusive writer migration begins with Stash formulation Add/Edit
+- Preserve existing UI and in-memory DEMO, but real Stash formulation stock Add/Edit must await exclusive cross-tab writer.transaction, disable Save while pending, assign state only after verified storage readback, and retain form on failure. Existing synchronous saveState remains for protected legacy callers until safely migrated. Neither prepared nasal administration nor actual vial transfer may be enabled by this partial conversion; no merge/deploy approval inferred.
+
 ## 2026-10-30 — Failed dose saves must not look successful
 - Preserve existing synchronous API for compatibility, but saveState now returns verified true or failure false, and critical routine Log Dose, combo and quick-dose handlers must check it before dismissal or showing success. If storage is stale/quota-failed, leave entry visible and warn for backup/reload. No silent untracked fallback or history changes. This mitigates false acknowledgement but does NOT provide Web Lock atomicity; existing prepared-source release gates stay disabled. No merge/deploy approval.
 
