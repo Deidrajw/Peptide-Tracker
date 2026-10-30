@@ -2285,3 +2285,32 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-stash-view-plan:focus-visible,.nx-vial-menu-action:focus-visible{outline:2px solid var(--accent,#a78bfa);outline-offset:2px}
 .nx-stash-view-plan span{font-size:20px;line-height:1}
 @media(max-width:350px){.nx-stash-view-plan{font-size:12px;padding:7px 6px}.nx-kit-list-action{flex-shrink:0}}
+
+/* PR124 cohesive use setup and compact Stash, additive DS2-compatible rules. */
+.nx-use-setup{display:grid;gap:13px;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.nx-use-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.nx-use-head h2{font-size:21px;line-height:1.2;letter-spacing:-.03em;margin:4px 0 7px;color:var(--t1)}
+.nx-use-head p,.nx-use-help{font-size:12px;line-height:1.5;color:var(--t3);margin:0}
+.nx-use-kicker{font-size:10px;letter-spacing:.12em;color:var(--accent,#A78BFA);font-weight:700}
+#nx-use-close{flex:none;width:44px;height:44px;border:0;border-radius:12px;color:var(--t2);background:var(--surface-2);font-size:18px}
+.nx-use-secondary[hidden]{display:none}
+.nx-use-tracking{min-width:0;border:0;padding:0;margin:0;display:grid;gap:8px}
+.nx-use-tracking legend{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.06em;margin-bottom:9px}
+.nx-use-tracking label{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border-sub);padding:12px;border-radius:12px;background:var(--surface-2);cursor:pointer;min-height:62px}
+.nx-use-tracking input{accent-color:var(--accent,#A78BFA);width:18px;height:18px;margin-top:2px}
+.nx-use-tracking span{display:grid;gap:4px}
+.nx-use-tracking strong{font-size:13px;font-weight:650;color:var(--t1)}
+.nx-use-tracking small{font-size:11px;line-height:1.45;color:var(--t3)}
+#nx-use-save{min-height:48px}
+.nx-dose-unit-row{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:8px;margin:0 0 10px}
+.nx-dose-unit-row .inp{min-width:0;margin:0}
+.nx-dose-untracked-note,.nx-dose-source-mismatch{font-size:12px;line-height:1.5;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t2);padding:11px 12px;margin-bottom:12px}
+.nx-kit-card{padding:12px!important}
+.nx-kit-card .nx-kit-heading-unified{margin-bottom:6px!important}
+.nx-kit-card .nx-kit-primary-vial{padding:9px 10px!important;margin-bottom:8px!important}
+.nx-kit-card .nx-kit-overview-label{font-size:10px}
+.nx-kit-use-setup-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 8px;padding:0 2px}
+.nx-kit-use-setup-row span{font-size:11px;line-height:1.4;color:var(--t3);min-width:0}
+.nx-stash-use-setup{flex:none;min-height:44px;padding:6px 10px;color:var(--accent,#A78BFA);font-size:12px;font-weight:700;background:transparent;border:0;border-radius:9px}
+.nx-stash-use-setup:focus-visible,.nx-use-tracking label:focus-within,#nx-use-close:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
+@media(max-width:350px){.nx-kit-use-setup-row{align-items:start}.nx-kit-use-setup-row span{font-size:10px}.nx-dose-unit-row{grid-template-columns:minmax(0,1fr) 86px}}
