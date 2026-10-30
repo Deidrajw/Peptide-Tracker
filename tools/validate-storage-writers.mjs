@@ -23,6 +23,16 @@ for(const file of ['assets/js/04-nexus.js','assets/js/10-nexus.js','assets/js/11
    throw Error('Onboarding restoration bypasses shared writer');
 }
 const runtime=fs.readFileSync('assets/js/04-nexus.js','utf8');
+// The migrated Add to Open Vial flow must not fall back to last-entry
+// history removal or uncoordinated legacy stock persistence.
+if(!runtime.includes('planAddToOpenVial(snapshot,input)')||
+   !runtime.includes('planUndoAddToOpenVial(snapshot,inverse)')||
+   !runtime.includes('const writer=nexusWriter();')||
+   !runtime.includes('await writer.transaction(saved,snapshot=>planAddToOpenVial(snapshot,input))')||
+   !runtime.includes('await writer.transaction(JSON.parse(raw),')||
+   runtime.includes('kit.wasteLog.pop(); // removes the addition-audit entry'))
+  throw Error('Exact-vial addition/undo does not use exclusive event-addressed writer');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
