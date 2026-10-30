@@ -322,7 +322,7 @@ try {
     ensure(await fixedHeader.count()===1,'Dose title and mode switch are not in fixed header');
     ensure(await fixedHeader.locator('.nx-dose-head > #x').count()===1,
       'Close control escaped fixed header (invalid modal HTML nesting)');
-    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Choose dose source"]').count()===1 &&
+    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Source choices when needed"]').count()===1 &&
       await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Administration details"]').count()===1,
       'Dose sections escaped scrolling body (invalid modal HTML nesting)');
     const layout=await page.locator('.nx2-dose-modal').evaluate(modal=>{
