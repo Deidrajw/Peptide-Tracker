@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 Stash formulation exclusive writer candidate, NOT RELEASED
+- Application commit 8cef8157 migrated Stash Add/Edit to awaited browser Web Lock transaction; static guard 1244e29c, Node stale two-tab/ledger/vial preservation tests b82b8265, Chromium actual Stash Save browser test d58e75b6. Dedicated safety CI 41117925738 SUCCESS on b82b8265; new exact-head browser CI pending. No storage migration, no production write, no merge/deploy, prepared nasal/transfer controls OFF. Physical iPhone NOT TESTED.
+
 ## 2026-10-30 — PR124 failed-save acknowledgement hardening candidate, NOT RELEASED
 - Commits 9c0c266f (save acknowledgement), 30c5afac (four Log Dose routes), 87424455 (combo + quick), a9b34047/b07ffd29 (static CI), ede6fc1f/eb544d66 (fictional 8-config LIVE/DEMO browser failure regression). Data: no migration and no production writes. New dedicated source test run 41116725844 SUCCESS and exact-source complete app packages (artifact 13005203507) CRC + offline-vs-standalone parity validated. New FULL/browser run 41116725723 IN PROGRESS at entry; mobile, WebKit, nested checks SUCCESS; real iPhone untested. PR draft/unmerged/undeployed, prepared nasal features still OFF due unresolved synchronous writer cross-tab atomicity.
 
