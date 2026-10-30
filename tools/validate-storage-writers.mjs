@@ -36,8 +36,7 @@ if(!runtime.includes('planAddToOpenVial(snapshot,input)')||
 if(!runtime.includes('await writer.transaction(saved,snapshot=>planExclusiveVialRestock(snapshot,event))')||
    !runtime.includes('snapshot=>planUndoExclusiveVialRestock(snapshot,inverse)')||
    !runtime.includes('This kit needs inventory reconciliation before exclusive restocking')||
-   !runtime.includes('Added vial has attached history; automatic undo blocked')||
-   /function addVialsModal\(kitId\)[\s\S]*?function adjustVialRemainingModal/.test('') )
+   !runtime.includes('Added vial has attached history; automatic undo blocked'))
   throw Error('Add Vials restock/Undo must use exclusive exact-ID transaction');
 
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
