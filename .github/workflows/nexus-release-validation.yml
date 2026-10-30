@@ -114,6 +114,7 @@ jobs:
           node tools/validate-protocol-design.mjs
           node tools/validate-vial-safety.mjs
           node tools/validate-logdose-ui.mjs
+          node tools/validate-save-ack-ui.mjs
           node tools/validate-combo-picker.mjs
           node tools/validate-stash-actions.mjs
           node tools/validate-stash-cards.mjs
