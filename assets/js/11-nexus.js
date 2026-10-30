@@ -577,10 +577,16 @@ function importData(e) {
         if(!next||!serialized)throw Error("Invalid restored state");
         // A restore is an explicit replacement but must still reject stale
         // storage and share the guarded writer. Never overwrite another tab.
-        const writer=nexusWriter();
-        writer.saveLegacy(next);
-        _nexusLastSavedSnapshot=writer.expected();
-        state=next;
+        if(_demoActive){
+          // Fictional demo restores are in-memory only; never invoke the
+          // production storage coordinator against isolated demo fixtures.
+          state=next;
+        }else{
+          const writer=nexusWriter();
+          writer.saveLegacy(next);
+          _nexusLastSavedSnapshot=writer.expected();
+          state=next;
+        }
         closeModal();render();
         alert("Backup restored. A local recovery copy of the previous records was saved.");
       }catch(err){
