@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 two-stage Log Dose review candidate
+- Approved iPhone review redesign coded: entry screen → Review & confirm within same modal, original fields mounted on Back, premium dose hero and tidy summary typography, 48px sticky actions, raw kit/vial database IDs omitted from review but saved source ledger retained. Full Chromium 320/390 light/dark LIVE/DEMO 8/8 PASS on 1da9f3c; mobile, WebKit and nested CI also PASS. NOT physically iPhone accepted, not merged/deployed. Preserve previously approved Stash/Calendar/Plans DS2 and personal storage.
+
 ## 2026-10-29 — PR124 source selection/kit preparation mobile coverage
 - Log Dose explicit same-kit physical vial buttons (kit, vial number, use, balance, 48px targets), no ambiguous default. Existing kit Vials panel adds linked no-transfer Create Preparation action that wraps at narrow iPhone widths. Existing purchased product Add Kit remains separate. Chromium fictional 320/390 light/dark LIVE/DEMO browser run 40912034303 SUCCESS at 2680aba5; newest CSS/source exact-head browser and physical iPhone not yet accepted.
 
