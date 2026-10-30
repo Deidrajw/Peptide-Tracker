@@ -1348,6 +1348,28 @@ function doseModal(name, existing, occTime) {
       showErrorBanner("Enter a valid amount greater than zero before confirming. Nothing was saved.");
       return;
     }
+    // Explicit dose-only mode: no source selection, no physical/prepared stock mutations.
+    if(isUntracked||editingUntracked){
+      const tgt=(PEPTIDES[name]?state.peptides:state.customPeptides);
+      if(!tgt[name])tgt[name]={enabled:true,scheduleDays:cfg(name).defaultSchedule,doses:[]};
+      const date=m.querySelector("#date").value;
+      if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date before saving.");return;}
+      const previous=(tgt[name].doses||[]).find(d=>d.id===f.id);
+      if(editingUntracked&&!previous){showErrorBanner("Original untracked record is missing. No changes saved.");return;}
+      const dose={...(editingUntracked?previous:{}),
+        id:editingUntracked?f.id:uid(),date,dose:doseAmtStr,
+        method:methodInput.value,site:m.querySelector("#site").value,
+        asNeeded:m.querySelector("#nx-dose-as-needed").checked,
+        notes:m.querySelector("#notes").value,symptoms:f.symptoms,
+        escalation:m.querySelector("#esc").checked,
+        trackingMode:"untracked",kitId:null,allocations:undefined,fromPreparedId:undefined,
+        enteredDose:m.querySelector("#nx-dose-entered")?.value||doseAmtStr,
+        enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit
+      };
+      tgt[name].doses=(tgt[name].doses||[]).filter(d=>d.id!==dose.id);
+      tgt[name].doses.push(dose);saveState();closeModal();render();
+      return;
+    }
     if(isBlend){
       const raw=Number(doseAmtStr),neededMg=doseToMg(raw,c.unit);
       if(!Number.isFinite(neededMg)||neededMg<=0){showErrorBanner("Invalid blend amount.");return;}
@@ -1527,7 +1549,10 @@ function doseModal(name, existing, occTime) {
     }
 
     const spraysEl = m.querySelector("#sprays");
-    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, method:methodInput.value, asNeeded:m.querySelector("#nx-dose-as-needed").checked, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
+    const dose = { ...(isEdit?{reactions:f.reactions||[]}:{}), trackingMode:"backed",
+      enteredDose:m.querySelector("#nx-dose-entered")?.value||doseAmtStr,
+      enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit,
+      id: isEdit ? f.id : uid(), date:m.querySelector("#date").value, dose:doseAmtStr, site:m.querySelector("#site").value, method:methodInput.value, asNeeded:m.querySelector("#nx-dose-as-needed").checked, symptoms:f.symptoms, notes:m.querySelector("#notes").value, escalation:m.querySelector("#esc").checked, kitId, allocations: allocations||undefined, fromPreparedId: fromPreparedId||undefined, sprayCount: spraysEl ? (parseFloat(spraysEl.value)||undefined) : (isEdit ? f.sprayCount : undefined) };
     const builtin = !!PEPTIDES[name];
     const tgt = builtin ? state.peptides : state.customPeptides;
     if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
