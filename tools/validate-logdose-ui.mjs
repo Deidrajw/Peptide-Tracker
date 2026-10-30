@@ -527,7 +527,7 @@ try {
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Inventory'),'Multi-vial Review omits inventory source summary');
+    ensure(splitReview.includes('Vial used'),'Multi-vial Review omits selected physical source summary');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
     await clickSave(page);
