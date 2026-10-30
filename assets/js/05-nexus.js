@@ -708,7 +708,7 @@ function nexusUseSetupModal(name,onSaved) {
   const c=cfg(name),cData=allPeptides()[name]||{};
   const old=nexusUseSetupFor(name)||{};
   const initial=nexusExplicitAdminMethod(old.method||cData.route)||"SubQ";
-  const preferred=["mg","mcg"].includes(old.unit)?old.unit:(["mg","mcg"].includes(c.unit)?c.unit:"mg");
+  const preferred=(["mg","mcg"].includes(old.unit)||(old.unit==="IU"&&c.unit==="IU"))?old.unit:(["mg","mcg","IU"].includes(c.unit)?c.unit:"mg");
   const m=openModal(`
     <div class="nx-use-setup" aria-label="Set up how you use ${esc(name)}">
       <div class="nx-use-head"><div><span class="nx-use-kicker">USE SETUP</span><h2>How do you use ${esc(name)}?</h2><p>Set this once. Change it in Stash whenever you need.</p></div><button id="nx-use-close" type="button" aria-label="Close setup">✕</button></div>
@@ -716,7 +716,7 @@ function nexusUseSetupModal(name,onSaved) {
       <select id="nx-use-family" class="inp">${["Injectable","Nasal","Topical","Oral","Other"].map(x=>`<option value="${x}"${nexusUseFamily(initial)===x?" selected":""}>${x}</option>`).join("")}</select>
       <div id="nx-use-injection-group" class="nx-use-secondary"><label class="field-label" for="nx-use-route">INJECTION ROUTE</label><select id="nx-use-route" class="inp"><option value="SubQ">SubQ</option><option value="IM">IM</option><option value="IV">IV</option></select></div>
       <label class="field-label" for="nx-use-unit">PREFERRED DOSE UNIT</label>
-      <select id="nx-use-unit" class="inp"><option value="mcg"${preferred==="mcg"?" selected":""}>mcg</option><option value="mg"${preferred==="mg"?" selected":""}>mg</option></select>
+      <select id="nx-use-unit" class="inp"><option value="mcg"${preferred==="mcg"?" selected":""}>mcg</option><option value="mg"${preferred==="mg"?" selected":""}>mg</option>${c.unit==="IU"?`<option value="IU"${preferred==="IU"?" selected":""}>IU (product-native)</option>`:""}</select>
       <p class="nx-use-help">Change mg or mcg at any entry. IU is not a universal mass conversion and requires a validated product definition.</p>
       <fieldset class="nx-use-tracking"><legend>HOW DO YOU WANT TO TRACK?</legend>
         <label><input type="radio" name="nx-use-mode" value="backed"${old.trackingMode==="untracked"?"":" checked"}><span><strong>Doses and inventory</strong><small>Use a verified exact stock source.</small></span></label>
@@ -760,9 +760,10 @@ function nexusUseSetupModal(name,onSaved) {
   m.querySelector("#nx-use-save").onclick=()=>{
     const method=family.value==="Injectable"?route.value:(family.value==="Other"?"Other":family.value);
     const unit=m.querySelector("#nx-use-unit").value;
-    if(!["mg","mcg"].includes(unit)){showErrorBanner("Choose mg or mcg; IU needs a verified product definition.");return;}
+    if(!["mg","mcg"].includes(unit)&&!(unit==="IU"&&c.unit==="IU")){showErrorBanner("IU needs a verified product definition. No setup saved.");return;}
     state.nexusUseSetups=state.nexusUseSetups||{};
     const trackingMode=modeNow();
+    if(unit==="IU"&&trackingMode==="backed"){showErrorBanner("Inventory-backed IU requires a verified product-specific conversion. Choose Doses only or a mass unit.");return;}
     const choice=sourceInput.value===""?null:sourceRows[Number(sourceInput.value)];
     if(choice&&trackingMode==="backed"){
       const known=nexusExplicitAdminMethod(choice.vial.intendedUse)||nexusExplicitAdminMethod(choice.kit.preparationMethod||choice.kit.administrationMethod||choice.kit.route);
