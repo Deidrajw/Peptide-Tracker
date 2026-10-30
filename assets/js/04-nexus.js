@@ -1968,7 +1968,13 @@ async function nexusCommitPreparationTransfer(input) {
   if(_demoActive)throw Error("Transfers unavailable in demo mode");
   if(!globalThis.NexusPreparationBridge||!input?.id)throw Error("Explicit preparation transfer required");
   const writer=nexusWriter();
-  const result=await writer.transaction(state,snapshot=>globalThis.NexusPreparationBridge.plan(snapshot,input));
+  // The explicit destination type selects exactly one immutable ledger.
+  // A physical-to-formulation transfer never writes to the legacy preparation
+  // array and never creates measured spray calibration.
+  const planner=input?.kind==="transfer-to-formulation"
+    ?globalThis.NexusPreparationBridge.planFormulation
+    :globalThis.NexusPreparationBridge.plan;
+  const result=await writer.transaction(state,snapshot=>planner(snapshot,input));
   state=result.next;_nexusLastSavedSnapshot=writer.expected();
   return result.event;
 }
