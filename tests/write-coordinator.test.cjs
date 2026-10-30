@@ -1,6 +1,7 @@
 const assert=require("node:assert/strict");
 const {create}=require("../assets/js/nexus-write-coordinator.js");
 const {planDose}=require("../assets/js/nexus-prepared-dose-transaction.js");
+const formulation=require("../assets/js/nexus-formulation-stock.js");
 const make=()=>({supplies:[{id:"K1",name:"Sample A",vials:[{id:"V1",status:"open",remainingMg:24}]}],formulationStocks:[{id:"N1",compound:"Sample A",containerType:"nasal-bottle",method:"Nasal",remainingMg:6,remainingMl:3,mgPerSpray:.1,mlPerSpray:.05,transactions:[]}],peptides:{"Sample A":{doses:[]}},customPeptides:{}});
 const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"backed",sourceKind:"formulation-container",sourceId:"N1",sprays:2,nativeUnit:"mg",date:"2026-10-30T12:00:00"};
 (async()=>{
@@ -66,5 +67,25 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(both[1].status,"rejected");
  assert.equal(turns,2);
  assert.equal(JSON.parse(shared).session,"first");
+ // A real Stash formulation add and edit must be one exclusive commit,
+ // preserving unrelated physical vial records and rejecting stale tabs.
+ let inv=JSON.stringify(make()), invTail=Promise.resolve();
+ const invLock=(_name,fn)=>{const job=invTail.then(fn);invTail=job.catch(()=>{});return job};
+ const invAdapter={read:()=>inv,write:v=>{inv=v},lock:invLock};
+ const stashA=create({...invAdapter,initialSnapshot:inv});
+ const stashB=create({...invAdapter,initialSnapshot:inv});
+ const invBefore=JSON.parse(inv);
+ const addForm={id:"F1",compound:"Fictional Sample",containerType:"nasal-bottle",method:"Nasal",volumeMl:7,quantityMg:10};
+ const newForm=await stashA.transaction(invBefore,s=>formulation.add(s,addForm));
+ assert.equal(newForm.next.formulationStocks.length,2);
+ assert.deepEqual(newForm.next.supplies,invBefore.supplies);
+ assert.equal(newForm.next.formulationStocks[1].mgPerSpray,null);
+ await assert.rejects(stashB.transaction(invBefore,s=>formulation.add(s,{...addForm,id:"F2"})),/changed/);
+ assert.equal(JSON.parse(inv).formulationStocks.length,2);
+ const editForm=await stashA.transaction(JSON.parse(inv),s=>formulation.edit(s,{id:"F1",remainingMl:6,remainingMg:9,transactionId:"adjust-F1"}));
+ assert.equal(editForm.next.formulationStocks[1].remainingMg,9);
+ assert.equal(editForm.next.formulationStocks[1].remainingMl,6);
+ assert.equal(editForm.next.formulationStocks[1].transactions.length,1);
+ assert.deepEqual(editForm.next.supplies,invBefore.supplies);
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
