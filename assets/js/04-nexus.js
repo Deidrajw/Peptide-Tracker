@@ -1426,17 +1426,27 @@ function vialActionsMenu(kitId, vialId) {
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
   const c = cfg(s.name);
   const isFinished = vial.status==="finished"||vial.status==="empty";
+  const isOpen = ["open","active"].includes(vial.status);
+  const canSetMethod = isOpen && Number(vial.remainingMg)>0.01 && !(vial.intendedUse && vial.intendedUse!=="undecided") && !(typeof nexusExplicitAdminMethod==="function" && nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route));
+  const hasPreparationPlan = (s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id) && p.status==="planned-no-transfer");
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">VIAL ACTIONS</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
+    ${canSetMethod?`<button id="va-method" class="nx-vial-menu-action" type="button">Set administration method<small>Identify how this specific vial will be used</small></button>`:""}
+    ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
+    ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
     <button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date, BAC water amount, or notes</div></button>
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
+  const methodAction=m.querySelector("#va-method");
+  if(methodAction)methodAction.onclick=()=>{closeModal();nexusStashSetLegacyVialMethod(kitId,vialId);};
+  const planAction=m.querySelector("#va-plan");
+  if(planAction)planAction.onclick=()=>{closeModal();nexusCreateLinkedPreparation(kitId,vialId);};
   m.querySelector("#va-edit").onclick = () => { closeModal(); editVialReconModal(kitId, vialId); };
   m.querySelector("#va-adjust").onclick = () => { closeModal(); adjustVialRemainingModal(kitId, vialId); };
   const reopenBtn = m.querySelector("#va-reopen");
