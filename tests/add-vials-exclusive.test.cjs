@@ -26,8 +26,8 @@ function rejectsUndo(snapshot,mutate,re){
  const base=fixture(),result=add(base,input()),saved=result.next,k=saved.supplies[0];
  assert.equal(base.supplies[0].vials.length,2,"Pure planner must not mutate original");
  assert.equal(k.vials.length,4);
- assert.deepEqual(k.vials.slice(2).map(v=>v.id),["V3","V4"]);
- assert.deepEqual(k.vials.slice(2).map(v=>v.status),["sealed","sealed"]);
+ assert.equal(k.vials.slice(2).map(v=>v.id).join(","),"V3,V4");
+ assert.equal(k.vials.slice(2).map(v=>v.status).join(","),"sealed,sealed");
  assert.equal(k.totalVials,4);assert.equal(k.vialMg,7);assert.equal(k.cost,90);
  assert.equal(k.restockLog[0].id,"REST1");
  assert.equal(k.restockLog[0].addedVialIds.join(","),"V3,V4");
