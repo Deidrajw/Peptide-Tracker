@@ -152,7 +152,7 @@ try{
   ensure(await page.locator('.nx-kit-card .nx-kit-test-download').count()>=1,'Kit Details do not expose saved attachment');
   await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
   // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
-  await page.evaluate(()=>{closeModal();doseModal('GHK-Cu');});
+  await page.evaluate(()=>{closeModal();const kit=state.supplies.find(k=>k.name==='GHK-Cu');kit.vials.find(v=>v.status==='open').intendedUse='SubQ';doseModal('GHK-Cu');});
   const multi=await page.locator('#toggle-multi').evaluate(el=>{
     const s=getComputedStyle(el),r=el.getBoundingClientRect();
     return {top:parseFloat(s.paddingTop),bottom:parseFloat(s.paddingBottom),
