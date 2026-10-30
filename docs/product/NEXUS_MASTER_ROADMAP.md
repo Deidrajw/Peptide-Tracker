@@ -1,3 +1,9 @@
+## 2026-10-30 — Reaffirmed linked UX priorities (DESIGN PENDING)
+- P-11: Unified first-time use setup. Top-level modes Injectable (SubQ/IM secondary detail), Nasal, Topical, Oral, Other. Preserve historical precision and distinct physical-versus-prepared stock.
+- P-12: User-selectable dose units, including mg/mcg and IU when meaningfully defined. Keep delivery measures separate, do not invent conversions, retain original values and normalized mass where safe. Requires complete unit-switch, persistence and calculation tests.
+- P-13: Compact DS2 Stash cards with essential quantity/status, clear disclosure, ellipsis for secondary actions and protected details/records. Do not drop this priority because source-selection work is ongoing.
+- Product review must consider the whole onboarding/setup → routine logging → stock/history experience for first-time and returning users, not merely patch one reported defect. These are user directions, NOT completed implementation. Preview integrated design before schema changes; no merge/deploy approval.
+
 # Nexus — Multi-Sprint Product Roadmap (Persistent)
 **Created:** 2026-10-27 | **Authority:** user direction, continuity logs, current GitHub source. **Status:** reconstructed roadmap INDEX, not a claim that all historical plans were recovered verbatim.
 
