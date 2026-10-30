@@ -41,6 +41,7 @@ jobs:
           node tests/prepared-dose-transaction.test.cjs
           node tests/prepared-exclusive-execution.test.cjs
           node tests/add-to-open-vial-exclusive.test.cjs
+          node tests/add-vials-exclusive.test.cjs
           node --check assets/js/nexus-write-coordinator.js
           node tests/write-coordinator.test.cjs
           node tools/validate-storage-writers.mjs
