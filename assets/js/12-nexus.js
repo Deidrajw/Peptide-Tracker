@@ -1388,10 +1388,14 @@ function showOnboarding() {
       next.profile.onboardingDone=true;
       const before=state;
       try{
-        const writer=nexusWriter();
-        writer.saveLegacy(next);
-        _nexusLastSavedSnapshot=writer.expected();
-        state=next;
+        if(_demoActive){
+          state=next; // isolated fictional onboarding restore
+        }else{
+          const writer=nexusWriter();
+          writer.saveLegacy(next);
+          _nexusLastSavedSnapshot=writer.expected();
+          state=next;
+        }
       }catch(e){
         state=before;
         // Never blindly overwrite storage with a recovery copy after failure.
