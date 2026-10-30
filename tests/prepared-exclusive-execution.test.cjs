@@ -27,8 +27,6 @@ const reverse={type:"reverse",tx:{transactionId:"tx1",reversalId:"rev1",compound
  assert.equal(result.next.formulationStocks[0].remainingMg,5.8);
  assert.equal(result.next.formulationStocks[0].remainingMl,2.9);
  assert.equal(result.next.peptides["Fictional C"].doses[0].sourceContainerId,"N1");
- await assert.rejects(prepared.executeExclusive(writer,initial,dose,{enabled:true}),/changed/);
- assert.equal(writes,1);
  const next=JSON.parse(raw);
  const undone=await prepared.executeExclusive(writer,next,reverse,{enabled:true});
  assert.equal(writes,2);
@@ -38,7 +36,13 @@ const reverse={type:"reverse",tx:{transactionId:"tx1",reversalId:"rev1",compound
  assert.equal(undone.next.peptides["Fictional C"].doses.length,0);
  assert.equal(undone.next.formulationStocks[0].transactions.length,2);
  assert.equal(JSON.parse(raw).formulationStocks[0].transactions[1].reverses,"tx1");
- await assert.rejects(prepared.executeExclusive(writer,JSON.parse(raw),reverse,{enabled:true}),/already reversed/);
+ // The coordinator must permanently block a stale second attempt until reload.
+ await assert.rejects(prepared.executeExclusive(writer,initial,dose,{enabled:true}),/changed/);
+ assert.equal(writes,2);
+ assert.equal(writer.status().blocked,true);
+ // A fresh coordinator evaluates replay safety after the stale writer is blocked.
+ const replay=create({read:()=>raw,write:x=>{writes++;raw=x},initialSnapshot:raw,lock:(_key,fn)=>fn()});
+ await assert.rejects(prepared.executeExclusive(replay,JSON.parse(raw),reverse,{enabled:true}),/already reversed/);
  assert.equal(writes,2);
  let errorRaw=JSON.stringify(fixture());
  const quota=create({read:()=>errorRaw,write:()=>{throw Error("quota")},initialSnapshot:errorRaw,lock:(_key,fn)=>fn()});
