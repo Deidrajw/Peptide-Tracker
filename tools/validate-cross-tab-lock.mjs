@@ -107,6 +107,7 @@ try{
    _nexusSharedWriter=null;
    addToOpenVialModal(987654321);
  });
+ await a.locator("#atv-source").selectOption("fictional-sealed");
  await a.locator("#atv-save").click();
  await a.waitForFunction(()=>{
    const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654321);
