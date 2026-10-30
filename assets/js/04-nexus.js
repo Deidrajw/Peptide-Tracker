@@ -1813,61 +1813,156 @@ function addToOpenVialModal(kitId) {
   };
 }
 
+// PR124: restocks and their inverse are immutable, exact-vial transactions.
+// A restock is inventory, not an administered dose or a preparation plan.
+function planExclusiveVialRestock(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!kit.vials.every(v=>Number.isFinite(Number(v.remainingMg))))
+    throw Error("Kit inventory needs reconciliation before restocking");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Add Vials");
+  const count=Number(input.count),mg=Number(input.mg),cost=Number(input.cost);
+  if(!Number.isSafeInteger(count)||count<1||count>1000)throw Error("Enter 1–1000 vials");
+  if(!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg)
+    throw Error("Vial strength must be a positive mg amount with at most two decimals");
+  if(!Number.isFinite(cost)||cost<0||Math.round(cost*100)/100!==cost)
+    throw Error("Additional cost must be a nonnegative amount with at most two decimals");
+  if(!Array.isArray(input.vialIds)||input.vialIds.length!==count||
+     new Set(input.vialIds.map(String)).size!==count||
+     input.vialIds.some(id=>id==null||String(id)===""))
+    throw Error("Unique identifiers required for every added vial");
+  const existing=new Set(kit.vials.map(v=>String(v.id)));
+  if(input.vialIds.some(id=>existing.has(String(id))))throw Error("Vial identifier already exists");
+  kit.restockLog=Array.isArray(kit.restockLog)?kit.restockLog:[];
+  if(kit.restockLog.some(e=>String(e.id)===String(input.eventId)))throw Error("Restock event already recorded");
+  const before={totalVials:kit.totalVials,vialMg:kit.vialMg,cost:kit.cost};
+  if(!Number.isSafeInteger(Number(kit.totalVials))||Number(kit.totalVials)<0)
+    throw Error("Kit total needs reconciliation");
+  const updatedCost=Math.round(((Number(kit.cost)||0)+cost)*100)/100;
+  if(!Number.isFinite(updatedCost))throw Error("Invalid resulting cost");
+  kit.vials.push(...input.vialIds.map(id=>({id,status:"sealed",vialMg:mg,remainingMg:mg})));
+  kit.totalVials=Number(kit.totalVials)+count;
+  kit.vialMg=mg;
+  if(cost)kit.cost=updatedCost;
+  const after={totalVials:kit.totalVials,vialMg:kit.vialMg,cost:kit.cost};
+  kit.restockLog.push({id:input.eventId,type:"vial-restock",status:"active",date:input.date,
+    loggedAt:input.loggedAt,addedVialIds:[...input.vialIds],addedVials:input.vialIds.map(id=>({id,status:"sealed",vialMg:mg,remainingMg:mg})),
+    count,mgPerVial:mg,additionalCost:cost,before,after});
+  return {next,eventId:input.eventId};
+}
+function planUndoExclusiveVialRestock(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.restockLog))
+    throw Error("Restock kit or history unavailable");
+  const idx=kit.restockLog.findIndex(e=>String(e.id)===String(input.eventId));
+  const event=kit.restockLog[idx];
+  if(!event||event.type!=="vial-restock"||event.status!=="active")
+    throw Error("This restock is not available for automatic undo");
+  if(kit.restockLog.slice(idx+1).some(e=>e.status==="active"))
+    throw Error("Later restock exists; review inventory before undo");
+  if(kit.restockLog.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Reversal event ID already exists");
+  if(Number(kit.totalVials)!==Number(event.after.totalVials)||
+     Number(kit.vialMg)!==Number(event.after.vialMg)||
+     Number(kit.cost||0)!==Number(event.after.cost||0))
+    throw Error("Kit totals or cost changed; automatic undo blocked");
+  const originals=event.addedVials||[];
+  if(originals.length!==event.count)throw Error("Original restock attribution incomplete");
+  for(const v of originals){
+    const found=kit.vials.filter(x=>String(x.id)===String(v.id));
+    if(found.length!==1||JSON.stringify(found[0])!==JSON.stringify(v))
+      throw Error("Added vial was used or changed; automatic undo blocked");
+    const hasActivity=(kit.wasteLog||[]).some(x=>String(x.vialId)===String(v.id));
+    const hasPreparation=(kit.linkedPreparationPlans||[]).some(x=>String(x.sourceVialId)===String(v.id));
+    const hasDose=Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+      .some(comp=>(comp.doses||[]).some(d=>(d.allocations||[]).some(a=>String(a.vialId)===String(v.id))||
+        ((d.vialId!=null&&String(d.vialId)===String(v.id))&&(d.kitId==null||String(d.kitId)===String(kit.id)))));
+    if(hasActivity||hasPreparation||hasDose)
+      throw Error("Added vial has attached history; automatic undo blocked");
+  }
+  const ids=new Set(event.addedVialIds.map(String));
+  kit.vials=kit.vials.filter(v=>!ids.has(String(v.id)));
+  kit.totalVials=event.before.totalVials;
+  if(Object.prototype.hasOwnProperty.call(event.before,"vialMg")&&event.before.vialMg!==undefined)
+    kit.vialMg=event.before.vialMg;
+  else delete kit.vialMg;
+  if(event.before.cost!==undefined)kit.cost=event.before.cost;
+  else delete kit.cost;
+  event.status="reversed";event.reversedAt=input.loggedAt;event.reversalId=input.undoEventId;
+  kit.restockLog.push({id:input.undoEventId,type:"vial-restock-reversal",status:"active",
+    date:input.date,loggedAt:input.loggedAt,reversesEventId:event.id,addedVialIds:[...event.addedVialIds]});
+  return {next,eventId:input.undoEventId};
+}
 function addVialsModal(kitId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const c = cfg(s.name);
-  const m = openModal(`
+  const s=state.supplies.find(x=>x.id===kitId);if(!s)return;
+  // Legacy migration is still synchronous; don't run it during this exclusive action.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before exclusive restocking.");return;
+  }
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADD VIALS</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <span class="mono" style="font-size:13px;letter-spacing:1.5px;color:${c.color}">ADD VIALS</span>
+      <button id="x" aria-label="Close Add Vials" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:16px">Adds sealed vials to this ${esc(s.name)} kit — for restocking the same product. A genuinely different product or strength is usually clearer as its own kit (Stash → Add Kit).</div>
+    <div class="hint" style="margin-bottom:16px">Adds individually identified sealed vials to this ${esc(s.name)} kit. The existing vial history stays unchanged.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div><label class="field-label">NUMBER OF VIALS</label><input id="av-count" type="number" min="1" step="1" class="inp" value="1" style="margin-bottom:14px"></div>
-      <div><label class="field-label">MG PER VIAL</label><input id="av-mg" type="number" step="0.01" class="inp" value="${s.vialMg||''}" style="margin-bottom:14px"></div>
+      <div><label class="field-label" for="av-count">NUMBER OF VIALS</label><input id="av-count" type="number" min="1" max="1000" step="1" class="inp" value="1" style="margin-bottom:14px"></div>
+      <div><label class="field-label" for="av-mg">MG PER VIAL</label><input id="av-mg" type="number" min="0.01" step="0.01" class="inp" value="${s.vialMg||''}" style="margin-bottom:14px"></div>
     </div>
     <div id="av-mismatch" style="display:none;background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:#F9C87D"></div>
-    <label class="field-label">ADDITIONAL COST (optional)</label>
-    <input id="av-cost" type="number" step="0.01" class="inp" placeholder="e.g. 100.00" style="margin-bottom:18px">
+    <label class="field-label" for="av-cost">ADDITIONAL COST (optional)</label>
+    <input id="av-cost" type="number" min="0" step="0.01" class="inp" placeholder="e.g. 100.00" style="margin-bottom:18px">
     <button id="av-save" class="btn-primary" style="background:${c.color}">Add to This Kit</button>
-  `, c.color);
-  m.querySelector("#x").onclick = closeModal;
-  const mgInput = m.querySelector("#av-mg");
-  const mismatchBox = m.querySelector("#av-mismatch");
-  const checkMismatch = () => {
-    const v = parseFloat(mgInput.value);
-    if (s.vialMg && v && Math.abs(v - s.vialMg) > 0.001) {
-      mismatchBox.style.display = "block";
-      mismatchBox.textContent = `This kit's existing vials are ${s.vialMg}mg each — these new ones would be ${v}mg. They'll still be tracked correctly (each vial keeps its own strength), but if this is really a separate product, a new kit would keep Stash clearer.`;
-    } else {
-      mismatchBox.style.display = "none";
-    }
+  `,c.color);
+  m.querySelector("#x").onclick=closeModal;
+  const mgInput=m.querySelector("#av-mg"),mismatchBox=m.querySelector("#av-mismatch"),saveButton=m.querySelector("#av-save");
+  mgInput.oninput=()=>{
+    const strength=Number(mgInput.value);
+    if(s.vialMg&&strength>0&&Math.abs(strength-Number(s.vialMg))>0.001){
+      mismatchBox.style.display="block";
+      mismatchBox.textContent=`This kit's existing vials are ${s.vialMg}mg each — these new ones would be ${strength}mg. Each vial keeps its own strength; use a separate kit if appropriate.`;
+    }else mismatchBox.style.display="none";
   };
-  mgInput.oninput = checkMismatch;
-  m.querySelector("#av-save").onclick = () => {
-    const count = parseInt(m.querySelector("#av-count").value);
-    const mg = parseFloat(mgInput.value);
-    if (!count || count<1) { showErrorBanner("Enter at least 1 vial."); return; }
-    if (!mg || mg<=0) { showErrorBanner("Enter a valid mg per vial."); return; }
-    const cost = parseFloat(m.querySelector("#av-cost").value)||0;
-    const addedIds = [];
-    s.vials = s.vials || [];
-    for (let i=0;i<count;i++) {
-      const v = { id: uid(), status: "sealed", vialMg: mg, remainingMg: mg };
-      s.vials.push(v);
-      addedIds.push(v.id);
-    }
-    s.totalVials = (s.totalVials||0) + count;
-    s.vialMg = mg; // kit-level value tracks the most recently added strength, same as activateVial already treats it
-    if (cost) s.cost = (parseFloat(s.cost)||0) + cost;
-    saveState(); closeModal(); render();
-    showUndoToast(`Added ${count} vial${count===1?"":"s"} to ${esc(s.name)} · Undo`, () => {
-      s.vials = (s.vials||[]).filter(v => !addedIds.includes(v.id));
-      s.totalVials = Math.max(0, (s.totalVials||0) - count);
-      if (cost) s.cost = Math.max(0, (parseFloat(s.cost)||0) - cost);
-      saveState(); render();
-    });
+  saveButton.onclick=async()=>{
+    if(saveButton.disabled)return;
+    const countRaw=m.querySelector("#av-count").value.trim(),mgRaw=mgInput.value.trim(),costRaw=m.querySelector("#av-cost").value.trim();
+    const count=Number(countRaw),mg=Number(mgRaw),cost=costRaw===""?0:Number(costRaw);
+    if(!countRaw||!Number.isSafeInteger(count)||count<1||count>1000){showErrorBanner("Enter 1–1000 whole vials.");return;}
+    if(!mgRaw||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){showErrorBanner("Enter a valid mg amount (two decimal places maximum).");return;}
+    if(!Number.isFinite(cost)||cost<0||Math.round(cost*100)/100!==cost){showErrorBanner("Enter a valid additional cost.");return;}
+    const event={kitId:s.id,expectedKit,count,mg,cost,vialIds:Array.from({length:count},()=>uid()),
+      eventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    saveButton.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveVialRestock(state,event);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),savedKit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!savedKit||JSON.stringify(savedKit)!==expectedKit)throw Error("Kit changed; reopen this form");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveVialRestock(snapshot,event));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+      showUndoToast(`Added ${count} vial${count===1?"":"s"} to ${esc(s.name)} · Undo`,async()=>{
+        const inverse={kitId:s.id,eventId:event.eventId,undoEventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+        try{
+          let reversed;
+          if(_demoActive)reversed=planUndoExclusiveVialRestock(state,inverse);
+          else{
+            const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable; reload");
+            const writer=nexusWriter();
+            reversed=await writer.transaction(JSON.parse(raw),snapshot=>planUndoExclusiveVialRestock(snapshot,inverse));
+            _nexusLastSavedSnapshot=writer.expected();
+          }
+          state=reversed.next;render();
+        }catch(e){showErrorBanner("Restock undo blocked: "+e.message);}
+      });
+    }catch(e){showErrorBanner("Vials not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
 }
 
