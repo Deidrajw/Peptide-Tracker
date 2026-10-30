@@ -51,5 +51,20 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  const staleErase=create({read:()=>erasable,remove:()=>{removed++},write:v=>{erasable=v},initialSnapshot:"old"});
  assert.throws(()=>staleErase.removeLegacy(),/changed/);
  assert.equal(removed,1);
+ // Two separate tab-like coordinators share an exclusive async lock.
+ // Once the first commits, the second must reject its stale original snapshot.
+ let shared=JSON.stringify(make()),tail=Promise.resolve(),turns=0;
+ const exclusive=(_name,fn)=>{const run=tail.then(async()=>{turns++;return fn()});tail=run.catch(()=>{});return run};
+ const first=create({read:()=>shared,write:s=>{shared=s},initialSnapshot:shared,lock:exclusive});
+ const second=create({read:()=>shared,write:s=>{shared=s},initialSnapshot:shared,lock:exclusive});
+ const snapshot=JSON.parse(shared);
+ const both=await Promise.allSettled([
+   first.transaction(snapshot,x=>({next:{...x,session:"first"}})),
+   second.transaction(snapshot,x=>({next:{...x,session:"second"}}))
+ ]);
+ assert.equal(both[0].status,"fulfilled");
+ assert.equal(both[1].status,"rejected");
+ assert.equal(turns,2);
+ assert.equal(JSON.parse(shared).session,"first");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
