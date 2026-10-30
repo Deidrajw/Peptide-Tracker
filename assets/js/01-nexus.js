@@ -55,17 +55,27 @@ function showSaveWarning() {
 // a transfer from another tab. A transfer's exclusive lock is not shared by
 // legacy synchronous writers, so real transfer controls remain disabled.
 let _nexusLastSavedSnapshot = (()=>{try{return localStorage.getItem(STORE_KEY)}catch{return null}})();
+let _nexusSharedWriter=null;
+function nexusWriter() {
+  if(!_nexusSharedWriter){
+    if(!globalThis.NexusWriteCoordinator) throw Error("Shared state writer is unavailable");
+    const lock=(typeof navigator!=="undefined"&&navigator.locks&&typeof navigator.locks.request==="function")
+      ? (name,action)=>navigator.locks.request(name,{mode:"exclusive"},action):null;
+    _nexusSharedWriter=globalThis.NexusWriteCoordinator.create({
+      read:()=>localStorage.getItem(STORE_KEY),
+      write:serialized=>localStorage.setItem(STORE_KEY,serialized),
+      lock,lockName:STORE_KEY+":inventory-transfer",initialSnapshot:_nexusLastSavedSnapshot
+    });
+  }
+  return _nexusSharedWriter;
+}
 function saveState() {
-  if(_demoActive) return; // never write demo data to localStorage
+  if(_demoActive)return; // keep fictional demo isolated
   try {
-    const observed=localStorage.getItem(STORE_KEY);
-    if(_nexusLastSavedSnapshot!==null && observed!==_nexusLastSavedSnapshot)
-      throw Error("Nexus storage changed in another tab; reload before saving");
-    const serialized=JSON.stringify(state);
-    localStorage.setItem(STORE_KEY,serialized);
-    if(localStorage.getItem(STORE_KEY)!==serialized) throw Error("Nexus save readback mismatch");
-    _nexusLastSavedSnapshot=serialized;
-  } catch(e) { console.error('Nexus save failed',e); showSaveWarning(); }
+    const writer=nexusWriter();
+    writer.saveLegacy(state);
+    _nexusLastSavedSnapshot=writer.expected();
+  }catch(e){console.error("Nexus save failed",e);showSaveWarning();}
 }
 
 
