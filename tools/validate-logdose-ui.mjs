@@ -103,6 +103,36 @@ try {
     verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
     await page.evaluate(()=>{closeModal();});
     await seed(page,theme);
+    // Stash-first explicit legacy method setup: do not change stock or history.
+    await page.evaluate(()=>{closeModal();});
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(788,6.25,1);
+      delete kit.preparationMethod; delete kit.route;delete kit.administrationMethod;
+      delete kit.vials[0].intendedUse;
+      state.supplies=[kit];
+      nexusStashSetLegacyVialMethod(788,10788);
+    });
+    ensure(await page.locator('.nx-stash-method-choices input').count()>=2,
+      'Stash legacy vial method options missing');
+    ensure(await page.locator('#nx-stash-method-confirm').isDisabled(),'Unselected method should not save');
+    await page.locator('.nx-stash-method-choices input[value="SubQ"]').check();
+    await page.locator('#nx-stash-method-confirm').click();
+    const stashSetup=await page.evaluate(()=>({
+      method:state.supplies[0].vials[0].intendedUse,
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length
+    }));
+    ensure(stashSetup.method==='SubQ' && stashSetup.remaining===6.25 && stashSetup.history===0,
+      'Stash method setup changed quantity/history or failed: '+JSON.stringify(stashSetup));
+    await page.evaluate(()=>doseModal('Retatrutide'));
+    ensure(await page.locator('.nx-confirm-legacy-vial').count()===0,
+      'Stash-confirmed legacy vial still triggers Log Dose fallback');
+    ensure(await page.locator('#nx-dose-inventory-status').count()===1,
+      'Single Stash-verified vial not automatically recognized');
+    await page.evaluate(()=>closeModal());
+    verified.push('stash-first-method-setup-preserves-stock-and-unblocks-single-source-dose');
+    await seed(page,theme);
     // A source chosen from two OPEN vials with ample stock must NOT inherit a
     // provisional 2mg allocation when the requested dose is 4mg. This reproduces
     // the iPhone report: selected vial shows ample mg but Step 1 says 2mg missing.
