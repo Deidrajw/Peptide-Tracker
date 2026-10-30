@@ -1,3 +1,6 @@
+## 2026-10-29 — PR124 Log Dose UX refinement build candidate VERIFIED, NOT DEPLOYED
+- User-approved direction app commit 2f31ff6/test 1159aa3. Four CI workflows successful: full 40982813383, nested 40982813381, mobile 40982813421, WebKit 40982813437. Source-matched artifact #12945533720 downloaded and validated: 24-file LIVE ZIP, isolated complete DEMO HTML and offline DEMO ZIP, CRC PASS, four app Git blob hashes matched development branch. Tested CI merge source 1a8b5389; app version string remains v0.9.20-beta (not production release). Changes: easier wording for one-time legacy method confirmation, one Review entry accordion, optional Protocol options retaining asNeeded semantics. No data migration, production update, PR merge or iPhone acceptance. Next physical iPhone test required.
+
 ## 2026-10-29 — PR124 targeted Log Dose UX preview (NOT RELEASED)
 - Draft app commit 2f31ff6, QA test 1159aa3. Reword one-time legacy method confirmation and remove misleading technical explanation, flatten nested source audit into single Review entry accordion, move unchanged PRN checkbox under optional protocol settings. No inventory math/storage migration/history modification. New exact-head CI and artifacts pending; not merged, not deployed, not physical-iPhone accepted.
 
