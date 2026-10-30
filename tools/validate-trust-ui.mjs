@@ -43,6 +43,11 @@ try{
           // Synthetic state and browser-local data only: standalone DEMO replaces
           // localStorage with a non-configurable in-memory map.
           localStorage.setItem(STORE_KEY,JSON.stringify(state));
+          // Fixture installation bypasses Nexus's writer on purpose. Reset
+          // only the isolated test's expected snapshot to that known fixture;
+          // a real externally changed snapshot must still be rejected.
+          _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+          _nexusSharedWriter=null;
           const fake=JSON.parse(JSON.stringify(state));
           fake.profile.name='Fictional Restore QA';
           const file=new File([JSON.stringify(fake)],'fictional-backup.json',{type:'application/json'});
