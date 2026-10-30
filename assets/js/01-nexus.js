@@ -77,12 +77,17 @@ function nexusEraseSavedState() {
   _nexusLastSavedSnapshot=writer.expected();
 }
 function saveState() {
-  if(_demoActive)return; // keep fictional demo isolated
+  if(_demoActive)return true; // fictional demo never touches production storage
   try {
     const writer=nexusWriter();
     writer.saveLegacy(state);
     _nexusLastSavedSnapshot=writer.expected();
-  }catch(e){console.error("Nexus save failed",e);showSaveWarning();}
+    return true;
+  }catch(e){
+    console.error("Nexus save failed",e);
+    showSaveWarning();
+    return false; // callers must not display success when persistence failed
+  }
 }
 
 
