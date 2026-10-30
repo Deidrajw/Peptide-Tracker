@@ -774,13 +774,13 @@ function doseModal(name, existing, occTime) {
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
-    <section class="nx-dose-section" aria-label="Dose source" style="${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Choose vial":preparedBatches.length?"How was this dose prepared?":"Inventory source"}</div>
-      <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Only choose a source when more than one is possible. Each saved dose keeps its exact source."}</p>
+    <section class="nx-dose-section nx-dose-source-exception" aria-label="Choose dose source" style="${isEdit||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Choose the vial used":preparedBatches.length?"Where did this dose come from?":"Vial setup needed"}</div>
+      <p class="nx-dose-section-desc">${isEdit ? "The recorded source stays linked to this entry." : "Nexus only needs a choice when more than one source is possible."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
       <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
-        ? (unlabelledOpenSources.length?"Open inventory found, but administration method is not confirmed. Choose the correct vial below.":"No compatible open vial. Nothing will be deducted until a source is selected.")
+        ? (unlabelledOpenSources.length?"An open vial needs its method confirmed. You can finish its setup in Stash.":"No verified open vial for this method. Check Stash to prepare or identify one.")
         : eligibleSources.length===1
           ? `Open ${esc(eligibleSources[0].kit.vialMg||"?")}${esc(c.unit)} vial · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)}${esc(c.unit)} remaining`
           : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
@@ -801,9 +801,9 @@ function doseModal(name, existing, occTime) {
       </div>
     </div>`:""}
     <div id="kit-picker" style="margin-bottom:14px;${needsKitPicker&&selectedSource==="fresh"?"":"display:none"}">
-      <label class="field-label">WHICH VIAL</label>
+      <label class="field-label">CHOOSE OPEN VIAL</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-        ${eligibleSources.map(({kit,vial})=>`<button type="button" class="kit-opt" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" aria-pressed="${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)}" style="min-height:48px;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">Kit ${esc(String(kit.name))} · Vial ${esc(String(vial.sequenceNumber||vial.id))} · ${esc(String(vial.intendedUse||initialMethod))} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)}${esc(c.unit)} available</button>`).join("")}
+        ${eligibleSources.map(({kit,vial})=>`<button type="button" class="kit-opt" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" aria-pressed="${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)}" style="min-height:48px;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">${esc(String(kit.name))} · Vial ${esc(String(vial.sequenceNumber||vial.id))} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left</button>`).join("")}
       </div>
     </div>
     </section>
@@ -825,7 +825,7 @@ function doseModal(name, existing, occTime) {
     <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
-    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" style="font-size:12px;color:var(--t3);padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px;margin:4px 0 12px"><span style="color:#7DF9C0">✓</span> Inventory ready · ${esc("Vial "+String(eligibleSources[0].vial.sequenceNumber||"open"))} · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} available</div>`:""}
+    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
     ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
