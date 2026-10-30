@@ -1423,7 +1423,11 @@ function doseModal(name, existing, occTime) {
         enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit
       };
       tgt[name].doses=(tgt[name].doses||[]).filter(d=>d.id!==dose.id);
-      tgt[name].doses.push(dose);saveState();closeModal();render();
+      tgt[name].doses.push(dose);
+      const fulfilled=(tgt[name].reschedules||[]).find(r=>!r.doseId&&dayKey(r.newDate)===dayKey(dose.date));
+      if(fulfilled)fulfilled.doseId=dose.id;
+      saveState();closeModal();render();
+      if(!editingUntracked&&!nexusPostProtocolDoseFollowup(name,dose,true))nexusPostDoseReactionPrompt(name,dose.id);
       return;
     }
     if(isBlend){
