@@ -1,3 +1,10 @@
+## 2026-10-30 — Stash formulation exclusive writer staging (NOT RELEASED)
+- Version: v0.9.20-beta development candidate, PR124 draft. Source 8cef8157 migrated Stash formulation Add/Edit from synchronous saveLegacy to awaited exclusive cross-tab Web Lock transaction; Save disabled while awaiting, original form remains on error, state only replaced after verified persistence. Existing DEMO remains in-memory fictional; production key/schema untouched.
+- Affected screens: Stash → Add Kit → capsule/nasal/raw/topical formulation editor and adjustments. Protected: physical vial balances, routine Log Dose, Check-In, Calendar, Plans, backup/restore and history.
+- Tests: dedicated safety CI 41117925738 SUCCESS on b82b8265; static writer ownership, exclusive formulation add/edit Node tests, stale tab conflict, physical vial conservation and adjustment history. New real Chromium Stash form UI case added d58e75b6; complete browser QA and latest exact-source artifact validation PENDING. No physical iPhone/VoiceOver acceptance.
+- Limitations: other legacy synchronous writes still do not own cross-tab Web Locks. Prepared nasal stock deductions and actual preparation transfers remain gated OFF; no merge/deploy authorized.
+- Release status: CODED / dedicated safety TESTED / full browser NOT VERIFIED / PR DRAFT / UNMERGED / UNDEPLOYED.
+
 ## 2026-10-30 — Save-ack hardening (NOT RELEASED)
 On draft PR124, verified saveState boolean now prevents false success in normal Log Dose, combo, and quick logging after stale/quota/readback failure. 4 Log Dose paths guarded; separate fictional 8-configuration browser regression added. Dedicated safety CI 41116725844 PASS, source-exact complete LIVE/isolated FULL DEMO package artifact 13005203507 CRC and offline parity checked, full QA 41116725723 pending; no storage migration/production writes. Prepared nasal remains disabled and cross-tab sync-to-exclusive migration incomplete. Real iPhone acceptance not tested, no merge/deploy.
 
