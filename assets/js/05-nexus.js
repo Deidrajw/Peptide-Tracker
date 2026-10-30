@@ -822,6 +822,15 @@ function doseModal(name, existing, occTime) {
 
   const preparedBatches = !isEdit ? (state.preparedDoses||[]).filter(pd=>pd.remainingCount>0 && !(pd.components&&pd.components.length>1) && getSyringeComponents(pd).some(c=>c.compoundName===name)) : [];
   let selectedSource = draft ? "fresh" : (preparedBatches.length===1) ? preparedBatches[0].id : "fresh";
+  // When the only prepared syringe is selected automatically, its measured
+  // amount must be displayed immediately. Previously Review was blocked by a
+  // blank/stale historical amount until the already-selected chip was tapped.
+  // Draft and edit values always take precedence; a selected prepared batch
+  // still passes the authoritative exact-amount validation on Save.
+  if(!draft&&!isEdit&&selectedSource!=="fresh"&&preparedBatches.length===1){
+    const measured=Number(preparedBatches[0].amountEach);
+    if(Number.isFinite(measured)&&measured>0)f.dose=String(measured);
+  }
 
   // Multi-vial allocation rows — {kitId, mg}. Restored from a draft (partial allocation
   // already drawn before the vial ran out), otherwise starts empty and is only populated
