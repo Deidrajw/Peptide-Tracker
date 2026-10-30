@@ -318,10 +318,10 @@ function stashView() {
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
                   <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
-                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)).map(p=>`<div class="nx-kit-list-meta">Linked ${esc(p.kind)} preparation · Plan only, no stock transferred</div>`).join("")}
+                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)).map(p=>`<div class="nx-stash-plan-status"><span>Planned · ${esc(p.kind||"Other")}</span><small>No stock transferred</small></div>`).join("")}
                 </div>
                 ${isActive && rem>0.01 && !(v.intendedUse && v.intendedUse!=="undecided") && !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)?`<button type="button" class="nx-stash-set-vial-method" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Set administration method for vial ${num}">Set method</button>`:""}
-                ${isActive?`<button type="button" class="nx-kit-create-preparation" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" style="min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface);color:var(--t1)">Create preparation</button>`:""}
+                ${isActive?`<button type="button" class="nx-kit-create-preparation" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" style="min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface);color:var(--t1)">${(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id))?"View preparation plan":"Plan preparation"}</button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
               </div>`;
             };
@@ -2144,26 +2144,62 @@ function nexusAddFormulationModal(type,existingId=null){
     }catch(e){showErrorBanner("Container not saved: "+e.message);}
   };
 }
-// Existing-kit preparation designation: linked audit metadata only, no stock movement.
+// Stash preparation planning: a reversible UI flow around non-transferring
+// metadata. Deliberately NO stock movement, bottle creation, or dosing math.
 function nexusCreateLinkedPreparation(kitId,vialId){
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
  if(!kit||!vial||!["open","active"].includes(vial.status)){showErrorBanner("Select an open vial in the existing kit.");return;}
- const m=openModal(`<section class="nx-form-stock-editor">
- <div class="nx-form-stock-editor-head"><strong>Create preparation</strong><button id="x" type="button" aria-label="Close">✕</button></div>
- <p class="hint">${esc(kit.name)} · Vial ${esc(String(vial.sequenceNumber||vial.id))}. This records a linked preparation plan only. It will not create a nasal stock balance, debit the vial, or calculate a spray dose.</p>
- <label class="field-label" for="nx-linked-kind">INTENDED PREPARATION</label>
- <select id="nx-linked-kind" class="inp"><option value="nasal">Nasal</option><option value="subq">SubQ</option><option value="im">IM</option><option value="other">Other</option></select>
- <label class="field-label" for="nx-linked-notes">NOTES (OPTIONAL)</label><textarea id="nx-linked-notes" class="inp" maxlength="500" rows="3"></textarea>
- <button id="nx-linked-save" class="btn-primary" type="button">Save linked plan</button>
+ const existing=(kit.linkedPreparationPlans||[]).find(p=>String(p.sourceVialId)===String(vial.id)&&p.status==="planned-no-transfer");
+ const kitName=esc(kit.name),number=esc(String(vial.sequenceNumber||"?"));
+ const options=[["nasal","Nasal"],["subq","SubQ"],["im","IM"],["other","Other"]];
+ const kindName=kind=>options.find(o=>o[0]===kind)?.[1]||"Other";
+ const m=openModal(`<section class="nx-form-stock-editor nx-prep-plan-sheet" aria-label="Vial preparation plan">
+  <div class="nx-form-stock-editor-head"><strong>${existing?"Preparation plan":"Plan a preparation"}</strong><button id="x" type="button" aria-label="Close preparation plan">✕</button></div>
+  <div class="nx-prep-plan-source">${kitName} · Vial ${number}</div>
+  <div class="nx-prep-plan-state" role="status"><strong>${existing?"Plan saved · No stock transferred":"Planning only"}</strong><span>${existing?"The source vial and its balance have not changed.":"This step records your intention; it does not create a prepared dose or bottle."}</span></div>
+  <div id="nx-prep-plan-read" ${existing?"":"hidden"}>
+    <div class="nx-prep-plan-row"><span>Preparation</span><strong id="nx-prep-plan-kind-value">${existing?esc(kindName(existing.kind)):""}</strong></div>
+    <div class="nx-prep-plan-row"><span>Notes</span><strong id="nx-prep-plan-notes-value">${existing?esc(existing.notes||"None"):""}</strong></div>
+  </div>
+  <div id="nx-prep-plan-edit" ${existing?"hidden":""}>
+    <div class="nx-prep-plan-step">STEP 1 · WHAT ARE YOU PLANNING?</div>
+    <label class="field-label" for="nx-linked-kind">Intended preparation</label>
+    <select id="nx-linked-kind" class="inp">${options.map(([value,label])=>`<option value="${value}"${existing?.kind===value?" selected":""}>${label}</option>`).join("")}</select>
+    <label class="field-label" for="nx-linked-notes">Notes · optional</label>
+    <textarea id="nx-linked-notes" class="inp" maxlength="500" rows="3" placeholder="What do you want to remember?">${existing?esc(existing.notes||""):""}</textarea>
+    <div class="nx-prep-plan-step">STEP 2 · REVIEW WHAT GETS SAVED</div>
+    <p class="hint">Nexus will link this plan to Vial ${number}. It will not change vial stock, create a nasal bottle, calculate concentration or mark preparation complete.</p>
+    <button id="nx-linked-save" class="btn-primary" type="button">${existing?"Save plan changes":"Save plan only"}</button>
+  </div>
+  <div class="nx-prep-plan-next">
+    <div class="nx-prep-plan-step">WHAT HAPPENS NEXT?</div>
+    <p>A saved plan is a reference in Stash. To record an administration method for an unlabeled legacy vial, use <strong>Set method</strong> in the Vials tab. A measured vial-to-preparation stock transfer is not yet available from this plan.</p>
+  </div>
+  ${existing?'<button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-edit-action">Edit plan</button>':""}
+  <button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-done">Back to vial</button>
  </section>`,"#A78BFA");
  m.querySelector("#x").onclick=closeModal;
+ m.querySelector("#nx-prep-plan-done").onclick=closeModal;
+ const edit=m.querySelector("#nx-prep-plan-edit-action");
+ if(edit)edit.onclick=()=>{
+   m.querySelector("#nx-prep-plan-read").hidden=true;
+   m.querySelector("#nx-prep-plan-edit").hidden=false;
+   edit.hidden=true;
+ };
  m.querySelector("#nx-linked-save").onclick=()=>{
-   const latestKit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
-   const latestVial=latestKit?.vials?.find(v=>String(v.id)===String(vialId));
-   if(!latestVial||!["open","active"].includes(latestVial.status)){showErrorBanner("Source vial is no longer open. No changes saved.");return;}
-   latestKit.linkedPreparationPlans=Array.isArray(latestKit.linkedPreparationPlans)?latestKit.linkedPreparationPlans:[];
-   latestKit.linkedPreparationPlans.push({id:uid(),sourceKitId:latestKit.id,sourceVialId:latestVial.id,kind:m.querySelector("#nx-linked-kind").value,notes:m.querySelector("#nx-linked-notes").value.trim(),createdAt:new Date().toISOString(),status:"planned-no-transfer"});
+   const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+   const source=current?.vials?.find(v=>String(v.id)===String(vialId));
+   if(!source||!["open","active"].includes(source.status)){showErrorBanner("Source vial is no longer open. Nothing saved.");return;}
+   const kind=m.querySelector("#nx-linked-kind").value;
+   if(!options.some(o=>o[0]===kind)){showErrorBanner("Select a valid preparation type.");return;}
+   const notes=m.querySelector("#nx-linked-notes").value.trim();
+   current.linkedPreparationPlans=Array.isArray(current.linkedPreparationPlans)?current.linkedPreparationPlans:[];
+   // Updating the same plan prevents a repeated CTA from silently duplicating records.
+   const saved=existing?current.linkedPreparationPlans.find(p=>String(p.id)===String(existing.id)):null;
+   if(existing&&!saved){showErrorBanner("The plan has changed. Reopen it before editing.");return;}
+   if(saved){saved.kind=kind;saved.notes=notes;}
+   else current.linkedPreparationPlans.push({id:uid(),sourceKitId:current.id,sourceVialId:source.id,kind,notes,createdAt:new Date().toISOString(),status:"planned-no-transfer"});
    saveState();closeModal();render();
  };
 }
