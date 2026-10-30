@@ -1,3 +1,6 @@
+## 2026-10-30 — Stash formulation exclusive writer staged migration
+- WR-12 browser Stash Add Kit → capsule Save added to tools/validate-cross-tab-lock.mjs at d58e75b6, status NOT TESTED pending exact-head browser workflow. Node writer test now verifies exclusive formulation add/edit, stale second tab rejected, physical vials unchanged, adjustment history persisted (b82b8265); dedicated CI 41117925738 SUCCESS. Existing demo formulation suite remains protected. Real iPhone, sync legacy concurrent write guarantee, and prepared nasal live logging remain BLOCKED/NOT TESTED.
+
 ## 2026-10-30 — PR124 failure acknowledgement browser smoke evidence
 - Local Chromium on standalone fictional full-app source eb544d66: 4/4 320/390px × dark/light failures simulated after Review, results PASS for modal stays open, no false success prompt, visible save-failure warning, no JS page errors. Mocked save result only; does NOT prove real device storage failure or atomicity against concurrent legacy synchronous writers. GitHub complete 8 LIVE/DEMO browser configurations in #41116725723 remain IN PROGRESS, not yet Pass. Production source/account unchanged.
 
