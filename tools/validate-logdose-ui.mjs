@@ -312,9 +312,9 @@ try {
     await setDose(page,2);
     await page.waitForTimeout(650);
     await page.locator('#nx-dose-review-open').click();
-    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const preview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
+    ensure((await page.locator('#nx-dose-review-compound').innerText()).includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
     ensure(!(await page.locator('#nx-dose-review-rows').innerText()).includes('9101'),'Internal source ID shown in user review');
     await page.locator('#nx-dose-review-back').click();
@@ -495,7 +495,7 @@ try {
       sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
       'Multi-kit sources should use distinct human-readable ordinals: '+JSON.stringify(sourceNames));
     await page.locator('#nx-dose-review-open').click();
-    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(splitReview.includes('Inventory'),'Multi-vial Review omits inventory source summary');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
@@ -520,7 +520,7 @@ try {
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
     await page.locator('#nx-dose-review-open').click();
-    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-rows')?.textContent?.includes('Retatrutide'));
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preparedReview.includes('Prepared dose')&&preparedReview.includes('8109')===false,'Prepared review source is unclear');
     await clickSave(page);
