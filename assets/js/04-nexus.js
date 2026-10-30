@@ -1703,7 +1703,9 @@ function addToOpenVialModal(kitId) {
   const vial=s.vials.find(v=>v.status==="active"||v.status==="open");
   if(!vial){showErrorBanner("No open vial to add to — open one first.");return;}
   const c=cfg(s.name);
-  const sealedCount=s.vials.filter(v=>v.status==="sealed").length;
+  const sealedVials=s.vials.filter(v=>v.status==="sealed");
+  const sealedCount=sealedVials.length;
+  const sealedOptions=sealedVials.map((v,i)=>`<option value="${esc(String(v.id))}">Vial ${esc(String(v.sequenceNumber||i+1))} · ${Number(v.remainingMg)} mg sealed</option>`).join("");
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADD TO OPEN VIAL</span>
@@ -1716,6 +1718,7 @@ function addToOpenVialModal(kitId) {
       <input id="atv-fromsealed" type="checkbox" ${sealedCount>0?"checked":""} ${sealedCount>0?"":"disabled"} style="accent-color:${c.color}">
       This came from one of my sealed vials${sealedCount>0?` (${sealedCount} available)`:" (none sealed right now)"}
     </label>
+    ${sealedCount?`<label class="field-label" for="atv-source">SEALED SOURCE VIAL</label><select id="atv-source" class="inp" style="width:100%;min-height:46px;margin-bottom:12px"><option value="">Choose the exact sealed vial</option>${sealedOptions}</select>`:""}
     <div id="atv-hint" style="font-size:10px;color:var(--t5);margin-bottom:18px">Checked: removes one sealed vial from your count, since its powder is now in this one. Unchecked: just adds the mg (e.g. a vial you hadn't logged into Nexus yet).</div>
     <button id="atv-save" class="btn-primary" style="background:${c.color}">Add to Open Vial</button>
   `, c.color);
@@ -1725,7 +1728,14 @@ function addToOpenVialModal(kitId) {
   // (right for the default amount, a full vial), but it used to stay ticked after the amount was
   // changed to something small — so adding 0.4mg silently deleted an entire 5mg sealed vial from
   // inventory. A partial amount can't be a whole vial's worth, so editing it unticks the box.
-  const atvMg = m.querySelector("#atv-mg"), atvBox = m.querySelector("#atv-fromsealed"), atvHint = m.querySelector("#atv-hint");
+  const atvMg = m.querySelector("#atv-mg"), atvBox = m.querySelector("#atv-fromsealed"), atvHint = m.querySelector("#atv-hint"), sourcePicker=m.querySelector("#atv-source");
+  if(sourcePicker){
+    sourcePicker.onchange=()=>{
+      const selected=sealedVials.find(v=>String(v.id)===String(sourcePicker.value));
+      if(selected&&atvBox.checked)atvMg.value=String(selected.remainingMg);
+    };
+    atvBox.onchange=()=>{sourcePicker.disabled=!atvBox.checked;};
+  }
   const atvHintDefault = atvHint.textContent;
   atvMg.oninput = () => {
     const v = parseFloat(atvMg.value);
@@ -1743,7 +1753,8 @@ function addToOpenVialModal(kitId) {
     saveButton.disabled=true;
     try{
       const source=fromSealed
-        ? (s.vials||[]).find(x=>x.status==="sealed") : null;
+        ? sealedVials.find(x=>String(x.id)===String(sourcePicker?.value)) : null;
+      if(fromSealed&&!source)throw Error("Choose the exact sealed source vial");
       const input={kitId:s.id,vialId:vial.id,expectedRemainingMg:vial.remainingMg,
         expectedVialMg:vial.vialMg,addMg,fromSealed,
         sourceSealedId:source?source.id:null,eventId:uid(),
