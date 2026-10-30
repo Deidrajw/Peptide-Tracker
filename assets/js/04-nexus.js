@@ -1986,6 +1986,28 @@ async function nexusCommitPreparationTransfer(input) {
     return event;
   });
 }
+// PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
+// but live controls remain disabled until every state writer shares the same
+// cross-tab transaction coordination. Never silently bypass this release gate.
+const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
+async function nexusCommitPreparedNasalOperation(operation) {
+  if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
+    throw Error("Prepared nasal stock logging is not enabled until shared state-write coordination and iPhone acceptance");
+  if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
+  if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared source transaction engine unavailable");
+  if(!navigator.locks||typeof navigator.locks.request!=="function")
+    throw Error("Exclusive inventory writer unavailable; nothing saved");
+  return navigator.locks.request(STORE_KEY+":inventory-transfer",{mode:"exclusive"},()=>{
+    const before=state;
+    const result=globalThis.NexusPreparedDoseTransaction.commit(before,operation,{
+      read:()=>localStorage.getItem(STORE_KEY),
+      write:serialized=>localStorage.setItem(STORE_KEY,serialized)
+    });
+    state=result.next;
+    _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+    return result;
+  });
+}
 function getEligibleSourceKits(name, method) {
   // An explicit route is required for route-scoped dose selection. Distinct
   // SubQ / nasal kits of the same compound are NEVER interchangeable stock.
