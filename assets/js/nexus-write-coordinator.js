@@ -12,7 +12,7 @@
 })(typeof globalThis!=="undefined"?globalThis:this,function(){
  const fail=message=>{throw Error(message)};
  const clone=value=>JSON.parse(JSON.stringify(value));
- function create({read,write,lock,lockName="nexus:state-writer",initialSnapshot=null}={}){
+ function create({read,write,remove,lock,lockName="nexus:state-writer",initialSnapshot=null}={}){
   if(typeof read!=="function"||typeof write!=="function")fail("Storage adapter required");
   if(typeof lockName!=="string"||!lockName)fail("Lock name required");
   let last=initialSnapshot, inFlight=false, blocked=false;
@@ -22,7 +22,7 @@
   function compare(){
    if(blocked)fail("Writes blocked until reloaded");
    const observed=read();
-   if(last!==null&&observed!==last)markConflict();
+   if(observed!==last)markConflict();
    return observed;
   }
   function persist(next,{beforeWrite}={}){
@@ -44,6 +44,18 @@
    if(inFlight)fail("Inventory transaction running; save blocked");
    return persist(next);
   }
+  function removeLegacy(){
+   if(inFlight)fail("Inventory transaction running; erase blocked");
+   if(typeof remove!=="function")fail("Removal adapter unavailable");
+   const observed=compare();
+   if(read()!==observed)markConflict();
+   try{remove()}catch(e){blocked=true;throw e}
+   let after;
+   try{after=read()}catch(e){blocked=true;throw e}
+   if(after!==null){blocked=true;fail("Removal readback mismatch; reload before retry")}
+   last=null;
+   return {removed:true};
+  }
   async function transaction(current,transform){
    if(typeof transform!=="function")fail("Transaction transform required");
    if(typeof lock!=="function")fail("Exclusive cross-tab lock required");
@@ -63,7 +75,7 @@
     });
    }finally{inFlight=false}
   }
-  return {saveLegacy,transaction,expected,status};
+  return {saveLegacy,removeLegacy,transaction,expected,status};
  }
  return {create};
 });
