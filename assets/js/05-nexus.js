@@ -270,7 +270,7 @@ function comboDoseModal() {
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
         state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
-        saveState(); closeModal(); render();
+        if(!saveState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
     };
   } catch(e) { showErrorBanner("comboDoseModal save-button wiring: "+e.message); }
@@ -2541,7 +2541,7 @@ function quickLogDose(name, occTime) {
   tgt[name].doses.push(dose);
   const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
   if (fulfilled) fulfilled.doseId = dose.id;
-  saveState(); render();
+  if(!saveState()){showErrorBanner("Quick dose could not be saved. Export a backup and reload before retrying.");return;} render();
   showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
