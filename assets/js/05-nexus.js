@@ -684,6 +684,54 @@ function nexusAdminMethod(value) {
 function nexusAdminSites(method) {
   return {SubQ:["Abdomen — upper L","Abdomen — upper R","Abdomen — lower L","Abdomen — lower R","Abdomen — upper middle","Abdomen — lower middle","Left thigh","Right thigh","Left flank","Right flank","Left upper arm","Right upper arm","Left delt","Right delt","Left glute","Right glute","Near injury site"],IM:["Deltoid — L (IM)","Deltoid — R (IM)","Vastus lateralis — L (IM)","Vastus lateralis — R (IM)","Ventrogluteal — L (IM)","Ventrogluteal — R (IM)","Left delt","Right delt","Left glute","Right glute"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
 }
+
+/* PR124 additive use preferences: no migration or historical record mutation. */
+function nexusUseSetupFor(name) {
+  const v=(state.nexusUseSetups||{})[name];
+  return v&&typeof v==="object"?v:null;
+}
+function nexusUseFamily(method) {
+  return ["SubQ","IM","IV"].includes(method)?"Injectable":(["Nasal","Topical","Oral"].includes(method)?method:"Other");
+}
+function nexusUseMassValue(value,from,to) {
+  const n=Number(value);
+  if(!Number.isFinite(n)||n<0||!["mg","mcg"].includes(from)||!["mg","mcg"].includes(to))return null;
+  return from===to?n:from==="mg"?n*1000:n/1000;
+}
+function nexusUseSetupModal(name) {
+  const c=cfg(name),cData=allPeptides()[name]||{};
+  const old=nexusUseSetupFor(name)||{};
+  const initial=nexusExplicitAdminMethod(old.method||cData.route)||"SubQ";
+  const preferred=["mg","mcg"].includes(old.unit)?old.unit:(["mg","mcg"].includes(c.unit)?c.unit:"mg");
+  const m=openModal(`
+    <div class="nx-use-setup" aria-label="Set up how you use ${esc(name)}">
+      <div class="nx-use-head"><div><span class="nx-use-kicker">USE SETUP</span><h2>How do you use ${esc(name)}?</h2><p>Set this once. Change it in Stash whenever you need.</p></div><button id="nx-use-close" type="button" aria-label="Close setup">✕</button></div>
+      <label class="field-label" for="nx-use-family">ADMINISTRATION</label>
+      <select id="nx-use-family" class="inp">${["Injectable","Nasal","Topical","Oral","Other"].map(x=>`<option value="${x}"${nexusUseFamily(initial)===x?" selected":""}>${x}</option>`).join("")}</select>
+      <div id="nx-use-injection-group" class="nx-use-secondary"><label class="field-label" for="nx-use-route">INJECTION ROUTE</label><select id="nx-use-route" class="inp"><option value="SubQ">SubQ</option><option value="IM">IM</option><option value="IV">IV</option></select></div>
+      <label class="field-label" for="nx-use-unit">PREFERRED DOSE UNIT</label>
+      <select id="nx-use-unit" class="inp"><option value="mcg"${preferred==="mcg"?" selected":""}>mcg</option><option value="mg"${preferred==="mg"?" selected":""}>mg</option></select>
+      <p class="nx-use-help">Change mg or mcg at any entry. IU is not a universal mass conversion and requires a validated product definition.</p>
+      <fieldset class="nx-use-tracking"><legend>HOW DO YOU WANT TO TRACK?</legend>
+        <label><input type="radio" name="nx-use-mode" value="backed"${old.trackingMode==="untracked"?"":" checked"}><span><strong>Doses and inventory</strong><small>Use a verified exact stock source.</small></span></label>
+        <label><input type="radio" name="nx-use-mode" value="untracked"${old.trackingMode==="untracked"?" checked":""}><span><strong>Doses only</strong><small>Save administrations without changing stock.</small></span></label>
+      </fieldset>
+      <p class="nx-use-help">Setting a method does not create prepared inventory. Existing records will remain unchanged.</p>
+      <button id="nx-use-save" type="button" class="btn-primary">Save use setup</button>
+    </div>`,"#A78BFA");
+  const family=m.querySelector("#nx-use-family"),route=m.querySelector("#nx-use-route"),group=m.querySelector("#nx-use-injection-group");
+  route.value=["SubQ","IM","IV"].includes(initial)?initial:"SubQ";
+  family.onchange=()=>{group.hidden=family.value!=="Injectable";};family.onchange();
+  m.querySelector("#nx-use-close").onclick=closeModal;
+  m.querySelector("#nx-use-save").onclick=()=>{
+    const method=family.value==="Injectable"?route.value:(family.value==="Other"?"Other":family.value);
+    const unit=m.querySelector("#nx-use-unit").value;
+    if(!["mg","mcg"].includes(unit)){showErrorBanner("Choose mg or mcg; IU needs a verified product definition.");return;}
+    state.nexusUseSetups=state.nexusUseSetups||{};
+    state.nexusUseSetups[name]={method,unit,trackingMode:m.querySelector('input[name="nx-use-mode"]:checked')?.value||"backed",updatedAt:new Date().toISOString()};
+    saveState();closeModal();render();
+  };
+}
 function doseModal(name, existing, occTime) {
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
