@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 vial-row UX refinement CODED, NOT RELEASED
+- User-approved targeted action hierarchy: existing ellipsis owns Set method and Plan preparation, direct View plan shown only on saved plan, clearer plan-vs-inventory language. Commits 089d9e0/8cedd29/8a28433. No changes to stock model, calculators, histories or storage schema, no migration. Automated checks and exact new-head LIVE/full DEMO pending; PR draft unmerged, primary Cloudflare not deployed, physical iPhone not accepted.
+
 ## 2026-10-29 — PR124 preparation planning UX update, NOT RELEASED
 - In response to a0f6466 iPhone feedback, implemented Plan preparation → View preparation plan/Edit plan in JS 864d202 and responsive styling 2eb292d. Linked plan remains audit metadata status planned-no-transfer; zero stock transfer, no nasal bottle, no preparation completed, no data migration. Original planning CTA was misleading and repeated after save; code now labels state accurately and updates existing plan instead of creating duplicates. CI and physical iPhone acceptance pending; release ZIP/DEMO for this source not yet validated; unmerged, undeployed.
 
