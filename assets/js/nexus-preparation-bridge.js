@@ -112,6 +112,7 @@
   const before=round(vial.remainingMg+dest.remainingMg);
   vial.remainingMg=round(vial.remainingMg-amount);
   dest.remainingMg=round(dest.remainingMg+amount);
+  if(vial.remainingMg<0||dest.remainingMg<0)fail("Negative inventory balance forbidden");
   if(Math.abs(round(vial.remainingMg+dest.remainingMg)-before)>1e-6)
    fail("Preparation mass conservation mismatch");
   dest.sourceKitId=kit.id;dest.sourceVialId=vial.id;
