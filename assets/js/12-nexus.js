@@ -1387,8 +1387,18 @@ function showOnboarding() {
       if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
       next.profile.onboardingDone=true;
       const before=state;
-      try{state=next;saveState();const stored=localStorage.getItem(STORE_KEY);if(!stored||stored!==JSON.stringify(next))throw Error("Could not verify saved backup");}
-      catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
+      try{
+        const writer=nexusWriter();
+        writer.saveLegacy(next);
+        _nexusLastSavedSnapshot=writer.expected();
+        state=next;
+      }catch(e){
+        state=before;
+        // Never blindly overwrite storage with a recovery copy after failure.
+        // Another tab may have updated the saved data; keep backup for review.
+        showSaveWarning();
+        throw e;
+      }
       closeModal();render();
     }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
   }
