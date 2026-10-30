@@ -2134,11 +2134,12 @@ function nexusAddFormulationModal(type,existingId=null){
         if(JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[])||
            JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
           throw Error("Inventory changed in another view. Reopen this form to review the latest inventory.");
-        const {next}=globalThis.NexusFormulationStock[commit](saved,input,{
-          read:()=>localStorage.getItem(STORE_KEY),
-          write:value=>localStorage.setItem(STORE_KEY,value)
-        });
-        state=next;_nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+        // Same guarded writer as ordinary state saves. Do not rebase after
+        // another tab has advanced its saved snapshot, even if stock matches.
+        const writer=nexusWriter();
+        const {next}=globalThis.NexusFormulationStock[operation](saved,input);
+        writer.saveLegacy(next);
+        state=next;_nexusLastSavedSnapshot=writer.expected();
       }
       closeModal();render();
     }catch(e){showErrorBanner("Container not saved: "+e.message);}
