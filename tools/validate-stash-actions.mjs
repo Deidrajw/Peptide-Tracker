@@ -15,7 +15,7 @@ try{
     state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
     document.documentElement.dataset.theme=t;
     state.supplies=[
-      {id:88901,name:'GHK-Cu',totalVials:3,vialMg:50,bacMl:2,activeKit:true,reconDate:'2026-10-20T12:00:00',vials:[{id:88911,status:'open',vialMg:50,remainingMg:40,reconDate:'2026-10-20T12:00:00'},{id:88912,status:'sealed',vialMg:50,remainingMg:50},{id:88913,status:'sealed',vialMg:50,remainingMg:50}]},
+      {id:88901,name:'GHK-Cu',totalVials:3,vialMg:50,bacMl:2,activeKit:true,reconDate:'2026-10-20T12:00:00',vials:[{id:88911,status:'open',intendedUse:'SubQ',vialMg:50,remainingMg:40,reconDate:'2026-10-20T12:00:00'},{id:88912,status:'sealed',vialMg:50,remainingMg:50},{id:88913,status:'sealed',vialMg:50,remainingMg:50}]},
       {id:88902,name:'Selank',totalVials:1,vialMg:5,bacMl:1,activeKit:false,reconDate:null,vials:[{id:88914,status:'sealed',vialMg:5,remainingMg:5}]},
       {id:88903,name:'Deadpool Test Blend',isBlend:true,composition:[{compound:'BPC-157',mg:10},{compound:'TB-500',mg:10}],totalVials:1,vialMg:20,bacMl:2,activeKit:false,reconDate:null,vials:[{id:88915,status:'sealed',vialMg:20,remainingMg:20}],doseLog:[],wasteLog:[]}
     ];
