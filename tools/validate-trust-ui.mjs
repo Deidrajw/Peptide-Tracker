@@ -209,7 +209,7 @@ try{
         });
         await page.evaluate(()=>logBlendDoseModal(975310));
         await page.locator('#dose').fill('31');
-        if(await page.locator('#nx-dose-step-next').count()){await page.locator('#nx-dose-step-next').click();}
+        if(await page.locator('#nx-dose-review-open').isVisible())await page.locator('#nx-dose-review-open').click();
         await page.locator('#save').click();
         assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
           'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');
