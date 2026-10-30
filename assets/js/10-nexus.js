@@ -252,6 +252,7 @@ function stashView() {
         <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}</span></span>
          <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
+      <div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Choose method, dose unit and tracking once";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Configure how you use ${esc(s.name)}">Use setup</button></div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
       ${displayOpenMg!==null ? `<div class="nx-kit-primary-vial">
@@ -2202,6 +2203,10 @@ function nexusCreateLinkedPreparation(kitId,vialId){
    saveState();closeModal();render();
  };
 }
+document.addEventListener("click",e=>{
+ const btn=e.target.closest?.(".nx-stash-use-setup");
+ if(btn&&typeof nexusUseSetupModal==="function")nexusUseSetupModal(btn.dataset.compound);
+});
 document.addEventListener("click",e=>{
  const btn=e.target.closest?.(".nx-kit-create-preparation");if(btn)nexusCreateLinkedPreparation(btn.dataset.kitId,btn.dataset.vialId);
 });
