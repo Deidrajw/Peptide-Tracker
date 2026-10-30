@@ -26,6 +26,7 @@ jobs:
           node tests/prepared-exclusive-execution.test.cjs
           node tests/add-to-open-vial-exclusive.test.cjs
           node tests/add-vials-exclusive.test.cjs
+          node tests/adjust-vial-exclusive.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/prepared-formulation-lifecycle.test.cjs
           node tests/formulation-stock.test.cjs
