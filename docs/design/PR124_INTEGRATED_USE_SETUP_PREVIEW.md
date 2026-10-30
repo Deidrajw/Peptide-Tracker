@@ -1,3 +1,10 @@
+## 2026-10-30 — APPROVED mode selection addendum
+Use Setup includes a single question: **How would you like to track doses?** Two modes:
+- **Track with inventory** — link a verified compatible physical vial or recorded prepared product, explicitly account for deductions. May show source-resolution during setup when needed, but never silently select an incompatible source or present plan-only stock as usable.
+- **Track doses only** — records the administration without managing/deducting Stash. A dose record carries explicit untracked status; history remains visible and exportable. No made-up kit/vial ID, no stock deductions, no prepared-stock creation.
+
+The choice is remembered for that specific use configuration (not a universal setting across different forms). Log Dose presents amount + selectable eligible unit + date and uses the remembered mode without asking again. Changing mode is a deliberate setting change for NEW entries; historical records preserve original provenance. If an inventory-backed source is unavailable, NEVER silently switch to untracked: offer a clear setup review/change mode action instead. All related save/edit/delete, export/import and stock isolation remain QA-gated. This is a product choice, not implemented code or a new release.
+
 # PR124 — Integrated UX journey preview (proposal, no application changes)
 Date: 2026-10-30. Baseline main da585ab3458394ddf5e88e283b210933beeab810; PR branch design source 03e5a428d7e404c80084a33c8c376be5694fa90e. Status: **DESIGN PREVIEW, NOT IMPLEMENTED / NOT APPROVED FOR MERGE**.
 
