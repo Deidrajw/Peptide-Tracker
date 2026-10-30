@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 exact source picker candidate, NOT RELEASED
+- Source `4a3d9a0e`: `bd4218d5` requires explicit sealed-vial picker and `4a3d9a0e` extends fictional Chromium UI test. Dedicated writer-safety workflow `41139878408` SUCCESS with 26-file source-matched LIVE ZIP and isolated full-app DEMO artifact `13018531897`; downloaded ZIP CRC checks PASS, offline DEMO/standalone parity PASS. Full browser and remaining visual/mobile workflows PENDING at time recorded. No user data writes, merge, production deploy or iPhone physical acceptance. All prepared nasal/transfer gates OFF.
+
 ## 2026-10-30 — PR124 exclusive Add to Open Vial candidate, NOT RELEASED
 - Draft development branch only. `4328b015` exclusive add/inverse; `895b282c` stale/unmigrated and metadata guard; `a15c4e3c` zero-outflow inverse; `cbca5db7` and `59ef6473` fictional Node tests; `b615f054` and `ba7cc67f` CI integration; `c35ddb95` actual browser form+Undo fixture. **New-head checks NOT VERIFIED yet**, so test and complete LIVE/DEMO package states remain PENDING. No release number increment, production data writes, destructive migration, merge, Cloudflare deploy or physical iPhone acceptance. Stock mutation retains exact source and audit; existing legacy synchronous writer race remains an explicit blocker; nasal/transfer gates OFF.
 
