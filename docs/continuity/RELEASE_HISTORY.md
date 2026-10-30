@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 staged UX candidate QA recovered, NOT RELEASED
+- Full source-8a28433a browser workflow 41004313957 SUCCESS, artifact 12955052803, full LIVE archive and isolated standalone DEMO CRC PASS; 24/24 exact GitHub blob source parity; VUX-01..06 partial/full browser evidence as documented in REGRESSION, VUX-07/08 incomplete and physical iPhone NOT TESTED. No production migration, merge or deployment. Previous v0.9.20-beta remains production baseline until approved release.
+
 ## 2026-10-30 — PR124 vial-row UX refinement CODED, NOT RELEASED
 - User-approved targeted action hierarchy: existing ellipsis owns Set method and Plan preparation, direct View plan shown only on saved plan, clearer plan-vs-inventory language. Commits 089d9e0/8cedd29/8a28433. No changes to stock model, calculators, histories or storage schema, no migration. Automated checks and exact new-head LIVE/full DEMO pending; PR draft unmerged, primary Cloudflare not deployed, physical iPhone not accepted.
 
