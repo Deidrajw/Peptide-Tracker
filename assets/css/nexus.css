@@ -2276,3 +2276,12 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-prep-plan-sheet .nx-prep-plan-secondary{border:1px solid var(--border-sub);border-radius:11px;min-height:46px;background:var(--surface);color:var(--t1);font-size:13px;font-weight:650}
 .nx-prep-plan-sheet #nx-linked-save{min-height:48px;width:100%;margin-top:12px}
 .nx-kit-create-preparation{min-height:44px!important}
+
+/* PR124: quiet vial row, one management menu plus saved-plan shortcut */
+.nx-vial-menu-action{display:block;width:100%;text-align:left;min-height:48px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650}
+.nx-vial-menu-action small{display:block;color:var(--t4);font-weight:400;font-size:11px;line-height:1.45;margin-top:3px}
+.nx-vial-menu-divider{height:1px;background:var(--border-sub);margin:12px 0}
+.nx-stash-view-plan{min-height:44px;padding:8px 10px;border:0;background:transparent;color:var(--accent,#a78bfa);font-size:13px;font-weight:650;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.nx-stash-view-plan:focus-visible,.nx-vial-menu-action:focus-visible{outline:2px solid var(--accent,#a78bfa);outline-offset:2px}
+.nx-stash-view-plan span{font-size:20px;line-height:1}
+@media(max-width:350px){.nx-stash-view-plan{font-size:12px;padding:7px 6px}.nx-kit-list-action{flex-shrink:0}}
