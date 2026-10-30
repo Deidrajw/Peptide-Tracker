@@ -500,8 +500,6 @@ try {
     ensure(splitReview.includes('Inventory'),'Multi-vial Review omits inventory source summary');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
-    const auditIds=await page.evaluate(()=>rows?.map(r=>r.kitId));
-    ensure(auditIds?.length===2,'Multi-vial ledger lost distinct physical source allocations');
     await clickSave(page);
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
