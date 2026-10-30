@@ -1,3 +1,6 @@
+## 2026-10-30 — Shared exclusive prepared execution boundary, no activation permission
+- Prepared nasal runtime (04-nexus.js, commit 2ebbd2c1) now calls the pure engine's executeExclusive, which requires writer.transaction and defaults disabled. The existing outer NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED=false remains mandatory. Never claim the standalone planner tests solve legacy synchronous cross-tab races; real user stock writes remain gated off. User approval to implement does not authorize a destructive writer migration, production release, merge or deploy. In-memory state adopts a result only after verified readback.
+
 ## 2026-10-30 — Prepared-source live activation still gated after exclusive execution scaffold
 - Code 8dbf9bfa implements exclusive planner execution with default-off enabled=false, accepting only supported dose/reverse under shared coordinator.transaction; initial state mutation and success UI are caller responsibilities only after verified durable result. This is a safe, narrow implementation of existing approved prepared-source work, NOT approval to enable live nasal stock deductions, to change existing sync writer API, or to merge/deploy. The flagged cross-tab sync/async race remains an explicit release blocker. Regression test 40f2d869, test lockout correction 48ca4187.
 
