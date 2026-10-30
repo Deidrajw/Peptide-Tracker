@@ -2099,7 +2099,10 @@ function nexusAddFormulationModal(type,existingId=null){
     compoundInput.setAttribute("aria-expanded",String(!!matches.length));
   }
   if(!existing){compoundInput.addEventListener("focus",refreshCompoundMatches);compoundInput.addEventListener("input",refreshCompoundMatches);}
-  m.querySelector("#nx-form-save").onclick=()=>{
+  m.querySelector("#nx-form-save").onclick=async()=>{
+    const saveButton=m.querySelector("#nx-form-save");
+    if(saveButton.disabled)return;
+    saveButton.disabled=true;
     try{
       if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
       const input=existing
@@ -2134,15 +2137,21 @@ function nexusAddFormulationModal(type,existingId=null){
         if(JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[])||
            JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
           throw Error("Inventory changed in another view. Reopen this form to review the latest inventory.");
-        // Same guarded writer as ordinary state saves. Do not rebase after
-        // another tab has advanced its saved snapshot, even if stock matches.
+        // Inventory-changing Stash edits now join the exclusive cross-tab
+        // writer instead of the synchronous legacy save path. The planner
+        // runs only after lock acquisition and a strict saved-state match.
         const writer=nexusWriter();
-        const {next}=globalThis.NexusFormulationStock[operation](saved,input);
-        writer.saveLegacy(next);
-        state=next;_nexusLastSavedSnapshot=writer.expected();
+        const result=await writer.transaction(saved,snapshot=>{
+          if(JSON.stringify(snapshot.supplies||[])!==JSON.stringify(state.supplies||[])||
+             JSON.stringify(snapshot.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
+            throw Error("Inventory changed. Reopen this form to review the latest inventory.");
+          return globalThis.NexusFormulationStock[operation](snapshot,input);
+        });
+        state=result.next;_nexusLastSavedSnapshot=writer.expected();
       }
       closeModal();render();
     }catch(e){showErrorBanner("Container not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
 }
 // Stash preparation planning: a reversible UI flow around non-transferring
