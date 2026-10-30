@@ -1973,48 +1973,105 @@ function addVialsModal(kitId) {
 // Deliberately NOT a silent overwrite: it always logs the delta as a wasteLog "adjustment"
 // entry, same as every other correction path this session, so the audit trail stays
 // truthful even when the correction itself isn't a normal consumption event.
+// Exact-vial, immutable correction planner. A correction is never inferred from
+// another log: one verified edit and one attributable adjustment record per commit.
+function planExclusiveVialAdjustment(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(s=>String(s.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Kit inventory unavailable");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("This kit changed; reopen the correction");
+  const matches=kit.vials.filter(v=>String(v.id)===String(input.vialId));
+  if(matches.length!==1)throw Error("Exact vial identity unavailable or duplicated");
+  const vial=matches[0];
+  if(vial.remainingMg===undefined||!Number.isFinite(Number(vial.remainingMg))||Number(vial.remainingMg)<0)
+    throw Error("Vial needs inventory reconciliation");
+  if(JSON.stringify(vial)!==input.expectedVial)throw Error("Vial changed; reopen the correction");
+  const capacity=Number(vial.vialMg!=null?vial.vialMg:kit.vialMg);
+  if(!Number.isFinite(capacity)||capacity<=0)
+    throw Error("Verified vial capacity required");
+  const requested=Number(input.newMg);
+  if(!Number.isFinite(requested)||requested<0||requested>capacity||
+     Math.round(requested*100)/100!==requested)
+    throw Error("Actual remaining must be within 0 and vial capacity, in 0.01mg increments");
+  const reason=typeof input.reason==="string"?input.reason.trim():"";
+  if(!reason)throw Error("A reason is required for every correction");
+  if(!input.eventId||String(input.eventId).trim()==="")
+    throw Error("A unique correction event is required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(kit.wasteLog.some(w=>String(w.id)===String(input.eventId)))
+    throw Error("Correction event already exists");
+  const before={remainingMg:vial.remainingMg,status:vial.status};
+  const deltaMg=Math.round((requested-Number(vial.remainingMg))*100)/100;
+  vial.remainingMg=requested<=0.01?0:requested;
+  if(vial.remainingMg===0&&vial.status!=="sealed")vial.status="empty";
+  else if(vial.remainingMg>0&&(vial.status==="empty"||vial.status==="transferred"))vial.status="open";
+  const after={remainingMg:vial.remainingMg,status:vial.status};
+  // Keep existing adjustment-log semantics: mg is the absolute difference,
+  // not a second physical stock deduction; sign/direction is in notes.
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:Math.abs(deltaMg),type:"adjustment",reason:`Manual correction: ${reason}`,
+    notes:`${deltaMg<0?"Reduced":"Increased"} by ${Math.abs(deltaMg).toFixed(2)}mg — set to ${vial.remainingMg.toFixed(2)}mg`,
+    status:"active",vialId:vial.id,adjustmentDeltaMg:deltaMg,stockBefore:before,stockAfter:after});
+  return {next,eventId:input.eventId};
+}
 function adjustVialRemainingModal(kitId, vialId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const vial = (s.vials||[]).find(v=>v.id===vialId); if(!vial || vial.remainingMg===undefined) return;
-  const c = cfg(s.name);
-  const capMg = vial.vialMg!=null ? vial.vialMg : (s.vialMg||0);
-  // Vial capacity/remaining is always plain mg, matching vial.remainingMg's own scale and
-  // the "KIT TOTAL: X/Y mg" display everywhere else — never the compound's dose unit
-  // (mcg for BPC-157 etc.), which is a different scale for a different kind of number.
-  // The Log Outflow whole-vial fix hit this exact same mistake; repeating it here would
-  // have made "4.49" silently become 0.00449mg.
-  const m = openModal(`
+  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
+  // Do not run legacy migration/backfill during this lock-protected stock edit.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before a correction.");return;
+  }
+  const matching=s.vials.filter(v=>String(v.id)===String(vialId));
+  if(matching.length!==1||matching[0].remainingMg===undefined){
+    showErrorBanner("Select one identifiable vial to correct.");return;
+  }
+  const vial=matching[0],c=cfg(s.name),capMg=Number(vial.vialMg!=null?vial.vialMg:s.vialMg);
+  if(!Number.isFinite(capMg)||capMg<=0){
+    showErrorBanner("Vial capacity must be verified before correction.");return;
+  }
+  const expectedKit=JSON.stringify(s),expectedVial=JSON.stringify(vial);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADJUST REMAINING AMOUNT</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <button id="x" aria-label="Close correction" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:16px">Nexus currently shows <b>${vial.remainingMg.toFixed(2)}mg</b> remaining in this vial (capacity: ${capMg}mg). Set what's actually true — the difference is logged as an adjustment, not silently overwritten.</div>
-    <label class="field-label">ACTUAL REMAINING AMOUNT (mg)</label>
-    <input id="adj-amount" type="number" step="0.01" class="inp" value="${vial.remainingMg.toFixed(2)}" style="margin-bottom:14px">
-    <label class="field-label">WHY (required)</label>
+    <div class="hint" style="margin-bottom:16px">Nexus currently shows <b>${Number(vial.remainingMg).toFixed(2)}mg</b> in this vial (capacity: ${capMg}mg). Set what is physically true. This writes an attributed adjustment to history.</div>
+    <label class="field-label" for="adj-amount">ACTUAL REMAINING AMOUNT (mg)</label>
+    <input id="adj-amount" type="number" min="0" max="${capMg}" step="0.01" class="inp" value="${Number(vial.remainingMg).toFixed(2)}" style="margin-bottom:14px">
+    <label class="field-label" for="adj-reason">WHY (required)</label>
     <textarea id="adj-reason" class="inp" placeholder="e.g. Correcting inventory bug — vial was wrongly marked empty by a Log Outflow issue" style="min-height:60px;resize:vertical;margin-bottom:18px"></textarea>
     <button id="adj-save" class="btn-primary" style="background:${c.color}">Save Correction</button>
-  `, c.color);
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#adj-save").onclick = () => {
-    const newMgRaw = parseFloat(m.querySelector("#adj-amount").value);
-    const reasonText = m.querySelector("#adj-reason").value.trim();
-    if (isNaN(newMgRaw) || newMgRaw<0) { showErrorBanner("Enter a valid amount, 0 or more."); return; }
-    if (!reasonText) { showErrorBanner("A reason is required for a manual inventory correction — this becomes part of your audit trail."); return; }
-    const newMg = Math.min(capMg, newMgRaw);
-    const deltaMg = Math.round((newMg - vial.remainingMg)*100)/100;
-    const wasEmptyOrTransferred = vial.status==="empty"||vial.status==="transferred";
-    vial.remainingMg = Math.round(newMg*100)/100;
-    if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; if (vial.status!=="sealed") vial.status = "empty"; }
-    else if (wasEmptyOrTransferred) { vial.status = "open"; }
-    if (!s.wasteLog) s.wasteLog = [];
-    s.wasteLog.push({
-      id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: Math.abs(deltaMg), type: "adjustment",
-      reason: `Manual correction: ${reasonText}`, notes: `${deltaMg<0?"Reduced":"Increased"} by ${Math.abs(deltaMg).toFixed(2)}mg — set to ${newMg.toFixed(2)}mg`,
-      status: "active", vialId: vial.id,
-    });
-    saveState(); closeModal(); render();
+  `,c.color);
+  m.querySelector("#x").onclick=closeModal;
+  const button=m.querySelector("#adj-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const rawMg=m.querySelector("#adj-amount").value.trim();
+    const requested=rawMg===""?NaN:Number(rawMg);
+    const reason=m.querySelector("#adj-reason").value.trim();
+    if(!Number.isFinite(requested)||requested<0||requested>capMg||
+       Math.round(requested*100)/100!==requested){
+      showErrorBanner("Enter a valid amount between 0 and vial capacity (maximum two decimals).");return;
+    }
+    if(!reason){showErrorBanner("A reason is required for a manual inventory correction — it becomes part of the audit trail.");return;}
+    const input={kitId:s.id,vialId:vial.id,expectedKit,expectedVial,newMg:requested,reason,
+      eventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    button.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveVialAdjustment(state,input);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),currentKit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!currentKit||JSON.stringify(currentKit)!==expectedKit)
+          throw Error("This kit changed; reopen the correction");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveVialAdjustment(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Correction not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
