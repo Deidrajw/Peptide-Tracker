@@ -25,6 +25,7 @@ jobs:
           node tests/prepared-dose-transaction.test.cjs
           node tests/prepared-exclusive-execution.test.cjs
           node tests/preparation-bridge.test.cjs
+          node tests/prepared-formulation-lifecycle.test.cjs
           node tests/formulation-stock.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-save-acknowledgement.mjs
