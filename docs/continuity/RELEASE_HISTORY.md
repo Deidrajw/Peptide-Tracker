@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 Add Vials exclusive restock candidate, NOT RELEASED
+- Development v0.9.20-beta unchanged. `fa40d091` immutable exact-ID Add Vials + inverse, `33d036cf`/`17313adb` fictional Node regression, `014d85c2`/`b346f1e2` dedicated/full CI, `bce66ebc` actual browser UI test, `546441ab` static writer guard. Previously pending full browser `41139878373` for pre-restock application source `4a3d9a0e` verified SUCCESS, NOT transferable to new head. Current restock writer CI/artifact parity PENDING, real iPhone NOT TESTED. No production migration, writes, release tag, merge or Cloudflare deployment; nasal/transfer live gates remain FALSE.
+
 ## 2026-10-30 — PR124 exact source picker candidate, NOT RELEASED
 - Source `4a3d9a0e`: `bd4218d5` requires explicit sealed-vial picker and `4a3d9a0e` extends fictional Chromium UI test. Dedicated writer-safety workflow `41139878408` SUCCESS with 26-file source-matched LIVE ZIP and isolated full-app DEMO artifact `13018531897`; downloaded ZIP CRC checks PASS, offline DEMO/standalone parity PASS. Full browser and remaining visual/mobile workflows PENDING at time recorded. No user data writes, merge, production deploy or iPhone physical acceptance. All prepared nasal/transfer gates OFF.
 
