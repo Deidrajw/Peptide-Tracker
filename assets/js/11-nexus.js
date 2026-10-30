@@ -277,8 +277,8 @@ function devResetAllModal() {
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
     if (m.querySelector("#erase-confirm").value.trim().toUpperCase()!=="ERASE") return;
-    try { localStorage.removeItem(STORE_KEY); } catch(e) {}
-    location.reload();
+    try { nexusEraseSavedState(); location.reload(); }
+    catch(e){console.error("Nexus erase failed",e);showSaveWarning();}
   };
 }
 
