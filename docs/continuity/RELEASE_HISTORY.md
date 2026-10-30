@@ -1,3 +1,6 @@
+## 2026-10-30 — Add Vials dedicated safety / package verified, still NOT RELEASED
+- Application/guard `546441ab`; dedicated writer CI `41142799501` SUCCESS, mobile `41142799457` SUCCESS, nested `41142799419` SUCCESS. Dedicated full-app artifact `13019931495` obtained and CRC PASS, LIVE 26 files and isolated DEMO parity PASS. Full Chromium `41142799429` and WebKit `41142799430` pending. No physical iPhone test, merge/deploy, production localStorage writes or schema migration. Runtime prepared gates false.
+
 ## 2026-10-30 — PR124 Add Vials exclusive restock candidate, NOT RELEASED
 - Development v0.9.20-beta unchanged. `fa40d091` immutable exact-ID Add Vials + inverse, `33d036cf`/`17313adb` fictional Node regression, `014d85c2`/`b346f1e2` dedicated/full CI, `bce66ebc` actual browser UI test, `546441ab` static writer guard. Previously pending full browser `41139878373` for pre-restock application source `4a3d9a0e` verified SUCCESS, NOT transferable to new head. Current restock writer CI/artifact parity PENDING, real iPhone NOT TESTED. No production migration, writes, release tag, merge or Cloudflare deployment; nasal/transfer live gates remain FALSE.
 
