@@ -52,6 +52,9 @@ function runUndo(state,op=rev){return undo({state,op}).next}
  const modified=JSON.parse(JSON.stringify(changed));
  modified.supplies[0].vials[0].remainingMg=4;
  assert.throws(()=>runUndo(modified),/balance changed/);
+ const metadataChanged=JSON.parse(JSON.stringify(changed));
+ metadataChanged.supplies[0].vials[0].reconDate="2026-11-01";
+ assert.throws(()=>runUndo(metadataChanged),/details changed/);
  let raw=JSON.stringify(fixture()),writes=0;
  const lock=async(_name,task)=>task();
  const w=create({read:()=>raw,write:x=>{writes++;raw=x},lock,initialSnapshot:raw});
