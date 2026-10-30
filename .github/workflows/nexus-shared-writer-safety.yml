@@ -1,0 +1,47 @@
+name: Nexus shared inventory writer safety
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  shared-writer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Shared writer and protected prepared ledger tests
+        run: |
+          set -e
+          node --check assets/js/nexus-write-coordinator.js
+          node --check assets/js/nexus-prepared-dose-transaction.js
+          node --check assets/js/01-nexus.js
+          node --check assets/js/04-nexus.js
+          node tests/write-coordinator.test.cjs
+          node tests/prepared-dose-transaction.test.cjs
+          node tests/preparation-bridge.test.cjs
+          node tests/formulation-stock.test.cjs
+          node tools/validate-storage-writers.mjs
+      - name: Build complete LIVE and isolated full-app DEMO
+        run: node tools/build-release.mjs
+      - name: Verify exact checkout parity for complete LIVE package
+        run: |
+          python3 - <<'PY'
+          import pathlib,zipfile,json,hashlib
+          ver=json.loads(pathlib.Path('release/release.json').read_text())['version']
+          with zipfile.ZipFile(f'dist/Nexus_{ver}_LIVE_GitHub.zip') as z:
+            assert z.testzip() is None
+            files=[p for p in z.namelist() if not p.endswith('/')]
+            assert len(files)>=26
+            for p in files:
+              assert hashlib.sha256(z.read(p)).digest()==hashlib.sha256(pathlib.Path(p).read_bytes()).digest(),p
+            print(f'PASS: {len(files)} exact checkout LIVE source files')
+          with zipfile.ZipFile(f'dist/Nexus_{ver}_OFFLINE_FULL_DEMO_OPEN_ME.zip') as z:
+            assert z.testzip() is None
+            assert z.read('index.html')==pathlib.Path(f'dist/Nexus_{ver}_FULL_DEMO.html').read_bytes()
+          print('PASS: source-exact complete LIVE and isolated standalone full-app DEMO')
+          PY
