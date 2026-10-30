@@ -763,7 +763,7 @@ function nexusUseSetupModal(name,onSaved) {
     if(!["mg","mcg"].includes(unit)){showErrorBanner("Choose mg or mcg; IU needs a verified product definition.");return;}
     state.nexusUseSetups=state.nexusUseSetups||{};
     const trackingMode=modeNow();
-    const choice=sourceRows[Number(sourceInput.value)];
+    const choice=sourceInput.value===""?null:sourceRows[Number(sourceInput.value)];
     if(choice&&trackingMode==="backed"){
       const known=nexusExplicitAdminMethod(choice.vial.intendedUse)||nexusExplicitAdminMethod(choice.kit.preparationMethod||choice.kit.administrationMethod||choice.kit.route);
       if(known&&known!==method){showErrorBanner("This vial has a different confirmed method. No setup saved.");return;}
@@ -844,7 +844,9 @@ function doseModal(name, existing, occTime) {
         // nasal bottle is not a nasal-administered source until a transfer is validated.
         const use=v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
           nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
-        return use===initialMethod;
+        // Physical nasal-labelled vials are not prepared nasal containers.
+        // Until explicit prepared-container stock is linked, never debit these as a spray.
+        return initialMethod!=="Nasal"&&use===initialMethod;
       }).map(vial=>({kit,vial}));});
   // Legacy inventory imported before method-labelled vials existed may have real
   // open stock without a route label. Show it for explicit confirmation; never
