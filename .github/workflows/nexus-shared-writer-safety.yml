@@ -23,6 +23,7 @@ jobs:
           node --check assets/js/04-nexus.js
           node tests/write-coordinator.test.cjs
           node tests/prepared-dose-transaction.test.cjs
+          node tests/prepared-exclusive-execution.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/formulation-stock.test.cjs
           node tools/validate-storage-writers.mjs
