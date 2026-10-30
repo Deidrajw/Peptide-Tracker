@@ -898,10 +898,10 @@ function doseModal(name, existing, occTime) {
     `}
     ${!isUntracked && !isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isUntracked && !isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
+    ${!isUntracked && !isEdit && eligibleSources.length ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
     ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
+    <div class="field-label" id="nx-method-label" style="${useSetup&&!isEdit?"display:none":""}">ADMINISTRATION METHOD</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label" style="${useSetup&&!isEdit?"display:none":""}">
       ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
@@ -1045,7 +1045,9 @@ function doseModal(name, existing, occTime) {
       showErrorBanner("Choose the vial you used before reviewing.");return;
     }
     if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&!activeKit()&&!isBlend){
-      showErrorBanner("No verified source for this use. Review setup in Stash before confirming inventory-backed logging.");return;
+      const setup=m.querySelector("#nx-dose-use-setup");
+      if(setup){setup.click();return;}
+      showErrorBanner("No compatible source selected. Nothing was saved.");return;
     }
     showDoseReview(true);
   };
