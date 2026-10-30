@@ -90,5 +90,59 @@ try{
  assert.equal(saved.inMemory.remainingCount,12);
  assert.equal(saved.pending,false);
  console.log("PASS: actual Stash formulation Save uses exclusive transaction, persists fictional capsule and leaves no pending write");
+
+ // Exercise the actual Add to Open Vial UI with FICTIONAL data using durable
+ // localhost storage and a real browser Web Lock. No production user records.
+ await a.evaluate(()=>{
+   closeModal();
+   const fresh=buildDemoState("weight_loss");
+   fresh.profile.onboardingDone=true;
+   fresh.supplies.push({id:987654321,name:"Retatrutide",vialMg:5,totalVials:2,
+     vials:[{id:"fictional-open",status:"open",vialMg:5,remainingMg:.2},
+       {id:"fictional-sealed",status:"sealed",vialMg:5,remainingMg:5,marker:"exact-source"}],
+     wasteLog:[]});
+   state=fresh;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+   _nexusSharedWriter=null;
+   addToOpenVialModal(987654321);
+ });
+ await a.locator("#atv-save").click();
+ await a.waitForFunction(()=>{
+   const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654321);
+   return kit?.wasteLog?.some(e=>e.type==="addition"&&e.status==="active");
+ },{timeout:10000});
+ const added=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(x=>x.id===987654321);
+   return {balance:k.vials.find(v=>v.id==="fictional-open").remainingMg,
+     sourceExists:k.vials.some(v=>v.id==="fictional-sealed"),
+     count:k.totalVials,record:k.wasteLog.find(e=>e.type==="addition"),
+     writerPending:nexusWriter().status().inFlight};
+ });
+ assert.equal(added.balance,5.2);
+ assert.equal(added.sourceExists,false);
+ assert.equal(added.count,1);
+ assert.equal(added.record.sourceSealedVialId,"fictional-sealed");
+ assert.equal(added.writerPending,false);
+ await a.locator("#undo-btn").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654321);
+   return k?.wasteLog?.some(e=>e.type==="addition-reversal");
+ },{timeout:10000});
+ const undoneUi=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654321);
+   return {balance:k.vials.find(v=>v.id==="fictional-open").remainingMg,
+     restored:k.vials.find(v=>v.id==="fictional-sealed"),
+     count:k.totalVials,events:k.wasteLog};
+ });
+ assert.equal(undoneUi.balance,.2);
+ assert.equal(undoneUi.restored.marker,"exact-source");
+ assert.equal(undoneUi.count,2);
+ assert.equal(undoneUi.events.length,2);
+ assert.equal(undoneUi.events[0].status,"reversed");
+ assert.equal(undoneUi.events[1].reversesEventId,added.record.id);
+ assert.equal(undoneUi.events[1].mg,0,"Reversal must not create a new outflow");
+ console.log("PASS: real Chromium fictional Add to Open Vial form persists exclusive exact-vial source and event-addressed undo");
+
  await context.close();
 }finally{await browser.close()}
