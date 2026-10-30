@@ -868,37 +868,81 @@ function doseModal(name, existing, occTime) {
   fixedDoseHeader.className="nx-dose-fixed-header";
   fixedDoseHeader.append(doseHead);
   doseScroll.insertAdjacentElement("beforebegin",fixedDoseHeader);
-  const review=document.createElement("details");
-  review.className="nx-dose-review-stage nx-dose-inline-review";
-  review.innerHTML='<summary>Review entry</summary><div id="nx-dose-review-rows"></div><div id="nx-dose-source-ids" hidden><div class="nx-dose-source-ids-body"></div></div><p>Inventory and source allocation are checked again on confirmation.</p>';
-  doseScroll.appendChild(review);
+  // Entry and confirmation are two stages of ONE modal, not two logging modes.
+  // Keep the original entry DOM mounted so edits, pending source allocations,
+  // date, notes and draft state survive every Back transition.
+  const review=document.createElement("section");
+  review.className="nx-dose-review-stage nx-dose-confirm-screen";
+  review.setAttribute("aria-label","Review dose");
+  review.hidden=true;
+  review.innerHTML='<div class="nx-dose-confirm-heading"><span class="nx-dose-confirm-eyebrow">FINAL CHECK</span><h2 id="nx-dose-review-title">Review dose</h2><p>Confirm the details before adding this entry to your history.</p></div><div class="nx-dose-confirm-hero"><span>DOSE</span><strong id="nx-dose-review-amount"></strong><span id="nx-dose-review-compound"></span></div><div id="nx-dose-review-rows" class="nx-dose-confirm-rows"></div><p class="nx-dose-confirm-safety" role="status">Nothing is saved until you tap Confirm & save. Inventory is checked again when saving.</p>';
+  doseScroll.insertAdjacentElement("afterend",review);
+  const saveButton=m.querySelector("#save");
+  const reviewButton=document.createElement("button");
+  reviewButton.type="button";
+  reviewButton.id="nx-dose-review-open";
+  reviewButton.className="btn-primary";
+  reviewButton.textContent=isEdit?"Review changes":"Review dose";
+  saveButton.insertAdjacentElement("beforebegin",reviewButton);
+  const backButton=document.createElement("button");
+  backButton.type="button";
+  backButton.id="nx-dose-review-back";
+  backButton.className="nx-dose-back";
+  backButton.textContent="‹  Edit details";
+  backButton.hidden=true;
+  reviewButton.insertAdjacentElement("beforebegin",backButton);
+  let doseReviewActive=false;
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
-  const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
+  const reviewRow=(label,value)=>'<div class="nx-dose-confirm-row"><span>'+esc(String(label))+'</span><strong>'+esc(String(value??"Not set"))+'</strong></div>';
   const updateDoseReview=()=>{
     const kit=activeKit();
     const vial=kit?activeVial():null;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
-    const sourceName=selectedSource==="fresh"
-      ?(vial?(kit.name+" · "+(vial.label||vial.name||"open vial")):"Open vial not selected")
-      :(prepared?"Prepared dose · "+prepared.amountEach+" "+c.unit:"Prepared dose");
-    const allocated=rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
+    const sourceLabel=selectedSource==="fresh"
+      ?(vial?(kit.name+" · Vial "+(vial.sequenceNumber||"?")):"Source not selected")
+      :(prepared?"Prepared dose":"Prepared source");
+    const usedMg=doseToMg(Number(doseVal("dose")),c.unit);
+    const remaining=vial?getVialRemainingMg(kit,vial):null;
+    review.querySelector("#nx-dose-review-amount").textContent=doseVal("dose")+" "+c.unit;
+    review.querySelector("#nx-dose-review-compound").textContent=name;
     review.querySelector("#nx-dose-review-rows").innerHTML=
-      row("Compound",name)+row("Dose",doseVal("dose")+" "+c.unit)+
-      row("Date & time",doseVal("date"))+row("Administration site",doseVal("site"))+
-      row("Source",sourceName)+
-      (selectedSource==="fresh"&&!isEdit&&!isBlend?
-        row("Allocated",mgToUnit(allocated,c.unit).toFixed(2)+" "+c.unit)+
-        rows.map((r,i)=>row("Source "+(i+1),mgToUnit(Number(r.mg)||0,c.unit).toFixed(2)+" "+c.unit)).join(""):"");
-    const ids=review.querySelector("#nx-dose-source-ids");
-    const idRows=rows.map((r,i)=>row("Source "+(i+1)+" kit ID",r.kitId||"Unspecified")+row("Source "+(i+1)+" vial ID",r.vialId||"Unspecified")).join("");
-    ids.hidden=!kit&&!rows.length;
-    ids.querySelector(".nx-dose-source-ids-body").innerHTML=(kit?row("Kit ID",kit.id):"")+(vial?row("Vial ID",vial.id):"")+idRows;
+      reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
+      reviewRow("Method",initialMethod)+
+      reviewRow("Administration site",doseVal("site")||"Not recorded")+
+      reviewRow("Inventory",isEdit?"Existing source retained":sourceLabel)+
+      (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
+        ?reviewRow("Vial remaining after save",mgToUnit(Math.max(0,remaining-usedMg),c.unit).toFixed(2)+" "+c.unit):"")+
+      (m.querySelector("#nx-dose-as-needed")?.checked?reviewRow("Protocol","Independent log"):"");
   };
-  review.addEventListener("toggle",()=>{if(review.open)updateDoseReview();});
-  doseScroll.addEventListener("input",()=>{if(review.open)updateDoseReview();});
-  doseScroll.addEventListener("change",()=>{if(review.open)updateDoseReview();});
-  if(doseFooter)doseFooter.querySelector(".nx-dose-review-note").textContent=
-    "Confirm the entered amount and inventory source before recording.";
+  const showDoseReview=(on)=>{
+    doseReviewActive=on;
+    if(on)updateDoseReview();
+    doseScroll.hidden=on;
+    review.hidden=!on;
+    reviewButton.hidden=on;
+    backButton.hidden=!on;
+    saveButton.hidden=!on;
+    reviewButton.setAttribute("aria-expanded",String(on));
+    fixedDoseHeader.querySelector(".nx-dose-kicker").textContent=on?"STEP 2 OF 2":(isEdit?"EDIT ENTRY":"STEP 1 OF 2");
+    fixedDoseHeader.querySelector(".nx-dose-title").textContent=on?"Review & confirm":(isEdit?"Edit dose":"Log a dose");
+    const note=doseFooter.querySelector(".nx-dose-review-note");
+    if(note)note.textContent=on?"Check your entry, then confirm once.":"Your entry stays here until you review and save.";
+    if(on)review.querySelector("#nx-dose-review-title")?.focus?.();
+  };
+  reviewButton.onclick=()=>{
+    const amount=Number(doseVal("dose"));
+    const date=doseVal("date");
+    if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date and time before reviewing.");return;}
+    if(!Number.isFinite(amount)||amount<=0){showErrorBanner("Enter an amount greater than zero before reviewing.");return;}
+    // Do not infer a vial when more than one physical source exists.
+    // The authoritative save path still verifies inventory and allocation.
+    if(!isEdit&&selectedSource==="fresh"&&needsKitPicker&&!selectedPhysicalSource()){
+      showErrorBanner("Choose the vial you used before reviewing.");return;
+    }
+    showDoseReview(true);
+  };
+  backButton.onclick=()=>showDoseReview(false);
+  showDoseReview(false);
   m.querySelector("#x").onclick = closeModal;
   const reactionLink=m.querySelector("#nx-record-reaction");
   if(reactionLink)reactionLink.onclick=()=>nexusDoseReactionModal(name,f.id);
