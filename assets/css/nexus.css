@@ -2235,3 +2235,17 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx2-dose-modal #nx-dose-inventory-status small{font-size:12px}
 .nx2-dose-modal #toggle-multi{font-size:12px;min-height:44px}
 .nx2-dose-modal .nx-dose-source-exception .kit-opt,.nx2-dose-modal .nx-dose-source-exception .src-opt{min-height:48px}
+
+/* Stash-first one-time legacy vial method setup — scoped DS2 treatment */
+.nx-stash-set-vial-method{min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
+.nx-stash-method-sheet{padding:8px 2px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+.nx-stash-method-header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.nx-stash-method-header h2{font-size:23px;line-height:1.2;letter-spacing:-.025em;color:var(--t1);margin:7px 0}
+.nx-stash-method-header p,.nx-stash-method-explain{font-size:13px;line-height:1.5;color:var(--t3);margin:0}
+.nx-stash-method-header button{min-width:44px;min-height:44px;border:0;border-radius:10px;background:var(--surface-2);color:var(--t2)}
+.nx-stash-method-choices{border:0;padding:0;margin:0;display:grid;gap:9px;min-width:0}
+.nx-stash-method-choices legend{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:9px}
+.nx-stash-method-choices label{display:flex;align-items:center;gap:12px;min-height:48px;padding:11px 13px;border:1px solid var(--border-sub);border-radius:12px;color:var(--t1);font-size:14px}
+.nx-stash-method-choices input{width:20px;height:20px;accent-color:var(--accent,#A78BFA)}
+.nx-stash-method-sheet #nx-stash-method-confirm{min-height:48px;width:100%}
+.nx-stash-method-sheet #nx-stash-method-confirm:disabled{opacity:.48}
