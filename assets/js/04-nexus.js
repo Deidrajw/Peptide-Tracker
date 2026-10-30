@@ -1603,30 +1603,90 @@ function manageKitMenu(kitId) {
 function addToOpenVialWouldOverRemove(addMg, kitVialMg, fromSealed) {
   return !!fromSealed && kitVialMg > 0 && addMg < kitVialMg * 0.9;
 }
-// Applies the addition and returns what's needed to undo it exactly.
-function applyAddToOpenVial(kit, vial, addMg, fromSealed) {
-  const snap = { beforeRemaining: vial.remainingMg, beforeVialMg: vial.vialMg, removedSealedId: null };
-  vial.remainingMg = Math.round((vial.remainingMg + addMg)*100)/100;
-  vial.vialMg = Math.round((vial.vialMg + addMg)*100)/100;
-  if (fromSealed) {
-    const sealedVial = ensureKitVials(kit).find(v=>v.status==="sealed");
-    if (sealedVial) { snap.removedSealedId = sealedVial.id; kit.vials = kit.vials.filter(v=>v.id!==sealedVial.id); kit.totalVials = Math.max(0,(kit.totalVials||0)-1); }
+// Pure, exact-vial stock planner. The caller supplies unique IDs and persists the
+// whole state inside nexusWriter().transaction; no mutation of live state before readback.
+function planAddToOpenVial(snapshot, input) {
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Exact source kit unavailable; reload Stash");
+  const vial=kit.vials.find(v=>String(v.id)===String(input.vialId));
+  if(!vial||!["active","open"].includes(vial.status))throw Error("Selected open vial changed; reopen this form");
+  if(Number(vial.remainingMg)!==Number(input.expectedRemainingMg) ||
+     Number(vial.vialMg)!==Number(input.expectedVialMg))throw Error("Vial balance changed; reopen this form");
+  const amount=Number(input.addMg);
+  if(!Number.isFinite(amount)||amount<=0||Math.round(amount*100)/100!==amount)
+    throw Error("Enter a positive mg amount with no more than two decimal places");
+  if(!Number.isFinite(Number(vial.remainingMg))||!Number.isFinite(Number(vial.vialMg)))
+    throw Error("Unverified vial amount");
+  if((kit.wasteLog||[]).some(x=>String(x.id)===String(input.eventId)))
+    throw Error("Addition already recorded");
+  const source=input.fromSealed
+    ? kit.vials.find(v=>String(v.id)===String(input.sourceSealedId)) : null;
+  if(input.fromSealed){
+    if(!source||source.id===vial.id||source.status!=="sealed")
+      throw Error("Selected sealed source vial is no longer available");
+    // An entire sealed vial is consumed; partial/mismatched amounts cannot
+    // silently discard or create stock. Use a separate adjustment instead.
+    if(Math.abs(Number(source.remainingMg)-amount)>0.001 ||
+       Math.abs(Number(source.vialMg)-amount)>0.001)
+      throw Error("Amount must match the exact sealed source vial");
   }
-  if (!kit.wasteLog) kit.wasteLog = [];
-  // The amount is always MILLIGRAMS (the field is "MG TO ADD") — this used to print it with the
-  // compound's own unit, so 0.4mg on an mcg-dosed compound was logged as "0.4mcg", off by 1000x.
-  kit.wasteLog.push({ id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: -addMg, type: "addition",
-    reason: `Added ${addMg}mg to the open vial${fromSealed?" (from a sealed vial, now removed from count)":""} — not done with it yet, chose not to open a separate one.`,
-    notes: "", status: "active", vialId: vial.id });
-  return snap;
+  const before={remainingMg:vial.remainingMg,vialMg:vial.vialMg};
+  const after={remainingMg:Math.round((Number(vial.remainingMg)+amount)*100)/100,
+    vialMg:Math.round((Number(vial.vialMg)+amount)*100)/100};
+  if(!Number.isFinite(after.remainingMg)||!Number.isFinite(after.vialMg))
+    throw Error("Invalid resulting vial amount");
+  vial.remainingMg=after.remainingMg;vial.vialMg=after.vialMg;
+  const sourceCopy=source?JSON.parse(JSON.stringify(source)):null;
+  if(source){
+    kit.vials=kit.vials.filter(v=>String(v.id)!==String(source.id));
+    kit.totalVials=Math.max(0,(kit.totalVials||0)-1);
+  }
+  if(!Array.isArray(kit.wasteLog))kit.wasteLog=[];
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:-amount,type:"addition",status:"active",vialId:vial.id,
+    reason:`Added ${amount}mg to open vial${source?" from exact sealed vial":""}`,
+    notes:"",sourceSealedVialId:source?source.id:null,
+    sourceSealedVialSnapshot:sourceCopy,stockBefore:before,stockAfter:after});
+  return {next,eventId:input.eventId};
 }
-function undoAddToOpenVial(kit, vial, snap) {
-  vial.remainingMg = snap.beforeRemaining; vial.vialMg = snap.beforeVialMg;
-  if (snap.removedSealedId && !kit.vials.find(v=>v.id===snap.removedSealedId)) {
-    kit.vials.push({ id: snap.removedSealedId, status:"sealed", vialMg: kit.vialMg, remainingMg: kit.vialMg });
-    kit.totalVials = (kit.totalVials||0)+1;
+function planUndoAddToOpenVial(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Source kit unavailable");
+  const events=kit.wasteLog||[];
+  const idx=events.findIndex(x=>String(x.id)===String(input.eventId));
+  const event=events[idx];
+  if(!event||event.type!=="addition"||event.status!=="active"||
+     !event.stockBefore||!event.stockAfter)
+    throw Error("This addition cannot be reversed automatically");
+  const vial=kit.vials.find(v=>String(v.id)===String(event.vialId));
+  if(!vial||!["active","open"].includes(vial.status))
+    throw Error("Vial lifecycle changed; review history before reversing");
+  if(Number(vial.remainingMg)!==Number(event.stockAfter.remainingMg)||
+     Number(vial.vialMg)!==Number(event.stockAfter.vialMg))
+    throw Error("Vial balance changed; automatic undo blocked");
+  // Do not undo an older addition over later operations on the same vial.
+  if(events.slice(idx+1).some(e=>String(e.vialId)===String(event.vialId)&&e.status!=="reversed"))
+    throw Error("Later vial events exist; automatic undo blocked");
+  if(events.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Undo already recorded");
+  const source=event.sourceSealedVialSnapshot;
+  if(source){
+    if(kit.vials.some(v=>String(v.id)===String(source.id)))
+      throw Error("Original sealed vial ID is already in use");
+    if(source.status!=="sealed"||Number(source.remainingMg)!==-Number(event.mg))
+      throw Error("Original sealed source cannot be restored safely");
+    kit.vials.push(JSON.parse(JSON.stringify(source)));
+    kit.totalVials=(kit.totalVials||0)+1;
   }
-  kit.wasteLog.pop(); // removes the addition-audit entry just added — it's the last one
+  vial.remainingMg=event.stockBefore.remainingMg;
+  vial.vialMg=event.stockBefore.vialMg;
+  event.status="reversed";event.reversedAt=input.loggedAt;event.reversalId=input.undoEventId;
+  events.push({id:input.undoEventId,date:input.date,loggedAt:input.loggedAt,
+    type:"addition-reversal",status:"active",vialId:vial.id,mg:-Number(event.mg),
+    reversesEventId:event.id,reason:"Reversed exact recorded vial addition",notes:""});
+  return {next,eventId:input.undoEventId};
 }
 
 function addToOpenVialModal(kitId) {
@@ -1669,10 +1729,53 @@ function addToOpenVialModal(kitId) {
     }
   };
 
-  const commitAdd = (addMg, fromSealed) => {
-    const snap = applyAddToOpenVial(s, vial, addMg, fromSealed);
-    saveState(); closeModal(); render();
-    showUndoToast(`Added ${addMg}mg to open ${esc(s.name)} vial · Undo`, () => { undoAddToOpenVial(s, vial, snap); saveState(); render(); });
+  const saveButton=m.querySelector("#atv-save");
+  const commitAdd=async(addMg,fromSealed)=>{
+    if(saveButton.disabled)return;
+    saveButton.disabled=true;
+    try{
+      const source=fromSealed
+        ? (s.vials||[]).find(x=>x.status==="sealed") : null;
+      const input={kitId:s.id,vialId:vial.id,expectedRemainingMg:vial.remainingMg,
+        expectedVialMg:vial.vialMg,addMg,fromSealed,
+        sourceSealedId:source?source.id:null,eventId:uid(),
+        date:localDate(),loggedAt:new Date().toISOString()};
+      let result;
+      if(_demoActive)result=planAddToOpenVial(state,input);
+      else{
+        const savedRaw=localStorage.getItem(STORE_KEY);
+        if(!savedRaw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(savedRaw);
+        // An unrelated UI-only save may be newer; validate the exact kit,
+        // but the writer still requires an exclusive lock and fresh snapshot.
+        const savedKit=(saved.supplies||[]).find(k=>String(k.id)===String(s.id));
+        if(!savedKit||JSON.stringify(savedKit)!==JSON.stringify(s))
+          throw Error("This kit changed since opening the form; reopen it");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planAddToOpenVial(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;
+      closeModal();render();
+      showUndoToast(`Added ${addMg}mg to open ${esc(s.name)} vial · Undo`,async()=>{
+        try{
+          const inverse={kitId:s.id,eventId:input.eventId,undoEventId:uid(),
+            date:localDate(),loggedAt:new Date().toISOString()};
+          let undone;
+          if(_demoActive)undone=planUndoAddToOpenVial(state,inverse);
+          else{
+            const writer=nexusWriter();
+            const raw=localStorage.getItem(STORE_KEY);
+            if(!raw)throw Error("Saved inventory unavailable; reload");
+            undone=await writer.transaction(JSON.parse(raw),
+              snapshot=>planUndoAddToOpenVial(snapshot,inverse));
+            _nexusLastSavedSnapshot=writer.expected();
+          }
+          state=undone.next;render();
+        }catch(e){showErrorBanner("Undo blocked: "+e.message);}
+      });
+    }catch(e){showErrorBanner("Addition not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
   m.querySelector("#atv-save").onclick = () => {
     const addMg = parseFloat(atvMg.value);
