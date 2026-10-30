@@ -2314,3 +2314,16 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-stash-use-setup{flex:none;min-height:44px;padding:6px 10px;color:var(--accent,#A78BFA);font-size:12px;font-weight:700;background:transparent;border:0;border-radius:9px}
 .nx-stash-use-setup:focus-visible,.nx-use-tracking label:focus-within,#nx-use-close:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
 @media(max-width:350px){.nx-kit-use-setup-row{align-items:start}.nx-kit-use-setup-row span{font-size:10px}.nx-dose-unit-row{grid-template-columns:minmax(0,1fr) 86px}}
+
+/* Compact collapsed Stash hierarchy without hiding stock/status or detailed records. */
+.nx-kit-card .nx-kit-primary-value{font-size:22px!important;line-height:1.25}
+.nx-kit-card .nx-kit-primary-value span{font-size:12px!important;font-weight:500}
+.nx-kit-card .nx-kit-primary-vial .nx-kit-overview-track{margin-top:7px!important}
+.nx-kit-card .nx-kit-actions{margin-top:7px!important;gap:7px!important}
+.nx-kit-card .nx-kit-actions button{min-height:44px!important;padding:9px 10px!important}
+.nx-kit-card .nx-kit-details{margin-top:9px!important;padding-top:7px!important}
+.nx-kit-card .nx-kit-overview-number{font-size:25px!important}
+.nx-dose-use-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0;margin:0 0 13px}
+.nx-dose-use-summary span{font-size:11px;line-height:1.4;color:var(--t3)}
+.nx-dose-use-summary button{min-height:44px;flex:none;padding:8px 11px;background:var(--surface-2);color:var(--accent,#A78BFA);border:1px solid var(--border-sub);border-radius:10px;font-size:12px;font-weight:650}
+.nx-dose-use-summary button:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
