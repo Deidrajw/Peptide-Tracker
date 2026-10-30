@@ -64,10 +64,17 @@ function nexusWriter() {
     _nexusSharedWriter=globalThis.NexusWriteCoordinator.create({
       read:()=>localStorage.getItem(STORE_KEY),
       write:serialized=>localStorage.setItem(STORE_KEY,serialized),
+      remove:()=>localStorage.removeItem(STORE_KEY),
       lock,lockName:STORE_KEY+":inventory-transfer",initialSnapshot:_nexusLastSavedSnapshot
     });
   }
   return _nexusSharedWriter;
+}
+function nexusEraseSavedState() {
+  if(_demoActive)throw Error("Cannot erase real data while demo is active");
+  const writer=nexusWriter();
+  writer.removeLegacy();
+  _nexusLastSavedSnapshot=writer.expected();
 }
 function saveState() {
   if(_demoActive)return; // keep fictional demo isolated
