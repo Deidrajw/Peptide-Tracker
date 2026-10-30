@@ -39,6 +39,15 @@ if(!runtime.includes('await writer.transaction(saved,snapshot=>planExclusiveVial
    !runtime.includes('Added vial has attached history; automatic undo blocked'))
   throw Error('Add Vials restock/Undo must use exclusive exact-ID transaction');
 
+// Manual vial correction must stay inside the same exclusive writer; reject
+// accidental fallback to legacy synchronous save or non-attributed history.
+if(!runtime.includes('function planExclusiveVialAdjustment(snapshot,input)')||
+   !runtime.includes('await writer.transaction(saved,snapshot=>planExclusiveVialAdjustment(snapshot,input))')||
+   !runtime.includes('A reason is required for every correction')||
+   !runtime.includes('adjustmentDeltaMg:deltaMg,stockBefore:before,stockAfter:after')||
+   !runtime.includes('Transferred source must use the source-transfer reversal'))
+  throw Error('Adjust Remaining Amount bypasses exclusive exact-vial/required-reason correction');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
