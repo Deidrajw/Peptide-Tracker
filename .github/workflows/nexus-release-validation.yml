@@ -106,6 +106,7 @@ jobs:
           npm install --no-save --no-package-lock playwright
           npx playwright install --with-deps chromium
           python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node tools/validate-cross-tab-lock.mjs
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
           node tools/validate-release.mjs
