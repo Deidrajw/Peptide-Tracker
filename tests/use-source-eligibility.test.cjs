@@ -28,4 +28,4 @@ assert.notEqual(JSON.stringify(state),before); // test fixture explicitly change
 assert.equal(state.supplies[0].vials[0].remainingMg,28);
 assert.equal(state.formulationStocks[0].remainingMg,6);
 assert.equal(state.formulationStocks[0].remainingMl,3);
-console.log("PASS: 14 prepared-source/source-eligibility assertions; no stock mutation");
+console.log("PASS: fictional prepared-source eligibility and no-stock-mutation assertions");
