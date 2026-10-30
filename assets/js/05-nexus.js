@@ -775,7 +775,7 @@ function doseModal(name, existing, occTime) {
     </div>
     
     <section class="nx-dose-section" aria-label="Dose source" style="${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"How was this dose prepared?":"Confirm dose source"}</div>
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Choose vial":preparedBatches.length?"How was this dose prepared?":"Inventory source"}</div>
       <p class="nx-dose-section-desc">${isEdit ? "The saved source is retained when editing this entry." : "Only choose a source when more than one is possible. Each saved dose keeps its exact source."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
@@ -786,10 +786,10 @@ function doseModal(name, existing, occTime) {
           : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
     </div>` : ""}
     ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
-      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Open vial needs method confirmation</div>
-      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">Your saved vial balance is intact. Nexus cannot assume that an older unlabeled vial is prepared for ${esc(initialMethod)}. Only confirm a vial you know is appropriate for this method.</p>
+      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Confirm how this vial is used</div>
+      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">This vial has no saved method yet. If you use this vial for ${esc(initialMethod)}, confirm it once. Its remaining amount will not change.</p>
       ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
-        Confirm ${esc(kit.name)} · Vial ${esc(vial.sequenceNumber||"?")} (${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left) for ${esc(initialMethod)}
+        Use Vial ${esc(vial.sequenceNumber||"?")} for ${esc(initialMethod)} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining
       </button>`).join("")}
     </div>`:""}
     ${isEdit ? `<div class="nx-dose-source-readout"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>Existing dose record</strong><small>Original source information stays linked to this dose.</small></div></div>` : ""}
@@ -838,7 +838,7 @@ function doseModal(name, existing, occTime) {
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select>
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
-    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 10px;font-size:13px;color:var(--t3);min-height:44px"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> As needed (PRN) · No protocol follow-up</label>
+    <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
@@ -870,7 +870,7 @@ function doseModal(name, existing, occTime) {
   doseScroll.insertAdjacentElement("beforebegin",fixedDoseHeader);
   const review=document.createElement("details");
   review.className="nx-dose-review-stage nx-dose-inline-review";
-  review.innerHTML='<summary>Review details before saving</summary><div id="nx-dose-review-rows"></div><details id="nx-dose-source-ids" hidden><summary>Source identifiers</summary><div class="nx-dose-source-ids-body"></div></details><p>Inventory and source allocation are checked again on confirmation.</p>';
+  review.innerHTML='<summary>Review entry</summary><div id="nx-dose-review-rows"></div><div id="nx-dose-source-ids" hidden><div class="nx-dose-source-ids-body"></div></div><p>Inventory and source allocation are checked again on confirmation.</p>';
   doseScroll.appendChild(review);
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const row=(k,v)=>'<div><span>'+k+'</span><strong>'+esc(String(v||"Not set"))+'</strong></div>';
