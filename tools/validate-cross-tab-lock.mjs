@@ -51,5 +51,31 @@ try{
  assert.equal(source,"fictional");
  await a.evaluate(key=>localStorage.removeItem(key),fixture);
  console.log("PASS: real Chromium cross-tab Web Lock serialized exclusive writers; stale second transaction rejected, fictional source preserved");
+ // Exercise the actual Stash form event handler in a fictional localhost
+ // profile, not merely the coordinator's pure transaction API.
+ await a.evaluate(()=>{
+   state=buildDemoState("weight_loss");
+   state.profile.onboardingDone=true;
+   _demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+   _nexusSharedWriter=null;
+   supplyModal(null,null);
+ });
+ await a.locator('[data-kit-form="capsule-bottle"]').click();
+ await a.locator('#nx-form-name').fill('Fictional Exclusive Capsule');
+ await a.locator('#nx-form-count').fill('12');
+ await a.locator('#nx-form-strength').fill('5');
+ await a.locator('#nx-form-save').click();
+ await a.waitForFunction(()=>state.formulationStocks?.some(s=>s.compound==="Fictional Exclusive Capsule"),{timeout:10000});
+ const saved=await a.evaluate(()=>({
+   stock:JSON.parse(localStorage.getItem(STORE_KEY)).formulationStocks.find(s=>s.compound==="Fictional Exclusive Capsule"),
+   inMemory:state.formulationStocks.find(s=>s.compound==="Fictional Exclusive Capsule"),
+   pending:nexusWriter().status().inFlight
+ }));
+ assert.equal(saved.stock.remainingCount,12);
+ assert.equal(saved.inMemory.remainingCount,12);
+ assert.equal(saved.pending,false);
+ console.log("PASS: actual Stash formulation Save uses exclusive transaction, persists fictional capsule and leaves no pending write");
  await context.close();
 }finally{await browser.close()}
