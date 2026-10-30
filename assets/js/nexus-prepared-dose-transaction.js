@@ -135,5 +135,20 @@
     }
     return result;
   }
-  return {planDose,reverseDose,commit};
+  // The only production-ready orchestration boundary for the prepared ledger.
+  // The writer must be the app's exclusive cross-tab coordinator. No state is
+  // assigned and no success acknowledgement occurs here. The caller may adopt
+  // result.next ONLY after the writer has verified a complete durable readback.
+  // The default-off gate prevents accidental live use while synchronous legacy
+  // stock writers are not all migrated to the same exclusive protocol.
+  async function executeExclusive(writer,snapshot,operation,{enabled=false}={}){
+    if(enabled!==true)fail("Prepared administration is disabled until all stock writers share an exclusive lock");
+    if(!writer||typeof writer.transaction!=="function")fail("Exclusive inventory writer required");
+    if(!operation||!["dose","reverse"].includes(operation.type))fail("Explicit prepared operation required");
+    const transform=operation.type==="dose"
+      ? prior=>planDose(prior,operation.tx)
+      : prior=>reverseDose(prior,operation.tx);
+    return await writer.transaction(snapshot,transform);
+  }
+  return {planDose,reverseDose,commit,executeExclusive};
 });
