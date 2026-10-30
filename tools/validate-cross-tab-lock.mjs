@@ -199,5 +199,53 @@ try{
  assert.equal(restoredRestock.events[1].reversesEventId,restock.event.id);
  console.log("PASS: Chromium actual Add Vials UI + event-specific Undo under exclusive writer, exact-vial audit, strength/cost restoration");
 
+
+ // Manual correction: real form and canonical stock/audit save in a fictional profile.
+ await a.evaluate(()=>{
+   closeModal();
+   const fresh=buildDemoState("weight_loss");fresh.profile.onboardingDone=true;
+   fresh.supplies.push({id:987654323,name:"Retatrutide",vialMg:10,totalVials:1,
+     vials:[{id:"correction-open",status:"open",vialMg:10,remainingMg:4.49,sequenceNumber:1}],
+     wasteLog:[{id:"prior-correction-fixture",type:"waste",status:"active",mg:1,vialId:"correction-open"}],
+     _vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+   state=fresh;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+   adjustVialRemainingModal(987654323,"correction-open");
+ });
+ await a.locator("#adj-amount").fill("3.25");
+ await a.locator("#adj-save").click();
+ const reasonRequired=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654323);
+   return {amount:k.vials[0].remainingMg,events:k.wasteLog.length,formVisible:!!document.querySelector("#adj-reason")};
+ });
+ assert.equal(reasonRequired.amount,4.49,"Missing required reason must not persist a change");
+ assert.equal(reasonRequired.events,1);
+ assert.equal(reasonRequired.formVisible,true);
+ await a.locator("#adj-reason").fill("Measured correction from fictional physical count");
+ await a.locator("#adj-save").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654323);
+   return k?.wasteLog?.some(e=>e.type==="adjustment"&&e.vialId==="correction-open");
+ },{timeout:10000});
+ const correction=await a.evaluate(()=>{
+   const saved=JSON.parse(localStorage.getItem(STORE_KEY));
+   const kit=saved.supplies.find(s=>s.id===987654323);
+   const memory=state.supplies.find(s=>s.id===987654323);
+   return {amount:kit.vials[0].remainingMg,inMemory:memory.vials[0].remainingMg,
+     events:kit.wasteLog,stillPending:nexusWriter().status().inFlight};
+ });
+ assert.equal(correction.amount,3.25);
+ assert.equal(correction.inMemory,3.25);
+ assert.equal(correction.events.length,2,"Historical outflow must be preserved");
+ assert.equal(correction.events[0].id,"prior-correction-fixture");
+ assert.equal(correction.events[1].type,"adjustment");
+ assert.equal(correction.events[1].mg,1.24);
+ assert.equal(correction.events[1].adjustmentDeltaMg,-1.24);
+ assert.equal(correction.events[1].reason,"Manual correction: Measured correction from fictional physical count");
+ assert.equal(correction.events[1].vialId,"correction-open");
+ assert.equal(correction.stillPending,false);
+ console.log("PASS: Chromium actual correction form refuses blank reason; exclusive exact-vial stock + historical adjustment readback");
+
  await context.close();
 }finally{await browser.close()}
