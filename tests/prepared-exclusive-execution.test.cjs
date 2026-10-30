@@ -42,7 +42,7 @@ const reverse={type:"reverse",tx:{transactionId:"tx1",reversalId:"rev1",compound
  assert.equal(writer.status().blocked,true);
  // A fresh coordinator evaluates replay safety after the stale writer is blocked.
  const replay=create({read:()=>raw,write:x=>{writes++;raw=x},initialSnapshot:raw,lock:(_key,fn)=>fn()});
- await assert.rejects(prepared.executeExclusive(replay,JSON.parse(raw),reverse,{enabled:true}),/already reversed/);
+ await assert.rejects(prepared.executeExclusive(replay,JSON.parse(raw),{...reverse,tx:{...reverse.tx,reversalId:"rev2"}},{enabled:true}),/already reversed/);
  assert.equal(writes,2);
  let errorRaw=JSON.stringify(fixture());
  const quota=create({read:()=>errorRaw,write:()=>{throw Error("quota")},initialSnapshot:errorRaw,lock:(_key,fn)=>fn()});
