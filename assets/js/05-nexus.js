@@ -1058,7 +1058,14 @@ function doseModal(name, existing, occTime) {
   m.querySelectorAll(".src-opt").forEach(b=>b.onclick=()=>{
     selectedSource = b.dataset.src==="fresh" ? "fresh" : +b.dataset.src;
     m.querySelectorAll(".src-opt").forEach(o=>{ const on=(o.dataset.src==="fresh"?"fresh":+o.dataset.src)===selectedSource; o.style.background=on?c.color+"22":"var(--surface-2)"; o.style.borderColor=on?c.color:"var(--border)"; o.style.color=on?c.color:"var(--t3)"; });
-    if (selectedSource!=="fresh") { const pd=preparedBatches.find(p=>p.id===selectedSource); if(pd) m.querySelector("#dose").value = pd.amountEach; }
+    if (selectedSource!=="fresh") {
+      const pd=preparedBatches.find(p=>p.id===selectedSource);
+      if(pd){
+        m.querySelector("#dose").value=pd.amountEach;
+        const shown=m.querySelector("#nx-dose-entered"),u=m.querySelector("#nx-dose-unit")?.value||c.unit;
+        if(shown){const v=nexusUseMassValue(pd.amountEach,c.unit,u);shown.value=v==null?"":String(Number(v.toPrecision(12)));}
+      }
+    }
     const kp = m.querySelector("#kit-picker");
     if (kp) kp.style.display = (needsKitPicker && selectedSource==="fresh") ? "" : "none";
     renderAllocPanel();
