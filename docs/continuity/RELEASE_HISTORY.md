@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 Adjust Remaining Amount exclusivity candidate, NOT RELEASED
+- Main `da585ab3`, version remains `v0.9.20-beta`. Restock full-browser `41142799429` is newly verified SUCCESS for prior source only. New manual correction candidate: `da856e63` immutable exact-vial adjustment, `a56c4c0d` transferred-source fail-closed, `fa2aa482` Node tests, `87c78289` and `c5edb926` CI wiring, `3a122e8e` actual Chromium form test and `e35de363` static guard. Independent model-level planner/coordinator fictional checks PASS; GitHub current-head CI/browser/artifact parity PENDING. No user data writes, localStorage migration, release tag, merge, Cloudflare deploy or iPhone physical acceptance. Other synchronous writers/transfer inverse/calibration remain blockers; prepared flags OFF.
+
 ## 2026-10-30 — Add Vials dedicated safety / package verified, still NOT RELEASED
 - Application/guard `546441ab`; dedicated writer CI `41142799501` SUCCESS, mobile `41142799457` SUCCESS, nested `41142799419` SUCCESS. Dedicated full-app artifact `13019931495` obtained and CRC PASS, LIVE 26 files and isolated DEMO parity PASS. Full Chromium `41142799429` and WebKit `41142799430` pending. No physical iPhone test, merge/deploy, production localStorage writes or schema migration. Runtime prepared gates false.
 
