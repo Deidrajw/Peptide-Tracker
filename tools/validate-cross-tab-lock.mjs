@@ -62,6 +62,19 @@ try{
    _nexusSharedWriter=null;
    supplyModal(null,null);
  });
+ // Real UI runtime must reject the prepared nasal path while the shared
+ // synchronous writer migration is incomplete, without altering fictional stock.
+ const disabled=await a.evaluate(async()=>{
+   const before=JSON.stringify(state),durable=localStorage.getItem(STORE_KEY);
+   let error="";
+   try{
+     await nexusCommitPreparedNasalOperation({type:"dose",tx:{id:"fixture",doseId:"fixture-dose"}});
+   }catch(e){error=e.message}
+   return {error,sameState:before===JSON.stringify(state),sameDurable:durable===localStorage.getItem(STORE_KEY)};
+ });
+ assert.match(disabled.error,/disabled pending shared-writer/,"Prepared nasal must remain release-gated in actual app runtime");
+ assert.equal(disabled.sameState,true,"Gated prepared nasal operation mutated live state");
+ assert.equal(disabled.sameDurable,true,"Gated prepared nasal operation wrote saved stock");
  await a.locator('[data-kit-form="capsule-bottle"]').click();
  await a.locator('#nx-form-name').fill('Fictional Exclusive Capsule');
  await a.locator('#nx-form-count').fill('12');
