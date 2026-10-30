@@ -26,6 +26,7 @@ jobs:
           node tests/preparation-bridge.test.cjs
           node tests/formulation-stock.test.cjs
           node tools/validate-storage-writers.mjs
+          node tools/validate-save-acknowledgement.mjs
       - name: Build complete LIVE and isolated full-app DEMO
         run: node tools/build-release.mjs
       - name: Verify exact checkout parity for complete LIVE package
