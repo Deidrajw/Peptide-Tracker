@@ -15,8 +15,8 @@ for(const file of ['assets/js/04-nexus.js','assets/js/10-nexus.js','assets/js/11
  const text=fs.readFileSync(file,'utf8');
  if(file.includes('04-')&&!text.includes('writer.transaction(state,'))
    throw Error('Prepared/source transactions bypass shared writer');
- if(file.includes('10-')&&!text.includes('writer.saveLegacy(next)'))
-   throw Error('Formulation stock bypasses shared writer');
+ if(file.includes('10-')&&(!text.includes('await writer.transaction(saved,')||!text.includes('saveButton.disabled=true')))
+   throw Error('Formulation stock bypasses exclusive shared writer');
  if(file.includes('11-')&&!text.includes('writer.saveLegacy(next)'))
    throw Error('Manual restoration bypasses shared writer');
  if(file.includes('12-')&&!text.includes('writer.saveLegacy(next)'))
