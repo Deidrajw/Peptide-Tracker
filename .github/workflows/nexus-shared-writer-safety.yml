@@ -45,3 +45,13 @@ jobs:
             assert z.read('index.html')==pathlib.Path(f'dist/Nexus_{ver}_FULL_DEMO.html').read_bytes()
           print('PASS: source-exact complete LIVE and isolated standalone full-app DEMO')
           PY
+      - name: Upload complete source-matched LIVE and isolated DEMO
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-shared-writer-release-candidate
+          path: |
+            dist/Nexus_*_LIVE_GitHub.zip
+            dist/Nexus_*_FULL_DEMO.html
+            dist/Nexus_*_OFFLINE_FULL_DEMO_OPEN_ME.zip
+            dist/Nexus_*_RELEASE_MANIFEST.json
+          retention-days: 30
