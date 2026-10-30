@@ -68,5 +68,66 @@
   if(read()!==serialized)fail("Transfer save verification failed; reload inventory before retry");
   return planned;
  }
- return {plan,commit};
+ // Explicit, one-way transfer from a confirmed physical vial into a NEW,
+ // empty nasal formulation container. Pure plan; no storage write, auto
+ // preparation, recipe inference, or dose unit conversion. This does not
+ // change the legacy preparations ledger or linked no-transfer plans.
+ function planFormulation(snapshot,tx){
+  if(!snapshot||!Array.isArray(snapshot.supplies)||!Array.isArray(snapshot.formulationStocks))
+   fail("Complete physical and formulation inventory required");
+  if(!tx||tx.kind!=="transfer-to-formulation"||typeof tx.id!=="string"||!tx.id.trim())
+   fail("Explicit unique formulation transfer ID required");
+  if(!Number.isFinite(tx.amountMg)||tx.amountMg<=0)fail("Positive measured mass required");
+  const allEvents=[
+    ...(snapshot.supplies||[]).flatMap(k=>k.preparationTransfers||[]),
+    ...(snapshot.formulationStocks||[]).flatMap(c=>c.transactions||[]),
+    ...(snapshot.preparations||[]).flatMap(p=>p.transactions||[])
+  ];
+  if(allEvents.some(e=>String(e.id)===tx.id))fail("Duplicate transfer ID");
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kits=next.supplies.filter(k=>String(k.id)===String(tx.sourceKitId));
+  if(kits.length!==1||kits[0].isBlend)fail("Unique non-blend source kit required");
+  const kit=kits[0];
+  const vials=(kit.vials||[]).filter(v=>String(v.id)===String(tx.sourceVialId));
+  if(vials.length!==1)fail("Exact physical source vial required");
+  const vial=vials[0];
+  if(!["open","active"].includes(vial.status)||vial.intendedUse!=="Nasal")
+   fail("Explicitly nasal-labelled open physical vial required");
+  if(!Number.isFinite(vial.remainingMg)||vial.remainingMg<0)
+   fail("Canonical source balance unavailable");
+  const dests=next.formulationStocks.filter(c=>String(c.id)===String(tx.destinationContainerId));
+  if(dests.length!==1)fail("Unique destination container required");
+  const dest=dests[0];
+  if(dest.compound!==kit.name||dest.method!=="Nasal"||dest.containerType!=="nasal-bottle")
+   fail("Destination formulation compound or route mismatch");
+  if(!Number.isFinite(dest.remainingMg)||dest.remainingMg!==0 ||
+     !Number.isFinite(dest.remainingMl)||dest.remainingMl<=0)
+   fail("New empty nasal container with measured delivery volume required");
+  if((dest.transactions||[]).length||dest.sourceKitId!=null||dest.sourceVialId!=null)
+   fail("Destination already contains or references stock");
+  if(dest.mgPerSpray!=null||dest.mlPerSpray!=null)
+   fail("Do not inherit or infer a dose calibration on preparation");
+  const amount=round(tx.amountMg);
+  if(amount<=0||amount>vial.remainingMg+1e-7)fail("Insufficient exact source stock");
+  const before=round(vial.remainingMg+dest.remainingMg);
+  vial.remainingMg=round(vial.remainingMg-amount);
+  dest.remainingMg=round(dest.remainingMg+amount);
+  if(Math.abs(round(vial.remainingMg+dest.remainingMg)-before)>1e-6)
+   fail("Preparation mass conservation mismatch");
+  dest.sourceKitId=kit.id;dest.sourceVialId=vial.id;
+  const event={
+   id:tx.id,kind:"transfer-to-formulation",
+   sourceKitId:kit.id,sourceVialId:vial.id,
+   destinationContainerId:dest.id,compound:kit.name,amountMg:amount
+  };
+  kit.preparationTransfers=kit.preparationTransfers||[];
+  dest.transactions=dest.transactions||[];
+  kit.preparationTransfers.push(event);
+  dest.transactions.push(event);
+  if(JSON.stringify(snapshot.peptides)!==JSON.stringify(next.peptides)||
+     JSON.stringify(snapshot.customPeptides)!==JSON.stringify(next.customPeptides))
+   fail("Preparation must not alter historical dose records");
+  return {next,event};
+ }
+ return {plan,commit,planFormulation};
 });
