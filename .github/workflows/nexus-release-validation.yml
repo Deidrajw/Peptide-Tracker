@@ -80,6 +80,14 @@ jobs:
               names=a.namelist()
               assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names and 'assets/css/nexus-contrast.css' in names
               assert sum(n.startswith('assets/js/') and n.endswith('-nexus.js') for n in names)==12
+              assert a.testzip() is None, "LIVE archive CRC failed"
+              from hashlib import sha256
+              for n in names:
+                  if n.endswith('/'): continue
+                  source=pathlib.Path(n)
+                  assert source.is_file(), f"LIVE archive contains non-source path: {n}"
+                  assert sha256(a.read(n)).digest()==sha256(source.read_bytes()).digest(), f"LIVE byte mismatch: {n}"
+              print(f"LIVE exact checkout byte parity PASS: {len([n for n in names if not n.endswith('/')])} source files")
           s=h.read_text()
           assert 'buildDemoState("weight_loss")' in s
           assert 'window.__NEXUS_FULL_APP_DEMO__' in s
