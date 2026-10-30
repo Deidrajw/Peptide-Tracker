@@ -575,15 +575,20 @@ function importData(e) {
         if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
         const next=migrate(incoming),serialized=JSON.stringify(next);
         if(!next||!serialized)throw Error("Invalid restored state");
-        localStorage.setItem(STORE_KEY,serialized);
-        if(localStorage.getItem(STORE_KEY)!==serialized)throw Error("Restore read-back mismatch");
+        // A restore is an explicit replacement but must still reject stale
+        // storage and share the guarded writer. Never overwrite another tab.
+        const writer=nexusWriter();
+        writer.saveLegacy(next);
+        _nexusLastSavedSnapshot=writer.expected();
         state=next;
         closeModal();render();
         alert("Backup restored. A local recovery copy of the previous records was saved.");
       }catch(err){
         state=oldState;
-        try{if(oldRaw!==null)localStorage.setItem(STORE_KEY,oldRaw);else localStorage.removeItem(STORE_KEY);}
-        catch(rollbackError){console.error("Restore rollback failed",rollbackError);showSaveWarning();}
+        // Do not attempt a second blind write on failure: storage may have
+        // advanced concurrently, or the previous write outcome may be unknown.
+        // The independent recovery backup above remains available to the user.
+        showSaveWarning();
         console.error("Backup restore failed",err);
         alert("Restore failed. Existing records were retained where browser storage permitted.");
       }
