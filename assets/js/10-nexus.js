@@ -233,6 +233,13 @@ function stashView() {
     const displayOpenMg = activeVialForCard && vialRem!=null ? vialRem : null;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
     const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
+    // Stash owns routine legacy method setup. Do not infer a method from the
+    // compound name, silently modify a vial, or touch historical allocations.
+    const unresolvedOpenVials=vialList.filter(v=>
+      ["open","active"].includes(v.status) && getVialRemainingMg(s,v)>0.01 &&
+      !nexusExplicitAdminMethod(v.intendedUse) &&
+      !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)
+    );
 
     const secondaryBits = [];
     if (shotsEst!=null) secondaryBits.push(`~${shotsEst} shots left`);
@@ -256,6 +263,7 @@ function stashView() {
         <div class="nx-kit-primary-value nx-kit-primary-empty">No vial open</div>
         <div class="nx-kit-primary-hint">${sealed} sealed vial${sealed===1?"":"s"} available</div>
       </div>`}
+      ${unresolvedOpenVials.length?`<div class="nx-stash-method-prompt" role="status"><div class="nx-stash-method-prompt-copy"><strong>Vial setup needed</strong><span>${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need${unresolvedOpenVials.length===1?"s":""} a confirmed administration method.</span></div><button type="button" class="nx-stash-go-vial-method" data-kit-id="${esc(String(s.id))}">Set up vial</button></div>`:""}
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
@@ -2168,6 +2176,18 @@ document.addEventListener("click",e=>{
   const edit=e.target.closest?.("[data-formulation-edit]");
   if(edit){const stock=(state.formulationStocks||[]).find(x=>String(x.id)===edit.dataset.formulationEdit);if(stock)nexusAddFormulationModal(stock.containerType,stock.id);}
 });
+
+ document.addEventListener("click",e=>{
+  const btn=e.target.closest?.(".nx-stash-go-vial-method");
+  if(!btn)return;
+  const card=btn.closest(".nx-kit-card");
+  if(!card)return;
+  const details=card.querySelector(".nx-kit-detail-button");
+  const panel=card.querySelector(".nx-kit-detail-panel");
+  if(panel?.hidden)details?.click();
+  card.querySelector('.nx-stash-tab[data-panel="vials"]')?.click();
+  card.querySelector(".nx-stash-set-vial-method")?.focus();
+ });
 
 /* Explicit one-time legacy vial identification lives in Stash.
  * Never infer a method from the compound name or debit stock in setup. */
