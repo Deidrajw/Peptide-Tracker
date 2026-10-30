@@ -1,3 +1,6 @@
+## 2026-10-30 — Approved implementation scope versus safety-gated live preparedness
+- User requested completion of prepared-source transaction path. Implementing pure stock/record transactional planner, guarded one-write persistence and inverse operation on draft PR124 is allowed, while enabling it in real logging is explicitly deferred until legacy saveState and all state writers share cross-tab atomic coordination. Real prepared nasal deductions remain gated false; no migration or retroactive history overwrite. Source-specific validated mgPerSpray plus mlPerSpray must both exist, and preparation plans never count as prepared stock. The corrected full browser CI 41084097074 passes prior fixture fix. No merge/deployment authorized.
+
 ## 2026-10-30 — CI fixture correction is not a change to route/source eligibility
 - Stash touch-target audit fixture explicitly labels its test-only GHK-Cu open vial SubQ (commit 5bd5a204). The app must continue to hide multi-vial selection for incompatible/unconfirmed stock. Prior approved no-guess route/source and planned-not-prepared rules remain unchanged; no merge/deploy approval.
 
