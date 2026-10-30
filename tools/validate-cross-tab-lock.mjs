@@ -145,5 +145,59 @@ try{
  assert.equal(undoneUi.events[1].mg,0,"Reversal must not create a new outflow");
  console.log("PASS: real Chromium fictional Add to Open Vial form persists exclusive exact-vial source and event-addressed undo");
 
+
+ // PR124 Add Vials: exercise actual UI with separate fictional local-only kit.
+ await a.evaluate(()=>{
+   closeModal();
+   const demo=buildDemoState("weight_loss");
+   demo.profile.onboardingDone=true;
+   demo.supplies.push({id:987654322,name:"Retatrutide",vialMg:5,totalVials:2,cost:30,
+     vials:[{id:"restock-open",status:"open",vialMg:5,remainingMg:1,sequenceNumber:1,legacyUsedMg:0},
+       {id:"restock-sealed",status:"sealed",vialMg:5,remainingMg:5}],
+     wasteLog:[],_vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+   state=demo;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+   _nexusSharedWriter=null;
+   addVialsModal(987654322);
+ });
+ await a.locator("#av-count").fill("2");
+ await a.locator("#av-mg").fill("7");
+ await a.locator("#av-cost").fill("20");
+ await a.locator("#av-save").click();
+ await a.waitForFunction(()=>{
+   const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(k=>k.id===987654322);
+   return kit?.restockLog?.some(e=>e.type==="vial-restock"&&e.status==="active");
+ },{timeout:10000});
+ const restock=await a.evaluate(()=>{
+   const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(k=>k.id===987654322);
+   return {total:kit.totalVials,strength:kit.vialMg,cost:kit.cost,
+     event:kit.restockLog.find(e=>e.type==="vial-restock"),
+     added:kit.vials.filter(v=>v.vialMg===7),pending:nexusWriter().status().inFlight};
+ });
+ assert.equal(restock.total,4);
+ assert.equal(restock.strength,7);
+ assert.equal(restock.cost,50);
+ assert.equal(restock.added.length,2);
+ assert.equal(restock.event.addedVialIds.length,2);
+ assert.equal(restock.pending,false);
+ await a.locator("#undo-btn").click();
+ await a.waitForFunction(()=>{
+   const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(k=>k.id===987654322);
+   return kit?.restockLog?.some(e=>e.type==="vial-restock-reversal");
+ },{timeout:10000});
+ const restoredRestock=await a.evaluate(()=>{
+   const kit=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(k=>k.id===987654322);
+   return {total:kit.totalVials,strength:kit.vialMg,cost:kit.cost,
+     ids:kit.vials.map(v=>v.id),events:kit.restockLog};
+ });
+ assert.equal(restoredRestock.total,2);
+ assert.equal(restoredRestock.strength,5);
+ assert.equal(restoredRestock.cost,30);
+ assert.ok(restoredRestock.ids.includes("restock-open")&&restoredRestock.ids.includes("restock-sealed"));
+ assert.equal(restoredRestock.events[0].status,"reversed");
+ assert.equal(restoredRestock.events[1].reversesEventId,restock.event.id);
+ console.log("PASS: Chromium actual Add Vials UI + event-specific Undo under exclusive writer, exact-vial audit, strength/cost restoration");
+
  await context.close();
 }finally{await browser.close()}
