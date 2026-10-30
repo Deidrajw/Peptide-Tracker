@@ -35,8 +35,8 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
    doseModal('Retatrutide');
    return before;
  });
- await page.locator('#dose').fill(String(amount));
- await page.locator('#dose').dispatchEvent('input');
+ await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').fill(String(amount));
+ await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').dispatchEvent('input');
  await page.waitForTimeout(650);
  await page.locator('#nx-dose-review-open').click();
  await page.locator('#nx-dose-review-rows').waitFor({state:'visible'});
