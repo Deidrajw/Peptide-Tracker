@@ -1983,11 +1983,12 @@ async function nexusCommitPreparedNasalOperation(operation) {
   if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
   if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
   const writer=nexusWriter();
-  const result=await writer.transaction(state,snapshot=>{
-    if(operation?.type==="dose")return globalThis.NexusPreparedDoseTransaction.planDose(snapshot,operation.tx);
-    if(operation?.type==="reverse")return globalThis.NexusPreparedDoseTransaction.reverseDose(snapshot,operation.tx);
-    throw Error("Unsupported prepared transaction");
-  });
+  // A single gated execution boundary owns the exact-source planner,
+  // exclusive lock and verified readback. No UI can reach this until the
+  // separate cross-tab legacy-writer migration is fully accepted.
+  const result=await globalThis.NexusPreparedDoseTransaction.executeExclusive(
+    writer,state,operation,{enabled:true}
+  );
   state=result.next;_nexusLastSavedSnapshot=writer.expected();
   return result;
 }
