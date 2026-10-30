@@ -318,7 +318,7 @@ try {
       'Raw source IDs leaked into primary review: '+preview);
     const idDetails=page.locator('#nx-dose-source-ids');
     ensure(await idDetails.count()===1,'Optional source audit disclosure missing');
-    await idDetails.locator('summary').click();
+    ensure(await idDetails.isVisible(),'Source audit rows hidden inside review');
     ensure((await idDetails.innerText()).includes('9101'),'Audit ID missing from disclosure');
     ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
     ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
@@ -500,7 +500,7 @@ try {
     ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Allocated'),'Multi-vial Review omits structured source rows');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     const splitIds=page.locator('#nx-dose-source-ids');
-    await splitIds.locator('summary').click();
+    ensure(await splitIds.isVisible(),'Multi-vial source audit rows missing');
     const auditIds=await splitIds.innerText();
     ensure(auditIds.includes('9104')&&auditIds.includes('9105'),'Multi-vial Review loses selected kit identity in source identifiers');
     await clickSave(page);
