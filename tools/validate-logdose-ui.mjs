@@ -549,6 +549,10 @@ try {
     });
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
+    ensure(await page.locator('#dose').inputValue()==='2',
+      'Auto-selected prepared syringe failed to prefill canonical measured amount');
+    ensure(Number(await page.locator('#nx-dose-entered').inputValue())>0,
+      'Auto-selected prepared syringe left visible dose entry blank');
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
