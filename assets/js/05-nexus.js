@@ -774,9 +774,42 @@ function doseModal(name, existing, occTime) {
       <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
     </div>
     
-    <section class="nx-dose-section nx-dose-source-exception" aria-label="Choose dose source" style="${isEdit||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Choose the vial used":preparedBatches.length?"Where did this dose come from?":"Vial setup needed"}</div>
-      <p class="nx-dose-section-desc">${isEdit ? "The recorded source stays linked to this entry." : "Nexus only needs a choice when more than one source is possible."}</p>
+    <section class="nx-dose-section" aria-label="Administration details">
+      <div class="nx-dose-section-title">Your dose</div>
+    <label class="field-label">DATE & TIME</label>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
+      <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
+    </div>
+    <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
+    ${isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
+    <label class="field-label">SPRAYS</label>
+    <input id="sprays" type="number" min="0" step="1" class="inp" placeholder="e.g. 2" value="${f.sprayCount||''}" style="margin-bottom:4px">
+    <div id="sprays-mg-hint" style="font-size:11px;color:var(--t4);margin-bottom:8px">${f.sprayCount?`= ${mgToUnit(doseToMg(f.sprayCount*cData.mcgPerSpray,"mcg"),c.unit).toFixed(3)}${c.unit}`:`&nbsp;`}</div>
+    <input id="dose" type="hidden" value="${esc(f.dose)}">
+    ` : `
+    <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
+    ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
+    `}
+    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
+    ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
+    ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
+    <div id="alloc-panel" style="margin-bottom:14px"></div>
+    <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
+    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
+      ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
+    </div>
+    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
+    <label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
+    <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select>
+    <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
+    ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
+    <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
+    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
+    </section>
+    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose how you prepared this dose":"Finish vial setup"}</div>
+      <p class="nx-dose-section-desc">${isEdit ? "The original source stays linked." : "Only needed when Nexus cannot identify one verified source."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
       <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
@@ -806,40 +839,6 @@ function doseModal(name, existing, occTime) {
         ${eligibleSources.map(({kit,vial})=>`<button type="button" class="kit-opt" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" aria-pressed="${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)}" style="min-height:48px;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">${esc(String(kit.name))} · Vial ${esc(String(vial.sequenceNumber||vial.id))} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left</button>`).join("")}
       </div>
     </div>
-    </section>
-    <section class="nx-dose-section" aria-label="Administration details">
-      <div class="nx-dose-section-title">Dose details</div>
-      <p class="nx-dose-section-desc">Review the amount, date and administration site.</p>
-    <label class="field-label">DATE & TIME</label>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
-      <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
-    </div>
-    <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
-    ${isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
-    <label class="field-label">SPRAYS</label>
-    <input id="sprays" type="number" min="0" step="1" class="inp" placeholder="e.g. 2" value="${f.sprayCount||''}" style="margin-bottom:4px">
-    <div id="sprays-mg-hint" style="font-size:11px;color:var(--t4);margin-bottom:8px">${f.sprayCount?`= ${mgToUnit(doseToMg(f.sprayCount*cData.mcgPerSpray,"mcg"),c.unit).toFixed(3)}${c.unit}`:`&nbsp;`}</div>
-    <input id="dose" type="hidden" value="${esc(f.dose)}">
-    ` : `
-    <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
-    ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
-    `}
-    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
-    ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"− Use a single vial instead":"+ Use multiple vials"}</button>` : ""}
-    <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
-    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
-      ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
-    </div>
-    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
-    <label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
-    <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select>
-    <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
-    ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
-    <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
-    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <details class="nx-dose-section nx-dose-optional" aria-label="Legacy dose observations" style="${isEdit && (f.notes || f.symptoms?.length) ? "" : "display:none"}">
       <summary><span class="nx2-observation-title">Earlier dose observations</span><span class="nx-dose-observations-hint">Legacy entries · Editable</span></summary>
@@ -909,7 +908,7 @@ function doseModal(name, existing, occTime) {
       reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
       reviewRow("Method",initialMethod)+
       reviewRow("Administration site",doseVal("site")||"Not recorded")+
-      reviewRow("Inventory",isEdit?"Existing source retained":sourceLabel)+
+      reviewRow("Vial used",isEdit?"Original source retained":sourceLabel)+
       (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
         ?reviewRow("Vial remaining after save",mgToUnit(Math.max(0,remaining-usedMg),c.unit).toFixed(2)+" "+c.unit):"")+
       (m.querySelector("#nx-dose-as-needed")?.checked?reviewRow("Protocol","Independent log"):"");
