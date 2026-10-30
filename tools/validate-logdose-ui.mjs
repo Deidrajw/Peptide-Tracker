@@ -36,7 +36,7 @@ async function stateSnapshot(page){return page.evaluate(()=>({
   prepared:state.preparedDoses.map(p=>({...p})),
   draft:state._pendingDoseDraft
 }));}
-async function setDose(page,amount){await page.locator('#dose').fill(String(amount));}
+async function setDose(page,amount){const sel=(await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose';await page.locator(sel).fill(String(amount));}
 async function openDose(page){
   await page.evaluate(()=>doseModal('Retatrutide'));
   // This legacy regression intentionally starts with the first source. The current
@@ -348,7 +348,7 @@ try {
       'Raw source IDs leaked into primary review: '+preview);
     ensure(!(await page.locator('#nx-dose-review-rows').innerText()).includes('9101'),'Internal source ID shown in user review');
     await page.locator('#nx-dose-review-back').click();
-    ensure((await page.locator('#dose').inputValue())==='2','Back did not preserve dose draft');
+    ensure((await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').inputValue())==='2','Back did not preserve dose draft');
     await page.locator('#nx-dose-review-open').click();
     ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
     ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
