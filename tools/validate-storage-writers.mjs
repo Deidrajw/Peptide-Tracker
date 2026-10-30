@@ -23,6 +23,10 @@ for(const file of ['assets/js/04-nexus.js','assets/js/10-nexus.js','assets/js/11
    throw Error('Onboarding restoration bypasses shared writer');
 }
 const runtime=fs.readFileSync('assets/js/04-nexus.js','utf8');
+if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
+   runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
+   runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
+  throw Error('Prepared nasal runtime bypasses exclusive transaction execution boundary');
 for(const lock of ['NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false','NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false']){
  if(!runtime.includes(lock))throw Error('Unapproved live stock transfer enablement: '+lock);
 }
