@@ -38,6 +38,7 @@ jobs:
           node tests/use-source-eligibility.test.cjs
           node --check assets/js/nexus-prepared-dose-transaction.js
           node tests/prepared-dose-transaction.test.cjs
+          node tests/prepared-exclusive-execution.test.cjs
           node --check assets/js/nexus-write-coordinator.js
           node tests/write-coordinator.test.cjs
           node tools/validate-storage-writers.mjs
