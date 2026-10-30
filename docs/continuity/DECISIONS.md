@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 narrow prepared-dose UX correction; no new product decision
+- Existing approved routine Log Dose means that when a unique valid prepared source is auto-selected it must show the associated saved amount without requiring a second tap. Source db756749 changes display initialization only, preserving draft/edit and all save-time validation. This is not approval to use a plan as stock, to activate nasal stock debits, to alter historical records, or to merge/deploy.
+
 ## 2026-10-30 — PR124 implementation safeguard: pure prepared-source gate, no new approval inferred
 - Following existing approved backed/untracked and route/source rules, implemented only a read-only prepared-source eligibility inspector and guarded nasal spray mathematical planner (1d176390, tests 4700362e, CI bdf26759). This does NOT approve, enable or release nasal stock deduction, prepared transfer, concurrent writer migration, new schema, historical rewrite, merge or deployment. Plans remain planned-no-transfer, and absence of bottle-specific verified spray mass plus delivery volume fails closed. Existing user product choices and P0 iPhone mismatch blocker remain in force.
 
