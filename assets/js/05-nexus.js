@@ -394,6 +394,12 @@ function resolveOverdueModal(name, originalDate, opts={}) {
     <button id="ro-reschedule" class="sheet-row">Reschedule<div class="sub">Move this specific dose to another date/time</div></button>
     ${proto?`<button id="ro-pause" class="sheet-row">Pause protocol<div class="sub">Temporarily stopping ${esc(proto.name)} — nothing further shows as due until you resume</div></button>`:""}
   `, c.color);
+  const setupButton=m.querySelector("#nx-dose-use-setup");
+  if(setupButton)setupButton.onclick=()=>{
+    state._pendingDoseDraft={name,dose:m.querySelector("#dose")?.value||"",date:m.querySelector("#date")?.value||localDatetime(),
+      notes:m.querySelector("#notes")?.value||"",rows:rows.map(r=>({...r}))};
+    closeModal();nexusUseSetupModal(name,()=>doseModal(name));
+  };
   m.querySelector("#x").onclick = closeModal;
   const tl = m.querySelector("#ro-takenlate"); if (tl) tl.onclick = () => { closeModal(); doseModal(name); };
   m.querySelector("#ro-missed").onclick = () => { closeModal(); markMissedModal(name, originalDate); };
@@ -671,7 +677,7 @@ function nexusPostDoseReactionPrompt(compoundName,doseId){
 }
 
 // A dose's recorded administration method is historical, not a mutable compound setting.
-const NEXUS_ADMIN_METHODS = ["SubQ","IM","IV","Oral","Nasal","Topical"];
+const NEXUS_ADMIN_METHODS = ["SubQ","IM","IV","Oral","Nasal","Topical","Other"];
 function nexusExplicitAdminMethod(value) {
   const aliases = { "subcutaneous":"SubQ","sc":"SubQ","sq":"SubQ","intramuscular":"IM","intravenous":"IV","intranasal":"Nasal","po":"Oral" };
   const raw=String(value||"").trim(),normalized=aliases[raw.toLowerCase()]||raw;
@@ -698,7 +704,7 @@ function nexusUseMassValue(value,from,to) {
   if(!Number.isFinite(n)||n<0||!["mg","mcg"].includes(from)||!["mg","mcg"].includes(to))return null;
   return from===to?n:from==="mg"?n*1000:n/1000;
 }
-function nexusUseSetupModal(name) {
+function nexusUseSetupModal(name,onSaved) {
   const c=cfg(name),cData=allPeptides()[name]||{};
   const old=nexusUseSetupFor(name)||{};
   const initial=nexusExplicitAdminMethod(old.method||cData.route)||"SubQ";
@@ -730,6 +736,7 @@ function nexusUseSetupModal(name) {
     state.nexusUseSetups=state.nexusUseSetups||{};
     state.nexusUseSetups[name]={method,unit,trackingMode:m.querySelector('input[name="nx-use-mode"]:checked')?.value||"backed",updatedAt:new Date().toISOString()};
     saveState();closeModal();render();
+    if(typeof onSaved==="function")onSaved();
   };
 }
 function doseModal(name, existing, occTime) {
@@ -750,7 +757,7 @@ function doseModal(name, existing, occTime) {
   const useSetup=nexusUseSetupFor(name);
   const isUntracked=!existing&&useSetup?.trackingMode==="untracked";
   const editingUntracked=!!existing&&existing.trackingMode==="untracked";
-  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||useSetup?.method||cData.route);
+  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||useSetup?.method||draft?.method||cData.route);
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
     (["mg","mcg"].includes(useSetup?.unit)?useSetup.unit:c.unit);
   const massSelectable=["mg","mcg"].includes(c.unit);
@@ -836,6 +843,7 @@ function doseModal(name, existing, occTime) {
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
       <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
+    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Change use setup</button></div>`:""}
     <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
     ${!isUntracked && isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
     <label class="field-label">SPRAYS</label>
@@ -843,7 +851,7 @@ function doseModal(name, existing, occTime) {
     <div id="sprays-mg-hint" style="font-size:11px;color:var(--t4);margin-bottom:8px">${f.sprayCount?`= ${mgToUnit(doseToMg(f.sprayCount*cData.mcgPerSpray,"mcg"),c.unit).toFixed(3)}${c.unit}`:`&nbsp;`}</div>
     <input id="dose" type="hidden" value="${esc(f.dose)}">
     ` : `
-    ${massSelectable?`<label class="field-label" for="nx-dose-entered">DOSE AMOUNT</label><div class="nx-dose-unit-row"><input id="nx-dose-entered" type="number" min="0" step="any" class="inp" value="${esc(existing?.enteredDose!=null?String(existing.enteredDose):String(nexusUseMassValue(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose,c.unit,preferredUnit)??""))}" aria-label="Dose amount"><select id="nx-dose-unit" class="inp" aria-label="Dose measurement"><option value="mcg"${preferredUnit==="mcg"?" selected":""}>mcg</option><option value="mg"${preferredUnit==="mg"?" selected":""}>mg</option></select></div><input id="dose" type="hidden" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}">`:`<label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(f.dose)}" style="margin-bottom:8px">`}
+    ${massSelectable?`<label class="field-label" for="nx-dose-entered">DOSE AMOUNT</label><div class="nx-dose-unit-row"><input id="nx-dose-entered" type="number" min="0" step="any" class="inp" value="${esc(existing?.enteredDose!=null?String(existing.enteredDose):String((f.dose===""?"":nexusUseMassValue(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose,c.unit,preferredUnit))??""))}" aria-label="Dose amount"><select id="nx-dose-unit" class="inp" aria-label="Dose measurement"><option value="mcg"${preferredUnit==="mcg"?" selected":""}>mcg</option><option value="mg"${preferredUnit==="mg"?" selected":""}>mg</option></select></div><input id="dose" type="hidden" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}">`:`<label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(f.dose)}" style="margin-bottom:8px">`}
 
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
@@ -853,7 +861,7 @@ function doseModal(name, existing, occTime) {
     ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
-    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
+    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label" style="${useSetup&&!isEdit?"display:none":""}">
       ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
     <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
