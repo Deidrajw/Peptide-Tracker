@@ -1993,6 +1993,8 @@ function planExclusiveVialAdjustment(snapshot,input){
   if(!Number.isFinite(requested)||requested<0||requested>capacity||
      Math.round(requested*100)/100!==requested)
     throw Error("Actual remaining must be within 0 and vial capacity, in 0.01mg increments");
+  if(vial.status==="transferred"&&requested>0)
+    throw Error("Transferred source must use the source-transfer reversal, not a manual stock correction");
   const reason=typeof input.reason==="string"?input.reason.trim():"";
   if(!reason)throw Error("A reason is required for every correction");
   if(!input.eventId||String(input.eventId).trim()==="")
