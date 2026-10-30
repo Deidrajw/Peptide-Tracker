@@ -1688,7 +1688,7 @@ function planUndoAddToOpenVial(snapshot,input){
   vial.vialMg=event.stockBefore.vialMg;
   event.status="reversed";event.reversedAt=input.loggedAt;event.reversalId=input.undoEventId;
   events.push({id:input.undoEventId,date:input.date,loggedAt:input.loggedAt,
-    type:"addition-reversal",status:"active",vialId:vial.id,mg:-Number(event.mg),
+    type:"addition-reversal",status:"active",vialId:vial.id,mg:0,amountMg:-Number(event.mg),
     reversesEventId:event.id,reason:"Reversed exact recorded vial addition",notes:""});
   return {next,eventId:input.undoEventId};
 }
