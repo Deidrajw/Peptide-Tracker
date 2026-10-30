@@ -1,3 +1,6 @@
+## 2026-10-30 — PR124 exclusive restock evidence reconciliation
+- Safety `41142799501`: PASS. Mobile `41142799457`: PASS. WebKit `41142799430`: PASS. DS2 nested `41142799419`: PASS. Full Chromium `41142799429`: IN PROGRESS, not a Pass. Exact SOURCE full LIVE and isolated DEMO ZIP independently inspected (outer/LIVE/offline CRC PASS, LIVE 26 root files, 04 JS Git blob parity, offline/standalone demo byte parity). Local browser navigation blocked by host policy, therefore NOT TESTED locally. Physical iPhone/VoiceOver NOT TESTED. Mixed old synchronous writers still BLOCKED.
+
 ## 2026-10-30 — Restock source-546441ab dedicated QA PASS; browser pending
 - Dedicated shared writer `41142799501` completed SUCCESS with new `add-vials-exclusive.test.cjs` and source-matched complete LIVE/DEMO archive artifact `13019931495`. Independent outer, LIVE and offline ZIP CRC PASS, 26 LIVE files, standalone/offline DEMO bytes match. Mobile `41142799457` SUCCESS and DS2 nested `41142799419` SUCCESS. Full browser `41142799429` and WebKit `41142799430` pending. Attempted standalone local Chromium with localhost and file URL, blocked by test environment before executing app, **NOT TESTED locally**. Physical iPhone/VoiceOver NOT TESTED. No claims beyond verified run status.
 
