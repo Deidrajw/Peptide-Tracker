@@ -722,19 +722,56 @@ function nexusUseSetupModal(name,onSaved) {
         <label><input type="radio" name="nx-use-mode" value="backed"${old.trackingMode==="untracked"?"":" checked"}><span><strong>Doses and inventory</strong><small>Use a verified exact stock source.</small></span></label>
         <label><input type="radio" name="nx-use-mode" value="untracked"${old.trackingMode==="untracked"?" checked":""}><span><strong>Doses only</strong><small>Save administrations without changing stock.</small></span></label>
       </fieldset>
+      <div id="nx-use-source-group"><label class="field-label" for="nx-use-source">USUAL PHYSICAL SOURCE</label><select id="nx-use-source" class="inp"></select><p id="nx-use-source-help" class="nx-use-help" role="status"></p></div>
       <p class="nx-use-help">Setting a method does not create prepared inventory. Existing records will remain unchanged.</p>
       <button id="nx-use-save" type="button" class="btn-primary">Save use setup</button>
     </div>`,"#A78BFA");
   const family=m.querySelector("#nx-use-family"),route=m.querySelector("#nx-use-route"),group=m.querySelector("#nx-use-injection-group");
   route.value=["SubQ","IM","IV"].includes(initial)?initial:"SubQ";
-  family.onchange=()=>{group.hidden=family.value!=="Injectable";};family.onchange();
+  const sourceInput=m.querySelector("#nx-use-source"),sourceGroup=m.querySelector("#nx-use-source-group");
+  const sourceHelp=m.querySelector("#nx-use-source-help");
+  const modeNow=()=>m.querySelector('input[name="nx-use-mode"]:checked')?.value||"backed";
+  let sourceRows=[];
+  const refresh=()=>{
+    group.hidden=family.value!=="Injectable";
+    sourceGroup.hidden=modeNow()==="untracked";
+    if(sourceGroup.hidden)return;
+    const method=family.value==="Injectable"?route.value:family.value;
+    sourceRows=method==="Nasal"?[]:(state.supplies||[]).filter(k=>k.name===name&&k.activeKit&&!k.isBlend).flatMap(k=>{
+      migrateKitToV2(k);
+      return (k.vials||[]).filter(v=>{
+        if(!["open","active"].includes(v.status)||getVialRemainingMg(k,v)<=0.01)return false;
+        const use=nexusExplicitAdminMethod(v.intendedUse)||nexusExplicitAdminMethod(k.preparationMethod||k.administrationMethod||k.route);
+        return !use||use===method;
+      }).map(v=>({kit:k,vial:v}));
+    });
+    sourceInput.innerHTML="";
+    sourceInput.add(new Option(sourceRows.length?"Choose usual vial":"No compatible physical vial",""));
+    sourceRows.forEach((x,i)=>sourceInput.add(new Option("Vial "+String(x.vial.sequenceNumber||x.vial.id)+" · "+getVialRemainingMg(x.kit,x.vial).toFixed(2)+" mg",String(i))));
+    const oldIndex=sourceRows.findIndex(x=>String(x.kit.id)===String(old.sourceKitId)&&String(x.vial.id)===String(old.sourceVialId));
+    if(oldIndex>=0)sourceInput.value=String(oldIndex);
+    else if(sourceRows.length===1)sourceInput.value="0";
+    sourceHelp.textContent=method==="Nasal"?"Nasal use requires an actually prepared product. A vial or saved plan isn't a ready spray.":sourceRows.length?"Choose once. Nexus remembers this exact vial for future stock-backed logs.":"No compatible open vial found. You may save setup, but inventory-backed logging needs verified stock.";
+  };
+  family.onchange=refresh;route.onchange=refresh;
+  m.querySelectorAll('input[name="nx-use-mode"]').forEach(el=>el.onchange=refresh);
+  refresh();
   m.querySelector("#nx-use-close").onclick=closeModal;
   m.querySelector("#nx-use-save").onclick=()=>{
     const method=family.value==="Injectable"?route.value:(family.value==="Other"?"Other":family.value);
     const unit=m.querySelector("#nx-use-unit").value;
     if(!["mg","mcg"].includes(unit)){showErrorBanner("Choose mg or mcg; IU needs a verified product definition.");return;}
     state.nexusUseSetups=state.nexusUseSetups||{};
-    state.nexusUseSetups[name]={method,unit,trackingMode:m.querySelector('input[name="nx-use-mode"]:checked')?.value||"backed",updatedAt:new Date().toISOString()};
+    const trackingMode=modeNow();
+    const choice=sourceRows[Number(sourceInput.value)];
+    if(choice&&trackingMode==="backed"){
+      const known=nexusExplicitAdminMethod(choice.vial.intendedUse)||nexusExplicitAdminMethod(choice.kit.preparationMethod||choice.kit.administrationMethod||choice.kit.route);
+      if(known&&known!==method){showErrorBanner("This vial has a different confirmed method. No setup saved.");return;}
+      if(!nexusExplicitAdminMethod(choice.vial.intendedUse))choice.vial.intendedUse=method;
+    }
+    state.nexusUseSetups[name]={method,unit,trackingMode,
+      ...(choice&&trackingMode==="backed"?{sourceKitId:choice.kit.id,sourceVialId:choice.vial.id}:{}),
+      updatedAt:new Date().toISOString()};
     saveState();closeModal();render();
     if(typeof onSaved==="function")onSaved();
   };
@@ -818,9 +855,10 @@ function doseModal(name, existing, occTime) {
       !(v.intendedUse && v.intendedUse!=="undecided") &&
       !nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route)
     ).map(vial=>({kit,vial})));
-  const needsKitPicker = !isEdit && eligibleSources.length > 1;
-  let selectedKitId = needsKitPicker?null:(eligibleSources[0]?.kit.id ?? null);
-  let selectedVialId = needsKitPicker?null:(eligibleSources[0]?.vial.id ?? null);
+  const rememberedSource=eligibleSources.find(x=>String(x.kit.id)===String(useSetup?.sourceKitId)&&String(x.vial.id)===String(useSetup?.sourceVialId));
+  const needsKitPicker = !isEdit && eligibleSources.length>1 && !rememberedSource;
+  let selectedKitId=rememberedSource?.kit.id??(needsKitPicker?null:(eligibleSources[0]?.kit.id??null));
+  let selectedVialId=rememberedSource?.vial.id??(needsKitPicker?null:(eligibleSources[0]?.vial.id??null));
   const selectedPhysicalSource = () => eligibleSources.find(x=>String(x.kit.id)===String(selectedKitId)&&String(x.vial.id)===String(selectedVialId))||null;
   const activeKit = () => selectedPhysicalSource()?.kit||null;
   const activeVial = () => selectedPhysicalSource()?.vial||null;
