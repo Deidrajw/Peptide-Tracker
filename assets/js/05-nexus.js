@@ -747,7 +747,14 @@ function doseModal(name, existing, occTime) {
   // just because the current vial ran out partway through drawing it up.
   const draft = state._pendingDoseDraft && state._pendingDoseDraft.name===name ? state._pendingDoseDraft : null;
   const lastDoseAmt = draft?.dose || occAmt || doseHistory[0]?.dose || "";
-  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||cData.route);
+  const useSetup=nexusUseSetupFor(name);
+  const isUntracked=!existing&&useSetup?.trackingMode==="untracked";
+  const editingUntracked=!!existing&&existing.trackingMode==="untracked";
+  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||useSetup?.method||cData.route);
+  const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
+    (["mg","mcg"].includes(useSetup?.unit)?useSetup.unit:c.unit);
+  const massSelectable=["mg","mcg"].includes(c.unit);
+
   const isNasal = initialMethod === "Nasal";
   // Route-specific source eligibility is intentionally strict: unlabelled inventory
   // cannot be guessed safe for nasal or injectable use.
@@ -830,18 +837,20 @@ function doseModal(name, existing, occTime) {
       <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
     <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
-    ${isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
+    ${!isUntracked && isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
     <label class="field-label">SPRAYS</label>
     <input id="sprays" type="number" min="0" step="1" class="inp" placeholder="e.g. 2" value="${f.sprayCount||''}" style="margin-bottom:4px">
     <div id="sprays-mg-hint" style="font-size:11px;color:var(--t4);margin-bottom:8px">${f.sprayCount?`= ${mgToUnit(doseToMg(f.sprayCount*cData.mcgPerSpray,"mcg"),c.unit).toFixed(3)}${c.unit}`:`&nbsp;`}</div>
     <input id="dose" type="hidden" value="${esc(f.dose)}">
     ` : `
-    <label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}" style="margin-bottom:8px">
+    ${massSelectable?`<label class="field-label" for="nx-dose-entered">DOSE AMOUNT</label><div class="nx-dose-unit-row"><input id="nx-dose-entered" type="number" min="0" step="any" class="inp" value="${esc(existing?.enteredDose!=null?String(existing.enteredDose):String(nexusUseMassValue(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose,c.unit,preferredUnit)??""))}" aria-label="Dose amount"><select id="nx-dose-unit" class="inp" aria-label="Dose measurement"><option value="mcg"${preferredUnit==="mcg"?" selected":""}>mcg</option><option value="mg"${preferredUnit==="mg"?" selected":""}>mg</option></select></div><input id="dose" type="hidden" value="${esc(selectedSource!=="fresh"?(preparedBatches.find(p=>p.id===selectedSource)?.amountEach||f.dose):f.dose)}">`:`<label class="field-label">DOSE (${c.unit})</label><input id="dose" type="number" class="inp" placeholder="e.g. 2" value="${esc(f.dose)}" style="margin-bottom:8px">`}
+
     ${isNasal && !(cData.mcgPerSpray>0) ? `<div style="font-size:10.5px;color:var(--t5);margin-bottom:8px">Set MCG PER SPRAY in this compound's settings (⚙ below on its Today card) to log by spray count instead.</div>` : ""}
     `}
-    ${!isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
+    ${!isUntracked && !isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
+    ${!isUntracked && !isEdit ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
+    ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
@@ -855,7 +864,7 @@ function doseModal(name, existing, occTime) {
     <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
-    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
+    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
       <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose how you prepared this dose":"Finish vial setup"}</div>
       <p class="nx-dose-section-desc">${isEdit ? "The original source stays linked." : "Only needed when Nexus cannot identify one verified source."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
@@ -945,16 +954,16 @@ function doseModal(name, existing, occTime) {
     const kit=activeKit();
     const vial=kit?activeVial():null;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
-    const sourceLabel=selectedSource==="fresh"
+    const sourceLabel=(isUntracked||editingUntracked)?"Untracked · No inventory deduction":selectedSource==="fresh"
       ?(vial?(kit.name+" · Vial "+(vial.sequenceNumber||"?")):"Source not selected")
       :(prepared?"Prepared dose":"Prepared source");
     const usedMg=doseToMg(Number(doseVal("dose")),c.unit);
     const remaining=vial?getVialRemainingMg(kit,vial):null;
-    review.querySelector("#nx-dose-review-amount").textContent=doseVal("dose")+" "+c.unit;
+    review.querySelector("#nx-dose-review-amount").textContent=(m.querySelector("#nx-dose-entered")?.value||doseVal("dose"))+" "+(m.querySelector("#nx-dose-unit")?.value||c.unit);
     review.querySelector("#nx-dose-review-compound").textContent=name;
     review.querySelector("#nx-dose-review-rows").innerHTML=
       reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
-      reviewRow("Method",initialMethod)+
+      reviewRow("Method",m.querySelector("#nx-dose-method")?.value||initialMethod)+
       reviewRow("Administration site",doseVal("site")||"Not recorded")+
       reviewRow("Vial used",isEdit?"Original source retained":sourceLabel)+
       (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
@@ -983,8 +992,11 @@ function doseModal(name, existing, occTime) {
     if(!Number.isFinite(amount)||amount<=0){showErrorBanner("Enter an amount greater than zero before reviewing.");return;}
     // Do not infer a vial when more than one physical source exists.
     // The authoritative save path still verifies inventory and allocation.
-    if(!isEdit&&selectedSource==="fresh"&&needsKitPicker&&!selectedPhysicalSource()){
+    if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&needsKitPicker&&!selectedPhysicalSource()){
       showErrorBanner("Choose the vial you used before reviewing.");return;
+    }
+    if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&!activeKit()&&!isBlend){
+      showErrorBanner("No verified source for this use. Review setup in Stash before confirming inventory-backed logging.");return;
     }
     showDoseReview(true);
   };
@@ -1048,7 +1060,7 @@ function doseModal(name, existing, occTime) {
   function renderAllocPanel() {
     const panel = m.querySelector("#alloc-panel");
     if (!panel) return;
-    if (isEdit || selectedSource!=="fresh") { panel.innerHTML=""; return; }
+    if (isEdit || isUntracked || selectedSource!=="fresh") { panel.innerHTML=""; return; }
     const doseAmtStr = m.querySelector("#dose")?.value || f.dose;
     const neededMg = doseToMg(doseAmtStr, c.unit);
     // The UI is shared. Premixed blends keep one administration record and an
@@ -1059,6 +1071,13 @@ function doseModal(name, existing, occTime) {
       return;
     }
     const ak = activeKit();
+    if(!ak && !unlabelledOpenSources.length && !eligibleSources.length){
+      const incompatible=(state.supplies||[]).filter(k=>k.name===name).flatMap(kit=>(kit.vials||[]).filter(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01).map(v=>({kit,v})));
+      panel.innerHTML='<p role="status" class="nx-dose-source-mismatch">'+(incompatible.length
+        ?'Physical inventory exists, but none is verified for '+esc(initialMethod)+'. Review use setup in Stash; this is not an inventory shortage.'
+        :'No compatible open stock is recorded for this use. Review setup in Stash.')+'</p>';
+      return;
+    }
     if(!ak && unlabelledOpenSources.length){
       panel.innerHTML='<p role="status" style="padding:12px;border:1px solid var(--border-sub);border-radius:10px;color:var(--t2)">Open inventory is recorded, but the administration method is unconfirmed. Choose and confirm the exact vial in Dose source above; no stock has been deducted.</p>';
       return;
@@ -1237,6 +1256,23 @@ function doseModal(name, existing, occTime) {
   // Stable debounced reference — must persist across calls so the debounce timer works
   // correctly (a fresh debounce() wrapper on every keystroke would never actually delay
   // anything).
+  const enteredInput=m.querySelector("#nx-dose-entered"),unitSelect=m.querySelector("#nx-dose-unit");
+  if(enteredInput&&unitSelect){
+    const sync=()=>{
+      const v=nexusUseMassValue(enteredInput.value,unitSelect.value,c.unit);
+      m.querySelector("#dose").value=enteredInput.value!==""&&v!==null?String(Number(v.toPrecision(12))):"";
+      renderAllocPanel();
+    };
+    enteredInput.oninput=sync;
+    unitSelect.onchange=()=>{
+      const previous=unitSelect.dataset.previous||preferredUnit;
+      const converted=nexusUseMassValue(enteredInput.value,previous,unitSelect.value);
+      enteredInput.value=enteredInput.value!==""&&converted!==null?String(Number(converted.toPrecision(12))):"";
+      unitSelect.dataset.previous=unitSelect.value;
+      sync();
+    };
+    unitSelect.dataset.previous=unitSelect.value;sync();
+  }
   const debouncedRenderAllocPanel = debounce(renderAllocPanel, 500);
   m.querySelector("#dose").oninput = debouncedRenderAllocPanel;
   const dateNowBtn = m.querySelector("#date-now");
