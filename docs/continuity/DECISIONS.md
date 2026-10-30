@@ -1,3 +1,6 @@
+## 2026-10-30 — Failed dose saves must not look successful
+- Preserve existing synchronous API for compatibility, but saveState now returns verified true or failure false, and critical routine Log Dose, combo and quick-dose handlers must check it before dismissal or showing success. If storage is stale/quota-failed, leave entry visible and warn for backup/reload. No silent untracked fallback or history changes. This mitigates false acknowledgement but does NOT provide Web Lock atomicity; existing prepared-source release gates stay disabled. No merge/deploy approval.
+
 ## 2026-10-30 — Shared writer release decision remains explicitly gated
 - Branch PR124 may use guarded single gateway for ordinary synchronous saves and exclusive async transactions, but a passing pure suite or real two-tab lock test for async transactions does not prove ordinary synchronous writes share that Web Lock. The unresolvable synchronous locking gap must be addressed through a reviewed asynchronous caller migration or a browser-safe coordinated alternative, with protected history/rollback and iPhone tests before either stock transfer flag can be enabled. Keep user-approved backed/untracked setup, existing localStorage key and prepared-vs-planned separation. No release, merge, destructive migration or deployment approval inferred.
 

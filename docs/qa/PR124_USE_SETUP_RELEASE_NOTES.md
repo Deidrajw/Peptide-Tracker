@@ -1,3 +1,6 @@
+## 2026-10-30 — Save-ack hardening (NOT RELEASED)
+On draft PR124, verified saveState boolean now prevents false success in normal Log Dose, combo, and quick logging after stale/quota/readback failure. 4 Log Dose paths guarded; separate fictional 8-configuration browser regression added. Dedicated safety CI 41116725844 PASS, source-exact complete LIVE/isolated FULL DEMO package artifact 13005203507 CRC and offline parity checked, full QA 41116725723 pending; no storage migration/production writes. Prepared nasal remains disabled and cross-tab sync-to-exclusive migration incomplete. Real iPhone acceptance not tested, no merge/deploy.
+
 ## 2026-10-30 — Source-exact shared writer candidate evidence, NOT RELEASED
 GitHub application source c003f77a: 26/26 LIVE Git blob parity PASS, outer+inner archive CRC PASS and standalone/offline full-app fictional DEMO byte equality, artifact 12998570703 from dedicated CI 41099893634 SUCCESS. Local isolated Chromium 320/390 dark/light smoke PASS, stale writer protection PASS. Full browser QA 41099893633 still running, physical iPhone and VoiceOver NOT TESTED. Cross-tab synchronous legacy-to-exclusive coordination unresolved, prepared nasal live UI safely OFF, no production changes/merge/deploy. See continuity docs and PR124_SHARED_WRITER_ACCEPTANCE.md.
 
