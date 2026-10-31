@@ -34,3 +34,8 @@ Status: PROPOSED / CODED CANDIDATE; PR #124 draft and unmerged. Version remains 
 
 ## Stash user-feedback refinement (2026-10-31), UNRELEASED
 - Three reported UI defects fixed as development candidate: oversize Stash kits tightened; nasal/capsule/raw/topical stock moved from mixed large kit-card display into new compact Other forms segment (with Vial kits and Supplies segments); non-vial compound input aligned to Vials' five visible suggestions plus View all browser. Saved formulation IDs, vial stock and history unchanged. No data migration or transfer feature; no new dosing features. 320/390, light/dark CI underway for newest code. Device Safari/VoiceOver acceptance and exact-source artifacts still pending; no production deploy/merge authorization.
+
+
+## 2026-10-31 — Focused Stash UI redesign qualification
+- **Code tested:** 3848c87d078fd763800265020fce1840877b57cd. Full #41249830807 plus writer/mobile/WebKit/DS2 four companion workflows all SUCCESS. Test includes 8 fictional LIVE/DEMO 320/390 light/dark formulation picker/category cases and protected Stash/Log Dose regressions. Artifact #13060877682 inspected, matching manifest/source, 26 LIVE files, offline DEMO matches full standalone; zero live sync and ephemeral storage.
+- **User priorities delivered in candidate:** smaller Stash kit cards, consistent five-option + View all compound picker across non-vial forms, separate Vial kits/Other forms/Supplies with compact non-vial stock rows. Supersedes inline mixed stock-card layout. **Limitations:** physical iPhone user acceptance pending, no production/source parity, no merge/deploy/transfer activation; version unchanged v0.9.20-beta.
