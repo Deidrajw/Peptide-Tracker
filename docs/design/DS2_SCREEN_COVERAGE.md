@@ -1,3 +1,6 @@
+## 2026-10-31 — Backup/Units child screenshot evidence inspected; modal acceptance pending
+- Independently opened nested evidence archive 13034276111, inspected 320px/390px light/dark screenshots of Backup & Restore and Units detail. No apparent horizontal overflow or lost controls; two Import/Export button labels wrap at 320 but remain legible. Existing nested audit run 41178615575 PASS. This is detail-screen visual evidence only and does NOT establish soft-keyboard or restore-preview fit. New four-case fictional standalone browser matrix committed in tools/validate-trust-ui.mjs at 1e7b647; run 41178820238 pending; physical iPhone/VoiceOver NOT TESTED. Keep these acceptance items OPEN.
+
 ## 2026-10-31 — Settings child screenshots inspected, modal acceptance open
 - 8 actual screenshots from nested artifact 13034276111 inspected: 320/390 light/dark Backup & Restore and Units detail child screens visually contained, with wrapped rollover at 320px. Screenshots do not capture restore confirmation or virtual keyboard. Fictional browser assertions added 56a52f86; Chromium 41178814456 pending. Parent layouts preserved, child acceptance OPEN.
 
