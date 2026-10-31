@@ -2100,7 +2100,7 @@ function nexusAddFormulationModal(type,existingId=null){
     browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;});};
     matchList.appendChild(browse);
     if(query && !candidates.some(name=>name.trim().toLocaleLowerCase()===query)){
-      const create=document.createElement("button");create.type="button";create.className="nx-kit-browse-all";
+      const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
       create.textContent='＋ Use "'+compoundInput.value.trim()+'" as a custom compound';
       create.onpointerdown=e=>e.preventDefault();
       create.onclick=()=>{
