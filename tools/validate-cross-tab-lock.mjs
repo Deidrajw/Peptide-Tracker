@@ -329,5 +329,52 @@ try{
  assert.equal(transferred.tx.vialId,"outflow-sealed-2");
  console.log("PASS: Chromium whole-vial source picker requires explicit choice and touches exact sealed source only");
 
+
+ // Real outflow modal: exact sealed source choice, persistent event, inverse.
+ await a.evaluate(()=>{
+   closeModal();
+   const fresh=buildDemoState("weight_loss");fresh.profile.onboardingDone=true;
+   fresh.supplies.push({id:987654324,name:"Retatrutide",vialMg:10,totalVials:3,
+     vials:[{id:"out-open",status:"open",vialMg:10,remainingMg:4,sequenceNumber:1},
+       {id:"out-sealed-1",status:"sealed",vialMg:10,remainingMg:10,sequenceNumber:2},
+       {id:"out-sealed-2",status:"sealed",vialMg:10,remainingMg:10,sequenceNumber:3}],
+     wasteLog:[],_vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+   state=fresh;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+   logWasteModal(987654324);
+ });
+ await a.locator("#waste-save").click();
+ await a.locator("#whole-vial-select").selectOption("out-sealed-2");
+ await a.locator("#whole-vial-confirm").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k?.wasteLog?.some(e=>e.vialId==="out-sealed-2"&&e.status==="active");
+ },{timeout:10000});
+ const outflow=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return {vials:k.vials,events:k.wasteLog};
+ });
+ assert.equal(outflow.vials.find(v=>v.id==="out-sealed-2").status,"transferred");
+ assert.equal(outflow.vials.find(v=>v.id==="out-sealed-2").remainingMg,0);
+ assert.equal(outflow.vials.find(v=>v.id==="out-open").remainingMg,4);
+ assert.equal(outflow.vials.find(v=>v.id==="out-sealed-1").remainingMg,10);
+ const outId=outflow.events[0].id;
+ await a.evaluate(id=>undoOutflowModal(987654324,id),outId);
+ await a.locator("#confirm-undo").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k?.wasteLog?.some(e=>e.reversesEventId);
+ },{timeout:10000});
+ const reversedOutflow=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return {vials:k.vials,events:k.wasteLog};
+ });
+ assert.equal(reversedOutflow.vials.find(v=>v.id==="out-sealed-2").status,"sealed");
+ assert.equal(reversedOutflow.vials.find(v=>v.id==="out-sealed-2").remainingMg,10);
+ assert.equal(reversedOutflow.events[0].status,"reversed");
+ assert.equal(reversedOutflow.events[1].reversesEventId,outId);
+ console.log("PASS: Chromium actual outflow exact sealed-vial picker and exclusive event-linked Undo readback");
+
  await context.close();
 }finally{await browser.close()}
