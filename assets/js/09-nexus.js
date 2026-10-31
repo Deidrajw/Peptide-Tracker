@@ -1292,7 +1292,8 @@ function markKitDoneModal(supplyId){
   const partial=m.querySelector("#done-partial-outflow");
   if(partial)partial.onclick=()=>{
     closeModal();
-    logWasteModal(s.id);
+    if(s.isBlend)blendLogOutflowModal(s.id);
+    else logWasteModal(s.id);
   };
   const button=m.querySelector("#done-save");
   button.onclick=async()=>{
