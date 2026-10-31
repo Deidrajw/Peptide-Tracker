@@ -1,3 +1,6 @@
+## 2026-10-31 — Profile/Settings child polish limited to evidenced defects
+- Keep accepted Profile/More parent and core Stash/Today/Calendar/Plans unchanged. Units detail controls use minimum 44px touch height. Backup preview wraps arbitrary user-selected filenames and action buttons at narrow widths, returns focus to Import Backup when Cancel or Close is used, and reports a recovery copy only when existing saved browser state was available. Keep explicit RESTORE typed confirmation and guarded writer unchanged. Code acddbe2d is PR124 draft only; no new merge/deploy approval.
+
 ## 2026-10-31 — UI content and action labels must fit 320px without inventory jargon
 - On retire-kit sheet, user-facing title is Mark Kit Done; kit identity is secondary. Explain impact in ordinary language, `Remove all XX mg from your stash` and previous records remain saved, rather than ledger/attribution mechanics. Provide clearly different actions `Log Partial Outflow` versus `Remove All & Mark Done`; keep confirmed stock amount read-only. Preserve 44/48px touch targets, safe-area sheets, reason gating, direct standard/blend route and existing Web-Locked exact-vial audit. Observed long text wrapping at 320px is concrete visual QA evidence; recheck new source screens before acceptance. Scope to unaccepted sheet, not approved parent navigation.
 
