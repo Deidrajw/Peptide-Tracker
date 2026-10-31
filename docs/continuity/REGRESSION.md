@@ -1,3 +1,6 @@
+## 2026-10-31 — Retirement visual screenshot observation + retest
+- #41170501525 nested 320/390 x dark/light captures PASS, screenshot artifact #13030128989 reviewed; original long 320px Mark Kit Done header and two primary action labels wrap and technical explanation is hard to scan. After b6a5b778 copy revision, current-head 320/390 visual + full browser still pending; #41170672326 nested, #41170672260 full. Browser functional test updated 67b6f5b to assert concise main button. No physical iPhone acceptance; keep broader DS2 child routes open.
+
 ## 2026-10-31 — Focused retirement UX 320/390 theme visual regression ADDED
 - `scripts/ds2-nested-navigation-audit.mjs` 79d7b93a adds four fictional data captures (320/390 x light/dark) of Mark Kit Done with 3.25mg open+10mg sealed; asserts consequence and tap target height, no redundant numeric amount, no invalid Used Up reason, no horizontal overflow. Never commits or imports production records; temporary fixture removed. Script execution on new head PENDING. Previous pre-addition nested QA #41170221405 SUCCESS; full browser #41170221409 unresolved at observation. Real iPhone/VoiceOver not yet accepted.
 
