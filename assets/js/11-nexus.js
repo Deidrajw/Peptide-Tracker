@@ -93,16 +93,16 @@ function renderUnitsDetail() {
   return `<div style="padding:4px 4px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;overflow:hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Weight unit</span>
-      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.weightUnit}</button>
+      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.weightUnit}</button>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Measurement unit</span>
-      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.measureUnit}</button>
+      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.measureUnit}</button>
     </div>
     <div style="padding:13px 12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <span style="font-size:13px;color:var(--t2)">My day rolls over at</span>
-        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:32px">
+        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:44px;max-width:100%">
           ${[0,1,2,3,4,5,6].map(h=>`<option value="${h}"${(Number(state.settings.dayRolloverHour)||0)===h?" selected":""}>${h===0?"Midnight (default)":h+":00 AM"}</option>`).join("")}
         </select>
       </div>
@@ -555,21 +555,22 @@ function importData(e) {
     openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <strong style="font-size:17px;color:var(--t1)">Review backup before restore</strong>
       <button id="nx-import-close" aria-label="Close restore preview" style="min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t1);font-size:22px">×</button></div>
-      <p style="font-size:12px;color:var(--t2);line-height:1.6">File: ${esc(file.name)}. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6;overflow-wrap:anywhere">File: <strong>${esc(file.name)}</strong>. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
       <div style="font-size:12px;color:var(--t2);margin:12px 0">${summary}</div>
       <label for="nx-restore-word" style="display:block;font-size:12px;font-weight:650;color:var(--t1);margin-bottom:6px">Type RESTORE to confirm</label>
       <input id="nx-restore-word" class="inp" autocomplete="off" autocapitalize="characters" placeholder="RESTORE">
       <p style="font-size:11px;color:var(--t3);margin:8px 0 14px">Nexus saves a local recovery copy before replacement if browser storage permits.</p>
-      <div style="display:flex;gap:8px"><button id="nx-import-cancel" style="flex:1;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
-      <button id="nx-import-confirm" disabled style="flex:1;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="nx-import-cancel" style="flex:1 1 110px;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
+      <button id="nx-import-confirm" disabled style="flex:1 1 150px;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
     const box=document.querySelector(".modal");if(!box)return;
-    box.querySelector("#nx-import-close").onclick=closeModal;
-    box.querySelector("#nx-import-cancel").onclick=closeModal;
+    const cancelRestore=()=>{closeModal();document.querySelector("#nx-import-open")?.focus();};
+    box.querySelector("#nx-import-close").onclick=cancelRestore;
+    box.querySelector("#nx-import-cancel").onclick=cancelRestore;
     const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
     word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
     go.onclick=()=>{
       if(word.value.trim()!=="RESTORE")return;
-      const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
+      const oldState=state,oldRaw=_demoActive?null:localStorage.getItem(STORE_KEY);
       const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
       try{
         if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
@@ -588,7 +589,7 @@ function importData(e) {
           state=next;
         }
         closeModal();render();
-        alert("Backup restored. A local recovery copy of the previous records was saved.");
+        alert(oldRaw!==null?"Backup restored. A local recovery copy of the previous records was saved.":"Backup restored. No previous saved browser records were available for a recovery copy.");
       }catch(err){
         state=oldState;
         // Do not attempt a second blind write on failure: storage may have
