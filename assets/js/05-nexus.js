@@ -1445,6 +1445,37 @@ function doseModal(name, existing, occTime) {
       if(!editingUntracked&&!nexusPostProtocolDoseFollowup(name,dose,true))nexusPostDoseReactionPrompt(name,dose.id);
       return;
     }
+    // Newly recorded backed physical doses use the exclusive original-source
+    // correction contract rather than the older synchronous edit/refund path.
+    if(isEdit&&f.trackingMode==="backed"&&!isBlend&&!f.fromPreparedId){
+      if(methodInput.value!==f.method){
+        showErrorBanner("Changing the method of an existing inventory-backed dose requires source review. No changes saved.");return;
+      }
+      const date=m.querySelector("#date").value;
+      if(!date||!Number.isFinite(new Date(date).getTime())){
+        showErrorBanner("Choose a valid date before saving.");return;
+      }
+      const button=m.querySelector("#save");
+      if(button.disabled)return;
+      button.disabled=true;
+      let changed;
+      try{
+        changed=await nexusCommitBackedDoseChange({
+          name,doseId:f.id,operation:"edit",nativeUnit:c.unit,builtin:!!PEPTIDES[name],
+          patch:{dose:doseAmtStr,date,method:f.method,
+            site:m.querySelector("#site").value,notes:m.querySelector("#notes").value,
+            asNeeded:m.querySelector("#nx-dose-as-needed").checked,
+            escalation:m.querySelector("#esc").checked,
+            enteredDose:m.querySelector("#nx-dose-entered")?.value||doseAmtStr,
+            enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit}
+        });
+      }finally{button.disabled=false;}
+      if(!changed){
+        showErrorBanner("The original exact vial or saved data could not be reconciled. No correction saved; review the source and reload if another tab changed inventory.");
+        return;
+      }
+      closeModal();render();return;
+    }
     if(isBlend){
       const raw=Number(doseAmtStr),neededMg=doseToMg(raw,c.unit);
       if(!Number.isFinite(neededMg)||neededMg<=0){showErrorBanner("Invalid blend amount.");return;}
@@ -1557,6 +1588,15 @@ function doseModal(name, existing, occTime) {
         return;
       }
       closeModal();render();
+      // Event-specific undo returns stock to the SAME physical vial under
+      // the exclusive writer, never to whichever vial is now open.
+      showUndoToast(name+" dose logged · Undo",async()=>{
+        const undone=await nexusCommitBackedDoseChange({
+          name,doseId:result.dose.id,operation:"undo",nativeUnit:c.unit,builtin:!!PEPTIDES[name]
+        });
+        if(!undone){showErrorBanner("Undo blocked: original vial or saved history changed. Nothing was reversed; reload and review the source.");return;}
+        render();
+      });
       if(!nexusPostProtocolDoseFollowup(name,result.dose,true))nexusPostDoseReactionPrompt(name,result.dose.id);
       return;
     }
