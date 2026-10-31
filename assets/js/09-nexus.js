@@ -1354,48 +1354,62 @@ function planUndoExclusivePhysicalOutflow(snapshot,input){
     status:"reversed",vialId:vial.id,reversesEventId:tx.id});
   return {next,eventId:input.undoEventId};
 }
-function undoOutflowModal(kitId,txId){
-  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
-  const tx=(s.wasteLog||[]).find(w=>String(w.id)===String(txId));if(!tx)return;
-  const m=openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">UNDO OUTFLOW</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
-    </div>
-    <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:8px">Undo ${tx.mg}mg outflow?</div>
-    <div class="hint" style="margin-bottom:20px">Restores the exact recorded vial only if it has not been changed or used since the outflow. Original history remains, marked reversed.</div>
-    <div style="display:flex;gap:8px">
-      <button id="cancel-undo" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px">Cancel</button>
-      <button id="confirm-undo" style="flex:1;padding:11px;border-radius:10px;background:#ff7c7c;color:#000;font-weight:700;font-size:13px">Undo Outflow</button>
-    </div>
-  `,"#ff7c7c");
-  m.querySelector("#x").onclick=closeModal;
-  m.querySelector("#cancel-undo").onclick=closeModal;
-  const button=m.querySelector("#confirm-undo");
-  button.onclick=async()=>{
-    if(button.disabled)return;
-    button.disabled=true;
-    try{
-      const input={kitId:s.id,eventId:tx.id,undoEventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
-      let result;
-      if(_demoActive)result=planUndoExclusivePhysicalOutflow(state,input);
-      else{
-        const raw=localStorage.getItem(STORE_KEY);
-        if(!raw)throw Error("Saved inventory unavailable; reload");
-        const writer=nexusWriter();
-        result=await writer.transaction(JSON.parse(raw),snapshot=>planUndoExclusivePhysicalOutflow(snapshot,input));
-        _nexusLastSavedSnapshot=writer.expected();
-      }
-      state=result.next;closeModal();render();
-    }catch(e){showErrorBanner("Outflow undo blocked: "+e.message);}
-    finally{if(button.isConnected)button.disabled=false;}
-  };
+function planExclusiveOutflowUndo(snapshot,input){
+ const next=JSON.parse(JSON.stringify(snapshot)),kit=(next.supplies||[]).find(s=>String(s.id)===String(input.kitId));
+ if(!kit||JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Undo");
+ const matches=(kit.wasteLog||[]).filter(e=>String(e.id)===String(input.txId));
+ if(matches.length!==1)throw Error("Outflow event unavailable");
+ const tx=matches[0];
+ if(tx.status!=="active"||!["waste","gifted","testing"].includes(tx.type)||
+    !["transferred_sealed","consumed_open_whole","consumed_open_partial"].includes(tx.outflowKind))
+   throw Error("Outflow cannot be reversed safely");
+ const targets=(kit.vials||[]).filter(v=>String(v.id)===String(tx.vialId));
+ if(targets.length!==1)throw Error("Exact source vial unavailable");
+ const vial=targets[0];
+ if(!tx.stockBefore||!tx.stockAfter||JSON.stringify(vial)!==JSON.stringify(tx.stockAfter))
+   throw Error("Source vial changed; cannot undo safely");
+ if((kit.wasteLog||[]).some(e=>String(e.id)===String(input.inverseId)))throw Error("Inverse already exists");
+ const after=JSON.parse(JSON.stringify(vial));
+ Object.keys(vial).forEach(k=>delete vial[k]);
+ Object.assign(vial,JSON.parse(JSON.stringify(tx.stockBefore)));
+ tx.status="reversed";tx.reversedAt=input.reversedAt;tx.reversalId=input.inverseId;
+ kit.wasteLog.push({id:input.inverseId,date:input.date,loggedAt:input.reversedAt,mg:0,
+  type:"outflow_reversal",reason:"Undo outflow",notes:"Exact vial restored",
+  status:"active",vialId:tx.vialId,reversesEventId:tx.id,stockBefore:after,
+  stockAfter:JSON.parse(JSON.stringify(vial))});
+ return {next,eventId:input.inverseId};
 }
-
-// Edit Outflow — correct the amount/reason/note/date of an existing transaction rather
-// than undo-then-redo. Since remaining is derived from the live wasteLog value, changing
-// mg here automatically restores/consumes the difference on next render — no manual
-// compensating math.
+function undoOutflowModal(kitId,txId){
+ const kit=state.supplies.find(s=>String(s.id)===String(kitId));if(!kit)return;
+ const tx=(kit.wasteLog||[]).find(e=>String(e.id)===String(txId));if(!tx)return;
+ const expectedKit=JSON.stringify(kit);
+ const m=openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+ <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">UNDO OUTFLOW</span>
+ <button id="x" aria-label="Close" style="color:var(--t4)">✕</button></div>
+ <div class="hint" style="margin-bottom:20px">Undo ${tx.mg}mg from its exact original vial? Undo is blocked if that vial changed afterward. The original event remains in history.</div>
+ <div style="display:flex;gap:8px"><button id="cancel-undo" class="btn-secondary">Cancel</button>
+ <button id="confirm-undo" class="btn-primary">Undo Outflow</button></div>`,"#ff7c7c");
+ m.querySelector("#x").onclick=closeModal;m.querySelector("#cancel-undo").onclick=closeModal;
+ const button=m.querySelector("#confirm-undo");
+ button.onclick=async()=>{
+  if(button.disabled)return;button.disabled=true;
+  try{
+   const input={kitId,txId,expectedKit,inverseId:uid(),date:localDate(),reversedAt:new Date().toISOString()};
+   let result;
+   if(_demoActive)result=planExclusiveOutflowUndo(state,input);
+   else{
+    const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable");
+    const saved=JSON.parse(raw),current=(saved.supplies||[]).find(s=>String(s.id)===String(kitId));
+    if(!current||JSON.stringify(current)!==expectedKit)throw Error("Kit changed; reopen Undo");
+    const writer=nexusWriter();
+    result=await writer.transaction(saved,snapshot=>planExclusiveOutflowUndo(snapshot,input));
+    _nexusLastSavedSnapshot=writer.expected();
+   }
+   state=result.next;closeModal();render();
+  }catch(e){showErrorBanner("Undo not saved: "+e.message);}
+  finally{if(button.isConnected)button.disabled=false;}
+ };
+}
 function editOutflowModal(kitId, txId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const tx = (s.wasteLog||[]).find(w=>w.id===txId); if(!tx) return;
