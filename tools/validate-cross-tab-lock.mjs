@@ -345,8 +345,8 @@ try{
    logWasteModal(987654324);
  });
  await a.locator("#waste-save").click();
- await a.locator("#whole-vial-select").selectOption("out-sealed-2");
- await a.locator("#whole-vial-confirm").click();
+ await a.locator("#waste-source").selectOption("out-sealed-2");
+ await a.locator("#waste-source-confirm").click();
  await a.waitForFunction(()=>{
    const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
    return k?.wasteLog?.some(e=>e.vialId==="out-sealed-2"&&e.status==="active");
