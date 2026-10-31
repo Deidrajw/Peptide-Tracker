@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 corrected Settings child QA verified, NOT RELEASED
+- Corrected full build Chromium #41178615573 SUCCESS, source-matched artifact #13033234592 outer ZIP CRC PASS / LIVE 26 file CRC PASS / isolated standalone FULL_DEMO included. Independent corrected-source Playwright fictional restore modal matrix 4/4 PASS 320/390 light/dark: keyboard typing, enabled/disabled confirmation, 44px layout, focus return, no-write dismissals, long filename. Reduced-height viewport approximation also checked. New expanded CI #41178820238 pending, physical iPhone and VoiceOver not accepted. PR remains draft, main da585ab3, production v0.9.20-beta, no merge/deploy.
+
 ## 2026-10-31 — Backup/Restore child QA evidence only (NOT RELEASED)
 - No code change or release triggered by independent earlier-source four-viewport Chromium DEMO test (4/4 PASS). Existing draft PR124 screenshot evidence 13034276111 passed nested audit. Requested current-head Chromium runs 41178615573, 41178814456 and newer 41178820238 remain IN PROGRESS (not PASS); no verified current-head LIVE/DEMO package, real iPhone acceptance, merge or Cloudflare deployment. Both prepared gates OFF.
 
