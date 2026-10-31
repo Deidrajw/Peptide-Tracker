@@ -2835,3 +2835,12 @@ User screenshots show visually unmatched same-role controls: Protocol wizard Con
 - Latest implementation includes single five-option Add Kit chooser, kit-list package cards, searchable compound field, per-vial intended-use option with NO actual transfer, and matching raw/topical/capsule/purchased nasal data constraints. Method/site fix remains native site dropdown. No historical records converted.
 - Earlier workflow runs failed 320px hit targets (form buttons 40/43px, Adjust 17px); fixed with explicit min-height on controls. DS2 nested audit later failed because its old expectation treated Add Kit entry as Vial editor; updated audit to choose Vials for old editor checks and to stop expecting Continue at the first form-selection step (fcb459a2). Latest exact-head CI PENDING; no merge/deployment.
 - NEXT: verify latest CI, resolve any genuine remaining regressions, then physical iPhone review in isolated preview. No user action needed now.
+
+
+## 2026-10-31 — PR #124 exclusive backed-dose QA checkpoint (draft only)
+- Verified main da585ab3458394ddf5e88e283b210933beeab810; draft PR #124 head before test patch 96b1de7a2bacfb37cf73929fbd44f8d6a6588c71; production Cloudflare source/parity NOT reverified, no merge/deploy approval.
+- Exact-head CI #41228823226 shared writer, #41228823156 mobile, #41228823165 nested navigation, #41228823147 WebKit PASS. Full release/build/browser #41228823152 FAIL at legacy exact-vial dose save assertion (remaining 6.75mg vs expected 5.5mg; history zero). Candidate whole-app artifact #13052578702 uploaded but full QA failed; not release-certified.
+- Full browser logs before failure explicitly PASS real Chromium two-tab exclusive backed Log Dose: one vial debit + one history, stale second transaction rejected; plus other inventory event-specific undo/edit tests. This DOES NOT prove exclusive backed-dose edit/undo is implemented or accepted.
+- Test-only commit 32de6c1e changes validate-logdose-ui.mjs to wait for asynchronous dose save before asserting legacy fixture; no production runtime change. Latest exact-head CI for this change NOT VERIFIED.
+- Prepared transfer controls remain OFF; preserve legacy histories and source identities, all approved DS2, no data migration. Physical iPhone/VoiceOver NOT TESTED for PR #124.
+- ONE NEXT ACTION: verify full exact-head browser CI after 32de6c1e; if still failing isolate actual save validation, then implement exclusive backed-dose edit/undo with stale-tab conflict QA before any release approval.
