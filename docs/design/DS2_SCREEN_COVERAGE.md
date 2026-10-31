@@ -1,3 +1,6 @@
+## 2026-10-31 — Backup & Restore child physical iPhone acceptance PASS
+- User-reported actual iPhone Safari checklist 9/9 PASS with zero notes, fictional full-app DEMO and JSON only, production data untouched: settings navigation, long filename, native keyboard/actions, typed RESTORE gating, Cancel/X no-write, external keyboard/VoiceOver focus return and light/dark readability. Independent browser Chromium #41178820238 and screenshot-fixed #41211810566 both SUCCESS; four settled local visual frames previously inspected. Mark ONLY Backup & Restore child-screen physical acceptance complete; broader Settings, production migration, and other PR124 features remain subject to their own acceptance.
+
 ## 2026-10-31 — Expanded restore modal visual audit: automated PASS, settled snapshots pending
 - Expanded GitHub Chromium #41178820238 SUCCESS; four actual restore-preview screenshots from artifact #13034107579 inspected at 320/390 × light/dark. Title, long filename, counts, consent, cancel/restore actions present and fit; QA JSON confirms overflow=false, 44px actions. Several screenshots rendered mid-entrance with low opacity; not valid settled contrast visual evidence. Timing-only screenshot correction b445679eb8ad346c4906f558271ad0615647f91b pending CI. iPhone Safari keyboard and VoiceOver not accepted. Keep parent screens unchanged and physical acceptance OPEN.
 
