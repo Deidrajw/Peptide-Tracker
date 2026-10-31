@@ -30,6 +30,19 @@ try {
   });
   assert.ok(layout.right<=layout.viewport+2,'Add Kit chooser overflow: '+JSON.stringify(layout));
   assert.ok(layout.heights.every(h=>h>=44),'Kit form below 44px target: '+JSON.stringify(layout));
+  // Custom compound path: not in the curated library, intentionally entered by the user.
+  // Selecting must NOT persist a kit or mutate the pre-existing inventory.
+  await page.locator('[data-kit-form="vial"]').click();
+  await page.locator('#nx-kit-combobox-input').fill('SLU-PP-332');
+  const createVial=page.locator('#nx-kit-combobox-list button').filter({hasText:'Add "SLU-PP-332"'});
+  assert.equal(await createVial.count(),1,'Unknown compound must offer Add custom action in Vial kits');
+  await createVial.click();
+  assert.equal(await page.locator('#sname').inputValue(),'SLU-PP-332','Custom vial selection must set canonical kit field');
+  assert.equal(await page.locator('#nx-kit-combobox-input').inputValue(),'SLU-PP-332');
+  assert.equal(await page.evaluate(()=>JSON.stringify(state.supplies)),before,'Selecting custom compound must not save a kit');
+  // Reopen picker: dismiss unsaved fictional draft, then test Other forms.
+  await page.locator('.modal #x').click();
+  await page.evaluate(()=>supplyModal(null,null));
   await page.locator('[data-kit-form="capsule-bottle"]').click();
   // Other formulations must share vial picker geometry and compact 5-result UX.
   await page.locator('#nx-form-name').focus();
@@ -41,6 +54,12 @@ try {
     items.map(x=>({height:x.getBoundingClientRect().height,bg:getComputedStyle(x).backgroundColor,border:getComputedStyle(x).borderTopWidth})));
   assert.ok(rows.every(x=>x.height>=44),'Compound result touch targets must be at least 44px');
   await page.locator('#nx-form-name').fill('');
+  await page.locator('#nx-form-name').fill('SLU-PP-332');
+  const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "SLU-PP-332"'});
+  assert.equal(await createForm.count(),1,'Unknown compound must offer custom option in Other forms');
+  await createForm.click();
+  assert.equal(await page.locator('#nx-form-name').inputValue(),'SLU-PP-332');
+  assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,'Explicit custom selection must close matches');
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-count').fill('30');
   await page.locator('#nx-form-strength').fill('5');
