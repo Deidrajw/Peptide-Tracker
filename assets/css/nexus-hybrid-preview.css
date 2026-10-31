@@ -2565,7 +2565,9 @@ html[data-theme="light"] #app .nexus-screen-plans .nx-plan-2-research .nx-plan-h
 .nx-browser-choice:focus-visible,.nx-browser-back:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 .nx-browser-empty{font-size:14px;color:var(--t3)}
 .nx-guided-blend-editor .nx-blend-browse-all,
-.nx-stash-kit-editor .nx-kit-browse-all{
+.nx-stash-kit-editor .nx-kit-browse-all,
+.nx-stash-kit-editor .nx-kit-create-custom,
+.nx-form-compound-combobox .nx-kit-create-custom{
  display:block;width:100%;min-height:44px;text-align:left;padding:11px 12px;
  border:0;border-top:1px solid var(--bdr);background:transparent;color:#bd9ef8;font-size:13px;font-weight:700}
 .nx-stash-kit-editor #nx-kit-combobox-list{max-height:none!important;overflow:visible!important;position:absolute;
