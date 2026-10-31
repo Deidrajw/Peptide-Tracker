@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 Backup/Restore child physical acceptance achieved (NOT RELEASED)
+- Physical iPhone Safari acceptance provided by user: all 9 checks PASS, Notes None, fictional DEMO/backup only, no production user data. Includes keyboard and focus with external keyboard/VoiceOver, responsive light/dark modal, Cancel/Close no-write. Separate corrected Chromium run #41178820238 SUCCESS and screenshot timing CI #41211810566 SUCCESS. Draft PR124 unmerged, undeployed; no approval to merge/deploy; no version change. Does not validate all PR124 feature gates, calculator safety or real historical data.
+
 ## 2026-10-31 — PR124 expanded restore automated acceptance (NOT A RELEASE)
 - Full expanded Chromium #41178820238 SUCCESS; artifact #13034107579 verified CRC 180 outer / 26 LIVE, manifest f12d63e. 320/390 light/dark fictional restored-preview keyboard/focus/no-write PASS (QA JSON). Four screenshots inspected, but some captured mid-animation/faded; timing-only test follow-up b445679eb8ad346c4906f558271ad0615647f91b pending. No runtime feature changes, no saved-data writes, production unchanged. Physical iPhone/VoiceOver NOT TESTED, PR124 draft/unmerged/undeployed.
 
