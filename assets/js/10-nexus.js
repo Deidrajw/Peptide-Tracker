@@ -2099,6 +2099,17 @@ function nexusAddFormulationModal(type,existingId=null){
     browse.onpointerdown=e=>e.preventDefault();
     browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;});};
     matchList.appendChild(browse);
+    if(query && !candidates.some(name=>name.trim().toLocaleLowerCase()===query)){
+      const create=document.createElement("button");create.type="button";create.className="nx-kit-browse-all";
+      create.textContent='＋ Use "'+compoundInput.value.trim()+'" as a custom compound';
+      create.onpointerdown=e=>e.preventDefault();
+      create.onclick=()=>{
+        const name=compoundInput.value.trim().replace(/\s+/g," ");
+        if(!name || name.length>120)return;
+        compoundInput.value=name;closeMatches();
+      };
+      matchList.appendChild(create);
+    }
     matchList.hidden=false;compoundInput.setAttribute("aria-expanded","true");
   }
   if(!existing){
