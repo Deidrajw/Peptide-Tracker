@@ -317,7 +317,7 @@ function supplyModal(existing, presetName, forceVials=false) {
         const create=document.createElement("button");create.type="button";create.className="nx-kit-browse-all";
         create.textContent='＋ Add "'+input.value.trim()+'" as a custom compound';
         create.onclick=()=>{
-          const name=input.value.trim().replace(/\\s+/g," ");
+          const name=input.value.trim().replace(/\s+/g," ");
           if(!name || name.length>120)return;
           const duplicate=options.find(o=>o.name.trim().toLocaleLowerCase()===name.toLocaleLowerCase());
           const chosen=duplicate?duplicate.value:name;
