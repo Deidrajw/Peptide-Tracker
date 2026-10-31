@@ -376,5 +376,75 @@ try{
  assert.equal(reversedOutflow.events[1].reversesEventId,outId);
  console.log("PASS: Chromium actual outflow exact sealed-vial picker and exclusive event-linked Undo readback");
 
+
+ // Exact physical Edit Outflow UI. Scoped to avoid a collision with other tests.
+ {
+   await a.evaluate(()=>{
+     closeModal();
+     const fresh=buildDemoState("weight_loss");fresh.profile.onboardingDone=true;
+     fresh.supplies.push({id:987654325,name:"Retatrutide",vialMg:10,totalVials:1,
+       vials:[{id:"edit-outflow-open",status:"open",vialMg:10,remainingMg:8}],
+       wasteLog:[],linkedPreparationPlans:[],
+       _vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+     state=fresh;_demoActive=false;
+     localStorage.setItem(STORE_KEY,JSON.stringify(state));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+     logWasteModal(987654325);
+   });
+   await a.locator("#waste-partial").click();
+   await a.locator("#waste-mg").fill("3");
+   await a.locator("#waste-save").click();
+   await a.waitForFunction(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return k?.wasteLog?.some(x=>x.outflowKind==="consumed_open_partial"&&x.status==="active");
+   },{timeout:10000});
+   const first=await a.evaluate(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return {balance:k.vials[0].remainingMg,id:k.wasteLog[0].id};
+   });
+   assert.equal(first.balance,5);
+   await a.evaluate(id=>editOutflowModal(987654325,id),first.id);
+   await a.locator("#eo-mg").fill("2");
+   await a.locator("#eo-reason").fill("Measured correction");
+   await a.locator("#eo-notes").fill("Fictional exact-vial check");
+   await a.locator("#eo-save").click();
+   await a.waitForFunction(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return k?.wasteLog?.[0]?.editHistory?.length===1;
+   },{timeout:10000});
+   const modified=await a.evaluate(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return {balance:k.vials[0].remainingMg,mg:k.wasteLog[0].mg,
+       original:k.wasteLog[0].editHistory[0].previous.mg,
+       current:k.wasteLog[0].editHistory[0].updated.mg,
+       linked:k.wasteLog[1].editsEventId,memory:state.supplies.find(s=>s.id===987654325).vials[0].remainingMg,
+       pending:nexusWriter().status().inFlight};
+   });
+   assert.equal(modified.balance,6);
+   assert.equal(modified.mg,2);
+   assert.equal(modified.original,3);
+   assert.equal(modified.current,2);
+   assert.equal(modified.linked,first.id);
+   assert.equal(modified.memory,6);
+   assert.equal(modified.pending,false);
+   await a.evaluate(id=>undoOutflowModal(987654325,id),first.id);
+   await a.locator("#confirm-undo").click();
+   await a.waitForFunction(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return k?.wasteLog?.some(x=>x.reversesEventId);
+   },{timeout:10000});
+   const final=await a.evaluate(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654325);
+     return {balance:k.vials[0].remainingMg,original:k.wasteLog[0],
+       audit:k.wasteLog[1],reversal:k.wasteLog[2]};
+   });
+   assert.equal(final.balance,8);
+   assert.equal(final.original.status,"reversed");
+   assert.equal(final.original.editHistory[0].previous.mg,3);
+   assert.equal(final.audit.mg,0);
+   assert.equal(final.reversal.mg,0);
+   console.log("PASS: browser Edit Outflow modifies saved exact vial plus event, retains old revision, and Undo restores original stock");
+ }
+
  await context.close();
 }finally{await browser.close()}
