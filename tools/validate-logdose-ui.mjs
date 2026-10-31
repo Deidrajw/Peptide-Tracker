@@ -110,6 +110,36 @@ try {
       saved.allocations?.some(a=>String(a.vialId)===String(10787)),
       'Confirmed legacy exact-source dose failed single vial deduction: '+JSON.stringify(saved));
     verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
+    // Edit the newly recorded backed dose using the actual dose sheet. It
+    // must correct the SAME physical vial, not append a second dose entry.
+    await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
+    await setDose(page,1.5);
+    await page.waitForTimeout(600);
+    await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses[0]?.dose==='1.5',{},{timeout:5000});
+    const edited=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      amount:state.peptides.Retatrutide.doses[0]?.allocations?.[0]?.amount,
+      audit:state.nexusDoseAudit?.length||0
+    }));
+    ensure(Math.abs(edited.remaining-5.25)<.001&&edited.history===1&&
+      Math.abs(edited.amount-1.5)<.001&&edited.audit===1,
+      'Exclusive backed-dose edit did not reconcile exact source and single history: '+JSON.stringify(edited));
+    const undo=await page.evaluate(async()=>nexusCommitBackedDoseChange({
+      name:'Retatrutide',doseId:state.peptides.Retatrutide.doses[0]?.id,
+      operation:'undo',nativeUnit:'mg',builtin:true
+    }));
+    ensure(!!undo,'Exclusive backed dose undo rejected valid latest exact-vial source');
+    const reversed=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      audit:state.nexusDoseAudit?.length||0
+    }));
+    ensure(Math.abs(reversed.remaining-6.75)<.001&&reversed.history===0&&reversed.audit===2,
+      'Exclusive backed dose undo failed to restore original source: '+JSON.stringify(reversed));
+    verified.push('exclusive-single-source-backed-edit-and-exact-vial-undo');
+
     await page.evaluate(()=>{closeModal();});
     await seed(page,theme);
     // Stash-first explicit legacy method setup: do not change stock or history.
