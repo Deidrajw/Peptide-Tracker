@@ -91,6 +91,45 @@ function saveState() {
 }
 
 
+
+/* PR124 first exclusive Log Dose slice: untracked (no stock debit).
+ * Keep the live in-memory state unchanged until the locked, durable commit
+ * succeeds. Do not retry or rebase a stale tab's dose without review.
+ */
+async function nexusCommitUntrackedDose(name,dose,editing){
+  const builtin=!!PEPTIDES[name];
+  const bucket=builtin?"peptides":"customPeptides";
+  const apply=next=>{
+    if(!next[bucket])next[bucket]={};
+    const record=next[bucket][name]||(next[bucket][name]={enabled:true,scheduleDays:cfg(name).defaultSchedule,doses:[]});
+    const existing=(record.doses||[]).find(d=>String(d.id)===String(dose.id));
+    if(editing&&!existing)throw Error("Original untracked dose no longer exists");
+    if(!editing&&existing)throw Error("Dose ID already exists");
+    record.doses=(record.doses||[]).filter(d=>String(d.id)!==String(dose.id));
+    record.doses.push({...dose});
+    const fulfilled=(record.reschedules||[]).find(r=>!r.doseId&&dayKey(r.newDate)===dayKey(dose.date));
+    if(fulfilled)fulfilled.doseId=dose.id;
+    return next;
+  };
+  if(_demoActive){
+    // DEMO remains strictly in memory; no live localStorage writes or locks.
+    state=apply(JSON.parse(JSON.stringify(state)));
+    return true;
+  }
+  try{
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>({next:apply(prior)}));
+    // The shared coordinator returns only after storage readback succeeded.
+    state=result.next;
+    _nexusLastSavedSnapshot=writer.expected();
+    return true;
+  }catch(e){
+    console.error("Nexus exclusive untracked dose save failed",e);
+    showSaveWarning();
+    return false;
+  }
+}
+
 function enterDemoMode(scenario) {
   if(_demoActive) return;
   _realState = JSON.parse(JSON.stringify(state)); // deep clone real state
