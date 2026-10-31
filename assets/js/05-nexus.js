@@ -204,7 +204,7 @@ function comboDoseModal() {
   } catch(e) { showErrorBanner("comboDoseModal fav-checkbox wiring: "+e.message); }
 
   try {
-    m.querySelector("#save").onclick = () => {
+    m.querySelector("#save").onclick = async () => {
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
@@ -1418,10 +1418,9 @@ function doseModal(name, existing, occTime) {
     // Explicit dose-only mode: no source selection, no physical/prepared stock mutations.
     if(isUntracked||editingUntracked){
       const tgt=(PEPTIDES[name]?state.peptides:state.customPeptides);
-      if(!tgt[name])tgt[name]={enabled:true,scheduleDays:cfg(name).defaultSchedule,doses:[]};
       const date=m.querySelector("#date").value;
       if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date before saving.");return;}
-      const previous=(tgt[name].doses||[]).find(d=>d.id===f.id);
+      const previous=(tgt[name]?.doses||[]).find(d=>d.id===f.id);
       if(editingUntracked&&!previous){showErrorBanner("Original untracked record is missing. No changes saved.");return;}
       const dose={...(editingUntracked?previous:{}),
         id:editingUntracked?f.id:uid(),date,dose:doseAmtStr,
@@ -1433,11 +1432,16 @@ function doseModal(name, existing, occTime) {
         enteredDose:m.querySelector("#nx-dose-entered")?.value||doseAmtStr,
         enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit
       };
-      tgt[name].doses=(tgt[name].doses||[]).filter(d=>d.id!==dose.id);
-      tgt[name].doses.push(dose);
-      const fulfilled=(tgt[name].reschedules||[]).find(r=>!r.doseId&&dayKey(r.newDate)===dayKey(dose.date));
-      if(fulfilled)fulfilled.doseId=dose.id;
-      if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();
+      const saveButton=m.querySelector("#save");
+      if(saveButton.disabled)return;
+      saveButton.disabled=true;
+      try{
+        if(!await nexusCommitUntrackedDose(name,dose,editingUntracked)){
+          showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");
+          return;
+        }
+      }finally{saveButton.disabled=false;}
+      closeModal();render();
       if(!editingUntracked&&!nexusPostProtocolDoseFollowup(name,dose,true))nexusPostDoseReactionPrompt(name,dose.id);
       return;
     }
