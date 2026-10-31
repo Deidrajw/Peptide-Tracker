@@ -262,3 +262,7 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 
 ## 2026-10-29 — Add Kit form architecture (draft PR #124)
 - Approved UX: Stash Add Kit launches a single five-choice form selection with explanatory card-buttons; Vials retains approved editor, others create form-specific package cards in normal kit list. Separate Other formulations section removed. Open New Vial has per-vial non-transferring intended-use selection. CSS target 44px+ controls at 320px/390px, light/dark. Browser CI pending; physical iPhone acceptance required. No merge/deployment.
+
+
+## 2026-10-31 — Stash density correction / form parity on draft PR #124
+- User review screenshots identify previously unaccepted oversized Vial cards, separate vertical boxed non-vial search results, and disproportionate Nasal/Capsule package cards in Vial kits. Targeted correction: responsive tighter cards, shared Vial compound combobox UX (5 results + View all), separate Vial kits / Other forms / Supplies segmented sections, compact non-vial stock row. Candidate commits 3bd53037, 3addc141, 5408ca8b, 18533dc8. User physical iPhone acceptance pending; preserve approved kit editor/detail flows, production stored source attribution and dosing safety. This specifically supersedes the previous mixed-display assumption without deleting or reclassifying records.
