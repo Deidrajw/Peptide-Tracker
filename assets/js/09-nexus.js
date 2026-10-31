@@ -1190,75 +1190,133 @@ function finishVialModal(supplyId) {
   };
 }
 
-function markKitDoneModal(supplyId) {
-  const s = state.supplies.find(x=>x.id===supplyId); if(!s) return;
-  const c = cfg(s.name);
-  // getKitRemainingMg is the one canonical source for this number — it already defers to
-  // the sum of vial.remainingMg for a v2-migrated kit. The previous separate dose-history
-  // scan here only matched doses carrying this kit's OWN kitId directly; any dose logged
-  // through the multi-vial engine (which always records allocations[] instead of a bare
-  // kitId, even for a single-kit dose) was invisible to it the moment more than one kit
-  // existed for the same compound — silently showing a wildly inflated "leftover" amount.
-  const remainingMg = getKitRemainingMg(s);
-
-  const REASONS = [
-    { key:"used_up", label:"Used up completely" },
-    { key:"bad_batch", label:"Bad batch / discarded" },
-    { key:"other", label:"Other" },
-  ];
-
-  const m = openModal(`
+// Whole-kit retirement is a physical multi-vial transaction, not a kit-level
+// unallocated waste amount. No read-time migration or inferred balancing.
+function planExclusiveMarkKitDone(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||kit.vials.length===0)
+    throw Error("Verified physical vials required; reconcile legacy kit first");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Mark Kit Done");
+  if(kit.kitStatus==="done"||kit.activeKit===false)
+    throw Error("Kit already done; reopen its history");
+  const reasonNames={used_up:"Used up completely",bad_batch:"Bad batch / discarded",other:"Other"};
+  if(!Object.hasOwn(reasonNames,input.reasonKey))throw Error("A valid completion reason is required");
+  const ids=new Set();let total=0;
+  const remaining=kit.vials.filter(v=>{
+    if(v.id==null||ids.has(String(v.id)))throw Error("Exact vial IDs required and must be unique");
+    ids.add(String(v.id));
+    const mg=Number(v.remainingMg),capacity=Number(v.vialMg??kit.vialMg);
+    if(v.remainingMg==null||!Number.isFinite(mg)||mg<0||
+       !Number.isFinite(capacity)||capacity<=0||mg>capacity||
+       Math.round(mg*100)/100!==mg)
+      throw Error("Vial inventory ambiguous; reconcile before retirement");
+    if(mg>0&&!["sealed","open","active"].includes(v.status))
+      throw Error("Positive stock has an unsupported status; reconcile first");
+    total=Math.round((total+mg)*100)/100;
+    return mg>0;
+  });
+  if(!Number.isFinite(input.declaredMg)||input.declaredMg!==total)
+    throw Error("Entered waste amount must match all remaining physical vial stock; use Log Outflow for a partial amount");
+  if(input.reasonKey==="used_up"&&total>0)
+    throw Error("Used up completely requires zero remaining stock; choose discarded/other for physical remainder");
+  if(remaining.length){
+    const attached=(kit.linkedPreparationPlans||[]).some(p=>remaining.some(v=>String(p.sourceVialId)===String(v.id)));
+    if(attached)throw Error("A linked preparation references remaining source stock; resolve before retiring");
+  }
+  const eventIds=input.eventIds;
+  if(!Array.isArray(eventIds)||eventIds.length!==remaining.length||new Set(eventIds.map(String)).size!==eventIds.length)
+    throw Error("Unique per-vial retirement event IDs required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(eventIds.some(id=>!id||kit.wasteLog.some(x=>String(x.id)===String(id)))||
+     !input.completionId||kit.wasteLog.some(x=>String(x.id)===String(input.completionId))||
+     eventIds.some(id=>String(id)===String(input.completionId)))
+    throw Error("Retirement event ID already used or missing");
+  const events=[];
+  remaining.forEach((v,i)=>{
+    const before={remainingMg:v.remainingMg,status:v.status},mg=v.remainingMg;
+    v.remainingMg=0;v.status="empty";
+    const event={id:eventIds[i],date:input.date,loggedAt:input.loggedAt,
+      mg,type:"waste",reason:input.reasonKey==="bad_batch"?"Bad batch — kit discarded":"Kit marked done",
+      notes:String(input.notes||""),status:"active",vialId:v.id,
+      outflowKind:"retired_kit_vial",retirementId:input.completionId,
+      stockBefore:before,stockAfter:{remainingMg:0,status:"empty"}};
+    kit.wasteLog.push(event);events.push({id:event.id,vialId:v.id,mg});
+  });
+  kit.kitStatus="done";kit.doneReason=reasonNames[input.reasonKey];kit.activeKit=false;
+  kit.kitDoneHistory=Array.isArray(kit.kitDoneHistory)?kit.kitDoneHistory:[];
+  kit.kitDoneHistory.push({id:input.completionId,date:input.date,loggedAt:input.loggedAt,
+    reasonKey:input.reasonKey,reason:reasonNames[input.reasonKey],notes:String(input.notes||""),
+    totalMg:total,vialEvents:events});
+  return {next,retirementId:input.completionId};
+}
+function markKitDoneModal(supplyId){
+  const s=(state.supplies||[]).find(x=>String(x.id)===String(supplyId));if(!s)return;
+  if(!Array.isArray(s.vials)||!s.vials.length||
+     s.vials.some(v=>v.remainingMg==null||!Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs verified physical vial inventory before Mark Done.");return;
+  }
+  const remainingMg=Math.round(s.vials.reduce((sum,v)=>sum+Number(v.remainingMg),0)*100)/100;
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const reasons=[{key:"used_up",label:"Used up completely"},
+    {key:"bad_batch",label:"Bad batch / discarded"},{key:"other",label:"Other"}];
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">MARK KIT DONE — ${esc(s.name).toUpperCase()}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <button id="x" aria-label="Close Mark Kit Done" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:14px">Moves this kit out of your active list into a collapsed "Done" section — it stays in your history, just out of the way while scrolling.</div>
+    <div class="hint" style="margin-bottom:14px">Moves this kit into Done and keeps its history. Remaining stock is retired vial-by-vial with exact physical attribution.</div>
     <label class="field-label">WHY IS IT DONE</label>
     <div style="display:flex;gap:6px;margin-bottom:14px">
-      ${REASONS.map((r,i)=>toggleChip(r.label, i===0, {attrs:`class="donereason-toggle" data-key="${r.key}"`, fontSize:"11px", padding:"9px 6px"})).join("")}
+      ${reasons.map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
     </div>
-    ${remainingMg>0?`<div id="leftover-notice" style="background:#ff7c7c11;border:1px solid #ff7c7c33;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-size:12px;color:#ff7c7c;font-weight:600;margin-bottom:4px">This kit still shows ${remainingMg.toFixed(1)}mg remaining</div>
-      <div style="font-size:11px;color:var(--t4);line-height:1.5">Marking it done will log that as waste so your supply totals stay accurate. Adjust if only part of it was actually lost.</div>
-      <label class="field-label" style="margin-top:10px">MG TO LOG AS WASTE</label>
-      <input id="leftover-mg" type="number" step="0.01" class="inp" value="${remainingMg.toFixed(2)}">
+    ${remainingMg>0?`<div style="background:#ff7c7c11;border:1px solid #ff7c7c33;border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:12px;color:#ff7c7c;font-weight:600;margin-bottom:4px">This kit still has ${remainingMg.toFixed(2)}mg across its physical vials</div>
+      <div style="font-size:11px;color:var(--t4);line-height:1.5">Mark Done retires all remaining physical stock. If only part was lost, use Log Outflow first. “Used up completely” is only valid with zero remaining.</div>
+      <label class="field-label" for="leftover-mg" style="margin-top:10px">TOTAL MG TO RETIRE (all remaining)</label>
+      <input id="leftover-mg" type="number" min="0" step="0.01" class="inp" value="${remainingMg.toFixed(2)}">
     </div>`:""}
-    <label class="field-label">NOTES (optional)</label>
-    <textarea id="done-notes" class="inp" placeholder="Anything worth remembering…" style="min-height:50px;resize:vertical;margin-bottom:18px"></textarea>
+    <label class="field-label" for="done-notes">NOTES (optional)</label>
+    <textarea id="done-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px" placeholder="Anything worth remembering…"></textarea>
     <button id="done-save" class="btn-primary" style="background:var(--t3)">Mark Done</button>
-  `, "#888");
-
-  m.querySelector("#x").onclick = closeModal;
-  let reasonKey = "used_up";
-  m.querySelectorAll(".donereason-toggle").forEach(btn=>btn.onclick=()=>{
-    reasonKey = btn.dataset.key;
-    m.querySelectorAll(".donereason-toggle").forEach(b=>{
-      const active = b.dataset.key===reasonKey;
-      b.style.background = active ? "var(--surface-3)" : "transparent";
-      b.style.borderColor = active ? "var(--border)" : "transparent";
-      b.style.color = active ? "var(--t1)" : "var(--t4)";
-    });
-  });
-
-  m.querySelector("#done-save").onclick = () => {
-    const reasonLabel = REASONS.find(r=>r.key===reasonKey).label;
-    const notes = m.querySelector("#done-notes").value;
-    const leftoverInput = m.querySelector("#leftover-mg");
-    const leftoverMg = leftoverInput ? parseFloat(leftoverInput.value)||0 : 0;
-    if (leftoverMg > 0) {
-      if (!s.wasteLog) s.wasteLog = [];
-      s.wasteLog.push({ id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: leftoverMg, type: reasonKey==="bad_batch"?"waste":"waste", reason: reasonKey==="bad_batch"?"Bad batch — kit discarded":"Kit marked done", notes });
+  `,"#888");
+  m.querySelector("#x").onclick=closeModal;
+  let reasonKey=remainingMg>0?"bad_batch":"used_up";
+  const setReason=k=>{reasonKey=k;m.querySelectorAll(".donereason-toggle").forEach(b=>{
+    const active=b.dataset.key===k;
+    b.style.background=active?"var(--surface-3)":"transparent";
+    b.style.borderColor=active?"var(--border)":"transparent";
+    b.style.color=active?"var(--t1)":"var(--t4)";
+  });};
+  m.querySelectorAll(".donereason-toggle").forEach(b=>b.onclick=()=>setReason(b.dataset.key));
+  setReason(reasonKey);
+  const button=m.querySelector("#done-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const inputEl=m.querySelector("#leftover-mg"),declaredMg=inputEl?Number(inputEl.value):0;
+    if(inputEl&&(!inputEl.value.trim()||!Number.isFinite(declaredMg)||
+       Math.round(declaredMg*100)/100!==declaredMg||declaredMg!==remainingMg)){
+      showErrorBanner("Mark Done retires every remaining vial. Use Log Outflow first to remove only part.");return;
     }
-    // The whole kit is retiring, not just one vial — every vial in it needs to actually
-    // zero out for a v2-migrated kit, or the kit total would still show whatever material
-    // its vials claim to have left even after being marked done. wasteLog alone (above)
-    // is audit history only; it doesn't move the authoritative number by itself.
-    migrateKitToV2(s);
-    (s.vials||[]).forEach(v => { if (v.remainingMg > 0) { v.remainingMg = 0; v.status = "empty"; } });
-    s.kitStatus = "done";
-    s.doneReason = reasonLabel;
-    s.activeKit = false;
-    saveState(); closeModal(); render();
+    const input={kitId:s.id,expectedKit,reasonKey,declaredMg,notes:m.querySelector("#done-notes").value,
+      eventIds:s.vials.filter(v=>Number(v.remainingMg)>0).map(()=>uid()),
+      completionId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    button.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveMarkKitDone(state,input);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),kit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!kit||JSON.stringify(kit)!==expectedKit)throw Error("Kit changed; reopen Mark Kit Done");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveMarkKitDone(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Mark Kit Done not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
