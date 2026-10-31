@@ -1270,15 +1270,14 @@ function markKitDoneModal(supplyId){
     <div style="display:flex;gap:6px;margin-bottom:14px">
       ${reasons.map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
     </div>
-    ${remainingMg>0?`<div style="background:#ff7c7c11;border:1px solid #ff7c7c33;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-size:12px;color:#ff7c7c;font-weight:600;margin-bottom:4px">This kit still has ${remainingMg.toFixed(2)}mg across its physical vials</div>
-      <div style="font-size:11px;color:var(--t4);line-height:1.5">Mark Done retires all remaining physical stock. If only part was lost, use Log Outflow first. “Used up completely” is only valid with zero remaining.</div>
-      <label class="field-label" for="leftover-mg" style="margin-top:10px">TOTAL MG TO RETIRE (all remaining)</label>
-      <input id="leftover-mg" type="number" min="0" step="0.01" class="inp" value="${remainingMg.toFixed(2)}">
-    </div>`:""}
+    ${remainingMg>0?`<div id="done-impact" role="note" style="background:#ff7c7c0c;border:1px solid #ff7c7c30;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--t1);font-weight:700;margin-bottom:6px">This will remove all ${remainingMg.toFixed(2)} mg remaining</div>
+      <div style="font-size:12px;color:var(--t4);line-height:1.5">Across ${s.vials.filter(v=>Number(v.remainingMg)>0).length} physical vial(s). Your dose and inventory history stay saved.</div>
+    </div>
+    <button type="button" id="done-partial-outflow" style="display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:600;margin-bottom:14px">Only removing part? Log Outflow instead</button>`:`<div role="note" style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:14px">No physical stock will be removed. This kit will move to Done and its history remains available.</div>`}
     <label class="field-label" for="done-notes">NOTES (optional)</label>
     <textarea id="done-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px" placeholder="Anything worth remembering…"></textarea>
-    <button id="done-save" class="btn-primary" style="background:var(--t3)">Mark Done</button>
+    <button id="done-save" class="btn-primary" style="background:var(--t3);min-height:48px">${remainingMg>0?"Mark Done & Remove Remaining Stock":"Mark Done"}</button>
   `,"#888");
   m.querySelector("#x").onclick=closeModal;
   let reasonKey=remainingMg>0?"bad_batch":"used_up";
@@ -1290,14 +1289,17 @@ function markKitDoneModal(supplyId){
   });};
   m.querySelectorAll(".donereason-toggle").forEach(b=>b.onclick=()=>setReason(b.dataset.key));
   setReason(reasonKey);
+  const partial=m.querySelector("#done-partial-outflow");
+  if(partial)partial.onclick=()=>{
+    closeModal();
+    logWasteModal(s.id);
+  };
   const button=m.querySelector("#done-save");
   button.onclick=async()=>{
     if(button.disabled)return;
-    const inputEl=m.querySelector("#leftover-mg"),declaredMg=inputEl?Number(inputEl.value):0;
-    if(inputEl&&(!inputEl.value.trim()||!Number.isFinite(declaredMg)||
-       Math.round(declaredMg*100)/100!==declaredMg||declaredMg!==remainingMg)){
-      showErrorBanner("Mark Done retires every remaining vial. Use Log Outflow first to remove only part.");return;
-    }
+    // The reviewed amount is verified stock, not an editable number. The
+    // planner still compares against the exclusive saved snapshot under lock.
+    const declaredMg=remainingMg;
     const input={kitId:s.id,expectedKit,reasonKey,declaredMg,notes:m.querySelector("#done-notes").value,
       eventIds:s.vials.filter(v=>Number(v.remainingMg)>0).map(()=>uid()),
       completionId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
