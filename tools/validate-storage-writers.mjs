@@ -58,6 +58,15 @@ if(!physicalOutflow.includes('function planExclusivePhysicalOutflow(snapshot,inp
    !physicalOutflow.includes('Later vial history exists; undo blocked'))
   throw Error('Log Outflow / Undo must retain exclusive exact-vial transaction and event history');
 
+// Edits to historic physical outflows must not mutate the event independently
+// of the exact physical vial, or fall back to saveState() without a Web Lock.
+if(!physicalOutflow.includes('function planExclusivePhysicalOutflowEdit(snapshot,input)')||
+   !physicalOutflow.includes('await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflowEdit(snapshot,input))')||
+   !physicalOutflow.includes('tx.editHistory.push(')||
+   !physicalOutflow.includes('Source vial changed since outflow; edit blocked')||
+   !physicalOutflow.includes('A sealed whole-vial transfer cannot have its physical amount edited'))
+  throw Error('Edit Outflow must be an exclusive exact-source stock-and-history transaction');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
