@@ -14,6 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate expanded research compound catalogue
+        run: node tools/validate-library-expansion.mjs
       - name: Build complete fictional app demo
         run: node tools/build-release.mjs
       - name: Install WebKit browser dependencies
