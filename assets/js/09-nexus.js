@@ -1262,22 +1262,22 @@ function markKitDoneModal(supplyId){
     {key:"bad_batch",label:"Bad batch / discarded"},{key:"other",label:"Other"}];
   const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">MARK KIT DONE — ${esc(s.name).toUpperCase()}</span>
+      <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">MARK KIT DONE</span>
       <button id="x" aria-label="Close Mark Kit Done" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:14px">Moves this kit into Done and keeps its history. Remaining stock is retired vial-by-vial with exact physical attribution.</div>
+    <div class="hint" style="margin-bottom:14px">${esc(s.name)} · Move this kit to Done. Your history stays saved.</div>
     <label class="field-label">WHY IS IT DONE</label>
     <div style="display:flex;gap:6px;margin-bottom:14px">
       ${reasons.filter(r=>remainingMg===0||r.key!=="used_up").map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
     </div>
     ${remainingMg>0?`<div id="done-impact" role="note" style="background:#ff7c7c0c;border:1px solid #ff7c7c30;border-radius:12px;padding:14px;margin-bottom:14px">
-      <div style="font-size:12px;color:var(--t1);font-weight:700;margin-bottom:6px">This will remove all ${remainingMg.toFixed(2)} mg remaining</div>
-      <div style="font-size:12px;color:var(--t4);line-height:1.5">Across ${s.vials.filter(v=>Number(v.remainingMg)>0).length} physical vial(s). Your dose and inventory history stay saved.</div>
+      <div style="font-size:12px;color:var(--t1);font-weight:700;margin-bottom:6px">Remove all ${remainingMg.toFixed(2)} mg from your stash</div>
+      <div style="font-size:12px;color:var(--t4);line-height:1.5">${s.vials.filter(v=>Number(v.remainingMg)>0).length} vials affected. Your previous records stay saved.</div>
     </div>
-    <button type="button" id="done-partial-outflow" style="display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:600;margin-bottom:14px">Only removing part? Log Outflow instead</button>`:`<div role="note" style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:14px">No physical stock will be removed. This kit will move to Done and its history remains available.</div>`}
+    <button type="button" id="done-partial-outflow" style="display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:600;margin-bottom:14px">Log Partial Outflow</button>`:`<div role="note" style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:14px">No physical stock will be removed. This kit will move to Done and its history remains available.</div>`}
     <label class="field-label" for="done-notes">NOTES (optional)</label>
     <textarea id="done-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px" placeholder="Anything worth remembering…"></textarea>
-    <button id="done-save" class="btn-primary" style="background:var(--t3);min-height:48px">${remainingMg>0?"Mark Done & Remove Remaining Stock":"Mark Done"}</button>
+    <button id="done-save" class="btn-primary" style="background:var(--t3);min-height:48px">${remainingMg>0?"Remove All & Mark Done":"Mark Done"}</button>
   `,"#888");
   m.querySelector("#x").onclick=closeModal;
   let reasonKey=remainingMg>0?"bad_batch":"used_up";
