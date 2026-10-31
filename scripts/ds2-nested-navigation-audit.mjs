@@ -574,6 +574,38 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:null});
  }catch(err){evidence.push({screen:'stash-log-outflow',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{await page.evaluate(()=>closeModal());}
+ // Mark Kit Done visual task: use a fictional kit, inspect consequence, options,
+ // tap targets and partial route before any transaction. Four viewport/theme pairs.
+ try {
+   const visual=await page.evaluate(()=>{
+     closeModal();
+     const id='ds2-fake-kit-done-visual';
+     state.supplies=state.supplies.filter(k=>k.id!==id);
+     state.supplies.push({id,name:'Fictional Retirement',vialMg:10,totalVials:2,
+       activeKit:true,kitStatus:'active',vials:[
+         {id:'ds2-retire-open',vialMg:10,remainingMg:3.25,status:'open'},
+         {id:'ds2-retire-sealed',vialMg:10,remainingMg:10,status:'sealed'}],
+       wasteLog:[],linkedPreparationPlans:[],_vialsBackfilled:true,
+       _vialsSeqOrderRepaired:true,_vialsRepaired:true});
+     markKitDoneModal(id);
+     const action=document.querySelector('#done-save'),partial=document.querySelector('#done-partial-outflow'),
+       impact=document.querySelector('#done-impact'),modal=document.querySelector('.modal');
+     if(!action||!partial||!impact||!modal)throw Error('Retirement modal consequence/controls missing');
+     const ab=action.getBoundingClientRect(),pb=partial.getBoundingClientRect();
+     return {actionHeight:ab.height,partialHeight:pb.height,
+       text:impact.textContent||'',overflow:modal.scrollWidth>modal.clientWidth,
+       invalidReason:!!modal.querySelector('.donereason-toggle[data-key="used_up"]'),
+       redundantInput:!!modal.querySelector('#leftover-mg')};
+   });
+   if(visual.actionHeight<44||visual.partialHeight<44||visual.overflow||
+      visual.invalidReason||visual.redundantInput||!visual.text.includes('13.25'))
+     throw Error('Retirement visual hierarchy/tap target failed '+JSON.stringify(visual));
+   await page.screenshot({path:path.join(out,`${width}-${theme}-stash-mark-kit-done.png`),animations:'disabled'});
+   evidence.push({screen:'stash-mark-kit-done',width,theme,overflow:false,
+     buttons:[{id:'done-save',height:visual.actionHeight},{id:'done-partial-outflow',height:visual.partialHeight}],error:null});
+ }catch(err){evidence.push({screen:'stash-mark-kit-done',width,theme,overflow:false,buttons:[],error:String(err)});}
+ finally{await page.evaluate(()=>{closeModal();state.supplies=state.supplies.filter(k=>k.id!=='ds2-fake-kit-done-visual');});}
+
  // Blend Kit action parity: inspect Finish Kit confirmation + cancellation without committing.
  try {
    const result=await page.evaluate(()=>{
