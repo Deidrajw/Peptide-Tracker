@@ -1,3 +1,18 @@
+function nexusRenderOtherFormCards(){
+  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).map(x=>{
+    const typeNames={"capsule-bottle":"Capsules","nasal-bottle":"Nasal spray","raw-powder":"Raw powder","topical-container":"Topical"};
+    const amount=x.containerType==="capsule-bottle"
+      ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
+      :x.containerType==="nasal-bottle" ?`${x.remainingMl} mL · ${x.remainingMg} mg`
+      :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
+    return `<div class="nx-other-stock-row" data-formulation-id="${esc(String(x.id))}">
+      <div class="nx-kit-heading"><span class="nx-other-stock-info"><strong>${esc(x.compound)}</strong><span>${esc(typeNames[x.containerType]||"Other package")} · ${esc(amount)}</span></span>
+      <button type="button" class="nx-form-edit nx-other-stock-adjust" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
+    </div>`;
+  }).join("");
+  return packageCards || '<p class="nx-stash-other-empty">No other forms added yet.</p>';
+}
+
 function stashView() {
   const filter = state._stashFilter || "all";
   const sort = state._stashSort || "attention";
@@ -49,12 +64,14 @@ function stashView() {
   const stashSubBtn=(id,label)=>toggleChip(label, stashSub===id, {attrs:`class="stash-sub-btn ${stashSub===id?"active":""}" aria-pressed="${stashSub===id}" data-sub="${id}"`, padding:"9px"});
   let html = `<h1 class="serif greet">Stash</h1>
   <div class="nx-hybrid-stash-segment" role="group" aria-label="Stash category">
-    ${stashSubBtn("kits","Compound kits")}
+    ${stashSubBtn("kits","Vial kits")}
+    ${stashSubBtn("other","Other forms")}
     ${stashSubBtn("equipment","Supplies")}
   </div>
 `;
 
   if(stashSub==="equipment") return html + equipmentView();
+  if(stashSub==="other") return html + `<section class="nx-stash-other-section" aria-label="Other inventory forms"><div class="nx-stash-other-intro"><strong>Other forms</strong><span>Capsules, nasal sprays, powders and topicals</span></div>${nexusRenderOtherFormCards()}<button id="addvial" class="nx-stash-other-add" type="button">+ Add inventory</button></section>`;
 
   // ── Inventory health summary ─────────────────────────────────────────────
   // Counted across ALL kits regardless of the current filter — this is a snapshot of
@@ -370,21 +387,6 @@ function stashView() {
   const liveEntries = entries.filter(s=>s.kitStatus!=="done");
   const doneEntries = entries.filter(s=>s.kitStatus==="done");
   const renderAnyKitCard = s => renderKitCard(s);
-  // Physical non-vial packages appear alongside kits, not in a separate
-  // "Other formulations" section. Existing standalone records remain unmodified.
-  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).map(x=>{
-    const typeNames={"capsule-bottle":"Capsules","nasal-bottle":"Nasal spray","raw-powder":"Raw powder","topical-container":"Topical"};
-    const amount=x.containerType==="capsule-bottle"
-      ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
-      :x.containerType==="nasal-bottle" ?`${x.remainingMl} mL · ${x.remainingMg} mg`
-      :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
-    return `<div class="card nx-kit-card nx-form-kit-card" data-formulation-id="${esc(String(x.id))}">
-      <div class="nx-kit-heading"><span class="nx-kit-title-stack"><strong class="nx-kit-card-title">${esc(x.compound)}</strong><span class="nx-card-status">${esc(typeNames[x.containerType]||"Other package")}</span></span>
-      <button type="button" class="nx-form-edit" style="min-height:46px;min-width:68px;padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
-      <div class="nx-form-kit-amount">${esc(amount)}</div>
-      <p class="nx-form-kit-hint">${x.sourceKitId?"Linked source kit":"Independent package"} · Inventory only, no automatic dose deductions</p>
-    </div>`;
-  }).join("");
   const GROUP_LABELS_STATUS = {attention:"NEEDS ATTENTION",active:"ACTIVE",stored:"STORED"};
   const GROUP_LABELS_INV = {active:"ACTIVE",sealed:"STORED / SEALED"};
   if (group==="status" || group==="inventory_state") {
@@ -419,7 +421,6 @@ function stashView() {
     if (open) doneEntries.forEach(s=>{ html+=renderAnyKitCard(s); });
   }
 
-  html+=packageCards;
   html+=`<button id="addvial" style="width:100%;padding:12px;border-radius:12px;background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;font-size:13px;font-weight:600">+ Add Kit</button>`;
   html += `<div style="margin:18px 0 6px;padding:15px;border-radius:14px;background:var(--surface);border:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><strong style="font-size:14px;color:var(--t1)">Need to replenish?</strong><p style="font-size:12px;color:var(--t3);margin:5px 0 0">Your shopping list is linked here for convenience.</p></div><button type="button" id="nx-shopping-from-stash" style="min-height:44px;padding:10px 15px;border-radius:10px;background:#A78BFA20;border:1px solid #A78BFA66;color:var(--t1);font-size:13px;font-weight:600">Open shopping list →</button></div>`;
   return html;
@@ -2070,7 +2071,7 @@ function nexusAddFormulationModal(type,existingId=null){
   const m=openModal(`<section class="nx-form-stock-editor">
     <div class="nx-form-stock-editor-head"><strong>${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
     <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
-    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or enter compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden style="max-height:192px;overflow-y:auto;border-radius:12px;margin:6px 0 12px"></div>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><div class="nx-kit-combobox nx-form-compound-combobox"><input id="nx-form-name" class="inp" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or choose compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden></div></div>
     ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
      <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" value="${existing?existing.mgPerCapsule:""}" placeholder="Labelled strength" ${existing?"readonly":""}>`:
      raw?`<label class="field-label" for="nx-form-mg">${existing?"MASS REMAINING":"MASS"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}">`:
@@ -2084,21 +2085,29 @@ function nexusAddFormulationModal(type,existingId=null){
   // Native datalist results were unreliable in iPhone browsers: provide visible tap choices.
   const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
   const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
+  const closeMatches=()=>{matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false");};
   function refreshCompoundMatches(){
     if(existing)return;
     const query=compoundInput.value.trim().toLocaleLowerCase();
-    const matches=candidates.filter(name=>name.toLocaleLowerCase().includes(query)).slice(0,30);
+    const matches=candidates.filter(name=>name.toLocaleLowerCase().includes(query)).slice(0,5);
     matchList.replaceChildren();
-    for(const name of matches){
+    matches.forEach(name=>{
       const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
-      option.style.cssText="display:block;width:100%;min-height:44px;text-align:left;padding:10px 14px;background:var(--surface);color:var(--t1);border:1px solid var(--border-sub);border-radius:8px;margin:3px 0";
-      option.addEventListener("click",()=>{compoundInput.value=name;matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false")});
-      matchList.append(option);
-    }
-    matchList.hidden=!matches.length;
-    compoundInput.setAttribute("aria-expanded",String(!!matches.length));
+      option.onclick=()=>{compoundInput.value=name;closeMatches();};matchList.appendChild(option);
+    });
+    const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
+    browse.onpointerdown=e=>e.preventDefault();
+    browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;});};
+    matchList.appendChild(browse);
+    matchList.hidden=false;compoundInput.setAttribute("aria-expanded","true");
   }
-  if(!existing){compoundInput.addEventListener("focus",refreshCompoundMatches);compoundInput.addEventListener("input",refreshCompoundMatches);}
+  if(!existing){
+    compoundInput.addEventListener("focus",refreshCompoundMatches);
+    compoundInput.addEventListener("input",refreshCompoundMatches);
+    compoundInput.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMatches();return;}if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}});
+    matchList.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closeMatches();compoundInput.focus();}});
+    m.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!m.contains(document.activeElement))closeMatches();});});
+  }
   m.querySelector("#nx-form-save").onclick=async()=>{
     const saveButton=m.querySelector("#nx-form-save");
     if(saveButton.disabled)return;
