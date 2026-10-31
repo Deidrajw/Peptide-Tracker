@@ -52,7 +52,7 @@ const physicalOutflow=fs.readFileSync('assets/js/09-nexus.js','utf8');
 if(!physicalOutflow.includes('function planExclusivePhysicalOutflow(snapshot,input)')||
    !physicalOutflow.includes('function planUndoExclusivePhysicalOutflow(snapshot,input)')||
    !physicalOutflow.includes('await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflow(snapshot,input))')||
-   !physicalOutflow.includes('snapshot=>planUndoExclusivePhysicalOutflow(snapshot,input)')||
+   !physicalOutflow.includes('return planUndoExclusivePhysicalOutflow(snapshot,{kitId,eventId:txId,undoEventId:input.inverseId,date:input.date,loggedAt:input.reversedAt})')||
    !physicalOutflow.includes('Exact source vial unavailable or duplicated')||
    !physicalOutflow.includes('Choose the exact physical source')||
    !physicalOutflow.includes('Later vial history exists; undo blocked'))
