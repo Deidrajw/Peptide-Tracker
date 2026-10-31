@@ -1262,52 +1262,133 @@ function markKitDoneModal(supplyId) {
   };
 }
 
-// Undo Outflow — reverses a specific transaction, on the SAME kit/vial it came from.
-// Since kit "remaining" is always derived (never a stored balance), reversal is just
-// marking the transaction status:"reversed" — getKitActiveWasteMg/getKitUsedMg then skip
-// it automatically, which is what propagates the restored amount through vial remaining,
-// kit remaining, supply forecast, and Needs Attention in one place, with nothing else to
-// update by hand. No fake compensating dose or adjustment record is created.
-function undoOutflowModal(kitId, txId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  const tx = (s.wasteLog||[]).find(w=>w.id===txId); if(!tx) return;
-  const c = cfg(s.name);
-  const m = openModal(`
+// Exclusive exact-vial physical outflow. These planners never mutate the caller
+// and never interpret a preparation plan as prepared stock.
+function planExclusivePhysicalOutflow(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||kit.isBlend)
+    throw Error("Exact physical kit inventory unavailable");
+  if(JSON.stringify(kit)!==input.expectedKit)
+    throw Error("Kit changed; reopen Log Outflow");
+  const matching=kit.vials.filter(v=>String(v.id)===String(input.vialId));
+  if(matching.length!==1)throw Error("Exact source vial unavailable or duplicated");
+  const vial=matching[0];
+  if(JSON.stringify(vial)!==input.expectedVial)
+    throw Error("Source vial changed; reopen Log Outflow");
+  const kind=input.kind,amount=Number(input.mg);
+  if(!["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(kind)||
+     !Number.isFinite(amount)||amount<=0||Math.round(amount*100)/100!==amount)
+    throw Error("Invalid outflow kind or exact mg amount");
+  if(!["waste","gifted","testing"].includes(input.type)||
+     typeof input.reason!=="string"||!input.reason.trim())
+    throw Error("Outflow type and reason are required");
+  if(!input.date||!/^\d{4}-\d{2}-\d{2}$/.test(input.date))
+    throw Error("Outflow date required");
+  if(!input.eventId||String(input.eventId).trim()==="")
+    throw Error("Unique outflow ID required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(kit.wasteLog.some(e=>String(e.id)===String(input.eventId)))
+    throw Error("Outflow ID already exists");
+  const before={remainingMg:vial.remainingMg,status:vial.status};
+  const balance=Number(vial.remainingMg),capacity=Number(vial.vialMg??kit.vialMg);
+  if(!Number.isFinite(balance)||balance<=0||!Number.isFinite(capacity)||capacity<=0)
+    throw Error("Unverified positive source stock");
+  if(kind==="transferred_sealed"){
+    if(vial.status!=="sealed"||Math.abs(balance-capacity)>0.001||amount!==balance)
+      throw Error("Whole sealed outflow requires exact untouched sealed vial contents");
+    vial.status="transferred";vial.remainingMg=0;
+  }else{
+    if(!["open","active"].includes(vial.status))
+      throw Error("An open vial is required for this outflow");
+    if(amount>balance)throw Error("Outflow exceeds remaining vial stock");
+    if(kind==="consumed_open_whole"&&amount!==balance)
+      throw Error("Whole outflow must use the entire open vial balance");
+    if(kind==="consumed_open_partial"&&amount>=balance)
+      throw Error("Use whole-vial outflow to remove all remaining stock");
+    vial.remainingMg=Math.round((balance-amount)*100)/100;
+    if(vial.remainingMg<=0.01){vial.remainingMg=0;vial.status="empty";}
+  }
+  const after={remainingMg:vial.remainingMg,status:vial.status};
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:amount,type:input.type,reason:input.reason.trim(),notes:String(input.notes||""),
+    status:"active",vialId:vial.id,outflowKind:kind,stockBefore:before,stockAfter:after,
+    sourceVialSnapshot:JSON.parse(JSON.stringify(input.expectedVial?JSON.parse(input.expectedVial):vial))});
+  return {next,eventId:input.eventId};
+}
+function planUndoExclusivePhysicalOutflow(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.wasteLog))
+    throw Error("Source kit or outflow history unavailable");
+  const index=kit.wasteLog.findIndex(e=>String(e.id)===String(input.eventId));
+  const tx=kit.wasteLog[index];
+  if(!tx||tx.status!=="active"||!tx.stockBefore||!tx.stockAfter||
+     !["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(tx.outflowKind))
+    throw Error("Original outflow lacks a safe reversible stock snapshot; review history");
+  const vialMatches=kit.vials.filter(v=>String(v.id)===String(tx.vialId));
+  if(vialMatches.length!==1)throw Error("Original exact vial no longer available");
+  const vial=vialMatches[0];
+  if(Number(vial.remainingMg)!==Number(tx.stockAfter.remainingMg)||vial.status!==tx.stockAfter.status)
+    throw Error("Vial balance or status changed; undo blocked");
+  if(!tx.sourceVialSnapshot||JSON.stringify(vial)!==JSON.stringify({...tx.sourceVialSnapshot,
+     remainingMg:tx.stockAfter.remainingMg,status:tx.stockAfter.status}))
+    throw Error("Vial metadata changed; undo blocked");
+  if(kit.wasteLog.slice(index+1).some(e=>String(e.vialId)===String(vial.id)&&e.status==="active"&&e.type!=="outflow-reversal"))
+    throw Error("Later vial history exists; undo blocked");
+  const linkedDose=Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+    .some(comp=>(comp.doses||[]).some(d=>(d.allocations||[]).some(a=>String(a.vialId)===String(vial.id))&&
+      new Date(d.date||0).getTime()>new Date(tx.loggedAt||tx.date).getTime()));
+  if(linkedDose)throw Error("Later dose allocation exists; undo blocked");
+  if((kit.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id)&&
+     new Date(p.createdAt||p.date||0).getTime()>new Date(tx.loggedAt||tx.date).getTime()))
+    throw Error("Later preparation reference exists; undo blocked");
+  if(kit.wasteLog.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Undo ID already recorded");
+  vial.remainingMg=tx.stockBefore.remainingMg;
+  vial.status=tx.stockBefore.status;
+  tx.status="reversed";tx.reversedAt=input.loggedAt;tx.reversalId=input.undoEventId;
+  // Keep the reversal in the permanent ledger without double-counting outflow.
+  kit.wasteLog.push({id:input.undoEventId,date:input.date,loggedAt:input.loggedAt,
+    mg:0,type:"outflow-reversal",reason:"Exact outflow reversed",notes:"",
+    status:"reversed",vialId:vial.id,reversesEventId:tx.id});
+  return {next,eventId:input.undoEventId};
+}
+function undoOutflowModal(kitId,txId){
+  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
+  const tx=(s.wasteLog||[]).find(w=>String(w.id)===String(txId));if(!tx)return;
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">UNDO OUTFLOW</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
     <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:8px">Undo ${tx.mg}mg outflow?</div>
-    <div class="hint" style="margin-bottom:20px">This will restore the exact vial this came from — reopening it if it was transferred or finished as part of this transaction. The transaction stays in history, marked as reversed.</div>
+    <div class="hint" style="margin-bottom:20px">Restores the exact recorded vial only if it has not been changed or used since the outflow. Original history remains, marked reversed.</div>
     <div style="display:flex;gap:8px">
       <button id="cancel-undo" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px">Cancel</button>
       <button id="confirm-undo" style="flex:1;padding:11px;border-radius:10px;background:#ff7c7c;color:#000;font-weight:700;font-size:13px">Undo Outflow</button>
     </div>
-  `, "#ff7c7c");
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#cancel-undo").onclick = closeModal;
-  m.querySelector("#confirm-undo").onclick = () => {
-    // Reverse the actual vial-level effect, not just flag the transaction — the old
-    // comment here described the pre-v2 history-derived model, where marking a wasteLog
-    // entry "reversed" was enough because remaining was always recomputed from live
-    // history on every render. Once a vial's remainingMg became a directly-mutated field,
-    // that stopped being true: this needs to explicitly put the material back on the
-    // specific vial the transaction actually came from, branching on exactly what that
-    // transaction did so undo restores the right status, not just the right number.
-    migrateKitToV2(s);
-    const v = tx.vialId ? (s.vials||[]).find(v=>v.id===tx.vialId) : null;
-    if (v && v.remainingMg !== undefined && tx.status!=="reversed") {
-      if (tx.outflowKind === "transferred_sealed") {
-        v.status = "sealed"; v.remainingMg = v.vialMg!=null ? v.vialMg : (s.vialMg||0);
-      } else {
-        const wasEmpty = v.status==="empty";
-        v.remainingMg = Math.round((v.remainingMg + tx.mg)*100)/100;
-        if (wasEmpty && v.remainingMg>0.01) v.status = "open";
+  `,"#ff7c7c");
+  m.querySelector("#x").onclick=closeModal;
+  m.querySelector("#cancel-undo").onclick=closeModal;
+  const button=m.querySelector("#confirm-undo");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    button.disabled=true;
+    try{
+      const input={kitId:s.id,eventId:tx.id,undoEventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+      let result;
+      if(_demoActive)result=planUndoExclusivePhysicalOutflow(state,input);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw)throw Error("Saved inventory unavailable; reload");
+        const writer=nexusWriter();
+        result=await writer.transaction(JSON.parse(raw),snapshot=>planUndoExclusivePhysicalOutflow(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
       }
-    }
-    tx.status = "reversed";
-    tx.reversedAt = localDatetime();
-    saveState(); closeModal(); render();
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Outflow undo blocked: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
