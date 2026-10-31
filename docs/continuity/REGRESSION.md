@@ -1,3 +1,6 @@
+## 2026-10-31 — Current 320/390 Mark Kit Done UX screenshots PASS (automation only)
+- Full DS2 nested run 41170672326 SUCCESS with fictional screenshot artifact 13030633352. Inspected 320-dark and 320-light: all user action titles/buttons fit on one line, consequence visible, alternative `Log Partial Outflow` clear and 44px target validated. Combined suite mobile 41170672321, WebKit 41170672264, writer safety 41170672364 SUCCESS. Final full Chromium 41170672260 pending at observation. Artifact 13030787463 exact source LIVE 26 files/offline standalone DEMO CRC and byte-parity verified. Real iPhone/VoiceOver/keyboard interaction not accepted.
+
 ## 2026-10-31 — Retirement visual screenshot observation + retest
 - #41170501525 nested 320/390 x dark/light captures PASS, screenshot artifact #13030128989 reviewed; original long 320px Mark Kit Done header and two primary action labels wrap and technical explanation is hard to scan. After b6a5b778 copy revision, current-head 320/390 visual + full browser still pending; #41170672326 nested, #41170672260 full. Browser functional test updated 67b6f5b to assert concise main button. No physical iPhone acceptance; keep broader DS2 child routes open.
 
