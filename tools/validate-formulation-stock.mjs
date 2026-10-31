@@ -31,11 +31,27 @@ try {
   assert.ok(layout.right<=layout.viewport+2,'Add Kit chooser overflow: '+JSON.stringify(layout));
   assert.ok(layout.heights.every(h=>h>=44),'Kit form below 44px target: '+JSON.stringify(layout));
   await page.locator('[data-kit-form="capsule-bottle"]').click();
+  // Other formulations must share vial picker geometry and compact 5-result UX.
+  await page.locator('#nx-form-name').focus();
+  assert.equal(await page.locator('#nx-form-match-list [role="option"]').count(),5,
+    'Non-vial compound picker must show five compact choices, matching Vials');
+  assert.equal(await page.locator('#nx-form-match-list .nx-kit-browse-all').count(),1,
+    'Non-vial compound picker must offer View all compounds');
+  const rows=await page.locator('#nx-form-match-list [role="option"]').evaluateAll(items=>
+    items.map(x=>({height:x.getBoundingClientRect().height,bg:getComputedStyle(x).backgroundColor,border:getComputedStyle(x).borderTopWidth})));
+  assert.ok(rows.every(x=>x.height>=44),'Compound result touch targets must be at least 44px');
+  await page.locator('#nx-form-name').fill('');
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-count').fill('30');
   await page.locator('#nx-form-strength').fill('5');
   await page.locator('#nx-form-save').click();
-  assert.equal(await page.locator('.nx-form-kit-card').count(),1,'capsules kit card missing');
+  assert.equal(await page.locator('.nx-other-stock-row').count(),1,'Capsules must appear in Other forms');
+  assert.equal(await page.locator('.stash-sub-btn[data-sub="other"][aria-pressed="true"]').count(),1,
+    'Saved capsule should switch to Other forms');
+  await page.locator('.stash-sub-btn[data-sub="kits"]').click();
+  assert.equal(await page.locator('.nx-other-stock-row').count(),0,
+    'Vial kits must not display independent capsule inventory');
+  await page.locator('.stash-sub-btn[data-sub="other"]').click();
   await page.evaluate(()=>supplyModal(null,null));
   await page.locator('[data-kit-form="nasal-bottle"]').click();
   await page.locator('#nx-form-name').fill('Fictional Slew');
@@ -56,7 +72,7 @@ try {
   const after=await page.evaluate(()=>({
    stock:state.formulationStocks,
    demo:isDemoMode(),
-   visible:document.querySelectorAll('.nx-form-kit-card').length
+   visible:document.querySelectorAll('.nx-other-stock-row').length
   }));
   // Compare original vial state from first snapshot, never infer formulations from kits.
   const current=await page.evaluate(()=>JSON.stringify(state.supplies));
