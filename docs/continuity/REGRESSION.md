@@ -2073,3 +2073,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - Browser test adds actual dose-sheet edit and programmatic exclusive undo at 320/390, dark/light, source/full isolated DEMO. Early #41231034162 FAIL was test syntax duplicate `edited`; corrected 38fb0796. Exact-head browser result remains NOT VERIFIED.
 - Real two Chromium tab fresh backed Log Dose PASS previously on #41230450954 before unrelated legacy test FAIL. New edit-versus-stale-Undo real two-tab test added 665eb9f9, NOT YET PASS until exact source CI complete.
 - Draft restrictions: most recent single exact-source physical vial only; prepared/blend/unknown/multi-vial/older edits outside new path. Physical iPhone Safari/VoiceOver NOT TESTED; full release qualification BLOCKED pending latest CI.
+
+
+## 2026-10-31 — Multi-kit second-vial source-ID defect and resolution candidate
+- FAIL full browser #41231285603: multi-vial UI dose save never completed (waitForFunction timeout at validate-logdose-ui.mjs:576). Root cause verified from code: #alloc-add-kit pushed {kitId,mg} with no vialId; strict exclusive planner requires exact kitId+vialId; correctly rejected save without stock/history mutation. Fixed runtime ecad706c: select the only eligible open physical vial and pin its ID; fail closed if ambiguous. Test c7d9477b checks second source vial ID 19105; test c4c64d7d reads collapsed disclosure metadata using textContent.
+- Focused writer, mobile and DS2 runs for source c4c64d7d PASS: #41231568131, #41231568083, #41231568051. Latest full browser #41231568003 and WebKit #41231568008 still PENDING. Do not label full regression PASS until completion.
+- PASS independently: real two Chromium tabs fresh backed log AND later edit vs stale Undo/reverse on source 665eb9f9, recorded in browser #41231125162 before unrelated multi-vial regression failure. This demonstrates exclusive-on-exclusive locking, NOT full coordination with all older synchronous legacy writers.

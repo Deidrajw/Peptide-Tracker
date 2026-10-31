@@ -15,3 +15,7 @@ Status: PROPOSED / CODED CANDIDATE; PR #124 draft and unmerged. Version remains 
 - Prior real Chromium two-tab fresh dose collision PASS on #41230450954, but full browser job FAILED legacy test fixture. Node dedicated writer tests for latest single-source edit/Undo PASS on #41230950876. Latest browser/actual two-tab edit-vs-undo, source-matched LIVE/DEMO, WebKit/mobile/visual and physical iPhone acceptance PENDING exact-head CI.
 - Historical multi-vial, prepared, blend, missing/ambiguous original source corrections intentionally blocked in new exclusive route.
 - No merge, no deploy, no primary host source-parity verification. Prepared transfer controls OFF. Real iPhone Safari/VoiceOver acceptance NOT TESTED.
+
+
+## Follow-up: exact-source multi-kit Log Dose
+- Additional-vial allocation now must name the actual open vial ID; when more than one candidate exists, save remains blocked pending explicit selection. Runtime ecad706c, browser metadata assertions c7d9477b/c4c64d7d. No historical records altered or automatic fallback added. Full exact-head browser/WebKit CI pending at checkpoint.
