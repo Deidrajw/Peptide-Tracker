@@ -1,3 +1,9 @@
+## 2026-10-31 — Stash custom compound picker (draft only)
+- User-requested non-destructive enhancement in PR #124: Vial kit combobox offers explicit Add custom compound action for unmatched search, inserts selected value into existing kit editor without changing the data model or saving on selection. Other forms combobox offers explicit Use custom compound option; saved formulation records remain independent.
+- Vial picker options also read existing state.supplies and state.formulationStocks names to allow reuse of user-recorded compounds. Typing alone never creates a kit. Existing stock/history and DS2 tabs unchanged. Example SLU-PP-332 can be entered without modifying curated PEPTIDES/LIBRARY metadata.
+- Implementation commits: 0b6f031b, d80e8111, db8a6a44 on feature/dose-administration-method-20261029. No merge or deployment approval. CI and physical iPhone acceptance for these exact changes NOT YET VERIFIED. Current live/isolated full-app artifacts for new head NOT VERIFIED.
+- Next release-safety priority unchanged: address cross-tab inventory writer P0. Custom compound creation should additionally be checked across 320/390 WebKit, keyboard focus, duplicates, kit save/reopen, and Other forms; build release packages before any release claim.
+
 ## 2026-10-31 — Profile/Settings child polish limited to evidenced defects
 - Keep accepted Profile/More parent and core Stash/Today/Calendar/Plans unchanged. Units detail controls use minimum 44px touch height. Backup preview wraps arbitrary user-selected filenames and action buttons at narrow widths, returns focus to Import Backup when Cancel or Close is used, and reports a recovery copy only when existing saved browser state was available. Keep explicit RESTORE typed confirmation and guarded writer unchanged. Code acddbe2d is PR124 draft only; no new merge/deploy approval.
 
