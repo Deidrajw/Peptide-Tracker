@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 physical outflow/inverse candidate, NOT RELEASED
+- Previous correction full browser `41145959949` SUCCESS, including browser and artifact steps. New physical Log Outflow and Undo on draft PR124: exact-source immutable planner and UI, exclusive writer, event-linked inverse, and new Chromium picker/undo test `efe9b7cc`; reconciled duplicate inverse in `6e0c7cd1`. Dedicated new-head QA and complete LIVE/DEMO source-parity verification PENDING; no physical iPhone, merge, deploy, production localStorage migration or real-user writes. Main `da585ab3`, version `v0.9.20-beta`, both prepared gates OFF.
+
 ## 2026-10-30 — PR124 manual correction isolated CI PASS, NOT RELEASED
 - Manual correction application `a56c4c0d`, VM fictional tests `fa2aa482`, typo fix `68df4f39` (original CI failed), browser form test `3a122e8e`, ownership guard `e35de363`. Dedicated shared writer `41145959785` SUCCESS, complete LIVE/DEMO artifact `13021610850` downloaded/exact-source inspected, mobile `41145959902` SUCCESS. Full browser `41145959949` pending at time of documentation; not a release. No main change, production storage impact, merge, deploy, real-iPhone acceptance or prepared-feature activation.
 
