@@ -314,7 +314,7 @@ function supplyModal(existing, presetName, forceVials=false) {
       });};
       list.appendChild(browse);
       if(q && !options.some(o=>o.name.trim().toLocaleLowerCase()===q.toLocaleLowerCase())){
-        const create=document.createElement("button");create.type="button";create.className="nx-kit-browse-all";
+        const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
         create.textContent='＋ Add "'+input.value.trim()+'" as a custom compound';
         create.onclick=()=>{
           const name=input.value.trim().replace(/\s+/g," ");
