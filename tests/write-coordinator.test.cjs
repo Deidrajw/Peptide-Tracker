@@ -190,14 +190,14 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(fixture().supplies[0].vials[0].remainingMg,10);
  const double=fixture();double.peptides["Sample A"].doses.push(firstDose);
  assert.throws(()=>planning.plan(double,one),/Duplicate dose ID/);
- const beforeDemo=physical,demo=buildScope(physical,null,true);
+ const beforeBackedDemo=physical,demo=buildScope(physical,null,true);
  const demoSaved=await demo.commit({...one,dose:{...firstDose,id:"demo-dose"}});
  assert.ok(demoSaved);
- assert.equal(physical,beforeDemo,"demo never writes durable storage");
+ assert.equal(physical,beforeBackedDemo,"demo never writes durable storage");
  const brokenWriter=create({read:()=>physical,write:()=>{throw Error("quota")},lock:serializedLock,initialSnapshot:physical});
  const failure=buildScope(physical,brokenWriter);
  assert.equal(await failure.commit({...one,dose:{...firstDose,id:"quota-dose"}}),null);
- assert.equal(physical,beforeDemo);
+ assert.equal(physical,beforeBackedDemo);
  assert.equal(failure.scope.state.peptides["Sample A"].doses.length,1,"quota failure must not alter in-memory dose history");
  console.log("PASS: backed physical exact-vial source, split mg/mcg, stale second tab, no double debit, insufficient/route/legacy failures, quota, demo isolation");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
