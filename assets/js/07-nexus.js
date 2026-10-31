@@ -81,7 +81,7 @@ function supplyModal(existing, presetName, forceVials=false) {
     <label class="field-label">COMPOUND</label>
     <select id="sname" class="inp" style="margin-bottom:14px">
       <option value="">— select compound —</option>
-      ${[...new Set([...Object.keys(PEPTIDES), ...LIBRARY.filter(l=>!l.blend).map(l=>l.name), ...Object.keys(state.customPeptides||{})])].sort().map(n=>`<option value="${esc(n)}" ${f.name===n?"selected":""}>${esc(n)}</option>`).join("")}
+      ${[...new Set([...Object.keys(PEPTIDES), ...LIBRARY.filter(l=>!l.blend).map(l=>l.name), ...Object.keys(state.customPeptides||{}), ...(state.supplies||[]).map(k=>k.name), ...(state.formulationStocks||[]).map(k=>k.compound)].filter(Boolean))].sort().map(n=>`<option value="${esc(n)}" ${f.name===n?"selected":""}>${esc(n)}</option>`).join("")}
     </select>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label class="field-label">NUMBER OF VIALS</label><input id="stv" type="number" class="inp" value="${f.totalVials}" placeholder="e.g. 10" ${existing?"disabled style=\"opacity:0.55\"":""} style="margin-bottom:${existing?"4":"14"}px"></div>
@@ -313,6 +313,21 @@ function supplyModal(existing, presetName, forceVials=false) {
         input.value=o.name;
       });};
       list.appendChild(browse);
+      if(q && !options.some(o=>o.name.trim().toLocaleLowerCase()===q.toLocaleLowerCase())){
+        const create=document.createElement("button");create.type="button";create.className="nx-kit-browse-all";
+        create.textContent='＋ Add "'+input.value.trim()+'" as a custom compound';
+        create.onclick=()=>{
+          const name=input.value.trim().replace(/\\s+/g," ");
+          if(!name || name.length>120)return;
+          const duplicate=options.find(o=>o.name.trim().toLocaleLowerCase()===name.toLocaleLowerCase());
+          const chosen=duplicate?duplicate.value:name;
+          if(!duplicate){const opt=document.createElement("option");opt.value=name;opt.textContent=name;originalSelect.appendChild(opt);options.push({name,value:name});}
+          originalSelect.value=chosen;
+          originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
+          input.value=chosen;closeList();
+        };
+        list.appendChild(create);
+      }
       list.hidden=false;input.setAttribute("aria-expanded","true");
     };
     input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
