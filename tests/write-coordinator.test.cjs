@@ -199,6 +199,17 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(await failure.commit({...one,dose:{...firstDose,id:"quota-dose"}}),null);
  assert.equal(physical,beforeBackedDemo);
  assert.equal(failure.scope.state.peptides["Sample A"].doses.length,1,"quota failure must not alter in-memory dose history");
+ const noLockPhysical=buildScope(physical,create({read:()=>physical,write:v=>{physical=v},initialSnapshot:physical}));
+ assert.equal(await noLockPhysical.commit({...one,dose:{...firstDose,id:"no-lock"}}),null,
+   "physical dose cannot commit without a cross-tab lock");
+ assert.equal(physical,beforeBackedDemo);
+ let corruptRaw=physical;
+ const corruptPhysical=buildScope(physical,create({read:()=>corruptRaw,write:()=>{corruptRaw="{}"},lock:serializedLock,initialSnapshot:physical}));
+ assert.equal(await corruptPhysical.commit({...one,dose:{...firstDose,id:"bad-readback"}}),null,
+   "unverified storage readback cannot report a dose saved");
+ assert.equal(corruptPhysical.scope.state.peptides["Sample A"].doses.length,1,
+   "readback failure retains original in-memory dose history");
+ assert.equal(corruptPhysical.scope.state.supplies[0].vials[0].remainingMg,7.5);
  console.log("PASS: backed physical exact-vial source, split mg/mcg, stale second tab, no double debit, insufficient/route/legacy failures, quota, demo isolation");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
