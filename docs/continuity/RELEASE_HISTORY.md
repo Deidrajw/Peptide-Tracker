@@ -1,3 +1,6 @@
+## 2026-10-31 — Draft PR124 retirement UX visual QA evidence (no release)
+- Simplified sheet source b6a5b778 and browser assertion 67b6f5b; DS2 nested visual 41170672326 SUCCESS, real screenshots checked at 320 light/dark and 390 light/dark (artifact 13030633352). Writer safety 41170672364, mobile 41170672321, WebKit 41170672264 SUCCESS. Full Chromium 41170672260 still pending final result. Latest full LIVE/DEMO artifact 13030787463 independently verified (26 LIVE, CRC, 09 Git blob af138ad3, DEMO byte parity, gates off). Not merged, deployed or physically accepted; product version still v0.9.20-beta.
+
 ## 2026-10-31 — Screenshot-informed retirement sheet copy iteration, draft only
 - Nested visual #41170501525 SUCCESS and evidence artifact #13030128989 showed multi-line title and CTA at 320px in both themes. Source-only UX b6a5b778 simplifies labels and explanation, browser assertion 67b6f5b updates expectation; current head browser/visual/dedicated checks pending. Exact-source original candidate artifact #13031181162 was independently CRC / 26 LIVE / isolated full-demo verified before copy iteration; must regenerate for latest code. No release, merge, primary Cloudflare deploy, production storage writes or iPhone acceptance.
 
