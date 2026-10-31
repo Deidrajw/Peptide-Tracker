@@ -92,6 +92,10 @@ try {
     ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
       'Labelled vial with sufficient balance still shows shortfall');
     await clickSave(page);
+    // Exclusive backed-dose commits complete asynchronously after the click handler.
+    // Wait for the durable, visible result rather than racing the Web Lock promise.
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1 ||
+      !!document.querySelector('.nx-error-banner, .error-banner'),null,{timeout:5000}).catch(()=>{});
     const saved=await page.evaluate(()=>({
       remaining:state.supplies[0].vials[0].remainingMg,
       history:state.peptides.Retatrutide.doses.length,
