@@ -204,7 +204,7 @@ function comboDoseModal() {
   } catch(e) { showErrorBanner("comboDoseModal fav-checkbox wiring: "+e.message); }
 
   try {
-    m.querySelector("#save").onclick = async () => {
+    m.querySelector("#save").onclick = () => {
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
@@ -1409,7 +1409,7 @@ function doseModal(name, existing, occTime) {
   if (toggleBtn) toggleBtn.onclick = () => { multiMode = !multiMode; if(!multiMode) rows=[]; toggleBtn.textContent = multiMode?"− Use a single vial instead":"+ Use multiple vials"; renderAllocPanel(); };
   renderAllocPanel();
 
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const doseAmtStr = m.querySelector("#dose").value;
     if (!doseAmtStr.trim() || !Number.isFinite(Number(doseAmtStr)) || Number(doseAmtStr) <= 0) {
       showErrorBanner("Enter a valid amount greater than zero before confirming. Nothing was saved.");
