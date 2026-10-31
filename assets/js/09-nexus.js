@@ -1539,72 +1539,94 @@ function logWasteModal(supplyId) {
   };
   m.querySelectorAll(".outflow-type-toggle").forEach(btn=>btn.onclick=()=>setType(btn.dataset.type));
 
-  m.querySelector("#waste-save").onclick = () => {
-    const mode0 = mode;
-    const date = m.querySelector("#waste-date").value || localDate();
-    const notes = m.querySelector("#waste-notes").value;
-    const conf = OUTFLOW_TYPES.find(t=>t.key===outflowType);
-    const value = conf.field==="select" ? m.querySelector("#waste-reason").value : m.querySelector("#outflow-text-input").value.trim();
-    const reason = conf.buildReason(value);
-    migrateKitToV2(s);
-    const openVial = kitOpenVialV2(s);
-    const sealedVials = kitSealedVialsV2(s);
-
-    if (mode0==="partial") {
-      const mg = parseFloat(m.querySelector("#waste-mg").value)||0;
-      if (mg<=0) return;
-      // A partial amount only makes sense as coming out of the vial actually in use.
-      if (!openVial) { showErrorBanner("No open vial to draw a partial outflow from."); return; }
-      openVial.remainingMg = Math.max(0, Math.round((openVial.remainingMg-mg)*100)/100);
-      if (openVial.remainingMg <= 0.01) { openVial.remainingMg = 0; openVial.status = "empty"; }
-      if (!s.wasteLog) s.wasteLog = [];
-      s.wasteLog.push({ id: uid(), date, loggedAt: new Date().toISOString(), mg, type: outflowType, reason, notes, status:"active", vialId: openVial.id, outflowKind:"consumed_open_partial" });
-      saveState(); closeModal(); render();
-      return;
+  const button=m.querySelector("#waste-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const current=(state.supplies||[]).find(x=>String(x.id)===String(s.id));
+    if(!current||!Array.isArray(current.vials)||
+       !current.vials.every(v=>v.remainingMg!==undefined&&Number.isFinite(Number(v.remainingMg)))){
+      showErrorBanner("This kit needs inventory reconciliation before an outflow.");return;
     }
-
-    // Whole vial — a real physical choice with real consequences, never inferred. If
-    // there's genuinely only one kind of vial available, there's nothing to ask; if both
-    // a sealed backup and an open vial exist, this MUST be an explicit choice — silently
-    // preferring one over the other is exactly the bug this flow is being rebuilt to fix.
-    const proceedWhole = (target, kind) => {
-      applyWholeVialOutflow(s, target, kind, { outflowType, reason, notes, date });
-      saveState(); closeModal(); render();
+    const expectedKit=JSON.stringify(current);
+    const openVials=current.vials.filter(v=>["open","active"].includes(v.status)&&Number(v.remainingMg)>0);
+    const sealedVials=current.vials.filter(v=>v.status==="sealed"&&Number(v.remainingMg)>0);
+    if(openVials.length>1){showErrorBanner("Multiple open vials require reconciliation before outflow.");return;}
+    const openVial=openVials[0]||null;
+    const date=m.querySelector("#waste-date").value||localDate();
+    const notes=m.querySelector("#waste-notes").value;
+    const config=OUTFLOW_TYPES.find(t=>t.key===outflowType);
+    const value=config.field==="select"?m.querySelector("#waste-reason").value:m.querySelector("#outflow-text-input").value.trim();
+    const reason=config.buildReason(value);
+    const proceed=async(target,kind,amount)=>{
+      if(button.disabled)return;
+      button.disabled=true;
+      try{
+        if(!target)throw Error("Choose a physical source vial");
+        const input={kitId:s.id,expectedKit,vialId:target.id,
+          expectedVial:JSON.stringify(target),mg:amount,kind,
+          type:outflowType,reason,notes,date,eventId:uid(),loggedAt:new Date().toISOString()};
+        let result;
+        if(_demoActive)result=planExclusivePhysicalOutflow(state,input);
+        else{
+          const raw=localStorage.getItem(STORE_KEY);
+          if(!raw)throw Error("Saved inventory unavailable; reload");
+          const saved=JSON.parse(raw),kit=(saved.supplies||[]).find(k=>String(k.id)===String(s.id));
+          if(!kit||JSON.stringify(kit)!==expectedKit)
+            throw Error("Kit changed; reopen Log Outflow");
+          const writer=nexusWriter();
+          result=await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflow(snapshot,input));
+          _nexusLastSavedSnapshot=writer.expected();
+        }
+        state=result.next;closeModal();render();
+      }catch(e){showErrorBanner("Outflow not saved: "+e.message);}
+      finally{if(button.isConnected)button.disabled=false;}
     };
-
-    const wholeRoute = resolveWholeVialOutflow(openVial, sealedVials);
-    if (wholeRoute === "choose") {
-      // Genuine ambiguity — ask, and default the selection (not the action) toward the
-      // sealed vial for anything that isn't "wasted," since giving away/testing a vial
-      // you've never opened is by far the more common real case; the person still has to
-      // confirm either way.
-      const preferSealed = outflowType!=="waste";
-      const dm = openModal(`
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-          <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">WHICH VIAL IS LEAVING?</span>
-          <button id="x2" style="color:var(--t4);font-size:18px">✕</button>
-        </div>
-        <div class="hint" style="margin-bottom:16px">This kit has both a sealed backup and a vial already in use. Pick exactly which physical vial is leaving your stash.</div>
-        <button class="whole-vial-choice" data-choice="sealed" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${preferSealed?"#ff7c7c14":"var(--surface-2)"};border:1px solid ${preferSealed?"#ff7c7c44":"var(--border-sub)"};margin-bottom:8px">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">Sealed vial — ${(sealedVials[0].vialMg!=null?sealedVials[0].vialMg:s.vialMg||0)}mg</div>
-          <div style="font-size:11px;color:var(--t5);margin-top:2px">Never opened · your open vial is untouched</div>
-        </button>
-        <button class="whole-vial-choice" data-choice="open" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${preferSealed?"var(--surface-2)":"#ff7c7c14"};border:1px solid ${preferSealed?"var(--border-sub)":"#ff7c7c44"}">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">Current open vial — ${openVial.remainingMg.toFixed(1)}mg remaining</div>
-          <div style="font-size:11px;color:var(--t5);margin-top:2px">This closes out your currently reconstituted vial</div>
-        </button>
-      `, "#ff7c7c");
-      dm.querySelector("#x2").onclick = closeModal;
-      dm.querySelectorAll(".whole-vial-choice").forEach(btn=>btn.onclick=()=>{
-        closeModal();
-        if (btn.dataset.choice==="sealed") proceedWhole(sealedVials[0], "transferred_sealed");
-        else proceedWhole(openVial, "consumed_open_whole");
-      });
-      return;
+    if(mode==="partial"){
+      const rawMg=m.querySelector("#waste-mg").value.trim(),mg=Number(rawMg);
+      if(!rawMg||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){
+        showErrorBanner("Enter a valid partial mg amount with at most two decimals.");return;
+      }
+      if(!openVial){showErrorBanner("No open vial to draw a partial outflow from.");return;}
+      if(mg>=Number(openVial.remainingMg)){
+        showErrorBanner("Partial outflow must be less than the available open-vial balance; select Whole Vial instead.");return;
+      }
+      await proceed(openVial,"consumed_open_partial",mg);return;
     }
-    if (wholeRoute === "sealed") { proceedWhole(sealedVials[0], "transferred_sealed"); return; }
-    if (wholeRoute === "open") { proceedWhole(openVial, "consumed_open_whole"); return; }
-    showErrorBanner("No vial available in this kit to log an outflow against.");
+    const chooseWhole=(target)=>{
+      if(!target){showErrorBanner("Choose the exact source vial.");return;}
+      const isSealed=target.status==="sealed";
+      return proceed(target,isSealed?"transferred_sealed":"consumed_open_whole",Number(target.remainingMg));
+    };
+    const available=[...sealedVials,...(openVial?[openVial]:[])];
+    if(!available.length){showErrorBanner("No vial available in this kit to log an outflow against.");return;}
+    if(available.length===1){await chooseWhole(available[0]);return;}
+    // Explicit exact-vial selection, including when multiple sealed backups exist.
+    // A type preference may affect ordering, never silently identify the source.
+    const ordered=outflowType==="waste"?[...(openVial?[openVial]:[]),...sealedVials]:available;
+    const options=ordered.map((v,i)=>`<option value="${esc(String(v.id))}">${v.status==="sealed"?"Sealed":"Open"} vial ${esc(String(v.sequenceNumber||i+1))} · ${Number(v.remainingMg)}mg</option>`).join("");
+    const sheet=openModal(`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">WHICH EXACT VIAL IS LEAVING?</span>
+        <button id="x2" aria-label="Cancel selection" style="color:var(--t4);font-size:18px">✕</button>
+      </div>
+      <div class="hint" style="margin-bottom:14px">Choose the exact physical source. No vial is selected automatically.</div>
+      <label for="waste-source" class="field-label">PHYSICAL SOURCE VIAL</label>
+      <select id="waste-source" class="inp" style="width:100%;min-height:46px;margin-bottom:16px">
+        <option value="">Choose a vial</option>${options}
+      </select>
+      <button id="waste-source-confirm" class="btn-primary" style="background:#ff7c7c">Confirm Outflow Source</button>
+    `,"#ff7c7c");
+    sheet.querySelector("#x2").onclick=closeModal;
+    const confirm=sheet.querySelector("#waste-source-confirm");
+    confirm.onclick=async()=>{
+      if(confirm.disabled)return;
+      const id=sheet.querySelector("#waste-source").value;
+      const selected=available.find(v=>String(v.id)===String(id));
+      if(!selected){showErrorBanner("Choose the exact source vial.");return;}
+      confirm.disabled=true;
+      try{await chooseWhole(selected);}
+      finally{if(confirm.isConnected)confirm.disabled=false;}
+    };
   };
 }
 
