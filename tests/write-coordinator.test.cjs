@@ -87,5 +87,52 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(editForm.next.formulationStocks[1].remainingMl,6);
  assert.equal(editForm.next.formulationStocks[1].transactions.length,1);
  assert.deepEqual(editForm.next.supplies,invBefore.supplies);
+
+ // Actual application untracked Log Dose helper: two tab-like contexts,
+ // one lock, stale fail-closed, editing, demo isolation and quota failure.
+ const vm=require("node:vm"),fs=require("node:fs"),path=require("node:path");
+ const appSource=fs.readFileSync(path.join(__dirname,"../assets/js/01-nexus.js"),"utf8");
+ const begin=appSource.indexOf("async function nexusCommitUntrackedDose(");
+ const end=appSource.indexOf("\nfunction enterDemoMode(",begin);
+ assert.ok(begin>0&&end>begin,"real Log Dose helper must exist");
+ const helper=appSource.slice(begin,end);
+ let durable=JSON.stringify({peptides:{"Sample A":{enabled:true,doses:[],reschedules:[{newDate:"2026-10-31",doseId:null}]}},customPeptides:{},supplies:[{id:"V1",remainingMg:10}]});
+ let queue=Promise.resolve(),acquired=0;
+ const gate=(_name,fn)=>{const job=queue.then(async()=>{acquired++;return fn()});queue=job.catch(()=>{});return job};
+ const context=({demo=false,write=serialized=>{durable=serialized}}={})=>{
+   const scope={state:JSON.parse(durable),_demoActive:demo,_nexusLastSavedSnapshot:durable,
+     PEPTIDES:{"Sample A":{}},cfg:()=>({defaultSchedule:7}),
+     dayKey:s=>String(s).slice(0,10),showSaveWarning:()=>{},console,
+     JSON,Error,String,globalThis:{}};
+   const coordinator=create({read:()=>durable,write,lock:gate,initialSnapshot:durable});
+   scope.nexusWriter=()=>coordinator;
+   vm.createContext(scope);
+   vm.runInContext(helper+";globalThis.commit=nexusCommitUntrackedDose;",scope);
+   return {scope,commit:scope.globalThis.commit,coordinator};
+ };
+ const dose={id:"D-A",date:"2026-10-31T10:00",dose:"1",trackingMode:"untracked",kitId:null};
+ const tabA=context(),tabB=context();
+ const competing=await Promise.all([tabA.commit("Sample A",dose,false),tabB.commit("Sample A",{...dose,id:"D-B"},false)]);
+ assert.deepEqual(competing,[true,false],"stale tab must fail closed");
+ assert.equal(acquired,2,"both dose attempts must acquire the shared exclusive lock");
+ assert.equal(JSON.parse(durable).peptides["Sample A"].doses.length,1);
+ assert.equal(JSON.parse(durable).supplies[0].remainingMg,10,"untracked dose must not debit inventory");
+ assert.equal(JSON.parse(durable).peptides["Sample A"].reschedules[0].doseId,"D-A");
+ assert.equal(tabB.scope.state.peptides["Sample A"].doses.length,0,"failed tab retains its original state");
+ const editTab=context();
+ assert.equal(await editTab.commit("Sample A",{...dose,notes:"edited"},true),true);
+ assert.equal(JSON.parse(durable).peptides["Sample A"].doses.length,1);
+ assert.equal(JSON.parse(durable).peptides["Sample A"].doses[0].notes,"edited");
+ const missing=context();
+ assert.equal(await missing.commit("Sample A",{...dose,id:"missing"},true),false);
+ const beforeDemo=durable,demoTab=context({demo:true});
+ assert.equal(await demoTab.commit("Sample A",{...dose,id:"DEMO"},false),true);
+ assert.equal(durable,beforeDemo,"demo must not touch durable storage");
+ assert.equal(demoTab.scope.state.peptides["Sample A"].doses.length,2);
+ const quotaTab=context({write:()=>{throw Error("quota")}});
+ assert.equal(await quotaTab.commit("Sample A",{...dose,id:"QUOTA"},false),false);
+ assert.equal(durable,beforeDemo);
+ assert.equal(quotaTab.scope.state.peptides["Sample A"].doses.length,1,"failed quota keeps memory unchanged");
+ console.log("PASS: exclusive untracked Log Dose 2-tab stale rejection, edit, no debit, DEMO isolation, quota fail-closed");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
