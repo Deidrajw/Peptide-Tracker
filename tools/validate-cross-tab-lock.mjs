@@ -469,17 +469,23 @@ try{
      _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
      markKitDoneModal(987654326);
    });
-   await a.locator("#leftover-mg").fill("2");
-   await a.locator("#done-save").click();
-   const rejected=await a.evaluate(()=>{
+   assert.equal(await a.locator("#leftover-mg").count(),0,"Known stock must not require duplicate numeric entry");
+   assert.equal(await a.locator("#done-impact").count(),1,"Show clear total stock consequence");
+   assert.match(await a.locator("#done-impact").innerText(),/13\.25 mg/);
+   assert.equal(await a.locator('.donereason-toggle[data-key="used_up"]').count(),0,
+     "Used up must not be offered with positive stock");
+   await a.locator("#done-partial-outflow").click();
+   assert.equal(await a.locator("#waste-save").count(),1,
+     "Partial shortcut should open existing Log Outflow, not discard all stock");
+   const partialUnchanged=await a.evaluate(()=>{
      const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
-     return {first:k.vials[0].remainingMg,second:k.vials[1].remainingMg,done:k.kitStatus,records:k.wasteLog.length};
+     return {first:k.vials[0].remainingMg,second:k.vials[1].remainingMg,history:k.wasteLog.length};
    });
-   assert.equal(rejected.first,3.25);
-   assert.equal(rejected.second,10);
-   assert.equal(rejected.records,1);
-   assert.notEqual(rejected.done,"done");
-   await a.locator("#leftover-mg").fill("13.25");
+   assert.equal(partialUnchanged.first,3.25);
+   assert.equal(partialUnchanged.second,10);
+   assert.equal(partialUnchanged.history,1);
+   await a.evaluate(()=>{closeModal();markKitDoneModal(987654326)});
+   assert.match(await a.locator("#done-save").innerText(),/Remove Remaining Stock/);
    await a.locator("#done-save").click();
    await a.waitForFunction(()=>{
      const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
@@ -502,7 +508,7 @@ try{
    assert.equal(done.durable.kitDoneHistory[0].vialEvents.length,2);
    assert.equal(done.memory.kitStatus,"done");
    assert.equal(done.pending,false);
-   console.log("PASS: real Mark Kit Done rejects partial waste, commits 2 exact-vial historic outflows + retired kit in one durable exclusive transaction");
+   console.log("PASS: real Mark Kit Done displays stock consequence, opens partial-outflow route without writes, and retires 2 exact vials in one durable exclusive transaction");
  }
 
  await context.close();
