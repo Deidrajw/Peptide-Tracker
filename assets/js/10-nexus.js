@@ -2158,6 +2158,8 @@ function nexusAddFormulationModal(type,existingId=null){
         });
         state=result.next;_nexusLastSavedSnapshot=writer.expected();
       }
+      // Show the saved form in its own inventory category, not among vial kits.
+      state._stashSub="other";
       closeModal();render();
     }catch(e){showErrorBanner("Container not saved: "+e.message);}
     finally{if(saveButton.isConnected)saveButton.disabled=false;}
