@@ -22,6 +22,18 @@ for(const file of ['assets/js/04-nexus.js','assets/js/10-nexus.js','assets/js/11
  if(file.includes('12-')&&!text.includes('writer.saveLegacy(next)'))
    throw Error('Onboarding restoration bypasses shared writer');
 }
+// Fresh inventory-backed dose corrections and Undo must never fall back to a
+// direct synchronous stock refund or history-only edit.
+const doseRuntime=fs.readFileSync('assets/js/05-nexus.js','utf8');
+const doseCore=fs.readFileSync('assets/js/01-nexus.js','utf8');
+if(!doseCore.includes('function nexusPlanBackedDoseChange(snapshot,entry)')||
+   !doseCore.includes('await writer.transaction(state,prior=>nexusPlanBackedDoseChange(prior,entry))')||
+   !doseCore.includes('Original exact source missing')||
+   !doseCore.includes('Only the most recent dose can be corrected through this safety path')||
+   !doseRuntime.includes('changed=await nexusCommitBackedDoseChange({')||
+   !doseRuntime.includes('const undone=await nexusCommitBackedDoseChange({')||
+   !doseRuntime.includes('operation:"undo"'))
+ throw Error('Backed dose edit/undo must use exact original vial and exclusive history transaction');
 const runtime=fs.readFileSync('assets/js/04-nexus.js','utf8');
 // The migrated Add to Open Vial flow must not fall back to last-entry
 // history removal or uncoordinated legacy stock persistence.
