@@ -392,6 +392,7 @@ try {
     ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
     ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
     await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
     let first=await stateSnapshot(page);
     ensure(first.entries.length===1,'Single vial confirmation failed to create one dose');
     ensure(Math.abs(first.kits[0].remaining[0]-4)<.01,'Confirmed 2 mg did not deduct exactly 2 mg');
@@ -407,6 +408,7 @@ try {
     verified.push('post-dose optional invitation and link to original dose');
     await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
     await setDose(page,3);await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses[0]?.dose==='3',null,{timeout:5000});
     let edited=await stateSnapshot(page);
     ensure(edited.entries.length===1 && edited.entries[0].id===originalId,'Editing duplicated a dose record');
     ensure(Math.abs(edited.kits[0].remaining[0]-3)<.01,'Edit failed to reverse and reapply deduction');
