@@ -34,11 +34,14 @@ try {
   // Selecting must NOT persist a kit or mutate the pre-existing inventory.
   await page.locator('[data-kit-form="vial"]').click();
   await page.locator('#nx-kit-combobox-input').fill('SLU-PP-332');
-  const createVial=page.locator('#nx-kit-combobox-list button').filter({hasText:'Add "SLU-PP-332"'});
+  assert.equal(await page.locator('#nx-kit-combobox-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
+    'SLU-PP-332 must now resolve as a curated compound');
+  await page.locator('#nx-kit-combobox-input').fill('Fictional Unlisted Compound');
+  const createVial=page.locator('#nx-kit-combobox-list button').filter({hasText:'Add "Fictional Unlisted Compound"'});
   assert.equal(await createVial.count(),1,'Unknown compound must offer Add custom action in Vial kits');
   await createVial.click();
-  assert.equal(await page.locator('#sname').inputValue(),'SLU-PP-332','Custom vial selection must set canonical kit field');
-  assert.equal(await page.locator('#nx-kit-combobox-input').inputValue(),'SLU-PP-332');
+  assert.equal(await page.locator('#sname').inputValue(),'Fictional Unlisted Compound','Custom vial selection must set canonical kit field');
+  assert.equal(await page.locator('#nx-kit-combobox-input').inputValue(),'Fictional Unlisted Compound');
   assert.equal(await page.evaluate(()=>JSON.stringify(state.supplies)),before,'Selecting custom compound must not save a kit');
   // Reopen picker: dismiss unsaved fictional draft, then test Other forms.
   await page.locator('.modal #x').click();
@@ -55,10 +58,13 @@ try {
   assert.ok(rows.every(x=>x.height>=44),'Compound result touch targets must be at least 44px');
   await page.locator('#nx-form-name').fill('');
   await page.locator('#nx-form-name').fill('SLU-PP-332');
-  const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "SLU-PP-332"'});
+  assert.equal(await page.locator('#nx-form-match-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
+    'Other forms must resolve curated compound');
+  await page.locator('#nx-form-name').fill('Fictional Unlisted Compound');
+  const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "Fictional Unlisted Compound"'});
   assert.equal(await createForm.count(),1,'Unknown compound must offer custom option in Other forms');
   await createForm.click();
-  assert.equal(await page.locator('#nx-form-name').inputValue(),'SLU-PP-332');
+  assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound');
   assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,'Explicit custom selection must close matches');
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-count').fill('30');
