@@ -570,7 +570,7 @@ function importData(e) {
     word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
     go.onclick=()=>{
       if(word.value.trim()!=="RESTORE")return;
-      const oldState=state,oldRaw=_demoActive?null:localStorage.getItem(STORE_KEY);
+      const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
       const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
       try{
         if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
