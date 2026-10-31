@@ -1520,6 +1520,46 @@ function doseModal(name, existing, occTime) {
     if (!isEdit && selectedSource==="fresh" && !activeKit()) {
       showErrorBanner("No compatible labelled open vial. No dose or inventory was saved.");return;
     }
+    // New inventory-backed physical dose: the exact-vial deduction and history
+    // commit happen under one Web Lock, not through synchronous saveState().
+    // Historical edits, blends and prepared syringe histories remain separate
+    // legacy paths and MUST NOT be presented as converted.
+    if(!isEdit&&!isBlend&&selectedSource==="fresh"){
+      const kit=activeKit();
+      const expectedMassMg=doseToMg(doseAmtStr,c.unit);
+      const sourceSteps=rows.length
+        ? rows.filter(r=>Number(r.mg)>0).map(r=>({kitId:r.kitId,vialId:r.vialId,mg:Number(r.mg),finished:!!r.finished}))
+        : [{kitId:kit?.id,vialId:selectedVialId,mg:expectedMassMg}];
+      const sourceDose={
+        id:f.id,date:m.querySelector("#date").value,dose:doseAmtStr,
+        trackingMode:"backed",enteredDose:m.querySelector("#nx-dose-entered")?.value||doseAmtStr,
+        enteredUnit:m.querySelector("#nx-dose-unit")?.value||c.unit,
+        method:methodInput.value,site:m.querySelector("#site").value,
+        asNeeded:m.querySelector("#nx-dose-as-needed").checked,
+        symptoms:f.symptoms,notes:m.querySelector("#notes").value,
+        escalation:m.querySelector("#esc").checked
+      };
+      if(!sourceDose.date||!Number.isFinite(new Date(sourceDose.date).getTime())){
+        showErrorBanner("Choose a valid date before saving.");return;
+      }
+      const saveButton=m.querySelector("#save");
+      if(saveButton.disabled)return;
+      saveButton.disabled=true;
+      let result;
+      try{
+        result=await nexusCommitBackedPhysicalDose({
+          name,dose:sourceDose,method:methodInput.value,
+          steps:sourceSteps,nativeUnit:c.unit,expectedMassMg,builtin:!!PEPTIDES[name]
+        });
+      }finally{saveButton.disabled=false;}
+      if(!result){
+        showErrorBanner("Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open, export a backup and reload before retrying.");
+        return;
+      }
+      closeModal();render();
+      if(!nexusPostProtocolDoseFollowup(name,result.dose,true))nexusPostDoseReactionPrompt(name,result.dose.id);
+      return;
+    }
     const ak = activeKit();
     // Remember this choice for next time — the whole point of the picker above is that a
     // person doing this daily shouldn't have to re-pick every single time once they've
