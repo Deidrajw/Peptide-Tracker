@@ -1,3 +1,6 @@
+## 2026-10-31 — Corrected child-source CI partial results
+- Following fix f4aba4f, shared writer run 41178615500 SUCCESS, mobile run 41178615552 SUCCESS, nested visual run 41178615575 SUCCESS. Full Chromium 41178615573 and WebKit 41178615553 still IN PROGRESS at latest observation; do not mark PASS. Initial Chromium 41178541248 FAIL retained as a recorded regression; correction preserves isolated-demo recovery fixture. Physical iPhone/VoiceOver still NOT TESTED.
+
 ## 2026-10-31 — Child restore preview CI regression caught and corrected (RETEST PENDING)
 - Chromium build/parity QA 41178541248 FAILED in browser trust UI at `pre-restore copy` assertion after first patch; source syntax/guarded inventory/writer tests before that point passed. Root cause: new `_demoActive?null` oldRaw branch suppressed existing isolated-demo recovery fixture; restored original oldRaw path in f4aba4f. Do not claim pass until current-head Chromium browser test verifies expected pre-restore local recovery and no live-data write. Mobile 41178541293 and shared writer 41178541297 completed SUCCESS on initial patch; nested and WebKit were running at observation.
 
