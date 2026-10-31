@@ -9,7 +9,7 @@ assert.ok(boundary>0,'Cannot isolate catalogue source');
 const library=vm.runInNewContext(source.slice(0,boundary+2)+'\nLIBRARY;',Object.create(null),{timeout:1500});
 const names=library.map(x=>x.name);
 const normalized=x=>x.trim().toLocaleLowerCase('en-CA');
-assert.equal(names.length,101,'Expected 48 previous + 53 curated additions');
+assert.equal(names.length,102,'Expected 49 previous + 53 curated additions');
 assert.equal(new Set(names.map(normalized)).size,names.length,'Compound names must be unique, case-insensitively');
 const requiredBioregulators=['Bronchogen','Cardiogen','Chonluten','Cortagen','Crystagen','Livagen','Ovagen','Pancragen','Prostamax','Testagen','Thymalin','Thymogen','Vesugen','Vilon'];
 const additions=['SLU-PP-332','Eloralintide','Follistatin 344','Gonadorelin','L-Carnitine','N-Acetyl Selank Amidate','FOXO4-DRI'];
