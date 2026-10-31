@@ -1277,8 +1277,21 @@ function doseModal(name, existing, occTime) {
     });
     const addKitBtn = panel.querySelector("#alloc-add-kit");
     if (addKitBtn) addKitBtn.onclick = () => {
-      const nextKit = otherKitsWithStock().filter(k=>!rows.some(r=>r.kitId===k.id))[0];
-      if (nextKit) { const take = Math.min(getKitRemainingMg(nextKit), remaining); rows.push({kitId:nextKit.id, mg:Math.round(take*100)/100}); renderAllocPanel(); }
+      const nextKit = otherKitsWithStock().filter(k=>!rows.some(r=>String(r.kitId)===String(k.id)))[0];
+      if (!nextKit)return;
+      // An additional KIT is not an additional physical SOURCE. The exclusive
+      // writer requires the exact vial ID; do not hand it an unpinned kit row.
+      const compatible=eligibleSources.filter(x=>String(x.kit.id)===String(nextKit.id)&&
+        ["open","active"].includes(x.vial.status)&&getVialRemainingMg(x.kit,x.vial)>0.001);
+      if(compatible.length!==1){
+        showErrorBanner("Choose and verify the exact open vial for this additional kit in Stash. No stock or history was changed.");
+        return;
+      }
+      const source=compatible[0];
+      const take=Math.min(getVialRemainingMg(source.kit,source.vial),remaining);
+      if(take<=0)return;
+      rows.push({kitId:nextKit.id,vialId:source.vial.id,mg:Math.round(take*100)/100});
+      renderAllocPanel();
     };
     const openNewBtn = panel.querySelector("#alloc-open-new");
     if (openNewBtn) openNewBtn.onclick = () => {
