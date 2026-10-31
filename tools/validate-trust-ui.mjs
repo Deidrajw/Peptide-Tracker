@@ -38,6 +38,42 @@ try{
       assert.equal(output.mass,0.08,label+' mcg conversion');
       assert.equal(output.badIU,true,label+' reject IU');
       results.push({viewport:width,theme,...output,result:'PASS'});
+      // Fictional backup preview: keyboard, focus return, overflow and no-write.
+      await page.evaluate(()=>{tab='profile';state._profileTab='settings';state._settingsDetail='backup';render();});
+      const importOpen=page.locator('#nx-import-open');
+      const original=await page.evaluate(()=>({raw:localStorage.getItem(STORE_KEY),profile:JSON.stringify(state.profile)}));
+      for(const dismiss of ['nx-import-cancel','nx-import-close']){
+        await importOpen.focus();
+        await page.evaluate(()=>{
+          const fake=JSON.parse(JSON.stringify(state));
+          fake.profile.name='Fictional Must Not Import';
+          importData({target:{files:[new File([JSON.stringify(fake)],
+            'fictional-very-long-backup-filename-2026-10-31-with-extra-description.json',
+            {type:'application/json'})],value:''}});
+        });
+        await page.locator('#nx-restore-word').waitFor({timeout:7000});
+        assert.equal(await page.locator('#nx-import-confirm').isDisabled(),true,label+' disabled until typed');
+        const metrics=await page.evaluate(()=>{
+          const box=document.querySelector('.modal'),r=box.querySelector('#nx-restore-word').getBoundingClientRect();
+          return {wrap:!!box.querySelector('p[style*="overflow-wrap"]'),
+            overflow:document.documentElement.scrollWidth>innerWidth+2,
+            inputFits:r.left>=-1&&r.right<=innerWidth+1,
+            cancel:box.querySelector('#nx-import-cancel').getBoundingClientRect().height,
+            confirm:box.querySelector('#nx-import-confirm').getBoundingClientRect().height};
+        });
+        assert.equal(metrics.wrap,true,label+' filename wrapping');
+        assert.equal(metrics.overflow,false,label+' no horizontal overflow');
+        assert.equal(metrics.inputFits,true,label+' input within viewport');
+        assert.ok(metrics.cancel>=44&&metrics.confirm>=44,label+' action touch targets');
+        await page.locator('#nx-restore-word').focus();
+        await page.keyboard.type('RESTORE');
+        assert.equal(await page.locator('#nx-import-confirm').isEnabled(),true,label+' keyboard confirmation');
+        await page.locator('#'+dismiss).click();
+        assert.equal(await importOpen.evaluate(el=>document.activeElement===el),true,label+' focus returned');
+        const after=await page.evaluate(()=>({raw:localStorage.getItem(STORE_KEY),profile:JSON.stringify(state.profile)}));
+        assert.deepEqual(after,original,label+' cancel/close must not write');
+      }
+      results.push({viewport:width,theme,backupKeyboardFocusNoWrite:'PASS'});
       if(width===390&&theme==='dark'){
         await page.evaluate(()=>{
           // Synthetic state and browser-local data only: standalone DEMO replaces
