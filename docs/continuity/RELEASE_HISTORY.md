@@ -1323,3 +1323,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ## 2026-10-31 — PR #124 exact-vial multi-kit allocation fix, CANDIDATE ONLY
 - Runtime ecad706c pins second physical vial ID when exactly one eligible source; ambiguous additional kits are blocked with no stock change. Tests c7d9477b/c4c64d7d assert exact ID despite collapsed technical source disclosure. These follow a real browser failure on prior full #41231285603 (unidentified secondary vial).
 - Latest source-target CI: writer #41231568131 PASS, mobile #41231568083 PASS, nested #41231568051 PASS; full #41231568003 IN PROGRESS; WebKit #41231568008 IN PROGRESS at documentation time. Source-matched full LIVE/fictional DEMO artifacts must be verified after latest CI. No migration, user storage rewrite, merge/deploy, Cloudflare parity or real iPhone acceptance.
+
+
+## 2026-10-31 — PR124 draft browser validation continuation, not released
+- #41231568003 proves browser Log Dose 176 flow matrix PASS on c4c64d7d after exact second-vial fix, but **full suite FAIL** at stale save acknowledgment test. 2e6ed2c7 updates test to target exclusive failed backed-dose commit, not retired synchronous saveState. #41231974659 exact-head full and artifacts pending. No runtime change from this test-only fix, no production-data migration/merge/deploy; primary parity and real iPhone acceptance incomplete.
