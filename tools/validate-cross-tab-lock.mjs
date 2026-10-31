@@ -247,5 +247,87 @@ try{
  assert.equal(correction.stillPending,false);
  console.log("PASS: Chromium actual correction form refuses blank reason; exclusive exact-vial stock + historical adjustment readback");
 
+
+ // PR124 physical outflow: exercise actual form and exact event-linked Undo.
+ // All data below is fictional in the isolated localhost browser profile.
+ await a.evaluate(()=>{
+   closeModal();
+   const d=buildDemoState("weight_loss");d.profile.onboardingDone=true;
+   d.supplies.push({id:987654324,name:"Retatrutide",vialMg:10,totalVials:3,
+     vials:[{id:"outflow-open",status:"open",vialMg:10,remainingMg:8,sequenceNumber:1},
+       {id:"outflow-sealed-1",status:"sealed",vialMg:10,remainingMg:10,sequenceNumber:2},
+       {id:"outflow-sealed-2",status:"sealed",vialMg:10,remainingMg:10,sequenceNumber:3}],
+     wasteLog:[{id:"historical-outflow",type:"waste",status:"active",mg:1,vialId:"other"}],
+     _vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+   state=d;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+   logWasteModal(987654324);
+ });
+ await a.locator("#waste-partial").click();
+ await a.locator("#waste-mg").fill("3");
+ await a.locator("#waste-save").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k?.wasteLog?.some(e=>e.outflowKind==="consumed_open_partial"&&e.status==="active");
+ },{timeout:10000});
+ const outflow=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return {k,mem:state.supplies.find(s=>s.id===987654324),pending:nexusWriter().status().inFlight};
+ });
+ assert.equal(outflow.k.vials[0].remainingMg,5);
+ assert.equal(outflow.k.vials[1].remainingMg,10);
+ assert.equal(outflow.k.vials[2].remainingMg,10);
+ assert.equal(outflow.mem.vials[0].remainingMg,5);
+ assert.equal(outflow.k.wasteLog.length,2);
+ assert.equal(outflow.k.wasteLog[0].id,"historical-outflow");
+ assert.equal(outflow.pending,false);
+ const tx=outflow.k.wasteLog[1];
+ assert.equal(tx.vialId,"outflow-open");assert.equal(tx.mg,3);
+ await a.evaluate(id=>undoOutflowModal(987654324,id),tx.id);
+ await a.locator("#confirm-undo").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k?.wasteLog?.some(e=>e.reversesEventId);
+ },{timeout:10000});
+ const undone=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return {k,mem:state.supplies.find(s=>s.id===987654324)};
+ });
+ assert.equal(undone.k.vials[0].remainingMg,8);
+ assert.equal(undone.mem.vials[0].remainingMg,8);
+ assert.equal(undone.k.wasteLog[1].status,"reversed");
+ assert.equal(undone.k.wasteLog[2].reversesEventId,tx.id);
+ assert.equal(undone.k.wasteLog[2].mg,0);
+ console.log("PASS: Chromium real partial Log Outflow and exact event-ID Undo commits, preserves unrelated historical entries");
+ // Whole-vial chooser must reject no selection; sealed source is explicitly chosen.
+ await a.evaluate(()=>logWasteModal(987654324));
+ await a.locator("#waste-save").click();
+ assert.equal(await a.locator("#waste-source").count(),1,"Whole outflow must show exact source chooser");
+ await a.locator("#waste-source-confirm").click();
+ const noAutoSource=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k.vials.find(v=>v.id==="outflow-sealed-2").status;
+ });
+ assert.equal(noAutoSource,"sealed");
+ await a.locator("#waste-source").selectOption("outflow-sealed-2");
+ await a.locator("#waste-source-confirm").click();
+ await a.waitForFunction(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return k.vials.find(v=>v.id==="outflow-sealed-2")?.status==="transferred";
+ },{timeout:10000});
+ const transferred=await a.evaluate(()=>{
+   const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
+   return {open:k.vials.find(v=>v.id==="outflow-open").remainingMg,
+     other:k.vials.find(v=>v.id==="outflow-sealed-1").remainingMg,
+     sealed:k.vials.find(v=>v.id==="outflow-sealed-2").remainingMg,
+     tx:k.wasteLog.find(e=>e.outflowKind==="transferred_sealed")};
+ });
+ assert.equal(transferred.open,8);
+ assert.equal(transferred.other,10);
+ assert.equal(transferred.sealed,0);
+ assert.equal(transferred.tx.vialId,"outflow-sealed-2");
+ console.log("PASS: Chromium whole-vial source picker requires explicit choice and touches exact sealed source only");
+
  await context.close();
 }finally{await browser.close()}
