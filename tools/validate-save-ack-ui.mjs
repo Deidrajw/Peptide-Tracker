@@ -23,16 +23,27 @@ try{
   await page.locator("#nx-dose-entered").fill("1");
   await page.locator("#nx-dose-review-open").click();
   await page.locator("#save").waitFor({state:"visible"});
+  // Fresh inventory-backed dosing no longer calls synchronous saveState().
+  // Simulate the EXCLUSIVE commit failing, not a retired persistence path.
+  // Synthetic fixtures remain isolated in memory and never write real storage.
   await page.evaluate(()=>{
-    window.__originalSaveState=saveState;
-    saveState=()=>false; // simulated storage failure, without real writes
+    _demoActive=true;
+    window.__originalCommitBacked=nexusCommitBackedPhysicalDose;
+    window.__saveAckBefore=JSON.stringify(state);
+    nexusCommitBackedPhysicalDose=async()=>null;
   });
   await page.locator("#save").click();
-  if(await page.locator(".nx-reaction-invite").count())throw Error("False success invitation after failing persistence");
-  if(!(await page.locator(".nx2-dose-modal").count()))throw Error("Dose modal closed after failing persistence");
-  const message=await page.locator("body").innerText();
-  if(!message.includes("Dose could not be saved"))throw Error("Failure warning absent");
-  await page.evaluate(()=>{saveState=window.__originalSaveState;closeModal()});
+  await page.getByText("No dose was committed.",{exact:false}).waitFor({state:"visible",timeout:5000});
+  if(await page.locator(".nx-reaction-invite").count())throw Error("False success invitation after exclusive commit rejection");
+  if(!(await page.locator(".nx2-dose-modal").count()))throw Error("Dose modal closed after exclusive commit rejection");
+  const saved=await page.evaluate(()=>({
+    before:JSON.parse(window.__saveAckBefore),
+    after:state
+  }));
+  if(saved.after.peptides.Retatrutide.doses.length!==0||
+     saved.after.supplies[0].vials[0].remainingMg!==6)
+    throw Error("Failed exclusive save changed fictional stock or history");
+  await page.evaluate(()=>{nexusCommitBackedPhysicalDose=window.__originalCommitBacked;closeModal()});
   if(errors.length)throw Error("Browser errors: "+errors.join("; "));
   checks++;
   await context.close();
