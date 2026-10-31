@@ -1,3 +1,6 @@
+## 2026-10-31 — Child restore preview CI regression caught and corrected (RETEST PENDING)
+- Chromium build/parity QA 41178541248 FAILED in browser trust UI at `pre-restore copy` assertion after first patch; source syntax/guarded inventory/writer tests before that point passed. Root cause: new `_demoActive?null` oldRaw branch suppressed existing isolated-demo recovery fixture; restored original oldRaw path in f4aba4f. Do not claim pass until current-head Chromium browser test verifies expected pre-restore local recovery and no live-data write. Mobile 41178541293 and shared writer 41178541297 completed SUCCESS on initial patch; nested and WebKit were running at observation.
+
 ## 2026-10-31 — Profile/Settings child regression cases (CURRENT HEAD NOT TESTED)
 - S-CHILD-01 [NOT TESTED] 320px/390px light/dark Units details: weight/measurement/day-rollover controls >=44px, no horizontal overflow or theme contrast regressions.
 - S-CHILD-02 [NOT TESTED] More > Profile > Settings > Backup & Restore: preview long fictional filename wraps, title/actions readable with virtual keyboard and safe area; cancel/close returns focus to Import Backup, no write occurs.
