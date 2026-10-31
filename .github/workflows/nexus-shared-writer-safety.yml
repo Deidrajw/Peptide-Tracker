@@ -29,6 +29,7 @@ jobs:
           node tests/adjust-vial-exclusive.test.cjs
           node tests/physical-outflow-exclusive.test.cjs
           node tests/edit-outflow-exclusive.test.cjs
+          node tests/mark-kit-done-exclusive.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/prepared-formulation-lifecycle.test.cjs
           node tests/formulation-stock.test.cjs
