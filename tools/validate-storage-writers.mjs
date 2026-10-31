@@ -67,6 +67,15 @@ if(!physicalOutflow.includes('function planExclusivePhysicalOutflowEdit(snapshot
    !physicalOutflow.includes('A sealed whole-vial transfer cannot have its physical amount edited'))
   throw Error('Edit Outflow must be an exclusive exact-source stock-and-history transaction');
 
+// Whole-kit retirement must not zero every vial after a smaller, unallocated
+// kit-level waste record. Require one Web-Locked state write and per-vial audit.
+if(!physicalOutflow.includes('function planExclusiveMarkKitDone(snapshot,input)')||
+   !physicalOutflow.includes('await writer.transaction(saved,snapshot=>planExclusiveMarkKitDone(snapshot,input))')||
+   !physicalOutflow.includes('Entered waste amount must match all remaining physical vial stock')||
+   !physicalOutflow.includes('outflowKind:"retired_kit_vial",retirementId:input.completionId')||
+   !physicalOutflow.includes('kit.kitDoneHistory.push('))
+  throw Error('Mark Kit Done must be exclusive and exact-vial attributed');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
