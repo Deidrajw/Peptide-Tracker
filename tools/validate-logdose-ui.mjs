@@ -570,6 +570,8 @@ try {
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
     await clickSave(page);
+    // Exclusive save callbacks are async even in isolated fictional demo mode.
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
     ensure(split.entries[0].allocations?.length===2,'Multi-vial allocation lost vial identity');
