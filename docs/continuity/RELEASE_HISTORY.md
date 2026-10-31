@@ -1307,3 +1307,9 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ## 2026-10-29 — PR #124 Add Kit redesign checkpoint (NOT RELEASED)
 - Replaced rejected standalone formulation controls with single Add Kit form selector (Vials/Capsules/Raw Powder/Topical/purchased Nasal Spray). Non-vial physical products render as regular Stash cards; source vial intended-use metadata added to Open New Vial; no transfer or dose deductions enabled.
 - Existing vial stock, dose history, capsule/nasal formulationStocks and backups retain their IDs/data; no implicit source attribution or destructive migration. Tests updated for button targets, kit cards, nasal-reserved vial isolation and raw/topical balances. Exact-head full QA still pending; production not merged/deployed; physical iPhone untested.
+
+
+## 2026-10-31 — PR #124 exclusive backed dose QA, draft only, NOT RELEASED
+- Current observed main da585ab3; draft head 96b1de7a. Exact-head shared writer #41228823226 PASS, WebKit #41228823147 PASS, mobile #41228823156 PASS, nested #41228823165 PASS. Full build/browser #41228823152 FAILED at legacy exact-vial dose-save assertion, despite earlier real Chromium two-tab fresh backed-dose PASS in its logs. Artifact #13052578702 uploaded, not fully QA certified.
+- Test-only follow-up commit 32de6c1e waits for async exclusive dose completion before legacy assertion. Its outcome remains PENDING; no runtime dosing logic, source identity, schema, localStorage migration or production data changed by this commit.
+- Incomplete: exclusive backed-dose edit/undo, full exact-head browser green, real iPhone acceptance. No merge/deploy; prepared transfer gates OFF; publication remains unverified.
