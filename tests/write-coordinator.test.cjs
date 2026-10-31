@@ -155,8 +155,8 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
    const scope={state:JSON.parse(raw),_demoActive:mode,_nexusLastSavedSnapshot:raw,
      nexusWriter:()=>writer,showSaveWarning:()=>{},console,JSON,Error,String,Number,Math,globalThis:{}};
    vm.createContext(scope);
-   vm.runInContext(backedSource+";globalThis.plan=nexusPlanBackedPhysicalDose;globalThis.commit=nexusCommitBackedPhysicalDose;",scope);
-   return {scope,plan:scope.globalThis.plan,commit:scope.globalThis.commit};
+   vm.runInContext(backedSource+";globalThis.plan=nexusPlanBackedPhysicalDose;globalThis.commit=nexusCommitBackedPhysicalDose;globalThis.change=nexusCommitBackedDoseChange;globalThis.planChange=nexusPlanBackedDoseChange;",scope);
+   return {scope,plan:scope.globalThis.plan,commit:scope.globalThis.commit,change:scope.globalThis.change,planChange:scope.globalThis.planChange};
  };
  let physical=JSON.stringify(fixture()),countWrites=0,lockChain=Promise.resolve();
  const serializedLock=(_name,fn)=>{const job=lockChain.then(fn);lockChain=job.catch(()=>{});return job};
@@ -210,6 +210,52 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(corruptPhysical.scope.state.peptides["Sample A"].doses.length,1,
    "readback failure retains original in-memory dose history");
  assert.equal(corruptPhysical.scope.state.supplies[0].vials[0].remainingMg,7.5);
+
+ // A backed dose correction must reconcile the original exact vial AND dose history
+ // under one shared exclusive transaction. No refund to a guessed source.
+ const originalSaved=planning.plan(fixture(),one);
+ const corrected=planning.planChange(originalSaved.next,{
+   name:"Sample A",doseId:"d-1",operation:"edit",nativeUnit:"mcg",builtin:true,
+   patch:{dose:"3000",notes:"corrected"}
+ });
+ assert.equal(corrected.next.supplies[0].vials[0].remainingMg,7);
+ assert.equal(corrected.next.supplies[0].vials[1].remainingMg,8);
+ assert.equal(corrected.next.peptides["Sample A"].doses.length,1);
+ assert.equal(corrected.next.peptides["Sample A"].doses[0].allocations[0].amount,3000);
+ assert.equal(corrected.next.nexusDoseAudit.length,1);
+ const undone=planning.planChange(corrected.next,{
+   name:"Sample A",doseId:"d-1",operation:"undo",nativeUnit:"mcg",builtin:true
+ });
+ assert.equal(undone.next.supplies[0].vials[0].remainingMg,10);
+ assert.equal(undone.next.peptides["Sample A"].doses.length,0);
+ assert.equal(undone.next.nexusDoseAudit.length,2);
+ const lostSource=JSON.parse(JSON.stringify(originalSaved.next));
+ lostSource.supplies[0].vials.splice(0,1);
+ assert.throws(()=>planning.planChange(lostSource,{name:"Sample A",doseId:"d-1",operation:"undo",nativeUnit:"mcg",builtin:true}),/unavailable/);
+ const ambiguous=JSON.parse(JSON.stringify(originalSaved.next));
+ ambiguous.peptides["Sample A"].doses[0].allocations.push({kitId:"K1",vialId:"V2",amount:1});
+ assert.throws(()=>planning.planChange(ambiguous,{name:"Sample A",doseId:"d-1",operation:"undo",nativeUnit:"mcg",builtin:true}),/Unsupported historic/);
+ const staleOld=JSON.parse(JSON.stringify(originalSaved.next));
+ staleOld.peptides["Sample A"].doses.push({...firstDose,id:"newer"});
+ assert.throws(()=>planning.planChange(staleOld,{name:"Sample A",doseId:"d-1",operation:"undo",nativeUnit:"mcg",builtin:true}),/most recent/);
+ let editRaw=JSON.stringify(originalSaved.next),editChain=Promise.resolve(),editWrites=0;
+ const editLock=(_name,fn)=>{const run=editChain.then(fn);editChain=run.catch(()=>{});return run};
+ const editAdapter={read:()=>editRaw,write:v=>{editRaw=v;editWrites++},lock:editLock};
+ const edA=buildScope(editRaw,create({...editAdapter,initialSnapshot:editRaw}));
+ const edB=buildScope(editRaw,create({...editAdapter,initialSnapshot:editRaw}));
+ const chg={name:"Sample A",doseId:"d-1",operation:"edit",nativeUnit:"mcg",builtin:true,patch:{dose:"3000"}};
+ const [editSuccess,staleUndo]=await Promise.all([edA.change(chg),edB.change({...chg,operation:"undo"})]);
+ assert.ok(editSuccess&&editSuccess.source.vialId==="V1");
+ assert.equal(staleUndo,null,"stale tab must not undo a committed edit");
+ assert.equal(editWrites,1);
+ assert.equal(JSON.parse(editRaw).supplies[0].vials[0].remainingMg,7);
+ assert.equal(edB.scope.state.supplies[0].vials[0].remainingMg,7.5);
+ const undoLive=buildScope(editRaw,create({...editAdapter,initialSnapshot:editRaw}));
+ assert.ok(await undoLive.change({...chg,operation:"undo"}));
+ assert.equal(JSON.parse(editRaw).supplies[0].vials[0].remainingMg,10);
+ assert.equal(JSON.parse(editRaw).peptides["Sample A"].doses.length,0);
+ assert.equal(editWrites,2);
+ console.log("PASS: exclusive backed dose EDIT/UNDO single exact vial, immutable audit, no guessed refund, real coordinated stale-tab rejection, no duplicate history");
  console.log("PASS: backed physical exact-vial source, split mg/mcg, stale second tab, no double debit, insufficient/route/legacy failures, quota, demo isolation");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
