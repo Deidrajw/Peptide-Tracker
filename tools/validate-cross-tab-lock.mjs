@@ -51,6 +51,40 @@ try{
  assert.equal(source,"fictional");
  await a.evaluate(key=>localStorage.removeItem(key),fixture);
  console.log("PASS: real Chromium cross-tab Web Lock serialized exclusive writers; stale second transaction rejected, fictional source preserved");
+
+ // Two ACTUAL Chromium pages on the same fictional local origin, invoking
+ // the app's real exclusive physical-dose helper (not only the test adapter).
+ // This is a controlled two-tab interleaving, not production data.
+ await a.evaluate(()=>{
+   const fixture=buildDemoState("weight_loss");
+   fixture.supplies=[{id:"fictional-dose-kit",name:"Retatrutide",activeKit:true,
+     vials:[{id:"fictional-v1",status:"open",remainingMg:10,intendedUse:"SubQ",vialMg:10}],
+     wasteLog:[]}];
+   fixture.peptides.Retatrutide={enabled:true,scheduleDays:7,doses:[],reschedules:[]};
+   state=fixture;_demoActive=false;
+   localStorage.setItem(STORE_KEY,JSON.stringify(state));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+ });
+ await b.evaluate(()=>{
+   state=JSON.parse(localStorage.getItem(STORE_KEY));_demoActive=false;
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+ });
+ const physicalEntry=id=>({name:"Retatrutide",method:"SubQ",builtin:true,nativeUnit:"mg",expectedMassMg:2,
+   dose:{id,date:"2026-10-31T10:00:00",dose:"2",method:"SubQ",trackingMode:"backed",enteredDose:"2",enteredUnit:"mg"},
+   steps:[{kitId:"fictional-dose-kit",vialId:"fictional-v1",mg:2}]});
+ const physicalResults=await Promise.all([
+   a.evaluate(entry=>nexusCommitBackedPhysicalDose(entry),physicalEntry("fictional-dose-A")),
+   b.evaluate(entry=>nexusCommitBackedPhysicalDose(entry),physicalEntry("fictional-dose-B"))
+ ]);
+ assert.equal(physicalResults.filter(Boolean).length,1,"Only one physical dose must win across two real browser tabs");
+ const physicalSaved=await a.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)));
+ assert.equal(physicalSaved.supplies[0].vials[0].remainingMg,8,"Exactly 2mg may be deducted once");
+ assert.equal(physicalSaved.peptides.Retatrutide.doses.length,1,"One exact-source dose only");
+ assert.equal(physicalSaved.peptides.Retatrutide.doses[0].allocations[0].vialId,"fictional-v1");
+ const rejectedTab=physicalResults[0]?b:a;
+ const rejectedMemory=await rejectedTab.evaluate(()=>state.supplies[0].vials[0].remainingMg);
+ assert.equal(rejectedMemory,10,"Rejected tab must preserve draft/snapshot rather than phantom stock");
+ console.log("PASS: REAL two-tab exclusive backed Log Dose, one committed vial deduction + one history entry, stale loser untouched");
  // The lock-race fixture mutates localStorage in a different synthetic test
  // context. Reload the fictional app before testing real Stash form actions;
  // do not suppress an actual app storage warning or force blocked clicks.
