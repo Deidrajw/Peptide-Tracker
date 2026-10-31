@@ -1,3 +1,6 @@
+## 2026-10-31 — Screenshot-informed retirement sheet copy iteration, draft only
+- Nested visual #41170501525 SUCCESS and evidence artifact #13030128989 showed multi-line title and CTA at 320px in both themes. Source-only UX b6a5b778 simplifies labels and explanation, browser assertion 67b6f5b updates expectation; current head browser/visual/dedicated checks pending. Exact-source original candidate artifact #13031181162 was independently CRC / 26 LIVE / isolated full-demo verified before copy iteration; must regenerate for latest code. No release, merge, primary Cloudflare deploy, production storage writes or iPhone acceptance.
+
 ## 2026-10-31 — UX refinement of draft Mark Kit Done and Settings Back, NOT RELEASED
 - Previous exact-vial Mark Kit Done full browser workflow 41169592533 SUCCESS confirmed (pre-refinement). Subsequent draft commits 9d64d3ff/ fb15280b /f9b29abd simplify retirement summary, disable irrelevant reasons and route partial flow (including blends), 51770aa9 makes consistent Settings child chevron; browser updated 454e3988, UX static source test c71f4e90, CI e6c5b536/306b3f2b. New-source QA and exact-matching LIVE/DEMO PENDING. No version bump, release, merge, deploy, personal user data migration or iPhone acceptance. Both prepared flags OFF.
 
