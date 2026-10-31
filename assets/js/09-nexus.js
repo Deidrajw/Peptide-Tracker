@@ -1268,7 +1268,7 @@ function markKitDoneModal(supplyId){
     <div class="hint" style="margin-bottom:14px">Moves this kit into Done and keeps its history. Remaining stock is retired vial-by-vial with exact physical attribution.</div>
     <label class="field-label">WHY IS IT DONE</label>
     <div style="display:flex;gap:6px;margin-bottom:14px">
-      ${reasons.map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
+      ${reasons.filter(r=>remainingMg===0||r.key!=="used_up").map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
     </div>
     ${remainingMg>0?`<div id="done-impact" role="note" style="background:#ff7c7c0c;border:1px solid #ff7c7c30;border-radius:12px;padding:14px;margin-bottom:14px">
       <div style="font-size:12px;color:var(--t1);font-weight:700;margin-bottom:6px">This will remove all ${remainingMg.toFixed(2)} mg remaining</div>
