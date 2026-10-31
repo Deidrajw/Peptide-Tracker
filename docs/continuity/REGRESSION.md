@@ -2060,3 +2060,9 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-10-29 — Unified Add Kit DS2 test reconciliation
 - DS2 audit 40897763612 FAIL had 4 x missing nx-kit-next on first Add Kit chooser; this is an outdated assertion, since Continue is inside Vials editor after selecting its product form. Updated scripts/ds2-nested-navigation-audit.mjs to enter Vials for its wizard/final-save screenshots and to omit ungrounded primary-CTA expectation on form-choice screen (commit fcb459a2). Next run PENDING.
 - Formulation WebKit run 40897763578 SUCCESS and mobile 40897763656 SUCCESS on a90bc116. Full browser on that commit in progress. Exact latest-head pass not yet established. Real iPhone NOT TESTED; no production data changes.
+
+
+## 2026-10-31 — PR #124 exclusive dose and full CI evidence
+- PASS on 96b1de7a: writer #41228823226; mobile #41228823156; DS2 nested #41228823165; WebKit #41228823147. Full browser job #41228823152 logged PASS real Chromium two-tab backed dose (stale loser blocked, exact vial deduction and one dose entry), and prior protected suites, but overall FAILED at validate-logdose-ui.mjs:100: legacy confirmed-source dose expected 5.5mg remaining + history 1, observed 6.75mg + history 0.
+- Test-only change 32de6c1e adds asynchronous save wait before that assertion, not yet proven by CI. Do NOT reclassify earlier full browser failure as PASS or diagnose runtime root cause without rerun.
+- Exclusive backed-dose EDIT / UNDO: NOT TESTED/INCOMPLETE. True physical iPhone Safari/VoiceOver: NOT TESTED. Cross-browser WebKit tab contention: NOT TESTED; real Chromium two-tab test PASS in full job logs (even though overall suite failed). LIVE/DEMO artifact #13052578702 uploaded but not release-qualified.
