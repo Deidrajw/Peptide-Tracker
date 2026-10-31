@@ -1,3 +1,6 @@
+## 2026-10-31 — UX refinement of draft Mark Kit Done and Settings Back, NOT RELEASED
+- Previous exact-vial Mark Kit Done full browser workflow 41169592533 SUCCESS confirmed (pre-refinement). Subsequent draft commits 9d64d3ff/ fb15280b /f9b29abd simplify retirement summary, disable irrelevant reasons and route partial flow (including blends), 51770aa9 makes consistent Settings child chevron; browser updated 454e3988, UX static source test c71f4e90, CI e6c5b536/306b3f2b. New-source QA and exact-matching LIVE/DEMO PENDING. No version bump, release, merge, deploy, personal user data migration or iPhone acceptance. Both prepared flags OFF.
+
 ## 2026-10-31 — Mark Kit Done exact physical multi-vial candidate, NOT RELEASED
 - Earlier Edit Outflow browser #41168309682 SUCCESS. New code 1239b519, Node regression 295336d3, CI 04d82e44/bd01526b, browser e68b4797, static guard 798386bc. New-head tests and exact-source 26-file LIVE/isolated full-app DEMO still PENDING. Addresses unallocated kit-level partial waste vs unconditional physical zeroing. Future audit is additive; no existing production user records changed or migrated. Main da585ab3 unchanged; PR draft, unmerged, undeployed, physical iPhone not accepted, both prepared flags OFF.
 
