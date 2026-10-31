@@ -34,7 +34,7 @@ function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
   const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", privacy:"Privacy & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer">‹</button>
+    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
   </div>`;
   let content = "";
