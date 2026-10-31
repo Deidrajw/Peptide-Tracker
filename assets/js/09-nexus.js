@@ -1354,31 +1354,6 @@ function planUndoExclusivePhysicalOutflow(snapshot,input){
     status:"reversed",vialId:vial.id,reversesEventId:tx.id});
   return {next,eventId:input.undoEventId};
 }
-function planExclusiveOutflowUndo(snapshot,input){
- const next=JSON.parse(JSON.stringify(snapshot)),kit=(next.supplies||[]).find(s=>String(s.id)===String(input.kitId));
- if(!kit||JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Undo");
- const matches=(kit.wasteLog||[]).filter(e=>String(e.id)===String(input.txId));
- if(matches.length!==1)throw Error("Outflow event unavailable");
- const tx=matches[0];
- if(tx.status!=="active"||!["waste","gifted","testing"].includes(tx.type)||
-    !["transferred_sealed","consumed_open_whole","consumed_open_partial"].includes(tx.outflowKind))
-   throw Error("Outflow cannot be reversed safely");
- const targets=(kit.vials||[]).filter(v=>String(v.id)===String(tx.vialId));
- if(targets.length!==1)throw Error("Exact source vial unavailable");
- const vial=targets[0];
- if(!tx.stockBefore||!tx.stockAfter||JSON.stringify(vial)!==JSON.stringify(tx.stockAfter))
-   throw Error("Source vial changed; cannot undo safely");
- if((kit.wasteLog||[]).some(e=>String(e.id)===String(input.inverseId)))throw Error("Inverse already exists");
- const after=JSON.parse(JSON.stringify(vial));
- Object.keys(vial).forEach(k=>delete vial[k]);
- Object.assign(vial,JSON.parse(JSON.stringify(tx.stockBefore)));
- tx.status="reversed";tx.reversedAt=input.reversedAt;tx.reversalId=input.inverseId;
- kit.wasteLog.push({id:input.inverseId,date:input.date,loggedAt:input.reversedAt,mg:0,
-  type:"outflow_reversal",reason:"Undo outflow",notes:"Exact vial restored",
-  status:"active",vialId:tx.vialId,reversesEventId:tx.id,stockBefore:after,
-  stockAfter:JSON.parse(JSON.stringify(vial))});
- return {next,eventId:input.inverseId};
-}
 function undoOutflowModal(kitId,txId){
  const kit=state.supplies.find(s=>String(s.id)===String(kitId));if(!kit)return;
  const tx=(kit.wasteLog||[]).find(e=>String(e.id)===String(txId));if(!tx)return;
@@ -1396,13 +1371,13 @@ function undoOutflowModal(kitId,txId){
   try{
    const input={kitId,txId,expectedKit,inverseId:uid(),date:localDate(),reversedAt:new Date().toISOString()};
    let result;
-   if(_demoActive)result=planExclusiveOutflowUndo(state,input);
+   if(_demoActive)result=planUndoExclusivePhysicalOutflow(state,{kitId,eventId:txId,undoEventId:input.inverseId,date:input.date,loggedAt:input.reversedAt});
    else{
     const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable");
     const saved=JSON.parse(raw),current=(saved.supplies||[]).find(s=>String(s.id)===String(kitId));
     if(!current||JSON.stringify(current)!==expectedKit)throw Error("Kit changed; reopen Undo");
     const writer=nexusWriter();
-    result=await writer.transaction(saved,snapshot=>planExclusiveOutflowUndo(snapshot,input));
+    result=await writer.transaction(saved,snapshot=>{const k=(snapshot.supplies||[]).find(s=>String(s.id)===String(kitId));if(!k||JSON.stringify(k)!==expectedKit)throw Error('Kit changed; reopen Undo');return planUndoExclusivePhysicalOutflow(snapshot,{kitId,eventId:txId,undoEventId:input.inverseId,date:input.date,loggedAt:input.reversedAt});});
     _nexusLastSavedSnapshot=writer.expected();
    }
    state=result.next;closeModal();render();
