@@ -1385,33 +1385,132 @@ function undoOutflowModal(kitId,txId){
   finally{if(button.isConnected)button.disabled=false;}
  };
 }
-function editOutflowModal(kitId, txId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  const tx = (s.wasteLog||[]).find(w=>w.id===txId); if(!tx) return;
-  const c = cfg(s.name);
-  const m = openModal(`
+// Editing a physical outflow must reconcile its saved amount and the exact
+// physical vial in one cross-tab exclusive state transaction. Old events without
+// before/after metadata require an explicit correction, never inferred mass.
+function planExclusivePhysicalOutflowEdit(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.wasteLog))
+    throw Error("Exact physical kit and outflow history required");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Edit Outflow");
+  const index=kit.wasteLog.findIndex(x=>String(x.id)===String(input.eventId));
+  const tx=kit.wasteLog[index];
+  if(!tx||tx.status!=="active"||
+    !["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(tx.outflowKind)||
+    !tx.stockBefore||!tx.stockAfter||!tx.sourceVialSnapshot)
+    throw Error("Legacy or reversed outflow cannot be edited safely; use a manual correction");
+  const matches=kit.vials.filter(v=>String(v.id)===String(tx.vialId));
+  if(matches.length!==1)throw Error("Original physical vial unavailable or duplicated");
+  const vial=matches[0];
+  if(JSON.stringify(vial)!==JSON.stringify({...tx.sourceVialSnapshot,
+    remainingMg:tx.stockAfter.remainingMg,status:tx.stockAfter.status}))
+    throw Error("Source vial changed since outflow; edit blocked");
+  if(kit.wasteLog.slice(index+1).some(e=>String(e.vialId)===String(vial.id)&&
+      e.status==="active"&&e.type!=="outflow-edit"))
+    throw Error("Later vial outflow or adjustment exists; edit blocked");
+  const timestamp=new Date(tx.loggedAt||tx.date).getTime();
+  if(Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+    .some(comp=>(comp.doses||[]).some(d=>{
+      const references=(d.allocations||[]).some(a=>String(a.vialId)===String(vial.id))||
+        (d.vialId!=null&&String(d.vialId)===String(vial.id)&&
+          (d.kitId==null||String(d.kitId)===String(kit.id)));
+      return references&&(!Number.isFinite(timestamp)||!Number.isFinite(new Date(d.date||"").getTime())||
+        new Date(d.date).getTime()>timestamp);
+    })))throw Error("Later dose history exists; edit blocked");
+  if((kit.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id)&&
+    (!Number.isFinite(timestamp)||!Number.isFinite(new Date(p.createdAt||p.date||"").getTime())||
+     new Date(p.createdAt||p.date).getTime()>timestamp)))
+    throw Error("Later preparation reference exists; edit blocked");
+  const mg=Number(input.mg);
+  if(!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg)
+    throw Error("Enter a positive outflow amount in hundredths of mg");
+  const reason=typeof input.reason==="string"?input.reason.trim():"";
+  const date=input.date;
+  if(!reason||typeof date!=="string"||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date))
+    throw Error("Outflow reason and date are required");
+  if(!input.editId||kit.wasteLog.some(e=>String(e.id)===String(input.editId)))
+    throw Error("Unique edit event ID required");
+  const originalMg=Number(tx.mg),starting=Number(tx.stockBefore.remainingMg);
+  if(!Number.isFinite(originalMg)||!Number.isFinite(starting)||starting<=0)
+    throw Error("Original outflow balance cannot be verified");
+  let afterMg=Number(tx.stockAfter.remainingMg),afterStatus=tx.stockAfter.status;
+  if(tx.outflowKind==="transferred_sealed"){
+    if(tx.stockBefore.status!=="sealed"||mg!==originalMg||mg!==starting)
+      throw Error("A sealed whole-vial transfer cannot have its physical amount edited");
+  }else if(tx.outflowKind==="consumed_open_whole"){
+    if(mg!==originalMg||mg!==starting)
+      throw Error("Whole open-vial outflow amount cannot be changed; use explicit correction");
+  }else{
+    if(mg>=starting)throw Error("Partial outflow must be smaller than the original stock");
+    afterMg=Math.round((starting-mg)*100)/100;
+    if(afterMg<=0.01)throw Error("Partial outflow would empty the vial; use whole-vial flow");
+    afterStatus=tx.stockBefore.status;
+  }
+  const previous={mg:tx.mg,reason:tx.reason,notes:tx.notes,date:tx.date,
+    stockAfter:JSON.parse(JSON.stringify(tx.stockAfter))};
+  vial.remainingMg=afterMg;
+  vial.status=afterStatus;
+  tx.mg=mg;tx.reason=reason;tx.notes=String(input.notes||"");tx.date=date;
+  tx.stockAfter={remainingMg:afterMg,status:afterStatus};
+  tx.editHistory=Array.isArray(tx.editHistory)?tx.editHistory:[];
+  tx.editHistory.push({id:input.editId,loggedAt:input.loggedAt,previous,
+    updated:{mg,reason,notes:tx.notes,date,stockAfter:JSON.parse(JSON.stringify(tx.stockAfter))}});
+  kit.wasteLog.push({id:input.editId,type:"outflow-edit",status:"reversed",mg:0,
+    date:input.editDate||date,loggedAt:input.loggedAt,vialId:vial.id,editsEventId:tx.id,
+    reason:"Historical outflow edited",notes:"Original and corrected details retained on source event"});
+  return {next,eventId:input.editId};
+}
+function editOutflowModal(kitId,txId){
+  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
+  const tx=(s.wasteLog||[]).find(x=>String(x.id)===String(txId));if(!tx)return;
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">EDIT OUTFLOW</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <button id="x" aria-label="Close Edit Outflow" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <label class="field-label">AMOUNT (mg)</label>
-    <input id="eo-mg" type="number" step="0.01" class="inp" value="${tx.mg}" style="margin-bottom:14px">
-    <label class="field-label">REASON</label>
+    <div class="hint" style="margin-bottom:12px">Editing the amount updates the exact physical vial and historical entry together. A whole-vial transfer amount cannot be changed.</div>
+    <label class="field-label" for="eo-mg">AMOUNT (mg)</label>
+    <input id="eo-mg" type="number" min="0.01" step="0.01" class="inp" value="${tx.mg}" style="margin-bottom:14px">
+    <label class="field-label" for="eo-reason">REASON</label>
     <input id="eo-reason" class="inp" value="${esc(tx.reason||"")}" style="margin-bottom:14px">
-    <label class="field-label">DATE</label>
+    <label class="field-label" for="eo-date">DATE</label>
     <input id="eo-date" type="date" class="inp" value="${dayKey(tx.date)}" style="margin-bottom:14px">
-    <label class="field-label">NOTES (optional)</label>
+    <label class="field-label" for="eo-notes">NOTES (optional)</label>
     <textarea id="eo-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px">${esc(tx.notes||"")}</textarea>
     <button id="eo-save" class="btn-primary" style="background:var(--t3)">Save Changes</button>
-  `, "#888");
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#eo-save").onclick = () => {
-    const newMg = parseFloat(m.querySelector("#eo-mg").value)||0;
-    tx.mg = newMg;
-    tx.reason = m.querySelector("#eo-reason").value.trim();
-    tx.date = m.querySelector("#eo-date").value || tx.date;
-    tx.notes = m.querySelector("#eo-notes").value;
-    saveState(); closeModal(); render();
+  `,"#888");
+  m.querySelector("#x").onclick=closeModal;
+  const button=m.querySelector("#eo-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const raw=m.querySelector("#eo-mg").value.trim(),mg=Number(raw);
+    if(!raw||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){
+      showErrorBanner("Enter a positive mg amount with at most two decimals.");return;
+    }
+    const reason=m.querySelector("#eo-reason").value.trim(),
+      date=m.querySelector("#eo-date").value,notes=m.querySelector("#eo-notes").value;
+    if(!reason||!date){showErrorBanner("Outflow reason and date are required.");return;}
+    button.disabled=true;
+    try{
+      const input={kitId:s.id,eventId:tx.id,expectedKit,mg,reason,date,notes,
+        editId:uid(),editDate:localDate(),loggedAt:new Date().toISOString()};
+      let result;
+      if(_demoActive)result=planExclusivePhysicalOutflowEdit(state,input);
+      else{
+        const rawSaved=localStorage.getItem(STORE_KEY);
+        if(!rawSaved)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(rawSaved);
+        const kit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!kit||JSON.stringify(kit)!==expectedKit)throw Error("Kit changed; reopen Edit Outflow");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflowEdit(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Outflow edit not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
