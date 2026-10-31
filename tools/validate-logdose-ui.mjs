@@ -554,6 +554,8 @@ try {
     ensure(await page.locator('#alloc-add-kit').count()===1,'Use another vial action absent');
     await page.locator('#alloc-add-kit').click();
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
+    ensure((await page.locator('.nx2-source-identifiers').nth(1).innerText()).includes('19105'),
+      'Second open vial must be pinned by exact physical vial ID before saving');
     const editableSource=page.locator('#alloc-rows .nx-hybrid-source-row').first();
     ensure(await editableSource.count()===1,'Editable source row missing in multi-vial mode');
     const technical=editableSource.locator('xpath=following-sibling::details[contains(concat(" ", normalize-space(@class), " "), " nx2-source-identifiers ")][1]');
