@@ -10,6 +10,11 @@ const ensure=(ok,why)=>{if(!ok)throw Error(why)};
 async function seed(page, theme) {
   await page.evaluate(t=>{
     state=buildDemoState('weight_loss');
+    // This viewport/theme UI matrix injects synthetic fixtures directly into state.
+    // Keep them in isolated memory on BOTH code builds: the exclusive writer
+    // correctly rejects unsaved fixture snapshots. Real localStorage/Web Lock
+    // persistence and two-tab contention are tested independently in CI.
+    _demoActive=true;
     state.profile.onboardingDone=true;
     document.documentElement.dataset.theme=t;
     state.peptides.Retatrutide={enabled:true,status:'active',route:'SubQ',
