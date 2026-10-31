@@ -37,7 +37,74 @@ try{
       assert.equal(output.guardedBackup,true,label+' restore handler');
       assert.equal(output.mass,0.08,label+' mcg conversion');
       assert.equal(output.badIU,true,label+' reject IU');
-      results.push({viewport:width,theme,...output,result:'PASS'});
+      // Settings Backup & Restore child acceptance: each width/theme uses the
+      // full standalone, in-memory-only fictional DEMO. No live writes/imports.
+      await page.evaluate(()=>{
+        state.profile.onboardingDone=true;
+        tab='profile';state._profileTab='settings';state._settingsDetail='backup';
+        render();
+      });
+      const importButton=page.locator('#nx-import-open');
+      await importButton.waitFor();
+      const beforeCancel=await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      }));
+      const launchFictionalPreview=()=>page.evaluate(()=>{
+        const fake=JSON.parse(JSON.stringify(state));
+        fake.profile.name='Fictional Uncommitted Import';
+        const file=new File([JSON.stringify(fake)],
+          'fictional-very-long-filename-with-multiple-sections-backup-2026-10-31.json',
+          {type:'application/json'});
+        importData({target:{files:[file],value:''}});
+      });
+      await launchFictionalPreview();
+      await page.locator('#nx-restore-word').waitFor({timeout:7000});
+      const previewLayout=await page.evaluate(()=>{
+        const modal=document.querySelector('.modal');
+        const cancel=modal.querySelector('#nx-import-cancel').getBoundingClientRect();
+        const confirm=modal.querySelector('#nx-import-confirm').getBoundingClientRect();
+        const viewport=innerWidth;
+        return {
+          viewport,overflow:document.documentElement.scrollWidth>viewport+2,
+          modalOverflow:modal.scrollWidth>modal.clientWidth+2,
+          cancelWidth:cancel.width,confirmWidth:confirm.width,
+          cancelHeight:cancel.height,confirmHeight:confirm.height,
+          actionsInViewport:cancel.left>=0&&confirm.right<=viewport+1,
+          filenameWrap:!!modal.querySelector('[style*="overflow-wrap:anywhere"]')
+        };
+      });
+      assert.equal(previewLayout.overflow,false,label+' global overflow');
+      assert.equal(previewLayout.modalOverflow,false,label+' restore modal overflow');
+      assert.equal(previewLayout.actionsInViewport,true,label+' restore actions fit');
+      assert.ok(previewLayout.cancelHeight>=44&&previewLayout.confirmHeight>=44,
+        label+' action target heights');
+      assert.equal(previewLayout.filenameWrap,true,label+' long filename wraps');
+      assert.equal(await page.locator('#nx-import-confirm').isDisabled(),true,
+        label+' confirmation starts disabled');
+      await page.locator('#nx-restore-word').focus();
+      await page.keyboard.type('RESTORE');
+      assert.equal(await page.locator('#nx-import-confirm').isEnabled(),true,
+        label+' keyboard enables confirmation');
+      await page.screenshot({path:'dist/Nexus_'+version+'_BACKUP_'+width+'_'+theme+'.png'});
+      await page.locator('#nx-import-cancel').click();
+      assert.equal(await page.evaluate(()=>document.activeElement?.id),'nx-import-open',
+        label+' cancel returns keyboard focus');
+      assert.deepEqual(await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      })),beforeCancel,label+' cancel is no-write');
+      await launchFictionalPreview();
+      await page.locator('#nx-import-close').waitFor();
+      await page.locator('#nx-import-close').click();
+      assert.equal(await page.evaluate(()=>document.activeElement?.id),'nx-import-open',
+        label+' close returns keyboard focus');
+      assert.deepEqual(await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      })),beforeCancel,label+' close is no-write');
+      results.push({viewport:width,theme,...output,backupChild:previewLayout,
+        keyboardTypedConsent:true,focusReturned:true,cancelNoWrite:true,closeNoWrite:true,result:'PASS'});
       // Fictional backup preview: keyboard, focus return, overflow and no-write.
       await page.evaluate(()=>{tab='profile';state._profileTab='settings';state._settingsDetail='backup';render();});
       const importOpen=page.locator('#nx-import-open');
