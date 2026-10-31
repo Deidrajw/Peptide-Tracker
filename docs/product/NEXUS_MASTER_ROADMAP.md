@@ -1,3 +1,10 @@
+## 2026-10-31 — Compound library breadth (PR124 DRAFT / NOT RELEASED)
+- Added 53 named records to curated library (49 existing → 102 total), including 14 bioregulators and SLU-PP-332 non-peptide research entry. Names from user workbook, with independent references where verified and explicit review-pending provenance otherwise. See docs/product/NEXUS_LIBRARY_EXPANSION_2026-10-31.md.
+- Preserve custom Add Compound action for unknown names, existing IDs/storage and data. Never auto-fill doses, routes or inventory conversions from supplier claims.
+- Open follow-up: searchable aliases (Epitalon/Epithalon, vendor spelling variants) without creating duplicate chemical identities; additional vendor-product/blend classification; IU or non-mg potency products need proper unit-specific inventory representation before being treated as vial mass.
+- Exact-source full browser and WebKit QA, complete LIVE/isolated DEMO package review and physical iPhone acceptance required. No merge or deploy approval; existing PR124 cross-tab safety P0 stays open.
+- One next priority: confirm corrected custom picker + 102-entry catalogue CI, fix errors and inspect current-source demo.
+
 ## 2026-10-31 — NEW USER IDEA P-14: Pause all protocols (BACKLOG / DISCOVERY ONLY)
 - **Request:** one convenient global action to temporarily pause every active protocol, with a corresponding Resume All action. Capture as a potential feature; this is NOT approval to implement during PR124 or change existing saved schedules.
 - **Suggested UX default for later review:** a single "Pause all protocols" command with clear confirmation, an obvious paused indicator, and "Resume all" available without navigating into every protocol. Explain whether this pauses reminders, due/overdue status and adherence calculations; do not silently delete or mark doses missed. Individual protocol pause states, already completed/ended protocols, future phase dates and PRN entries must be preserved or handled explicitly.
