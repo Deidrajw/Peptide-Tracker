@@ -85,6 +85,34 @@ try{
  const rejectedMemory=await rejectedTab.evaluate(()=>state.supplies[0].vials[0].remainingMg);
  assert.equal(rejectedMemory,10,"Rejected tab must preserve draft/snapshot rather than phantom stock");
  console.log("PASS: REAL two-tab exclusive backed Log Dose, one committed vial deduction + one history entry, stale loser untouched");
+
+ // Actual two-browser-tab backed dose EDIT versus stale UNDO. Both invoke the
+ // real app and real navigator.locks on fictional localhost storage.
+ const winningTab=physicalResults[0]?a:b;
+ const losingTab=physicalResults[0]?b:a;
+ const savedId=physicalSaved.peptides.Retatrutide.doses[0].id;
+ const change={name:"Retatrutide",doseId:savedId,operation:"edit",nativeUnit:"mg",builtin:true,
+   patch:{dose:"3",notes:"fictional correction"}};
+ const changed=await Promise.all([
+   winningTab.evaluate(x=>nexusCommitBackedDoseChange(x),change),
+   losingTab.evaluate(x=>nexusCommitBackedDoseChange(x),{...change,operation:"undo"})
+ ]);
+ assert.ok(changed[0]&&changed[0].source.vialId==="fictional-v1","Backed edit must preserve original source");
+ assert.equal(changed[1],null,"Stale tab undo must not reverse fresh committed edit");
+ const editedDurable=await winningTab.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)));
+ assert.equal(editedDurable.supplies[0].vials[0].remainingMg,7);
+ assert.equal(editedDurable.peptides.Retatrutide.doses.length,1);
+ assert.equal(editedDurable.peptides.Retatrutide.doses[0].dose,"3");
+ assert.equal(editedDurable.nexusDoseAudit.length,1);
+ const correctedUndo=await winningTab.evaluate(x=>nexusCommitBackedDoseChange(x),{
+   ...change,operation:"undo"});
+ assert.ok(correctedUndo,"Winning tab must be able to undo its latest saved edit");
+ const reversedDurable=await winningTab.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)));
+ assert.equal(reversedDurable.supplies[0].vials[0].remainingMg,10);
+ assert.equal(reversedDurable.peptides.Retatrutide.doses.length,0);
+ assert.equal(reversedDurable.nexusDoseAudit.length,2);
+ console.log("PASS: REAL two Chromium tabs backed edit vs stale Undo, exact original-vial correction, one history, durable Undo and audit");
+
  // The lock-race fixture mutates localStorage in a different synthetic test
  // context. Reload the fictional app before testing real Stash form actions;
  // do not suppress an actual app storage warning or force blocked clicks.
