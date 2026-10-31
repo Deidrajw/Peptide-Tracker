@@ -1327,3 +1327,8 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-10-31 — PR124 draft browser validation continuation, not released
 - #41231568003 proves browser Log Dose 176 flow matrix PASS on c4c64d7d after exact second-vial fix, but **full suite FAIL** at stale save acknowledgment test. 2e6ed2c7 updates test to target exclusive failed backed-dose commit, not retired synchronous saveState. #41231974659 exact-head full and artifacts pending. No runtime change from this test-only fix, no production-data migration/merge/deploy; primary parity and real iPhone acceptance incomplete.
+
+
+## 2026-10-31 — PR #124 full QA green at source 653beee2 (NOT RELEASED)
+- Five exact-head CI workflows SUCCESS; full build/parity/browser #41232054165 and artifact 13054077913. Standalone fictional full-app DEMO and full source LIVE ZIP passed GitHub CI validation; independently matched all 26 LIVE package file Git blobs to PR branch. DEMO isolates storage, embeds scripts/styles, has no live sync or writes; Log Dose 176 flows/8 browser matrices PASS. Real device/VoiceOver NOT TESTED.
+- Initial manifest erroneously used PR synthetic merge SHA 864c6c40 as source_commit; artifact source bytes correctly matched 653beee2. Build metadata fix 09acddcd to record event.pull_request.head.sha; follow-up candidate artifacts and CI require revalidation before final source metadata certification. Full-app candidate remains draft; no version bump, merge, deploy or production change authorized. Prepared transfer gates OFF.

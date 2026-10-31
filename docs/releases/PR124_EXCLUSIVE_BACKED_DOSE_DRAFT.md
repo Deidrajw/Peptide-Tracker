@@ -19,3 +19,8 @@ Status: PROPOSED / CODED CANDIDATE; PR #124 draft and unmerged. Version remains 
 
 ## Follow-up: exact-source multi-kit Log Dose
 - Additional-vial allocation now must name the actual open vial ID; when more than one candidate exists, save remains blocked pending explicit selection. Runtime ecad706c, browser metadata assertions c7d9477b/c4c64d7d. No historical records altered or automatic fallback added. Full exact-head browser/WebKit CI pending at checkpoint.
+
+
+## Candidate QA and exact-source artifact checkpoint (2026-10-31)
+- Five workflows SUCCESS at 653beee2, including full run #41232054165; Log Dose browser 176 flows/8 matrices PASS. Independently downloaded #13054077913 and proved 26/26 LIVE files Git blob parity against PR head, offline/standalone DEMO HTML equality, ZIP integrity and no external runtime assets. Real iPhone remains NOT TESTED.
+- Correct manifest source_commit metadata to head SHA (09acddcd), not GitHub's synthetic PR merge SHA. Follow-up CI and refreshed package pending. PR draft/unmerged; no deployment, no user-data migration, no prepared-transfer activation. Candidate version remains v0.9.20-beta until separate approved release revision.
