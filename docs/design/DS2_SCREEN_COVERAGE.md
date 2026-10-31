@@ -1,3 +1,6 @@
+## 2026-10-31 — Expanded restore modal visual audit: automated PASS, settled snapshots pending
+- Expanded GitHub Chromium #41178820238 SUCCESS; four actual restore-preview screenshots from artifact #13034107579 inspected at 320/390 × light/dark. Title, long filename, counts, consent, cancel/restore actions present and fit; QA JSON confirms overflow=false, 44px actions. Several screenshots rendered mid-entrance with low opacity; not valid settled contrast visual evidence. Timing-only screenshot correction b445679eb8ad346c4906f558271ad0615647f91b pending CI. iPhone Safari keyboard and VoiceOver not accepted. Keep parent screens unchanged and physical acceptance OPEN.
+
 ## 2026-10-31 — Settings Backup modal independent Chromium acceptance, physical acceptance open
 - Source matched corrected Chromium #41178615573 SUCCESS; verified artifact #13033234592 and 4/4 independently run real Chromium 320/390 light/dark full-app fictional DEMO restore modal tests. Long filename wraps, 44px actions/zero overflow, keyboard typing and focus return, Cancel/Close strict no-write equality PASS. 320px 420px-height keyboard-space approximation shows input and actions visible; actual Safari on-screen keyboard/VoiceOver not tested. New committed test matrix CI #41178820238 pending final verification. Preserve accepted parent screens; do NOT close physical iPhone acceptance.
 
