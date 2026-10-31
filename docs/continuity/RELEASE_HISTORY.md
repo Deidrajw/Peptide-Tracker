@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 expanded restore automated acceptance (NOT A RELEASE)
+- Full expanded Chromium #41178820238 SUCCESS; artifact #13034107579 verified CRC 180 outer / 26 LIVE, manifest f12d63e. 320/390 light/dark fictional restored-preview keyboard/focus/no-write PASS (QA JSON). Four screenshots inspected, but some captured mid-animation/faded; timing-only test follow-up b445679eb8ad346c4906f558271ad0615647f91b pending. No runtime feature changes, no saved-data writes, production unchanged. Physical iPhone/VoiceOver NOT TESTED, PR124 draft/unmerged/undeployed.
+
 ## 2026-10-31 — PR124 corrected Settings child QA verified, NOT RELEASED
 - Corrected full build Chromium #41178615573 SUCCESS, source-matched artifact #13033234592 outer ZIP CRC PASS / LIVE 26 file CRC PASS / isolated standalone FULL_DEMO included. Independent corrected-source Playwright fictional restore modal matrix 4/4 PASS 320/390 light/dark: keyboard typing, enabled/disabled confirmation, 44px layout, focus return, no-write dismissals, long filename. Reduced-height viewport approximation also checked. New expanded CI #41178820238 pending, physical iPhone and VoiceOver not accepted. PR remains draft, main da585ab3, production v0.9.20-beta, no merge/deploy.
 
