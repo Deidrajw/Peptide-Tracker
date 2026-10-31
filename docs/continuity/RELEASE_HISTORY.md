@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 Profile/Settings child fixes (NOT RELEASED)
+- Draft code acddbe2d0f72c2323c3a4bc3f24d82a2e4110f08 touches assets/js/11-nexus.js only: 44px Units controls, restore filename wrapping, responsive action buttons, close/cancel focus return, truthful conditional recovery-copy success message. No schema migration or intended stock/dose data writes. Existing published product remains v0.9.20-beta; prior full Chromium run 41170672260 PASS is PRE-PATCH evidence only. New-head automated/mobile/WebKit/physical tests, complete matching LIVE ZIP and isolated standalone full-app DEMO INCOMPLETE. No merge/deploy.
+
 ## 2026-10-31 — Draft PR124 retirement UX visual QA evidence (no release)
 - Simplified sheet source b6a5b778 and browser assertion 67b6f5b; DS2 nested visual 41170672326 SUCCESS, real screenshots checked at 320 light/dark and 390 light/dark (artifact 13030633352). Writer safety 41170672364, mobile 41170672321, WebKit 41170672264 SUCCESS. Full Chromium 41170672260 still pending final result. Latest full LIVE/DEMO artifact 13030787463 independently verified (26 LIVE, CRC, 09 Git blob af138ad3, DEMO byte parity, gates off). Not merged, deployed or physically accepted; product version still v0.9.20-beta.
 
