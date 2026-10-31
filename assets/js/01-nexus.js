@@ -130,6 +130,73 @@ async function nexusCommitUntrackedDose(name,dose,editing){
   }
 }
 
+
+/* PR124 exclusive physical vial dose, new fresh doses only.
+ * Explicit already-migrated open vial IDs; never infer sealed/legacy sources,
+ * prepared stock, finished draft deductions or blend ledger allocations.
+ */
+function nexusPlanBackedPhysicalDose(snapshot,entry){
+  const fail=m=>{throw Error(m)};
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const {name,dose,method,steps,nativeUnit,expectedMassMg,builtin}=entry;
+  if(!name||!dose||!dose.id||!dose.date||dose.trackingMode!=="backed")fail("Valid dose record required");
+  if(!Array.isArray(steps)||!steps.length)fail("Exact source vial required");
+  if(!Number.isFinite(expectedMassMg)||expectedMassMg<=0)fail("Invalid mass");
+  if(!["mg","mcg"].includes(nativeUnit))fail("Unsupported mass unit for physical vial");
+  if(!["SubQ","IM","Topical","Oral","Other"].includes(method))fail("Unsupported physical vial administration method");
+  const bucket=builtin?"peptides":"customPeptides";
+  const target=next[bucket]||(next[bucket]={});
+  const record=target[name]||(target[name]={enabled:true,scheduleDays:7,doses:[]});
+  if((record.doses||[]).some(d=>String(d.id)===String(dose.id)))fail("Duplicate dose ID");
+  const allocations=[],seen=new Set();
+  let total=0;
+  for(const step of steps){
+    if(step.finished)fail("Previously drawn vial requires separate reconciliation");
+    if(step.kitId==null||step.vialId==null)fail("Unidentified physical vial");
+    const key=String(step.kitId)+":"+String(step.vialId);
+    if(seen.has(key))fail("Duplicate vial allocation");
+    seen.add(key);
+    if(!Number.isFinite(step.mg)||step.mg<=0)fail("Invalid source allocation");
+    const kit=(next.supplies||[]).find(k=>String(k.id)===String(step.kitId));
+    if(!kit||kit.name!==name||kit.isBlend||!kit.activeKit)fail("Incompatible physical kit");
+    const vial=(kit.vials||[]).find(v=>String(v.id)===String(step.vialId));
+    if(!vial||!["open","active"].includes(vial.status)||!Number.isFinite(vial.remainingMg)||vial.remainingMg<=0)fail("Open migrated vial required");
+    const route=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+      (kit.preparationMethod||kit.administrationMethod||kit.route);
+    if(route!==method)fail("Vial method mismatch");
+    const mg=Math.round(step.mg*100)/100;
+    if(Math.abs(mg-step.mg)>0.000001)fail("Unsupported source precision");
+    if(mg>vial.remainingMg+0.000001)fail("Insufficient exact vial balance");
+    vial.remainingMg=Math.round((vial.remainingMg-mg)*100)/100;
+    if(vial.remainingMg<=0.01){vial.remainingMg=0;vial.status="empty";}
+    const amount=nativeUnit==="mcg"?mg*1000:mg;
+    allocations.push({kitId:kit.id,vialId:vial.id,amount});
+    total+=mg;
+  }
+  if(Math.abs(total-expectedMassMg)>0.001)fail("Source allocation must match dose");
+  record.doses=(record.doses||[]).concat([{...dose,allocations,kitId:null,fromPreparedId:undefined}]);
+  const reschedule=(record.reschedules||[]).find(r=>!r.doseId&&String(r.newDate||"").slice(0,10)===String(dose.date).slice(0,10));
+  if(reschedule)reschedule.doseId=dose.id;
+  return {next,dose:record.doses[record.doses.length-1],allocations};
+}
+async function nexusCommitBackedPhysicalDose(entry){
+  try{
+    if(_demoActive){
+      const result=nexusPlanBackedPhysicalDose(state,entry);
+      state=result.next;return result;
+    }
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry));
+    state=result.next;
+    _nexusLastSavedSnapshot=writer.expected();
+    return result;
+  }catch(e){
+    console.error("Nexus exclusive physical dose failed",e);
+    if(!_demoActive)showSaveWarning();
+    return null;
+  }
+}
+
 function enterDemoMode(scenario) {
   if(_demoActive) return;
   _realState = JSON.parse(JSON.stringify(state)); // deep clone real state
