@@ -1,3 +1,7 @@
+## 2026-10-31 — Backup child visual evidence and browser test coverage
+- Actual 320/390 light/dark child landing screenshots manually inspected from artifact 13034276111: no clipped controls observed, 320 rollover wraps. Modal/keyboard not shown; no acceptance implied.
+- Playwright test 56a52f86 adds fictional long filename, overflow, input placement, 44px buttons, typed RESTORE via keyboard, Cancel/Close focus return and localStorage/profile no-write assertions in four viewport/theme combinations. Chromium 41178814456 IN PROGRESS, NOT PASS at observation. Physical iPhone/VoiceOver NOT TESTED.
+
 ## 2026-10-31 — Corrected child-source CI partial results
 - Following fix f4aba4f, shared writer run 41178615500 SUCCESS, mobile run 41178615552 SUCCESS, nested visual run 41178615575 SUCCESS. Full Chromium 41178615573 and WebKit 41178615553 still IN PROGRESS at latest observation; do not mark PASS. Initial Chromium 41178541248 FAIL retained as a recorded regression; correction preserves isolated-demo recovery fixture. Physical iPhone/VoiceOver still NOT TESTED.
 
