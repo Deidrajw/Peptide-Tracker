@@ -1,3 +1,6 @@
+## 2026-10-31 — Settings child screenshots inspected, modal acceptance open
+- 8 actual screenshots from nested artifact 13034276111 inspected: 320/390 light/dark Backup & Restore and Units detail child screens visually contained, with wrapped rollover at 320px. Screenshots do not capture restore confirmation or virtual keyboard. Fictional browser assertions added 56a52f86; Chromium 41178814456 pending. Parent layouts preserved, child acceptance OPEN.
+
 ## 2026-10-31 — Profile/Settings nested child audit: targeted code, acceptance still OPEN
 - Inspected assets/js/11-nexus.js Settings details and backup restore flow. Concrete defects: Units weight/measurement/day-rollover controls 32px targets; backup restore arbitrary filename without wrapping; rigid narrow action row; no explicit focus return after Cancel/Close; misleading unconditional recovery-copy success copy. Scoped fix acddbe2d (44px controls, wrapping, responsive actions, focus, conditional message) on draft PR124. Existing Profile/Settings parent and accepted screen structure not changed. Browser 320/390 light/dark, virtual keyboard, VoiceOver, no-write fixture QA PENDING; do not mark screen accepted. Other Profile, Trends/Nexus, and DS2 child journeys remain OPEN.
 
