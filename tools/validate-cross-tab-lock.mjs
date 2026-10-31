@@ -51,6 +51,12 @@ try{
  assert.equal(source,"fictional");
  await a.evaluate(key=>localStorage.removeItem(key),fixture);
  console.log("PASS: real Chromium cross-tab Web Lock serialized exclusive writers; stale second transaction rejected, fictional source preserved");
+ // The lock-race fixture mutates localStorage in a different synthetic test
+ // context. Reload the fictional app before testing real Stash form actions;
+ // do not suppress an actual app storage warning or force blocked clicks.
+ await a.reload({waitUntil:"domcontentloaded"});
+ await a.waitForFunction(()=>typeof supplyModal==="function",{timeout:10000});
+
  // Exercise the actual Stash form event handler in a fictional localhost
  // profile, not merely the coordinator's pure transaction API.
  await a.evaluate(()=>{
