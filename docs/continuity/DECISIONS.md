@@ -1083,3 +1083,8 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 - User approved ONE existing Stash Add Kit action leading to a card/button choice: Vials, Capsules, Raw Powder, Topical, Nasal Spray, with short explanations. SLU-PP capsules are a normal capsule package, not fake vials. No independent +Capsules/+Nasal buttons or Other formulations section.
 - Purchased nasal spray can be entered as its own physical kit/package. A nasal preparation made from a vial must instead identify a specific source vial in its parent vial kit and use separately validated transfer accounting; intent selection alone performs no transfer.
 - Preserve existing kit/vial records and independently created formulationStocks; never auto-link them by compound name. All new product forms are inventory only; no automatic dose deductions. No merge/deploy approval implied.
+
+
+## 2026-10-31 — Backed dose correction safety boundary (implemented candidate, NOT product release approval)
+- For new fresh inventory-backed physical Log Dose only, a correction/Undo must reconcile the original recorded exact vial and dose history in one exclusive durable transaction. Append an audit of the previous record; do not auto-assign another kit or refund current open stock. Reject concurrent stale tabs and failed storage readback.
+- Candidate intentionally limits automatic correction to the latest saved single-vial source with matching method; multi-vial, historical/prepared/blend or missing attribution is fail-closed until a separately designed and tested reconciliation flow. This is a conservative engineering guard, not approval to delete old data or restrict existing features in production. Prepared transfer gates stay OFF. Draft PR #124 has no merge/deploy approval.
