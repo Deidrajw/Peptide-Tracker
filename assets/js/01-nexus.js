@@ -197,6 +197,79 @@ async function nexusCommitBackedPhysicalDose(entry){
   }
 }
 
+
+/* PR124 backed-dose correction boundary. Corrections are scoped to a recorded
+ * exact physical source. Old prepared/blend/unknown-source histories fail closed.
+ * No vial substitution or automatic historical source attribution is allowed.
+ */
+function nexusPlanBackedDoseChange(snapshot,entry){
+  const fail=m=>{throw Error(m)};
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const {name,doseId,operation,patch={},nativeUnit,builtin}=entry;
+  if(!name||doseId==null||!["edit","undo"].includes(operation))fail("Backed dose correction required");
+  if(!["mg","mcg"].includes(nativeUnit))fail("Verified mass unit required");
+  const bucket=builtin?"peptides":"customPeptides";
+  const record=next[bucket]?.[name];
+  const index=record?.doses?.findIndex(d=>String(d.id)===String(doseId))??-1;
+  if(index<0)fail("Original dose missing");
+  const old=record.doses[index];
+  if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
+     !Array.isArray(old.allocations)||old.allocations.length!==1)fail("Unsupported historic source: review manually");
+  if(index!==record.doses.length-1)fail("Only the most recent dose can be corrected through this safety path");
+  const original=old.allocations[0];
+  if(original.kitId==null||original.vialId==null)fail("Original exact source missing");
+  const originalAmount=Number(original.amount);
+  const originalMg=nativeUnit==="mcg"?originalAmount/1000:originalAmount;
+  if(!Number.isFinite(originalMg)||originalMg<=0)fail("Invalid original allocation");
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(original.kitId));
+  const vial=(kit?.vials||[]).find(v=>String(v.id)===String(original.vialId));
+  if(!kit||kit.name!==name||kit.isBlend||!vial||!["open","active","empty"].includes(vial.status)||
+     !Number.isFinite(vial.remainingMg))fail("Original vial unavailable; no correction");
+  const matchedMethod=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+    (kit.preparationMethod||kit.administrationMethod||kit.route);
+  if(matchedMethod!==old.method)fail("Original method no longer matches the exact vial");
+  const nextDose=operation==="undo"?null:{...old,...patch,id:old.id,
+    allocations:old.allocations.map(a=>({...a}))};
+  if(nextDose&&(nextDose.method!==old.method||nextDose.trackingMode!=="backed"||
+     nextDose.fromPreparedId||nextDose.isBlendDose))fail("Dose source or method cannot change");
+  const nextAmount=operation==="undo"?0:Number(nextDose.dose);
+  const nextMg=operation==="undo"?0:nativeUnit==="mcg"?nextAmount/1000:nextAmount;
+  if(!Number.isFinite(nextMg)||nextMg<0||(operation==="edit"&&nextMg<=0)||
+     Math.abs(nextMg*100-Math.round(nextMg*100))>0.00001)fail("Invalid corrected mass");
+  const delta=nextMg-originalMg;
+  if(delta>vial.remainingMg+0.000001)fail("Insufficient original vial for correction");
+  const restored=Math.round((vial.remainingMg-delta)*100)/100;
+  if(restored<0||restored>Number(vial.vialMg||kit.vialMg||Infinity)+0.000001)
+    fail("Correction exceeds original vial capacity");
+  vial.remainingMg=restored;
+  if(restored<=0.01){vial.remainingMg=0;vial.status="empty";}
+  else if(vial.status==="empty")vial.status="open";
+  if(operation==="undo"){
+    record.doses.splice(index,1);
+    (record.reschedules||[]).forEach(r=>{if(String(r.doseId)===String(old.id))r.doseId=null});
+  }else{
+    nextDose.allocations=[{...original,amount:nativeUnit==="mcg"?Math.round(nextMg*100000)/100:nextMg}];
+    record.doses[index]=nextDose;
+  }
+  next.nexusDoseAudit=next.nexusDoseAudit||[];
+  next.nexusDoseAudit.push({id:String(doseId)+":"+operation+":"+String(next.nexusDoseAudit.length+1),
+    doseId:old.id,compound:name,operation,kitId:kit.id,vialId:vial.id,
+    beforeMg:originalMg,afterMg:nextMg,previousDose:JSON.parse(JSON.stringify(old))});
+  return {next,operation,dose:nextDose,source:{kitId:kit.id,vialId:vial.id,remainingMg:vial.remainingMg}};
+}
+async function nexusCommitBackedDoseChange(entry){
+  try{
+    if(_demoActive){const result=nexusPlanBackedDoseChange(state,entry);state=result.next;return result;}
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>nexusPlanBackedDoseChange(prior,entry));
+    state=result.next;_nexusLastSavedSnapshot=writer.expected();return result;
+  }catch(e){
+    console.error("Nexus exclusive backed dose correction rejected",e);
+    if(!_demoActive)showSaveWarning();
+    return null;
+  }
+}
+
 function enterDemoMode(scenario) {
   if(_demoActive) return;
   _realState = JSON.parse(JSON.stringify(state)); // deep clone real state
