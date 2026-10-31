@@ -452,5 +452,58 @@ try{
    console.log("PASS: browser Edit Outflow modifies saved exact vial plus event, retains old revision, and Undo restores original stock");
  }
 
+
+ // Real Mark Kit Done UI and canonical physical stock in fictional isolated profile.
+ {
+   await a.evaluate(()=>{
+     closeModal();
+     const fresh=buildDemoState("weight_loss");fresh.profile.onboardingDone=true;
+     fresh.supplies.push({id:987654326,name:"Retatrutide",vialMg:10,totalVials:3,activeKit:true,kitStatus:"active",
+       vials:[{id:"done-open",status:"open",remainingMg:3.25,vialMg:10},
+         {id:"done-sealed",status:"sealed",remainingMg:10,vialMg:10},
+         {id:"done-empty",status:"empty",remainingMg:0,vialMg:10}],
+       wasteLog:[{id:"done-prior-event",type:"waste",status:"active",mg:1,vialId:"done-empty"}],
+       linkedPreparationPlans:[],_vialsBackfilled:true,_vialsSeqOrderRepaired:true,_vialsRepaired:true});
+     state=fresh;_demoActive=false;
+     localStorage.setItem(STORE_KEY,JSON.stringify(state));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+     markKitDoneModal(987654326);
+   });
+   await a.locator("#leftover-mg").fill("2");
+   await a.locator("#done-save").click();
+   const rejected=await a.evaluate(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
+     return {first:k.vials[0].remainingMg,second:k.vials[1].remainingMg,done:k.kitStatus,records:k.wasteLog.length};
+   });
+   assert.equal(rejected.first,3.25);
+   assert.equal(rejected.second,10);
+   assert.equal(rejected.records,1);
+   assert.notEqual(rejected.done,"done");
+   await a.locator("#leftover-mg").fill("13.25");
+   await a.locator("#done-save").click();
+   await a.waitForFunction(()=>{
+     const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
+     return k?.kitStatus==="done"&&k?.kitDoneHistory?.length===1;
+   },{timeout:10000});
+   const done=await a.evaluate(()=>{
+     const durable=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
+     const memory=state.supplies.find(s=>s.id===987654326);
+     return {durable,memory,pending:nexusWriter().status().inFlight};
+   });
+   assert.equal(done.durable.vials[0].remainingMg,0);
+   assert.equal(done.durable.vials[1].remainingMg,0);
+   assert.equal(done.durable.vials[2].remainingMg,0);
+   assert.equal(done.durable.wasteLog[0].id,"done-prior-event");
+   assert.equal(done.durable.wasteLog[1].vialId,"done-open");
+   assert.equal(done.durable.wasteLog[1].mg,3.25);
+   assert.equal(done.durable.wasteLog[2].vialId,"done-sealed");
+   assert.equal(done.durable.wasteLog[2].mg,10);
+   assert.equal(done.durable.kitDoneHistory[0].totalMg,13.25);
+   assert.equal(done.durable.kitDoneHistory[0].vialEvents.length,2);
+   assert.equal(done.memory.kitStatus,"done");
+   assert.equal(done.pending,false);
+   console.log("PASS: real Mark Kit Done rejects partial waste, commits 2 exact-vial historic outflows + retired kit in one durable exclusive transaction");
+ }
+
  await context.close();
 }finally{await browser.close()}
