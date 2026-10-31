@@ -1,3 +1,7 @@
+## 2026-10-31 — Settings child evidence and keyboard QA update
+- Independently downloaded artifact 13034276111 from DS2 run 41178615575 SUCCESS; manually inspected eight 320/390 light/dark Settings Backup & Restore and Units screenshots. No visible clipping; 320px rollover label and selector wrap within card. Landing screenshots do not prove restore-modal keyboard behavior.
+- Added Playwright fictional restore tests in 56a52f86: four viewport/theme combinations, long filename, overflow, 44px action targets, keyboard typed RESTORE, Cancel/Close focus return and no-write localStorage/profile assertions. Full Chromium 41178814456 IN PROGRESS at last observation; prior corrected Chromium 41178615573 also IN PROGRESS. No merge/deploy. NEXT ONE ACTION: verify full Chromium results, resolve failures, then verify matching LIVE/DEMO and physical iPhone keyboard acceptance.
+
 ## 2026-10-31 — CI feedback: restore isolated-demo compatibility maintained
 - Initial child-screen patch acddbe2d failed Chromium run 41178541248 at tools/validate-trust-ui.mjs:72 `pre-restore copy`: a change to demo pre-restore local snapshot behavior broke the existing regression. Corrective source commit f4aba4f459f3b441f583985082dd0730e86247cd restores the original copy path and keeps truthfully conditional success text, other child UX fixes intact. The initial run is FAIL, not PASS; rerun required on corrected head. Source validation and artifact assembly in failed run succeeded, but browser gate failed. No deployment.
 
