@@ -86,7 +86,10 @@ try{
       await page.keyboard.type('RESTORE');
       assert.equal(await page.locator('#nx-import-confirm').isEnabled(),true,
         label+' keyboard enables confirmation');
-      await page.screenshot({path:'dist/Nexus_'+version+'_BACKUP_'+width+'_'+theme+'.png'});
+      // Capture the settled sheet; an entering bottom-sheet animation can yield
+      // translucent screenshots despite passing hit-target/overflow assertions.
+      await page.waitForTimeout(500);
+      await page.screenshot({path:'dist/Nexus_'+version+'_BACKUP_'+width+'_'+theme+'.png',animations:'disabled'});
       await page.locator('#nx-import-cancel').click();
       assert.equal(await page.evaluate(()=>document.activeElement?.id),'nx-import-open',
         label+' cancel returns keyboard focus');
