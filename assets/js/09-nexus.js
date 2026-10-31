@@ -1190,158 +1190,388 @@ function finishVialModal(supplyId) {
   };
 }
 
-function markKitDoneModal(supplyId) {
-  const s = state.supplies.find(x=>x.id===supplyId); if(!s) return;
-  const c = cfg(s.name);
-  // getKitRemainingMg is the one canonical source for this number — it already defers to
-  // the sum of vial.remainingMg for a v2-migrated kit. The previous separate dose-history
-  // scan here only matched doses carrying this kit's OWN kitId directly; any dose logged
-  // through the multi-vial engine (which always records allocations[] instead of a bare
-  // kitId, even for a single-kit dose) was invisible to it the moment more than one kit
-  // existed for the same compound — silently showing a wildly inflated "leftover" amount.
-  const remainingMg = getKitRemainingMg(s);
-
-  const REASONS = [
-    { key:"used_up", label:"Used up completely" },
-    { key:"bad_batch", label:"Bad batch / discarded" },
-    { key:"other", label:"Other" },
-  ];
-
-  const m = openModal(`
+// Whole-kit retirement is a physical multi-vial transaction, not a kit-level
+// unallocated waste amount. No read-time migration or inferred balancing.
+function planExclusiveMarkKitDone(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||kit.vials.length===0)
+    throw Error("Verified physical vials required; reconcile legacy kit first");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Mark Kit Done");
+  if(kit.kitStatus==="done"||kit.activeKit===false)
+    throw Error("Kit already done; reopen its history");
+  const reasonNames={used_up:"Used up completely",bad_batch:"Bad batch / discarded",other:"Other"};
+  if(!Object.hasOwn(reasonNames,input.reasonKey))throw Error("A valid completion reason is required");
+  const ids=new Set();let total=0;
+  const remaining=kit.vials.filter(v=>{
+    if(v.id==null||ids.has(String(v.id)))throw Error("Exact vial IDs required and must be unique");
+    ids.add(String(v.id));
+    const mg=Number(v.remainingMg),capacity=Number(v.vialMg??kit.vialMg);
+    if(v.remainingMg==null||!Number.isFinite(mg)||mg<0||
+       !Number.isFinite(capacity)||capacity<=0||mg>capacity||
+       Math.round(mg*100)/100!==mg)
+      throw Error("Vial inventory ambiguous; reconcile before retirement");
+    if(mg>0&&!["sealed","open","active"].includes(v.status))
+      throw Error("Positive stock has an unsupported status; reconcile first");
+    total=Math.round((total+mg)*100)/100;
+    return mg>0;
+  });
+  if(!Number.isFinite(input.declaredMg)||input.declaredMg!==total)
+    throw Error("Entered waste amount must match all remaining physical vial stock; use Log Outflow for a partial amount");
+  if(input.reasonKey==="used_up"&&total>0)
+    throw Error("Used up completely requires zero remaining stock; choose discarded/other for physical remainder");
+  if(remaining.length){
+    const attached=(kit.linkedPreparationPlans||[]).some(p=>remaining.some(v=>String(p.sourceVialId)===String(v.id)));
+    if(attached)throw Error("A linked preparation references remaining source stock; resolve before retiring");
+  }
+  const eventIds=input.eventIds;
+  if(!Array.isArray(eventIds)||eventIds.length!==remaining.length||new Set(eventIds.map(String)).size!==eventIds.length)
+    throw Error("Unique per-vial retirement event IDs required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(eventIds.some(id=>!id||kit.wasteLog.some(x=>String(x.id)===String(id)))||
+     !input.completionId||kit.wasteLog.some(x=>String(x.id)===String(input.completionId))||
+     eventIds.some(id=>String(id)===String(input.completionId)))
+    throw Error("Retirement event ID already used or missing");
+  const events=[];
+  remaining.forEach((v,i)=>{
+    const before={remainingMg:v.remainingMg,status:v.status},mg=v.remainingMg;
+    v.remainingMg=0;v.status="empty";
+    const event={id:eventIds[i],date:input.date,loggedAt:input.loggedAt,
+      mg,type:"waste",reason:input.reasonKey==="bad_batch"?"Bad batch — kit discarded":"Kit marked done",
+      notes:String(input.notes||""),status:"active",vialId:v.id,
+      outflowKind:"retired_kit_vial",retirementId:input.completionId,
+      stockBefore:before,stockAfter:{remainingMg:0,status:"empty"}};
+    kit.wasteLog.push(event);events.push({id:event.id,vialId:v.id,mg});
+  });
+  kit.kitStatus="done";kit.doneReason=reasonNames[input.reasonKey];kit.activeKit=false;
+  kit.kitDoneHistory=Array.isArray(kit.kitDoneHistory)?kit.kitDoneHistory:[];
+  kit.kitDoneHistory.push({id:input.completionId,date:input.date,loggedAt:input.loggedAt,
+    reasonKey:input.reasonKey,reason:reasonNames[input.reasonKey],notes:String(input.notes||""),
+    totalMg:total,vialEvents:events});
+  return {next,retirementId:input.completionId};
+}
+function markKitDoneModal(supplyId){
+  const s=(state.supplies||[]).find(x=>String(x.id)===String(supplyId));if(!s)return;
+  if(!Array.isArray(s.vials)||!s.vials.length||
+     s.vials.some(v=>v.remainingMg==null||!Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs verified physical vial inventory before Mark Done.");return;
+  }
+  const remainingMg=Math.round(s.vials.reduce((sum,v)=>sum+Number(v.remainingMg),0)*100)/100;
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const reasons=[{key:"used_up",label:"Used up completely"},
+    {key:"bad_batch",label:"Bad batch / discarded"},{key:"other",label:"Other"}];
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">MARK KIT DONE — ${esc(s.name).toUpperCase()}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">MARK KIT DONE</span>
+      <button id="x" aria-label="Close Mark Kit Done" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:14px">Moves this kit out of your active list into a collapsed "Done" section — it stays in your history, just out of the way while scrolling.</div>
+    <div class="hint" style="margin-bottom:14px">${esc(s.name)} · Move this kit to Done. Your history stays saved.</div>
     <label class="field-label">WHY IS IT DONE</label>
     <div style="display:flex;gap:6px;margin-bottom:14px">
-      ${REASONS.map((r,i)=>toggleChip(r.label, i===0, {attrs:`class="donereason-toggle" data-key="${r.key}"`, fontSize:"11px", padding:"9px 6px"})).join("")}
+      ${reasons.filter(r=>remainingMg===0||r.key!=="used_up").map((r,i)=>toggleChip(r.label,i===0,{attrs:`class="donereason-toggle" data-key="${r.key}"`,fontSize:"11px",padding:"9px 6px"})).join("")}
     </div>
-    ${remainingMg>0?`<div id="leftover-notice" style="background:#ff7c7c11;border:1px solid #ff7c7c33;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-size:12px;color:#ff7c7c;font-weight:600;margin-bottom:4px">This kit still shows ${remainingMg.toFixed(1)}mg remaining</div>
-      <div style="font-size:11px;color:var(--t4);line-height:1.5">Marking it done will log that as waste so your supply totals stay accurate. Adjust if only part of it was actually lost.</div>
-      <label class="field-label" style="margin-top:10px">MG TO LOG AS WASTE</label>
-      <input id="leftover-mg" type="number" step="0.01" class="inp" value="${remainingMg.toFixed(2)}">
-    </div>`:""}
-    <label class="field-label">NOTES (optional)</label>
-    <textarea id="done-notes" class="inp" placeholder="Anything worth remembering…" style="min-height:50px;resize:vertical;margin-bottom:18px"></textarea>
-    <button id="done-save" class="btn-primary" style="background:var(--t3)">Mark Done</button>
-  `, "#888");
-
-  m.querySelector("#x").onclick = closeModal;
-  let reasonKey = "used_up";
-  m.querySelectorAll(".donereason-toggle").forEach(btn=>btn.onclick=()=>{
-    reasonKey = btn.dataset.key;
-    m.querySelectorAll(".donereason-toggle").forEach(b=>{
-      const active = b.dataset.key===reasonKey;
-      b.style.background = active ? "var(--surface-3)" : "transparent";
-      b.style.borderColor = active ? "var(--border)" : "transparent";
-      b.style.color = active ? "var(--t1)" : "var(--t4)";
-    });
-  });
-
-  m.querySelector("#done-save").onclick = () => {
-    const reasonLabel = REASONS.find(r=>r.key===reasonKey).label;
-    const notes = m.querySelector("#done-notes").value;
-    const leftoverInput = m.querySelector("#leftover-mg");
-    const leftoverMg = leftoverInput ? parseFloat(leftoverInput.value)||0 : 0;
-    if (leftoverMg > 0) {
-      if (!s.wasteLog) s.wasteLog = [];
-      s.wasteLog.push({ id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: leftoverMg, type: reasonKey==="bad_batch"?"waste":"waste", reason: reasonKey==="bad_batch"?"Bad batch — kit discarded":"Kit marked done", notes });
-    }
-    // The whole kit is retiring, not just one vial — every vial in it needs to actually
-    // zero out for a v2-migrated kit, or the kit total would still show whatever material
-    // its vials claim to have left even after being marked done. wasteLog alone (above)
-    // is audit history only; it doesn't move the authoritative number by itself.
-    migrateKitToV2(s);
-    (s.vials||[]).forEach(v => { if (v.remainingMg > 0) { v.remainingMg = 0; v.status = "empty"; } });
-    s.kitStatus = "done";
-    s.doneReason = reasonLabel;
-    s.activeKit = false;
-    saveState(); closeModal(); render();
+    ${remainingMg>0?`<div id="done-impact" role="note" style="background:#ff7c7c0c;border:1px solid #ff7c7c30;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--t1);font-weight:700;margin-bottom:6px">Remove all ${remainingMg.toFixed(2)} mg from your stash</div>
+      <div style="font-size:12px;color:var(--t4);line-height:1.5">${s.vials.filter(v=>Number(v.remainingMg)>0).length} vials affected. Your previous records stay saved.</div>
+    </div>
+    <button type="button" id="done-partial-outflow" style="display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:600;margin-bottom:14px">Log Partial Outflow</button>`:`<div role="note" style="font-size:12px;color:var(--t4);line-height:1.5;margin-bottom:14px">No physical stock will be removed. This kit will move to Done and its history remains available.</div>`}
+    <label class="field-label" for="done-notes">NOTES (optional)</label>
+    <textarea id="done-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px" placeholder="Anything worth remembering…"></textarea>
+    <button id="done-save" class="btn-primary" style="background:var(--t3);min-height:48px">${remainingMg>0?"Remove All & Mark Done":"Mark Done"}</button>
+  `,"#888");
+  m.querySelector("#x").onclick=closeModal;
+  let reasonKey=remainingMg>0?"bad_batch":"used_up";
+  const setReason=k=>{reasonKey=k;m.querySelectorAll(".donereason-toggle").forEach(b=>{
+    const active=b.dataset.key===k;
+    b.style.background=active?"var(--surface-3)":"transparent";
+    b.style.borderColor=active?"var(--border)":"transparent";
+    b.style.color=active?"var(--t1)":"var(--t4)";
+  });};
+  m.querySelectorAll(".donereason-toggle").forEach(b=>b.onclick=()=>setReason(b.dataset.key));
+  setReason(reasonKey);
+  const partial=m.querySelector("#done-partial-outflow");
+  if(partial)partial.onclick=()=>{
+    closeModal();
+    if(s.isBlend)blendLogOutflowModal(s.id);
+    else logWasteModal(s.id);
   };
-}
-
-// Undo Outflow — reverses a specific transaction, on the SAME kit/vial it came from.
-// Since kit "remaining" is always derived (never a stored balance), reversal is just
-// marking the transaction status:"reversed" — getKitActiveWasteMg/getKitUsedMg then skip
-// it automatically, which is what propagates the restored amount through vial remaining,
-// kit remaining, supply forecast, and Needs Attention in one place, with nothing else to
-// update by hand. No fake compensating dose or adjustment record is created.
-function undoOutflowModal(kitId, txId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  const tx = (s.wasteLog||[]).find(w=>w.id===txId); if(!tx) return;
-  const c = cfg(s.name);
-  const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">UNDO OUTFLOW</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
-    </div>
-    <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:8px">Undo ${tx.mg}mg outflow?</div>
-    <div class="hint" style="margin-bottom:20px">This will restore the exact vial this came from — reopening it if it was transferred or finished as part of this transaction. The transaction stays in history, marked as reversed.</div>
-    <div style="display:flex;gap:8px">
-      <button id="cancel-undo" style="flex:1;padding:11px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px">Cancel</button>
-      <button id="confirm-undo" style="flex:1;padding:11px;border-radius:10px;background:#ff7c7c;color:#000;font-weight:700;font-size:13px">Undo Outflow</button>
-    </div>
-  `, "#ff7c7c");
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#cancel-undo").onclick = closeModal;
-  m.querySelector("#confirm-undo").onclick = () => {
-    // Reverse the actual vial-level effect, not just flag the transaction — the old
-    // comment here described the pre-v2 history-derived model, where marking a wasteLog
-    // entry "reversed" was enough because remaining was always recomputed from live
-    // history on every render. Once a vial's remainingMg became a directly-mutated field,
-    // that stopped being true: this needs to explicitly put the material back on the
-    // specific vial the transaction actually came from, branching on exactly what that
-    // transaction did so undo restores the right status, not just the right number.
-    migrateKitToV2(s);
-    const v = tx.vialId ? (s.vials||[]).find(v=>v.id===tx.vialId) : null;
-    if (v && v.remainingMg !== undefined && tx.status!=="reversed") {
-      if (tx.outflowKind === "transferred_sealed") {
-        v.status = "sealed"; v.remainingMg = v.vialMg!=null ? v.vialMg : (s.vialMg||0);
-      } else {
-        const wasEmpty = v.status==="empty";
-        v.remainingMg = Math.round((v.remainingMg + tx.mg)*100)/100;
-        if (wasEmpty && v.remainingMg>0.01) v.status = "open";
+  const button=m.querySelector("#done-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    // The reviewed amount is verified stock, not an editable number. The
+    // planner still compares against the exclusive saved snapshot under lock.
+    const declaredMg=remainingMg;
+    const input={kitId:s.id,expectedKit,reasonKey,declaredMg,notes:m.querySelector("#done-notes").value,
+      eventIds:s.vials.filter(v=>Number(v.remainingMg)>0).map(()=>uid()),
+      completionId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    button.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveMarkKitDone(state,input);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),kit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!kit||JSON.stringify(kit)!==expectedKit)throw Error("Kit changed; reopen Mark Kit Done");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveMarkKitDone(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
       }
-    }
-    tx.status = "reversed";
-    tx.reversedAt = localDatetime();
-    saveState(); closeModal(); render();
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Mark Kit Done not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
-// Edit Outflow — correct the amount/reason/note/date of an existing transaction rather
-// than undo-then-redo. Since remaining is derived from the live wasteLog value, changing
-// mg here automatically restores/consumes the difference on next render — no manual
-// compensating math.
-function editOutflowModal(kitId, txId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  const tx = (s.wasteLog||[]).find(w=>w.id===txId); if(!tx) return;
-  const c = cfg(s.name);
-  const m = openModal(`
+// Exclusive exact-vial physical outflow. These planners never mutate the caller
+// and never interpret a preparation plan as prepared stock.
+function planExclusivePhysicalOutflow(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||kit.isBlend)
+    throw Error("Exact physical kit inventory unavailable");
+  if(JSON.stringify(kit)!==input.expectedKit)
+    throw Error("Kit changed; reopen Log Outflow");
+  const matching=kit.vials.filter(v=>String(v.id)===String(input.vialId));
+  if(matching.length!==1)throw Error("Exact source vial unavailable or duplicated");
+  const vial=matching[0];
+  if(JSON.stringify(vial)!==input.expectedVial)
+    throw Error("Source vial changed; reopen Log Outflow");
+  const kind=input.kind,amount=Number(input.mg);
+  if(!["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(kind)||
+     !Number.isFinite(amount)||amount<=0||Math.round(amount*100)/100!==amount)
+    throw Error("Invalid outflow kind or exact mg amount");
+  if(!["waste","gifted","testing"].includes(input.type)||
+     typeof input.reason!=="string"||!input.reason.trim())
+    throw Error("Outflow type and reason are required");
+  if(!input.date||!/^\d{4}-\d{2}-\d{2}$/.test(input.date))
+    throw Error("Outflow date required");
+  if(!input.eventId||String(input.eventId).trim()==="")
+    throw Error("Unique outflow ID required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(kit.wasteLog.some(e=>String(e.id)===String(input.eventId)))
+    throw Error("Outflow ID already exists");
+  const before={remainingMg:vial.remainingMg,status:vial.status};
+  const balance=Number(vial.remainingMg),capacity=Number(vial.vialMg??kit.vialMg);
+  if(!Number.isFinite(balance)||balance<=0||!Number.isFinite(capacity)||capacity<=0)
+    throw Error("Unverified positive source stock");
+  if(kind==="transferred_sealed"){
+    if(vial.status!=="sealed"||Math.abs(balance-capacity)>0.001||amount!==balance)
+      throw Error("Whole sealed outflow requires exact untouched sealed vial contents");
+    vial.status="transferred";vial.remainingMg=0;
+  }else{
+    if(!["open","active"].includes(vial.status))
+      throw Error("An open vial is required for this outflow");
+    if(amount>balance)throw Error("Outflow exceeds remaining vial stock");
+    if(kind==="consumed_open_whole"&&amount!==balance)
+      throw Error("Whole outflow must use the entire open vial balance");
+    if(kind==="consumed_open_partial"&&amount>=balance)
+      throw Error("Use whole-vial outflow to remove all remaining stock");
+    vial.remainingMg=Math.round((balance-amount)*100)/100;
+    if(vial.remainingMg<=0.01){vial.remainingMg=0;vial.status="empty";}
+  }
+  const after={remainingMg:vial.remainingMg,status:vial.status};
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:amount,type:input.type,reason:input.reason.trim(),notes:String(input.notes||""),
+    status:"active",vialId:vial.id,outflowKind:kind,stockBefore:before,stockAfter:after,
+    sourceVialSnapshot:JSON.parse(JSON.stringify(input.expectedVial?JSON.parse(input.expectedVial):vial))});
+  return {next,eventId:input.eventId};
+}
+function planUndoExclusivePhysicalOutflow(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.wasteLog))
+    throw Error("Source kit or outflow history unavailable");
+  const index=kit.wasteLog.findIndex(e=>String(e.id)===String(input.eventId));
+  const tx=kit.wasteLog[index];
+  if(!tx||tx.status!=="active"||!tx.stockBefore||!tx.stockAfter||
+     !["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(tx.outflowKind))
+    throw Error("Original outflow lacks a safe reversible stock snapshot; review history");
+  const vialMatches=kit.vials.filter(v=>String(v.id)===String(tx.vialId));
+  if(vialMatches.length!==1)throw Error("Original exact vial no longer available");
+  const vial=vialMatches[0];
+  if(Number(vial.remainingMg)!==Number(tx.stockAfter.remainingMg)||vial.status!==tx.stockAfter.status)
+    throw Error("Vial balance or status changed; undo blocked");
+  if(!tx.sourceVialSnapshot||JSON.stringify(vial)!==JSON.stringify({...tx.sourceVialSnapshot,
+     remainingMg:tx.stockAfter.remainingMg,status:tx.stockAfter.status}))
+    throw Error("Vial metadata changed; undo blocked");
+  if(kit.wasteLog.slice(index+1).some(e=>String(e.vialId)===String(vial.id)&&e.status==="active"&&e.type!=="outflow-reversal"))
+    throw Error("Later vial history exists; undo blocked");
+  const linkedDose=Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+    .some(comp=>(comp.doses||[]).some(d=>(d.allocations||[]).some(a=>String(a.vialId)===String(vial.id))&&
+      new Date(d.date||0).getTime()>new Date(tx.loggedAt||tx.date).getTime()));
+  if(linkedDose)throw Error("Later dose allocation exists; undo blocked");
+  if((kit.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id)&&
+     new Date(p.createdAt||p.date||0).getTime()>new Date(tx.loggedAt||tx.date).getTime()))
+    throw Error("Later preparation reference exists; undo blocked");
+  if(kit.wasteLog.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Undo ID already recorded");
+  vial.remainingMg=tx.stockBefore.remainingMg;
+  vial.status=tx.stockBefore.status;
+  tx.status="reversed";tx.reversedAt=input.loggedAt;tx.reversalId=input.undoEventId;
+  // Keep the reversal in the permanent ledger without double-counting outflow.
+  kit.wasteLog.push({id:input.undoEventId,date:input.date,loggedAt:input.loggedAt,
+    mg:0,type:"outflow-reversal",reason:"Exact outflow reversed",notes:"",
+    status:"reversed",vialId:vial.id,reversesEventId:tx.id});
+  return {next,eventId:input.undoEventId};
+}
+function undoOutflowModal(kitId,txId){
+ const kit=state.supplies.find(s=>String(s.id)===String(kitId));if(!kit)return;
+ const tx=(kit.wasteLog||[]).find(e=>String(e.id)===String(txId));if(!tx)return;
+ const expectedKit=JSON.stringify(kit);
+ const m=openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+ <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">UNDO OUTFLOW</span>
+ <button id="x" aria-label="Close" style="color:var(--t4)">✕</button></div>
+ <div class="hint" style="margin-bottom:20px">Undo ${tx.mg}mg from its exact original vial? Undo is blocked if that vial changed afterward. The original event remains in history.</div>
+ <div style="display:flex;gap:8px"><button id="cancel-undo" class="btn-secondary">Cancel</button>
+ <button id="confirm-undo" class="btn-primary">Undo Outflow</button></div>`,"#ff7c7c");
+ m.querySelector("#x").onclick=closeModal;m.querySelector("#cancel-undo").onclick=closeModal;
+ const button=m.querySelector("#confirm-undo");
+ button.onclick=async()=>{
+  if(button.disabled)return;button.disabled=true;
+  try{
+   const input={kitId,txId,expectedKit,inverseId:uid(),date:localDate(),reversedAt:new Date().toISOString()};
+   let result;
+   if(_demoActive)result=planUndoExclusivePhysicalOutflow(state,{kitId,eventId:txId,undoEventId:input.inverseId,date:input.date,loggedAt:input.reversedAt});
+   else{
+    const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable");
+    const saved=JSON.parse(raw),current=(saved.supplies||[]).find(s=>String(s.id)===String(kitId));
+    if(!current||JSON.stringify(current)!==expectedKit)throw Error("Kit changed; reopen Undo");
+    const writer=nexusWriter();
+    result=await writer.transaction(saved,snapshot=>{const k=(snapshot.supplies||[]).find(s=>String(s.id)===String(kitId));if(!k||JSON.stringify(k)!==expectedKit)throw Error('Kit changed; reopen Undo');return planUndoExclusivePhysicalOutflow(snapshot,{kitId,eventId:txId,undoEventId:input.inverseId,date:input.date,loggedAt:input.reversedAt});});
+    _nexusLastSavedSnapshot=writer.expected();
+   }
+   state=result.next;closeModal();render();
+  }catch(e){showErrorBanner("Undo not saved: "+e.message);}
+  finally{if(button.isConnected)button.disabled=false;}
+ };
+}
+// Editing a physical outflow must reconcile its saved amount and the exact
+// physical vial in one cross-tab exclusive state transaction. Old events without
+// before/after metadata require an explicit correction, never inferred mass.
+function planExclusivePhysicalOutflowEdit(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(x=>String(x.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.wasteLog))
+    throw Error("Exact physical kit and outflow history required");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Edit Outflow");
+  const index=kit.wasteLog.findIndex(x=>String(x.id)===String(input.eventId));
+  const tx=kit.wasteLog[index];
+  if(!tx||tx.status!=="active"||
+    !["consumed_open_partial","consumed_open_whole","transferred_sealed"].includes(tx.outflowKind)||
+    !tx.stockBefore||!tx.stockAfter||!tx.sourceVialSnapshot)
+    throw Error("Legacy or reversed outflow cannot be edited safely; use a manual correction");
+  const matches=kit.vials.filter(v=>String(v.id)===String(tx.vialId));
+  if(matches.length!==1)throw Error("Original physical vial unavailable or duplicated");
+  const vial=matches[0];
+  if(JSON.stringify(vial)!==JSON.stringify({...tx.sourceVialSnapshot,
+    remainingMg:tx.stockAfter.remainingMg,status:tx.stockAfter.status}))
+    throw Error("Source vial changed since outflow; edit blocked");
+  if(kit.wasteLog.slice(index+1).some(e=>String(e.vialId)===String(vial.id)&&
+      e.status==="active"&&e.type!=="outflow-edit"))
+    throw Error("Later vial outflow or adjustment exists; edit blocked");
+  const timestamp=new Date(tx.loggedAt||tx.date).getTime();
+  if(Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+    .some(comp=>(comp.doses||[]).some(d=>{
+      const references=(d.allocations||[]).some(a=>String(a.vialId)===String(vial.id))||
+        (d.vialId!=null&&String(d.vialId)===String(vial.id)&&
+          (d.kitId==null||String(d.kitId)===String(kit.id)));
+      return references&&(!Number.isFinite(timestamp)||!Number.isFinite(new Date(d.date||"").getTime())||
+        new Date(d.date).getTime()>timestamp);
+    })))throw Error("Later dose history exists; edit blocked");
+  if((kit.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id)&&
+    (!Number.isFinite(timestamp)||!Number.isFinite(new Date(p.createdAt||p.date||"").getTime())||
+     new Date(p.createdAt||p.date).getTime()>timestamp)))
+    throw Error("Later preparation reference exists; edit blocked");
+  const mg=Number(input.mg);
+  if(!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg)
+    throw Error("Enter a positive outflow amount in hundredths of mg");
+  const reason=typeof input.reason==="string"?input.reason.trim():"";
+  const date=input.date;
+  if(!reason||typeof date!=="string"||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date))
+    throw Error("Outflow reason and date are required");
+  if(!input.editId||kit.wasteLog.some(e=>String(e.id)===String(input.editId)))
+    throw Error("Unique edit event ID required");
+  const originalMg=Number(tx.mg),starting=Number(tx.stockBefore.remainingMg);
+  if(!Number.isFinite(originalMg)||!Number.isFinite(starting)||starting<=0)
+    throw Error("Original outflow balance cannot be verified");
+  let afterMg=Number(tx.stockAfter.remainingMg),afterStatus=tx.stockAfter.status;
+  if(tx.outflowKind==="transferred_sealed"){
+    if(tx.stockBefore.status!=="sealed"||mg!==originalMg||mg!==starting)
+      throw Error("A sealed whole-vial transfer cannot have its physical amount edited");
+  }else if(tx.outflowKind==="consumed_open_whole"){
+    if(mg!==originalMg||mg!==starting)
+      throw Error("Whole open-vial outflow amount cannot be changed; use explicit correction");
+  }else{
+    if(mg>=starting)throw Error("Partial outflow must be smaller than the original stock");
+    afterMg=Math.round((starting-mg)*100)/100;
+    if(afterMg<=0.01)throw Error("Partial outflow would empty the vial; use whole-vial flow");
+    afterStatus=tx.stockBefore.status;
+  }
+  const previous={mg:tx.mg,reason:tx.reason,notes:tx.notes,date:tx.date,
+    stockAfter:JSON.parse(JSON.stringify(tx.stockAfter))};
+  vial.remainingMg=afterMg;
+  vial.status=afterStatus;
+  tx.mg=mg;tx.reason=reason;tx.notes=String(input.notes||"");tx.date=date;
+  tx.stockAfter={remainingMg:afterMg,status:afterStatus};
+  tx.editHistory=Array.isArray(tx.editHistory)?tx.editHistory:[];
+  tx.editHistory.push({id:input.editId,loggedAt:input.loggedAt,previous,
+    updated:{mg,reason,notes:tx.notes,date,stockAfter:JSON.parse(JSON.stringify(tx.stockAfter))}});
+  kit.wasteLog.push({id:input.editId,type:"outflow-edit",status:"reversed",mg:0,
+    date:input.editDate||date,loggedAt:input.loggedAt,vialId:vial.id,editsEventId:tx.id,
+    reason:"Historical outflow edited",notes:"Original and corrected details retained on source event"});
+  return {next,eventId:input.editId};
+}
+function editOutflowModal(kitId,txId){
+  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
+  const tx=(s.wasteLog||[]).find(x=>String(x.id)===String(txId));if(!tx)return;
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:var(--t3);letter-spacing:1.5px">EDIT OUTFLOW</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <button id="x" aria-label="Close Edit Outflow" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <label class="field-label">AMOUNT (mg)</label>
-    <input id="eo-mg" type="number" step="0.01" class="inp" value="${tx.mg}" style="margin-bottom:14px">
-    <label class="field-label">REASON</label>
+    <div class="hint" style="margin-bottom:12px">Editing the amount updates the exact physical vial and historical entry together. A whole-vial transfer amount cannot be changed.</div>
+    <label class="field-label" for="eo-mg">AMOUNT (mg)</label>
+    <input id="eo-mg" type="number" min="0.01" step="0.01" class="inp" value="${tx.mg}" style="margin-bottom:14px">
+    <label class="field-label" for="eo-reason">REASON</label>
     <input id="eo-reason" class="inp" value="${esc(tx.reason||"")}" style="margin-bottom:14px">
-    <label class="field-label">DATE</label>
+    <label class="field-label" for="eo-date">DATE</label>
     <input id="eo-date" type="date" class="inp" value="${dayKey(tx.date)}" style="margin-bottom:14px">
-    <label class="field-label">NOTES (optional)</label>
+    <label class="field-label" for="eo-notes">NOTES (optional)</label>
     <textarea id="eo-notes" class="inp" style="min-height:50px;resize:vertical;margin-bottom:18px">${esc(tx.notes||"")}</textarea>
     <button id="eo-save" class="btn-primary" style="background:var(--t3)">Save Changes</button>
-  `, "#888");
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#eo-save").onclick = () => {
-    const newMg = parseFloat(m.querySelector("#eo-mg").value)||0;
-    tx.mg = newMg;
-    tx.reason = m.querySelector("#eo-reason").value.trim();
-    tx.date = m.querySelector("#eo-date").value || tx.date;
-    tx.notes = m.querySelector("#eo-notes").value;
-    saveState(); closeModal(); render();
+  `,"#888");
+  m.querySelector("#x").onclick=closeModal;
+  const button=m.querySelector("#eo-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const raw=m.querySelector("#eo-mg").value.trim(),mg=Number(raw);
+    if(!raw||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){
+      showErrorBanner("Enter a positive mg amount with at most two decimals.");return;
+    }
+    const reason=m.querySelector("#eo-reason").value.trim(),
+      date=m.querySelector("#eo-date").value,notes=m.querySelector("#eo-notes").value;
+    if(!reason||!date){showErrorBanner("Outflow reason and date are required.");return;}
+    button.disabled=true;
+    try{
+      const input={kitId:s.id,eventId:tx.id,expectedKit,mg,reason,date,notes,
+        editId:uid(),editDate:localDate(),loggedAt:new Date().toISOString()};
+      let result;
+      if(_demoActive)result=planExclusivePhysicalOutflowEdit(state,input);
+      else{
+        const rawSaved=localStorage.getItem(STORE_KEY);
+        if(!rawSaved)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(rawSaved);
+        const kit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!kit||JSON.stringify(kit)!==expectedKit)throw Error("Kit changed; reopen Edit Outflow");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflowEdit(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Outflow edit not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
@@ -1458,72 +1688,94 @@ function logWasteModal(supplyId) {
   };
   m.querySelectorAll(".outflow-type-toggle").forEach(btn=>btn.onclick=()=>setType(btn.dataset.type));
 
-  m.querySelector("#waste-save").onclick = () => {
-    const mode0 = mode;
-    const date = m.querySelector("#waste-date").value || localDate();
-    const notes = m.querySelector("#waste-notes").value;
-    const conf = OUTFLOW_TYPES.find(t=>t.key===outflowType);
-    const value = conf.field==="select" ? m.querySelector("#waste-reason").value : m.querySelector("#outflow-text-input").value.trim();
-    const reason = conf.buildReason(value);
-    migrateKitToV2(s);
-    const openVial = kitOpenVialV2(s);
-    const sealedVials = kitSealedVialsV2(s);
-
-    if (mode0==="partial") {
-      const mg = parseFloat(m.querySelector("#waste-mg").value)||0;
-      if (mg<=0) return;
-      // A partial amount only makes sense as coming out of the vial actually in use.
-      if (!openVial) { showErrorBanner("No open vial to draw a partial outflow from."); return; }
-      openVial.remainingMg = Math.max(0, Math.round((openVial.remainingMg-mg)*100)/100);
-      if (openVial.remainingMg <= 0.01) { openVial.remainingMg = 0; openVial.status = "empty"; }
-      if (!s.wasteLog) s.wasteLog = [];
-      s.wasteLog.push({ id: uid(), date, loggedAt: new Date().toISOString(), mg, type: outflowType, reason, notes, status:"active", vialId: openVial.id, outflowKind:"consumed_open_partial" });
-      saveState(); closeModal(); render();
-      return;
+  const button=m.querySelector("#waste-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const current=(state.supplies||[]).find(x=>String(x.id)===String(s.id));
+    if(!current||!Array.isArray(current.vials)||
+       !current.vials.every(v=>v.remainingMg!==undefined&&Number.isFinite(Number(v.remainingMg)))){
+      showErrorBanner("This kit needs inventory reconciliation before an outflow.");return;
     }
-
-    // Whole vial — a real physical choice with real consequences, never inferred. If
-    // there's genuinely only one kind of vial available, there's nothing to ask; if both
-    // a sealed backup and an open vial exist, this MUST be an explicit choice — silently
-    // preferring one over the other is exactly the bug this flow is being rebuilt to fix.
-    const proceedWhole = (target, kind) => {
-      applyWholeVialOutflow(s, target, kind, { outflowType, reason, notes, date });
-      saveState(); closeModal(); render();
+    const expectedKit=JSON.stringify(current);
+    const openVials=current.vials.filter(v=>["open","active"].includes(v.status)&&Number(v.remainingMg)>0);
+    const sealedVials=current.vials.filter(v=>v.status==="sealed"&&Number(v.remainingMg)>0);
+    if(openVials.length>1){showErrorBanner("Multiple open vials require reconciliation before outflow.");return;}
+    const openVial=openVials[0]||null;
+    const date=m.querySelector("#waste-date").value||localDate();
+    const notes=m.querySelector("#waste-notes").value;
+    const config=OUTFLOW_TYPES.find(t=>t.key===outflowType);
+    const value=config.field==="select"?m.querySelector("#waste-reason").value:m.querySelector("#outflow-text-input").value.trim();
+    const reason=config.buildReason(value);
+    const proceed=async(target,kind,amount)=>{
+      if(button.disabled)return;
+      button.disabled=true;
+      try{
+        if(!target)throw Error("Choose a physical source vial");
+        const input={kitId:s.id,expectedKit,vialId:target.id,
+          expectedVial:JSON.stringify(target),mg:amount,kind,
+          type:outflowType,reason,notes,date,eventId:uid(),loggedAt:new Date().toISOString()};
+        let result;
+        if(_demoActive)result=planExclusivePhysicalOutflow(state,input);
+        else{
+          const raw=localStorage.getItem(STORE_KEY);
+          if(!raw)throw Error("Saved inventory unavailable; reload");
+          const saved=JSON.parse(raw),kit=(saved.supplies||[]).find(k=>String(k.id)===String(s.id));
+          if(!kit||JSON.stringify(kit)!==expectedKit)
+            throw Error("Kit changed; reopen Log Outflow");
+          const writer=nexusWriter();
+          result=await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflow(snapshot,input));
+          _nexusLastSavedSnapshot=writer.expected();
+        }
+        state=result.next;closeModal();render();
+      }catch(e){showErrorBanner("Outflow not saved: "+e.message);}
+      finally{if(button.isConnected)button.disabled=false;}
     };
-
-    const wholeRoute = resolveWholeVialOutflow(openVial, sealedVials);
-    if (wholeRoute === "choose") {
-      // Genuine ambiguity — ask, and default the selection (not the action) toward the
-      // sealed vial for anything that isn't "wasted," since giving away/testing a vial
-      // you've never opened is by far the more common real case; the person still has to
-      // confirm either way.
-      const preferSealed = outflowType!=="waste";
-      const dm = openModal(`
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-          <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">WHICH VIAL IS LEAVING?</span>
-          <button id="x2" style="color:var(--t4);font-size:18px">✕</button>
-        </div>
-        <div class="hint" style="margin-bottom:16px">This kit has both a sealed backup and a vial already in use. Pick exactly which physical vial is leaving your stash.</div>
-        <button class="whole-vial-choice" data-choice="sealed" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${preferSealed?"#ff7c7c14":"var(--surface-2)"};border:1px solid ${preferSealed?"#ff7c7c44":"var(--border-sub)"};margin-bottom:8px">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">Sealed vial — ${(sealedVials[0].vialMg!=null?sealedVials[0].vialMg:s.vialMg||0)}mg</div>
-          <div style="font-size:11px;color:var(--t5);margin-top:2px">Never opened · your open vial is untouched</div>
-        </button>
-        <button class="whole-vial-choice" data-choice="open" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${preferSealed?"var(--surface-2)":"#ff7c7c14"};border:1px solid ${preferSealed?"var(--border-sub)":"#ff7c7c44"}">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">Current open vial — ${openVial.remainingMg.toFixed(1)}mg remaining</div>
-          <div style="font-size:11px;color:var(--t5);margin-top:2px">This closes out your currently reconstituted vial</div>
-        </button>
-      `, "#ff7c7c");
-      dm.querySelector("#x2").onclick = closeModal;
-      dm.querySelectorAll(".whole-vial-choice").forEach(btn=>btn.onclick=()=>{
-        closeModal();
-        if (btn.dataset.choice==="sealed") proceedWhole(sealedVials[0], "transferred_sealed");
-        else proceedWhole(openVial, "consumed_open_whole");
-      });
-      return;
+    if(mode==="partial"){
+      const rawMg=m.querySelector("#waste-mg").value.trim(),mg=Number(rawMg);
+      if(!rawMg||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){
+        showErrorBanner("Enter a valid partial mg amount with at most two decimals.");return;
+      }
+      if(!openVial){showErrorBanner("No open vial to draw a partial outflow from.");return;}
+      if(mg>=Number(openVial.remainingMg)){
+        showErrorBanner("Partial outflow must be less than the available open-vial balance; select Whole Vial instead.");return;
+      }
+      await proceed(openVial,"consumed_open_partial",mg);return;
     }
-    if (wholeRoute === "sealed") { proceedWhole(sealedVials[0], "transferred_sealed"); return; }
-    if (wholeRoute === "open") { proceedWhole(openVial, "consumed_open_whole"); return; }
-    showErrorBanner("No vial available in this kit to log an outflow against.");
+    const chooseWhole=(target)=>{
+      if(!target){showErrorBanner("Choose the exact source vial.");return;}
+      const isSealed=target.status==="sealed";
+      return proceed(target,isSealed?"transferred_sealed":"consumed_open_whole",Number(target.remainingMg));
+    };
+    const available=[...sealedVials,...(openVial?[openVial]:[])];
+    if(!available.length){showErrorBanner("No vial available in this kit to log an outflow against.");return;}
+    if(available.length===1){await chooseWhole(available[0]);return;}
+    // Explicit exact-vial selection, including when multiple sealed backups exist.
+    // A type preference may affect ordering, never silently identify the source.
+    const ordered=outflowType==="waste"?[...(openVial?[openVial]:[]),...sealedVials]:available;
+    const options=ordered.map((v,i)=>`<option value="${esc(String(v.id))}">${v.status==="sealed"?"Sealed":"Open"} vial ${esc(String(v.sequenceNumber||i+1))} · ${Number(v.remainingMg)}mg</option>`).join("");
+    const sheet=openModal(`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span class="mono" style="font-size:13px;color:#ff7c7c;letter-spacing:1.5px">WHICH EXACT VIAL IS LEAVING?</span>
+        <button id="x2" aria-label="Cancel selection" style="color:var(--t4);font-size:18px">✕</button>
+      </div>
+      <div class="hint" style="margin-bottom:14px">Choose the exact physical source. No vial is selected automatically.</div>
+      <label for="waste-source" class="field-label">PHYSICAL SOURCE VIAL</label>
+      <select id="waste-source" class="inp" style="width:100%;min-height:46px;margin-bottom:16px">
+        <option value="">Choose a vial</option>${options}
+      </select>
+      <button id="waste-source-confirm" class="btn-primary" style="background:#ff7c7c">Confirm Outflow Source</button>
+    `,"#ff7c7c");
+    sheet.querySelector("#x2").onclick=closeModal;
+    const confirm=sheet.querySelector("#waste-source-confirm");
+    confirm.onclick=async()=>{
+      if(confirm.disabled)return;
+      const id=sheet.querySelector("#waste-source").value;
+      const selected=available.find(v=>String(v.id)===String(id));
+      if(!selected){showErrorBanner("Choose the exact source vial.");return;}
+      confirm.disabled=true;
+      try{await chooseWhole(selected);}
+      finally{if(confirm.isConnected)confirm.disabled=false;}
+    };
   };
 }
 
@@ -1532,7 +1784,8 @@ function openNewVialModal(supplyId, onDone) {
   const c = cfg(s.name);
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
-  const vialNum = ((s.reconHistory||[]).length)+1;
+  // Label the actual next physical vial, including when a sibling remains open.
+  const vialNum = Math.max(0,...(s.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">OPEN NEW VIAL</span>
@@ -1556,6 +1809,14 @@ function openNewVialModal(supplyId, onDone) {
       </div>
       <div id="rv-conc-preview" style="font-size:11px;color:var(--t4);margin-top:8px;text-align:center"></div>
     </div>
+    <label class="field-label" for="rv-purpose">INTENDED USE · THIS VIAL ONLY</label>
+    <select id="rv-purpose" class="inp" style="margin-bottom:10px;min-height:46px">
+      <option value="undecided">Decide later</option>
+      <option value="SubQ">Injectable · SubQ</option>
+      <option value="IM">Injectable · IM</option>
+      <option value="nasal-source">Plan a nasal preparation from this vial</option>
+    </select>
+    <p id="rv-purpose-note" class="hint" style="margin-bottom:14px">This labels the selected vial only. It does not transfer any quantity or create a nasal bottle.</p>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
     <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
@@ -1602,7 +1863,7 @@ function openNewVialModal(supplyId, onDone) {
     if(entry.isBlend){
       const sealed=getSealedVials(entry);if(!sealed.length||getActiveVial(entry)){showErrorBanner("No available sealed vial to open.");return;}
       const vial=sealed[0],notes=m.querySelector("#rvn").value.trim();
-      vial.status="open";vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
+      vial.status="open";vial.intendedUse=m.querySelector("#rv-purpose").value;vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
       // Immutable recipe for this physical vial; later kit edits cannot rewrite it.
       if(!Array.isArray(vial.composition) && Array.isArray(entry.composition))
         vial.composition=entry.composition.map(x=>({compound:x.compound,mg:Number(x.mg)}));
@@ -1618,9 +1879,12 @@ function openNewVialModal(supplyId, onDone) {
       // the way openNewVialModal's own inline bookkeeping and reconstituteVialModal's
       // vials[]-based bookkeeping just did. No more forced deactivation of other same-name
       // kits here — multiple can now be open at once, by explicit confirmation above.
-      activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
+      const openedVial=activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
+      openedVial.intendedUse=m.querySelector("#rv-purpose").value;
       saveState(); closeModal(); render();
-      if(typeof onDone==='function')onDone(getActiveVial(entry));
+      // When another vial in this kit is already open, the first-open lookup is
+      // ambiguous. Resume against the exact vial just opened, preserving its ID.
+      if(typeof onDone==='function')onDone(openedVial);
     });
   };
 }

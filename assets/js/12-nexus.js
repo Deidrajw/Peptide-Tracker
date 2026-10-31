@@ -256,7 +256,7 @@ function wireBody() {
     } catch(e) { console.error(e); }
   };
   const nd=document.getElementById("nuke-data"); if(nd) nd.onclick=()=>{
-    confirmAction("⚠️ Remove ALL data? This cannot be undone.",()=>{localStorage.removeItem(STORE_KEY);state=migrate(null);tab="home";render();});
+    confirmAction("⚠️ Remove ALL data? This cannot be undone.",()=>{try{nexusEraseSavedState();state=migrate(null);tab="home";render();}catch(e){console.error(e);showSaveWarning();}});
   };
   const delBtns=[
     ["del-health-all","Remove all health data (macros, weight, activity, measurements)?",()=>{
@@ -1387,8 +1387,22 @@ function showOnboarding() {
       if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
       next.profile.onboardingDone=true;
       const before=state;
-      try{state=next;saveState();const stored=localStorage.getItem(STORE_KEY);if(!stored||stored!==JSON.stringify(next))throw Error("Could not verify saved backup");}
-      catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
+      try{
+        if(_demoActive){
+          state=next; // isolated fictional onboarding restore
+        }else{
+          const writer=nexusWriter();
+          writer.saveLegacy(next);
+          _nexusLastSavedSnapshot=writer.expected();
+          state=next;
+        }
+      }catch(e){
+        state=before;
+        // Never blindly overwrite storage with a recovery copy after failure.
+        // Another tab may have updated the saved data; keep backup for review.
+        showSaveWarning();
+        throw e;
+      }
       closeModal();render();
     }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
   }

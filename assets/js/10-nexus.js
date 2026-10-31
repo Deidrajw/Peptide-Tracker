@@ -233,6 +233,13 @@ function stashView() {
     const displayOpenMg = activeVialForCard && vialRem!=null ? vialRem : null;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
     const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
+    // Stash owns routine legacy method setup. Do not infer a method from the
+    // compound name, silently modify a vial, or touch historical allocations.
+    const unresolvedOpenVials=vialList.filter(v=>
+      ["open","active"].includes(v.status) && getVialRemainingMg(s,v)>0.01 &&
+      !nexusExplicitAdminMethod(v.intendedUse) &&
+      !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)
+    );
 
     const secondaryBits = [];
     if (shotsEst!=null) secondaryBits.push(`~${shotsEst} shots left`);
@@ -245,6 +252,7 @@ function stashView() {
         <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}</span></span>
          <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
+      <div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Choose method, dose unit and tracking once";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Configure how you use ${esc(s.name)}">Use setup</button></div>
       ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
 
       ${displayOpenMg!==null ? `<div class="nx-kit-primary-vial">
@@ -256,6 +264,7 @@ function stashView() {
         <div class="nx-kit-primary-value nx-kit-primary-empty">No vial open</div>
         <div class="nx-kit-primary-hint">${sealed} sealed vial${sealed===1?"":"s"} available</div>
       </div>`}
+      ${unresolvedOpenVials.length?`<div class="nx-stash-method-prompt" role="status"><div class="nx-stash-method-prompt-copy"><strong>Vial setup needed</strong><span>${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need${unresolvedOpenVials.length===1?"s":""} a confirmed administration method.</span></div><button type="button" class="nx-stash-go-vial-method" data-kit-id="${esc(String(s.id))}">Set up vial</button></div>`:""}
       ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
       ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
 
@@ -306,11 +315,13 @@ function stashView() {
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
               const num=v.sequenceNumber||"—";
-              return `<div class="nx-kit-list-row nx-kit-vial-row">
+              return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
-                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left</div>
+                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
+                  ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer").map(p=>`<div class="nx-stash-plan-status"><span>Plan saved · ${esc(p.kind||"Other")}</span><small>Vial inventory unchanged</small></div>`).join("")}
                 </div>
+                ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
               </div>`;
             };
@@ -359,6 +370,21 @@ function stashView() {
   const liveEntries = entries.filter(s=>s.kitStatus!=="done");
   const doneEntries = entries.filter(s=>s.kitStatus==="done");
   const renderAnyKitCard = s => renderKitCard(s);
+  // Physical non-vial packages appear alongside kits, not in a separate
+  // "Other formulations" section. Existing standalone records remain unmodified.
+  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).map(x=>{
+    const typeNames={"capsule-bottle":"Capsules","nasal-bottle":"Nasal spray","raw-powder":"Raw powder","topical-container":"Topical"};
+    const amount=x.containerType==="capsule-bottle"
+      ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
+      :x.containerType==="nasal-bottle" ?`${x.remainingMl} mL · ${x.remainingMg} mg`
+      :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
+    return `<div class="card nx-kit-card nx-form-kit-card" data-formulation-id="${esc(String(x.id))}">
+      <div class="nx-kit-heading"><span class="nx-kit-title-stack"><strong class="nx-kit-card-title">${esc(x.compound)}</strong><span class="nx-card-status">${esc(typeNames[x.containerType]||"Other package")}</span></span>
+      <button type="button" class="nx-form-edit" style="min-height:46px;min-width:68px;padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
+      <div class="nx-form-kit-amount">${esc(amount)}</div>
+      <p class="nx-form-kit-hint">${x.sourceKitId?"Linked source kit":"Independent package"} · Inventory only, no automatic dose deductions</p>
+    </div>`;
+  }).join("");
   const GROUP_LABELS_STATUS = {attention:"NEEDS ATTENTION",active:"ACTIVE",stored:"STORED"};
   const GROUP_LABELS_INV = {active:"ACTIVE",sealed:"STORED / SEALED"};
   if (group==="status" || group==="inventory_state") {
@@ -393,6 +419,7 @@ function stashView() {
     if (open) doneEntries.forEach(s=>{ html+=renderAnyKitCard(s); });
   }
 
+  html+=packageCards;
   html+=`<button id="addvial" style="width:100%;padding:12px;border-radius:12px;background:#C9A0FF18;border:1px solid #C9A0FF44;color:#C9A0FF;font-size:13px;font-weight:600">+ Add Kit</button>`;
   html += `<div style="margin:18px 0 6px;padding:15px;border-radius:14px;background:var(--surface);border:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><strong style="font-size:14px;color:var(--t1)">Need to replenish?</strong><p style="font-size:12px;color:var(--t3);margin:5px 0 0">Your shopping list is linked here for convenience.</p></div><button type="button" id="nx-shopping-from-stash" style="min-height:44px;padding:10px 15px;border-radius:10px;background:#A78BFA20;border:1px solid #A78BFA66;color:var(--t1);font-size:13px;font-weight:600">Open shopping list →</button></div>`;
   return html;
@@ -1192,12 +1219,53 @@ function buildReminders() {
   // pausing means "don't quietly progress," which extends to not alerting about
   // transitions that aren't actually approaching in real terms.
   if (state.settings.phaseRemindersEnabled!==false) {
-    (state.protocols||[]).filter(proto=>["active","in_progress"].includes(proto.status)).forEach(proto=>{
+    (state.protocols||[]).filter(proto=>["active","in_progress","planned"].includes(proto.status)).forEach(proto=>{
       (proto.compounds||[]).forEach(comp=>{
         const info = getProtocolPhaseInfo(proto, comp);
-        if (!info || info.done || info.notStartedYet) return;
+        if (!info) return;
         const c2 = cfg(comp.name);
         const today = localDate();
+        // Planned protocols may alert about their upcoming first phase, but an
+        // overdue unactivated plan must not impersonate active progression.
+        if (proto.status==="planned" &&
+            !info.notStartedYet &&
+            !(info.current?.startDate===today && info.index===0)) return;
+        const phases = info.phases||[];
+        const first = phases[0], last = phases[phases.length-1];
+        if (!first || !last) return;
+        const daysTo = date => Math.round((new Date(date+"T12:00")-new Date(today+"T12:00"))/86400000);
+        // All alerts are derived from the existing pause-adjusted phase dates.
+        // They never update a stored protocol status, dose, or inventory record.
+        if (info.notStartedYet) {
+          const days = daysTo(first.startDate);
+          if ([7,1,0].includes(days)) {
+            const when = days===0?"starts today":days===1?"starts tomorrow":"starts in 7 days";
+            r(`pstart_${proto.id}_${comp.name}_${first.startDate}_${days}`,"phase",days===0?1:3,"📅",
+              `${comp.name} Phase 1 ${when}`,
+              `Scheduled start: ${fmtDate(first.startDate)}. Review your protocol before beginning.`,
+              c2.color,"protocol|"+comp.name,"View Protocol");
+          }
+          return;
+        }
+        if (info.done) {
+          // At elapsed schedule, surface a persistent review item, not a false
+          // automatic 'Completed' status. Manual completion remains the user's choice.
+          r(`pend_${proto.id}_${comp.name}_${last.endDate}`,"phase",1,"📋",
+            `${comp.name} protocol schedule ended`,
+            `Scheduled end: ${fmtDate(last.endDate)}. Review or update your protocol; its recorded status and history are unchanged.`,
+            c2.color,"protocol|"+comp.name,"Review Protocol");
+          return;
+        }
+        const remainingProtocolDays = daysTo(last.endDate);
+        // Phase endDate is exclusive: the first day after the final planned day
+        // is the schedule-ended day. 7/1-day reminders refer to that boundary.
+        if ([7,1].includes(remainingProtocolDays)) {
+          r(`pend_soon_${proto.id}_${comp.name}_${last.endDate}_${remainingProtocolDays}`,
+            "phase",remainingProtocolDays===1?2:3,"📅",
+            `${comp.name} protocol ends in ${remainingProtocolDays} day${remainingProtocolDays===1?"":"s"}`,
+            `Scheduled end: ${fmtDate(last.endDate)}. Your plan will need review when the schedule ends.`,
+            c2.color,"protocol|"+comp.name,"View Protocol");
+        }
 
         // TODAY — detected by comparing today's date directly against the current
         // phase's own startDate, NOT by counting daysLeft down to 0. On the actual
@@ -1205,6 +1273,13 @@ function buildReminders() {
         // duration still ahead (daysLeft equals the whole new phase's length, never 0) —
         // counting down could structurally never catch this moment. index>0 excludes the
         // very first phase, which has no "previous" phase to describe a change from.
+        if (info.current.startDate===today && info.index===0) {
+          r(`pstart_${proto.id}_${comp.name}_${info.current.startDate}_0`,"phase",1,"📅",
+            `${comp.name} Phase 1 starts today`,
+            `Your first planned phase begins today. Review its schedule and record doses when taken.`,
+            c2.color,"protocol|"+comp.name,"View Protocol");
+          return;
+        }
         if (info.current.startDate===today && info.index>0) {
           const prev = info.phases[info.index-1], cur = info.current;
           const prevIsRest = prev.type!=="dose", curIsRest = cur.type!=="dose";
@@ -1218,7 +1293,7 @@ function buildReminders() {
         // TOMORROW / 3-DAYS-OUT — forward-looking via info.next, unchanged from before.
         if (!info.next) return;
         const daysUntil = info.daysLeft;
-        if (![1,3].includes(daysUntil)) return;
+        if (![1,3,7].includes(daysUntil)) return;
         const cur = info.current, next = info.next;
         const curIsRest = cur.type!=="dose", nextIsRest = next.type!=="dose";
         const describeChange = () => {
@@ -1234,12 +1309,12 @@ function buildReminders() {
           if (enteringRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins tomorrow`,`Your active dosing ends tomorrow.`,c2.color,"protocol|"+comp.name,"View Protocol");
           else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${next.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+2} tomorrow`,`Your dose changes from ${cur.dose||"—"} to ${next.dose||"—"} ${c2.unit}.`,c2.color,"protocol|"+comp.name,"View Protocol");
-        } else if (daysUntil===3) {
+        } else if (daysUntil===3 || daysUntil===7) {
           const changeDesc = describeChange();
-          const detail = enteringRest ? `Your active dosing ends in 3 days. Rest phase begins ${fmtDate(next.startDate)}.`
-            : exitingRest ? `Your rest phase ends in 3 days. Dosing resumes ${fmtDate(next.startDate)} at ${next.dose||"—"} ${c2.unit}.`
-            : `Phase change in 3 days.${changeDesc?" "+changeDesc+".":""}`;
-          r(idBase+"_soon","phase",3, enteringRest?"⏸":exitingRest?"▶":"📈", `${comp.name} phase change in 3 days`, detail, c2.color,"protocol|"+comp.name,"View Protocol");
+          const detail = enteringRest ? `Your active dosing ends in ${daysUntil} days. Rest phase begins ${fmtDate(next.startDate)}.`
+            : exitingRest ? `Your rest phase ends in ${daysUntil} days. Dosing resumes ${fmtDate(next.startDate)} at ${next.dose||"—"} ${c2.unit}.`
+            : `Phase change in ${daysUntil} days.${changeDesc?" "+changeDesc+".":""}`;
+          r(idBase+"_soon","phase",3, enteringRest?"⏸":exitingRest?"▶":"📈", `${comp.name} phase change in ${daysUntil} days`, detail, c2.color,"protocol|"+comp.name,"View Protocol");
         }
       });
     });
@@ -1977,3 +2052,236 @@ document.addEventListener('click',e=>{
  if(btn.id==='nx-shopping-from-stash'){tab='plans';state._plansSub='shopping';render();window.scrollTo(0,0);}
 });
 
+
+/* Isolated formulation stock editor. Never converts existing kits or vials.
+ * Saves one complete state snapshot and swaps in-memory state only after readback.
+ */
+function nexusKitFormPicker(){
+ const forms=[["vial","Vials","Individual vials, reconstitution and remaining mg"],["capsule-bottle","Capsules","Capsule count and labelled strength"],["raw-powder","Raw powder","Powder mass, no vial calculations"],["topical-container","Topical","Product container and remaining volume"],["nasal-bottle","Nasal spray","Purchased spray bottle; homemade preparations start from a vial"]];
+ const html='<section class="nx-kit-type-picker"><div class="nx-form-stock-editor-head"><strong>ADD KIT</strong><button id="x" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" style="min-height:80px;display:flex;flex-direction:column;padding:12px" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
+ const m=openModal(html,"#A78BFA");m.querySelector("#x").onclick=closeModal;
+ m.querySelectorAll("[data-kit-form]").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.kitForm;closeModal();if(type==="vial")supplyModal(null,null,true);else nexusAddFormulationModal(type);});
+}
+function nexusAddFormulationModal(type,existingId=null){
+  if(!["capsule-bottle","nasal-bottle","raw-powder","topical-container"].includes(type))return;
+  const oral=type==="capsule-bottle",raw=type==="raw-powder",topical=type==="topical-container";
+  const existing=existingId==null?null:(state.formulationStocks||[]).find(x=>String(x.id)===String(existingId)&&x.containerType===type);
+  if(existingId!=null&&!existing)return;
+  const m=openModal(`<section class="nx-form-stock-editor">
+    <div class="nx-form-stock-editor-head"><strong>${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><input id="nx-form-name" class="inp" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or enter compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden style="max-height:192px;overflow-y:auto;border-radius:12px;margin:6px 0 12px"></div>
+    ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
+     <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" value="${existing?existing.mgPerCapsule:""}" placeholder="Labelled strength" ${existing?"readonly":""}>`:
+     raw?`<label class="field-label" for="nx-form-mg">${existing?"MASS REMAINING":"MASS"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}">`:
+     topical?`<label class="field-label" for="nx-form-volume">${existing?"VOLUME REMAINING":"VOLUME"} (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
+     `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
+      <label class="field-label" for="nx-form-mg">${existing?"AMOUNT REMAINING":"AMOUNT"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
+    <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
+    <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
+  </section>`, "#A78BFA");
+  m.querySelector("#x").onclick=closeModal;
+  // Native datalist results were unreliable in iPhone browsers: provide visible tap choices.
+  const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
+  const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
+  function refreshCompoundMatches(){
+    if(existing)return;
+    const query=compoundInput.value.trim().toLocaleLowerCase();
+    const matches=candidates.filter(name=>name.toLocaleLowerCase().includes(query)).slice(0,30);
+    matchList.replaceChildren();
+    for(const name of matches){
+      const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
+      option.style.cssText="display:block;width:100%;min-height:44px;text-align:left;padding:10px 14px;background:var(--surface);color:var(--t1);border:1px solid var(--border-sub);border-radius:8px;margin:3px 0";
+      option.addEventListener("click",()=>{compoundInput.value=name;matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false")});
+      matchList.append(option);
+    }
+    matchList.hidden=!matches.length;
+    compoundInput.setAttribute("aria-expanded",String(!!matches.length));
+  }
+  if(!existing){compoundInput.addEventListener("focus",refreshCompoundMatches);compoundInput.addEventListener("input",refreshCompoundMatches);}
+  m.querySelector("#nx-form-save").onclick=async()=>{
+    const saveButton=m.querySelector("#nx-form-save");
+    if(saveButton.disabled)return;
+    saveButton.disabled=true;
+    try{
+      if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
+      const input=existing
+        ?{id:existing.id,transactionId:"adjust-"+uid()}
+        :{id:"form-"+uid(),compound:m.querySelector("#nx-form-name").value.trim(),containerType:type,method:oral?"Oral":raw?"Unassigned":topical?"Topical":"Nasal"};
+      if(oral){
+        const rawCount=m.querySelector("#nx-form-count").value;
+        if(rawCount.trim()==="")throw Error("Enter the capsule count");
+        if(existing)input.remainingCount=Number(rawCount);
+        else {input.count=Number(rawCount);input.mgPerCapsule=Number(m.querySelector("#nx-form-strength").value);}
+      }else if(raw){
+        const v=m.querySelector("#nx-form-mg").value;if(!v.trim())throw Error("Enter raw powder mass");
+        if(existing)input.remainingMg=Number(v);else input.quantityMg=Number(v);
+      }else if(topical){
+        const v=m.querySelector("#nx-form-volume").value;if(!v.trim())throw Error("Enter topical volume");
+        if(existing)input.remainingMl=Number(v);else input.volumeMl=Number(v);
+      }else{
+        const rawVolume=m.querySelector("#nx-form-volume").value,rawMg=m.querySelector("#nx-form-mg").value;
+        if(rawVolume.trim()===""||rawMg.trim()==="")throw Error("Enter volume and amount");
+        if(existing){input.remainingMl=Number(rawVolume);input.remainingMg=Number(rawMg);}
+        else {input.volumeMl=Number(rawVolume);input.quantityMg=Number(rawMg);}
+      }
+      const operation=existing?"edit":"add",commit=existing?"commitEdit":"commitAdd";
+      if(_demoActive){
+        state=globalThis.NexusFormulationStock[operation](state,input).next;
+      }else{
+        // Rebase onto the saved snapshot only when inventory itself is unchanged.
+        // Other in-memory UI drafts/settings must not cause a false inventory conflict.
+        const savedRaw=localStorage.getItem(STORE_KEY);
+        if(!savedRaw)throw Error("Saved inventory unavailable");
+        const saved=JSON.parse(savedRaw);
+        if(JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[])||
+           JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
+          throw Error("Inventory changed in another view. Reopen this form to review the latest inventory.");
+        // Inventory-changing Stash edits now join the exclusive cross-tab
+        // writer instead of the synchronous legacy save path. The planner
+        // runs only after lock acquisition and a strict saved-state match.
+        const writer=nexusWriter();
+        const result=await writer.transaction(saved,snapshot=>{
+          if(JSON.stringify(snapshot.supplies||[])!==JSON.stringify(state.supplies||[])||
+             JSON.stringify(snapshot.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[]))
+            throw Error("Inventory changed. Reopen this form to review the latest inventory.");
+          return globalThis.NexusFormulationStock[operation](snapshot,input);
+        });
+        state=result.next;_nexusLastSavedSnapshot=writer.expected();
+      }
+      closeModal();render();
+    }catch(e){showErrorBanner("Container not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
+  };
+}
+// Stash preparation planning: a reversible UI flow around non-transferring
+// metadata. Deliberately NO stock movement, bottle creation, or dosing math.
+function nexusCreateLinkedPreparation(kitId,vialId){
+ const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+ const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
+ if(!kit||!vial||!["open","active"].includes(vial.status)){showErrorBanner("Select an open vial in the existing kit.");return;}
+ const existing=(kit.linkedPreparationPlans||[]).find(p=>String(p.sourceVialId)===String(vial.id)&&p.status==="planned-no-transfer");
+ const kitName=esc(kit.name),number=esc(String(vial.sequenceNumber||"?"));
+ const options=[["nasal","Nasal"],["subq","SubQ"],["im","IM"],["other","Other"]];
+ const kindName=kind=>options.find(o=>o[0]===kind)?.[1]||"Other";
+ const m=openModal(`<section class="nx-form-stock-editor nx-prep-plan-sheet" aria-label="Vial preparation plan">
+  <div class="nx-form-stock-editor-head"><strong>${existing?"Preparation plan":"Plan a preparation"}</strong><button id="x" type="button" aria-label="Close preparation plan">✕</button></div>
+  <div class="nx-prep-plan-source">${kitName} · Vial ${number}</div>
+  <div class="nx-prep-plan-state" role="status"><strong>${existing?"Preparation plan saved":"Planning only"}</strong><span>${existing?"Your vial inventory is unchanged. No prepared stock was created.":"Save what you're planning. Your vial inventory won't change until an actual preparation is recorded."}</span></div>
+  <div id="nx-prep-plan-read" ${existing?"":"hidden"}>
+    <div class="nx-prep-plan-row"><span>Preparation</span><strong id="nx-prep-plan-kind-value">${existing?esc(kindName(existing.kind)):""}</strong></div>
+    <div class="nx-prep-plan-row"><span>Notes</span><strong id="nx-prep-plan-notes-value">${existing?esc(existing.notes||"None"):""}</strong></div>
+  </div>
+  <div id="nx-prep-plan-edit" ${existing?"hidden":""}>
+    <div class="nx-prep-plan-step">STEP 1 · WHAT ARE YOU PLANNING?</div>
+    <label class="field-label" for="nx-linked-kind">Intended preparation</label>
+    <select id="nx-linked-kind" class="inp">${options.map(([value,label])=>`<option value="${value}"${existing?.kind===value?" selected":""}>${label}</option>`).join("")}</select>
+    <label class="field-label" for="nx-linked-notes">Notes · optional</label>
+    <textarea id="nx-linked-notes" class="inp" maxlength="500" rows="3" placeholder="What do you want to remember?">${existing?esc(existing.notes||""):""}</textarea>
+    <div class="nx-prep-plan-step">STEP 2 · REVIEW WHAT GETS SAVED</div>
+    <p class="hint">Nexus will link this plan to Vial ${number}. It will not change vial stock, create a nasal bottle, calculate concentration or mark preparation complete.</p>
+    <button id="nx-linked-save" class="btn-primary" type="button">${existing?"Save plan changes":"Save plan only"}</button>
+  </div>
+  <div class="nx-prep-plan-next">
+    <div class="nx-prep-plan-step">WHAT HAPPENS NEXT?</div>
+    <p>This saves your plan, not a completed preparation. When you actually prepare stock, Nexus will need a separate inventory record. You can set a vial's administration method from its <strong>⋯ actions</strong> menu.</p>
+  </div>
+  ${existing?'<button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-edit-action">Edit plan</button>':""}
+  <button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-done">Back to vial</button>
+ </section>`,"#A78BFA");
+ m.querySelector("#x").onclick=closeModal;
+ m.querySelector("#nx-prep-plan-done").onclick=closeModal;
+ const edit=m.querySelector("#nx-prep-plan-edit-action");
+ if(edit)edit.onclick=()=>{
+   m.querySelector("#nx-prep-plan-read").hidden=true;
+   m.querySelector("#nx-prep-plan-edit").hidden=false;
+   edit.hidden=true;
+ };
+ m.querySelector("#nx-linked-save").onclick=()=>{
+   const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+   const source=current?.vials?.find(v=>String(v.id)===String(vialId));
+   if(!source||!["open","active"].includes(source.status)){showErrorBanner("Source vial is no longer open. Nothing saved.");return;}
+   const kind=m.querySelector("#nx-linked-kind").value;
+   if(!options.some(o=>o[0]===kind)){showErrorBanner("Select a valid preparation type.");return;}
+   const notes=m.querySelector("#nx-linked-notes").value.trim();
+   current.linkedPreparationPlans=Array.isArray(current.linkedPreparationPlans)?current.linkedPreparationPlans:[];
+   // Updating the same plan prevents a repeated CTA from silently duplicating records.
+   const saved=existing?current.linkedPreparationPlans.find(p=>String(p.id)===String(existing.id)):null;
+   if(existing&&!saved){showErrorBanner("The plan has changed. Reopen it before editing.");return;}
+   if(saved){saved.kind=kind;saved.notes=notes;}
+   else current.linkedPreparationPlans.push({id:uid(),sourceKitId:current.id,sourceVialId:source.id,kind,notes,createdAt:new Date().toISOString(),status:"planned-no-transfer"});
+   saveState();closeModal();render();
+ };
+}
+document.addEventListener("click",e=>{
+ const btn=e.target.closest?.(".nx-stash-use-setup");
+ if(btn&&typeof nexusUseSetupModal==="function")nexusUseSetupModal(btn.dataset.compound);
+});
+document.addEventListener("click",e=>{
+ const btn=e.target.closest?.(".nx-kit-create-preparation");if(btn)nexusCreateLinkedPreparation(btn.dataset.kitId,btn.dataset.vialId);
+});
+document.addEventListener("click",e=>{
+  if(e.target.closest?.("#nx-add-capsules"))nexusAddFormulationModal("capsule-bottle");
+  if(e.target.closest?.("#nx-add-nasal"))nexusAddFormulationModal("nasal-bottle");
+  const edit=e.target.closest?.("[data-formulation-edit]");
+  if(edit){const stock=(state.formulationStocks||[]).find(x=>String(x.id)===edit.dataset.formulationEdit);if(stock)nexusAddFormulationModal(stock.containerType,stock.id);}
+});
+
+ document.addEventListener("click",e=>{
+  const btn=e.target.closest?.(".nx-stash-go-vial-method");
+  if(!btn)return;
+  const card=btn.closest(".nx-kit-card");
+  if(!card)return;
+  const details=card.querySelector(".nx-kit-detail-button");
+  const panel=card.querySelector(".nx-kit-detail-panel");
+  if(panel?.hidden)details?.click();
+  card.querySelector('.nx-stash-tab[data-panel="vials"]')?.click();
+  card.querySelector(".nx-stash-set-vial-method")?.focus();
+ });
+
+/* Explicit one-time legacy vial identification lives in Stash.
+ * Never infer a method from the compound name or debit stock in setup. */
+function nexusStashSetLegacyVialMethod(kitId,vialId){
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+  if(!kit)return;
+  const vial=(kit.vials||[]).find(v=>String(v.id)===String(vialId));
+  if(!vial || !["open","active"].includes(vial.status) || !(getVialRemainingMg(kit,vial)>0.01))return;
+  const resolved=nexusExplicitAdminMethod(vial.intendedUse)||nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
+  if(resolved){showErrorBanner("This vial already has a confirmed administration method.");return;}
+  const n=vial.sequenceNumber||"?";
+  const m=openModal(`
+    <div class="nx-stash-method-sheet">
+      <div class="nx-stash-method-header">
+        <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2>How is this vial used?</h2><p>${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
+        <button type="button" id="nx-stash-method-close" aria-label="Close without changes">✕</button>
+      </div>
+      <p class="nx-stash-method-explain">This older vial has no saved method. Select the method you actually prepared it for. Confirming will not change its remaining amount or past dose history.</p>
+      <fieldset class="nx-stash-method-choices"><legend>Administration method</legend>
+        ${NEXUS_ADMIN_METHODS.map(method=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(method)}"><span>${esc(method)}</span></label>`).join("")}
+      </fieldset>
+      <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm vial method</button>
+    </div>`);
+  m.querySelector("#nx-stash-method-close").onclick=closeModal;
+  m.querySelectorAll('input[name="nx-stash-vial-use"]').forEach(input=>input.onchange=()=>{
+    m.querySelector("#nx-stash-method-confirm").disabled=false;
+  });
+  m.querySelector("#nx-stash-method-confirm").onclick=()=>{
+    const method=m.querySelector('input[name="nx-stash-vial-use"]:checked')?.value;
+    if(!NEXUS_ADMIN_METHODS.includes(method))return;
+    // Re-read source by its exact identifiers before committing.
+    const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+    const target=(current?.vials||[]).find(v=>String(v.id)===String(vialId));
+    if(!target || !["open","active"].includes(target.status) || !(getVialRemainingMg(current,target)>0.01)){
+      showErrorBanner("This vial has changed. Reopen its details before confirming.");return;
+    }
+    if(nexusExplicitAdminMethod(target.intendedUse) || nexusExplicitAdminMethod(current.preparationMethod||current.administrationMethod||current.route)){
+      showErrorBanner("A method was already confirmed. No changes made.");return;
+    }
+    target.intendedUse=method;
+    saveState();closeModal();render();
+  };
+}
+document.addEventListener("click",e=>{
+  const btn=e.target.closest?.(".nx-stash-set-vial-method");
+  if(btn)nexusStashSetLegacyVialMethod(btn.dataset.kitId,btn.dataset.vialId);
+});

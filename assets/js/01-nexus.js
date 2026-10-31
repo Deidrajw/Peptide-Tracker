@@ -50,11 +50,46 @@ function showSaveWarning() {
   warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
   document.body.appendChild(warning);
 }
-function saveState() {
-  if(_demoActive) return; // never write demo data to localStorage
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-  catch(e) { console.error('Nexus save failed', e); showSaveWarning(); }
+// All ordinary writes and preparation transfers use this single storage key.
+// Ordinary callers remain synchronous; reject stale snapshots rather than overwrite
+// a transfer from another tab. A transfer's exclusive lock is not shared by
+// legacy synchronous writers, so real transfer controls remain disabled.
+let _nexusLastSavedSnapshot = (()=>{try{return localStorage.getItem(STORE_KEY)}catch{return null}})();
+let _nexusSharedWriter=null;
+function nexusWriter() {
+  if(!_nexusSharedWriter){
+    if(!globalThis.NexusWriteCoordinator) throw Error("Shared state writer is unavailable");
+    const lock=(typeof navigator!=="undefined"&&navigator.locks&&typeof navigator.locks.request==="function")
+      ? (name,action)=>navigator.locks.request(name,{mode:"exclusive"},action):null;
+    _nexusSharedWriter=globalThis.NexusWriteCoordinator.create({
+      read:()=>localStorage.getItem(STORE_KEY),
+      write:serialized=>localStorage.setItem(STORE_KEY,serialized),
+      remove:()=>localStorage.removeItem(STORE_KEY),
+      lock,lockName:STORE_KEY+":inventory-transfer",initialSnapshot:_nexusLastSavedSnapshot
+    });
+  }
+  return _nexusSharedWriter;
 }
+function nexusEraseSavedState() {
+  if(_demoActive)throw Error("Cannot erase real data while demo is active");
+  const writer=nexusWriter();
+  writer.removeLegacy();
+  _nexusLastSavedSnapshot=writer.expected();
+}
+function saveState() {
+  if(_demoActive)return true; // fictional demo never touches production storage
+  try {
+    const writer=nexusWriter();
+    writer.saveLegacy(state);
+    _nexusLastSavedSnapshot=writer.expected();
+    return true;
+  }catch(e){
+    console.error("Nexus save failed",e);
+    showSaveWarning();
+    return false; // callers must not display success when persistence failed
+  }
+}
+
 
 function enterDemoMode(scenario) {
   if(_demoActive) return;

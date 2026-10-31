@@ -37,12 +37,123 @@ try{
       assert.equal(output.guardedBackup,true,label+' restore handler');
       assert.equal(output.mass,0.08,label+' mcg conversion');
       assert.equal(output.badIU,true,label+' reject IU');
-      results.push({viewport:width,theme,...output,result:'PASS'});
+      // Settings Backup & Restore child acceptance: each width/theme uses the
+      // full standalone, in-memory-only fictional DEMO. No live writes/imports.
+      await page.evaluate(()=>{
+        state.profile.onboardingDone=true;
+        tab='profile';state._profileTab='settings';state._settingsDetail='backup';
+        render();
+      });
+      const importButton=page.locator('#nx-import-open');
+      await importButton.waitFor();
+      const beforeCancel=await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      }));
+      const launchFictionalPreview=()=>page.evaluate(()=>{
+        const fake=JSON.parse(JSON.stringify(state));
+        fake.profile.name='Fictional Uncommitted Import';
+        const file=new File([JSON.stringify(fake)],
+          'fictional-very-long-filename-with-multiple-sections-backup-2026-10-31.json',
+          {type:'application/json'});
+        importData({target:{files:[file],value:''}});
+      });
+      await launchFictionalPreview();
+      await page.locator('#nx-restore-word').waitFor({timeout:7000});
+      const previewLayout=await page.evaluate(()=>{
+        const modal=document.querySelector('.modal');
+        const cancel=modal.querySelector('#nx-import-cancel').getBoundingClientRect();
+        const confirm=modal.querySelector('#nx-import-confirm').getBoundingClientRect();
+        const viewport=innerWidth;
+        return {
+          viewport,overflow:document.documentElement.scrollWidth>viewport+2,
+          modalOverflow:modal.scrollWidth>modal.clientWidth+2,
+          cancelWidth:cancel.width,confirmWidth:confirm.width,
+          cancelHeight:cancel.height,confirmHeight:confirm.height,
+          actionsInViewport:cancel.left>=0&&confirm.right<=viewport+1,
+          filenameWrap:!!modal.querySelector('[style*="overflow-wrap:anywhere"]')
+        };
+      });
+      assert.equal(previewLayout.overflow,false,label+' global overflow');
+      assert.equal(previewLayout.modalOverflow,false,label+' restore modal overflow');
+      assert.equal(previewLayout.actionsInViewport,true,label+' restore actions fit');
+      assert.ok(previewLayout.cancelHeight>=44&&previewLayout.confirmHeight>=44,
+        label+' action target heights');
+      assert.equal(previewLayout.filenameWrap,true,label+' long filename wraps');
+      assert.equal(await page.locator('#nx-import-confirm').isDisabled(),true,
+        label+' confirmation starts disabled');
+      await page.locator('#nx-restore-word').focus();
+      await page.keyboard.type('RESTORE');
+      assert.equal(await page.locator('#nx-import-confirm').isEnabled(),true,
+        label+' keyboard enables confirmation');
+      // Capture the settled sheet; an entering bottom-sheet animation can yield
+      // translucent screenshots despite passing hit-target/overflow assertions.
+      await page.waitForTimeout(500);
+      await page.screenshot({path:'dist/Nexus_'+version+'_BACKUP_'+width+'_'+theme+'.png',animations:'disabled'});
+      await page.locator('#nx-import-cancel').click();
+      assert.equal(await page.evaluate(()=>document.activeElement?.id),'nx-import-open',
+        label+' cancel returns keyboard focus');
+      assert.deepEqual(await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      })),beforeCancel,label+' cancel is no-write');
+      await launchFictionalPreview();
+      await page.locator('#nx-import-close').waitFor();
+      await page.locator('#nx-import-close').click();
+      assert.equal(await page.evaluate(()=>document.activeElement?.id),'nx-import-open',
+        label+' close returns keyboard focus');
+      assert.deepEqual(await page.evaluate(()=>({
+        raw:localStorage.getItem(STORE_KEY),name:state.profile.name,
+        keys:Object.keys(localStorage).sort().join('|')
+      })),beforeCancel,label+' close is no-write');
+      results.push({viewport:width,theme,...output,backupChild:previewLayout,
+        keyboardTypedConsent:true,focusReturned:true,cancelNoWrite:true,closeNoWrite:true,result:'PASS'});
+      // Fictional backup preview: keyboard, focus return, overflow and no-write.
+      await page.evaluate(()=>{tab='profile';state._profileTab='settings';state._settingsDetail='backup';render();});
+      const importOpen=page.locator('#nx-import-open');
+      const original=await page.evaluate(()=>({raw:localStorage.getItem(STORE_KEY),profile:JSON.stringify(state.profile)}));
+      for(const dismiss of ['nx-import-cancel','nx-import-close']){
+        await importOpen.focus();
+        await page.evaluate(()=>{
+          const fake=JSON.parse(JSON.stringify(state));
+          fake.profile.name='Fictional Must Not Import';
+          importData({target:{files:[new File([JSON.stringify(fake)],
+            'fictional-very-long-backup-filename-2026-10-31-with-extra-description.json',
+            {type:'application/json'})],value:''}});
+        });
+        await page.locator('#nx-restore-word').waitFor({timeout:7000});
+        assert.equal(await page.locator('#nx-import-confirm').isDisabled(),true,label+' disabled until typed');
+        const metrics=await page.evaluate(()=>{
+          const box=document.querySelector('.modal'),r=box.querySelector('#nx-restore-word').getBoundingClientRect();
+          return {wrap:!!box.querySelector('p[style*="overflow-wrap"]'),
+            overflow:document.documentElement.scrollWidth>innerWidth+2,
+            inputFits:r.left>=-1&&r.right<=innerWidth+1,
+            cancel:box.querySelector('#nx-import-cancel').getBoundingClientRect().height,
+            confirm:box.querySelector('#nx-import-confirm').getBoundingClientRect().height};
+        });
+        assert.equal(metrics.wrap,true,label+' filename wrapping');
+        assert.equal(metrics.overflow,false,label+' no horizontal overflow');
+        assert.equal(metrics.inputFits,true,label+' input within viewport');
+        assert.ok(metrics.cancel>=44&&metrics.confirm>=44,label+' action touch targets');
+        await page.locator('#nx-restore-word').focus();
+        await page.keyboard.type('RESTORE');
+        assert.equal(await page.locator('#nx-import-confirm').isEnabled(),true,label+' keyboard confirmation');
+        await page.locator('#'+dismiss).click();
+        assert.equal(await importOpen.evaluate(el=>document.activeElement===el),true,label+' focus returned');
+        const after=await page.evaluate(()=>({raw:localStorage.getItem(STORE_KEY),profile:JSON.stringify(state.profile)}));
+        assert.deepEqual(after,original,label+' cancel/close must not write');
+      }
+      results.push({viewport:width,theme,backupKeyboardFocusNoWrite:'PASS'});
       if(width===390&&theme==='dark'){
         await page.evaluate(()=>{
           // Synthetic state and browser-local data only: standalone DEMO replaces
           // localStorage with a non-configurable in-memory map.
           localStorage.setItem(STORE_KEY,JSON.stringify(state));
+          // Fixture installation bypasses Nexus's writer on purpose. Reset
+          // only the isolated test's expected snapshot to that known fixture;
+          // a real externally changed snapshot must still be rejected.
+          _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+          _nexusSharedWriter=null;
           const fake=JSON.parse(JSON.stringify(state));
           fake.profile.name='Fictional Restore QA';
           const file=new File([JSON.stringify(fake)],'fictional-backup.json',{type:'application/json'});
@@ -65,9 +176,18 @@ try{
         await page.locator('#nx-import-confirm').click();
         assert.equal(await page.evaluate(()=>state.profile.name),'Fictional Restore QA','confirmed restore');
         assert.equal(await page.evaluate(()=>[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).some(k=>k.includes('-before-manual-restore-'))),true,'pre-restore copy');
+        // Route-specific sites stay granular; do not regress to three generic regions.
+        const granularSites=await page.evaluate(()=>({
+          subq:nexusAdminSites('SubQ'),im:nexusAdminSites('IM'),oral:nexusAdminSites('Oral')
+        }));
+        for(const site of ['Abdomen — upper L','Abdomen — lower R','Abdomen — lower middle'])
+          assert.ok(granularSites.subq.includes(site),'SubQ detail preserved: '+site);
+        for(const site of ['Deltoid — L (IM)','Vastus lateralis — R (IM)','Ventrogluteal — L (IM)'])
+          assert.ok(granularSites.im.includes(site),'IM detail preserved: '+site);
+        assert.deepEqual(granularSites.oral,[],'Oral doses have no injection site');
         // Single-vial premixed blend regression, in fully isolated fictional DEMO.
         await page.evaluate(()=>{
-          const kit={id:975310,name:'QA Premixed Blend',isBlend:true,
+          const kit={id:975310,name:'QA Premixed Blend',isBlend:true,preparationMethod:'SubQ',
             composition:[{compound:'QA A',mg:10},{compound:'QA B',mg:10},{compound:'QA C',mg:10}],
             totalVials:2,vialMg:30,openedVials:0,emptyVials:0,activeKit:false,
             reconDate:null,bacMl:0,expiryDays:28,notes:'',doseLog:[],wasteLog:[],reconHistory:[]};
@@ -127,8 +247,8 @@ try{
           totalBack:128.5,oldVial:0,sealed:80
         },"legacy premixed kit preserves physical vial balances through new draw and Undo");
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#dose').fill('3');
-        if(await page.locator('#nx-dose-step-next').count()){await page.locator('#nx-dose-step-next').click();}
+        await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').fill('3');
+        if(await page.locator('#nx-dose-review-open').isVisible())await page.locator('#nx-dose-review-open').click();
         await page.locator('#save').click();
         const doses=await page.evaluate(()=>{
           const k=state.supplies.find(k=>k.id===975310);
@@ -199,8 +319,8 @@ try{
           dose.allocations=restored.allocations.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:a.amountMg,ledgerId:a.ledgerId}));
         });
         await page.evaluate(()=>logBlendDoseModal(975310));
-        await page.locator('#dose').fill('31');
-        if(await page.locator('#nx-dose-step-next').count()){await page.locator('#nx-dose-step-next').click();}
+        await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').fill('31');
+        if(await page.locator('#nx-dose-review-open').isVisible())await page.locator('#nx-dose-review-open').click();
         await page.locator('#save').click();
         assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===975310).doseLog.length),1,
           'draw exceeding a 30mg vial cannot be logged even with sealed stock in kit');

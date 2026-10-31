@@ -1,0 +1,91 @@
+const assert=require("node:assert/strict");
+const {create}=require("../assets/js/nexus-write-coordinator.js");
+const {planDose}=require("../assets/js/nexus-prepared-dose-transaction.js");
+const formulation=require("../assets/js/nexus-formulation-stock.js");
+const make=()=>({supplies:[{id:"K1",name:"Sample A",vials:[{id:"V1",status:"open",remainingMg:24}]}],formulationStocks:[{id:"N1",compound:"Sample A",containerType:"nasal-bottle",method:"Nasal",remainingMg:6,remainingMl:3,mgPerSpray:.1,mlPerSpray:.05,transactions:[]}],peptides:{"Sample A":{doses:[]}},customPeptides:{}});
+const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"backed",sourceKind:"formulation-container",sourceId:"N1",sprays:2,nativeUnit:"mg",date:"2026-10-30T12:00:00"};
+(async()=>{
+ let snap=make(),raw=JSON.stringify(snap),writes=0;
+ const adapters={read:()=>raw,write:s=>{raw=s;writes++},lock:(_name,fn)=>fn()};
+ const c=create({...adapters,initialSnapshot:raw});
+ c.saveLegacy({...snap,profile:{name:"fictional"}});
+ assert.equal(writes,1);
+ assert.equal(c.expected(),raw);
+ const latest=JSON.parse(raw);
+ const done=await c.transaction(latest,prior=>planDose(prior,tx));
+ assert.equal(writes,2);
+ assert.equal(done.next.formulationStocks[0].remainingMg,5.8);
+ assert.equal(done.next.supplies[0].vials[0].remainingMg,24);
+ assert.equal(JSON.parse(raw).peptides["Sample A"].doses.length,1);
+ const stale=create({...adapters,initialSnapshot:"old"});
+ assert.throws(()=>stale.saveLegacy(snap),/changed/);
+ assert.equal(stale.status().blocked,true);
+ assert.rejects(stale.transaction(snap,x=>({next:x})),/blocked/);
+ let release;const barrier=new Promise(resolve=>{release=resolve});
+ let entered;const started=new Promise(resolve=>{entered=resolve});
+ const queued=create({read:()=>raw,write:s=>{raw=s},initialSnapshot:raw,lock:async(_name,fn)=>{entered();await barrier;return fn()}});
+ const task=queued.transaction(JSON.parse(raw),x=>({next:{...x,marker:"locked"}}));
+ await started;
+ assert.throws(()=>queued.saveLegacy({...JSON.parse(raw),marker:"unsafe"}),/running/);
+ release();await task;
+ assert.equal(JSON.parse(raw).marker,"locked");
+ const noLock=create({read:()=>raw,write:s=>{raw=s},initialSnapshot:raw});
+ await assert.rejects(noLock.transaction(JSON.parse(raw),x=>({next:x})),/cross-tab lock/);
+ const crash=create({read:()=>raw,write:()=>{throw Error("quota")},initialSnapshot:raw,lock:(_n,fn)=>fn()});
+ assert.throws(()=>crash.saveLegacy(JSON.parse(raw)),/quota/);assert.equal(crash.status().blocked,true);
+ let divergent=raw;const corrupt=create({read:()=>divergent,write:()=>{divergent="{}"},initialSnapshot:raw,lock:(_n,fn)=>fn()});
+ await assert.rejects(corrupt.transaction(JSON.parse(raw),x=>({next:{...x,broken:true}})),/readback/);
+ assert.equal(corrupt.status().blocked,true);
+ let race=raw,count=0;const racing=create({read:()=>{count++;return count===3?"{}":race},write:s=>{race=s},initialSnapshot:raw,lock:(_n,fn)=>fn()});
+ await assert.rejects(racing.transaction(JSON.parse(raw),x=>({next:x})),/changed/);
+ let empty=null;
+ const emptyWriter=create({read:()=>empty,write:x=>{empty=x},remove:()=>{empty=null},initialSnapshot:null});
+ empty="written in another tab";
+ assert.throws(()=>emptyWriter.saveLegacy({}),/changed/);
+ let erasable=JSON.stringify(make()),removed=0;
+ const erase=create({read:()=>erasable,write:v=>{erasable=v},remove:()=>{erasable=null;removed++},initialSnapshot:erasable});
+ erase.removeLegacy();
+ assert.equal(removed,1);
+ assert.equal(erasable,null);
+ erase.saveLegacy({profile:{fictional:true}});
+ assert.equal(JSON.parse(erasable).profile.fictional,true);
+ const staleErase=create({read:()=>erasable,remove:()=>{removed++},write:v=>{erasable=v},initialSnapshot:"old"});
+ assert.throws(()=>staleErase.removeLegacy(),/changed/);
+ assert.equal(removed,1);
+ // Two separate tab-like coordinators share an exclusive async lock.
+ // Once the first commits, the second must reject its stale original snapshot.
+ let shared=JSON.stringify(make()),tail=Promise.resolve(),turns=0;
+ const exclusive=(_name,fn)=>{const run=tail.then(async()=>{turns++;return fn()});tail=run.catch(()=>{});return run};
+ const first=create({read:()=>shared,write:s=>{shared=s},initialSnapshot:shared,lock:exclusive});
+ const second=create({read:()=>shared,write:s=>{shared=s},initialSnapshot:shared,lock:exclusive});
+ const snapshot=JSON.parse(shared);
+ const both=await Promise.allSettled([
+   first.transaction(snapshot,x=>({next:{...x,session:"first"}})),
+   second.transaction(snapshot,x=>({next:{...x,session:"second"}}))
+ ]);
+ assert.equal(both[0].status,"fulfilled");
+ assert.equal(both[1].status,"rejected");
+ assert.equal(turns,2);
+ assert.equal(JSON.parse(shared).session,"first");
+ // A real Stash formulation add and edit must be one exclusive commit,
+ // preserving unrelated physical vial records and rejecting stale tabs.
+ let inv=JSON.stringify(make()), invTail=Promise.resolve();
+ const invLock=(_name,fn)=>{const job=invTail.then(fn);invTail=job.catch(()=>{});return job};
+ const invAdapter={read:()=>inv,write:v=>{inv=v},lock:invLock};
+ const stashA=create({...invAdapter,initialSnapshot:inv});
+ const stashB=create({...invAdapter,initialSnapshot:inv});
+ const invBefore=JSON.parse(inv);
+ const addForm={id:"F1",compound:"Fictional Sample",containerType:"nasal-bottle",method:"Nasal",volumeMl:7,quantityMg:10};
+ const newForm=await stashA.transaction(invBefore,s=>formulation.add(s,addForm));
+ assert.equal(newForm.next.formulationStocks.length,2);
+ assert.deepEqual(newForm.next.supplies,invBefore.supplies);
+ assert.equal(newForm.next.formulationStocks[1].mgPerSpray,null);
+ await assert.rejects(stashB.transaction(invBefore,s=>formulation.add(s,{...addForm,id:"F2"})),/changed/);
+ assert.equal(JSON.parse(inv).formulationStocks.length,2);
+ const editForm=await stashA.transaction(JSON.parse(inv),s=>formulation.edit(s,{id:"F1",remainingMl:6,remainingMg:9,transactionId:"adjust-F1"}));
+ assert.equal(editForm.next.formulationStocks[1].remainingMg,9);
+ assert.equal(editForm.next.formulationStocks[1].remainingMl,6);
+ assert.equal(editForm.next.formulationStocks[1].transactions.length,1);
+ assert.deepEqual(editForm.next.supplies,invBefore.supplies);
+ console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
+})().catch(e=>{console.error(e);process.exitCode=1});

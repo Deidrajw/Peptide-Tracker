@@ -1,3 +1,18 @@
+## 2026-10-30 — P-11/12/13 integration progress (CODED; NOT RELEASED)
+- P-11 unified use setup: coded on draft PR124 with Injectable/SubQ/IM and Nasal/Topical/Oral/Other, remembered setup choice and exact matching physical vial when available; current model is one preference per compound name, not simultaneous multiple forms. Parallel forms are INCOMPLETE.
+- P-12 user-selectable dose units: mg/mcg selector with roundtrip into existing canonical unit and entered unit metadata; IU remains guarded to already IU-native product and has no invented stock conversion. Built-in nasal spray-count path and full prepared-form dose integration still require separate verification.
+- P-13 compact Stash: reduced card padding, header and primary stock type, use setup summary/action, preserved expanded Vials/History and kit actions. 320/390 and physical iPhone acceptance NOT YET COMPLETE.
+- Tracking mode approved and coded: setup once inventory-backed or untracked with no debit; reactive/protocol followups preserved. GitHub CI pending full source acceptance; no production migration, merge or deployment. Next: verify exact-head full browser and artifacts, test critical prepared/form and device paths before acceptance.
+
+## 2026-10-30 — P-11 decision: BOTH tracking modes approved
+- Setup-level choice **Inventory-backed** (verified exact source, appropriate debit and history) or **Track only / no inventory** (explicitly untracked administrations, zero stock mutation). Choice persists per compound/use configuration and is not repeatedly asked on every dose. Mode can be deliberately changed later for future logs, not retroactively. No silent fallback when a source fails; never fabricate a source or create prepared stock from a plan. Unit preference (mg/mcg/conditional IU) and compact Stash remain linked P-12/P-13. Product decision approved; code/schema migration NOT implemented or authorized. Mandatory tests: both onboarding paths, remembered defaults, unavailable-stock transition, mode switching, exports/histories, no hidden debits, multiple use configurations.
+
+## 2026-10-30 — Reaffirmed linked UX priorities (DESIGN PENDING)
+- P-11: Unified first-time use setup. Top-level modes Injectable (SubQ/IM secondary detail), Nasal, Topical, Oral, Other. Preserve historical precision and distinct physical-versus-prepared stock.
+- P-12: User-selectable dose units, including mg/mcg and IU when meaningfully defined. Keep delivery measures separate, do not invent conversions, retain original values and normalized mass where safe. Requires complete unit-switch, persistence and calculation tests.
+- P-13: Compact DS2 Stash cards with essential quantity/status, clear disclosure, ellipsis for secondary actions and protected details/records. Do not drop this priority because source-selection work is ongoing.
+- Product review must consider the whole onboarding/setup → routine logging → stock/history experience for first-time and returning users, not merely patch one reported defect. These are user directions, NOT completed implementation. Preview integrated design before schema changes; no merge/deploy approval.
+
 # Nexus — Multi-Sprint Product Roadmap (Persistent)
 **Created:** 2026-10-27 | **Authority:** user direction, continuity logs, current GitHub source. **Status:** reconstructed roadmap INDEX, not a claim that all historical plans were recovered verbatim.
 
@@ -45,3 +60,7 @@ Cross-link legacy decisions and issues to these product lanes, recover exact pre
 | P-10 | Nexus Ask assistant capability and conversation UX | Evaluate more robust use of existing records/context, helpful follow-up questions, reliable handling of complex questions, clear provenance/uncertainty, readable message layout, suggestions, history and composer UX | IDEA / DISCOVERY — audit current Ask implementation and available backend/data before promising features; protect privacy, offline behaviour, user records and avoid unsupported clinical recommendations |
 
 **User intent:** capture these as *potential future things*, not approval to code, deploy or change the current design sprint. Next for each: inventory candidate screens and interaction examples, present UI previews and implementation tradeoffs, obtain scope approval. The current DS2 child-page verification remains the immediate priority; global a11y/typography/forms/scroll/navigation/motion stays last within DS2. Future onboarding/core workflows/personalization/platform expansion remain on the roadmap.
+
+
+## 2026-10-29 — Stash/Add Kit approved architecture checkpoint
+- Active draft PR #124: single Add Kit entry point with Vials / Capsules / Raw Powder / Topical / purchased Nasal Spray. Non-vial stock appears as kit/package cards, not standalone Other formulations. Per-vial intended use may be labelled on open (no transfer), with source-anchored homemade nasal preparation deferred until coordinated atomic inventory writer and ledger validation. No migrated historical source IDs. Browser and real-iPhone gates pending; no production deployment approval.

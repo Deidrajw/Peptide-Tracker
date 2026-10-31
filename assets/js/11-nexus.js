@@ -34,7 +34,7 @@ function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
   const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", privacy:"Privacy & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer">‹</button>
+    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
   </div>`;
   let content = "";
@@ -55,14 +55,14 @@ function renderPhaseRemindersDetail() {
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;margin-bottom:14px">
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:22px">📈</span>
-      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — you'll see in-app alerts before and when a protocol phase changes":"Off — no phase-transition alerts"}</div></div>
+      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — phase starts, changes and protocol-end reviews":"Off — no protocol schedule alerts"}</div></div>
       ${enabled
         ? `<button id="disablephaserem" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:7px 14px;font-size:12px">Turn off</button>`
         : `<button id="enablephaserem" style="background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Enable</button>`}
     </div>
   </div>
   <div style="font-size:11px;color:var(--t5);line-height:1.6;padding:0 4px">
-    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Fires 3 days before a phase transition, and on the transition day itself, for any compound with a multi-phase protocol configured. Automatically derived from each protocol's phase durations — nothing to set up per-compound.
+    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Reminders appear 7, 3 or 1 day before applicable phase changes, when Phase 1 or another phase starts, and 7 or 1 day before a protocol's scheduled end. When an active protocol's schedule has elapsed, a review alert appears until dismissed, snoozed or resolved by updating its status. An elapsed schedule is <b>not</b> automatically marked Completed, and no dose or history is changed. Paused protocols don't generate reminders. Dates are derived from each protocol's saved phases and pause adjustments.
   </div>`;
 }
 
@@ -93,16 +93,16 @@ function renderUnitsDetail() {
   return `<div style="padding:4px 4px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;overflow:hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Weight unit</span>
-      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.weightUnit}</button>
+      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.weightUnit}</button>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Measurement unit</span>
-      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.measureUnit}</button>
+      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.measureUnit}</button>
     </div>
     <div style="padding:13px 12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <span style="font-size:13px;color:var(--t2)">My day rolls over at</span>
-        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:32px">
+        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:44px;max-width:100%">
           ${[0,1,2,3,4,5,6].map(h=>`<option value="${h}"${(Number(state.settings.dayRolloverHour)||0)===h?" selected":""}>${h===0?"Midnight (default)":h+":00 AM"}</option>`).join("")}
         </select>
       </div>
@@ -277,8 +277,8 @@ function devResetAllModal() {
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
     if (m.querySelector("#erase-confirm").value.trim().toUpperCase()!=="ERASE") return;
-    try { localStorage.removeItem(STORE_KEY); } catch(e) {}
-    location.reload();
+    try { nexusEraseSavedState(); location.reload(); }
+    catch(e){console.error("Nexus erase failed",e);showSaveWarning();}
   };
 }
 
@@ -555,16 +555,17 @@ function importData(e) {
     openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <strong style="font-size:17px;color:var(--t1)">Review backup before restore</strong>
       <button id="nx-import-close" aria-label="Close restore preview" style="min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t1);font-size:22px">×</button></div>
-      <p style="font-size:12px;color:var(--t2);line-height:1.6">File: ${esc(file.name)}. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6;overflow-wrap:anywhere">File: <strong>${esc(file.name)}</strong>. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
       <div style="font-size:12px;color:var(--t2);margin:12px 0">${summary}</div>
       <label for="nx-restore-word" style="display:block;font-size:12px;font-weight:650;color:var(--t1);margin-bottom:6px">Type RESTORE to confirm</label>
       <input id="nx-restore-word" class="inp" autocomplete="off" autocapitalize="characters" placeholder="RESTORE">
       <p style="font-size:11px;color:var(--t3);margin:8px 0 14px">Nexus saves a local recovery copy before replacement if browser storage permits.</p>
-      <div style="display:flex;gap:8px"><button id="nx-import-cancel" style="flex:1;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
-      <button id="nx-import-confirm" disabled style="flex:1;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="nx-import-cancel" style="flex:1 1 110px;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
+      <button id="nx-import-confirm" disabled style="flex:1 1 150px;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
     const box=document.querySelector(".modal");if(!box)return;
-    box.querySelector("#nx-import-close").onclick=closeModal;
-    box.querySelector("#nx-import-cancel").onclick=closeModal;
+    const cancelRestore=()=>{closeModal();document.querySelector("#nx-import-open")?.focus();};
+    box.querySelector("#nx-import-close").onclick=cancelRestore;
+    box.querySelector("#nx-import-cancel").onclick=cancelRestore;
     const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
     word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
     go.onclick=()=>{
@@ -575,15 +576,26 @@ function importData(e) {
         if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
         const next=migrate(incoming),serialized=JSON.stringify(next);
         if(!next||!serialized)throw Error("Invalid restored state");
-        localStorage.setItem(STORE_KEY,serialized);
-        if(localStorage.getItem(STORE_KEY)!==serialized)throw Error("Restore read-back mismatch");
-        state=next;
+        // A restore is an explicit replacement but must still reject stale
+        // storage and share the guarded writer. Never overwrite another tab.
+        if(_demoActive){
+          // Fictional demo restores are in-memory only; never invoke the
+          // production storage coordinator against isolated demo fixtures.
+          state=next;
+        }else{
+          const writer=nexusWriter();
+          writer.saveLegacy(next);
+          _nexusLastSavedSnapshot=writer.expected();
+          state=next;
+        }
         closeModal();render();
-        alert("Backup restored. A local recovery copy of the previous records was saved.");
+        alert(oldRaw!==null?"Backup restored. A local recovery copy of the previous records was saved.":"Backup restored. No previous saved browser records were available for a recovery copy.");
       }catch(err){
         state=oldState;
-        try{if(oldRaw!==null)localStorage.setItem(STORE_KEY,oldRaw);else localStorage.removeItem(STORE_KEY);}
-        catch(rollbackError){console.error("Restore rollback failed",rollbackError);showSaveWarning();}
+        // Do not attempt a second blind write on failure: storage may have
+        // advanced concurrently, or the previous write outcome may be unknown.
+        // The independent recovery backup above remains available to the user.
+        showSaveWarning();
         console.error("Backup restore failed",err);
         alert("Restore failed. Existing records were retained where browser storage permitted.");
       }
@@ -1334,6 +1346,46 @@ function getProtocolPhaseInfo(p, c) {
 
 // Phase-aware timeline summary: use existing pause-aware phase dates, never
 // infer a countdown from the number of compounds or logged administrations.
+// Post-protocol follow-up is informational: logging a dose never reactivates a protocol.
+function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
+  if(!dose||dose.asNeeded||!Array.isArray(state.protocols))return false;
+  const date=dayKey(dose.date);
+  const eligible=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>c.name===name)).map(p=>{
+    const component=(p.compounds||[]).find(c=>c.name===name);
+    const info=getProtocolPhaseInfo(p,component);
+    const end=info?.phases?.[info.phases.length-1]?.endDate||null;
+    const ended=!!end&&date>=end;
+    return {p,end,eligible:(ended || (p.status==="completed"&&(!end||date>=end)))&&p.status!=="archived"};
+  }).filter(x=>x.eligible).sort((a,b)=>String(b.end||"").localeCompare(String(a.end||"")));
+  // A newer active same-compound protocol covering this dose takes precedence over
+  // older completed protocols; don't nag when dosing is already covered by a plan.
+  const coveredByCurrent=(state.protocols||[]).some(p=>
+    p.status!=="completed"&&p.status!=="archived"&&p.status!=="paused"&&
+    (p.compounds||[]).some(c=>{
+      if(c.name!==name)return false;
+      const info=getProtocolPhaseInfo(p,c);
+      return !!info&&!info.done&&!info.notStartedYet &&
+        info.phases?.some(ph=>date>=ph.startDate&&date<ph.endDate);
+    }));
+  if(coveredByCurrent)return false;
+  const chosen=eligible[0];if(!chosen)return false;
+  const key=String(chosen.p.id)+"|"+name;
+  if((state.protocolDoseFollowupAcknowledged||{})[key])return false;
+  const m=openModal(`<section class="nx-postprotocol-followup">
+    <div class="nx-form-stock-editor-head"><strong>Protocol follow-up</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <h2 style="font-size:20px;margin:8px 0">You're still logging ${esc(name)}</h2>
+    <p class="hint">Your previous protocol, ${esc(chosen.p.name||name)}, has ${chosen.p.status==="completed"?"been marked completed":"reached the end of its schedule"}. Your dose has already been saved. Would you like to update the protocol or start another?</p>
+    <button type="button" id="nexus-followup-update" class="btn-primary" style="min-height:48px">Update existing protocol</button>
+    <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
+    <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
+  </section>`,"#A78BFA");
+  const dismiss=(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();saveState();closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
+  m.querySelector("#x").onclick=dismiss;
+  m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
+  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss(false);protocolBuilderModal(chosen.p);};
+  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss(false);protocolBuilderModal();};
+  return true;
+}
 function protocolCountdownSummary(p) {
   if (p.status==="completed") return {label:"Completed", detail:"Marked complete"};
   const entries=(p.compounds||[]).map(c=>getProtocolPhaseInfo(p,c)).filter(Boolean);

@@ -2147,3 +2147,183 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   overflow:visible;
   overscroll-behavior:auto;
 }
+
+/* PR #124: accessible, compact administration method and site selectors */
+/* PR #124 iPhone: unselected method controls must remain legible in light mode. */
+[data-theme="light"] .nx-method-option:not(.is-selected){background:var(--surface,#fff) !important;color:var(--t1,#242033) !important;border-color:var(--line,#d6d0e3)}
+
+.nx-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 16px}
+.nx-method-option,.nx-site-option,.nx-site-region{font:inherit;min-width:0;min-height:44px;border:1px solid var(--border,var(--line,#8d8d9b));border-radius:12px;background:var(--card,var(--bg2,#252735));color:var(--t1,inherit);cursor:pointer;padding:9px 7px;text-align:center;line-height:1.35;overflow-wrap:anywhere}
+.nx-method-option.is-selected,.nx-site-option.is-selected,.nx-site-region.is-selected{background:var(--accent-soft,rgba(167,139,250,.15));border-color:var(--accent,#a78bfa);color:var(--t1,inherit);font-weight:700}
+.nx-method-option:focus-visible,.nx-site-option:focus-visible,.nx-site-region:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+.nx-site-region-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:4px 0 9px}
+.nx-site-region{padding:8px 14px;white-space:nowrap;flex-shrink:0}
+.nx-site-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}
+.nx-site-choice-grid[hidden]{display:none}
+@media(max-width:350px){.nx-method-grid{gap:6px}.nx-method-option{padding:8px 3px;font-size:12px}.nx-site-option{font-size:12px}}
+
+/* Additive Stash formulation inventory — no legacy kit/card CSS overrides */
+.nx-form-stock{margin:12px 0 18px;padding:15px;border:1px solid var(--border-sub);border-radius:16px;background:var(--surface)}
+.nx-form-stock-heading strong{font-size:15px;color:var(--t1)}
+.nx-form-stock-heading p,.nx-form-stock-note,.nx-form-stock-empty{font-size:12px;line-height:1.5;color:var(--t3);margin:5px 0 12px}
+.nx-form-stock-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.nx-form-stock-actions button{min-height:46px;border-radius:12px;padding:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--t1);font-size:13px;font-weight:650}
+.nx-form-stock-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border-sub)}
+.nx-form-stock-item strong,.nx-form-stock-item small{display:block}.nx-form-stock-item strong{font-size:13px;color:var(--t1)}.nx-form-stock-item small,.nx-form-stock-count{font-size:12px;color:var(--t3)}
+.nx-form-stock-count{text-align:right;font-variant-numeric:tabular-nums}
+.nx-form-stock-editor{display:grid;gap:10px}.nx-form-stock-editor-head{display:flex;align-items:center;justify-content:space-between}.nx-form-stock-editor-head strong{font-size:17px;color:var(--t1)}.nx-form-stock-editor-head button{min-height:44px;min-width:44px;color:var(--t1)}
+.nx-form-stock-editor .inp{min-height:44px}.nx-form-stock-editor .btn-primary{min-height:48px}
+@media(max-width:350px){.nx-form-stock-item{align-items:flex-start;flex-direction:column;gap:4px}.nx-form-stock-count{text-align:left}}
+
+.nx-form-stock-item .nx-form-edit{min-height:44px;min-width:64px;padding:8px 11px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
+.nx-form-stock-item .nx-form-edit:focus-visible,.nx-form-stock-actions button:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+@media(max-width:350px){.nx-form-stock-item .nx-form-edit{align-self:flex-start}}
+
+/* Route-specific guidance is ephemeral; selecting another method hides it. */
+.nx-nasal-method-note{font-size:12px;line-height:1.45;color:var(--t3);padding:10px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);margin:-5px 0 14px}
+.nx-nasal-method-note[hidden]{display:none!important}
+
+/* One kit-first entry point; selectable physical package forms */
+.nx-kit-type-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}
+.nx-kit-type-choice{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;min-width:0;min-height:80px;padding:14px 12px;background:var(--surface-2);border:1px solid var(--border-sub);border-radius:13px;color:var(--t1);font:inherit}
+.nx-kit-type-choice strong{font-size:14px;font-weight:700}
+.nx-kit-type-choice span{font-size:11px;line-height:1.45;color:var(--t3)}
+.nx-kit-type-choice:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+.nx-form-kit-card{padding:16px;margin-bottom:12px;border-color:var(--border-sub)}
+.nx-form-kit-card .nx-kit-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nx-form-kit-card .nx-kit-title-stack{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nx-form-kit-amount{font-size:15px;color:var(--t1);font-weight:650;font-variant-numeric:tabular-nums;margin:12px 0 6px}
+.nx-form-kit-hint{font-size:12px;color:var(--t3);margin:0;line-height:1.4}
+@media(max-width:350px){.nx-kit-type-options{gap:6px}.nx-kit-type-choice{padding:12px 9px}}
+
+/* PR124 — two-stage iPhone Log Dose confirmation; preserves DS2 surface tokens */
+.nx2-dose-modal .nx-dose-confirm-screen[hidden],
+.nx2-dose-modal .nx-dose-scroll[hidden],
+.nx2-dose-modal .nx-dose-footer button[hidden]{display:none!important}
+.nx2-dose-modal .nx-dose-confirm-screen{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;padding:20px 18px 28px;-webkit-overflow-scrolling:touch}
+.nx2-dose-modal .nx-dose-confirm-heading{margin:0 0 22px}
+.nx2-dose-modal .nx-dose-confirm-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--t3)}
+.nx2-dose-modal .nx-dose-confirm-heading h2{margin:7px 0 6px;font-size:25px;line-height:1.18;font-weight:750;letter-spacing:-.025em;color:var(--t1)}
+.nx2-dose-modal .nx-dose-confirm-heading p{margin:0;font-size:13px;line-height:1.5;color:var(--t3)}
+.nx2-dose-modal .nx-dose-confirm-hero{display:flex;flex-direction:column;gap:5px;border-radius:16px;padding:22px 18px;background:var(--surface-2);margin-bottom:16px}
+.nx2-dose-modal .nx-dose-confirm-hero span:first-child{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--t3)}
+.nx2-dose-modal .nx-dose-confirm-hero strong{font-size:36px;line-height:1.1;font-weight:750;letter-spacing:-.035em;color:var(--t1);font-variant-numeric:tabular-nums}
+.nx2-dose-modal .nx-dose-confirm-hero span:last-child{font-size:13px;color:var(--t2)}
+.nx2-dose-modal .nx-dose-confirm-rows{padding:4px 0}
+.nx2-dose-modal .nx-dose-confirm-row{display:flex;align-items:start;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--border-sub)}
+.nx2-dose-modal .nx-dose-confirm-row span{font-size:13px;color:var(--t3);flex:1}
+.nx2-dose-modal .nx-dose-confirm-row strong{font-size:13px;font-weight:650;color:var(--t1);text-align:right;max-width:58%;overflow-wrap:anywhere}
+.nx2-dose-modal .nx-dose-confirm-safety{font-size:12px;line-height:1.55;color:var(--t3);margin:19px 0}
+.nx2-dose-modal .nx-dose-back{display:flex;align-items:center;justify-content:center;min-height:46px;width:100%;background:transparent;border:0;color:var(--t1);font:600 14px/1.3 inherit;cursor:pointer}
+.nx2-dose-modal .nx-dose-footer #nx-dose-review-open,
+.nx2-dose-modal .nx-dose-footer #save{min-height:48px;width:100%}
+@media(max-width:359px){.nx2-dose-modal .nx-dose-confirm-screen{padding:16px 14px 22px}.nx2-dose-modal .nx-dose-confirm-heading h2{font-size:23px}}
+
+/* PR124: quiet single-vial inventory feedback; reveal choices only for ambiguity */
+.nx2-dose-modal .nx-dose-stock-status{display:flex;align-items:center;gap:7px;min-height:32px;margin:0 0 12px;padding:3px 2px;color:var(--t2);font-size:12px;font-weight:600;line-height:1.35}
+.nx2-dose-modal .nx-dose-stock-status>span{display:inline-grid;place-items:center;flex-shrink:0;width:17px;height:17px;border-radius:50%;background:color-mix(in srgb,var(--accent,#a78bfa) 14%,transparent);color:var(--t1);font-size:11px}
+.nx2-dose-modal .nx-dose-stock-status small{margin-inline-start:auto;color:var(--t3);font-size:11px;font-weight:400;font-variant-numeric:tabular-nums}
+.nx2-dose-modal .nx-dose-source-exception .nx-dose-section-title{font-size:15px;letter-spacing:-.01em;font-weight:700}
+.nx2-dose-modal .nx-dose-source-exception .kit-opt{min-height:48px;text-align:left;line-height:1.4}
+
+/* PR124: dose-first entry; source choice is contextual, not a permanent inventory form. */
+.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]{padding-top:8px}
+.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title{font-size:18px;line-height:1.25;letter-spacing:-.02em;font-weight:700}
+.nx2-dose-modal .nx-dose-source-exception{margin-top:10px;border:0;border-top:1px solid var(--border-sub);border-radius:0;background:transparent;padding-top:18px}
+.nx2-dose-modal .nx-dose-source-exception[style*="display:none"]{display:none!important}
+.nx2-dose-modal #nx-dose-inventory-status{margin:6px 0 14px;min-height:36px;font-size:12px;line-height:1.4}
+.nx2-dose-modal #nx-dose-inventory-status small{font-size:12px}
+.nx2-dose-modal #toggle-multi{font-size:12px;min-height:44px}
+.nx2-dose-modal .nx-dose-source-exception .kit-opt,.nx2-dose-modal .nx-dose-source-exception .src-opt{min-height:48px}
+
+/* Stash-first one-time legacy vial method setup — scoped DS2 treatment */
+.nx-stash-set-vial-method{min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
+.nx-stash-method-sheet{padding:8px 2px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+.nx-stash-method-header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.nx-stash-method-header h2{font-size:23px;line-height:1.2;letter-spacing:-.025em;color:var(--t1);margin:7px 0}
+.nx-stash-method-header p,.nx-stash-method-explain{font-size:13px;line-height:1.5;color:var(--t3);margin:0}
+.nx-stash-method-header button{min-width:44px;min-height:44px;border:0;border-radius:10px;background:var(--surface-2);color:var(--t2)}
+.nx-stash-method-choices{border:0;padding:0;margin:0;display:grid;gap:9px;min-width:0}
+.nx-stash-method-choices legend{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:9px}
+.nx-stash-method-choices label{display:flex;align-items:center;gap:12px;min-height:48px;padding:11px 13px;border:1px solid var(--border-sub);border-radius:12px;color:var(--t1);font-size:14px}
+.nx-stash-method-choices input{width:20px;height:20px;accent-color:var(--accent,#A78BFA)}
+.nx-stash-method-sheet #nx-stash-method-confirm{min-height:48px;width:100%}
+.nx-stash-method-sheet #nx-stash-method-confirm:disabled{opacity:.48}
+
+/* PR124: Stash-first, one-time legacy vial method setup. */
+.nx-stash-method-prompt{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 13px;margin:10px 0 14px;border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2)}
+.nx-stash-method-prompt-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nx-stash-method-prompt-copy strong{font-size:13px;line-height:1.3;font-weight:700;color:var(--t1)}
+.nx-stash-method-prompt-copy span{font-size:12px;line-height:1.4;color:var(--t3)}
+.nx-stash-method-prompt .nx-stash-go-vial-method{flex-shrink:0;min-height:44px;border-radius:10px;padding:9px 12px;border:1px solid var(--border);background:var(--surface);color:var(--t1);font-size:12px;font-weight:650}
+.nx-stash-set-vial-method{min-height:44px;border-radius:10px;padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--t1);font-weight:650}
+@media(max-width:359px){.nx-stash-method-prompt{align-items:stretch;flex-direction:column}.nx-stash-method-prompt .nx-stash-go-vial-method{width:100%}}
+
+/* PR124 — distinguish planning from actual vial transfer; simple iPhone sheet. */
+.nx-stash-plan-status{display:flex;flex-direction:column;gap:2px;padding:8px 0}
+.nx-stash-plan-status span{font-size:12px;color:var(--t3)}
+.nx-prep-plan-sheet{display:flex;flex-direction:column;gap:12px}
+.nx-prep-plan-source{font-size:13px;color:var(--t2);font-weight:600}
+.nx-prep-plan-state{display:flex;flex-direction:column;gap:5px;background:var(--surface-2);border-radius:13px;padding:14px}
+.nx-prep-plan-state strong{font-size:13px;color:var(--t1)}
+.nx-prep-plan-state span{font-size:12px;line-height:1.5;color:var(--t3)}
+.nx-prep-plan-step{font-size:11px;letter-spacing:.06em;font-weight:750;color:var(--t2);margin:8px 0}
+.nx-prep-plan-row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border-sub)}
+.nx-prep-plan-row span{font-size:13px;color:var(--t3)}
+.nx-prep-plan-row strong{font-size:13px;text-align:right;color:var(--t1);overflow-wrap:anywhere}
+.nx-prep-plan-next{background:var(--surface-2);border-radius:12px;padding:13px}
+.nx-prep-plan-next p{margin:0;font-size:12px;line-height:1.55;color:var(--t2)}
+.nx-prep-plan-sheet .nx-prep-plan-secondary{border:1px solid var(--border-sub);border-radius:11px;min-height:46px;background:var(--surface);color:var(--t1);font-size:13px;font-weight:650}
+.nx-prep-plan-sheet #nx-linked-save{min-height:48px;width:100%;margin-top:12px}
+.nx-kit-create-preparation{min-height:44px!important}
+
+/* PR124: quiet vial row, one management menu plus saved-plan shortcut */
+.nx-vial-menu-action{display:block;width:100%;text-align:left;min-height:48px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2);color:var(--t1);font-size:13px;font-weight:650}
+.nx-vial-menu-action small{display:block;color:var(--t4);font-weight:400;font-size:11px;line-height:1.45;margin-top:3px}
+.nx-vial-menu-divider{height:1px;background:var(--border-sub);margin:12px 0}
+.nx-stash-view-plan{min-height:44px;padding:8px 10px;border:0;background:transparent;color:var(--accent,#a78bfa);font-size:13px;font-weight:650;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.nx-stash-view-plan:focus-visible,.nx-vial-menu-action:focus-visible{outline:2px solid var(--accent,#a78bfa);outline-offset:2px}
+.nx-stash-view-plan span{font-size:20px;line-height:1}
+@media(max-width:350px){.nx-stash-view-plan{font-size:12px;padding:7px 6px}.nx-kit-list-action{flex-shrink:0}}
+
+/* PR124 cohesive use setup and compact Stash, additive DS2-compatible rules. */
+.nx-use-setup{display:grid;gap:13px;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.nx-use-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.nx-use-head h2{font-size:21px;line-height:1.2;letter-spacing:-.03em;margin:4px 0 7px;color:var(--t1)}
+.nx-use-head p,.nx-use-help{font-size:12px;line-height:1.5;color:var(--t3);margin:0}
+.nx-use-kicker{font-size:10px;letter-spacing:.12em;color:var(--accent,#A78BFA);font-weight:700}
+#nx-use-close{flex:none;width:44px;height:44px;border:0;border-radius:12px;color:var(--t2);background:var(--surface-2);font-size:18px}
+.nx-use-secondary[hidden]{display:none}
+.nx-use-tracking{min-width:0;border:0;padding:0;margin:0;display:grid;gap:8px}
+.nx-use-tracking legend{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.06em;margin-bottom:9px}
+.nx-use-tracking label{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border-sub);padding:12px;border-radius:12px;background:var(--surface-2);cursor:pointer;min-height:62px}
+.nx-use-tracking input{accent-color:var(--accent,#A78BFA);width:18px;height:18px;margin-top:2px}
+.nx-use-tracking span{display:grid;gap:4px}
+.nx-use-tracking strong{font-size:13px;font-weight:650;color:var(--t1)}
+.nx-use-tracking small{font-size:11px;line-height:1.45;color:var(--t3)}
+#nx-use-save{min-height:48px}
+.nx-dose-unit-row{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:8px;margin:0 0 10px}
+.nx-dose-unit-row .inp{min-width:0;margin:0}
+.nx-dose-untracked-note,.nx-dose-source-mismatch{font-size:12px;line-height:1.5;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);color:var(--t2);padding:11px 12px;margin-bottom:12px}
+.nx-kit-card{padding:12px!important}
+.nx-kit-card .nx-kit-heading-unified{margin-bottom:6px!important}
+.nx-kit-card .nx-kit-primary-vial{padding:9px 10px!important;margin-bottom:8px!important}
+.nx-kit-card .nx-kit-overview-label{font-size:10px}
+.nx-kit-use-setup-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 8px;padding:0 2px}
+.nx-kit-use-setup-row span{font-size:11px;line-height:1.4;color:var(--t3);min-width:0}
+.nx-stash-use-setup{flex:none;min-height:44px;padding:6px 10px;color:var(--accent,#A78BFA);font-size:12px;font-weight:700;background:transparent;border:0;border-radius:9px}
+.nx-stash-use-setup:focus-visible,.nx-use-tracking label:focus-within,#nx-use-close:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
+@media(max-width:350px){.nx-kit-use-setup-row{align-items:start}.nx-kit-use-setup-row span{font-size:10px}.nx-dose-unit-row{grid-template-columns:minmax(0,1fr) 86px}}
+
+/* Compact collapsed Stash hierarchy without hiding stock/status or detailed records. */
+.nx-kit-card .nx-kit-primary-value{font-size:22px!important;line-height:1.25}
+.nx-kit-card .nx-kit-primary-value span{font-size:12px!important;font-weight:500}
+.nx-kit-card .nx-kit-primary-vial .nx-kit-overview-track{margin-top:7px!important}
+.nx-kit-card .nx-kit-actions{margin-top:7px!important;gap:7px!important}
+.nx-kit-card .nx-kit-actions button{min-height:44px!important;padding:9px 10px!important}
+.nx-kit-card .nx-kit-details{margin-top:9px!important;padding-top:7px!important}
+.nx-kit-card .nx-kit-overview-number{font-size:25px!important}
+.nx-dose-use-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0;margin:0 0 13px}
+.nx-dose-use-summary span{font-size:11px;line-height:1.4;color:var(--t3)}
+.nx-dose-use-summary button{min-height:44px;flex:none;padding:8px 11px;background:var(--surface-2);color:var(--accent,#A78BFA);border:1px solid var(--border-sub);border-radius:10px;font-size:12px;font-weight:650}
+.nx-dose-use-summary button:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}

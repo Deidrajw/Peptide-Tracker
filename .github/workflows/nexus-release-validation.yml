@@ -22,12 +22,34 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-ux-consistency.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
           release_version="$(node -p "require('./release/release.json').version")"
           grep -Fq "<title>Nexus · ${release_version}</title>" index.html
+          node --check assets/js/nexus-preparation-ledger.js
+          node --check assets/js/nexus-preparation-bridge.js
+          node --check assets/js/nexus-formulation-stock.js
+          node tests/formulation-stock.test.cjs
+          node tests/preparation-ledger.test.cjs
+          node tests/preparation-bridge.test.cjs
+          node tests/prepared-formulation-lifecycle.test.cjs
+          node --check assets/js/nexus-use-source-eligibility.js
+          node tests/use-source-eligibility.test.cjs
+          node --check assets/js/nexus-prepared-dose-transaction.js
+          node tests/prepared-dose-transaction.test.cjs
+          node tests/prepared-exclusive-execution.test.cjs
+          node tests/add-to-open-vial-exclusive.test.cjs
+          node tests/add-vials-exclusive.test.cjs
+          node tests/adjust-vial-exclusive.test.cjs
+          node tests/physical-outflow-exclusive.test.cjs
+          node tests/edit-outflow-exclusive.test.cjs
+          node tests/mark-kit-done-exclusive.test.cjs
+          node tests/stash-retirement-ux.test.cjs
+          node --check assets/js/nexus-write-coordinator.js
+          node tests/write-coordinator.test.cjs
+          node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
           node tools/validate-ux-consistency.mjs
       - name: Gate stale release notes against changed application source
@@ -72,6 +94,14 @@ jobs:
               names=a.namelist()
               assert 'index.html' in names and 'assets/css/nexus.css' in names and 'assets/css/nexus-disclosures.css' in names and 'assets/css/nexus-contrast.css' in names
               assert sum(n.startswith('assets/js/') and n.endswith('-nexus.js') for n in names)==12
+              assert a.testzip() is None, "LIVE archive CRC failed"
+              from hashlib import sha256
+              for n in names:
+                  if n.endswith('/'): continue
+                  source=pathlib.Path(n)
+                  assert source.is_file(), f"LIVE archive contains non-source path: {n}"
+                  assert sha256(a.read(n)).digest()==sha256(source.read_bytes()).digest(), f"LIVE byte mismatch: {n}"
+              print(f"LIVE exact checkout byte parity PASS: {len([n for n in names if not n.endswith('/')])} source files")
           s=h.read_text()
           assert 'buildDemoState("weight_loss")' in s
           assert 'window.__NEXUS_FULL_APP_DEMO__' in s
@@ -85,12 +115,15 @@ jobs:
           npm install --no-save --no-package-lock playwright
           npx playwright install --with-deps chromium
           python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
+          node tools/validate-cross-tab-lock.mjs
           node tools/validate-trust-ui.mjs
+          node tools/validate-formulation-stock.mjs
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
           node tools/validate-protocol-design.mjs
           node tools/validate-vial-safety.mjs
           node tools/validate-logdose-ui.mjs
+          node tools/validate-save-ack-ui.mjs
           node tools/validate-combo-picker.mjs
           node tools/validate-stash-actions.mjs
           node tools/validate-stash-cards.mjs
