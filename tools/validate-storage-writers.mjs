@@ -48,6 +48,16 @@ if(!runtime.includes('function planExclusiveVialAdjustment(snapshot,input)')||
    !runtime.includes('Transferred source must use the source-transfer reversal'))
   throw Error('Adjust Remaining Amount bypasses exclusive exact-vial/required-reason correction');
 
+const physicalOutflow=fs.readFileSync('assets/js/09-nexus.js','utf8');
+if(!physicalOutflow.includes('function planExclusivePhysicalOutflow(snapshot,input)')||
+   !physicalOutflow.includes('function planUndoExclusivePhysicalOutflow(snapshot,input)')||
+   !physicalOutflow.includes('await writer.transaction(saved,snapshot=>planExclusivePhysicalOutflow(snapshot,input))')||
+   !physicalOutflow.includes('snapshot=>planUndoExclusivePhysicalOutflow(snapshot,input)')||
+   !physicalOutflow.includes('Exact source vial unavailable or duplicated')||
+   !physicalOutflow.includes('Choose the exact physical source')||
+   !physicalOutflow.includes('Later vial history exists; undo blocked'))
+  throw Error('Log Outflow / Undo must retain exclusive exact-vial transaction and event history');
+
 if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
