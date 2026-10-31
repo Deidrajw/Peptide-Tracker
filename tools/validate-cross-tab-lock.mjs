@@ -485,7 +485,7 @@ try{
    assert.equal(partialUnchanged.second,10);
    assert.equal(partialUnchanged.history,1);
    await a.evaluate(()=>{closeModal();markKitDoneModal(987654326)});
-   assert.match(await a.locator("#done-save").innerText(),/Remove Remaining Stock/);
+   assert.match(await a.locator("#done-save").innerText(),/Remove All & Mark Done/);
    await a.locator("#done-save").click();
    await a.waitForFunction(()=>{
      const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654326);
