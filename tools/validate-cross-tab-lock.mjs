@@ -351,15 +351,15 @@ try{
    const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
    return k?.wasteLog?.some(e=>e.vialId==="out-sealed-2"&&e.status==="active");
  },{timeout:10000});
- const outflow=await a.evaluate(()=>{
+ const exactOutflow=await a.evaluate(()=>{
    const k=JSON.parse(localStorage.getItem(STORE_KEY)).supplies.find(s=>s.id===987654324);
    return {vials:k.vials,events:k.wasteLog};
  });
- assert.equal(outflow.vials.find(v=>v.id==="out-sealed-2").status,"transferred");
- assert.equal(outflow.vials.find(v=>v.id==="out-sealed-2").remainingMg,0);
- assert.equal(outflow.vials.find(v=>v.id==="out-open").remainingMg,4);
- assert.equal(outflow.vials.find(v=>v.id==="out-sealed-1").remainingMg,10);
- const outId=outflow.events[0].id;
+ assert.equal(exactOutflow.vials.find(v=>v.id==="out-sealed-2").status,"transferred");
+ assert.equal(exactOutflow.vials.find(v=>v.id==="out-sealed-2").remainingMg,0);
+ assert.equal(exactOutflow.vials.find(v=>v.id==="out-open").remainingMg,4);
+ assert.equal(exactOutflow.vials.find(v=>v.id==="out-sealed-1").remainingMg,10);
+ const outId=exactOutflow.events[0].id;
  await a.evaluate(id=>undoOutflowModal(987654324,id),outId);
  await a.locator("#confirm-undo").click();
  await a.waitForFunction(()=>{
