@@ -134,5 +134,71 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(durable,beforeDemo);
  assert.equal(quotaTab.scope.state.peptides["Sample A"].doses.length,1,"failed quota keeps memory unchanged");
  console.log("PASS: exclusive untracked Log Dose 2-tab stale rejection, edit, no debit, DEMO isolation, quota fail-closed");
+
+ // Actual inventory-backed source helper: immutable exact-vial planner and
+ // locked two isolated-tab conflict; all fixtures are entirely fictional.
+ const startBacked=appSource.indexOf("function nexusPlanBackedPhysicalDose(");
+ const endBacked=appSource.indexOf("\nfunction enterDemoMode(",startBacked);
+ assert.ok(startBacked>0&&endBacked>startBacked);
+ const backedSource=appSource.slice(startBacked,endBacked);
+ const fixture=()=>({peptides:{"Sample A":{enabled:true,doses:[],reschedules:[]}},
+   customPeptides:{},supplies:[{id:"K1",name:"Sample A",activeKit:true,
+    vials:[{id:"V1",status:"open",remainingMg:10,intendedUse:"SubQ"},
+           {id:"V2",status:"open",remainingMg:8,intendedUse:"SubQ"},
+           {id:"V3",status:"sealed",remainingMg:10,intendedUse:"SubQ"}]},
+    {id:"K2",name:"Other",activeKit:true,
+      vials:[{id:"V4",status:"open",remainingMg:10,intendedUse:"SubQ"}]}]});
+ const firstDose={id:"d-1",date:"2026-10-31T08:00",dose:"2500",method:"SubQ",trackingMode:"backed",enteredUnit:"mcg"};
+ const one={name:"Sample A",dose:firstDose,method:"SubQ",
+   steps:[{kitId:"K1",vialId:"V1",mg:2.5}],nativeUnit:"mcg",expectedMassMg:2.5,builtin:true};
+ const buildScope=(raw,writer,mode=false)=>{
+   const scope={state:JSON.parse(raw),_demoActive:mode,_nexusLastSavedSnapshot:raw,
+     nexusWriter:()=>writer,showSaveWarning:()=>{},console,JSON,Error,String,Number,Math,globalThis:{}};
+   vm.createContext(scope);
+   vm.runInContext(backedSource+";globalThis.plan=nexusPlanBackedPhysicalDose;globalThis.commit=nexusCommitBackedPhysicalDose;",scope);
+   return {scope,plan:scope.globalThis.plan,commit:scope.globalThis.commit};
+ };
+ let physical=JSON.stringify(fixture()),countWrites=0,lockChain=Promise.resolve();
+ const serializedLock=(_name,fn)=>{const job=lockChain.then(fn);lockChain=job.catch(()=>{});return job};
+ const physicalAdapter={read:()=>physical,write:v=>{physical=v;countWrites++},lock:serializedLock};
+ const sourceA=buildScope(physical,create({...physicalAdapter,initialSnapshot:physical}));
+ const sourceB=buildScope(physical,create({...physicalAdapter,initialSnapshot:physical}));
+ const resultA=sourceA.commit(one),resultB=sourceB.commit({...one,dose:{...firstDose,id:"d-2"}});
+ const [doneA,doneB]=await Promise.all([resultA,resultB]);
+ assert.ok(doneA&&doneA.dose.id==="d-1","first exclusive dose committed");
+ assert.equal(doneB,null,"stale second physical dose rejected");
+ assert.equal(countWrites,1,"one durable atomic state commit");
+ assert.equal(JSON.parse(physical).supplies[0].vials[0].remainingMg,7.5);
+ assert.equal(JSON.parse(physical).peptides["Sample A"].doses.length,1);
+ assert.equal(sourceB.scope.state.supplies[0].vials[0].remainingMg,10,"rejected tab retains original in-memory stock");
+ const planning=buildScope(JSON.stringify(fixture()),null);
+ const throws=(tx,match)=>assert.throws(()=>planning.plan(fixture(),tx),match);
+ throws({...one,steps:[{kitId:"K1",vialId:"V3",mg:2.5}]},/Open migrated vial/);
+ throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:11}],expectedMassMg:11},/Insufficient/);
+ throws({...one,steps:[{kitId:"K2",vialId:"V4",mg:2.5}]},/Incompatible physical kit/);
+ throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:2.5,finished:true}]},/Previously drawn/);
+ throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:2},{kitId:"K1",vialId:"V1",mg:.5}]},/Duplicate vial/);
+ throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:2}]},/match dose/);
+ throws({...one,method:"Nasal"},/Unsupported physical/);
+ const mismatch=fixture();mismatch.supplies[0].vials[0].intendedUse="IM";
+ assert.throws(()=>planning.plan(mismatch,one),/method mismatch/);
+ const split=planning.plan(fixture(),{...one,steps:[{kitId:"K1",vialId:"V1",mg:1},{kitId:"K1",vialId:"V2",mg:1.5}]});
+ assert.equal(split.next.supplies[0].vials[0].remainingMg,9);
+ assert.equal(split.next.supplies[0].vials[1].remainingMg,6.5);
+ assert.equal(split.dose.allocations[0].amount,1000);
+ assert.equal(split.dose.allocations[1].amount,1500);
+ assert.equal(fixture().supplies[0].vials[0].remainingMg,10);
+ const double=fixture();double.peptides["Sample A"].doses.push(firstDose);
+ assert.throws(()=>planning.plan(double,one),/Duplicate dose ID/);
+ const beforeDemo=physical,demo=buildScope(physical,null,true);
+ const demoSaved=await demo.commit({...one,dose:{...firstDose,id:"demo-dose"}});
+ assert.ok(demoSaved);
+ assert.equal(physical,beforeDemo,"demo never writes durable storage");
+ const brokenWriter=create({read:()=>physical,write:()=>{throw Error("quota")},lock:serializedLock,initialSnapshot:physical});
+ const failure=buildScope(physical,brokenWriter);
+ assert.equal(await failure.commit({...one,dose:{...firstDose,id:"quota-dose"}}),null);
+ assert.equal(physical,beforeDemo);
+ assert.equal(failure.scope.state.peptides["Sample A"].doses.length,1,"quota failure must not alter in-memory dose history");
+ console.log("PASS: backed physical exact-vial source, split mg/mcg, stale second tab, no double debit, insufficient/route/legacy failures, quota, demo isolation");
  console.log("PASS: shared coordinator legacy writes, exclusive transaction, stale detection, no-save while in-flight, fail-closed quota/readback/race");
 })().catch(e=>{console.error(e);process.exitCode=1});
