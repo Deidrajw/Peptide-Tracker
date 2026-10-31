@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 automated restore-child QA expansion (NOT A RELEASE)
+- No production code change beyond earlier Settings child acddbe2d and correction f4aba4f. New test commit 1e7b647 adds four-width/theme keyboard/focus/no-write browser assertions and screenshots to existing full-app DEMO build gate. Existing DS2 evidence 13034276111 inspected; full corrected Chromium 41178615573 and new assertions 41178820238 not yet conclusively verified. Remains draft/unmerged/undeployed, published version v0.9.20-beta, physical iPhone unaccepted.
+
 ## 2026-10-31 — PR124 Profile/Settings child fixes (NOT RELEASED)
 - Draft code acddbe2d0f72c2323c3a4bc3f24d82a2e4110f08 touches assets/js/11-nexus.js only: 44px Units controls, restore filename wrapping, responsive action buttons, close/cancel focus return, truthful conditional recovery-copy success message. No schema migration or intended stock/dose data writes. Existing published product remains v0.9.20-beta; prior full Chromium run 41170672260 PASS is PRE-PATCH evidence only. New-head automated/mobile/WebKit/physical tests, complete matching LIVE ZIP and isolated standalone full-app DEMO INCOMPLETE. No merge/deploy.
 
