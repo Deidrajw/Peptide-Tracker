@@ -1,3 +1,9 @@
+## 2026-10-31 — Profile/Settings child regression cases (CURRENT HEAD NOT TESTED)
+- S-CHILD-01 [NOT TESTED] 320px/390px light/dark Units details: weight/measurement/day-rollover controls >=44px, no horizontal overflow or theme contrast regressions.
+- S-CHILD-02 [NOT TESTED] More > Profile > Settings > Backup & Restore: preview long fictional filename wraps, title/actions readable with virtual keyboard and safe area; cancel/close returns focus to Import Backup, no write occurs.
+- S-CHILD-03 [NOT TESTED] Invalid JSON/size rejected without write; typed RESTORE required; authenticated guarded writer refuses stale-state replacement; previous records preserved on failed restore; success backup message accurately reflects existence of recovery copy; demo mode never touches production storage.
+- S-PROTECTED [NOT TESTED on patched source] Today/Calendar/Plans/Stash, check-ins, supplements, Log Dose exact-vial deductions, history and source integrity. Earlier Chromium 41170672260 PASS only verifies preceding revision. Physical iPhone, VoiceOver and dedicated keyboard QA NOT TESTED. Patch acddbe2d, no merge/deploy.
+
 ## 2026-10-31 — Current 320/390 Mark Kit Done UX screenshots PASS (automation only)
 - Full DS2 nested run 41170672326 SUCCESS with fictional screenshot artifact 13030633352. Inspected 320-dark and 320-light: all user action titles/buttons fit on one line, consequence visible, alternative `Log Partial Outflow` clear and 44px target validated. Combined suite mobile 41170672321, WebKit 41170672264, writer safety 41170672364 SUCCESS. Final full Chromium 41170672260 pending at observation. Artifact 13030787463 exact source LIVE 26 files/offline standalone DEMO CRC and byte-parity verified. Real iPhone/VoiceOver/keyboard interaction not accepted.
 
