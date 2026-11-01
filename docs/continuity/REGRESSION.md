@@ -2374,3 +2374,7 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Stash attachment PASS; Plans View goal 44px FAIL
 - Chromium #41325584431 source 74f798b1: Stash Actions PASS across all 8 LIVE/DEMO 320/390 dark/light, including durable fictional PDF attachment and Kit Details button. Stash Cards PASS at collapsed open-vial height 232px@320/234px@390, Stash Panels PASS, chevrons PASS, blend Combo Picker PASS, Check-In 8 PASS, Protocol/Today 8 PASS, vial-source 96 assertions PASS, Log Dose 176 flows PASS. Overall FULL FAIL at Plans goal entry minimum tap target (<44px as tested); physical iPhone NOT TESTED.
 - CSS cdffdab2 raises specific legacy goal CTA min-height to 48px!important; test 741865f6 retains >=44px assertion and diagnostic measured dimensions. Latest exact-head full #41326571439 and focused workflows pending; no Pass claims for newly changed CSS until latest source. P0 release BLOCKING.
+
+
+## 2026-11-01 — Plans Goal Save async race
+- #41326571439 (741865f6) full browser FAILED at validate-plans-hierarchy.mjs:334: #nx-g-next click unstable/detached after a prior subjective Goal Save and immediate new goalModal; initial legacy View goal 44px assertion was cleared by 48px CSS. Prior Check-In, Protocol/Today, Log Dose 176 flows, Stash Actions/attached PDF, Stash Cards/Panels, chevron and blend picker all PASS in same run. Test-only a2e0321 waits for five Goal Save modal closures and commits fictional LIVE Plans fixture under exclusive writer; new CI PENDING, do not infer pass.
