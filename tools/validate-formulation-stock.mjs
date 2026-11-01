@@ -680,6 +680,18 @@ try {
   assert.equal(appSaved.supplementLogs[0].id,'H2');
   assert.equal(appSaved.supplies[0].vials[0].remainingMg,8);
   assert.equal(appSaved.settings.theme,'light');
+  // Destructive operation must reject the stale tab and preserve all data.
+  const staleErase=await a.evaluate(()=>nexusEraseSavedState());
+  assert.equal(staleErase,false,'Stale actual-app Erase Everything must not acknowledge deletion');
+  let afterStaleErase=await b.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  assert.equal(afterStaleErase.supplies[0].vials[0].remainingMg,8);
+  assert.equal(afterStaleErase.supplementLogs[0].id,'H2');
+  assert.equal(afterStaleErase.settings.phaseRemindersEnabled,true);
+  // The current tab must be able to erase the same isolated fixture.
+  const erased=await b.evaluate(()=>nexusEraseSavedState());
+  assert.equal(erased,true,'Exclusive erase must acknowledge verified removal');
+  assert.equal(await a.evaluate(()=>localStorage.getItem('peptide-tracker-html-v1')),null);
+  results.push({test:'real Chromium two-tab stale destructive erase and fresh erase readback',result:'PASS'});
   results.push({test:'real Chromium two-tab application scoped settings/history handlers',result:'PASS'});
   results.push({test:'real Chromium two-tab exclusive coordinator races',result:'PASS'});
   await context.close();
