@@ -1175,7 +1175,7 @@ function addBlendKitModal(blendNameOrKit) {
     paint();
   }
 
-  m.querySelector("#bk-save").onclick = () => {
+  m.querySelector("#bk-save").onclick = async () => {
     if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const finalName = isEdit ? existingKit.name : (isCustomNew ? name.trim() : blendName);
     if (!finalName) { showErrorBanner("Give this blend a name first."); return; }
@@ -1200,7 +1200,7 @@ function addBlendKitModal(blendNameOrKit) {
       existingKit.notes=m.querySelector("#bk-notes").value.trim();
       existingKit.testResultAttachment=kitTestResult.getValue();
       initCompoundTracking(isEdit ? existingKit.name : finalName);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       return;
     }
 
@@ -1224,7 +1224,7 @@ function addBlendKitModal(blendNameOrKit) {
     // history/symptom tracking works — but they get NO separate Stash kit of their own;
     // this one blend vial is the only physical inventory record.
     initCompoundTracking(isEdit ? existingKit.name : finalName);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -1263,7 +1263,7 @@ function classifyLegacyPremixedKit(kitId) {
        Math.abs(comps.reduce((a,c)=>a+c.mg,0)-Number(kit.vialMg))>0.001){
       showErrorBanner("Enter at least two unique components and match the original vial strength exactly.");return;
     }
-    confirmAction("Mark "+kit.name+" as a premixed blend? Your original dose history and physical vial balances will be preserved. This is not a rewrite of past doses.",()=>{
+    confirmAction("Mark "+kit.name+" as a premixed blend? Your original dose history and physical vial balances will be preserved. This is not a rewrite of past doses.",async()=>{
       const original=state.supplies.find(x=>String(x.id)===String(kitId));
       if(!original||original.isBlend)return;
       // No updates to dose arrays, historical outflows, or physical vials.
@@ -1271,7 +1271,7 @@ function classifyLegacyPremixedKit(kitId) {
       original.blendInventoryMode="legacy-v2";
       original.composition=comps;
       original.legacyBlendDesignatedAt=localDatetime();
-      saveState();render();
+      if(!await nexusCommitCurrentState())return;render();
     },{tone:"info",confirmLabel:"Mark as blend",cancelLabel:"Cancel"});
   };
 }
@@ -1333,7 +1333,7 @@ function correctBlendOpenVialBalanceModal(kitId) {
     if(!Number.isFinite(extra)||extra<=0||extra>100000){showErrorBanner("Enter a valid positive correction in mg.");return;}
     const vialId=vial.id;
     closeModal();
-    confirmAction("Correct this open blend vial from "+before.toFixed(3)+" mg to approximately "+(before+extra).toFixed(3)+" mg? This does not log a dose or take material from a sealed vial.",()=>{
+    confirmAction("Correct this open blend vial from "+before.toFixed(3)+" mg to approximately "+(before+extra).toFixed(3)+" mg? This does not log a dose or take material from a sealed vial.",async()=>{
       const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
       const open=current&&getActiveVial(current);
       if(!open||String(open.id)!==String(vialId)||Math.abs(getBlendOpenVialRemainingMg(current)-before)>0.001){
@@ -1344,7 +1344,7 @@ function correctBlendOpenVialBalanceModal(kitId) {
         reason:"More blend remained in physical vial than previously estimated",status:"active"});
       if(current.blendInventoryMode==="legacy-v2")
         open.remainingMg=Math.round((Number(open.remainingMg||0)+extra)*1000)/1000;
-      saveState();render();
+      if(!await nexusCommitCurrentState())return;render();
     },{tone:"warning",confirmLabel:"Correct balance",cancelLabel:"Cancel"});
   };
 }
@@ -1376,7 +1376,7 @@ function blendLogOutflowModal(kitId) {
     }
     const vialId=active.id;
     closeModal();
-    confirmAction("Record "+mg.toFixed(2)+" mg of blend outflow? This removes physical inventory, not a separately administered dose.",()=>{
+    confirmAction("Record "+mg.toFixed(2)+" mg of blend outflow? This removes physical inventory, not a separately administered dose.",async()=>{
       const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
       const v=current&&getActiveVial(current);
       if(!v||String(v.id)!==String(vialId)||mg>getBlendOpenVialRemainingMg(current)+0.0001){
@@ -1390,7 +1390,7 @@ function blendLogOutflowModal(kitId) {
         v.status="empty";current.emptyVials=(current.emptyVials||0)+1;
         current.reconDate=null;current.activeKit=false;
       }
-      saveState();render();
+      if(!await nexusCommitCurrentState())return;render();
     },{tone:"warning",confirmLabel:"Record outflow",cancelLabel:"Cancel"});
   };
 }
@@ -1409,7 +1409,7 @@ function finishBlendKitModal(kitId) {
     return {id:v.id,amount};
   });
   const total=toDiscard.reduce((n,v)=>n+v.amount,0);
-  confirmAction("Finish this blend kit? "+total.toFixed(2)+" mg of remaining physical material will be recorded as discarded. Dose and component history will be preserved.",()=>{
+  confirmAction("Finish this blend kit? "+total.toFixed(2)+" mg of remaining physical material will be recorded as discarded. Dose and component history will be preserved.",async()=>{
     const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId)&&k.isBlend);
     if(!current||current.kitStatus==="done")return;
     // Recalculate before mutating to avoid depending on a stale modal amount.
@@ -1431,7 +1431,7 @@ function finishBlendKitModal(kitId) {
     current.emptyVials=Math.max(Number(current.totalVials)||0,Number(current.emptyVials)||0);
     current.reconDate=null;current.activeKit=false;current.kitStatus="done";
     current.doneReason="Kit completed";
-    saveState();render();
+    if(!await nexusCommitCurrentState())return;render();
   },{tone:"warning",confirmLabel:"Finish kit",cancelLabel:"Keep kit open"});
 }
 
@@ -1443,7 +1443,7 @@ function finishBlendVialModal(kitId) {
   const vial=ensureKitVials(kit).find(v=>v.status==="open"||v.status==="active");
   if(!vial){showErrorBanner("No blend vial is currently open.");return;}
   const rem=getBlendOpenVialRemainingMg(kit);
-  confirmAction(`Finish the current ${esc(kit.name)} vial? ${rem.toFixed(2)} mg remaining will be recorded as discarded outflow. Existing dose logs stay unchanged.`,()=>{
+  confirmAction(`Finish the current ${esc(kit.name)} vial? ${rem.toFixed(2)} mg remaining will be recorded as discarded outflow. Existing dose logs stay unchanged.`,async()=>{
     const latest=ensureKitVials(kit).find(v=>String(v.id)===String(vial.id));
     if(!latest || !["open","active"].includes(latest.status))return;
     const remaining=getBlendOpenVialRemainingMg(kit);
@@ -1456,7 +1456,7 @@ function finishBlendVialModal(kitId) {
     latest.status="finished";
     kit.emptyVials=(kit.emptyVials||0)+1;
     kit.reconDate=null;
-    saveState();render();
+    if(!await nexusCommitCurrentState())return;render();
   },{tone:"warning",confirmLabel:"Finish vial",cancelLabel:"Keep open"});
 }
 
