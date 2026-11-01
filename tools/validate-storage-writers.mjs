@@ -102,7 +102,7 @@ const coordinator=fs.readFileSync('assets/js/nexus-write-coordinator.js','utf8')
 if(/\b(?:saveLegacy|removeLegacy)\s*[:(,}]/.test(coordinator))throw Error('Unlocked coordinator API still exposed');
 for(const file of files){
  const text=fs.readFileSync(file,'utf8');
- const active=text.replace(/^\s*\\/\\/.*$/gm,'');
+ const active=text.replace(/^\s*\/\/.*$/gm,'');
  if(/\bsaveState\s*\(/.test(active)||/\b(?:saveLegacy|removeLegacy)\s*\(/.test(active))throw Error('Legacy save caller remains: '+file);
  const bareErase=[...active.matchAll(/(?<!function\s)nexusEraseSavedState\s*\(/g)];
  for(const m of bareErase){const preceding=active.slice(Math.max(0,m.index-18),m.index);if(!/await\s*$/.test(preceding))throw Error('Destructive erase not awaited: '+file);}
