@@ -4087,3 +4087,13 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   font-size:15px!important;line-height:1.55!important;
   padding:16px!important;overflow-wrap:normal;word-break:normal;
 }
+
+/* PR124 — shared actual-preparation review, isolated to the nasal form. */
+.modal .nx-nasal-actual-prep [hidden]{display:none!important}
+.modal .nx-nasal-actual-prep .nx-dose-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0}
+.modal .nx-nasal-actual-prep .nx-dose-head>div{min-width:0}
+.modal .nx-nasal-actual-prep .nx-dose-title{font-size:20px;line-height:1.25;margin:4px 0}
+.modal .nx-nasal-actual-prep .nx-dose-close{flex:none;min-width:44px;min-height:44px}
+.modal .nx-nasal-actual-prep #nx-nasal-record-review{padding:14px 16px;border-radius:14px;background:var(--card);line-height:1.6;overflow-wrap:anywhere}
+.modal .nx-nasal-actual-prep #nx-nasal-record-back{margin:12px 0 8px}
+.modal .nx-nasal-actual-prep #nx-nasal-record-save{margin-top:8px}
