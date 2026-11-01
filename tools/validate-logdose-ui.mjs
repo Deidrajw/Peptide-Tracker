@@ -90,8 +90,8 @@ try {
       remaining:state.supplies[0].vials[0].remainingMg,
       history:state.peptides.Retatrutide.doses.length
     }));
-    ensure(afterConfirm.method==='SubQ' && afterConfirm.remaining===6.75 && afterConfirm.history===0,
-      'Explicit method confirmation mutated dose balance/history or failed to label exact vial: '+JSON.stringify(afterConfirm));
+    ensure(afterConfirm.method==='Injectable' && afterConfirm.remaining===6.75 && afterConfirm.history===0,
+      'Explicit product-form confirmation mutated dose balance/history or failed to label exact vial: '+JSON.stringify(afterConfirm));
     await setDose(page,1.25);
     await page.waitForTimeout(600); // 500 ms allocation-input debounce
     ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
