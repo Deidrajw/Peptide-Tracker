@@ -1,3 +1,8 @@
+## Evidence delivery update — 2026-11-01
+- Chromium Log Dose artifact #13106129580 retrieved and 24 images / 8 geometry results verified. Review Back hit target 36px fails minimum despite prior suite PASS; fix `28ccb58d` sets 48px, `38f356b6` asserts >=44px, local Chromium four width/theme cases PASS; new-source CI pending.
+- WebKit picker/nasal run #41363990003 passed functional test but **zero artifacts**. Workflow change `ff824d4e` uploads WebKit screenshots/JSON on new head; run and visual review pending. Do not equate test green with screenshot acceptance. Existing transient Undo toast on Log Dose focused/review screenshot may confound lower-footer review; primary CTA was visible, physical acceptance remains blocked.
+- 16×16 full matrix incomplete, saved data preserved, P0 mixed writer blocking, LIVE nasal OFF, no merge/deploy.
+
 ## Log Dose visual findings — 2026-11-01 (partial, not physical acceptance)
 - Chromium screenshot run #41363339799 SUCCESS; inspected 24 PNGs and geometry JSON from artifact #13106129580. Entry/Focused/Review across 8 fictional 320/390 light/dark LIVE/DEMO cases shows no horizontal sheet or footer clipping; dedicated 320px images inspected. A transient Undo toast from a previous test appears over lower Review area; no primary CTA occlusion observed.
 - Newly detected Review Edit details target = 36px high on 320/390 both themes (legacy CSS specificity conflict), **FAIL** 44px requirement. Targeted CSS fix `28ccb58d` measured 48px locally in all four width/theme combinations; new assertion `38f356b6` awaiting CI. Do not mark fixed production or device accepted before rerun.
