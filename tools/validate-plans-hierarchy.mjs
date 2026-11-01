@@ -320,6 +320,8 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
  ensure(await page.locator('.nx-goal-detail-tab').count()===3,'Goal detail sections missing');
+ ensure(await page.locator('.nx-goal-detail .nx-dose-close svg[aria-hidden="true"]').count()===1,
+   'Goal Details close button must use the same outline SVG affordance as shared forms');
  ensure(await page.locator('.nx-goal-detail .nx-dose-head .nx-dose-title').count()===1,
    'Goal Details must reuse shared DS2 header and title hierarchy');
  const goalControls=await page.locator('.nx-goal-detail .nx-dose-close, .nx-goal-detail-tab').evaluateAll(els=>
