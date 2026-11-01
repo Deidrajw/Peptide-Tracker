@@ -91,6 +91,7 @@ try {
   assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound',
     'Enter must preserve typed custom compound rather than pick first suggestion');
   await page.locator('#nx-form-name').focus();
+  await page.locator('#nx-form-match-list').waitFor({state:'visible',timeout:1500});
   const pickerAfterTyping=await page.locator('#nx-form-match-list').evaluate(list=>({
     hidden:list.hidden,display:getComputedStyle(list).display,
     inputValue:document.querySelector('#nx-form-name')?.value,
