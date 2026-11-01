@@ -682,7 +682,7 @@ function nexusAdminMethod(value) {
   return nexusExplicitAdminMethod(value)||"SubQ";
 }
 function nexusAdminSites(method) {
-  return {SubQ:["Abdomen — upper L","Abdomen — upper R","Abdomen — lower L","Abdomen — lower R","Abdomen — upper middle","Abdomen — lower middle","Left thigh","Right thigh","Left flank","Right flank","Left upper arm","Right upper arm","Left delt","Right delt","Left glute","Right glute","Near injury site"],IM:["Deltoid — L (IM)","Deltoid — R (IM)","Vastus lateralis — L (IM)","Vastus lateralis — R (IM)","Ventrogluteal — L (IM)","Ventrogluteal — R (IM)","Left delt","Right delt","Left glute","Right glute"],IV:[],Oral:[],Nasal:["Left nostril","Right nostril","Both nostrils"],Topical:["Face","Scalp","Arms","Legs","Other area"]}[method]||[];
+  return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
 }
 
 /* PR124 additive use preferences: no migration or historical record mutation. */
@@ -787,7 +787,7 @@ function nexusCapsuleDoseModal(name,occTime){
   '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button></div>'+
   '<div id="nx-capsule-confirm" hidden><p id="nx-capsule-summary" role="status"></p><button id="nx-capsule-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-capsule-save" type="button" class="btn-primary" style="min-height:48px">Confirm & save</button></div></div>';
  const m=openModal(html,"#A78BFA"); // Shared single-scroll form sheet.
-  m.classList.add("nx-form-log-sheet");
+  m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-shared-dose-sheet");
  m.querySelector("#x").onclick=closeModal;
  const sel=m.querySelector("#nx-capsule-source"),qty=m.querySelector("#nx-capsule-count"),date=m.querySelector("#nx-capsule-date"),
   preview=m.querySelector("#nx-capsule-preview"),confirm=m.querySelector("#nx-capsule-confirm");
@@ -806,9 +806,17 @@ function nexusCapsuleDoseModal(name,occTime){
   if(!date.value||!Number.isFinite(new Date(date.value).getTime())){
    showErrorBanner("Choose a valid date and time. Nothing saved.");return;
   }
-  m.querySelector("#nx-capsule-summary").textContent=
-    n+" "+(n===1?"capsule":"capsules")+" · "+(n*c.mgPerCapsule)+" mg · "+c.compound+
-    " · "+(c.remainingCount-n)+" capsules expected after saving. No vial stock is used.";
+  m.querySelector("#nx-capsule-summary").innerHTML=
+    '<div class="nx-shared-review-title">Check capsule entry</div>'+
+    '<dl class="nx-shared-review-grid">'+
+    '<dt>Compound</dt><dd>'+esc(c.compound)+'</dd>'+
+    '<dt>Date & time</dt><dd>'+esc(new Date(date.value).toLocaleString())+'</dd>'+
+    '<dt>Exact container</dt><dd>'+esc(String(c.id))+'</dd>'+
+    '<dt>Capsules taken</dt><dd>'+n+'</dd>'+
+    '<dt>Nominal amount</dt><dd>'+(n*c.mgPerCapsule)+' mg</dd>'+
+    '<dt>Available after save</dt><dd>'+(c.remainingCount-n)+' capsules</dd>'+
+    '<dt>Injectable vial impact</dt><dd>None</dd>'+
+    '</dl><p class="nx-shared-review-footnote">No stock changes until you confirm.</p>';
   confirm.hidden=false;m.querySelector("#nx-capsule-entry-fields").hidden=true;
  };
  m.querySelector("#nx-capsule-back").onclick=()=>{confirm.hidden=true;m.querySelector("#nx-capsule-entry-fields").hidden=false;};
@@ -869,7 +877,7 @@ function nexusNasalDoseModal(name,occTime){
   '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button></div>'+
   '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
   '<p class="hint">Recorded values are nominal. Nexus cannot verify spray output, product stability or suitability.</p></div>',"#A78BFA");
- m.classList.add("nx-form-log-sheet");
+ m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-shared-dose-sheet");
  m.querySelector("#x").onclick=closeModal;
  const source=m.querySelector("#nx-spray-source"),qty=m.querySelector("#nx-spray-count"),
   date=m.querySelector("#nx-spray-date"),box=m.querySelector("#nx-spray-confirm");
@@ -889,7 +897,17 @@ function nexusNasalDoseModal(name,occTime){
    showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
   }
   const b=current(),n=Number(qty.value);
-  m.querySelector("#nx-spray-summary").textContent=n+" "+(n===1?"spray":"sprays")+" · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+" mcg. Estimated bottle balance after saving: "+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+" mL. Nothing saved yet.";
+  m.querySelector("#nx-spray-summary").innerHTML=
+    '<div class="nx-shared-review-title">Check prepared spray entry</div>'+
+    '<dl class="nx-shared-review-grid">'+
+    '<dt>Compound</dt><dd>'+esc(name)+'</dd>'+
+    '<dt>Date & time</dt><dd>'+esc(new Date(date.value).toLocaleString())+'</dd>'+
+    '<dt>Prepared bottle</dt><dd>'+esc(String(b.id))+'</dd>'+
+    '<dt>Sprays recorded</dt><dd>'+n+'</dd>'+
+    '<dt>Nominal amount</dt><dd>'+(n*b.mgPerSpray*1000).toFixed(2)+' mcg</dd>'+
+    '<dt>Bottle after save</dt><dd>'+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+' mL</dd>'+
+    '<dt>Original source vial</dt><dd>No second deduction</dd>'+
+    '</dl><p class="nx-shared-review-footnote">Recorded spray values are nominal. Nothing saved yet.</p>';
   box.hidden=false;m.querySelector("#nx-spray-entry-fields").hidden=true;
  };
  m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
@@ -936,7 +954,7 @@ function nexusChoosePhysicalForm(name,occTime){
  (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
  (availableVial?'<button id="nx-use-injectable" type="button" class="nx-multi-vial-toggle" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
  '</div>',"#A78BFA");
- m.classList.add("nx-form-log-sheet","nx-form-choice-sheet");
+ m.classList.add("nx-form-log-sheet","nx-form-choice-sheet","nx-shared-form-sheet");
  m.querySelector("#x").onclick=closeModal;
  if(capsules)m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
  if(nasal)m.querySelector("#nx-use-nasal").onclick=()=>{closeModal();nexusNasalDoseModal(name,occTime);};
@@ -1577,6 +1595,18 @@ function doseModal(name, existing, occTime, formChoice) {
   methodButtons.forEach(btn=>btn.onclick=()=>{
     const nextMethod=btn.dataset.adminMethod;
     if(nextMethod===methodInput.value)return;
+    // Both injection routes use the same exact injectable source family.
+    // Stay in the current sheet; never reopen the physical-form picker.
+    // Rebuild only the site list, clearing a site that belongs to another route.
+    if(["SubQ","IM"].includes(nextMethod)&&["SubQ","IM"].includes(methodInput.value)){
+      methodInput.value=nextMethod;
+      siteInput.value="";
+      f.site="";
+      methodInput.dispatchEvent(new Event("change",{bubbles:true}));
+      return;
+    }
+    // Other route changes require revalidation of the physical inventory source.
+    // Preserve a draft but do not silently apply an injectable vial to nasal/oral.
     state._pendingDoseDraft={name,id:f.id,method:nextMethod,
       dose:m.querySelector("#dose")?.value||f.dose,
       date:m.querySelector("#date")?.value||f.date,site:"",
@@ -1584,7 +1614,7 @@ function doseModal(name, existing, occTime, formChoice) {
       escalation:!!m.querySelector("#esc")?.checked,
       asNeeded:!!m.querySelector("#nx-dose-as-needed")?.checked,
       symptoms:f.symptoms,rows:[]};
-    closeModal();doseModal(name);
+    closeModal();doseModal(name,null,null,"vial");
   });
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
