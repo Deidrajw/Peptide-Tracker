@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 DS2 close parity + optional options test candidate (NOT RELEASED)
+- Draft PR124 branch only: nine shared modal close buttons standardized to outline SVG (`0f580936`/`dd4819ea`/`6fff5770`/`cdf5b421`). New assertions for form modal/Goal Details icon/44px geometry (`ff0b050e`/`3a7b8ef1`). Additional dose options responsive and disclosure tests (`7212783e`). No data/schema/source/vial/nasal algorithm changes.
+- Old focused picker `ee903da8` WebKit/mobile/writer/nested SUCCESS, Chromium build pending; combined newest application/test SHA `3a7b8ef1` full QA pending, no physical iPhone acceptance. Production unaffected. P0 mixed writer BLOCKING; LIVE nasal OFF. Draft unmerged/undeployed. Release ZIP/full-app DEMO not verified at latest SHA.
+
 ## 2026-11-01 — PR124 73e036c9 focused picker repaint candidate, NOT RELEASED
 - New Other-form compound picker fix ensures subsequent user typing can reopen custom/results list after keyboard selection and delayed focusout closure. Chromium/WebKit had explicitly failed while input was focused and results present but hidden at `4086417e`. Current 73e036c9 exact-head automation in progress, physical iPhone not accepted. Data impact: none; stock/source/bottle ledger unchanged. P0 blocking, nasal LIVE OFF, PR draft/unmerged/undeployed.
 
