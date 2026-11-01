@@ -1,3 +1,44 @@
+## PR124 — New family-vs-route scenarios (NOT READY FOR DEVICE ACCEPTANCE)
+
+As of 2026-10-31 22:20 Toronto, source 9ef27f9 is a known failing candidate for these newly reported workflows. These tests are FUTURE acceptance cases after an exact-source corrected full-app isolated DEMO is provided. Do not test source-changing scenarios using production data.
+
+### QA-FORM-01: Set up injectable form, select dose route (critical)
+- Start: corrected isolated DEMO > Stash > Vial kits > fictional compound (e.g. Fictional Injectable).
+- Scenario: create fictional 10 mg kit with one sealed vial; open one using Open new vial; choose form Injectable without a SubQ/IM/IV setting. Note initial vial mg. If UI still requires route, Fail.
+- Steps: 1. Open Use setup; verify no injection route field and save form preference. 2. Today > Log Dose; find compound, including without a protocol. 3. Choose SubQ and review source and site. 4. Cancel, repeat with IM. 5. Confirm a fictional dose only when the correct verified source and safe route are explicitly allowed; inspect history and exact balance.
+- Expected: Stash form remains Injectable, recorded dose route reflects per-entry selection; no phantom or wrong source deduction; historical records preserved. Mark Blocked if fixture or verified route compatibility unavailable; never infer clinical route eligibility.
+- Status: NOT TESTED on corrected build; known FAIL on 9ef27f9. Evidence: paired setup, route, vial and history screenshots; device/iOS and tester/date. Cleanup: restore new fictional fixture.
+
+### QA-FORM-02: Same compound with independent injectable and oral forms (critical)
+- Start: corrected isolated DEMO > Stash > a fictional compound with an injectable vial and a separately entered oral container.
+- Scenario: create fictional vial 10 mg with 8 mg open and fictional oral container with known count. Record both balances, exact source IDs and date-specific history count before saving.
+- Steps: 1. Today > Log Dose > compound. 2. Select Oral and view eligible source. 3. Cancel; return and select SubQ. 4. Check source choices and review. 5. Save one fictional supported form-backed dose; inspect both balances and history.
+- Expected: no cross-form attribution; oral must not debit an injectable vial, injectable must not debit oral stock; incompatible or unverified source fails closed with draft intact. If oral inventory consumption is not implemented, mark Blocked rather than Pass.
+- Status: NOT TESTED corrected build; user-reported current failure. Evidence: pre/post balances, screenshot and saved event. Cleanup: reset fictional fixture.
+
+### QA-PICKER-01: Stocked compound not in any protocol (high)
+- Start: corrected isolated DEMO > Stash > a fictional compound with open viable stock but no protocol.
+- Scenario: create fictional unprotocolled compound/kit; ensure no schedule or protocol record.
+- Steps: 1. Open Today > Log Dose picker. 2. Search exact compound name. 3. Select and inspect independent logging option. 4. Enter an amount, Review, cancel without saving.
+- Expected: compound discoverable without creating schedule or protocol, available stock attributed only to verified source; cancellation preserves stock/history.
+- Status: NOT TESTED on corrected source. Evidence: picker and cancelled form. Cleanup: reset fictional fixture.
+
+### QA-STASH-ORDER-01: Vial order stable (medium)
+- Start: corrected isolated DEMO > Stash > Vial kit > Details > Vials.
+- Scenario: fictional kit with sequence numbered vials 1/2/4/5 and mixed open/finished statuses. If required fixture cannot be created via DEMO UI, mark Blocked.
+- Steps: 1. Open Vial details. 2. Note every rendered sequence number. 3. Close/reopen Details and switch theme. 4. Compare numbering and histories.
+- Expected: consistent intentional numeric vial order, not backing-array order; no mutation to actual sequence numbers/ledger.
+- Status: NOT TESTED. Evidence: ordered list screenshots light and dark.
+
+### QA-PREP-01: Nasal plan is not prepared inventory (critical)
+- Start: corrected isolated DEMO > Stash > Vials > fictional open kit vial.
+- Scenario: use fictional stock; note original mg. Do not mix real compounds/ingredients for a software test.
+- Steps: 1. Open Plan a preparation > Nasal. 2. Save a fictional planning note. 3. Verify saved-plan status. 4. Open Stash and Log Dose sources.
+- Expected: plan does not reduce original mg, does not create nasal spray stock or enable a nasal dose. A separate validated transfer/container step must exist before any prepared stock may be consumed.
+- Status: NOT TESTED after explanatory redesign. Evidence: source and plan screens, before/after mg. Cleanup: reset fictional fixture.
+
+All cases require Pass/Fail/Blocked/Not Tested, exact observations, evidence, build SHA and tester/date using the in-chat Copy Results form. Prior CI/browser tests DO NOT validate these cases.
+
 ## PR124 — Stash button parity and expanded vial setup (candidate CSS d9cb70a6)
 
 **Scope and proof:** Retest the approved compact cards, action-button hierarchy, use setup and unresolved-vial message at 320px/390px (emulation) and on a physical iPhone in both system light and dark appearance. Physical results must be observed by the device tester; all cases start **Not Tested**. Record device model, iOS version, DEMO source SHA, theme, screenshots, actual result, tester/date and any issue. Use the PR124 source-matched **isolated full-app DEMO** only. Do not import a personal backup or change the Cloudflare production app.
