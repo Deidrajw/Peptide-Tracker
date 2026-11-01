@@ -1,3 +1,6 @@
+## 2026-10-31/Nov 1 UTC — PR124 purple Stash candidate QA (NOT RELEASED)
+- App/CSS 9ef27f986d28d9278c521f5493811316e69f259f; full Chromium #41263023868 SUCCESS; WebKit #41263023879 SUCCESS; mobile #41263023829 SUCCESS; nested #41263023831 SUCCESS; scoped writer #41263023853 SUCCESS. Corrected purple primary and lavender open-vial secondary in light theme. Standalone full app DEMO and complete LIVE ZIP obtained from source-matched GitHub artifact #13065749673, CRC and contents verified. No data migration, merge or deployment. Physical iPhone acceptance pending and P0 cross-tab mixed writer remains unresolved.
+
 ## 2026-10-31 — PR124 light-mode Stash purple correction (UNRELEASED)
 - CSS 9ef27f9 replaces near-black primary Set up vial with purple and softens expanded Open new vial secondary to lavender in light theme. No business logic, inventory or storage changes. Pre-fix browser run #41261696707 success does not verify post-fix colour. Post-fix artifact and physical device acceptance pending; draft PR #124 unmerged and not deployed; mixed-writer P0 still open.
 
