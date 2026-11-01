@@ -1,3 +1,9 @@
+## 2026-11-01 — shared 48px outline close and Additional dose options test checkpoint
+- **#04/#05/#07/#08/#09/#14/#16 CODED correction:** shared form close buttons in `05-nexus.js` (4), `07-nexus.js` (1), `10-nexus.js` (3), and `11-nexus.js` (1) now use the same 20px outline SVG inside the existing 44–48px touch-target button; IDs, event handlers and storage unchanged. App commits `0f580936`, `dd4819ea`, `6fff5770`, `cdf5b421`. Explicit mobile form and Goal Details SVG assertions added in `ff0b050e` and `3a7b8ef1`.
+- **#15 TEST CODED:** Log Dose Additional dose options expanded/collapsed, two controls, 44px row/summary and no overflow are now asserted in existing LIVE/DEMO 320/390 light/dark browser loops at `7212783e`.
+- Last picker app test `ee903da8`: WebKit PASS #41359883284, writer PASS #41359883263, mobile PASS #41359883287, nested PASS #41359883312; Chromium/build #41359883310 was in progress when observed. These PASS are **not** new SVG/Additional options acceptance.
+- Combined test source `3a7b8ef1` five workflows queued; **no exact-head full suite PASS yet**. User's 16-point physical iPhone acceptance still NOT ACCEPTED, legacy/nasal sections remain partial. P0 BLOCKING, LIVE nasal OFF, PR draft/no merge/deploy.
+
 ## 2026-11-01 — #15 Additional dose options narrow-screen assertions added
 - Test `7212783e` now opens the live/isolated-DEMO Log Dose panel across Chromium 320px/390px × light/dark, asserts one accessible Additional dose options disclosure, ≥44px summary and both optional rows, no viewport overflow, two underlying optional controls and reversible expand/collapse without saving. **TEST CODED, no PASS until matching workflow completes.** Remaining physical UAT, route/site and Goal Details screen review is not accepted. No dose mutation or storage schema change.
 
