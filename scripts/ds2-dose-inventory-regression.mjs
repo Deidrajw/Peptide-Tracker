@@ -131,11 +131,13 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
    v.intendedUse='Nasal';
    doseModal('Retatrutide');
  },base);
- const mismatch=await page.locator('#alloc-panel').innerText();
- if(!mismatch.includes('not an inventory shortage'))throw Error('Missing method-mismatch explanation '+mismatch);
- await page.locator('#nx-dose-entered').fill('250');
- await page.locator('#nx-dose-review-open').click();
- if(await page.locator('.nx-dose-review-stage').isVisible())throw Error('Unresolved source was allowed into Review');
+ // A Nasal-reserved source without a prepared bottle must now fail closed
+ // before opening an injectable editor at all, rather than rendering a
+ // misleading inventory shortage inside the old allocation panel.
+ if(await page.locator('#nx-dose-entered').count()!==0)
+   throw Error('Nasal-reserved vial was incorrectly offered as an injectable dose');
+ if(await page.locator('#nx-spray-count').count()!==0)
+   throw Error('Unprepared nasal source was incorrectly treated as a spray bottle');
  const mismatchAfter=await page.evaluate(({kitId,vialId})=>{
    const k=state.supplies.find(k=>k.id===kitId),v=k.vials.find(v=>v.id===vialId);
    return {mg:v.remainingMg,count:state.peptides.Retatrutide.doses.length};
