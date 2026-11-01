@@ -2255,6 +2255,25 @@ async function nexusCommitPreparationTransfer(input) {
   return result.event;
 }
 
+/* Exact source-to-prepared-bottle live transaction is fully planned under one
+ * exclusive commit; public controls remain gated until ALL legacy state writers
+ * are coordinated. Never use a separately saved empty bottle or provisional debit.
+ * State swaps only after the writer's full-snapshot readback succeeds.
+ */
+async function nexusCommitRecordedNasalPreparation(input) {
+  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)
+    throw Error("Recorded nasal transfers are unavailable until mixed-writer acceptance");
+  if(_demoActive)throw Error("Use the in-memory fictional planner in demo mode");
+  if(!globalThis.NexusPreparationBridge?.planRecordedNasal || !input?.confirmed)
+    throw Error("Confirmed recorded preparation with verified planner required");
+  const writer=nexusWriter();
+  const result=await writer.transaction(state,snapshot=>
+    globalThis.NexusPreparationBridge.planRecordedNasal(snapshot,input));
+  state=result.next;
+  _nexusLastSavedSnapshot=writer.expected();
+  return result;
+}
+
 // PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
 // but live controls remain disabled until every state writer shares the same
 // cross-tab transaction coordination. Never silently bypass this release gate.
