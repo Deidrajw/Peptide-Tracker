@@ -1,3 +1,7 @@
+## 2026-10-31 — P-11 immediate correction: physical form versus dose method
+- One next implementation priority: distinguish physical product FORM (Injectable/Nasal/Oral/Topical/Other) from per-entry administration METHOD (SubQ/IM/IV), include multi-form source choice, no-protocol stocked compounds in picker, protected native units/historical vial IDs, fail-closed exact-source writer, and cross-tab safety. Preserve past user data and do not silently migrate.
+- Then, as separate focused fixes: DS2 button parity with Supplies, Log Dose content hierarchy and checkbox consistency, numeric vial ordering, better nasal planning explanation without pretending to create prepared stock. New iPhone defects recorded in REGRESSION and existing Playbook governs guided testing.
+
 ## 2026-10-31 — Compound library breadth (PR124 DRAFT / NOT RELEASED)
 - Added 53 named records to curated library (49 existing → 102 total), including 14 bioregulators and SLU-PP-332 non-peptide research entry. Names from user workbook, with independent references where verified and explicit review-pending provenance otherwise. See docs/product/NEXUS_LIBRARY_EXPANSION_2026-10-31.md.
 - Preserve custom Add Compound action for unknown names, existing IDs/storage and data. Never auto-fill doses, routes or inventory conversions from supplier claims.
