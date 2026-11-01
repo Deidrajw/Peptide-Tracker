@@ -124,6 +124,19 @@ function nexusPlanScopedStateChange(snapshot,operation){
   if(operation.key==="recentDiscoverViews"&&(!Array.isArray(operation.value)||operation.value.length>8||operation.value.some(x=>typeof x!=="string"||x.length>160)||new Set(operation.value).size!==operation.value.length))fail("Invalid recent discovery views");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
+ }else if(operation.kind==="dated-log-upsert"){
+  const field=operation.field,record=operation.record;
+  if(!["macroLogs","weightLogs","measurementLogs"].includes(field))fail("Unsupported dated log");
+  if(!Array.isArray(next[field])||!record||typeof record!=="object"||Array.isArray(record))fail("Invalid dated log record");
+  if((typeof record.id!=="number"&&typeof record.id!=="string")||!String(record.id).trim())fail("Exact dated log ID required");
+  if(typeof record.date!=="string"||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(record.date))fail("Valid dated log date required");
+  if(next[field].filter(x=>String(x.id)===String(record.id)).length>1)fail("Ambiguous dated log ID");
+  if(field==="macroLogs"){
+   next[field]=next[field].filter(x=>String(x.id)!==String(record.id)&&dayKey(x.date)!==dayKey(record.date));
+  }else{
+   next[field]=next[field].filter(x=>String(x.id)!==String(record.id));
+  }
+  next[field].push(JSON.parse(JSON.stringify(record)));
  }else if(operation.kind==="supplement-list-add"){
   const value=operation.name;
   if(typeof value!=="string"||!value.trim()||value.trim().length>160)fail("Valid supplement name required");
