@@ -1,3 +1,6 @@
+## 2026-10-31 / Nov 1 UTC — Unreleased shared physical form lookup correction
+- Code 0e247f5 aligns shared getEligibleSourceKits with canonical nexusPhysicalVialCompatible form mapping; tests e07c623/42e09f update legacy form expectations and e49853f covers SubQ/IM shared physical family with IV/nasal guarded. Previous full #41266340372 failed stale SubQ assertion despite early actual browser writer checks passing; latest full #41266633696 and WebKit #41266633690 pending. No migration, merge, deploy, or user-data writes.
+
 ## 2026-10-31 / Nov 1 UTC — PR124 coordinated form/route integration checks (UNRELEASED)
 - Updated stale DS2 test expectation in 8a983222 to match stored Injectable family, not old SubQ method. Extended browser/WebKit source-choice checks in ab89db0 for route-switch no-write and no-protocol physical stock discovery. Existing draft code includes family/route separation, DS2 style work and numeric vial ordering from prior branch work, but exact current release source must pass integrated CI. Full app demo and LIVE bundle NOT REGENERATED/VERIFIED on this latest test SHA. No merge/deploy, no data migration. Existing P0 writer open.
 
