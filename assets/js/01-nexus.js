@@ -131,6 +131,32 @@ async function nexusCommitUntrackedDose(name,dose,editing){
 }
 
 
+/* Physical product classification is not the route used on an individual dose.
+ * Legacy SubQ/IM labels are interpreted read-only as Injectable; no migration
+ * or change to saved historical dose.method / exact source identifiers.
+ * A nasal-source vial is an ingredient for preparation, NEVER a nasal bottle.
+ */
+function nexusPhysicalForm(value){
+  const x=String(value||"").trim().toLowerCase();
+  if(["injectable","subq","subcutaneous","sq","sc","im","intramuscular","iv","intravenous"].includes(x))return "Injectable";
+  if(["oral","po"].includes(x))return "Oral";
+  if(["topical"].includes(x))return "Topical";
+  if(["nasal","intranasal"].includes(x))return "Nasal";
+  if(["nasal-source","nasal preparation source"].includes(x))return "NasalSource";
+  if(x==="other")return "Other";
+  return null;
+}
+function nexusDoseMethodForm(method){
+  return ["SubQ","IM","IV"].includes(method)?"Injectable":nexusPhysicalForm(method);
+}
+function nexusPhysicalVialCompatible(formLabel,doseMethod){
+  // IV requires independently verified suitability; an injectable label alone
+  // is insufficient and the current backed writer deliberately excludes IV.
+  if(doseMethod==="IV"||doseMethod==="Nasal")return false;
+  const form=nexusPhysicalForm(formLabel);
+  return !!form&&form===nexusDoseMethodForm(doseMethod);
+}
+
 /* PR124 exclusive physical vial dose, new fresh doses only.
  * Explicit already-migrated open vial IDs; never infer sealed/legacy sources,
  * prepared stock, finished draft deductions or blend ledger allocations.
@@ -163,7 +189,7 @@ function nexusPlanBackedPhysicalDose(snapshot,entry){
     if(!vial||!["open","active"].includes(vial.status)||!Number.isFinite(vial.remainingMg)||vial.remainingMg<=0)fail("Open migrated vial required");
     const route=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
       (kit.preparationMethod||kit.administrationMethod||kit.route);
-    if(route!==method)fail("Vial method mismatch");
+    if(!nexusPhysicalVialCompatible(route,method))fail("Vial formulation incompatible with this administration method");
     const mg=Math.round(step.mg*100)/100;
     if(Math.abs(mg-step.mg)>0.000001)fail("Unsupported source precision");
     if(mg>vial.remainingMg+0.000001)fail("Insufficient exact vial balance");
@@ -227,7 +253,7 @@ function nexusPlanBackedDoseChange(snapshot,entry){
      !Number.isFinite(vial.remainingMg))fail("Original vial unavailable; no correction");
   const matchedMethod=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
     (kit.preparationMethod||kit.administrationMethod||kit.route);
-  if(matchedMethod!==old.method)fail("Original method no longer matches the exact vial");
+  if(!nexusPhysicalVialCompatible(matchedMethod,old.method))fail("Original vial formulation no longer matches the historical dose");
   const nextDose=operation==="undo"?null:{...old,...patch,id:old.id,
     allocations:old.allocations.map(a=>({...a}))};
   if(nextDose&&(nextDose.method!==old.method||nextDose.trackingMode!=="backed"||
