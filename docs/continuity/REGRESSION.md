@@ -1,3 +1,8 @@
+## 2026-11-01 — actual SVG visibility and viewport entry/review clipping regression
+- `5d406a72` fixes a concrete contradictory style: shared modal buttons had an SVG but applied transparent foreground and painted a second masked X. The real SVG now renders, duplicate mask suppressed only for SVG-backed buttons; fallback remains for legacy glyph-only cases.
+- `aca4a10b` checks capsule and nasal close computed SVG colour, suppressed duplicate pseudo-element, >=44px target, both widths/themes, LIVE/isolated DEMO. `445ad980` / `1c41a3d6` add ordinary Log Dose entry and Review geometry: no horizontal document/sheet/header/footer clipping, >=44px close and viewport-visible footer at 320/390. Tests CODED; new-head execution NOT VERIFIED.
+- Historical confirmed WebKit #41360134694 on `de85376c` SUCCESS: log says 16 fictional LIVE/DEMO sessions. Chromium/build at this SHA remains pending. No physical iPhone keyboard or VoiceOver acceptance. P0 BLOCKING; LIVE nasal OFF.
+
 ## 2026-11-01 — shared close SVG and optional panel assertions
 - App `0f580936`/`dd4819ea`/`6fff5770`/`cdf5b421`: nine `.nx-dose-close` UI buttons from four JS modules converted from text X to outlined SVG; existing 44–48px button geometry intact; no data/ledger writes. Test `ff0b050e` now requires SVG close in actual capsule and nasal bottle sheet at 320px/390px light/dark, `3a7b8ef1` in Goal Details modal.
 - Test `7212783e`: Log Dose Additional dose options summary and both rows have >=44px, no horizontal overflow, expand/collapse reversible, both controls present. Existing `tools/validate-logdose-ui.mjs` runs LIVE/DEMO 320/390 dark/light Chromium.
