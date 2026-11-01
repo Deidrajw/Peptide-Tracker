@@ -1484,3 +1484,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — Additional development-only safety correction, no release
 - 3ce0e793 fixes outdated DEMO save acknowledgement assertion; 3ce0e793 shared-writer #41280418868 and mobile #41280418877 SUCCESS. a3bc6c15 guards startup inventory migration against unacknowledged save; exact-head full QA and artifact pending. No destructive data operation, schema change, merge or deployment. Current production version unchanged; release P0 BLOCKING.
+
+
+## 2026-11-01 — PR124 QA fixture follow-up (development only)
+- Test-only commit 0eda5bcd6f41baab129530abafc000a365d7c413 adds missing activityLogs array to fictional Chromium two-tab bulk-health delete fixture; no application code or data schema change. Previous a3bc6c15 full CI FAILED on test fixture, while its writer/mobile/DS2/WebKit passed and artifact #13072478870 integrity/source manifest were inspected. Current exact-head full QA and artifact pending; no release bump, merge, deployment or real data modification. Nasal gates OFF, P0 blocking.
