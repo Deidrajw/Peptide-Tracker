@@ -909,7 +909,7 @@ function doseModal(name, existing, occTime) {
     <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
     <div id="nx-dose-site-field"><label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select></div>
-    <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
+    <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note"${initialMethod==="Nasal"?"":" hidden"}>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <details class="nx-dose-protocol-options nx-dose-more-options" style="margin:10px 0 0">
       <summary>Additional dose options</summary>
@@ -1410,7 +1410,7 @@ function doseModal(name, existing, occTime) {
     // Local, reversible guidance: never add a persistent global error banner
     // when merely exploring administration methods.
     const nasalNote=m.querySelector("#nx-nasal-method-note");
-    if(nasalNote)nasalNote.hidden=!(methodInput.value==="Nasal" && !isNasal);
+    if(nasalNote)nasalNote.hidden=methodInput.value!=="Nasal";
     refreshAdminSites();
     renderAdminButtons();
   };
