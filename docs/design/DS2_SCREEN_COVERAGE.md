@@ -284,3 +284,16 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 
 ## 2026-10-31 — Stash density correction / form parity on draft PR #124
 - User review screenshots identify previously unaccepted oversized Vial cards, separate vertical boxed non-vial search results, and disproportionate Nasal/Capsule package cards in Vial kits. Targeted correction: responsive tighter cards, shared Vial compound combobox UX (5 results + View all), separate Vial kits / Other forms / Supplies segmented sections, compact non-vial stock row. Candidate commits 3bd53037, 3addc141, 5408ca8b, 18533dc8. User physical iPhone acceptance pending; preserve approved kit editor/detail flows, production stored source attribution and dosing safety. This specifically supersedes the previous mixed-display assumption without deleting or reclassifying records.
+
+## 2026-11-01 — PR124 user-request scorecard (current corrective sprint)
+| Requested item | State | Evidence / remaining gate |
+| --- | --- | --- |
+| Shared form header and close control parity | Implemented, automated CI passed on 5b7f878e | CSS 2b19a5de; physical iPhone pending |
+| Compact five-result compound search on non-vial Add Product | Implemented, new-head QA pending | Existing combobox plus keyboard/browse/no-result refinements 108f1559; check all four stock forms |
+| View all compounds and custom-name option | Implemented, new-head QA pending | 108f1559; test touch, keyboard and search dismissal |
+| Capsule, nasal, raw and topical form-flow parity | Partially implemented | Cross-screen end-to-end inspection outstanding |
+| Nasal exact-source transfer and bottle accounting | Passed on previous tested source 66959ba7 | Preserve source IDs, single transfer and dose debit; new-head recheck needed |
+| 320px / 390px light and dark comprehensive corrective audit | Not tested on 108f1559 | Four configurations required; previous 5b7f878e five CI workflows succeeded |
+| Remaining user-reported 16-point DS2 corrections | Incomplete | Reconcile individual screenshot items before sign-off; do not count CSS-only work as completion |
+| Full-app isolated DEMO and exact-source LIVE ZIP | Not verified for current head | Regenerate and inspect before release |
+| P0 writer and LIVE nasal safety gates | BLOCKING / OFF | No merge or deploy |
