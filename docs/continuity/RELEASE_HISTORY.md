@@ -1,3 +1,8 @@
+## 2026-11-01 — PR124 QA evidence update, NOT RELEASED
+- Tested candidate 2457a657: all five exact-application-source GitHub workflows SUCCESS (#41327745230 Chromium/full, #41327745218 WebKit, #41327745251 mobile, #41327745323 writer, #41327745216 nested). Prior reported 26-file LIVE ZIP/isolated full-app DEMO artifact #13092541470 not re-downloaded/reverified this session.
+- Follow-up continuity-only head 62e0c126 has a new failed full browser workflow #41328859453 due to 320px zero-height Plans View goal target. Other four follow-up workflows succeeded. No change labelled tested release or deployed; failure needs triage and a fresh source-matched green run.
+- Guided device acceptance expanded in the existing permanent iPhone QA Playbook; results remain NOT TESTED physically. P0 mixed legacy writers and live nasal gates are BLOCKED/OFF. Version bump, physical acceptance, approved merge, Cloudflare deployment and release verification NOT DONE. Production data unchanged.
+
 ## 2026-11-01 — Draft actual-handler concurrency test, NOT RELEASED
 - e1d3966f adds true Chromium two-tab tests invoking application settings/history commit helpers. No test pass evidence, remaining ordinary save callers unconverted, no live nasal/merge/deploy.
 
