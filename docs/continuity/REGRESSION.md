@@ -1,3 +1,6 @@
+## 2026-11-01 — Chromium two-tab actual-key regression added, execution pending
+- 6db79cd6 adds actual browser tabs/shared origin/production-named storage key (isolated fictional context) race to Chromium formulation validator: inventory lock, queued settings, stale settings/history rejection, fresh commits, readback and injected write failure. NOT YET RUN / NOT VERIFIED. Existing old synchronous ordinary UI writers remain P0 BLOCKED; coordinator test alone cannot approve release.
+
 ## 2026-11-01 — Today tracking exclusive-save slice
 - CODED 77f3e722: activity selection waits for exclusive readback before render, restores selection on failure. Automated/physical UI verification NOT TESTED. P0 mixed writer BLOCKED, true Chromium two-tab race NOT RUN.
 
