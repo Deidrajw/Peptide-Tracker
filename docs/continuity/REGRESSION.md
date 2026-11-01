@@ -1,3 +1,7 @@
+## 2026-11-01 — Picker hidden-results reproduced with instrumentation; candidate fix pending
+- On source `4086417e`, WebKit #41359516504 FAIL: after ArrowDown/Enter compound choice, typing "Fictional Unlisted Compound" left input focused, matchList containing Browse+custom, but list was hidden and computed display:none. Not a missing custom option, not an accepted UX. Chromium also failed at same hidden option on predecessors.
+- Application `73e036c9` schedules a conditional focused-input repaint after input so any stale focusout frame cannot leave current query results hidden; retain current-state focus check to avoid reopening on blur. Exact-head CI IN PROGRESS; do not claim correction verified. Existing test remains strict. P0 BLOCKED; LIVE nasal OFF; no merge/deploy.
+
 ## 2026-11-01 — picker WebKit regression identified, focus-return corrections CODED
 - Source `0ed9d03e` Chromium #41358693238 / WebKit #41358693323 FAIL: compound options 6 instead of 5 because Browse all erroneously exposed option role; application `bc8325a5` fixes Browse role.
 - WebKit #41358985489 at `1fab968c` FAIL: after keyboard selection, next Other-form custom option existed but was hidden; focus remained on a collapsed list item and subsequent input focus/out closed new suggestions. Corrections `96dc4bc0` (Other form) and `4e1b0502` (Vial) return focus to compound input, then close list. Test `57196a96` asserts input focus after Enter. Shared compound browser Back accessible name `4d162c31` is now context-neutral.
