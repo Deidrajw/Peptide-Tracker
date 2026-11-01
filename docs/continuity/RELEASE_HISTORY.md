@@ -1496,3 +1496,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 test-only Check-In date correction (no release)
 - 49018ee2 fixes false editor expectation in tools/validate-checkin.mjs by specifying fictional date 2032-11-10; no application source or data schema changes. CI and exact-source artifact qualification pending. P0 release blocker open, draft PR #124, nasal gates OFF; not merged or deployed.
+
+
+## 2026-11-01 — QA-only Check-In instrumentation and WebKit geometry tolerance
+- 49018ee2 adds explicit fictional Check-In date but full CI #41283705756 still FAILED at second search. 33b67722 captures second modal state; 526300aa allows 0.01px floating rounding on a designed 44px WebKit capsule close target. No app CSS/JS behaviour or production data changed by these commits; P0 release blocking, draft PR #124, nasal gates OFF, exact-head artifact pending; no merge/deploy.
