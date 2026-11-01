@@ -180,10 +180,13 @@ try{
         const granularSites=await page.evaluate(()=>({
           subq:nexusAdminSites('SubQ'),im:nexusAdminSites('IM'),oral:nexusAdminSites('Oral')
         }));
-        for(const site of ['Abdomen — upper L','Abdomen — lower R','Abdomen — lower middle'])
-          assert.ok(granularSites.subq.includes(site),'SubQ detail preserved: '+site);
-        for(const site of ['Deltoid — L (IM)','Vastus lateralis — R (IM)','Ventrogluteal — L (IM)'])
-          assert.ok(granularSites.im.includes(site),'IM detail preserved: '+site);
+        // Approved PR124 labels use explicit left/right descriptions rather
+        // than obsolete abbreviations; preserve distinct route-only choices.
+        for(const site of ['Abdomen — upper left','Abdomen — lower right','Thigh — left (SubQ)','Upper arm — right (SubQ)'])
+          assert.ok(granularSites.subq.includes(site),'SubQ route-specific site missing: '+site);
+        for(const site of ['Deltoid — left (IM)','Deltoid — right (IM)','Vastus lateralis — right (IM)','Ventrogluteal — left (IM)'])
+          assert.ok(granularSites.im.includes(site),'IM route-specific site missing: '+site);
+        assert.ok(!granularSites.subq.some(site=>granularSites.im.includes(site)),'IM/SubQ choices must not overlap');
         assert.deepEqual(granularSites.oral,[],'Oral doses have no injection site');
         // Single-vial premixed blend regression, in fully isolated fictional DEMO.
         await page.evaluate(()=>{
