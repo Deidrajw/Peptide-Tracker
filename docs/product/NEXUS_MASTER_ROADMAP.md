@@ -1,3 +1,8 @@
+## 2026-11-01 — Exact-source combined QA checkpoint
+- Capsule-count exact stock and event Undo + multiple oral sources CODED & browser verified; reversible Pause All/Resume All CODED & regression-covered; adaptive capsule Log Dose and fictional isolated DEMO nasal preparation/spray count CODED & tested in full Chromium #41273119998, WebKit #41273119793. Exact-source artifacts manifest 9752ab64 inspected.
+- CRITICAL OPEN release gates: mixed legacy writer P0, production nasal transfer and prepared administration gates OFF, missing form-specific topical and dedicated retrospective container-backed dose editing. Physical iPhone/VoiceOver acceptance and primary production deployment NOT DONE. No merge/deploy.
+- Next one priority: retire mixed-writer P0 with actual cross-tab tests across every remaining legacy writer, then implement and validate live nasal source-to-container debit and dose administration; preserve existing data and DS2; follow existing iPhone Playbook.
+
 ## 2026-11-01 — Coordinated form-specific sprint checkpoint
 - Capsule physical container → count-based Log Dose → source-specific whole-count debit + history → exact event Undo CODED at source 9c84350 and test coverage added; acceptance pending exact-head CI and physical iPhone. An independent custom compound entry does not create a protocol.
 - Nasal exact reserved physical source → user-recorded completed preparation → new separately tracked bottle → nominal spray-count log → exact bottle debit and reversal CODED in isolated fictional DEMO only; tested pure planners are needed, but live safety gates remain OFF. This explicitly does NOT resolve live nasal functionality. No 'Plan' prerequisite in new experimental DEMO flow.
