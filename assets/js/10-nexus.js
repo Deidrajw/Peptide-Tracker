@@ -2123,7 +2123,7 @@ function nexusAddFormulationModal(type,existingId=null){
       option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();};matchList.appendChild(option);
     });
     const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
-    browse.setAttribute("role","option");
+    // Browse opens the library: it is not an additional compound option.
     browse.onpointerdown=e=>e.preventDefault();
     browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));});};
     matchList.appendChild(browse);
