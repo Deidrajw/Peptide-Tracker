@@ -1,10 +1,4 @@
-/* Nexus PR124 shared write coordinator.
- * A single synchronous guarded writer for legacy calls, and one asynchronous
- * exclusive writer for inventory operations. This intentionally does NOT
- * claim that legacy synchronous calls hold a cross-tab Web Lock; the live
- * prepared administration feature remains disabled until every writer is
- * converted to the exclusive contract.
- */
+/* Nexus PR124 exclusive Web-Lock write coordinator. All durable app-state writes require awaited readback. */
 (function(root,factory){
  const api=factory();
  if(typeof module==="object"&&module.exports)module.exports=api;
@@ -39,22 +33,6 @@
    if(verified!==serialized){blocked=true;fail("Storage readback mismatch; reload before retry")}
    last=serialized;
    return {serialized};
-  }
-  function saveLegacy(next){
-   if(inFlight)fail("Inventory transaction running; save blocked");
-   return persist(next);
-  }
-  function removeLegacy(){
-   if(inFlight)fail("Inventory transaction running; erase blocked");
-   if(typeof remove!=="function")fail("Removal adapter unavailable");
-   const observed=compare();
-   if(read()!==observed)markConflict();
-   try{remove()}catch(e){blocked=true;throw e}
-   let after;
-   try{after=read()}catch(e){blocked=true;throw e}
-   if(after!==null){blocked=true;fail("Removal readback mismatch; reload before retry")}
-   last=null;
-   return {removed:true};
   }
   // Unlike the pre-migration erase, this path cannot bypass another tab's
   // inventory lock. A stale tab rejects without removing any saved records.
@@ -96,7 +74,7 @@
     });
    }finally{inFlight=false}
   }
-  return {saveLegacy,removeLegacy,eraseExclusive,transaction,expected,status};
+  return {eraseExclusive,transaction,expected,status};
  }
  return {create};
 });
