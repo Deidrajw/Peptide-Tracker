@@ -89,6 +89,11 @@ try{
         }));
         assert(beforeConfirm.catalog&&!beforeConfirm.logged,'Inline supplement entry must not auto-log a taken supplement');
         await page.locator('.modal #suppsave').click();
+        // Save is async: Playwright click acknowledgement is NOT durable-save
+        // acknowledgement. Wait for the successful handler to close its modal
+        // before opening the next Check-In sheet, or its delayed close can
+        // accidentally dismiss the new sheet.
+        await page.locator('.modal #suppsave').waitFor({state:'detached',timeout:8000});
         const afterConfirm=await page.evaluate(()=>({
           logged:(state.supplementLogs||[]).find(l=>dayKey(l.date)==='2032-11-09')?.taken||[]
         }));
