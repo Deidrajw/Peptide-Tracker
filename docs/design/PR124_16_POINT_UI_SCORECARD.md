@@ -1,3 +1,6 @@
+## 2026-11-01 — #06 focused custom-result hidden-state blocker
+- Instrumented WebKit #41359516504 at `4086417e` FAILED: compound search retained focus and custom option existed but the result list was hidden following keyboard choice. Corrective candidate `73e036c9` schedules a focused-input repaint to survive delayed blur/focusout. Full 320/390 light/dark Chromium/WebKit tests still pending. **#06 is CODED / AUTOMATED FAIL ON PREDECESSOR / PHYSICAL NOT ACCEPTED**, not PASS. All 16 scope and nasal/P0 holds remain.
+
 ## 2026-11-01 — picker keyboard selection + shared browser navigation correction
 - Earlier 320/390 × light/dark Chromium/WebKit on `0ed9d03e` FAILED at six options: Browse all was incorrectly `role="option"`; `bc8325a5` fixes that.
 - Subsequent WebKit on `1fab968c` FAILED with hidden custom selection after keyboard choice. Exact identified cause: focus remained on an option in the collapsed list. Other-form focus restoration `96dc4bc0` and Vial kit focus restoration `4e1b0502` are CODED, with explicit focus+keyboard regression `57196a96`.
