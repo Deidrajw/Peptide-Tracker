@@ -101,7 +101,7 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
   supplies:[{id:"KIT",name:"Fictional A",vials:[{id:"V1",remainingMg:10,status:"open"}]}],
   settings:{nexusApiKey:"",phaseRemindersEnabled:false,theme:"dark"},
   supplementLogs:[{date:"2026-11-01",supplements:["Fictional C"]}],
-  macroLogs:[],weightLogs:[],measurementLogs:[],
+  macroLogs:[],weightLogs:[],measurementLogs:[],activityLogs:[],dailyLogs:[],
   peptides:{"Fictional A":{doses:[]}},customPeptides:{}
  }),scopedWrites=0,scopedTail=Promise.resolve();
  const scopedLock=(_key,fn)=>{const run=scopedTail.then(fn);scopedTail=run.catch(()=>{});return run};
@@ -183,6 +183,17 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
   assert.equal(saved.supplies[0].vials[0].remainingMg,8);
   assert.equal(saved.peptides["Fictional A"].doses.length,1);
  }
+ const beforeBulk=JSON.parse(scopedRaw);
+ const bulkTab=scopedTab();
+ assert.equal(await bulkTab.commit({kind:"bulk-delete",target:"del-health-all"}),true);
+ const bulkAfter=JSON.parse(scopedRaw);
+ for(const key of ["macroLogs","weightLogs","activityLogs","measurementLogs"])assert.equal(bulkAfter[key].length,0);
+ assert.equal(bulkAfter.supplies[0].vials[0].remainingMg,8);
+ assert.equal(bulkAfter.peptides["Fictional A"].doses.length,1);
+ assert.equal(bulkAfter.supplementLogs.length,beforeBulk.supplementLogs.length);
+ const invalidBulk=scopedTab(),priorBulk=scopedRaw;
+ assert.equal(await invalidBulk.commit({kind:"bulk-delete",target:"erase-everything"}),false);
+ assert.equal(scopedRaw,priorBulk);
  const invalidDated=scopedTab(),beforeDatedInvalid=scopedRaw;
  assert.equal(await invalidDated.commit({kind:"dated-log-upsert",field:"supplies",record:{id:"K1",date:"2026-11-02"}}),false);
  assert.equal(scopedRaw,beforeDatedInvalid);
