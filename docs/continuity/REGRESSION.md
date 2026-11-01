@@ -1,3 +1,8 @@
+## 2026-11-01 — New targeted automated tests (not iPhone acceptance)
+- 0e385399 formulation stock Chromium/WebKit test: 320/390 × light/dark × LIVE/isolated DEMO test modal geometry, 44px close, no horizontal overflow, capsule/spray Review replacing entry form (not stacking below Notes), Back restores entered values, spray review does not expose internal ID. Run #41275927660 / #41275927710 underway at observation; NOT PASS until completed.
+- c6572fa1 unit fixture: new prepared nasal first ever dose without existing compound history or protocol creates custom dose history, depletes only exact prepared bottle, never debits physical source vial, Undo reverses. Run awaiting completed QA.
+- Real-device UI-ORAL-01 and UI-NASAL-01 remain FAILED against 2026-11-01 screenshots pending new exact-head iPhone test; user asked NOT to test again before all areas fixed. Writer P0 remains BLOCKED regardless of scoped coordinator passing.
+
 ## 2026-11-01 — Follow-on device remediation coverage
 - New branch-only code: 392998ac auto-advances DEMO newly opened nasal-source vial to record-completed-preparation, except when an existing onDone continuation owns the flow. Test two entry points: legacy Set up vial and Open new vial; verify no duplicate opens or double transfer, cancel leaves original vial intact.
 - New branch-only code: 6c90120e/b8c04888 displays separate prepared bottle count and mL on linked physical source card after transfer. Verify original 0 mg is labelled source-only, linked prepared stock remains separate, kit totals unchanged, other same-compound kits unaffected, multiple bottles do not combine mcg/spray strengths.
