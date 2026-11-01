@@ -2076,7 +2076,7 @@ document.addEventListener('click',async e=>{
 function nexusKitFormPicker(){
  const forms=[["vial","Vials","Individual vials, reconstitution and remaining mg"],["capsule-bottle","Capsules","Capsule count and labelled strength"],["raw-powder","Raw powder","Powder mass, no vial calculations"],["topical-container","Topical","Product container and remaining volume"],["nasal-bottle","Nasal spray","Purchased spray bottle; homemade preparations start from a vial"]];
  const html='<section class="nx-kit-type-picker nx-shared-inventory-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · INVENTORY</div><h2 class="nx-dose-title">Add product</h2></div><button id="x" class="nx-dose-close" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" style="min-height:80px;display:flex;flex-direction:column;padding:12px" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
- const m=openModal(html,"#A78BFA");m.querySelector("#x").onclick=closeModal;
+ const m=openModal(html,"#A78BFA");m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal");m.querySelector("#x").onclick=closeModal;
  m.querySelectorAll("[data-kit-form]").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.kitForm;closeModal();if(type==="vial")supplyModal(null,null,true);else nexusAddFormulationModal(type);});
 }
 function nexusAddFormulationModal(type,existingId=null){
@@ -2097,6 +2097,7 @@ function nexusAddFormulationModal(type,existingId=null){
     <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
     <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
+  m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal");
   m.querySelector("#x").onclick=closeModal;
   // Native datalist results were unreliable in iPhone browsers: provide visible tap choices.
   const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
