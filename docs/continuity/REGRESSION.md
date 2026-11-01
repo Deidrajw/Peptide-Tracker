@@ -1,3 +1,6 @@
+## 2026-10-31 — Interim automation results for Stash visual candidate
+- On exact app/test source 754e3a8079: WebKit #41261696687 SUCCESS, mobile #41261696620 SUCCESS, writer #41261696631 SUCCESS, nested #41261696622 SUCCESS. Full Chromium #41261696707 IN PROGRESS; Stash action contrast/geometry and expanded setup checks not yet certified. Physical device scenario QA-STASH-VIS-01/02/03 and QA-PROTECTED-01: NOT TESTED on new CSS, awaiting user evidence. P0 legacy mixed writer remains BLOCKED.
+
 ## 2026-10-31 — PR124 Stash button/expanded setup screenshot regression
 - Device feedback: light/dark Retatrutide card (fictional-like example, user actual screenshot) structure OK; controls inconsistent. This is user visual defect evidence, NOT device acceptance of the fix.
 - Existing tools/validate-stash-cards.mjs enhanced in commits 5e9f73e and 754e3a8: 8 LIVE/DEMO 320/390 × dark/light fixture checks; primary-versus-secondary computed backgrounds, text contrast >=4.5, matching button radii and >=44px height; expanded use setup card nontransparent and bordered, setup action >=44px/bordered; capture expanded screenshot. Status NOT TESTED on changed CSS until new CI run completes. Existing earlier 231/233px height results apply to previous source.
