@@ -263,33 +263,31 @@ function stashView() {
     if (expLabel) secondaryBits.push(expLabel);
     if (!currentReconDate && sealed>0) secondaryBits.push(`${sealed} vial${sealed===1?"":"s"} sealed`);
 
-    return `<div class="card nx-kit-card" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:16px">
-      <div class="nx-kit-heading nx-kit-heading-unified" style="display:flex;align-items:center;gap:9px;margin-bottom:${kitDisambigLabel?"2":"10"}px">
-        <div style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></div>
+    return `<div class="card nx-kit-card nx-kit-condensed" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:12px 14px">
+      <div class="nx-kit-heading nx-kit-heading-unified">
+        <div class="nx-kit-compound-mark" style="background:${c.color}" aria-hidden="true"></div>
         <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}</span></span>
-         <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+        <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
-      <div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Choose method, dose unit and tracking once";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Configure how you use ${esc(s.name)}">Use setup</button></div>
-      ${kitDisambigLabel?`<div class="mono" style="font-size:10.5px;color:var(--t4);margin-bottom:10px;padding-left:18px">${esc(kitDisambigLabel)}</div>`:""}
-
-      ${displayOpenMg!==null ? `<div class="nx-kit-primary-vial">
-        <div class="nx-kit-overview-label">CURRENT OPEN VIAL</div>
-        <div class="nx-kit-primary-value">${displayOpenMg.toFixed(displayOpenMg%1?1:0)} <span>of ${activeCapacityMg} mg remaining</span></div>
-        ${vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
-      </div>` : `<div class="nx-kit-primary-vial nx-kit-vial-unopened">
-        <div class="nx-kit-overview-label">CURRENT OPEN VIAL</div>
-        <div class="nx-kit-primary-value nx-kit-primary-empty">No vial open</div>
-        <div class="nx-kit-primary-hint">${sealed} sealed vial${sealed===1?"":"s"} available</div>
-      </div>`}
-      ${unresolvedOpenVials.length?`<div class="nx-stash-method-prompt" role="status"><div class="nx-stash-method-prompt-copy"><strong>Vial setup needed</strong><span>${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need${unresolvedOpenVials.length===1?"s":""} a confirmed administration method.</span></div><button type="button" class="nx-stash-go-vial-method" data-kit-id="${esc(String(s.id))}">Set up vial</button></div>`:""}
-      ${secondaryBits.length?`<div style="font-size:11.5px;color:var(--t4);margin-bottom:12px">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
-      ${(()=>{ const pc=getPreparedRemainingCount(s.name, s.id); if(!pc) return ""; return `<div style="font-size:11px;color:#A78BFA;margin-bottom:10px">Prepared · ${pc} dose${pc===1?"":"s"} · ${mgToUnit(getPreparedRemainingMg(s.name, s.id), c.unit).toFixed(1)}${c.unit} ready to log</div>`; })()}
-
-      <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions ${action?"":"nx-hybrid-detail-only"}">
-        ${action?`<button class="${action.cls}" data-id="${s.id}">${action.label}</button>`:""}
-        <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Kit details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nx-kit-compact-context">${esc(kitDisambigLabel||((Number(s.vialMg)||0)+" mg/vial"))} · ${openCount} open${sealed?" · "+sealed+" sealed":""}</div>
+      <div class="nx-kit-primary-vial">
+        <span class="nx-kit-overview-label">${displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
+        <div class="nx-kit-primary-value">${displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
+        ${displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
+      </div>
+      ${unresolvedOpenVials.length?`<p class="nx-kit-compact-notice" role="status"><span class="nx-kit-compact-notice-dot" aria-hidden="true"></span>${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need${unresolvedOpenVials.length===1?"s":""} method setup</p>`:""}
+      ${secondaryBits.length?`<div class="nx-kit-compact-meta">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
+      ${(()=>{ const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-compact-meta">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
+      <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
+        ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Set up vial</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
+        <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
+        <div class="nx-kit-detail-setup">
+      <div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Choose method, dose unit and tracking once";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Configure how you use ${esc(s.name)}">Use setup</button></div>
+          ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Vial setup needed · ${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need confirmed administration methods.</div>`:""}
+          ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">${action.label}</button>`:""}
+        </div>
         <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
           <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
           <button type="button" role="tab" aria-selected="false" tabindex="-1" class="nx-stash-tab" data-panel="vials" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Vials</button>
