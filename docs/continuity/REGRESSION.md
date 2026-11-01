@@ -1,3 +1,8 @@
+## 2026-11-01 — Chromium #41360853883 first reproducible failure: moving entrance geometry
+- At `43e5c1f6`, `validate-logdose-ui.mjs` failed `Entry close or sticky footer outside viewport` for 320×820 while the `.modal` `slideUp` animation still translated the Log Dose sheet by 20px (`sheet.bottom=840`, `footer.bottom=839`, `action.bottom=827`). Baseline CSS `@keyframes slideUp` begins at `translateY(20px)`, duration 0.25s. This is a timing-sensitive geometry capture; not yet evidence of settled persistent clipping.
+- Test-only change `6713f6c8` waits for element-owned animations to complete before asserting entry/review footer bounds, without weakening bounds or changing product UI. New-head rerun NOT YET VERIFIED. Keep real settled clipping and physical iPhone acceptance open until evidence.
+- Exact-head WebKit #41360853765 PASS 16 fictional LIVE/DEMO formulation sessions; mobile #41360853806, nested #41360853741, writer #41360853816 PASS. Mixed-writer P0 BLOCKING, LIVE nasal gates OFF.
+
 ## 2026-11-01 — actual SVG visibility and viewport entry/review clipping regression
 - `5d406a72` fixes a concrete contradictory style: shared modal buttons had an SVG but applied transparent foreground and painted a second masked X. The real SVG now renders, duplicate mask suppressed only for SVG-backed buttons; fallback remains for legacy glyph-only cases.
 - `aca4a10b` checks capsule and nasal close computed SVG colour, suppressed duplicate pseudo-element, >=44px target, both widths/themes, LIVE/isolated DEMO. `445ad980` / `1c41a3d6` add ordinary Log Dose entry and Review geometry: no horizontal document/sheet/header/footer clipping, >=44px close and viewport-visible footer at 320/390. Tests CODED; new-head execution NOT VERIFIED.
