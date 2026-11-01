@@ -109,7 +109,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
  }else if(operation.kind==="supplement-log-delete"){
-  if(typeof operation.date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(typeof operation.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(operation.date))fail("Valid exact date required");
   if(!Array.isArray(next.supplementLogs))fail("Supplement log history unavailable");
   const existing=next.supplementLogs.filter(x=>dayKey(x.date)===operation.date);
   if(existing.length!==1)fail("Unique dated supplement record required");
