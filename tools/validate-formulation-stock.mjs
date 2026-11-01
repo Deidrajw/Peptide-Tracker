@@ -223,6 +223,42 @@ try {
   assert.equal(planCheck.plans[0].status,'planned-no-transfer');
   assert.equal(planCheck.formulations.length,0,'No unvalidated bottle stock must be created');
   await page.evaluate(()=>closeModal());
+  // Two distinct PHYSICAL forms sharing a compound must remain isolated.
+  // This fixture uses two verified open vials rather than silently assuming
+  // the separate capsule-bottle schema has a backed dose transaction.
+  await page.evaluate(()=>{
+    state.supplies.push({id:992212,name:'Fictional Source Selector',
+      activeKit:true,preparationMethod:'Oral',vialMg:5,totalVials:1,
+      vials:[{id:'oral-source',sequenceNumber:1,status:'open',vialMg:5,remainingMg:4,intendedUse:'Oral'}]});
+    doseModal('Fictional Source Selector');
+  });
+  await page.locator('[data-admin-method="Oral"]').click();
+  assert.equal(await page.locator('#nx-dose-method').inputValue(),'Oral',
+    'Oral form must be independently selectable for same compound');
+  const oralEligible=await page.evaluate(()=>{
+    const named=[...document.querySelectorAll('.kit-opt')].map(x=>x.dataset.vial);
+    return {named,source:[...document.querySelectorAll('.nx-dose-stock-status')].map(x=>x.textContent)};
+  });
+  assert.equal(oralEligible.named.length,0,
+    'One oral vial should not show ambiguous multi-vial choices');
+  assert.equal(await page.locator('#nx-dose-inventory-status').isVisible(),true,
+    'One eligible Oral vial must appear as available stock');
+  await page.locator('#nx-dose-entered').fill('1');
+  await page.locator('#nx-dose-review-open').click();
+  await page.locator('#save').click();
+  const oralResult=await page.evaluate(()=>{
+    const injection=state.supplies.find(x=>x.id===992211);
+    const oral=state.supplies.find(x=>x.id===992212);
+    const latest=state.customPeptides['Fictional Source Selector'].doses.at(-1);
+    return {injectable:injection.vials.map(v=>v.remainingMg),oral:oral.vials[0].remainingMg,
+      method:latest?.method,source:latest?.allocations?.[0]?.vialId};
+  });
+  assert.deepEqual(oralResult.injectable,[7,9],
+    'Oral dose must not debit the same compound injectable stock');
+  assert.equal(oralResult.oral,3,'Oral dose must debit only exact oral-form vial');
+  assert.equal(oralResult.method,'Oral','Dose history must record per-entry Oral method');
+  assert.equal(oralResult.source,'oral-source','Oral source vial ID must remain linked');
+  await page.evaluate(()=>closeModal());
   // A physical open compound must be discoverable from Today even with NO
   // associated protocol, without creating a protocol simply by opening the picker.
   await page.evaluate(()=>{
