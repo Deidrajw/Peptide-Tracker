@@ -778,7 +778,7 @@ function nexusCapsuleDoseModal(name,occTime){
  if(!sources.length){showErrorBanner("No verified capsule container with stock. Nothing saved.");return;}
  const unit=cfg(name).unit;
  if(!["mg","mcg"].includes(unit)){showErrorBanner("Capsule logging needs an explicit mass unit; nothing saved.");return;}
- const html='<div class="nx-dose-form nx-capsule-entry"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">ORAL · CAPSULES</div><h2 class="nx-dose-title">Log a dose</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close capsule log">✕</button></div>'+
+ const html='<div class="nx-dose-form nx-capsule-entry"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">ORAL · CAPSULES</div><h2 class="nx-dose-title">Log a dose</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close capsule log"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
   '<div id="nx-capsule-entry-fields" class="nx-form-log-entry"><label class="field-label" for="nx-capsule-date">DATE & TIME</label><input class="inp" id="nx-capsule-date" type="datetime-local" value="'+esc(occTime||localDatetime())+'">'+
   '<label class="field-label" for="nx-capsule-source">CAPSULE CONTAINER</label><select id="nx-capsule-source" class="inp">'+(sources.length>1?'<option value="">Choose exact capsule container</option>':'')+sources.map(x=>'<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingCount))+' capsules left · '+esc(String(x.mgPerCapsule))+' mg each</option>').join("")+'</select>'+
   '<label class="field-label" for="nx-capsule-count">CAPSULES TAKEN</label><input id="nx-capsule-count" class="inp" type="number" min="1" step="1" value="1" inputmode="numeric">'+
@@ -867,7 +867,7 @@ function nexusNasalDoseModal(name,occTime){
  const unit=cfg(name).unit;
  if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
-  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log a dose</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div>'+
+  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log a dose</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
   '<div id="nx-spray-entry-fields" class="nx-form-log-entry"><label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
   '<label class="field-label" for="nx-spray-source">PREPARED BOTTLE</label><select class="inp" id="nx-spray-source">'+(bottles.length>1?'<option value="">Choose exact prepared bottle</option>':'')+bottles.map(x=>
    '<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingMl))+' mL remaining · nominal '+esc(String(x.mgPerSpray*1000))+' mcg/spray</option>').join("")+'</select>'+
@@ -961,7 +961,7 @@ function nexusChoosePhysicalForm(name,occTime){
    nexusPhysicalForm(k.preparationMethod||k.administrationMethod||k.route)!=="Nasal"));
  const choices=Number(capsules)+Number(nasal)+Number(availableVial);
  if(choices===1){if(capsules)nexusCapsuleDoseModal(name,occTime);else if(nasal)nexusNasalDoseModal(name,occTime);else doseModal(name,null,occTime,"vial");return true;}
- const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button></div>'+
+ const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
  '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
  (capsules?'<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>':'')+
  (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
@@ -1088,7 +1088,7 @@ function doseModal(name, existing, occTime, formChoice) {
       <div><div class="nx-dose-kicker">${isEdit?"EDIT ENTRY":"NEW ENTRY"}</div>
       <div class="nx-dose-title">${isEdit?"Edit dose":"Log a dose"}</div>
       <div class="nx-dose-subtitle">${esc(name)}${occLabel}</div>${isEdit?`<button type="button" id="nx-record-reaction" class="nx-reaction-link">Record reaction ${(f.reactions||[]).length?`(${f.reactions.length})`:""}</button>`:""}</div>
-      <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form">✕</button>
+      <button id="x" type="button" class="nx-dose-close" aria-label="Close dose form"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     
     <section class="nx-dose-section" aria-label="Administration details">
