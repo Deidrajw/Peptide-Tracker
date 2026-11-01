@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 48px Review Back correction candidate (NOT RELEASED)
+- `28ccb58d`: CSS-only override for Log Dose Review Edit details 36px legacy-specificity bug, rendering 48px; `38f356b6`: actual browser assertion for >=44px and viewport containment. Previously green Chromium #41363339799 screenshot artifact #13106129580 contains 24 Log Dose images (8 fictional width/theme/build cells) but did not catch Back target. Local equivalent CSS injection PASS four width/theme screenshots; new-head Chromium #41364394562/WebKit #41364394531 unverified. No app data/schema/ledger change, no production release. P0 writer BLOCKED, LIVE nasal OFF, draft unmerged/undeployed.
+
 ## 2026-11-01 — PR124 new screenshot test-only candidate (NOT RELEASED)
 - `2f4e8d76` updates `tools/validate-formulation-stock.mjs` to capture 96 planned Chromium/WebKit picker and nasal-preparation screenshots across 320/390 light/dark fictional LIVE/DEMO builds plus JSON geometry; no application runtime or saved-data changes. CI #41363989984/#41363990003 pending. 16-point full matrix and physical acceptance incomplete. PR unmerged/undeployed; P0 blocking; LIVE nasal OFF.
 
