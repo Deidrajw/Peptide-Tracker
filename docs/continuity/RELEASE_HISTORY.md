@@ -1,3 +1,6 @@
+## 2026-11-01 — Additional corrective code/test, NOT RELEASED
+- 0e385399 320/390 page QA; f1d1347d two-stage entry/review; 1e9f0ba4 DS2 stage styling; 6a670778 fix first prepared nasal history; 4db8f6a7 correct DEMO spray error; c6572fa1 first-nasal-dose/undo unit fixture. Draft PR124 only. Checks pending, no production activation, merge, or deployment. No data migration.
+
 ## 2026-11-01 — Additional draft commits, NOT RELEASED
 - 392998ac DEMO new-vial nasal preparation continuation; 6c90120e linked prepared-vs-source card label; b8c04888 prepared summary style. Latest app checkpoint b8c04888941b7e07a0a78aa56138d73d2bf1d5bc. CI initiated, no results claimed, package/merge/deploy incomplete.
 
