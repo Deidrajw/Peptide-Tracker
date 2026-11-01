@@ -2350,22 +2350,38 @@ function nexusRecordNasalPreparation(kitId,vialId){
   return valid;
  };
  inputs.forEach(x=>x.oninput=refresh);refresh();
- m.querySelector("#nx-nasal-record-save").onclick=()=>{
+ m.querySelector("#nx-nasal-record-save").onclick=async()=>{
   if(!refresh()||!m.querySelector("#nx-nasal-record-confirm").checked){
    showErrorBanner("Confirm actual values before recording. Nothing saved.");return;
   }
-  if(!_demoActive){showErrorBanner("Live nasal transfers remain disabled until cross-tab writer acceptance.");return;}
+  const button=m.querySelector("#nx-nasal-record-save");
+  if(button.disabled)return;
+  button.disabled=true;
   const [amountMg,bacMl,salineMl,mlPerSpray]=values();
+  const recorded={
+   id:"nasal-transfer-"+uid(),destinationContainerId:"nasal-container-"+uid(),
+   sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
+   volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime()
+  };
   try{
    if(!globalThis.NexusPreparationBridge?.planRecordedNasal)throw Error("Planner unavailable");
-   const result=globalThis.NexusPreparationBridge.planRecordedNasal(state,{
-    id:"nasal-transfer-"+uid(),destinationContainerId:"nasal-container-"+uid(),
-    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
-    volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime()
-   });
-   state=result.next;closeModal();render();
-  }catch(error){console.error("Nasal demo preparation rejected",error);
-   showErrorBanner("Source, quantities or destination could not be verified. Nothing saved.");}
+   if(_demoActive){
+    const result=globalThis.NexusPreparationBridge.planRecordedNasal(state,recorded);
+    state=result.next;closeModal();render();
+   }else{
+    // Live commit stays blocked by the central safety flag until ALL ordinary
+    // state writers also obey exclusive cross-tab coordination.
+    const result=await nexusCommitRecordedNasalPreparation(recorded);
+    if(!result?.container)throw Error("Verified prepared container missing");
+    closeModal();render();
+   }
+  }catch(error){
+   console.error("Recorded nasal preparation rejected",error);
+   showErrorBanner(_demoActive?
+    "Source, quantities or destination could not be verified. Nothing saved.":
+    "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+   button.disabled=false;
+  }
  };
 }
 document.addEventListener("click",e=>{
