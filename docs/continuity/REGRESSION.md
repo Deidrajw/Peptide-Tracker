@@ -1,3 +1,7 @@
+## 2026-10-31/Nov 1 UTC — Final purple Stash exact-source automation
+- App CSS 9ef27f9, full-browser #41263023868 SUCCESS: 8 LIVE/DEMO × 320/390 × light/dark Stash Cards and Panels PASS; card height 231px (320), 233px (390), action contrast/geometry and expanded setup assertions PASS. WebKit #41263023879 SUCCESS; mobile #41263023829 SUCCESS; nested #41263023831 SUCCESS; writer scoped #41263023853 SUCCESS. Full-browser Log Dose 176 flows PASS, contrast audit zero flagged candidates, math diagnostic 80/80 PASS with no clinical validation inference.
+- Exact-source build manifest 9ef27f9 and artifact ID 13065749673 independently inspected, CRC outer/LIVE/offline ZIP PASS, purple and lavender CSS present. Physical iPhone QA-STASH-VIS-01/02/03 and QA-PROTECTED-01 NOT TESTED. P0 mixed legacy writer BLOCKED.
+
 ## 2026-10-31 — Purple light-mode buttons and demo-access correction
 - Screenshot feedback: dark near-black Set up vial in light mode was rejected; light theme must use Nexus purple, with soft-purple Open new vial secondary. Scoped CSS changed at 9ef27f9; prior screenshot is FAIL for visual acceptance, corrected candidate NOT TESTED on physical iPhone.
 - Previous full browser #41261696707 SUCCESS on pre-purple-fix source 754e3a8; WebKit #41261696687 SUCCESS same pre-purple-fix CSS. New source run/results and artifact pending; do not relabel prior tests as validation of new purple correction. Use standing iPhone playbook QA-STASH-VIS-01/02/03. User must receive matching actual demo, not previous release preview.
