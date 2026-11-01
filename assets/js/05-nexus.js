@@ -780,7 +780,7 @@ function nexusCapsuleDoseModal(name,occTime){
  if(!["mg","mcg"].includes(unit)){showErrorBanner("Capsule logging needs an explicit mass unit; nothing saved.");return;}
  const html='<div class="nx-dose-form nx-capsule-entry"><div class="nx-dose-head"><div><div class="nx-dose-kicker">ORAL · CAPSULES</div><h2 class="nx-dose-title">Log capsules</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close capsule log">✕</button></div>'+
   '<label class="field-label" for="nx-capsule-date">DATE & TIME</label><input class="inp" id="nx-capsule-date" type="datetime-local" value="'+esc(occTime||localDatetime())+'">'+
-  '<label class="field-label" for="nx-capsule-source">CAPSULE CONTAINER</label><select id="nx-capsule-source" class="inp">'+sources.map(x=>'<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingCount))+' capsules left · '+esc(String(x.mgPerCapsule))+' mg each</option>').join("")+'</select>'+
+  '<label class="field-label" for="nx-capsule-source">CAPSULE CONTAINER</label><select id="nx-capsule-source" class="inp">'+(sources.length>1?'<option value="">Choose exact capsule container</option>':'')+sources.map(x=>'<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingCount))+' capsules left · '+esc(String(x.mgPerCapsule))+' mg each</option>').join("")+'</select>'+
   '<label class="field-label" for="nx-capsule-count">CAPSULES TAKEN</label><input id="nx-capsule-count" class="inp" type="number" min="1" step="1" value="1" inputmode="numeric">'+
   '<div id="nx-capsule-preview" role="status" class="nx-dose-untracked-note"></div>'+
   '<label class="field-label" for="nx-capsule-notes">NOTES · OPTIONAL</label><textarea id="nx-capsule-notes" class="inp" rows="2"></textarea>'+
@@ -860,7 +860,7 @@ function nexusNasalDoseModal(name,occTime){
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
   '<div class="nx-dose-head"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log sprays</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" aria-label="Close">✕</button></div>'+
   '<label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
-  '<label class="field-label" for="nx-spray-source">PREPARED BOTTLE</label><select class="inp" id="nx-spray-source">'+bottles.map(x=>
+  '<label class="field-label" for="nx-spray-source">PREPARED BOTTLE</label><select class="inp" id="nx-spray-source">'+(bottles.length>1?'<option value="">Choose exact prepared bottle</option>':'')+bottles.map(x=>
    '<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingMl))+' mL remaining · nominal '+esc(String(x.mgPerSpray*1000))+' mcg/spray</option>').join("")+'</select>'+
   '<label class="field-label" for="nx-spray-count">SPRAYS TAKEN</label><input class="inp" type="number" min="1" step="1" value="1" id="nx-spray-count">'+
   '<p id="nx-spray-preview" class="nx-dose-untracked-note" role="status"></p>'+
