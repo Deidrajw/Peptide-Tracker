@@ -572,5 +572,93 @@ try {
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
  }
+
+ // True Chromium browser-tab concurrency against the production storage key,
+ // using an isolated browser context and entirely fictional records.
+ // This verifies the exclusive coordinator, not yet the legacy saveState callers.
+ if(engine===chromium){
+  const context=await browser.newContext();
+  const a=await context.newPage(),b=await context.newPage();
+  await Promise.all([a.goto('http://127.0.0.1:8777/'),b.goto('http://127.0.0.1:8777/')]);
+  const key='peptide-tracker-html-v1';
+  const fixture={settings:{theme:'dark'},supplementLogs:[{id:'H1',date:'2026-11-01',taken:['Fictional C']}],
+   supplies:[{id:'K1',vials:[{id:'V1',remainingMg:10}]}],peptides:{Fictional:{doses:[]}}};
+  await a.evaluate(({key,fixture})=>localStorage.setItem(key,JSON.stringify(fixture)),{key,fixture});
+  const init=()=>{const raw=localStorage.getItem('peptide-tracker-html-v1');
+   globalThis.__raceWriter=NexusWriteCoordinator.create({
+    read:()=>localStorage.getItem('peptide-tracker-html-v1'),
+    write:value=>localStorage.setItem('peptide-tracker-html-v1',value),
+    lock:(name,fn)=>navigator.locks.request(name,{mode:'exclusive'},fn),
+    lockName:'peptide-tracker-html-v1:inventory-transfer',initialSnapshot:raw});
+   globalThis.__raceSnapshot=JSON.parse(raw);
+  };
+  await a.evaluate(init);await b.evaluate(init);
+  const held=a.evaluate(async()=>{let entered;const started=new Promise(resolve=>entered=resolve);
+   globalThis.__raceHeld=true;
+   const pending=__raceWriter.transaction(__raceSnapshot,async next=>{
+    entered();await new Promise(resolve=>globalThis.__raceRelease=resolve);
+    next.supplies[0].vials[0].remainingMg=8;
+    next.peptides.Fictional.doses.push({id:'D1',dose:2});
+    return {next};
+   });
+   await started;
+   return pending.then(()=>({success:true}),e=>({success:false,error:String(e)}));
+  });
+  await a.waitForFunction(()=>typeof globalThis.__raceRelease==='function');
+  const competing=b.evaluate(async()=>__raceWriter.transaction(__raceSnapshot,next=>{
+   next.settings.theme='light';return {next};
+  }).then(()=>({success:true}),e=>({success:false,error:String(e)})));
+  await b.waitForTimeout(100);
+  const blocked=await b.evaluate(async()=>{const result=await navigator.locks.query();
+   return result.pending.some(item=>item.name==='peptide-tracker-html-v1:inventory-transfer');});
+  assert.equal(blocked,true,'Settings tab did not wait for exclusive inventory lock');
+  await a.evaluate(()=>globalThis.__raceRelease());
+  const [inventory,settings]=await Promise.all([held,competing]);
+  assert.equal(inventory.success,true,'Inventory transaction must commit');
+  assert.equal(settings.success,false,'Stale settings tab must reject rather than overwrite inventory');
+  let actual=await a.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  assert.equal(actual.supplies[0].vials[0].remainingMg,8);
+  assert.equal(actual.peptides.Fictional.doses.length,1);
+  assert.equal(actual.settings.theme,'dark');
+  assert.equal(actual.supplementLogs.length,1);
+  // Refresh expected snapshot, then prove a successful settings commit.
+  await b.evaluate(init);
+  const settingsSaved=await b.evaluate(async()=>__raceWriter.transaction(__raceSnapshot,next=>{
+   next.settings.theme='light';return {next};
+  }).then(()=>true,()=>false));
+  assert.equal(settingsSaved,true);
+  // A stale history editor must fail, leaving both stock and settings intact.
+  const staleHistory=await a.evaluate(async()=>__raceWriter.transaction(__raceSnapshot,next=>{
+   next.supplementLogs=[];return {next};
+  }).then(()=>true,()=>false));
+  assert.equal(staleHistory,false);
+  await a.evaluate(init);
+  const historySaved=await a.evaluate(async()=>__raceWriter.transaction(__raceSnapshot,next=>{
+   next.supplementLogs=[];return {next};
+  }).then(()=>true,()=>false));
+  assert.equal(historySaved,true);
+  actual=await b.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  assert.equal(actual.supplies[0].vials[0].remainingMg,8);
+  assert.equal(actual.settings.theme,'light');
+  assert.equal(actual.supplementLogs.length,0);
+  // A quota/write failure must reject without falsely acknowledging success.
+  const failed=await b.evaluate(async()=>{
+   const raw=localStorage.getItem('peptide-tracker-html-v1');
+   const writer=NexusWriteCoordinator.create({read:()=>localStorage.getItem('peptide-tracker-html-v1'),
+    write:()=>{throw Error('simulated quota failure')},
+    lock:(name,fn)=>navigator.locks.request(name,{mode:'exclusive'},fn),
+    lockName:'peptide-tracker-html-v1:inventory-transfer',initialSnapshot:raw});
+   return writer.transaction(JSON.parse(raw),next=>{next.settings.theme='invalid';return {next};})
+    .then(()=>({success:true}),e=>({success:false,error:String(e)}));
+  });
+  assert.equal(failed.success,false);
+  assert.match(failed.error,/simulated quota failure/);
+  actual=await a.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  assert.equal(actual.settings.theme,'light');
+  assert.equal(actual.supplies[0].vials[0].remainingMg,8);
+  assert.equal(actual.supplementLogs.length,0);
+  results.push({test:'real Chromium two-tab exclusive coordinator races',result:'PASS'});
+  await context.close();
+ }
 } finally {await browser.close();}
 console.log('PASS: '+engine.name()+' unified Add Kit chooser, capsule/nasal kit cards and untouched vial stock in '+results.length+' fictional LIVE/DEMO sessions');
