@@ -941,6 +941,12 @@ function nexusChoosePhysicalForm(name,occTime){
 }
 
 function doseModal(name, existing, occTime, formChoice) {
+ // Container-backed events have an immutable exact-source audit. Never route
+ // them through the legacy vial editor or silently rewrite stock/history.
+ if(existing?.sourceKind==="formulation-container"&&(existing.capsuleTransactionId||existing.preparedTransactionId)){
+   showErrorBanner("This container-backed entry cannot be edited in the vial editor. Its recorded stock and history remain unchanged.");
+   return;
+ }
  if(!existing&&!formChoice&&nexusChoosePhysicalForm(name,occTime))return;
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
