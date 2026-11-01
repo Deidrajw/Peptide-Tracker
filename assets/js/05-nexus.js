@@ -2141,7 +2141,7 @@ function prepareMixedSyringeModal(draftComponents) {
     }
     state.preparedDoses.push(entry);
     if(!await nexusCommitCurrentState())return;closeModal();render();
-    showUndoToast(`Syringe prepared (${entry.components.length} compound${entry.components.length===1?"":"s"}) · Undo`, () => {
+    showUndoToast(`Syringe prepared (${entry.components.length} compound${entry.components.length===1?"":"s"}) · Undo`, async () => {
       state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
       // Reverse each component's real deduction, not just remove the record — mirrors
       // reverseDoseInventoryEffect's approach for regular doses.
