@@ -92,10 +92,14 @@ function nxOpenCompoundSheet(trigger) {
 
 function wireBody() {
   // nexus api key
-  const nks=$("#nexus-key-save"); if(nks) nks.onclick=()=>{
+  const nks=$("#nexus-key-save"); if(nks) nks.onclick=async()=>{
     const v=document.getElementById("nexus-key-input").value.trim();
-    state.settings.nexusApiKey=v; saveState();
-    nks.textContent=v?"✓ Key saved":"Key cleared"; setTimeout(()=>nks.textContent="Save API Key",2000);
+    if(nks.disabled)return;
+    nks.disabled=true;nks.textContent="Saving…";
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"nexusApiKey",value:v});
+    nks.disabled=false;
+    if(!ok){nks.textContent="Save API Key";return;}
+    nks.textContent=v?"✓ Key saved":"Key cleared";setTimeout(()=>{if(nks.isConnected)nks.textContent="Save API Key";},2000);
   };
   const gnp=$("#goto-profile-nexus"); if(gnp) gnp.onclick=()=>{ state._profileReturn=tab; tab="profile"; render(); window.scrollTo(0,0); };
   const pbk=$("#profile-back"); if(pbk) pbk.onclick=()=>{ const ret=state._profileReturn||"home"; state._profileReturn=null; tab=ret; render(); window.scrollTo(0,0); };
@@ -175,9 +179,11 @@ function wireBody() {
   const ainp=$("#amino-input");
   if(ainp) ainp.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();aminoSend(ainp.value);ainp.value="";} });
   document.querySelectorAll(".edit-supp-log").forEach(b=>b.onclick=()=>supplementModal(b.dataset.date));
-  document.querySelectorAll(".del-supp-log").forEach(b=>b.onclick=()=>{
-    state.supplementLogs=(state.supplementLogs||[]).filter(s=>dayKey(s.date)!==b.dataset.date);
-    saveState();render();
+  document.querySelectorAll(".del-supp-log").forEach(b=>b.onclick=async()=>{
+    if(b.disabled)return;b.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-log-delete",date:b.dataset.date});
+    if(!ok){b.disabled=false;return;}
+    render();
   });
   document.querySelectorAll(".qa-supp").forEach(b=>b.onclick=()=>supplementModal());
   const tlt=$("#timeline-toggle"); if(tlt) tlt.onclick=()=>{state._timelineOpen=!state._timelineOpen;renderBody();};
@@ -201,8 +207,16 @@ function wireBody() {
   });
   const er=$("#enablerem");  if(er) er.onclick=enableReminders;
   const dr=$("#disablerem"); if(dr) dr.onclick=disableReminders;
-  const epr=$("#enablephaserem");  if(epr) epr.onclick=()=>{ state.settings.phaseRemindersEnabled=true; saveState(); render(); };
-  const dpr=$("#disablephaserem"); if(dpr) dpr.onclick=()=>{ state.settings.phaseRemindersEnabled=false; saveState(); render(); };
+  const epr=$("#enablephaserem"); if(epr) epr.onclick=async()=>{
+    if(epr.disabled)return;epr.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"phaseRemindersEnabled",value:true});
+    if(!ok){epr.disabled=false;return;}render();
+  };
+  const dpr=$("#disablephaserem"); if(dpr) dpr.onclick=async()=>{
+    if(dpr.disabled)return;dpr.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"phaseRemindersEnabled",value:false});
+    if(!ok){dpr.disabled=false;return;}render();
+  };
   // weekly digest
   const od=$("#opendigest"); if(od) od.onclick=weeklyDigestModal;
   // theme toggle
