@@ -92,6 +92,24 @@ try{
     ensure(compact.actionHeights.length===2&&compact.actionHeights.every(h=>h>=44),'Compact actions must have 44px touch targets: '+JSON.stringify(compact));
     ensure(compact.titleSize>=15,'Compact typography must remain readable: '+JSON.stringify(compact));
     ensure(compact.setupInDetails,'Use setup must remain accessible in expanded details');
+    const actionVisual=await card(99002).evaluate(el=>{
+      const p=el.querySelector('.nx-kit-next-action'),d=el.querySelector('.nx-kit-detail-button');
+      const a=getComputedStyle(p),b=getComputedStyle(d);
+      const rgb=str=>{const v=(str.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);return v};
+      const lum=v=>{let c=v.map(x=>{const y=x/255;return y<=.04045?y/12.92:Math.pow((y+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+      const ratio=(x,y)=>{const a=lum(rgb(x)),b=lum(rgb(y));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
+      return {primaryBg:a.backgroundColor,secondaryBg:b.backgroundColor,
+        primaryContrast:ratio(a.color,a.backgroundColor),secondaryContrast:ratio(b.color,b.backgroundColor),
+        radiusP:parseFloat(a.borderTopLeftRadius),radiusD:parseFloat(b.borderTopLeftRadius),
+        primaryHeight:p.getBoundingClientRect().height,secondaryHeight:d.getBoundingClientRect().height};
+    });
+    ensure(actionVisual.primaryBg!==actionVisual.secondaryBg,'Primary and Details lost hierarchy: '+JSON.stringify(actionVisual));
+    ensure(actionVisual.primaryContrast>=4.5&&actionVisual.secondaryContrast>=4.5,
+      'Stash actions fail AA text contrast: '+JSON.stringify(actionVisual));
+    ensure(Math.abs(actionVisual.radiusP-actionVisual.radiusD)<1 &&
+      actionVisual.primaryHeight>=44&&actionVisual.secondaryHeight>=44,
+      'Stash actions inconsistent geometry: '+JSON.stringify(actionVisual));
+
     const vialSurface=await card(99002).locator('.nx-kit-primary-vial').evaluate(el=>({
       background:getComputedStyle(el).backgroundColor,
       border:getComputedStyle(el).borderTopWidth
@@ -136,6 +154,19 @@ try{
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
     await card(99002).locator('.nx-kit-detail-button').click();
     ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
+    const expandedSetup=await card(99002).evaluate(el=>{
+      const row=el.querySelector('.nx-kit-detail-setup .nx-kit-use-setup-row'),
+        btn=el.querySelector('.nx-stash-use-setup');
+      const a=getComputedStyle(row),b=getComputedStyle(btn);
+      return {rowBackground:a.backgroundColor,rowBorder:a.borderTopWidth,
+        buttonBorder:b.borderTopWidth,buttonHeight:btn.getBoundingClientRect().height,
+        buttonBackground:b.backgroundColor};
+    });
+    ensure(expandedSetup.rowBorder!=='0px'&&expandedSetup.rowBackground!=='rgba(0, 0, 0, 0)'&&
+      expandedSetup.buttonHeight>=44&&expandedSetup.buttonBorder!=='0px',
+      'Expanded use setup still blends into card: '+JSON.stringify(expandedSetup));
+    await page.screenshot({animations:'disabled',path:'dist/stash-expanded-setup-'+kind+'-'+theme+'-'+width+'.png'});
+
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
     const before=await page.evaluate(()=>JSON.stringify(state.supplies));
     await page.evaluate(()=>supplyModal());
