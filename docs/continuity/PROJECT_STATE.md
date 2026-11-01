@@ -1,3 +1,6 @@
+## 2026-10-31 — Interim exact-source CI evidence for Stash visual candidate
+- Application+test SHA 754e3a807935c8af94180de28a4915f59165a08a: WebKit formulation #41261696687 SUCCESS; mobile #41261696620 SUCCESS; shared writer #41261696631 SUCCESS; nested navigation #41261696622 SUCCESS. Full-browser artifact/parity run #41261696707 still IN PROGRESS at observation; final 8-view Stash computed contrast and updated HTML/CSS package NOT YET VERIFIED. UI source change d9cb70a6 only, no production writes/merge/deploy; physical iPhone pending. Existing QA Playbook extended in a5239cb1 (no new standard). NEXT ONE ACTION: verify full-browser run #41261696707 and exact-source artifacts or remediate failure before physical iPhone acceptance.
+
 ## 2026-10-31 — User-reported Stash theme/action and expanded-setup hierarchy (PR124 DRAFT)
 - Source baseline main independently reverified da585ab3458394ddf5e88e283b210933beeab810; branch feature/dose-administration-method-20261029, draft PR #124 unmerged and production not deployed from this work.
 - User supplied real-device light and dark screenshots: compact Retatrutide card accepted structurally, but Set up vial / Details buttons had inconsistent theme emphasis, expanded "Use setup" and unresolved-vial warning lacked visual hierarchy, "Open new vial" secondary button blended into parent surface.
