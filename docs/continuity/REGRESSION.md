@@ -2342,3 +2342,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Actual Save completion race in Check-In browser harness
 - Traced #41284103097 second modal immediately present with valid #supp-search and no JS errors, followed by locator timeout. The preceding supplement #suppsave click returned before asynchronous handler's durable write/close completed; test navigated to new modal prematurely, risking late close of new sheet. Fix 77a759af waits for old Save control detachment before advancing. Exact-head full run #41284493052 PENDING; do not report Check-In PASS until run conclusion.
 - 33b67722 WebKit FAIL on 43.999992px vs 44px floating point, corrected 526300aa to 43.99px tolerance without UI change. Focused writer/mobile at 77a759af PASS, latest WebKit/DS2 pending. P0 blocked and nasal gates OFF; physical iPhone NOT TESTED.
+
+
+## 2026-11-01 — Inline supplement Add durable-ack test correction
+- 77a759af full #41284493052 FAIL in later Check-In due missing Magnesium Citrate browse option; earlier simulated LIVE/DEMO storage, second modal, mood/symptoms and supplement editing progressed. Inline Add is asynchronous; previous harness treated immediate in-memory catalogue change as completed write and reset fixture while exclusive save was still pending.
+- 861b9d84 waits for _demoActive memory or real STORE_KEY persisted Zinc with no in-flight writer, then performs awaited exclusive catalogue reset. New exact source writer #41284836789, mobile #41284836846, DS2 #41284836809 PASS; full #41284836788, WebKit #41284836803 PENDING. No claim of Check-In full PASS. P0 BLOCKING, no merge/deploy, nasal gates OFF; device NOT TESTED.
