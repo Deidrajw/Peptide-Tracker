@@ -2356,3 +2356,7 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Check-In 8-session browser evidence and Protocol fixture correction
 - PASS 0aaed043 full build #41285215207 logs Check-In suite through all 320/390 LIVE/DEMO dark/light contexts; overall workflow FAIL later at tools/validate-protocol-design.mjs:225 TypeError on undefined todayTrackingActivities after direct unsaved fixture assignment during awaited startup. Do not promote full suite to PASS.
 - Fix test-only 57a48323 waits for app boot render, initializes fictional LIVE state through exclusive transaction/readback and DEMO in memory. New exact-head full #41285602797, WebKit #41285602790 pending at observation. Prior 0aaed043 writer/mobile/DS2/WebKit SUCCESS. Unmerged/undeployed; P0 blocking and physical iPhone not tested.
+
+
+## 2026-11-01 — Protocol/Today async preference check
+- Full #41285602797 FAIL at validate-protocol-design.mjs:240 on undefined todayTrackingActivities after weight checkbox check, while previous Check-In 8-context LIVE/DEMO matrix PASS. App uses async nexusCommitScopedStateChange for optional preference; test click does not await durable acknowledgement. Test-only 39e504d9 waits for exact saved preference from state and localStorage (or isolated demo), with 10s failure bound. No assertion removal. Focused writer #41322896592 and mobile #41322896591 PASS; full #41322896613/WebKit #41322896615/DS2 #41322896590 pending. P0 BLOCKING, physical iPhone NOT TESTED.
