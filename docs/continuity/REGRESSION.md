@@ -1,3 +1,7 @@
+## 2026-10-31 — Purple light-mode buttons and demo-access correction
+- Screenshot feedback: dark near-black Set up vial in light mode was rejected; light theme must use Nexus purple, with soft-purple Open new vial secondary. Scoped CSS changed at 9ef27f9; prior screenshot is FAIL for visual acceptance, corrected candidate NOT TESTED on physical iPhone.
+- Previous full browser #41261696707 SUCCESS on pre-purple-fix source 754e3a8; WebKit #41261696687 SUCCESS same pre-purple-fix CSS. New source run/results and artifact pending; do not relabel prior tests as validation of new purple correction. Use standing iPhone playbook QA-STASH-VIS-01/02/03. User must receive matching actual demo, not previous release preview.
+
 ## 2026-10-31 — Interim automation results for Stash visual candidate
 - On exact app/test source 754e3a8079: WebKit #41261696687 SUCCESS, mobile #41261696620 SUCCESS, writer #41261696631 SUCCESS, nested #41261696622 SUCCESS. Full Chromium #41261696707 IN PROGRESS; Stash action contrast/geometry and expanded setup checks not yet certified. Physical device scenario QA-STASH-VIS-01/02/03 and QA-PROTECTED-01: NOT TESTED on new CSS, awaiting user evidence. P0 legacy mixed writer remains BLOCKED.
 
