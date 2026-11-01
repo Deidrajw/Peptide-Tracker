@@ -101,6 +101,7 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
   supplies:[{id:"KIT",name:"Fictional A",vials:[{id:"V1",remainingMg:10,status:"open"}]}],
   settings:{nexusApiKey:"",phaseRemindersEnabled:false,theme:"dark"},
   supplementLogs:[{date:"2026-11-01",supplements:["Fictional C"]}],
+  macroLogs:[],weightLogs:[],measurementLogs:[],
   peptides:{"Fictional A":{doses:[]}},customPeptides:{}
  }),scopedWrites=0,scopedTail=Promise.resolve();
  const scopedLock=(_key,fn)=>{const run=scopedTail.then(fn);scopedTail=run.catch(()=>{});return run};
