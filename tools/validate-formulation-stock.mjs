@@ -129,6 +129,42 @@ try {
   assert.deepEqual(afterOpen.map(v=>v.remainingMg),[7,10],'Opening second vial must retain both individual quantities');
   assert.equal(afterOpen[1].sequenceNumber,2,'Second physical vial must have independent sequence');
   await page.evaluate(()=>doseModal('Fictional Source Selector'));
+  assert.equal(await page.locator('.nx-dose-source-readout').count(),0,
+    'Two verified open vials must not show a redundant Fresh from vial readout');
+  assert.ok((await page.locator('.nx-dose-source-exception').innerText()).includes('Which vial did you use?'),
+    'Multiple-vial choice requires a direct question');
+  assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
+    'SubQ should offer an optional injection-site field');
+  for(const method of ['Nasal','Oral','Topical','IV','Other']){
+    await page.evaluate(value=>{
+      const select=document.querySelector('#nx-dose-method');
+      select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));
+    },method);
+    assert.equal(await page.locator('#nx-dose-site-field').isVisible(),false,
+      method+' should not show an injection-site field');
+    assert.equal(await page.locator('#site').inputValue(),'',
+      method+' should not retain an incompatible injection site');
+  }
+  await page.evaluate(()=>{
+    const select=document.querySelector('#nx-dose-method');
+    select.value='SubQ';select.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
+    'Returning to SubQ must restore the injection-site field');
+  await page.locator('#nx-dose-entered').fill('1.5');
+  await page.locator('#nx-dose-use-setup').click();
+  assert.equal(await page.locator('.nx-use-setup').count(),1,
+    'Edit defaults must open the real use-setup editor');
+  const retainedDraft=await page.evaluate(()=>({
+    dose:state._pendingDoseDraft?.dose,
+    date:state._pendingDoseDraft?.date,
+    inventory:state.supplies.find(k=>k.id===992211)?.vials.map(v=>v.remainingMg)
+  }));
+  assert.equal(Number(retainedDraft.dose),1.5,'Edit defaults must preserve the unsaved dose amount');
+  assert.deepEqual(retainedDraft.inventory,[7,10],'Opening defaults must never deduct stock');
+  await page.evaluate(()=>{closeModal();doseModal('Fictional Source Selector');});
+  assert.equal(Number(await page.locator('#nx-dose-entered').inputValue()),1.5,
+    'Returning to the dose should restore the unsaved amount');
   const physicalChoices=page.locator('.kit-opt[data-kit="992211"]');
   assert.equal(await physicalChoices.count(),2,'Two vials in same kit must have separate source choices');
   assert.deepEqual(await physicalChoices.evaluateAll(items=>items.map(b=>b.dataset.vial)),['source-a','source-b']);
