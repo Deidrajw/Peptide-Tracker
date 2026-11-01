@@ -429,17 +429,42 @@ try {
         stage+' close or sticky footer outside viewport: '+JSON.stringify(geometry));
       return geometry;
     };
-    await doseViewport('Entry');
+    const visualEvidence={};
+    // Browser-only focus proxy: this does NOT emulate a physical iOS keyboard.
+    // Preserve screenshots/geometry so visual reviewers can inspect actual
+    // entry, focused-field, and Review states for every width/theme/build.
+    const captureDose=async(label)=>{
+      const metrics=await doseViewport(label);
+      const filename='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_'+label.toLowerCase()+'.png';
+      await page.screenshot({path:path.join('dist',filename),fullPage:false});
+      visualEvidence[label]={filename,metrics};
+    };
+    fs.mkdirSync('dist',{recursive:true});
+    await captureDose('Entry');
     ensure(await fixedHeader.locator('.nx-dose-head').count()===1,'Sticky dose header missing');
     ensure(await page.locator('.nx-dose-mode-switch, .nx-dose-step-nav').count()===0,
       'Legacy Quick/Guided step navigation still visible');
     await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=el.scrollHeight});
     ensure(await page.locator('.nx2-dose-modal #nx-dose-review-open').isVisible(),'Entry screen review action missing');
     await setDose(page,2);
+    const focusedField=page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose');
+    await focusedField.focus();
+    const focusState=await focusedField.evaluate(el=>{
+      el.scrollIntoView({block:'nearest'});
+      const b=el.getBoundingClientRect();
+      return {focused:document.activeElement===el,top:b.top,bottom:b.bottom,
+        viewport:window.innerHeight,scrollWidth:document.documentElement.scrollWidth,
+        clientWidth:document.documentElement.clientWidth};
+    });
+    ensure(focusState.focused&&focusState.top>=-2&&focusState.bottom<=focusState.viewport+2&&
+      focusState.scrollWidth<=focusState.clientWidth+2,
+      'Focused dose input hidden or horizontally clipped: '+JSON.stringify(focusState));
+    await captureDose('Focused');
+    visualEvidence.Focused.focusState=focusState;
     await page.waitForTimeout(650);
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
-    await doseViewport('Review');
+    await captureDose('Review');
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure((await page.locator('#nx-dose-review-compound').innerText()).includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
@@ -688,7 +713,7 @@ try {
       Math.abs(draft.kits[0].remaining[1]-10)<.01,'Draft handoff unexpectedly changed inventory/history');
     verified.push('new-vial handoff preserves unsaved draft with no deduction');
     ensure(errors.length===0,'Browser JS errors: '+errors.join(' | '));
-    results.push({width,theme,kind,status:'PASS',verified});
+    results.push({width,theme,kind,status:'PASS',verified,visualEvidence});
     await context.close();
   }
 }finally{await browser.close();}
