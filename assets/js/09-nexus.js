@@ -1886,7 +1886,12 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
       entry.bacMl=newBac;entry.expiryDays=expiryDays;entry.reconDate=reconTimestamp;entry.openedVials=(entry.openedVials||0)+1;entry.activeKit=true;
       entry.reconHistory=entry.reconHistory||[];
       entry.reconHistory.push({id:uid(),date:reconTimestamp,notes,vialId:vial.id,bacMl:newBac,expiryDays});
-      if(!await nexusCommitCurrentState())return;closeModal();render();if(typeof onDone==='function')onDone(vial);return;
+      if(!await nexusCommitCurrentState())return;closeModal();render();
+      if(selectedForm==="nasal-source"){
+        if(_demoActive&&typeof nexusRecordNasalPreparation==="function")nexusRecordNasalPreparation(entry.id,vial.id);
+        else showErrorBanner("Live nasal preparation remains unavailable until inventory saving is fully protected.");
+      }else if(typeof onDone==="function")onDone(vial);
+      return;
     }
     entry.expiryDays=expiryDays;
     confirmOpenIfOtherKitOpen(entry, async () => {
@@ -1900,10 +1905,13 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
       if(!await nexusCommitCurrentState())return;closeModal();render();
       // When another vial in this kit is already open, the first-open lookup is
       // ambiguous. Resume against the exact vial just opened, preserving its ID.
-      if(typeof onDone==='function')onDone(openedVial);
-       else if(_demoActive && openedVial.intendedUse==="nasal-source" &&
-               typeof nexusRecordNasalPreparation==="function")
-         nexusRecordNasalPreparation(entry.id,openedVial.id);
+      if(openedVial.intendedUse==="nasal-source"){
+        // Never hand a nasal-reserved physical vial back to a pending
+        // injectable Log Dose as if it were an eligible injection source.
+        if(_demoActive&&typeof nexusRecordNasalPreparation==="function")
+          nexusRecordNasalPreparation(entry.id,openedVial.id);
+        else showErrorBanner("Live nasal preparation remains unavailable until inventory saving is fully protected.");
+      }else if(typeof onDone==="function")onDone(openedVial);
     });
   };
 }
