@@ -83,7 +83,7 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
  await page.locator('input[name="nx-use-mode"][value="untracked"]').check();
  await page.locator('#nx-use-save').click();
  const untrackedSetup=await page.evaluate(()=>({...state.nexusUseSetups.Retatrutide}));
- if(untrackedSetup.unit!=='mcg'||untrackedSetup.trackingMode!=='untracked'||untrackedSetup.method!=='SubQ')
+ if(untrackedSetup.unit!=='mcg'||untrackedSetup.trackingMode!=='untracked'||untrackedSetup.form!=='Injectable'||untrackedSetup.method!=='Injectable')
    throw Error('Setup preferences did not persist '+JSON.stringify(untrackedSetup));
  const untrackedBefore=await page.evaluate(({kitId,vialId})=>{
    const k=state.supplies.find(k=>k.id===kitId),v=k.vials.find(v=>v.id===vialId);
