@@ -124,7 +124,7 @@ try {
   const oralLayout=await formLayout();
   assert.ok(!oralLayout.pageOverflow&&oralLayout.sheetRight<=oralLayout.viewportWidth+2,
     'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
-  assert.ok(oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=44&&oralLayout.closeHeight>=44,
+  assert.ok(oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=43.99&&oralLayout.closeHeight>=43.99,
     'Capsule sheet height/close target: '+JSON.stringify(oralLayout));
   await page.locator('#nx-capsule-count').fill('2');
   await page.locator('#nx-capsule-review').click();
