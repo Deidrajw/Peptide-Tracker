@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 Oxytocin E2E candidate, UNRELEASED
+- Test commits 9dcc7c6a and bd68be8e provide exact fictional Add Kit to prepared-container Log Dose regression. Matching WebKit run 41350297385 SUCCESS, writer/mobile/nested SUCCESS, Chromium 41350297420 pending. No merge, deployment, live nasal enablement, personal-data changes or physical acceptance. UX 16-item checklist remains unresolved.
+
 ## 2026-11-01 — PR124 post-iPhone corrective source through dd4949ab; NOT RELEASED
 - Added form-first two-choice Open New Vial Injectable/Nasal, reviewed DEMO-only atomic source-open+nasal prepared-bottle transfer, exact source reuse, contextual Stash linked mg/mL status and Setup, shared close/header/scroll/review corrective styling; extra fictional one-confirmation and no-write-before-review browser assertions. Commits 1e66a38f, 8c19d1f5, f3978fc3, 12735789, ad020476, fba443d3, dd4949ab follow earlier corrective CSS/markup. Current exact-head five QA NOT CERTIFIED; no source-matched new artifact verified. Data migration none; production no change. Physical iPhone UI rejection unresolved, mixed-writer P0 BLOCKED, both LIVE nasal gates OFF, PR draft/unmerged/undeployed. No version bump.
 
