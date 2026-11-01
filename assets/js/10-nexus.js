@@ -2143,7 +2143,14 @@ function nexusAddFormulationModal(type,existingId=null){
   }
   if(!existing){
     compoundInput.addEventListener("focus",refreshCompoundMatches);
-    compoundInput.addEventListener("input",refreshCompoundMatches);
+    compoundInput.addEventListener("input",()=>{
+      refreshCompoundMatches();
+      // A prior focusout frame can close results after a keyboard selection
+      // while the user resumes typing. Respect the current input focus.
+      requestAnimationFrame(()=>{
+        if(document.activeElement===compoundInput && matchList.hidden)refreshCompoundMatches();
+      });
+    });
     compoundInput.addEventListener("keydown",e=>{
       if(e.key==="Escape"){closeMatches();return;}
       if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}
