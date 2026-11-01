@@ -6,8 +6,10 @@ for(const file of files){
  const writes=[...text.matchAll(/localStorage\s*\.\s*(setItem|removeItem)\s*\(\s*STORE_KEY\s*[,)]/g)];
  if(file==='assets/js/01-nexus.js'){
    if(writes.length!==2)throw Error('Canonical storage gateway missing/duplicated: '+writes.length);
-   if(!text.includes('writer.saveLegacy(state)')||!text.includes('writer.removeLegacy()'))
-     throw Error('Legacy writes no longer use shared coordinator');
+   if(!text.includes('writer.saveLegacy(state)')||
+      !text.includes('await writer.eraseExclusive(state)')||
+      text.includes('writer.removeLegacy()'))
+     throw Error('Canonical writer or exclusive erase gateway missing');
  }else if(writes.length)throw Error(file+' has '+writes.length+' direct main storage writes outside coordinator');
  count+=writes.length;
 }
