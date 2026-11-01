@@ -325,12 +325,12 @@ try {
       'Seven saved-route options including Other should remain available');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
       'SubQ not marked as selected');
-    await page.locator('#site').selectOption('Abdomen — lower L');
-    ensure(await page.locator('#site').inputValue()==='Abdomen — lower L',
+    await page.locator('#site').selectOption('Abdomen — lower left');
+    ensure(await page.locator('#site').inputValue()==='Abdomen — lower left',
       'SubQ site button did not synchronise saved site value');
     await page.locator('.nx-method-option[data-admin-method="IM"]').click();
     ensure(await page.locator('#nx-dose-method').inputValue()==='IM' &&
-      await page.locator('#site option[value="Deltoid — L (IM)"]').count()===1,
+      await page.locator('#site option[value="Deltoid — left (IM)"]').count()===1,
       'Method switching failed to update IM regions and canonical value');
     await page.locator('.nx-method-option[data-admin-method="Nasal"]').click();
     ensure(await page.locator('#nx-nasal-method-note').isVisible(),
