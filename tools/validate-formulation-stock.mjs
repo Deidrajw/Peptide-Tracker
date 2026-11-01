@@ -582,6 +582,7 @@ try {
   await Promise.all([a.goto('http://127.0.0.1:8777/'),b.goto('http://127.0.0.1:8777/')]);
   const key='peptide-tracker-html-v1';
   const fixture={settings:{theme:'dark'},supplementLogs:[{id:'H1',date:'2026-11-01',taken:['Fictional C']}],
+   macroLogs:[],weightLogs:[],measurementLogs:[],
    supplies:[{id:'K1',vials:[{id:'V1',remainingMg:10}]}],peptides:{Fictional:{doses:[]}}};
   await a.evaluate(({key,fixture})=>localStorage.setItem(key,JSON.stringify(fixture)),{key,fixture});
   const init=()=>{const raw=localStorage.getItem('peptide-tracker-html-v1');
@@ -674,10 +675,23 @@ try {
   const appHistoryFresh=await b.evaluate(()=>nexusCommitScopedStateChange({
    kind:'supplement-log-upsert',date:'2026-11-02',taken:['Fictional C'],id:'H2',expectedId:null}));
   assert.equal(appHistoryFresh,true,'Actual fresh history handler must commit');
+  // App-level dated health history commits, with the same inventory
+  // and dose-history snapshot preserved throughout.
+  for(const [field,id,extra] of [
+   ['macroLogs','M1',{calories:'2000'}],
+   ['weightLogs','W1',{weight:'180.5'}],
+   ['measurementLogs','Z1',{waist:'30'}]
+  ]){
+   const persisted=await b.evaluate(({field,id,extra})=>
+    nexusCommitScopedStateChange({kind:'dated-log-upsert',field,
+      record:{id,date:'2026-11-02',...extra}}),{field,id,extra});
+   assert.equal(persisted,true,'Actual dated health history save failed for '+field);
+  }
   const appSaved=await a.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
   assert.equal(appSaved.settings.phaseRemindersEnabled,true);
   assert.equal(appSaved.supplementLogs.length,1);
   assert.equal(appSaved.supplementLogs[0].id,'H2');
+  for(const field of ['macroLogs','weightLogs','measurementLogs'])assert.equal(appSaved[field].length,1);
   assert.equal(appSaved.supplies[0].vials[0].remainingMg,8);
   assert.equal(appSaved.settings.theme,'light');
   // Destructive operation must reject the stale tab and preserve all data.
