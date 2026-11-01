@@ -310,6 +310,24 @@ function wireBody() {
   });
   const resetProtocolFilter=document.querySelector("#nx-protocol-reset-filter");
   if(resetProtocolFilter) resetProtocolFilter.onclick=()=>{state._protocolStatusFilter="all";renderBody();};
+  // P-14 global pause/resume: the action is confirmed before any exclusive write.
+  // Existing individually paused protocols are excluded by nexusBulkProtocolAction.
+  const pauseAll=document.querySelector("#nx-pause-all-protocols");
+  if(pauseAll)pauseAll.onclick=()=>{
+    const count=(state.protocols||[]).filter(p=>["active","in_progress"].includes(p.status)).length;
+    if(!count)return;
+    confirmAction("Pause "+count+" active protocol"+(count===1?"":"s")+"? Existing dose history, individual pauses and inventory will remain unchanged.",()=>{
+      nexusBulkProtocolAction("pause");
+    },{confirmLabel:"Pause protocols",cancelLabel:"Cancel",tone:"warning"});
+  };
+  const resumeAll=document.querySelector("#nx-resume-all-protocols");
+  if(resumeAll)resumeAll.onclick=()=>{
+    const count=(state.protocols||[]).filter(p=>p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt).length;
+    if(!count)return;
+    confirmAction("Resume "+count+" protocol"+(count===1?"":"s")+" paused by Pause All? Protocols already paused individually will remain paused.",()=>{
+      nexusBulkProtocolAction("resume");
+    },{confirmLabel:"Resume protocols",cancelLabel:"Cancel",tone:"success"});
+  };
   const np=$("#new-protocol"); if(np) np.onclick=()=>protocolBuilderModal();
   const esp=$("#empty-setup-protocol"); if(esp) esp.onclick=()=>{tab="protocols";render();window.scrollTo(0,0);};
   document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=()=>{
