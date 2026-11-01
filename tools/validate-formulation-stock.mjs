@@ -158,13 +158,14 @@ try {
         viewportWidth:document.documentElement.clientWidth,viewportHeight:window.innerHeight,
         scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,
         closeWidth:close.width,closeHeight:close.height,
+        outlinedClose:!!head.querySelector('#x svg[aria-hidden="true"]'),
         pageOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
     });
   };
   const oralLayout=await formLayout();
   assert.ok(!oralLayout.pageOverflow&&oralLayout.sheetRight<=oralLayout.viewportWidth+2,
     'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
-  assert.ok(oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=43.99&&oralLayout.closeHeight>=43.99,
+  assert.ok(oralLayout.outlinedClose&&oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=43.99&&oralLayout.closeHeight>=43.99,
     'Capsule sheet height/close target: '+JSON.stringify(oralLayout));
   await page.locator('#nx-capsule-count').fill('2');
   await page.locator('#nx-capsule-review').click();
@@ -180,7 +181,7 @@ try {
   const nasalLayout=await formLayout();
   assert.ok(!nasalLayout.pageOverflow&&nasalLayout.sheetRight<=nasalLayout.viewportWidth+2,
     'Spray sheet viewport overflow: '+JSON.stringify(nasalLayout));
-  assert.ok(nasalLayout.sheetHeight<=nasalLayout.viewportHeight+2&&nasalLayout.closeWidth>=44&&nasalLayout.closeHeight>=44,
+  assert.ok(nasalLayout.outlinedClose&&nasalLayout.sheetHeight<=nasalLayout.viewportHeight+2&&nasalLayout.closeWidth>=44&&nasalLayout.closeHeight>=44,
     'Spray sheet height/close target: '+JSON.stringify(nasalLayout));
   await page.locator('#nx-spray-count').fill('2');
   await page.locator('#nx-spray-review').click();
