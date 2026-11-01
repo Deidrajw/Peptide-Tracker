@@ -773,16 +773,21 @@ function wireBody() {
   // within the same page, not navigation to a different screen, so jumping to the top
   // would be jarring and wrong.
   const preserveScroll = (fn) => { const y = window.scrollY; fn(); requestAnimationFrame(()=>window.scrollTo(0,y)); };
-  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=()=>preserveScroll(()=>{
+  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=async()=>{
     const allowed=["checkin","supplements","weight","nutrition"];
     const selected=Array.isArray(state.settings.todayTrackingActivities)?[...state.settings.todayTrackingActivities]:["checkin","supplements"];
     const next=new Set(selected.filter(id=>allowed.includes(id)));
-    if(el.checked) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
-    state.settings.todayTrackingActivities=allowed.filter(id=>next.has(id));
-    saveState(); render();
+    const requested=el.checked;
+    if(requested) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
+    const value=allowed.filter(id=>next.has(id)),y=window.scrollY;
+    el.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"setting",key:"todayTrackingActivities",value});
+    if(!saved){el.checked=!requested;el.disabled=false;return;}
+    render();
+    requestAnimationFrame(()=>window.scrollTo(0,y));
     const panel=document.querySelector(".nx-daily-tracking");
     if(panel)panel.open=true;
-  }));
+  });
   document.querySelectorAll(".nx-activity-period").forEach(btn=>btn.onclick=()=>{
     state._todayActivityPeriod=btn.dataset.period;
     document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
