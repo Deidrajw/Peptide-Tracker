@@ -2327,3 +2327,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 - FAIL #41280790400 (0eda5bcd): Playwright fill waits for absent modal search, after real Chromium storage races and 11 formulation cases PASS. FAIL #41281222118 (930d77c9) after startup loading wait. FAIL #41281738778 (32233c14): immediate 320/dark/LIVE probe shows one valid modal/search before later timeout. FAIL #41281825163 (13ff65da): LIVE fixture committed via exclusive writer yet later modal timeout. Full Check-In NOT PASS.
 - PASS 13ff65da focused writer #41281825174, mobile #41281825137, DS2 #41281825160, WebKit #41281825212. Independent offline DEMO Chromium 320/390 fictional supplement add/save PASS and no page errors; not substitute for full LIVE or iPhone.
 - Diagnostic 22df3072 adds closeModal trace + delayed probe. New exact-head CI PENDING/NOT TESTED. P0 blocked; nasal gates OFF; no merge/deploy.
+
+
+## 2026-11-01 — Check-In browser navigation bug in test corrected
+- Root cause verified from Chromium job 124776259254: the first supplement modal existed before/after 200ms; timeout occurred at second Check-In search because dailyModal(null) intentionally redirects to an existing-today Check-In sheet when today's log exists. Test expected an empty-date editor. Fix 49018ee2 explicitly opens unused fictional 2032-11-10 to test inline supplement creation without changing product UI behaviour.
+- Exact-source full-browser retest #41283705756 PENDING; retain failure status until complete. Previously focused writer, mobile, DS2 and WebKit PASS; original 22df3072 full FAIL. No production writes, merge or deploy.
