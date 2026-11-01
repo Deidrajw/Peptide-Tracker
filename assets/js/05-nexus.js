@@ -779,12 +779,12 @@ function nexusCapsuleDoseModal(name,occTime){
  const unit=cfg(name).unit;
  if(!["mg","mcg"].includes(unit)){showErrorBanner("Capsule logging needs an explicit mass unit; nothing saved.");return;}
  const html='<div class="nx-dose-form nx-capsule-entry"><div class="nx-dose-head"><div><div class="nx-dose-kicker">ORAL · CAPSULES</div><h2 class="nx-dose-title">Log capsules</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close capsule log">✕</button></div>'+
-  '<label class="field-label" for="nx-capsule-date">DATE & TIME</label><input class="inp" id="nx-capsule-date" type="datetime-local" value="'+esc(occTime||localDatetime())+'">'+
+  '<div id="nx-capsule-entry-fields" class="nx-form-log-entry"><label class="field-label" for="nx-capsule-date">DATE & TIME</label><input class="inp" id="nx-capsule-date" type="datetime-local" value="'+esc(occTime||localDatetime())+'">'+
   '<label class="field-label" for="nx-capsule-source">CAPSULE CONTAINER</label><select id="nx-capsule-source" class="inp">'+(sources.length>1?'<option value="">Choose exact capsule container</option>':'')+sources.map(x=>'<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingCount))+' capsules left · '+esc(String(x.mgPerCapsule))+' mg each</option>').join("")+'</select>'+
   '<label class="field-label" for="nx-capsule-count">CAPSULES TAKEN</label><input id="nx-capsule-count" class="inp" type="number" min="1" step="1" value="1" inputmode="numeric">'+
   '<div id="nx-capsule-preview" role="status" class="nx-dose-untracked-note"></div>'+
   '<label class="field-label" for="nx-capsule-notes">NOTES · OPTIONAL</label><textarea id="nx-capsule-notes" class="inp" rows="2"></textarea>'+
-  '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button>'+
+  '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button></div>'+
   '<div id="nx-capsule-confirm" hidden><p id="nx-capsule-summary" role="status"></p><button id="nx-capsule-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-capsule-save" type="button" class="btn-primary" style="min-height:48px">Confirm & save</button></div></div>';
  const m=openModal(html,"#A78BFA"); // Shared single-scroll form sheet.
   m.classList.add("nx-form-log-sheet");
@@ -809,9 +809,9 @@ function nexusCapsuleDoseModal(name,occTime){
   m.querySelector("#nx-capsule-summary").textContent=
     n+" "+(n===1?"capsule":"capsules")+" · "+(n*c.mgPerCapsule)+" mg · "+c.compound+
     " · "+(c.remainingCount-n)+" capsules expected after saving. No vial stock is used.";
-  confirm.hidden=false;m.querySelector("#nx-capsule-review").hidden=true;
+  confirm.hidden=false;m.querySelector("#nx-capsule-entry-fields").hidden=true;
  };
- m.querySelector("#nx-capsule-back").onclick=()=>{confirm.hidden=true;m.querySelector("#nx-capsule-review").hidden=false;};
+ m.querySelector("#nx-capsule-back").onclick=()=>{confirm.hidden=true;m.querySelector("#nx-capsule-entry-fields").hidden=false;};
  m.querySelector("#nx-capsule-save").onclick=async()=>{
   const c=current(),n=Number(qty.value),save=m.querySelector("#nx-capsule-save");
   if(!c||!Number.isSafeInteger(n)||n<1||n>c.remainingCount||!date.value||!Number.isFinite(new Date(date.value).getTime())){
@@ -860,13 +860,13 @@ function nexusNasalDoseModal(name,occTime){
  if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
   '<div class="nx-dose-head"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log sprays</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" aria-label="Close">✕</button></div>'+
-  '<label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
+  '<div id="nx-spray-entry-fields" class="nx-form-log-entry"><label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
   '<label class="field-label" for="nx-spray-source">PREPARED BOTTLE</label><select class="inp" id="nx-spray-source">'+(bottles.length>1?'<option value="">Choose exact prepared bottle</option>':'')+bottles.map(x=>
    '<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingMl))+' mL remaining · nominal '+esc(String(x.mgPerSpray*1000))+' mcg/spray</option>').join("")+'</select>'+
   '<label class="field-label" for="nx-spray-count">SPRAYS TAKEN</label><input class="inp" type="number" min="1" step="1" value="1" id="nx-spray-count">'+
   '<p id="nx-spray-preview" class="nx-dose-untracked-note" role="status"></p>'+
   '<label class="field-label" for="nx-spray-notes">NOTES · OPTIONAL</label><textarea class="inp" id="nx-spray-notes" rows="2"></textarea>'+
-  '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button>'+
+  '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button></div>'+
   '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
   '<p class="hint">Recorded values are nominal. Nexus cannot verify spray output, product stability or suitability.</p></div>',"#A78BFA");
  m.classList.add("nx-form-log-sheet");
@@ -890,9 +890,9 @@ function nexusNasalDoseModal(name,occTime){
   }
   const b=current(),n=Number(qty.value);
   m.querySelector("#nx-spray-summary").textContent=n+" "+(n===1?"spray":"sprays")+" · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+" mcg. Estimated bottle balance after saving: "+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+" mL. Nothing saved yet.";
-  box.hidden=false;m.querySelector("#nx-spray-review").hidden=true;
+  box.hidden=false;m.querySelector("#nx-spray-entry-fields").hidden=true;
  };
- m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-review").hidden=false;};
+ m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
  m.querySelector("#nx-spray-save").onclick=async()=>{
   if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
    showErrorBanner("Source or amount changed; nothing saved.");return;
