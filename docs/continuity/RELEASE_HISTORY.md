@@ -1,3 +1,6 @@
+## 2026-10-31 — PR124 light-mode Stash purple correction (UNRELEASED)
+- CSS 9ef27f9 replaces near-black primary Set up vial with purple and softens expanded Open new vial secondary to lavender in light theme. No business logic, inventory or storage changes. Pre-fix browser run #41261696707 success does not verify post-fix colour. Post-fix artifact and physical device acceptance pending; draft PR #124 unmerged and not deployed; mixed-writer P0 still open.
+
 ## 2026-10-31 — PR124 Stash light/dark action styling candidate (NOT RELEASED)
 - CSS d9cb70a6; Stash browser regression extensions 5e9f73e/754e3a8. Collapsed card hierarchy unchanged; buttons/focus, expanded use setup, warning and secondary open-vial action themed consistently. No data migration or production storage writes.
 - Exact-source QA #41261696707/#41261696687 and complete LIVE/DEMO artifacts NOT VERIFIED at this note; previous source tests do not validate new CSS. Physical iPhone not yet accepted. Mixed writer P0 unresolved. Unmerged draft PR #124; no deploy.
