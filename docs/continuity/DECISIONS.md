@@ -1189,3 +1189,7 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 
 ## 2026-11-01 — Do not weaken Check-In browser verification
 - Keep Check-In supplement search/add/save as a required full-suite assertion. Missing modal control is FAIL, not skipped or automatically retried. Trace actual close/render cause before changing application behaviour. LIVE fictional fixtures go through the exclusive writer; DEMO remains memory-only. Preserve production records and nasal feature gates OFF. Draft PR #124 not eligible for merge/deployment on focused passes alone.
+
+
+## 2026-11-01 — Scoped settings writer must distinguish transient UI from persistent stock
+- Permit top-level _UI-only properties to differ from canonical durable snapshot during a scoped setting/history save. Do not permit any persistent-field mismatch (especially supplies/vials), stale-tab CAS mismatch, missing Web Lock or readback failure to be acknowledged. Apply scoped change to writer's verified durable snapshot and retain transient UI keys in memory. Test fixtures with legacy vial shape must normalize and durably save fictional vial IDs before UI interactions; never infer safety from a test that wrote only the in-memory fixture. Draft PR #124 release remains blocked pending comprehensive tests and explicit merge/deploy approval.
