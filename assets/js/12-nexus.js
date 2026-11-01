@@ -296,7 +296,7 @@ function wireBody() {
   ];
   delBtns.forEach(([id,msg,fn])=>{
     const el=document.getElementById(id);
-    if(el) el.onclick=()=>confirmAction("⚠️ "+msg+" This cannot be undone.",()=>{fn();saveState();render();});
+    if(el) el.onclick=()=>confirmAction("⚠️ "+msg+" This cannot be undone.",async()=>{const saved=await nexusCommitScopedStateChange({kind:"bulk-delete",target:id});if(saved)render();});
   });
   // quick log
   const nxAddLogToggle=document.getElementById("nx-add-log-toggle");
