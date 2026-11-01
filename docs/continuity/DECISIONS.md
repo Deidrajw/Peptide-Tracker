@@ -1,3 +1,8 @@
+## 2026-11-01 — Physical iPhone UX correction mandate
+- User rejected form-specific oral/nasal sheets as warped, visually inconsistent with standard Log Dose; do not send for another device test before coordinated redesign and safety/functional completion. Treat screenshots as failed UAT evidence, not merely preference.
+- Approved direction from user: nasal selection and completed-preparation recording belong in a single sequential flow; eliminate redundant separate navigation steps. Show a prepared bottle as distinct from the original vial; neither silently erase nor double-debit stock.
+- Continue to preserve explicit live safety gates until mixed legacy writer P0 is resolved. Simplified UI must not misrepresent an unavailable operation as saved. Reuse accepted DS2 design tokens, typography, standard form sheet/CTA and safe-area/scroll conventions; never replace prior accepted screens wholesale without approval.
+
 ## 2026-11-01 — Coordinated form-aware logging without unsafe live nasal transition
 - Implement draft capsule flow as separate container-count logging with exact source, labelled strength, one exclusive writer debit and event-addressed undo. No automatic protocol creation; never debit injectable vial for capsules.
 - Implement actual nasal preparation and prepared nasal spray-count logging first as a fictional isolated DEMO to validate the intended direct user workflow. Record source vial, actual transfer amount, actual liquid volumes, nominal pump-volume arithmetic and auditable source/destination; a reservation or preparation plan alone never creates sprayable stock. Do not infer sterility, compatibility, pump delivery or clinical suitability from calculations.
