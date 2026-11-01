@@ -48,6 +48,15 @@ try{
           }
           document.documentElement.dataset.theme=t;
         },theme);
+        // Diagnose modal removal instead of masking a real browser failure with retries.
+        await page.evaluate(()=>{
+          globalThis.__checkinCloseStacks=[];
+          const originalClose=closeModal;
+          closeModal=function(...args){
+            if(modalEl)globalThis.__checkinCloseStacks.push((new Error('Check-In modal closed')).stack);
+            return originalClose(...args);
+          };
+        });
         // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
         // Preserve historical records; catalogue addition does not itself save a taken log.
         const modalProbe=await page.evaluate(()=>{
@@ -62,7 +71,16 @@ try{
         console.log('CHECKIN first modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(modalProbe));
         assert(modalProbe.search===1,'Supplement modal missing immediately after open: '+JSON.stringify(modalProbe)+'; page errors='+errors.join('; '));
         assert(await page.locator('.modal #nx2-new-supp').count()===0,'Duplicate supplement input remains');
-        await page.locator('.modal #supp-search').fill('Fictional Vitamin B');
+        await page.waitForTimeout(200);
+        const delayedProbe=await page.evaluate(()=>({
+          search:document.querySelectorAll('.modal #supp-search').length,
+          modal:document.querySelectorAll('.modal').length,
+          closeStacks:globalThis.__checkinCloseStacks,
+          activeModal:!!modalEl
+        }));
+        console.log('CHECKIN delayed modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(delayedProbe));
+        assert(delayedProbe.search===1,'Supplement modal disappeared: '+JSON.stringify(delayedProbe));
+        await page.locator('.modal #supp-search').fill('Fictional Vitamin B',{timeout:3000});
         assert(await page.locator('.modal [data-add-search="modal"]').count()===1,'Unified Add search action absent');
         await page.locator('.modal [data-add-search="modal"]').click();
         const beforeConfirm=await page.evaluate(()=>({
