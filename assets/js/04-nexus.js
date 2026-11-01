@@ -575,7 +575,7 @@ function backfillVialMetadata(kit) {
   opened.filter(v=>!v.reconDate).forEach(v=>{ if (v.legacyUsedMg==null) { v.legacyUsedMg = 0; changed=true; } });
 
   kit._vialsBackfilled = true;
-  if (changed) saveState();
+  
 }
 
 // Targeted repair for a specific known bug signature from an earlier version of the
@@ -606,7 +606,7 @@ function repairVialSequenceOrder(kit) {
     }
   }
   kit._vialsSeqOrderRepaired = true;
-  if (changed) saveState();
+  
 }
 
 function repairVialIdentityConflicts(kit) {
@@ -627,7 +627,7 @@ function repairVialIdentityConflicts(kit) {
     fixedAny = true;
   });
   kit._vialsRepaired = true;
-  if (fixedAny) saveState();
+  
 }
 
 function ensureKitVials(kit) {
@@ -678,7 +678,7 @@ function ensureKitVials(kit) {
   kit._vialsRepaired = true; // freshly migrated — nothing to repair yet
   // Persist immediately — this is a one-time migration; sequence numbers and legacy usage
   // snapshots must never be regenerated on a later render.
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
   return vials;
 }
 function getActiveVial(kit) { return ensureKitVials(kit).find(v=>v.status==="active"||v.status==="open") || null; }
@@ -847,7 +847,7 @@ function migrateToInventoryV2() {
   state._preV2SuppliesBackup = JSON.parse(JSON.stringify(state.supplies||[]));
   (state.supplies||[]).forEach(kit => migrateKitToV2(kit));
   state.inventoryModelVersion = 2;
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
 }
 
 // Per-kit migration — the actual conversion logic, callable either from the app-wide
@@ -969,7 +969,7 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId, vialId
       if(getBlendOpenVialRemainingMg(kit)<=0.01){
         vial.status="empty";kit.emptyVials=(kit.emptyVials||0)+1;kit.reconDate=null;
       }
-      saveState();
+      /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
     }
     return {transactionId:id,totalMg:amountMg,allocations,
       remainingNeeded:committed?0:Math.max(0,requested-available),committed,
@@ -1003,7 +1003,7 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId, vialId
     remainingNeeded: committed ? 0 : remaining, committed,
     hasSealedVial: kitSealedVialsV2(kit).length > 0, reason: reason || "dose",
   };
-  if (committed) saveState();
+  
   return result;
 }
 
@@ -1022,7 +1022,7 @@ function openNextVialV2(kit, { reconDate, bacMl } = {}) {
   sealed.reconDate = reconDate || localDatetime();
   sealed.bacMl = bacMl != null ? bacMl : kit.bacMl;
   sealed.remainingMg = sealed.vialMg;
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
   return sealed;
 }
 
@@ -1068,7 +1068,7 @@ function undoConsumeCompoundInventory(kit, transactionResult) {
         showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");
       }
     }
-    saveState();return;
+    return;
   }  transactionResult.allocations.forEach(a => {
     const v = (kit.vials||[]).find(v=>v.id===a.vialId);
     if (!v) return;
@@ -1076,7 +1076,7 @@ function undoConsumeCompoundInventory(kit, transactionResult) {
     v.remainingMg = Math.round((v.remainingMg + a.amountMg)*100)/100;
     if (wasEmpty && v.remainingMg > 0.01) v.status = "open";
   });
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
 }
 
 // Reverses whatever inventory effect a dose record had, called right before it's deleted
@@ -1175,7 +1175,7 @@ function reverseDoseInventoryEffect(dose) {
       const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
       if(!refundBlendLedgerAmount(kit,a.ledgerId,doseToMg(a.amount,cfg(kit.name).unit)))return false;
     }
-    saveState();return true;
+    return true;
   }
   if (dose.fromPreparedId) {
     const pd = (state.preparedDoses||[]).find(p=>p.id===dose.fromPreparedId);
