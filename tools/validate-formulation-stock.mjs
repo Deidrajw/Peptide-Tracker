@@ -293,8 +293,12 @@ try {
   await page.locator('#nx-nasal-record-save').click();
   assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true,
     'Actual nasal preparation must enter a separate review before confirmation');
-  assert.ok((await page.locator('#nx-nasal-record-review').textContent()).includes('One confirmed event'),
-    'Review must explain single-event source debit and bottle credit');
+  const nasalReview=await page.locator('#nx-nasal-record-review').textContent();
+  assert.ok(nasalReview.includes('One confirmed transfer')&&
+    nasalReview.includes('Source vial after transfer')&&
+    nasalReview.includes('Prepared bottle after transfer')&&
+    nasalReview.includes('2.00 mg / 5.00 mL'),
+    'Structured Review must show exact source debit, destination credit and one confirmed transfer');
   assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===990400).vials[0].remainingMg),5,
     'Review alone must not debit physical source');
   await page.locator('#nx-nasal-record-back').click();
