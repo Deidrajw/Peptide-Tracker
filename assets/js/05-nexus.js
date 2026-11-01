@@ -691,7 +691,7 @@ function nexusUseSetupFor(name) {
   return v&&typeof v==="object"?v:null;
 }
 function nexusUseFamily(method) {
-  return ["SubQ","IM","IV"].includes(method)?"Injectable":(["Nasal","Topical","Oral"].includes(method)?method:"Other");
+  return nexusPhysicalForm(method)||"Other";
 }
 function nexusUseMassValue(value,from,to) {
   const n=Number(value);
@@ -701,14 +701,14 @@ function nexusUseMassValue(value,from,to) {
 function nexusUseSetupModal(name,onSaved) {
   const c=cfg(name),cData=allPeptides()[name]||{};
   const old=nexusUseSetupFor(name)||{};
-  const initial=nexusExplicitAdminMethod(old.method||cData.route)||"SubQ";
+  const initialForm=nexusUseFamily(old.form||old.method||cData.route||"SubQ");
   const preferred=(["mg","mcg"].includes(old.unit)||(old.unit==="IU"&&c.unit==="IU"))?old.unit:(["mg","mcg","IU"].includes(c.unit)?c.unit:"mg");
   const m=openModal(`
     <div class="nx-use-setup" aria-label="Set up how you use ${esc(name)}">
       <div class="nx-use-head"><div><span class="nx-use-kicker">USE SETUP</span><h2>How do you use ${esc(name)}?</h2><p>Set this once. Change it in Stash whenever you need.</p></div><button id="nx-use-close" type="button" aria-label="Close setup">✕</button></div>
       <label class="field-label" for="nx-use-family">ADMINISTRATION</label>
-      <select id="nx-use-family" class="inp">${["Injectable","Nasal","Topical","Oral","Other"].map(x=>`<option value="${x}"${nexusUseFamily(initial)===x?" selected":""}>${x}</option>`).join("")}</select>
-      <div id="nx-use-injection-group" class="nx-use-secondary"><label class="field-label" for="nx-use-route">INJECTION ROUTE</label><select id="nx-use-route" class="inp"><option value="SubQ">SubQ</option><option value="IM">IM</option><option value="IV">IV</option></select></div>
+      <select id="nx-use-family" class="inp">${["Injectable","Nasal","Topical","Oral","Other"].map(x=>`<option value="${x}"${initialForm===x?" selected":""}>${x}</option>`).join("")}</select>
+
       <label class="field-label" for="nx-use-unit">PREFERRED DOSE UNIT</label>
       <select id="nx-use-unit" class="inp"><option value="mcg"${preferred==="mcg"?" selected":""}>mcg</option><option value="mg"${preferred==="mg"?" selected":""}>mg</option>${c.unit==="IU"?`<option value="IU"${preferred==="IU"?" selected":""}>IU (product-native)</option>`:""}</select>
       <p class="nx-use-help">Change mg or mcg at any entry. IU is not a universal mass conversion and requires a validated product definition.</p>
@@ -720,23 +720,21 @@ function nexusUseSetupModal(name,onSaved) {
       <p class="nx-use-help">Setting a method does not create prepared inventory. Existing records will remain unchanged.</p>
       <button id="nx-use-save" type="button" class="btn-primary">Save use setup</button>
     </div>`,"#A78BFA");
-  const family=m.querySelector("#nx-use-family"),route=m.querySelector("#nx-use-route"),group=m.querySelector("#nx-use-injection-group");
-  route.value=["SubQ","IM","IV"].includes(initial)?initial:"SubQ";
+  const family=m.querySelector("#nx-use-family");
   const sourceInput=m.querySelector("#nx-use-source"),sourceGroup=m.querySelector("#nx-use-source-group");
   const sourceHelp=m.querySelector("#nx-use-source-help");
   const modeNow=()=>m.querySelector('input[name="nx-use-mode"]:checked')?.value||"backed";
   let sourceRows=[];
   const refresh=()=>{
-    group.hidden=family.value!=="Injectable";
     sourceGroup.hidden=modeNow()==="untracked";
     if(sourceGroup.hidden)return;
-    const method=family.value==="Injectable"?route.value:family.value;
-    sourceRows=method==="Nasal"?[]:(state.supplies||[]).filter(k=>k.name===name&&k.activeKit&&!k.isBlend).flatMap(k=>{
+    const productForm=family.value;
+    sourceRows=productForm==="Nasal"?[]:(state.supplies||[]).filter(k=>k.name===name&&k.activeKit&&!k.isBlend).flatMap(k=>{
       migrateKitToV2(k);
       return (k.vials||[]).filter(v=>{
         if(!["open","active"].includes(v.status)||getVialRemainingMg(k,v)<=0.01)return false;
-        const use=nexusExplicitAdminMethod(v.intendedUse)||nexusExplicitAdminMethod(k.preparationMethod||k.administrationMethod||k.route);
-        return !use||use===method;
+        const use=nexusPhysicalForm(v.intendedUse)||nexusPhysicalForm(k.preparationMethod||k.administrationMethod||k.route);
+        return !use||use===productForm;
       }).map(v=>({kit:k,vial:v}));
     });
     sourceInput.innerHTML="";
@@ -745,14 +743,14 @@ function nexusUseSetupModal(name,onSaved) {
     const oldIndex=sourceRows.findIndex(x=>String(x.kit.id)===String(old.sourceKitId)&&String(x.vial.id)===String(old.sourceVialId));
     if(oldIndex>=0)sourceInput.value=String(oldIndex);
     else if(sourceRows.length===1)sourceInput.value="0";
-    sourceHelp.textContent=method==="Nasal"?"Nasal use requires an actually prepared product. A vial or saved plan isn't a ready spray.":sourceRows.length?"Choose once. Nexus remembers this exact vial for future stock-backed logs.":"No compatible open vial found. You may save setup, but inventory-backed logging needs verified stock.";
+    sourceHelp.textContent=productForm==="Nasal"?"Nasal use requires an actually prepared product. A vial or saved plan isn't a ready spray.":sourceRows.length?"Choose once. Nexus remembers this exact vial for future stock-backed logs.":"No compatible open vial found. You may save setup, but inventory-backed logging needs verified stock.";
   };
-  family.onchange=refresh;route.onchange=refresh;
+  family.onchange=refresh;
   m.querySelectorAll('input[name="nx-use-mode"]').forEach(el=>el.onchange=refresh);
   refresh();
   m.querySelector("#nx-use-close").onclick=closeModal;
   m.querySelector("#nx-use-save").onclick=()=>{
-    const method=family.value==="Injectable"?route.value:(family.value==="Other"?"Other":family.value);
+    const productForm=family.value;
     const unit=m.querySelector("#nx-use-unit").value;
     if(!["mg","mcg"].includes(unit)&&!(unit==="IU"&&c.unit==="IU")){showErrorBanner("IU needs a verified product definition. No setup saved.");return;}
     state.nexusUseSetups=state.nexusUseSetups||{};
@@ -760,11 +758,11 @@ function nexusUseSetupModal(name,onSaved) {
     if(unit==="IU"&&trackingMode==="backed"){showErrorBanner("Inventory-backed IU requires a verified product-specific conversion. Choose Doses only or a mass unit.");return;}
     const choice=sourceInput.value===""?null:sourceRows[Number(sourceInput.value)];
     if(choice&&trackingMode==="backed"){
-      const known=nexusExplicitAdminMethod(choice.vial.intendedUse)||nexusExplicitAdminMethod(choice.kit.preparationMethod||choice.kit.administrationMethod||choice.kit.route);
-      if(known&&known!==method){showErrorBanner("This vial has a different confirmed method. No setup saved.");return;}
-      if(!nexusExplicitAdminMethod(choice.vial.intendedUse))choice.vial.intendedUse=method;
+      const known=nexusPhysicalForm(choice.vial.intendedUse)||nexusPhysicalForm(choice.kit.preparationMethod||choice.kit.administrationMethod||choice.kit.route);
+      if(known&&known!==productForm){showErrorBanner("This vial has a different confirmed form. Nothing saved.");return;}
+      if(!nexusPhysicalForm(choice.vial.intendedUse))choice.vial.intendedUse=productForm;
     }
-    state.nexusUseSetups[name]={method,unit,trackingMode,
+    state.nexusUseSetups[name]={form:productForm,method:productForm,unit,trackingMode,
       ...(choice&&trackingMode==="backed"?{sourceKitId:choice.kit.id,sourceVialId:choice.vial.id}:{}),
       updatedAt:new Date().toISOString()};
     saveState();closeModal();render();
@@ -789,7 +787,8 @@ function doseModal(name, existing, occTime) {
   const useSetup=nexusUseSetupFor(name);
   const isUntracked=!existing&&useSetup?.trackingMode==="untracked";
   const editingUntracked=!!existing&&existing.trackingMode==="untracked";
-  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||useSetup?.method||draft?.method||cData.route);
+  const setupMethod=useSetup?.form==="Injectable"?"SubQ":useSetup?.form||useSetup?.method;
+  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
     (["mg","mcg"].includes(useSetup?.unit)?useSetup.unit:c.unit);
   const massSelectable=["mg","mcg"].includes(c.unit);
@@ -850,7 +849,7 @@ function doseModal(name, existing, occTime) {
           nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
         // Physical nasal-labelled vials are not prepared nasal containers.
         // Until explicit prepared-container stock is linked, never debit these as a spray.
-        return initialMethod!=="Nasal"&&use===initialMethod;
+        return nexusPhysicalVialCompatible(use,initialMethod);
       }).map(vial=>({kit,vial}));});
   // Legacy inventory imported before method-labelled vials existed may have real
   // open stock without a route label. Show it for explicit confirmation; never
@@ -858,8 +857,7 @@ function doseModal(name, existing, occTime) {
   const unlabelledOpenSources = (state.supplies||[]).filter(k=>k.name===name && k.activeKit)
     .flatMap(kit=>(kit.vials||[]).filter(v=>
       ["open","active"].includes(v.status) && getVialRemainingMg(kit,v)>0.01 &&
-      !(v.intendedUse && v.intendedUse!=="undecided") &&
-      !nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route)
+      !nexusPhysicalForm(v.intendedUse) && !nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route)
     ).map(vial=>({kit,vial})));
   const rememberedSource=eligibleSources.find(x=>String(x.kit.id)===String(useSetup?.sourceKitId)&&String(x.vial.id)===String(useSetup?.sourceVialId));
   const needsKitPicker = !isEdit && eligibleSources.length>1 && !rememberedSource;
@@ -887,7 +885,7 @@ function doseModal(name, existing, occTime) {
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
       <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Edit defaults</button></div>`:""}
+    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.form||useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Edit defaults</button></div>`:""}
     <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
     ${!isUntracked && isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
     <label class="field-label">SPRAYS</label>
@@ -904,8 +902,8 @@ function doseModal(name, existing, occTime) {
     ${!isUntracked && !isEdit && eligibleSources.length ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
     ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
     <div id="alloc-panel" style="margin-bottom:14px"></div>
-    <div class="field-label" id="nx-method-label" style="${useSetup&&!isEdit?"display:none":""}">ADMINISTRATION METHOD</div>
-    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label" style="${useSetup&&!isEdit?"display:none":""}">
+    <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD · THIS DOSE</div>
+    <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
       ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
     <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
@@ -1094,7 +1092,7 @@ function doseModal(name, existing, occTime) {
     // Never overwrite an incompatible method or a previously confirmed route.
     const existingUse=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
       nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
-    if(existingUse&&existingUse!==initialMethod){
+    if(existingUse&&nexusPhysicalForm(existingUse)!==nexusDoseMethodForm(initialMethod)){
       showErrorBanner("This vial is already labelled for another method. No inventory changed.");return;
     }
     state._pendingDoseDraft={
@@ -1106,7 +1104,7 @@ function doseModal(name, existing, occTime) {
       // source allocations from the earlier Open a sealed vial handoff.
       rows:rows.map(r=>({...r}))
     };
-    vial.intendedUse=initialMethod;
+    vial.intendedUse=nexusDoseMethodForm(initialMethod);
     saveState();closeModal();doseModal(name);
   });
   m.querySelectorAll(".kit-opt").forEach(b=>b.onclick=()=>{
@@ -1389,8 +1387,16 @@ function doseModal(name, existing, occTime) {
     });
   }
   methodButtons.forEach(btn=>btn.onclick=()=>{
-    methodInput.value=btn.dataset.adminMethod;
-    methodInput.dispatchEvent(new Event("change",{bubbles:true}));
+    const nextMethod=btn.dataset.adminMethod;
+    if(nextMethod===methodInput.value)return;
+    state._pendingDoseDraft={name,id:f.id,method:nextMethod,
+      dose:m.querySelector("#dose")?.value||f.dose,
+      date:m.querySelector("#date")?.value||f.date,site:"",
+      notes:m.querySelector("#notes")?.value||f.notes,
+      escalation:!!m.querySelector("#esc")?.checked,
+      asNeeded:!!m.querySelector("#nx-dose-as-needed")?.checked,
+      symptoms:f.symptoms,rows:[]};
+    closeModal();doseModal(name);
   });
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
@@ -1568,9 +1574,6 @@ function doseModal(name, existing, occTime) {
     }
     // A dose cannot silently switch preparations or consume an unlabelled vial.
     // Keep the existing dose/edit ledger unchanged on validation failure.
-    if (!isEdit && methodInput.value!==initialMethod) {
-      showErrorBanner("Changing the administration method requires selecting a compatible preparation. No dose or inventory was saved.");return;
-    }
     if (!isEdit && selectedSource==="fresh" && !activeKit()) {
       showErrorBanner("No compatible labelled open vial. No dose or inventory was saved.");return;
     }
