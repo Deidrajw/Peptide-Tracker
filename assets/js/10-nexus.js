@@ -2055,13 +2055,17 @@ function nxUsageDownload(){
  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nexus-shortcut-counts.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-document.addEventListener('change',e=>{if(e.target?.id==='nx-usage-toggle'){
- state.settings.nxUsageEnabled=!!e.target.checked;saveState();render();
+document.addEventListener('change',async e=>{if(e.target?.id==='nx-usage-toggle'){
+ const control=e.target,requested=!!control.checked;
+ control.disabled=true;
+ const saved=await nexusCommitScopedStateChange({kind:"setting",key:"nxUsageEnabled",value:requested});
+ if(!saved){control.checked=!requested;control.disabled=false;return;}
+ render();
 }});
-document.addEventListener('click',e=>{
+document.addEventListener('click',async e=>{
  const btn=e.target.closest?.('#nx-usage-export,#nx-usage-reset,#nx-shopping-from-stash');if(!btn)return;
  if(btn.id==='nx-usage-export'){nxUsageDownload();return;}
- if(btn.id==='nx-usage-reset'){if(!confirm('Reset all locally recorded shortcut counts?'))return;state.settings.nxUsageCounts={};saveState();render();return;}
+ if(btn.id==='nx-usage-reset'){if(!confirm('Reset all locally recorded shortcut counts?'))return;btn.disabled=true;const saved=await nexusCommitScopedStateChange({kind:"setting",key:"nxUsageCounts",value:{}});if(!saved){btn.disabled=false;return;}render();return;}
  if(btn.id==='nx-shopping-from-stash'){tab='plans';state._plansSub='shopping';render();window.scrollTo(0,0);}
 });
 
