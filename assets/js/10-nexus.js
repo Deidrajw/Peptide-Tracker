@@ -2356,7 +2356,16 @@ function nexusRecordNasalPreparation(kitId,vialId){
    m.querySelector("#nx-nasal-record-confirm").checked=false;
    save.textContent=active?"Confirm completed preparation and transfer":"Review preparation and transfer";
    if(active){const [mg,bac,saline,pump]=values(),total=bac+saline,remaining=getVialRemainingMg(kit,vial);
-     review.textContent="Source: "+kit.name+" · Vial "+String(vial.sequenceNumber||vial.id)+" · "+remaining.toFixed(2)+" mg available. Actual transfer: "+mg.toFixed(2)+" mg into a prepared bottle with "+bac.toFixed(2)+" mL BAC water and "+saline.toFixed(2)+" mL saline ("+total.toFixed(2)+" mL recorded total). After transfer: source "+(remaining-mg).toFixed(2)+" mg; prepared bottle "+mg.toFixed(2)+" mg. Nominal "+(mg*1000/total*pump).toFixed(2)+" mcg/spray. One confirmed event, not two inventory debits.";
+     review.innerHTML='<div class="nx-shared-review-title">Review actual source transfer</div>'+
+       '<dl class="nx-shared-review-grid">'+
+       '<dt>Compound</dt><dd>'+esc(kit.name)+'</dd>'+
+       '<dt>Original source</dt><dd>Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+remaining.toFixed(2)+' mg before transfer</dd>'+
+       '<dt>Transferred into bottle</dt><dd>'+mg.toFixed(2)+' mg</dd>'+
+       '<dt>Recorded liquids</dt><dd>'+bac.toFixed(2)+' mL BAC water + '+saline.toFixed(2)+' mL saline = '+total.toFixed(2)+' mL</dd>'+
+       '<dt>Source vial after transfer</dt><dd>'+(remaining-mg).toFixed(2)+' mg</dd>'+
+       '<dt>Prepared bottle after transfer</dt><dd>'+mg.toFixed(2)+' mg / '+total.toFixed(2)+' mL</dd>'+
+       '<dt>Nominal pump amount</dt><dd>'+(mg*1000/total*pump).toFixed(2)+' mcg/spray</dd>'+
+       '</dl><p class="nx-shared-review-footnote">One confirmed transfer between two linked stocks. No material disappears, and it is not counted twice.</p>';
    }
  };
  back.onclick=()=>setReview(false);
