@@ -817,7 +817,7 @@ function nexusCapsuleDoseModal(name,occTime){
    showErrorBanner("Container, capsule count or date changed. Review again; nothing saved.");return;
   }
   if(save.disabled)return;save.disabled=true;
-  const tx={id:"capsule-"+uid(),doseId:uid(),sourceId:c.id,compound:name,count:n,date:date.value,
+  const tx={id:"capsule-"+uid(),doseId:String(uid()),sourceId:c.id,compound:name,count:n,date:date.value,
     nativeUnit:unit,notes:m.querySelector("#nx-capsule-notes").value};
   let result;
   try{
