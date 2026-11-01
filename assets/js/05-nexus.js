@@ -2756,7 +2756,7 @@ function reconstituteVialModal(kit, onDone) {
       // is first in the array, which silently resolves to the WRONG (old) vial. Callers
       // that need to know specifically what was just opened must use this, not re-derive it.
       if (onDone) { onDone(newVial); return; } // resumes the in-progress dose — no undo toast here, the draft itself is the safety net
-      showUndoToast(`${kit.name} vial reconstituted · Undo`, () => {
+      showUndoToast(`${kit.name} vial reconstituted · Undo`, async () => {
         kit.vials = prevVials; Object.assign(kit, prevAgg);
         if(!await nexusCommitCurrentState())return;render();
       });
@@ -2840,7 +2840,7 @@ async function quickLogDose(name, occTime) {
   const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
   if (fulfilled) fulfilled.doseId = dose.id;
   if(!await nexusCommitCurrentState()){showErrorBanner("Quick dose could not be saved. Export a backup and reload before retrying.");return;} render();
-  showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
+  showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, async () => {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
     if (fulfilled) fulfilled.doseId = null;
@@ -2969,7 +2969,7 @@ function editUpdateModal(log, update) {
   nexusConfigureCheckinSheet(m, ["save"]);
   m.querySelector("#x").onclick=closeModal;
   const sym=m.querySelector("#sym"); sym.innerHTML=symptomPickerHTML(syms,"#A78BFA"); wireSymptomPicker(sym,syms,"#A78BFA");
-  m.querySelector("#save").onclick=()=>{
+  m.querySelector("#save").onclick=async()=>{
     const [hh,mm]=m.querySelector("#utime").value.split(":").map(Number);
     const newTime=new Date(t); newTime.setHours(hh,mm,0,0);
     const entry=state.dailyLogs.find(l=>l.id===log.id);
