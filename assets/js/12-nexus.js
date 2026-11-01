@@ -238,7 +238,7 @@ function wireBody() {
     };
   });
   document.querySelectorAll(".supply-edit").forEach(b=>b.onclick=()=>{const e=(state.equipmentItems||[]).find(x=>x.id===+b.dataset.id);if(e)equipmentModal(e);});
-  document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",async()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".supply-log-use").forEach(b=>b.onclick=()=>logSupplyUseModal(+b.dataset.id));
   document.querySelectorAll(".supply-activate-next").forEach(b=>b.onclick=()=>activateNextSupplyUnit(+b.dataset.id));
   document.querySelectorAll(".supply-restock").forEach(b=>b.onclick=()=>restockSupplyModal(+b.dataset.id));
@@ -506,11 +506,11 @@ function wireBody() {
   document.querySelectorAll(".skipdose").forEach(b=>b.onclick=()=>skipDoseModal(b.dataset.name, b.dataset.date));
   document.querySelectorAll(".resolveoverdue").forEach(b=>b.onclick=()=>resolveOverdueModal(b.dataset.name, b.dataset.date));
   document.querySelectorAll(".whathappened").forEach(b=>b.onclick=()=>resolveOverdueModal(b.dataset.name, b.dataset.date, {takenLateFirst:true}));
-  document.querySelectorAll(".undoskip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".undoskip").forEach(b=>b.onclick=async()=>{
     const entry = state.peptides[b.dataset.name] || state.customPeptides[b.dataset.name];
     if (!entry || !entry.skips) return;
     entry.skips = entry.skips.filter(s => dayKey(s.date) !== dayKey(b.dataset.date));
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return;render();
   });
   document.querySelectorAll(".compound-intel-btn").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
@@ -832,11 +832,11 @@ function wireBody() {
       choices().forEach(x=>x.checked=next);
       refresh();
     };
-    const dismissIds=ids=>{
+    const dismissIds=async ids=>{
       const existing=state.settings.dismissedReminders||{};
       ids.forEach(id=>{if(id)existing[id]=Date.now();});
       state.settings.dismissedReminders=existing;
-      saveState();closeAlerts();render();
+      if(!await nexusCommitCurrentState())return;closeAlerts();render();
     };
     if(selected)selected.onclick=()=>{
       const ids=choices().filter(x=>x.checked).map(x=>x.dataset.id);
@@ -859,7 +859,7 @@ function wireBody() {
     };
   }
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
-  document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
+  document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(async()=>{ state._homeView=b.dataset.view; if(!await nexusCommitCurrentState())return;render(); }));
   // History is a direct action: expand and reveal records in one tap, without the ellipsis.
   document.querySelectorAll(".nx-open-compound-history").forEach(el=>el.onclick=()=>preserveScroll(()=>{
     if (!(state._todayExpandedCompounds instanceof Set)) state._todayExpandedCompounds = new Set();
@@ -901,40 +901,40 @@ function wireBody() {
   }));
   const todayCalendar=$("#nx-open-calendar"); if(todayCalendar) todayCalendar.onclick=()=>{ tab="calendar"; render(); window.scrollTo(0,0); };
   const viewUp=$("#view-upcoming"); if(viewUp) viewUp.onclick=()=>preserveScroll(()=>{ state._homeView="upcoming"; render(); });
-  document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._allStatusFilter=b.dataset.status; saveState(); render(); }));
+  document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(async()=>{ state._allStatusFilter=b.dataset.status; if(!await nexusCommitCurrentState())return;render(); }));
   // pause/resume/delete compound
-  document.querySelectorAll(".pausepep").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".pausepep").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="paused";saveState();render();}
+    if(tgt[n]){tgt[n].status="paused";if(!await nexusCommitCurrentState())return;render();}
   });
-  document.querySelectorAll(".resumepep").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".resumepep").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="active";saveState();render();}
+    if(tgt[n]){tgt[n].status="active";if(!await nexusCommitCurrentState())return;render();}
   });
   // today sheet
   document.querySelectorAll(".opentodaysheet").forEach(b=>b.onclick=()=>{
     const log=state.dailyLogs.find(l=>l.id===+b.dataset.id); if(log) todayLogSheet(log);
   });
   document.querySelectorAll(".editdaily").forEach(b=>b.onclick=()=>dailyModal(state.dailyLogs.find(l=>l.id===+b.dataset.id)));
-  document.querySelectorAll(".deldaily").forEach(b=>b.onclick=()=>confirmAction("Delete this check-in?",()=>{state.dailyLogs=state.dailyLogs.filter(l=>l.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".deldaily").forEach(b=>b.onclick=()=>confirmAction("Delete this check-in?",async()=>{state.dailyLogs=state.dailyLogs.filter(l=>l.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".edit-update").forEach(b=>b.onclick=()=>{
     const uid2=+b.dataset.uid, lid=+b.dataset.lid;
     const entry=state.dailyLogs.find(l=>l.id===lid);
     const update=entry&&(entry.updates||[]).find(u=>u.id===uid2);
     if(update){ closeModal(); editUpdateModal(entry,update); }
   });
-  document.querySelectorAll(".del-update").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".del-update").forEach(b=>b.onclick=async()=>{
     const uid2=+b.dataset.uid, lid=+b.dataset.lid;
     const entry=state.dailyLogs.find(l=>l.id===lid);
-    if(entry){entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2);saveState();render();}
+    if(entry){entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2);if(!await nexusCommitCurrentState())return;render();}
   });
   // weight/measure/macro edit+delete
   document.querySelectorAll(".editweight").forEach(b=>b.onclick=()=>weightModal(state.weightLogs.find(w=>w.id===+b.dataset.id)));
   document.querySelectorAll(".editmeasure").forEach(b=>b.onclick=()=>measureModal(state.measurementLogs.find(m=>m.id===+b.dataset.id)));
   document.querySelectorAll(".editmacro").forEach(b=>b.onclick=()=>macroModal(null,state.macroLogs.find(m=>m.id===+b.dataset.id)));
-  document.querySelectorAll(".delmacro").forEach(b=>b.onclick=()=>{state.macroLogs=state.macroLogs.filter(m=>m.id!==+b.dataset.id);saveState();render();});
-  document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);saveState();render();}));
-  document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".delmacro").forEach(b=>b.onclick=async()=>{state.macroLogs=state.macroLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();});
+  document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",async()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
+  document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",async()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   // stash
   const av=$("#addvial"); if(av)av.onclick=()=>supplyModal();
   const qaAdd=$("#qa-addkit"); if(qaAdd) qaAdd.onclick=()=>supplyModal(null);
@@ -1014,9 +1014,9 @@ function wireBody() {
   });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
   document.querySelectorAll(".markkitdone").forEach(b=>b.onclick=()=>markKitDoneModal(+b.dataset.id));
-  document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=async()=>{
     const kit=state.supplies.find(s=>s.id===+b.dataset.id); if(!kit) return;
-    kit.kitStatus=null; saveState(); renderBody();
+    kit.kitStatus=null; if(!await nexusCommitCurrentState())return;renderBody();
   });
   document.querySelectorAll(".editsupply").forEach(b=>b.onclick=()=>{
     const kit = state.supplies.find(s=>s.id===+b.dataset.id);
@@ -1034,20 +1034,20 @@ function wireBody() {
   document.querySelectorAll(".edit-outflow").forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); editOutflowModal(+b.dataset.kit, +b.dataset.tx); });
   document.querySelectorAll(".undo-outflow").forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); undoOutflowModal(+b.dataset.kit, +b.dataset.tx); });
   document.querySelectorAll(".preparedoses").forEach(b=>b.onclick=()=>prepareDosesModal(b.dataset.name));
-  document.querySelectorAll(".toggleactivekit").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".toggleactivekit").forEach(b=>b.onclick=async()=>{
     const id=+b.dataset.id;
     const kit=state.supplies.find(s=>s.id===id); if(!kit) return;
     const willActivate=!kit.activeKit;
-    if (!willActivate) { kit.activeKit=false; saveState(); render(); return; }
+    if (!willActivate) { kit.activeKit=false; if(!await nexusCommitCurrentState())return;render();return; }
     // Multiple simultaneously-active kits per compound is now supported by choice —
     // confirm rather than silently retiring whatever else is currently open, same rule as
     // every other "open a vial" entry point.
-    confirmOpenIfOtherKitOpen(kit, () => { kit.activeKit=true; saveState(); render(); });
+    confirmOpenIfOtherKitOpen(kit, async () => { kit.activeKit=true; if(!await nexusCommitCurrentState())return;render(); });
   });
-  document.querySelectorAll(".delsupply").forEach(b=>b.onclick=()=>confirmAction("Delete this kit?",()=>{
+  document.querySelectorAll(".delsupply").forEach(b=>b.onclick=()=>confirmAction("Delete this kit?",async()=>{
     const s=state.supplies.find(x=>x.id===+b.dataset.id);
     if(s){const othersExist=state.supplies.filter(x=>x.id!==+b.dataset.id&&x.name===s.name).length>0;if(!othersExist){if(state.peptides[s.name])state.peptides[s.name].status="archived";else if(state.customPeptides[s.name])state.customPeptides[s.name].status="archived";}}
-    state.supplies=state.supplies.filter(x=>x.id!==+b.dataset.id);saveState();render();
+    state.supplies=state.supplies.filter(x=>x.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();
   }));
   // calendar
   const csw=$("#cs-week"); if(csw)csw.onclick=()=>{state._calSub="week";render();};
