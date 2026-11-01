@@ -170,6 +170,7 @@ try{
         assert(await supplement.count()>0,'Supplement browse option missing');
         await supplement.click();
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const created=await snapshot(page,testDay);
         assert(created.entries.length===1,'Create did not save one daily log');
         const saved=created.entries[0];
@@ -184,6 +185,7 @@ try{
         assert(await page.locator('.modal #moods .moodbtn[data-v="4"]').getAttribute('aria-pressed')==='true','Mood missing from Edit');
         await restored.fill('Edited synthetic Check-In note');
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const edited=await snapshot(page,testDay);
         assert(edited.entries.length===1,'Edit duplicated Check-In date');
         assert(edited.entries[0].notes==='Edited synthetic Check-In note','Edit did not persist notes');
@@ -194,6 +196,7 @@ try{
         await page.evaluate(date=>dailyModal(null,date),collisionDay);
         await page.locator('.modal #notes').fill('Separate date entry');
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const second=await snapshot(page,collisionDay);
         assert(second.entries.length===1,'Setup collision date failed');
         await page.evaluate(date=>dailyModal(state.dailyLogs.find(l=>dayKey(l.date)===date)),testDay);
