@@ -159,6 +159,8 @@ try {
         scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,
         closeWidth:close.width,closeHeight:close.height,
         outlinedClose:!!head.querySelector('#x svg[aria-hidden="true"]'),
+        closeSvgColor:getComputedStyle(head.querySelector('#x svg')).color,
+        duplicateIconDisplay:getComputedStyle(head.querySelector('#x'),'::after').display,
         pageOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
     });
   };
@@ -167,6 +169,8 @@ try {
     'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
   assert.ok(oralLayout.outlinedClose&&oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=43.99&&oralLayout.closeHeight>=43.99,
     'Capsule sheet height/close target: '+JSON.stringify(oralLayout));
+  assert.ok(oralLayout.closeSvgColor!=='rgba(0, 0, 0, 0)'&&oralLayout.closeSvgColor!=='transparent'&&oralLayout.duplicateIconDisplay==='none',
+    'Capsule close must render one visible SVG, not a duplicate masked glyph: '+JSON.stringify(oralLayout));
   await page.locator('#nx-capsule-count').fill('2');
   await page.locator('#nx-capsule-review').click();
   assert.equal(await page.locator('#nx-capsule-entry-fields').isHidden(),true,
@@ -183,6 +187,8 @@ try {
     'Spray sheet viewport overflow: '+JSON.stringify(nasalLayout));
   assert.ok(nasalLayout.outlinedClose&&nasalLayout.sheetHeight<=nasalLayout.viewportHeight+2&&nasalLayout.closeWidth>=44&&nasalLayout.closeHeight>=44,
     'Spray sheet height/close target: '+JSON.stringify(nasalLayout));
+  assert.ok(nasalLayout.closeSvgColor!=='rgba(0, 0, 0, 0)'&&nasalLayout.closeSvgColor!=='transparent'&&nasalLayout.duplicateIconDisplay==='none',
+    'Spray close must render one visible SVG, not a duplicate masked glyph: '+JSON.stringify(nasalLayout));
   await page.locator('#nx-spray-count').fill('2');
   await page.locator('#nx-spray-review').click();
   assert.equal(await page.locator('#nx-spray-entry-fields').isHidden(),true,
