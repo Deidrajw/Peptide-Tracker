@@ -1,3 +1,7 @@
+## Test expansion checkpoint — 2026-11-01 (NOT full matrix)
+- New shared-engine test-only commit `2f4e8d76`: compound-picker five-results/custom; nasal preparation Entry/Review/Back/sealed-source Review; capture 6 screenshots × 8 viewport/theme/build cells × Chromium/WebKit = 96 planned screenshots and matching geometry JSON, no source-vial mutation from browsing/Review. CI new-head #41363989984 Chromium, #41363990003 WebKit not yet complete. Prior Log Dose 24-image candidate #41363339799 still in progress and images not reviewed. Keep all unexecuted visual cells NOT TESTED and physical iPhone BLOCKED pending user acceptance.
+- No UI/storage/ledger changes; preserve draft PR, P0 writer gate and LIVE nasal gates OFF.
+
 ## Execution checkpoint — 2026-11-01 (NOT complete visual acceptance)
 - Baseline `27f24637` Chromium #41362141111 **PASS** and WebKit #41362141098 **PASS**. Chromium Log Dose 8 LIVE/DEMO width/theme regression cells (176 functional flows); WebKit 16 fictional formulation sessions. These results do not complete 16×16 visual cells.
 - Downloaded exact-source artifact #13105393555, validated release manifest SHA `27f24637` and all 26 LIVE ZIP asset paths. Existing PNG set has no dedicated normal Log Dose entry/focused/review screenshots.
