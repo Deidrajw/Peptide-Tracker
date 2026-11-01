@@ -1809,14 +1809,16 @@ function openNewVialModal(supplyId, onDone) {
       </div>
       <div id="rv-conc-preview" style="font-size:11px;color:var(--t4);margin-top:8px;text-align:center"></div>
     </div>
-    <label class="field-label" for="rv-purpose">INTENDED USE · THIS VIAL ONLY</label>
+    <label class="field-label" for="rv-purpose">PRODUCT FORM · THIS VIAL</label>
     <select id="rv-purpose" class="inp" style="margin-bottom:10px;min-height:46px">
       <option value="undecided">Decide later</option>
-      <option value="SubQ">Injectable · SubQ</option>
-      <option value="IM">Injectable · IM</option>
-      <option value="nasal-source">Plan a nasal preparation from this vial</option>
+      <option value="Injectable">Injectable (choose SubQ or IM when logging)</option>
+      <option value="Oral">Oral</option>
+      <option value="Topical">Topical</option>
+      <option value="nasal-source">Source for nasal preparation · not a ready spray</option>
+      <option value="Other">Other</option>
     </select>
-    <p id="rv-purpose-note" class="hint" style="margin-bottom:14px">This labels the selected vial only. It does not transfer any quantity or create a nasal bottle.</p>
+    <p id="rv-purpose-note" class="hint" style="margin-bottom:14px">Record the physical product form, not a permanent injection route. Nasal planning does not create a prepared bottle or deduct stock.</p>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
     <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
