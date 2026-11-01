@@ -1,3 +1,10 @@
+## 2026-10-31/Nov 1 UTC — Coordinated sprint checkpoint against F01–A03
+- F01/F02/F03/F04: implemented in draft source for *physical-vial* form/route selection, exact verified source, visible route switching and independent stocked picker; improved tests 1341f629 run 8 WebKit cases SUCCESS (#41266340383), Chromium full #41266340372 pending. **Do not mark complete or accepted**, because non-vial oral containers, real nasal prepared transfers and legacy writer routes remain outside verified exclusive debit coverage.
+- F05: planning copy now explains kit/vial -> plan -> separately verified preparation/container -> nasal eligibility (953d07e, CSS b69bb16f), but actual prepared container transfer intentionally INCOMPLETE.
+- F06/UI01/UI02/UI03: setup and DS2 styles, no forced route in setup, visible dose route, fixed contrast/checkbox/typographic hierarchy and numeric vial sorting are source-coded; detailed physical iPhone UX/VoiceOver acceptance INCOMPLETE.
+- R01: protected suites partially passed; R02 mixed legacy cross-tab writer P0 OPEN. A01 exact-source artifact pending full Chromium; A02 device NOT ACCEPTED; A03 draft/unmerged/undeployed.
+- One next concrete action: settle exact-source Chromium #41266340372, inspect artifact and independently exercise protected flows before iPhone handoff.
+
 ## 2026-10-31 — PR #124 COORDINATED FLOW & DESIGN ACCEPTANCE TRACKER (single sprint; no items silently dropped)
 
 The user requests one coordinated workstream rather than separately forgotten patch cycles. This is the sprint's product acceptance matrix. Source of truth for reproducible testing remains docs/qa/IPHONE_MANUAL_TEST_PLAYBOOK.md and docs/continuity/REGRESSION.md (do NOT create a new QA standard). Keep all rows until independently verified on matching build and accepted on physical iPhone.
