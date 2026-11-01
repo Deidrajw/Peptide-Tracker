@@ -1,3 +1,10 @@
+## 2026-10-31 — User-reported Stash theme/action and expanded-setup hierarchy (PR124 DRAFT)
+- Source baseline main independently reverified da585ab3458394ddf5e88e283b210933beeab810; branch feature/dose-administration-method-20261029, draft PR #124 unmerged and production not deployed from this work.
+- User supplied real-device light and dark screenshots: compact Retatrutide card accepted structurally, but Set up vial / Details buttons had inconsistent theme emphasis, expanded "Use setup" and unresolved-vial warning lacked visual hierarchy, "Open new vial" secondary button blended into parent surface.
+- CSS at d9cb70a6 adds scoped 44px matching action geometry/clear lavender or dark primary according to theme, secondary bordered Details, high-visibility outlined use-setup control and amber unresolved-vial warning, matching secondary open-vial treatment. No DOM/business logic or persistence changes. Test tooling 5e9f73e/754e3a80 adds contrast >=4.5, matching button radii, expanded use setup separation assertions and screenshots to existing tools/validate-stash-cards.mjs at 320/390 light/dark LIVE/DEMO.
+- Exact-head runs for 754e3a80 queued/in progress at this writing (build #41261696707, WebKit #41261696687, mobile #41261696620, shared writer #41261696631, nested #41261696622). NOT YET VERIFIED on exact source. Previous Log Dose/browser source 200db956 passed prior suite but does not validate this new CSS. Physical iPhone visual reacceptance pending; P0 mixed writer still open. No merge, deploy or production data touched.
+- NEXT ONE ACTION: inspect exact-head #41261696707 Stash card screenshot/contrast and CI results; fix issues if any; then physical iPhone light/dark acceptance with isolated DEMO.
+
 ## 2026-10-31 — PR124 Log Dose source cleanup browser & WebKit verified (not released)
 - Current GitHub main independently reverified at da585ab3458394ddf5e88e283b210933beeab810; draft feature branch remained unmerged.
 - Latest application/test commit 200db956e513166e5420d5533e570f49088d6023 (UI d574c5dd, prior handler ece3780, stale Stash test ef8b297, browser/WebKit test 200db9).
