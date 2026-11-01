@@ -99,12 +99,17 @@ try{
           render();
         });
         // Empty-catalogue Daily Check-In also permits inline supplement creation.
-        await page.evaluate(()=>{
+        const checkinProbe=await page.evaluate(()=>{
           state.settings.supplements=[];
-          // An explicit unused fictional date bypasses the intentional
-          // existing-today redirect to the Today Check-In details sheet.
+          // Use an explicit fictional date, not the existing-today redirect.
           dailyModal(null,'2032-11-10');
+          return {modal:!!document.querySelector('.modal'), search:!!document.querySelector('.modal #supp-search'),
+            text:document.querySelector('.modal')?.textContent?.slice(0,350),
+            alerts:[...document.querySelectorAll('[role="alert"]')].map(x=>x.textContent?.slice(0,150)),
+            closeStacks:globalThis.__checkinCloseStacks?.slice(-3)};
         });
+        console.log('CHECKIN second modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(checkinProbe)+' pageerrors='+errors.join('; '));
+        assert(checkinProbe.search,'Daily Check-In search field did not open: '+JSON.stringify(checkinProbe)+' pageerrors='+errors.join('; '));
         assert(await page.locator('.modal #nx2-checkin-new-supp').count()===0,'Check-In duplicate supplement input remains');
         await page.locator('.modal #supp-search').fill('Fictional Zinc');
         assert(await page.locator('.modal [data-add-search="checkin"]').count()===1,'Check-In unified Add action absent');
