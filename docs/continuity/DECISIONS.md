@@ -1185,3 +1185,7 @@ Primary Continue, Save, Confirm Log, Add to Stash, Record/Save reaction uses a c
 ## 2026-11-01 — PR124 writer gate policy reaffirmed
 - No synchronous/unlocked ordinary save or erase APIs may remain; every durable write uses awaited exclusive Web Lock + durable readback and stale rejection. Mixed-writer release gate must test currently supported exclusive settings/inventory paths, not a removed saveLegacy method. A passing simulated contention test does not replace real Chromium two-tab application-handler tests; both are required before reconsidering P0.
 - Existing production data is protected; prepared transfer and nasal administration gates remain OFF; no merge or deployment without explicit user approval.
+
+
+## 2026-11-01 — Do not weaken Check-In browser verification
+- Keep Check-In supplement search/add/save as a required full-suite assertion. Missing modal control is FAIL, not skipped or automatically retried. Trace actual close/render cause before changing application behaviour. LIVE fictional fixtures go through the exclusive writer; DEMO remains memory-only. Preserve production records and nasal feature gates OFF. Draft PR #124 not eligible for merge/deployment on focused passes alone.
