@@ -1,3 +1,8 @@
+## 2026-11-01 — current corrective implementation #04/#05/#14 and strict regression
+- `5d406a72` fixes #04/#05 close-button double-render/transparent-SVG presentation; keeps 48px close and keyboard focus ring. `aca4a10b` tests visible SVG without pseudo duplicate on actual capsule/nasal form sheets.
+- `445ad980`+`1c41a3d6` add #14 entry AND Review bounding-box clipping evidence gate: fixed header, 44px close, single scroll body and sticky footer all within 320/390 viewport, both themes and isolated DEMO/LIVE builds. Source TEST CODED, NOT RUN/VERIFIED on latest head. `docs/design/PR124_FULL_VISUAL_ACCEPTANCE_MATRIX.md` remains a specification, not an execution result.
+- Predecessor WebKit `de85376c` #41360134694 is SUCCESS (16 fictional LIVE/DEMO), but predecessor Chromium and current exact-head workflows remain running/queued. All 16 physical acceptance items stay PENDING/previously REJECTED. Mixed writer P0 BLOCKING; nasal LIVE OFF; draft/no merge/deploy.
+
 ## 2026-11-01 — shared 48px outline close and Additional dose options test checkpoint
 - **#04/#05/#07/#08/#09/#14/#16 CODED correction:** shared form close buttons in `05-nexus.js` (4), `07-nexus.js` (1), `10-nexus.js` (3), and `11-nexus.js` (1) now use the same 20px outline SVG inside the existing 44–48px touch-target button; IDs, event handlers and storage unchanged. App commits `0f580936`, `dd4819ea`, `6fff5770`, `cdf5b421`. Explicit mobile form and Goal Details SVG assertions added in `ff0b050e` and `3a7b8ef1`.
 - **#15 TEST CODED:** Log Dose Additional dose options expanded/collapsed, two controls, 44px row/summary and no overflow are now asserted in existing LIVE/DEMO 320/390 light/dark browser loops at `7212783e`.
