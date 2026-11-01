@@ -1,3 +1,8 @@
+## 2026-11-01 — shared close SVG and optional panel assertions
+- App `0f580936`/`dd4819ea`/`6fff5770`/`cdf5b421`: nine `.nx-dose-close` UI buttons from four JS modules converted from text X to outlined SVG; existing 44–48px button geometry intact; no data/ledger writes. Test `ff0b050e` now requires SVG close in actual capsule and nasal bottle sheet at 320px/390px light/dark, `3a7b8ef1` in Goal Details modal.
+- Test `7212783e`: Log Dose Additional dose options summary and both rows have >=44px, no horizontal overflow, expand/collapse reversible, both controls present. Existing `tools/validate-logdose-ui.mjs` runs LIVE/DEMO 320/390 dark/light Chromium.
+- Last code `ee903da8` WebKit/mobile/writer/nested PASS; latest composite `3a7b8ef1` unverified. No physical iPhone/VoiceOver success. No new nasal safety certification; P0 BLOCKING, nasal LIVE OFF.
+
 ## 2026-11-01 — Log Dose optional disclosure adds explicit narrow-viewport QA
 - `tools/validate-logdose-ui.mjs` test `7212783e` checks single Additional dose options disclosure and summary, ≥44px checkbox rows and summary, both independently-log/escalation control IDs, keyboard-independent expand/collapse, no horizontal overflow at 320/390 dark/light LIVE/isolated DEMO. Check exact-head run; added assertions are not a verified PASS by themselves.
 - Shared compound picker prior WebKit hidden results remained FAIL; candidate `ee903da8` with double animation-frame check was still running in browser jobs. P0 release blocker persists; LIVE nasal OFF.
