@@ -101,7 +101,9 @@ try{
         // Empty-catalogue Daily Check-In also permits inline supplement creation.
         await page.evaluate(()=>{
           state.settings.supplements=[];
-          dailyModal(null);
+          // An explicit unused fictional date bypasses the intentional
+          // existing-today redirect to the Today Check-In details sheet.
+          dailyModal(null,'2032-11-10');
         });
         assert(await page.locator('.modal #nx2-checkin-new-supp').count()===0,'Check-In duplicate supplement input remains');
         await page.locator('.modal #supp-search').fill('Fictional Zinc');
