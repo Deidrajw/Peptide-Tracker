@@ -3944,3 +3944,111 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   background:#efe5fc;color:#4d3274;border-color:#cbb6ea;
 }
+
+
+/* PR124 iPhone corrective pass: new form-specific sheets inherit established
+   Nexus modal anatomy rather than stretching into empty fullscreen panels.
+   One scrollport, stable safe-area and balanced hierarchy at 320/390px. */
+.modal.nx-form-log-sheet{
+  display:block!important;box-sizing:border-box!important;
+  height:auto!important;min-height:0!important;
+  max-height:min(92dvh,840px)!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  padding:20px 16px calc(20px + env(safe-area-inset-bottom))!important;
+  scroll-padding-bottom:calc(24px + env(safe-area-inset-bottom))!important;
+  -webkit-overflow-scrolling:touch;
+}
+.modal.nx-form-log-sheet .nx-dose-form,
+.modal .nx-nasal-actual-prep{
+  display:flex!important;flex-direction:column!important;gap:0!important;
+  min-width:0!important;min-height:0!important;
+  height:auto!important;padding:0!important;
+  font-family:inherit!important;font-size:14px;line-height:1.5;
+}
+.modal.nx-form-log-sheet .nx-dose-head{
+  display:flex!important;align-items:flex-start!important;
+  gap:12px!important;margin:0 0 18px!important;
+}
+.modal.nx-form-log-sheet .nx-dose-head > div{min-width:0;flex:1}
+.modal.nx-form-log-sheet .nx-dose-title,
+.modal .nx-nasal-actual-prep .nx-form-stock-editor-head strong{
+  margin:0!important;font-size:20px!important;line-height:1.25!important;
+  letter-spacing:-.025em!important;font-weight:750!important;
+  overflow-wrap:normal;word-break:normal;color:var(--t1);
+}
+.modal.nx-form-log-sheet .nx-dose-subtitle{
+  font-size:12px!important;line-height:1.45!important;margin:5px 0 0!important;
+}
+.modal.nx-form-log-sheet .nx-dose-head #x,
+.modal .nx-nasal-actual-prep #x{
+  flex:0 0 44px!important;display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;min-height:44px!important;
+  padding:0!important;border:1px solid var(--border-sub)!important;
+  border-radius:12px!important;background:var(--surface-2)!important;color:var(--t1)!important;
+}
+.modal.nx-form-log-sheet :is(.field-label),
+.modal .nx-nasal-actual-prep .field-label{
+  margin:14px 0 7px!important;font-family:inherit!important;
+  font-size:11px!important;line-height:1.4!important;
+  letter-spacing:.055em!important;text-transform:uppercase!important;
+  font-weight:700!important;color:var(--t3)!important;
+}
+.modal.nx-form-log-sheet :is(.inp,select,textarea),
+.modal .nx-nasal-actual-prep :is(.inp,select,textarea){
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  min-height:48px!important;box-sizing:border-box!important;
+  font:inherit!important;font-size:16px!important;line-height:1.35!important;
+  margin:0!important;border-radius:12px!important;
+}
+.modal.nx-form-log-sheet textarea.inp,
+.modal .nx-nasal-actual-prep textarea.inp{
+  min-height:88px!important;resize:vertical;
+}
+.modal.nx-form-log-sheet :is(.nx-dose-untracked-note,#nx-capsule-summary,#nx-spray-summary),
+.modal .nx-nasal-actual-prep #nx-nasal-record-preview{
+  display:block;max-width:100%;overflow-wrap:anywhere;
+  margin:12px 0 4px!important;padding:10px 12px!important;
+  border:1px solid var(--border-sub);border-radius:12px;
+  background:var(--surface-2);font-size:12px!important;
+  line-height:1.5!important;color:var(--t2)!important;
+}
+.modal.nx-form-log-sheet :is(.btn-primary,.nx-dose-back),
+.modal .nx-nasal-actual-prep .btn-primary{
+  display:flex;align-items:center;justify-content:center;
+  width:100%!important;min-height:48px!important;
+  margin-top:12px!important;padding:11px 14px!important;
+  box-sizing:border-box!important;border-radius:12px!important;
+  font-family:inherit!important;font-size:14px!important;
+  font-weight:700!important;line-height:1.35!important;
+  text-align:center;white-space:normal;overflow-wrap:break-word;
+}
+.modal.nx-form-log-sheet .nx-dose-back{
+  background:transparent!important;color:var(--t2)!important;
+  box-shadow:none!important;border:0!important;
+}
+.modal.nx-form-log-sheet [hidden],
+.modal .nx-nasal-actual-prep [hidden]{display:none!important}
+.modal.nx-form-choice-sheet{max-height:min(78dvh,560px)!important}
+.modal .nx-nasal-actual-prep .nx-dose-option-check{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:16px 0 8px;font-size:13px;line-height:1.45;
+}
+.modal .nx-nasal-actual-prep .nx-dose-option-check input{
+  flex:0 0 20px;width:20px;height:20px;margin:1px 0 0;
+}
+.modal .nx-nasal-actual-prep .hint{
+  margin:10px 0!important;line-height:1.5!important;
+  font-size:12px!important;color:var(--t3)!important;
+}
+.nx-kit-record-list .nx-kit-list-row{
+  min-width:0;grid-template-columns:minmax(0,1fr) auto!important;
+}
+.nx-kit-record-list .nx-kit-list-copy{min-width:0}
+.nx-kit-record-list :is(.nx-kit-record-nasal,.nx-kit-list-action){
+  min-width:44px;min-height:44px;max-width:100%;
+  line-height:1.3;white-space:normal;overflow-wrap:normal;
+}
+@media(max-width:380px){
+  .modal.nx-form-log-sheet{padding:16px 14px calc(16px + env(safe-area-inset-bottom))!important}
+  .modal.nx-form-log-sheet .nx-dose-title{font-size:19px!important}
+}
