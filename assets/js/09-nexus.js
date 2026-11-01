@@ -1896,6 +1896,9 @@ function openNewVialModal(supplyId, onDone) {
       // When another vial in this kit is already open, the first-open lookup is
       // ambiguous. Resume against the exact vial just opened, preserving its ID.
       if(typeof onDone==='function')onDone(openedVial);
+       else if(_demoActive && openedVial.intendedUse==="nasal-source" &&
+               typeof nexusRecordNasalPreparation==="function")
+         nexusRecordNasalPreparation(entry.id,openedVial.id);
     });
   };
 }
