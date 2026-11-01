@@ -786,7 +786,7 @@ function nexusCapsuleDoseModal(name,occTime){
   '<label class="field-label" for="nx-capsule-notes">NOTES · OPTIONAL</label><textarea id="nx-capsule-notes" class="inp" rows="2"></textarea>'+
   '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button>'+
   '<div id="nx-capsule-confirm" hidden><p id="nx-capsule-summary" role="status"></p><button id="nx-capsule-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-capsule-save" type="button" class="btn-primary" style="min-height:48px">Confirm & save</button></div></div>';
- const m=openModal(html,"#A78BFA");m.classList.add("nx2-dose-modal");
+ const m=openModal(html,"#A78BFA"); // Use normal scrolling; this form has no nx-dose-scroll/footer split.
  m.querySelector("#x").onclick=closeModal;
  const sel=m.querySelector("#nx-capsule-source"),qty=m.querySelector("#nx-capsule-count"),date=m.querySelector("#nx-capsule-date"),
   preview=m.querySelector("#nx-capsule-preview"),confirm=m.querySelector("#nx-capsule-confirm");
