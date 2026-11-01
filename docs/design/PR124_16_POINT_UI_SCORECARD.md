@@ -1,3 +1,10 @@
+## Log Dose clipping — explicit cross-screen acceptance gate
+
+- User reconfirmed that **Log Dose screens clipping** is part of the 16 requested corrections, not an optional polish item. Cross-reference items **#14**, **#15**, and **#16**. Keep these OPEN until independently validated.
+- Required coverage: normal injectable Log Dose **entry and Review**, Capsules **entry and Review**, prepared nasal spray **entry and Review**, form-choice sheet, expanded **Additional dose options**, and any supported edit/legacy flows. At **320px and 390px**, in **both light and dark**, assert: header/title and 44–48px close entirely visible; no horizontal clipping/overflow; primary CTA and Back accessible and readable; one vertical scroll owner; bottom safe-area clearance; long labels and results wrap; opening the software keyboard does not conceal the currently focused field or permanently hide the save/confirm action.
+- Automated viewport checks are distinct from on-device iOS Safari/Edge keyboard and VoiceOver checks. Previous physical screenshots **FAILED** and user explicitly withheld another acceptance cycle until full corrective implementation. Do not mark PASS solely from CSS presence or a broad green CI workflow.
+- Status: **OPEN / BLOCKING PHYSICAL UAT**. Existing CSS and nasal scroll/focus candidate `2503f55f` are partial fixes, not complete clipping remediation. No merge/deploy, live nasal gates OFF, cross-tab writer P0 blocking.
+
 ## 2026-11-01 — nasal review scroll/focus follow-up
 - Application `2503f55f` resets the single scroll-owner sheet to top when switching from nasal preparation fields to Review or Back; Review receives explicit programmatic focus. Regression `7d00437e` checks focus and scroll state in existing 320/390 × light/dark fictional LIVE/DEMO Playwright loops. **CODED, exact-head CI PENDING**, iPhone UAT still FAIL/retest withheld.
 - No change to prepared-bottle/source ledger, transaction IDs, safety gates or production data. Do not mark #9/#12/#16 accepted pending screenshots and physical retest.
