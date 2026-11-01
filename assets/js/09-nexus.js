@@ -1793,6 +1793,20 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
     return;
   }
   if(!["Injectable","nasal-source"].includes(selectedForm)){showErrorBanner("Choose Injectable or Nasal. Nothing saved.");return;}
+  if(selectedForm==="nasal-source"&&_demoActive){
+    // In fictional DEMO a nasal choice opens the actual preparation form
+    // immediately. The sealed source is not opened or debited until one
+    // confirmed, validated state transition. LIVE nasal remains safety gated.
+    const sealed=(s.vials||[]).find(v=>v.status==="sealed");
+    if(s.isBlend||!sealed||!Number.isFinite(Number(sealed.expectedMg ?? sealed.vialMg ?? s.vialMg))){
+      showErrorBanner("Choose a kit with an exact eligible sealed source vial for nasal preparation. Nothing saved.");return;
+    }
+    if(typeof nexusRecordNasalPreparation!=="function"){
+      showErrorBanner("Nasal preparation form unavailable. Nothing saved.");return;
+    }
+    nexusRecordNasalPreparation(s.id,sealed.id,{openSealed:true});
+    return;
+  }
   const c = cfg(s.name);
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
