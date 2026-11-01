@@ -3688,3 +3688,5 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
  background:var(--surface-2)!important;color:var(--t1)!important;
  box-shadow:none!important;
 }
+
+.nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-detail-secondary{font-size:12px;line-height:1.45;color:var(--t3);padding:2px 0}
