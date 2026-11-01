@@ -556,7 +556,7 @@ function wireBody() {
     const dose=tgt[name]&&tgt[name].doses.find(d=>d.id===id);
     if(dose) doseModal(name,dose);
   });
-  document.querySelectorAll(".colorpick").forEach(c=>c.onchange=()=>{
+  document.querySelectorAll(".colorpick").forEach(c=>c.onchange=async()=>{
     // onchange (not oninput) is deliberate: oninput fires continuously while dragging the
     // native color picker's spectrum/slider, and renderBody() rebuilds the whole page —
     // including this very <input> element — on every single one of those events. That
@@ -567,23 +567,23 @@ function wireBody() {
     const name=c.dataset.name; const builtin=!!PEPTIDES[name];
     const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:cfg(name).defaultSchedule,doses:[]};
-    tgt[name].customColor=c.value; saveState(); renderBody();
+    tgt[name].customColor=c.value; if(!await nexusCommitCurrentState())return; renderBody();
   });
-  document.querySelectorAll(".resetcolor").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".resetcolor").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name; const builtin=!!PEPTIDES[name];
     const tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[name]) delete tgt[name].customColor; saveState(); renderBody();
+    if(tgt[name]) delete tgt[name].customColor; if(!await nexusCommitCurrentState())return; renderBody();
   });
-  document.querySelectorAll(".deldose").forEach(b=>b.onclick=()=>confirmAction("Delete this dose entry?",()=>{
+  document.querySelectorAll(".deldose").forEach(b=>b.onclick=async()=>confirmAction("Delete this dose entry?",async()=>{
     const name=b.dataset.name,id=+b.dataset.id,builtin=!!PEPTIDES[name],tgt=builtin?state.peptides:state.customPeptides;
     if(tgt[name]){
       const dose = tgt[name].doses.find(d=>d.id===id);
       if (dose && reverseDoseInventoryEffect(dose)===false)return;
       tgt[name].doses=tgt[name].doses.filter(d=>d.id!==id);
     }
-    saveState();render();
+    if(!await nexusCommitCurrentState())return;render();
   }));
-  document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=async()=>{
     const box=document.querySelector(`.histbox[data-name="${CSS.escape(b.dataset.name)}"]`);
     if(box){
       const opening=box.style.display==="none";
@@ -592,24 +592,24 @@ function wireBody() {
       b.textContent=opening?"Close history":"History ("+box.querySelectorAll(".nx-dose-history-record").length+")";
     }
   });
-  document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=async()=>{
     const box=document.querySelector(`.tunebox[data-name="${CSS.escape(b.dataset.name)}"]`);
     if(box) box.style.display=box.style.display==="none"?"block":"none";
   });
-  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=()=>nxOpenCompoundSheet(b));
-  document.querySelectorAll(".tunerange").forEach(r=>r.oninput=()=>{
+  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=async()=>nxOpenCompoundSheet(b));
+  document.querySelectorAll(".tunerange").forEach(r=>r.onchange=async()=>{
     const name=r.dataset.name; const days=parseFloat(r.value);
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:days,doses:[]};
-    tgt[name].scheduleDays=days; saveState();
+    tgt[name].scheduleDays=days; if(!await nexusCommitCurrentState())return;
     const tv=r.closest(".tunebox")?.querySelector(".tuneval"); if(tv) tv.textContent=days+" days";
   });
-  document.querySelectorAll(".route-btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".route-btn").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, route=b.dataset.route;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]};
     tgt[name].route = route;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     // In place, same reason as sched-mode-btn below — selecting a route shouldn't collapse
     // the panel you're actively adjusting.
     const box = b.closest(".tunebox");
@@ -624,21 +624,21 @@ function wireBody() {
       if (nasalUi) nasalUi.style.display = route==="Nasal" ? "block" : "none";
     }
   });
-  document.querySelectorAll(".route-mcgperspray").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".route-mcgperspray").forEach(inp=>inp.onchange=async()=>{
     const name=inp.dataset.name;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) return;
     const v = parseFloat(inp.value);
     tgt[name].mcgPerSpray = isNaN(v) ? null : v;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
   });
-  document.querySelectorAll(".sched-mode-btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".sched-mode-btn").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, mode=b.dataset.mode;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]};
     tgt[name].scheduleType = mode;
     if(mode==="weekdays" && !(tgt[name].scheduleWeekdays||[]).length) tgt[name].scheduleWeekdays=[1,3,5]; // sensible default: Mon/Wed/Fri
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     // Update in place (no full re-render) so the settings panel stays open
     const box = b.closest(".tunebox");
     if (box) {
@@ -660,7 +660,7 @@ function wireBody() {
       });
     }
   });
-  document.querySelectorAll(".sched-wd-chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".sched-wd-chip").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, day=+b.dataset.day;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) return;
@@ -668,7 +668,7 @@ function wireBody() {
     if(cur.has(day)) cur.delete(day); else cur.add(day);
     if(cur.size===0) return; // require at least one day selected
     tgt[name].scheduleWeekdays=[...cur].sort((a,b)=>a-b);
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     const on=cur.has(day), cc=cfg(name).color;
     b.style.background = on ? cc+"22" : "var(--surface-3)";
     b.style.borderColor = on ? cc : "var(--border)";
@@ -679,19 +679,19 @@ function wireBody() {
   // This is the actual dosing engine's source of truth; full re-render since the number
   // of time-row inputs changes.
   const getTgt = (name) => { const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides; if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]}; return tgt[name]; };
-  document.querySelectorAll(".dpd-inc").forEach(b=>b.onclick=()=>{
-    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.min(4,(t.dosesPerDay||1)+1); saveState(); render();
+  document.querySelectorAll(".dpd-inc").forEach(b=>b.onclick=async()=>{
+    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.min(4,(t.dosesPerDay||1)+1); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".dpd-dec").forEach(b=>b.onclick=()=>{
-    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.max(1,(t.dosesPerDay||1)-1); saveState(); render();
+  document.querySelectorAll(".dpd-dec").forEach(b=>b.onclick=async()=>{
+    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.max(1,(t.dosesPerDay||1)-1); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".dpd-time-input").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".dpd-time-input").forEach(inp=>inp.onchange=async()=>{
     const t=getTgt(inp.dataset.name), i=+inp.dataset.i;
     if(!t.times) t.times=getOccurrenceTimes(t);
-    t.times[i]=inp.value; saveState();
+    t.times[i]=inp.value; if(!await nexusCommitCurrentState())return;
   });
   document.querySelectorAll(".dpd-amt-input").forEach(inp=>{
-    inp.oninput = () => {
+    inp.oninput = async () => {
       // Live-update the total line as they type, without a full re-render (which would
       // steal focus mid-entry) — reads straight from the sibling inputs' current values,
       // not saved state, so it reflects exactly what's on screen right now.
@@ -713,17 +713,17 @@ function wireBody() {
         }
       }
     };
-    inp.onchange=()=>{
+    inp.onchange=async()=>{
       const t=getTgt(inp.dataset.name), i=+inp.dataset.i;
       if(!t.doseAmounts) t.doseAmounts=[];
-      t.doseAmounts[i]=inp.value.trim(); saveState();
+      t.doseAmounts[i]=inp.value.trim(); if(!await nexusCommitCurrentState())return;
     };
   });
   // Protocol phase controls — phases live on the compound record itself (t.phases), the
   // same object dosesPerDay/times/scheduleDays already live on. Toggling ON seeds one
   // phase from whatever the compound's current schedule already is, so switching to
   // phases never silently resets a working schedule.
-  document.querySelectorAll(".phases-toggle").forEach(cb=>cb.onchange=()=>{
+  document.querySelectorAll(".phases-toggle").forEach(cb=>cb.onchange=async()=>{
     const t=getTgt(cb.dataset.name);
     if (cb.checked) {
       if (!t.phases || !t.phases.length) {
@@ -733,40 +733,40 @@ function wireBody() {
     } else {
       t.phases = [];
     }
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; saveState(); render(); });
-  document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); saveState(); render(); });
-  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); saveState(); render(); });
-  document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; saveState(); render(); });
-  document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); saveState(); });
-  document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); if(!await nexusCommitCurrentState())return; });
+  document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi];
     if (!ph.schedule) ph.schedule={};
     if (b.dataset.mode==="weekly") { ph.schedule.scheduleWeekdays = ph.schedule.scheduleWeekdays&&ph.schedule.scheduleWeekdays.length ? ph.schedule.scheduleWeekdays : [0]; }
     else { ph.schedule.scheduleWeekdays = null; if(!ph.schedule.scheduleDays) ph.schedule.scheduleDays=1; }
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-wd-chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-wd-chip").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi], day=+b.dataset.day;
     const cur=new Set(ph.schedule.scheduleWeekdays||[]);
     if(cur.has(day)) cur.delete(day); else cur.add(day);
     if(cur.size===0) return;
-    ph.schedule.scheduleWeekdays=[...cur].sort((a,b)=>a-b); saveState(); render();
+    ph.schedule.scheduleWeekdays=[...cur].sort((a,b)=>a-b); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-interval").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].schedule.scheduleDays=Math.max(1,parseFloat(inp.value)||1); saveState(); });
-  document.querySelectorAll(".phase-dpd-inc").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.min(4,(ph.schedule.dosesPerDay||1)+1); saveState(); render(); });
-  document.querySelectorAll(".phase-dpd-dec").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.max(1,(ph.schedule.dosesPerDay||1)-1); saveState(); render(); });
-  document.querySelectorAll(".phase-time").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".phase-interval").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].schedule.scheduleDays=Math.max(1,parseFloat(inp.value)||1); if(!await nexusCommitCurrentState())return; });
+  document.querySelectorAll(".phase-dpd-inc").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.min(4,(ph.schedule.dosesPerDay||1)+1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-dpd-dec").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.max(1,(ph.schedule.dosesPerDay||1)-1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-time").forEach(inp=>inp.onchange=async()=>{
     const t=getTgt(inp.dataset.name), ph=t.phases[+inp.dataset.pi], ti=+inp.dataset.ti;
     if(!ph.schedule.times) ph.schedule.times=[];
-    ph.schedule.times[ti]=inp.value; saveState();
+    ph.schedule.times[ti]=inp.value; if(!await nexusCommitCurrentState())return;
   });
-  document.querySelectorAll(".phase-add").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-add").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name);
     const last=t.phases[t.phases.length-1];
     t.phases.push({ durationWeeks:4, dose:last?.dose||"", schedule: last?.schedule ? JSON.parse(JSON.stringify(last.schedule)) : {scheduleDays:7,dosesPerDay:1,times:["08:00"]} });
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
   // home filters
   // Scroll position is preserved across these re-renders — they're filters/expansion
