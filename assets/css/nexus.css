@@ -2361,8 +2361,19 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   width:48px!important;height:48px!important;min-width:48px!important;
   padding:0!important;margin:0!important;border-radius:14px!important;
   border:1px solid var(--border)!important;background:var(--surface-2)!important;
-  color:transparent!important;font-size:0!important;line-height:0!important;
+  color:var(--t1)!important;font-size:0!important;line-height:0!important;
   position:relative!important;
+}
+/* Render the actual outline SVG rather than hiding it underneath a second
+   CSS mask. Keep the mask only for older close controls without an SVG. */
+.modal .nx-dose-close>svg {
+  width:20px;height:20px;display:block;flex:none;
+  color:var(--t1);stroke:currentColor;pointer-events:none;
+}
+.modal .nx-dose-close:has(>svg)::after {display:none!important}
+.modal .nx-dose-close:focus-visible {
+  outline:3px solid var(--nx2-accent,#A78BFA)!important;
+  outline-offset:2px!important;
 }
 .modal .nx-dose-close:after {
   content:"";display:block;width:20px;height:20px;background:var(--t1);
