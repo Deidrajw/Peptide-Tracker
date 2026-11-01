@@ -1,3 +1,6 @@
+## 2026-11-01 — Today tracking exclusive-save slice
+- CODED 77f3e722: activity selection waits for exclusive readback before render, restores selection on failure. Automated/physical UI verification NOT TESTED. P0 mixed writer BLOCKED, true Chromium two-tab race NOT RUN.
+
 ## 2026-11-01 — Supplement dated history regression
 - New test source checks malformed date no-write and valid YYYY-MM-DD upsert through scoped exclusive writer; no execution result yet. Global mixed-writer P0 remains BLOCKED; actual two-tab browser test NOT RUN.
 
