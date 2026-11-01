@@ -1156,7 +1156,7 @@ function finishVialModal(supplyId) {
   };
   m.querySelectorAll(".finish-reason-opt").forEach(btn=>btn.onclick=()=>setReason(btn.dataset.key));
 
-  m.querySelector("#finish-save").onclick = () => {
+  m.querySelector("#finish-save").onclick = async () => {
     if (reasonKey==="used_in_dose") {
       // For a v2 vial, finishVial() zeroes remainingMg immediately, right here — not
       // deferred until the resulting dose gets saved. The draft below exists purely to
@@ -2188,7 +2188,7 @@ function equipmentModal(existing) {
     document.getElementById("eq-status-open").onclick = () => setInitialStatus("open");
   }
 
-  document.querySelector("#eq-save").onclick = () => {
+  document.querySelector("#eq-save").onclick = async () => {
     e.type = document.querySelector("#eq-type").value;
     e.brand = document.querySelector("#eq-brand").value.trim();
     if (!hasHistory) {
