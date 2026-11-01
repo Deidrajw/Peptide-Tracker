@@ -2088,7 +2088,7 @@ function nexusAddFormulationModal(type,existingId=null){
   const m=openModal(`<section class="nx-form-stock-editor nx-shared-inventory-sheet">
     <div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · INVENTORY</div><h2 class="nx-dose-title">${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</h2></div><button id="x" class="nx-dose-close" type="button" aria-label="Close">✕</button></div>
     <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
-    <label class="field-label" for="nx-form-name">COMPOUND</label><div class="nx-kit-combobox nx-form-compound-combobox"><input id="nx-form-name" class="inp" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or choose compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden></div></div>
+    <label class="field-label" for="nx-form-name">COMPOUND</label><div class="nx-kit-combobox nx-form-compound-combobox"><input id="nx-form-name" class="inp" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" aria-label="Compound · type to search or browse" placeholder="Search or choose compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><div id="nx-form-match-list" role="listbox" hidden></div></div>
     ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
      <label class="field-label" for="nx-form-strength">MG PER CAPSULE</label><input id="nx-form-strength" class="inp" type="number" min="0" step="any" value="${existing?existing.mgPerCapsule:""}" placeholder="Labelled strength" ${existing?"readonly":""}>`:
      raw?`<label class="field-label" for="nx-form-mg">${existing?"MASS REMAINING":"MASS"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}">`:
@@ -2111,11 +2111,11 @@ function nexusAddFormulationModal(type,existingId=null){
     matchList.replaceChildren();
     matches.forEach(name=>{
       const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
-      option.onclick=()=>{compoundInput.value=name;closeMatches();};matchList.appendChild(option);
+      option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();};matchList.appendChild(option);
     });
     const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
     browse.onpointerdown=e=>e.preventDefault();
-    browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;});};
+    browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));});};
     matchList.appendChild(browse);
     if(query && !candidates.some(name=>name.trim().toLocaleLowerCase()===query)){
       const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
@@ -2124,7 +2124,7 @@ function nexusAddFormulationModal(type,existingId=null){
       create.onclick=()=>{
         const name=compoundInput.value.trim().replace(/\s+/g," ");
         if(!name || name.length>120)return;
-        compoundInput.value=name;closeMatches();
+        compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();
       };
       matchList.appendChild(create);
     }
