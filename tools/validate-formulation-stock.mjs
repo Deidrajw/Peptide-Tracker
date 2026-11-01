@@ -37,7 +37,7 @@ try {
   assert.equal(await page.locator('#nx-kit-combobox-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
     'SLU-PP-332 must now resolve as a curated compound');
   await page.locator('#nx-kit-combobox-input').fill('Fictional Unlisted Compound');
-  const createVial=page.locator('#nx-kit-combobox-list button').filter({hasText:'Add "Fictional Unlisted Compound"'});
+  const createVial=page.locator('#nx-kit-combobox-list button').filter({hasText:'Use "Fictional Unlisted Compound"'});
   assert.equal(await createVial.count(),1,'Unknown compound must offer Add custom action in Vial kits');
   await createVial.click();
   assert.equal(await page.locator('#sname').inputValue(),'Fictional Unlisted Compound','Custom vial selection must set canonical kit field');
