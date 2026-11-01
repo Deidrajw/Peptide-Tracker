@@ -16,11 +16,19 @@
   const same=(a,b)=>String(a)===String(b);
   const clone=x=>JSON.parse(JSON.stringify(x));
   const EPS=1e-7;
-  function entryFor(snapshot,name){
+  function entryFor(snapshot,name,{create=false,unit="mg"}={}){
     const builtin=snapshot.peptides?.[name],custom=snapshot.customPeptides?.[name];
     if(builtin&&custom)fail("Ambiguous compound history");
-    const p=builtin||custom;
-    if(!p||!Array.isArray(p.doses))fail("Existing compound dose history required");
+    let p=builtin||custom;
+    // Inventory-backed standalone use never requires an associated protocol or
+    // an earlier dose. Create history only in the cloned planned snapshot.
+    if(!p&&create){
+      if(!["mg","mcg"].includes(unit))fail("Explicit native mass unit required");
+      if(!snapshot.customPeptides)snapshot.customPeptides={};
+      p={doses:[],status:"inactive",route:"Nasal",unit};
+      snapshot.customPeptides[name]=p;
+    }
+    if(!p||!Array.isArray(p.doses))fail("Compound dose history unavailable");
     return p;
   }
   function uniqueTx(snapshot,transactionId,doseId){
@@ -56,7 +64,7 @@
     if(tx.sourceKind!=="formulation-container")fail("Physical vial or preparation plan is not prepared nasal stock");
     const next=clone(snapshot);
     const s=container(next,tx.compound,tx.sourceId);
-    const history=entryFor(next,tx.compound);
+    const history=entryFor(next,tx.compound,{create:true,unit:tx.nativeUnit});
     const original=container(snapshot,tx.compound,tx.sourceId);
     const mg=round(tx.sprays*s.mgPerSpray),ml=round(tx.sprays*s.mlPerSpray);
     if(!positive(mg)||!positive(ml))fail("Invalid dose conversion");
