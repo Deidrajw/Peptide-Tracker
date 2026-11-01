@@ -889,7 +889,7 @@ function nxReconcileBlendHistory(name,onDone) {
       composition:components.map(x=>({compound:x.compound,mg:Number(x.mg)})),
       confirmedAt:localDatetime(),source:"user confirmation"};
     closeModal();
-    confirmAction("Apply the displayed recipe to "+rows.length+" older blend record(s) between "+from.value+" and "+to.value+"? Original doses, physical inventory and vial history will not change.",()=>{
+    confirmAction("Apply the displayed recipe to "+rows.length+" older blend record(s) between "+from.value+" and "+to.value+"? Original doses, physical inventory and vial history will not change.",async()=>{
       const live=(state.supplies||[]).find(x=>String(x.id)===String(k.id));
       if(!live||!live.isBlend)return;
       live.blendHistoryAttributions=live.blendHistoryAttributions||[];
@@ -897,7 +897,7 @@ function nxReconcileBlendHistory(name,onDone) {
         showErrorBanner("A confirmation for this period already exists. Nothing was changed.");return;
       }
       live.blendHistoryAttributions.push(overlay);
-      saveState();if(typeof onDone==="function")onDone();
+      if(!await nexusCommitCurrentState())return;if(typeof onDone==="function")onDone();
     },{tone:"primary",confirmLabel:"Confirm historical recipe",cancelLabel:"Keep unchanged"});
   };
 }
@@ -1065,12 +1065,12 @@ function nxTrendsDetail(name, kind="dose", initialDoseId=null, initialRange="90"
           const index=Number(audit.querySelector('input[name="nx-revoke-choice"]:checked')?.value);
           if(!Number.isInteger(index)||index<0||index>=confirmedHistory.length){showErrorBanner("Choose a historical attribution to reverse.");return;}
           const {kit,entry}=confirmedHistory[index];closeModal();
-          confirmAction("Reverse the selected historical attribution? This will not change any saved dose or physical inventory record.",()=>{
+          confirmAction("Reverse the selected historical attribution? This will not change any saved dose or physical inventory record.",async()=>{
             const live=(state.supplies||[]).find(k=>String(k.id)===String(kit.id));
             const existing=live?.blendHistoryAttributions?.find(a=>String(a.id)===String(entry.id));
             if(!existing||existing.status!=="confirmed")return;
             existing.status="reversed";existing.reversedAt=localDatetime();
-            saveState();closeModal();nxTrendsDetail(name,"dose");
+            if(!await nexusCommitCurrentState())return;closeModal();nxTrendsDetail(name,"dose");
           },{tone:"warning",confirmLabel:"Reverse interpretation",cancelLabel:"Keep attribution"});
         };
       };
@@ -1168,7 +1168,7 @@ function finishVialModal(supplyId) {
       // represents material that's already left inventory, not something doseModal's save
       // should try to deduct again. finished:true tells it to just record the allocation.
       state._pendingDoseDraft = { name: s.name, id: uid(), dose: remainingMg.toFixed(2), date: localDatetime(), site: "", notes: "", escalation:false, symptoms:[], rows: [{kitId: s.id, vialId: vial?.id, mg: Math.round(remainingMg*100)/100, finished:true}] };
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       doseModal(s.name);
       return;
     }
@@ -1186,7 +1186,7 @@ function finishVialModal(supplyId) {
       // with vialId so it's attributed to THIS specific vial, not the kit in general.
       s.wasteLog.push({ id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: remainingMg, type: reasonKey==="discrepancy"?"adjustment":"waste", reason: reasonLabel, notes:"", status:"active", vialId: vial?.id });
     }
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -1856,7 +1856,7 @@ function openNewVialModal(supplyId, onDone) {
   m.querySelector("#rv-totalvials").oninput = updatePreview;
   updatePreview();
 
-  m.querySelector("#rvsave").onclick = () => {
+  m.querySelector("#rvsave").onclick = async () => {
     const entry = state.supplies.find(x=>x.id===supplyId); if(!entry) return;
     // Save any edits back to the kit
     const newMg = parseFloat(m.querySelector("#rv-vialmg").value);
@@ -1881,10 +1881,10 @@ function openNewVialModal(supplyId, onDone) {
       entry.bacMl=newBac;entry.expiryDays=expiryDays;entry.reconDate=reconTimestamp;entry.openedVials=(entry.openedVials||0)+1;entry.activeKit=true;
       entry.reconHistory=entry.reconHistory||[];
       entry.reconHistory.push({id:uid(),date:reconTimestamp,notes,vialId:vial.id,bacMl:newBac,expiryDays});
-      saveState();closeModal();render();if(typeof onDone==='function')onDone(vial);return;
+      if(!await nexusCommitCurrentState())return;closeModal();render();if(typeof onDone==='function')onDone(vial);return;
     }
     entry.expiryDays=expiryDays;
-    confirmOpenIfOtherKitOpen(entry, () => {
+    confirmOpenIfOtherKitOpen(entry, async () => {
       // Single canonical path for opening a vial — the same activateVial() used by the
       // mid-dose "Open New Vial" flow, so this button and that one can never drift apart
       // the way openNewVialModal's own inline bookkeeping and reconstituteVialModal's
@@ -1892,7 +1892,7 @@ function openNewVialModal(supplyId, onDone) {
       // kits here — multiple can now be open at once, by explicit confirmation above.
       const openedVial=activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
       openedVial.intendedUse=m.querySelector("#rv-purpose").value;
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       // When another vial in this kit is already open, the first-open lookup is
       // ambiguous. Resume against the exact vial just opened, preserving its ID.
       if(typeof onDone==='function')onDone(openedVial);
@@ -2229,7 +2229,7 @@ function equipmentModal(existing) {
     }
     state.equipmentItems = (state.equipmentItems||[]).filter(x=>x.id!==e.id);
     state.equipmentItems.push(e);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -2245,7 +2245,7 @@ function logSupplyUseModal(itemId) {
     <div id="su-error" style="color:#ff7c7c;font-size:11px;margin-bottom:10px;display:none"></div>
     <button id="su-save" class="btn-primary" style="background:#7DF9C0;color:#000">Log It</button>
   `, "#7DF9C0");
-  m.querySelector("#su-save").onclick = () => {
+  m.querySelector("#su-save").onclick = async () => {
     const amount = parseFloat(m.querySelector("#su-amount").value);
     const errEl = m.querySelector("#su-error");
     if (!amount || amount<=0) return;
@@ -2266,26 +2266,26 @@ function logSupplyUseModal(itemId) {
       activeUnit.emptiedDate = localDate();
       justEmptied = true;
     }
-    saveState(); closeModal();
+    if(!await nexusCommitCurrentState())return;closeModal();
     // Render BEFORE showing the confirm prompt — the underlying screen reflects the newly
     // empty unit immediately. If the person declines opening the next one, nothing further
     // needs to happen; there's no stale state left behind because this render already ran.
     render();
     const nextSealed = (item.units||[]).find(u=>u.status==="sealed");
     if (justEmptied && nextSealed) {
-      confirmAction(`This ${item.unitLabel} is empty. Open the next one now?`, () => {
+      confirmAction(`This ${item.unitLabel} is empty. Open the next one now?`, async () => {
         nextSealed.status = "active"; nextSealed.openedDate = localDate();
-        saveState(); render();
+        if(!await nexusCommitCurrentState())return;render();
       }, { confirmLabel: "Open next " + item.unitLabel, cancelLabel: "Not now", tone: "success" });
     }
   };
 }
 
-function activateNextSupplyUnit(itemId) {
+async function activateNextSupplyUnit(itemId) {
   const item = (state.equipmentItems||[]).find(x=>x.id===itemId); if (!item) return;
   const next = (item.units||[]).find(u=>u.status==="sealed"); if (!next) return;
   next.status = "active"; next.openedDate = localDate();
-  saveState(); render();
+  if(!await nexusCommitCurrentState())return;render();
 }
 
 function restockSupplyModal(itemId) {
@@ -2296,11 +2296,11 @@ function restockSupplyModal(itemId) {
     <input id="rs-count" type="number" class="inp" value="1" style="margin-bottom:16px">
     <button id="rs-save" class="btn-primary" style="background:#7DF9C0;color:#000">Add to Inventory</button>
   `, "#7DF9C0");
-  m.querySelector("#rs-save").onclick = () => {
+  m.querySelector("#rs-save").onclick = async () => {
     const count = Math.max(1, parseInt(m.querySelector("#rs-count").value)||1);
     if (!item.units) item.units = [];
     for (let i=0;i<count;i++) item.units.push({ id: uid()+i, status:"sealed", openedDate:null, emptiedDate:null, consumed:0 });
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
