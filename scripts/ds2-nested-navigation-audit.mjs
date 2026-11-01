@@ -538,6 +538,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
    const s=state.supplies.find(x=>!x.isBlend && x.name);
    if(!s)throw Error('Fictional single compound kit missing');
    openNewVialModal(s.id);
+   const chooser=document.querySelector('#nx-open-injectable');
+   if(!chooser)throw Error('Form-first Open Vial chooser missing');
+   chooser.click();
  }, '#rvsave');
  await verifyNamed('protocol-name-focus',()=>{
    protocolBuilderModal();
