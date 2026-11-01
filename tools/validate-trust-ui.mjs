@@ -199,6 +199,11 @@ try{
             state.customPeptides[name]={status:'active',scheduleDays:7,doses:[]};
           openBlendVialModal(kit.id);
         });
+        assert.equal(await page.locator('.nx-open-vial-form-options button').count(),2,
+          'Open Vial must choose between Injectable and Nasal before setup fields');
+        await page.locator('#nx-open-injectable').click();
+        assert.equal(await page.locator('#rv-purpose').inputValue(),'Injectable',
+          'Form-first Injectable selection must carry through to the editor');
         await page.locator('#rv-bacml').fill('2');
         await page.locator('#rv-expiry').fill('30');
         await page.locator('#rvn').fill('Fictional vial');
