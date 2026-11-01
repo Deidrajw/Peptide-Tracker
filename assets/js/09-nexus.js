@@ -1791,8 +1791,8 @@ function openNewVialModal(supplyId, onDone) {
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">OPEN NEW VIAL</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div style="background:${c.color}11;border:1px solid ${c.color}33;border-radius:10px;padding:14px;margin-bottom:16px">
-      <div style="font-size:11px;color:${c.color};font-weight:600;margin-bottom:10px">VIAL ${vialNum} DETAILS</div>
+    <div class="nx-open-vial-details">
+      <div class="nx-open-vial-title">Vial ${vialNum} details</div>
       <div class="nx-open-vial-fields" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div>
           <label class="field-label">VIALS IN KIT</label>
@@ -1839,7 +1839,7 @@ function openNewVialModal(supplyId, onDone) {
       const conc = (mg/bac).toFixed(2);
       const unit = PEPTIDES[s.name]?.unit||"mg";
       prev.textContent = `Concentration: ${conc} mg/mL · 1 ${unit} ≈ ${(1/conc*1000).toFixed(1)} units${tv?" · "+tv+" vials total":""}`;
-      prev.style.color = c.color;
+      prev.style.color = "var(--t2)";
     } else { prev.textContent = ""; }
   };
   m.querySelector("#rv-vialmg").oninput = updatePreview;
