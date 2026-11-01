@@ -1,3 +1,8 @@
+## 2026-10-31 / Nov 1 UTC — Legacy route assertion + shared helper parity
+- Full Chromium #41266340372 FAIL: tools/validate-logdose-ui.mjs legacy test expected vial.intendedUse SubQ; new family model correctly saves Injectable and retains 6.75 mg, 0 history. Test updated e07c623/42e09f (includes Stash-first setup UI selecting Injectable), requires rerun.
+- Shared getEligibleSourceKits route isolation now family-compatible at 0e247f5; expanded e49853f assertion requires SubQ=[9331], IM=[9331], IV=[], Nasal=[], Oral=[], and an explicitly nasal-source-reserved vial absent from both injection routes. This preserves guard rather than silently granting IV or nasal use from generic injectable vial.
+- Exact-source full/WebKit CI still pending at this checkpoint. Never mark prior failing runs Pass retroactively. Writer P0 and physical device acceptance still open.
+
 ## 2026-10-31/Nov 1 UTC — Real test failure and correction, oral-source fixture
 - Full browser #41266244054 FAIL and WebKit #41266244001 FAIL: test assertion expected no .kit-opt elements in DOM for a single eligible Oral vial; actual one exists even though parent kit-picker is hidden. No evidence of wrong inventory mutation from this failure because script stopped before dose save. Corrected at test commit 1341f629: assert exact oral source ID and hidden picker, then exercise oral save and original injectable balance unchanged. Status NOT TESTED corrected commit. Retain failure evidence until rerun passes.
 - Nested #41266244056 SUCCESS; shared writer #41266244022 SUCCESS. Neither proves full multi-form save path. Cross-tab legacy P0 remains open.
