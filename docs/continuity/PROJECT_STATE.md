@@ -1,3 +1,6 @@
+## 2026-11-01 — Today tracking settings exclusive-save slice (P0 OPEN)
+- Main verified da585ab3; PR124 remains draft. Commit 77f3e722 replaces Today activity selection's synchronous whole-state save with awaited nexusCommitScopedStateChange; control disabled pending transaction, restored on failure, render and scroll preservation after durable success. Other ordinary save callers remain unconverted. Actual two-tab Chromium races NOT RUN; no claim of P0 resolution. No merge/deploy, nasal live gates OFF. ONE NEXT ACTION: complete all ordinary caller migration and browser multi-tab safety verification.
+
 ## 2026-11-01 — Supplement history date validation fix (P0 OPEN)
 - Verified main da585ab3. Commit 9d4c3548 corrects accidentally double-escaped YYYY-MM-DD regex in exclusive supplement-log-upsert (previously rejected valid dates). Tests dff9ace2 and 322f7d26 assert malformed dates fail without write and valid fictional upserts persist, after existing history race assertions. Test execution NOT VERIFIED. No global ordinary save migration, true two-tab browser race, or nasal activation completed. Preserve P0 gate and both live nasal gates OFF. ONE NEXT ACTION: finish all remaining ordinary save/erase migrations with acknowledged exclusive persistence and run real-browser two-tab races.
 
