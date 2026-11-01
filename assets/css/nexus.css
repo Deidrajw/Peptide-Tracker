@@ -2215,6 +2215,8 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx2-dose-modal .nx-dose-confirm-row strong{font-size:13px;font-weight:650;color:var(--t1);text-align:right;max-width:58%;overflow-wrap:anywhere}
 .nx2-dose-modal .nx-dose-confirm-safety{font-size:12px;line-height:1.55;color:var(--t3);margin:19px 0}
 .nx2-dose-modal .nx-dose-back{display:flex;align-items:center;justify-content:center;min-height:46px;width:100%;background:transparent;border:0;color:var(--t1);font:600 14px/1.3 inherit;cursor:pointer}
+/* Specificity over legacy .modal:has(#dose) button 36px rule; preserve Review tap target. */
+.nx2-dose-modal #nx-dose-review-back.nx-dose-back{min-height:48px}
 .nx2-dose-modal .nx-dose-footer #nx-dose-review-open,
 .nx2-dose-modal .nx-dose-footer #save{min-height:48px;width:100%}
 @media(max-width:359px){.nx2-dose-modal .nx-dose-confirm-screen{padding:16px 14px 22px}.nx2-dose-modal .nx-dose-confirm-heading h2{font-size:23px}}
