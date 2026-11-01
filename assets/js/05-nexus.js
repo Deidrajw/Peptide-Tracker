@@ -204,7 +204,7 @@ function comboDoseModal() {
   } catch(e) { showErrorBanner("comboDoseModal fav-checkbox wiring: "+e.message); }
 
   try {
-    m.querySelector("#save").onclick = () => {
+    m.querySelector("#save").onclick = async () => {
       try {
         if (!sel.length) return;
         const date = m.querySelector("#combo-date").value;
@@ -270,7 +270,7 @@ function comboDoseModal() {
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
         state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
-        if(!saveState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
+        if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
     };
   } catch(e) { showErrorBanner("comboDoseModal save-button wiring: "+e.message); }
@@ -348,7 +348,7 @@ function rescheduleDoseModal(name, originalDate) {
   m.querySelector("#rs-schedule-opt-keep").onclick = () => setScheduleMode("keep_schedule");
   m.querySelector("#rs-schedule-opt-shift").onclick = () => setScheduleMode("shift_schedule");
 
-  m.querySelector("#rs-save").onclick = () => {
+  m.querySelector("#rs-save").onclick = async () => {
     let newDate;
     if (dateMode==="tomorrow") newDate = tomorrow;
     else if (dateMode==="pick") newDate = m.querySelector("#rs-date").value;
@@ -400,7 +400,7 @@ function resolveOverdueModal(name, originalDate, opts={}) {
   m.querySelector("#ro-skip").onclick = () => { closeModal(); skipDoseModal(name, originalDate); };
   m.querySelector("#ro-reschedule").onclick = () => { closeModal(); rescheduleDoseModal(name, originalDate); };
   const pb = m.querySelector("#ro-pause");
-  if (pb) pb.onclick = () => { closeModal(); pauseProtocol(proto); saveState(); render(); };
+  if (pb) pb.onclick = async () => { pauseProtocol(proto);if(!await nexusCommitCurrentState())return;closeModal();render(); };
 }
 
 function skipDoseModal(name, originalDate) {
@@ -415,7 +415,7 @@ function skipDoseModal(name, originalDate) {
     </select>
     <button id="sk-save" class="btn-primary" style="background:#ff7c7c">Confirm Skip</button>
   `, "#ff7c7c");
-  m.querySelector("#sk-save").onclick = () => {
+  m.querySelector("#sk-save").onclick = async () => {
     if (!entry.skips) entry.skips = [];
     entry.skips.push({ id: uid(), date: originalDate, kind: "skipped", reason: m.querySelector("#sk-reason").value || null });
     saveState(); closeModal(); render();
@@ -438,7 +438,7 @@ function markMissedModal(name, originalDate) {
     <textarea id="mm-note" class="inp" placeholder="Anything worth remembering about why" style="min-height:54px;resize:vertical;margin-bottom:16px"></textarea>
     <button id="mm-save" class="btn-primary" style="background:#ff7c7c">Confirm Missed</button>
   `, "#ff7c7c");
-  m.querySelector("#mm-save").onclick = () => {
+  m.querySelector("#mm-save").onclick = async () => {
     if (!entry.skips) entry.skips = [];
     entry.skips.push({ id: uid(), date: originalDate, kind: "missed", reason: m.querySelector("#mm-note").value.trim() || null });
     saveState(); closeModal(); render();
@@ -641,7 +641,7 @@ function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
       saveState();render();nexusDoseReactionModal(compoundName,doseId);
     },{confirmLabel:"Delete reaction",cancelLabel:"Keep reaction",tone:"danger"});
   });
-  m.querySelector("#nx-reaction-save").onclick=()=>{
+  m.querySelector("#nx-reaction-save").onclick=async()=>{
     const label=m.querySelector("#nx-reaction-label").value;
     const observedAt=m.querySelector("#nx-reaction-time").value;
     if(!label||!observedAt||!Number.isFinite(new Date(observedAt).getTime())){showErrorBanner("Choose a reaction and the time you noticed it.");return;}
@@ -1707,7 +1707,7 @@ function doseModal(name, existing, occTime, formChoice) {
         const old=tgt.doses.find(x=>x.id===f.id);
         if(!old){showErrorBanner("Original blend record not found.");return;}
         Object.assign(old,{date:inputDate,site,method:methodInput.value,notes,symptoms,escalation:m.querySelector("#esc").checked});
-        if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
+        if(!await nexusCommitCurrentState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
       }
       const id=uid(),allocations=[];
       let fromPreparedId;
@@ -1758,7 +1758,7 @@ function doseModal(name, existing, occTime, formChoice) {
         blendSource:allocations[0]?.kitId||blendKits[0]?.id,
         allocations,fromPreparedId};
       tgt.doses.push(dose);
-      if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
+      if(!await nexusCommitCurrentState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;}closeModal();render();return;
     }
     // A dose cannot silently switch preparations or consume an unlabelled vial.
     // Keep the existing dose/edit ledger unchanged on validation failure.
@@ -1929,7 +1929,7 @@ function doseModal(name, existing, occTime, formChoice) {
     tgt[name].doses.push(dose);
     const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
     if (fulfilled) fulfilled.doseId = dose.id;
-    if(!saveState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;} closeModal(); render();
+    if(!await nexusCommitCurrentState()){showErrorBanner("Dose could not be saved. Your entry remains open; export a backup and reload before retrying.");return;} closeModal(); render();
     if(!isEdit && !nexusPostProtocolDoseFollowup(name,dose,true)) nexusPostDoseReactionPrompt(name,dose.id);
   };
 }
@@ -2768,7 +2768,7 @@ function reconstituteVialModal(kit, onDone) {
 // Falls back to the full modal when there's not enough history to derive a dose amount
 // safely, or when multiple occurrences are still pending and none was specified — Quick
 // Log must never guess which of several same-day doses it's logging.
-function quickLogDose(name, occTime) {
+async function quickLogDose(name, occTime) {
   // Quick Log's legacy direct inventory mutation is not blend-ledger aware.
   // Always use the canonical form/confirmation for premixed preparations.
   if((state.supplies||[]).some(k=>k.name===name&&k.isBlend))return doseModal(name,null,occTime);
@@ -2839,7 +2839,7 @@ function quickLogDose(name, occTime) {
   tgt[name].doses.push(dose);
   const fulfilled = (tgt[name].reschedules||[]).find(r=>!r.doseId && dayKey(r.newDate)===dayKey(dose.date));
   if (fulfilled) fulfilled.doseId = dose.id;
-  if(!saveState()){showErrorBanner("Quick dose could not be saved. Export a backup and reload before retrying.");return;} render();
+  if(!await nexusCommitCurrentState()){showErrorBanner("Quick dose could not be saved. Export a backup and reload before retrying.");return;} render();
   showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, () => {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
