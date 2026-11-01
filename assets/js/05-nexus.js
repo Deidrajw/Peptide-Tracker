@@ -394,12 +394,6 @@ function resolveOverdueModal(name, originalDate, opts={}) {
     <button id="ro-reschedule" class="sheet-row">Reschedule<div class="sub">Move this specific dose to another date/time</div></button>
     ${proto?`<button id="ro-pause" class="sheet-row">Pause protocol<div class="sub">Temporarily stopping ${esc(proto.name)} — nothing further shows as due until you resume</div></button>`:""}
   `, c.color);
-  const setupButton=m.querySelector("#nx-dose-use-setup");
-  if(setupButton)setupButton.onclick=()=>{
-    state._pendingDoseDraft={name,dose:m.querySelector("#dose")?.value||"",date:m.querySelector("#date")?.value||localDatetime(),
-      notes:m.querySelector("#notes")?.value||"",rows:rows.map(r=>({...r}))};
-    closeModal();nexusUseSetupModal(name,()=>doseModal(name));
-  };
   m.querySelector("#x").onclick = closeModal;
   const tl = m.querySelector("#ro-takenlate"); if (tl) tl.onclick = () => { closeModal(); doseModal(name); };
   m.querySelector("#ro-missed").onclick = () => { closeModal(); markMissedModal(name, originalDate); };
@@ -893,7 +887,7 @@ function doseModal(name, existing, occTime) {
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
       <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Change use setup</button></div>`:""}
+    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Edit defaults</button></div>`:""}
     <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
     ${!isUntracked && isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
     <label class="field-label">SPRAYS</label>
@@ -915,15 +909,15 @@ function doseModal(name, existing, occTime) {
       ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
     <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
-    <label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
-    <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select>
+    <div id="nx-dose-site-field"><label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
+    <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select></div>
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose how you prepared this dose":"Finish vial setup"}</div>
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":"Choose your vial"}</div>
       <p class="nx-dose-section-desc">${isEdit ? "The original source stays linked." : "Only needed when Nexus cannot identify one verified source."}</p>
     ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
       <span class="nx-dose-source-dot" aria-hidden="true"></span>
@@ -934,8 +928,8 @@ function doseModal(name, existing, occTime) {
           : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
     </div>` : ""}
     ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
-      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Confirm how this vial is used</div>
-      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">This vial has no saved method yet. If you use this vial for ${esc(initialMethod)}, confirm it once. Its remaining amount will not change.</p>
+      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Identify your source vial</div>
+      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">Confirm which vial you used. This only labels the vial; it won't deduct inventory until you save your dose.</p>
       ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
         Use Vial ${esc(vial.sequenceNumber||"?")} for ${esc(initialMethod)} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining
       </button>`).join("")}
@@ -1022,7 +1016,7 @@ function doseModal(name, existing, occTime) {
     review.querySelector("#nx-dose-review-rows").innerHTML=
       reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
       reviewRow("Method",m.querySelector("#nx-dose-method")?.value||initialMethod)+
-      reviewRow("Administration site",doseVal("site")||"Not recorded")+
+      (["SubQ","IM"].includes(m.querySelector("#nx-dose-method")?.value)?reviewRow("Administration site",doseVal("site")||"Not recorded"):"")+
       reviewRow("Vial used",isEdit?"Original source retained":sourceLabel)+
       (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
         ?reviewRow("Vial remaining after save",mgToUnit(Math.max(0,remaining-usedMg),c.unit).toFixed(2)+" "+c.unit):"")+
@@ -1063,6 +1057,21 @@ function doseModal(name, existing, occTime) {
   backButton.onclick=()=>showDoseReview(false);
   showDoseReview(false);
   m.querySelector("#x").onclick = closeModal;
+  const setupButton=m.querySelector("#nx-dose-use-setup");
+  if(setupButton)setupButton.onclick=()=>{
+    state._pendingDoseDraft={
+      name,id:f.id,method:m.querySelector("#nx-dose-method")?.value||initialMethod,
+      dose:m.querySelector("#dose")?.value||f.dose,
+      date:m.querySelector("#date")?.value||f.date,
+      site:m.querySelector("#site")?.value||"",
+      notes:m.querySelector("#notes")?.value||f.notes,
+      escalation:!!m.querySelector("#esc")?.checked,
+      asNeeded:!!m.querySelector("#nx-dose-as-needed")?.checked,
+      symptoms:f.symptoms,rows:rows.map(r=>({...r}))
+    };
+    closeModal();
+    nexusUseSetupModal(name,()=>doseModal(name));
+  };
   const reactionLink=m.querySelector("#nx-record-reaction");
   if(reactionLink)reactionLink.onclick=()=>nexusDoseReactionModal(name,f.id);
   const sym = m.querySelector("#sym"); sym.innerHTML = symptomPickerHTML(f.symptoms, c.color); wireSymptomPicker(sym, f.symptoms, c.color);
@@ -1369,6 +1378,13 @@ function doseModal(name, existing, occTime) {
     const sameRecordedMethod=methodInput.value===initialMethod;
     // Historical site text remains on the saved dose; incompatible sites are not selectable for the active method.
     siteInput.value=options.includes(previous)?previous:"";
+    const siteField=m.querySelector("#nx-dose-site-field");
+    const requiresInjectionSite=["SubQ","IM"].includes(methodInput.value);
+    if(siteField)siteField.hidden=!requiresInjectionSite;
+    siteInput.disabled=!requiresInjectionSite;
+    if(!requiresInjectionSite)siteInput.value="";
+    const siteGuidance=m.querySelector(".nx-site-guidance");
+    if(siteGuidance)siteGuidance.hidden=!requiresInjectionSite;
   };
   const methodButtons=[...m.querySelectorAll("[data-admin-method]")];
   function renderAdminButtons(){
