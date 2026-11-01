@@ -1,3 +1,7 @@
+## 2026-11-01 — P0 diagnostic as explicit CI blocker
+- Commit 105f5e25 adds mixed-writer-p0-release-gate running tools/diagnose-mixed-tab-writes.cjs. Expected FAIL until legacy writer lock bypass is removed. This is two isolated V8 tabs, not true-browser acceptance.
+- Commit c3971a8f adds overdraw/replay no-write assertions to nasal live planner pipeline; latest CI not yet verified. P0-WRITER BLOCKED, LIVE NASAL OFF, physical iPhone NOT TESTED on latest head.
+
 ## 2026-11-01 — New targeted automated tests (not iPhone acceptance)
 - 0e385399 formulation stock Chromium/WebKit test: 320/390 × light/dark × LIVE/isolated DEMO test modal geometry, 44px close, no horizontal overflow, capsule/spray Review replacing entry form (not stacking below Notes), Back restores entered values, spray review does not expose internal ID. Run #41275927660 / #41275927710 underway at observation; NOT PASS until completed.
 - c6572fa1 unit fixture: new prepared nasal first ever dose without existing compound history or protocol creates custom dose history, depletes only exact prepared bottle, never debits physical source vial, Undo reverses. Run awaiting completed QA.
