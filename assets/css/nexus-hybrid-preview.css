@@ -4106,3 +4106,53 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 .modal .nx-shared-goal-sheet .nx-goal-detail-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:16px}
 .modal .nx-shared-goal-sheet .nx-goal-detail-tab{min-width:0;min-height:44px;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:650;border:1px solid var(--border);background:var(--surface-2);color:var(--t2)}
 .modal .nx-shared-goal-sheet .nx-goal-detail-tab[aria-selected="true"]{color:var(--t1);font-weight:750}
+
+
+/* PR124 DS2 corrective pass — form presentation only; does not touch ledger or routing. */
+.modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) .nx-dose-head,
+.modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) .nx-dose-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;min-width:0;margin-bottom:14px;
+}
+.modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) .nx-dose-head > div,
+.modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) .nx-dose-head > div{
+  flex:1;min-width:0;
+}
+.modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) .nx-dose-title,
+.modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) .nx-dose-title{
+  font-size:clamp(18px,5vw,21px)!important;line-height:1.25!important;
+  overflow-wrap:break-word;word-break:normal;
+}
+.modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) :is(.nx-dose-close,#x),
+.modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) :is(.nx-dose-close,#x){
+  flex:0 0 48px!important;width:48px!important;height:48px!important;
+  min-width:48px!important;min-height:48px!important;
+  display:inline-flex!important;align-items:center;justify-content:center;
+  border-radius:13px!important;box-sizing:border-box;
+}
+.modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) :is(.nx-dose-close,#x):focus-visible,
+.modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) :is(.nx-dose-close,#x):focus-visible{
+  outline:3px solid var(--accent,#a78bfa);outline-offset:2px;
+}
+.modal.nx-form-log-sheet,
+.modal.nx-form-choice-sheet{
+  box-sizing:border-box;min-width:0;max-width:min(100%,520px);
+  overflow-x:hidden;overscroll-behavior:contain;
+}
+.modal.nx-form-log-sheet :is(input,select,textarea),
+.modal .nx-nasal-actual-prep :is(input,select,textarea){
+  max-width:100%;box-sizing:border-box;font-size:16px;
+}
+.modal.nx-form-log-sheet :is(#nx-capsule-confirm,#nx-spray-confirm),
+.modal .nx-nasal-actual-prep #nx-nasal-record-review{
+  min-width:0;max-width:100%;overflow-wrap:break-word;word-break:normal;
+}
+.modal.nx-form-log-sheet :is(.btn-primary,.nx-dose-back),
+.modal .nx-nasal-actual-prep :is(#nx-nasal-record-save,#nx-nasal-record-back){
+  min-height:48px;white-space:normal;line-height:1.35;
+}
+@media(max-width:380px){
+ .modal:is(.nx-form-choice-sheet,.nx-form-log-sheet) .nx-dose-head,
+ .modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) .nx-dose-head{gap:8px}
+ .modal .nx-nasal-actual-prep #nx-nasal-record-review{padding:12px!important}
+}
