@@ -1,3 +1,7 @@
+## 2026-11-01 — Draft PR124 Plans 320px test-race fix verified, NOT RELEASED
+- Test-only correction 20079810 stabilizes 320px View goal assertion after awaited Goal status save and render, preserving >=44px check. Full five-workflow CI SUCCESS on ebc09e46: #41332954450 Chromium/build, #41332954367 WebKit, #41332954453 mobile, #41332954503 shared writer, #41332954461 nested. Previously failed browser #41328859453 remains historical FAIL, not retroactively rewritten.
+- Source-matched artifact #13094725721 verified outer/inner ZIP CRC, 26 LIVE files, ordered 01–12 JS, isolated standalone/full-app DEMO and manifest source. Build version label v0.9.20-beta, no version promotion. No application storage/schema change from this test fix. Physical iPhone/VoiceOver acceptance outstanding; P0 legacy mixed writer unresolved and live nasal gates OFF. PR draft/unmerged/undeployed; Cloudflare source parity NOT VERIFIED for candidate; user production data unchanged.
+
 ## 2026-11-01 — Test-only Plans race stabilization, PR124 NOT RELEASED
 - Commit 20079810 amends asynchronous Goal status browser test to await acknowledged sheet dismissal and visible rerendered View goal before retaining 44px geometry assertion. No application behaviour or version change. New exact-head five GitHub Actions checks initiated; no PASS claim yet. Exact-head artifact, real iPhone and VoiceOver outstanding. P0 remains blocking; nasal live gates OFF. No merge or Cloudflare deployment.
 
