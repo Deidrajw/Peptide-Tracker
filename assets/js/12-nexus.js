@@ -1254,7 +1254,7 @@ function wireBody() {
       // If it's a known PEPTIDES compound, initialize it properly
       if(PEPTIDES[name]){ state.peptides[name]={ status:"active", scheduleDays:PEPTIDES[name].defaultSchedule, doses:[] }; }
       else { state.customPeptides[name]={ status:"active", scheduleDays:sched, doses:[], unit }; }
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
   };
   document.querySelectorAll(".guideitem").forEach(b=>b.onclick=()=>{state._guideOpen=+b.dataset.i;render();window.scrollTo(0,0);});
@@ -1412,7 +1412,7 @@ function showOnboarding() {
   const STEPS=["Welcome","Goal","Stats","Done"];
   let restoreCandidate=null;
   function countsForBackup(v){return {compounds:Object.keys(v.peptides||{}).length,checkins:(v.dailyLogs||[]).length,protocols:(v.protocols||[]).length,kits:(v.supplies||[]).length};}
-  function safeRestore(){
+  async function safeRestore(){
     if(!restoreCandidate) return;
     const active=loadState();
     const hasRecords=!!(active&&((active.dailyLogs||[]).length||(active.supplies||[]).length||(active.protocols||[]).length||Object.keys(active.peptides||{}).length));
@@ -1431,7 +1431,7 @@ function showOnboarding() {
           state=next; // isolated fictional onboarding restore
         }else{
           const writer=nexusWriter();
-          writer.saveLegacy(next);
+          const result=await writer.transaction(state,()=>({next}));
           _nexusLastSavedSnapshot=writer.expected();
           state=next;
         }
