@@ -352,6 +352,55 @@ try {
   assert.equal(await page.evaluate(()=>state.customPeptides['Fictional Prepared Spray Test'].doses.length),0,
     'Nasal dose reversal must remove the matching dose');
 
+  // Form-first NASAL selection goes directly to one conditional actual-prep
+  // editor. Opening the sealed source and transferring into a linked bottle
+  // must be a SINGLE fictional confirmed state swap with no pre-review debit.
+  await page.evaluate(()=>{
+    state.supplies.push({id:990405,name:'Fictional One-Step Nasal',vialMg:5,
+      totalVials:1,openedVials:0,emptyVials:0,activeKit:false,
+      preparationMethod:null,vials:[{id:'one-step-sealed',sequenceNumber:1,status:'sealed',vialMg:5,expectedMg:5,remainingMg:5}]});
+    openNewVialModal(990405);
+  });
+  assert.equal(await page.locator('.nx-open-vial-form-options button').count(),2,
+    'Open New Vial first step must have only Injectable and Nasal');
+  assert.equal(await page.locator('#rv-bacml').count(),0,
+    'No reconstitution fields before physical form choice');
+  await page.locator('#nx-open-nasal').click();
+  assert.equal(await page.locator('#nx-nasal-source-mg').count(),1,
+    'Nasal choice must go directly to actual source-to-bottle preparation editor');
+  assert.equal(await page.locator('#rv-bacml').count(),0,
+    'Nasal editor should not repeat the injectable vial editor');
+  for(const [id,value] of [['nx-nasal-source-mg','2'],['nx-nasal-bac','1'],
+    ['nx-nasal-saline','4'],['nx-nasal-pump','0.1']])
+    await page.locator('#'+id).fill(value);
+  await page.locator('#nx-nasal-record-save').click();
+  const beforeOneStep=await page.evaluate(()=>{
+    const k=state.supplies.find(x=>x.id===990405);
+    return {status:k.vials[0].status,mg:k.vials[0].remainingMg,
+      linked:(state.formulationStocks||[]).filter(b=>String(b.sourceKitId)==='990405').length};
+  });
+  assert.deepEqual(beforeOneStep,{status:'sealed',mg:5,linked:0},
+    'Nasal Review must not open source or transfer inventory early');
+  await page.locator('#nx-nasal-record-confirm').check();
+  await page.locator('#nx-nasal-record-save').click();
+  const afterOneStep=await page.evaluate(()=>{
+    const k=state.supplies.find(x=>x.id===990405);
+    const b=state.formulationStocks.find(x=>String(x.sourceKitId)==='990405');
+    return {sourceId:k.vials[0].id,status:k.vials[0].status,mg:k.vials[0].remainingMg,
+      opened:k.openedVials,transfers:k.preparationTransfers?.length||0,
+      bottleId:b?.id,bottleSource:b?.sourceVialId,preparedMg:b?.remainingMg,preparedMl:b?.remainingMl,
+      events:b?.transactions?.length||0};
+  });
+  assert.equal(afterOneStep.sourceId,'one-step-sealed','Original sealed vial identity changed');
+  assert.equal(afterOneStep.status,'open','Confirmed preparation must open exact sealed source');
+  assert.equal(afterOneStep.mg,3,'Confirmed preparation must debit only 2mg exact source');
+  assert.equal(afterOneStep.opened,1,'Exactly one new vial opening');
+  assert.equal(afterOneStep.transfers,1,'Exactly one source transfer event');
+  assert.equal(afterOneStep.bottleSource,'one-step-sealed','Prepared bottle lost source link');
+  assert.equal(afterOneStep.preparedMg,2,'Destination bottle mass credit mismatch');
+  assert.equal(afterOneStep.preparedMl,5,'Destination bottle volume mismatch');
+  assert.equal(afterOneStep.events,1,'Prepared bottle must have one linked transfer event');
+
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
   await page.evaluate(()=>{
