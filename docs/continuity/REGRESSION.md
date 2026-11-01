@@ -1,3 +1,6 @@
+## 2026-11-01 — Quick Access exclusive settings slice
+- CODED: toggle and reset now await exclusive readback, disabled during save, no success render on failure. Unit assertions added for counter validity and preserved vial inventory. Test execution and true-browser two-tab acceptance NOT VERIFIED. Legacy mixed-writer P0 still BLOCKED.
+
 ## 2026-11-01 — P0 diagnostic as explicit CI blocker
 - Commit 105f5e25 adds mixed-writer-p0-release-gate running tools/diagnose-mixed-tab-writes.cjs. Expected FAIL until legacy writer lock bypass is removed. This is two isolated V8 tabs, not true-browser acceptance.
 - Commit c3971a8f adds overdraw/replay no-write assertions to nasal live planner pipeline; latest CI not yet verified. P0-WRITER BLOCKED, LIVE NASAL OFF, physical iPhone NOT TESTED on latest head.
