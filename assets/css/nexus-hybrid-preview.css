@@ -4156,3 +4156,18 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
  .modal :is(.nx-nasal-actual-prep,.nx-shared-goal-sheet) .nx-dose-head{gap:8px}
  .modal .nx-nasal-actual-prep #nx-nasal-record-review{padding:12px!important}
 }
+
+/* PR124 — one scroll owner for Other forms' five-result compound picker.
+   The picker has only five quick options plus browse/custom; the containing sheet
+   scrolls naturally rather than showing a second nested list scrollbar. */
+.modal .nx-form-compound-combobox{position:relative;width:100%;min-width:0;margin-bottom:14px}
+.modal .nx-form-compound-combobox #nx-form-name{
+  display:block;width:100%;min-height:48px;font-size:16px!important;border-radius:13px;
+}
+.modal .nx-form-compound-combobox #nx-form-match-list{
+  max-height:none!important;overflow:visible!important;overscroll-behavior:auto;
+  box-sizing:border-box;width:100%;box-shadow:none;
+}
+.modal .nx-form-compound-combobox #nx-form-match-list [role="option"]{
+  min-height:48px!important;font-size:14px!important;
+}
