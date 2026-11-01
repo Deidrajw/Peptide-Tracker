@@ -31,9 +31,9 @@ try{
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
-    ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
+    ensure(await card(99001).locator('.nx-kit-overview-label').first().innerText().then(x=>x.includes('AVAILABLE STOCK')),'Sealed kit should display available stock');
     ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
-    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
+    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('10') && x.includes('remaining in kit')),'Sealed kit stock amount or label incorrect');
     ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
     ensure(await card(99003).locator('.nx-kit-overview-number').count()===1,'Blend missing kit-wide inventory under Overview');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').count()===1,'Open vial progress is missing');
