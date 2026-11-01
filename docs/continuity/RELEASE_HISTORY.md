@@ -1,3 +1,8 @@
+## 2026-10-31 — PR124 Log Dose conditional source candidate (TESTED ON CI; NOT RELEASED)
+- Code commits ece3780, d574c5dd; test commits ef8b297, 200db956e513166e5420d5533e570f49088d6023. One actionable vial source panel, method-appropriate site, functional Edit defaults handoff; legacy exact-source safety preserved.
+- Exact app/test SHA 200db956 full Chromium #41259356814 SUCCESS (176 Log Dose flows; 231/233px card heights, 80/80 measurement diagnostics) and WebKit #41259356810 SUCCESS; mobile #41259356838, shared writer #41259356777, nested #41259356808 SUCCESS.
+- Release artifact 13064338609, outer 180 files integrity verified; LIVE ZIP 26 files, complete standalone DEMO (2,949,147 bytes), offline demo ZIP CRC verified; build manifest reports version v0.9.20-beta and source 200db956. Documentation commits later do not change source. User data not modified; no migration, not merged, not deployed, physical iPhone not accepted. Outstanding mixed-writer P0. Next: physical acceptance, then writer safety closure before merge.
+
 ## 2026-10-31 — PR124 Log Dose cleanup (UNRELEASED)
 - Code d574c5d, Stash test ef8b297, WebKit/Chromium test 200db95, prior Log Dose handler code ece3780. Fix Edit defaults wiring, contextual site, simplify source cards and conditional legacy confirmation. Source-only candidate, no merge/deploy or migrations.
 - Historical full QA 41258715620: Log Dose 176 flows PASS, Stash 320=231px and 390=233px PASS, overall FAILED on stale sealed-vial test. Latest-source QA/artifact and iPhone acceptance NOT VERIFIED. P0 mixed writer remains blocker.
