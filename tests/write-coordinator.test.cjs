@@ -136,6 +136,18 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(await afterStock.commit({kind:"setting",key:"phaseRemindersEnabled",value:true}),true);
  assert.equal(JSON.parse(scopedRaw).supplies[0].vials[0].remainingMg,8);
  assert.equal(JSON.parse(scopedRaw).peptides["Fictional A"].doses.length,1);
+ // Newly migrated Quick Access preference controls must use the same lock,
+ // and must not write over the previously committed inventory/history.
+ const quickTab=scopedTab();
+ assert.equal(await quickTab.commit({kind:"setting",key:"nxUsageEnabled",value:true}),true);
+ assert.equal(JSON.parse(scopedRaw).settings.nxUsageEnabled,true);
+ assert.equal(JSON.parse(scopedRaw).supplies[0].vials[0].remainingMg,8);
+ const quickReset=scopedTab();
+ assert.equal(await quickReset.commit({kind:"setting",key:"nxUsageCounts",value:{}}),true);
+ assert.deepEqual(JSON.parse(scopedRaw).settings.nxUsageCounts,{});
+ const invalidQuick=scopedTab(),beforeQuickInvalid=scopedRaw;
+ assert.equal(await invalidQuick.commit({kind:"setting",key:"nxUsageCounts",value:{"shortcut":-1}}),false);
+ assert.equal(scopedRaw,beforeQuickInvalid);
  const historyTab=scopedTab(),reminderTab=scopedTab();
  const historyAndSettings=await Promise.all([
   historyTab.commit({kind:"supplement-log-delete",date:"2026-11-01"}),
