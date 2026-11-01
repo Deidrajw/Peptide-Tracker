@@ -253,6 +253,7 @@ function stashView() {
       String(b.sourceKitId)===String(s.id)&&b.recordedPreparation&&
       Number.isFinite(b.remainingMl)&&b.remainingMl>=0);
     const preparedNasalMl=preparedNasalBottles.reduce((total,b)=>total+b.remainingMl,0);
+    const preparedNasalMg=preparedNasalBottles.reduce((total,b)=>total+(Number(b.remainingMg)||0),0);
     const preparedNasalTransferred=preparedNasalBottles.length>0&&
       activeVialForCard?.intendedUse==="nasal-source"&&displayOpenMg!==null&&displayOpenMg<=0.000001;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
@@ -280,7 +281,7 @@ function stashView() {
       <div class="nx-kit-primary-vial">
         <span class="nx-kit-overview-label">${displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
         <div class="nx-kit-primary-value">${displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
-        ${preparedNasalBottles.length?`<div class="nx-kit-prepared-summary">${preparedNasalTransferred?"Original vial stock transferred · ":"Prepared nasal stock · "}${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"} · ${preparedNasalMl.toFixed(2)} mL remaining separately</div>`:""}
+        ${preparedNasalBottles.length?`<div class="nx-kit-prepared-summary">Source vial ${displayOpenMg!==null?displayOpenMg.toFixed(2)+" mg remaining":"tracked separately"} · Prepared bottle ${preparedNasalMg.toFixed(2)} mg / ${preparedNasalMl.toFixed(2)} mL remaining (${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"}). Transferred stock is not lost or double-counted</div>`:""}
         ${displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
@@ -2094,7 +2095,7 @@ function nexusAddFormulationModal(type,existingId=null){
      topical?`<label class="field-label" for="nx-form-volume">${existing?"VOLUME REMAINING":"VOLUME"} (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
      `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
       <label class="field-label" for="nx-form-mg">${existing?"AMOUNT REMAINING":"AMOUNT"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
-    <p class="hint">Do not infer spray dose or route suitability from this entry. Existing dosing is unaffected.</p>
+    <p class="hint">${oral?"Capsules are tracked by whole count and labelled strength, separately from vial stock.":raw?"Raw powder remains separate from prepared-vial inventory.":topical?"Topical volume is tracked separately from injectable inventory.":"Spray figures are nominal; this entry does not verify pump delivery or route suitability."}</p>
     <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
   m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal");
