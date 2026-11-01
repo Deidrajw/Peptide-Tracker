@@ -786,7 +786,8 @@ function nexusCapsuleDoseModal(name,occTime){
   '<label class="field-label" for="nx-capsule-notes">NOTES · OPTIONAL</label><textarea id="nx-capsule-notes" class="inp" rows="2"></textarea>'+
   '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button>'+
   '<div id="nx-capsule-confirm" hidden><p id="nx-capsule-summary" role="status"></p><button id="nx-capsule-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-capsule-save" type="button" class="btn-primary" style="min-height:48px">Confirm & save</button></div></div>';
- const m=openModal(html,"#A78BFA"); // Use normal scrolling; this form has no nx-dose-scroll/footer split.
+ const m=openModal(html,"#A78BFA"); // Shared single-scroll form sheet.
+  m.classList.add("nx-form-log-sheet");
  m.querySelector("#x").onclick=closeModal;
  const sel=m.querySelector("#nx-capsule-source"),qty=m.querySelector("#nx-capsule-count"),date=m.querySelector("#nx-capsule-date"),
   preview=m.querySelector("#nx-capsule-preview"),confirm=m.querySelector("#nx-capsule-confirm");
@@ -868,6 +869,7 @@ function nexusNasalDoseModal(name,occTime){
   '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button>'+
   '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
   '<p class="hint">Recorded values are nominal. Nexus cannot verify spray output, product stability or suitability.</p></div>',"#A78BFA");
+ m.classList.add("nx-form-log-sheet");
  m.querySelector("#x").onclick=closeModal;
  const source=m.querySelector("#nx-spray-source"),qty=m.querySelector("#nx-spray-count"),
   date=m.querySelector("#nx-spray-date"),box=m.querySelector("#nx-spray-confirm");
@@ -887,8 +889,7 @@ function nexusNasalDoseModal(name,occTime){
    showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
   }
   const b=current(),n=Number(qty.value);
-  m.querySelector("#nx-spray-summary").textContent=n+" sprays · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+
-   " mcg from prepared bottle "+b.id+". Nothing saved yet.";
+  m.querySelector("#nx-spray-summary").textContent=n+" "+(n===1?"spray":"sprays")+" · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+" mcg. Estimated bottle balance after saving: "+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+" mL. Nothing saved yet.";
   box.hidden=false;m.querySelector("#nx-spray-review").hidden=true;
  };
  m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-review").hidden=false;};
@@ -927,12 +928,15 @@ function nexusChoosePhysicalForm(name,occTime){
  if(!capsules&&!nasal)return false;
  const availableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
    ["open","active"].includes(v.status)&&Number(v.remainingMg)>0));
+ const choices=Number(capsules)+Number(nasal)+Number(availableVial);
+ if(choices===1){if(capsules)nexusCapsuleDoseModal(name,occTime);else if(nasal)nexusNasalDoseModal(name,occTime);else doseModal(name,null,occTime,"vial");return true;}
  const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" aria-label="Close">✕</button></div>'+
  '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
  (capsules?'<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>':'')+
  (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
  (availableVial?'<button id="nx-use-injectable" type="button" class="nx-multi-vial-toggle" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
  '</div>',"#A78BFA");
+ m.classList.add("nx-form-log-sheet","nx-form-choice-sheet");
  m.querySelector("#x").onclick=closeModal;
  if(capsules)m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
  if(nasal)m.querySelector("#nx-use-nasal").onclick=()=>{closeModal();nexusNasalDoseModal(name,occTime);};
