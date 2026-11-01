@@ -102,10 +102,12 @@ function nexusPlanScopedStateChange(snapshot,operation){
  if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
  const next=JSON.parse(JSON.stringify(snapshot));
  if(operation.kind==="setting"){
-  const allowed=["nexusApiKey","phaseRemindersEnabled"];
+  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="nexusApiKey"&&typeof operation.value!=="string")fail("Invalid API key");
   if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
+  if(operation.key==="nxUsageEnabled"&&typeof operation.value!=="boolean")fail("Invalid shortcut tracking choice");
+  if(operation.key==="nxUsageCounts"&&(!operation.value||Array.isArray(operation.value)||typeof operation.value!=="object"||Object.keys(operation.value).some(key=>!/^[-a-zA-Z0-9_]{1,80}$/.test(key)||!Number.isSafeInteger(operation.value[key])||operation.value[key]<0)))fail("Invalid shortcut counters");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
  }else if(operation.kind==="supplement-list-add"){
