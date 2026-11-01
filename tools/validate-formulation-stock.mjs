@@ -120,7 +120,7 @@ try {
         {id:'source-a',sequenceNumber:1,status:'open',vialMg:10,remainingMg:7,intendedUse:'SubQ'},
         {id:'source-b',status:'sealed',vialMg:10,remainingMg:10}]});
     openNewVialModal(992211);
-    document.querySelector('#rv-purpose').value='SubQ';
+    document.querySelector('#rv-purpose').value='Injectable';
     document.querySelector('#rvsave').click();
   });
   const afterOpen=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>({id:v.id,status:v.status,remainingMg:v.remainingMg,sequenceNumber:v.sequenceNumber})));
@@ -155,6 +155,10 @@ try {
   await page.locator('#nx-dose-use-setup').click();
   assert.equal(await page.locator('.nx-use-setup').count(),1,
     'Edit defaults must open the real use-setup editor');
+  assert.equal(await page.locator('#nx-use-injection-group').count(),0,
+    'Stash use setup should not force a permanent SubQ/IM route');
+  assert.equal(await page.locator('#nx-use-family').inputValue(),'Injectable',
+    'Injectable is the stored product form, not an injection route');
   const retainedDraft=await page.evaluate(()=>({
     dose:state._pendingDoseDraft?.dose,
     date:state._pendingDoseDraft?.date,
