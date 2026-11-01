@@ -403,6 +403,11 @@ try {
     // Prior iPhone screenshots showed clipped Log Dose headers/actions. Assert
     // actual viewport geometry in entry AND Review, not just DOM containment.
     const doseViewport=async stage=>{
+      // The 250ms slideUp entrance starts 20px below the viewport. Measure only
+      // after that transform settles, while still asserting true footer clipping.
+      await page.locator('.nx2-dose-modal').evaluate(modal=>
+        Promise.all(modal.getAnimations({subtree:false}).map(animation=>
+          animation.finished.catch(()=>{}))));
       const geometry=await page.locator('.nx2-dose-modal').evaluate(modal=>{
         const rect=selector=>{const el=modal.querySelector(selector);if(!el)return null;
           const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
