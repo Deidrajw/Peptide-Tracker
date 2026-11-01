@@ -808,7 +808,7 @@ function doseModal(name, existing, occTime) {
   })();
   const f = existing
     ? { ...existing, symptoms: existing.symptoms||[] }
-    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site||suggestedSite, method:initialMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false };
+    : { id:draft?.id||uid(), date:draft?.date||occTime||localDatetime(), dose:lastDoseAmt, site:draft?.site||suggestedSite, method:initialMethod, symptoms:draft?.symptoms||[], notes:draft?.notes||"", escalation:draft?.escalation||false, asNeeded:!!draft?.asNeeded };
   const isEdit = !!existing;
   const occLabel = (occIndex>=0 && cData.dosesPerDay>1) ? ` — ${occIndex===0?"MORNING":occIndex===getOccurrenceTimes(cData).length-1?"EVENING":"DOSE "+(occIndex+1)}` : "";
   state._pendingDoseDraft = null; // consumed — cleared unless we re-save it below on "Open New Vial"
@@ -911,8 +911,14 @@ function doseModal(name, existing, occTime) {
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select></div>
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note" hidden>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
-    <details class="nx-dose-protocol-options" style="margin:4px 0 10px"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--t2);font-size:13px">Protocol options</summary><label style="display:flex;align-items:center;gap:10px;min-height:48px;font-size:13px;color:var(--t2)"><input id="nx-dose-as-needed" type="checkbox" style="accent-color:var(--accent,#A78BFA)"${f.asNeeded?" checked":""}> Log independently of a protocol</label><p style="font-size:12px;color:var(--t3);margin:0 0 8px">Use for a dose that should not prompt a protocol follow-up. Existing records keep their setting.</p></details>
-    <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
+    <details class="nx-dose-protocol-options nx-dose-more-options" style="margin:10px 0 0">
+      <summary>Additional dose options</summary>
+      <div class="nx-dose-options-body">
+        <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
+        <p class="nx-dose-option-description">Record this dose without creating a protocol follow-up. Existing records are unaffected.</p>
+        <label class="nx-dose-option-check nx-dose-escalation-row"><input id="esc" type="checkbox"${f.escalation?" checked":""}><span>Mark as dose escalation</span></label>
+      </div>
+    </details>
     </section>
     <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
       <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":unlabelledOpenSources.length?"Confirm your vial":"Dose source"}</div>
