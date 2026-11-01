@@ -88,6 +88,76 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(editForm.next.formulationStocks[1].transactions.length,1);
  assert.deepEqual(editForm.next.supplies,invBefore.supplies);
 
+
+ // P0 incremental migration: actual scoped settings/history application helper
+ // races a stock transaction under one exclusive writer, preserving exact stock.
+ const scopedVm=require("node:vm"),scopedFs=require("node:fs"),scopedPath=require("node:path");
+ const scopedSource=scopedFs.readFileSync(scopedPath.join(__dirname,"../assets/js/01-nexus.js"),"utf8");
+ const scopedBegin=scopedSource.indexOf("function nexusPlanScopedStateChange(");
+ const scopedEnd=scopedSource.indexOf("/* PR124 first exclusive Log Dose slice:",scopedBegin);
+ assert.ok(scopedBegin>0&&scopedEnd>scopedBegin,"Production scoped writer must exist");
+ const scopedCode=scopedSource.slice(scopedBegin,scopedEnd);
+ let scopedRaw=JSON.stringify({
+  supplies:[{id:"KIT",name:"Fictional A",vials:[{id:"V1",remainingMg:10,status:"open"}]}],
+  settings:{nexusApiKey:"",phaseRemindersEnabled:false,theme:"dark"},
+  supplementLogs:[{date:"2026-11-01",supplements:["Fictional C"]}],
+  peptides:{"Fictional A":{doses:[]}},customPeptides:{}
+ }),scopedWrites=0,scopedTail=Promise.resolve();
+ const scopedLock=(_key,fn)=>{const run=scopedTail.then(fn);scopedTail=run.catch(()=>{});return run};
+ const scopedAdapter={read:()=>scopedRaw,write:x=>{scopedRaw=x;scopedWrites++},lock:scopedLock};
+ const scopedTab=({demo=false,adapter=scopedAdapter}={})=>{
+  const coordinator=create({...adapter,initialSnapshot:scopedRaw});
+  const ctx={state:JSON.parse(scopedRaw),_demoActive:demo,_nexusLastSavedSnapshot:scopedRaw,
+   nexusWriter:()=>coordinator,showSaveWarning:()=>{},dayKey:value=>value.slice(0,10),
+   console,globalThis:{},JSON,Error,String,Number};
+  scopedVm.createContext(ctx);
+  scopedVm.runInContext(scopedCode+
+    ";globalThis.commitScoped=nexusCommitScopedStateChange;globalThis.planScoped=nexusPlanScopedStateChange;",ctx);
+  return {ctx,writer:coordinator,commit:ctx.globalThis.commitScoped,plan:ctx.globalThis.planScoped};
+ };
+ const settingsTab=scopedTab(),stockTab=scopedTab();
+ const originalScoped=JSON.parse(scopedRaw);
+ const settingsVsStock=await Promise.all([
+  stockTab.writer.transaction(originalScoped,prior=>{
+   prior.supplies[0].vials[0].remainingMg=8;
+   prior.peptides["Fictional A"].doses.push({id:"DOSE-1",dose:"2"});
+   return {next:prior};
+  }),
+  settingsTab.commit({kind:"setting",key:"phaseRemindersEnabled",value:true})
+ ]);
+ assert.equal(settingsVsStock[1],false,"Stale settings tab must not overwrite inventory");
+ assert.equal(scopedWrites,1,"Exactly one competing full-state write");
+ assert.equal(JSON.parse(scopedRaw).supplies[0].vials[0].remainingMg,8);
+ assert.equal(JSON.parse(scopedRaw).peptides["Fictional A"].doses.length,1);
+ assert.equal(JSON.parse(scopedRaw).settings.phaseRemindersEnabled,false);
+ assert.equal(settingsTab.ctx.state.settings.phaseRemindersEnabled,false,
+  "Failed settings tab cannot claim in-memory success");
+ const afterStock=scopedTab();
+ assert.equal(await afterStock.commit({kind:"setting",key:"phaseRemindersEnabled",value:true}),true);
+ assert.equal(JSON.parse(scopedRaw).supplies[0].vials[0].remainingMg,8);
+ assert.equal(JSON.parse(scopedRaw).peptides["Fictional A"].doses.length,1);
+ const historyTab=scopedTab(),reminderTab=scopedTab();
+ const historyAndSettings=await Promise.all([
+  historyTab.commit({kind:"supplement-log-delete",date:"2026-11-01"}),
+  reminderTab.commit({kind:"setting",key:"nexusApiKey",value:"fictional-key"})
+ ]);
+ assert.deepEqual(historyAndSettings,[true,false],
+  "Concurrent history/settings saves must reject the stale tab");
+ assert.equal(JSON.parse(scopedRaw).supplementLogs.length,0);
+ assert.equal(JSON.parse(scopedRaw).settings.nexusApiKey,"");
+ assert.equal(JSON.parse(scopedRaw).supplies[0].vials[0].remainingMg,8);
+ const savedBeforeInvalid=scopedRaw;
+ const invalidScoped=scopedTab();
+ assert.equal(await invalidScoped.commit({kind:"setting",key:"theme",value:"light"}),false,
+  "Unreviewed settings mutation must fail closed");
+ assert.equal(scopedRaw,savedBeforeInvalid);
+ const demoScoped=scopedTab({demo:true});
+ assert.equal(await demoScoped.commit({kind:"setting",key:"phaseRemindersEnabled",value:false}),true);
+ assert.equal(scopedRaw,savedBeforeInvalid,"DEMO may not touch real saved state");
+ const failScoped=scopedTab({adapter:{...scopedAdapter,write:()=>{throw Error("quota")}}});
+ assert.equal(await failScoped.commit({kind:"setting",key:"nexusApiKey",value:"never-saved"}),false);
+ assert.equal(scopedRaw,savedBeforeInvalid,"Quota failure cannot overwrite storage");
+ console.log("PASS: scoped settings/history vs stock, competing full snapshots, stale rejection, DEMO and quota");
  // Actual application untracked Log Dose helper: two tab-like contexts,
  // one lock, stale fail-closed, editing, demo isolation and quota failure.
  const vm=require("node:vm"),fs=require("node:fs"),path=require("node:path");
