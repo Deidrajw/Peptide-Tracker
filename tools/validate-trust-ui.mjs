@@ -213,7 +213,7 @@ try{
           const read=id=>{
             const card=document.querySelector('.nx-kit-card[data-kit-id="'+id+'"]');
             if(!card)return null;
-            return {label:card.querySelector('.nx-kit-overview-label')?.textContent?.includes('CURRENT OPEN VIAL'),
+            return {label:['OPEN VIAL','AVAILABLE STOCK'].includes(card.querySelector('.nx-kit-primary-vial .nx-kit-overview-label')?.textContent?.trim()),
               actionPresent:!!card.querySelector('.opennewvial,.openblendvial'),
               summary:card.querySelector('.nx-kit-detail-button')?.textContent?.trim(),
               tabs:[...card.querySelectorAll('.nx-stash-tab')].map(x=>x.textContent.trim())};
