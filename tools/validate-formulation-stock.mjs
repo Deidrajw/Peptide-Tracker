@@ -359,7 +359,11 @@ try {
         {id:'source-a',sequenceNumber:1,status:'open',vialMg:10,remainingMg:7,intendedUse:'SubQ'},
         {id:'source-b',status:'sealed',vialMg:10,remainingMg:10}]});
     openNewVialModal(992211);
-    document.querySelector('#rv-purpose').value='Injectable';
+    const chooser=document.querySelector('.nx-open-vial-choice-sheet');
+    if(!chooser || chooser.querySelectorAll('.nx-open-vial-form-options button').length!==2 ||
+       chooser.querySelector('#rv-totalvials')) throw Error('Open Vial must ask Injectable/Nasal BEFORE vial details');
+    chooser.querySelector('#nx-open-injectable').click();
+    if(document.querySelector('#rv-purpose')?.value!=='Injectable') throw Error('Injectable choice not preserved into vial editor');
     document.querySelector('#rvsave').click();
   });
   const afterOpen=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>({id:v.id,status:v.status,remainingMg:v.remainingMg,sequenceNumber:v.sequenceNumber})));
