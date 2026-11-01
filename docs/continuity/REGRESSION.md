@@ -2378,3 +2378,7 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-11-01 — Plans Goal Save async race
 - #41326571439 (741865f6) full browser FAILED at validate-plans-hierarchy.mjs:334: #nx-g-next click unstable/detached after a prior subjective Goal Save and immediate new goalModal; initial legacy View goal 44px assertion was cleared by 48px CSS. Prior Check-In, Protocol/Today, Log Dose 176 flows, Stash Actions/attached PDF, Stash Cards/Panels, chevron and blend picker all PASS in same run. Test-only a2e0321 waits for five Goal Save modal closures and commits fictional LIVE Plans fixture under exclusive writer; new CI PENDING, do not infer pass.
+
+
+## 2026-11-01 — Goal wizard Continue handler verification
+- Full #41326571439 FAIL at tools/validate-plans-hierarchy.mjs:334: Playwright pointer action retried unstable/detached #nx-g-next in numeric Goal wizard after other Check-In, Protocol, Stash, Log Dose browser suites PASS. 44px View goal touch-target gate passed after CSS cdffdab2. Test-only 2457a657 introduces stepwise bounded DOM click through existing Continue handlers, checks label advancement and Review Save exposure; separate touch geometry checks still enforced. Latest CI #41327745230 pending at observation; do not claim browser PASS. Real iPhone/VoiceOver NOT TESTED, P0 blocking.
