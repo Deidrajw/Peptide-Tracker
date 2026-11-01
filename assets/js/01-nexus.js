@@ -112,7 +112,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
   const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","remindersEnabled","lastNotifyDate"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="remindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid notification toggle");
-  if(operation.key==="lastNotifyDate"&&(typeof operation.value!=="string"||!/^(?:\\d{4}-\\d{2}-\\d{2})?$/.test(operation.value)))fail("Invalid notification date");
+  if(operation.key==="lastNotifyDate"&&(typeof operation.value!=="string"||!/^(?:\d{4}-\d{2}-\d{2})?$/.test(operation.value)))fail("Invalid notification date");
   if(operation.key==="nexusApiKey"&&typeof operation.value!=="string")fail("Invalid API key");
   if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
   if(operation.key==="nxUsageEnabled"&&typeof operation.value!=="boolean")fail("Invalid shortcut tracking choice");
