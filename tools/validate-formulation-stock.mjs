@@ -321,6 +321,12 @@ try {
   await page.locator('#nx-nasal-record-save').click();
   assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true,
     'Actual nasal preparation must enter a separate review before confirmation');
+  const nasalReviewUX=await page.locator('#nx-nasal-record-review').evaluate(section=>({
+    focused:document.activeElement===section,
+    sheetScroll:section.closest('.modal')?.scrollTop ?? -1
+  }));
+  assert.equal(nasalReviewUX.focused,true,'Nasal review focus should move to its visible summary');
+  assert.ok(nasalReviewUX.sheetScroll<=2,'Nasal review must reset the only sheet scroll owner to top');
   const nasalReview=await page.locator('#nx-nasal-record-review').textContent();
   assert.ok(nasalReview.includes('One confirmed transfer')&&
     nasalReview.includes('Source vial after transfer')&&
