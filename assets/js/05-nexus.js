@@ -769,7 +769,104 @@ function nexusUseSetupModal(name,onSaved) {
     if(typeof onSaved==="function")onSaved();
   };
 }
-function doseModal(name, existing, occTime) {
+
+/* Adaptive Oral entry: whole capsule count, labelled per-capsule mass and one
+   exact physical container. This never enters the legacy vial deduction path. */
+function nexusCapsuleDoseModal(name,occTime){
+ const sources=(state.formulationStocks||[]).filter(x=>x.compound===name&&x.containerType==="capsule-bottle"&&
+   x.method==="Oral"&&Number.isSafeInteger(x.remainingCount)&&x.remainingCount>0&&Number.isFinite(x.mgPerCapsule)&&x.mgPerCapsule>0);
+ if(!sources.length){showErrorBanner("No verified capsule container with stock. Nothing saved.");return;}
+ const unit=cfg(name).unit;
+ if(!["mg","mcg"].includes(unit)){showErrorBanner("Capsule logging needs an explicit mass unit; nothing saved.");return;}
+ const html='<div class="nx-dose-form nx-capsule-entry"><div class="nx-dose-head"><div><div class="nx-dose-kicker">ORAL · CAPSULES</div><h2 class="nx-dose-title">Log capsules</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close capsule log">✕</button></div>'+
+  '<label class="field-label" for="nx-capsule-date">DATE & TIME</label><input class="inp" id="nx-capsule-date" type="datetime-local" value="'+esc(occTime||localDatetime())+'">'+
+  '<label class="field-label" for="nx-capsule-source">CAPSULE CONTAINER</label><select id="nx-capsule-source" class="inp">'+sources.map(x=>'<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingCount))+' capsules left · '+esc(String(x.mgPerCapsule))+' mg each</option>').join("")+'</select>'+
+  '<label class="field-label" for="nx-capsule-count">CAPSULES TAKEN</label><input id="nx-capsule-count" class="inp" type="number" min="1" step="1" value="1" inputmode="numeric">'+
+  '<div id="nx-capsule-preview" role="status" class="nx-dose-untracked-note"></div>'+
+  '<label class="field-label" for="nx-capsule-notes">NOTES · OPTIONAL</label><textarea id="nx-capsule-notes" class="inp" rows="2"></textarea>'+
+  '<button id="nx-capsule-review" type="button" class="btn-primary" style="width:100%;min-height:48px">Review capsules</button>'+
+  '<div id="nx-capsule-confirm" hidden><p id="nx-capsule-summary" role="status"></p><button id="nx-capsule-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-capsule-save" type="button" class="btn-primary" style="min-height:48px">Confirm & save</button></div></div>';
+ const m=openModal(html,"#A78BFA");m.classList.add("nx2-dose-modal");
+ m.querySelector("#x").onclick=closeModal;
+ const sel=m.querySelector("#nx-capsule-source"),qty=m.querySelector("#nx-capsule-count"),date=m.querySelector("#nx-capsule-date"),
+  preview=m.querySelector("#nx-capsule-preview"),confirm=m.querySelector("#nx-capsule-confirm");
+ const current=()=>sources.find(x=>String(x.id)===sel.value);
+ const renderPreview=()=>{
+  const c=current(),n=Number(qty.value);
+  preview.textContent=c&&Number.isSafeInteger(n)&&n>0?
+    n+" "+(n===1?"capsule":"capsules")+" · "+(n*c.mgPerCapsule).toFixed(3)+" mg · "+c.remainingCount+" available":"Enter a positive whole capsule count.";
+ };
+ [sel,qty].forEach(x=>x.onchange=renderPreview);qty.oninput=renderPreview;renderPreview();
+ m.querySelector("#nx-capsule-review").onclick=()=>{
+  const c=current(),n=Number(qty.value);
+  if(!c||!Number.isSafeInteger(n)||n<1||n>c.remainingCount){
+   showErrorBanner("Choose an exact container and a whole capsule count within stock. Nothing saved.");return;
+  }
+  if(!date.value||!Number.isFinite(new Date(date.value).getTime())){
+   showErrorBanner("Choose a valid date and time. Nothing saved.");return;
+  }
+  m.querySelector("#nx-capsule-summary").textContent=
+    n+" "+(n===1?"capsule":"capsules")+" · "+(n*c.mgPerCapsule)+" mg · "+c.compound+
+    " · "+(c.remainingCount-n)+" capsules expected after saving. No vial stock is used.";
+  confirm.hidden=false;m.querySelector("#nx-capsule-review").hidden=true;
+ };
+ m.querySelector("#nx-capsule-back").onclick=()=>{confirm.hidden=true;m.querySelector("#nx-capsule-review").hidden=false;};
+ m.querySelector("#nx-capsule-save").onclick=async()=>{
+  const c=current(),n=Number(qty.value),save=m.querySelector("#nx-capsule-save");
+  if(!c||!Number.isSafeInteger(n)||n<1||n>c.remainingCount||!date.value||!Number.isFinite(new Date(date.value).getTime())){
+   showErrorBanner("Container, capsule count or date changed. Review again; nothing saved.");return;
+  }
+  if(save.disabled)return;save.disabled=true;
+  const tx={id:"capsule-"+uid(),doseId:uid(),sourceId:c.id,compound:name,count:n,date:date.value,
+    nativeUnit:unit,notes:m.querySelector("#nx-capsule-notes").value};
+  let result;
+  try{
+   if(!globalThis.NexusFormulationStock?.planCapsuleDose)throw Error("Capsule dose engine unavailable");
+   if(_demoActive){result=globalThis.NexusFormulationStock.planCapsuleDose(state,tx);state=result.next;}
+   else{
+    const writer=nexusWriter();
+    result=await writer.transaction(state,snapshot=>globalThis.NexusFormulationStock.planCapsuleDose(snapshot,tx));
+    state=result.next;_nexusLastSavedSnapshot=writer.expected();
+   }
+  }catch(error){
+   console.error("Exact capsule dose rejected",error);
+   showErrorBanner("Could not verify exact capsule stock and dose history. No save confirmed; reload and review before retry.");
+   save.disabled=false;return;
+  }
+  closeModal();render();
+  showUndoToast(name+" capsules logged · Undo",async()=>{
+   try{
+    const reversal={sourceId:c.id,transactionId:tx.id,reversalId:"capsule-undo-"+uid(),doseId:tx.doseId,compound:name};
+    let undo;
+    if(_demoActive){undo=globalThis.NexusFormulationStock.reverseCapsuleDose(state,reversal);state=undo.next;}
+    else{
+     const writer=nexusWriter();
+     undo=await writer.transaction(state,snapshot=>globalThis.NexusFormulationStock.reverseCapsuleDose(snapshot,reversal));
+     state=undo.next;_nexusLastSavedSnapshot=writer.expected();
+    }
+    render();
+   }catch(error){console.error("Capsule undo rejected",error);showErrorBanner("Original capsule entry changed or saved state is stale. Undo blocked.");}
+  });
+ };
+}
+function nexusChoosePhysicalForm(name,occTime){
+ const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.remainingCount>0);
+ if(!capsules)return false;
+ const availableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
+   ["open","active"].includes(v.status)&&Number(v.remainingMg)>0));
+ const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" aria-label="Close">✕</button></div>'+
+ '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
+ '<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>'+
+ (availableVial?'<button id="nx-use-injectable" type="button" class="nx-multi-vial-toggle" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
+ '</div>',"#A78BFA");
+ m.querySelector("#x").onclick=closeModal;
+ m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
+ if(availableVial)m.querySelector("#nx-use-injectable").onclick=()=>{closeModal();doseModal(name,null,occTime,"vial");};
+ return true;
+}
+
+function doseModal(name, existing, occTime, formChoice) {
+ if(!existing&&!formChoice&&nexusChoosePhysicalForm(name,occTime))return;
   const c = cfg(name);
   const cData = allPeptides()[name] || {};
   const blendKits=state.supplies.filter(k=>k.name===name&&k.isBlend);
