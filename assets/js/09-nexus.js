@@ -1815,10 +1815,10 @@ function openNewVialModal(supplyId, onDone) {
       <option value="Injectable">Injectable (choose SubQ or IM when logging)</option>
       <option value="Oral">Oral</option>
       <option value="Topical">Topical</option>
-      <option value="nasal-source">Source for nasal preparation · not a ready spray</option>
+      <option value="nasal-source">Nasal · vial reserved for spray preparation</option>
       <option value="Other">Other</option>
     </select>
-    <p id="rv-purpose-note" class="hint" style="margin-bottom:14px">Record the physical product form, not a permanent injection route. Nasal planning does not create a prepared bottle or deduct stock.</p>
+    <p id="rv-purpose-note" class="hint" role="status" style="margin-bottom:14px">Choose the physical form for this vial, not your route for every dose.</p>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
     <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
@@ -1828,6 +1828,15 @@ function openNewVialModal(supplyId, onDone) {
     <button id="rvsave" class="btn-primary" style="background:${c.color};color:#1A1728!important">Log Reconstitution</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
+  const purpose=m.querySelector("#rv-purpose"),purposeNote=m.querySelector("#rv-purpose-note");
+  const updatePurposeNote=()=>{
+    purposeNote.textContent=purpose.value==="nasal-source"
+      ?"Nasal source only: this is still the original vial, not a nasal spray. To log sprays, a separately recorded and calibrated prepared bottle is required; the transfer workflow is not yet enabled."
+      :purpose.value==="Injectable"
+      ?"Injectable form: choose SubQ or IM separately for each administration in Log Dose. This does not establish IV suitability."
+      :"This labels your physical stock; dose administration is recorded separately.";
+  };
+  purpose.onchange=updatePurposeNote;updatePurposeNote();
 
   // Live concentration preview
   const updatePreview = () => {
