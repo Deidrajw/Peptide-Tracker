@@ -247,6 +247,24 @@ try{
       ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Viewer failed to close for kit '+id);
     }
 
+    // Regression: the displayed vial sequence must be numeric, not the
+    // storage array's arbitrary insertion order (real iPhone report 5,2,1,4).
+    await page.evaluate(()=>{
+      const kit=state.supplies.find(k=>k.id===99002);
+      kit.vials=[
+        {id:99025,sequenceNumber:5,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99022,sequenceNumber:2,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99021,sequenceNumber:1,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99024,sequenceNumber:4,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50}
+      ];
+      kit.activeKit=false;
+      render();
+    });
+    await card(99002).locator('.nx-kit-detail-button').click();
+    await card(99002).locator('.nx-stash-tab[data-panel="vials"]').click();
+    const vialOrder=await card(99002).locator('.nx-kit-vial-row .nx-kit-list-top strong').allTextContents();
+    ensure(vialOrder.join('|')==='Vial 1|Vial 2|Vial 4|Vial 5',
+      'Opened vial details must display numeric sequence order: '+JSON.stringify(vialOrder));
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
