@@ -215,8 +215,24 @@ async function nexusCommitScopedStateChange(operation){
  }
  try{
   const writer=nexusWriter();
-  const result=await writer.transaction(state,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
-  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  const serialized=writer.expected();
+  if(typeof serialized!=="string")throw Error("Durable scoped state unavailable; reload before saving");
+  const durable=JSON.parse(serialized);
+  // Rendering populates top-level _UI fields without saving them. They must
+  // not make an unrelated settings edit fail, but unsaved persistent changes
+  // must still fail closed instead of being silently discarded.
+  const persistent=value=>{
+    const copy={...value};
+    for(const key of Object.keys(copy))if(key.startsWith("_"))delete copy[key];
+    return JSON.stringify(copy);
+  };
+  if(persistent(state)!==persistent(durable))
+    throw Error("Unsaved persistent changes are pending; reload before saving");
+  const transient=Object.fromEntries(Object.entries(state).filter(([key])=>key.startsWith("_")));
+  // Expected durable bytes are checked against live storage inside the same
+  // exclusive lock. Another tab's edits can never be silently rebased.
+  const result=await writer.transaction(durable,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
+  state={...result.next,...transient};_nexusLastSavedSnapshot=writer.expected();
   return true;
  }catch(error){
   console.error("Scoped state save rejected",error);
