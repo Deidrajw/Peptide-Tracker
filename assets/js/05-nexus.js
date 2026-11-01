@@ -917,21 +917,12 @@ function doseModal(name, existing, occTime) {
     <label class="nx-dose-escalation-row" style="display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:13px;color:var(--t3);min-height:44px"><input id="esc" type="checkbox" style="accent-color:${c.color}"${f.escalation?" checked":""}> Mark as dose escalation</label>
     </section>
     <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":"Choose your vial"}</div>
-      <p class="nx-dose-section-desc">${isEdit ? "The original source stays linked." : "Only needed when Nexus cannot identify one verified source."}</p>
-    ${!preparedBatches.length && !isEdit ? `<div class="nx-dose-source-readout" aria-label="Dose source: fresh from vial">
-      <span class="nx-dose-source-dot" aria-hidden="true"></span>
-      <div><strong>Fresh from vial</strong><small>${eligibleSources.length===0
-        ? (unlabelledOpenSources.length?"An open vial needs its method confirmed. You can finish its setup in Stash.":"No verified open vial for this method. Check Stash to prepare or identify one.")
-        : eligibleSources.length===1
-          ? `Open ${esc(eligibleSources[0].kit.vialMg||"?")}${esc(c.unit)} vial · ${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)}${esc(c.unit)} remaining`
-          : `${eligibleSources.length} open vials available — select which to use below.`}</small></div>
-    </div>` : ""}
+      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":unlabelledOpenSources.length?"Confirm your vial":"Dose source"}</div>
+    ${!isEdit && !preparedBatches.length && eligibleSources.length===0 && unlabelledOpenSources.length===0 ? `<div class="nx-dose-source-readout" role="status"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>No verified open vial</strong><small>Check Stash for an open vial compatible with ${esc(initialMethod)}. No inventory will be deducted without a verified source.</small></div></div>` : ""}
     ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
-      <div style="font-weight:650;color:var(--t1);font-size:14px;margin-bottom:6px">Identify your source vial</div>
-      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">Confirm which vial you used. This only labels the vial; it won't deduct inventory until you save your dose.</p>
+      <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">This vial has no saved administration method. Confirm it once; inventory changes only when you save the dose.</p>
       ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
-        Use Vial ${esc(vial.sequenceNumber||"?")} for ${esc(initialMethod)} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining
+        Vial ${esc(vial.sequenceNumber||"?")} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left · Confirm ${esc(initialMethod)}
       </button>`).join("")}
     </div>`:""}
     ${isEdit ? `<div class="nx-dose-source-readout"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>Existing dose record</strong><small>Original source information stays linked to this dose.</small></div></div>` : ""}
@@ -943,7 +934,7 @@ function doseModal(name, existing, occTime) {
       </div>
     </div>`:""}
     <div id="kit-picker" style="margin-bottom:14px;${needsKitPicker&&selectedSource==="fresh"?"":"display:none"}">
-      <label class="field-label">CHOOSE OPEN VIAL</label>
+      <label class="field-label">OPEN VIAL</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
         ${eligibleSources.map(({kit,vial})=>`<button type="button" class="kit-opt" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" aria-pressed="${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)}" style="min-height:48px;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:600;background:${String(selectedKitId)===String(kit.id)&&String(selectedVialId)===String(vial.id)?c.color+"22":"var(--surface-2)"};border:1px solid ${selectedKitId===kit.id?c.color:"var(--border)"};color:${selectedKitId===kit.id?c.color:"var(--t3)"}">${esc(String(kit.name))} · Vial ${esc(String(vial.sequenceNumber||vial.id))} · ${mgToUnit(getVialRemainingMg(kit,vial),c.unit).toFixed(2)} ${esc(c.unit)} left</button>`).join("")}
       </div>
@@ -1048,9 +1039,12 @@ function doseModal(name, existing, occTime) {
       showErrorBanner("Choose the vial you used before reviewing.");return;
     }
     if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&!activeKit()&&!isBlend){
-      const setup=m.querySelector("#nx-dose-use-setup");
-      if(setup){setup.click();return;}
-      showErrorBanner("No compatible source selected. Nothing was saved.");return;
+      if(unlabelledOpenSources.length){
+        showErrorBanner("Confirm the exact open vial below before reviewing. No inventory changed.");
+      }else{
+        showErrorBanner("No compatible open vial for this method. Review inventory in Stash; nothing saved.");
+      }
+      return;
     }
     showDoseReview(true);
   };
@@ -1380,11 +1374,11 @@ function doseModal(name, existing, occTime) {
     siteInput.value=options.includes(previous)?previous:"";
     const siteField=m.querySelector("#nx-dose-site-field");
     const requiresInjectionSite=["SubQ","IM"].includes(methodInput.value);
-    if(siteField)siteField.hidden=!requiresInjectionSite;
+    if(siteField){siteField.hidden=!requiresInjectionSite;siteField.style.display=requiresInjectionSite?"":"none";}
     siteInput.disabled=!requiresInjectionSite;
     if(!requiresInjectionSite)siteInput.value="";
     const siteGuidance=m.querySelector(".nx-site-guidance");
-    if(siteGuidance)siteGuidance.hidden=!requiresInjectionSite;
+    if(siteGuidance){siteGuidance.hidden=!requiresInjectionSite;siteGuidance.style.display=requiresInjectionSite?"":"none";}
   };
   const methodButtons=[...m.querySelectorAll("[data-admin-method]")];
   function renderAdminButtons(){
