@@ -67,6 +67,18 @@ const dose={
   "Spray logging must never debit original vial twice");
  assert.equal(afterDose.customPeptides["Fictional A"].doses.length,1,
   "First spray can create history without a protocol");
+ // Invalid spray overdraw and replay must not change durable state.
+ const guarded=create({...adapter,initialSnapshot:durable});
+ const beforeInvalid=durable,invalidWrites=writes;
+ await assert.rejects(guarded.transaction(JSON.parse(durable),snapshot=>prepared.planDose(snapshot,{
+  ...dose,id:"OVERDRAW",doseId:"OVERDRAW-LOG",sprays:1000
+ })),/Insufficient|exceed|available|balance|stock/i);
+ assert.equal(durable,beforeInvalid,"Overdraw must not change physical or prepared stock");
+ assert.equal(writes,invalidWrites,"Overdraw must not write");
+ const replay=create({...adapter,initialSnapshot:durable});
+ await assert.rejects(replay.transaction(JSON.parse(durable),snapshot=>prepared.planDose(snapshot,dose)),
+  /Duplicate|already|exists/i);
+ assert.equal(writes,invalidWrites,"Duplicate dose must not write");
  const reversal=await tabDoseA.transaction(afterDose,s=>prepared.reverseDose(s,{
   transactionId:"DOSE-1",reversalId:"UNDO-1",compound:"Fictional A",
   sourceId:"BOTTLE-1",doseId:"LOG-1"
