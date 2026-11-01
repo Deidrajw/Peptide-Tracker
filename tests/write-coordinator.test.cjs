@@ -137,7 +137,7 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
 
  // Actual inventory-backed source helper: immutable exact-vial planner and
  // locked two isolated-tab conflict; all fixtures are entirely fictional.
- const startBacked=appSource.indexOf("function nexusPlanBackedPhysicalDose(");
+ const startBacked=appSource.indexOf("function nexusPhysicalForm(");
  const endBacked=appSource.indexOf("\nfunction enterDemoMode(",startBacked);
  assert.ok(startBacked>0&&endBacked>startBacked);
  const backedSource=appSource.slice(startBacked,endBacked);
@@ -180,8 +180,17 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:2},{kitId:"K1",vialId:"V1",mg:.5}]},/Duplicate vial/);
  throws({...one,steps:[{kitId:"K1",vialId:"V1",mg:2}]},/match dose/);
  throws({...one,method:"Nasal"},/Unsupported physical/);
- const mismatch=fixture();mismatch.supplies[0].vials[0].intendedUse="IM";
- assert.throws(()=>planning.plan(mismatch,one),/method mismatch/);
+ // Historical SubQ/IM vial labels are the same injectable product family.
+ // Per-dose method remains historical; no vial records are relabelled.
+ const legacyIM=fixture();legacyIM.supplies[0].vials[0].intendedUse="IM";
+ const compatible=planning.plan(legacyIM,one);
+ assert.equal(compatible.next.peptides["Sample A"].doses[0].method,"SubQ");
+ assert.equal(compatible.next.supplies[0].vials[0].intendedUse,"IM");
+ const mismatch=fixture();mismatch.supplies[0].vials[0].intendedUse="Oral";
+ assert.throws(()=>planning.plan(mismatch,one),/formulation incompatible/);
+ const intravenous={...one,method:"IV"};
+ assert.throws(()=>planning.plan(fixture(),intravenous),/Unsupported physical/);
+
  const split=planning.plan(fixture(),{...one,steps:[{kitId:"K1",vialId:"V1",mg:1},{kitId:"K1",vialId:"V2",mg:1.5}]});
  assert.equal(split.next.supplies[0].vials[0].remainingMg,9);
  assert.equal(split.next.supplies[0].vials[1].remainingMg,6.5);
