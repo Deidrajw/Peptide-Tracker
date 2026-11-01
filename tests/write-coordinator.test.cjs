@@ -167,6 +167,24 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(scopedRaw,beforeUpsert);
  assert.equal(await upsertTab.commit({kind:"supplement-log-upsert",date:"2026-11-02",taken:["Fictional C"],id:"H-2",expectedId:null}),true);
  assert.equal(JSON.parse(scopedRaw).supplementLogs.some(x=>x.date==="2026-11-02"&&x.id==="H-2"),true);
+ // Nutrition, weight and measurements must preserve vial stock while
+ // allowing only a validated exact dated record to be persisted.
+ for(const [field,id,extra] of [
+  ["macroLogs","M1",{calories:"2000",protein:"120"}],
+  ["weightLogs","W1",{weight:"180.5"}],
+  ["measurementLogs","Z1",{waist:"30"}]
+ ]){
+  const tab=scopedTab();
+  const accepted=await tab.commit({kind:"dated-log-upsert",field,record:{id,date:"2026-11-02",...extra}});
+  assert.equal(accepted,true,field+" was not durably committed");
+  const saved=JSON.parse(scopedRaw);
+  assert.equal(saved[field].some(x=>x.id===id),true);
+  assert.equal(saved.supplies[0].vials[0].remainingMg,8);
+  assert.equal(saved.peptides["Fictional A"].doses.length,1);
+ }
+ const invalidDated=scopedTab(),beforeDatedInvalid=scopedRaw;
+ assert.equal(await invalidDated.commit({kind:"dated-log-upsert",field:"supplies",record:{id:"K1",date:"2026-11-02"}}),false);
+ assert.equal(scopedRaw,beforeDatedInvalid);
  const savedBeforeInvalid=scopedRaw;
  const invalidScoped=scopedTab();
  assert.equal(await invalidScoped.commit({kind:"setting",key:"theme",value:"light"}),false,
