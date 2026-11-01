@@ -156,6 +156,34 @@ try {
   await page.locator('.modal #x').click();
 
 
+
+  // Multiple physical capsule containers must require an explicit source, not
+  // silently pick the first matching compound just because both are Oral.
+  const dual=await page.evaluate(()=>{
+    state.formulationStocks.push(NexusFormulationStock.create({id:'fictional-second-capsules',
+      compound:'Fictional Slew',containerType:'capsule-bottle',method:'Oral',
+      count:3,mgPerCapsule:5}));
+    return state.formulationStocks.find(s=>s.containerType==='capsule-bottle').id;
+  });
+  await page.evaluate(()=>doseModal('Fictional Slew'));
+  await page.locator('#nx-use-capsules').click();
+  assert.equal(await page.locator('#nx-capsule-source').inputValue(),'',
+    'Multiple capsule sources must not silently choose a source');
+  await page.locator('#nx-capsule-review').click();
+  assert.equal(await page.locator('#nx-capsule-confirm').isHidden(),true,
+    'Unselected exact capsule source cannot reach review');
+  await page.locator('#nx-capsule-source').selectOption('fictional-second-capsules');
+  await page.locator('#nx-capsule-review').click();
+  await page.locator('#nx-capsule-save').click();
+  const dualAfter=await page.evaluate(id=>({
+    first:state.formulationStocks.find(s=>String(s.id)===String(id)).remainingCount,
+    second:state.formulationStocks.find(s=>s.id==='fictional-second-capsules').remainingCount,
+    source:state.customPeptides['Fictional Slew'].doses[0]?.sourceContainerId
+  }),dual);
+  assert.equal(dualAfter.first,27,'Other capsule container must retain its balance');
+  assert.equal(dualAfter.second,2,'Explicit second source must deduct exactly one capsule');
+  assert.equal(dualAfter.source,'fictional-second-capsules','Saved source attribution must identify chosen bottle');
+
   // A nasal-source label is a reservation, not ready-to-use stock. The pure
   // transfer planner must accept that explicit source only when a destination
   // container and exact mass are provided; preview never changes state.
