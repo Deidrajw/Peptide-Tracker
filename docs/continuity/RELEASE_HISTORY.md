@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft Chromium cross-tab regression, NOT RELEASED
+- 6db79cd6 adds real Chromium two-tab actual-storage-key coordinator race coverage, including stale rejection and quota simulation. Results pending; full caller migration not complete. No live nasal, merge or deployment.
+
 ## 2026-11-01 — Draft Today tracking persistence fix, NOT RELEASED
 - 77f3e722 converts Today tracking activity selection to awaited exclusive scoped writer. Other ordinary saves remain unsafe; no release or deployment.
 
