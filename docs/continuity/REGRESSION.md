@@ -1,3 +1,14 @@
+## 2026-10-31 late evening — iPhone QA new defects after 2081b900 automated PASS
+- User reported physical DEMO FORM-01 Pass, FORM-02 Pass, STASH-01 Pass, PROTECTED-01 Pass, no observation notes or device/iOS. Do not overwrite passing reports; new defects require separate acceptance tests.
+- UI-STASH-BADGE FAIL user visual: Healthy and Stored status pills differ height/padding/font; expect identical badge geometry light/dark at 320/390.
+- UI-STASH-CTA FAIL user visual: coloured left-edge strip/gradient artifact on Set up vial/Open new vial in light mode; expect exact Supplies DS2 gradient and clean edges.
+- UI-STASH-VIALDETAIL FAIL user visual: green 'Vial N Details' fieldset; expect DS2 neutral surface/consistent contrast.
+- UI-DOSE-OPTIONS FAIL user visual: Additional dose options header/checkbox hierarchy differs from main Log Dose typography in light/dark; test focus and keyboard too.
+- FORM-NASAL-01 FAIL functional user scenario: open injectable vial + separate reserved nasal-source vial from same kit; selecting Nasal in Log Dose shows 'physical inventory exists, but none verified for Nasal' because reserved vial is not a prepared container. Expected: direct auditable actual preparation record creates separately tracked verified nasal container; until then guard remains correctly fail-closed. Test source mg decrement and target mL/sprays, no double debit, edits/cancel/restore, same-kit injectable balance and two-tab conflicts. NOT IMPLEMENTED.
+- FORM-ORAL-01 NOT TESTED: same compound injectable kit and oral capsule bottle; log 1 or 2 capsules with per-unit strength, count deductions and history, without injection fields or cross-form debit. NOT IMPLEMENTED.
+- FORM-ADAPTIVE-01 NOT TESTED: injectable, oral, nasal, topical conditional field sets with common date/time, exact-source review, distinct unit UI, accessibility and keyboard/scroll. NOT IMPLEMENTED.
+- Use existing docs/qa/IPHONE_MANUAL_TEST_PLAYBOOK.md, do not invent results. Cross-tab legacy writer P0 remains unresolved.
+
 ## 2026-10-31 / Nov 1 UTC — Final exact-source integrated QA on app SHA 2081b900
 - Full Chromium #41266959886 SUCCESS; prior #41266681030 FAIL for nasal guidance now resolved in passing source, without relabelling historical failure. 8 LIVE/DEMO x 320/390 x light/dark browser matrix PASS, 176 Log Dose flows PASS, 96 exact-vial source assertions PASS, Stash Cards/Actions/Panels 8 each PASS, Check-In 8 PASS, Plans 8 PASS, backup/restore and calculator guards PASS. Stash height 231px at 320, 233px at 390. Math diagnostic 80/80 software checks PASS, NOT clinical calculator validation.
 - WebKit #41266959863 SUCCESS; mobile #41266959817 SUCCESS; nested #41266959810 SUCCESS; scoped writer #41266959808 SUCCESS. Actual two-tab exclusive writer tests and backed edit/undo PASS, but legacy mixed writer P0 remains BLOCKED.
