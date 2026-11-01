@@ -1508,3 +1508,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — Test-only durable inline supplement acknowledgement
 - Commit 861b9d84 adds awaited exclusive writer readback for fictional inline Check-In supplement Add and fixture reset, resolving unsequenced test actions after prior 77a759af full #41284493052 FAIL. No application code or schema change, no production data write, no release. Latest full/browser and WebKit pending, P0 blocking; draft PR #124, nasal gates OFF.
+
+
+## 2026-11-01 — PR124 browser harness acknowledged Check-In saves (test-only)
+- 0aaed043597ea50d08995cc2f23e903fe95ae18c awaits post-save sheet dismissal after successful Check-In creates/edits; prior 861b9d84 full QA #41284836788 FAIL due premature Edit sheet opening while prior save still closing. Application code/data schema untouched; exact-head CI pending, nasal gates OFF, draft unmerged/undeployed, P0 blocked.
