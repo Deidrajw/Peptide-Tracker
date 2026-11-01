@@ -1,3 +1,7 @@
+## 2026-10-31 — PR124 Stash light/dark action styling candidate (NOT RELEASED)
+- CSS d9cb70a6; Stash browser regression extensions 5e9f73e/754e3a8. Collapsed card hierarchy unchanged; buttons/focus, expanded use setup, warning and secondary open-vial action themed consistently. No data migration or production storage writes.
+- Exact-source QA #41261696707/#41261696687 and complete LIVE/DEMO artifacts NOT VERIFIED at this note; previous source tests do not validate new CSS. Physical iPhone not yet accepted. Mixed writer P0 unresolved. Unmerged draft PR #124; no deploy.
+
 ## 2026-10-31 — PR124 Log Dose conditional source candidate (TESTED ON CI; NOT RELEASED)
 - Code commits ece3780, d574c5dd; test commits ef8b297, 200db956e513166e5420d5533e570f49088d6023. One actionable vial source panel, method-appropriate site, functional Edit defaults handoff; legacy exact-source safety preserved.
 - Exact app/test SHA 200db956 full Chromium #41259356814 SUCCESS (176 Log Dose flows; 231/233px card heights, 80/80 measurement diagnostics) and WebKit #41259356810 SUCCESS; mobile #41259356838, shared writer #41259356777, nested #41259356808 SUCCESS.
