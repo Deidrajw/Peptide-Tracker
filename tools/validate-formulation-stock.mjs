@@ -298,6 +298,51 @@ try {
   assert.equal(followup.repeated,false,'Acknowledged follow-up must not repeatedly nag');
   assert.equal(followup.currentCount,followup.existingCount,'Notice must not alter dose history');
   assert.equal(followup.protocolStatus,'completed','Notice must not reactivate protocol');
+
+  // P-14 actual buttons: cancel, bulk pause, bulk resume and data integrity.
+  const bulkBefore=await page.evaluate(()=>{
+    closeModal();
+    state.protocols=[
+      {id:'bulk-running',name:'Fictional running',status:'in_progress',startDate:'2026-01-01',compounds:[]},
+      {id:'bulk-ready',name:'Fictional ready',status:'active',startDate:'2026-02-01',compounds:[]},
+      {id:'bulk-manual',name:'Fictional already paused',status:'paused',pausedAt:'2026-10-20T10:00',compounds:[]},
+      {id:'bulk-planned',name:'Fictional future',status:'planned',compounds:[]},
+      {id:'bulk-complete',name:'Fictional complete',status:'completed',compounds:[]}
+    ];
+    const frozen=JSON.stringify({supplies:state.supplies,peptides:state.peptides,custom:state.customPeptides});
+    tab='protocols';render();
+    return frozen;
+  });
+  assert.equal(await page.locator('#nx-pause-all-protocols').count(),1,'Pause All missing in Protocols');
+  await page.locator('#nx-pause-all-protocols').click();
+  assert.equal(await page.locator('#ca-cancel').count(),1,'Pause All must require confirmation');
+  await page.locator('#ca-cancel').click();
+  assert.equal(await page.evaluate(()=>state.protocols.filter(p=>p.status==='paused').length),1,
+    'Cancel must not modify any protocol');
+  await page.locator('#nx-pause-all-protocols').click();
+  await page.locator('#ca-ok').click();
+  await page.waitForFunction(()=>state.protocols.filter(p=>p.nexusBulkPausedFrom).length===2);
+  const paused=await page.evaluate(()=>state.protocols.map(p=>({
+    status:p.status,from:p.nexusBulkPausedFrom||null,pausedAt:p.pausedAt
+  })));
+  assert.deepEqual(paused.map(p=>p.status),['paused','paused','paused','planned','completed']);
+  assert.deepEqual(paused.slice(0,2).map(p=>p.from),['in_progress','active'],
+    'Global pause must preserve each running protocol prior state');
+  assert.equal(paused[2].pausedAt,'2026-10-20T10:00','Existing individual pause changed');
+  assert.equal(await page.locator('#nx-resume-all-protocols').count(),1,'Resume All missing');
+  await page.locator('#nx-resume-all-protocols').click();
+  await page.locator('#ca-ok').click();
+  await page.waitForFunction(()=>state.protocols.filter(p=>p.nexusBulkPausedFrom).length===0);
+  const resumed=await page.evaluate(()=>({
+    protocols:state.protocols.map(p=>({status:p.status,history:(p.pauseHistory||[]).length})),
+    untouched:JSON.stringify({supplies:state.supplies,peptides:state.peptides,custom:state.customPeptides})
+  }));
+  assert.deepEqual(resumed.protocols.map(p=>p.status),
+    ['in_progress','active','paused','planned','completed'],
+    'Resume All must preserve individually paused protocols');
+  assert.deepEqual(resumed.protocols.slice(0,2).map(p=>p.history),[1,1],
+    'Global pause intervals not preserved historically');
+  assert.equal(resumed.untouched,bulkBefore,'Pause/Resume changed inventory or dose history');
   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
  }
