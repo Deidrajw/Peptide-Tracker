@@ -1,3 +1,8 @@
+## 2026-11-01 — picker WebKit regression identified, focus-return corrections CODED
+- Source `0ed9d03e` Chromium #41358693238 / WebKit #41358693323 FAIL: compound options 6 instead of 5 because Browse all erroneously exposed option role; application `bc8325a5` fixes Browse role.
+- WebKit #41358985489 at `1fab968c` FAIL: after keyboard selection, next Other-form custom option existed but was hidden; focus remained on a collapsed list item and subsequent input focus/out closed new suggestions. Corrections `96dc4bc0` (Other form) and `4e1b0502` (Vial) return focus to compound input, then close list. Test `57196a96` asserts input focus after Enter. Shared compound browser Back accessible name `4d162c31` is now context-neutral.
+- Latest corrected-code five workflows PENDING, NOT PASS. An unrelated exact-head real Chromium two-tab writer job previously FAILED at `1fab968c` due stale-tab rejection during test; keep P0 BLOCKING and do not reinterpret as safe writer pass. No physical iPhone screenshots or VoiceOver acceptance. Nasal LIVE OFF; no merge/deploy.
+
 ## 2026-11-01 — PR124 form picker 320/390 × light/dark new QA gate
 - Test source `bedff373`: no duplicate native datalist on Other forms, labelled searchable compound field; existing five-result/44px/browse/custom/stock safety assertions retained.
 - Test source `cc568a3f`: checks 320/390 responsive picker right edge, no nested list scroll, ArrowDown/Enter keyboard selection and dismissal in LIVE/DEMO dark/light Chromium/WebKit matrix.
