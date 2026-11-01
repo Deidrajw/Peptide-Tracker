@@ -1,3 +1,6 @@
+## 2026-10-31 — User colour correction to Stash light theme (approved direction)
+- Set up vial primary action should use brand purple, not dark charcoal/near-black, in LIGHT appearance. Expanded Open new vial secondary action should be lavender-tinted and legible. Keep Details a restrained secondary surface. Supersedes 2026-10-31 interim dark light-theme primary background #32233e. CSS fix 9ef27f9; acceptance requires new matching DEMO screenshots and device testing.
+
 ## 2026-10-31 — Targeted Stash action hierarchy in PR124 (draft)
 - Retain user-accepted collapsed compound/remaining/action card structure and Details disclosure. Set up vial is one prominent primary action and Details visually secondary in both modes, matching height/radius and accessible focus. No new chevrons. Expanded use setup is a bounded secondary preference row with unmistakable outlined Edit/use setup action; unresolved-method condition is a distinct, readable amber attention message, and Open new vial remains accessible as secondary action.
 - Visual styling only, no changes to vial identity, ownership, default routes, dose math, inventory, localStorage, workflows or previously approved DS2 sections. Requires exact-source automated and physical iPhone evidence before acceptance.
