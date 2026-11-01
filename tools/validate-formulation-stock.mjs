@@ -657,6 +657,30 @@ try {
   assert.equal(actual.settings.theme,'light');
   assert.equal(actual.supplies[0].vials[0].remainingMg,8);
   assert.equal(actual.supplementLogs.length,0);
+  // Exercise the actual app scoped settings/history handlers, not just the
+  // coordinator adapter. Both tabs start with the same persisted snapshot.
+  const resetAppTab=()=>{const raw=localStorage.getItem('peptide-tracker-html-v1');
+   state=JSON.parse(raw);_demoActive=false;
+   _nexusLastSavedSnapshot=raw;_nexusSharedWriter=null;
+  };
+  await a.evaluate(resetAppTab);await b.evaluate(resetAppTab);
+  const appSettings=await a.evaluate(()=>nexusCommitScopedStateChange({
+   kind:'setting',key:'phaseRemindersEnabled',value:true}));
+  assert.equal(appSettings,true,'Actual settings handler must acknowledge durable save');
+  const appHistoryStale=await b.evaluate(()=>nexusCommitScopedStateChange({
+   kind:'supplement-log-upsert',date:'2026-11-02',taken:['Fictional C'],id:'H2',expectedId:null}));
+  assert.equal(appHistoryStale,false,'Actual stale history handler must not claim success');
+  await b.evaluate(resetAppTab);
+  const appHistoryFresh=await b.evaluate(()=>nexusCommitScopedStateChange({
+   kind:'supplement-log-upsert',date:'2026-11-02',taken:['Fictional C'],id:'H2',expectedId:null}));
+  assert.equal(appHistoryFresh,true,'Actual fresh history handler must commit');
+  const appSaved=await a.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  assert.equal(appSaved.settings.phaseRemindersEnabled,true);
+  assert.equal(appSaved.supplementLogs.length,1);
+  assert.equal(appSaved.supplementLogs[0].id,'H2');
+  assert.equal(appSaved.supplies[0].vials[0].remainingMg,8);
+  assert.equal(appSaved.settings.theme,'light');
+  results.push({test:'real Chromium two-tab application scoped settings/history handlers',result:'PASS'});
   results.push({test:'real Chromium two-tab exclusive coordinator races',result:'PASS'});
   await context.close();
  }
