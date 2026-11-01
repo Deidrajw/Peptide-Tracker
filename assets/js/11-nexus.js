@@ -2194,15 +2194,15 @@ function checkAndNotify() {
   if((due.length||overdue.length)&&"Notification" in window&&Notification.permission==="granted"){
     const msg=overdue.length?`💉 ${overdue[0]} overdue`:`💉 ${due[0]} due today`;
     try{new Notification("Nexus",{body:msg,icon:"/icon.png"});}catch(e){}
-    state.settings.lastNotifyDate=today; saveState();
+    void nexusCommitScopedStateChange({kind:"setting",key:"lastNotifyDate",value:today});
   }
 }
 function enableReminders() {
   if(!("Notification" in window)){alert("Notifications not supported in this browser.");return;}
-  Notification.requestPermission().then(p=>{ state.settings.remindersEnabled=p==="granted"; if(p!=="granted")alert("Please allow notifications in your browser settings."); saveState(); render(); });
+  Notification.requestPermission().then(async p=>{const saved=await nexusCommitScopedStateChange({kind:"setting",key:"remindersEnabled",value:p==="granted"});if(!saved)return;if(p!=="granted")alert("Please allow notifications in your browser settings.");render();});
 }
 function disableReminders() {
-  state.settings.remindersEnabled=false; saveState(); render();
+  void nexusCommitScopedStateChange({kind:"setting",key:"remindersEnabled",value:false}).then(saved=>{if(saved)render();});
 }
 // Phase 2A: five primary destinations, with secondary destinations retained in More.
 // The existing screen renderers and application state are unchanged.
