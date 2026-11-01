@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 DS2 CSS-only corrective candidate, UNRELEASED
+- Commit `2b19a5de` shared form header/48px close/compact review geometry CSS on draft development branch. No JS, accounting, storage schema, production migration, version promotion or release. All 16 physical UI corrections INCOMPLETE; current-code CI/visual/iPhone not verified. Historical fictional Oxytocin browser PASS remains pinned to `66959ba7`. P0 BLOCKING; both LIVE nasal gates OFF; no merge/deploy.
+
 ## 2026-11-01 — Draft PR124 fictional Oxytocin E2E verified, NOT RELEASED
 - Exact app/test SHA `66959ba7`: Chromium/build #41351301441, WebKit #41351301343, writer/mobile/nested SUCCESS. Fictional Oxytocin kit→single nasal preparation transfer→linked bottle→2-spray dose test PASS, verified original source and destination ledger. Candidate artifact #13101324932 downloaded, nested ZIP CRCs and LIVE 26-file manifest and standalone/full-app DEMO parity PASS; build label v0.9.20-beta unchanged. No user data migrated, merge, production deployment, live nasal enablement or physical iPhone acceptance. Original 16 DS2 requests not complete; P0 release hold remains.
 
