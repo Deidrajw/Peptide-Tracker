@@ -1528,3 +1528,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 Stash attachment browser-test repair (no release)
 - Test-only commit 74f798b1 fixes Stash action test to save fictional LIVE fixture and wait for exclusive blend Save acknowledgement/durable attached PDF readback and Kit Details re-render. Previous aca48a79 full QA passed Protocol/Today and many prior suites but overall FAILED on stale immediate Kit Details attachment assertion. Product JS still e8213af1. Current exact-source full QA/artifacts pending; PR remains draft and unmerged; primary production unchanged; P0 release BLOCKING.
+
+
+## 2026-11-01 — PR124 goal tap-target correction, not a release
+- Stash attachment accepted in browser #41325584431, but full QA failed later on legacy Plans View goal touch target. CSS source commit cdffdab2 increases target to 48px; test diagnostic 741865f6 preserves minimum 44px safety assertion. Exact-head full QA / artifact certification pending. No merge/deploy; production untouched, nasal gates OFF, P0 blocking.
