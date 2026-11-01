@@ -248,6 +248,13 @@ function stashView() {
     // Owned stock includes sealed reserves; progress applies only to an actual open vial.
     const displayKitMg = Number.isFinite(kitRemMg) ? kitRemMg : null;
     const displayOpenMg = activeVialForCard && vialRem!=null ? vialRem : null;
+    const preparedNasalBottles=(state.formulationStocks||[]).filter(b=>
+      b.containerType==="nasal-bottle"&&b.method==="Nasal"&&
+      String(b.sourceKitId)===String(s.id)&&b.recordedPreparation&&
+      Number.isFinite(b.remainingMl)&&b.remainingMl>=0);
+    const preparedNasalMl=preparedNasalBottles.reduce((total,b)=>total+b.remainingMl,0);
+    const preparedNasalTransferred=preparedNasalBottles.length>0&&
+      activeVialForCard?.intendedUse==="nasal-source"&&displayOpenMg!==null&&displayOpenMg<=0.000001;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
     const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
     // Stash owns routine legacy method setup. Do not infer a method from the
@@ -273,6 +280,7 @@ function stashView() {
       <div class="nx-kit-primary-vial">
         <span class="nx-kit-overview-label">${displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
         <div class="nx-kit-primary-value">${displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
+        ${preparedNasalBottles.length?`<div class="nx-kit-prepared-summary">${preparedNasalTransferred?"Original vial stock transferred · ":"Prepared nasal stock · "}${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"} · ${preparedNasalMl.toFixed(2)} mL remaining separately</div>`:""}
         ${displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
