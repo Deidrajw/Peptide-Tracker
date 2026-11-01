@@ -1480,3 +1480,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 ## 2026-11-01 — PR124 development-only storage writer gate correction (no release)
 - Draft branch commits 10f7cd638983b45e931ef10bcc00a013dd121a08 (repair line-comment regex syntax in exclusive writer gate), 5e6b5a258b07c4fcc8863abd7d7aa161e32de068 (replace obsolete saveLegacy-based mixed-writer failure diagnostic with exclusive contention/stale/fresh-retry safety assertions). Prior e323d8f1 Chromium job SUCCESS but full and writer CI FAILED at syntax gate.
 - Source schema/data unchanged; no migration or production writes; nasal preparation gates remain OFF. Exact-head CI, LIVE ZIP, FULL-APP DEMO, physical iPhone testing, merge and deployment all PENDING/NOT TESTED. Release version unchanged (documented production v0.9.20-beta); P0 remains BLOCKING.
+
+
+## 2026-11-01 — Additional development-only safety correction, no release
+- 3ce0e793 fixes outdated DEMO save acknowledgement assertion; 3ce0e793 shared-writer #41280418868 and mobile #41280418877 SUCCESS. a3bc6c15 guards startup inventory migration against unacknowledged save; exact-head full QA and artifact pending. No destructive data operation, schema change, merge or deployment. Current production version unchanged; release P0 BLOCKING.
