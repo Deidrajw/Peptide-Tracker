@@ -4097,3 +4097,12 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 .modal .nx-nasal-actual-prep #nx-nasal-record-review{padding:14px 16px;border-radius:14px;background:var(--card);line-height:1.6;overflow-wrap:anywhere}
 .modal .nx-nasal-actual-prep #nx-nasal-record-back{margin:12px 0 8px}
 .modal .nx-nasal-actual-prep #nx-nasal-record-save{margin-top:8px}
+
+/* PR124 — Goal Details uses the same DS2 hierarchy as inventory and dose sheets. */
+.modal .nx-shared-goal-sheet .nx-dose-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.modal .nx-shared-goal-sheet .nx-dose-head>div{min-width:0;flex:1}
+.modal .nx-shared-goal-sheet .nx-dose-title{font-size:20px;line-height:1.25;overflow-wrap:anywhere;margin:4px 0}
+.modal .nx-shared-goal-sheet .nx-dose-close{min-width:44px;min-height:44px;flex:none}
+.modal .nx-shared-goal-sheet .nx-goal-detail-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:16px}
+.modal .nx-shared-goal-sheet .nx-goal-detail-tab{min-width:0;min-height:44px;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:650;border:1px solid var(--border);background:var(--surface-2);color:var(--t2)}
+.modal .nx-shared-goal-sheet .nx-goal-detail-tab[aria-selected="true"]{color:var(--t1);font-weight:750}
