@@ -99,6 +99,63 @@ try {
    demo:isDemoMode(),
    visible:document.querySelectorAll('.nx-other-stock-row').length
   }));
+
+  // PR124 physical-iPhone failure reproduction: entry and review must use one
+  // DS2 sheet and no full-height single-choice detour. Fictional sources only.
+  await page.evaluate(()=>{
+    const oral=state.formulationStocks.find(x=>x.containerType==='capsule-bottle');
+    const nasal=state.formulationStocks.find(x=>x.containerType==='nasal-bottle');
+    oral.remainingCount=27;
+    nasal.remainingMg=10;nasal.remainingMl=7;nasal.mgPerSpray=0.05;nasal.mlPerSpray=0.1;
+    nexusCapsuleDoseModal('Fictional Slew');
+  });
+  const formLayout=async()=>{
+    return page.locator('.modal.nx-form-log-sheet').evaluate(el=>{
+      const bounds=el.getBoundingClientRect();
+      const head=el.querySelector('.nx-dose-head');
+      const close=head.querySelector('#x').getBoundingClientRect();
+      return {sheetRight:bounds.right,sheetHeight:bounds.height,
+        viewportWidth:document.documentElement.clientWidth,viewportHeight:window.innerHeight,
+        scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,
+        closeWidth:close.width,closeHeight:close.height,
+        pageOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
+    });
+  };
+  const oralLayout=await formLayout();
+  assert.ok(!oralLayout.pageOverflow&&oralLayout.sheetRight<=oralLayout.viewportWidth+2,
+    'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
+  assert.ok(oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=44&&oralLayout.closeHeight>=44,
+    'Capsule sheet height/close target: '+JSON.stringify(oralLayout));
+  await page.locator('#nx-capsule-count').fill('2');
+  await page.locator('#nx-capsule-review').click();
+  assert.equal(await page.locator('#nx-capsule-entry-fields').isHidden(),true,
+    'Capsule review should replace entry controls, not duplicate them');
+  assert.equal(await page.locator('#nx-capsule-confirm').isVisible(),true);
+  await page.locator('#nx-capsule-back').click();
+  assert.equal(await page.locator('#nx-capsule-entry-fields').isVisible(),true);
+  assert.equal(await page.locator('#nx-capsule-count').inputValue(),'2',
+    'Back must preserve the exact original input');
+  await page.evaluate(()=>closeModal());
+  await page.evaluate(()=>nexusNasalDoseModal('Fictional Slew'));
+  const nasalLayout=await formLayout();
+  assert.ok(!nasalLayout.pageOverflow&&nasalLayout.sheetRight<=nasalLayout.viewportWidth+2,
+    'Spray sheet viewport overflow: '+JSON.stringify(nasalLayout));
+  assert.ok(nasalLayout.sheetHeight<=nasalLayout.viewportHeight+2&&nasalLayout.closeWidth>=44&&nasalLayout.closeHeight>=44,
+    'Spray sheet height/close target: '+JSON.stringify(nasalLayout));
+  await page.locator('#nx-spray-count').fill('2');
+  await page.locator('#nx-spray-review').click();
+  assert.equal(await page.locator('#nx-spray-entry-fields').isHidden(),true,
+    'Spray review should replace entry controls');
+  const reviewedSpray=await page.locator('#nx-spray-summary').textContent();
+  assert.ok(reviewedSpray.includes('Estimated bottle balance after saving'),
+    'Spray review must name estimated balance');
+  assert.ok(!reviewedSpray.includes(String((await page.evaluate(()=>state.formulationStocks.find(x=>x.containerType==='nasal-bottle').id)))),
+    'Spray review must not expose raw internal container ID');
+  await page.locator('#nx-spray-back').click();
+  assert.equal(await page.locator('#nx-spray-entry-fields').isVisible(),true);
+  assert.equal(await page.locator('#nx-spray-count').inputValue(),'2');
+  await page.evaluate(()=>closeModal());
+
   // Compare original vial state from first snapshot, never infer formulations from kits.
   const current=await page.evaluate(()=>JSON.stringify(state.supplies));
   assert.equal(current,before,'existing vial kits changed');
