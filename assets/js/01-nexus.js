@@ -108,6 +108,38 @@ function nexusPlanScopedStateChange(snapshot,operation){
   if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
+ }else if(operation.kind==="supplement-list-add"){
+  const value=operation.name;
+  if(typeof value!=="string"||!value.trim()||value.trim().length>160)fail("Valid supplement name required");
+  if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
+  const list=next.settings.supplements||[];
+  if(!Array.isArray(list))fail("Supplement preferences invalid");
+  if(list.some(x=>String(x).toLocaleLowerCase()===value.trim().toLocaleLowerCase()))fail("Supplement already exists");
+  next.settings.supplements=[...list,value.trim()].sort((a,b)=>a.localeCompare(b));
+ }else if(operation.kind==="supplement-list-remove"){
+  const list=next.settings?.supplements;
+  if(!Array.isArray(list)||typeof operation.name!=="string"||!list.includes(operation.name))
+    fail("Exact supplement name unavailable");
+  next.settings.supplements=list.filter(x=>x!==operation.name);
+  // Preserve dated supplement records verbatim.
+ }else if(operation.kind==="supplement-log-upsert"){
+  if(typeof operation.date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(!Array.isArray(next.supplementLogs)||!Array.isArray(operation.taken))
+    fail("Supplement history and selected items required");
+  if(operation.taken.some(x=>typeof x!=="string"||!x.trim())||
+     new Set(operation.taken).size!==operation.taken.length)fail("Invalid duplicate supplement selection");
+  const matches=next.supplementLogs.filter(x=>dayKey(x.date)===operation.date);
+  if(matches.length>1)fail("Ambiguous dated supplement history");
+  if(operation.expectedId==null&&matches.length)fail("Dated supplement history changed since editor opened");
+  if(operation.expectedId!=null&&(matches.length!==1||String(matches[0].id)!==String(operation.expectedId)))
+    fail("Original dated supplement entry changed");
+  next.supplementLogs=next.supplementLogs.filter(x=>dayKey(x.date)!==operation.date);
+  if(operation.taken.length){
+    if(operation.expectedId==null&&(operation.id==null||String(operation.id).trim()===""))fail("New history ID required");
+    const id=operation.expectedId!=null?matches[0].id:operation.id;
+    if(next.supplementLogs.some(x=>String(x.id)===String(id)))fail("Duplicate supplement history ID");
+    next.supplementLogs.push({...matches[0],id,date:operation.date,taken:[...operation.taken]});
+  }
  }else if(operation.kind==="supplement-log-delete"){
   if(typeof operation.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(operation.date))fail("Valid exact date required");
   if(!Array.isArray(next.supplementLogs))fail("Supplement log history unavailable");
