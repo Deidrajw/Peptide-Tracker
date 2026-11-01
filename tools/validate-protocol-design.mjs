@@ -25,11 +25,22 @@ try{
     await page.evaluate(async value=>{
       const fixture=buildDemoState('weight_loss');
       fixture.profile.onboardingDone=true;
-      if(_demoActive)state=fixture;
+      // The fictional starter kits can use legacy vial shapes. Real Nexus
+      // normalizes its inventory during boot before it acknowledges storage.
+      // Normalize this synthetic fixture before the first durable save too;
+      // otherwise rendering lazily adds supplies[].vials and the correct
+      // exclusive writer rejects an unrelated settings edit as unsaved stock.
+      state=fixture;
+      migrateToInventoryV2();
+      (state.supplies||[]).forEach(kit=>{
+        if(!kit.isBlend){migrateKitToV2(kit);ensureKitVials(kit);}
+      });
+      const normalized=JSON.parse(JSON.stringify(state));
+      if(_demoActive)state=normalized;
       else {
         const writer=nexusWriter(),raw=writer.expected();
         const before=raw===null?null:JSON.parse(raw);
-        const result=await writer.transaction(before,()=>({next:fixture}));
+        const result=await writer.transaction(before,()=>({next:normalized}));
         state=result.next;_nexusLastSavedSnapshot=writer.expected();
       }
       document.documentElement.dataset.theme=value;
