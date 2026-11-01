@@ -147,7 +147,7 @@ function comboDoseModal() {
       e.stopPropagation();
       confirmAction("Remove this favourite combo?", async ()=>{
         state.comboPresets = presets.filter(p=>String(p.id)!==x.dataset.id);
-        saveState(); closeModal(); comboDoseModal();
+        if(!await nexusCommitCurrentState())return;closeModal();comboDoseModal();
       });
     });
   } catch(e) { showErrorBanner("comboDoseModal preset wiring: "+e.message); }
@@ -370,7 +370,7 @@ function rescheduleDoseModal(name, originalDate) {
       entry.scheduleWeekdays = entry.scheduleWeekdays.map(d=>((d+deltaDays)%7+7)%7);
     }
 
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -418,7 +418,7 @@ function skipDoseModal(name, originalDate) {
   m.querySelector("#sk-save").onclick = async () => {
     if (!entry.skips) entry.skips = [];
     entry.skips.push({ id: uid(), date: originalDate, kind: "skipped", reason: m.querySelector("#sk-reason").value || null });
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -441,7 +441,7 @@ function markMissedModal(name, originalDate) {
   m.querySelector("#mm-save").onclick = async () => {
     if (!entry.skips) entry.skips = [];
     entry.skips.push({ id: uid(), date: originalDate, kind: "missed", reason: m.querySelector("#mm-note").value.trim() || null });
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -538,7 +538,7 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
       // vial if that draw also happened to empty it; otherwise it stays active/open with
       // its remainder available for the next preparation.
       if (emptiesVial) finishVial(kit, vial, "used_in_dose");
-      saveState(); closeModal();
+      if(!await nexusCommitCurrentState())return;closeModal();
       onComplete(actual);
       return;
     }
@@ -580,7 +580,7 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
         vial.remainingMg = Math.max(0, Math.round((vial.remainingMg - doseToMg(intendedDraw, c.unit))*100)/100);
       }
       if (emptiesVial) finishVial(kit, vial, reasonKey);
-      saveState(); closeModal();
+      if(!await nexusCommitCurrentState())return;closeModal();
       onComplete(actual);
     };
   };
@@ -638,7 +638,7 @@ function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
         showErrorBanner("The reaction no longer exists. Nothing changed.");return;
       }
       target.reactions=target.reactions.filter(r=>String(r.id)!==String(id));
-      saveState();render();nexusDoseReactionModal(compoundName,doseId);
+      if(!await nexusCommitCurrentState())return;render();nexusDoseReactionModal(compoundName,doseId);
     },{confirmLabel:"Delete reaction",cancelLabel:"Keep reaction",tone:"danger"});
   });
   m.querySelector("#nx-reaction-save").onclick=async()=>{
@@ -654,7 +654,7 @@ function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
       if(!original){showErrorBanner("The reaction no longer exists. Nothing changed.");return;}
       Object.assign(original,fields);
     } else target.reactions.push({id:uid(),...fields,recordedAt:new Date().toISOString()});
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -765,7 +765,7 @@ function nexusUseSetupModal(name,onSaved) {
     state.nexusUseSetups[name]={form:productForm,method:productForm,unit,trackingMode,
       ...(choice&&trackingMode==="backed"?{sourceKitId:choice.kit.id,sourceVialId:choice.vial.id}:{}),
       updatedAt:new Date().toISOString()};
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
     if(typeof onSaved==="function")onSaved();
   };
 }
@@ -1270,7 +1270,7 @@ function doseModal(name, existing, occTime, formChoice) {
     if (kp) kp.style.display = (needsKitPicker && selectedSource==="fresh") ? "" : "none";
     renderAllocPanel();
   });
-  m.querySelectorAll(".nx-confirm-legacy-vial").forEach(b=>b.onclick=()=>{
+  m.querySelectorAll(".nx-confirm-legacy-vial").forEach(b=>b.onclick=async()=>{
     const kit=state.supplies.find(k=>String(k.id)===b.dataset.kit);
     const vial=kit?.vials?.find(v=>String(v.id)===b.dataset.vial);
     if(!kit||!vial||!["open","active"].includes(vial.status)||getVialRemainingMg(kit,vial)<=0.01){
@@ -1293,7 +1293,7 @@ function doseModal(name, existing, occTime, formChoice) {
       rows:rows.map(r=>({...r}))
     };
     vial.intendedUse=nexusDoseMethodForm(initialMethod);
-    saveState();closeModal();doseModal(name);
+    if(!await nexusCommitCurrentState())return;closeModal();doseModal(name);
   });
   m.querySelectorAll(".kit-opt").forEach(b=>b.onclick=()=>{
     selectedKitId = b.dataset.kit;
@@ -1910,7 +1910,7 @@ function doseModal(name, existing, occTime, formChoice) {
           // touching remainingMg, which is always canonical mg.
           if (v) { const wasEmpty=v.status==="empty"; v.remainingMg=Math.round((v.remainingMg+doseToMg(a.amount, c.unit))*100)/100; if(wasEmpty&&v.remainingMg>0.01) v.status="open"; }
         });
-        saveState();
+        if(!await nexusCommitCurrentState())return;
         showErrorBanner(`Not enough in the open vial for this dose — ${shortfall.needed.toFixed(2)}${c.unit} short in ${shortfall.kitName}. Open another vial first, then try again.`);
         return;
       }
@@ -2140,7 +2140,7 @@ function prepareMixedSyringeModal(draftComponents) {
       entry.allocations = entry.components[0].allocations;
     }
     state.preparedDoses.push(entry);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
     showUndoToast(`Syringe prepared (${entry.components.length} compound${entry.components.length===1?"":"s"}) · Undo`, () => {
       state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
       // Reverse each component's real deduction, not just remove the record — mirrors
@@ -2157,7 +2157,7 @@ function prepareMixedSyringeModal(draftComponents) {
           if (wasEmpty && v.remainingMg>0.01) v.status = "open";
         });
       });
-      saveState(); render();
+      if(!await nexusCommitCurrentState())return;render();
     });
   };
 }
@@ -2219,7 +2219,7 @@ function administerSyringeModal(pd) {
     pd.remainingCount = Math.max(0, (pd.remainingCount||0) - 1);
     if (pd.remainingCount === 0) pd.status = "administered";
     pd.administeredAt = date;
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -2599,7 +2599,7 @@ function prepareDosesModal(name) {
       }
       const allocations=saved.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId}));
       const entry={id:uid(),compound:name,amountEach:amt,unit:c.unit,count,remainingCount:count,allocations,createdAt:localDatetime()};
-      state.preparedDoses.push(entry);saveState();closeModal();render();
+      state.preparedDoses.push(entry);if(!await nexusCommitCurrentState())return;closeModal();render();
       showUndoToast(`${count} ${name} doses prepared · Undo`,()=>{
         state.preparedDoses=state.preparedDoses.filter(p=>p.id!==entry.id);
         allocations.forEach(a=>{const kit=state.supplies.find(k=>k.id===a.kitId);if(kit)undoConsumeCompoundInventory(kit,{allocations:[a]});});
@@ -2636,13 +2636,13 @@ function prepareDosesModal(name) {
           const v = k ? (k.vials||[]).find(v=>v.id===a.vialId) : null;
           if (v) { const wasEmpty=v.status==="empty"; v.remainingMg=Math.round((v.remainingMg+doseToMg(a.amount, c.unit))*100)/100; if(wasEmpty&&v.remainingMg>0.01) v.status="open"; }
         });
-        saveState();
+        if(!await nexusCommitCurrentState())return;
         showErrorBanner(`Not enough inventory to prepare all ${count} syringes — nothing was saved.`);
         return;
       }
       const entry = { id:uid(), compound:name, amountEach:amt, unit:c.unit, count, remainingCount:count, allocations:realAllocations, createdAt:localDatetime() };
       state.preparedDoses.push(entry);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       showUndoToast(`${count} ${name} doses prepared · Undo`, () => {
         state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
         realAllocations.forEach(a=>{ const k=state.supplies.find(s=>s.id===a.kitId); if(k) undoConsumeCompoundInventory(k, {allocations:[{...a, amountMg: doseToMg(a.amount, c.unit)}]}); });
@@ -2699,13 +2699,13 @@ function prepareDosesModal(name) {
         const v = k ? (k.vials||[]).find(v=>v.id===a.vialId) : null;
         if (v) { const wasEmpty=v.status==="empty"; v.remainingMg=Math.round((v.remainingMg+doseToMg(a.amount, c.unit))*100)/100; if(wasEmpty&&v.remainingMg>0.01) v.status="open"; }
       });
-      saveState();
+      if(!await nexusCommitCurrentState())return;
       showErrorBanner(`Not enough in the source vial(s) to prepare this dose — nothing was saved.`);
       return;
     }
     const entry = { id:uid(), compound:name, amountEach:amt, unit:c.unit, count:1, remainingCount:1, allocations:realAllocations, createdAt:localDatetime() };
     state.preparedDoses.push(entry);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
     showUndoToast(`${name} syringe prepared${realAllocations.length>1?` (${realAllocations.length} vials)`:""} · Undo`, () => {
       state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
       realAllocations.forEach(a=>{ const k=state.supplies.find(s=>s.id===a.kitId); if(k) undoConsumeCompoundInventory(k, {allocations:[{...a, amountMg: doseToMg(a.amount, c.unit)}]}); });
@@ -2749,7 +2749,7 @@ function reconstituteVialModal(kit, onDone) {
       const prevVials = JSON.parse(JSON.stringify(ensureKitVials(kit)));
       const prevAgg = { reconDate:kit.reconDate, activeKit:kit.activeKit, bacMl:kit.bacMl, openedVials:kit.openedVials, totalVials:kit.totalVials };
       const newVial = activateVial(kit, m.querySelector("#rc-date").value, parseFloat(m.querySelector("#rc-bac").value)||kit.bacMl, m.querySelector("#rc-notes").value);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       // Pass the exact vial that was just created through to onDone. getActiveVial(kit)
       // is ambiguous the instant a kit has more than one vial with status "active" at once
       // (the old one not yet drawn, the new one just opened) — it just returns whichever
@@ -2758,7 +2758,7 @@ function reconstituteVialModal(kit, onDone) {
       if (onDone) { onDone(newVial); return; } // resumes the in-progress dose — no undo toast here, the draft itself is the safety net
       showUndoToast(`${kit.name} vial reconstituted · Undo`, () => {
         kit.vials = prevVials; Object.assign(kit, prevAgg);
-        saveState(); render();
+        if(!await nexusCommitCurrentState())return;render();
       });
     });
   };
@@ -2844,7 +2844,7 @@ async function quickLogDose(name, occTime) {
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
     reverseDoseInventoryEffect(dose);
     if (fulfilled) fulfilled.doseId = null;
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return;render();
   });
   nexusPostProtocolDoseFollowup(name,dose);
 }
@@ -2917,7 +2917,7 @@ function todayLogSheet(log) {
   m.querySelectorAll(".del-update").forEach(b=>b.onclick=async()=>{
     const uid2=+b.dataset.uid;
     const entry = state.dailyLogs.find(l=>l.id===log.id);
-    if(entry){ entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2); saveState(); closeModal(); render(); }
+    if(entry){ entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2); if(!await nexusCommitCurrentState())return;closeModal();render(); }
   });
 }
 
@@ -2947,7 +2947,7 @@ function addUpdateModal(log) {
     const updateTime = new Date(now); updateTime.setHours(hh,mm,0,0);
     const update = { id:uid(), time:updateTime.toISOString(), symptoms:f.symptoms, notes:m.querySelector("#notes").value };
     const entry = state.dailyLogs.find(l=>l.id===log.id);
-    if(entry){ if(!entry.updates) entry.updates=[]; entry.updates.push(update); saveState(); closeModal(); render(); }
+    if(entry){ if(!entry.updates) entry.updates=[]; entry.updates.push(update); if(!await nexusCommitCurrentState())return;closeModal();render(); }
   };
 }
 
@@ -2974,7 +2974,7 @@ function editUpdateModal(log, update) {
     const newTime=new Date(t); newTime.setHours(hh,mm,0,0);
     const entry=state.dailyLogs.find(l=>l.id===log.id);
     const u=entry&&(entry.updates||[]).find(u=>u.id===update.id);
-    if(u){ u.time=newTime.toISOString(); u.symptoms=syms; u.notes=m.querySelector("#notes").value; saveState(); closeModal(); render(); }
+    if(u){ u.time=newTime.toISOString(); u.symptoms=syms; u.notes=m.querySelector("#notes").value; if(!await nexusCommitCurrentState())return;closeModal();render(); }
   };
 }
 
@@ -3142,7 +3142,7 @@ function dailyModal(existing, prefillDate) {
       state.supplementLogs=(state.supplementLogs||[]).filter(l=>dayKey(l.date)!==f.date);
       if(suppTaken2.size) state.supplementLogs.push({id:uid(),date:f.date,taken:[...suppTaken2]});
     }
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -3152,7 +3152,7 @@ async function addSupplementFromSearch(query, onSelect) {
   if(!name)return null;
   const catalogue=state.settings.supplements || (state.settings.supplements=[]);
   let known=catalogue.find(v=>v.toLocaleLowerCase()===name.toLocaleLowerCase());
-  if(!known){known=name;catalogue.push(name);catalogue.sort((a,b)=>a.localeCompare(b));saveState();}
+  if(!known){known=name;catalogue.push(name);catalogue.sort((a,b)=>a.localeCompare(b));if(!await nexusCommitCurrentState())return;}
   onSelect(known);
   return known;
 }
@@ -3199,7 +3199,7 @@ function supplementModal(prefillDate) {
   modal.querySelector("#suppsave").onclick=async()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
     if(taken.size)state.supplementLogs.push({id:uid(),date:today,taken:[...taken]});
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
