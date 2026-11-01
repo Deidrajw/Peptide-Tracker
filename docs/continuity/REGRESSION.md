@@ -1,3 +1,7 @@
+## 2026-11-01 — formulation visual evidence at two engines, unverified
+- TEST CODED `2f4e8d76`: `validate-formulation-stock.mjs` captures picker five-result and typed custom panels, nasal preparation Entry/Review/Back and sealed-source Review at each LIVE/isolated DEMO width/theme permutation for Chromium and WebKit. 96 planned PNGs with per-cell JSON geometry; assertions reject horizontal document/panel clipping. Browser viewport screenshots do not simulate actual software keyboard, physical iPhone or VoiceOver. No PASS claim until same-head CI completes and screenshots are visually reviewed.
+- Prior WebKit screenshot run #41363339787 SUCCESS; prior Chromium #41363339799 pending at last check, so Log Dose screenshot verification and inspected geometry remain outstanding. P0 mixed writer blocking, LIVE nasal flags OFF.
+
 ## 2026-11-01 — exact-head Chromium/WebKit green; Log Dose screenshot evidence added, pending execution
 - Chromium #41362141111 exact `27f24637` SUCCESS: `validate-logdose-ui.mjs` 176 fictional flows across 8 LIVE/DEMO 320/390 light/dark configurations; prior moving-entrance geometry error no longer fails after waiting for `slideUp` completion. WebKit #41362141098 SUCCESS (16 fictional form sessions). These are narrower than complete 16-row × 16-configuration visual acceptance.
 - Artifact #13105393555: release manifest source `27f24637`, all 26 LIVE ZIP paths verified present, standalone DEMO present. No new real iOS keyboard, VoiceOver, or 256-cell proof.
