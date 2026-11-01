@@ -597,13 +597,13 @@ function wireBody() {
     if(box) box.style.display=box.style.display==="none"?"block":"none";
   });
   document.querySelectorAll(".moremenu").forEach(b=>b.onclick=async()=>nxOpenCompoundSheet(b));
-  document.querySelectorAll(".tunerange").forEach(r=>r.onchange=async()=>{
+  document.querySelectorAll(".tunerange").forEach(r=>{r.oninput=()=>{const tv=r.closest(".tunebox")?.querySelector(".tuneval");if(tv)tv.textContent=parseFloat(r.value)+" days";};r.onchange=async()=>{
     const name=r.dataset.name; const days=parseFloat(r.value);
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:days,doses:[]};
     tgt[name].scheduleDays=days; if(!await nexusCommitCurrentState())return;
     const tv=r.closest(".tunebox")?.querySelector(".tuneval"); if(tv) tv.textContent=days+" days";
-  });
+  };});
   document.querySelectorAll(".route-btn").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, route=b.dataset.route;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
