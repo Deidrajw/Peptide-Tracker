@@ -130,7 +130,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
   next.settings.supplements=list.filter(x=>x!==operation.name);
   // Preserve dated supplement records verbatim.
  }else if(operation.kind==="supplement-log-upsert"){
-  if(typeof operation.date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(typeof operation.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(operation.date))fail("Valid exact date required");
   if(!Array.isArray(next.supplementLogs)||!Array.isArray(operation.taken))
     fail("Supplement history and selected items required");
   if(operation.taken.some(x=>typeof x!=="string"||!x.trim())||
