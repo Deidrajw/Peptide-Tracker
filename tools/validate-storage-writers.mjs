@@ -6,10 +6,11 @@ for(const file of files){
  const writes=[...text.matchAll(/localStorage\s*\.\s*(setItem|removeItem)\s*\(\s*STORE_KEY\s*[,)]/g)];
  if(file==='assets/js/01-nexus.js'){
    if(writes.length!==2)throw Error('Canonical storage gateway missing/duplicated: '+writes.length);
-   if(!text.includes('writer.saveLegacy(state)')||
-      !text.includes('await writer.eraseExclusive(state)')||
-      text.includes('writer.removeLegacy()'))
-     throw Error('Canonical writer or exclusive erase gateway missing');
+   if(!text.includes('await writer.eraseExclusive(state)')||
+      !text.includes('await writer.transaction(before,()=>({next:proposed}))')||
+      /\\bfunction\\s+saveState\\s*\\(/.test(text)||
+      /\\b(?:saveLegacy|removeLegacy)\\s*\\(/.test(text))
+     throw Error('Unlocked writer gateway detected or exclusive save/erase missing');
  }else if(writes.length)throw Error(file+' has '+writes.length+' direct main storage writes outside coordinator');
  count+=writes.length;
 }
@@ -97,4 +98,13 @@ if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
 for(const lock of ['NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false','NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false']){
  if(!runtime.includes(lock))throw Error('Unapproved live stock transfer enablement: '+lock);
 }
-console.log('PASS: canonical writer ownership and prepared stock release gates intact; direct gateway adapters='+count);
+const coordinator=fs.readFileSync('assets/js/nexus-write-coordinator.js','utf8');
+if(/\\b(?:saveLegacy|removeLegacy)\\s*[:(,}]/.test(coordinator))throw Error('Unlocked coordinator API still exposed');
+for(const file of files){
+ const text=fs.readFileSync(file,'utf8');
+ const active=text.replace(/^\\s*\\/\\/.*$/gm,'');
+ if(/\\bsaveState\\s*\\(/.test(active)||/\\b(?:saveLegacy|removeLegacy)\\s*\\(/.test(active))throw Error('Legacy save caller remains: '+file);
+ const bareErase=[...active.matchAll(/(?<!function\\s)nexusEraseSavedState\\s*\\(/g)];
+ for(const m of bareErase){const preceding=active.slice(Math.max(0,m.index-18),m.index);if(!/await\\s*$/.test(preceding))throw Error('Destructive erase not awaited: '+file);}
+}
+console.log('PASS: no unlocked app-state save/erase gateway; canonical exclusive adapters='+count);
