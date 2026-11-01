@@ -1,5 +1,7 @@
-/* Additive formulation inventory. Never reads or mutates legacy supplies/vials.
- * No dose or transfer operations are permitted through this module.
+/* Additive formulation inventory. Never directly persists or alters physical vial stock.
+ * Capsule dose/reversal planners return immutable full-state snapshots; callers
+ * must use the shared exclusive writer for any real inventory or history change.
+ * Nasal preparation transfers remain a separate safety-gated subsystem.
  */
 (function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;else root.NexusFormulationStock=api;})(typeof globalThis!=="undefined"?globalThis:this,function(){
  const fail=m=>{throw Error(m)};
