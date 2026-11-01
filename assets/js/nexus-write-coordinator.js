@@ -66,7 +66,7 @@
    try{
     return await lock(lockName,async()=>{
      const observed=compare();
-     if(observed!==JSON.stringify(current))markConflict();
+     if(observed!==(current===null?null:JSON.stringify(current)))markConflict();
      if(read()!==observed)markConflict();
      try{remove()}catch(error){blocked=true;throw error}
      let after;
@@ -87,7 +87,7 @@
      const observed=compare();
      // The current in-memory snapshot must be identical to durable state
      // before a destructive stock transaction; never merge silently.
-     if(observed!==JSON.stringify(current))markConflict();
+     if(observed!==(current===null?null:JSON.stringify(current)))markConflict();
      const proposed=await transform(clone(current));
      if(!proposed||!proposed.next||typeof proposed.next!=="object")fail("Transaction did not return a complete state");
      if(read()!==observed)markConflict();
