@@ -2412,6 +2412,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
    volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime()
   };
+  let committed=false;
   try{
    if(!globalThis.NexusPreparationBridge?.planRecordedNasal)throw Error("Planner unavailable");
    if(_demoActive){
@@ -2454,19 +2455,25 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
         vialId:candidateVial.id,kind:"recorded-nasal-preparation-source",notes:"Opened as part of confirmed preparation transfer"});
     }
     const result=globalThis.NexusPreparationBridge.planRecordedNasal(sourceSnapshot,recorded);
-    state=result.next;closeModal();render();
+    state=result.next;committed=true;closeModal();render();
    }else{
     // Live commit stays blocked by the central safety flag until ALL ordinary
     // state writers also obey exclusive cross-tab coordination.
     const result=await nexusCommitRecordedNasalPreparation(recorded);
     if(!result?.container)throw Error("Verified prepared container missing");
-    closeModal();render();
+    committed=true;closeModal();render();
    }
   }catch(error){
    console.error("Recorded nasal preparation rejected",error);
-   showErrorBanner(_demoActive?
-    "Source, quantities or destination could not be verified. Nothing saved.":
-    "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+   // A rendering failure after a successful in-memory DEMO commit is NOT a
+   // rejected transaction. Never tell the user "Nothing saved" after mutation.
+   if(committed){
+    showErrorBanner("Preparation was recorded, but the screen could not refresh. Reopen Stash to verify the linked bottle.");
+   }else{
+    showErrorBanner(_demoActive?
+     "Preparation was not recorded: "+String(error?.message||"source or destination verification failed")+". No inventory changed.":
+     "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+   }
    button.disabled=false;
   }
  };
