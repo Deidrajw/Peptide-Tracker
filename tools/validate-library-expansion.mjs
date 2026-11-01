@@ -28,16 +28,17 @@ for(const name of requiredBioregulators){
 assert.match(library.find(x=>x.name==='SLU-PP-332').overview,/not a peptide/i);
 assert.match(library.find(x=>x.name==='ATX-304').overview,/not a peptide/i);
 assert.ok(library.find(x=>x.name==='ATX-304').aliases.includes('O304'));
-const unverified=library.find(x=>x.name==='SLU-PP-519');
-assert.ok(unverified,'Confirmed user spelling must be searchable');
-assert.equal(unverified.identityVerified,false,'Unverified label must not be presented as verified');
-assert.equal(unverified.category,'Identity unverified');
-assert.equal(unverified.researchSources.length,0,'Do not cite unrelated research as direct proof');
-assert.equal(Object.keys(unverified.meta).length,0,'No dose, route or preparation defaults');
-assert.match(unverified.overview,/do not assume/i,'No inferred chemistry or conflated identities');
-assert.ok(library.find(x=>x.name==='SLU-PP-332')!==unverified);
+const slu915=library.find(x=>x.name==='SLU-PP-915');
+assert.ok(slu915,'User-confirmed SLU-PP-915 must be searchable');
+assert.equal(slu915.identityVerified,true,'Research-confirmed 915 designation');
+assert.equal(slu915.category,'Metabolic / Experimental');
+assert.ok(slu915.researchSources.some(x=>x.includes('41421047')));
+assert.equal(Object.keys(slu915.meta).length,0,'No experimental 915 dose or preparation defaults');
+assert.match(slu915.overview,/not a peptide/i);
+assert.ok(!names.includes('SLU-PP-519'),'Superseded provisional 519 must not be curated');
+assert.ok(slu915!==library.find(x=>x.name==='SLU-PP-332'),'915 and 332 must remain separate');
 for(const sku of ['SK5','LC216','RT10','5AD','Adamax-1032da']){
  assert.ok(!names.includes(sku),'Vendor SKU must not be canonically imported: '+sku);
 }
 assert.ok(library.some(x=>x.name==='Cartalax')&&library.some(x=>x.name==='Pinealon'),'Previously approved catalogue records preserved');
-console.log('PASS: '+names.length+' catalogue entries; 54 researched additions plus one unverified user label, bioregulators, types, duplicate names and no new dosing defaults.');
+console.log('PASS: '+names.length+' catalogue entries; 55 researched additions, bioregulators, types, duplicate names and no new dosing defaults.');
