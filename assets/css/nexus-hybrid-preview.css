@@ -4052,3 +4052,16 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   .modal.nx-form-log-sheet{padding:16px 14px calc(16px + env(safe-area-inset-bottom))!important}
   .modal.nx-form-log-sheet .nx-dose-title{font-size:19px!important}
 }
+
+
+/* Separate the prep action from the vial-row ellipsis. No narrow multi-action grid. */
+.nx-kit-record-nasal-row{
+  display:flex;align-items:center;justify-content:center;
+  width:calc(100% - 24px);max-width:calc(100% - 24px);
+  min-height:44px;padding:10px 12px;margin:0 12px 10px;
+  border:1px solid var(--border-sub);border-radius:11px;
+  background:var(--surface-2);color:var(--t1);
+  font-family:inherit;font-size:13px;font-weight:700;
+  line-height:1.4;text-align:center;white-space:normal;
+}
+.nx-kit-record-nasal-row:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
