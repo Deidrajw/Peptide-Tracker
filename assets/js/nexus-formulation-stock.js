@@ -109,7 +109,9 @@
   if(!finite(stock.mgPerCapsule)||stock.mgPerCapsule<=0||!Array.isArray(stock.transactions))fail("Invalid capsule strength or ledger");
   const mg=Math.round(stock.mgPerCapsule*tx.count*1e6)/1e6;
   if(!finite(mg)||mg<=0)fail("Invalid capsule dose");
+  next.customPeptides=next.customPeptides||{};
   const collection=next.peptides?.[tx.compound]?next.peptides:next.customPeptides;
+  if(!collection[tx.compound] && collection===next.customPeptides) collection[tx.compound]={doses:[],status:"inactive",route:"Oral",unit:tx.nativeUnit};
   if(!collection?.[tx.compound]||!Array.isArray(collection[tx.compound].doses))fail("Compound history unavailable");
   const dose={id:tx.doseId,date:tx.date,dose:String(tx.nativeUnit==="mg"?mg:mg*1000),
    method:"Oral",trackingMode:"backed",sourceKind:"formulation-container",sourceContainerId:stock.id,
