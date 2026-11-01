@@ -1573,6 +1573,61 @@ function recordPastPauseModal(protoId) {
   };
 }
 
+/* PR124 P-14: coordinated bulk pause/resume. Only changes running protocols and
+ * records their previous status. All other statuses, inventory and dose history stay intact.
+ * Persistent writes use Nexus's exclusive coordinator to reject stale-tab updates.
+ */
+async function nexusBulkProtocolAction(direction) {
+  if(!["pause","resume"].includes(direction))return false;
+  const eligible = (state.protocols||[]).filter(p=>direction==="pause"
+    ?["active","in_progress"].includes(p.status)
+    :p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt);
+  if(!eligible.length)return false;
+  const targetIds=new Set(eligible.map(p=>String(p.id)));
+  const updatedAt=localDatetime();
+  const mutate=prior=>{
+    const next=JSON.parse(JSON.stringify(prior));
+    const current=(next.protocols||[]).filter(p=>targetIds.has(String(p.id)));
+    if(current.length!==targetIds.size)throw Error("Protocol list changed. Reload before retrying.");
+    for(const p of current){
+      if(direction==="pause"){
+        if(!["active","in_progress"].includes(p.status))throw Error("One protocol is no longer active.");
+        p.nexusBulkPausedFrom=p.status;
+        p.status="paused";
+        p.pausedAt=updatedAt;
+      }else{
+        if(p.status!=="paused"||!p.pausedAt||!p.nexusBulkPausedFrom)throw Error("One protocol pause has changed.");
+        const priorStatus=p.nexusBulkPausedFrom;
+        if(!["active","in_progress"].includes(priorStatus))throw Error("Unrecognised original protocol status.");
+        p.pauseHistory=Array.isArray(p.pauseHistory)?p.pauseHistory:[];
+        p.pauseHistory.push({pausedAt:p.pausedAt,resumedAt:updatedAt});
+        const days=Math.max(0,Math.round((new Date(updatedAt)-new Date(p.pausedAt))/86400000));
+        p.pauseDaysAccumulated=(Number(p.pauseDaysAccumulated)||0)+days;
+        p.pausedAt=null;
+        p.status=priorStatus;
+        delete p.nexusBulkPausedFrom;
+      }
+    }
+    return next;
+  };
+  try{
+    if(_demoActive){
+      state=mutate(state);
+    }else{
+      const writer=nexusWriter();
+      const result=await writer.transaction(state,prior=>({next:mutate(prior)}));
+      state=result.next;
+      _nexusLastSavedSnapshot=writer.expected();
+    }
+    renderBody();
+    return true;
+  }catch(error){
+    console.error("Nexus bulk protocol action rejected",error);
+    showSaveWarning();
+    return false;
+  }
+}
+
 function protocolsView() {
 
 
@@ -1600,6 +1655,9 @@ function protocolsView() {
   const matchesFilter=filterGroups[filter]||filterGroups.all;
   const visibleProtos=protos.filter(matchesFilter);
   const filters=[["all","All"],["not_started","Not started"],["in_progress","In progress"],["paused","Paused"],["completed","Completed"],["archived","Archived"]];
+  const bulkCanPause=protos.filter(p=>["active","in_progress"].includes(p.status)).length;
+  const bulkCanResume=protos.filter(p=>p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt).length;
+  const bulkActions=(bulkCanPause||bulkCanResume)?`<div class="nx-protocol-bulk-actions" aria-label="Protocol schedule controls">${bulkCanPause?`<button type="button" id="nx-pause-all-protocols" class="nx-protocol-bulk-btn">Pause all protocols <span>${bulkCanPause}</span></button>`:""}${bulkCanResume?`<button type="button" id="nx-resume-all-protocols" class="nx-protocol-bulk-btn nx-protocol-bulk-resume">Resume all paused by this action <span>${bulkCanResume}</span></button>`:""}</div>`:"";
   const filterBar='<div class="nx-protocol-filter-row" role="group" aria-label="Filter protocols by status" style="display:flex;gap:7px;overflow-x:auto;padding:3px 0 10px;scrollbar-width:none;max-width:100%">'+filters.map(([key,label])=>'<button type="button" class="nx-protocol-filter" data-status="'+key+'" aria-pressed="'+(filter===key)+'" style="min-height:44px;padding:8px 10px;white-space:nowrap;flex:0 0 auto;border-radius:999px;border:1px solid '+(filter===key?'#A78BFA':'var(--border)')+';background:'+(filter===key?'#A78BFA22':'var(--surface-2)')+';color:'+(filter===key?'#A78BFA':'var(--t3)')+';font-size:12px;font-weight:650">'+label+'</button>').join('')+'</div>';
   const live=visibleProtos.filter(p=>["active","in_progress","paused"].includes(p.status));
   const planned=visibleProtos.filter(p=>p.status==="planned");
@@ -1680,7 +1738,7 @@ function protocolsView() {
   };
 
   const section=(title,color,cards)=>cards.length?`<div class="nexus-protocol-section-label" style="color:${color}">${title} <span style="opacity:.7">${cards.length}</span></div>${cards.map(protoCard).join("")}`:"";
-  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${filterBar}${!visibleProtos.length&&protos.length?`<div class="nx-protocol-empty-filter" role="status" style="padding:20px 10px;text-align:center;color:var(--t4);font-size:12px">No protocols match this status.<br><button type="button" id="nx-protocol-reset-filter" style="min-height:44px;margin-top:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">Show all protocols</button></div>`:""}${!live.length&&!planned.length&&!drafts.length&&!done.length&&!protos.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
+  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${bulkActions}${filterBar}${!visibleProtos.length&&protos.length?`<div class="nx-protocol-empty-filter" role="status" style="padding:20px 10px;text-align:center;color:var(--t4);font-size:12px">No protocols match this status.<br><button type="button" id="nx-protocol-reset-filter" style="min-height:44px;margin-top:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">Show all protocols</button></div>`:""}${!live.length&&!planned.length&&!drafts.length&&!done.length&&!protos.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
 
 }
 
