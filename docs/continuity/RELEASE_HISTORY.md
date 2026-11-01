@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 16-point picker parity and responsive test candidate, NOT RELEASED
+- Branch-only source `e394603f` removes double native/custom Other-form picker; `0ed9d03e` avoids nested five-result scroll; `bc8325a5` fixes Browse all mislabelled as compound option; `f743adba` aligns Vial custom selection accessibility/wording. Tests `bedff373`, `cc568a3f`, `1fab968c` and persistent 16-point design scorecard committed.
+- Earlier Chromium/WebKit on pre-correction source failed count 6 instead of 5; newest exact-head five-workflow suite not yet fully verified. No source/bottle ledger implementation changed, historical E2E remains source-specific PASS at `66959ba7`. Existing app version unchanged, no production storage migration or live writes. P0 BLOCKING, LIVE nasal OFF, PR124 draft/unmerged/undeployed, device UAT incomplete.
+
 ## 2026-11-01 — PR124 DS2 CSS-only corrective candidate, UNRELEASED
 - Commit `2b19a5de` shared form header/48px close/compact review geometry CSS on draft development branch. No JS, accounting, storage schema, production migration, version promotion or release. All 16 physical UI corrections INCOMPLETE; current-code CI/visual/iPhone not verified. Historical fictional Oxytocin browser PASS remains pinned to `66959ba7`. P0 BLOCKING; both LIVE nasal gates OFF; no merge/deploy.
 
