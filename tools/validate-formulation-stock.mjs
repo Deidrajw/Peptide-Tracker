@@ -186,6 +186,70 @@ try {
     correctVial:'reserved-source',wrongSourceBlocked:true},
     'Reserved nasal-source preview must conserve mass and reject incompatible stock');
 
+
+  // DEMO-only complete form-aware nasal flow. Physical vial is debited once
+  // upon explicit preparation, never on the later spray log or reversal.
+  await page.evaluate(()=>{
+    const name='Fictional Prepared Spray Test';
+    state.customPeptides[name]={doses:[],status:'inactive',route:'Nasal',unit:'mg'};
+    state.supplies.push({id:990400,name,activeKit:true,vialMg:5,vials:[
+      {id:'nasal-reserved-a',status:'open',intendedUse:'nasal-source',
+        sequenceNumber:1,remainingMg:5,vialMg:5}]});
+    nexusRecordNasalPreparation(990400,'nasal-reserved-a');
+  });
+  assert.equal(await page.locator('#nx-nasal-source-mg').count(),1,
+    'Reserved nasal-source should have a direct recorded-preparation workflow in isolated DEMO');
+  await page.locator('#nx-nasal-source-mg').fill('2');
+  await page.locator('#nx-nasal-bac').fill('1');
+  await page.locator('#nx-nasal-saline').fill('4');
+  await page.locator('#nx-nasal-pump').fill('0.1');
+  await page.locator('#nx-nasal-record-confirm').check();
+  await page.locator('#nx-nasal-record-save').click();
+  const preparedFixture=await page.evaluate(()=>{
+    const kit=state.supplies.find(k=>k.id===990400);
+    const container=state.formulationStocks.find(s=>s.compound==='Fictional Prepared Spray Test');
+    return {source:kit.vials[0].remainingMg,bottleMg:container?.remainingMg,
+      bottleMl:container?.remainingMl,perSpray:container?.mgPerSpray,
+      mlPerSpray:container?.mlPerSpray,sourceId:container?.sourceVialId};
+  });
+  assert.equal(preparedFixture.source,3,'Nasal preparation must debit exact physical vial once');
+  assert.equal(preparedFixture.bottleMg,2,'Destination prepared bottle must credit same mg');
+  assert.equal(preparedFixture.bottleMl,5,'Prepared volume must match actual recorded liquid');
+  assert.equal(preparedFixture.perSpray,0.04,'Nominal mass per spray should be derived from recorded quantities');
+  assert.equal(preparedFixture.mlPerSpray,0.1);
+  assert.equal(preparedFixture.sourceId,'nasal-reserved-a','Preparation must retain exact vial link');
+  await page.evaluate(()=>doseModal('Fictional Prepared Spray Test'));
+  await page.locator('#nx-use-nasal').click();
+  assert.equal(await page.locator('#nx-spray-count').count(),1,
+    'Prepared nasal should log by whole sprays, not mass or injection route');
+  assert.equal(await page.locator('.nx-method-grid').count(),0,
+    'Nasal form-specific entry should not show injection route grid');
+  await page.locator('#nx-spray-count').fill('2');
+  await page.locator('#nx-spray-review').click();
+  await page.locator('#nx-spray-save').click();
+  const sprayed=await page.evaluate(()=>{
+    const source=state.supplies.find(k=>k.id===990400).vials[0];
+    const stock=state.formulationStocks.find(s=>s.compound==='Fictional Prepared Spray Test');
+    const dose=state.customPeptides['Fictional Prepared Spray Test'].doses[0];
+    return {vialMg:source.remainingMg,bottleMg:stock.remainingMg,bottleMl:stock.remainingMl,
+      sprays:dose?.sprayCount,amount:dose?.amountMg,transaction:dose?.preparedTransactionId,
+      doseId:dose?.id,sourceId:stock.id};
+  });
+  assert.equal(sprayed.vialMg,3,'Nasal spray dose must not debit the physical vial twice');
+  assert.equal(sprayed.bottleMg,1.92,'Two nominal sprays debit the prepared bottle by 0.08 mg');
+  assert.equal(sprayed.bottleMl,4.8,'Two sprays debit 0.2 mL from prepared bottle');
+  assert.equal(sprayed.sprays,2);
+  await page.evaluate(({transaction,doseId,sourceId})=>{
+    const r=NexusPreparedDoseTransaction.reverseDose(state,{transactionId:transaction,
+      reversalId:'fictional-nasal-undo',compound:'Fictional Prepared Spray Test',
+      doseId,sourceId});
+    state=r.next;
+  },sprayed);
+  assert.equal(await page.evaluate(()=>state.formulationStocks.find(s=>s.compound==='Fictional Prepared Spray Test').remainingMg),2,
+    'Nasal dose reversal must restore only the prepared bottle');
+  assert.equal(await page.evaluate(()=>state.customPeptides['Fictional Prepared Spray Test'].doses.length),0,
+    'Nasal dose reversal must remove the matching dose');
+
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
   await page.evaluate(()=>{
