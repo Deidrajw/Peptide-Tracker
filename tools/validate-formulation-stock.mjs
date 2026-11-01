@@ -47,6 +47,11 @@ try {
   await page.locator('.modal #x').click();
   await page.evaluate(()=>supplyModal(null,null));
   await page.locator('[data-kit-form="capsule-bottle"]').click();
+  // Keep a single custom combobox on iPhone: native datalist duplicates suggestions.
+  assert.equal(await page.locator('#nx-form-compound-list').count(),0,
+    'Other forms must not display a second browser-native suggestion picker');
+  assert.equal(await page.locator('#nx-form-name').getAttribute('aria-label'),
+    'Compound · type to search or browse','Other forms compound control needs same accessible intent as Vial kits');
   // Other formulations must share vial picker geometry and compact 5-result UX.
   await page.locator('#nx-form-name').focus();
   assert.equal(await page.locator('#nx-form-match-list [role="option"]').count(),5,
