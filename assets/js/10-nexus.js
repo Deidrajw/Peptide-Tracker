@@ -2338,8 +2338,12 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  // Existing reserved/open source and first-time sealed source have separate
  // validations, but both use the same reviewed actual preparation form.
  const validExisting=!!vial&&vial.intendedUse==="nasal-source"&&["open","active"].includes(vial.status);
+ // A sealed vial's canonical starting mass is its vial/kit strength. Its
+ // remainingMg field can be absent or zero before opening; that is NOT a
+ // prepared/open balance and must not disqualify an otherwise valid source.
+ const sealedMass=Number(vial?.expectedMg ?? vial?.vialMg ?? kit?.vialMg);
  const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
-   Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
+   Number.isFinite(sealedMass)&&sealedMass>0;
  const validLegacy=!!vial&&adoptUnlabelled&&_demoActive&&!kit?.isBlend&&
    ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
    !nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route)&&
@@ -2349,7 +2353,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation">✕</button></div>'+
- '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+getVialRemainingMg(kit,vial).toFixed(2)+' mg available. '+(openSealed?'Sealed source opens only after one completed preparation and transfer is confirmed.':'Record only an already completed preparation.')+'</p>'+
+ '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+(openSealed?sealedMass:getVialRemainingMg(kit,vial)).toFixed(2)+' mg available. '+(openSealed?'Sealed source opens only after one completed preparation and transfer is confirmed.':'Record only an already completed preparation.')+'</p>'+
  '<label class="field-label" for="nx-nasal-source-mg">ACTUAL SOURCE AMOUNT (mg)</label><input class="inp" id="nx-nasal-source-mg" type="number" min="0" step="any" placeholder="Recorded amount">'+
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
  '<label class="field-label" for="nx-nasal-saline">SALINE USED (mL)</label><input class="inp" id="nx-nasal-saline" type="number" min="0" step="any" placeholder="Recorded volume">'+
@@ -2371,7 +2375,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    preview.hidden=active;review.hidden=!active;confirmRow.hidden=!active;back.hidden=!active;
    m.querySelector("#nx-nasal-record-confirm").checked=false;
    save.textContent=active?"Confirm completed preparation and transfer":"Review preparation and transfer";
-   if(active){const [mg,bac,saline,pump]=values(),total=bac+saline,remaining=getVialRemainingMg(kit,vial);
+   if(active){const [mg,bac,saline,pump]=values(),total=bac+saline,remaining=openSealed?sealedMass:getVialRemainingMg(kit,vial);
      review.innerHTML='<div class="nx-shared-review-title">Review actual source transfer</div>'+
        '<dl class="nx-shared-review-grid">'+
        '<dt>Compound</dt><dd>'+esc(kit.name)+'</dd>'+
@@ -2396,7 +2400,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  };
  inputs.forEach(x=>x.oninput=refresh);refresh();
  m.querySelector("#nx-nasal-record-save").onclick=async()=>{
-  if(!refresh()||values()[0]>getVialRemainingMg(kit,vial)){
+  if(!refresh()||values()[0]>(openSealed?sealedMass:getVialRemainingMg(kit,vial))){
    showErrorBanner("Actual transfer exceeds verified source balance or has invalid values. Nothing saved.");return;
   }
   if(!reviewing){setReview(true);return;}
@@ -2442,7 +2446,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
       const candidateVial=candidateKit?.vials?.find(v=>String(v.id)===String(vial.id));
       if(!candidateVial||candidateVial.status!=="sealed"||candidateKit.isBlend)
         throw Error("Sealed source changed before review confirmation");
-      const canonicalMg=Number(candidateVial.remainingMg ?? candidateVial.expectedMg ?? candidateVial.vialMg ?? candidateKit.vialMg);
+      const canonicalMg=Number(candidateVial.expectedMg ?? candidateVial.vialMg ?? candidateKit.vialMg);
       if(!Number.isFinite(canonicalMg)||canonicalMg<=0||amountMg>canonicalMg+1e-7)
         throw Error("Invalid exact sealed source balance");
       candidateVial.status="open";candidateVial.intendedUse="nasal-source";
