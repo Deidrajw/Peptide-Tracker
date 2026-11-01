@@ -569,7 +569,7 @@ function importData(e) {
     box.querySelector("#nx-import-cancel").onclick=cancelRestore;
     const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
     word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
-    go.onclick=()=>{
+    go.onclick=async()=>{
       if(word.value.trim()!=="RESTORE")return;
       const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
       const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
@@ -585,9 +585,9 @@ function importData(e) {
           state=next;
         }else{
           const writer=nexusWriter();
-          writer.saveLegacy(next);
+          const result=await writer.transaction(state,()=>({next}));
           _nexusLastSavedSnapshot=writer.expected();
-          state=next;
+          state=result.next;
         }
         closeModal();render();
         alert(oldRaw!==null?"Backup restored. A local recovery copy of the previous records was saved.":"Backup restored. No previous saved browser records were available for a recovery copy.");
