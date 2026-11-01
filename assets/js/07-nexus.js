@@ -74,7 +74,7 @@ function supplyModal(existing, presetName, forceVials=false) {
   const c = cfg(f.name);
   const m = openModal(`
     <div class="nx-dose-head nx-shared-sheet-header">
-      <div><span class="mono nx-dose-kicker">${existing?"EDIT KIT":"ADD KIT"}</span></div>
+      <div><span class="nx-dose-kicker">STASH · INVENTORY</span><h2 class="nx-dose-title">${existing?"Edit kit":"Add kit"}</h2></div>
       <button id="x" class="nx-dose-close" type="button" aria-label="Close kit editor">✕</button>
     </div>
     ${!existing?`<button id="sw-blend" style="background:transparent;border:none;padding:0;font-size:11.5px;color:#C9A0FF;margin-bottom:14px;text-align:left">Adding a blend of multiple compounds in one vial? →</button>`:""}
@@ -119,11 +119,10 @@ function supplyModal(existing, presetName, forceVials=false) {
   const kitTestResult=nexusKitTestResultControl(m,"ssave",existing?.testResultAttachment);
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
   m.classList.add("nx-stash-kit-editor","nx-shared-form-sheet");
-  const originalTitle=m.querySelector(".mono");
-  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");
-    originalTitle.textContent=existing?"Edit kit":"Add kit";
+  const originalTitle=m.querySelector(".nx-dose-title");
+  if(originalTitle){
     const intro=document.createElement("p");intro.className="nx-kit-editor-intro";intro.textContent=existing?"Update kit details without changing vial quantities or history.":"Record a kit and its vial details. You can open a vial later.";
-    originalTitle.parentElement.insertAdjacentElement("afterend",intro);
+    m.querySelector(".nx-dose-head").insertAdjacentElement("afterend",intro);
   }
   const openLabel=m.querySelector("#shasopen")?.closest("label");
   if(openLabel)openLabel.classList.add("nx-kit-editor-open-toggle");
