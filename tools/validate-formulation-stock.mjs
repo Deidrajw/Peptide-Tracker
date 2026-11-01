@@ -61,6 +61,24 @@ try {
   const rows=await page.locator('#nx-form-match-list [role="option"]').evaluateAll(items=>
     items.map(x=>({height:x.getBoundingClientRect().height,bg:getComputedStyle(x).backgroundColor,border:getComputedStyle(x).borderTopWidth})));
   assert.ok(rows.every(x=>x.height>=44),'Compound result touch targets must be at least 44px');
+  const pickerGeometry=await page.locator('.nx-form-compound-combobox').evaluate(combo=>{
+    const list=combo.querySelector('#nx-form-match-list');
+    const rect=list.getBoundingClientRect();
+    return {right:rect.right,viewport:document.documentElement.clientWidth,
+      clientHeight:list.clientHeight,scrollHeight:list.scrollHeight,
+      overflowY:getComputedStyle(list).overflowY};
+  });
+  assert.ok(pickerGeometry.right<=pickerGeometry.viewport+2,
+    'Other forms picker exceeds iPhone viewport: '+JSON.stringify(pickerGeometry));
+  assert.ok(pickerGeometry.scrollHeight<=pickerGeometry.clientHeight+2,
+    'Other forms five-result picker must not create nested vertical scrolling: '+JSON.stringify(pickerGeometry));
+  await page.locator('#nx-form-name').press('ArrowDown');
+  assert.equal(await page.locator('#nx-form-match-list [role="option"]').first().evaluate(x=>x===document.activeElement),true,
+    'Other forms ArrowDown must focus first compound choice');
+  await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,
+    'Keyboard compound selection must close the suggestion list');
+
   await page.locator('#nx-form-name').fill('');
   await page.locator('#nx-form-name').fill('SLU-PP-332');
   assert.equal(await page.locator('#nx-form-match-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
