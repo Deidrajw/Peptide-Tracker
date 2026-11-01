@@ -70,11 +70,18 @@ function nexusWriter() {
   }
   return _nexusSharedWriter;
 }
-function nexusEraseSavedState() {
+async function nexusEraseSavedState() {
   if(_demoActive)throw Error("Cannot erase real data while demo is active");
-  const writer=nexusWriter();
-  writer.removeLegacy();
-  _nexusLastSavedSnapshot=writer.expected();
+  try {
+    const writer=nexusWriter();
+    await writer.eraseExclusive(state);
+    _nexusLastSavedSnapshot=writer.expected();
+    return true;
+  }catch(error){
+    console.error("Nexus erase rejected",error);
+    showSaveWarning();
+    return false;
+  }
 }
 function saveState() {
   if(_demoActive)return true; // fictional demo never touches production storage
