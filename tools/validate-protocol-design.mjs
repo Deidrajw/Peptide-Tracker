@@ -229,22 +229,26 @@ try{
     check(/0\s*of\s*1/.test(synced.active)&&/0\s*of\s*1/.test(synced.inProgress)&&synced.doseCount===0,
       "Synced activation/first dose not reflected in Today without inventory writes: "+JSON.stringify(synced));
 
-    // Earlier reminder/wizard smoke modifies in-memory fictional state without
-    // committing those temporary mutations. The following interaction tests
-    // real durable settings: restore the verified saved fixture first, without
-    // writing or rebasing a changed tab's storage.
+    // Rendering may add ephemeral top-level _UI keys to state; the scoped
+    // writer must accept those while rejecting any unsaved persistent edits.
+    // Do not reset the page from storage here: test the actual rendered state.
     const trackingBaseline=await page.evaluate(()=>{
       if(_demoActive)return {mode:'demo'};
       const observed=localStorage.getItem(STORE_KEY),expected=nexusWriter().expected();
-      if(observed!==expected)throw Error('Protocol QA fixture storage changed externally; cannot restore');
-      state=JSON.parse(observed);
-      render();
-      return {mode:'live',matches:JSON.stringify(state)===observed,
+      if(observed!==expected)throw Error('Protocol QA fixture storage changed externally');
+      const saved=JSON.parse(observed);
+      const persistent=v=>JSON.stringify(Object.fromEntries(
+        Object.entries(v).filter(([key])=>!key.startsWith('_'))));
+      const changed=Object.keys({...saved,...state}).filter(key=>
+        JSON.stringify(state[key])!==JSON.stringify(saved[key]));
+      return {mode:'live',matches:persistent(state)===persistent(saved),
+        transientChanges:changed.filter(key=>key.startsWith('_')),
+        persistentChanges:changed.filter(key=>!key.startsWith('_')),
         inMemoryLength:JSON.stringify(state).length,storedLength:observed.length};
     });
     console.log('PROTOCOL tracking fixture '+width+'/'+theme+'/'+kind+' '+JSON.stringify(trackingBaseline));
     check(trackingBaseline.mode==='demo'||trackingBaseline.matches,
-      'Protocol/Today app render changed current storage snapshot before user preference edit: '+JSON.stringify(trackingBaseline));
+      'Protocol/Today has unsaved persistent differences before scoped preference save: '+JSON.stringify(trackingBaseline));
 
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
