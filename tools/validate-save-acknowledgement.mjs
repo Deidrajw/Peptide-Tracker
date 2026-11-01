@@ -10,7 +10,7 @@ if(refs.length!==3)throw Error("Expected 3 guarded exclusive-CAS Log Dose paths,
 if(!handler.includes("await nexusCommitUntrackedDose(name,dose,editingUntracked)")||!root.includes("writer.transaction(state,prior=>({next:apply(prior)}))"))throw Error("Exclusive untracked Log Dose acknowledgement missing");
 if(!handler.includes("await nexusCommitBackedPhysicalDose(")||!root.includes("writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry))"))throw Error("Exclusive backed physical dose acknowledgement missing");
 if(!root.includes("async function nexusCommitCurrentState()")||!root.includes("await writer.transaction(before,()=>({next:proposed}))"))throw Error("Exclusive CAS readback acknowledgement missing");
-if(!root.includes("return true; // fictional demo never touches production storage"))throw Error("DEMO save acknowledgement missing");
+if(!root.includes("async function nexusCommitCurrentState(){\n if(_demoActive)return true;")||!root.includes("// DEMO remains strictly in memory; no live localStorage writes or locks."))throw Error("DEMO save acknowledgement or isolated memory boundary missing");
 if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved.'))throw Error("Combo save acknowledgement missing");
 if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Quick dose could not be saved.'))throw Error("Quick save acknowledgement missing");
 for(const flag of ["NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false","NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false"]){
