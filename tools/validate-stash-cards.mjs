@@ -95,7 +95,7 @@ try{
     const actionVisual=await card(99002).evaluate(el=>{
       const p=el.querySelector('.nx-kit-next-action'),d=el.querySelector('.nx-kit-detail-button');
       const a=getComputedStyle(p),b=getComputedStyle(d);
-      const rgb=str=>{const v=(str.match(/[\\d.]+/g)||[]).slice(0,3).map(Number);return v};
+      const rgb=str=>{const v=(str.match(/[0-9.]+/g)||[]).slice(0,3).map(Number);return v};
       const lum=v=>{let c=v.map(x=>{const y=x/255;return y<=.04045?y/12.92:Math.pow((y+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
       const ratio=(x,y)=>{const a=lum(rgb(x)),b=lum(rgb(y));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
       return {primaryBg:a.backgroundColor,secondaryBg:b.backgroundColor,
