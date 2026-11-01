@@ -582,7 +582,7 @@ try {
   await Promise.all([a.goto('http://127.0.0.1:8777/'),b.goto('http://127.0.0.1:8777/')]);
   const key='peptide-tracker-html-v1';
   const fixture={settings:{theme:'dark'},supplementLogs:[{id:'H1',date:'2026-11-01',taken:['Fictional C']}],
-   macroLogs:[],weightLogs:[],measurementLogs:[],
+   macroLogs:[],weightLogs:[],measurementLogs:[],activityLogs:[],
    supplies:[{id:'K1',vials:[{id:'V1',remainingMg:10}]}],peptides:{Fictional:{doses:[]}}};
   await a.evaluate(({key,fixture})=>localStorage.setItem(key,JSON.stringify(fixture)),{key,fixture});
   const init=()=>{const raw=localStorage.getItem('peptide-tracker-html-v1');
