@@ -135,6 +135,22 @@ try {
     'Multiple-vial choice requires a direct question');
   assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
     'SubQ should offer an optional injection-site field');
+  // A saved product form must NOT hide per-dose method choices. Switching
+  // SubQ to IM reopens the same verified Injectable physical choices, with
+  // no source mass or history mutation until actual dose save.
+  assert.equal(await page.locator('[data-admin-method="IM"]').isVisible(),true,
+    'IM route must be visibly selectable in a saved injectable setup');
+  await page.locator('[data-admin-method="IM"]').click();
+  assert.equal(await page.locator('#nx-dose-method').inputValue(),'IM',
+    'Selecting IM must apply only to this draft dose');
+  assert.equal(await page.locator('.kit-opt[data-kit="992211"]').count(),2,
+    'An Injectable vial may be eligible for IM without relabelling physical stock');
+  assert.deepEqual(await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg)),[7,10],
+    'Exploring another injection route cannot debit stock');
+  await page.locator('[data-admin-method="SubQ"]').click();
+  assert.equal(await page.locator('#nx-dose-method').inputValue(),'SubQ',
+    'Returning to SubQ should restore SubQ per-dose method');
+
   for(const method of ['Nasal','Oral','Topical','IV','Other']){
     await page.evaluate(value=>{
       const select=document.querySelector('#nx-dose-method');
@@ -206,6 +222,18 @@ try {
   assert.equal(planCheck.plans[0].sourceVialId,'source-a','Plan must link exact original source');
   assert.equal(planCheck.plans[0].status,'planned-no-transfer');
   assert.equal(planCheck.formulations.length,0,'No unvalidated bottle stock must be created');
+  await page.evaluate(()=>closeModal());
+  // A physical open compound must be discoverable from Today even with NO
+  // associated protocol, without creating a protocol simply by opening the picker.
+  await page.evaluate(()=>{
+    state.protocols=[];
+    tab='home';render();
+    todayLogDosePicker();
+  });
+  assert.equal(await page.locator('#today-dose-compound').locator('option').filter({hasText:'Fictional Source Selector'}).count(),1,
+    'Unprotocolled stocked compound must be available in Today Log Dose');
+  const protocolCount=await page.evaluate(()=>state.protocols.length);
+  assert.equal(protocolCount,0,'Opening Log Dose must not create a protocol');
   await page.evaluate(()=>closeModal());
   // Post-protocol follow-up is optional UI, never a condition of dose persistence.
   const followup=await page.evaluate(()=>{
