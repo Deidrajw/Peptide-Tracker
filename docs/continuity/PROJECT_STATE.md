@@ -1,3 +1,9 @@
+## 2026-11-01 — PR124 persistent 16-point scorecard and picker parity, UNRELEASED
+- New working scorecard `docs/design/PR124_16_POINT_UI_SCORECARD.md` lists 16 user-visible correction areas with separate coded, automated and physical acceptance states. It is a decomposition of screenshot feedback, not a recovered verbatim numbered list. Do not declare all 16 fixed while PARTIAL/OPEN or device UAT FAIL remain.
+- New app JS commit `c4f9e8d6` brings non-vial compound picker keyboard Enter, ArrowUp/Down and focus-close handling closer to Vials picker, preserving existing compound selection, free text, inventories and source accounting. Exact-head Chromium/WebKit/320/390 light/dark validation for this JS change NOT YET VERIFIED.
+- Prior CSS-only `2b19a5de` five CI workflows all SUCCESS at docs head `5b7f878e` (Chromium 41355828075, WebKit 41355828082, mobile 41355828040, writer 41355828049, nested 41355828098). This is automated evidence, not accepted iPhone presentation.
+- P0 remains BLOCKING, both LIVE nasal gates OFF, PR draft/unmerged/undeployed. ONE NEXT ACTION: close outstanding scorecard partial/open issues and verify exact-source visual QA plus artifacts before device UAT.
+
 ## 2026-11-01 — PR124 shared-form CSS corrective checkpoint, NOT UI COMPLETE
 - GitHub main verified `da585ab3`, PR124 draft head initially `4f9ab0ad`; CSS-only candidate commit `2b19a5de` updates `assets/css/nexus-hybrid-preview.css`: shared form-choice/dose/nasal/Goal headers, 48px close targets, wrapping and 320px input/review geometry. No JS, bottle ledger, data schema, historical record, source IDs or LIVE gates changed by this commit.
 - Previously verified fictional Oxytocin E2E Chromium/WebKit and artifact manifest remain evidenced only at application SHA `66959ba7`; CSS candidate has NO completed exact-head browser/mobile/WebKit/visual or physical iPhone verification. Do not infer physical UX acceptance or report all 16 corrections complete.
