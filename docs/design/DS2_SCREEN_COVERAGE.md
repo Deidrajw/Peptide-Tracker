@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 16-point shared compound picker corrective checkpoint
+- Persistent per-item implementation/browser/physical matrix is `docs/design/PR124_16_POINT_UI_SCORECARD.md`. Other-form combobox e394603f, CSS 0ed9d03e, Browse-all role fix bc8325a5 and Vial picker parity f743adba are CODED; regression bedff373/cc568a3f/1fab968c checks 320/390 light/dark and single scroll/keyboard.
+- Pre-correction browser failed 6-vs-5 real choices; newest exact-source CI still pending. No physical iPhone pass; remaining modal/Goal/Additional options/legacy nasal sheet polish PARTIAL. Preserve exact-source nasal accounting and accepted parents, P0 BLOCKED, LIVE nasal OFF; no merge/deploy.
+
 ## 2026-11-01 — PR124 shared form geometry refinement, not acceptance
 - Coded CSS-only candidate `2b19a5de` aligns form-choice, Log Dose capsule/spray, nasal preparation and Goal Details titles/close targets, 48px close, 16px inputs and narrow review wrapping. All 16 user-required corrections remain open until picker, legacy flows, optional dose options, source/bottle clarity and safe-area/keyboard issues are resolved and verified.
 - Current candidate visual Chromium/WebKit 320px/390px light/dark NOT TESTED; physical iPhone/VoiceOver NOT TESTED; prior user screenshot failures retained. Separate exact-source Oxytocin ledger PASS at `66959ba7` is not presentation acceptance. P0 blocked; nasal LIVE OFF; draft/no deployment.
