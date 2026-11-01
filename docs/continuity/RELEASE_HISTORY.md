@@ -1532,3 +1532,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 goal tap-target correction, not a release
 - Stash attachment accepted in browser #41325584431, but full QA failed later on legacy Plans View goal touch target. CSS source commit cdffdab2 increases target to 48px; test diagnostic 741865f6 preserves minimum 44px safety assertion. Exact-head full QA / artifact certification pending. No merge/deploy; production untouched, nasal gates OFF, P0 blocking.
+
+
+## 2026-11-01 — PR124 Plans Goals QA Save acknowledgment (no release)
+- Test-only a2e0321 fixes premature reopening of Goals wizard before preceding async Save completion, and commits fictional LIVE Plans fixture through exclusive writer. Previous #41326571439 full failed later in Plans though source CTA 48px touch assertion cleared; all four focused suites PASS. No new application code beyond prior 48px CSS and scoped writer change, no release/merge/deploy. P0 blocking and exact-source artifacts still unqualified.
