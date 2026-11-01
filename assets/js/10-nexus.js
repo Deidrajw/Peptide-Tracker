@@ -2120,7 +2120,7 @@ function nexusAddFormulationModal(type,existingId=null){
       const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
       option.setAttribute("aria-selected",String(compoundInput.value.trim().toLocaleLowerCase()===name.toLocaleLowerCase()));
       option.onpointerdown=e=>e.preventDefault();
-      option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();};matchList.appendChild(option);
+      option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();};matchList.appendChild(option);
     });
     const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
     // Browse opens the library: it is not an additional compound option.
@@ -2135,7 +2135,7 @@ function nexusAddFormulationModal(type,existingId=null){
       create.onclick=()=>{
         const name=compoundInput.value.trim().replace(/\s+/g," ");
         if(!name || name.length>120)return;
-        compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();
+        compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();
       };
       matchList.appendChild(create);
     }
