@@ -4073,3 +4073,17 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   color:var(--t2);font-family:inherit;font-size:12px;line-height:1.45;
   overflow-wrap:break-word;
 }
+
+
+/* One form stage at a time, matching the approved Log Dose review pattern. */
+.modal.nx-form-log-sheet .nx-form-log-entry{
+  display:flex;flex-direction:column;min-width:0;
+}
+.modal.nx-form-log-sheet .nx-form-log-entry[hidden]{display:none!important}
+.modal.nx-form-log-sheet :is(#nx-capsule-confirm,#nx-spray-confirm){
+  padding-top:8px;min-width:0;
+}
+.modal.nx-form-log-sheet :is(#nx-capsule-summary,#nx-spray-summary){
+  font-size:15px!important;line-height:1.55!important;
+  padding:16px!important;overflow-wrap:normal;word-break:normal;
+}
