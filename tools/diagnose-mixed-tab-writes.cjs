@@ -39,11 +39,11 @@ async function main(){
  for(let i=1;i<=12;i++){
   const filename=String(i).padStart(2,'0')+'-nexus.js';
   const source=fs.readFileSync(path.join(sourceDir,filename),'utf8');
-  const lines=source.split('\\n');
+  const lines=source.split('\n');
   for(let n=0;n<lines.length;n++){
-   if(/\\bsaveState\\s*\\(|\\bnexusEraseSavedState\\s*\\(/.test(lines[n]) &&
-      !/^\\s*(?:async\\s+)?function\\s+(?:saveState|nexusEraseSavedState)\\s*\\(/.test(lines[n]) &&
-      !/^\\s*(?:\\/\\/|\\*)/.test(lines[n]))
+   if(/\bsaveState\s*\(|\bnexusEraseSavedState\s*\(/.test(lines[n]) &&
+      !/^\s*(?:async\s+)?function\s+(?:saveState|nexusEraseSavedState)\s*\(/.test(lines[n]) &&
+      !/^\s*(?:\/\/|\*)/.test(lines[n]))
      remaining.push(filename+':'+(n+1));
   }
  }
