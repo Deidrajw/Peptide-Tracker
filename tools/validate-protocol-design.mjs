@@ -237,7 +237,20 @@ try{
     check(await tracking.locator('.nx-track-select').count()===4,'Tracking preferences missing');
     const weightCheckbox=tracking.locator('.nx-track-select[data-activity="weight"]');
     await weightCheckbox.check();
-    check(await page.evaluate(()=>state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
+    // Checkbox change commits through an awaited exclusive Web Lock. The click
+    // itself does not await that handler; assert the durable readback instead
+    // of racing an optional preference field before the transaction finishes.
+    await page.waitForFunction(()=>{
+      const selected=state.settings?.todayTrackingActivities;
+      if(!Array.isArray(selected)||!selected.includes('weight'))return false;
+      if(_demoActive)return true;
+      const saved=JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+      return Array.isArray(saved?.settings?.todayTrackingActivities)
+        && saved.settings.todayTrackingActivities.includes('weight')
+        && _nexusLastSavedSnapshot===localStorage.getItem(STORE_KEY);
+    },null,{timeout:10000});
+    check(await page.evaluate(()=>Array.isArray(state.settings.todayTrackingActivities)
+      && state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
     check(await page.locator('.nx-today-activity.nx-week-pulse').count()===1,'Compact weekly pulse missing');
     check(await page.locator('.nx-today-activity .nx-activity-period').count()===0,'Retired activity periods unexpectedly reappeared');
     check(await page.locator('.nx-today-activity .nx-week-score').count()===1,'Weekly pulse score missing');
