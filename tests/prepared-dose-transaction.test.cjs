@@ -36,6 +36,21 @@ assert.equal(rev.next.supplies[0].vials[0].remainingMg,24);
 assert.equal(rev.next.peptides["Sample A"].doses.length,0);
 assert.equal(rev.next.formulationStocks[0].transactions.length,2);
 assert.throws(()=>api.reverseDose(rev.next,{transactionId:"T1",reversalId:"R2",compound:"Sample A",doseId:"D1",sourceId:"N1"}),/already reversed/);
+// Fictional stock without a prior protocol or dose must still log and undo.
+const standalone=base();
+standalone.peptides={};
+standalone.customPeptides={};
+const standaloneBefore=JSON.stringify(standalone);
+const firstNasal=api.planDose(standalone,tx());
+assert.equal(JSON.stringify(standalone),standaloneBefore,"standalone planner mutated original state");
+assert.equal(firstNasal.next.customPeptides["Sample A"].doses.length,1,
+ "First nasal log must create its own custom history without creating a protocol");
+assert.equal(firstNasal.next.formulationStocks[0].remainingMl,2.9);
+assert.equal(firstNasal.next.supplies[0].vials[0].remainingMg,24,
+ "Standalone nasal first dose may not debit the original source vial");
+const undoneFirst=api.reverseDose(firstNasal.next,{transactionId:"T1",reversalId:"R1",compound:"Sample A",doseId:"D1",sourceId:"N1"});
+assert.equal(undoneFirst.next.customPeptides["Sample A"].doses.length,0);
+assert.equal(undoneFirst.next.formulationStocks[0].remainingMl,3);
 const memory={raw:JSON.stringify(start),writes:0};const adapter={read:()=>memory.raw,write:x=>{memory.writes++;memory.raw=x}};
 const commit=api.commit(start,{type:"dose",tx:tx()},adapter);
 assert.equal(memory.writes,1);assert.equal(JSON.parse(memory.raw).peptides["Sample A"].doses.length,1);
