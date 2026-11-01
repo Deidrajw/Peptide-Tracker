@@ -2311,3 +2311,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Application acknowledgement and gate evidence checkpoint
 - Exact source 3ce0e793: shared-writer workflow #41280418868 SUCCESS after correcting outdated DEMO static comment check; it includes real Chromium two-tab job and mixed-writer exclusive settings/inventory race simulated PASS. Mobile #41280418877 SUCCESS. Full suite still running at observation.
 - Latest application source a3bc6c15 adds a guarded startup inventory-migration save acknowledgement. New exact-head CI NOT TESTED/NOT YET OBSERVED. Settings/history/inventory physical Safari and failed-write UX physical iPhone NOT TESTED. P0 remains BLOCKED until full exact-head checks, source-matched artifact, and user approval. No merge/deploy.
+
+
+## 2026-11-01 — Real Chromium writer PASS on a3bc6c15; full qualification pending
+- PASS a3bc6c15: shared-writer workflow #41280477872 jobs 124771204125 (writer), 124771204266 (mixed gate), 124771204255 (Playwright real two-tab). Chromium output: 'PASS Chromium real two-tab exclusive locking, stale rejection, durable fresh save, stock/history/settings preservation, failed write'. Mobile #41280477794 SUCCESS.
+- NOT TESTED/PENDING at last observation: full build #41280477982, WebKit #41280477923, DS2 visual #41280477876, artifact byte parity, physical iPhone/VoiceOver. P0 still BLOCKED, no merge/deploy.
