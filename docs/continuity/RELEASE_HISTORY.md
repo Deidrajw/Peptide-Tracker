@@ -1520,3 +1520,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — Draft PR124 Protocol/Today test-only correction
 - 39e504d94e3b342ccf8cbf0bf057ca598245a863 fixes premature browser check for async Today tracking preference, verifies durable exclusive writer result. No product JS/CSS, schema change, deployment or release; full QA and exact-source artifact acceptance pending. P0 BLOCKING, nasal gates OFF, draft PR #124.
+
+
+## 2026-11-01 — PR124 scoped writer & Protocol/Today fixture follow-up (development only)
+- Code e8213af1: scoped setting writer compares persistent fields to its expected durable snapshot (ignoring root _transient only), then commits the requested setting under exclusive Web Lock and verified readback; preserves UI-only fields. Prevents false setting rejection due purely transient render data without allowing stale or unsaved stock overwrite. Test 71db3f9b exposed fictional uncommitted lazy vial metadata, and test aca48a79 boot-normalizes/persists fictional legacy starter kits prior to Protocol/Today QA. Exact-head CI pending; no release, schema migration, deployment or production data writes; P0 blocking and nasal preparation gates OFF.
