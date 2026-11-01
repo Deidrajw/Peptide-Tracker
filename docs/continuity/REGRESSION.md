@@ -1,3 +1,8 @@
+## 2026-10-31 / Nov 1 UTC — Candidate full-browser status
+- Full browser #41266681030 FAILED due nasal-guidance placement assertion after 8 LIVE/DEMO viewport/theme matrices, 96 vial-source tests and 26-file LIVE exact-source byte parity passed. Candidate code 2081b9009ca6399ab4aff0462c8311f91a16220c follows this failed run.
+- Latest full browser runs #41266959886 and #41267040198 remained IN PROGRESS on Browser QA step at last inspection, no uploaded artifact. WebKit #41266959863/#41267040185 SUCCESS, nested #41266959810/#41267040190 SUCCESS, mobile #41266959817/#41267040191 SUCCESS, shared writer #41266959808/#41267040179 SUCCESS. This does not imply integrated Chromium PASS.
+- Source-matched final DEMO, LIVE ZIP, manifest asset integrity and isolated demo storage NOT VERIFIED until full run publishes its artifact. Physical iPhone NOT TESTED. Mixed legacy writer P0 open, oral-container debit and nasal preparation transfer incomplete. No merge/deploy.
+
 ## 2026-10-31 / Nov 1 UTC — Legacy route assertion + shared helper parity
 - Full Chromium #41266340372 FAIL: tools/validate-logdose-ui.mjs legacy test expected vial.intendedUse SubQ; new family model correctly saves Injectable and retains 6.75 mg, 0 history. Test updated e07c623/42e09f (includes Stash-first setup UI selecting Injectable), requires rerun.
 - Shared getEligibleSourceKits route isolation now family-compatible at 0e247f5; expanded e49853f assertion requires SubQ=[9331], IM=[9331], IV=[], Nasal=[], Oral=[], and an explicitly nasal-source-reserved vial absent from both injection routes. This preserves guard rather than silently granting IV or nasal use from generic injectable vial.
