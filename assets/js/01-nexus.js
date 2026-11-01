@@ -102,12 +102,17 @@ function nexusPlanScopedStateChange(snapshot,operation){
  if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
  const next=JSON.parse(JSON.stringify(snapshot));
  if(operation.kind==="setting"){
-  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts"];
+  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="nexusApiKey"&&typeof operation.value!=="string")fail("Invalid API key");
   if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
   if(operation.key==="nxUsageEnabled"&&typeof operation.value!=="boolean")fail("Invalid shortcut tracking choice");
   if(operation.key==="nxUsageCounts"&&(!operation.value||Array.isArray(operation.value)||typeof operation.value!=="object"||Object.keys(operation.value).some(key=>!/^[-a-zA-Z0-9_]{1,80}$/.test(key)||!Number.isSafeInteger(operation.value[key])||operation.value[key]<0)))fail("Invalid shortcut counters");
+  if(operation.key==="measureUnit"&&!["in","cm"].includes(operation.value))fail("Invalid measurement unit");
+  if(operation.key==="weightUnit"&&!["lbs","kg"].includes(operation.value))fail("Invalid weight unit");
+  if(operation.key==="dayRolloverHour"&&(!Number.isInteger(operation.value)||operation.value<0||operation.value>12))fail("Invalid rollover hour");
+  if(operation.key==="todayTrackingActivities"&&(!Array.isArray(operation.value)||operation.value.some(x=>!["checkin","supplements","weight","nutrition","measurements"].includes(x))||new Set(operation.value).size!==operation.value.length))fail("Invalid tracking activities");
+  if(operation.key==="recentDiscoverViews"&&(!Array.isArray(operation.value)||operation.value.length>8||operation.value.some(x=>typeof x!=="string"||x.length>160)||new Set(operation.value).size!==operation.value.length))fail("Invalid recent discovery views");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
  }else if(operation.kind==="supplement-list-add"){
