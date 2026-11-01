@@ -1540,3 +1540,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 Goal wizard QA correction, not a release
 - Commit 2457a657 updates only tools/validate-plans-hierarchy.mjs for unstable/detached rapid Playwright Goal Continue actions; retains actual onclick execution and assertions. Previous full #41326571439 FAILED despite substantial preceding browser PASS. Full/physical iPhone and exact-head artifact qualifications pending; no live deployment or production data writes; nasal gates OFF, P0 blocking.
+
+
+## 2026-11-01 — PR124 CI-qualified development candidate, NOT RELEASED
+- Source/test commit 2457a657 (Plans Goal wizard stepwise test), preceding CSS cdffdab2 (48px View goal action), app JS e8213af1 (exclusive scoped settings persistent-vs-transient state), previous Stash test 74f798b1 and Protocol fixture aca48a79. All five GitHub workflows SUCCESS: #41327745230 full Chromium, #41327745323 writer, #41327745251 mobile, #41327745216 DS2, #41327745218 WebKit. Artifact #13092541470 verified 26-file exact-source LIVE + full isolated offline DEMO + manifest; v0.9.20-beta is internal build version only, not a new published release. No user data/schema destructive change or production deploy. Unmerged draft PR124; physical iPhone/VoiceOver NOT TESTED, release publication/version notes pending, P0 BLOCKING, nasal gates OFF.
