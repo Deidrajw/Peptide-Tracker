@@ -91,6 +91,15 @@ try {
   assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound',
     'Enter must preserve typed custom compound rather than pick first suggestion');
   await page.locator('#nx-form-name').focus();
+  const pickerAfterTyping=await page.locator('#nx-form-match-list').evaluate(list=>({
+    hidden:list.hidden,display:getComputedStyle(list).display,
+    inputValue:document.querySelector('#nx-form-name')?.value,
+    activeId:document.activeElement?.id,
+    focusedInside:list.parentElement?.contains(document.activeElement),
+    resultLabels:[...list.querySelectorAll('button')].map(b=>b.textContent)
+  }));
+  assert.ok(!pickerAfterTyping.hidden && pickerAfterTyping.display!=='none',
+    'Typing after keyboard choice must reopen compound choices: '+JSON.stringify(pickerAfterTyping));
   const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "Fictional Unlisted Compound"'});
   assert.equal(await createForm.count(),1,'Unknown compound must offer custom option in Other forms');
   await createForm.click();
