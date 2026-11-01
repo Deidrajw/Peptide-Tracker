@@ -239,8 +239,10 @@ try {
     const named=[...document.querySelectorAll('.kit-opt')].map(x=>x.dataset.vial);
     return {named,source:[...document.querySelectorAll('.nx-dose-stock-status')].map(x=>x.textContent)};
   });
-  assert.equal(oralEligible.named.length,0,
-    'One oral vial should not show ambiguous multi-vial choices');
+  assert.deepEqual(oralEligible.named,['oral-source'],
+    'Oral route must resolve only its independently labelled physical vial');
+  assert.equal(await page.locator('#kit-picker').isHidden(),true,
+    'One eligible oral vial should not visibly ask for another source choice');
   assert.equal(await page.locator('#nx-dose-inventory-status').isVisible(),true,
     'One eligible Oral vial must appear as available stock');
   await page.locator('#nx-dose-entered').fill('1');
