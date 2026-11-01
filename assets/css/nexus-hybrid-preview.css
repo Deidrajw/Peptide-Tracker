@@ -1853,7 +1853,7 @@ html[data-theme="light"] .nx-journal-picker input{color-scheme:light}
   outline-offset:2px;
 }
 .nexus-screen-plans .nx-plan-2-goal .nx-open-goal {
-  display:inline-flex;align-items:center;min-height:44px;
+  display:inline-flex;align-items:center;min-height:48px!important;
   margin-top:6px!important;
 }
 .nexus-screen-plans .nx-plan-2-research .nx-plan-secondary {
