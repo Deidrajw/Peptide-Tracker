@@ -1149,7 +1149,7 @@ function protocolBuilderModal(existing) {
     rebuildModal();
   }
 
-  function saveProto(status){
+  async function saveProto(status){
     if(!proto.name.trim()){proto.name=proto.goal||"New Protocol";}
     proto.status=status;
     if(!state.protocols)state.protocols=[];
@@ -1164,7 +1164,7 @@ function protocolBuilderModal(existing) {
     // Protocol tab and its reminders while the real dosing engine silently keeps using
     // the old numbers.
     if (status==="active" || status==="in_progress") syncProtocolToCompoundData(proto);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   }
 
   const m=openModal(`<div id="proto-builder-wrap" style="display:flex;flex-direction:column;max-height:85vh">
@@ -1380,7 +1380,7 @@ function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
     <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
     <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
   </section>`,"#A78BFA");
-  const dismiss=(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();saveState();closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
+  const dismiss=async(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();if(!await nexusCommitCurrentState())return;closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
   m.querySelector("#x").onclick=dismiss;
   m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
   m.querySelector("#nexus-followup-update").onclick=()=>{dismiss(false);protocolBuilderModal(chosen.p);};
@@ -1519,16 +1519,16 @@ function manageProtocolMenu(protoId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#mp-edit").onclick = () => { closeModal(); protocolBuilderModal(p); };
   const pauseBtn = m.querySelector("#mp-pause");
-  if (pauseBtn) pauseBtn.onclick = () => { closeModal(); pauseProtocol(p); saveState(); renderBody(); };
+  if (pauseBtn) pauseBtn.onclick = async () => { pauseProtocol(p); if(!await nexusCommitCurrentState())return;closeModal();renderBody(); };
   const completeBtn = m.querySelector("#mp-complete");
-  if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", () => {
-    p.status="completed"; saveState(); renderBody(); protocolCompletionCelebration(p.name);
+  if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", async () => {
+    p.status="completed";if(!await nexusCommitCurrentState())return;renderBody();protocolCompletionCelebration(p.name);
   }, { confirmLabel: "Complete", cancelLabel: "Cancel", tone: "success" }); };
   const resumeBtn = m.querySelector("#mp-resume");
-  if (resumeBtn) resumeBtn.onclick = () => { closeModal(); resumeProtocol(p); saveState(); renderBody(); };
+  if (resumeBtn) resumeBtn.onclick = async () => { resumeProtocol(p);if(!await nexusCommitCurrentState())return;closeModal();renderBody(); };
   m.querySelector("#mp-pastpause").onclick = () => { closeModal(); recordPastPauseModal(protoId); };
-  m.querySelector("#mp-delete").onclick = () => { closeModal(); confirmAction("Delete this protocol?", () => {
-    state.protocols=(state.protocols||[]).filter(x=>String(x.id)!==String(protoId)); saveState(); renderBody();
+  m.querySelector("#mp-delete").onclick = () => { closeModal(); confirmAction("Delete this protocol?", async () => {
+    state.protocols=(state.protocols||[]).filter(x=>String(x.id)!==String(protoId));if(!await nexusCommitCurrentState())return;renderBody();
   }); };
 }
 
@@ -1553,7 +1553,7 @@ function recordPastPauseModal(protoId) {
     <button id="rpp-save" class="btn-primary">Save pause interval</button>
   `, "#F9C87D");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#rpp-save").onclick = () => {
+  m.querySelector("#rpp-save").onclick = async () => {
     const startVal = m.querySelector("#rpp-start").value;
     const endVal = m.querySelector("#rpp-end").value;
     const errEl = m.querySelector("#rpp-err");
@@ -1570,7 +1570,7 @@ function recordPastPauseModal(protoId) {
     if (overlaps) return showErr("This overlaps a pause interval already recorded for this protocol.");
     p.pauseHistory = p.pauseHistory || [];
     p.pauseHistory.push({ pausedAt, resumedAt });
-    saveState(); closeModal(); renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 
@@ -1767,12 +1767,12 @@ function managePlanItemMenu(type, id) {
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
   if(type==="goal"){
-    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=()=>{
+    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=async()=>{
       const next=button.dataset.status;
       if(!["planned","active","paused","completed"].includes(next))return;
       const current=state.plans?.goals?.find(goal=>String(goal.id)===String(id));
       if(!current)return;
-      if((current.status||"active")!==next){current.status=next;saveState();}
+      if((current.status||"active")!==next){current.status=next;if(!await nexusCommitCurrentState())return;}
       closeModal();renderBody();
     });
   }
@@ -1782,9 +1782,9 @@ function managePlanItemMenu(type, id) {
     else if(type==="research") researchModal(item);
     else shoppingModal(item);
   };
-  m.querySelector("#pm-delete").onclick = () => { closeModal(); confirmAction(`Delete this ${label}?`, () => {
+  m.querySelector("#pm-delete").onclick = () => { closeModal(); confirmAction(`Delete this ${label}?`, async () => {
     if(!state.plans) return;
-    state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id)); saveState(); renderBody();
+    state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));if(!await nexusCommitCurrentState())return;renderBody();
   }); };
 }
 
@@ -2021,7 +2021,7 @@ function goalModal(existing) {
     currentStep=Math.min(3,currentStep+1);paintWizard();
   };
   paintWizard();
-  m.querySelector("#g-save").onclick=()=>{
+  m.querySelector("#g-save").onclick=async()=>{
     const name=(m.querySelector("#g-name").value||"").trim();if(!name)return;
     const type=m.querySelector("#g-progress-type").value;
     const val=id=>m.querySelector("#"+id)?.value?.trim()||"";
@@ -2057,7 +2057,7 @@ function researchModal(existing) {
   const rp=m.querySelector("#rcomp-picker");
   const refreshR=()=>{rp.innerHTML=compoundPickerHTML(selComp,"rcomp");wireCompoundPicker(rp,selComp,"rcomp",refreshR);};
   wireCompoundPicker(rp,selComp,"rcomp",refreshR);
-  m.querySelector("#r-save").onclick=()=>{
+  m.querySelector("#r-save").onclick=async()=>{
     const compound=selComp[0]||"";if(!compound)return;
     const updated={...r,compound,status:m.querySelector("#r-status").value,reason:m.querySelector("#r-reason").value,goal:m.querySelector("#r-goal").value,notes:m.querySelector("#r-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
@@ -2083,7 +2083,7 @@ function protocolModal(existing) {
   const pp=m.querySelector("#pcomp-picker");
   const refreshP=()=>{pp.innerHTML=compoundPickerHTML(selC,"pcomp");wireCompoundPicker(pp,selC,"pcomp",refreshP);};
   wireCompoundPicker(pp,selC,"pcomp",refreshP);
-  m.querySelector("#p-save").onclick=()=>{
+  m.querySelector("#p-save").onclick=async()=>{
     const name=(m.querySelector("#p-name").value||"").trim();if(!name)return;
     const updated={...pr,name,goal:m.querySelector("#p-goal").value,status:m.querySelector("#p-status").value,compounds:selC,startDate:m.querySelector("#p-start").value,duration:m.querySelector("#p-dur").value,notes:m.querySelector("#p-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
@@ -2106,7 +2106,7 @@ function shoppingModal(existing) {
     <div class="nx-plan-edit-footer"><button type="button" id="s-save" class="btn-primary">${existing?"Save changes":"Add item"}</button></div>`,"#A78BFA");
   m.classList.add("nx-plan-edit-modal","nx-plan-shopping-edit");
   m.querySelector("#x").onclick=closeModal;
-  m.querySelector("#s-save").onclick=()=>{
+  m.querySelector("#s-save").onclick=async()=>{
     const item=(m.querySelector("#s-item").value||"").trim();if(!item)return;
     const updated={...s,item,category:m.querySelector("#s-cat").value,status:m.querySelector("#s-status").value,qty:m.querySelector("#s-qty").value,goal:m.querySelector("#s-goal").value,notes:m.querySelector("#s-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
