@@ -1,6 +1,31 @@
 import fs from 'node:fs'; import path from 'node:path'; import {chromium} from 'playwright';
 const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version,demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),results=[];const ensure=(x,msg)=>{if(!x)throw Error(msg)};
+
+// Exercise the actual Goal wizard Continue handlers and assert every transition.
+// The wizard replaces/repositions panel content synchronously, which can detach
+// Playwright's moving button between its actionability check and pointer click.
+// Other checks cover real touch geometry; use DOM click for rapid wizard steps.
+async function advanceGoalToReview(page){
+  const transitions=await page.evaluate(()=>{
+    const labels=[];
+    for(let i=0;i<4;i++){
+      const next=document.querySelector('.modal #nx-g-next');
+      const step=document.querySelector('.modal #nx-g-step-label');
+      if(!next||!step)throw Error('Goal wizard controls unavailable');
+      const before=step.textContent||'';
+      if(next.hidden)break;
+      next.click();
+      const after=step.textContent||'';
+      if(before===after)throw Error('Goal wizard Continue did not advance: '+before);
+      labels.push({before,after});
+    }
+    return {labels,reviewVisible:!!document.querySelector('.modal #g-save')?.getClientRects().length};
+  });
+  ensure(transitions.reviewVisible&&transitions.labels.length>=1,
+    'Goal wizard did not reach Review: '+JSON.stringify(transitions));
+}
+
 try { for(const mode of ['live','demo'])for(const width of [320,390])for(const theme of ['light','dark']){
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
@@ -298,7 +323,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#nx-g-next').click(); // Progress -> Connections
  ensure(await page.locator('#g-evidence-symptom').isVisible(),'Connections field must be visible');
  await page.locator('#g-evidence-symptom').selectOption('Skin irritation');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  // The app saves Goals asynchronously through its exclusive writer; only
@@ -331,7 +356,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#g-p-target').fill('180');
  await page.locator('#g-p-unit').fill('lb');
  await page.locator('#g-p-source').selectOption('weightLogs');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  // The app saves Goals asynchronously through its exclusive writer; only
@@ -346,7 +371,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('subjective');
  await page.locator('#g-p-rating').selectOption('4');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  // The app saves Goals asynchronously through its exclusive writer; only
@@ -358,7 +383,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('milestones');
  await page.locator('#g-p-milestones').fill(['One','Two'].join(String.fromCharCode(10)));
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  // The app saves Goals asynchronously through its exclusive writer; only
@@ -369,7 +394,7 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('exploratory');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
  // The app saves Goals asynchronously through its exclusive writer; only
