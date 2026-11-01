@@ -231,6 +231,8 @@ try {
       state.supplies=[subq,nasal,unknown,unlabelled];
       const result={
         subq:getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id),
+        im:getEligibleSourceKits('Retatrutide','IM').map(x=>x.kit.id),
+        iv:getEligibleSourceKits('Retatrutide','IV').map(x=>x.kit.id),
         nasal:getEligibleSourceKits('Retatrutide','Nasal').map(x=>x.kit.id),
         oral:getEligibleSourceKits('Retatrutide','Oral').map(x=>x.kit.id)
       };
@@ -239,8 +241,8 @@ try {
       state.supplies=[];
       return result;
     });
-    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"nasal":[9332],"oral":[],"reservedSubq":[]}',
-      'Route-labelled open vials were combined or unlabelled stock guessed: '+JSON.stringify(routeIsolation));
+    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"im":[9331],"iv":[],"nasal":[],"oral":[],"reservedSubq":[]}',
+      'Physical-form isolation failed: injection routes must share only verified injectable stock, IV/nasal/unlabelled must remain blocked: '+JSON.stringify(routeIsolation));
     verified.push('same compound separate SubQ/nasal physical stock remains route-isolated');
     // Regression: compound View details/taken-today action must not throw ReferenceError fmtT.
     const completedAction=await page.evaluate(()=>{
