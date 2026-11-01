@@ -3744,7 +3744,11 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   color:var(--t1)!important;font-size:13px!important;font-weight:650!important;
 }
 html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-actions-three > .nx-kit-next-action{
-  background:#32233e!important;color:#fff!important;border-color:#32233e!important;
+  background:#7650a9!important;color:#fff!important;border-color:#7650a9!important;
+}
+/* Make both opening/setup actions read as Nexus purple, never near-black in light mode. */
+html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-secondary-open{
+  background:#efe6fb!important;color:#604184!important;border-color:#cdb6ea!important;
 }
 html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-use-setup-row > .nx-stash-use-setup{
   color:#493263!important;border-color:#87709d!important;background:#f6f0fb!important;
