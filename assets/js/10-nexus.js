@@ -343,10 +343,9 @@ function stashView() {
                   ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer").map(p=>`<div class="nx-stash-plan-status"><span>Plan saved · ${esc(p.kind||"Other")}</span><small>Vial inventory unchanged</small></div>`).join("")}
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
-                ${isActive&&v.intendedUse==="nasal-source"&&_demoActive?`<button type="button" class="nx-kit-record-nasal nx-kit-list-action" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}">Record prepared nasal spray</button>`:""}
-                <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
-              </div>`;
-            };
+                
+                <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button></div>${isActive&&v.intendedUse==="nasal-source"&&_demoActive?`<button type="button" class="nx-kit-record-nasal nx-kit-record-nasal-row" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}">Record prepared nasal spray</button>`:""}`;
+             };
             return `<div class="nx-kit-record-list">${ordered.slice(0,5).map(renderVial).join("")}</div>
               ${ordered.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${ordered.length}" data-noun="vials">Show all ${ordered.length} vials</button><div class="nx-kit-history-extra" hidden>${ordered.slice(5).map(renderVial).join("")}</div>`:""}`;
           })():`<p class="nx-kit-empty-note">No opened vials in this kit yet.</p>`}
@@ -2306,6 +2305,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
     }
     target.intendedUse=form;
     saveState();closeModal();render();
+     if(form==="nasal-source"&&_demoActive)nexusRecordNasalPreparation(kitId,vialId);
   };
 }
 
@@ -2318,7 +2318,7 @@ function nexusRecordNasalPreparation(kitId,vialId){
   showErrorBanner("An open vial reserved for nasal preparation is required.");return;
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
- '<div class="nx-form-stock-editor-head"><strong>Record prepared nasal spray</strong><button type="button" id="x" aria-label="Close">✕</button></div>'+
+ '<div class="nx-form-stock-editor-head"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><strong>Record prepared nasal spray</strong></div><button type="button" id="x" aria-label="Close">✕</button></div>'+
  '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+getVialRemainingMg(kit,vial).toFixed(2)+' mg remaining. Record only an already completed preparation.</p>'+
  '<label class="field-label" for="nx-nasal-source-mg">ACTUAL SOURCE AMOUNT (mg)</label><input class="inp" id="nx-nasal-source-mg" type="number" min="0" step="any" placeholder="Recorded amount">'+
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
@@ -2328,6 +2328,7 @@ function nexusRecordNasalPreparation(kitId,vialId){
  '<label class="nx-dose-option-check"><input type="checkbox" id="nx-nasal-record-confirm"><span>These are the actual quantities and source vial I recorded.</span></label>'+
  '<button type="button" id="nx-nasal-record-save" class="btn-primary" style="min-height:48px;width:100%">Record completed preparation</button>'+
  '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. Live transfers remain safety-gated.</p></section>',"#A78BFA");
+  m.classList.add("nx-form-log-sheet");
  m.querySelector("#x").onclick=closeModal;
  const inputs=["nx-nasal-source-mg","nx-nasal-bac","nx-nasal-saline","nx-nasal-pump"].map(id=>m.querySelector("#"+id));
  const preview=m.querySelector("#nx-nasal-record-preview"),values=()=>inputs.map(x=>Number(x.value));
