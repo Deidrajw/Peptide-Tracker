@@ -303,7 +303,7 @@ function supplyModal(existing, presetName, forceVials=false) {
       const q=input.value.toLowerCase().trim();
       const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,5);
       list.replaceChildren();
-      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.setAttribute("aria-selected",String(input.value.trim().toLocaleLowerCase()===o.name.toLocaleLowerCase()));b.textContent=o.name;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
+      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.setAttribute("aria-selected",String(input.value.trim().toLocaleLowerCase()===o.name.toLocaleLowerCase()));b.textContent=o.name;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;input.focus({preventScroll:true});closeList();};list.appendChild(b);});
       const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";
       browse.textContent="View all compounds";
       browse.onpointerdown=e=>e.preventDefault();
@@ -324,7 +324,7 @@ function supplyModal(existing, presetName, forceVials=false) {
           if(!duplicate){const opt=document.createElement("option");opt.value=name;opt.textContent=name;originalSelect.appendChild(opt);options.push({name,value:name});}
           originalSelect.value=chosen;
           originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
-          input.value=chosen;closeList();
+          input.value=chosen;input.focus({preventScroll:true});closeList();
         };
         list.appendChild(create);
       }
