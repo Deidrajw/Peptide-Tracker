@@ -14,11 +14,12 @@ function macroModal(prefillDate, existing) {
     <button id="save" class="btn-primary" style="background:#F9C87D">${isEdit?"SAVE CHANGES":"SAVE"}</button>
   `, "#F9C87D");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const rec = { id:f.id, date:m.querySelector("#date").value, calories:m.querySelector("#cal").value, protein:m.querySelector("#pro").value, carbs:m.querySelector("#carb").value, fat:m.querySelector("#fat").value, notes:m.querySelector("#notes").value };
     if(!rec.calories&&!rec.protein&&!rec.carbs&&!rec.fat) return;
-    state.macroLogs = state.macroLogs.filter(x=>x.id!==rec.id && dayKey(x.date)!==dayKey(rec.date));
-    state.macroLogs.push(rec); saveState(); closeModal(); render();
+    const button=m.querySelector("#save");button.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"dated-log-upsert",field:"macroLogs",record:rec});
+    if(!saved){button.disabled=false;return;}closeModal();render();
   };
 }
 
@@ -56,12 +57,12 @@ function weightModal(existing) {
     <button id="save" class="btn-primary" style="background:#8AB4FF">${isEdit?"SAVE CHANGES":"SAVE"}</button>
   `, "#8AB4FF");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const w = m.querySelector("#w").value; if (!w) return;
     const rec = {id:f.id, date:m.querySelector("#date").value, weight:w, notes:m.querySelector("#notes").value};
-    state.weightLogs = state.weightLogs.filter(x=>x.id!==rec.id);
-    state.weightLogs.push(rec);
-    saveState(); closeModal(); render();
+    const button=m.querySelector("#save");button.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"dated-log-upsert",field:"weightLogs",record:rec});
+    if(!saved){button.disabled=false;return;}closeModal();render();
   };
 }
 
@@ -77,12 +78,13 @@ function measureModal(existing) {
     <button id="save" class="btn-primary" style="background:#FF9CC8">${isEdit?"SAVE CHANGES":"SAVE"}</button>
   `, "#FF9CC8");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const rec = {id:f.id, date:m.querySelector("#date").value, notes:m.querySelector("#notes").value};
     let any=false; MEASURES.forEach(([k])=>{ const v=m.querySelector("#"+k).value; if(v){rec[k]=v;any=true;} });
     if (!any) return;
-    state.measurementLogs = state.measurementLogs.filter(x=>x.id!==rec.id);
-    state.measurementLogs.push(rec); saveState(); closeModal(); render();
+    const button=m.querySelector("#save");button.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"dated-log-upsert",field:"measurementLogs",record:rec});
+    if(!saved){button.disabled=false;return;}closeModal();render();
   };
 }
 
