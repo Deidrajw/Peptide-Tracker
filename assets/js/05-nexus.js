@@ -907,7 +907,7 @@ function nexusNasalDoseModal(name,occTime){
    if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}
    else result=await nexusCommitPreparedNasalOperation({type:"dose",tx});
   }catch(error){console.error("Prepared nasal dose blocked",error);
-   showErrorBanner("Live prepared nasal logging is not enabled pending shared-writer acceptance. Nothing saved.");
+   showErrorBanner(_demoActive?"Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":"Live nasal logging is unavailable until inventory saving is fully protected. Nothing saved.");
    btn.disabled=false;return;
   }
   closeModal();render();
