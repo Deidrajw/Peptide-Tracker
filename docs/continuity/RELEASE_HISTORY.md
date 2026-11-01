@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft PR124 shared form consolidation checkpoint, NOT RELEASED
+- a6b68f5e shared DS2 inventory/product-form header, f922fa16 Goal Details shared hierarchy, ee087bc7 Goal responsive styles, d471c178 Goal browser assertions. Source-level changes only; exact-head Chromium/WebKit pending. No storage migration, release promotion, artifact verification, merge, deployment or physical iPhone acceptance. P0 blocking; LIVE nasal gates OFF.
+
 ## 2026-11-01 — PR124 shared nasal review corrections, NOT RELEASED
 - Source commits 38edd27e (actual preparation Review), 1f35b65f (spray balance/opaque bottle label), 1384fc6d (review regression), 5434b01f (responsive shared review CSS). Initial Chromium/WebKit failed; corrected exact-head run pending. No version bump, no artifact parity verification, no live write gate enablement, no merge/deploy or iPhone acceptance. P0 remains blocking.
 
