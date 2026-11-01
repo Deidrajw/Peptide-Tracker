@@ -124,6 +124,28 @@ function nexusPlanScopedStateChange(snapshot,operation){
   if(operation.key==="recentDiscoverViews"&&(!Array.isArray(operation.value)||operation.value.length>8||operation.value.some(x=>typeof x!=="string"||x.length>160)||new Set(operation.value).size!==operation.value.length))fail("Invalid recent discovery views");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
+ }else if(operation.kind==="bulk-delete"){
+  const target=operation.target;
+  const allowed=["del-health-all","del-health-imported","del-activity","del-doses","del-logs","del-stash","del-workouts"];
+  if(!allowed.includes(target))fail("Unsupported destructive operation");
+  const requireLog=field=>{if(!Array.isArray(next[field]))fail("Invalid "+field+" history");};
+  const imported=r=>r.sourceType||r.notes?.includes("Apple Health")||r.notes==="Health Auto Export"||r.note==="Apple Health";
+  if(target==="del-health-all"){
+   for(const field of ["macroLogs","weightLogs","activityLogs","measurementLogs"]){requireLog(field);next[field]=[];}
+  }else if(target==="del-health-imported"){
+   for(const field of ["macroLogs","weightLogs","activityLogs","measurementLogs"]){requireLog(field);next[field]=next[field].filter(r=>!imported(r));}
+  }else if(target==="del-activity"){requireLog("activityLogs");next.activityLogs=[];}
+  else if(target==="del-logs"){requireLog("dailyLogs");next.dailyLogs=[];}
+  else if(target==="del-stash"){requireLog("supplies");next.supplies=[];}
+  else if(target==="del-workouts"){requireLog("activityLogs");next.activityLogs=next.activityLogs.filter(r=>!r.isWorkout);}
+  else{
+   if(!next.peptides||typeof next.peptides!=="object")fail("Dose history unavailable");
+   for(const field of ["peptides","customPeptides"]){
+    for(const item of Object.values(next[field]||{})){
+     if(item){if(!Array.isArray(item.doses))fail("Invalid dose history");item.doses=[];}
+    }
+   }
+  }
  }else if(operation.kind==="dated-log-upsert"){
   const field=operation.field,record=operation.record;
   if(!["macroLogs","weightLogs","measurementLogs"].includes(field))fail("Unsupported dated log");
