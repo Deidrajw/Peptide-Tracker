@@ -1,3 +1,6 @@
+## 2026-11-01 — Additional draft commits, NOT RELEASED
+- 392998ac DEMO new-vial nasal preparation continuation; 6c90120e linked prepared-vs-source card label; b8c04888 prepared summary style. Latest app checkpoint b8c04888941b7e07a0a78aa56138d73d2bf1d5bc. CI initiated, no results claimed, package/merge/deploy incomplete.
+
 ## 2026-11-01 — PR124 corrective working commits, NOT RELEASED
 - Draft-only commits: 1fc20386 (oral/nasal single-choice navigation and modal tags), faa9d6b5 (DS2 responsive modal treatment), 0d841fc9 (nasal demo legacy handoff and action placement), fc49debb (action styling). Base main da585ab3.
 - No merge/deployment, no production storage modification, no safety gate enablement. Latest-head CI, complete matching LIVE/DEMO package and physical iPhone reacceptance NOT VERIFIED. Existing prior QA on 9752ab64 cannot validate these new commits. LIVE prepared nasal transfers and spray writes remain P0 blocked.
