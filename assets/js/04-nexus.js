@@ -1305,9 +1305,9 @@ function deletePreparedDoseModal(pd) {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     if(deletePreparedDose(pd)===false)return;
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 // ═══════════════ END INVENTORY MODEL V2 (domain layer only — not yet wired to any screen) ═══════════════
@@ -1412,9 +1412,9 @@ function reopenVialModal(kitId, vialId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
-    confirmOpenIfOtherKitOpen(s, () => {
+    confirmOpenIfOtherKitOpen(s, async () => {
       reopenVial(s, vial);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     });
   };
 }
@@ -1543,7 +1543,7 @@ function manageKitMenu(kitId) {
     const btn=card.querySelector(".nx-kit-detail-button");
     if(btn){const panel=card.querySelector(".nx-kit-detail-panel"); if(panel){panel.hidden=false;btn.setAttribute("aria-expanded","true");card.scrollIntoView({block:"nearest",behavior:"smooth"});btn.focus({preventScroll:true});}}
   };
-  m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=()=>{
+  m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=async()=>{
     const id=btn.dataset.action;
     if(id==="details"){openDetails();return;}
     closeModal();
@@ -1564,8 +1564,8 @@ function manageKitMenu(kitId) {
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
     else if(id==="blend-finish-kit") finishBlendKitModal(kitId);
-    else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
-    else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",()=>{
+    else if(id==="reopen") { s.kitStatus=null; if(!await nexusCommitCurrentState())return;renderBody(); }
+    else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",async()=>{
       const kit=state.supplies.find(x=>x.id===kitId);
       if(kit){
         const othersExist=state.supplies.some(x=>x.id!==kitId&&x.name===kit.name);
@@ -1575,7 +1575,7 @@ function manageKitMenu(kitId) {
         }
       }
       state.supplies=state.supplies.filter(x=>x.id!==kitId);
-      saveState();render();
+      if(!await nexusCommitCurrentState())return;render();
     });
   });
 }
@@ -2094,7 +2094,7 @@ function editVialReconModal(kitId, vialId) {
     <button id="ev-save" class="btn-primary" style="background:${c.color}">Save Changes</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#ev-save").onclick = () => {
+  m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
     vial.reconDate = newDate;
     if (isActiveVial) {
@@ -2102,7 +2102,7 @@ function editVialReconModal(kitId, vialId) {
       const bacInput = m.querySelector("#ev-bac");
       if (bacInput) s.bacMl = parseFloat(bacInput.value)||s.bacMl;
     }
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -2153,9 +2153,9 @@ function undoReconstitutionModal(kitId, vialId) {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     undoReconstitution(s, vial);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -2219,12 +2219,12 @@ function nexusEligiblePreparedSources(name, method) {
     Number.isFinite(p.remainingMg)&&p.remainingMg>0&&
     (method!=="Nasal"||p.containerType==="nasal-bottle"));
 }
-function nexusCreatePreparationRecord(input) {
+async function nexusCreatePreparationRecord(input) {
   if(!globalThis.NexusPreparationLedger)throw Error("Preparation ledger unavailable");
   const p=globalThis.NexusPreparationLedger.createPreparation(input);
   if((state.preparations||[]).some(x=>String(x.id)===String(p.id)))throw Error("Duplicate preparation");
   state.preparations=state.preparations||[];
-  state.preparations.push(p);saveState();
+  state.preparations.push(p);if(!await nexusCommitCurrentState())throw Error("Preparation record not durably saved");
   return p;
 }
 function nexusPreviewPreparationTransaction(input) {
@@ -2735,16 +2735,16 @@ function snoozeModal(id) {
     <button type="button" id="dismiss-reminder" style="width:100%;min-height:44px;text-align:left;padding:12px 14px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--t2);font-size:13px">Dismiss this alert</button>
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#dismiss-reminder").onclick=()=>{
+  m.querySelector("#dismiss-reminder").onclick=async()=>{
     if(!state.settings.dismissedReminders) state.settings.dismissedReminders={};
     state.settings.dismissedReminders[id]=Date.now();
-    saveState();closeModal();render();
-    showUndoToast("Alert dismissed",()=>{delete state.settings.dismissedReminders[id];saveState();render();});
+    if(!await nexusCommitCurrentState())return;closeModal();render();
+    showUndoToast("Alert dismissed",async()=>{delete state.settings.dismissedReminders[id];if(!await nexusCommitCurrentState())return;render();});
   };
-  m.querySelectorAll(".snooze-opt").forEach(b=>b.onclick=()=>{
+  m.querySelectorAll(".snooze-opt").forEach(b=>b.onclick=async()=>{
     if (!state.settings.snoozedReminders) state.settings.snoozedReminders={};
     state.settings.snoozedReminders[id] = Date.now() + (+b.dataset.days)*86400000;
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   });
 }
 
@@ -2935,13 +2935,13 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
       </div>`;
     addBtn.parentNode.insertBefore(form,addBtn);
     form.querySelector("#cs-cancel").onclick=()=>{form.remove();addBtn.style.display="";};
-    form.querySelector("#cs-save").onclick=()=>{
+    form.querySelector("#cs-save").onclick=async()=>{
       const name=(form.querySelector("#cs-name-inline").value||"").trim();
       if(!name) return;
       if(!state.settings.customSymptoms) state.settings.customSymptoms=[];
       if(!state.settings.customSymptoms.find(c=>c.name.toLowerCase()===name.toLowerCase())){
         state.settings.customSymptoms.push({name,category:"Other"});
-        saveState();
+        if(!await nexusCommitCurrentState())return;
       }
       selected.push({name,intensity:2});
       state._symPickerOpen=state._symPickerOpen||{};
