@@ -321,6 +321,31 @@ try {
     // method changes must keep native storage fields synchronised.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
     await openDose(page);
+    // DS2 #15: Additional dose options must be one legible, keyboard-reachable
+    // disclosure in every narrow viewport/theme, without horizontal overflow.
+    const optional=page.locator('.nx2-dose-modal .nx-dose-more-options');
+    ensure(await optional.count()===1,'Exactly one Additional dose options disclosure required');
+    const optSummary=optional.locator('summary');
+    const optBefore=await optSummary.evaluate(el=>({
+      height:el.getBoundingClientRect().height,
+      right:el.getBoundingClientRect().right,
+      viewport:document.documentElement.clientWidth,
+      label:el.textContent.trim()
+    }));
+    ensure(optBefore.label==='Additional dose options'&&optBefore.height>=44&&optBefore.right<=optBefore.viewport+2,
+      'Additional dose options touch/viewport geometry: '+JSON.stringify(optBefore));
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')!==null,'Additional dose options disclosure must expand');
+    const checkboxLayout=await optional.locator('.nx-dose-option-check').evaluateAll(els=>
+      els.map(el=>({height:el.getBoundingClientRect().height,
+        right:el.getBoundingClientRect().right,
+        viewport:document.documentElement.clientWidth})));
+    ensure(checkboxLayout.length===2&&checkboxLayout.every(g=>g.height>=44&&g.right<=g.viewport+2),
+      'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
+    ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
+      'Both independent-log and escalation options must be available');
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')===null,'Optional panel should collapse without saving');
     ensure(await page.locator('.nx-method-option').count()===7,
       'Seven saved-route options including Other should remain available');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
