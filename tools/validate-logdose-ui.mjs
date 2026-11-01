@@ -465,6 +465,14 @@ try {
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     await captureDose('Review');
+    const reviewBack=await page.locator('#nx-dose-review-back').evaluate(el=>{
+      const b=el.getBoundingClientRect();return {width:b.width,height:b.height,
+        top:b.top,bottom:b.bottom,viewport:innerHeight};
+    });
+    ensure(reviewBack.height>=44&&reviewBack.width>=44&&reviewBack.top>=-2&&
+      reviewBack.bottom<=reviewBack.viewport+2,
+      'Review Edit details falls below 44px or clips: '+JSON.stringify(reviewBack));
+    visualEvidence.Review.backTarget=reviewBack;
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure((await page.locator('#nx-dose-review-compound').innerText()).includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
