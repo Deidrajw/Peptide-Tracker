@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 corrected Chromium and matched candidate artifacts, NOT RELEASED
+- Test-only `febed48d` corrects obsolete left/right site expectations; branch draft PR #124 remains unmerged, main `da585ab3`. All five matching CI workflows SUCCESS (#41343188488 Chromium/build, #41343188622 WebKit, #41343188505 mobile, #41343188428 writer, #41343188427 nested). Exact-source artifact #13098810253 independently downloaded: outer and nested ZIP CRC PASS, 26 LIVE files match manifest, standalone full-app DEMO equals offline index and in-memory/network isolation bootstrap verified. Build retains `v0.9.20-beta` label, no version promotion.
+- Data impact: no application/storage/schema change from this correction and no production writes. P0 mixed-writer release hold remains; LIVE nasal gates OFF; no physical iPhone/VoiceOver acceptance, merge, Cloudflare candidate deployment or release. Existing Cloudflare parity report is not an approval or deployment result.
+
 ## 2026-11-01 — Draft PR124 shared form consolidation checkpoint, NOT RELEASED
 - a6b68f5e shared DS2 inventory/product-form header, f922fa16 Goal Details shared hierarchy, ee087bc7 Goal responsive styles, d471c178 Goal browser assertions. Source-level changes only; exact-head Chromium/WebKit pending. No storage migration, release promotion, artifact verification, merge, deployment or physical iPhone acceptance. P0 blocking; LIVE nasal gates OFF.
 
