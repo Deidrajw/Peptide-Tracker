@@ -272,7 +272,7 @@ function wireBody() {
     } catch(e) { console.error(e); }
   };
   const nd=document.getElementById("nuke-data"); if(nd) nd.onclick=()=>{
-    confirmAction("⚠️ Remove ALL data? This cannot be undone.",()=>{try{nexusEraseSavedState();state=migrate(null);tab="home";render();}catch(e){console.error(e);showSaveWarning();}});
+    confirmAction("⚠️ Remove ALL data? This cannot be undone.",async()=>{try{if(!await nexusEraseSavedState())return;state=migrate(null);tab="home";render();}catch(e){console.error(e);showSaveWarning();}});
   };
   const delBtns=[
     ["del-health-all","Remove all health data (macros, weight, activity, measurements)?",()=>{
