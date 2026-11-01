@@ -4065,3 +4065,11 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   line-height:1.4;text-align:center;white-space:normal;
 }
 .nx-kit-record-nasal-row:focus-visible{outline:3px solid var(--accent,#a78bfa);outline-offset:2px}
+
+
+.nx-kit-prepared-summary{
+  margin-top:9px;padding:9px 11px;border-radius:10px;
+  background:var(--surface-2);border:1px solid var(--border-sub);
+  color:var(--t2);font-family:inherit;font-size:12px;line-height:1.45;
+  overflow-wrap:break-word;
+}
