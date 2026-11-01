@@ -275,10 +275,11 @@ function devResetAllModal() {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     if (m.querySelector("#erase-confirm").value.trim().toUpperCase()!=="ERASE") return;
-    try { nexusEraseSavedState(); location.reload(); }
-    catch(e){console.error("Nexus erase failed",e);showSaveWarning();}
+    const button=m.querySelector("#confirm");button.disabled=true;
+    try {if(await nexusEraseSavedState())location.reload();else button.disabled=false;}
+    catch(e){console.error("Nexus erase failed",e);showSaveWarning();button.disabled=false;}
   };
 }
 
