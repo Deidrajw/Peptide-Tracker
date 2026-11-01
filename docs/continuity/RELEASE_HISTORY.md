@@ -1,3 +1,6 @@
+## 2026-10-31 / Nov 1 UTC — PR124 coordinated form/route integration checks (UNRELEASED)
+- Updated stale DS2 test expectation in 8a983222 to match stored Injectable family, not old SubQ method. Extended browser/WebKit source-choice checks in ab89db0 for route-switch no-write and no-protocol physical stock discovery. Existing draft code includes family/route separation, DS2 style work and numeric vial ordering from prior branch work, but exact current release source must pass integrated CI. Full app demo and LIVE bundle NOT REGENERATED/VERIFIED on this latest test SHA. No merge/deploy, no data migration. Existing P0 writer open.
+
 ## 2026-10-31 — New PR124 physical feedback and source-model discovery (NOT RELEASED)
 - Main da585ab3, draft PR124 2dad70b at start, last tested DEMO 9ef27f9. User visual Stash cases 01/02 Pass; case 03 Not Tested. New screenshots show product-form versus per-dose-route mismatch, hidden dose method, no-protocol compound discovery gap, unsorted vials and DS2 visual problems.
 - Verified exact-match route source filters and authoritative writer; nasal plan only metadata. Work logged as source-model rework requirement. No migration, source change, new artifact, merge or deployment in this discovery step. Mixed writer P0 open.
