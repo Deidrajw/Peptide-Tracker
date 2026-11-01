@@ -20,6 +20,23 @@ jobs:
           # during another tab's exclusive stock transaction. Do not treat
           # passing scoped coordinator tests as release safety acceptance.
           node tools/diagnose-mixed-tab-writes.cjs
+  chromium-real-two-tab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install real Chromium test browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Run two actual same-origin tabs with shared storage and Web Locks
+        run: |
+          python3 -m http.server 8777 --bind 127.0.0.1 >/tmp/nexus-two-tab-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8777/ >/dev/null && break; sleep 1; done
+          node tests/chromium-two-tab-writer.cjs
   shared-writer:
     runs-on: ubuntu-latest
     timeout-minutes: 8
