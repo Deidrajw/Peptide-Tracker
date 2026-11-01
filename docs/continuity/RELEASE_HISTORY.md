@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft safety gate, NOT RELEASED
+- 105f5e25 adds deliberately failing mixed-writer release gate; c3971a8f adds nasal overdraw and replay tests. No claim of P0 resolution, live activation, artifact verification, merge or deployment.
+
 ## 2026-11-01 — Additional corrective code/test, NOT RELEASED
 - 0e385399 320/390 page QA; f1d1347d two-stage entry/review; 1e9f0ba4 DS2 stage styling; 6a670778 fix first prepared nasal history; 4db8f6a7 correct DEMO spray error; c6572fa1 first-nasal-dose/undo unit fixture. Draft PR124 only. Checks pending, no production activation, merge, or deployment. No data migration.
 
