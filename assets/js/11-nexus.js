@@ -2035,7 +2035,7 @@ function goalModal(existing) {
     const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value,evidenceSymptom:m.querySelector("#g-evidence-symptom").value,progressModel:{...(g.progressModel||{}),...progressModel}};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.goals.findIndex(x=>x.id===g.id);idx>=0?state.plans.goals[idx]=updated:state.plans.goals.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function researchModal(existing) {
@@ -2062,7 +2062,7 @@ function researchModal(existing) {
     const updated={...r,compound,status:m.querySelector("#r-status").value,reason:m.querySelector("#r-reason").value,goal:m.querySelector("#r-goal").value,notes:m.querySelector("#r-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.research.findIndex(x=>String(x.id)===String(r.id));idx>=0?state.plans.research[idx]=updated:state.plans.research.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function protocolModal(existing) {
@@ -2088,7 +2088,7 @@ function protocolModal(existing) {
     const updated={...pr,name,goal:m.querySelector("#p-goal").value,status:m.querySelector("#p-status").value,compounds:selC,startDate:m.querySelector("#p-start").value,duration:m.querySelector("#p-dur").value,notes:m.querySelector("#p-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.protocols.findIndex(x=>String(x.id)===String(pr.id));idx>=0?state.plans.protocols[idx]=updated:state.plans.protocols.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function shoppingModal(existing) {
@@ -2111,7 +2111,7 @@ function shoppingModal(existing) {
     const updated={...s,item,category:m.querySelector("#s-cat").value,status:m.querySelector("#s-status").value,qty:m.querySelector("#s-qty").value,goal:m.querySelector("#s-goal").value,notes:m.querySelector("#s-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.shopping.findIndex(x=>x.id===s.id);idx>=0?state.plans.shopping[idx]=updated:state.plans.shopping.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 
