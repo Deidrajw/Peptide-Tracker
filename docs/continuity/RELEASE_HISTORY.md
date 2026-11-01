@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft actual-handler concurrency test, NOT RELEASED
+- e1d3966f adds true Chromium two-tab tests invoking application settings/history commit helpers. No test pass evidence, remaining ordinary save callers unconverted, no live nasal/merge/deploy.
+
 ## 2026-11-01 — Draft Chromium cross-tab regression, NOT RELEASED
 - 6db79cd6 adds real Chromium two-tab actual-storage-key coordinator race coverage, including stale rejection and quota simulation. Results pending; full caller migration not complete. No live nasal, merge or deployment.
 
