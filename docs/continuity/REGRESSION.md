@@ -1,3 +1,9 @@
+## 2026-11-01 — PR124 form picker 320/390 × light/dark new QA gate
+- Test source `bedff373`: no duplicate native datalist on Other forms, labelled searchable compound field; existing five-result/44px/browse/custom/stock safety assertions retained.
+- Test source `cc568a3f`: checks 320/390 responsive picker right edge, no nested list scroll, ArrowDown/Enter keyboard selection and dismissal in LIVE/DEMO dark/light Chromium/WebKit matrix.
+- Earlier `0ed9d03e` matching Chromium #41358693238 and WebKit #41358693323 FAILED 6 vs 5 options because Browse all incorrectly declared `role=option`; code `bc8325a5` removes that role. New exact-head CI `1fab968c` pending. Do not report PASS until verified.
+- Oxytocin E2E historical fictional PASS on `66959ba7`; latest source iPhone/VoiceOver, screenshots, keyboard, 16-point physical acceptance NOT TESTED. Mixed-writer P0 BLOCKED and nasal LIVE OFF.
+
 ## 2026-11-01 — PR124 DS2 CSS corrective checkpoint (NO NEW PASS)
 - Branch styling commit `2b19a5de`: shared form/Goal/nasal header geometry, 48px close and responsive review/field/CTA text wrapping, CSS-only.
 - New-source Chromium 320/390 light/dark, WebKit, mobile, writer, nested, modal scroll/keyboard, screenshot inspection: NOT TESTED at this commit. Physical iPhone/VoiceOver: NOT TESTED; earlier 13-screen physical UI rejection remains FAIL/RETEST. Sixteen-point corrective list NOT COMPLETE.
