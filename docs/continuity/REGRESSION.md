@@ -1,3 +1,8 @@
+## 2026-10-31 / Nov 1 UTC — Form/route regression implementation checkpoint
+- Source of record: new family compatibility implementation present on branch head 6c79fef (source commit lineage); untested features are NOT marked pass. Independent prior nested #41265838553 FAILED stale SubQ expectation; test fixed 8a983222 and must rerun.
+- Added exact interaction checks ab89db0 into existing tools/validate-formulation-stock.mjs: per-dose SubQ → IM → SubQ with a saved/compatible Injectable vial; two exact vial choices remain, no debit from just switching route; Today Log Dose discovers fictional physical stock without protocols, opening picker does not create protocol. New run pending.
+- Product-form other inventory (capsules/nasal bottle) exists and is protected by no-write checks; automatic dose decrement from other-form stock is not yet a fully verified exclusive source workflow. Physical multi-form debit acceptance remains BLOCKED; nasal plans no transfer by design. Legacy mixed writer P0 unresolved.
+
 ## 2026-10-31 — iPhone feedback and root-cause defects PR124
 - User-reported physical checklist: QA-STASH-VIS-01 PASS, QA-STASH-VIS-02 PASS, QA-STASH-VIS-03 NOT TESTED, QA-PROTECTED-01 PASS; observation fields empty. These passes do not imply corrected Log Dose.
 - QA-FORM-01 FAIL user visible: saved use setup hides administration method grid via style display:none in assets/js/05-nexus.js 907-911.
