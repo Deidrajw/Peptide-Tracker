@@ -1,3 +1,8 @@
+## 2026-11-01 — Coordinated capsule and nasal candidate, source 9c84350
+- Source code tests ADDED to tools/validate-formulation-stock.mjs: capsule form-specific chooser, two-capsule 10mg from labelled 5mg units, count 27→25, exact custom no-protocol history, no physical-vial or nasal-container mutation, reverse 25→27, and overdraw blocked before confirmation. Nasal planner reserved 'nasal-source' acceptance, 5mg source→3mg + 2mg new destination, unchanged input snapshot and mismatched form rejected. DEMO end-to-end actual nasal preparation produces separate 2mg/5mL source-linked bottle with nominal 0.04mg/spray and 0.1mL/spray; two fictional sprays debit prepared container 2→1.92mg, 5→4.8mL without re-debiting vial, exact reversal restores bottle/dose.
+- Status at documentation: NOT YET VERIFIED on exact-head Chromium/WebKit (CI #41272345072/#41272345033 in progress). User real iPhone and VoiceOver NOT TESTED. No latest-source demo/live artifact verified. Existing protected writer/mobile suites SUCCESS at observation; do not extrapolate to untested cases.
+- Live prepared-source transfers and nasal sprays intentionally BLOCKED by P0 legacy mixed-writer coordination; tests are fictional, in-memory and pure planner only. User safety gates remain closed; no automatic or destructive migration.
+
 ## 2026-10-31 late evening — iPhone QA new defects after 2081b900 automated PASS
 - User reported physical DEMO FORM-01 Pass, FORM-02 Pass, STASH-01 Pass, PROTECTED-01 Pass, no observation notes or device/iOS. Do not overwrite passing reports; new defects require separate acceptance tests.
 - UI-STASH-BADGE FAIL user visual: Healthy and Stored status pills differ height/padding/font; expect identical badge geometry light/dark at 320/390.
