@@ -92,6 +92,48 @@ function saveState() {
 
 
 
+
+/* P0 migration: strictly scoped settings and dated supplement-history saves.
+ * No live state mutation before verified durable commit, no silent rebase.
+ * All callers must await the result before displaying save success.
+ */
+function nexusPlanScopedStateChange(snapshot,operation){
+ const fail=message=>{throw Error(message)};
+ if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
+ const next=JSON.parse(JSON.stringify(snapshot));
+ if(operation.kind==="setting"){
+  const allowed=["nexusApiKey","phaseRemindersEnabled"];
+  if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
+  if(operation.key==="nexusApiKey"&&typeof operation.value!=="string")fail("Invalid API key");
+  if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
+  if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
+  next.settings[operation.key]=operation.value;
+ }else if(operation.kind==="supplement-log-delete"){
+  if(typeof operation.date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(!Array.isArray(next.supplementLogs))fail("Supplement log history unavailable");
+  const existing=next.supplementLogs.filter(x=>dayKey(x.date)===operation.date);
+  if(existing.length!==1)fail("Unique dated supplement record required");
+  next.supplementLogs=next.supplementLogs.filter(x=>dayKey(x.date)!==operation.date);
+ }else fail("Unsupported scoped save");
+ return {next};
+}
+async function nexusCommitScopedStateChange(operation){
+ if(_demoActive){
+  const result=nexusPlanScopedStateChange(state,operation);
+  state=result.next;return true;
+ }
+ try{
+  const writer=nexusWriter();
+  const result=await writer.transaction(state,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
+  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  return true;
+ }catch(error){
+  console.error("Scoped state save rejected",error);
+  showSaveWarning();
+  return false;
+ }
+}
+
 /* PR124 first exclusive Log Dose slice: untracked (no stock debit).
  * Keep the live in-memory state unchanged until the locked, durable commit
  * succeeds. Do not retry or rebase a stale tab's dose without review.
