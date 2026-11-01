@@ -818,7 +818,7 @@ function nexusBrowseAllCompounds(modal, options, choose, initialQuery="") {
   viewer.className="nx-compound-browser";
   viewer.setAttribute("role","dialog");viewer.setAttribute("aria-modal","true");
   viewer.setAttribute("aria-label","All compounds");
-  viewer.innerHTML='<div class="nx-compound-browser-header"><button type="button" class="nx-browser-back" aria-label="Back to kit editor">←</button><h2>All compounds</h2><span></span></div><label class="nx-browser-label" for="nx-browser-search">Search compounds</label><input id="nx-browser-search" type="search" autocomplete="off" placeholder="Type to filter compounds"><p class="nx-browser-count" aria-live="polite"></p><div class="nx-browser-items"></div>';
+  viewer.innerHTML='<div class="nx-compound-browser-header"><button type="button" class="nx-browser-back" aria-label="Back to compound selection">←</button><h2>All compounds</h2><span></span></div><label class="nx-browser-label" for="nx-browser-search">Search compounds</label><input id="nx-browser-search" type="search" autocomplete="off" placeholder="Type to filter compounds"><p class="nx-browser-count" aria-live="polite"></p><div class="nx-browser-items"></div>';
   const back=viewer.querySelector(".nx-browser-back"),search=viewer.querySelector("#nx-browser-search"),
     count=viewer.querySelector(".nx-browser-count"),items=viewer.querySelector(".nx-browser-items");
   const priorFocus=document.activeElement;
