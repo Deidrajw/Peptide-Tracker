@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 WebKit screenshot-upload CI candidate (NOT RELEASED)
+- `ff824d4e` adds GitHub Actions artifact publishing for WebKit compound-picker/nasal visual screenshots and geometry JSON. Previous WebKit #41363990003 SUCCESS yet no uploaded artifact, so visual review impossible from that run. No runtime/data/storage changes. Keep PR draft and release blocked pending CI, full matrix and physical iPhone, P0 mixed writer, LIVE nasal gates OFF.
+
 ## 2026-11-01 — PR124 48px Review Back correction candidate (NOT RELEASED)
 - `28ccb58d`: CSS-only override for Log Dose Review Edit details 36px legacy-specificity bug, rendering 48px; `38f356b6`: actual browser assertion for >=44px and viewport containment. Previously green Chromium #41363339799 screenshot artifact #13106129580 contains 24 Log Dose images (8 fictional width/theme/build cells) but did not catch Back target. Local equivalent CSS injection PASS four width/theme screenshots; new-head Chromium #41364394562/WebKit #41364394531 unverified. No app data/schema/ledger change, no production release. P0 writer BLOCKED, LIVE nasal OFF, draft unmerged/undeployed.
 
