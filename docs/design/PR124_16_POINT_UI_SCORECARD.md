@@ -11,7 +11,7 @@ Status key: CODED = source change present; PARTIAL = some source changes but sco
 | 03 | Add Kit one entry, five purchased forms, consistent hierarchy | CODED | PASS broad suite at 5b7f878e | UAT FAIL, retest pending |
 | 04 | Shared modal header hierarchy across Add Kit, Capsules, Topical, Log Dose, Goal | PARTIAL CSS 2b19a5de | PASS suite at 5b7f878e; visual acceptance unproven | UAT FAIL |
 | 05 | Standard 44–48px rounded close button, consistent SVG/position | PARTIAL CSS 2b19a5de | PASS suite at 5b7f878e | UAT FAIL |
-| 06 | Vial and other-form compound pickers same search/browse/keyboard behavior | PARTIAL: picker keyboard parity c4f9e8d6; remaining layout audit | NEW HEAD NOT TESTED | UAT FAIL |
+| 06 | Vial and other-form compound pickers same search/browse/keyboard behavior | CODED: shared picker keyboard parity c4f9e8d6 and Other-form native dropdown removal e394603f; browser test bedff373; remaining layout/device audit | NEW HEAD NOT TESTED | UAT FAIL |
 | 07 | Capsule form compact, readable and non-clipped | PARTIAL | PASS earlier broad suite | UAT FAIL |
 | 08 | Topical/raw form consistent picker, fields, actions | PARTIAL | PASS earlier broad suite | UAT FAIL |
 | 09 | Nasal actual preparation compact, no wasted full-height whitespace | PARTIAL CSS | PASS earlier Oxytocin browser | UAT FAIL |
@@ -26,6 +26,11 @@ Status key: CODED = source change present; PARTIAL = some source changes but sco
 ## Verified engineering and release gates
 - Main da585ab3; PR #124 draft/unmerged. Prior exact Oxytocin Chromium/WebKit PASS at application 66959ba7 with matching full-app isolated DEMO and LIVE artifact audit.
 - CSS candidate 2b19a5de: five workflows at 5b7f878e SUCCESS (Chromium/build 41355828075, WebKit 41355828082, mobile 41355828040, writer 41355828049, nested 41355828098).
-- Picker behavior parity code c4f9e8d6 is a NEW source change; its exact-head checks and artifact audit must be separately verified. No physical iPhone retest claimed.
+- Picker behavior parity code c4f9e8d6, Other-form native/custom picker consolidation e394603f and browser assertion bedff373 are NEW source changes. Both the new 320/390 suite and artifact audit must be verified at exact-head before PASS. No physical iPhone retest claimed.
 - Mixed legacy-writer P0 BLOCKING; LIVE nasal transfer/log flags OFF. No merge, deploy, version promotion, production data migration or user-data writes.
 - Remaining next action: finish the OPEN/PARTIAL UI issues, add explicit 320/390 light/dark visual assertions for all 16, inspect screenshots and exact-source isolated full-app DEMO/LIVE ZIP, then ask for physical iPhone acceptance.
+
+## 2026-11-01 — additional picker consolidation checkpoint
+- Other-form capsule/raw/topical/purchased nasal compound field now has a **single** custom searchable combobox rather than overlapping native datalist and custom results. It preserves five-option browse, View all, custom names and field values; click/custom/browse now dispatch change consistently. Application commit `e394603f`.
+- Regression `bedff373` demands no #nx-form-compound-list and an accessible search intent label in addition to existing five-result, custom, Browse all, >=44px touch-target and save tests.
+- This is CODED, not physical acceptance. Need confirm exact-head CI, inspect narrow screenshots, and resolve all remaining PARTIAL items before requesting iPhone testing. P0 BLOCKED, nasal LIVE OFF.
