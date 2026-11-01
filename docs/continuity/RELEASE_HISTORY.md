@@ -1,3 +1,7 @@
+## 2026-10-31 — PR124 Log Dose cleanup (UNRELEASED)
+- Code d574c5d, Stash test ef8b297, WebKit/Chromium test 200db95, prior Log Dose handler code ece3780. Fix Edit defaults wiring, contextual site, simplify source cards and conditional legacy confirmation. Source-only candidate, no merge/deploy or migrations.
+- Historical full QA 41258715620: Log Dose 176 flows PASS, Stash 320=231px and 390=233px PASS, overall FAILED on stale sealed-vial test. Latest-source QA/artifact and iPhone acceptance NOT VERIFIED. P0 mixed writer remains blocker.
+
 ## 2026-10-31 — Exclusive backed physical Log Dose source audit and additional failure tests
 - Verified main da585ab3 and draft PR124 source cc0d293a at start. Previous untracked slice full Chromium #41228001797, WebKit #41228001558, nested #41228001621, shared writer #41228001525 and mobile #41228001521 all SUCCESS. Full-build artifact #13053211462 exists (16,721,290 bytes, not expired); archive contents NOT independently inspected.
 - Current PR source already implements nexusPlanBackedPhysicalDose and nexusCommitBackedPhysicalDose in assets/js/01-nexus.js and fresh physical dose branch in assets/js/05-nexus.js. Pinned open exact-vial IDs, compatible kit/name/method, source mass and totals, no sealed/finished sources, duplicate dose IDs; debit physical mg and record native-unit allocations + dose history in one exclusive Web-Locked transaction with readback and stale fail-closed. DEMO in-memory only; no migration or production writes.
