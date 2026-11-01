@@ -26,6 +26,11 @@ try{
         page.on('pageerror',error=>errors.push(error.message));
         page.on('dialog',dialog=>dialog.accept());
         await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
+        // Startup now waits for exclusive durable readback before first render.
+        // Do not open a test modal over the initial LOADING shell: the delayed
+        // first render can legitimately replace it and invalidate selectors.
+        await page.waitForFunction(()=>{const root=document.querySelector('#app');
+          return root && !root.textContent.includes('LOADING…');});
         await page.evaluate((t)=>{
           // CI browser contexts are disposable and isolated from any real user data.
           state=buildDemoState('weight_loss');
