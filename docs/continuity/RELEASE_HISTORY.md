@@ -1536,3 +1536,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 Plans Goals QA Save acknowledgment (no release)
 - Test-only a2e0321 fixes premature reopening of Goals wizard before preceding async Save completion, and commits fictional LIVE Plans fixture through exclusive writer. Previous #41326571439 full failed later in Plans though source CTA 48px touch assertion cleared; all four focused suites PASS. No new application code beyond prior 48px CSS and scoped writer change, no release/merge/deploy. P0 blocking and exact-source artifacts still unqualified.
+
+
+## 2026-11-01 — PR124 Goal wizard QA correction, not a release
+- Commit 2457a657 updates only tools/validate-plans-hierarchy.mjs for unstable/detached rapid Playwright Goal Continue actions; retains actual onclick execution and assertions. Previous full #41326571439 FAILED despite substantial preceding browser PASS. Full/physical iPhone and exact-head artifact qualifications pending; no live deployment or production data writes; nasal gates OFF, P0 blocking.
