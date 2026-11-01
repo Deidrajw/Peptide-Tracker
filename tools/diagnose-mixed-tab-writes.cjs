@@ -32,11 +32,29 @@ async function main(){
  assert.equal(final.supplies[0].remainingMg,10);
  assert.equal(final.peptides.Fictional.doses.length,0);
  assert.equal(final.settings.theme,'light');
+ // Static release gate: inventory-only locking is not sufficient while
+ // ordinary callers can still invoke a synchronous unlocked gateway.
+ const sourceDir=path.resolve(__dirname,'../assets/js');
+ const remaining=[];
+ for(let i=1;i<=12;i++){
+  const filename=String(i).padStart(2,'0')+'-nexus.js';
+  const source=fs.readFileSync(path.join(sourceDir,filename),'utf8');
+  const lines=source.split('\\n');
+  for(let n=0;n<lines.length;n++){
+   if(/\\bsaveState\\s*\\(|\\bnexusEraseSavedState\\s*\\(/.test(lines[n]) &&
+      !/^\\s*(?:async\\s+)?function\\s+(?:saveState|nexusEraseSavedState)\\s*\\(/.test(lines[n]) &&
+      !/^\\s*(?:\\/\\/|\\*)/.test(lines[n]))
+     remaining.push(filename+':'+(n+1));
+  }
+ }
+ const gateClear=remaining.length===0 &&
+  !fs.readFileSync(path.join(sourceDir,'01-nexus.js'),'utf8').includes('writer.saveLegacy(state)') &&
+  !fs.readFileSync(path.join(sourceDir,'01-nexus.js'),'utf8').includes('writer.removeLegacy()');
  const gap=ordinary==='COMMITTED';
- console.log(JSON.stringify({status:gap?'FAIL_SAFETY_GATE':'PASS',
+ console.log(JSON.stringify({status:gap||!gateClear?'FAIL_SAFETY_GATE':'PASS',unlockedCallSites:remaining,
    scenario:'Tab A holds exclusive inventory lock; Tab B ordinary whole-state save',
    ordinary,inventory,lockHeldDuringOrdinary:true,final,
    limitation:'isolated V8 tab simulation; true browser-process timing NOT TESTED'},null,2));
- if(gap)process.exitCode=1;
+ if(gap||!gateClear)process.exitCode=1;
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
