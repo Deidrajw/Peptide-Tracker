@@ -400,6 +400,31 @@ try {
     ensure(layout.bodyHeight>80 && layout.bodyTop>=layout.headerBottom-2 &&
       layout.bodyBottom<=layout.footerTop+2,
       'Scroll body overlaps sticky header/footer: '+JSON.stringify(layout));
+    // Prior iPhone screenshots showed clipped Log Dose headers/actions. Assert
+    // actual viewport geometry in entry AND Review, not just DOM containment.
+    const doseViewport=async stage=>{
+      const geometry=await page.locator('.nx2-dose-modal').evaluate(modal=>{
+        const rect=selector=>{const el=modal.querySelector(selector);if(!el)return null;
+          const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
+        return {viewport:document.documentElement.clientWidth,
+          vh:window.innerHeight,pageScrollWidth:document.documentElement.scrollWidth,
+          sheet:rect(':scope'),header:rect('.nx-dose-fixed-header'),
+          close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
+          action:rect('.nx-dose-footer .btn-primary')};
+      });
+      ensure(geometry.sheet&&geometry.header&&geometry.close&&geometry.footer,
+        stage+' missing Log Dose shell: '+JSON.stringify(geometry));
+      ensure(geometry.pageScrollWidth<=geometry.viewport+2 &&
+        [geometry.sheet,geometry.header,geometry.close,geometry.footer].every(box=>
+          box.left>=-2&&box.right<=geometry.viewport+2),
+        stage+' has horizontally clipped Log Dose UI: '+JSON.stringify(geometry));
+      ensure(geometry.close.width>=44&&geometry.close.height>=44&&
+        geometry.close.top>=-2&&geometry.close.bottom<=geometry.vh+2&&
+        geometry.footer.top>=-2&&geometry.footer.bottom<=geometry.vh+2,
+        stage+' close or sticky footer outside viewport: '+JSON.stringify(geometry));
+      return geometry;
+    };
+    await doseViewport('Entry');
     ensure(await fixedHeader.locator('.nx-dose-head').count()===1,'Sticky dose header missing');
     ensure(await page.locator('.nx-dose-mode-switch, .nx-dose-step-nav').count()===0,
       'Legacy Quick/Guided step navigation still visible');
@@ -409,6 +434,7 @@ try {
     await page.waitForTimeout(650);
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
+    await doseViewport('Review');
     const preview=await page.locator('#nx-dose-review-rows').innerText();
     ensure((await page.locator('#nx-dose-review-compound').innerText()).includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
       'Raw source IDs leaked into primary review: '+preview);
