@@ -1779,17 +1779,29 @@ function logWasteModal(supplyId) {
   };
 }
 
-function openNewVialModal(supplyId, onDone) {
+function openNewVialModal(supplyId, onDone, selectedForm=null) {
   const s = state.supplies.find(x=>x.id===supplyId); if(!s) return;
+  // New-vial use is a two-step, form-first flow. Never collect reconstitution
+  // details until the physical intended use is chosen. Legacy labels remain
+  // intact on previously opened vials.
+  if(selectedForm===null){
+    const chooser=openModal('<section class="nx-open-vial-form-choice nx-dose-form nx-shared-form-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">What form are you using?</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div><p class="hint">Choose the intended physical use before entering vial details.</p><div class="nx-open-vial-form-options"><button type="button" id="nx-open-injectable" class="nx-kit-type-choice"><strong>Injectable</strong><span>Open for injection. Select SubQ or IM when logging a dose.</span></button><button type="button" id="nx-open-nasal" class="nx-kit-type-choice"><strong>Nasal</strong><span>Reserve this vial for a separate, recorded nasal preparation.</span></button></div></section>',"#A78BFA");
+    chooser.classList.add("nx-shared-form-sheet","nx-open-vial-choice-sheet");
+    chooser.querySelector("#x").onclick=closeModal;
+    chooser.querySelector("#nx-open-injectable").onclick=()=>{closeModal();openNewVialModal(supplyId,onDone,"Injectable");};
+    chooser.querySelector("#nx-open-nasal").onclick=()=>{closeModal();openNewVialModal(supplyId,onDone,"nasal-source");};
+    return;
+  }
+  if(!["Injectable","nasal-source"].includes(selectedForm)){showErrorBanner("Choose Injectable or Nasal. Nothing saved.");return;}
   const c = cfg(s.name);
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
   // Label the actual next physical vial, including when a sibling remains open.
   const vialNum = Math.max(0,...(s.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">OPEN NEW VIAL</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-dose-head nx-shared-sheet-header">
+      <div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">Open ${selectedForm==="nasal-source"?"nasal source":"injectable"} vial</h2><div class="nx-dose-subtitle">Vial ${vialNum} · ${esc(s.name)}</div></div>
+      <button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button>
     </div>
     <div class="nx-open-vial-details">
       <div class="nx-open-vial-title">Vial ${vialNum} details</div>
@@ -1809,16 +1821,8 @@ function openNewVialModal(supplyId, onDone) {
       </div>
       <div id="rv-conc-preview" style="font-size:11px;color:var(--t4);margin-top:8px;text-align:center"></div>
     </div>
-    <label class="field-label" for="rv-purpose">PRODUCT FORM · THIS VIAL</label>
-    <select id="rv-purpose" class="inp" style="margin-bottom:10px;min-height:46px">
-      <option value="undecided">Decide later</option>
-      <option value="Injectable">Injectable (choose SubQ or IM when logging)</option>
-      <option value="Oral">Oral</option>
-      <option value="Topical">Topical</option>
-      <option value="nasal-source">Nasal · vial reserved for spray preparation</option>
-      <option value="Other">Other</option>
-    </select>
-    <p id="rv-purpose-note" class="hint" role="status" style="margin-bottom:14px">Choose the physical form for this vial, not your route for every dose.</p>
+    <input type="hidden" id="rv-purpose" value="${selectedForm}">
+    <p id="rv-purpose-note" class="hint" role="status" style="margin-bottom:14px"></p>
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="rvd" type="date" class="inp" value="${today}" style="margin-bottom:14px">
     <label class="field-label">EXPIRY AFTER RECON (DAYS)</label>
@@ -1827,6 +1831,7 @@ function openNewVialModal(supplyId, onDone) {
     <input id="rvn" class="inp" placeholder="optional" style="margin-bottom:18px">
     <button id="rvsave" class="btn-primary" style="background:${c.color};color:#1A1728!important">Log Reconstitution</button>
   `, c.color);
+  m.classList.add("nx-open-vial-editor","nx-shared-form-sheet");
   m.querySelector("#x").onclick = closeModal;
   const purpose=m.querySelector("#rv-purpose"),purposeNote=m.querySelector("#rv-purpose-note");
   const updatePurposeNote=()=>{
@@ -1836,7 +1841,7 @@ function openNewVialModal(supplyId, onDone) {
       ?"Injectable form: choose SubQ or IM separately for each administration in Log Dose. This does not establish IV suitability."
       :"This labels your physical stock; dose administration is recorded separately.";
   };
-  purpose.onchange=updatePurposeNote;updatePurposeNote();
+  updatePurposeNote();
 
   // Live concentration preview
   const updatePreview = () => {
