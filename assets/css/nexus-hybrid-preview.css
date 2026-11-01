@@ -3743,8 +3743,12 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   border-radius:11px!important;background:var(--surface-2)!important;
   color:var(--t1)!important;font-size:13px!important;font-weight:650!important;
 }
+/* Shared Supplies CTA palette; sampled from .nx-supply-actions>button:first-child.
+   Retain an opaque fallback for contrast audits and older WebKit. */
 html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-actions-three > .nx-kit-next-action{
-  background:#7650a9!important;color:#fff!important;border-color:#7650a9!important;
+  background-color:#c4a4f2!important;
+  background-image:linear-gradient(135deg,#d8bcfa,#aa8bf1)!important;
+  color:#241432!important;border-color:transparent!important;
 }
 /* Make both opening/setup actions read as Nexus purple, never near-black in light mode. */
 html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-kit-secondary-open{
