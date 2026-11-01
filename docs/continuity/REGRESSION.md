@@ -1,3 +1,14 @@
+## 2026-10-31 — iPhone feedback and root-cause defects PR124
+- User-reported physical checklist: QA-STASH-VIS-01 PASS, QA-STASH-VIS-02 PASS, QA-STASH-VIS-03 NOT TESTED, QA-PROTECTED-01 PASS; observation fields empty. These passes do not imply corrected Log Dose.
+- QA-FORM-01 FAIL user visible: saved use setup hides administration method grid via style display:none in assets/js/05-nexus.js 907-911.
+- QA-FORM-02 FAIL functional design: saved injectable routes treated as exclusive physical form by selector and exclusive writer. Validate separate physical Injectable family and per-dose SubQ/IM/IV with exact source, no guessing route safety, no lost history.
+- QA-FORM-03 NOT TESTED: simultaneous Injectable + Oral sources for same compound, change selected form and verify only matching source debit.
+- QA-PICKER-01 FAIL user report: open stocked compound with no protocol missing in Log Dose picker; allow independent record.
+- QA-STASH-ORDER-01 FAIL user visual: vial detail list shown 5,2,1,4 due everOpenedVials.reverse() instead of numeric sort.
+- QA-PREP-01 BLOCKED pending approved transfer design: Plan a nasal preparation does not create usable nasal stock.
+- QA-UI-01 FAIL user visual: Stash light CTA is too dark compared with accepted Supplies; Log Dose typography, field visibility, protocol section and checkbox states inconsistent. Existing automated tests lack these cases; add to permanent test suite/standing iPhone Playbook.
+- Cross-tab mixed writer P0 remains BLOCKED. Historical CI on 9ef27f9 does not prove newly reported flows.
+
 ## 2026-10-31/Nov 1 UTC — Final purple Stash exact-source automation
 - App CSS 9ef27f9, full-browser #41263023868 SUCCESS: 8 LIVE/DEMO × 320/390 × light/dark Stash Cards and Panels PASS; card height 231px (320), 233px (390), action contrast/geometry and expanded setup assertions PASS. WebKit #41263023879 SUCCESS; mobile #41263023829 SUCCESS; nested #41263023831 SUCCESS; writer scoped #41263023853 SUCCESS. Full-browser Log Dose 176 flows PASS, contrast audit zero flagged candidates, math diagnostic 80/80 PASS with no clinical validation inference.
 - Exact-source build manifest 9ef27f9 and artifact ID 13065749673 independently inspected, CRC outer/LIVE/offline ZIP PASS, purple and lavender CSS present. Physical iPhone QA-STASH-VIS-01/02/03 and QA-PROTECTED-01 NOT TESTED. P0 mixed legacy writer BLOCKED.
