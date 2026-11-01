@@ -2351,3 +2351,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 
 ## 2026-11-01 — Check-In Save completion vs Edit sheet collision
 - FAIL full #41284836788 (861b9d84): after first fictional Check-In Create, Edit textarea initially found but detached before fill. Asynchronous original #save handler may close a new modal unless test waits for confirmed first-save dismissal. Fix 0aaed043 adds Playwright waitFor state detached after three successful #save actions; intentionally rejected date collision remains open and is not awaited for dismissal. Actual application Check-In date/validation unchanged. New exact-head full #41285215207 pending; P0 blocked; no merge/deploy.
+
+
+## 2026-11-01 — Check-In 8-session browser evidence and Protocol fixture correction
+- PASS 0aaed043 full build #41285215207 logs Check-In suite through all 320/390 LIVE/DEMO dark/light contexts; overall workflow FAIL later at tools/validate-protocol-design.mjs:225 TypeError on undefined todayTrackingActivities after direct unsaved fixture assignment during awaited startup. Do not promote full suite to PASS.
+- Fix test-only 57a48323 waits for app boot render, initializes fictional LIVE state through exclusive transaction/readback and DEMO in memory. New exact-head full #41285602797, WebKit #41285602790 pending at observation. Prior 0aaed043 writer/mobile/DS2/WebKit SUCCESS. Unmerged/undeployed; P0 blocking and physical iPhone not tested.
