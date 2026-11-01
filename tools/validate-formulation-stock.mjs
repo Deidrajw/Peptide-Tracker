@@ -400,6 +400,13 @@ try {
   assert.equal(afterOneStep.preparedMg,2,'Destination bottle mass credit mismatch');
   assert.equal(afterOneStep.preparedMl,5,'Destination bottle volume mismatch');
   assert.equal(afterOneStep.events,1,'Prepared bottle must have one linked transfer event');
+  await page.evaluate(()=>openNewVialModal(990405));
+  await page.locator('#nx-open-nasal').click();
+  assert.equal(await page.locator('#nx-nasal-source-mg').count(),1,
+    'Returning to Nasal should reuse the one eligible original open source');
+  assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===990405).vials[0].remainingMg),3,
+    'Opening a second nasal preparation draft must not debit the source');
+  await page.evaluate(()=>closeModal());
 
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
