@@ -2075,7 +2075,7 @@ document.addEventListener('click',async e=>{
  */
 function nexusKitFormPicker(){
  const forms=[["vial","Vials","Individual vials, reconstitution and remaining mg"],["capsule-bottle","Capsules","Capsule count and labelled strength"],["raw-powder","Raw powder","Powder mass, no vial calculations"],["topical-container","Topical","Product container and remaining volume"],["nasal-bottle","Nasal spray","Purchased spray bottle; homemade preparations start from a vial"]];
- const html='<section class="nx-kit-type-picker"><div class="nx-form-stock-editor-head"><strong>ADD KIT</strong><button id="x" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" style="min-height:80px;display:flex;flex-direction:column;padding:12px" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
+ const html='<section class="nx-kit-type-picker nx-shared-inventory-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · INVENTORY</div><h2 class="nx-dose-title">Add product</h2></div><button id="x" class="nx-dose-close" type="button" aria-label="Close">✕</button></div><p class="hint">What form did you purchase?</p><div class="nx-kit-type-options">'+forms.map(f=>'<button type="button" class="nx-kit-type-choice" style="min-height:80px;display:flex;flex-direction:column;padding:12px" data-kit-form="'+f[0]+'"><strong>'+f[1]+'</strong><span>'+f[2]+'</span></button>').join("")+'</div></section>';
  const m=openModal(html,"#A78BFA");m.querySelector("#x").onclick=closeModal;
  m.querySelectorAll("[data-kit-form]").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.kitForm;closeModal();if(type==="vial")supplyModal(null,null,true);else nexusAddFormulationModal(type);});
 }
@@ -2084,8 +2084,8 @@ function nexusAddFormulationModal(type,existingId=null){
   const oral=type==="capsule-bottle",raw=type==="raw-powder",topical=type==="topical-container";
   const existing=existingId==null?null:(state.formulationStocks||[]).find(x=>String(x.id)===String(existingId)&&x.containerType===type);
   if(existingId!=null&&!existing)return;
-  const m=openModal(`<section class="nx-form-stock-editor">
-    <div class="nx-form-stock-editor-head"><strong>${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+  const m=openModal(`<section class="nx-form-stock-editor nx-shared-inventory-sheet">
+    <div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · INVENTORY</div><h2 class="nx-dose-title">${existing?"Adjust":"Add"} ${oral?"capsules":raw?"raw powder":topical?"topical":"nasal spray"}</h2></div><button id="x" class="nx-dose-close" type="button" aria-label="Close">✕</button></div>
     <p class="hint">${existing?"Adjust recorded inventory without creating a dose. The previous balance is kept in history.":"This creates a separate physical inventory record; existing vial records are untouched."}</p>
     <label class="field-label" for="nx-form-name">COMPOUND</label><div class="nx-kit-combobox nx-form-compound-combobox"><input id="nx-form-name" class="inp" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nx-form-match-list" placeholder="Search or choose compound" value="${existing?esc(existing.compound):""}" ${existing?"readonly":""} required><datalist id="nx-form-compound-list">${[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{})])].filter(Boolean).sort().map(name=>`<option value="${esc(name)}"></option>`).join("")}</datalist><div id="nx-form-match-list" role="listbox" hidden></div></div>
     ${oral?`<label class="field-label" for="nx-form-count">NUMBER OF CAPSULES</label><input id="nx-form-count" class="inp" type="number" min="0" step="1" value="${existing?existing.remainingCount:30}">
@@ -2330,7 +2330,7 @@ function nexusRecordNasalPreparation(kitId,vialId){
   showErrorBanner("An open vial reserved for nasal preparation is required.");return;
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
- '<div class="nx-dose-head"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation">✕</button></div>'+
+ '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation">✕</button></div>'+
  '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+getVialRemainingMg(kit,vial).toFixed(2)+' mg remaining. Record only an already completed preparation.</p>'+
  '<label class="field-label" for="nx-nasal-source-mg">ACTUAL SOURCE AMOUNT (mg)</label><input class="inp" id="nx-nasal-source-mg" type="number" min="0" step="any" placeholder="Recorded amount">'+
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
