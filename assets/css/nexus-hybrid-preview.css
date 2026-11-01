@@ -3593,3 +3593,83 @@ body .nx-blend-date-list:not([hidden]) {
 .modal .nx-form-compound-combobox #nx-form-match-list button:focus-visible{outline:2px solid #a78bfa;outline-offset:-2px}
 .modal .nx-form-compound-combobox #nx-form-match-list button+button{border-top:1px solid var(--border-sub)}
 @media(max-width:359px){.nexus-screen-stash .nx-other-stock-row{padding:9px 10px}.nexus-screen-stash .nx-kit-card{padding:10px 11px!important}}
+
+
+/* Nexus Stash compact kit hierarchy: identity / balance / next action.
+   Expanded panel retains setup, open-new-vial and all original detail tools. */
+.nexus-screen-stash .nx-kit-card.nx-kit-condensed{
+  padding:12px 13px!important;box-shadow:none!important;border-radius:16px!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-heading-unified{
+  display:flex!important;align-items:center!important;gap:9px!important;margin:0!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-compound-mark{
+  width:5px;min-width:5px;height:30px;border-radius:99px;flex:none;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-title-stack{
+  flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;
+  column-gap:8px;row-gap:3px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-card-title{
+  font-size:16px!important;line-height:1.3!important;font-weight:700!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-compact-context{
+  font-size:12px;line-height:1.4;color:var(--t3);margin:1px 0 0 14px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-primary-vial{
+  margin:9px 0 2px!important;padding:0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-primary-vial .nx-kit-overview-label{
+  font-size:10px!important;line-height:1.3;letter-spacing:.08em;color:var(--t3);
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-primary-value{
+  display:flex;flex-wrap:wrap;align-items:baseline;column-gap:6px;
+  font-size:26px!important;line-height:1.2!important;font-weight:750;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-primary-value span{
+  font-size:12px!important;line-height:1.4!important;font-weight:450;color:var(--t3);
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-overview-track{
+  height:4px!important;margin:7px 0 0!important;border-radius:99px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-compact-meta{
+  font-size:11.5px;color:var(--t3);line-height:1.4;margin-top:5px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-compact-notice{
+  display:flex;align-items:center;gap:7px;line-height:1.35;font-size:12px;
+  color:var(--t2);margin:7px 0 0;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-compact-notice-dot{
+  width:6px;height:6px;border-radius:50%;background:#D5AB68;flex:none;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-actions-three{
+  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);
+  gap:8px!important;margin-top:11px!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-actions-three>button{
+  width:100%;min-height:44px!important;padding:9px 10px!important;
+  font-size:13px!important;line-height:1.25;border-radius:11px!important;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-next-action{
+  background:var(--t1);color:var(--bg);font-weight:700;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-detail-setup{
+  display:grid;gap:8px;margin:12px 0 4px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-detail-setup .nx-kit-use-setup-row{
+  margin:0!important;padding:5px 0!important;min-height:44px;
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-detail-warning{
+  padding:8px 10px;border:1px solid var(--border-sub);border-radius:10px;
+  font-size:12px;color:var(--t2);
+}
+.nexus-screen-stash .nx-kit-condensed .nx-kit-secondary-open{
+  min-height:44px;border:1px solid var(--border-sub);border-radius:10px;
+  color:var(--t1);background:var(--surface-2);
+}
+@media(max-width:359px){
+ .nexus-screen-stash .nx-kit-condensed .nx-kit-card-title{font-size:15px!important}
+ .nexus-screen-stash .nx-kit-condensed .nx-kit-header-manage{flex-basis:44px}
+ .nexus-screen-stash .nx-kit-condensed .nx-kit-actions-three{grid-template-columns:1fr 1fr}
+}
