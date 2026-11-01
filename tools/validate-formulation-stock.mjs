@@ -19,6 +19,25 @@ try {
    const banner=document.querySelector('#demo-banner');if(banner)banner.style.display='none';
    tab='stash';render();
   },theme);
+  const visualEvidence=[];
+  const captureVisual=async(stage,selector)=>{
+    const shell=page.locator(selector).first();
+    assert.ok(await shell.count()>0,'Missing visual target: '+stage);
+    await shell.evaluate(el=>Promise.all(el.getAnimations({subtree:false}).map(a=>a.finished.catch(()=>{}))));
+    const geometry=await shell.evaluate(el=>{
+      const b=el.getBoundingClientRect(),doc=document.documentElement;
+      return {left:b.left,right:b.right,bottom:b.bottom,top:b.top,width:b.width,
+        viewport:doc.clientWidth,height:innerHeight,scrollWidth:doc.scrollWidth,
+        focus:document.activeElement?.id||''};
+    });
+    assert.ok(geometry.scrollWidth<=geometry.viewport+2 &&
+      geometry.left>=-2&&geometry.right<=geometry.viewport+2,
+      'Visual horizontal clipping '+stage+': '+JSON.stringify(geometry));
+    fs.mkdirSync('dist',{recursive:true});
+    const filename='Nexus_'+version+'_VISUAL_'+engine.name()+'_'+kind+'_'+theme+'_'+width+'_'+stage+'.png';
+    await page.screenshot({path:'dist/'+filename,fullPage:false});
+    visualEvidence.push({stage,filename,geometry});
+  };
   const before=await page.evaluate(()=>JSON.stringify(state.supplies));
   await page.evaluate(()=>supplyModal(null,null));
   assert.equal(await page.locator('.nx-kit-type-choice').count(),5,'One Add Kit flow requires five product forms');
@@ -72,6 +91,7 @@ try {
     'Other forms picker exceeds iPhone viewport: '+JSON.stringify(pickerGeometry));
   assert.ok(pickerGeometry.scrollHeight<=pickerGeometry.clientHeight+2,
     'Other forms five-result picker must not create nested vertical scrolling: '+JSON.stringify(pickerGeometry));
+  await captureVisual('picker-five-results','.nx-form-compound-combobox');
   await page.locator('#nx-form-name').press('ArrowDown');
   assert.equal(await page.locator('#nx-form-match-list [role="option"]').first().evaluate(x=>x===document.activeElement),true,
     'Other forms ArrowDown must focus first compound choice');
@@ -101,6 +121,7 @@ try {
   }));
   assert.ok(!pickerAfterTyping.hidden && pickerAfterTyping.display!=='none',
     'Typing after keyboard choice must reopen compound choices: '+JSON.stringify(pickerAfterTyping));
+  await captureVisual('picker-custom','.nx-form-compound-combobox');
   const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "Fictional Unlisted Compound"'});
   assert.equal(await createForm.count(),1,'Unknown compound must offer custom option in Other forms');
   await createForm.click();
@@ -335,12 +356,14 @@ try {
   await page.locator('#nx-nasal-bac').fill('1');
   await page.locator('#nx-nasal-saline').fill('4');
   await page.locator('#nx-nasal-pump').fill('0.1');
+  await captureVisual('nasal-entry','.modal');
   // Entry is not a commit. The user reviews the exact source-to-bottle
   // movement, may edit without losing values, then explicitly confirms once.
   await page.locator('#nx-nasal-record-save').click();
   assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true,
     'Actual nasal preparation must enter a separate review before confirmation');
-  const nasalReviewUX=await page.locator('#nx-nasal-record-review').evaluate(section=>({
+  await captureVisual('nasal-review','.modal');
+   const nasalReviewUX=await page.locator('#nx-nasal-record-review').evaluate(section=>({
     focused:document.activeElement===section,
     sheetScroll:section.closest('.modal')?.scrollTop ?? -1
   }));
@@ -355,7 +378,8 @@ try {
   assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===990400).vials[0].remainingMg),5,
     'Review alone must not debit physical source');
   await page.locator('#nx-nasal-record-back').click();
-  assert.equal(await page.locator('#nx-nasal-source-mg').inputValue(),'2',
+  await captureVisual('nasal-back','.modal');
+   assert.equal(await page.locator('#nx-nasal-source-mg').inputValue(),'2',
     'Back to edit must preserve source mass');
   await page.locator('#nx-nasal-record-save').click();
   await page.locator('#nx-nasal-record-confirm').check();
@@ -427,7 +451,8 @@ try {
     ['nx-nasal-saline','4'],['nx-nasal-pump','0.1']])
     await page.locator('#'+id).fill(value);
   await page.locator('#nx-nasal-record-save').click();
-  const beforeOneStep=await page.evaluate(()=>{
+  await captureVisual('nasal-sealed-review','.modal');
+   const beforeOneStep=await page.evaluate(()=>{
     const k=state.supplies.find(x=>x.id===990405);
     return {status:k.vials[0].status,mg:k.vials[0].remainingMg,
       linked:(state.formulationStocks||[]).filter(b=>String(b.sourceKitId)==='990405').length};
@@ -813,7 +838,9 @@ try {
   assert.deepEqual(resumed.protocols.slice(0,2).map(p=>p.history),[1,1],
     'Global pause intervals not preserved historically');
   assert.equal(resumed.untouched,bulkBefore,'Pause/Resume changed inventory or dose history');
-  results.push({width,theme,kind,result:'PASS'});
+  fs.writeFileSync('dist/Nexus_'+version+'_VISUAL_'+engine.name()+'_'+kind+'_'+theme+'_'+width+'.json',
+     JSON.stringify({sha:process.env.GITHUB_SHA||'local',engine:engine.name(),kind,theme,width,visualEvidence},null,2));
+   results.push({width,theme,kind,result:'PASS'});
   await ctx.close();
  }
 
