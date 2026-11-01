@@ -408,7 +408,7 @@ try {
           const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
         return {viewport:document.documentElement.clientWidth,
           vh:window.innerHeight,pageScrollWidth:document.documentElement.scrollWidth,
-          sheet:rect(':scope'),header:rect('.nx-dose-fixed-header'),
+          sheet:(()=>{const b=modal.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})(),header:rect('.nx-dose-fixed-header'),
           close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
           action:rect('.nx-dose-footer .btn-primary')};
       });
