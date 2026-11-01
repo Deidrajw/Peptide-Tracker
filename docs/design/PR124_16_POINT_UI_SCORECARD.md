@@ -1,3 +1,7 @@
+
+## 2026-11-01 — custom Enter selection safety follow-up
+- Application commit `130d2200`: Other-form compound input Enter now selects only an exact matching suggestion; otherwise preserves and dispatches the typed custom compound instead of silently replacing it with the first candidate. Existing five visible suggestions, browse-all, click selection, and ordinary save remain intact.
+- Regression commit `7d99ae18`: actual Playwright Add Kit capsule-form flow asserts that Enter preserves the fictional unlisted compound, alongside 320/390 light/dark LIVE and isolated DEMO loops. **CODED / QA PENDING** until matching workflow completion; physical iPhone acceptance remains unverified. No accounting, schema, legacy-writer or production-gate changes.
 # PR #124 — 16-point physical iPhone DS2 correction scorecard
 
 Updated 2026-11-01. Source: user-rejected physical iPhone screenshots and continuity decisions. This is a **working decomposition of the 16-point request**, not a claim that an original verbatim numbered list was recovered. Keep coded, automated QA, and physical acceptance distinct. User explicitly withholds another iPhone retest until all 16 are actually fixed.
