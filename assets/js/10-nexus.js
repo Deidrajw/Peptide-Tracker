@@ -254,8 +254,8 @@ function stashView() {
     // compound name, silently modify a vial, or touch historical allocations.
     const unresolvedOpenVials=vialList.filter(v=>
       ["open","active"].includes(v.status) && getVialRemainingMg(s,v)>0.01 &&
-      !nexusExplicitAdminMethod(v.intendedUse) &&
-      !nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route)
+      !nexusPhysicalForm(v.intendedUse) &&
+      !nexusPhysicalForm(s.preparationMethod||s.administrationMethod||s.route)
     );
 
     const secondaryBits = [];
@@ -2272,8 +2272,8 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
   if(!kit)return;
   const vial=(kit.vials||[]).find(v=>String(v.id)===String(vialId));
   if(!vial || !["open","active"].includes(vial.status) || !(getVialRemainingMg(kit,vial)>0.01))return;
-  const resolved=nexusExplicitAdminMethod(vial.intendedUse)||nexusExplicitAdminMethod(kit.preparationMethod||kit.administrationMethod||kit.route);
-  if(resolved){showErrorBanner("This vial already has a confirmed administration method.");return;}
+  const resolved=nexusPhysicalForm(vial.intendedUse)||nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route);
+  if(resolved){showErrorBanner("This vial already has a confirmed product form.");return;}
   const n=vial.sequenceNumber||"?";
   const m=openModal(`
     <div class="nx-stash-method-sheet">
@@ -2281,29 +2281,29 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
         <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2>How is this vial used?</h2><p>${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
         <button type="button" id="nx-stash-method-close" aria-label="Close without changes">✕</button>
       </div>
-      <p class="nx-stash-method-explain">This older vial has no saved method. Select the method you actually prepared it for. Confirming will not change its remaining amount or past dose history.</p>
-      <fieldset class="nx-stash-method-choices"><legend>Administration method</legend>
-        ${NEXUS_ADMIN_METHODS.map(method=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(method)}"><span>${esc(method)}</span></label>`).join("")}
+      <p class="nx-stash-method-explain">This older vial has no saved product form. Choose its physical formulation, not the injection route of an individual dose. Confirming will not change remaining inventory or past history.</p>
+      <fieldset class="nx-stash-method-choices"><legend>Product form</legend>
+        ${["Injectable","Oral","Topical","Other","nasal-source"].map(form=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(form)}"><span>${esc(form==="nasal-source"?"For nasal preparation · not yet a spray":form)}</span></label>`).join("")}
       </fieldset>
-      <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm vial method</button>
+      <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm product form</button>
     </div>`);
   m.querySelector("#nx-stash-method-close").onclick=closeModal;
   m.querySelectorAll('input[name="nx-stash-vial-use"]').forEach(input=>input.onchange=()=>{
     m.querySelector("#nx-stash-method-confirm").disabled=false;
   });
   m.querySelector("#nx-stash-method-confirm").onclick=()=>{
-    const method=m.querySelector('input[name="nx-stash-vial-use"]:checked')?.value;
-    if(!NEXUS_ADMIN_METHODS.includes(method))return;
+    const form=m.querySelector('input[name="nx-stash-vial-use"]:checked')?.value;
+    if(!["Injectable","Oral","Topical","Other","nasal-source"].includes(form))return;
     // Re-read source by its exact identifiers before committing.
     const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
     const target=(current?.vials||[]).find(v=>String(v.id)===String(vialId));
     if(!target || !["open","active"].includes(target.status) || !(getVialRemainingMg(current,target)>0.01)){
       showErrorBanner("This vial has changed. Reopen its details before confirming.");return;
     }
-    if(nexusExplicitAdminMethod(target.intendedUse) || nexusExplicitAdminMethod(current.preparationMethod||current.administrationMethod||current.route)){
+    if(nexusPhysicalForm(target.intendedUse) || nexusPhysicalForm(current.preparationMethod||current.administrationMethod||current.route)){
       showErrorBanner("A method was already confirmed. No changes made.");return;
     }
-    target.intendedUse=method;
+    target.intendedUse=form;
     saveState();closeModal();render();
   };
 }
