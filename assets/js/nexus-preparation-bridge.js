@@ -91,7 +91,7 @@
   const vials=(kit.vials||[]).filter(v=>String(v.id)===String(tx.sourceVialId));
   if(vials.length!==1)fail("Exact physical source vial required");
   const vial=vials[0];
-  if(!["open","active"].includes(vial.status)||vial.intendedUse!=="Nasal")
+  if(!["open","active"].includes(vial.status)||!["Nasal","nasal-source"].includes(vial.intendedUse))
    fail("Explicitly nasal-labelled open physical vial required");
   if(!Number.isFinite(vial.remainingMg)||vial.remainingMg<0)
    fail("Canonical source balance unavailable");
