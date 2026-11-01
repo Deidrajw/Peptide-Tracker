@@ -1,3 +1,28 @@
+## 2026-10-31 — PR #124 COORDINATED FLOW & DESIGN ACCEPTANCE TRACKER (single sprint; no items silently dropped)
+
+The user requests one coordinated workstream rather than separately forgotten patch cycles. This is the sprint's product acceptance matrix. Source of truth for reproducible testing remains docs/qa/IPHONE_MANUAL_TEST_PLAYBOOK.md and docs/continuity/REGRESSION.md (do NOT create a new QA standard). Keep all rows until independently verified on matching build and accepted on physical iPhone.
+
+| ID | Dependency / exact outcome | Current state at checkpoint | Test evidence required |
+| --- | --- | --- | --- |
+| F01 | Stash form-only Injectable/Nasal/Oral/Topical/Other; remove SubQ/IM from kit/vial defaults, preserve historical method labels and migration-free storage | OPEN — existing source wrong | browser route/form matrix + iPhone |
+| F02 | Log Dose always presents context-appropriate per-dose SubQ/IM/IV/Oral/Nasal/Topical; saved setup never hides selection | OPEN — source hides methods | interaction across forms + source validation |
+| F03 | Exact validated source follows chosen form/route, multiple form stocks same compound; never deduct different form, reject unprepared nasal | OPEN / CRITICAL P0 | authoritative exclusive writer tests, edit/undo |
+| F04 | Every stocked compound can be found and logged independently of protocols | OPEN — user reproduction | picker + protocol independence + correct history |
+| F05 | Prepare nasal from exact source via honest plan -> confirmed actual preparation/container -> eligible inventory; do not infer spray dose | OPEN, transfer feature not approved; planning-only preserved | plan no-write and prepared-stock audited transition |
+| F06 | Explain when Set up vial appears and what Use setup changes; no forced duplicate prompts | OPEN | new/legacy kit scenarios |
+| UI01 | DS2 Obsidian/Porcelain button consistency from accepted Supplies gradient, 44px across themes | PARTIAL CODE fef0a3f; new source untested | 320/390 light/dark pixel and contrast |
+| UI02 | Log Dose hierarchy/typography/spacing, grouped protocol options and consistent checkbox states | OPEN | keyboard/sheets/VoiceOver and light/dark |
+| UI03 | Stash opened-vial detail numeric sequence order independent of storage array | CODE b138a1f; browser fixture 020df0a pending | 5,2,1,4 => 1,2,4,5, no record mutations |
+| R01 | Preserve original vial IDs, allocation math, dates, check-ins, supplements, weight/nutrition and backup/restore | OPEN ongoing regression | 320/390 LIVE/isolated DEMO, actual save/edit/undo |
+| R02 | Cross-tab mixed legacy writer P0 closure without destructive storage migration | OPEN / RELEASE BLOCKER | real two-tab conflict, stale fail closed |
+| A01 | Exact-head standalone FULL APP DEMO HTML + offline demo, complete LIVE ZIP and release notes | INCOMPLETE for current code | manifest SHA, root paths/CRC, isolated storage |
+| A02 | Guided physical iPhone acceptance for changed and protected flows | INCOMPLETE | Playbook record, statuses and evidence |
+| A03 | Draft PR #124 only; no merge, Cloudflare deploy or production data changes without explicit approval | PROTECTED | GitHub SHA + hosted parity only after approval |
+
+**Integration rule:** do not mark a slice accepted because a narrow visual test passes while F01–F04 or R02 remain open. Implement coordinated code across data, UI and writer before full release, but commit/test in small reversible source changes. No automatic relabelling of old SubQ/IM vials or conversion of saved plans. When a safety assertion fails, stop the candidate, do not retroactively mark Pass.
+
+**One next concrete action:** complete safe product-form/route/source matching including the authoritative writer, then run exact-source combined regression before user testing.
+
 ## 2026-10-31 — P-11 immediate correction: physical form versus dose method
 - One next implementation priority: distinguish physical product FORM (Injectable/Nasal/Oral/Topical/Other) from per-entry administration METHOD (SubQ/IM/IV), include multi-form source choice, no-protocol stocked compounds in picker, protected native units/historical vial IDs, fail-closed exact-source writer, and cross-tab safety. Preserve past user data and do not silently migrate.
 - Then, as separate focused fixes: DS2 button parity with Supplies, Log Dose content hierarchy and checkbox consistency, numeric vial ordering, better nasal planning explanation without pretending to create prepared stock. New iPhone defects recorded in REGRESSION and existing Playbook governs guided testing.
