@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 corrective working commits, NOT RELEASED
+- Draft-only commits: 1fc20386 (oral/nasal single-choice navigation and modal tags), faa9d6b5 (DS2 responsive modal treatment), 0d841fc9 (nasal demo legacy handoff and action placement), fc49debb (action styling). Base main da585ab3.
+- No merge/deployment, no production storage modification, no safety gate enablement. Latest-head CI, complete matching LIVE/DEMO package and physical iPhone reacceptance NOT VERIFIED. Existing prior QA on 9752ab64 cannot validate these new commits. LIVE prepared nasal transfers and spray writes remain P0 blocked.
+
 ## 2026-11-01 — PR124 exact-source capsule/P14 and DEMO-only nasal QA candidate (UNRELEASED)
 - Candidate app/test 9752ab6415a1f815ce6e6696ab21609ea7651cb4; full Chromium #41273119998 and four associated WebKit/mobile/nested/scoped-writer runs SUCCESS. Capsule count exact source, independent log, overdraw guard, history and undo implemented; isolated fictional DEMO direct nasal preparation and spray count with transfer attribution; Pause All/Resume All and DS2 retained. Live nasal transfer/admin safety gates remain OFF due mixed legacy writer P0; topical and retrospectively edited container-backed log unsupported.
 - GitHub artifact #13069419875 downloaded, exact source SHA and 26-file LIVE ZIP/standalone isolated full-app DEMO/CRC/source hashes verified and exported; no new production version bump, no data migration or live writes, PR draft/unmerged/undeployed; physical iPhone NOT TESTED.
