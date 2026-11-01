@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft partial writer migration, NOT RELEASED
+- 39b63fc8 validated scoped Quick Access settings; 3a87012e awaited UI commit for toggle/reset; c100806d targeted fictional regression tests. No global ordinary-writer migration, no live nasal enablement, no merge/deployment.
+
 ## 2026-11-01 — Draft safety gate, NOT RELEASED
 - 105f5e25 adds deliberately failing mixed-writer release gate; c3971a8f adds nasal overdraw and replay tests. No claim of P0 resolution, live activation, artifact verification, merge or deployment.
 
