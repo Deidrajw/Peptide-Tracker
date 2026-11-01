@@ -1,3 +1,9 @@
+## 2026-11-01 — picker keyboard selection + shared browser navigation correction
+- Earlier 320/390 × light/dark Chromium/WebKit on `0ed9d03e` FAILED at six options: Browse all was incorrectly `role="option"`; `bc8325a5` fixes that.
+- Subsequent WebKit on `1fab968c` FAILED with hidden custom selection after keyboard choice. Exact identified cause: focus remained on an option in the collapsed list. Other-form focus restoration `96dc4bc0` and Vial kit focus restoration `4e1b0502` are CODED, with explicit focus+keyboard regression `57196a96`.
+- Shared compound browser Back affordance was misleading outside Vial kits. `4d162c31` changes the accessible label to **Back to compound selection** with existing no-save navigation preserved.
+- **Row #06 remains CODED / QA PENDING, UAT FAIL historical.** Latest exact-head full Chromium/WebKit/motion/keyboard and physical iPhone acceptance must be verified; no new device pass assumed. All other still-partial rows remain OPEN for acceptance. P0 BLOCKED; LIVE nasal OFF; draft/no deployment.
+
 ## Log Dose clipping — explicit cross-screen acceptance gate
 
 - User reconfirmed that **Log Dose screens clipping** is part of the 16 requested corrections, not an optional polish item. Cross-reference items **#14**, **#15**, and **#16**. Keep these OPEN until independently validated.
