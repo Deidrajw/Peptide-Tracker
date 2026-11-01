@@ -155,15 +155,15 @@ try {
     ensure(await page.locator('.nx-stash-method-choices input').count()>=2,
       'Stash legacy vial method options missing');
     ensure(await page.locator('#nx-stash-method-confirm').isDisabled(),'Unselected method should not save');
-    await page.locator('.nx-stash-method-choices input[value="SubQ"]').check();
+    await page.locator('.nx-stash-method-choices input[value="Injectable"]').check();
     await page.locator('#nx-stash-method-confirm').click();
     const stashSetup=await page.evaluate(()=>({
       method:state.supplies[0].vials[0].intendedUse,
       remaining:state.supplies[0].vials[0].remainingMg,
       history:state.peptides.Retatrutide.doses.length
     }));
-    ensure(stashSetup.method==='SubQ' && stashSetup.remaining===6.25 && stashSetup.history===0,
-      'Stash method setup changed quantity/history or failed: '+JSON.stringify(stashSetup));
+    ensure(stashSetup.method==='Injectable' && stashSetup.remaining===6.25 && stashSetup.history===0,
+      'Stash form confirmation changed quantity/history or failed: '+JSON.stringify(stashSetup));
     await page.evaluate(()=>doseModal('Retatrutide'));
     ensure(await page.locator('.nx-confirm-legacy-vial').count()===0,
       'Stash-confirmed legacy vial still triggers Log Dose fallback');
