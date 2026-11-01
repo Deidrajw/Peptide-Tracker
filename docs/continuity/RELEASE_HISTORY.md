@@ -1512,3 +1512,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 browser harness acknowledged Check-In saves (test-only)
 - 0aaed043597ea50d08995cc2f23e903fe95ae18c awaits post-save sheet dismissal after successful Check-In creates/edits; prior 861b9d84 full QA #41284836788 FAIL due premature Edit sheet opening while prior save still closing. Application code/data schema untouched; exact-head CI pending, nasal gates OFF, draft unmerged/undeployed, P0 blocked.
+
+
+## 2026-11-01 — PR124 Protocol/Today QA fixture migration; no release
+- 57a483233459ba0c87ccbe3c15c16e56acc5a0b5 adjusts only tools/validate-protocol-design.mjs to initialize fictional LIVE fixture under Web Lock after app boot. Check-In eight LIVE/DEMO browser combinations passed in prior failed overall run #41285215207, which stopped at Protocol QA stale fixture. No application change or data migration, no merge/deploy, P0 release blocked pending exact-source CI and artefact certification.
