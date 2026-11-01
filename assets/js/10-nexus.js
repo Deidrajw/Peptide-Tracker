@@ -2147,9 +2147,9 @@ function nexusAddFormulationModal(type,existingId=null){
       refreshCompoundMatches();
       // A prior focusout frame can close results after a keyboard selection
       // while the user resumes typing. Respect the current input focus.
-      requestAnimationFrame(()=>{
-        if(document.activeElement===compoundInput && matchList.hidden)refreshCompoundMatches();
-      });
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(document.activeElement===compoundInput)refreshCompoundMatches();
+      }));
     });
     compoundInput.addEventListener("keydown",e=>{
       if(e.key==="Escape"){closeMatches();return;}
