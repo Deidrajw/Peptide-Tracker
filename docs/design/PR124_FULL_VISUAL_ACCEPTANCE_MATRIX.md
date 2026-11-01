@@ -1,3 +1,8 @@
+## Log Dose visual findings — 2026-11-01 (partial, not physical acceptance)
+- Chromium screenshot run #41363339799 SUCCESS; inspected 24 PNGs and geometry JSON from artifact #13106129580. Entry/Focused/Review across 8 fictional 320/390 light/dark LIVE/DEMO cases shows no horizontal sheet or footer clipping; dedicated 320px images inspected. A transient Undo toast from a previous test appears over lower Review area; no primary CTA occlusion observed.
+- Newly detected Review Edit details target = 36px high on 320/390 both themes (legacy CSS specificity conflict), **FAIL** 44px requirement. Targeted CSS fix `28ccb58d` measured 48px locally in all four width/theme combinations; new assertion `38f356b6` awaiting CI. Do not mark fixed production or device accepted before rerun.
+- Compound picker/nasal 96 planned images via `2f4e8d76` awaiting exact-head run artifact and manual inspection. Full 16×16 matrix NOT COMPLETE, physical iPhone UAT BLOCKED, mixed writer P0 BLOCKING; nasal LIVE OFF; draft/no merge/deploy.
+
 ## Test expansion checkpoint — 2026-11-01 (NOT full matrix)
 - New shared-engine test-only commit `2f4e8d76`: compound-picker five-results/custom; nasal preparation Entry/Review/Back/sealed-source Review; capture 6 screenshots × 8 viewport/theme/build cells × Chromium/WebKit = 96 planned screenshots and matching geometry JSON, no source-vial mutation from browsing/Review. CI new-head #41363989984 Chromium, #41363990003 WebKit not yet complete. Prior Log Dose 24-image candidate #41363339799 still in progress and images not reviewed. Keep all unexecuted visual cells NOT TESTED and physical iPhone BLOCKED pending user acceptance.
 - No UI/storage/ledger changes; preserve draft PR, P0 writer gate and LIVE nasal gates OFF.
