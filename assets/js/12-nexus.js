@@ -1268,7 +1268,7 @@ function wireBody() {
     state._settingsDetail=key; render(); window.scrollTo(0,0);
   });
   const sdBack=$("#settings-detail-back"); if(sdBack) sdBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
-  const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=()=>{ state.settings.measureUnit=state.settings.measureUnit==="in"?"cm":"in"; saveState(); render(); };
+  const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=async()=>{ const value=state.settings.measureUnit==="in"?"cm":"in"; muToggle.disabled=true; const saved=await nexusCommitScopedStateChange({kind:"setting",key:"measureUnit",value}); if(saved)render();else muToggle.disabled=false; };
   const suppSearch=$("#supp-search");
   if(suppSearch){ suppSearch.oninput=()=>{ state._supplementSearch=suppSearch.value; renderBody(); const n=$("#supp-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
   const ep2=$("#editprofile2"); if(ep2)ep2.onclick=profileModal;
@@ -1279,8 +1279,8 @@ function wireBody() {
   const im=$("#imp"); if(im)im.onchange=importData;
   const imOpen=$("#nx-import-open"); if(imOpen)imOpen.onclick=()=>im?.click();
   const imh=$("#imp-health"); if(imh)imh.onclick=()=>healthModal();
-  const wu=$("#wunit"); if(wu)wu.onclick=()=>{state.settings.weightUnit=state.settings.weightUnit==="lbs"?"kg":"lbs";saveState();render();};
-  const dro=$("#dayrollover"); if(dro)dro.onchange=()=>{ const h=parseInt(dro.value,10); state.settings.dayRolloverHour=(h>0&&h<=12)?h:0; saveState(); render(); };
+  const wu=$("#wunit"); if(wu)wu.onclick=async()=>{const value=state.settings.weightUnit==="lbs"?"kg":"lbs";wu.disabled=true;const saved=await nexusCommitScopedStateChange({kind:"setting",key:"weightUnit",value});if(saved)render();else wu.disabled=false;};
+  const dro=$("#dayrollover"); if(dro)dro.onchange=async()=>{ const h=parseInt(dro.value,10),value=(h>0&&h<=12)?h:0,previous=state.settings.dayRolloverHour;dro.disabled=true;const saved=await nexusCommitScopedStateChange({kind:"setting",key:"dayRolloverHour",value});if(saved)render();else{dro.value=String(previous||0);dro.disabled=false;} };
 }
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
