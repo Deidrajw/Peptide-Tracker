@@ -56,6 +56,27 @@
    last=null;
    return {removed:true};
   }
+  // Unlike the pre-migration erase, this path cannot bypass another tab's
+  // inventory lock. A stale tab rejects without removing any saved records.
+  async function eraseExclusive(current){
+   if(typeof remove!=="function")fail("Removal adapter unavailable");
+   if(typeof lock!=="function")fail("Exclusive cross-tab lock required");
+   if(inFlight)fail("Another storage operation is pending");
+   inFlight=true;
+   try{
+    return await lock(lockName,async()=>{
+     const observed=compare();
+     if(observed!==JSON.stringify(current))markConflict();
+     if(read()!==observed)markConflict();
+     try{remove()}catch(error){blocked=true;throw error}
+     let after;
+     try{after=read()}catch(error){blocked=true;throw error}
+     if(after!==null){blocked=true;fail("Removal readback mismatch; reload before retry")}
+     last=null;
+     return {removed:true};
+    });
+   }finally{inFlight=false}
+  }
   async function transaction(current,transform){
    if(typeof transform!=="function")fail("Transaction transform required");
    if(typeof lock!=="function")fail("Exclusive cross-tab lock required");
@@ -75,7 +96,7 @@
     });
    }finally{inFlight=false}
   }
-  return {saveLegacy,removeLegacy,transaction,expected,status};
+  return {saveLegacy,removeLegacy,eraseExclusive,transaction,expected,status};
  }
  return {create};
 });
