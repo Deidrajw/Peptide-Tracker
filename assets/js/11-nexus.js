@@ -206,7 +206,7 @@ function renderDeveloperDetail() {
 // "WHICH VIAL" picker and remembered-choice defaulting. Uses a dedicated test compound
 // name specifically so it can never collide with or affect a real tracked compound.
 const MULTIKIT_TEST_NAME = "Test Multi-Kit Peptide";
-function loadMultiKitTestScenario() {
+async function loadMultiKitTestScenario() {
   // Wipe any previous run of this test first, so re-running it doesn't pile up kits.
   state.supplies = (state.supplies||[]).filter(s=>s.name!==MULTIKIT_TEST_NAME);
   if (state.customPeptides) delete state.customPeptides[MULTIKIT_TEST_NAME];
@@ -224,18 +224,18 @@ function loadMultiKitTestScenario() {
   state.supplies = [...(state.supplies||[]), kitA, kitB];
   state.customPeptides = state.customPeptides || {};
   state.customPeptides[MULTIKIT_TEST_NAME] = { status: "active", scheduleDays: 1, doses: [] };
-  saveState();
+  if(!await nexusCommitCurrentState())return;
   tab = "stash";
   render();
-  showUndoToast(`Test scenario loaded — ${esc(MULTIKIT_TEST_NAME)} (30mg kit open, 10mg kit sealed) · Remove`, () => {
+  showUndoToast(`Test scenario loaded — ${esc(MULTIKIT_TEST_NAME)} (30mg kit open, 10mg kit sealed) · Remove`, async () => {
     state.supplies = (state.supplies||[]).filter(s=>s.name!==MULTIKIT_TEST_NAME);
     if (state.customPeptides) delete state.customPeptides[MULTIKIT_TEST_NAME];
     if (state.lastSourceKit) delete state.lastSourceKit[MULTIKIT_TEST_NAME];
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return;render();
   });
 }
 
-function forceVialRepairModal() {
+async function forceVialRepairModal() {
   const kits = state.supplies||[];
   let touched = 0;
   kits.forEach(kit=>{
@@ -245,7 +245,7 @@ function forceVialRepairModal() {
     ensureKitVials(kit);
     if (JSON.stringify(kit.vials) !== before) touched++;
   });
-  saveState(); render();
+  if(!await nexusCommitCurrentState())return;render();
   const c = touched>0 ? "#7DF9C0" : "var(--t3)";
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -440,7 +440,7 @@ function importAppleHealth(e) {
     const finish = () => {
       bar.style.width = "100%";
       status.textContent = "Applying data…";
-      setTimeout(() => {
+      setTimeout(async () => {
         const existingWt = new Set(state.weightLogs.map(w=>dayKey(w.date)));
         let wtAdded=0, hrAdded=0, hrvAdded=0, macroAdded=0;
 
@@ -515,7 +515,7 @@ function importAppleHealth(e) {
           }
         });
 
-        saveState();
+        if(!await nexusCommitCurrentState())return;
         status.innerHTML = `<span style="color:#7DF9C0">✓ ${wtAdded} weight · ${hrAdded} HR · ${hrvAdded} HRV · ${macroAdded} macro days · ${activityAdded} activity days imported</span>`;
         const btn=document.querySelector(".modal #ah-go");
         if(btn){btn.textContent="Done — Close"; btn.disabled=false; btn.onclick=()=>{closeModal();render();};}
