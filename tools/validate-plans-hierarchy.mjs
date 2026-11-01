@@ -305,12 +305,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
  ensure(await page.locator('.nx-goal-quick-status[data-status="planned"]').getAttribute('aria-pressed')==='true','Quick status selected state not retained');
  await page.locator('.nx-goal-quick-status[data-status="active"]').click();
+ // Status save is asynchronous. Wait for the durable save acknowledgement to
+ // close its sheet and complete the card rerender before measuring geometry.
+ // Otherwise Playwright can briefly measure a detached pre-rerender button as 0px.
+ await page.locator('.nx-goal-quick-status').first().waitFor({state:'detached',timeout:15000});
+ await page.locator('.nx-plan-item .nx-open-goal').first().waitFor({state:'visible',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].status==='active'),'Goal status could not be restored');
 
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
- const viewGoalGeometry=await page.locator('.nx-plan-item .nx-open-goal').first().evaluate(e=>({height:e.getBoundingClientRect().height,minHeight:getComputedStyle(e).minHeight,classes:e.className,screen:innerWidth}));
+ const viewGoalGeometry=await page.locator('.nx-plan-item .nx-open-goal:visible').first().evaluate(e=>({height:e.getBoundingClientRect().height,minHeight:getComputedStyle(e).minHeight,classes:e.className,screen:innerWidth,connected:e.isConnected}));
  ensure(viewGoalGeometry.height>=44,'View goal touch target too small: '+JSON.stringify(viewGoalGeometry));
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
