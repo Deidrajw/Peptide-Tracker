@@ -2317,15 +2317,22 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
     if(nexusPhysicalForm(target.intendedUse) || nexusPhysicalForm(current.preparationMethod||current.administrationMethod||current.route)){
       showErrorBanner("A method was already confirmed. No changes made.");return;
     }
+    if(form==="nasal-source"){
+      // Older unlabelled opened vials can join the same actual-preparation
+      // Review. Never persist an intermediate reserved vial before transfer.
+      if(!_demoActive){showErrorBanner("Live nasal preparation remains safety-gated. Nothing saved.");return;}
+      closeModal();
+      nexusRecordNasalPreparation(kitId,vialId,{adoptUnlabelled:true});
+      return;
+    }
     target.intendedUse=form;
     if(!await nexusCommitCurrentState())return;closeModal();render();
-     if(form==="nasal-source"&&_demoActive)nexusRecordNasalPreparation(kitId,vialId);
   };
 }
 
 /* Experimental isolated-DEMO actual preparation flow; production transfers
  * remain disabled until legacy cross-tab writers are fully coordinated. */
-function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false}={}){
+function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabelled=false}={}){
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
  // Existing reserved/open source and first-time sealed source have separate
@@ -2333,7 +2340,11 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false}={}){
  const validExisting=!!vial&&vial.intendedUse==="nasal-source"&&["open","active"].includes(vial.status);
  const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
    Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
- if(!kit||!vial||(!validExisting&&!validNew)){
+ const validLegacy=!!vial&&adoptUnlabelled&&_demoActive&&!kit?.isBlend&&
+   ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
+   !nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route)&&
+   Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
+ if(!kit||!vial||(!validExisting&&!validNew&&!validLegacy)){
   showErrorBanner("An exact eligible nasal preparation source is required. Nothing saved.");return;
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
@@ -2409,6 +2420,21 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false}={}){
     // source opening in a fictional working snapshot and credit the prepared
     // bottle only through the checked pure planner, in ONE committed state swap.
     let sourceSnapshot=state;
+    if(!openSealed&&(adoptUnlabelled||!Number.isFinite(vial.remainingMg))){
+      // Promote a verified legacy source ONLY in the fictional working copy,
+      // never before Review or on an unsuccessful planner result.
+      const observed=getVialRemainingMg(kit,vial);
+      if(!Number.isFinite(observed)||observed<=0||amountMg>observed+1e-7)
+        throw Error("Legacy physical vial balance cannot be confirmed");
+      sourceSnapshot=JSON.parse(JSON.stringify(state));
+      const k=sourceSnapshot.supplies.find(k=>String(k.id)===String(kit.id));
+      const v=k?.vials?.find(v=>String(v.id)===String(vial.id));
+      if(!v||!["open","active"].includes(v.status))
+        throw Error("Exact legacy source changed");
+      v.remainingMg=observed;
+      if(adoptUnlabelled)v.intendedUse="nasal-source";
+      // Preserve the exact physical source ID, original strength and history.
+    }
     if(openSealed){
       sourceSnapshot=JSON.parse(JSON.stringify(state));
       const candidateKit=sourceSnapshot.supplies.find(k=>String(k.id)===String(kit.id));
