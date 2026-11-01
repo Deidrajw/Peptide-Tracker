@@ -1504,3 +1504,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 test ordering correction, not a release
 - 77a759aff589a6636e9becd7bfb315199722e220 ensures fictional supplement Save is fully acknowledged/closed before browser test opens the next Check-In sheet. Previous 33b67722 full #41284103097 FAIL at second search despite valid initial DOM; 526300aa corrected WebKit fractional pixel assertion. Test-only commits, no production app JS/CSS/data change, no merge/deploy, nasal gates OFF, P0 blocking pending exact-head CI.
+
+
+## 2026-11-01 — Test-only durable inline supplement acknowledgement
+- Commit 861b9d84 adds awaited exclusive writer readback for fictional inline Check-In supplement Add and fixture reset, resolving unsequenced test actions after prior 77a759af full #41284493052 FAIL. No application code or schema change, no production data write, no release. Latest full/browser and WebKit pending, P0 blocking; draft PR #124, nasal gates OFF.
