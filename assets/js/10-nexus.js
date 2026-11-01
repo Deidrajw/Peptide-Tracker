@@ -1133,7 +1133,7 @@ function profileModal() {
     avatarPreview.innerHTML=`<span class="nx-profile-avatar-fallback nx-profile-avatar-large" aria-hidden="true"><svg class="nx-avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.3-4 2.8-6 7-6s6.7 2 7 6"/></svg></span>`;
     removeAvatar.remove();
   };
-  m.querySelector("#psave").onclick = () => {
+  m.querySelector("#psave").onclick = async () => {
     state.profile = {
       ...state.profile,
       name:          m.querySelector("#pname").value,
@@ -1144,7 +1144,7 @@ function profileModal() {
       goalGlute:     m.querySelector("#pg_glute").value,
       protocolNotes: m.querySelector("#pnotes").value,
     };
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -1423,11 +1423,11 @@ function exportICSWithTimePicker(name) {
     </div>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#ics-save").onclick = () => {
+  m.querySelector("#ics-save").onclick = async () => {
     const time = m.querySelector("#ics-time")?.value || suggestedTime;
     if(!state.settings._reminderTimes) state.settings._reminderTimes={};
     state.settings._reminderTimes[name]=time;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
 
     let blocks;
     if (isPhased) {
@@ -1467,7 +1467,7 @@ function exportICSWithTimePicker(name) {
     URL.revokeObjectURL(a.href);
     if(!state.settings._calDismissed) state.settings._calDismissed={};
     state.settings._calDismissed[name]=nextDue;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     closeModal();
   };
 }
@@ -1572,13 +1572,13 @@ function nxQuickAccessView(){
   const selected=nxQuickIds();
   return `<section class="nx-qa" aria-label="Customizable quick access"><div class="nx-qa-head"><div><div class="nx-qa-eyebrow">YOUR SHORTCUTS</div><h2>Quick access</h2></div><button type="button" id="nx-qa-customize" aria-label="Customize quick access">Customize</button></div><div class="nx-qa-grid">${selected.map(id=>{const t=NX_QUICK_TOOLS.find(x=>x.id===id);return `<button type="button" class="nx-qa-tile" data-nx-quick="${t.id}" aria-label="Open ${t.label}"><span class="nx-qa-icon" aria-hidden="true">${t.icon}</span><span class="nx-qa-copy"><strong>${t.label}</strong><small>${t.hint}</small></span></button>`}).join("")}</div></section>`;
 }
-function nxUsageEvent(feature){
+async function nxUsageEvent(feature){
   // Deliberately track only feature IDs and aggregate counts, never dates, doses, symptoms or personal values.
   if(_demoActive||state.settings?.nxUsageEnabled!==true)return;
   const allowed=new Set(NX_QUICK_TOOLS.map(t=>t.id));if(!allowed.has(feature))return;
   const usage=state.settings.nxUsageCounts||{};
   usage[feature]=Math.min(999999,(Number(usage[feature])||0)+1);
-  state.settings.nxUsageCounts=usage;saveState();
+  await nexusCommitScopedStateChange({kind:"setting",key:"nxUsageCounts",value:{...usage}});
 }
 function nxQuickGo(id){
   nxUsageEvent(id);
@@ -1599,9 +1599,9 @@ function nxQuickCustomize(){
     if(chosen.length>4){b.checked=false;m.querySelector('#nx-qa-error').textContent='You can choose up to four shortcuts.';}
     else m.querySelector('#nx-qa-error').textContent='';
   }));
-  m.querySelector('#nx-qa-save').onclick=()=>{
+  m.querySelector('#nx-qa-save').onclick=async()=>{
     state.settings.nxQuickAccess=boxes.filter(x=>x.checked).map(x=>x.value);
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -2235,7 +2235,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
    m.querySelector("#nx-prep-plan-edit").hidden=false;
    edit.hidden=true;
  };
- m.querySelector("#nx-linked-save").onclick=()=>{
+ m.querySelector("#nx-linked-save").onclick=async()=>{
    const current=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
    const source=current?.vials?.find(v=>String(v.id)===String(vialId));
    if(!source||!["open","active"].includes(source.status)){showErrorBanner("Source vial is no longer open. Nothing saved.");return;}
@@ -2248,7 +2248,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
    if(existing&&!saved){showErrorBanner("The plan has changed. Reopen it before editing.");return;}
    if(saved){saved.kind=kind;saved.notes=notes;}
    else current.linkedPreparationPlans.push({id:uid(),sourceKitId:current.id,sourceVialId:source.id,kind,notes,createdAt:new Date().toISOString(),status:"planned-no-transfer"});
-   saveState();closeModal();render();
+   if(!await nexusCommitCurrentState())return;closeModal();render();
  };
 }
 document.addEventListener("click",e=>{
@@ -2303,7 +2303,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
   m.querySelectorAll('input[name="nx-stash-vial-use"]').forEach(input=>input.onchange=()=>{
     m.querySelector("#nx-stash-method-confirm").disabled=false;
   });
-  m.querySelector("#nx-stash-method-confirm").onclick=()=>{
+  m.querySelector("#nx-stash-method-confirm").onclick=async()=>{
     const form=m.querySelector('input[name="nx-stash-vial-use"]:checked')?.value;
     if(!["Injectable","Oral","Topical","Other","nasal-source"].includes(form))return;
     // Re-read source by its exact identifiers before committing.
@@ -2316,7 +2316,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
       showErrorBanner("A method was already confirmed. No changes made.");return;
     }
     target.intendedUse=form;
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
      if(form==="nasal-source"&&_demoActive)nexusRecordNasalPreparation(kitId,vialId);
   };
 }
