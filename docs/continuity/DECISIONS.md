@@ -1,3 +1,9 @@
+## 2026-10-31 — User's product form versus dose route direction
+- Stash should record PRODUCT FORM: Injectable, Nasal, Oral, Topical, Other. No injection-route selection in Stash or per-vial setup; SubQ/IM/IV is a per-dose method chosen in Log Dose and saved historically. A category of injectable inventory is not clinical evidence of suitability for every route, particularly IV; preserve safety confirmation and source verification.
+- Support simultaneous physical forms of same compound, with exact eligible source selection and corresponding deduction, no cross-form stock attribution. Allow dose logging without protocol for any selectable stocked compound; untracked mode must remain explicit. Preserve historical dose routes, exact vial allocations, source IDs, storage and setup records; no automatic/destructive migration.
+- Nasal plan is metadata only. Explain kit/vial -> plan -> separately verified real preparation/container stock -> dose, without inventing spray conversion or automatically transferring stock.
+- DS2 colours must match existing Supplies reference; Log Dose requires typography hierarchy, grouped protocol options, coherent checkbox states, and visible per-dose methods. Numeric vial order must not depend on arbitrary backing-array order. No merge/deploy permission.
+
 ## 2026-10-31 — User colour correction to Stash light theme (approved direction)
 - Set up vial primary action should use brand purple, not dark charcoal/near-black, in LIGHT appearance. Expanded Open new vial secondary action should be lavender-tinted and legible. Keep Details a restrained secondary surface. Supersedes 2026-10-31 interim dark light-theme primary background #32233e. CSS fix 9ef27f9; acceptance requires new matching DEMO screenshots and device testing.
 
