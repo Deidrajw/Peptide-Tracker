@@ -3917,3 +3917,30 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .nx-open-vial-details #rv-conc-preview {
   color:var(--t2)!important;line-height:1.45!important;
 }
+
+/* P-14: reversible global protocol actions; same DS2 hierarchy and tap targets. */
+.nexus-screen-protocols .nx-protocol-bulk-actions{
+  display:flex;flex-wrap:wrap;gap:8px;margin:11px 0 15px;
+}
+.nexus-screen-protocols .nx-protocol-bulk-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  flex:1 1 180px;min-height:48px;padding:12px 14px;
+  border-radius:12px;border:1px solid var(--border-sub);
+  background:var(--surface-2);color:var(--t1);
+  font:650 13px/1.35 inherit;cursor:pointer;
+}
+.nexus-screen-protocols .nx-protocol-bulk-btn span{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:23px;height:23px;padding:0 6px;border-radius:999px;
+  background:var(--surface);font-size:11px;color:var(--t2);
+}
+.nexus-screen-protocols .nx-protocol-bulk-resume{
+  background:var(--accent-soft,rgba(167,139,250,.16));
+  border-color:var(--accent,#a78bfa);
+}
+.nexus-screen-protocols .nx-protocol-bulk-btn:focus-visible{
+  outline:2px solid var(--accent,#a78bfa);outline-offset:3px;
+}
+html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
+  background:#efe5fc;color:#4d3274;border-color:#cbb6ea;
+}
