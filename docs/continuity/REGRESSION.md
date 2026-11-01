@@ -1,3 +1,6 @@
+## 2026-11-01 — Supplement dated history regression
+- New test source checks malformed date no-write and valid YYYY-MM-DD upsert through scoped exclusive writer; no execution result yet. Global mixed-writer P0 remains BLOCKED; actual two-tab browser test NOT RUN.
+
 ## 2026-11-01 — Quick Access exclusive settings slice
 - CODED: toggle and reset now await exclusive readback, disabled during save, no success render on failure. Unit assertions added for counter validity and preserved vial inventory. Test execution and true-browser two-tab acceptance NOT VERIFIED. Legacy mixed-writer P0 still BLOCKED.
 
