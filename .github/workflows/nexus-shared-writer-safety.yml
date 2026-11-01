@@ -6,6 +6,20 @@ on:
 permissions:
   contents: read
 jobs:
+  mixed-writer-p0-release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require legacy saves to respect inventory lock (P0)
+        run: |
+          # Intentionally fails while a synchronous legacy save can commit
+          # during another tab's exclusive stock transaction. Do not treat
+          # passing scoped coordinator tests as release safety acceptance.
+          node tools/diagnose-mixed-tab-writes.cjs
   shared-writer:
     runs-on: ubuntu-latest
     timeout-minutes: 8
