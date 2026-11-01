@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft exclusive history validation fix, NOT RELEASED
+- 9d4c3548 fixes double-escaped date validation for scoped supplement history upsert; dff9ace2 / 322f7d26 add/order targeted tests. P0 not resolved, no merge or deployment.
+
 ## 2026-11-01 — Draft partial writer migration, NOT RELEASED
 - 39b63fc8 validated scoped Quick Access settings; 3a87012e awaited UI commit for toggle/reset; c100806d targeted fictional regression tests. No global ordinary-writer migration, no live nasal enablement, no merge/deployment.
 
