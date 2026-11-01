@@ -408,6 +408,115 @@ try {
     'Opening a second nasal preparation draft must not debit the source');
   await page.evaluate(()=>closeModal());
 
+  // Exact physical-device Oxytocin repro: create a REAL kit via the Add Kit
+  // wizard, open a sealed vial as Nasal, confirm one source-to-bottle transfer,
+  // inspect Stash identity, and open Log Dose without any SubQ fallback.
+  const oxytocinOldIds=await page.evaluate(()=>state.supplies.filter(k=>k.name==='Oxytocin').map(k=>String(k.id)));
+  await page.evaluate(()=>supplyModal(null,null));
+  await page.locator('[data-kit-form="vial"]').click();
+  await page.locator('#nx-kit-combobox-input').fill('Oxytocin');
+  await page.locator('#nx-kit-combobox-list [role="option"]').filter({hasText:'Oxytocin'}).first().click();
+  await page.locator('#stv').fill('10');
+  await page.locator('#svmg').fill('10');
+  await page.locator('#nx-kit-next').click();
+  await page.locator('#nx-kit-next').click();
+  await page.locator('#ssave').click();
+  await page.waitForFunction(oldIds=>
+    state.supplies.some(k=>k.name==='Oxytocin'&&!oldIds.includes(String(k.id))),oxytocinOldIds);
+  const oxyKit=await page.evaluate(oldIds=>{
+    const k=state.supplies.find(k=>k.name==='Oxytocin'&&!oldIds.includes(String(k.id)));
+    return {kitId:k.id,vialCount:k.vials.length,
+      firstVialId:String(k.vials.find(v=>v.status==='sealed').id),
+      firstMg:k.vials.find(v=>v.status==='sealed').remainingMg,
+      existingBottleCount:(state.formulationStocks||[]).filter(b=>String(b.sourceKitId)===String(k.id)).length};
+  },oxytocinOldIds);
+  assert.equal(oxyKit.vialCount,10,'Oxytocin Add Kit must create exactly ten vials');
+  assert.equal(oxyKit.existingBottleCount,0,'Fresh kit must not pre-create a nasal preparation');
+  await page.evaluate(id=>openNewVialModal(id),oxyKit.kitId);
+  assert.equal(await page.locator('#nx-open-injectable').count(),1,'Form-first Injectable missing');
+  assert.equal(await page.locator('#nx-open-nasal').count(),1,'Form-first Nasal missing');
+  await page.locator('#nx-open-nasal').click();
+  assert.equal(await page.locator('#nx-nasal-source-mg').count(),1,'Nasal must open its preparation form');
+  for(const [id,val] of [['nx-nasal-source-mg','10'],['nx-nasal-bac','1'],
+    ['nx-nasal-saline','9'],['nx-nasal-pump','0.1']])
+    await page.locator('#'+id).fill(val);
+  await page.locator('#nx-nasal-record-save').click();
+  assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true);
+  const oxyBefore=await page.evaluate(id=>{
+    const k=state.supplies.find(k=>String(k.id)===String(id));
+    const v=k.vials.find(v=>v.status==='sealed');
+    return {sealed:k.vials.filter(v=>v.status==='sealed').length,
+      open:k.vials.filter(v=>v.status==='open'||v.status==='active').length,
+      firstId:String(v.id),firstMg:v.remainingMg,
+      linked:(state.formulationStocks||[]).filter(b=>String(b.sourceKitId)===String(id)).length};
+  },oxyKit.kitId);
+  assert.deepEqual(oxyBefore,{sealed:10,open:0,firstId:oxyKit.firstVialId,firstMg:10,linked:0},
+    'Review must never create an opened Oxytocin vial or prepared bottle');
+  await page.locator('#nx-nasal-record-confirm').check();
+  await page.locator('#nx-nasal-record-save').click();
+  await page.waitForFunction(id=>(state.formulationStocks||[]).some(b=>String(b.sourceKitId)===String(id)),oxyKit.kitId);
+  const oxyAfter=await page.evaluate(id=>{
+    const k=state.supplies.find(k=>String(k.id)===String(id));
+    const vial=k.vials.find(v=>v.status==='open'||v.status==='active');
+    const bottles=(state.formulationStocks||[]).filter(b=>String(b.sourceKitId)===String(id));
+    const bottle=bottles[0];
+    return {open:k.vials.filter(v=>['open','active'].includes(v.status)).length,
+      sealed:k.vials.filter(v=>v.status==='sealed').length,
+      vialId:String(vial?.id),vialMg:vial?.remainingMg,form:vial?.intendedUse,
+      bottleCount:bottles.length,bottleId:String(bottle?.id),
+      sourceVialId:String(bottle?.sourceVialId),bottleMg:bottle?.remainingMg,
+      bottleMl:bottle?.remainingMl,mgPerSpray:bottle?.mgPerSpray,
+      sourceEvents:k.preparationTransfers?.length||0,
+      destinationEvents:bottle?.transactions?.length||0,
+      transferId:k.preparationTransfers?.[0]?.id,
+      mirroredTransferId:bottle?.transactions?.[0]?.id};
+  },oxyKit.kitId);
+  assert.equal(oxyAfter.open,1,'Exactly one Oxytocin physical source must be opened');
+  assert.equal(oxyAfter.sealed,9,'Nine sealed Oxytocin vials must remain');
+  assert.equal(oxyAfter.vialId,oxyKit.firstVialId,'Original physical vial ID must not change');
+  assert.equal(oxyAfter.vialMg,0,'10mg source must transfer only once');
+  assert.equal(oxyAfter.form,'nasal-source','Original source must remain nasal-labelled');
+  assert.equal(oxyAfter.bottleCount,1,'One and only one prepared bottle must be created');
+  assert.equal(oxyAfter.sourceVialId,oxyKit.firstVialId,'Prepared bottle must reference exact vial');
+  assert.equal(oxyAfter.bottleMg,10,'Full 10mg must be credited to destination');
+  assert.equal(oxyAfter.bottleMl,10,'Prepared bottle should contain 10mL');
+  assert.equal(oxyAfter.mgPerSpray,0.1,'Recorded 0.1mL pump nominal mass must be 0.1mg');
+  assert.equal(oxyAfter.sourceEvents,1,'One source transfer event');
+  assert.equal(oxyAfter.destinationEvents,1,'One destination transfer event');
+  assert.equal(oxyAfter.transferId,oxyAfter.mirroredTransferId,'Ledger event IDs must match');
+  await page.evaluate(()=>{tab='stash';render();});
+  assert.ok((await page.locator('.nx-kit-card').filter({hasText:'Oxytocin'}).allTextContents())
+    .some(text=>text.includes('Prepared bottle')&&text.includes('10.00 mg')),
+    'Stash must make source-linked prepared Oxytocin mass visible');
+  await page.evaluate(()=>doseModal('Oxytocin'));
+  const nasalPicker=await page.locator('#nx-use-nasal').count();
+  if(nasalPicker)await page.locator('#nx-use-nasal').click();
+  assert.equal(await page.locator('#nx-spray-count').count(),1,
+    'Oxytocin Log Dose must select prepared nasal spray instead of SubQ');
+  assert.equal(await page.locator('.nx-method-grid').count(),0,
+    'Prepared nasal source must not expose the injection method grid');
+  assert.equal(await page.locator('#nx-spray-source').inputValue(),oxyAfter.bottleId,
+    'Oxytocin prepared Log Dose must use the linked exact bottle');
+  await page.locator('#nx-spray-count').fill('2');
+  await page.locator('#nx-spray-review').click();
+  await page.locator('#nx-spray-save').click();
+  const oxyLogged=await page.evaluate(({kitId,bottleId})=>{
+    const k=state.supplies.find(k=>String(k.id)===String(kitId));
+    const b=state.formulationStocks.find(b=>String(b.id)===String(bottleId));
+    const dose=[...(state.peptides.Oxytocin?.doses||[]),...(state.customPeptides.Oxytocin?.doses||[])]
+      .find(d=>String(d.sourceContainerId)===String(bottleId));
+    return {sourceMg:k.vials.find(v=>['open','active'].includes(v.status)).remainingMg,
+      bottleMg:b.remainingMg,bottleMl:b.remainingMl,
+      doseMethod:dose?.method,doseBottle:String(dose?.sourceContainerId),sprayCount:dose?.sprayCount};
+  },{kitId:oxyKit.kitId,bottleId:oxyAfter.bottleId});
+  assert.equal(oxyLogged.sourceMg,0,'Logging nasal sprays must not double-debit source vial');
+  assert.equal(oxyLogged.bottleMg,9.8,'Two sprays debit 0.2mg from prepared bottle');
+  assert.equal(oxyLogged.bottleMl,9.8,'Two sprays debit 0.2mL from prepared bottle');
+  assert.equal(oxyLogged.doseMethod,'Nasal','Oxytocin history must say Nasal');
+  assert.equal(oxyLogged.doseBottle,oxyAfter.bottleId,'Dose must link to prepared bottle ID');
+  assert.equal(oxyLogged.sprayCount,2,'Dose history must record exactly two sprays');
+  results.push({test:'Add Kit Oxytocin → Open New Vial Nasal → one transfer → Stash → prepared Log Dose',result:'PASS'});
+
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
   await page.evaluate(()=>{
