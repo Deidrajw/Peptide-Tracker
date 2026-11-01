@@ -9,7 +9,7 @@ assert.ok(boundary>0,'Cannot isolate catalogue source');
 const library=vm.runInNewContext(source.slice(0,boundary+2)+'\nLIBRARY;',Object.create(null),{timeout:1500});
 const names=library.map(x=>x.name);
 const normalized=x=>x.trim().toLocaleLowerCase('en-CA');
-assert.equal(names.length,103,'Expected 49 baseline + 54 curated additions including ATX-304');
+assert.equal(names.length,104,'Expected 49 baseline + 54 curated and one unverified user label');
 assert.equal(new Set(names.map(normalized)).size,names.length,'Compound names must be unique, case-insensitively');
 const requiredBioregulators=['Bronchogen','Cardiogen','Chonluten','Cortagen','Crystagen','Livagen','Ovagen','Pancragen','Prostamax','Testagen','Thymalin','Thymogen','Vesugen','Vilon'];
 const additions=['ATX-304','SLU-PP-332','Eloralintide','Follistatin 344','Gonadorelin','L-Carnitine','N-Acetyl Selank Amidate','FOXO4-DRI'];
@@ -28,9 +28,16 @@ for(const name of requiredBioregulators){
 assert.match(library.find(x=>x.name==='SLU-PP-332').overview,/not a peptide/i);
 assert.match(library.find(x=>x.name==='ATX-304').overview,/not a peptide/i);
 assert.ok(library.find(x=>x.name==='ATX-304').aliases.includes('O304'));
-assert.ok(!names.includes('SLU-PP-519'),'Unverified SLU-PP-519 cannot be introduced as a verified compound');
+const unverified=library.find(x=>x.name==='SLU-PP-519');
+assert.ok(unverified,'Confirmed user spelling must be searchable');
+assert.equal(unverified.identityVerified,false,'Unverified label must not be presented as verified');
+assert.equal(unverified.category,'Identity unverified');
+assert.equal(unverified.researchSources.length,0,'Do not cite unrelated research as direct proof');
+assert.equal(Object.keys(unverified.meta).length,0,'No dose, route or preparation defaults');
+assert.match(unverified.overview,/do not assume/i,'No inferred chemistry or conflated identities');
+assert.ok(library.find(x=>x.name==='SLU-PP-332')!==unverified);
 for(const sku of ['SK5','LC216','RT10','5AD','Adamax-1032da']){
  assert.ok(!names.includes(sku),'Vendor SKU must not be canonically imported: '+sku);
 }
 assert.ok(library.some(x=>x.name==='Cartalax')&&library.some(x=>x.name==='Pinealon'),'Previously approved catalogue records preserved');
-console.log('PASS: '+names.length+' catalogue entries; 54 additions, bioregulators, types, duplicate names and no new dosing defaults.');
+console.log('PASS: '+names.length+' catalogue entries; 54 researched additions plus one unverified user label, bioregulators, types, duplicate names and no new dosing defaults.');
