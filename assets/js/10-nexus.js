@@ -353,7 +353,7 @@ function stashView() {
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
                 
-                <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button></div>${isActive&&v.intendedUse==="nasal-source"&&_demoActive&&!(state.formulationStocks||[]).some(b=>b.recordedPreparation&&String(b.sourceKitId)===String(s.id)&&String(b.sourceVialId)===String(v.id))?`<button type="button" class="nx-kit-record-nasal nx-kit-record-nasal-row" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}">Record prepared nasal spray</button>`:""}`;
+                <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button></div>`;
              };
             return `<div class="nx-kit-record-list">${ordered.slice(0,5).map(renderVial).join("")}</div>
               ${ordered.length>5?`<button type="button" class="nx-kit-show-more" aria-expanded="false" data-count="${ordered.length}" data-noun="vials">Show all ${ordered.length} vials</button><div class="nx-kit-history-extra" hidden>${ordered.slice(5).map(renderVial).join("")}</div>`:""}`;
@@ -2445,10 +2445,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false}={}){
   }
  };
 }
-document.addEventListener("click",e=>{
- const b=e.target.closest?.(".nx-kit-record-nasal");
- if(b)nexusRecordNasalPreparation(b.dataset.kitId,b.dataset.vialId);
-});
+
 
 document.addEventListener("click",e=>{
   const btn=e.target.closest?.(".nx-stash-set-vial-method");
