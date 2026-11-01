@@ -1,3 +1,7 @@
+## 2026-10-31/Nov 1 UTC — Real test failure and correction, oral-source fixture
+- Full browser #41266244054 FAIL and WebKit #41266244001 FAIL: test assertion expected no .kit-opt elements in DOM for a single eligible Oral vial; actual one exists even though parent kit-picker is hidden. No evidence of wrong inventory mutation from this failure because script stopped before dose save. Corrected at test commit 1341f629: assert exact oral source ID and hidden picker, then exercise oral save and original injectable balance unchanged. Status NOT TESTED corrected commit. Retain failure evidence until rerun passes.
+- Nested #41266244056 SUCCESS; shared writer #41266244022 SUCCESS. Neither proves full multi-form save path. Cross-tab legacy P0 remains open.
+
 ## 2026-10-31 / Nov 1 UTC — Form/route regression implementation checkpoint
 - Source of record: new family compatibility implementation present on branch head 6c79fef (source commit lineage); untested features are NOT marked pass. Independent prior nested #41265838553 FAILED stale SubQ expectation; test fixed 8a983222 and must rerun.
 - Added exact interaction checks ab89db0 into existing tools/validate-formulation-stock.mjs: per-dose SubQ → IM → SubQ with a saved/compatible Injectable vial; two exact vial choices remain, no debit from just switching route; Today Log Dose discovers fictional physical stock without protocols, opening picker does not create protocol. New run pending.
