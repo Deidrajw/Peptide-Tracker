@@ -325,7 +325,14 @@ function stashView() {
           </div>
           <div class="nx-kit-history-heading"><span>Opened vial details</span></div>
           ${everOpenedVials.length? (() => {
-            const ordered=[...everOpenedVials].reverse();
+            // Display identity order, independent of insertion/migration order.
+             // Keep underlying vial records and sequence numbers untouched.
+             const ordered=[...everOpenedVials].sort((a,b)=>{
+               const an=Number(a.sequenceNumber),bn=Number(b.sequenceNumber);
+               const av=Number.isFinite(an)&&an>0?an:Number.MAX_SAFE_INTEGER;
+               const bv=Number.isFinite(bn)&&bn>0?bn:Number.MAX_SAFE_INTEGER;
+               return av-bv||String(a.id||"").localeCompare(String(b.id||""));
+             });
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
               const num=v.sequenceNumber||"—";
