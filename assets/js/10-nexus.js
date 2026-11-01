@@ -2210,7 +2210,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
   </div>
   <div class="nx-prep-plan-next">
     <div class="nx-prep-plan-step">WHAT HAPPENS NEXT?</div>
-    <p>This saves your plan, not a completed preparation. When you actually prepare stock, Nexus will need a separate inventory record. You can set a vial's administration method from its <strong>⋯ actions</strong> menu.</p>
+    <ol class="nx-prep-source-steps"><li><strong>Kit:</strong> Choose the stocked compound kit.</li><li><strong>Vial:</strong> Link the exact opened source vial to this plan.</li><li><strong>Prepared container:</strong> When physically prepared, record a separately verified actual transfer and container. Saving this plan never does that.</li><li><strong>Log Dose:</strong> A nasal dose can use only a verified prepared source, not this planning note or an untransferred vial.</li></ol><p>Planning leaves original vial inventory and spray concentration unchanged.</p>
   </div>
   ${existing?'<button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-edit-action">Edit plan</button>':""}
   <button type="button" class="nx-prep-plan-secondary" id="nx-prep-plan-done">Back to vial</button>
