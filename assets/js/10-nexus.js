@@ -2325,15 +2325,20 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
 
 /* Experimental isolated-DEMO actual preparation flow; production transfers
  * remain disabled until legacy cross-tab writers are fully coordinated. */
-function nexusRecordNasalPreparation(kitId,vialId){
+function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false}={}){
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
- if(!kit||!vial||vial.intendedUse!=="nasal-source"||!["open","active"].includes(vial.status)){
-  showErrorBanner("An open vial reserved for nasal preparation is required.");return;
+ // Existing reserved/open source and first-time sealed source have separate
+ // validations, but both use the same reviewed actual preparation form.
+ const validExisting=!!vial&&vial.intendedUse==="nasal-source"&&["open","active"].includes(vial.status);
+ const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
+   Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
+ if(!kit||!vial||(!validExisting&&!validNew)){
+  showErrorBanner("An exact eligible nasal preparation source is required. Nothing saved.");return;
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation">✕</button></div>'+
- '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+getVialRemainingMg(kit,vial).toFixed(2)+' mg remaining. Record only an already completed preparation.</p>'+
+ '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+getVialRemainingMg(kit,vial).toFixed(2)+' mg available. '+(openSealed?'Sealed source opens only after one completed preparation and transfer is confirmed.':'Record only an already completed preparation.')+'</p>'+
  '<label class="field-label" for="nx-nasal-source-mg">ACTUAL SOURCE AMOUNT (mg)</label><input class="inp" id="nx-nasal-source-mg" type="number" min="0" step="any" placeholder="Recorded amount">'+
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
  '<label class="field-label" for="nx-nasal-saline">SALINE USED (mL)</label><input class="inp" id="nx-nasal-saline" type="number" min="0" step="any" placeholder="Recorded volume">'+
@@ -2399,7 +2404,30 @@ function nexusRecordNasalPreparation(kitId,vialId){
   try{
    if(!globalThis.NexusPreparationBridge?.planRecordedNasal)throw Error("Planner unavailable");
    if(_demoActive){
-    const result=globalThis.NexusPreparationBridge.planRecordedNasal(state,recorded);
+    // The initial Nasal choice in Open New Vial must NOT save an intermediate
+    // "open vial" and then require a second Record button. Construct the exact
+    // source opening in a fictional working snapshot and credit the prepared
+    // bottle only through the checked pure planner, in ONE committed state swap.
+    let sourceSnapshot=state;
+    if(openSealed){
+      sourceSnapshot=JSON.parse(JSON.stringify(state));
+      const candidateKit=sourceSnapshot.supplies.find(k=>String(k.id)===String(kit.id));
+      const candidateVial=candidateKit?.vials?.find(v=>String(v.id)===String(vial.id));
+      if(!candidateVial||candidateVial.status!=="sealed"||candidateKit.isBlend)
+        throw Error("Sealed source changed before review confirmation");
+      const canonicalMg=Number(candidateVial.remainingMg ?? candidateVial.expectedMg ?? candidateVial.vialMg ?? candidateKit.vialMg);
+      if(!Number.isFinite(canonicalMg)||canonicalMg<=0||amountMg>canonicalMg+1e-7)
+        throw Error("Invalid exact sealed source balance");
+      candidateVial.status="open";candidateVial.intendedUse="nasal-source";
+      candidateVial.remainingMg=canonicalMg;candidateVial.vialMg=canonicalMg;
+      candidateVial.expectedMg=canonicalMg;candidateVial.reconDate=recorded.date;
+      candidateKit.activeKit=true;candidateKit.openedVials=(Number(candidateKit.openedVials)||0)+1;
+      candidateKit.reconDate=recorded.date;
+      candidateKit.reconHistory=candidateKit.reconHistory||[];
+      candidateKit.reconHistory.push({id:"nasal-open-"+uid(),date:recorded.date,
+        vialId:candidateVial.id,kind:"recorded-nasal-preparation-source",notes:"Opened as part of confirmed preparation transfer"});
+    }
+    const result=globalThis.NexusPreparationBridge.planRecordedNasal(sourceSnapshot,recorded);
     state=result.next;closeModal();render();
    }else{
     // Live commit stays blocked by the central safety flag until ALL ordinary
