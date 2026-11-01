@@ -130,5 +130,50 @@
    fail("Preparation must not alter historical dose records");
   return {next,event};
  }
- return {plan,commit,planFormulation};
+
+ // One pure, explicit source-to-container preparation record. No save occurs
+ // here; production callers must commit the entire returned snapshot under a
+ // validated exclusive writer (feature remains gated while legacy writers exist).
+ function planRecordedNasal(snapshot,input){
+  if(!input||input.confirmed!==true||typeof input.destinationContainerId!=="string"||!input.destinationContainerId.trim())
+   fail("Confirmed, uniquely identified actual preparation required");
+  for(const key of ["amountMg","bacMl","salineMl","volumeMl","mlPerSpray"]){
+   if(!Number.isFinite(input[key])||input[key]<0)fail("Invalid recorded preparation volume or mass");
+  }
+  if(input.amountMg<=0||input.volumeMl<=0||input.mlPerSpray<=0||input.mlPerSpray>input.volumeMl)
+   fail("Positive source, final volume and pump calibration required");
+  if(Math.abs(input.bacMl+input.salineMl-input.volumeMl)>0.000001)
+   fail("Record the actual total liquid volume; components do not reconcile");
+  if(!Array.isArray(snapshot?.formulationStocks)||snapshot.formulationStocks.some(c=>String(c.id)===input.destinationContainerId))
+   fail("Unique new nasal container required");
+  const kits=(snapshot.supplies||[]).filter(k=>String(k.id)===String(input.sourceKitId));
+  if(kits.length!==1)fail("Unique physical source kit required");
+  const kit=kits[0];
+  const next=JSON.parse(JSON.stringify(snapshot));
+  next.formulationStocks.push({
+   id:input.destinationContainerId,compound:kit.name,containerType:"nasal-bottle",
+   method:"Nasal",remainingMl:input.volumeMl,remainingMg:0,mgPerSpray:null,
+   transactions:[]
+  });
+  const transferred=planFormulation(next,{
+   id:input.id,kind:"transfer-to-formulation",
+   sourceKitId:input.sourceKitId,sourceVialId:input.sourceVialId,
+   destinationContainerId:input.destinationContainerId,amountMg:input.amountMg
+  });
+  const bottle=transferred.next.formulationStocks.find(c=>String(c.id)===input.destinationContainerId);
+  const nominal=Math.round((input.amountMg/input.volumeMl)*input.mlPerSpray*1e6)/1e6;
+  if(!Number.isFinite(nominal)||nominal<=0)fail("Nominal per-spray arithmetic invalid");
+  bottle.mlPerSpray=input.mlPerSpray;bottle.mgPerSpray=nominal;
+  bottle.recordedPreparation={
+   bacMl:input.bacMl,salineMl:input.salineMl,finalVolumeMl:input.volumeMl,
+   recordedPumpMl:input.mlPerSpray,calibrationKind:"recorded-nominal",
+   sourceKitId:input.sourceKitId,sourceVialId:input.sourceVialId,
+   sourceAmountMg:input.amountMg,createdAt:input.date||null
+  };
+  // This is an arithmetic record of user-entered values, not proof of actual
+  // spray delivery, sterility, stability, compatibility or route suitability.
+  return {...transferred,container:bottle};
+ }
+
+ return {plan,commit,planFormulation,planRecordedNasal};
 });
