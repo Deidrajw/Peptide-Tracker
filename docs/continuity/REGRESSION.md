@@ -2337,3 +2337,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Check-In second modal and WebKit subpixel rounding
 - FAIL 49018ee2 full Chromium #41283705756 at tools/validate-checkin.mjs:109: second Daily Check-In search still absent even with explicit fictional 2032-11-10 date. First Supplements modal remains present after 200ms; not a first-modal disappearance. 33b67722 records immediate second modal contents, errors and close stacks; full QA #41284103097 PENDING.
 - FAIL WebKit 33b67722 #41284103214: capsule close target bounding rect 43.99999237060547px vs assert >=44 (0.0000076px floating deviation); close width 44, no overflow, sheet fits viewport. 526300aa changes tolerance to >=43.99px, no visual or production change; exact-head WebKit retest PENDING. Safety, mobile, DS2 focused PASS; P0 release BLOCKING, device NOT TESTED.
+
+
+## 2026-11-01 — Actual Save completion race in Check-In browser harness
+- Traced #41284103097 second modal immediately present with valid #supp-search and no JS errors, followed by locator timeout. The preceding supplement #suppsave click returned before asynchronous handler's durable write/close completed; test navigated to new modal prematurely, risking late close of new sheet. Fix 77a759af waits for old Save control detachment before advancing. Exact-head full run #41284493052 PENDING; do not report Check-In PASS until run conclusion.
+- 33b67722 WebKit FAIL on 43.999992px vs 44px floating point, corrected 526300aa to 43.99px tolerance without UI change. Focused writer/mobile at 77a759af PASS, latest WebKit/DS2 pending. P0 blocked and nasal gates OFF; physical iPhone NOT TESTED.
