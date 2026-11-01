@@ -1867,8 +1867,8 @@ async function aminoSend(input) {
   state._aminoMsgs.push({role:"user", content:input});
   if (!state.settings.recentNexusQuestions) state.settings.recentNexusQuestions=[];
   state.settings.recentNexusQuestions = [input, ...state.settings.recentNexusQuestions.filter(q=>q.toLowerCase()!==input.toLowerCase())].slice(0,5);
-  saveState();
-  state._aminoLoading = true; render();
+  if(!await nexusCommitCurrentState())return;
+  state._aminoLoading = true;render();
   setTimeout(()=>{ const c=document.getElementById("amino-chat"); if(c) c.scrollTop=c.scrollHeight; },50);
   // Small delay for natural feel
   await new Promise(r=>setTimeout(r,400));
