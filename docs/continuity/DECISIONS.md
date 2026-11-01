@@ -1,3 +1,6 @@
+## 2026-11-01 — Preserve first-use and two-stage product-form experience
+- Product-form dose recording must not require an existing protocol/previous dose. A valid stocked oral or prepared nasal source may create a first custom history entry, with no protocol creation. Review replaces entry controls until Back is tapped, preserving entered date, source, count and notes; never pile a second review on the bottom of the same scrolled form.
+- Error copy must distinguish isolated fictional DEMO planning failure from intentionally blocked LIVE transfer/administration. Do not imply a failed save succeeded or a planner validation failed because a live flag was off.
 ## 2026-11-01 — Physical iPhone UX correction mandate
 - User rejected form-specific oral/nasal sheets as warped, visually inconsistent with standard Log Dose; do not send for another device test before coordinated redesign and safety/functional completion. Treat screenshots as failed UAT evidence, not merely preference.
 - Approved direction from user: nasal selection and completed-preparation recording belong in a single sequential flow; eliminate redundant separate navigation steps. Show a prepared bottle as distinct from the original vial; neither silently erase nor double-debit stock.
