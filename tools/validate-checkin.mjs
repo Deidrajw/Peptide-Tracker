@@ -40,11 +40,17 @@ try{
         },theme);
         // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
         // Preserve historical records; catalogue addition does not itself save a taken log.
-        await page.evaluate(()=>{
+        const modalProbe=await page.evaluate(()=>{
           state.settings.supplements=[];
           state.supplementLogs=[];
           supplementModal('2032-11-09');
+          return {search:document.querySelectorAll('.modal #supp-search').length,
+            modals:document.querySelectorAll('.modal').length,
+            appLoading:document.querySelector('#app')?.textContent?.includes('LOADING…'),
+            modalText:document.querySelector('.modal')?.textContent?.slice(0,150)};
         });
+        console.log('CHECKIN first modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(modalProbe));
+        assert(modalProbe.search===1,'Supplement modal missing immediately after open: '+JSON.stringify(modalProbe)+'; page errors='+errors.join('; '));
         assert(await page.locator('.modal #nx2-new-supp').count()===0,'Duplicate supplement input remains');
         await page.locator('.modal #supp-search').fill('Fictional Vitamin B');
         assert(await page.locator('.modal [data-add-search="modal"]').count()===1,'Unified Add search action absent');
