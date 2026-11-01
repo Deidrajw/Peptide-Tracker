@@ -694,6 +694,13 @@ try {
   for(const field of ['macroLogs','weightLogs','measurementLogs'])assert.equal(appSaved[field].length,1);
   assert.equal(appSaved.supplies[0].vials[0].remainingMg,8);
   assert.equal(appSaved.settings.theme,'light');
+  const bulkSaved=await b.evaluate(()=>nexusCommitScopedStateChange({kind:'bulk-delete',target:'del-health-all'}));
+  assert.equal(bulkSaved,true,'App bulk health removal must be an acknowledged exclusive transaction');
+  const afterBulk=await a.evaluate(()=>JSON.parse(localStorage.getItem('peptide-tracker-html-v1')));
+  for(const field of ['macroLogs','weightLogs','measurementLogs','activityLogs'])assert.equal(afterBulk[field].length,0);
+  assert.equal(afterBulk.supplies[0].vials[0].remainingMg,8);
+  assert.equal(afterBulk.peptides.Fictional.doses.length,1);
+  assert.equal(afterBulk.supplementLogs[0].id,'H2');
   // Destructive operation must reject the stale tab and preserve all data.
   const staleErase=await a.evaluate(()=>nexusEraseSavedState());
   assert.equal(staleErase,false,'Stale actual-app Erase Everything must not acknowledge deletion');
