@@ -170,6 +170,8 @@ try{
 
     // Green-tinted vial details came from compound-specific inline CSS, not DS2.
     await page.evaluate(()=>openNewVialModal(99001));
+    ensure(await page.locator('.nx-open-vial-form-options button').count()===2, 'Form choices missing');
+    await page.locator('#nx-open-injectable').click();
     ensure(await page.locator('.nx-open-vial-details').count()===1,
       'Open New Vial lacks neutral DS2 details panel');
     const detailsBg=await page.locator('.nx-open-vial-details').evaluate(el=>{
