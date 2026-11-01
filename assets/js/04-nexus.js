@@ -2276,18 +2276,21 @@ async function nexusCommitPreparedNasalOperation(operation) {
 }
 
 function getEligibleSourceKits(name, method) {
-  // An explicit route is required for route-scoped dose selection. Distinct
-  // SubQ / nasal kits of the same compound are NEVER interchangeable stock.
-  // Omitted method retains the legacy unscoped helper for other callers.
-  return (state.supplies||[]).filter(s=>{
-      if(s.name!==name || !s.activeKit) return false;
-      if(method==null) return true;
-      const labelled=s.preparationMethod||s.administrationMethod||s.route;
-      return !!labelled && nexusExplicitAdminMethod(labelled)===method;
-    })
-    .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
-    .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01 &&
-      (!method || !x.vial.intendedUse || x.vial.intendedUse==="undecided" || x.vial.intendedUse===method));
+  // Shared source discovery agrees with Log Dose and the authoritative writer:
+  // vial-level physical FORM overrides kit defaults; legacy SubQ/IM are read
+  // as Injectable without altering saved labels. Explicit routes must never
+  // infer compatibility from an unlabelled vial or a nasal preparation plan.
+  // No-method callers retain the existing unscoped lookup contract.
+  return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
+    .map(s=>{migrateKitToV2(s);return {kit:s,vial:getActiveVial(s)};})
+    .filter(({kit,vial})=>{
+      if(!vial || !["open","active"].includes(vial.status) ||
+          getVialRemainingMg(kit,vial)<=0.01)return false;
+      if(method==null)return true;
+      const formLabel=vial.intendedUse&&vial.intendedUse!=="undecided"
+        ?vial.intendedUse:(kit.preparationMethod||kit.administrationMethod||kit.route);
+      return nexusPhysicalVialCompatible(formLabel,method);
+    });
 }
 // Which kit to default to when more than one is eligible: the person's own last choice
 // for this compound, if it's still valid — otherwise the one with the LEAST remaining, a
