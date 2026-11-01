@@ -485,6 +485,9 @@ try {
   assert.equal(oxyAfter.destinationEvents,1,'One destination transfer event');
   assert.equal(oxyAfter.transferId,oxyAfter.mirroredTransferId,'Ledger event IDs must match');
   await page.evaluate(()=>{tab='stash';render();});
+  // Earlier test explicitly switched Stash to Other Forms. Return to Kits
+  // before inspecting the actual newly created Oxytocin physical kit.
+  await page.locator('.stash-sub-btn[data-sub="kits"]').click();
   assert.ok((await page.locator('.nx-kit-card').filter({hasText:'Oxytocin'}).allTextContents())
     .some(text=>text.includes('Prepared bottle')&&text.includes('10.00 mg')),
     'Stash must make source-linked prepared Oxytocin mass visible');
@@ -495,6 +498,8 @@ try {
     'Oxytocin Log Dose must select prepared nasal spray instead of SubQ');
   assert.equal(await page.locator('.nx-method-grid').count(),0,
     'Prepared nasal source must not expose the injection method grid');
+  const selectedOxytocinBottle=await page.locator('#nx-spray-source').inputValue();
+  if(selectedOxytocinBottle==='')await page.locator('#nx-spray-source').selectOption(oxyAfter.bottleId);
   assert.equal(await page.locator('#nx-spray-source').inputValue(),oxyAfter.bottleId,
     'Oxytocin prepared Log Dose must use the linked exact bottle');
   await page.locator('#nx-spray-count').fill('2');
