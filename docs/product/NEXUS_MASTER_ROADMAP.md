@@ -1,3 +1,8 @@
+## 2026-10-31 / Nov 1 UTC — PR124 coordinated acceptance matrix evidence refresh
+- Exact app SHA 2081b900 full Chromium #41266959886 SUCCESS; WebKit/mobile/nested/scoped-writer SUCCESS. F01 F02, physical-vial subset F03, F04, F06 and UI01–UI03 source-coded with 8-case browser matrix/176 Log Dose flows and 96 exact-vial checks; device acceptance NOT DONE. F05 planning explanation coded but actual nasal stock transfer OFF and not user-complete.
+- R01 protected browser coverage Pass; R02 mixed legacy writer P0 OPEN; A01 full app DEMO/LIVE ZIP generated and checked by exact source manifest and CRC + six Git blob hashes; A02 physical iPhone Not Tested; A03 remains draft, unmerged/undeployed. Multi-form oral-container debit is INCOMPLETE despite form-specific picker progress.
+- DO NOT equate full browser SUCCESS with release completion or physical acceptance. ONE NEXT PRIORITY: iPhone guided acceptance of exact 2081b900 DEMO then finish P0 writer and unsupported form accounting before merge approval.
+
 ## 2026-10-31/Nov 1 UTC — Coordinated sprint checkpoint against F01–A03
 - F01/F02/F03/F04: implemented in draft source for *physical-vial* form/route selection, exact verified source, visible route switching and independent stocked picker; improved tests 1341f629 run 8 WebKit cases SUCCESS (#41266340383), Chromium full #41266340372 pending. **Do not mark complete or accepted**, because non-vial oral containers, real nasal prepared transfers and legacy writer routes remain outside verified exclusive debit coverage.
 - F05: planning copy now explains kit/vial -> plan -> separately verified preparation/container -> nasal eligibility (953d07e, CSS b69bb16f), but actual prepared container transfer intentionally INCOMPLETE.
