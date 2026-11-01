@@ -288,6 +288,19 @@ try {
   await page.locator('#nx-nasal-bac').fill('1');
   await page.locator('#nx-nasal-saline').fill('4');
   await page.locator('#nx-nasal-pump').fill('0.1');
+  // Entry is not a commit. The user reviews the exact source-to-bottle
+  // movement, may edit without losing values, then explicitly confirms once.
+  await page.locator('#nx-nasal-record-save').click();
+  assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true,
+    'Actual nasal preparation must enter a separate review before confirmation');
+  assert.ok((await page.locator('#nx-nasal-record-review').textContent()).includes('One confirmed event'),
+    'Review must explain single-event source debit and bottle credit');
+  assert.equal(await page.evaluate(()=>state.supplies.find(k=>k.id===990400).vials[0].remainingMg),5,
+    'Review alone must not debit physical source');
+  await page.locator('#nx-nasal-record-back').click();
+  assert.equal(await page.locator('#nx-nasal-source-mg').inputValue(),'2',
+    'Back to edit must preserve source mass');
+  await page.locator('#nx-nasal-record-save').click();
   await page.locator('#nx-nasal-record-confirm').check();
   await page.locator('#nx-nasal-record-save').click();
   const preparedFixture=await page.evaluate(()=>{
