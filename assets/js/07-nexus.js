@@ -156,7 +156,7 @@ function supplyModal(existing, presetName, forceVials=false) {
   m.querySelector("#svmg").oninput = updateConc;
   m.querySelector("#sbac").oninput = updateConc;
   updateConc();
-  m.querySelector("#ssave").onclick = () => {
+  m.querySelector("#ssave").onclick = async () => {
     if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const name=m.querySelector("#sname").value.trim(); if(!name||name==="— select compound —") return;
     const bacMl = +m.querySelector("#sbac").value||0;
@@ -174,7 +174,7 @@ function supplyModal(existing, presetName, forceVials=false) {
       // which could silently drift out of sync with the kit's actual vial state.
       const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes, testResultAttachment:kitTestResult.getValue() };
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       return;
     }
 
@@ -204,7 +204,7 @@ function supplyModal(existing, presetName, forceVials=false) {
       testResultAttachment:kitTestResult.getValue(),
       vials,
     };
-    const finishCreate = () => {
+    const finishCreate = async () => {
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
       // Inventory does NOT imply tracking. Adding a kit used to silently create a fully
       // "active" tracked peptide entry (empty doses) — which is exactly why compounds you
@@ -215,7 +215,7 @@ function supplyModal(existing, presetName, forceVials=false) {
       // one of those paths already creates its own tracker entry independently when it
       // actually happens, so nothing here needs to pre-create it. Buying/stocking a
       // compound is an inventory fact, not a decision to start tracking it.
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
     // Only ask if this new kit is ALSO being created with a vial already open — a purely
     // sealed new kit isn't opening anything, so there's nothing to confirm.
@@ -702,7 +702,7 @@ function healthModal() {
     const ccr=body.querySelector("#csv-clearrange"); if(ccr) ccr.onclick=()=>{ csvDateFrom=""; csvDateTo=""; csvPreview(); };
     const imp=body.querySelector("#csv-imp"); if(imp) imp.onclick=csvDoImport;
   }
-  function csvDoImport() {
+  async function csvDoImport() {
     if (!csvRows?.length) return;
     const filteredImport = csvRows.filter(r=>{
       if(csvDateFrom && r.date < csvDateFrom) return false;
@@ -761,7 +761,7 @@ function healthModal() {
         } else { skipped++; }
       });
     }
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     const parts=[imported&&`${imported} added`,replaced&&`${replaced} replaced`,merged&&`${merged} merged`,skipped&&`${skipped} skipped`].filter(Boolean);
     body.innerHTML=`<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#7DF9C0;font-weight:700;margin-bottom:8px">Import complete</div><div style="font-size:12px;color:var(--t4);line-height:1.6">${parts.join(" · ")}</div><div style="font-size:11px;color:var(--t5);margin-top:8px;color:#A78BFA">Batch ID: ${String(importBatchId).slice(0,8)}</div></div><button id="done" class="btn-primary" style="background:#7DF9C0;margin-top:8px">DONE</button>`;
     body.querySelector("#done").onclick=()=>{closeModal();render();};
@@ -797,7 +797,7 @@ function healthModal() {
     body.querySelector("#bp").onclick=pick;
     body.querySelector("#wk-imp").onclick=workoutDoImport;
   }
-  function workoutDoImport() {
+  async function workoutDoImport() {
     if (!workoutRows?.length) return;
     const workoutMeta={sourceType:"workout_csv",isWorkout:true,importBatchId,importedAt,importSource:importFileName};
     let added=0, skipped=0;
@@ -813,7 +813,7 @@ function healthModal() {
       ['durationMin','distanceKm','avgHR','maxHR','mets','hrZone1','hrZone2','hrZone3','hrZone4','hrZone5'].forEach(k=>{if(r[k]!=null)e[k]=r[k];});
       state.activityLogs.push(e); added++;
     });
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     body.innerHTML=`<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#A78BFA;font-weight:700;margin-bottom:8px">Workouts imported</div><div style="font-size:12px;color:var(--t4)">${added} added · ${skipped} already existed</div></div><button id="done" class="btn-primary" style="background:#A78BFA;margin-top:8px">DONE</button>`;
     body.querySelector("#done").onclick=()=>{closeModal();render();};
   }
@@ -885,7 +885,7 @@ function healthModal() {
     });
     const imp = body.querySelector("#imp"); if (imp) imp.onclick = doImport;
   }
-  function doImport() {
+  async function doImport() {
     const wk=new Set(state.weightLogs.map(w=>dayKey(w.date)));
     const waistK=new Set(state.measurementLogs.map(x=>dayKey(x.date)));
     const ak=new Set(state.activityLogs.map(a=>dayKey(a.date)));
@@ -908,7 +908,7 @@ function healthModal() {
       const e={id:uid(),date:r.date}; if(sel.steps)e.steps=r.value; if(sel.activeCalories&&cal)e.activeCalories=cal.value; if(sel.restingHR&&hr)e.restingHR=hr.value;
       if(e.steps||e.activeCalories||e.restingHR) state.activityLogs.push(e);
     });
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     body.innerHTML = `<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#7DF9C0;font-weight:700;margin-bottom:8px">Import complete</div><div style="font-size:12px;color:var(--t4)">Check Trends to see it overlaid on your cycle.</div></div><button id="done" class="btn-primary" style="background:#7DF9C0">DONE</button>`;
     body.querySelector("#done").onclick = () => { closeModal(); render(); };
   }
@@ -961,21 +961,21 @@ function healthModal() {
     };
     const deleteByBatch = bid => {
       const sidBid = String(bid); // data-bid attrs are strings; importBatchId is a number — compare as strings
-      confirmAction("Delete this import batch? This cannot be undone.",()=>{
+      confirmAction("Delete this import batch? This cannot be undone.",async()=>{
         state.macroLogs    = state.macroLogs.filter(r=>String(r.importBatchId)!==sidBid);
         state.weightLogs   = state.weightLogs.filter(r=>String(r.importBatchId)!==sidBid);
         state.activityLogs = state.activityLogs.filter(r=>String(r.importBatchId)!==sidBid);
-        saveState(); render(); manageImports();
+        if(!await nexusCommitCurrentState())return;render();manageImports();
       });
     };
     const deleteByType = srcType => {
       const label = srcLabel[srcType]||srcType;
-      confirmAction(`Delete all ${label} imports (tracked and legacy)? Manual entries are not affected.`,()=>{
+      confirmAction(`Delete all ${label} imports (tracked and legacy)? Manual entries are not affected.`,async()=>{
         const match = r => r.sourceType===srcType || isLegacyMatch(r,srcType);
         state.macroLogs    = state.macroLogs.filter(r=>!match(r));
         state.weightLogs   = state.weightLogs.filter(r=>!match(r));
         state.activityLogs = state.activityLogs.filter(r=>!match(r));
-        saveState(); render(); manageImports();
+        if(!await nexusCommitCurrentState())return;render();manageImports();
       });
     };
 
