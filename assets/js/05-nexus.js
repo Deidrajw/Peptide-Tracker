@@ -943,9 +943,22 @@ function nexusNasalDoseModal(name,occTime){
 function nexusChoosePhysicalForm(name,occTime){
  const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.remainingCount>0);
  const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
+ const nasalSourceOnly=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
+   ["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0&&
+   ["nasal-source","Nasal"].includes(v.intendedUse)));
+ // A nasal-reserved VIAL is not an injectable or an administered spray.
+ // If bottle preparation failed there is no valid nasal dose source: block
+ // instead of defaulting silently to SubQ.
+ if(!capsules&&!nasal&&nasalSourceOnly){
+   showErrorBanner("This vial is reserved for nasal preparation, but no prepared bottle is available. Nothing logged. Open New Vial → Nasal in Stash to review the prepared source.");
+   return true;
+ }
  if(!capsules&&!nasal)return false;
  const availableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
-   ["open","active"].includes(v.status)&&Number(v.remainingMg)>0));
+   ["open","active"].includes(v.status)&&Number(getVialRemainingMg(k,v))>0&&
+   nexusPhysicalForm(v.intendedUse)!=="nasal-source"&&
+   nexusPhysicalForm(v.intendedUse)!=="Nasal"&&
+   nexusPhysicalForm(k.preparationMethod||k.administrationMethod||k.route)!=="Nasal"));
  const choices=Number(capsules)+Number(nasal)+Number(availableVial);
  if(choices===1){if(capsules)nexusCapsuleDoseModal(name,occTime);else if(nasal)nexusNasalDoseModal(name,occTime);else doseModal(name,null,occTime,"vial");return true;}
  const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button></div>'+
