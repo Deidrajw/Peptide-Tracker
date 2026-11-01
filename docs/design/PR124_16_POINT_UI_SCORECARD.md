@@ -1,3 +1,7 @@
+## 2026-11-01 — nasal review scroll/focus follow-up
+- Application `2503f55f` resets the single scroll-owner sheet to top when switching from nasal preparation fields to Review or Back; Review receives explicit programmatic focus. Regression `7d00437e` checks focus and scroll state in existing 320/390 × light/dark fictional LIVE/DEMO Playwright loops. **CODED, exact-head CI PENDING**, iPhone UAT still FAIL/retest withheld.
+- No change to prepared-bottle/source ledger, transaction IDs, safety gates or production data. Do not mark #9/#12/#16 accepted pending screenshots and physical retest.
+
 
 ## 2026-11-01 — custom Enter selection safety follow-up
 - Application commit `130d2200`: Other-form compound input Enter now selects only an exact matching suggestion; otherwise preserves and dispatches the typed custom compound instead of silently replacing it with the first candidate. Existing five visible suggestions, browse-all, click selection, and ordinary save remain intact.
