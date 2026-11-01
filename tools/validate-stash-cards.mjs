@@ -92,6 +92,12 @@ try{
     ensure(compact.actionHeights.length===2&&compact.actionHeights.every(h=>h>=44),'Compact actions must have 44px touch targets: '+JSON.stringify(compact));
     ensure(compact.titleSize>=15,'Compact typography must remain readable: '+JSON.stringify(compact));
     ensure(compact.setupInDetails,'Use setup must remain accessible in expanded details');
+    const vialSurface=await card(99002).locator('.nx-kit-primary-vial').evaluate(el=>({
+      background:getComputedStyle(el).backgroundColor,
+      border:getComputedStyle(el).borderTopWidth
+    }));
+    ensure(vialSurface.background==='rgba(0, 0, 0, 0)'&&vialSurface.border==='0px',
+      'Compact card still has nested vial panel surface: '+JSON.stringify(vialSurface));
     ensure(await card(99002).locator('.nx-kit-condensed').count()===0,'Nested compact card regression');
     ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
     ensure(await card(99003).locator('.nx-kit-overview-number').count()===1,'Blend missing kit-wide inventory under Overview');
@@ -211,9 +217,9 @@ try{
     }
 
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
-    results.push({kind,width,theme,status:'PASS',checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
+    results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
   }
 }finally{await browser.close()}
 fs.writeFileSync('dist/Nexus_'+VERSION+'_STASH_CARDS_QA.json',JSON.stringify({version:VERSION,results},null,2));
-console.log('Stash Cards browser QA PASS: '+results.length+' LIVE/DEMO mobile theme configurations');
+console.log('Stash Cards browser QA PASS: '+results.length+' LIVE/DEMO mobile theme configurations; collapsed open-vial card heights '+results.map(x=>x.width+'px/'+x.theme+'/'+x.kind+'='+x.compactCardHeightPx+'px').join(', '));
