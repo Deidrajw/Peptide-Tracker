@@ -320,6 +320,12 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
  ensure(await page.locator('.nx-goal-detail-tab').count()===3,'Goal detail sections missing');
+ ensure(await page.locator('.nx-goal-detail .nx-dose-head .nx-dose-title').count()===1,
+   'Goal Details must reuse shared DS2 header and title hierarchy');
+ const goalControls=await page.locator('.nx-goal-detail .nx-dose-close, .nx-goal-detail-tab').evaluateAll(els=>
+   els.map(e=>({height:e.getBoundingClientRect().height,width:e.getBoundingClientRect().width})));
+ ensure(goalControls.length===4&&goalControls.every(x=>x.height>=44),
+   'Goal Details close and tabs require 44px targets: '+JSON.stringify(goalControls));
  await page.locator('.nx-goal-detail-tab[data-tab="connections"]').click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
