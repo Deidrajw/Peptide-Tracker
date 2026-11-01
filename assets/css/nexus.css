@@ -2444,3 +2444,18 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
  .modal .nx-shared-review-grid dt{padding:10px 0 0;border-bottom:0}
  .modal .nx-shared-review-grid dd{padding-top:3px;text-align:left}
 }
+
+
+/* The ordinary Log Dose modal intentionally owns a fixed two-pane shell.
+   Container-backed entry forms must NOT inherit its 92dvh flex-child sizing:
+   that caused the physical iPhone full-height blank canvas and clipped header. */
+.modal-bg>.modal.nx-form-log-sheet.nx2-dose-modal {
+  display:block!important;height:auto!important;min-height:0!important;
+  max-height:min(90dvh,calc(100dvh - env(safe-area-inset-top) - 12px))!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+}
+.modal.nx-form-log-sheet.nx2-dose-modal>.nx-dose-form {
+  display:block!important;flex:none!important;height:auto!important;
+  min-height:0!important;overflow:visible!important;
+}
+.modal.nx-form-log-sheet.nx2-dose-modal>.nx-dose-form>[hidden] {display:none!important}
