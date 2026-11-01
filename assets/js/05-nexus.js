@@ -902,10 +902,10 @@ function nexusNasalDoseModal(name,occTime){
     '<dl class="nx-shared-review-grid">'+
     '<dt>Compound</dt><dd>'+esc(name)+'</dd>'+
     '<dt>Date & time</dt><dd>'+esc(new Date(date.value).toLocaleString())+'</dd>'+
-    '<dt>Prepared bottle</dt><dd>'+esc(String(b.id))+'</dd>'+
+    '<dt>Prepared bottle</dt><dd>Verified prepared stock · '+esc(String(b.remainingMl))+' mL before entry</dd>'+
     '<dt>Sprays recorded</dt><dd>'+n+'</dd>'+
     '<dt>Nominal amount</dt><dd>'+(n*b.mgPerSpray*1000).toFixed(2)+' mcg</dd>'+
-    '<dt>Bottle after save</dt><dd>'+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+' mL</dd>'+
+    '<dt>Estimated bottle balance after saving</dt><dd>'+Math.max(0,b.remainingMl-n*b.mlPerSpray).toFixed(2)+' mL</dd>'+
     '<dt>Original source vial</dt><dd>No second deduction</dd>'+
     '</dl><p class="nx-shared-review-footnote">Recorded spray values are nominal. Nothing saved yet.</p>';
   box.hidden=false;m.querySelector("#nx-spray-entry-fields").hidden=true;
