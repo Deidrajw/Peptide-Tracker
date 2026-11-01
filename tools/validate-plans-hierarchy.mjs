@@ -4,7 +4,19 @@ const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),resul
 try { for(const mode of ['live','demo'])for(const width of [320,390])for(const theme of ['light','dark']){
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
- await page.evaluate(t=>{state=buildDemoState('weight_loss');state.profile.onboardingDone=true;state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());},theme);
+ await page.waitForFunction(()=>{const app=document.querySelector('#app');return app&&!app.textContent.includes('LOADING…');});
+ await page.evaluate(async t=>{
+   state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
+   state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};
+   state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();
+   if(!_demoActive){
+     const writer=nexusWriter(),raw=writer.expected(),before=raw===null?null:JSON.parse(raw);
+     const fixture=JSON.parse(JSON.stringify(state));
+     const result=await writer.transaction(before,()=>({next:fixture}));
+     state=result.next;_nexusLastSavedSnapshot=writer.expected();render();
+   }
+   document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
+ },theme);
  // Allow the approved 250ms theme background transition to settle before contrast sampling.
  // Immediate reads mix light-mode text with the outgoing dark-mode surface.
  await page.waitForTimeout(400);
@@ -289,6 +301,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].evidenceSymptom==='Skin irritation'&&state.dailyLogs.length===2),'Evidence selection or original Check-In history mutated');
  await page.locator('.nx-open-goal').first().click();
  await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
@@ -318,6 +334,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.source==='weightLogs'&&state.weightLogs.length===2),'Numeric model save or weight history preservation failed');
  await page.locator('.nx-open-goal').first().click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('185')&&t.includes('75%')),'Goal weight progress did not use latest dated record');
@@ -329,6 +349,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.rating===4),'Subjective rating save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#nx-g-next').click(); // Basics -> Progress
@@ -337,6 +361,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.milestones.length===2),'Milestones save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#nx-g-next').click(); // Basics -> Progress
@@ -344,6 +372,10 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.type==='exploratory'&&state.plans.goals[0].notes==='Fictional note'),'Exploratory save or legacy notes preservation failed');
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});
