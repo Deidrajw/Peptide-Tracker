@@ -149,6 +149,36 @@ try{
       ensure(parity,'Stash card header missing stacked status/unified ellipsis for kit '+id);
     }
 
+    // Physical iPhone report: Stored and Healthy badges must share one baseline,
+    // and the light primary action must not expose the older underlying background.
+    const badgeAndCta=await page.evaluate(()=>{
+      const cards=[...document.querySelectorAll('.nx-kit-card.nx-kit-condensed')];
+      const badges=cards.map(c=>c.querySelector('.nx-card-status > *')).filter(Boolean);
+      const primary=cards[0]?.querySelector('.nx-kit-next-action');
+      const styles=primary?getComputedStyle(primary):null;
+      return {badgeHeights:badges.map(b=>Math.round(b.getBoundingClientRect().height)),
+        badgeFont:badges.map(b=>getComputedStyle(b).fontSize),
+        ctaBgImage:styles?.backgroundImage||'',ctaWidth:primary?.getBoundingClientRect().width||0,
+        ctaClientWidth:primary?.clientWidth||0};
+    });
+    ensure(badgeAndCta.badgeHeights.every(x=>x===26)&&new Set(badgeAndCta.badgeFont).size===1,
+      'Stash status pills lack identical DS2 geometry: '+JSON.stringify(badgeAndCta));
+    ensure(badgeAndCta.ctaClientWidth>0&&badgeAndCta.ctaWidth>=44,
+      'Stash primary CTA clipped by grid: '+JSON.stringify(badgeAndCta));
+    if(theme==='light')ensure(badgeAndCta.ctaBgImage.includes('linear-gradient'),
+      'Light primary CTA lost the Supplies lavender gradient: '+JSON.stringify(badgeAndCta));
+
+    // Green-tinted vial details came from compound-specific inline CSS, not DS2.
+    await page.evaluate(()=>openNewVialModal(99001));
+    ensure(await page.locator('.nx-open-vial-details').count()===1,
+      'Open New Vial lacks neutral DS2 details panel');
+    const detailsBg=await page.locator('.nx-open-vial-details').evaluate(el=>{
+      const st=getComputedStyle(el);
+      return {bg:st.backgroundColor,border:st.borderTopColor};
+    });
+    ensure(!detailsBg.bg.includes('0, 255, 0')&&detailsBg.border!=='rgba(0, 0, 0, 0)',
+      'Open New Vial details panel missing neutral surface: '+JSON.stringify(detailsBg));
+    await page.evaluate(()=>closeModal());
     // Onboarding is independent of these fictional inventory fixtures; close any
     // introductory overlay before testing a real pointer tap on the Stash details.
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
