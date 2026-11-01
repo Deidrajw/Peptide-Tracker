@@ -75,7 +75,7 @@ function supplyModal(existing, presetName, forceVials=false) {
   const m = openModal(`
     <div class="nx-dose-head nx-shared-sheet-header">
       <div><span class="nx-dose-kicker">STASH · INVENTORY</span><h2 class="nx-dose-title">${existing?"Edit kit":"Add kit"}</h2></div>
-      <button id="x" class="nx-dose-close" type="button" aria-label="Close kit editor">✕</button>
+      <button id="x" class="nx-dose-close" type="button" aria-label="Close kit editor"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     ${!existing?`<button id="sw-blend" style="background:transparent;border:none;padding:0;font-size:11.5px;color:#C9A0FF;margin-bottom:14px;text-align:left">Adding a blend of multiple compounds in one vial? →</button>`:""}
     <label class="field-label">COMPOUND</label>
