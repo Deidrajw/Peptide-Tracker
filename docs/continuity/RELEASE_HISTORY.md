@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft Today tracking persistence fix, NOT RELEASED
+- 77f3e722 converts Today tracking activity selection to awaited exclusive scoped writer. Other ordinary saves remain unsafe; no release or deployment.
+
 ## 2026-11-01 — Draft exclusive history validation fix, NOT RELEASED
 - 9d4c3548 fixes double-escaped date validation for scoped supplement history upsert; dff9ace2 / 322f7d26 add/order targeted tests. P0 not resolved, no merge or deployment.
 
