@@ -83,22 +83,7 @@ async function nexusEraseSavedState() {
     return false;
   }
 }
-function saveState() {
-  if(_demoActive)return true; // fictional demo never touches production storage
-  try {
-    const writer=nexusWriter();
-    writer.saveLegacy(state);
-    _nexusLastSavedSnapshot=writer.expected();
-    return true;
-  }catch(e){
-    console.error("Nexus save failed",e);
-    showSaveWarning();
-    return false; // callers must not display success when persistence failed
-  }
-}
-
-
-
+// The synchronous saveState gateway was retired: app writes require awaited exclusive readback.
 
 /* Transitional exclusive CAS for reviewed legacy handlers whose validated
  * mutation is already applied to app state. Snapshot the proposed state before
