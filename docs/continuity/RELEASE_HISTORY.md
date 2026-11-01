@@ -1516,3 +1516,7 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-01 — PR124 Protocol/Today QA fixture migration; no release
 - 57a483233459ba0c87ccbe3c15c16e56acc5a0b5 adjusts only tools/validate-protocol-design.mjs to initialize fictional LIVE fixture under Web Lock after app boot. Check-In eight LIVE/DEMO browser combinations passed in prior failed overall run #41285215207, which stopped at Protocol QA stale fixture. No application change or data migration, no merge/deploy, P0 release blocked pending exact-source CI and artefact certification.
+
+
+## 2026-11-01 — Draft PR124 Protocol/Today test-only correction
+- 39e504d94e3b342ccf8cbf0bf057ca598245a863 fixes premature browser check for async Today tracking preference, verifies durable exclusive writer result. No product JS/CSS, schema change, deployment or release; full QA and exact-source artifact acceptance pending. P0 BLOCKING, nasal gates OFF, draft PR #124.
