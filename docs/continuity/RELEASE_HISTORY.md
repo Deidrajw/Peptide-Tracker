@@ -1,3 +1,6 @@
+## 2026-11-01 — Draft PR124 fictional Oxytocin E2E verified, NOT RELEASED
+- Exact app/test SHA `66959ba7`: Chromium/build #41351301441, WebKit #41351301343, writer/mobile/nested SUCCESS. Fictional Oxytocin kit→single nasal preparation transfer→linked bottle→2-spray dose test PASS, verified original source and destination ledger. Candidate artifact #13101324932 downloaded, nested ZIP CRCs and LIVE 26-file manifest and standalone/full-app DEMO parity PASS; build label v0.9.20-beta unchanged. No user data migrated, merge, production deployment, live nasal enablement or physical iPhone acceptance. Original 16 DS2 requests not complete; P0 release hold remains.
+
 ## 2026-11-01 — PR124 Oxytocin E2E candidate, UNRELEASED
 - Test commits 9dcc7c6a and bd68be8e provide exact fictional Add Kit to prepared-container Log Dose regression. Matching WebKit run 41350297385 SUCCESS, writer/mobile/nested SUCCESS, Chromium 41350297420 pending. No merge, deployment, live nasal enablement, personal-data changes or physical acceptance. UX 16-item checklist remains unresolved.
 
