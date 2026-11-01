@@ -849,18 +849,93 @@ function nexusCapsuleDoseModal(name,occTime){
   });
  };
 }
+
+/* Form-aware prepared spray entry. Real prepared stock use remains gated;
+   DEMO invokes the already audited pure planner on fictional state only. */
+function nexusNasalDoseModal(name,occTime){
+ const bottles=(state.formulationStocks||[]).filter(c=>c.compound===name&&c.containerType==="nasal-bottle"&&
+  c.method==="Nasal"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
+ const unit=cfg(name).unit;
+ if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
+ const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
+  '<div class="nx-dose-head"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log sprays</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" aria-label="Close">✕</button></div>'+
+  '<label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
+  '<label class="field-label" for="nx-spray-source">PREPARED BOTTLE</label><select class="inp" id="nx-spray-source">'+bottles.map(x=>
+   '<option value="'+esc(String(x.id))+'">'+esc(String(x.remainingMl))+' mL remaining · nominal '+esc(String(x.mgPerSpray*1000))+' mcg/spray</option>').join("")+'</select>'+
+  '<label class="field-label" for="nx-spray-count">SPRAYS TAKEN</label><input class="inp" type="number" min="1" step="1" value="1" id="nx-spray-count">'+
+  '<p id="nx-spray-preview" class="nx-dose-untracked-note" role="status"></p>'+
+  '<label class="field-label" for="nx-spray-notes">NOTES · OPTIONAL</label><textarea class="inp" id="nx-spray-notes" rows="2"></textarea>'+
+  '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button>'+
+  '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
+  '<p class="hint">Recorded values are nominal. Nexus cannot verify spray output, product stability or suitability.</p></div>',"#A78BFA");
+ m.querySelector("#x").onclick=closeModal;
+ const source=m.querySelector("#nx-spray-source"),qty=m.querySelector("#nx-spray-count"),
+  date=m.querySelector("#nx-spray-date"),box=m.querySelector("#nx-spray-confirm");
+ const current=()=>bottles.find(x=>String(x.id)===source.value);
+ const valid=()=>{
+  const b=current(),n=Number(qty.value);
+  return b&&Number.isSafeInteger(n)&&n>0&&n*b.mgPerSpray<=b.remainingMg+1e-7&&n*b.mlPerSpray<=b.remainingMl+1e-7;
+ };
+ const refresh=()=>{
+  const b=current(),n=Number(qty.value);
+  m.querySelector("#nx-spray-preview").textContent=b&&Number.isSafeInteger(n)&&n>0?
+   n+" "+(n===1?"spray":"sprays")+" · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+" mcg; "+b.remainingMl+" mL before dose":"Choose a positive whole spray count.";
+ };
+ source.onchange=refresh;qty.oninput=refresh;refresh();
+ m.querySelector("#nx-spray-review").onclick=()=>{
+  if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
+   showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
+  }
+  const b=current(),n=Number(qty.value);
+  m.querySelector("#nx-spray-summary").textContent=n+" sprays · nominal "+(n*b.mgPerSpray*1000).toFixed(2)+
+   " mcg from prepared bottle "+b.id+". Nothing saved yet.";
+  box.hidden=false;m.querySelector("#nx-spray-review").hidden=true;
+ };
+ m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-review").hidden=false;};
+ m.querySelector("#nx-spray-save").onclick=async()=>{
+  if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
+   showErrorBanner("Source or amount changed; nothing saved.");return;
+  }
+  const b=current(),n=Number(qty.value),btn=m.querySelector("#nx-spray-save");
+  if(btn.disabled)return;btn.disabled=true;
+  const tx={id:"spray-dose-"+uid(),doseId:String(uid()),compound:name,sourceId:b.id,
+   sprays:n,method:"Nasal",sourceKind:"formulation-container",trackingMode:"backed",
+   nativeUnit:unit,date:date.value,notes:m.querySelector("#nx-spray-notes").value};
+  let result;
+  try{
+   if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}
+   else result=await nexusCommitPreparedNasalOperation({type:"dose",tx});
+  }catch(error){console.error("Prepared nasal dose blocked",error);
+   showErrorBanner("Live prepared nasal logging is not enabled pending shared-writer acceptance. Nothing saved.");
+   btn.disabled=false;return;
+  }
+  closeModal();render();
+  showUndoToast(name+" sprays logged · Undo",async()=>{
+   try{
+    const undo={transactionId:tx.id,reversalId:"spray-undo-"+uid(),compound:name,doseId:tx.doseId,sourceId:b.id};
+    if(_demoActive){const r=NexusPreparedDoseTransaction.reverseDose(state,undo);state=r.next;}
+    else await nexusCommitPreparedNasalOperation({type:"reverse",tx:undo});
+    render();
+   }catch(error){console.error("Spray undo rejected",error);showErrorBanner("Source or dose changed. Undo blocked.");}
+  });
+ };
+}
+
 function nexusChoosePhysicalForm(name,occTime){
  const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.remainingCount>0);
- if(!capsules)return false;
+ const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
+ if(!capsules&&!nasal)return false;
  const availableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
    ["open","active"].includes(v.status)&&Number(v.remainingMg)>0));
  const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" aria-label="Close">✕</button></div>'+
  '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
- '<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>'+
+ (capsules?'<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>':'')+
+ (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
  (availableVial?'<button id="nx-use-injectable" type="button" class="nx-multi-vial-toggle" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
  '</div>',"#A78BFA");
  m.querySelector("#x").onclick=closeModal;
- m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
+ if(capsules)m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
+ if(nasal)m.querySelector("#nx-use-nasal").onclick=()=>{closeModal();nexusNasalDoseModal(name,occTime);};
  if(availableVial)m.querySelector("#nx-use-injectable").onclick=()=>{closeModal();doseModal(name,null,occTime,"vial");};
  return true;
 }
