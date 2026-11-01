@@ -1,3 +1,6 @@
+## 2026-11-01 — Test-only Plans race stabilization, PR124 NOT RELEASED
+- Commit 20079810 amends asynchronous Goal status browser test to await acknowledged sheet dismissal and visible rerendered View goal before retaining 44px geometry assertion. No application behaviour or version change. New exact-head five GitHub Actions checks initiated; no PASS claim yet. Exact-head artifact, real iPhone and VoiceOver outstanding. P0 remains blocking; nasal live gates OFF. No merge or Cloudflare deployment.
+
 ## 2026-11-01 — PR124 QA evidence update, NOT RELEASED
 - Tested candidate 2457a657: all five exact-application-source GitHub workflows SUCCESS (#41327745230 Chromium/full, #41327745218 WebKit, #41327745251 mobile, #41327745323 writer, #41327745216 nested). Prior reported 26-file LIVE ZIP/isolated full-app DEMO artifact #13092541470 not re-downloaded/reverified this session.
 - Follow-up continuity-only head 62e0c126 has a new failed full browser workflow #41328859453 due to 320px zero-height Plans View goal target. Other four follow-up workflows succeeded. No change labelled tested release or deployed; failure needs triage and a fresh source-matched green run.
