@@ -33,6 +33,7 @@ jobs:
           node tests/stash-retirement-ux.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/prepared-formulation-lifecycle.test.cjs
+          node tests/nasal-live-exclusive-pipeline.test.cjs
           node tests/formulation-stock.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-save-acknowledgement.mjs
