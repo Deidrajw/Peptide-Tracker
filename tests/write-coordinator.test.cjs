@@ -148,6 +148,15 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  const invalidQuick=scopedTab(),beforeQuickInvalid=scopedRaw;
  assert.equal(await invalidQuick.commit({kind:"setting",key:"nxUsageCounts",value:{"shortcut":-1}}),false);
  assert.equal(scopedRaw,beforeQuickInvalid);
+ // Regression: valid YYYY-MM-DD upsert must reach the locked writer;
+ // malformed date must never write. This previously used a double-escaped
+ // regex and rejected every valid date.
+ const upsertTab=scopedTab();
+ const beforeUpsert=scopedRaw;
+ assert.equal(await upsertTab.commit({kind:"supplement-log-upsert",date:"not-a-date",taken:["Fictional C"],id:"H-2"}),false);
+ assert.equal(scopedRaw,beforeUpsert);
+ assert.equal(await upsertTab.commit({kind:"supplement-log-upsert",date:"2026-11-02",taken:["Fictional C"],id:"H-2",expectedId:null}),true);
+ assert.equal(JSON.parse(scopedRaw).supplementLogs.some(x=>x.date==="2026-11-02"&&x.id==="H-2"),true);
  const historyTab=scopedTab(),reminderTab=scopedTab();
  const historyAndSettings=await Promise.all([
   historyTab.commit({kind:"supplement-log-delete",date:"2026-11-01"}),
