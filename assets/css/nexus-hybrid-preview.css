@@ -3849,3 +3849,11 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 html[data-theme="light"] .modal.nx2-dose-modal .nx-dose-option-check input[type="checkbox"]:checked{
   background:#bf9cf1!important;border-color:#8b61c9!important;
 }
+
+/* PR124: readable kit -> vial -> verified prepared container explanation. */
+.nx-prep-plan-sheet .nx-prep-source-steps{
+  display:grid;gap:9px;margin:10px 0 12px;padding-left:22px;
+  font-size:12px;line-height:1.55;color:var(--t2);
+}
+.nx-prep-plan-sheet .nx-prep-source-steps li{padding-left:3px}
+.nx-prep-plan-sheet .nx-prep-source-steps strong{color:var(--t1)}
