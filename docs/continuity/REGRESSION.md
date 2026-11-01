@@ -1,3 +1,7 @@
+## 2026-11-01 — Goal Details and inventory shared header checks
+- Previous nasal candidate 5434b01f WebKit #41342059777 PASS; mobile #41342059743 PASS; writer #41342059803 PASS; nested #41342059796 PASS; Chromium #41342059754 FAIL with Check-In delayed modal/timeout evidence. No claim of full Chromium PASS.
+- Goal Details now uses shared DS2 header/close and three responsive tabs; tools/validate-plans-hierarchy.mjs asserts header presence and >=44px control heights. Exact-head CI and physical iPhone/VoiceOver NOT TESTED on new Goal changes. Protected Check-In, inventory, Plans remain regression-critical.
+
 ## 2026-11-01 — Nasal shared-form regression follow-up
 - Initial source 6d3f3bcf: Chromium/build #41341325252 FAIL (obsolete SubQ label assertion); WebKit #41341325267 FAIL (spray review lacks required estimated balance); mobile #41341325322 PASS; shared writer #41341325307 PASS; nested #41341325315 PASS. Later aa05e058 full #41341925691 and WebKit #41341925801 still FAIL on spray balance wording; remaining three PASS.
 - Corrective code 1f35b65f labels estimated bottle balance and removes internal container ID from spray review. Browser test 1384fc6d now exercises actual preparation Review, Back/edit preservation, zero debit before confirmation, and single source-to-bottle transfer. CSS 5434b01f ensures hidden stages and 44px close. These fixes are NOT YET VERIFIED by completed exact-head CI.
