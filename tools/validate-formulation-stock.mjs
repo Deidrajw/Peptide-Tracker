@@ -109,6 +109,52 @@ try {
   assert.equal(after.stock[0].transactions[0].before.remainingCount,30);
   assert.equal(after.stock[1].remainingMl,7);
   assert.equal(after.stock[1].mgPerSpray,null);
+
+  // Form-specific capsule logging: an independent stocked compound with no
+  // protocol gets its own dose history, while the physical vial ledger and
+  // unrelated purchased nasal container must remain unchanged.
+  await page.evaluate(()=>doseModal('Fictional Slew'));
+  assert.equal(await page.locator('#nx-use-capsules').count(),1,'Capsule stock must offer a form-specific logging choice');
+  await page.locator('#nx-use-capsules').click();
+  assert.equal(await page.locator('#nx-capsule-count').count(),1,'Capsule entry must log whole capsules');
+  assert.equal(await page.locator('.nx-method-grid').count(),0,'Oral capsule entry must not show injectable route choices');
+  await page.locator('#nx-capsule-count').fill('2');
+  await page.locator('#nx-capsule-review').click();
+  assert.ok((await page.locator('#nx-capsule-summary').innerText()).includes('10 mg'),'Capsule strength must determine displayed mass');
+  const beforeCapsule=await page.evaluate(()=>JSON.stringify(state.supplies));
+  await page.locator('#nx-capsule-save').click();
+  const loggedCapsule=await page.evaluate(()=>({
+    stock:state.formulationStocks.map(x=>({type:x.containerType,remainingCount:x.remainingCount,remainingMg:x.remainingMg,transactions:x.transactions.length})),
+    doses:(state.customPeptides['Fictional Slew']?.doses||[]),
+    protocols:(state.protocols||[]).length,
+    vials:JSON.stringify(state.supplies)
+  }));
+  assert.equal(loggedCapsule.stock[0].remainingCount,25,'Two capsules should deduct two units from exact capsule bottle');
+  assert.equal(loggedCapsule.stock[1].remainingMg,10,'Capsules must never alter a separate nasal container');
+  assert.equal(loggedCapsule.doses.length,1,'Capsules should create one independent record');
+  assert.equal(loggedCapsule.doses[0].capsuleCount,2,'Capsule-count history must persist');
+  assert.equal(Number(loggedCapsule.doses[0].dose),10,'Saved native amount must equal labelled mass times count');
+  assert.equal(loggedCapsule.vials,beforeCapsule,'Capsule entry must never mutate vial stock');
+  await page.evaluate(()=>{
+    const entry=state.customPeptides['Fictional Slew'].doses[0];
+    const stock=state.formulationStocks.find(x=>x.containerType==='capsule-bottle');
+    const out=NexusFormulationStock.reverseCapsuleDose(state,{
+      sourceId:stock.id,transactionId:entry.capsuleTransactionId,
+      reversalId:'fictional-capsule-undo',doseId:entry.id,compound:'Fictional Slew'});
+    state=out.next;
+  });
+  assert.equal(await page.evaluate(()=>state.formulationStocks.find(x=>x.containerType==='capsule-bottle').remainingCount),27,
+    'Exact capsule reversal restores count after save');
+  assert.equal(await page.evaluate(()=>state.customPeptides['Fictional Slew'].doses.length),0,
+    'Exact capsule reversal removes only its linked dose');
+  await page.evaluate(()=>doseModal('Fictional Slew'));
+  await page.locator('#nx-use-capsules').click();
+  await page.locator('#nx-capsule-count').fill('999');
+  await page.locator('#nx-capsule-review').click();
+  assert.equal(await page.locator('#nx-capsule-confirm').isHidden(),true,
+    'Overdrawn capsule amount must never reach confirmation');
+  await page.locator('.modal #x').click();
+
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
   await page.evaluate(()=>{
