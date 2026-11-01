@@ -119,15 +119,25 @@ try{
         await page.locator('.modal #supp-search').fill('Fictional Zinc');
         assert(await page.locator('.modal [data-add-search="checkin"]').count()===1,'Check-In unified Add action absent');
         await page.locator('.modal [data-add-search="checkin"]').click();
+        // Inline catalogue Add is an async exclusive save; wait for durable
+        // readback before replacing the fictional fixture and opening another
+        // editor. An in-memory catalogue mutation alone is not acknowledgement.
+        await page.waitForFunction(()=>{
+          if(_demoActive)return state.settings.supplements.includes('Fictional Zinc');
+          const writer=nexusWriter(),raw=localStorage.getItem(STORE_KEY);
+          return !writer.status().inFlight && !!raw &&
+            JSON.parse(raw).settings?.supplements?.includes('Fictional Zinc');
+        });
         const checkinInline=await page.evaluate(()=>({
           catalog:state.settings.supplements.includes('Fictional Zinc'),
           saved:(state.supplementLogs||[]).some(l=>(l.taken||[]).includes('Fictional Zinc'))
         }));
         assert(checkinInline.catalog&&!checkinInline.saved,
           'Check-In catalogue addition must not implicitly write taken history');
-        await page.evaluate(()=>{
+        await page.evaluate(async()=>{
           closeModal();
           state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          if(!await nexusCommitCurrentState())throw Error('Fictional catalogue reset not acknowledged');
           render();
         });
         const before=await snapshot(page,testDay);
