@@ -18,7 +18,22 @@ try{
     const page=await ctx.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
-    await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
+    // Startup is an awaited exclusive write; initialize fictional tests only
+    // after the first render and commit LIVE fixtures via the same coordinator.
+    await page.waitForFunction(()=>{const root=document.querySelector('#app');
+      return root&&!root.textContent.includes('LOADING…');});
+    await page.evaluate(async value=>{
+      const fixture=buildDemoState('weight_loss');
+      fixture.profile.onboardingDone=true;
+      if(_demoActive)state=fixture;
+      else {
+        const writer=nexusWriter(),raw=writer.expected();
+        const before=raw===null?null:JSON.parse(raw);
+        const result=await writer.transaction(before,()=>({next:fixture}));
+        state=result.next;_nexusLastSavedSnapshot=writer.expected();
+      }
+      document.documentElement.dataset.theme=value;
+    },theme);
     // Source-backed fictional protocol reminders: day boundaries, pauses and
     // non-destructive manual completion. Run in LIVE and standalone DEMO.
     const protocolAlerts=await page.evaluate(()=>{
