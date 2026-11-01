@@ -84,6 +84,11 @@ try {
   assert.equal(await page.locator('#nx-form-match-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
     'Other forms must resolve curated compound');
   await page.locator('#nx-form-name').fill('Fictional Unlisted Compound');
+  // Enter should never silently replace a new custom name with the top search result.
+  await page.locator('#nx-form-name').press('Enter');
+  assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound',
+    'Enter must preserve typed custom compound rather than pick first suggestion');
+  await page.locator('#nx-form-name').focus();
   const createForm=page.locator('#nx-form-match-list button').filter({hasText:'Use "Fictional Unlisted Compound"'});
   assert.equal(await createForm.count(),1,'Unknown compound must offer custom option in Other forms');
   await createForm.click();
