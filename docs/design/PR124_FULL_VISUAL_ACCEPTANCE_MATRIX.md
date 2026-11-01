@@ -1,3 +1,9 @@
+## Execution checkpoint — 2026-11-01 (NOT complete visual acceptance)
+- Baseline `27f24637` Chromium #41362141111 **PASS** and WebKit #41362141098 **PASS**. Chromium Log Dose 8 LIVE/DEMO width/theme regression cells (176 functional flows); WebKit 16 fictional formulation sessions. These results do not complete 16×16 visual cells.
+- Downloaded exact-source artifact #13105393555, validated release manifest SHA `27f24637` and all 26 LIVE ZIP asset paths. Existing PNG set has no dedicated normal Log Dose entry/focused/review screenshots.
+- TEST-ONLY `18e63ece` adds Chromium entry, focused, review screenshot and bounds evidence in 8 width/theme/build combinations (=24 images) to `validate-logdose-ui.mjs`. Execution and manual screenshot inspection remain **NOT TESTED** for this new commit; WebKit equivalent, actual iPhone software keyboard, nasal and picker screenshot grids remain **NOT TESTED**. Do not equate focus proxy with iOS keyboard.
+- Next execution: confirm exact-head artifacts and manually inspect eight sets of Log Dose screenshots; then compound picker and nasal preparation in both engines. Release P0 mixed writer BLOCKING; nasal LIVE OFF; draft/no merge/deploy.
+
 # PR #124 — Full DS2 visual acceptance matrix (working gate)
 Date: 2026-11-01. Draft PR only. This is a **test specification**, not a PASS report. Previous physical iPhone screenshots FAILED; user has withheld retest until all 16 corrections are coded. No merge/deploy approval.
 
