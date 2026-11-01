@@ -1,3 +1,6 @@
+## 2026-11-01 — #15 Additional dose options narrow-screen assertions added
+- Test `7212783e` now opens the live/isolated-DEMO Log Dose panel across Chromium 320px/390px × light/dark, asserts one accessible Additional dose options disclosure, ≥44px summary and both optional rows, no viewport overflow, two underlying optional controls and reversible expand/collapse without saving. **TEST CODED, no PASS until matching workflow completes.** Remaining physical UAT, route/site and Goal Details screen review is not accepted. No dose mutation or storage schema change.
+
 ## 2026-11-01 — #06 focused custom-result hidden-state blocker
 - Instrumented WebKit #41359516504 at `4086417e` FAILED: compound search retained focus and custom option existed but the result list was hidden following keyboard choice. Corrective candidate `73e036c9` schedules a focused-input repaint to survive delayed blur/focusout. Full 320/390 light/dark Chromium/WebKit tests still pending. **#06 is CODED / AUTOMATED FAIL ON PREDECESSOR / PHYSICAL NOT ACCEPTED**, not PASS. All 16 scope and nasal/P0 holds remain.
 
