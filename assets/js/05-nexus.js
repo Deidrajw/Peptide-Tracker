@@ -145,7 +145,7 @@ function comboDoseModal() {
     });
     document.querySelectorAll(".combo-preset-del").forEach(x=>x.onclick=(e)=>{
       e.stopPropagation();
-      confirmAction("Remove this favourite combo?", ()=>{
+      confirmAction("Remove this favourite combo?", async ()=>{
         state.comboPresets = presets.filter(p=>String(p.id)!==x.dataset.id);
         saveState(); closeModal(); comboDoseModal();
       });
@@ -246,7 +246,7 @@ function comboDoseModal() {
               `${name} only has ${have.toFixed(2)}${unit} left — this dose needs ${doseVal}${unit}. Finish this vial and open the next one to cover the rest?`,
               () => {
                 finishAndOpenNextVial(kit);
-                saveState();
+                if(!await nexusCommitCurrentState())return;
                 closeModal();
                 comboDoseModal();
               },
@@ -499,7 +499,7 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
     // Do not reconcile inventory or mark the source row completed.
     if (typeof onCancel === "function") onCancel();
   };
-  m.querySelector("#draw-confirm").onclick = () => {
+  m.querySelector("#draw-confirm").onclick = async () => {
     const rawActual = m.querySelector("#draw-actual").value.trim();
     const actual = Number(rawActual);
     if (!rawActual || !Number.isFinite(actual) || actual < 0) {
@@ -565,7 +565,7 @@ function drawFromVialModal(kit, vial, targetAmount, onComplete, onCancel) {
       step2.querySelectorAll(".draw-reason-opt").forEach(b2=>{ const on=b2.dataset.key===reasonKey; b2.style.background=on?"var(--surface-3)":"transparent"; b2.style.borderColor=on?"var(--border)":"transparent"; b2.style.color=on?"var(--t1)":"var(--t3)"; });
       step2.querySelector("#draw-other-field").style.display = reasonKey==="other" ? "block" : "none";
     });
-    step2.querySelector("#draw-reconcile-save").onclick = () => {
+    step2.querySelector("#draw-reconcile-save").onclick = async () => {
       const otherText = step2.querySelector("#draw-other-text")?.value?.trim();
       const reasonLabel = reasonKey==="discarded" ? "Discarded — short draw"
         : reasonKey==="discrepancy" ? "Inventory discrepancy — vial short on draw"
@@ -632,7 +632,7 @@ function nexusDoseReactionModal(compoundName, doseId, reactionId=null) {
   m.querySelectorAll(".nx-reaction-edit").forEach(button=>button.onclick=()=>nexusDoseReactionModal(compoundName,doseId,button.dataset.id));
   m.querySelectorAll(".nx-reaction-delete").forEach(button=>button.onclick=()=>{
     const id=button.dataset.id;
-    confirmAction("Delete this reaction? The original dose and vial balance will stay unchanged.",()=>{
+    confirmAction("Delete this reaction? The original dose and vial balance will stay unchanged.",async()=>{
       const target=getDose();
       if(!target || !Array.isArray(target.reactions) || !target.reactions.some(r=>String(r.id)===String(id))){
         showErrorBanner("The reaction no longer exists. Nothing changed.");return;
@@ -749,7 +749,7 @@ function nexusUseSetupModal(name,onSaved) {
   m.querySelectorAll('input[name="nx-use-mode"]').forEach(el=>el.onchange=refresh);
   refresh();
   m.querySelector("#nx-use-close").onclick=closeModal;
-  m.querySelector("#nx-use-save").onclick=()=>{
+  m.querySelector("#nx-use-save").onclick=async()=>{
     const productForm=family.value;
     const unit=m.querySelector("#nx-use-unit").value;
     if(!["mg","mcg"].includes(unit)&&!(unit==="IU"&&c.unit==="IU")){showErrorBanner("IU needs a verified product definition. No setup saved.");return;}
@@ -2041,7 +2041,7 @@ function prepareMixedSyringeModal(draftComponents) {
     };
   };
 
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     if (!components.length) return;
     // Never let this be a silent no-op — if a component's inventory situation changed
     // since it was added (another action drew from the same kit, a vial was finished,
@@ -2190,7 +2190,7 @@ function administerSyringeModal(pd) {
   m.querySelector("#x").onclick = closeModal;
   const admDateNowBtn = m.querySelector("#adm-date-now");
   if (admDateNowBtn) admDateNowBtn.onclick = () => { m.querySelector("#adm-date").value = localDatetime(); };
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const date = m.querySelector("#adm-date").value;
     const site = m.querySelector("#adm-site").value;
     state._admSite = site;
@@ -2561,7 +2561,7 @@ function prepareDosesModal(name) {
   }
   renderAllocPanel();
 
-  m.querySelector("#pd-save").onclick = () => {
+  m.querySelector("#pd-save").onclick = async () => {
     // The legacy syringe preparation screen lacks its own same-kit vial chooser.
     // Stop before touching inventory rather than consuming the first of two open vials.
     if((state.supplies||[]).some(k=>k.name===name&&!k.isBlend &&
@@ -2744,8 +2744,8 @@ function reconstituteVialModal(kit, onDone) {
   m.querySelector("#rc-bac").oninput = updateConc;
   const rcDateNowBtn = m.querySelector("#rc-date-now");
   if (rcDateNowBtn) rcDateNowBtn.onclick = () => { m.querySelector("#rc-date").value = localDatetime(); };
-  m.querySelector("#rc-save").onclick = () => {
-    confirmOpenIfOtherKitOpen(kit, () => {
+  m.querySelector("#rc-save").onclick = async () => {
+    confirmOpenIfOtherKitOpen(kit, async () => {
       const prevVials = JSON.parse(JSON.stringify(ensureKitVials(kit)));
       const prevAgg = { reconDate:kit.reconDate, activeKit:kit.activeKit, bacMl:kit.bacMl, openedVials:kit.openedVials, totalVials:kit.totalVials };
       const newVial = activateVial(kit, m.querySelector("#rc-date").value, parseFloat(m.querySelector("#rc-bac").value)||kit.bacMl, m.querySelector("#rc-notes").value);
@@ -2914,7 +2914,7 @@ function todayLogSheet(log) {
     const update=entry&&(entry.updates||[]).find(u=>u.id===uid2);
     if(update){ closeModal(); editUpdateModal(log,update); }
   });
-  m.querySelectorAll(".del-update").forEach(b=>b.onclick=()=>{
+  m.querySelectorAll(".del-update").forEach(b=>b.onclick=async()=>{
     const uid2=+b.dataset.uid;
     const entry = state.dailyLogs.find(l=>l.id===log.id);
     if(entry){ entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2); saveState(); closeModal(); render(); }
@@ -2941,7 +2941,7 @@ function addUpdateModal(log) {
   nexusConfigureCheckinSheet(m, ["save"]);
   m.querySelector("#x").onclick = closeModal;
   const sym=m.querySelector("#sym"); sym.innerHTML=symptomPickerHTML(f.symptoms,"#A78BFA"); wireSymptomPicker(sym,f.symptoms,"#A78BFA");
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const timeVal = m.querySelector("#utime").value;
     const [hh,mm] = timeVal.split(":").map(Number);
     const updateTime = new Date(now); updateTime.setHours(hh,mm,0,0);
@@ -3126,7 +3126,7 @@ function dailyModal(existing, prefillDate) {
     suppTaken2.clear();(log?.taken||[]).forEach(n=>suppTaken2.add(n));
     suppSelectionTouched=false;renderSuppSearch();
   });
-  m.querySelector("#save").onclick = () => {
+  m.querySelector("#save").onclick = async () => {
     const chosenDate=m.querySelector("#date").value;
     if(!chosenDate || Number.isNaN(new Date(chosenDate+"T12:00:00").getTime())) {
       alert("Choose a valid check-in date before saving."); return;
@@ -3147,7 +3147,7 @@ function dailyModal(existing, prefillDate) {
 }
 
 // ─── Macro modal ──────────────────────────────────────────────────────────────
-function addSupplementFromSearch(query, onSelect) {
+async function addSupplementFromSearch(query, onSelect) {
   const name=String(query||"").trim();
   if(!name)return null;
   const catalogue=state.settings.supplements || (state.settings.supplements=[]);
@@ -3196,7 +3196,7 @@ function supplementModal(prefillDate) {
     });
   };
   input.oninput=()=>{dropdownOpen=true;paint();};paint();
-  modal.querySelector("#suppsave").onclick=()=>{
+  modal.querySelector("#suppsave").onclick=async()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
     if(taken.size)state.supplementLogs.push({id:uid(),date:today,taken:[...taken]});
     saveState();closeModal();render();
