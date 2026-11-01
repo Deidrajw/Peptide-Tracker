@@ -2347,3 +2347,7 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Inline supplement Add durable-ack test correction
 - 77a759af full #41284493052 FAIL in later Check-In due missing Magnesium Citrate browse option; earlier simulated LIVE/DEMO storage, second modal, mood/symptoms and supplement editing progressed. Inline Add is asynchronous; previous harness treated immediate in-memory catalogue change as completed write and reset fixture while exclusive save was still pending.
 - 861b9d84 waits for _demoActive memory or real STORE_KEY persisted Zinc with no in-flight writer, then performs awaited exclusive catalogue reset. New exact source writer #41284836789, mobile #41284836846, DS2 #41284836809 PASS; full #41284836788, WebKit #41284836803 PENDING. No claim of Check-In full PASS. P0 BLOCKING, no merge/deploy, nasal gates OFF; device NOT TESTED.
+
+
+## 2026-11-01 — Check-In Save completion vs Edit sheet collision
+- FAIL full #41284836788 (861b9d84): after first fictional Check-In Create, Edit textarea initially found but detached before fill. Asynchronous original #save handler may close a new modal unless test waits for confirmed first-save dismissal. Fix 0aaed043 adds Playwright waitFor state detached after three successful #save actions; intentionally rejected date collision remains open and is not awaited for dismissal. Actual application Check-In date/validation unchanged. New exact-head full #41285215207 pending; P0 blocked; no merge/deploy.
