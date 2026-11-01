@@ -244,7 +244,7 @@ function comboDoseModal() {
             // (matches the kit's own), so there's nothing further to ask.
             confirmAction(
               `${name} only has ${have.toFixed(2)}${unit} left — this dose needs ${doseVal}${unit}. Finish this vial and open the next one to cover the rest?`,
-              () => {
+              async () => {
                 finishAndOpenNextVial(kit);
                 if(!await nexusCommitCurrentState())return;
                 closeModal();
