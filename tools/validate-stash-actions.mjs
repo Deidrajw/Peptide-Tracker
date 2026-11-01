@@ -11,7 +11,9 @@ try{
   const page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
-  await page.evaluate(t=>{
+  await page.waitForFunction(()=>{const app=document.querySelector('#app');
+    return app&&!app.textContent.includes('LOADING…');});
+  await page.evaluate(async t=>{
     state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
     document.documentElement.dataset.theme=t;
     state.supplies=[
@@ -20,6 +22,15 @@ try{
       {id:88903,name:'Deadpool Test Blend',isBlend:true,composition:[{compound:'BPC-157',mg:10},{compound:'TB-500',mg:10}],totalVials:1,vialMg:20,bacMl:2,activeKit:false,reconDate:null,vials:[{id:88915,status:'sealed',vialMg:20,remainingMg:20}],doseLog:[],wasteLog:[]}
     ];
     tab='stash';render();
+    // Live source tests must begin from durable fictional inventory. Rendering
+    // may normalize legacy vial metadata; capture that normalized fixture now.
+    if(!_demoActive){
+      const fixture=JSON.parse(JSON.stringify(state));
+      const writer=nexusWriter(),raw=writer.expected(),before=raw===null?null:JSON.parse(raw);
+      const result=await writer.transaction(before,()=>({next:fixture}));
+      state=result.next;_nexusLastSavedSnapshot=writer.expected();
+      render();
+    }
   },theme);
   const snap=()=>page.evaluate(()=>JSON.stringify(state.supplies));
   const before=await snap();
@@ -145,6 +156,18 @@ try{
   await page.screenshot({animations:'disabled',path:'dist/stash-blend-review-'+mode+'-'+theme+'-'+width+'.png'});
   ensure(await page.evaluate(()=>!state.supplies.some(x=>x.name==='QA Fixture Blend')),'Wizard saved before confirmation');
   await page.locator('#bk-save').click();
+  // The Save handler awaits an exclusive transaction/readback before closing
+  // and rerendering; a Playwright click alone is not save acknowledgement.
+  await page.locator('#bk-save').waitFor({state:'detached',timeout:10000});
+  await page.waitForFunction(()=>{
+    const kit=(state.supplies||[]).find(x=>x.name==='QA Fixture Blend');
+    if(!kit?.testResultAttachment?.dataUrl)return false;
+    if(!_demoActive){
+      const saved=JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+      if(!saved?.supplies?.some(x=>x.id===kit.id&&x.testResultAttachment?.dataUrl===kit.testResultAttachment.dataUrl))return false;
+    }
+    return !!document.querySelector('.nx-kit-card .nx-kit-test-download');
+  },null,{timeout:10000});
   const recorded=await page.evaluate(()=>state.supplies.find(x=>x.name==='QA Fixture Blend'));
   ensure(recorded?.bacMl===2.5&&recorded?.cost==='190'&&recorded?.currency==='USD'&&recorded?.totalVials===3&&recorded?.vialMg===15,'Saved blend differs from Review');
   ensure(recorded?.composition?.length===2&&recorded.composition[0].mg===10&&recorded.composition[1].mg===5,'Saved component amounts incorrect');
