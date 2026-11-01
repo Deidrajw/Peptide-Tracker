@@ -2147,7 +2147,14 @@ function nexusAddFormulationModal(type,existingId=null){
     compoundInput.addEventListener("keydown",e=>{
       if(e.key==="Escape"){closeMatches();return;}
       if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}
-      else if(e.key==="Enter"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.click();}
+      else if(e.key==="Enter"&&!matchList.hidden){
+        // Do not silently replace a typed custom compound with the first suggestion.
+        // Exact matching selections are safe; otherwise Enter preserves the input.
+        const typed=compoundInput.value.trim().toLocaleLowerCase();
+        const exact=[...matchList.querySelectorAll('[role="option"]')].find(option=>option.textContent.trim().toLocaleLowerCase()===typed);
+        if(exact){e.preventDefault();exact.click();}
+        else if(typed){e.preventDefault();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();}
+      }
     });
     matchList.addEventListener("keydown",e=>{
       if(e.key==="Escape"){e.preventDefault();closeMatches();compoundInput.focus();return;}
