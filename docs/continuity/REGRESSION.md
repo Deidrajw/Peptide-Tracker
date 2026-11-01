@@ -1,3 +1,15 @@
+## 2026-11-01 — Physical iPhone corrective QA and follow-up gates (PR124)
+| ID | Scenario | Result / evidence |
+| --- | --- | --- |
+| CAP-01 | Two exact oral containers, whole-count debit, history and Undo | User-reported physical iPhone PASS; observations: none |
+| NAS-01 | DEMO source vial → preparation → spray log → separate balances and Undo | NOT PASSED/NOT TESTED end to end on physical iPhone; screenshots show UI and blocked LIVE spray save, not confirmed completion |
+| UI-ORAL-01 | Capsule sheet compact layout/scroll/buttons at 320/390, keyboard open, light/dark | FAIL on screenshot; corrective code 1fc20386/faa9d6b5, RETEST NOT DONE |
+| UI-NASAL-01 | Nasal prep & spray sheets consistent hierarchy/no overlaps or awkward footer | FAIL on screenshots; corrective code 0d841fc9/faa9d6b5, RETEST NOT DONE |
+| UI-NASAL-02 | Selecting nasal source opens preparation next, no redundant action, original-vial and prepared-bottle balances distinguished | FAIL original workflow; legacy DEMO handoff CODED, new-vial handoff + stock explanation INCOMPLETE |
+| P0-WRITER | Legacy and coordinated writes across simultaneous tabs with no lost update | BLOCKED; safety gates OFF |
+| DS2-01 | Previously accepted protected screens | User-reported physical iPhone PASS, must rerun protected regression after new code |
+| P14-01 | Pause All/Resume All | User-reported physical iPhone PASS, must rerun after new code |
+
 ## 2026-11-01 — 9752ab64 source-matched full CI PASS, remaining release blockers
 - Full build/browser #41273119998 SUCCESS. WebKit #41273119793, mobile #41273119758, nested #41273119777, scoped writer #41273119816 SUCCESS. Chromium 8 LIVE/DEMO 320/390 dark/light combinations, 176 Log Dose flows, 96 vial-source assertions, capsule exact count and two oral-container selection, fictional DEMO nasal preparation+sprays, Pause All/Resume All tests. Stash compact card 232/234px, Check-In/Plans/Calendar and backup/restore protected browser checks PASS.
 - Artifact #13069419875 exact manifest SHA 9752ab64; outer + inner archive CRC PASS, LIVE 26 exact file paths, sampled Git blob SHA parity, standalone DEMO == offline index, memory-only storage and blocked network paths. Physical iPhone and VoiceOver NOT TESTED.
