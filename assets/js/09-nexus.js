@@ -1794,9 +1794,32 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   }
   if(!["Injectable","nasal-source"].includes(selectedForm)){showErrorBanner("Choose Injectable or Nasal. Nothing saved.");return;}
   if(selectedForm==="nasal-source"&&_demoActive){
-    // In fictional DEMO a nasal choice opens the actual preparation form
-    // immediately. The sealed source is not opened or debited until one
-    // confirmed, validated state transition. LIVE nasal remains safety gated.
+    // An already open nasal source remains selectable for subsequent recorded
+    // bottles. Never silently substitute another vial or discard remaining mg.
+    const existingSources=(s.vials||[]).filter(v=>["open","active"].includes(v.status)&&
+      v.intendedUse==="nasal-source"&&Number(getVialRemainingMg(s,v))>0);
+    if(existingSources.length===1){
+      nexusRecordNasalPreparation(s.id,existingSources[0].id);
+      return;
+    }
+    if(existingSources.length>1){
+      const choices=openModal('<section class="nx-dose-form nx-open-vial-form-choice"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · SOURCE</div><h2 class="nx-dose-title">Choose exact source vial</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button></div><p class="hint">More than one reserved vial is open. Select the physical source before recording a bottle transfer.</p><div id="nx-nasal-source-choices"></div></section>',"#A78BFA");
+      choices.classList.add("nx-open-vial-choice-sheet","nx-form-log-sheet");
+      choices.querySelector("#x").onclick=closeModal;
+      const host=choices.querySelector("#nx-nasal-source-choices");
+      existingSources.forEach(v=>{
+        const button=document.createElement("button");button.type="button";
+        button.className="nx-kit-type-choice";
+        button.style.width="100%";button.style.marginBottom="10px";
+        button.textContent="Vial "+String(v.sequenceNumber||v.id)+" · "+getVialRemainingMg(s,v).toFixed(2)+" mg remaining";
+        button.onclick=()=>{closeModal();nexusRecordNasalPreparation(s.id,v.id);};
+        host.appendChild(button);
+      });
+      return;
+    }
+    // For a fresh sealed physical source, the fictional DEMO immediately
+    // opens its conditional preparation editor. The source is not opened or
+    // debited before one confirmed state transition; LIVE remains gated.
     const sealed=(s.vials||[]).find(v=>v.status==="sealed");
     if(s.isBlend||!sealed||!Number.isFinite(Number(sealed.expectedMg ?? sealed.vialMg ?? s.vialMg))){
       showErrorBanner("Choose a kit with an exact eligible sealed source vial for nasal preparation. Nothing saved.");return;
