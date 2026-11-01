@@ -1170,22 +1170,22 @@ function wireBody() {
   const mis=$("#mix-search"); if(mis)mis.oninput=()=>{state._mixSearch=mis.value;renderBody();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
   document.querySelectorAll(".mix-type-chip").forEach(b=>b.onclick=()=>{state._mixTypeFilter=b.dataset.t;renderBody();});
   const lsd=$("#ls-discover"); if(lsd)lsd.onclick=()=>{state._learnSub="discover";renderBody();};
-  document.querySelectorAll(".discitem").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".discitem").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name;
     state._discoverOpen=n;
     // Recently Viewed — most-recent-first, capped at 8, deduped. Settled/persisted state
     // (not session-only) since this is exactly the kind of "remembered where I was
     // browsing" preference worth keeping across visits.
-    if (!state.settings.recentDiscoverViews) state.settings.recentDiscoverViews=[];
-    state.settings.recentDiscoverViews = [n, ...state.settings.recentDiscoverViews.filter(x=>x!==n)].slice(0,8);
-    saveState();
+    const recent=Array.isArray(state.settings.recentDiscoverViews)?state.settings.recentDiscoverViews:[];
+    const saved=await nexusCommitScopedStateChange({kind:"setting",key:"recentDiscoverViews",value:[n,...recent.filter(x=>x!==n)].slice(0,8)});
+    if(!saved)return;
     render(); window.scrollTo(0,0);
   });
   const bd=$("#backdisc"); if(bd)bd.onclick=()=>{state._discoverOpen=null;renderBody();window.scrollTo(0,0);};
   const ds=$("#disc-search"); if(ds)ds.oninput=()=>{ state._discoverSearch=ds.value; renderBody(); const ns=$("#disc-search"); if(ns){ns.focus();ns.setSelectionRange(ns.value.length,ns.value.length);} };
   const dc=$("#disc-clear"); if(dc)dc.onclick=()=>{ state._discoverSearch=""; renderBody(); const ns=$("#disc-search"); if(ns)ns.focus(); };
   document.querySelectorAll(".disc-filter").forEach(b=>b.onclick=()=>{state._discoverFilter=b.dataset.cat;renderBody();});
-  document.querySelectorAll(".disc-track").forEach(b=>b.onclick=()=>{ initCompoundTracking(b.dataset.name); saveState(); render(); });
+  document.querySelectorAll(".disc-track").forEach(b=>b.onclick=async()=>{ initCompoundTracking(b.dataset.name);if(!await nexusCommitCurrentState())return;render(); });
   document.querySelectorAll(".disc-track-blend").forEach(b=>b.onclick=()=>addBlendKitModal(b.dataset.name));
   document.querySelectorAll(".disc-remove").forEach(b=>b.onclick=()=>{
     const name=b.dataset.name;
@@ -1197,19 +1197,19 @@ function wireBody() {
       </div>`,"#ff7c7c");
     document.querySelector(".modal #x").onclick=closeModal;
     document.querySelector(".modal #rm-cancel").onclick=closeModal;
-    document.querySelector(".modal #rm-confirm").onclick=()=>{
+    document.querySelector(".modal #rm-confirm").onclick=async()=>{
       const n=document.querySelector(".modal #rm-confirm").dataset.name;
       if(state.peptides[n]) state.peptides[n].status="archived";
       else if(state.customPeptides[n]) state.customPeptides[n].status="archived";
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
   });
   document.querySelectorAll(".archivepep").forEach(b=>b.onclick=()=>{
     const n=b.dataset.name;
-    confirmAction(`Remove ${n} from Today?`,()=>{
+    confirmAction(`Remove ${n} from Today?`,async()=>{
       if(state.peptides[n]) state.peptides[n].status="archived";
       else if(state.customPeptides[n]) state.customPeptides[n].status="archived";
-      saveState(); render();
+      if(!await nexusCommitCurrentState())return;render();
     });
   });
   const addcust=$("#add-custom-compound"); if(addcust) addcust.onclick=()=>{
@@ -1245,7 +1245,7 @@ function wireBody() {
       ci.style.display=v==="__custom__"?"block":"none";
       if(v==="__custom__") ci.focus();
     };
-    document.querySelector(".modal #cc-save").onclick=()=>{
+    document.querySelector(".modal #cc-save").onclick=async()=>{
       const sel=document.querySelector(".modal #cc-name").value;
       const name=(sel==="__custom__"?document.querySelector(".modal #cc-custom").value:sel).trim();
       if(!name||name==="— select or type below —"){document.querySelector(".modal #cc-name").style.borderColor="#ff7c7c";return;}
@@ -1489,7 +1489,7 @@ function showOnboarding() {
     m.querySelector("#ob-sw")?.addEventListener("input",e=>{data.startWeight=e.target.value;});
     m.querySelector("#ob-gw")?.addEventListener("input",e=>{data.goalWeight=e.target.value;});
   }
-  function finish(){
+  async function finish(){
     if(data.name)state.profile.name=data.name;
     if(data.startWeight)state.profile.startWeight=data.startWeight;
     if(data.goalWeight)state.profile.goalWeight=data.goalWeight;
@@ -1507,7 +1507,7 @@ function showOnboarding() {
         state.plans.goals.push({id:uid(),name:GOAL_LABELS[gid]||gid,category:GOAL_LABELS[gid]||gid,status:"active",compounds:[],metrics:"",notes:"Set during onboarding"});
       });
     }
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   }
   const m=openModal(`<div id="ob-wrap"><div id="ob-body">${buildOb()}</div><div id="ob-nav">${buildNav()}</div></div>`,"#A78BFA");
   wireOb();
@@ -1565,9 +1565,13 @@ sinceLastVisitSummary = computeSinceLastVisit();
 // could silently break by running early. This is what actually eliminates the two-model
 // coexistence for good, rather than leaving every kit to migrate lazily whenever
 // something first happens to touch it.
-preserveOriginalState();
-migrateToInventoryV2();
-saveState();
-if(!state.profile.onboardingDone){render();showOnboarding();}
-else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
-else render();
+// Gate startup migrations on exclusive durable readback, without ever
+// mistaking an unacknowledged legacy save for successful persistence.
+(async()=>{
+ preserveOriginalState();
+ migrateToInventoryV2();
+ await nexusCommitCurrentState();
+ if(!state.profile.onboardingDone){render();showOnboarding();}
+ else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
+ else render();
+})().catch(error=>{console.error("Nexus startup persistence rejected",error);showSaveWarning();render();});
