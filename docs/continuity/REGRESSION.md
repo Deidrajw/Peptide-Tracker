@@ -1,3 +1,10 @@
+## 2026-11-01 — PR124 DS2 CSS corrective checkpoint (NO NEW PASS)
+- Branch styling commit `2b19a5de`: shared form/Goal/nasal header geometry, 48px close and responsive review/field/CTA text wrapping, CSS-only.
+- New-source Chromium 320/390 light/dark, WebKit, mobile, writer, nested, modal scroll/keyboard, screenshot inspection: NOT TESTED at this commit. Physical iPhone/VoiceOver: NOT TESTED; earlier 13-screen physical UI rejection remains FAIL/RETEST. Sixteen-point corrective list NOT COMPLETE.
+- Prior fictional Oxytocin E2E Chromium/WebKit pass, source + bottle ledger, artifact integrity: PASS solely at `66959ba7`; unchanged source accounting code in the CSS-only patch does not replace new-head regression.
+- Live nasal safety: BLOCKED (both gates OFF). Mixed legacy-writer P0: BLOCKED. No merge/deploy or production data change.
+- Required follow-up: inspect picker parity and route-specific UI; exact-head browser + mobile + nested + 320/390 visual and complete DEMO/LIVE audit before any user device UAT.
+
 ## 2026-11-01 — Oxytocin end-to-end Chromium + WebKit PASS on application SHA 66959ba7
 - Chromium full #41351301441 and WebKit #41351301343 SUCCESS, matched mobile #41351301490, writer #41351301335, nested #41351301348 SUCCESS. Actual `tools/validate-formulation-stock.mjs` tested Add Kit via wizard, form-first Nasal, no pre-confirm mutation, one reviewed source-to-prepared-bottle transfer with same exact vial ID and matched mirrored event IDs, 10mg source → 0mg, 10mg/10mL bottle, Stash prepared stock, Log Dose nasal instead of SubQ, 2 sprays 0.2mg/0.2mL from bottle only, unchanged original source, dose method Nasal and exact bottle audit. All confirmed on fictional isolated browser fixtures; physical iPhone UAT remains FAIL/not accepted.
 - GitHub artifact #13101324932 independently downloaded: outer 188 entries CRC PASS, LIVE 26 exact manifest paths CRC PASS, offline DEMO CRC PASS, standalone/offline HTML byte-identical PASS; manifest source `66959ba7`. No source-matched visual iPhone approval. Remain P0 BLOCKED, LIVE nasal OFF, no merge/deploy.
