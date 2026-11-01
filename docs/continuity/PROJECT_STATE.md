@@ -1,3 +1,8 @@
+## 2026-10-31 — Light-theme Stash purple correction; NEW demo required
+- User correctly reported prior request for iPhone testing lacked an updated matching DEMO link. Previous full-app demo from 200db956 predates Stash CSS d9cb70a6 and is not valid acceptance evidence for the new style. Full browser for first visual candidate #41261696707 SUCCESS, but that run predates newest purple fix.
+- Applied light-theme Nexus purple Set up vial primary (#7650a9 white foreground) and pale-lavender Open new vial secondary (#efe6fb foreground #604184) to scoped CSS in 9ef27f986d28d9278c521f5493811316e69f259f; prior near-black #32233e superseded. Keep collapsed card layout and existing source logic.
+- Source-matched LIVE/standalone DEMO ZIP for NEW 9ef27f9 candidate and post-change CI NOT YET VERIFIED at this writing. No merge/deploy. NEXT ONE ACTION: verify new CI artifact source manifest 9ef27f9, extract and deliver complete DEMO, then physical-iPhone test.
+
 ## 2026-10-31 — Interim exact-source CI evidence for Stash visual candidate
 - Application+test SHA 754e3a807935c8af94180de28a4915f59165a08a: WebKit formulation #41261696687 SUCCESS; mobile #41261696620 SUCCESS; shared writer #41261696631 SUCCESS; nested navigation #41261696622 SUCCESS. Full-browser artifact/parity run #41261696707 still IN PROGRESS at observation; final 8-view Stash computed contrast and updated HTML/CSS package NOT YET VERIFIED. UI source change d9cb70a6 only, no production writes/merge/deploy; physical iPhone pending. Existing QA Playbook extended in a5239cb1 (no new standard). NEXT ONE ACTION: verify full-browser run #41261696707 and exact-source artifacts or remediate failure before physical iPhone acceptance.
 
