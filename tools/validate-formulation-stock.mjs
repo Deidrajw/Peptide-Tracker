@@ -155,6 +155,37 @@ try {
     'Overdrawn capsule amount must never reach confirmation');
   await page.locator('.modal #x').click();
 
+
+  // A nasal-source label is a reservation, not ready-to-use stock. The pure
+  // transfer planner must accept that explicit source only when a destination
+  // container and exact mass are provided; preview never changes state.
+  const nasalPlanner=await page.evaluate(()=>{
+    const kit={id:91810,name:'Fictional Nasal Transfer',isBlend:false,vials:[
+      {id:'reserved-source',status:'open',intendedUse:'nasal-source',remainingMg:5}]};
+    const bottle={id:'empty-nasal',compound:kit.name,containerType:'nasal-bottle',
+      method:'Nasal',remainingMl:5,remainingMg:0,mgPerSpray:null,transactions:[]};
+    const before={supplies:[kit],formulationStocks:[bottle],preparations:[],
+      peptides:{},customPeptides:{}};
+    const tx={id:'fictional-transfer',kind:'transfer-to-formulation',
+      sourceKitId:kit.id,sourceVialId:'reserved-source',
+      destinationContainerId:bottle.id,amountMg:2};
+    const planned=NexusPreparationBridge.planFormulation(before,tx);
+    let wrongSourceBlocked=false;
+    try{
+      NexusPreparationBridge.planFormulation(
+        {...before,supplies:[{...kit,vials:[{...kit.vials[0],intendedUse:'Injectable'}]}]},
+        {...tx,id:'wrong-form'});
+    }catch{wrongSourceBlocked=true;}
+    return {source:planned.next.supplies[0].vials[0].remainingMg,
+      destination:planned.next.formulationStocks[0].remainingMg,
+      original:before.supplies[0].vials[0].remainingMg,
+      originalBottle:before.formulationStocks[0].remainingMg,
+      correctVial:planned.event.sourceVialId,wrongSourceBlocked};
+  });
+  assert.deepEqual(nasalPlanner,{source:3,destination:2,original:5,originalBottle:0,
+    correctVial:'reserved-source',wrongSourceBlocked:true},
+    'Reserved nasal-source preview must conserve mass and reject incompatible stock');
+
   // Two open physical vials of one kit must be independently selectable.
   // No physical transfer or dose is written merely by changing the selected vial.
   await page.evaluate(()=>{
