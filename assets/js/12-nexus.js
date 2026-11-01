@@ -187,23 +187,25 @@ function wireBody() {
   });
   document.querySelectorAll(".qa-supp").forEach(b=>b.onclick=()=>supplementModal());
   const tlt=$("#timeline-toggle"); if(tlt) tlt.onclick=()=>{state._timelineOpen=!state._timelineOpen;renderBody();};
-  const as=$("#add-supp"); if(as) as.onclick=()=>{
+  const as=$("#add-supp"); if(as) as.onclick=async()=>{
     const inp=document.getElementById("new-supp"); const v=(inp?.value||"").trim();
-    if(!v) return;
-    if(!state.settings.supplements) state.settings.supplements=[];
-    if(state.settings.supplements.some(s=>s.toLocaleLowerCase()===v.toLocaleLowerCase())){
+    if(!v||as.disabled)return;
+    if((state.settings.supplements||[]).some(s=>s.toLocaleLowerCase()===v.toLocaleLowerCase())){
       alert("This supplement is already in your list."); return;
     }
-    state.settings.supplements.push(v);
-    state.settings.supplements.sort((a,b)=>a.localeCompare(b));
-    saveState(); renderBody();
+    as.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-list-add",name:v});
+    if(!ok){as.disabled=false;showErrorBanner("Supplement was not saved. Your entry is still available; reload to review saved changes.");return;}
+    renderBody();
   };
   const ni=document.getElementById("new-supp"); if(ni) ni.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("add-supp")?.click();}});
-  document.querySelectorAll(".del-supp").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".del-supp").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name;
-    if(!confirm("Remove "+name+" from your supplement list? Historical supplement logs will be preserved.")) return;
-    state.settings.supplements=(state.settings.supplements||[]).filter(s=>s!==name);
-    saveState(); renderBody();
+    if(b.disabled||!confirm("Remove "+name+" from your supplement list? Historical supplement logs will be preserved.")) return;
+    b.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-list-remove",name});
+    if(!ok){b.disabled=false;showErrorBanner("Supplement was not removed. No save was confirmed.");return;}
+    renderBody();
   });
   const er=$("#enablerem");  if(er) er.onclick=enableReminders;
   const dr=$("#disablerem"); if(dr) dr.onclick=disableReminders;
