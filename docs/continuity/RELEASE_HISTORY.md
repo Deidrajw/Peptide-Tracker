@@ -1,3 +1,7 @@
+## 2026-10-31 — New PR124 physical feedback and source-model discovery (NOT RELEASED)
+- Main da585ab3, draft PR124 2dad70b at start, last tested DEMO 9ef27f9. User visual Stash cases 01/02 Pass; case 03 Not Tested. New screenshots show product-form versus per-dose-route mismatch, hidden dose method, no-protocol compound discovery gap, unsorted vials and DS2 visual problems.
+- Verified exact-match route source filters and authoritative writer; nasal plan only metadata. Work logged as source-model rework requirement. No migration, source change, new artifact, merge or deployment in this discovery step. Mixed writer P0 open.
+
 ## 2026-10-31/Nov 1 UTC — PR124 purple Stash candidate QA (NOT RELEASED)
 - App/CSS 9ef27f986d28d9278c521f5493811316e69f259f; full Chromium #41263023868 SUCCESS; WebKit #41263023879 SUCCESS; mobile #41263023829 SUCCESS; nested #41263023831 SUCCESS; scoped writer #41263023853 SUCCESS. Corrected purple primary and lavender open-vial secondary in light theme. Standalone full app DEMO and complete LIVE ZIP obtained from source-matched GitHub artifact #13065749673, CRC and contents verified. No data migration, merge or deployment. Physical iPhone acceptance pending and P0 cross-tab mixed writer remains unresolved.
 
