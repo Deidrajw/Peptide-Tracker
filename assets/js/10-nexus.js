@@ -2109,17 +2109,28 @@ function nexusAddFormulationModal(type,existingId=null){
     const query=compoundInput.value.trim().toLocaleLowerCase();
     const matches=candidates.filter(name=>name.toLocaleLowerCase().includes(query)).slice(0,5);
     matchList.replaceChildren();
+    // Same compact five-result + browse pattern as the approved vial picker.
+    // Keep every option keyboard-reachable and expose empty searches explicitly.
+    if(!matches.length){
+      const empty=document.createElement("p");empty.className="nx-kit-no-results";
+      empty.textContent=query?"No matching compounds. Browse all or use a custom name.":"No compounds available.";
+      matchList.appendChild(empty);
+    }
     matches.forEach(name=>{
       const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
+      option.setAttribute("aria-selected",String(compoundInput.value.trim().toLocaleLowerCase()===name.toLocaleLowerCase()));
+      option.onpointerdown=e=>e.preventDefault();
       option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();};matchList.appendChild(option);
     });
     const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
+    browse.setAttribute("role","option");
     browse.onpointerdown=e=>e.preventDefault();
     browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));});};
     matchList.appendChild(browse);
     if(query && !candidates.some(name=>name.trim().toLocaleLowerCase()===query)){
       const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
       create.textContent='＋ Use "'+compoundInput.value.trim()+'" as a custom compound';
+      create.setAttribute("role","option");
       create.onpointerdown=e=>e.preventDefault();
       create.onclick=()=>{
         const name=compoundInput.value.trim().replace(/\s+/g," ");
@@ -2140,10 +2151,11 @@ function nexusAddFormulationModal(type,existingId=null){
     });
     matchList.addEventListener("keydown",e=>{
       if(e.key==="Escape"){e.preventDefault();closeMatches();compoundInput.focus();return;}
-      if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      if(e.key==="ArrowDown"||e.key==="ArrowUp"||e.key==="Home"||e.key==="End"){
         const options=[...matchList.querySelectorAll('[role="option"]')];
         const index=options.indexOf(document.activeElement);
-        if(options.length){e.preventDefault();options[Math.max(0,Math.min(options.length-1,index+(e.key==="ArrowDown"?1:-1)))]?.focus();}
+        const next=e.key==="Home"?0:e.key==="End"?options.length-1:Math.max(0,Math.min(options.length-1,index+(e.key==="ArrowDown"?1:-1)));
+        if(options.length){e.preventDefault();options[next]?.focus();}
       }
     });
     m.querySelector(".nx-form-compound-combobox").addEventListener("focusout",()=>{
