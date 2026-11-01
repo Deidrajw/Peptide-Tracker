@@ -90,5 +90,60 @@
   if(adapter.read()!==serialized)fail("Inventory save verification failed");
   return result;
  }
- return {create,add,commitAdd,edit,commitEdit};
+
+ // Pure planners only. The UI must persist the complete result with nexusWriter().transaction.
+ function planCapsuleDose(snapshot,tx){
+  if(!snapshot||!Array.isArray(snapshot.formulationStocks)||!tx)fail("Complete formulation inventory required");
+  if(typeof tx.id!=="string"||!tx.id.trim()||typeof tx.doseId!=="string"||!tx.doseId.trim())fail("Unique IDs required");
+  if(!Number.isSafeInteger(tx.count)||tx.count<=0)fail("Positive whole capsule count required");
+  if(!tx.date||!Number.isFinite(Date.parse(tx.date)))fail("Valid date required");
+  if(!["mg","mcg"].includes(tx.nativeUnit)||typeof tx.compound!=="string"||!tx.compound)fail("Compound mass unit required");
+  const next=JSON.parse(JSON.stringify(snapshot));
+  if(next.formulationStocks.some(x=>(x.transactions||[]).some(t=>t.id===tx.id||String(t.doseId)===tx.doseId)))fail("Duplicate source transaction");
+  if([...Object.values(next.peptides||{}),...Object.values(next.customPeptides||{})].some(p=>(p.doses||[]).some(d=>String(d.id)===tx.doseId)))fail("Duplicate historical dose");
+  const matches=next.formulationStocks.filter(x=>String(x.id)===String(tx.sourceId));
+  if(matches.length!==1)fail("Unique exact capsule source required");
+  const stock=matches[0];
+  if(stock.containerType!=="capsule-bottle"||stock.method!=="Oral"||stock.compound!==tx.compound)fail("Capsule source mismatch");
+  if(!Number.isSafeInteger(stock.remainingCount)||stock.remainingCount<tx.count)fail("Insufficient capsule stock");
+  if(!finite(stock.mgPerCapsule)||stock.mgPerCapsule<=0||!Array.isArray(stock.transactions))fail("Invalid capsule strength or ledger");
+  const mg=Math.round(stock.mgPerCapsule*tx.count*1e6)/1e6;
+  if(!finite(mg)||mg<=0)fail("Invalid capsule dose");
+  const collection=next.peptides?.[tx.compound]?next.peptides:next.customPeptides;
+  if(!collection?.[tx.compound]||!Array.isArray(collection[tx.compound].doses))fail("Compound history unavailable");
+  const dose={id:tx.doseId,date:tx.date,dose:String(tx.nativeUnit==="mg"?mg:mg*1000),
+   method:"Oral",trackingMode:"backed",sourceKind:"formulation-container",sourceContainerId:stock.id,
+   capsuleCount:tx.count,mgPerCapsule:stock.mgPerCapsule,amountMg:mg,
+   enteredDose:String(tx.count),enteredUnit:"capsules",capsuleTransactionId:tx.id,site:"",
+   ...(typeof tx.notes==="string"?{notes:tx.notes}:{})};
+  const event={id:tx.id,kind:"administer-capsules",compound:tx.compound,doseId:dose.id,
+   sourceContainerId:stock.id,count:tx.count,mgPerCapsule:stock.mgPerCapsule,amountMg:mg,
+   date:tx.date,doseSnapshot:JSON.parse(JSON.stringify(dose))};
+  stock.remainingCount-=tx.count;stock.transactions.push(event);collection[tx.compound].doses.push(dose);
+  if(JSON.stringify(snapshot.supplies)!==JSON.stringify(next.supplies))fail("Capsules changed vial inventory");
+  return {next,event,dose};
+ }
+ function reverseCapsuleDose(snapshot,{sourceId,transactionId,reversalId,doseId,compound}={}){
+  if(!snapshot||!Array.isArray(snapshot.formulationStocks)||typeof reversalId!=="string"||!reversalId.trim())fail("Reversal requires saved stock and ID");
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const matches=next.formulationStocks.filter(x=>String(x.id)===String(sourceId));
+  if(matches.length!==1||matches[0].containerType!=="capsule-bottle"||matches[0].compound!==compound)fail("Original capsule container missing");
+  const stock=matches[0],ledger=stock.transactions||[];
+  if(ledger.some(t=>t.id===reversalId||t.reverses===transactionId))fail("Duplicate or completed reversal");
+  const original=ledger.filter(t=>t.id===transactionId&&t.kind==="administer-capsules"&&String(t.doseId)===String(doseId));
+  if(original.length!==1)fail("Original capsule transaction missing");
+  const event=original[0],collection=next.peptides?.[compound]?next.peptides:next.customPeptides,doses=collection?.[compound]?.doses;
+  if(!Array.isArray(doses))fail("Dose history missing");
+  const historical=doses.filter(d=>String(d.id)===String(doseId)&&d.capsuleTransactionId===transactionId&&String(d.sourceContainerId)===String(sourceId));
+  if(historical.length!==1||JSON.stringify(historical[0])!==JSON.stringify(event.doseSnapshot))fail("Historical dose changed; cannot undo");
+  if(!Number.isSafeInteger(stock.remainingCount)||stock.remainingCount<0||!Number.isSafeInteger(event.count)||event.count<=0)fail("Invalid capsule ledger");
+  stock.remainingCount+=event.count;
+  const inverse={id:reversalId,kind:"reverse-capsules",reverses:transactionId,doseId,sourceContainerId:sourceId,count:event.count};
+  stock.transactions.push(inverse);
+  collection[compound].doses=doses.filter(d=>String(d.id)!==String(doseId));
+  if(JSON.stringify(snapshot.supplies)!==JSON.stringify(next.supplies))fail("Capsule undo changed vial inventory");
+  return {next,event:inverse};
+ }
+
+ return {create,add,commitAdd,edit,commitEdit,planCapsuleDose,reverseCapsuleDose};
 });
