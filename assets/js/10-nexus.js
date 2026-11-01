@@ -275,15 +275,14 @@ function stashView() {
         <div class="nx-kit-primary-value">${displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
         ${displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>
-      ${unresolvedOpenVials.length?`<p class="nx-kit-compact-notice" role="status"><span class="nx-kit-compact-notice-dot" aria-hidden="true"></span>${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need${unresolvedOpenVials.length===1?"s":""} method setup</p>`:""}
-      ${secondaryBits.length?`<div class="nx-kit-compact-meta">${secondaryBits.filter(x=>!x.includes(" sealed")).join(" · ")}</div>`:""}
-      ${(()=>{ const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-compact-meta">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
         ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Set up vial</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
         <div class="nx-kit-detail-setup">
+          ${secondaryBits.length?`<div class="nx-kit-detail-secondary">${secondaryBits.join(" · ")}</div>`:""}
+          ${(()=>{const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-detail-secondary">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
       <div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Choose method, dose unit and tracking once";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Configure how you use ${esc(s.name)}">Use setup</button></div>
           ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Vial setup needed · ${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} need confirmed administration methods.</div>`:""}
           ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">${action.label}</button>`:""}
