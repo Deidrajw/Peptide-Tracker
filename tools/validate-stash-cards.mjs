@@ -69,13 +69,30 @@ try{
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
-    ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
+    ensure(await card(99001).locator('.nx-kit-compact-context').innerText().then(x=>x.includes('0 open')),'Sealed kit must identify zero open vials');
     ensure(await card(99001).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed standard kit should show primary action and Kit details');
     ensure(await card(99003).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed blend kit should show primary action and Kit details');
     ensure(await card(99002).locator('.nx-hybrid-two-actions>button').count()===2,'Open vial should show contextual action and details');
-    ensure(await card(99001).locator('.nx-kit-primary-empty').isVisible(),'No-vial state must be prominent');
+    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('mg')),'Sealed kit must show available mg');
     ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
-    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
+    ensure(await card(99001).locator('.nx-kit-primary-vial .nx-kit-overview-label').innerText().then(x=>x.includes('AVAILABLE STOCK')),'Sealed kit must distinguish stored stock from an open vial');
+    // Actual compact structure, not a typography-only reduction. Assertions run at 320/390,
+    // both themes, LIVE and isolated DEMO fixtures.
+    const compact=await card(99002).evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      const actions=[...el.querySelectorAll('.nx-kit-actions-three>button')];
+      return {height:r.height,width:r.width,viewport:document.documentElement.clientWidth,
+        actionHeights:actions.map(x=>x.getBoundingClientRect().height),
+        titleSize:parseFloat(getComputedStyle(el.querySelector('.nx-kit-card-title')).fontSize),
+        nestedVisible:!!el.querySelector('.nx-kit-primary-vial .nx-kit-overview-track'),
+        setupInDetails:!!el.querySelector('.nx-kit-detail-panel .nx-stash-use-setup')};
+    });
+    ensure(compact.width<=compact.viewport+2,'Compact card overflows iPhone: '+JSON.stringify(compact));
+    ensure(compact.height<255,'Collapsed card remains excessively tall: '+JSON.stringify(compact));
+    ensure(compact.actionHeights.length===2&&compact.actionHeights.every(h=>h>=44),'Compact actions must have 44px touch targets: '+JSON.stringify(compact));
+    ensure(compact.titleSize>=15,'Compact typography must remain readable: '+JSON.stringify(compact));
+    ensure(compact.setupInDetails,'Use setup must remain accessible in expanded details');
+    ensure(await card(99002).locator('.nx-kit-condensed').count()===0,'Nested compact card regression');
     ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
     ensure(await card(99003).locator('.nx-kit-overview-number').count()===1,'Blend missing kit-wide inventory under Overview');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').count()===1,'Open vial progress is missing');
