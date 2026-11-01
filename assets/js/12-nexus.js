@@ -1570,7 +1570,7 @@ sinceLastVisitSummary = computeSinceLastVisit();
 (async()=>{
  preserveOriginalState();
  migrateToInventoryV2();
- await nexusCommitCurrentState();
+ if(!await nexusCommitCurrentState()){render();return;}
  if(!state.profile.onboardingDone){render();showOnboarding();}
  else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
  else render();
