@@ -1,3 +1,6 @@
+## 2026-11-01 — Actual application-handler Chromium race (pending)
+- e1d3966f adds real Chromium two-tab settings/history handler assertions against isolated actual-key localStorage and preserved inventory. CODED, NOT RUN; full migration still BLOCKED. No physical iPhone acceptance.
+
 ## 2026-11-01 — Chromium two-tab actual-key regression added, execution pending
 - 6db79cd6 adds actual browser tabs/shared origin/production-named storage key (isolated fictional context) race to Chromium formulation validator: inventory lock, queued settings, stale settings/history rejection, fresh commits, readback and injected write failure. NOT YET RUN / NOT VERIFIED. Existing old synchronous ordinary UI writers remain P0 BLOCKED; coordinator test alone cannot approve release.
 
