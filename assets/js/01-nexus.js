@@ -100,6 +100,29 @@ function saveState() {
 
 
 
+/* Transitional exclusive CAS for reviewed legacy handlers whose validated
+ * mutation is already applied to app state. Snapshot the proposed state before
+ * awaiting the shared lock, never silently merge another tab's changes.
+ * The caller MUST await the boolean and cannot close/re-render on failure.
+ */
+async function nexusCommitCurrentState(){
+ if(_demoActive)return true;
+ try{
+  const writer=nexusWriter();
+  const raw=writer.expected();
+  const before=raw===null?null:JSON.parse(raw);
+  const proposed=JSON.parse(JSON.stringify(state));
+  const result=await writer.transaction(before,()=>({next:proposed}));
+  state=result.next;
+  _nexusLastSavedSnapshot=writer.expected();
+  return true;
+ }catch(error){
+  console.error("Nexus reviewed legacy transaction rejected",error);
+  showSaveWarning();
+  return false;
+ }
+}
+
 /* P0 migration: strictly scoped settings and dated supplement-history saves.
  * No live state mutation before verified durable commit, no silent rebase.
  * All callers must await the result before displaying save success.
