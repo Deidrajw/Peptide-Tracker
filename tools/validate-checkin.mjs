@@ -31,11 +31,21 @@ try{
         // first render can legitimately replace it and invalidate selectors.
         await page.waitForFunction(()=>{const root=document.querySelector('#app');
           return root && !root.textContent.includes('LOADING…');});
-        await page.evaluate((t)=>{
+        await page.evaluate(async(t)=>{
           // CI browser contexts are disposable and isolated from any real user data.
-          state=buildDemoState('weight_loss');
-          state.profile.onboardingDone=true;
-          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          // LIVE test fixtures must be durably initialized through the SAME
+          // exclusive writer as real app handlers; assigning state alone leaves
+          // the writer snapshot stale and allows startup to overwrite the fixture.
+          const fixture=buildDemoState('weight_loss');
+          fixture.profile.onboardingDone=true;
+          fixture.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          if(_demoActive)state=fixture;
+          else {
+            const writer=nexusWriter(),raw=writer.expected();
+            const before=raw===null?null:JSON.parse(raw);
+            const saved=await writer.transaction(before,()=>({next:fixture}));
+            state=saved.next;_nexusLastSavedSnapshot=writer.expected();
+          }
           document.documentElement.dataset.theme=t;
         },theme);
         // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
