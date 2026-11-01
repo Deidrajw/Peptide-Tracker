@@ -2600,6 +2600,13 @@ function openModal(innerHTML, color="#7DF9C0") {
   modalEl = h(`<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true" tabindex="-1" style="border-color:${color}33;box-shadow:0 0 40px ${color}22"></div></div>`);
   modalEl.querySelector(".modal").innerHTML = innerHTML;
   modalEl.querySelector(".modal").classList.add("nx-sheet");
+  // Preserve original #x button/event identity while applying one visual and
+  // accessible close control across product and legacy sheets alike.
+  modalEl.querySelectorAll(".modal button#x").forEach(button=>{
+    button.type="button";
+    button.classList.add("nx-dose-close");
+    if(!button.hasAttribute("aria-label"))button.setAttribute("aria-label","Close");
+  });
   if (modalEl.querySelector(".modal > .nx-dose-form")) modalEl.querySelector(".modal").classList.add("nx2-dose-modal");
   modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal("backdrop"); });
   document.body.appendChild(modalEl);
