@@ -1,3 +1,43 @@
+## PR124 — Form-specific inventory, nasal DEMO preview, capsule source and bulk pause (2026-11-01)
+**Scope:** This extends this permanent QA Playbook, not a new standard. Use exact-source fictional FULL-APP DEMO only; never import live account backups or production inventory. Tests begin **Not Tested** on a physical iPhone. Record tester/date, iPhone model/iOS, Safari mode, build SHA, Pass/Fail/Blocked/Not Tested, actual result and screenshots for every case. In-chat test controls should offer Copy Results. Do not equate browser CI with physical acceptance.
+
+### QA-CAPSULE-01 — Oral form and count-based dose (critical)
+- **Start:** Standalone full-app DEMO > Stash > Other forms > Add capsules; then Today > Log Dose.
+- **Fixture:** Add fictional SLU-PP-332 capsule container with 30 capsules at 5 mg per capsule. Keep a different fictional injectable vial for the SAME compound in a separate kit. Record both starting balances and dose-history count. Do not use real inventory.
+- **Steps:** 1. Save capsule container. 2. Open Today > Log Dose, select compound and choose Capsules. 3. Verify no injection methods/sites. 4. Enter two capsules and Review. 5. Confirm fictional dose. 6. Check exact capsule count, labelled strength, saved dose history and unchanged vial balance. 7. Use Undo and verify exact original capsule container restored. 8. Try more capsules than available; Review must refuse.
+- **Expected:** Single event deducts exactly two capsules (30→28), records nominal 10 mg and exact container ID, retains injectable mg unchanged; Undo affects only same container and linked dose; overdraw fails closed.
+- **Result:** Not Tested / Pass / Fail / Blocked. **Observation/evidence:** device, theme, before/after balances, event and screenshots. **Cleanup:** Reset isolated fictional DEMO.
+
+### QA-NASAL-01 — Actual nasal source transfer preview (critical)
+- **Start:** Isolated full-app DEMO > Stash > Vial kits > Details > Vials > an open fictional vial reserved 'For nasal preparation'.
+- **Fixture:** Fictional 5 mg open vial reserved for nasal preparation, separate fictional injectable vial in same kit, no prepared bottle. Use only recorded *fictional example* values; do not prepare a real compound. Capture before-state/source ID.
+- **Steps:** 1. Confirm reserved source is not selectable as a ready spray in Log Dose. 2. Open Record prepared nasal spray on the reserved vial. 3. Enter fictional actual amount and volumes/pump volume, confirm recording. 4. Inspect nominal concentration preview and source vial ID. 5. Check a new separate prepared bottle is shown in Other forms and initial source mg debited once. 6. Repeat with missing values or insufficient source stock to confirm refusal.
+- **Expected:** No plan prerequisite; exact reserved physical source debited once only in isolated DEMO, destination gets equivalent mass, nominal spray value stored without claiming verified output; no mutation of other vials, no duplicate events. **CRITICAL:** Live transfer still safety-gated and NOT accepted; live workflow must be marked Blocked until mixed-writer P0 resolved.
+- **Result:** Not Tested / Pass / Fail / Blocked. **Observation/evidence:** source/destination balances/screenshots. **Cleanup:** Reset fictional DEMO.
+
+### QA-NASAL-02 — Adaptive nasal spray count and undo (critical)
+- **Start:** Isolated full-app DEMO > Today > Log Dose after completing QA-NASAL-01.
+- **Fixture:** The fictional source-linked prepared bottle from QA-NASAL-01 with recorded nominal per-spray mass/volume, separate injectable vial still open.
+- **Steps:** 1. Select compound then Prepared nasal spray. 2. Confirm route/site grid is absent. 3. Enter two sprays; review container and nominal amount. 4. Confirm fictional log; check prepared bottle mg/mL and saved dose. 5. Confirm original vial is NOT debited again. 6. Undo, recheck original prepared balances and log. 7. Attempt a count above prepared balance; Review should block.
+- **Expected:** Only the exact prepared container changes; source vial unchanged after preparation; no plan-only source can be logged. Undo restores only prepared container and exact dose. Live gate: Blocked, not Pass.
+- **Result:** Not Tested / Pass / Fail / Blocked. **Observation/evidence:** source IDs, balances, screenshots and details. **Cleanup:** Reset isolated DEMO.
+
+### QA-P14-01 — Reversible Pause All / Resume All (critical)
+- **Start:** Isolated full-app DEMO > Protocols / Plans.
+- **Fixture:** Two fictional active protocols, one individually paused protocol, one future protocol, one completed protocol; fictional dose history and Stash balances recorded before.
+- **Steps:** 1. Tap Pause All and Cancel; confirm no changes. 2. Repeat and Confirm. 3. Inspect Today/Plans due, overdue and reminder presentation; existing history stays unchanged. 4. Tap Resume All and Confirm. 5. Check only the two bulk-paused protocols resume to prior states, individual pause/future/completed unchanged. 6. Confirm independent Log Dose still available. 7. Verify vial, capsule, nasal stock and dates unchanged. 8. Repeat in light/dark at 320/390 equivalent where possible.
+- **Expected:** Reversible explicit choice, no accidental missed-dose penalties or schedule rewriting, no stock/history change; no destructive reset.
+- **Result:** Not Tested / Pass / Fail / Blocked. **Observation/evidence:** screenshots, status before/after, device and date. **Cleanup:** Reset fictional DEMO.
+
+### QA-FORM-UI-01 — DS2 adaptive screen and input accessibility (high)
+- **Start:** Isolated full-app DEMO > Stash / Log Dose / Protocols.
+- **Fixture:** Fictional injectable vial, separate capsule container and prepared nasal bottle; no real records.
+- **Steps:** 1. Inspect Stash badges and actions in light/dark, including uniform Healthy/Stored size and no left gradient artifact. 2. Open Vial Details, confirm neutral surface. 3. Log Injectable (SubQ/IM options) then Capsules (count only) and Nasal (spray count only). 4. Inspect Additional dose options typography and checkbox states. 5. Open/close keyboard on all fields, scroll to sticky actions, check 44–48px targets and safe areas. 6. Repeat landscape or at narrow iPhone width if available, and basic VoiceOver labels.
+- **Expected:** Each physical form gets relevant fields; no double scroll, clipped buttons or missing confirmation, consistent DS2 hierarchy and accessible controls.
+- **Result:** Not Tested / Pass / Fail / Blocked. **Observation/evidence:** screenshots/device notes. **Cleanup:** Reset fictional DEMO.
+
+**Protected regression still required:** Daily Check-In one-record-per-date validation and edit, searchable supplements, Plans/schedules, Calendar current month and day logs, History, Weight/Nutrition, Stash adjustments and event-specific Undo, backup/import guard, calculator safety (failed assertions remain blockers), both theme modes, iPhone safe areas. Record each protected path separately instead of one blanket Pass. No merge/deploy without explicit approval.
+
 ## PR124 — New family-vs-route scenarios (NOT READY FOR DEVICE ACCEPTANCE)
 
 As of 2026-10-31 22:20 Toronto, source 9ef27f9 is a known failing candidate for these newly reported workflows. These tests are FUTURE acceptance cases after an exact-source corrected full-app isolated DEMO is provided. Do not test source-changing scenarios using production data.
