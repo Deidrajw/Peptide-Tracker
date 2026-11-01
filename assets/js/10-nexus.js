@@ -2133,9 +2133,22 @@ function nexusAddFormulationModal(type,existingId=null){
   if(!existing){
     compoundInput.addEventListener("focus",refreshCompoundMatches);
     compoundInput.addEventListener("input",refreshCompoundMatches);
-    compoundInput.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMatches();return;}if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}});
-    matchList.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closeMatches();compoundInput.focus();}});
-    m.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!m.contains(document.activeElement))closeMatches();});});
+    compoundInput.addEventListener("keydown",e=>{
+      if(e.key==="Escape"){closeMatches();return;}
+      if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}
+      else if(e.key==="Enter"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.click();}
+    });
+    matchList.addEventListener("keydown",e=>{
+      if(e.key==="Escape"){e.preventDefault();closeMatches();compoundInput.focus();return;}
+      if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+        const options=[...matchList.querySelectorAll('[role="option"]')];
+        const index=options.indexOf(document.activeElement);
+        if(options.length){e.preventDefault();options[Math.max(0,Math.min(options.length-1,index+(e.key==="ArrowDown"?1:-1)))]?.focus();}
+      }
+    });
+    m.querySelector(".nx-form-compound-combobox").addEventListener("focusout",()=>{
+      requestAnimationFrame(()=>{if(!m.querySelector(".nx-form-compound-combobox")?.contains(document.activeElement))closeMatches();});
+    });
   }
   m.querySelector("#nx-form-save").onclick=async()=>{
     const saveButton=m.querySelector("#nx-form-save");
