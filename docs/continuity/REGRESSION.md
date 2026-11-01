@@ -2332,3 +2332,8 @@ Test visual CSS fb05e322 and 5f0be242: Stash Add/Save, reactions Save/Open, Prot
 ## 2026-11-01 — Check-In browser navigation bug in test corrected
 - Root cause verified from Chromium job 124776259254: the first supplement modal existed before/after 200ms; timeout occurred at second Check-In search because dailyModal(null) intentionally redirects to an existing-today Check-In sheet when today's log exists. Test expected an empty-date editor. Fix 49018ee2 explicitly opens unused fictional 2032-11-10 to test inline supplement creation without changing product UI behaviour.
 - Exact-source full-browser retest #41283705756 PENDING; retain failure status until complete. Previously focused writer, mobile, DS2 and WebKit PASS; original 22df3072 full FAIL. No production writes, merge or deploy.
+
+
+## 2026-11-01 — Check-In second modal and WebKit subpixel rounding
+- FAIL 49018ee2 full Chromium #41283705756 at tools/validate-checkin.mjs:109: second Daily Check-In search still absent even with explicit fictional 2032-11-10 date. First Supplements modal remains present after 200ms; not a first-modal disappearance. 33b67722 records immediate second modal contents, errors and close stacks; full QA #41284103097 PENDING.
+- FAIL WebKit 33b67722 #41284103214: capsule close target bounding rect 43.99999237060547px vs assert >=44 (0.0000076px floating deviation); close width 44, no overflow, sheet fits viewport. 526300aa changes tolerance to >=43.99px, no visual or production change; exact-head WebKit retest PENDING. Safety, mobile, DS2 focused PASS; P0 release BLOCKING, device NOT TESTED.
