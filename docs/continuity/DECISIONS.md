@@ -1,3 +1,6 @@
+## 2026-11-01 — Mixed writer acceptance contract
+- A passing scoped coordinator suite cannot approve release while synchronous saveLegacy bypasses Web Locks. Keep mixed-writer diagnostic a blocking CI job until legacy saves use the same cross-tab exclusive protocol. Do not change synchronous saveState signatures without auditing success acknowledgement in all callers. Keep both live nasal gates OFF until independently verified.
+
 ## 2026-11-01 — Preserve first-use and two-stage product-form experience
 - Product-form dose recording must not require an existing protocol/previous dose. A valid stocked oral or prepared nasal source may create a first custom history entry, with no protocol creation. Review replaces entry controls until Back is tapped, preserving entered date, source, count and notes; never pile a second review on the bottom of the same scrolled form.
 - Error copy must distinguish isolated fictional DEMO planning failure from intentionally blocked LIVE transfer/administration. Do not imply a failed save succeeded or a planner validation failed because a live flag was off.
