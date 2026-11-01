@@ -78,6 +78,8 @@ try {
   await page.keyboard.press('Enter');
   assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,
     'Keyboard compound selection must close the suggestion list');
+  assert.equal(await page.locator('#nx-form-name').evaluate(el=>el===document.activeElement),true,
+    'Selected keyboard compound must return focus to the editable search field');
 
   await page.locator('#nx-form-name').fill('');
   await page.locator('#nx-form-name').fill('SLU-PP-332');
