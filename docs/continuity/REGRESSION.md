@@ -1,3 +1,8 @@
+## 2026-11-01 — Follow-on device remediation coverage
+- New branch-only code: 392998ac auto-advances DEMO newly opened nasal-source vial to record-completed-preparation, except when an existing onDone continuation owns the flow. Test two entry points: legacy Set up vial and Open new vial; verify no duplicate opens or double transfer, cancel leaves original vial intact.
+- New branch-only code: 6c90120e/b8c04888 displays separate prepared bottle count and mL on linked physical source card after transfer. Verify original 0 mg is labelled source-only, linked prepared stock remains separate, kit totals unchanged, other same-compound kits unaffected, multiple bottles do not combine mcg/spray strengths.
+- Both rows: CODED, BROWSER/REAL-IPHONE NOT RETESTED. Current app b8c04888. No nasal live write approval.
+
 ## 2026-11-01 — Physical iPhone corrective QA and follow-up gates (PR124)
 | ID | Scenario | Result / evidence |
 | --- | --- | --- |
