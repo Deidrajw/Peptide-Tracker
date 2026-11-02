@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 field-label parity after strict Chromium mismatch (NOT RELEASED)
+- CSS ef723d61 matched field labels except computed text-transform, so Chromium/build #41524017555 FAILED. Corrective commit 4fa74b8d changed only CSS transform property (literal uppercase remains), no JS/data/migration changes.
+- Exact 4fa74b8d mobile #41524938061, writer #41524938305 (3 jobs), nested #41524937947, WebKit #41524937951 SUCCESS. Chromium/build #41524937984 pending; physical iPhone #15 NOT TESTED. Source-patched 26-file LIVE and full fictional isolated DEMO CRC/source CSS blob verified; CI-certified exact artifacts pending. PR draft, not merged/deployed, P0 blocking, both nasal LIVE gates OFF.
+
 ## 2026-11-02 — PR124 optional disclosure same as administration label (NOT RELEASED)
 - Candidate draft PR #124, CSS commit ef723d618a9c178a20778cf3ec7039d4d65ddc80; no release version increment or production deployment. User-specified Additional dose options heading now takes actual Administration Method/Site field-label style: 11px/700/uppercase/0.055em/themed t3. Preferences and checkbox copy, functionality, saved state and dose math unchanged; no migration.
 - Exact-head mobile #41524016473 SUCCESS, writer #41524016416 SUCCESS (three jobs), DS2 nested #41524016572 SUCCESS. Chromium/build #41524017555 and WebKit #41524016420 still running at latest check; screenshot and exact-source final package acceptance pending. Physical iPhone #15 NOT TESTED on new label correction. P0 release BLOCKING and both LIVE nasal gates OFF. NOT MERGED OR DEPLOYED.
