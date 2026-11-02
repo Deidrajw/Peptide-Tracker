@@ -4317,3 +4317,24 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   .modal .nx-shared-goal-sheet .nx-goal-detail-tabs{gap:4px!important}
   .modal .nx-shared-goal-sheet .nx-goal-detail-tab{padding:9px 2px!important;font-size:12px!important}
 }
+
+/* PR124 Open Vial details: old inline three-column form made numeric inputs
+   and their labels too narrow at iPhone widths; stack responsibly. */
+.modal .nx-open-vial-details .nx-open-vial-fields{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;min-width:0!important;
+}
+.modal .nx-open-vial-details .nx-open-vial-fields > div{min-width:0!important}
+.modal .nx-open-vial-details .nx-open-vial-fields :is(.inp,input){
+  box-sizing:border-box!important;min-width:0!important;width:100%!important;
+  min-height:48px!important;font-size:16px!important;
+}
+.modal .nx-open-vial-details .nx-open-vial-fields .field-label{
+  display:block!important;white-space:normal!important;
+  overflow-wrap:anywhere!important;line-height:1.35!important;
+}
+@media(max-width:360px){
+  .modal .nx-open-vial-details .nx-open-vial-fields{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
