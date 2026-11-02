@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 Open Vial corrected WebKit evidence (NOT RELEASED)
+- Test-only `7bb4e07c` with runtime `21efdf23`: WebKit #41377738574 SUCCESS (136-file screenshot artifact #13111679623, CRC verified). 320/390 dark/light screenshots of compact Open Vial show header and title clear of rounded border. Chromium #41377738544 still running when observed; full screenshot matrix/physical iPhone acceptance incomplete.
+- Screenshot review also exposed transient `Undo` snackbar overlaying chooser controls after prior fictional dose. OPEN UX risk; do not hide or discard Undo as a test shortcut. No production release, no data migration or ledger edits; PR draft/unmerged, P0 mixed-writer BLOCKING, LIVE nasal gates OFF.
+
 ## 2026-11-01 — PR124 Open Vial wrong modal shell fix (NOT RELEASED)
 - `21efdf23`: remove incorrect `nx-dose-form` marker on physical form-first Open Vial chooser, which had inherited fixed-height 0-padding dose shell and visibly clipped the left/top heading. `7bb4e07c`: add border-inset and wrong-shell assertions to Chromium/WebKit UI test. Source `30d3f428` all five CI green but screenshot review rejected clipping. Test at corrected head pending, no data/storage/inventory impact, no merge/deploy, P0 mixed writer blocking, nasal LIVE OFF.
 
