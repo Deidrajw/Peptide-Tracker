@@ -644,7 +644,21 @@ try {
     const chooser=document.querySelector('.nx-open-vial-choice-sheet');
     if(!chooser || chooser.querySelectorAll('.nx-open-vial-form-options button').length!==2 ||
        chooser.querySelector('#rv-totalvials')) throw Error('Open Vial must ask Injectable/Nasal BEFORE vial details');
+    const assertSheetHeader=(sheet,label)=>{
+      const head=sheet?.querySelector('.nx-dose-head');
+      const close=head?.querySelector('#x');
+      const h=head?.getBoundingClientRect(),c=close?.getBoundingClientRect();
+      const t=head?.querySelector('.nx-dose-title')?.getBoundingClientRect();
+      const width=document.documentElement.clientWidth;
+      if(!h||!c||!t||t.top<0||t.left<-2||t.right>width+2||
+        c.top<h.top-2||c.bottom>h.bottom+2||
+        c.width<44||c.height<44||c.left<-2||c.right>width+2||
+        document.documentElement.scrollWidth>width+2)
+        throw Error(label+' header or close clipped: '+JSON.stringify({top:t?.top,closeTop:c?.top,closeBottom:c?.bottom,headerTop:h?.top,headerBottom:h?.bottom,width}));
+    };
+    assertSheetHeader(chooser,'Form-first Open Vial');
     chooser.querySelector('#nx-open-injectable').click();
+    assertSheetHeader(document.querySelector('.nx-open-vial-editor'),'Injectable Open Vial');
     if(document.querySelector('#rv-purpose')?.value!=='Injectable') throw Error('Injectable choice not preserved into vial editor');
     document.querySelector('#rvsave').click();
   });
