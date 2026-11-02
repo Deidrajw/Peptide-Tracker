@@ -519,13 +519,13 @@ try {
     return {title:!!title,subtitle:!!subtitle,
       titleSize:parseFloat(getComputedStyle(title).fontSize),
       titleFamily:getComputedStyle(title).fontFamily,
-      bodyFamily:getComputedStyle(document.body).fontFamily,
+      sheetFamily:getComputedStyle(sheet).fontFamily,
       closeWidth:close.width,closeHeight:close.height,
       selected:!!sheet.querySelector('input[name="nx-stash-vial-use"]:checked')};
   });
   assert.ok(typeGeometry.title&&typeGeometry.subtitle&&
-    typeGeometry.titleSize>=18&&typeGeometry.titleSize<=22&&
-    typeGeometry.titleFamily===typeGeometry.bodyFamily&&
+    typeGeometry.titleSize>=20&&typeGeometry.titleSize<=24&&
+    typeGeometry.titleFamily===typeGeometry.sheetFamily&&
     typeGeometry.closeWidth>=44&&typeGeometry.closeHeight>=44&&
     !typeGeometry.selected,
     'Stash legacy vial sheet must match shared DS2 font/close geometry and avoid preselection: '+JSON.stringify(typeGeometry));
