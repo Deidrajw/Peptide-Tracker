@@ -328,6 +328,20 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    els.map(e=>({height:e.getBoundingClientRect().height,width:e.getBoundingClientRect().width})));
  ensure(goalControls.length===4&&goalControls.every(x=>x.height>=44),
    'Goal Details close and tabs require 44px targets: '+JSON.stringify(goalControls));
+ // WAI-ARIA tablist: keyboard navigation must be predictable at 320/390.
+ ensure(await page.locator('.nx-goal-detail-tab[tabindex="0"]').count()===1,
+   'Goal Details must expose exactly one keyboard tab stop');
+ await page.locator('.nx-goal-detail-tab[data-tab="overview"]').focus();
+ await page.keyboard.press('ArrowRight');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="connections"]').getAttribute('aria-selected')==='true'&&
+   await page.locator('.nx-goal-detail-tab[data-tab="connections"]').evaluate(e=>document.activeElement===e),
+   'Right arrow must focus and select Connections tab');
+ await page.keyboard.press('End');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="activity"]').getAttribute('aria-selected')==='true',
+   'End must activate the final Goal Details tab');
+ await page.keyboard.press('Home');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="overview"]').getAttribute('aria-selected')==='true',
+   'Home must activate the first Goal Details tab');
  await page.locator('.nx-goal-detail-tab[data-tab="connections"]').click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
