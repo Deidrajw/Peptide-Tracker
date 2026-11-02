@@ -1,3 +1,9 @@
+## 2026-11-02 — #11 automated VERIFIED; #15 UI implementation and #02 regression candidate
+- **#11:** Demo-only opened nasal-source Stash action `7f06617e` + regression `1cb85019`: Chromium/build #41393354271, WebKit #41393354453, mobile #41393354352, nested #41393354356, writer #41393354445 **SUCCESS**. This verifies no pre-confirm state changes, same one-confirmation Review and absent redundant action for exhausted source. **Physical iPhone UAT not accepted.** LIVE nasal gating OFF.
+- **#15:** Both Log Dose Additional dose option controls gain connected helper descriptions in `1bf5e69d`; control interaction regression `87cfc2c4` verifies independent toggle, collapse/reopen state and no save. **Await latest exact-head Chromium #41394215775.**
+- **#02:** New route/site regression `fbdaafea` checks Nasal/Oral/Topical/IV/Other site controls hidden, disabled and cleared, SubQ/IM preserved. No runtime source/edit/history changed. **Await latest exact-head Chromium.**
+- All 16 physical UAT points remain OPEN/not accepted. Preserve P0 mixed-writer blocker, demo-only nasal and PR draft/unmerged/undeployed.
+
 ## 2026-11-02 — #11 direct historical nasal-source action implemented, browser verification pending
 - App `7f06617e`: within Stash Details > Vials, an eligible opened, explicitly reserved nasal-source with remaining mg shows one **Prepare nasal bottle** action in isolated DEMO. This invokes existing unified preparation Review/Confirm (not an extra "Record prepared nasal spray" action) and is omitted when source remaining mass is zero; retains original vial history. LIVE remains OFF.
 - Exact UI regression `1cb85019`: actionable view; no pre-confirm mutation; no post-full-transfer action; 320/390 and light/dark in both browser engines. Chromium/WebKit CI still pending. **#11 PARTIAL until exact-head browser pass and real-iPhone UAT**. P0 mixed-writer BLOCKING, no merge/deploy.
