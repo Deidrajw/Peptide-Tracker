@@ -965,7 +965,7 @@ function nexusChoosePhysicalForm(name,occTime){
  '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
  (capsules?'<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>':'')+
  (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
- (availableVial?'<button id="nx-use-injectable" type="button" class="nx-multi-vial-toggle" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
+ (availableVial?'<button id="nx-use-injectable" type="button" class="btn-primary" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
  '</div>',"#A78BFA");
  m.classList.add("nx-form-log-sheet","nx-form-choice-sheet","nx-shared-form-sheet");
  m.querySelector("#x").onclick=closeModal;
