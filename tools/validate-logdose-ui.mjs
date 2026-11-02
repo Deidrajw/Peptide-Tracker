@@ -996,7 +996,7 @@ try {
         {id:'fixture-powder',compound:'AHK-Cu',containerType:'raw-powder',remainingMg:100},
         {id:'fixture-topical',compound:'SNAP-8',containerType:'topical-container',remainingMl:50},
         {id:'fixture-capsule',compound:'Retatrutide',containerType:'capsule-bottle',
-          remainingCount:30,mgPerCapsule:5}
+          method:'Oral',remainingCount:30,mgPerCapsule:5}
       ];
       todayLogDosePicker();
     });
@@ -1009,9 +1009,7 @@ try {
       'Usable capsules should remain loggable in Today');
     await page.locator('#today-dose-compound').selectOption({label:'Retatrutide'});
     await page.locator('#today-dose-single').click();
-    ensure(await page.locator('.nx-capsule-dose-sheet').count()+
-      await page.locator('.nx-capsule-dose-form').count()>0 ||
-      await page.locator('#nx-capsule-dose-count').count()>0,
+    ensure(await page.locator('.nx-capsule-entry #nx-capsule-count').isVisible(),
       'Today capsule selection fell through to generic injectable dose');
     ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===100,
       'Choosing a capsule touched raw powder inventory');
