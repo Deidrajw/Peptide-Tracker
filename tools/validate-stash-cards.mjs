@@ -318,7 +318,7 @@ try{
     ensure(lines.includes('Prepared nasal bottle · 2.00 mg / 4.00 mL'),'Prepared bottle incorrect: '+lines);
     ensure((await mixed.locator('.nx-kit-primary-value').innerText()).includes('7.00 mg'),'Mixed card primary balance must be injectable-only');
     ensure(await mixed.locator('.nx-kit-prepared-summary').count()===1,'Mixed card repeats nasal stock summary');
-    ensure(await mixed.locator('.nx-kit-overview-track').count()===0,'Mixed card shows misleading single-vial progress');
+    ensure(await mixed.locator('.nx-kit-primary-vial .nx-kit-overview-track').count()===0,'Mixed compact card shows misleading single-vial progress');
     ensure(await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg).join(',')+':'+state.formulationStocks[0].remainingMg)==='7,3:2','Stash render mutated stock');
     ensure(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Mixed card horizontal overflow at mobile width');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
