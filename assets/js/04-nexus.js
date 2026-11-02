@@ -2755,7 +2755,7 @@ function todayLogDosePicker() {
     const blendKit=blendKits.find(k=>k.name===name);
     closeModal();
     if(blendKit){ if(!blendKit.reconDate) openBlendVialModal(blendKit.id); else logBlendDoseModal(blendKit.id); }
-    else doseModal(name);
+    else if(!nexusChoosePhysicalForm(name)) doseModal(name); // Usable capsules/sprays/vials route to their exact-source form; keep dose-only fallback for legacy schedules.
   };
   const combo=m.querySelector("#today-dose-combo");
   if(combo) combo.onclick=()=>{closeModal();comboDoseModal();};
