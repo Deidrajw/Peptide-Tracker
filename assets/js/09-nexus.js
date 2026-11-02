@@ -1785,7 +1785,7 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   // details until the physical intended use is chosen. Legacy labels remain
   // intact on previously opened vials.
   if(selectedForm===null){
-    const chooser=openModal('<section class="nx-open-vial-form-choice nx-shared-form-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">What form are you using?</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div><p class="hint">Choose the intended physical use before entering vial details.</p><div class="nx-open-vial-form-options"><button type="button" id="nx-open-injectable" class="nx-kit-type-choice"><strong>Injectable</strong><span>Open for injection. Select SubQ or IM when logging a dose.</span></button><button type="button" id="nx-open-nasal" class="nx-kit-type-choice"><strong>Nasal</strong><span>Reserve this vial for a separate, recorded nasal preparation.</span></button></div></section>',"#A78BFA");
+    const chooser=openModal('<section class="nx-open-vial-form-choice nx-shared-form-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">What form are you using?</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><p class="hint">Choose the intended physical use before entering vial details.</p><div class="nx-open-vial-form-options"><button type="button" id="nx-open-injectable" class="nx-kit-type-choice"><strong>Injectable</strong><span>Open for injection. Select SubQ or IM when logging a dose.</span></button><button type="button" id="nx-open-nasal" class="nx-kit-type-choice"><strong>Nasal</strong><span>Reserve this vial for a separate, recorded nasal preparation.</span></button></div></section>',"#A78BFA");
     chooser.classList.add("nx-shared-form-sheet","nx-open-vial-choice-sheet");
     chooser.querySelector("#x").onclick=closeModal;
     chooser.querySelector("#nx-open-injectable").onclick=()=>{closeModal();openNewVialModal(supplyId,onDone,"Injectable");};
@@ -1809,7 +1809,7 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
       return;
     }
     if(existingSources.length>1){
-      const choices=openModal('<section class="nx-dose-form nx-open-vial-form-choice"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · SOURCE</div><h2 class="nx-dose-title">Choose exact source vial</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button></div><p class="hint">More than one reserved vial is open. Select the physical source before recording a bottle transfer.</p><div id="nx-nasal-source-choices"></div></section>',"#A78BFA");
+      const choices=openModal('<section class="nx-dose-form nx-open-vial-form-choice"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · SOURCE</div><h2 class="nx-dose-title">Choose exact source vial</h2><div class="nx-dose-subtitle">'+esc(s.name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><p class="hint">More than one reserved vial is open. Select the physical source before recording a bottle transfer.</p><div id="nx-nasal-source-choices"></div></section>',"#A78BFA");
       choices.classList.add("nx-open-vial-choice-sheet","nx-form-log-sheet");
       choices.querySelector("#x").onclick=closeModal;
       const host=choices.querySelector("#nx-nasal-source-choices");
@@ -1844,7 +1844,7 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   const m = openModal(`
     <div class="nx-dose-head nx-shared-sheet-header">
       <div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">Open ${selectedForm==="nasal-source"?"nasal source":"injectable"} vial</h2><div class="nx-dose-subtitle">Vial ${vialNum} · ${esc(s.name)}</div></div>
-      <button id="x" type="button" class="nx-dose-close" aria-label="Close">✕</button>
+      <button id="x" type="button" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="nx-open-vial-details">
       <div class="nx-open-vial-title">Vial ${vialNum} details</div>
