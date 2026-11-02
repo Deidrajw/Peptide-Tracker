@@ -384,9 +384,11 @@ try {
       typography.label.color===typography.input.color,
       'Checkbox copy must share ordinary Log Dose input typography: '+JSON.stringify(typography));
     ensure(typography.preference.font===typography.input.font &&
-      typography.preference.size===typography.input.size &&
-      typography.preference.color!==typography.heading.color,
-      'Dose preferences must be a readable secondary control, not another heading: '+JSON.stringify(typography));
+      parseFloat(typography.preference.size)<parseFloat(typography.input.size) &&
+      parseFloat(typography.preference.size)>=14 &&
+      typography.preference.color!==typography.heading.color &&
+      parseFloat(typography.preference.weight)<parseFloat(typography.heading.weight),
+      'Dose preferences must be smaller/secondary, never another heading: '+JSON.stringify(typography));
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
@@ -950,7 +952,7 @@ try {
       typeSystem.checkbox.color===typeSystem.input.color,
       'Checkbox option copy differs from main form: '+JSON.stringify(typeSystem));
     ensure(typeSystem.preference.family===typeSystem.input.family &&
-      typeSystem.preference.size===typeSystem.input.size &&
+      parseFloat(typeSystem.preference.size)<parseFloat(typeSystem.input.size) &&
       typeSystem.preference.color!==typeSystem.heading.color,
       'Dose preferences hierarchy must be secondary: '+JSON.stringify(typeSystem));
     ensure(await page.locator('.nx-dose-review-stage').isHidden(),
