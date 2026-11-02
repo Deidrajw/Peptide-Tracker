@@ -2294,6 +2294,79 @@ function syringeDetailModal(syringeId) {
   if (delBtn) delBtn.onclick = () => { closeModal(); deletePreparedDoseModal(pd); };
 }
 
+
+/* PR124: legacy prepared-dose Undo must be exact, exclusive and readback-verified. */
+async function nexusUndoLegacyPreparation(id, original) {
+  try {
+    const reverse = current => {
+      const next=JSON.parse(JSON.stringify(current));
+      const matches=(next.preparedDoses||[]).filter(p=>String(p.id)===String(id));
+      if(matches.length!==1||JSON.stringify(matches[0])!==JSON.stringify(original))
+        throw Error("This prepared syringe was changed or already undone. Reload to review it.");
+      const p=matches[0];
+      if(!Number.isSafeInteger(Number(p.count))||Number(p.count)<1||
+          Number(p.remainingCount)!==Number(p.count))
+        throw Error("This prepared syringe has already been used or modified.");
+      const parts=Array.isArray(p.components)&&p.components.length
+        ? p.components : [{unit:p.unit,allocations:p.allocations}];
+      const changes=[],seen=new Set();
+      for(const part of parts){
+        if(!Array.isArray(part.allocations)||!part.allocations.length)
+          throw Error("Preparation has no exact source allocations.");
+        for(const a of part.allocations){
+          const mg=doseToMg(Number(a.amount),part.unit);
+          const k=(next.supplies||[]).find(k=>String(k.id)===String(a.kitId));
+          const v=k?.vials?.find(v=>String(v.id)===String(a.vialId));
+          if(!Number.isFinite(mg)||mg<=0||!k||!v)
+            throw Error("Original vial could not be verified. No stock was changed.");
+          if(k.isBlend){
+            const key=String(a.ledgerId);
+            const log=(k.doseLog||[]).find(d=>String(d.id)===key);
+            if(a.ledgerId==null||seen.has(key)||!log||
+               String(log.vialId)!==String(a.vialId)||
+               log.kind!=="prepared"||
+               Math.abs(Number(log.totalMgDrawn)-mg)>.011)
+              throw Error("Original blend preparation ledger is missing or has changed.");
+            seen.add(key);
+            changes.push({k,v,mg,log});
+          }else{
+            if(!Number.isFinite(Number(v.remainingMg))||!["open","active","empty"].includes(v.status))
+              throw Error("Original vial balance could not be verified.");
+            changes.push({k,v,mg});
+          }
+        }
+      }
+      // Validate all records before crediting any of them.
+      for(const {k,v,mg,log} of changes){
+        if(log){
+          k.doseLog.splice(k.doseLog.findIndex(d=>String(d.id)===String(log.id)),1);
+          if(k.blendInventoryMode==="legacy-v2")
+            v.remainingMg=Math.round((Number(v.remainingMg)+mg)*1000)/1000;
+          if(v.status==="empty"){
+            v.status="open";k.emptyVials=Math.max(0,(k.emptyVials||0)-1);
+            k.reconDate=v.reconDate||k.reconDate;k.activeKit=true;
+          }
+        }else{
+          v.remainingMg=Math.round((Number(v.remainingMg)+mg)*100)/100;
+          if(v.status==="empty"&&v.remainingMg>.01)v.status="open";
+        }
+      }
+      next.preparedDoses=next.preparedDoses.filter(p=>String(p.id)!==String(id));
+      return {next};
+    };
+    if(_demoActive){state=reverse(state).next;render();return true;}
+    const writer=nexusWriter(),raw=writer.expected();
+    if(typeof raw!=="string")throw Error("No verified saved state available.");
+    const result=await writer.transaction(JSON.parse(raw),reverse);
+    state=result.next;_nexusLastSavedSnapshot=writer.expected();render();
+    return true;
+  }catch(error){
+    console.error("Legacy prepared Undo rejected",error);
+    showErrorBanner(error.message||"Undo failed. The preparation was not reversed.");
+    showSaveWarning();return false;
+  }
+}
+
 function prepareDosesModal(name) {
   const c = cfg(name);
   const lastDose = [...(allPeptides()[name]?.doses||[])].sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
@@ -2643,11 +2716,7 @@ function prepareDosesModal(name) {
       const allocations=saved.map(a=>({kitId:a.kitId,vialId:a.vialId,amount:mgToUnit(a.amountMg,c.unit),ledgerId:a.ledgerId}));
       const entry={id:uid(),compound:name,amountEach:amt,unit:c.unit,count,remainingCount:count,allocations,createdAt:localDatetime()};
       state.preparedDoses.push(entry);if(!await nexusCommitCurrentState())return;closeModal();render();
-      showUndoToast(`${count} ${name} doses prepared · Undo`,()=>{
-        state.preparedDoses=state.preparedDoses.filter(p=>p.id!==entry.id);
-        allocations.forEach(a=>{const kit=state.supplies.find(k=>k.id===a.kitId);if(kit)undoConsumeCompoundInventory(kit,{allocations:[a]});});
-        render();
-      });
+      showUndoToast(`${count} ${name} doses prepared · Undo`, () => nexusUndoLegacyPreparation(entry.id, entry));
       return;
     }
     if (count>1) {
@@ -2686,11 +2755,7 @@ function prepareDosesModal(name) {
       const entry = { id:uid(), compound:name, amountEach:amt, unit:c.unit, count, remainingCount:count, allocations:realAllocations, createdAt:localDatetime() };
       state.preparedDoses.push(entry);
       if(!await nexusCommitCurrentState())return;closeModal();render();
-      showUndoToast(`${count} ${name} doses prepared · Undo`, () => {
-        state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
-        realAllocations.forEach(a=>{ const k=state.supplies.find(s=>s.id===a.kitId); if(k) undoConsumeCompoundInventory(k, {allocations:[{...a, amountMg: doseToMg(a.amount, c.unit)}]}); });
-        render();
-      });
+      showUndoToast(`${count} ${name} doses prepared · Undo`, () => nexusUndoLegacyPreparation(entry.id, entry));
       return;
     }
     const totalMg = doseToMg(amt, c.unit);
@@ -2749,11 +2814,7 @@ function prepareDosesModal(name) {
     const entry = { id:uid(), compound:name, amountEach:amt, unit:c.unit, count:1, remainingCount:1, allocations:realAllocations, createdAt:localDatetime() };
     state.preparedDoses.push(entry);
     if(!await nexusCommitCurrentState())return;closeModal();render();
-    showUndoToast(`${name} syringe prepared${realAllocations.length>1?` (${realAllocations.length} vials)`:""} · Undo`, () => {
-      state.preparedDoses = state.preparedDoses.filter(p=>p.id!==entry.id);
-      realAllocations.forEach(a=>{ const k=state.supplies.find(s=>s.id===a.kitId); if(k) undoConsumeCompoundInventory(k, {allocations:[{...a, amountMg: doseToMg(a.amount, c.unit)}]}); });
-      render();
-    });
+    showUndoToast(`${name} syringe prepared${realAllocations.length>1?` (${realAllocations.length} vials)`:""} · Undo`, () => nexusUndoLegacyPreparation(entry.id, entry));
   };
 }
 
