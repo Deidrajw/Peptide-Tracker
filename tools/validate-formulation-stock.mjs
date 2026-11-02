@@ -72,6 +72,8 @@ try {
       progressModel:{type:'exploratory'}});
     goalDetailModal('fictional-goal-crossengine');
   });
+  await page.locator('.nx-goal-detail').evaluate(el=>
+    Promise.all(el.closest('.modal').getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))));
   const goalGeometry=await page.locator('.nx-goal-detail').evaluate(detail=>{
     const shell=detail.closest('.modal');
     const head=detail.querySelector('.nx-dose-head'),title=detail.querySelector('.nx-dose-title'),
