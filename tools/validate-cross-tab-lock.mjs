@@ -665,5 +665,72 @@ try{
    console.log("PASS: actual failed Storage write rejects legacy save, restores verified state and surfaces warning");
  }
 
+
+ // Prepared-dose Undo regression: invoke the real app helper in two actual tabs,
+ // with fictional state and an exclusive browser Web Lock, never production data.
+ for(const scenario of ["single","multi","blend"]){
+   await a.reload({waitUntil:"domcontentloaded"});
+   await b.reload({waitUntil:"domcontentloaded"});
+   await a.waitForFunction(()=>typeof nexusUndoLegacyPreparation==="function");
+   const fixture=await a.evaluate(kind=>{
+     const base=buildDemoState("weight_loss");
+     const blend=kind==="blend";
+     const allocation={kitId:"undo-kit",vialId:"undo-vial",amount:2,...(blend?{ledgerId:"undo-ledger"}:{})};
+     const entry={id:"undo-"+kind,compound:"Retatrutide",unit:"mg",
+       amountEach:2,count:kind==="multi"?3:1,remainingCount:kind==="multi"?3:1,
+       allocations:[allocation],createdAt:"2026-11-02T10:00:00"};
+     base.preparedDoses=[entry];
+     base.supplies=[{id:"undo-kit",name:"Retatrutide",isBlend:blend,activeKit:true,
+       ...(blend?{blendInventoryMode:"legacy-v2",doseLog:[{id:"undo-ledger",vialId:"undo-vial",kind:"prepared",totalMgDrawn:2}]}:{}),
+       vials:[{id:"undo-vial",status:"open",remainingMg:8,vialMg:10}]}];
+     state=base;_demoActive=false;
+     localStorage.setItem(STORE_KEY,JSON.stringify(base));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+     return entry;
+   },scenario);
+   await b.evaluate(()=>{
+     state=JSON.parse(localStorage.getItem(STORE_KEY));_demoActive=false;
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+   });
+   const first=await a.evaluate(entry=>nexusUndoLegacyPreparation(entry.id,entry),fixture);
+   assert.equal(first,true,scenario+": first Undo should commit and read back");
+   const durable=await a.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)));
+   assert.equal(durable.preparedDoses.length,0,scenario+": exact preparation removed");
+   assert.equal(durable.supplies[0].vials[0].remainingMg,10,scenario+": exact vial credited once");
+   if(scenario==="blend")assert.equal(durable.supplies[0].doseLog.length,0,"Exact blend ledger removed");
+   assert.equal(await b.evaluate(entry=>nexusUndoLegacyPreparation(entry.id,entry),fixture),false,
+     scenario+": stale second tab must reject");
+   assert.equal(await a.evaluate(entry=>nexusUndoLegacyPreparation(entry.id,entry),fixture),false,
+     scenario+": double Undo must reject");
+   assert.equal((await a.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)))).supplies[0].vials[0].remainingMg,10,
+     scenario+": rejected attempts must not double credit");
+   await a.reload({waitUntil:"domcontentloaded"});
+   assert.equal(await a.evaluate(()=>JSON.parse(localStorage.getItem(STORE_KEY)).preparedDoses.length),0,
+     scenario+": readback survives reload");
+   console.log("PASS: real two-tab prepared Undo "+scenario+" exact source, stale, double Undo and reload");
+ }
+ // Injected durable-write failure must preserve the original preparation and stock.
+ await a.evaluate(()=>{
+   const base=buildDemoState("weight_loss");
+   base.preparedDoses=[{id:"undo-failure",compound:"Retatrutide",unit:"mg",amountEach:2,count:1,
+     remainingCount:1,allocations:[{kitId:"undo-kit",vialId:"undo-vial",amount:2}]}];
+   base.supplies=[{id:"undo-kit",name:"Retatrutide",activeKit:true,
+     vials:[{id:"undo-vial",status:"open",remainingMg:8,vialMg:10}]}];
+   state=base;_demoActive=false;localStorage.setItem(STORE_KEY,JSON.stringify(base));
+   _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_nexusSharedWriter=null;
+ });
+ const undoFailure=await a.evaluate(async()=>{
+   const original=Storage.prototype.setItem, before=localStorage.getItem(STORE_KEY);
+   Storage.prototype.setItem=function(k,v){if(k===STORE_KEY)throw Error("fictional failure");return original.call(this,k,v)};
+   let ok;
+   try{ok=await nexusUndoLegacyPreparation(state.preparedDoses[0].id,JSON.parse(JSON.stringify(state.preparedDoses[0])))}
+   finally{Storage.prototype.setItem=original}
+   return {ok,before,after:localStorage.getItem(STORE_KEY),blocked:nexusWriter().status().blocked};
+ });
+ assert.equal(undoFailure.ok,false,"Failed Undo write must not acknowledge success");
+ assert.equal(undoFailure.after,undoFailure.before,"Failed Undo must preserve exact durable preparation and balance");
+ assert.equal(undoFailure.blocked,true,"Failed Undo must block uncertain writer");
+ console.log("PASS: prepared Undo failed write preserves durable state and blocks retry");
+
  await context.close();
 }finally{await browser.close()}
