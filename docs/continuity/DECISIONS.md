@@ -1,3 +1,6 @@
+## 2026-11-02 — label-parity screenshot correction verified in browser, real iPhone still pending
+- Binding user request is literal uppercase ADDITIONAL DOSE OPTIONS with exactly Administration Method/Site field-label styling, not a new 20px/14px heading. At 4fa74b8d Chromium computed style parity and 320/390 light/dark LIVE/DEMO screenshots passed. Checkbox and preferences copy/handlers are preserved. This does not grant permission for production deployment or undo P0 controls. Real-device UAT still required.
+
 ## 2026-11-02 — exact CSS computed parity correction, no redesign
 - Keep literal uppercase ADDITIONAL DOSE OPTIONS matching ADMINISTRATION METHOD and ADMINISTRATION SITE. Existing field labels have computed text-transform none. Corrected CSS text-transform from uppercase to none at 4fa74b8d while literal uppercase remains. Prior Chromium mismatch is not an invitation for new typography. Do not alter checkbox text, preferences, storage, event handlers, or gates. No merge/deploy approval.
 
