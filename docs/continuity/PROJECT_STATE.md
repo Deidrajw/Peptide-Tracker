@@ -1,3 +1,9 @@
+## 2026-11-02 — injectable route restriction in progress (NOT RELEASED)
+- App commit 379f60eb: when new physical vial Log Dose uses formChoice=vial, route buttons and native selector are limited to SubQ, IM, IV; within-family changes remain in sheet. Historical edits retain original route. No inventory/data migration.
+- Mobile form workflow #41410285193 SUCCESS; other exact-source CI jobs pending at time of this note. No dedicated new source-conditional browser regression yet: acceptance INCOMPLETE.
+- Mixed injectable/nasal Stash balance presentation investigated in assets/js/10-nexus.js; attempted edit was blocked by tooling safety check, NOT COMMITTED. Keep separate vial source and prepared nasal container balances; never add bottle stock into injectable vial. ONE NEXT ACTION: implement source-separated Stash card and dedicated Chromium/WebKit fixture tests; then full QA.
+- PR #124 DRAFT/UNMERGED, nasal LIVE OFF, release P0 BLOCKING, production untouched. Physical iPhone NOT TESTED.
+
 ## 2026-11-02 — prepared-dose Undo P0 Chromium gate VERIFIED (draft only)
 - PR #124 code contains exclusive exact-event nexusUndoLegacyPreparation for all three legacy callbacks; CI wiring corrected at c3311a31 to execute tools/validate-cross-tab-lock.mjs (earlier fb822cf4 green writer job did not run that script).
 - Exact c3311a31 PR test merge 2a48c36 against main da585ab3: GitHub Actions shared-writer run #41409838497 Chromium job 125160129665 SUCCESS. Real same-origin Chromium two-tab logs explicitly PASS single, multi and blend Undo; exact vial/ledger reversal, stale second-tab rejection, double Undo rejection, durable reload, and failed Storage.setItem preserving records/blocking retry. Shared writer and mixed writer safety jobs SUCCESS. No physical iPhone test.
