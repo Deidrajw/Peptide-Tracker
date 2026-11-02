@@ -21,24 +21,45 @@ try {
   },theme);
   const visualEvidence=[];
   const captureVisual=async(stage,selector)=>{
-    // Remove synthetic demo banner from screenshot-only visual sample.
+    // The synthetic banner is a fixture helper, not part of the app sheet.
     await page.evaluate(()=>{const bar=document.querySelector('#demo-banner');if(bar)bar.style.display='none';});
     const shell=page.locator(selector).first();
     assert.ok(await shell.count()>0,'Missing visual target: '+stage);
-    await shell.evaluate(el=>Promise.all(el.getAnimations({subtree:false}).map(a=>a.finished.catch(()=>{}))));
+    await shell.evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))));
     const geometry=await shell.evaluate(el=>{
       const b=el.getBoundingClientRect(),doc=document.documentElement;
-      return {left:b.left,right:b.right,bottom:b.bottom,top:b.top,width:b.width,
-        viewport:doc.clientWidth,height:innerHeight,scrollWidth:doc.scrollWidth,
-        focus:document.activeElement?.id||''};
+      const style=getComputedStyle(el);
+      const top=Math.max(0,b.top),bottom=Math.min(innerHeight,b.bottom);
+      const visibleHeight=Math.max(0,bottom-top);
+      const sampleX=Math.max(1,Math.min(doc.clientWidth-2,b.left+b.width/2));
+      const sampleY=visibleHeight>0?Math.max(1,Math.min(innerHeight-2,top+Math.min(32,visibleHeight/2))):-1;
+      const topmost=sampleY>=0?document.elementFromPoint(sampleX,sampleY):null;
+      const activeModal=el.closest('.modal');
+      const actualModal=document.querySelector('.modal-bg:last-of-type .modal');
+      return {
+        left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,
+        viewport:doc.clientWidth,viewportHeight:innerHeight,scrollWidth:doc.scrollWidth,
+        visibleHeight,opacity:style.opacity,visibility:style.visibility,
+        foreground:!!(topmost&&el.contains(topmost)),
+        activeSheet:!!activeModal&&activeModal===actualModal,
+        topmostNode:topmost?.id||topmost?.className?.toString().slice(0,80)||'none',
+        focus:document.activeElement?.id||''
+      };
     });
     assert.ok(geometry.scrollWidth<=geometry.viewport+2 &&
       geometry.left>=-2&&geometry.right<=geometry.viewport+2,
       'Visual horizontal clipping '+stage+': '+JSON.stringify(geometry));
+    assert.ok(geometry.visibleHeight>=Math.min(48,geometry.height*.4) &&
+      geometry.opacity!=='0'&&geometry.visibility==='visible'&&
+      geometry.foreground&&geometry.activeSheet,
+      'Capture target not actually in foreground viewport '+stage+': '+JSON.stringify(geometry));
     fs.mkdirSync('dist',{recursive:true});
-    const filename='Nexus_'+version+'_VISUAL_'+engine.name()+'_'+kind+'_'+theme+'_'+width+'_'+stage+'.png';
+    const basename='Nexus_'+version+'_VISUAL_'+engine.name()+'_'+kind+'_'+theme+'_'+width+'_'+stage;
+    const filename=basename+'.png';
     await page.screenshot({path:'dist/'+filename,fullPage:false});
-    visualEvidence.push({stage,filename,geometry});
+    const targetFile=basename+'_target.png';
+    await shell.screenshot({path:'dist/'+targetFile});
+    visualEvidence.push({stage,filename,targetFile,geometry});
   };
   const before=await page.evaluate(()=>JSON.stringify(state.supplies));
   await page.evaluate(()=>supplyModal(null,null));
