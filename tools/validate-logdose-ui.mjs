@@ -385,6 +385,7 @@ try {
       Number(typography.helper.weight)===400 &&
       typography.summary.transform==='none'&&typography.label.transform==='none',
       'Additional dose options font size/weight must match approved Log Dose hierarchy with original copy: '+JSON.stringify(typography));
+    const visualEvidence={};
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
     visualEvidence['Additional options']={filename:optionsShot,typography,layout:checkboxLayout};
