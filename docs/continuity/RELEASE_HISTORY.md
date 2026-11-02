@@ -1,3 +1,6 @@
+## 2026-11-02 — PR124 canonical Log Dose optional-section hierarchy (NOT A RELEASE)
+- Candidate v0.9.20-beta, CSS db81ebfe (share Your dose heading style, secondary preferences, regular-sized checkbox controls, remove uniform-16px visual flatness and pointer-focus rectangle), test afe63da3 (actual hierarchy comparison). Source only in draft PR. No storage, inventory math, histories, migrations, Cloudflare or deployment changes. Exact-head browser CI and rebuilt standalone FULL-APP DEMO/LIVE ZIP pending; physical #15 rejected and not accepted. Release P0 blocking and nasal LIVE gates OFF.
+
 ## 2026-11-02 — second physical iPhone UAT: four failures; corrected upstream (PR #124 DRAFT)
 - NOT A RELEASE. v0.9.20-beta PR124 correction candidate, UAT 2/6 prior DEMO; commits 0bfb28dc/3ca9685f/c8fcf5cd/29518068/e6a8f004. Coded in draft PR; no production storage writes or schema/history changes. Chromium/WebKit and artifact parity unverified at last query; iPhone UAT pending. PR unmerged/undeployed; P0 blocking, LIVE nasal OFF.
 
