@@ -1433,7 +1433,7 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
     const fill=info?.done?100:info?.current?Math.max(0,Math.min(100,Math.round(100*(1-info.daysLeft/(info.totalWeeks*7))))):0;
     return '<button type="button" class="nx-proto-detail-compound" data-proto-comp="'+esc(c.name)+'"><span class="nx-proto-detail-compound-head"><strong>'+esc(c.name)+'</strong><span aria-hidden="true">›</span></span><span>'+esc(stage)+'</span>'+(info?.current||info?.done?'<span class="nx-proto-detail-bar" aria-hidden="true"><span style="width:'+fill+'%"></span></span>':"")+'<small>'+esc(detail)+'</small></button>';
   }).join("");
-  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
+  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" id="x" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
   m.querySelector(".nx-proto-detail-close").onclick=closeModal;
   const show=(view)=>{
 
