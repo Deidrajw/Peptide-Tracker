@@ -1,3 +1,8 @@
+## 2026-11-01 — Undo toast / foreground modal regression
+- Case: after a fictional reversible action, open the Open Vial form chooser; the Undo toast must be hidden from sight, hit testing and accessibility while the sheet is present. Closing the sheet must restore the button with remaining six-second opportunity. Reopening must hide again. Test added at `3b3cb5dd` in `tools/validate-formulation-stock.mjs`, **NOT TESTED at exact-head yet**.
+- Previous Open Vial alignment: Chromium #41377738544 and WebKit #41377738574 completed success on `7bb4e07c`, screenshot review previously identified transient toast overlap. Full 320/390 both theme, both engines and physical iPhone acceptance **NOT COMPLETE**.
+- Independent failure: shared inventory writer #41382344475 / `chromium-real-two-tab` FAIL; at tests/chromium-two-tab-writer.cjs:76 unexpected rejection `Saved data changed or a prior write was uncertain`. Treat as OPEN, not pass; P0 release blocking.
+
 ## 2026-11-01 — WebKit verified no rounded-header clipping; Undo overlay OPEN
 - WebKit exact corrected test `7bb4e07c` #41377738574 PASS, artifact #13111679623 136 entries/ZIP intact. 320/390 dark/light chooser screenshots inspected, proper left/top padding and compact modal. Chromium #41377738544 incomplete at last check; 16×16 full matrix NOT complete, real iPhone not tested.
 - New observation: six-second `showUndoToast` uses fixed z-index 9999 and can float across new modal's form options in the same test session. This may block tap access briefly. Do not remove or suppress the user's Undo ability without deliberate design/testing. Record as **open targeted UX failure**; screenshot-only hiding would mask it. Keep exact-vial Undo history and user data protected.
