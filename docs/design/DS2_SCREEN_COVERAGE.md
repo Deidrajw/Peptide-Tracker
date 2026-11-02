@@ -1,3 +1,8 @@
+## 2026-11-01 — PR124 shared form QA delta (NOT PHYSICALLY ACCEPTED)
+- App source `1cc45e46` implements 48px SVG close consistency for three remaining Open Vial sheets, responsive 320/390 Open Vial details fields, actual nasal preparation Review with viewport-anchored consent/Back/Confirm, and Goal Details tab keyboard navigation. Actual nasal CTA clipping reproduced (offscreen y=1081 > 844), then corrected and inspected in Chromium/WebKit both themes/widths.
+- Exact-source five workflows PASS (#41390039557 Chromium/build, #41390039507 WebKit, #41390039506 mobile, #41390039533 nested, #41390039503 writer). Full-app DEMO and LIVE exact-source ZIP CRC-verified artifact #13117342031; still candidate only.
+- 16-point physical acceptance remains OPEN, especially #02 legacy routes, #08 topical/raw parity, #11 historical nasal fallback, #15 options, #16 iPhone keyboard/VoiceOver. No merge/deploy; P0 mixed writer blocking; live nasal gates OFF.
+
 ## 2026-11-01 — Capsule/prepared-spray Review layout corrective candidate
 - Actual WebKit screenshot evidence (#13115950372) showed off-fold Review actions at 320px despite passing close/header; app CSS `9d409122` anchors Review actions with one summary scrollport only while preserving compact Entry. New full 16-cell UI test at `d4b18b8` pending CI. No acceptance of iPhone keyboard, VoiceOver or other 16 rows.
 
