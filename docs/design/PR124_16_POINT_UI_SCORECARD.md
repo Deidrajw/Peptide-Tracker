@@ -1,3 +1,7 @@
+## 2026-11-01 — #14 normal injectable Entry/Review browser gate PASSED, broader scope remains PARTIAL
+- Corrected test source `ddd6e42a`, Chromium #41385255742 PASS 8/8 fictional LIVE/isolated DEMO 320/390 dark/light; 24 PNG captures and JSON; manually inspected 4 LIVE Review screenshots; no clipping observed in these specific cases. Other capsule/prepared nasal/edit sheets, physical iOS keyboard and real iPhone UAT remain OPEN. Thus #14 still **PARTIAL**, not physical PASS.
+- #01/#04/#05 WebKit #41385255709 screenshot target 320/390 both themes inspected; form-first title, two choices and X stay clear of rounded border. No blanket 16-point acceptance. Proceed with grouped shared header #04/#05/#07/#08/#09/#16.
+
 ## 2026-11-01 — #14 browser review assertion correction
 - Chromium #41384577261 FAIL at Review 320 dark/live due to wrong hidden footer CTA selector, not verified clipping. `ddd6e42a` selects currently visible action; same-source full CI pending. Shared #04/#05 headers and #07/#08/#09/#16 remain incomplete for physical acceptance; no app source was modified.
 
