@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 visual CI evidence accepted for narrow QA only (NOT RELEASED)
+- At prior test head, Chromium #41363989984 and WebKit #41364638145 passed picker/nasal browser flow: 96 screenshots + 16 JSON reports retrieved and checked, 0 horizontal viewport violations. Chromium Log Dose #41363339799 passed 24 screenshot run, exposed an untested 36px secondary Review target; draft branch CSS `28ccb58d` fixes to 48px and new assertion `38f356b6`; test-only screenshot banner cleanup `50578f77`/`ca31d38d` pending new-head test. Data/schema/ledger unchanged. No Cloudflare production deployment, merge or physical acceptance, full 256 visual cells not completed. P0 mixed writer blocking, LIVE nasal OFF.
+
 ## 2026-11-01 — PR124 WebKit screenshot-upload CI candidate (NOT RELEASED)
 - `ff824d4e` adds GitHub Actions artifact publishing for WebKit compound-picker/nasal visual screenshots and geometry JSON. Previous WebKit #41363990003 SUCCESS yet no uploaded artifact, so visual review impossible from that run. No runtime/data/storage changes. Keep PR draft and release blocked pending CI, full matrix and physical iPhone, P0 mixed writer, LIVE nasal gates OFF.
 
