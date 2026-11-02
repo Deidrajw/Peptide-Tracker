@@ -437,6 +437,31 @@ try {
   await page.locator('#nx-nasal-record-save').click();
   assert.equal(await page.locator('#nx-nasal-record-review').isVisible(),true,
     'Actual nasal preparation must enter a separate review before confirmation');
+  // Review controls must remain in the initial visual viewport (320/390),
+  // with only the summary scrollable, not below an uncontrolled long form.
+  const nasalDock=await page.locator('.modal.nx-nasal-shared-review').evaluate(modal=>{
+    const review=modal.querySelector('#nx-nasal-record-review');
+    const confirm=modal.querySelector('#nx-nasal-confirm-row');
+    const back=modal.querySelector('#nx-nasal-record-back');
+    const save=modal.querySelector('#nx-nasal-record-save');
+    const rect=el=>{const b=el.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,left:b.left,right:b.right};};
+    const shell=rect(modal),summary=rect(review),consent=rect(confirm),edit=rect(back),action=rect(save);
+    return {shell,summary,consent,edit,action,
+      viewportWidth:document.documentElement.clientWidth,
+      viewportHeight:window.innerHeight,
+      overflow:getComputedStyle(modal).overflowY,
+      summaryScroll:getComputedStyle(review).overflowY,
+      scrollHeight:review.scrollHeight,clientHeight:review.clientHeight};
+  });
+  assert.ok(nasalDock.action.height>=44&&nasalDock.edit.height>=44&&
+    nasalDock.action.bottom<=nasalDock.viewportHeight+2&&nasalDock.edit.top>=nasalDock.shell.top-2&&
+    nasalDock.consent.top>=nasalDock.summary.bottom-2&&
+    nasalDock.edit.top>=nasalDock.consent.bottom-2&&
+    nasalDock.action.top>=nasalDock.edit.bottom-2&&
+    nasalDock.action.left>=-2&&nasalDock.action.right<=nasalDock.viewportWidth+2&&
+    nasalDock.overflow==='hidden'&&
+    ['auto','scroll'].includes(nasalDock.summaryScroll),
+    'Nasal actual-transfer Review dock must be visible with one summary scroller: '+JSON.stringify(nasalDock));
   await captureVisual('nasal-review','.modal');
    const nasalReviewUX=await page.locator('#nx-nasal-record-review').evaluate(section=>({
     focused:document.activeElement===section,
