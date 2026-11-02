@@ -50,10 +50,10 @@ function showSaveWarning() {
   warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
   document.body.appendChild(warning);
 }
-// All ordinary writes and preparation transfers use this single storage key.
-// Ordinary callers remain synchronous; reject stale snapshots rather than overwrite
-// a transfer from another tab. A transfer's exclusive lock is not shared by
-// legacy synchronous writers, so real transfer controls remain disabled.
+// All durable application state writes share one exclusive Web Lock and one
+// storage key. The retired synchronous gateway is forbidden by CI. Reviewed
+// optimistic legacy handlers await the exclusive write and roll back on failure.
+// LIVE nasal controls remain separately disabled until release safety approval.
 let _nexusLastSavedSnapshot = (()=>{try{return localStorage.getItem(STORE_KEY)}catch{return null}})();
 let _nexusSharedWriter=null;
 function nexusWriter() {
