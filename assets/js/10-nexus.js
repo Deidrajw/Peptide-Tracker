@@ -298,7 +298,7 @@ function stashView() {
         ${!mixedForms&&displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
-        ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Set up vial</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
+        ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Confirm vial form</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
