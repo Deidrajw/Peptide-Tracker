@@ -428,7 +428,7 @@ try {
           scrollOverflowY:scroll?getComputedStyle(scroll).overflowY:null,
           modalOverflowY:docStyle.overflowY,
           close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
-          action:rect('.nx-dose-footer .btn-primary'),
+          action:(()=>{const active=Array.from(modal.querySelectorAll('.nx-dose-footer .btn-primary')).find(el=>!el.hidden&&getComputedStyle(el).display!=='none');if(!active)return null;const b=active.getBoundingClientRect();return {id:active.id,left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})(),
           internal:{headerInside:!!header&&header.left>=sheet.left-2&&header.right<=sheet.right+2&&header.top>=sheet.top-2,
             titleInside:!!title&&!!header&&title.left>=header.left+4&&title.right<=header.right-4&&title.top>=header.top-2,
             bodyBetween:!!body&&!!header&&!!footer&&body.top>=header.bottom-2&&body.bottom<=footer.top+2,
