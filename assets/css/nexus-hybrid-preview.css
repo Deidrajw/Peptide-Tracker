@@ -3810,7 +3810,7 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   min-height:48px!important;cursor:pointer;list-style:none;
   /* Match Administration Method and Administration Site field labels exactly. */
   font-family:inherit!important;font-size:11px!important;line-height:1.4!important;
-  letter-spacing:.055em!important;text-transform:uppercase!important;
+  letter-spacing:.055em!important;text-transform:none!important;
   font-weight:700!important;color:var(--t3)!important;
   margin:0!important;border-radius:10px;
 }
