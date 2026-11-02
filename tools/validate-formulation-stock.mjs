@@ -561,6 +561,31 @@ try {
   assert.equal(preparedFixture.perSpray,0.04,'Nominal mass per spray should be derived from recorded quantities');
   assert.equal(preparedFixture.mlPerSpray,0.1);
   assert.equal(preparedFixture.sourceId,'nasal-reserved-a','Preparation must retain exact vial link');
+  // #11: a legacy/open reserved vial must have ONE direct preparation entry.
+  // After the source is fully transferred, no redundant preparation action.
+  // This checks the real Stash button and listener with fictional inventory only.
+  await page.evaluate(()=>{tab='stash';state._stashSub='kits';render();});
+  await page.locator('.nx-kit-detail-button[data-id="990400"]').click();
+  await page.locator('#nx-kit-details-990400 .nx-stash-tab[data-panel="vials"]').click();
+  const directAction=page.locator('#nx-kit-details-990400 .nx-kit-record-nasal-direct[data-vial-id="nasal-reserved-a"]');
+  assert.equal(await directAction.count(),1,
+    'Remaining nasal source must offer one direct preparation action, not a second Record action');
+  assert.ok((await directAction.getAttribute('aria-label')).includes('Prepare nasal bottle'),
+    'Preparation action must describe actual transfer rather than duplicate recording');
+  const preDirect=await page.evaluate(()=>JSON.stringify({supplies:state.supplies,formulationStocks:state.formulationStocks}));
+  await directAction.click();
+  assert.equal(await page.locator('#nx-nasal-record-review').count(),1,
+    'Direct nasal-source action must open the same confirmed preparation flow');
+  assert.equal(await page.evaluate(()=>JSON.stringify({supplies:state.supplies,formulationStocks:state.formulationStocks})),preDirect,
+    'Opening direct preparation must never mutate either physical source or prepared bottle');
+  await page.locator('.modal #x').click();
+  await page.evaluate(()=>{
+    const kit=state.supplies.find(k=>k.id===990400),vial=kit.vials.find(v=>v.id==='nasal-reserved-a');
+    const before=vial.remainingMg;vial.remainingMg=0;render();vial.remainingMg=before;
+  });
+  assert.equal(await page.locator('#nx-kit-details-990400 .nx-kit-record-nasal-direct').count(),0,
+    'Fully transferred source must never show another Record/Prepare action');
+  await page.evaluate(()=>{tab='stash';render();});
   await page.evaluate(()=>doseModal('Fictional Prepared Spray Test'));
   await page.locator('#nx-use-nasal').click();
   assert.equal(await page.locator('#nx-spray-count').count(),1,
