@@ -504,6 +504,35 @@ try {
   assert.deepEqual(formulationSchema,{fresh:true,recovered:true,preserved:true},
     'New and legacy states must initialize formulation stock without dropping saved bottles');
 
+  // The legacy physical-form sheet must use the same DS2 typography system as
+  // other form modals, and offer a full-size close button without writing stock.
+  await page.evaluate(()=>{
+    state.supplies.push({id:'fictional-type-kit',name:'Fictional Type Check',
+      vialMg:5,activeKit:true,vials:[{id:'fictional-type-vial',sequenceNumber:1,
+        status:'open',remainingMg:5,vialMg:5}]});
+    nexusStashSetLegacyVialMethod('fictional-type-kit','fictional-type-vial');
+  });
+  const typeGeometry=await page.locator('.nx-stash-method-sheet').evaluate(sheet=>{
+    const title=sheet.querySelector('.nx-stash-method-header .nx-dose-title');
+    const subtitle=sheet.querySelector('.nx-stash-method-header .nx-dose-subtitle');
+    const close=sheet.querySelector('#nx-stash-method-close').getBoundingClientRect();
+    return {title:!!title,subtitle:!!subtitle,
+      titleSize:parseFloat(getComputedStyle(title).fontSize),
+      titleFamily:getComputedStyle(title).fontFamily,
+      bodyFamily:getComputedStyle(document.body).fontFamily,
+      closeWidth:close.width,closeHeight:close.height,
+      selected:!!sheet.querySelector('input[name="nx-stash-vial-use"]:checked')};
+  });
+  assert.ok(typeGeometry.title&&typeGeometry.subtitle&&
+    typeGeometry.titleSize>=18&&typeGeometry.titleSize<=22&&
+    typeGeometry.titleFamily===typeGeometry.bodyFamily&&
+    typeGeometry.closeWidth>=44&&typeGeometry.closeHeight>=44&&
+    !typeGeometry.selected,
+    'Stash legacy vial sheet must match shared DS2 font/close geometry and avoid preselection: '+JSON.stringify(typeGeometry));
+  await captureVisual('stash-vial-setup','.modal');
+  await page.locator('#nx-stash-method-close').click();
+  await page.evaluate(()=>{state.supplies=state.supplies.filter(k=>k.id!=='fictional-type-kit');});
+
   // A nasal-source label is a reservation, not ready-to-use stock. The pure
   // transfer planner must accept that explicit source only when a destination
   // container and exact mass are provided; preview never changes state.
