@@ -1,3 +1,6 @@
+## 2026-11-02 — second physical iPhone UAT: four failures; corrected upstream (PR #124 DRAFT)
+- NOT A RELEASE. v0.9.20-beta PR124 correction candidate, UAT 2/6 prior DEMO; commits 0bfb28dc/3ca9685f/c8fcf5cd/29518068/e6a8f004. Coded in draft PR; no production storage writes or schema/history changes. Chromium/WebKit and artifact parity unverified at last query; iPhone UAT pending. PR unmerged/undeployed; P0 blocking, LIVE nasal OFF.
+
 ## 2026-11-02 — physical iPhone user UAT corrective PR124 candidate (NOT A RELEASE)
 - Candidate remains v0.9.20-beta, draft branch; app/style commits 160efd3a, 4ea917ca, 1fd19d57. 18/19 prior physical scorecard marked Pass, #15 FAIL; user also raised powder-only Log Dose eligibility, stale amount warning, airy Review dose, and unconfirmed-vial dead-end. Corrective candidate restricts unprepared raw/topical inventory-only entries, clears resolved validation, condenses review, and directly opens vial identification. No migration, production writes, implicit stock deductions or historical rewrite. Code committed only; exact-head CI, matching DEMO/LIVE artifacts and new iPhone acceptance PENDING. Neither merged nor deployed, release P0 blocking and both LIVE nasal gates OFF.
 
