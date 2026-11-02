@@ -61,6 +61,44 @@ try {
     await shell.screenshot({path:'dist/'+targetFile});
     visualEvidence.push({stage,filename,targetFile,geometry});
   };
+  // #16 cross-engine Goal Details: actual shared sheet, roving tabs and
+  // narrow viewport in both fictional LIVE-source and isolated full DEMO.
+  // These are browser visual/focus proxies, not physical iOS VoiceOver.
+  await page.evaluate(()=>{
+    if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
+    state.plans.goals.push({id:'fictional-goal-crossengine',
+      name:'Fictional goal with readable detail',category:'Personal',
+      status:'active',notes:'Fictional notes for browser visual inspection',
+      progressModel:{type:'exploratory'}});
+    goalDetailModal('fictional-goal-crossengine');
+  });
+  const goalGeometry=await page.locator('.nx-goal-detail').evaluate(detail=>{
+    const shell=detail.closest('.modal');
+    const head=detail.querySelector('.nx-dose-head'),title=detail.querySelector('.nx-dose-title'),
+      close=detail.querySelector('.nx-dose-close'),tabs=detail.querySelector('.nx-goal-detail-tabs');
+    const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+    const nodes=[shell,head,title,close,tabs].map(rect);
+    return {viewport:document.documentElement.clientWidth,docWidth:document.documentElement.scrollWidth,
+      windowHeight:innerHeight,sheet:nodes[0],head:nodes[1],title:nodes[2],close:nodes[3],tabs:nodes[4]};
+  });
+  assert.ok(goalGeometry.docWidth<=goalGeometry.viewport+2&&
+    [goalGeometry.sheet,goalGeometry.head,goalGeometry.title,goalGeometry.close,goalGeometry.tabs]
+      .every(x=>x.left>=-2&&x.right<=goalGeometry.viewport+2)&&
+    goalGeometry.close.height>=44&&goalGeometry.close.bottom<=goalGeometry.windowHeight+2&&
+    goalGeometry.title.top>=goalGeometry.head.top-2,
+    'Goal Details shared header/close viewport geometry failed: '+JSON.stringify(goalGeometry));
+  assert.equal(await page.locator('.nx-goal-detail-tab').count(),3);
+  await captureVisual('goal-details-overview','.modal .nx-goal-detail');
+  await page.locator('.nx-goal-detail-tab[data-tab="overview"]').focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('.nx-goal-detail-tab[data-tab="connections"]').getAttribute('aria-selected'),'true');
+  assert.ok(await page.locator('.nx-goal-detail-tab[data-tab="connections"]').evaluate(el=>document.activeElement===el),
+    'Goal Details roving focus must follow selected tab in both engines');
+  await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
+  await captureVisual('goal-details-activity','.modal .nx-goal-detail');
+  await page.locator('#nx-goal-detail-close').click();
+  assert.equal(await page.locator('.nx-goal-detail').count(),0,'Goal Details close must dismiss one sheet');
+  await page.evaluate(()=>{state.plans.goals=state.plans.goals.filter(g=>g.id!=='fictional-goal-crossengine');});
   const before=await page.evaluate(()=>JSON.stringify(state.supplies));
   await page.evaluate(()=>supplyModal(null,null));
   assert.equal(await page.locator('.nx-kit-type-choice').count(),5,'One Add Kit flow requires five product forms');
