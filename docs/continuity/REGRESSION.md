@@ -1,3 +1,7 @@
+## 2026-11-01 — #14 actual capsule/spray Review CTA occlusion and fix candidate
+- WebKit `bb213bb7` #41386559560 passed old geometry, yet visually inspected 320 dark capsule/spray Review showed Edit details at/beyond bottom with Confirm & save not visible; 390 light spray review CTA also below initial viewport. Green close/header checks were insufficient. User's reported clipping reproduced in screenshot evidence.
+- CSS `9d409122` (test `bfa5f462`/fixed `d4b18b8`): review-only viewport-bound sheet; fixed header and bottom Back/Confirm; exactly one scrolling summary, retaining compact natural-height entry. Assert summary between header and back, save after back, primary CTA ≥44px and within visual viewport, modal overflow hidden; both engines × 320/390 × light/dark × LIVE/DEMO. Exact-head pending. Must inspect screenshots and real iPhone keyboard/safe-area.
+
 ## 2026-11-01 — Shared header title-inset test corrected
 - Initial `9b9e6ca0` assertion failed both engines for capsule form: measured title beginning at same inset as its header, but erroneously required another 4px nested inset. Actual header and X within sheet, no horizontal overflow. `bb213bb7` requires title ≥10px from sheet left and contained by header (±2px), rather than inventing internal extra padding. Tests exact-head pending; no visual acceptance or app CSS change claimed.
 
