@@ -2640,3 +2640,31 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .modal .nx-shared-goal-sheet .nx-goal-notes-panel{
   min-width:0;
 }
+
+/* PR124 Goal Details: make summary, supporting context and limitations distinct.
+   Typography-only hierarchy refinement; no data, navigation or source changes. */
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy{
+  display:flex;flex-direction:column;gap:15px;min-width:0;
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy>section{
+  min-width:0;margin:0;padding:0 0 14px;
+  border-bottom:1px solid var(--border-sub);
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy>section:last-of-type{
+  border-bottom:0;padding-bottom:0;
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy .nx-goal-section-title{
+  font-size:15px;line-height:1.32;font-weight:700;
+  letter-spacing:-.012em;margin:0 0 6px;
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy .nx-goal-eyebrow{
+  font-size:10px;font-weight:700;letter-spacing:.105em;margin:0 0 5px;
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy .nx-goal-section-body,
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy .nx-goal-target-value{
+  font-size:13px;font-weight:400;line-height:1.48;margin:0;
+}
+.modal .nx-shared-goal-sheet .nx-goal-hierarchy .nx-goal-progress-disclaimer{
+  font-family:inherit;font-size:12px;line-height:1.5;font-weight:400;
+  color:var(--t3);margin:0;
+}
