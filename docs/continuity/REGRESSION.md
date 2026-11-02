@@ -1,3 +1,8 @@
+## 2026-11-02 — focused real iPhone #15 UAT user-reported 4/4 PASS
+- Candidate application CSS 5ea01fd3, user completed device checklist: (1) typography/final spacing PASS; (2) disclosure and preferences PASS; (3) both checkbox controls PASS; (4) light/dark appearance PASS. Evidence: user-provided checklist result; not an automated test or VoiceOver acceptance.
+- Exact source five CI workflows PASS and canonical artifact verified as documented immediately below. Other protected workflows limited to existing automated coverage; no claim of universal real-device acceptance. No merge/deploy; both nasal LIVE gates OFF.
+- ONE NEXT ACTION: release authorization after remaining blocker review.
+
 ## 2026-11-02 — full final compact Dose preferences UI exact-source QA 5/5 PASS, device UAT pending
 - Application CSS 5ea01fd3: prefs font weight 400, reduced visual title gap without shrinking independent summary/preference hit areas below 44px or checkbox rows below 48px; source only CSS. All five exact-app workflows PASS: Chromium/build #41547092367, WebKit #41547092364, mobile #41547092333, nested #41547092384, writer #41547092346 (including mixed P0 and real two-tab).
 - Chromium log: Log Dose 248 flows PASS across eight 320/390 light/dark LIVE/DEMO; vial-source 96 PASS; measurement math 80/80 diagnostic PASS (not clinical certification); Check-In 8 configs PASS. Canonical full-app artifact #13190285462 540 entries CRC PASS; nested LIVE ZIP 26 files CRC PASS; demo/offline byte identical, CSS Git hash 022bea2a408a1570d2f621b0d423ba6d9ccdb6b3 verified. Visual inspection all eight Additional Options captures PASS for spacing/typography, tiny chevron pixels differ LIVE vs DEMO in 3/4 size/theme pairs.
