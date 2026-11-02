@@ -1,3 +1,6 @@
+## 2026-11-01 — Chromium capsule/spray Review dock evidence at d4b18b8 (NOT DEVICE ACCEPTANCE)
+- Run #41387143307 release-artifacts job SUCCESS; artifact #13116101650 downloaded (412 entries, CRC PASS). Chromium visual LIVE screenshots 320/390 dark/light for capsule and prepared-spray Review manually inspected: docked Edit details / Confirm & save are visible in initial viewport, separate summary scrollport; normal browser matrix eight variants PASS. LIVE ZIP 26 entries CRC PASS; full DEMO manifest specifies ephemeral in-memory only, offline DEMO ZIP CRC PASS. Potential clipped first character of uppercase header eyebrow still merits targeted original-image/DOM investigation; do not mark shared-header #04/#05 fully accepted. Physical Safari/Edge keyboard/VoiceOver NOT TESTED. P0 BLOCKING, LIVE nasal gates OFF, no deployment.
+
 ## 2026-11-01 — Capsule/spray Review dock visually accepted in limited WebKit matrix
 - WebKit #41387143892 on code `d4b18b8` SUCCESS; 200-entry CRC verified artifact #13116340677. Inspected 320 dark and 390 light LIVE target pairs and 320 full viewport: actual CTA visible in both forms, summary scroll clipped only at intentional scrollport boundary; header not clipped in full viewport. Chromium pending; physical iPhone/VoiceOver pending. No release claim.
 
