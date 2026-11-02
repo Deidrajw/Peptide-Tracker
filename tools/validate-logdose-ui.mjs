@@ -869,6 +869,91 @@ try {
     ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,'Route selection mutated injectable stock');
     verified.push('source-conditional injectable routes and untouched nasal balance');
     await page.evaluate(()=>closeModal());
+
+    // PR124 physical iPhone acceptance follow-up: raw powder/topical are
+    // inventory-only until a separately prepared, usable physical form exists.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.formulationStocks=[{id:'fixture-raw-only',compound:'Retatrutide',
+        containerType:'raw-powder',method:'Unassigned',remainingMg:30}];
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.nx-inventory-only-notice').isVisible(),
+      'Raw powder alone incorrectly entered injectable Log Dose');
+    ensure(await page.locator('.nx-method-option').count()===0,
+      'Raw powder must not expose injection route controls');
+    await page.locator('#nx-inventory-only-go').click();
+    ensure(await page.evaluate(()=>tab==='stash'&&state._stashSub==='other'),
+      'Raw-only notice must offer working Stash navigation');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===30,
+      'Opening raw-only notice mutated raw stock');
+    verified.push('raw powder inventory-only gate, no phantom dose/debit and actionable Stash link');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.formulationStocks=[{id:'fixture-topical-only',compound:'Retatrutide',
+        containerType:'topical-container',method:'Topical',remainingMl:20}];
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.nx-inventory-only-notice').isVisible(),
+      'Topical inventory alone incorrectly entered injectable Log Dose');
+    ensure(await page.locator('.nx-method-option').count()===0,
+      'Topical inventory must not expose injection route controls');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMl)===20,
+      'Topical-only notice changed stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('topical inventory-only gate without fabricated application log');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(951,9);kit.vials[0].intendedUse='Injectable';
+      state.supplies=[kit];state.formulationStocks=[{id:'fixture-raw-also',
+        compound:'Retatrutide',containerType:'raw-powder',method:'Unassigned',remainingMg:30}];
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'Raw stock must not hide a separately verified injectable vial');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===30,
+      'Injectable entry touched independent raw stock');
+    await page.locator('#nx-dose-entered').fill('');
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('#nx-validation-message').isVisible(),
+      'Missing positive amount should remain validated');
+    await page.locator('#nx-dose-entered').fill('5');
+    ensure(await page.locator('#nx-validation-message').count()===0,
+      'Missing-amount warning persisted after valid input');
+    const optionType=await page.locator('.nx-dose-more-options>summary').evaluate(el=>getComputedStyle(el).fontSize);
+    ensure(optionType==='16px','Additional dose options not main-form text size: '+optionType);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('#nx-dose-review-amount').innerText()==='5 mg',
+      'Review did not reflect newly entered valid amount');
+    const spacing=await page.evaluate(()=>{
+      const hero=document.querySelector('.nx-dose-confirm-hero').getBoundingClientRect();
+      const rows=document.querySelector('#nx-dose-review-rows').getBoundingClientRect();
+      return Math.round(rows.top-hero.bottom);
+    });
+    ensure(spacing>=0&&spacing<=24,'Review amount/rows too far apart: '+spacing+'px');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
+      'Review without Confirm mutated an injectable vial');
+    await page.evaluate(()=>closeModal());
+    verified.push('positive amount clears stale warning, 16px options, compact review and no write before confirm');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(952,9);
+      delete kit.preparationMethod;
+      delete kit.administrationMethod;
+      delete kit.route;
+      state.supplies=[kit];tab='stash';state._stashSub='kits';render();
+    });
+    ensure(await page.locator('.nx-stash-go-vial-method').count()>0,
+      'Unlabelled vial must offer Identify vial form');
+    await page.locator('.nx-stash-go-vial-method').first().click();
+    ensure(await page.locator('.nx-stash-method-sheet').isVisible(),
+      'Identify vial form did not open the actionable physical-form sheet directly');
+    ensure(await page.locator('.nx-kit-secondary-open').count()===0,
+      'Obsolete Open another vial action remains in this flow');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
+      'Opening physical-form choice debited an unlabelled vial');
+    await page.evaluate(()=>closeModal());
+    verified.push('direct one-time unlabelled vial choice with no debit or unrelated CTA');
     ensure(errors.length===0,'Browser JS errors: '+errors.join(' | '));
     results.push({width,theme,kind,status:'PASS',verified,visualEvidence});
     await context.close();
