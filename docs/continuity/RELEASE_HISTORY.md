@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 #11 verified; #15 optional-dose description candidate (NOT RELEASED)
+- On `1cb85019`, five workflow groups SUCCESS for demo-only nasal Stash source action; no live writes or ledger modification. Subsequent app `1bf5e69d` adds accessible helper explanations to independent-dose and escalation checkboxes; test `87cfc2c4` adds reversible checkbox expansion state; `fbdaafea` tests clearing noninjectable administration sites, no runtime method change.
+- No storage schema change, history rewrite, calculations, production merge/deploy or release version promotion. Latest exact-source Chromium/WebKit pending; physical iPhone acceptance and mixed-writer P0 open. Source-matched new demo/live artifact verification pending.
+
 ## 2026-11-02 — PR124 nasal-source Stash direct action candidate, NOT RELEASED
 - App commit `7f06617e`: show direct `Prepare nasal bottle` for eligible opened nasal-source in fictional isolated DEMO only; reuse previously approved one-confirmation source→destination transaction. Stop offering action once source has no remaining mg, preserve all historical entries and identifiers. No LIVE gates changed, no schema, storage, calculation or transaction changes.
 - Test `1cb85019` exercises the actual user flow; five browser/writer workflows triggered; Chromium/WebKit exact-head not verified as PASS at documentation checkpoint. No merge/deploy or production writes. Physical UAT and writer P0 pending.
