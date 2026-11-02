@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 optional-dose hierarchy follow-up (NOT RELEASED)
+- Candidate v0.9.20-beta; draft PR124 UI CSS db81ebfe + 3bae29ae and revised browser test a4b35c70. Actual Your dose section heading shares style with Additional dose options; checkbox labels match actual 16px dose input; Dose preferences is lower-emphasis 14px action. No data migration, source debit/math/history or production changes; LIVE nasal OFF.
+- Exact CI WebKit/mobile/nested/writer SUCCESS; Chromium #41516179632 pending at last observation; prior browser run #41515217095 FAILED on checkbox/input size parity and is not a pass. Source-patched complete DEMO/LIVE ZIP CRC checked, but canonical CI artifact and physical iPhone acceptance pending. Not merged/deployed, P0 blocking.
+
 ## 2026-11-02 — PR124 canonical Log Dose optional-section hierarchy (NOT A RELEASE)
 - Candidate v0.9.20-beta, CSS db81ebfe (share Your dose heading style, secondary preferences, regular-sized checkbox controls, remove uniform-16px visual flatness and pointer-focus rectangle), test afe63da3 (actual hierarchy comparison). Source only in draft PR. No storage, inventory math, histories, migrations, Cloudflare or deployment changes. Exact-head browser CI and rebuilt standalone FULL-APP DEMO/LIVE ZIP pending; physical #15 rejected and not accepted. Release P0 blocking and nasal LIVE gates OFF.
 
