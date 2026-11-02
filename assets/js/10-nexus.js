@@ -2166,7 +2166,7 @@ function nexusAddFormulationModal(type,existingId=null){
         const typed=compoundInput.value.trim().toLocaleLowerCase();
         const exact=[...matchList.querySelectorAll('[role="option"]')].find(option=>option.textContent.trim().toLocaleLowerCase()===typed);
         if(exact){e.preventDefault();exact.click();}
-        else if(typed){e.preventDefault();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));closeMatches();}
+        else if(typed){e.preventDefault();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));refreshCompoundMatches();}
       }
     });
     matchList.addEventListener("keydown",e=>{
