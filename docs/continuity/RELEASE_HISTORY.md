@@ -1,3 +1,8 @@
+## 2026-11-02 — PR124 final label-parity QA 5/5 PASS, NOT RELEASED
+- Candidate v0.9.20-beta, exact application/test 4fa74b8d, main da585ab3. Changed only Log Dose optional disclosure computed text-transform to match existing 11px bold uppercase admin field-label style; visual text remains uppercase, no JS/migrations/stock/history changes. Prior ef723d61 Chromium failure fixed rather than ignored.
+- Exact-source CI: Chromium #41524937984, WebKit #41524937951, mobile #41524938061, nested #41524937947, writer #41524938305 all SUCCESS (writer 3 jobs). Chromium canonical artifact #13179992122 540 entries CRC PASS, 26-file LIVE ZIP CRC PASS, root index, isolated full-app DEMO 3,098,278 bytes, offline HTML byte-identical, CSS Git blob 1b14c653742352c203cd5935584b1f8b82f9dce6. Eight optional dose screenshots 320/390 light/dark LIVE/DEMO inspected; four pairwise pixel identical.
+- Physical iPhone #15 NOT TESTED. Release status draft PR/unmerged/undeployed, P0 overall BLOCKING pending device acceptance and approval; both nasal LIVE gates OFF. No live data changed.
+
 ## 2026-11-02 — PR124 field-label parity after strict Chromium mismatch (NOT RELEASED)
 - CSS ef723d61 matched field labels except computed text-transform, so Chromium/build #41524017555 FAILED. Corrective commit 4fa74b8d changed only CSS transform property (literal uppercase remains), no JS/data/migration changes.
 - Exact 4fa74b8d mobile #41524938061, writer #41524938305 (3 jobs), nested #41524937947, WebKit #41524937951 SUCCESS. Chromium/build #41524937984 pending; physical iPhone #15 NOT TESTED. Source-patched 26-file LIVE and full fictional isolated DEMO CRC/source CSS blob verified; CI-certified exact artifacts pending. PR draft, not merged/deployed, P0 blocking, both nasal LIVE gates OFF.
