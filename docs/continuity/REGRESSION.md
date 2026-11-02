@@ -1,3 +1,9 @@
+## 2026-11-02 — corrected optional field-label regression, exact-head five-way QA PASS
+- Browser assertion failure ef723d61 #41524017555 (summary computed transform uppercase vs Administration Method/Site none) corrected at application 4fa74b8d; literal uppercase heading preserved. Exact 4fa74b8d Chromium #41524937984 PASS; WebKit #41524937951 PASS; mobile #41524938061 PASS; nested #41524937947 PASS; shared writer #41524938305 PASS all 3 jobs incl P0 gate.
+- Canonical artifact #13179992122 540 outer entries CRC PASS; LIVE 26 files/root index CRC PASS; full isolated fictional app HTML 3,098,278 bytes, offline HTML byte-identical; source CSS git blob matches. Actual optional-control screenshots at 320/390 light/dark for LIVE/DEMO inspected, four paired images pixel identical. Computed typography summary equals method/site label; preference secondary 13px, checkbox copy 14px and 48px rows remain.
+- Physical iPhone #15 NOT TESTED; local browser BLOCKED by policy (CI succeeded). No release, live data mutation, merge/deploy or nasal LIVE enablement. Overall P0 release status BLOCKING until device acceptance and approval.
+- ONE NEXT ACTION: focused physical iPhone #15 acceptance on canonical DEMO.
+
 ## 2026-11-02 — #15 computed parity regression and corrective QA
 - ef723d61 Chromium #41524017555 FAILED summary transform uppercase vs Method/Site none even though 11px size, 700 weight, t3 colour, spacing, font matched. CSS 4fa74b8d corrects only transform; heading remains visibly uppercase.
 - Exact 4fa74b8d mobile #41524938061 PASS; writer #41524938305 PASS all 3 jobs; nested #41524937947 PASS; WebKit #41524937951 PASS. Chromium/build #41524937984 NOT YET COMPLETE. WebKit artifact CRC PASS; local browser BLOCKED by policy, final corrected Chromium visual NOT YET VERIFIED, physical iPhone #15 NOT TESTED. No release or data changes, P0 BLOCKING and nasal LIVE OFF.
