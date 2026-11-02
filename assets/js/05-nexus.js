@@ -969,13 +969,15 @@ function nexusChoosePhysicalForm(name,occTime){
  '<p class="hint">Choose the physical form. Nexus will show only fields relevant to that source.</p>'+
  (capsules?'<button id="nx-use-capsules" class="btn-primary" style="width:100%;min-height:48px">Capsules · Log by count</button>':'')+
  (nasal?'<button id="nx-use-nasal" type="button" class="btn-primary" style="width:100%;min-height:48px">Prepared nasal spray · Log sprays</button>':'')+
- (availableVial?'<button id="nx-use-injectable" type="button" class="btn-primary" style="width:100%;min-height:48px">Vial · Log by amount and route</button>':'')+
+ (availableVial?'<button id="nx-use-injectable" type="button" class="btn-primary" style="width:100%;min-height:48px">Injectable vial · SubQ, IM or IV</button>':'')+
+ (oralVial?'<button id="nx-use-oral-vial" type="button" class="btn-primary" style="width:100%;min-height:48px">Oral vial · Log by amount</button>':'')+
  '</div>',"#A78BFA");
  m.classList.add("nx-form-log-sheet","nx-form-choice-sheet","nx-shared-form-sheet");
  m.querySelector("#x").onclick=closeModal;
  if(capsules)m.querySelector("#nx-use-capsules").onclick=()=>{closeModal();nexusCapsuleDoseModal(name,occTime);};
  if(nasal)m.querySelector("#nx-use-nasal").onclick=()=>{closeModal();nexusNasalDoseModal(name,occTime);};
  if(availableVial)m.querySelector("#nx-use-injectable").onclick=()=>{closeModal();doseModal(name,null,occTime,"vial");};
+ if(oralVial)m.querySelector("#nx-use-oral-vial").onclick=()=>{closeModal();doseModal(name,null,occTime,"oral-vial");};
  return true;
 }
 
