@@ -319,6 +319,7 @@ try{
     const line=await nasalLine.innerText();
     ensure(line==='Nasal · 2 mg prepared',
       'Compact nasal line must be concise and show only available prepared stock: '+line);
+    await mixed.locator('.nx-kit-detail-button').click();
     const overview=mixed.locator('.nx-stash-pane[data-pane="overview"] .nx-kit-separate-stocks');
     ensure(await overview.innerText().then(x=>x.includes('7.00 mg')&&x.includes('3.00 mg')&&x.includes('2.00 mg · 4.00 mL')),
       'Detailed injectable, nasal source and prepared balances must remain distinct in Overview');
