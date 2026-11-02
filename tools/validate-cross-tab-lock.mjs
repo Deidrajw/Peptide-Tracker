@@ -596,6 +596,14 @@ try{
      _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
      _nexusSharedWriter=null;
    });
+   // The second tab's first-run bootstrap may update the shared fictional
+   // fixture; refresh the committing tab from the final common durable bytes
+   // before simulating its subsequent fresh settings write.
+   await a.evaluate(()=>{
+     state=JSON.parse(localStorage.getItem(STORE_KEY));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+     _nexusSharedWriter=null;
+   });
    const baseline=await b.evaluate(()=>({
      durable:localStorage.getItem(STORE_KEY),
      memory:JSON.stringify(state)
