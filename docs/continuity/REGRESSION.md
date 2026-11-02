@@ -1,3 +1,6 @@
+## 2026-11-01 — Log Dose active Entry/Review scroll owner specificity
+- `bfa46539` improves `validate-logdose-ui.mjs` to evaluate `.nx-dose-scroll:not([hidden])` OR `.nx-dose-review-stage:not([hidden])`, rather than measuring a hidden Entry panel during Review. Both must stay inside fixed header/footer. CI PENDING; physical iOS keyboard remains NOT TESTED.
+
 ## 2026-11-01 — #14 Log Dose non-clipping acceptance expansion
 - `tools/validate-logdose-ui.mjs` `e301cafa`: Entry/Focused/Review in Chromium 320/390, dark/light, LIVE-source/isolated DEMO; require title and fixed header inset inside sheet, scroll body between header/footer, modal overflow hidden, one vertical scroll owner, close and primary CTA ≥44px in visual viewport, and no document horizontal overflow. Screenshot/JSON evidence retained by existing harness. A focus event is not a real iOS software keyboard.
 - First candidate `e0687dc8` failed Node syntax before browser execution (#41384282835), correction at `e301cafa`; final browser result PENDING. Do not conflate green other workflow results with #14 device acceptance. P0 and live gates unchanged.
