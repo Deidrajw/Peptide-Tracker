@@ -2485,8 +2485,13 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
   if(button.disabled)return;
   button.disabled=true;
   const [amountMg,bacMl,salineMl,mlPerSpray]=values();
+  // A unique destination must not depend on timestamp/randomness alone.
+  // Existing fictional or imported container IDs are always preserved.
+  const allocatedIds=new Set((state.formulationStocks||[]).map(c=>String(c.id)));
+  let suffix=0;
+  const nextContainerId=()=>{let candidate;do{candidate="nasal-container-"+uid()+"-"+(++suffix);}while(allocatedIds.has(candidate));return candidate;};
   const recorded={
-   id:"nasal-transfer-"+uid(),destinationContainerId:"nasal-container-"+uid(),
+   id:"nasal-transfer-"+uid(),destinationContainerId:nextContainerId(),
    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
    volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime()
   };
