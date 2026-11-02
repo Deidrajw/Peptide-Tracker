@@ -1127,10 +1127,9 @@ function doseModal(name, existing, occTime, formChoice) {
     <details class="nx-dose-protocol-options nx-dose-more-options" style="margin:10px 0 0">
       <summary>Additional dose options</summary>
       <div class="nx-dose-options-body">
-        <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox" aria-describedby="nx-dose-independent-help"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
-        <p id="nx-dose-independent-help" class="nx-dose-option-description">Record this dose without creating a protocol follow-up. Existing records are unaffected.</p>
-        <label class="nx-dose-option-check nx-dose-escalation-row"><input id="esc" type="checkbox" aria-describedby="nx-dose-escalation-help"${f.escalation?" checked":""}><span>Mark as dose escalation</span></label>
-        <p id="nx-dose-escalation-help" class="nx-dose-option-description">Mark this entry in dose history. This does not change your protocol or the dose amount.</p>
+        <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
+        <p class="nx-dose-option-description">Record this dose without creating a protocol follow-up. Existing records are unaffected.</p>
+        <label class="nx-dose-option-check nx-dose-escalation-row"><input id="esc" type="checkbox"${f.escalation?" checked":""}><span>Mark as dose escalation</span></label>
       </div>
     </details>
     </section>
