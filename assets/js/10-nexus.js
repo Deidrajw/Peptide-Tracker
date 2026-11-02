@@ -269,7 +269,7 @@ function stashView() {
     // Preserve physical vial remainingMg; present the linked, prepared balance
     // prominently instead of marking the compound Empty when its source is zero.
     const showsPreparedNasal = preparedNasalTransferred && preparedNasalMg>0;
-    const stockBadgeLabel=showsPreparedNasal?"Prepared":st.label;
+    const stockBadgeLabel=mixedForms?st.label:showsPreparedNasal?"Prepared":st.label;
     const stockBadgeColor=showsPreparedNasal?"#A78BFA":st.color;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
     const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
@@ -322,6 +322,7 @@ function stashView() {
             <div class="nx-kit-overview-number">${kitRemMg.toFixed(kitRemMg%1?1:0)} <span>of ${totalMg} mg</span></div>
             <div class="nx-kit-overview-track"><span style="width:${totalMg>0?Math.max(0,Math.min(100,kitRemMg/totalMg*100)):0}%"></span></div>
           </div>
+          ${mixedForms?`<div class="nx-kit-stat-list nx-kit-separate-stocks" aria-label="Separate injectable and nasal balances"><div><span>Injectable open vials</span><strong>${injectableOpenMg.toFixed(2)} mg</strong></div><div><span>Nasal source vials</span><strong>${nasalReservedMg.toFixed(2)} mg</strong></div><div><span>Prepared nasal bottle</span><strong>${preparedNasalMg.toFixed(2)} mg · ${preparedNasalMl.toFixed(2)} mL</strong></div></div>`:""}
           <div class="nx-kit-stat-list">
             <div><span>Vials</span><strong>${sealed} sealed${openCount?` · ${openCount} open`:""}${finishedVialsWithHistory.length?` · ${finishedVialsWithHistory.length} empty`:""}</strong></div>
             <div><span>Concentration</span><strong>${conc?conc.toFixed(2)+" mg/mL":"Not recorded"}</strong></div>
