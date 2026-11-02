@@ -1,3 +1,6 @@
+## 2026-11-02 — User confirmation and #15 visual acceptance criteria
+- User explicitly confirmed all 16 corrected interpretations. Do not replace targeted styling with extra copy, features or interactive previews. #15 is specifically Additional dose options font family/size/weight/colour parity with the existing Log Dose form in light and dark, keeping checkbox handlers and original text unchanged. Scoped CSS and restored original content already present on branch; exact computed typography assertion and expanded-panel screenshot added at `566a2536`. **Status: CODED; exact-head CI / screenshot review PENDING; physical iPhone NOT ACCEPTED.**
+
 ## 2026-11-02 — #02/#11/#15 latest browser VERIFIED; 16-point device acceptance still OPEN
 - **#02:** Legacy Log Dose non-injectable methods Nasal, Oral, Topical, IV and Other now explicitly browser-asserted to hide/disable/clear irrelevant administration sites while SubQ/IM remain available. Runtime unchanged; Chromium #41394215775 SUCCESS (8/8 Log Dose cases).
 - **#11:** DEMO-only direct nasal source Stash action verified on `1cb85019` and retained in current code; five workflow groups PASS. It opens existing single-confirmation Review, no write on opening and hides once source depleted. Physical acceptance still OPEN, LIVE gates OFF.
