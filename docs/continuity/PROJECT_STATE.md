@@ -1,3 +1,8 @@
+## 2026-11-02 — focused iPhone #15 spacing and divider correction (NOT RELEASED)
+- User screenshot requested only removal of divider and correction of excessive vertical gaps in Log Dose Additional dose options; preserve all typography, checkbox/pref actions and other flows. CSS 914eb2482ab91df61bb5c6ae7962a470300060cf removes top divider and preference/option separators and compacts summary, preference and checkbox spacing with >=44px touch targets. No JS, storage, calculation or inventory changes.
+- Branch PR124 remains draft/unmerged; this new CSS has NOT YET PASSED exact-head browser/WebKit/mobile/writer QA or physical iPhone. Previous 4fa74b8d five-way PASS applies only to previous CSS. Both LIVE nasal gates OFF, overall P0 release BLOCKING, no deploy/merge.
+- ONE NEXT ACTION: run exact-head CI 320/390 light/dark screenshot comparison, verify canonical full-app DEMO and LIVE ZIP, then request focused physical iPhone spacing acceptance.
+
 ## 2026-11-02 — field-label typography exact-source CI 5/5 PASS; physical iPhone #15 remains (NO RELEASE)
 - Main da585ab3458394ddf5e88e283b210933beeab810; PR124 draft/unmerged. Exact CSS application/test source 4fa74b8d7a78882653daa505d8a6ecce370ffcda fixes only optional disclosure computed text-transform to none, while literal ADDITIONAL DOSE OPTIONS remains uppercase and shares actual 11px/700 field-label computed properties with Administration Method/Site.
 - Exact 4fa74b8d Chromium/build #41524937984 SUCCESS; WebKit #41524937951 SUCCESS; mobile #41524938061 SUCCESS; nested #41524937947 SUCCESS; shared writer #41524938305 SUCCESS (all 3 jobs incl mixed-writer P0 release gate and real Chromium two-tab). Prior ef723d61 Chromium #41524017555 FAILED transform parity and was corrected; do not conflate.
