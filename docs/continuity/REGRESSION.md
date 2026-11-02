@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 capsule and prepared-spray browser visibility coverage candidate
+- Test-only `9b9e6ca0`: `validate-formulation-stock.mjs` captures `capsule-log-entry`, `capsule-log-review`, `spray-log-entry`, `spray-log-review` foreground/target PNGs across Chromium/WebKit, 320/390, both themes, LIVE/isolated DEMO. Assert shared header/title/close inside modal, no duplicate header, existing 44–48px SVG X and no horizontal overflow. Source TEST CODED, exact-head results pending, no iPhone software keyboard/VoiceOver.
+
 ## 2026-11-01 — #14 normal injectable exact-head browser PASS / physical unaccepted
 - At `ddd6e42a`, Chromium/build #41385255742 SUCCESS, Log Dose result JSON 8/8 PASS (320/390 × dark/light × LIVE/isolated DEMO): Entry/Focused/Review title/header inside modal, one active scroll owner, close/footer CTA in visual viewport, Back target minimum size, no document horizontal overflow. 24 PNG and 8 JSON records archived in artifact #13115620770; 4 LIVE Review screenshots personally inspected. No actual iOS software keyboard emulated.
 - WebKit formulation #41385255709 SUCCESS, visual artifact #13114684921 CRC PASS and Open Vial chooser target images inspected 320/390 dark/light. Other form-specific #14 capsule/nasal review and physical keyboard tests remain NOT TESTED to full 16-point standard.
