@@ -62,6 +62,7 @@ async function clickSave(page){
 }
 try {
   for(const width of [320,390])for(const theme of ['dark','light'])for(const kind of ['live','demo']){
+    const visualEvidence={};
     const context=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});
     const page=await context.newPage();const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
@@ -521,7 +522,7 @@ try {
         stage+' has competing modal/body vertical scroll owners: '+JSON.stringify(geometry));
       return geometry;
     };
-    const visualEvidence={};
+
     // Browser-only focus proxy: this does NOT emulate a physical iOS keyboard.
     // Preserve screenshots/geometry so visual reviewers can inspect actual
     // entry, focused-field, and Review states for every width/theme/build.
