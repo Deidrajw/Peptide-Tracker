@@ -2398,7 +2398,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
- '<p class="hint">'+esc(kit.name)+' · Vial '+esc(String(vial.sequenceNumber||vial.id))+' · '+(openSealed?sealedMass:getVialRemainingMg(kit,vial)).toFixed(2)+' mg available. '+(openSealed?'Sealed source opens only after one completed preparation and transfer is confirmed.':'Record only an already completed preparation.')+'</p>'+
+ '<p class="hint">Preparing '+esc(kit.name)+' · '+(openSealed?sealedMass:getVialRemainingMg(kit,vial)).toFixed(2)+' mg in source vial. No inventory changes until you confirm.</p>'+
  '<label class="field-label" for="nx-nasal-source-mg">ACTUAL SOURCE AMOUNT (mg)</label><input class="inp" id="nx-nasal-source-mg" type="number" min="0" step="any" placeholder="Recorded amount">'+
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
  '<label class="field-label" for="nx-nasal-saline">SALINE USED (mL)</label><input class="inp" id="nx-nasal-saline" type="number" min="0" step="any" placeholder="Recorded volume">'+
