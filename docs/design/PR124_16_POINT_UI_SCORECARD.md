@@ -1,3 +1,27 @@
+## 2026-11-02 — Consolidated 16-point QA audit, browser passed / physical OPEN
+- Source 653a7f78, main da585ab3, PR #124 draft/unmerged/undeployed. Corrected Chromium #41400223943 PASS, WebKit #41400223773 PASS, mobile #41400223658 PASS, nested #41400223790 PASS, scoped writer #41400223736 PASS. P0 mixed legacy-writer remains BLOCKING; LIVE nasal gates OFF.
+- #15: 8/8 LIVE/DEMO 320/390 light/dark computed typography assertions PASS; 8 expanded Additional dose options screenshots manually inspected. UI font matches method; summary 14px/650, checkbox labels 14px/500, helper 12px/400 and theme token colours. Original labels/one helper retained. Former screenshot harness ReferenceError fixed b4bd969c.
+- Visual 16 stage types x 8 configurations x 2 engines = 256 recorded foreground/visible/in-bounds observations; screenshots reviewed in 320 light/dark for Add Kit, form-first Open Vial, capsule/spray Review, nasal Review, Raw Powder, Topical, picker. This is NOT 16 requirements exhaustively tested in every config.
+- Exact manifest commit matches 653a7f78; Chromium outer 484-entry ZIP CRC PASS, LIVE ZIP 26 entries CRC PASS, full-app standalone DEMO 3,076,903 bytes isolated ephemeral-memory, offline DEMO ZIP 2 entries and byte-equal index.html; WebKit outer 264-entry ZIP CRC PASS.
+- Per issue evidence and unfinished work:
+  01 form-first chooser browser PASS; device pending.
+  02 noninjectable site cleared Chromium PASS; legacy edit and device pending.
+  03 Add Kit correct header/intro/step screenshot sample; full wizard/device pending.
+  04 shared header subset visual PASS; Goal/legacy/all-sheet device pending.
+  05 SVG close source/browser subset PASS; whole-sheet/device sweep pending.
+  06 shared compound picker browser/visual PASS; native keyboard/device pending.
+  07 capsule Entry/Review browser visuals PASS; device/legacy edit pending.
+  08 Raw Powder/Topical browser visuals PASS; complete device journeys pending.
+  09 nasal Entry/Review/Back/browser scroll PASS; native keyboard/device pending.
+  10 fictional one-confirmation transfer exact-ledger PASS; LIVE BLOCKED by P0.
+  11 historical reserved nasal source direct action browser PASS; wider legacy/device pending.
+  12 nasal Review source/destination and CTA browser PASS; long-label/device pending.
+  13 original source and prepared-bottle accounting tests PASS; older stock/device pending.
+  14 capsule/spray Review WebKit and injectable Chromium PASS; legacy/device pending.
+  15 exact typography and screenshots Chromium 8/8 PASS; physical pending.
+  16 Goal keyboard tab and nested navigation PASS; native VoiceOver/safe-area pending.
+- ALL physical iPhone acceptance items remain NOT TESTED on this candidate; prior rejected screenshots are not overwritten by CI green. Next priority: complete remaining legacy/Goal/device coverage as one coordinated acceptance round, but first clear P0 before any release. No merge/deploy or user-data changes.
+
 ## 2026-11-02 — User confirmation and #15 visual acceptance criteria
 - User explicitly confirmed all 16 corrected interpretations. Do not replace targeted styling with extra copy, features or interactive previews. #15 is specifically Additional dose options font family/size/weight/colour parity with the existing Log Dose form in light and dark, keeping checkbox handlers and original text unchanged. Scoped CSS and restored original content already present on branch; exact computed typography assertion and expanded-panel screenshot added at `566a2536`. **Status: CODED; exact-head CI / screenshot review PENDING; physical iPhone NOT ACCEPTED.**
 
