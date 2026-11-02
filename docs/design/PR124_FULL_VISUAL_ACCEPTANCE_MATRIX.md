@@ -1,3 +1,7 @@
+## 2026-11-01 — Verified WebKit chooser correction / uncovered Undo overlap
+- Source `7bb4e07c`, WebKit #41377738574 PASS, 320/390 dark/light LIVE/DEMO screenshots show form-first Open Vial heading now inset within rounded border; prior `30d3f428` visuals had left-edge clipped header. This closes the narrow WebKit border regression, not 16-point approval.
+- New screenshot finding: `showUndoToast` after fictional dose may overlay the two Open Vial choice cards in next modal during its six-second lifetime. Track UX as OPEN until a solution retains functional Undo and doesn't obstruct choices. Chromium corrected-source result pending; physical iPhone/VoiceOver pending; P0 writer blocking/nasal LIVE OFF/no merge-deploy.
+
 ## 2026-11-01 — Open Vial visual FAIL despite all-five green CI
 - Viewed Chromium #41374399340 and WebKit #41374399303 screenshot artifacts: Add Kit first-step title/close → intro → progress looks correctly ordered at 320px in both themes; Open Vial form-choice heading/eyebrow is flush against or clipped by rounded sheet border at 320px. Mark form-first (#01/#04/#05) screenshot geometry **FAIL** on source `30d3f428`, not accepted by green jobs alone.
 - Fix `21efdf23` removes the false `nx-dose-form` class that switched the chooser into `nx2-dose-modal` fixed-height, no-padding layout. Regression `7bb4e07c` asserts 12px left clearance and 10px top clearance and correct non-dose modal class. Both-engine 320/390 light/dark LIVE/DEMO CI pending, screenshots must be reinspected.
