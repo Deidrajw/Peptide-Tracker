@@ -1,3 +1,8 @@
+## 2026-11-01 — Test-bearing source 3b3cb5dd writer and mobile PASS; visual runs pending
+- Exactly `3b3cb5dd`: mobile #41382408025 **SUCCESS**; shared writer #41382408038 **SUCCESS** including `chromium-real-two-tab`, `mixed-writer-p0-release-gate`, and `shared-writer` jobs. Prior `fb9d7c8f` two-tab #41382344475 failure remains relevant as intermittent/inconsistent evidence, not an unconditional safety acceptance. Broader P0 remains BLOCKING.
+- Same source Chromium build #41382408052, WebKit #41382408019 and nested #41382408187 **IN PROGRESS** at last check. Latest docs-only head does not change app/test source. Screenshot-by-screenshot visual approval, full 16-point matrix and physical iPhone acceptance NOT DONE.
+- ONE NEXT ACTION: settle Chromium/WebKit exact-source visual jobs, inspect 320/390 both themes screenshot overlays and original Open Vial geometry, and only then update acceptance status. PR remains draft, no merge/deploy, nasal LIVE gates OFF.
+
 ## 2026-11-01 — Toast overlap correction committed; exact-head visual approval pending
 - Previous Open Vial clipping fix `7bb4e07c`: Chromium #41377738544 release-artifacts/browser job **SUCCESS**; WebKit #41377738574 previously **SUCCESS**. Green geometry is not physical visual acceptance.
 - In `assets/js/04-nexus.js`, `fb9d7c8f` pauses the six-second reversible Undo toast whenever a foreground modal is open and restores its remaining lifetime on dismissal, avoiding transient overlap with Injectable/Nasal and other sheet controls. `3b3cb5dd` adds a real-browser formulation test for hidden-under-modal and restore-on-dismiss states. **Exact-head 3b3cb5dd tests pending; visually unaccepted**.
