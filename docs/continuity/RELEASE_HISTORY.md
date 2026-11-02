@@ -1,3 +1,6 @@
+## 2026-11-02 — PR124 optional-dose restrained typography (NOT RELEASED)
+- Draft candidate v0.9.20-beta: CSS 37e1aee0, regression f7111443, not merged/deployed. Replaced 20px optional heading with 14px/600 disclosure, checkbox copy 14px/500, preferences secondary 13px/500 while retaining main heading, storage/ledger/math/history. Exact CI and artifact QA in progress; physical #15 acceptance pending; release P0 blocking, nasal LIVE OFF.
+
 ## 2026-11-02 — Chromium #41517769157 verified successful; physical #15 acceptance remains pending
 - Exact application/test source ad7eb2e077654fd5388fe5da304b35c8fed8f251, main da585ab3458394ddf5e88e283b210933beeab810. GitHub workflow #41517769157 COMPLETED SUCCESS at 2026-11-02T20:27:07Z; build, 320/390 light/dark Chromium QA, full isolated DEMO/LIVE packaging and artifact upload passed.
 - Exact-source WebKit #41517769217, mobile #41517769155, nested #41517769200 SUCCESS; shared inventory writer #41517769232 CANCELLED, **not Pass**, P0 remains BLOCKING.
