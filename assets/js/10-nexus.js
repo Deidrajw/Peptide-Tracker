@@ -2253,7 +2253,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
  const options=[["nasal","Nasal"],["subq","SubQ"],["im","IM"],["other","Other"]];
  const kindName=kind=>options.find(o=>o[0]===kind)?.[1]||"Other";
  const m=openModal(`<section class="nx-form-stock-editor nx-prep-plan-sheet" aria-label="Vial preparation plan">
-  <div class="nx-form-stock-editor-head"><strong>${existing?"Preparation plan":"Plan a preparation"}</strong><button id="x" type="button" aria-label="Close preparation plan">✕</button></div>
+  <div class="nx-form-stock-editor-head"><strong>${existing?"Preparation plan":"Plan a preparation"}</strong><button id="x" class="nx-dose-close" type="button" aria-label="Close preparation plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
   <div class="nx-prep-plan-source">${kitName} · Vial ${number}</div>
   <div class="nx-prep-plan-state" role="status"><strong>${existing?"Preparation plan saved":"Planning only"}</strong><span>${existing?"Your vial inventory is unchanged. No prepared stock was created.":"Save what you're planning. Your vial inventory won't change until an actual preparation is recorded."}</span></div>
   <div id="nx-prep-plan-read" ${existing?"":"hidden"}>
@@ -2341,7 +2341,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
     <div class="nx-stash-method-sheet">
       <div class="nx-stash-method-header">
         <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2>How is this vial used?</h2><p>${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
-        <button type="button" id="nx-stash-method-close" aria-label="Close without changes">✕</button>
+        <button type="button" id="nx-stash-method-close" class="nx-dose-close" aria-label="Close without changes"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <p class="nx-stash-method-explain">This older vial has no saved product form. Choose its physical formulation, not the injection route of an individual dose. Confirming will not change remaining inventory or past history.</p>
       <fieldset class="nx-stash-method-choices"><legend>Product form</legend>
