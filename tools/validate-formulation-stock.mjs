@@ -21,6 +21,8 @@ try {
   },theme);
   const visualEvidence=[];
   const captureVisual=async(stage,selector)=>{
+    // Remove synthetic demo banner from screenshot-only visual sample.
+    await page.evaluate(()=>{const bar=document.querySelector('#demo-banner');if(bar)bar.style.display='none';});
     const shell=page.locator(selector).first();
     assert.ok(await shell.count()>0,'Missing visual target: '+stage);
     await shell.evaluate(el=>Promise.all(el.getAnimations({subtree:false}).map(a=>a.finished.catch(()=>{}))));
