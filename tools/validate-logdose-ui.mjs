@@ -320,7 +320,7 @@ try {
 
     // Administration form preserves six original routes plus Other; site selection and
     // method changes must keep native storage fields synchronised.
-    await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
+    await page.evaluate(()=>{state.supplies=[window.__fixtureKit(9101,6,1)];state.supplies[0].preparationMethod='';});
     await openDose(page);
     // DS2 #15: Additional dose options must be one legible, keyboard-reachable
     // disclosure in every narrow viewport/theme, without horizontal overflow.
