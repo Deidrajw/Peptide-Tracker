@@ -2602,7 +2602,11 @@ function openModal(innerHTML, color="#7DF9C0") {
   modalEl.querySelector(".modal").classList.add("nx-sheet");
   // Preserve original #x button/event identity while applying one visual and
   // accessible close control across product and legacy sheets alike.
-  modalEl.querySelectorAll(".modal button#x").forEach(button=>{
+  // Include legacy icon-only close controls that use a named ID rather
+  // than #x (e.g. Protocol Details / restore preview). Do not restyle text
+  // actions labelled "Close", or replace their click handlers.
+  modalEl.querySelectorAll('.modal button#x, .modal button[aria-label^="Close"]').forEach(button=>{
+    if(button.id!=="x"&&!/^[×✕✖✗X]$/.test((button.textContent||"").trim()))return;
     button.type="button";
     button.classList.add("nx-dose-close");
     if(!button.hasAttribute("aria-label"))button.setAttribute("aria-label","Close");
