@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 extra visual checkpoints, NOT RELEASED
+- Test-only `80c03bad` adds foreground Add Kit and Open Vial form-choice screenshots to both-engine 320/390 light/dark fictional LIVE/DEMO regression. `6309aabb` foreground picker/nasal WebKit #41373419369 PASS (artifact #13110630210, 96 images). Current-head screenshot CI unfinished. No application/source-ledger changes or release; PR draft, P0 BLOCKING, nasal LIVE OFF.
+
 ## 2026-11-01 — PR124 screenshot-capture evidence gate, NOT RELEASED
 - Exact application candidate `e3a34c27` passed Chromium #41367429266 / WebKit #41367429235 and three auxiliary workflows. Exact-source FULL DEMO and 26-source-file LIVE ZIP in Chromium artifact #13108271260 pass ZIP CRC; WebKit #13108320099 screenshot artifact retrieved. Visual audit found picker screenshots not reliably foreground, despite green tests. Test-only `6309aabb` adds target foreground/intersection assertions and paired screenshots (Chromium and WebKit); new-head CI pending. No app source/data, user data, production hosting or nasal feature gates altered; draft PR not merged.
 
