@@ -1879,7 +1879,7 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   const purpose=m.querySelector("#rv-purpose"),purposeNote=m.querySelector("#rv-purpose-note");
   const updatePurposeNote=()=>{
     purposeNote.textContent=purpose.value==="nasal-source"
-      ?"Nasal source only: this is still the original vial, not a nasal spray. To log sprays, a separately recorded and calibrated prepared bottle is required; the transfer workflow is not yet enabled."
+      ?(_demoActive?"Nasal source only: this is still the original vial, not a nasal spray. In this fictional DEMO, record an actual preparation and bottle transfer before logging sprays.":"Nasal source only: the original vial is not a ready-to-use spray. Live bottle transfers and spray logging remain disabled; no transfer or dose is recorded.")
       :purpose.value==="Injectable"
       ?"Injectable form: choose SubQ or IM separately for each administration in Log Dose. This does not establish IV suitability."
       :"This labels your physical stock; dose administration is recorded separately.";
