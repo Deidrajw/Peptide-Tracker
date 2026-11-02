@@ -627,6 +627,11 @@ try{
  {
    await a.reload({waitUntil:"domcontentloaded"});
    await a.waitForFunction(()=>typeof nexusCommitCurrentState==="function");
+   await a.evaluate(()=>{
+     state=JSON.parse(localStorage.getItem(STORE_KEY));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+     _nexusSharedWriter=null;
+   });
    const failed=await a.evaluate(async()=>{
      const original=Storage.prototype.setItem;
      const durable=localStorage.getItem(STORE_KEY);
