@@ -682,7 +682,12 @@ function nexusAdminMethod(value) {
   return nexusExplicitAdminMethod(value)||"SubQ";
 }
 function nexusAdminSites(method) {
-  return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
+  // Keep legacy stored site strings selectable; shorten only their visible labels.
+  // Mid-abdomen options restore the previously requested mid-stomach choices.
+  return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — mid-left","Abdomen — mid-right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
+}
+function nexusAdminSiteLabel(site) {
+  return String(site||"").replace(/\\s*\\((?:SubQ|IM)\\)$/,"");
 }
 
 /* PR124 additive use preferences: no migration or historical record mutation. */
@@ -1151,7 +1156,7 @@ function doseModal(name, existing, occTime, formChoice) {
       <div class="nx-dose-options-body">
         ${!isEdit?`<button id="nx-dose-use-setup" type="button" class="nx-dose-pref-link">Dose preferences · unit, tracking and usual source</button>`:""}
         <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
-        <p class="nx-dose-option-description">Record this dose without creating a protocol follow-up. Existing records are unaffected.</p>
+        
         <label class="nx-dose-option-check nx-dose-escalation-row"><input id="esc" type="checkbox"${f.escalation?" checked":""}><span>Mark as dose escalation</span></label>
       </div>
     </details>
@@ -1608,7 +1613,7 @@ function doseModal(name, existing, occTime, formChoice) {
   const refreshAdminSites=()=>{
     const options=nexusAdminSites(methodInput.value);
     const previous=siteInput.value||f.site||"";
-    siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(site)+'</option>').join("");
+    siteInput.innerHTML='<option value="">Not specified</option>'+options.map(site=>'<option value="'+esc(site)+'">'+esc(nexusAdminSiteLabel(site))+'</option>').join("");
     const sameRecordedMethod=methodInput.value===initialMethod;
     // Historical site text remains on the saved dose; incompatible sites are not selectable for the active method.
     siteInput.value=options.includes(previous)?previous:"";
