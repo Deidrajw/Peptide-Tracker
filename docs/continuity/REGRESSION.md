@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 active footer CTA selection regression
+- Old test `bfa46539` measured first `.nx-dose-footer .btn-primary` and incorrectly got hidden Entry action in Review; Chromium #41384577261 FAIL despite measured Review title, header, body and footer in bounds. `ddd6e42a` now finds `!hidden` and computed visible primary CTA, recording ID and rect. Exact-head Chromium outcome PENDING; not a product UAT pass.
+
 ## 2026-11-01 — Log Dose active Entry/Review scroll owner specificity
 - `bfa46539` improves `validate-logdose-ui.mjs` to evaluate `.nx-dose-scroll:not([hidden])` OR `.nx-dose-review-stage:not([hidden])`, rather than measuring a hidden Entry panel during Review. Both must stay inside fixed header/footer. CI PENDING; physical iOS keyboard remains NOT TESTED.
 
