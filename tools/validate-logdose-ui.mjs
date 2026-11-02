@@ -345,8 +345,9 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
-    // #15 is a styling request: verify actual computed UI font and theme
-    // colours against neighbouring Log Dose method buttons (not new copy).
+    // #15 physical iPhone rejected earlier 14px secondary typography. Verify
+    // 16px ordinary form-control readability, plus font/theme colour parity.
+    // The uppercase 12px method FIELD LABEL is not the comparison baseline.
     const typography=await optional.evaluate(el=>{
       const modal=el.closest('.nx2-dose-modal');
       const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
@@ -371,7 +372,7 @@ try {
       'Missing Log Dose controls for typography comparison: '+JSON.stringify(typography));
     for(const key of ['summary','label','preference']){
       ensure(typography[key].font===typography.method.font &&
-        typography[key].size==='14px'&&Number(typography[key].weight)===500&&
+        typography[key].size==='16px'&&Number(typography[key].weight)===500&&
         typography[key].color===typography.primary &&
         typography[key].transform==='none',
         'Additional dose options '+key+' must match sibling form controls: '+JSON.stringify(typography));
