@@ -2622,6 +2622,9 @@ function openModal(innerHTML, color="#7DF9C0") {
   if (modalEl.querySelector(".modal > .nx-dose-form")) modalEl.querySelector(".modal").classList.add("nx2-dose-modal");
   modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal("backdrop"); });
   document.body.appendChild(modalEl);
+  // A transient Undo action must not cover choices inside a foreground sheet.
+  // Keep its remaining lifetime available when the sheet is dismissed.
+  pauseUndoToast();
   applyNexusSheetStructure(modalEl.querySelector(".modal"));
   refineNexusSheet(modalEl.querySelector(".modal"));
   return modalEl.querySelector(".modal");
@@ -2637,6 +2640,7 @@ function closeModal(reason) {
   const staleValidation=document.getElementById("nx-validation-message");
   if(staleValidation)staleValidation.remove();
   modalEl.remove(); modalEl=null; nexusPriorFocus=null;
+  resumeUndoToast();
   if (prior && prior.isConnected && typeof prior.focus === "function") try { prior.focus({preventScroll:true}); } catch(e) {}
   if (typeof onDismiss === "function") onDismiss();
 }
@@ -2770,16 +2774,34 @@ function snoozeModal(id) {
 // ─── Universal undo toast ────────────────────────────────────────────────────
 // One shared snackbar for any reversible action. `undoFn` restores prior state and
 // re-renders; nothing else builds its own bespoke undo UI. Auto-dismisses after 6s.
-let toastEl = null, toastTimer = null;
+let toastEl = null, toastTimer = null, toastDeadline = 0, toastRemaining = 6000;
+function pauseUndoToast() {
+  if (!toastEl) return;
+  if (toastTimer) { clearTimeout(toastTimer); toastTimer=null; toastRemaining=Math.max(0,toastDeadline-Date.now()); }
+  toastEl.style.visibility="hidden";
+  toastEl.style.pointerEvents="none";
+  toastEl.setAttribute("aria-hidden","true");
+}
+function resumeUndoToast() {
+  if (!toastEl || modalEl) return;
+  toastEl.style.visibility="";
+  toastEl.style.pointerEvents="";
+  toastEl.removeAttribute("aria-hidden");
+  clearTimeout(toastTimer);
+  toastDeadline=Date.now()+toastRemaining;
+  toastTimer=setTimeout(()=>{if(toastEl){toastEl.remove();toastEl=null;}toastTimer=null;},toastRemaining);
+}
 function showUndoToast(message, undoFn) {
-  if (toastEl) { toastEl.remove(); clearTimeout(toastTimer); }
+  if (toastEl) { toastEl.remove(); clearTimeout(toastTimer); toastTimer=null; }
+  toastRemaining=6000;
   toastEl = h(`<div style="position:fixed;left:16px;right:16px;bottom:86px;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px #0006">
     <span style="font-size:12.5px;color:var(--t1)">${esc(message)}</span>
     <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;padding:4px 6px">UNDO</button>
   </div>`);
   toastEl.querySelector("#undo-btn").onclick = () => { clearTimeout(toastTimer); toastEl.remove(); toastEl=null; undoFn(); };
   document.body.appendChild(toastEl);
-  toastTimer = setTimeout(()=>{ if(toastEl){toastEl.remove();toastEl=null;} }, 6000);
+  if (modalEl) pauseUndoToast();
+  else resumeUndoToast();
 }
 
 // ─── Symptom picker (shared) ────────────────────────────────────────────────────
