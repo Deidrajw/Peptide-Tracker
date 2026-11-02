@@ -122,7 +122,13 @@ function supplyModal(existing, presetName, forceVials=false) {
   const originalTitle=m.querySelector(".nx-dose-title");
   if(originalTitle){
     const intro=document.createElement("p");intro.className="nx-kit-editor-intro";intro.textContent=existing?"Update kit details without changing vial quantities or history.":"Record a kit and its vial details. You can open a vial later.";
-    m.querySelector(".nx-dose-head").insertAdjacentElement("afterend",intro);
+    // Intro belongs in the scroll body, not between the header's title and X.
+    // Never allow wizard-stage reparenting to move the sheet header.
+    const editorBody=m.querySelector(".nx-unified-body")||m;
+    const header=editorBody.querySelector(":scope > .nx-dose-head");
+    const fixedHeader=m.querySelector(":scope > .nx-unified-header");
+    if(header&&fixedHeader){header.classList.add("nx-sheet-title-row");fixedHeader.appendChild(header);}
+    editorBody.prepend(intro);
   }
   const openLabel=m.querySelector("#shasopen")?.closest("label");
   if(openLabel)openLabel.classList.add("nx-kit-editor-open-toggle");
