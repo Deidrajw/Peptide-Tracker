@@ -865,6 +865,8 @@ try {
     await page.locator('[data-admin-method="IV"]').click();
     ensure(await page.locator('#nx-dose-method').inputValue()==='IV','IV route selection failed');
     ensure(await page.locator('#nx-dose-site-field').isHidden(),'IV must not show an injection site');
+    ensure(await page.locator('#nx-iv-method-note').isVisible(),
+      'IV must disclose its existing verified-source safety limitation');
     ensure(await page.locator('[data-admin-method="Nasal"]').count()===0,'Nasal route exposed on injectable source');
     ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,'Route selection mutated injectable stock');
     verified.push('source-conditional injectable routes and untouched nasal balance');
