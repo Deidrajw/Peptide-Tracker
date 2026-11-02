@@ -256,6 +256,12 @@ function stashView() {
     const preparedNasalMg=preparedNasalBottles.reduce((total,b)=>total+(Number(b.remainingMg)||0),0);
     const preparedNasalTransferred=preparedNasalBottles.length>0&&
       activeVialForCard?.intendedUse==="nasal-source"&&displayOpenMg!==null&&displayOpenMg<=0.000001;
+    // A confirmed source-to-bottle transfer is not an administered dose.
+    // Preserve physical vial remainingMg; present the linked, prepared balance
+    // prominently instead of marking the compound Empty when its source is zero.
+    const showsPreparedNasal = preparedNasalTransferred && preparedNasalMg>0;
+    const stockBadgeLabel=showsPreparedNasal?"Prepared":st.label;
+    const stockBadgeColor=showsPreparedNasal?"#A78BFA":st.color;
     const openCount = vialList.filter(v=>v.status==="active"||v.status==="open").length;
     const kitInventoryLabel = [sealed ? sealed+" sealed" : "", openCount ? openCount+" open" : "None open"].join(" · ");
     // Stash owns routine legacy method setup. Do not infer a method from the
@@ -274,14 +280,14 @@ function stashView() {
     return `<div class="card nx-kit-card nx-kit-condensed" data-kit-id="${s.id}" style="border-color:var(--border-sub);margin-bottom:12px;padding:12px 14px">
       <div class="nx-kit-heading nx-kit-heading-unified">
         <div class="nx-kit-compound-mark" style="background:${c.color}" aria-hidden="true"></div>
-        <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(st.label, st.color, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(st.label, st.color)}</span></span>
+        <span class="nx-kit-title-stack"><span class="nx-kit-card-title">${esc(s.name)}</span><span class="nx-card-status">${statusTappable?statusBadge(stockBadgeLabel, stockBadgeColor, {tappable:true, attrs:`class="toggleactivekit" data-id="${s.id}"`}):statusBadge(stockBadgeLabel, stockBadgeColor)}</span></span>
         <button type="button" class="manage-kit-btn nx-kit-header-manage" data-id="${s.id}" aria-label="Manage ${esc(s.name)} kit" title="Manage kit"><svg class="nx-unified-more-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
       </div>
       <div class="nx-kit-compact-context">${esc(kitDisambigLabel||((Number(s.vialMg)||0)+" mg/vial"))} · ${openCount} open${sealed?" · "+sealed+" sealed":""}</div>
       <div class="nx-kit-primary-vial">
-        <span class="nx-kit-overview-label">${displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
-        <div class="nx-kit-primary-value">${displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
-        ${preparedNasalBottles.length?`<div class="nx-kit-prepared-summary">Source vial ${displayOpenMg!==null?displayOpenMg.toFixed(2)+" mg remaining":"tracked separately"} · Prepared bottle ${preparedNasalMg.toFixed(2)} mg / ${preparedNasalMl.toFixed(2)} mL remaining (${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"}). Transferred stock is not lost or double-counted</div>`:""}
+        <span class="nx-kit-overview-label">${showsPreparedNasal?"PREPARED NASAL BOTTLE":displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
+        <div class="nx-kit-primary-value">${showsPreparedNasal?preparedNasalMg.toFixed(preparedNasalMg%1?1:0)+" mg":displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${showsPreparedNasal?"remaining in prepared bottle":displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
+        ${preparedNasalBottles.length?`<div class="nx-kit-prepared-summary">${showsPreparedNasal?"Transferred from source vial · ":"Source vial "+(displayOpenMg!==null?displayOpenMg.toFixed(2)+" mg remaining":"tracked separately")+" · "}Prepared bottle ${preparedNasalMg.toFixed(2)} mg / ${preparedNasalMl.toFixed(2)} mL remaining (${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"}). Transferred stock remains available until its recorded use</div>`:""}
         ${displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
@@ -348,7 +354,7 @@ function stashView() {
               return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
-                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${rem.toFixed(2)} mg left${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
+                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${v.intendedUse==="nasal-source"&&rem<=0.000001&&(state.formulationStocks||[]).some(b=>b.containerType==="nasal-bottle"&&b.recordedPreparation&&String(b.sourceVialId)===String(v.id)&&Number(b.remainingMg)>0)?"Transferred to prepared nasal bottle":rem.toFixed(2)+" mg remaining in vial"}${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
                   ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer").map(p=>`<div class="nx-stash-plan-status"><span>Plan saved · ${esc(p.kind||"Other")}</span><small>Vial inventory unchanged</small></div>`).join("")}
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
