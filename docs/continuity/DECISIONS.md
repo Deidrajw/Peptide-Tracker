@@ -1,3 +1,6 @@
+## 2026-11-02 — exact CSS computed parity correction, no redesign
+- Keep literal uppercase ADDITIONAL DOSE OPTIONS matching ADMINISTRATION METHOD and ADMINISTRATION SITE. Existing field labels have computed text-transform none. Corrected CSS text-transform from uppercase to none at 4fa74b8d while literal uppercase remains. Prior Chromium mismatch is not an invitation for new typography. Do not alter checkbox text, preferences, storage, event handlers, or gates. No merge/deploy approval.
+
 ## 2026-11-02 — binding screenshot correction: optional disclosure equals existing field label (supersedes earlier optional-heading prescriptions)
 - User explicitly requested same typography as ADMINISTRATION METHOD and ADMINISTRATION SITE for ADDITIONAL DOSE OPTIONS. No special 20px/14px section heading; use existing field-label appearance (actual 11px bold uppercase, inherited font, theme colour and letter spacing). This supersedes older conflicting heading rules for this disclosure only.
 - Preserve Dose preferences and checkbox copy/handlers, 48px tap rows, accessible keyboard focus, all saved data and inventory accounting. CSS commit ef723d61 scoped to the optional disclosure; no broader redesign or merge/deploy authorization. Final exact-head visual and real-iPhone acceptance pending.
