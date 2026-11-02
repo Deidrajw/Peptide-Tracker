@@ -217,7 +217,8 @@ try {
       const close=head?.querySelector('#x')?.getBoundingClientRect();
       return {sheetRight:bounds.right,sheetHeight:bounds.height,
         headerInside:!!hb&&hb.left>=bounds.left-2&&hb.right<=bounds.right+2&&hb.top>=bounds.top-2,
-        titleInside:!!title&&!!hb&&title.left>=hb.left+4&&title.right<=hb.right-4&&title.top>=hb.top-2,
+        titleInside:!!title&&!!hb&&title.left>=bounds.left+10&&title.right<=bounds.right-8&&
+          title.left>=hb.left-2&&title.right<=hb.right+2&&title.top>=hb.top-2,
         closeInside:!!close&&!!hb&&close.left>=bounds.left+4&&close.right<=bounds.right-4&&
           close.top>=hb.top-2&&close.bottom<=hb.bottom+2,
         headerCount:el.querySelectorAll('.nx-dose-head').length,
