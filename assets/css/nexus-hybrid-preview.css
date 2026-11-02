@@ -4358,11 +4358,11 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;
   color:var(--t2)!important;background:transparent!important;
-  border:0!important;border-bottom:1px solid var(--border-sub)!important;
-  padding:10px 0!important;border-radius:0!important;
-  margin:0 0 8px!important;min-height:48px!important;
+  border:0!important;border-bottom:0!important;
+  padding:4px 0!important;border-radius:0!important;
+  margin:0!important;min-height:48px!important;
 }
-.modal.nx2-dose-modal .nx-dose-options-body{padding:4px 0 8px!important;gap:2px!important}
+.modal.nx2-dose-modal .nx-dose-options-body{padding:0 0 4px!important;gap:0!important}
 
 /* Review is a completely SEPARATE second-stage scroll surface. Never override
    [hidden] with display:block!important; that exposed Step 2 inside Step 1. */
