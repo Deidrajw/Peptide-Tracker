@@ -1,3 +1,7 @@
+## 2026-11-02 — binding screenshot correction: optional disclosure equals existing field label (supersedes earlier optional-heading prescriptions)
+- User explicitly requested same typography as ADMINISTRATION METHOD and ADMINISTRATION SITE for ADDITIONAL DOSE OPTIONS. No special 20px/14px section heading; use existing field-label appearance (actual 11px bold uppercase, inherited font, theme colour and letter spacing). This supersedes older conflicting heading rules for this disclosure only.
+- Preserve Dose preferences and checkbox copy/handlers, 48px tap rows, accessible keyboard focus, all saved data and inventory accounting. CSS commit ef723d61 scoped to the optional disclosure; no broader redesign or merge/deploy authorization. Final exact-head visual and real-iPhone acceptance pending.
+
 ## 2026-11-02 — approved restrained optional Log Dose typography (replaces 20px matching heading)
 - User explicitly rejected making Additional dose options a primary 20px/750 heading. Correct target is 14px/600 disclosure, 14px/500 checkbox labels and smaller 13px/500 secondary Dose preferences action; same inherited Log Dose font, themed colours, 48px controls. Primary Your dose remains 20px/750, ADMINISTRATION SITE remains 11px uppercase field label. Do not equate hierarchy with identical size on all elements. Maintain keyboard-visible focus; avoid persistent pointer outline.
 - Preserve all option event handlers, vial identification, dose review, storage/history, physical form gating and nasal LIVE OFF. Do not merge or deploy without separate authorization.
