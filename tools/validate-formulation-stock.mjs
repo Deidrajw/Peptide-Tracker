@@ -673,7 +673,13 @@ try {
       const h=head?.getBoundingClientRect(),c=close?.getBoundingClientRect();
       const t=head?.querySelector('.nx-dose-title')?.getBoundingClientRect();
       const width=document.documentElement.clientWidth;
-      if(!h||!c||!t||t.top<0||t.left<-2||t.right>width+2||
+      const modalBounds=sheet?.getBoundingClientRect();
+      const kicker=head?.querySelector('.nx-dose-kicker')?.getBoundingClientRect();
+      const badShell=label==='Form-first Open Vial'&&sheet.classList.contains('nx2-dose-modal');
+      if(!h||!c||!t||!modalBounds||!kicker||badShell||
+        kicker.left<modalBounds.left+12||kicker.top<modalBounds.top+10||
+        t.left<modalBounds.left+12||c.right>modalBounds.right-8||
+        t.top<0||t.right>width+2||
         c.top<h.top-2||c.bottom>h.bottom+2||
         c.width<44||c.height<44||c.left<-2||c.right>width+2||
         document.documentElement.scrollWidth>width+2)
