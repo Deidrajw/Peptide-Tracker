@@ -1,3 +1,7 @@
+## 2026-11-02 — #15 Chromium visual-evidence harness correction
+- Chromium/build #41398827783 FAIL at `tools/validate-logdose-ui.mjs:389`: `visualEvidence` accessed before `const` initialization. Browser typography checks executed before screenshot assignment but the test aborted; this is harness failure, not product acceptance.
+- Corrected test-only on b4bd969c: exactly one `visualEvidence` per 320/390 × light/dark × LIVE/DEMO iteration, available before Additional dose options screenshot. Await exact-head rerun; mark #15 Chromium **NOT VERIFIED**, not Pass. WebKit #41398827760 SUCCESS. No physical iPhone/VoiceOver acceptance; mixed writer P0 remains blocking.
+
 ## 2026-11-02 — #15 exact font hierarchy acceptance gate
 - Test commit `566a2536` asserts computed Log Dose Additional dose options title 14px/650, checkbox labels 14px/500, helper 12px/400, same font family as method options, primary/secondary theme tokens and original single helper. Captures expanded disclosure screenshot per 320/390 × light/dark × LIVE/DEMO cell. Exact-head CI and screenshot inspection PENDING. Physical iPhone NOT TESTED, no merge/deploy.
 
