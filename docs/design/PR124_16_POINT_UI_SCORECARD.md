@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 browser review assertion correction
+- Chromium #41384577261 FAIL at Review 320 dark/live due to wrong hidden footer CTA selector, not verified clipping. `ddd6e42a` selects currently visible action; same-source full CI pending. Shared #04/#05 headers and #07/#08/#09/#16 remain incomplete for physical acceptance; no app source was modified.
+
 ## 2026-11-01 — #14 clipping test upgraded (new acceptance gate, not accepted)
 - `e301cafa` strengthens Log Dose entry/Review/Focused geometry across 320/390 light/dark LIVE/DEMO with in-sheet header/title, footer, visual viewport action and single scroll owner assertions. Corrected test syntax after predecessor `e0687dc8` failed preflight. No UI source change yet pending measured result, and all 16 remain physically unaccepted. Continue #14 before grouped shared header #04/#05/#07/#08/#09/#16.
 
