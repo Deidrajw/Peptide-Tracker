@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 Open Vial wrong modal shell fix (NOT RELEASED)
+- `21efdf23`: remove incorrect `nx-dose-form` marker on physical form-first Open Vial chooser, which had inherited fixed-height 0-padding dose shell and visibly clipped the left/top heading. `7bb4e07c`: add border-inset and wrong-shell assertions to Chromium/WebKit UI test. Source `30d3f428` all five CI green but screenshot review rejected clipping. Test at corrected head pending, no data/storage/inventory impact, no merge/deploy, P0 mixed writer blocking, nasal LIVE OFF.
+
 ## 2026-11-01 — PR124 extra visual checkpoints, NOT RELEASED
 - Test-only `80c03bad` adds foreground Add Kit and Open Vial form-choice screenshots to both-engine 320/390 light/dark fictional LIVE/DEMO regression. `6309aabb` foreground picker/nasal WebKit #41373419369 PASS (artifact #13110630210, 96 images). Current-head screenshot CI unfinished. No application/source-ledger changes or release; PR draft, P0 BLOCKING, nasal LIVE OFF.
 
