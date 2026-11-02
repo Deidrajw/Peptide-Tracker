@@ -1,3 +1,7 @@
+## 2026-11-01 — New Add Kit and form-first visual screenshots (pending)
+- `80c03bad` captures Add Kit Step 1 and Open Vial form-choice paired viewport and isolated-target screenshots with `captureVisual` foreground/viewport assertions. These specifically address user rejected header/progress order and warped form-choice page. Both engines × 320/390 × light/dark × LIVE/DEMO; new CI pending, no screenshot acceptance yet.
+- `6309aabb` WebKit #41373419369 PASS, 96 picker/nasal PNGs and 8 geometry JSON, representative screenshots visually inspected, shows actual list foreground rather than hidden background. Chromium source-head unresolved, physical iPhone/VoiceOver incomplete. Keep full 16-point matrix NOT COMPLETE and release P0 blocked.
+
 ## 2026-11-01 — foreground screenshot acceptance gate added
 - At `e3a34c27`, 5 CI workflows pass but picker viewport screenshots were not valid foreground proof (Chromium dimmed overlay and WebKit background Stash). Treat row #06 visual as **FAIL / retest pending**, not accepted. Previous JSON checked bounds, not visibility to the user.
 - Test-only `6309aabb` requires actual topmost target via `elementFromPoint`, active sheet, viewport intersection and readable visibility, and saves `_target.png` beside each picker/nasal full viewport PNG. Chromium/WebKit 320/390 dark/light LIVE/DEMO new-head CI pending; physical keyboard/VoiceOver and complete 16-point matrix not certified. App Stock source/bottle presentation from `e3a34c27` preserved; mixed-writer P0 blocking, nasal LIVE OFF; no merge/deploy.
