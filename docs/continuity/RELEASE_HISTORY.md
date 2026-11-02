@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 physical iPhone #15 accepted, still NOT RELEASED
+- Final application CSS 5ea01fd3: user-reported physical iPhone PASS for typography/spacing, disclosure/preferences, both checkboxes and light/dark. Automated five-way source-exact CI PASS (Chromium #41547092367; WebKit #41547092364; mobile #41547092333; nested #41547092384; writer #41547092346). Full-app fictional DEMO + 26-file LIVE ZIP canonical artifact #13190285462 CRC/source validated.
+- Data impact: no code-driven storage migration in this final spacing CSS change. Scope acceptance is not VoiceOver testing nor authorization to deploy. Draft PR124 unmerged and undeployed; nasal LIVE OFF. Pending explicit release approval and blocker assessment.
+
 ## 2026-11-02 — candidate v0.9.20-beta final spacing source, complete automated QA (NOT RELEASED)
 - PR124 draft: application CSS 5ea01fd3, main da585ab3. Dose preferences is regular weight and closer to its field-label header, with 44px+ action targets and 48px checkbox rows; no JS, localStorage, inventory, dose-history, migration, or nasal LIVE gate changes.
 - All five exact-source jobs SUCCESS: Chromium #41547092367, WebKit #41547092364, mobile #41547092333, DS2 nested #41547092384, shared-writer #41547092346 (P0 mixed writer + two-tab PASS).
