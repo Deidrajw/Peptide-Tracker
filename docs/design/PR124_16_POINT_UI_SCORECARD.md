@@ -1,3 +1,16 @@
+## 2026-11-01 — Engineering delta after consolidation; user-device signoff NOT CLAIMED
+**Source/test baseline:** application `1cc45e4622baa18250c3105c31990018946a12ef`; Chromium #41390039557 PASS, WebKit #41390039507 PASS, mobile #41390039506 PASS, nested #41390039533 PASS, writer #41390039503 PASS. Exact demo/live artifact #13117342031 CRC checked. This is not a physical iPhone UAT pass and P0 remains blocking.
+
+| Issue | Concrete improvement verified in this sprint | Remaining before closing |
+|---|---|---|
+| #02, #04 | Open Vial fields no longer use a forced three-column 320px layout; source-controlled responsive 2/1-column CSS `b44c4122` | Full legacy/site route walkthrough and actual 320px Open Vial editor visual approval |
+| #05 | All 3 remaining **shared Open Vial** close glyphs replaced by matched outline SVG `42ef2f71`; static source gate `694852b4` PASS in full CI | Whole 16-screen close alignment and physical taps |
+| #07, #14 | Existing capsule/spray review docks preserved; exact-head two-engine formulation tests PASS | Legacy/edit paths, iOS software keyboard, physical UAT |
+| #09, #12 | Actual nasal-preparation Review now uses an anchored action dock, one bounded summary scroll, visible consent and Confirm at 320/390 light/dark. **Real bug reproduced** on test `3d65617f`: Confirm at y=1081 for 844px viewport; corrected at `1cc45e46`. Chromium/WebKit screenshots manually inspected. Nominal qualification remains in Review `50f399ac` | Full legacy and physical iPhone acceptance |
+| #16 | Goal Details tabs now have roving focus, ArrowLeft/Right, Home/End and control relationships `86e3d242`; regression `4f005b47` passes Chromium full QA | Real iPhone safe-area/VoiceOver acceptance |
+
+**Not silently marked complete:** #01/#03/#06/#10/#13 previously CODED with focused/broad QA; #08 topical/raw form full visual parity, #11 historical nasal fallback, #15 optional-dose detailed physical UAT, #02 legacy-path inventory/route audits remain unresolved or partially verified. All 16 are still **physical UAT pending / previously rejected**. No merge or deploy permission. LIVE nasal gates remain OFF. Do not collapse "CODED" with "device ACCEPTED".
+
 ## 2026-11-01 — #14 WebKit corrected Review screenshots
 - #14 / #07 / #09: `d4b18b8` WebKit #41387143892 PASS, 320 dark and 390 light LIVE capsule/spray Review screenshots inspected: docked Edit/Confirm visible, header/close clear, summary scrolls. 320 capsule whole-viewport image confirms no actual left header clipping despite target-crop glyph artefact. Chromium same-source pending; physical UAT remains rejected/unaccepted. #14 PARTIAL, not release-ready.
 
