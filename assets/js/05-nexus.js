@@ -1013,7 +1013,7 @@ function doseModal(name, existing, occTime, formChoice) {
       nexusPhysicalForm(v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
         kit.preparationMethod||kit.administrationMethod||kit.route)==="Injectable"));
   const injectableEntry=!existing&&formChoice!=="legacy-route"&&
-    (formChoice==="vial"||injectableSourceConfirmed||useSetup?.form==="Injectable");
+    (formChoice==="vial"||injectableSourceConfirmed);
   const requestedMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
   const initialMethod=injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
