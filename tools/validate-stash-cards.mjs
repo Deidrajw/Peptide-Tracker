@@ -297,6 +297,30 @@ try{
     const vialOrder=await card(99002).locator('.nx-kit-vial-row .nx-kit-list-top strong').allTextContents();
     ensure(vialOrder.join('|')==='Vial 1|Vial 2|Vial 4|Vial 5',
       'Opened vial details must display numeric sequence order: '+JSON.stringify(vialOrder));
+    // Fictional mixed physical stock: source-specific numbers must remain distinct.
+    await page.evaluate(()=>{
+      state._stashSub='kits';state._stashFilter='all';state._stashGroup='none';
+      state.supplies=[{id:88001,name:'Selank',activeKit:true,totalVials:2,vialMg:10,bacMl:2,
+        _vialsBackfilled:true,_vialsRepaired:true,reconDate:'2026-10-20T09:00:00',
+        vials:[{id:88011,status:'open',intendedUse:'Injectable',vialMg:10,remainingMg:7,sequenceNumber:1,reconDate:'2026-10-20T09:00:00'},
+               {id:88012,status:'open',intendedUse:'nasal-source',vialMg:10,remainingMg:3,sequenceNumber:2,reconDate:'2026-10-20T09:00:00'}],
+        doseLog:[],wasteLog:[]}];
+      state.formulationStocks=[{id:'fictional-bottle',compound:'Selank',sourceKitId:88001,
+        containerType:'nasal-bottle',method:'Nasal',recordedPreparation:true,
+        remainingMg:2,remainingMl:4,mgPerSpray:0.05,mlPerSpray:0.1}];
+      render();
+    });
+    const mixed=card(88001),breakdown=mixed.locator('.nx-kit-source-breakdown');
+    ensure(await breakdown.count()===1,'Mixed physical stock breakdown missing');
+    const lines=await breakdown.innerText();
+    ensure(lines.includes('Injectable vials · 7.00 mg'),'Injectable stock incorrect: '+lines);
+    ensure(lines.includes('Nasal source vial · 3.00 mg'),'Nasal source incorrect: '+lines);
+    ensure(lines.includes('Prepared nasal bottle · 2.00 mg / 4.00 mL'),'Prepared bottle incorrect: '+lines);
+    ensure((await mixed.locator('.nx-kit-primary-value').innerText()).includes('7.00 mg'),'Mixed card primary balance must be injectable-only');
+    ensure(await mixed.locator('.nx-kit-prepared-summary').count()===1,'Mixed card repeats nasal stock summary');
+    ensure(await mixed.locator('.nx-kit-overview-track').count()===0,'Mixed card shows misleading single-vial progress');
+    ensure(await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg).join(',')+':'+state.formulationStocks[0].remainingMg)==='7,3:2','Stash render mutated stock');
+    ensure(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Mixed card horizontal overflow at mobile width');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
