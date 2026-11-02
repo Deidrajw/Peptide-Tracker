@@ -342,11 +342,11 @@ try{
       render();
     });
     const pending=card(88001);
-    ensure((await pending.locator('.nx-stash-go-vial-method').innerText()).trim()==='Confirm vial form',
-      'Unlabelled inventory must prioritize physical confirmation, not preferences');
+    ensure((await pending.locator('.nx-stash-go-vial-method').innerText()).trim()==='Identify vial form',
+      'Unlabelled inventory must prioritize the direct one-time physical-form action over preferences');
     await pending.locator('.nx-kit-detail-button').click();
-    ensure((await pending.locator('.nx-kit-detail-warning').innerText()).includes('Vial form not confirmed'),
-      'Physical-vial status warning missing');
+    ensure((await pending.locator('.nx-kit-detail-warning').innerText()).includes('Confirm the physical form'),
+      'Physical-vial status must explain why identification is needed');
     ensure(await pending.locator('.nx-kit-detail-panel > .nx-kit-detail-setup .nx-stash-use-setup').count()===0,
       'Optional preferences interrupt urgent vial status');
     ensure((await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').innerText()).trim()==='Dose preferences',
