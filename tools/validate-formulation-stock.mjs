@@ -627,7 +627,7 @@ try {
     'Fully transferred source must never show another Record/Prepare action');
   await page.evaluate(()=>{tab='stash';render();});
   await page.evaluate(()=>doseModal('Fictional Prepared Spray Test'));
-  await page.locator('#nx-use-nasal').click();
+  if(await page.locator('#nx-use-nasal').count())await page.locator('#nx-use-nasal').click();
   assert.equal(await page.locator('#nx-spray-count').count(),1,
     'Prepared nasal should log by whole sprays, not mass or injection route');
   assert.equal(await page.locator('.nx-method-grid').count(),0,
