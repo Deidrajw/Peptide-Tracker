@@ -1,3 +1,7 @@
+## 2026-11-01 — #14 active-scroll correction; Chromium rerun
+- After `e301cafa` 320/390 Entry/Review clipping-gate implementation, static code review confirmed Review lives in a sibling `.nx-dose-review-stage` while Entry `.nx-dose-scroll` is hidden. `bfa46539` corrects the test to measure the currently visible scroll owner in either stage; no application UI/data changes. Build/browser #41384577261 initiated, final exact-head result pending. This is test correctness work, not #14 physical closure.
+- Preserve primary next action: collect exact-head Chromium #41384577261, then inspect screenshots and fix any genuinely clipped case; only then consolidate shared headers #04/#05/#07/#08/#09/#16. PR draft, no merge/deploy, P0 BLOCKING and LIVE nasal gates OFF.
+
 ## 2026-11-01 — #14 Log Dose clipping: stronger exact-geometry gate (IN PROGRESS)
 - Main reverified `da585ab3`. Test source `e301cafa` extends Chromium LIVE/isolated-DEMO Log Dose Entry, Focused and Review checks at 320/390 dark/light to assert header/title inside sheet, one scrollable body, accessible 44px+ footer action within visual viewport, no competing modal scroll, and no clipped close/footer. No application CSS/JS changed; `e0687dc8` initial test commit had syntax FAIL in CI #41384282835; corrected `e301cafa` passes syntax/package steps.
 - `e301cafa` mobile #41384357789 SUCCESS, shared writer #41384357924 SUCCESS; Chromium build #41384357818 browser step running; WebKit #41384357800, nested #41384357788 in progress last observed. No new #14 visual PASS asserted. No iPhone/VoiceOver test.
