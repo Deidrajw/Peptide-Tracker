@@ -417,7 +417,8 @@ try {
     ensure(await page.locator('#nx-nasal-method-note').isVisible(),
       'Nasal guidance did not appear within administration fields');
     // #02: Non-injectable methods must never expose an irrelevant site.
-    for(const nonInjection of ['Nasal','Oral','Topical','IV','Other']){
+    // Exercise IV last: choosing an injectable physical source correctly narrows the available methods.
+    for(const nonInjection of ['Nasal','Oral','Topical','Other','IV']){
       await page.locator('.nx-method-option[data-admin-method="'+nonInjection+'"]').click();
       ensure(await page.locator('#nx-dose-method').inputValue()===nonInjection,
         nonInjection+' selection did not update canonical method');
