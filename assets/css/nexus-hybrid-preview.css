@@ -4233,3 +4233,33 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   width:min(100%,560px)!important;min-width:0!important;
   border-radius:24px 24px 0 0!important;
 }
+
+/* PR124 #14 — capsule and prepared-spray Review: pinned actions, one scroll owner.
+   Entry remains naturally compact. Only an expanded Review uses viewport height. */
+.modal.nx-form-log-sheet:has(#nx-capsule-confirm:not([hidden]),#nx-spray-confirm:not([hidden])){
+  display:flex!important;flex-direction:column!important;overflow:hidden!important;
+  height:min(92dvh,840px)!important;max-height:min(92dvh,840px)!important;
+}
+.modal.nx-form-log-sheet:has(#nx-capsule-confirm:not([hidden]),#nx-spray-confirm:not([hidden])) > .nx-dose-form{
+  display:flex!important;flex-direction:column!important;
+  flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;
+}
+.modal.nx-form-log-sheet:has(#nx-capsule-confirm:not([hidden]),#nx-spray-confirm:not([hidden])) .nx-dose-head{
+  flex:0 0 auto!important;
+}
+.modal.nx-form-log-sheet :is(#nx-capsule-confirm,#nx-spray-confirm):not([hidden]){
+  display:flex!important;flex-direction:column!important;
+  flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;
+}
+.modal.nx-form-log-sheet :is(#nx-capsule-confirm,#nx-spray-confirm):not([hidden]) :is(#nx-capsule-summary,#nx-spray-summary){
+  flex:1 1 0%!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  scroll-padding-bottom:20px;
+}
+.modal.nx-form-log-sheet :is(#nx-capsule-confirm,#nx-spray-confirm):not([hidden]) :is(.nx-dose-back,.btn-primary){
+  flex:0 0 auto!important;min-height:48px!important;
+}
+.modal.nx-form-log-sheet:has(#nx-spray-confirm:not([hidden])) .nx-prepared-spray-entry > .hint{
+  flex:0 0 auto!important;margin:8px 0 0!important;
+}
