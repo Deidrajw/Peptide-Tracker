@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 screenshot-capture evidence gate, NOT RELEASED
+- Exact application candidate `e3a34c27` passed Chromium #41367429266 / WebKit #41367429235 and three auxiliary workflows. Exact-source FULL DEMO and 26-source-file LIVE ZIP in Chromium artifact #13108271260 pass ZIP CRC; WebKit #13108320099 screenshot artifact retrieved. Visual audit found picker screenshots not reliably foreground, despite green tests. Test-only `6309aabb` adds target foreground/intersection assertions and paired screenshots (Chromium and WebKit); new-head CI pending. No app source/data, user data, production hosting or nasal feature gates altered; draft PR not merged.
+
 ## 2026-11-01 — PR124 Add Kit title capitalization follow-up (NOT RELEASED)
 - `1fde47f8` restores `Add Kit`/`Edit Kit` title casing in draft modal shell. UI text only, no saved-data impact. CI/physical acceptance outstanding; no merge/deploy; P0 writer blocking; LIVE nasal gates OFF.
 
