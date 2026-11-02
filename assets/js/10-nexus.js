@@ -2361,8 +2361,8 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
   const n=vial.sequenceNumber||"?";
   const m=openModal(`
     <div class="nx-stash-method-sheet">
-      <div class="nx-stash-method-header">
-        <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2>How is this vial used?</h2><p>${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
+      <div class="nx-stash-method-header nx-dose-head nx-shared-sheet-header">
+        <div><div class="nx-dose-kicker">STASH · VIAL SETUP</div><h2 class="nx-dose-title">How is this vial used?</h2><p class="nx-dose-subtitle">${esc(kit.name)} · Vial ${esc(String(n))}</p></div>
         <button type="button" id="nx-stash-method-close" class="nx-dose-close" aria-label="Close without changes"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <p class="nx-stash-method-explain">This older vial has no saved product form. Choose its physical formulation, not the injection route of an individual dose. Confirming will not change remaining inventory or past history.</p>
