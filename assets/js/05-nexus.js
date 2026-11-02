@@ -1021,7 +1021,8 @@ function doseModal(name, existing, occTime, formChoice) {
   const injectableEntry=!existing&&formChoice!=="legacy-route"&&
     (formChoice==="vial"||injectableSourceConfirmed);
   const requestedMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
-  const initialMethod=injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
+  const initialMethod=formChoice==="oral-vial"?"Oral":injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
+  const selectableMethods=injectableEntry?["SubQ","IM","IV"]:formChoice==="oral-vial"?["Oral"]:NEXUS_ADMIN_METHODS;
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
     (["mg","mcg"].includes(useSetup?.unit)?useSetup.unit:c.unit);
   const massSelectable=["mg","mcg"].includes(c.unit);
@@ -1137,9 +1138,9 @@ function doseModal(name, existing, occTime, formChoice) {
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD · THIS DOSE</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
-      ${(injectableEntry?["SubQ","IM","IV"]:NEXUS_ADMIN_METHODS).map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
+      ${selectableMethods.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
-    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${(injectableEntry?["SubQ","IM","IV"]:NEXUS_ADMIN_METHODS).map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
+    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${selectableMethods.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
     <div id="nx-dose-site-field"><label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select></div>
     <p id="nx-iv-method-note" role="status" class="nx-nasal-method-note"${initialMethod==="IV"&&!isUntracked?"":" hidden"}>IV is listed as an administration method, but stock-backed IV logging is not enabled without an independently verified source.</p>
