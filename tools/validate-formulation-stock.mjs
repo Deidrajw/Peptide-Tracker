@@ -89,6 +89,7 @@ try {
   assert.ok(kitHeader.head&&kitHeader.intro&&kitHeader.progress&&kitHeader.ordered&&
     kitHeader.close&&kitHeader.height>=44&&kitHeader.aligned&&kitHeader.scroll<=kitHeader.viewport+2,
     'Add Kit sheet header/intro/progress order or close alignment: '+JSON.stringify(kitHeader));
+  await captureVisual('add-kit-first-step','.modal.nx-stash-kit-editor');
   await page.locator('#nx-kit-combobox-input').fill('SLU-PP-332');
   assert.equal(await page.locator('#nx-kit-combobox-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
     'SLU-PP-332 must now resolve as a curated compound');
@@ -475,6 +476,7 @@ try {
       preparationMethod:null,vials:[{id:'one-step-sealed',sequenceNumber:1,status:'sealed',vialMg:5,expectedMg:5,remainingMg:5}]});
     openNewVialModal(990405);
   });
+  await captureVisual('open-vial-form-choice','.modal.nx-open-vial-choice-sheet');
   assert.equal(await page.locator('.nx-open-vial-form-options button').count(),2,
     'Open New Vial first step must have only Injectable and Nasal');
   assert.equal(await page.locator('#rv-bacml').count(),0,
