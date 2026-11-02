@@ -2242,7 +2242,7 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-stash-set-vial-method{min-height:44px;padding:8px 12px;border:1px solid var(--border-sub);border-radius:10px;background:var(--surface-2);color:var(--t1);font-size:12px;font-weight:650}
 .nx-stash-method-sheet{padding:8px 2px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
 .nx-stash-method-header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
-.nx-stash-method-header h2{font-family:inherit;font-size:25px;line-height:1.16;font-weight:750;letter-spacing:-.035em;color:var(--t1);margin:7px 0 6px}
+.nx-stash-method-header h2{font-family:inherit;font-size:20px;line-height:1.25;font-weight:750;letter-spacing:-.025em;color:var(--t1);margin:4px 0}
 .nx-stash-method-header p{font-size:14px;line-height:1.45;color:var(--t3);margin:0}
 .nx-stash-method-explain{font-size:13px;line-height:1.5;color:var(--t3);margin:0;max-width:44ch}
 .nx-stash-method-header button{min-width:44px;min-height:44px;border:0;border-radius:10px;background:var(--surface-2);color:var(--t2)}
