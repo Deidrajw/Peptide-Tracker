@@ -1,3 +1,8 @@
+## 2026-11-01 — Open Vial visual FAIL despite all-five green CI
+- Viewed Chromium #41374399340 and WebKit #41374399303 screenshot artifacts: Add Kit first-step title/close → intro → progress looks correctly ordered at 320px in both themes; Open Vial form-choice heading/eyebrow is flush against or clipped by rounded sheet border at 320px. Mark form-first (#01/#04/#05) screenshot geometry **FAIL** on source `30d3f428`, not accepted by green jobs alone.
+- Fix `21efdf23` removes the false `nx-dose-form` class that switched the chooser into `nx2-dose-modal` fixed-height, no-padding layout. Regression `7bb4e07c` asserts 12px left clearance and 10px top clearance and correct non-dose modal class. Both-engine 320/390 light/dark LIVE/DEMO CI pending, screenshots must be reinspected.
+- 16×16 full matrix, clean fixture toast, physical iPhone keyboard/VoiceOver and P0 writer acceptance still incomplete; LIVE nasal OFF; no merge/deploy.
+
 ## 2026-11-01 — New Add Kit and form-first visual screenshots (pending)
 - `80c03bad` captures Add Kit Step 1 and Open Vial form-choice paired viewport and isolated-target screenshots with `captureVisual` foreground/viewport assertions. These specifically address user rejected header/progress order and warped form-choice page. Both engines × 320/390 × light/dark × LIVE/DEMO; new CI pending, no screenshot acceptance yet.
 - `6309aabb` WebKit #41373419369 PASS, 96 picker/nasal PNGs and 8 geometry JSON, representative screenshots visually inspected, shows actual list foreground rather than hidden background. Chromium source-head unresolved, physical iPhone/VoiceOver incomplete. Keep full 16-point matrix NOT COMPLETE and release P0 blocked.
