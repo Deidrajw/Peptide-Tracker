@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 real Review action accessibility failure and pinned-dock candidate
+- WebKit `bb213bb7` #41386559560 PASS geometry but inspected capsule and prepared spray 320px Review images showed final actions below viewport; 390 light spray Review also not showing Confirm. This is genuinely OPEN UI failure, not a test false positive. CSS `9d409122` bounds Review and docks Back+Confirm, preserving compact Entry; test `d4b18b8` asserts fixed actionable viewport and single summary scroll owner in all 16 engine/build/theme/width cells. Latest CI/screenshots/physical UAT **PENDING**.
+
 ## 2026-11-01 — Shared capsule/prepare spray header audit corrected
 - Test-only `9b9e6ca0` both engines FAIL at artificial title-in-header +4px inset assertion; header and close were within sheet, no 320px overflow. `bb213bb7` corrects measure to border clearance ≥10px. New screenshots/CI pending, all #04/#05/#07/#09/#14 physical acceptance still OPEN.
 
