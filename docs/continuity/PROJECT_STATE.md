@@ -1,3 +1,9 @@
+## 2026-11-02 — mixed-source Stash + injectable Log Dose QA candidate (NOT RELEASED)
+- Verified draft PR124 head 76ddd1c1; main baseline da585ab3. Existing concurrent branch commit 7144fa0d already implemented source-separated mixed Stash values: injectable open-vial mg, nasal-reserved source mg, prepared nasal bottle mg/mL. Commit 3889f729 removes duplicate bottle summary and single-vial progress bar for mixed cards; no stored data changed.
+- Test commit fbf8c173 adds fictional mixed-inventory Stash card assertions for exact 7mg injectable, 3mg nasal source and 2mg/4mL prepared bottle, no mutation, no overflow in existing LIVE/DEMO 320/390 light/dark matrix. Test commit 76ddd1c1 adds source-conditional injectable Log Dose route tests for SubQ/IM/IV, hidden IV site, no Nasal option and no stock change in existing 320/390 light/dark matrix.
+- Exact-head CI runs #41410928002 (build), #41410927982 (mobile), #41410928030 (WebKit), #41410927929 (nested), #41410928469 (writer) IN PROGRESS at time of documentation; no PASS claimed. Standalone artifacts and physical iPhone acceptance NOT VERIFIED. P0 release BLOCKING; nasal LIVE OFF; PR draft, no merge/deploy.
+- ONE NEXT ACTION: retrieve exact-head CI results and failed-job logs if any; inspect matching full-app DEMO/LIVE artifact and 320/390 screenshots; resolve failures before release consideration.
+
 ## 2026-11-02 — injectable route restriction in progress (NOT RELEASED)
 - App commit 379f60eb: when new physical vial Log Dose uses formChoice=vial, route buttons and native selector are limited to SubQ, IM, IV; within-family changes remain in sheet. Historical edits retain original route. No inventory/data migration.
 - Mobile form workflow #41410285193 SUCCESS; other exact-source CI jobs pending at time of this note. No dedicated new source-conditional browser regression yet: acceptance INCOMPLETE.
