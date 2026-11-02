@@ -114,4 +114,9 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   console.log('PASS Chromium real two-tab exclusive locking, stale rejection, durable fresh save, stock/history/settings preservation, failed write');
   await context.close();
  }finally{await browser.close()}
-})().catch(e=>{console.error(e);process.exitCode=1});
+})().then(()=>{
+ // Run the real application-handler prepared-dose Undo regression in the SAME
+ // required Chromium CI job. The separate script uses fresh fictional browser
+ // contexts and the already running 8777 static server; failures fail this job.
+ require('node:child_process').execFileSync(process.execPath,['tools/validate-cross-tab-lock.mjs'],{stdio:'inherit'});
+}).catch(e=>{console.error(e);process.exitCode=1});
