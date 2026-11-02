@@ -434,6 +434,8 @@ try {
     // Preserve screenshots/geometry so visual reviewers can inspect actual
     // entry, focused-field, and Review states for every width/theme/build.
     const captureDose=async(label)=>{
+    // Remove synthetic demo banner from screenshot-only visual sample.
+    await page.evaluate(()=>{const bar=document.querySelector('#demo-banner');if(bar)bar.style.display='none';});
       const metrics=await doseViewport(label);
       const filename='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_'+label.toLowerCase()+'.png';
       await page.screenshot({path:path.join('dist',filename),fullPage:false});
