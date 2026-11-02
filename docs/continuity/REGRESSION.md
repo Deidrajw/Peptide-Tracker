@@ -1,3 +1,8 @@
+## 2026-11-02 — #15 visual hierarchy physical FAIL, canonical heading/control regression added
+- Prior physical UAT screenshot: Additional dose options, Dose preferences and checkboxes all 16px same regular visual importance, unlike the adjacent “Your dose” heading and labelled dose inputs. Browser font-family/size parity PASS was insufficient; #15 remains physical FAIL.
+- Commit db81ebfe CSS shares the exact “Your dose” section heading rule with “Additional dose options”; preference uses secondary type, checkboxes normal form input type, 48px touch rows, primary/secondary theme tokens. Commit afe63da3 changes Chromium assertions to compare actual heading/inputs and includes visual screenshot evidence at 320/390, light/dark, LIVE and isolated DEMO. Check expand/collapse, state persistence, save math, review separation and source inventory unchanged.
+- CI for afe63da3 started; mobile and shared writer PASS at last check, others pending; physical iPhone & VoiceOver NOT TESTED. No merge/deploy, P0 blocker and LIVE nasal OFF.
+
 ## 2026-11-02 — second physical iPhone UAT: four failures; corrected upstream (PR #124 DRAFT)
 - Physical focused UAT: typography FAIL, raw selector FAIL, topical selector FAIL, Review FAIL; validation PASS, vial setup PASS. iPhone/device version unspecified. Screenshot evidence in chat.
 - Regression tests now cover raw/topical names ABSENT from actual Today selector, usable capsule present and exact-form entry, mixed raw + injectable eligibility, matching summary/checkbox/preference computed font-family/size/color versus main Log Dose form, Review hidden STEP 1/visible STEP 2, Back hides again, no inventory mutation until confirmed, 320/390 light/dark LIVE-source and fictional DEMO.
