@@ -1,3 +1,6 @@
+## 2026-11-01 — #04/#05/#07/#09/#14 cross-form header and review evidence gate
+- `9b9e6ca0` adds explicit capsule + prepared spray Log Dose Entry/Review screenshots and per-sheet shared header/close inset checks, Chromium/WebKit × 320/390 × light/dark × LIVE/DEMO. Both engines' new-head results PENDING. Do not treat earlier normal injectable 8/8 PASS as all #14 acceptance. No new UI/CSS changes, real iPhone still pending.
+
 ## 2026-11-01 — #14 normal injectable Entry/Review browser gate PASSED, broader scope remains PARTIAL
 - Corrected test source `ddd6e42a`, Chromium #41385255742 PASS 8/8 fictional LIVE/isolated DEMO 320/390 dark/light; 24 PNG captures and JSON; manually inspected 4 LIVE Review screenshots; no clipping observed in these specific cases. Other capsule/prepared nasal/edit sheets, physical iOS keyboard and real iPhone UAT remain OPEN. Thus #14 still **PARTIAL**, not physical PASS.
 - #01/#04/#05 WebKit #41385255709 screenshot target 320/390 both themes inspected; form-first title, two choices and X stay clear of rounded border. No blanket 16-point acceptance. Proceed with grouped shared header #04/#05/#07/#08/#09/#16.
