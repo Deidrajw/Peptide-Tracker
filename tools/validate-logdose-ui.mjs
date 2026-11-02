@@ -378,6 +378,16 @@ try {
     await page.locator('.nx-method-option[data-admin-method="Nasal"]').click();
     ensure(await page.locator('#nx-nasal-method-note').isVisible(),
       'Nasal guidance did not appear within administration fields');
+    // #02: Non-injectable methods must never expose an irrelevant site.
+    for(const nonInjection of ['Nasal','Oral','Topical','IV','Other']){
+      await page.locator('.nx-method-option[data-admin-method="'+nonInjection+'"]').click();
+      ensure(await page.locator('#nx-dose-method').inputValue()===nonInjection,
+        nonInjection+' selection did not update canonical method');
+      ensure(await page.locator('#nx-dose-site-field').isHidden() &&
+        await page.locator('#site').isDisabled() &&
+        await page.locator('#site').inputValue()==='',
+        nonInjection+' must hide, disable and clear irrelevant administration site');
+    }
     await page.locator('.nx-method-option[data-admin-method="SubQ"]').click();
     ensure(await page.locator('#nx-nasal-method-note').isHidden(),
       'Nasal guidance persisted after switching out of nasal mode');
