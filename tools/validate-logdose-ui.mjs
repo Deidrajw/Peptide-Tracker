@@ -921,11 +921,41 @@ try {
     await page.locator('#nx-dose-entered').fill('5');
     ensure(await page.locator('#nx-validation-message').count()===0,
       'Missing-amount warning persisted after valid input');
-    const optionType=await page.locator('.nx-dose-more-options>summary').evaluate(el=>getComputedStyle(el).fontSize);
-    ensure(optionType==='16px','Additional dose options not main-form text size: '+optionType);
+    const typeSystem=await page.evaluate(()=>{
+      const summary=document.querySelector('.nx-dose-more-options>summary');
+      const checkbox=document.querySelector('.nx-dose-option-check>span');
+      const preference=document.querySelector('.nx-dose-pref-link');
+      const normal=document.querySelector('#nx-dose-entered');
+      const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
+      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),normal:sample(normal)};
+    });
+    for(const key of ['summary','checkbox','preference']){
+      ensure(typeSystem[key].family===typeSystem.normal.family,
+        key+' font differs from main Log Dose: '+JSON.stringify(typeSystem));
+      ensure(typeSystem[key].size===typeSystem.normal.size,
+        key+' font size differs from main Log Dose: '+JSON.stringify(typeSystem));
+      ensure(typeSystem[key].color===typeSystem.normal.color,
+        key+' text colour differs from main Log Dose: '+JSON.stringify(typeSystem));
+    }
+    ensure(await page.locator('.nx-dose-review-stage').isHidden(),
+      'STEP 2 REVIEW LEAK: Review visible inside Step 1');
+    ensure(await page.locator('.nx-dose-scroll').isVisible(),
+      'Step 1 entry should be visible before Review');
     await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-review-stage').isVisible(),
+      'Review must appear only after requesting Step 2');
+    ensure(await page.locator('.nx-dose-scroll').isHidden(),
+      'Step 1 form leaked into Step 2');
     ensure(await page.locator('#nx-dose-review-amount').innerText()==='5 mg',
       'Review did not reflect newly entered valid amount');
+    ensure(await page.locator('#nx-dose-review-rows .nx-dose-confirm-row').count()>=3,
+      'Second-step review detail rows missing');
+    await page.locator('#nx-dose-review-back').click();
+    ensure(await page.locator('.nx-dose-review-stage').isHidden(),
+      'Review remained visible after returning to Step 1');
+    ensure(await page.locator('.nx-dose-scroll').isVisible(),
+      'Step 1 missing after Edit details');
+    await page.locator('#nx-dose-review-open').click();
     const spacing=await page.evaluate(()=>{
       const hero=document.querySelector('.nx-dose-confirm-hero').getBoundingClientRect();
       const rows=document.querySelector('#nx-dose-review-rows').getBoundingClientRect();
@@ -935,7 +965,7 @@ try {
     ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
       'Review without Confirm mutated an injectable vial');
     await page.evaluate(()=>closeModal());
-    verified.push('positive amount clears stale warning, 16px options, compact review and no write before confirm');
+    verified.push('live validation, exact Log Dose font/colour/size parity, isolated Step 1/2 and no write before confirm');
     await seed(page,theme);
     await page.evaluate(()=>{
       const kit=window.__fixtureKit(952,9);
@@ -955,6 +985,50 @@ try {
       'Opening physical-form choice debited an unlabelled vial');
     await page.evaluate(()=>closeModal());
     verified.push('direct one-time unlabelled vial choice with no debit or unrelated CTA');
+    // Today dropdown itself, NOT only the downstream dose form, excludes
+    // stocked raw powder / topical without a separately usable physical form.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[];
+      state.formulationStocks=[
+        {id:'fixture-powder',compound:'AHK-Cu',containerType:'raw-powder',remainingMg:100},
+        {id:'fixture-topical',compound:'SNAP-8',containerType:'topical-container',remainingMl:50},
+        {id:'fixture-capsule',compound:'Retatrutide',containerType:'capsule-bottle',
+          remainingCount:30,mgPerCapsule:5}
+      ];
+      todayLogDosePicker();
+    });
+    const onlyOptions=await page.locator('#today-dose-compound option').allTextContents();
+    ensure(!onlyOptions.includes('AHK-Cu'),
+      'Today Log Dose picker lists powder-only AHK-Cu: '+onlyOptions.join('|'));
+    ensure(!onlyOptions.includes('SNAP-8'),
+      'Today Log Dose picker lists topical-only SNAP-8: '+onlyOptions.join('|'));
+    ensure(onlyOptions.includes('Retatrutide'),
+      'Usable capsules should remain loggable in Today');
+    await page.locator('#today-dose-compound').selectOption({label:'Retatrutide'});
+    await page.locator('#today-dose-single').click();
+    ensure(await page.locator('.nx-capsule-dose-sheet').count()+
+      await page.locator('.nx-capsule-dose-form').count()>0 ||
+      await page.locator('#nx-capsule-dose-count').count()>0,
+      'Today capsule selection fell through to generic injectable dose');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===100,
+      'Choosing a capsule touched raw powder inventory');
+    await page.evaluate(()=>closeModal());
+    verified.push('Today selector hides powder-only/topical-only; usable capsule routes to exact form');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(953,8)];
+      state.supplies[0].name='AHK-Cu';
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      state.formulationStocks=[{id:'raw-mixed',compound:'AHK-Cu',
+        containerType:'raw-powder',remainingMg:100}];
+      todayLogDosePicker();
+    });
+    const mixedOptions=await page.locator('#today-dose-compound option').allTextContents();
+    ensure(mixedOptions.includes('AHK-Cu'),
+      'Valid injectable vial should remain selectable despite unrelated raw stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('mixed raw powder plus independently usable injectable remains discoverable');
     ensure(errors.length===0,'Browser JS errors: '+errors.join(' | '));
     results.push({width,theme,kind,status:'PASS',verified,visualEvidence});
     await context.close();
