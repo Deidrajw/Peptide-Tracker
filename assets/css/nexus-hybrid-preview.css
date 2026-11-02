@@ -3804,8 +3804,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .modal.nx2-dose-modal .nx-dose-more-options>summary{
   display:flex;align-items:center;justify-content:space-between;
   min-height:48px!important;cursor:pointer;list-style:none;
-  color:var(--t1)!important;font-family:'DM Sans',-apple-system,sans-serif!important;
-  font-weight:500!important;font-size:15px!important;line-height:1.5!important;
+  color:var(--t1)!important;font-family:inherit!important;
+  font-weight:500!important;font-size:16px!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;
 }
 .modal.nx2-dose-modal .nx-dose-more-options>summary::-webkit-details-marker{display:none}
@@ -3823,8 +3823,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .modal.nx2-dose-modal .nx-dose-option-check{
   display:flex!important;align-items:center!important;gap:12px!important;
   min-height:48px!important;color:var(--t1)!important;
-  font-family:'DM Sans',-apple-system,sans-serif!important;
-  font-size:15px!important;font-weight:500!important;line-height:1.5!important;
+  font-family:inherit!important;
+  font-size:16px!important;font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;margin:0!important;
   cursor:pointer;
 }
@@ -4340,8 +4340,8 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
    overrides. This is ordinary body/field text, not a special miniature form. */
 .modal.nx2-dose-modal .nx-dose-more-options .nx-dose-option-check>span,
 .modal.nx2-dose-modal .nx-dose-more-options .nx-dose-pref-link{
-  font-family:'DM Sans',-apple-system,sans-serif!important;
-  font-size:15px!important;font-weight:500!important;line-height:1.5!important;
+  font-family:inherit!important;
+  font-size:16px!important;font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;color:var(--t1)!important;
 }
 .modal.nx2-dose-modal .nx-dose-pref-link{
