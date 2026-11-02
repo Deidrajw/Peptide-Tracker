@@ -258,7 +258,7 @@ function stashView() {
     const nasalReservedMg=vialList.filter(v=>["open","active"].includes(v.status)&&
       nexusPhysicalForm(v.intendedUse)==="NasalSource").reduce((n,v)=>n+Math.max(0,Number(getVialRemainingMg(s,v))||0),0);
     const mixedForms=injectableOpenVials.length>0&&(nasalReservedMg>0||preparedNasalBottles.length>0);
-    const cardVial= mixedForms ? injectableOpenVials[0] : activeVialForCard;
+    const cardVial= mixedForms ? (injectableOpenVials.find(v=>getVialRemainingMg(s,v)>0.000001)||injectableOpenVials[0]) : activeVialForCard;
     const cardVialCapacity=cardVial ? Number(cardVial.vialMg||s.vialMg) : 0;
     const cardVialPct=cardVial&&cardVialCapacity>0 ? Math.max(0,Math.min(100,Math.round(getVialRemainingMg(s,cardVial)/cardVialCapacity*100))) : null;
     const preparedNasalMl=preparedNasalBottles.reduce((total,b)=>total+b.remainingMl,0);
