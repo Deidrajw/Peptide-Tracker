@@ -1003,7 +1003,17 @@ function doseModal(name, existing, occTime, formChoice) {
   const setupMethod=useSetup?.form==="Injectable"?"SubQ":useSetup?.form||useSetup?.method;
   // A physical injectable vial can only be logged through an injectable route.
   // Existing historical entries retain their recorded route in the edit flow.
-  const injectableEntry=!existing&&formChoice==="vial";
+  // Source-conditional controls must work for the ordinary Today → Log Dose
+  // entry too, not only when the separate product-form picker supplied "vial".
+  // A route default alone is insufficient: require a designated injectable
+  // open vial (or an expressly saved injectable use setup), and preserve
+  // the historic cross-route editor for explicitly labelled legacy forms.
+  const injectableSourceConfirmed=(state.supplies||[]).some(kit=>kit.name===name&&kit.activeKit&&
+    (kit.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01&&
+      nexusPhysicalForm(v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
+        kit.preparationMethod||kit.administrationMethod||kit.route)==="Injectable"));
+  const injectableEntry=!existing&&formChoice!=="legacy-route"&&
+    (formChoice==="vial"||injectableSourceConfirmed||useSetup?.form==="Injectable");
   const requestedMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
   const initialMethod=injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
@@ -1102,7 +1112,7 @@ function doseModal(name, existing, occTime, formChoice) {
       <input id="date" type="datetime-local" class="inp" value="${esc(f.date)}" style="flex:1">
       <button id="date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    ${!isEdit?`<div class="nx-dose-use-summary"><span>${useSetup?(esc(nexusUseFamily(useSetup.form||useSetup.method))+" · "+esc(useSetup.trackingMode==="untracked"?"Doses only":"Doses + inventory")):"Default setup"}</span><button id="nx-dose-use-setup" type="button">Edit defaults</button></div>`:""}
+    ${!isEdit?`<div class="nx-dose-use-summary"><span>${esc(isUntracked?"Tracking: doses only":"Tracking: doses and inventory")}</span></div>`:""}
     <div id="counts-for" style="font-size:11px;color:#A78BFA;line-height:1.4;margin:-8px 0 14px"></div>
     ${!isUntracked && isNasal && cData.mcgPerSpray>0 && selectedSource==="fresh" ? `
     <label class="field-label">SPRAYS</label>
@@ -1131,6 +1141,7 @@ function doseModal(name, existing, occTime, formChoice) {
     <details class="nx-dose-protocol-options nx-dose-more-options" style="margin:10px 0 0">
       <summary>Additional dose options</summary>
       <div class="nx-dose-options-body">
+        ${!isEdit?`<button id="nx-dose-use-setup" type="button" class="nx-dose-pref-link">Dose preferences · unit, tracking and usual source</button>`:""}
         <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
         <p class="nx-dose-option-description">Record this dose without creating a protocol follow-up. Existing records are unaffected.</p>
         <label class="nx-dose-option-check nx-dose-escalation-row"><input id="esc" type="checkbox"${f.escalation?" checked":""}><span>Mark as dose escalation</span></label>
