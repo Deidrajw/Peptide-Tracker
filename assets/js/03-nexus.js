@@ -605,7 +605,7 @@ function defaultState() {
     // controls which compounds are in the user's personal tracker.
     peptides: {},
     customPeptides: {},
-    dailyLogs: [], weightLogs: [], measurementLogs: [], activityLogs: [], macroLogs: [], supplementLogs: [], supplies: [], equipmentItems: [],
+    dailyLogs: [], weightLogs: [], measurementLogs: [], activityLogs: [], macroLogs: [], supplementLogs: [], supplies: [], formulationStocks: [], equipmentItems: [],
     settings: { weightUnit:"lbs", measureUnit:"in", remindersEnabled:false, lastNotifyDate:"", nexusApiKey:"", supplements:[], customSymptoms:[], lastSeenChangelog:0 },
     plans: { goals:[], research:[], shopping:[] },
     protocols: [], // v2: first-class Protocol entities
@@ -683,7 +683,9 @@ function migrate(d) {
     profile:  { ...base.profile,  ...(d.profile||{}) },
     plans: { goals:(d.plans?.goals||[]), research:(d.plans?.research||[]), shopping:(d.plans?.shopping||[]) },
     protocols: d.protocols||[],
-    activityLogs: d.activityLogs||[], measurementLogs: d.measurementLogs||[], macroLogs: d.macroLogs||[], supplementLogs: d.supplementLogs||[], supplies: d.supplies||[], equipmentItems: d.equipmentItems||[],
+    activityLogs: d.activityLogs||[], measurementLogs: d.measurementLogs||[], macroLogs: d.macroLogs||[], supplementLogs: d.supplementLogs||[], supplies: d.supplies||[],
+    // Additive shape migration: preserve every existing prepared/capsule/topical stock.
+    formulationStocks: Array.isArray(d.formulationStocks) ? d.formulationStocks : [], equipmentItems: d.equipmentItems||[],
     comboPresets: d.comboPresets||[] };
   reconcileDoseKitLinks(merged.peptides, merged.customPeptides, merged.supplies);
   // Migrate Supplies to the unit-tracked architecture (mirrors Compound Kits).
