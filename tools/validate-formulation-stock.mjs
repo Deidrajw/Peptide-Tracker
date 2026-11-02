@@ -193,6 +193,46 @@ try {
     viewport:document.documentElement.clientWidth
   }));
   assert.ok(touch.height>=44&&touch.right<=touch.viewport+2,'Adjustment control touch/overflow regression: '+JSON.stringify(touch));
+  // #08: Raw Powder and Topical use the same compact compound chooser, safe
+  // action geometry and no implicit save when a user backs out.
+  for(const [form,field] of [['raw-powder','#nx-form-mg'],['topical-container','#nx-form-volume']]){
+    const original=await page.evaluate(()=>JSON.stringify(state.formulationStocks));
+    await page.evaluate(()=>supplyModal(null,null));
+    await page.locator('[data-kit-form="'+form+'"]').click();
+    assert.equal(await page.locator('.modal .nx-form-stock-editor .nx-dose-head').count(),1,
+      form+' requires one consistent shared header');
+    assert.equal(await page.locator('#nx-form-name').getAttribute('role'),'combobox',
+      form+' must reuse searchable compound picker');
+    assert.equal(await page.locator('#nx-form-match-list').getAttribute('role'),'listbox');
+    await page.locator('#nx-form-name').focus();
+    assert.equal(await page.locator('#nx-form-match-list [role="option"]').count(),5,
+      form+' picker must use the same five-result pattern');
+    const formBounds=await page.locator('.modal .nx-form-stock-editor').evaluate(sheet=>{
+      const modal=sheet.closest('.modal'),input=sheet.querySelector('input[role="combobox"]'),
+            save=sheet.querySelector('#nx-form-save'),close=sheet.querySelector('#x'),
+            field=sheet.querySelector('input[type="number"]');
+      const rect=e=>e.getBoundingClientRect();
+      return {viewport:document.documentElement.clientWidth,
+        pageWidth:document.documentElement.scrollWidth,
+        modalRight:rect(modal).right,headerCount:sheet.querySelectorAll('.nx-dose-head').length,
+        closeH:rect(close).height,saveH:rect(save).height,
+        inputFont:parseFloat(getComputedStyle(input).fontSize),
+        numericFont:parseFloat(getComputedStyle(field).fontSize),
+        inputRight:rect(input).right,numericRight:rect(field).right};
+    });
+    assert.ok(formBounds.pageWidth<=formBounds.viewport+2&&
+      formBounds.modalRight<=formBounds.viewport+2&&
+      formBounds.inputRight<=formBounds.viewport+2&&
+      formBounds.numericRight<=formBounds.viewport+2&&
+      formBounds.closeH>=44&&formBounds.saveH>=44&&
+      formBounds.inputFont>=16&&formBounds.numericFont>=16,
+      form+' narrow field, zoom prevention or action geometry: '+JSON.stringify(formBounds));
+    await captureVisual(form+'-entry','.modal .nx-form-stock-editor');
+    assert.equal(await page.locator(field).count(),1,form+' must expose only its relevant numeric field');
+    await page.locator('.modal #x').click();
+    assert.equal(await page.evaluate(()=>JSON.stringify(state.formulationStocks)),original,
+      form+' Cancel must not save or change existing inventory');
+  }
   const after=await page.evaluate(()=>({
    stock:state.formulationStocks,
    demo:isDemoMode(),
