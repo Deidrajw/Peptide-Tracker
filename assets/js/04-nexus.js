@@ -2606,6 +2606,18 @@ function openModal(innerHTML, color="#7DF9C0") {
     button.type="button";
     button.classList.add("nx-dose-close");
     if(!button.hasAttribute("aria-label"))button.setAttribute("aria-label","Close");
+    // Single approved outline X everywhere: preserve button identity, handlers
+    // and accessible name while removing conflicting text/mask variants.
+    const svgNS="http://www.w3.org/2000/svg";
+    const svg=document.createElementNS(svgNS,"svg");
+    svg.setAttribute("viewBox","0 0 24 24");
+    svg.setAttribute("width","22");svg.setAttribute("height","22");
+    svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");
+    svg.setAttribute("stroke-width","2.6");svg.setAttribute("stroke-linecap","round");
+    svg.setAttribute("aria-hidden","true");
+    const path=document.createElementNS(svgNS,"path");
+    path.setAttribute("d","M18 6 6 18M6 6l12 12");
+    svg.appendChild(path);button.replaceChildren(svg);
   });
   if (modalEl.querySelector(".modal > .nx-dose-form")) modalEl.querySelector(".modal").classList.add("nx2-dose-modal");
   modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal("backdrop"); });
