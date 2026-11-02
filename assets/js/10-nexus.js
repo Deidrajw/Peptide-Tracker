@@ -252,6 +252,12 @@ function stashView() {
       b.containerType==="nasal-bottle"&&b.method==="Nasal"&&
       String(b.sourceKitId)===String(s.id)&&b.recordedPreparation&&
       Number.isFinite(b.remainingMl)&&b.remainingMl>=0);
+    const injectableOpenVials=vialList.filter(v=>["open","active"].includes(v.status)&&
+      nexusPhysicalForm(v.intendedUse||s.preparationMethod||s.administrationMethod||s.route)==="Injectable");
+    const injectableOpenMg=injectableOpenVials.reduce((n,v)=>n+Math.max(0,Number(getVialRemainingMg(s,v))||0),0);
+    const nasalReservedMg=vialList.filter(v=>["open","active"].includes(v.status)&&
+      nexusPhysicalForm(v.intendedUse)==="nasal-source").reduce((n,v)=>n+Math.max(0,Number(getVialRemainingMg(s,v))||0),0);
+    const mixedForms=injectableOpenVials.length>0&&(nasalReservedMg>0||preparedNasalBottles.length>0);
     const preparedNasalMl=preparedNasalBottles.reduce((total,b)=>total+b.remainingMl,0);
     const preparedNasalMg=preparedNasalBottles.reduce((total,b)=>total+(Number(b.remainingMg)||0),0);
     const preparedNasalTransferred=preparedNasalBottles.length>0&&
