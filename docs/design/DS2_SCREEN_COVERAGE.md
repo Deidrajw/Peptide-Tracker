@@ -1,3 +1,6 @@
+## 2026-11-01 — Log Dose normal injectable visual gate verification
+- Test source `ddd6e42a`: all five CI SUCCESS, normal injectable Log Dose 8/8 browser cases 320/390 light/dark LIVE/isolated DEMO, 4 LIVE Review screenshots manually inspected with visible header, Edit details, Confirm Log, no observed clipping. Other forms, physical iPhone/VoiceOver/software keyboard and 16-item UAT incomplete. No UI runtime changes and no merge/deploy.
+
 ## 2026-11-01 — Log Dose #14 first targeted closure pass
 - Added stronger Entry/Review geometry assertions at `e301cafa` for true internal clipping (title/header vs sheet edge, body/footer ownership, primary action in visual viewport), not merely outer viewport bounds. 320/390 both themes LIVE/DEMO Chromium CI PENDING, iPhone keyboard/VoiceOver NOT TESTED. Other-form and shared header rows remain partial; no layout redesign approved or shipped.
 
