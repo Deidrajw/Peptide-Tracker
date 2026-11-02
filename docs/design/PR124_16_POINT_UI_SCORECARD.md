@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 WebKit corrected Review screenshots
+- #14 / #07 / #09: `d4b18b8` WebKit #41387143892 PASS, 320 dark and 390 light LIVE capsule/spray Review screenshots inspected: docked Edit/Confirm visible, header/close clear, summary scrolls. 320 capsule whole-viewport image confirms no actual left header clipping despite target-crop glyph artefact. Chromium same-source pending; physical UAT remains rejected/unaccepted. #14 PARTIAL, not release-ready.
+
 ## 2026-11-01 — #14 real Review action accessibility failure and pinned-dock candidate
 - WebKit `bb213bb7` #41386559560 PASS geometry but inspected capsule and prepared spray 320px Review images showed final actions below viewport; 390 light spray Review also not showing Confirm. This is genuinely OPEN UI failure, not a test false positive. CSS `9d409122` bounds Review and docks Back+Confirm, preserving compact Entry; test `d4b18b8` asserts fixed actionable viewport and single summary scroll owner in all 16 engine/build/theme/width cells. Latest CI/screenshots/physical UAT **PENDING**.
 
