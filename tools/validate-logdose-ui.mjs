@@ -815,6 +815,27 @@ try {
     ensure(draft.entries.length===0 && Math.abs(draft.kits[0].remaining[0]-1)<.01 &&
       Math.abs(draft.kits[0].remaining[1]-10)<.01,'Draft handoff unexpectedly changed inventory/history');
     verified.push('new-vial handoff preserves unsaved draft with no deduction');
+    // New physical injectable vial: routes are source-conditional, not all-form choices.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(901,9)];
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      state.formulationStocks=[{id:'fictional-nasal',compound:'Retatrutide',sourceKitId:901,
+        containerType:'nasal-bottle',method:'Nasal',recordedPreparation:true,
+        remainingMg:1,remainingMl:2,mgPerSpray:.05,mlPerSpray:.1}];
+      doseModal('Retatrutide',null,null,'vial');
+    });
+    const routes=await page.locator('.nx-method-option').allTextContents();
+    ensure(routes.join('|')==='SubQ|IM|IV','Injectable route choices incorrect: '+routes.join('|'));
+    await page.locator('[data-admin-method="IM"]').click();
+    ensure(await page.locator('#nx-dose-method').inputValue()==='IM','IM route selection failed');
+    await page.locator('[data-admin-method="IV"]').click();
+    ensure(await page.locator('#nx-dose-method').inputValue()==='IV','IV route selection failed');
+    ensure(await page.locator('#nx-dose-site-field').isHidden(),'IV must not show an injection site');
+    ensure(await page.locator('[data-admin-method="Nasal"]').count()===0,'Nasal route exposed on injectable source');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,'Route selection mutated injectable stock');
+    verified.push('source-conditional injectable routes and untouched nasal balance');
+    await page.evaluate(()=>closeModal());
     ensure(errors.length===0,'Browser JS errors: '+errors.join(' | '));
     results.push({width,theme,kind,status:'PASS',verified,visualEvidence});
     await context.close();
