@@ -1,3 +1,10 @@
+## 2026-11-02 — #02/#11/#15 latest browser VERIFIED; 16-point device acceptance still OPEN
+- **#02:** Legacy Log Dose non-injectable methods Nasal, Oral, Topical, IV and Other now explicitly browser-asserted to hide/disable/clear irrelevant administration sites while SubQ/IM remain available. Runtime unchanged; Chromium #41394215775 SUCCESS (8/8 Log Dose cases).
+- **#11:** DEMO-only direct nasal source Stash action verified on `1cb85019` and retained in current code; five workflow groups PASS. It opens existing single-confirmation Review, no write on opening and hides once source depleted. Physical acceptance still OPEN, LIVE gates OFF.
+- **#15:** Additional dose options explanatory copy and accessible descriptions `1bf5e69d`; expanded/collapsed and independently checked/cleared unsaved checkbox regression PASS at `fbdaafea` Chromium #41394215775; **physical keyboard UAT still OPEN**.
+- **#08/#09/#12:** WebKit #41394215749 PASS, CRC artifact #13119235667 (264 entries); manually inspected 320/390 light Raw Powder, Topical and actual nasal Review sample screenshots. This is focused browser visual acceptance, NOT full 16-point iPhone acceptance.
+- Exact candidate `fbdaafea` all five workflow groups SUCCESS, full-app DEMO and LIVE ZIP exact-source audit PASS. **Do not mark all 16 device PASS, merge or deploy.** P0 release acceptance BLOCKED.
+
 ## 2026-11-02 — #11 automated VERIFIED; #15 UI implementation and #02 regression candidate
 - **#11:** Demo-only opened nasal-source Stash action `7f06617e` + regression `1cb85019`: Chromium/build #41393354271, WebKit #41393354453, mobile #41393354352, nested #41393354356, writer #41393354445 **SUCCESS**. This verifies no pre-confirm state changes, same one-confirmation Review and absent redundant action for exhausted source. **Physical iPhone UAT not accepted.** LIVE nasal gating OFF.
 - **#15:** Both Log Dose Additional dose option controls gain connected helper descriptions in `1bf5e69d`; control interaction regression `87cfc2c4` verifies independent toggle, collapse/reopen state and no save. **Await latest exact-head Chromium #41394215775.**
