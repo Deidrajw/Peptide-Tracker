@@ -1,3 +1,6 @@
+## 2026-11-01 — #14 clipping test upgraded (new acceptance gate, not accepted)
+- `e301cafa` strengthens Log Dose entry/Review/Focused geometry across 320/390 light/dark LIVE/DEMO with in-sheet header/title, footer, visual viewport action and single scroll owner assertions. Corrected test syntax after predecessor `e0687dc8` failed preflight. No UI source change yet pending measured result, and all 16 remain physically unaccepted. Continue #14 before grouped shared header #04/#05/#07/#08/#09/#16.
+
 ## 2026-11-01 — current corrective implementation #04/#05/#14 and strict regression
 - `5d406a72` fixes #04/#05 close-button double-render/transparent-SVG presentation; keeps 48px close and keyboard focus ring. `aca4a10b` tests visible SVG without pseudo duplicate on actual capsule/nasal form sheets.
 - `445ad980`+`1c41a3d6` add #14 entry AND Review bounding-box clipping evidence gate: fixed header, 44px close, single scroll body and sticky footer all within 320/390 viewport, both themes and isolated DEMO/LIVE builds. Source TEST CODED, NOT RUN/VERIFIED on latest head. `docs/design/PR124_FULL_VISUAL_ACCEPTANCE_MATRIX.md` remains a specification, not an execution result.
