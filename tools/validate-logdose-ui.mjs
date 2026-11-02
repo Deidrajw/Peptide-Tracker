@@ -411,11 +411,29 @@ try {
       const geometry=await page.locator('.nx2-dose-modal').evaluate(modal=>{
         const rect=selector=>{const el=modal.querySelector(selector);if(!el)return null;
           const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
+        const scroll=modal.querySelector('.nx-dose-scroll');
+        const sheet=modal.getBoundingClientRect();
+        const visual=window.visualViewport;
+        const docStyle=getComputedStyle(modal);
+        const body=scroll?.getBoundingClientRect();
+        const header=modal.querySelector('.nx-dose-fixed-header')?.getBoundingClientRect();
+        const footer=modal.querySelector('.nx-dose-footer')?.getBoundingClientRect();
+        const title=modal.querySelector('.nx-dose-fixed-header .nx-dose-title')?.getBoundingClientRect();
+        const visibleBottom=visual?visual.offsetTop+visual.height:window.innerHeight;
         return {viewport:document.documentElement.clientWidth,
-          vh:window.innerHeight,pageScrollWidth:document.documentElement.scrollWidth,
-          sheet:(()=>{const b=modal.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})(),header:rect('.nx-dose-fixed-header'),
+          vh:window.innerHeight,visibleBottom,pageScrollWidth:document.documentElement.scrollWidth,
+          sheet:{left:sheet.left,right:sheet.right,top:sheet.top,bottom:sheet.bottom,width:sheet.width,height:sheet.height},
+          header:rect('.nx-dose-fixed-header'),title:rect('.nx-dose-fixed-header .nx-dose-title'),
+          scrollBody:rect('.nx-dose-scroll'),scrollHeight:scroll?.scrollHeight,clientHeight:scroll?.clientHeight,
+          scrollOverflowY:scroll?getComputedStyle(scroll).overflowY:null,
+          modalOverflowY:docStyle.overflowY,
           close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
-          action:rect('.nx-dose-footer .btn-primary')};
+          action:rect('.nx-dose-footer .btn-primary'),
+          internal:{headerInside:!!header&&header.left>=sheet.left-2&&header.right<=sheet.right+2&&header.top>=sheet.top-2,
+            titleInside:!!title&&!!header&&title.left>=header.left+4&&title.right<=header.right-4&&title.top>=header.top-2,
+            bodyBetween:!!body&&!!header&&!!footer&&body.top>=header.bottom-2&&body.bottom<=footer.top+2,
+            footerInside:!!footer&&footer.left>=sheet.left-2&&footer.right<=sheet.right+2&&footer.bottom<=sheet.bottom+2}};
+        };
       });
       ensure(geometry.sheet&&geometry.header&&geometry.close&&geometry.footer,
         stage+' missing Log Dose shell: '+JSON.stringify(geometry));
@@ -424,9 +442,19 @@ try {
           box.left>=-2&&box.right<=geometry.viewport+2),
         stage+' has horizontally clipped Log Dose UI: '+JSON.stringify(geometry));
       ensure(geometry.close.width>=44&&geometry.close.height>=44&&
-        geometry.close.top>=-2&&geometry.close.bottom<=geometry.vh+2&&
-        geometry.footer.top>=-2&&geometry.footer.bottom<=geometry.vh+2,
+        geometry.close.top>=-2&&geometry.close.bottom<=geometry.visibleBottom+2&&
+        geometry.footer.top>=-2&&geometry.footer.bottom<=geometry.visibleBottom+2,
         stage+' close or sticky footer outside viewport: '+JSON.stringify(geometry));
+      ensure(geometry.title&&geometry.scrollBody&&geometry.action&&
+        Object.values(geometry.internal).every(Boolean)&&
+        geometry.action.width>=44&&geometry.action.height>=44&&
+        geometry.action.left>=-2&&geometry.action.right<=geometry.viewport+2&&
+        geometry.action.top>=-2&&geometry.action.bottom<=geometry.visibleBottom+2,
+        stage+' title, scroll region or action clipped inside sheet: '+JSON.stringify(geometry));
+      ensure(geometry.scrollOverflowY==='auto'||geometry.scrollOverflowY==='scroll',
+        stage+' dose body is not the intended scroll owner: '+JSON.stringify(geometry));
+      ensure(geometry.modalOverflowY==='hidden'||geometry.modalOverflowY==='clip',
+        stage+' has competing modal/body vertical scroll owners: '+JSON.stringify(geometry));
       return geometry;
     };
     const visualEvidence={};
