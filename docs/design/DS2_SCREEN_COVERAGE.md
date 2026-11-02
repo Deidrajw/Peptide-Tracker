@@ -1,3 +1,6 @@
+## 2026-11-01 — Capsule/prepared-spray Review layout corrective candidate
+- Actual WebKit screenshot evidence (#13115950372) showed off-fold Review actions at 320px despite passing close/header; app CSS `9d409122` anchors Review actions with one summary scrollport only while preserving compact Entry. New full 16-cell UI test at `d4b18b8` pending CI. No acceptance of iPhone keyboard, VoiceOver or other 16 rows.
+
 ## 2026-11-01 — Log Dose normal injectable visual gate verification
 - Test source `ddd6e42a`: all five CI SUCCESS, normal injectable Log Dose 8/8 browser cases 320/390 light/dark LIVE/isolated DEMO, 4 LIVE Review screenshots manually inspected with visible header, Edit details, Confirm Log, no observed clipping. Other forms, physical iPhone/VoiceOver/software keyboard and 16-item UAT incomplete. No UI runtime changes and no merge/deploy.
 
