@@ -258,6 +258,9 @@ function stashView() {
     const nasalReservedMg=vialList.filter(v=>["open","active"].includes(v.status)&&
       nexusPhysicalForm(v.intendedUse)==="NasalSource").reduce((n,v)=>n+Math.max(0,Number(getVialRemainingMg(s,v))||0),0);
     const mixedForms=injectableOpenVials.length>0&&(nasalReservedMg>0||preparedNasalBottles.length>0);
+    const cardVial= mixedForms ? injectableOpenVials[0] : activeVialForCard;
+    const cardVialCapacity=cardVial ? Number(cardVial.vialMg||s.vialMg) : 0;
+    const cardVialPct=cardVial&&cardVialCapacity>0 ? Math.max(0,Math.min(100,Math.round(getVialRemainingMg(s,cardVial)/cardVialCapacity*100))) : null;
     const preparedNasalMl=preparedNasalBottles.reduce((total,b)=>total+b.remainingMl,0);
     const preparedNasalMg=preparedNasalBottles.reduce((total,b)=>total+(Number(b.remainingMg)||0),0);
     const preparedNasalTransferred=preparedNasalBottles.length>0&&
@@ -291,11 +294,11 @@ function stashView() {
       </div>
       <div class="nx-kit-compact-context">${esc(kitDisambigLabel||((Number(s.vialMg)||0)+" mg/vial"))} · ${openCount} open${sealed?" · "+sealed+" sealed":""}</div>
       <div class="nx-kit-primary-vial">
-        <span class="nx-kit-overview-label">${mixedForms?"INJECTABLE VIALS":showsPreparedNasal?"PREPARED NASAL BOTTLE":displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
-        <div class="nx-kit-primary-value">${mixedForms?injectableOpenMg.toFixed(2)+" mg":showsPreparedNasal?preparedNasalMg.toFixed(preparedNasalMg%1?1:0)+" mg":displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${mixedForms?"available for injection":showsPreparedNasal?"remaining in prepared bottle":displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
-        ${mixedForms?`<div class="nx-kit-prepared-summary nx-kit-source-breakdown" role="group" aria-label="Separate physical stock balances"><div>Injectable vials · ${injectableOpenMg.toFixed(2)} mg</div><div>Nasal source vial · ${nasalReservedMg.toFixed(2)} mg</div><div>Prepared nasal bottle · ${preparedNasalMg.toFixed(2)} mg / ${preparedNasalMl.toFixed(2)} mL</div></div>`:""}
+        <span class="nx-kit-overview-label">${mixedForms?"OPEN VIAL":showsPreparedNasal?"PREPARED NASAL BOTTLE":displayOpenMg!==null?"OPEN VIAL":"AVAILABLE STOCK"}</span>
+        <div class="nx-kit-primary-value">${mixedForms?injectableOpenMg.toFixed(injectableOpenMg%1?1:0)+" mg":showsPreparedNasal?preparedNasalMg.toFixed(preparedNasalMg%1?1:0)+" mg":displayOpenMg!==null?displayOpenMg.toFixed(displayOpenMg%1?1:0)+" mg":displayKitMg!==null?displayKitMg.toFixed(displayKitMg%1?1:0)+" mg":"—"} <span>${mixedForms?"of "+cardVialCapacity+" mg remaining":showsPreparedNasal?"remaining in prepared bottle":displayOpenMg!==null?"of "+activeCapacityMg+" mg remaining":"remaining in kit"}</span></div>
+        ${mixedForms?`<div class="nx-kit-prepared-summary nx-kit-nasal-summary" role="status">Nasal: ${nasalReservedMg.toFixed(nasalReservedMg%1?1:0)} mg source · ${preparedNasalMg.toFixed(preparedNasalMg%1?1:0)} mg prepared <span class="nx-kit-detail-cue">See Details</span></div>`:""}
         ${preparedNasalBottles.length&&!mixedForms?`<div class="nx-kit-prepared-summary">${showsPreparedNasal?"Transferred from source vial · ":"Source vial "+(displayOpenMg!==null?displayOpenMg.toFixed(2)+" mg remaining":"tracked separately")+" · "}Prepared bottle ${preparedNasalMg.toFixed(2)} mg / ${preparedNasalMl.toFixed(2)} mL remaining (${preparedNasalBottles.length} ${preparedNasalBottles.length===1?"bottle":"bottles"}). Transferred stock remains available until its recorded use</div>`:""}
-        ${!mixedForms&&displayOpenMg!==null&&vialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${vialPct}"><span style="width:${vialPct}%;background:${st.color}"></span></div>`:""}
+        ${cardVialPct!==null?`<div class="nx-kit-overview-track" role="progressbar" aria-label="Current vial remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${cardVialPct}"><span style="width:${cardVialPct}%;background:${st.color}"></span></div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
         ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Confirm vial form</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
