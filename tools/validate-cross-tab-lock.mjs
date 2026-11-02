@@ -589,6 +589,13 @@ try{
    });
    await b.reload({waitUntil:"domcontentloaded"});
    await b.waitForFunction(()=>typeof nexusCommitCurrentState==="function");
+   // Start at the exact durable fixture, excluding non-persisted layout/
+   // migration presentation fields created during application bootstrap.
+   await b.evaluate(()=>{
+     state=JSON.parse(localStorage.getItem(STORE_KEY));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+     _nexusSharedWriter=null;
+   });
    const baseline=await b.evaluate(()=>({
      durable:localStorage.getItem(STORE_KEY),
      memory:JSON.stringify(state)
