@@ -310,7 +310,7 @@ try{
       render();
     });
     const mixed=card(88001),nasalLine=mixed.locator('.nx-kit-nasal-summary');
-    ensure(await mixed.locator('.nx-kit-overview-label').innerText()==='OPEN VIAL',
+    ensure(await mixed.locator('.nx-kit-primary-vial > .nx-kit-overview-label').innerText()==='OPEN VIAL',
       'Mixed-form kit must retain the original Open vial card label');
     const primary=await mixed.locator('.nx-kit-primary-value').innerText();
     ensure(primary.includes('7 mg')&&primary.includes('of 10 mg remaining'),
