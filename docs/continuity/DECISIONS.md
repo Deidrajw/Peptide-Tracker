@@ -1,3 +1,7 @@
+## 2026-11-02 — binding physical iPhone #15 acceptance of final spacing
+- User approved final 5ea01fd3 UI on a physical iPhone with four PASS results: typography/spacing, disclosure/preferences, both checkbox controls, and light/dark appearance. Maintain approved compact label style and no separator; do not redesign this section without new reason/approval.
+- This acceptance applies to this UI scope only. It is not explicit PR merge/production deployment authorization; both nasal LIVE gates remain OFF.
+
 ## 2026-11-02 — final approved Dose preferences spacing target (UNRELEASED)
 - User accepted tighter preview and indicated readiness to go. Application CSS commit 5ea01fd33d17dd2163e3c6c683e6e74349cce575 makes Dose preferences font-weight 400 and closes visible title-to-preferences gap while retaining independent >=44px summary and preference hit areas, >=48px checkbox rows. Only CSS modified; no data, storage, dosing, inventory or nasal LIVE gates changed.
 - Exact-head CI, final full-app DEMO/LIVE package, physical iPhone acceptance and release clearance must be verified before production. PR124 draft/unmerged; main baseline da585ab3; overall P0 remains blocking until verified resolved. No merge/deploy yet.
