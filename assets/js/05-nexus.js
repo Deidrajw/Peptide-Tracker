@@ -1166,7 +1166,7 @@ function doseModal(name, existing, occTime, formChoice) {
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note"${initialMethod==="Nasal"?"":" hidden"}>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
     ${!isEdit&&recent.length?`<div class="nx-site-guidance"><strong>Suggested next: ${esc(suggestedSite)}</strong><div class="nx-site-recent">Recent sites: ${recent.map(esc).join(" · ")}</div></div>`:""}
     <details class="nx-dose-protocol-options nx-dose-more-options" style="margin:10px 0 0">
-      <summary>Additional dose options</summary>
+      <summary class="field-label">ADDITIONAL DOSE OPTIONS</summary>
       <div class="nx-dose-options-body">
         ${!isEdit?`<button id="nx-dose-use-setup" type="button" class="nx-dose-pref-link">Dose preferences · unit, tracking and usual source</button>`:""}
         <label class="nx-dose-option-check"><input id="nx-dose-as-needed" type="checkbox"${f.asNeeded?" checked":""}><span>Log independently of a protocol</span></label>
