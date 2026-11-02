@@ -328,6 +328,39 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
    els.map(e=>({height:e.getBoundingClientRect().height,width:e.getBoundingClientRect().width})));
  ensure(goalControls.length===4&&goalControls.every(x=>x.height>=44),
    'Goal Details close and tabs require 44px targets: '+JSON.stringify(goalControls));
+
+ // #16: verify the actual Goal Details sheet/header/close/tab content at
+ // both iPhone widths, in both themes and LIVE-source/isolated DEMO.
+ // Geometry is browser evidence, not a physical iOS keyboard/VoiceOver pass.
+ await page.waitForTimeout(350);
+ const goalViewport=await page.locator('.nx-goal-detail').evaluate(detail=>{
+   const sheet=detail.closest('.modal');
+   const head=detail.querySelector('.nx-dose-head');
+   const title=detail.querySelector('.nx-dose-title');
+   const close=detail.querySelector('.nx-dose-close');
+   const tabs=detail.querySelector('.nx-goal-detail-tabs');
+   const content=detail.querySelector('#nx-goal-detail-content');
+   const rect=node=>{const b=node.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height}};
+   const roots=[sheet,head,title,close,tabs,content].map(rect);
+   return {viewport:document.documentElement.clientWidth,height:innerHeight,
+     documentWidth:document.documentElement.scrollWidth,
+     sheet:roots[0],head:roots[1],title:roots[2],close:roots[3],
+     tabs:roots[4],content:roots[5],
+     titleReadable:getComputedStyle(title).visibility==='visible',
+     sheetOverflow:getComputedStyle(sheet).overflowY};
+ });
+ ensure(goalViewport.documentWidth<=goalViewport.viewport+2&&
+   [goalViewport.sheet,goalViewport.head,goalViewport.title,goalViewport.close,
+     goalViewport.tabs,goalViewport.content].every(x=>x.left>=-2&&x.right<=goalViewport.viewport+2)&&
+   goalViewport.head.top>=goalViewport.sheet.top-2&&
+   goalViewport.close.top>=goalViewport.sheet.top-2&&
+   goalViewport.close.bottom<=goalViewport.height+2&&
+   goalViewport.tabs.top>=goalViewport.head.top-2&&
+   goalViewport.titleReadable&&goalViewport.close.width>=44,
+   'Goal Details must retain visible DS2 header, title, close and three tabs at iPhone widths: '+JSON.stringify(goalViewport));
+ const goalVisual='Nexus_'+VERSION+'_GOAL_DETAILS_'+mode+'_'+theme+'_'+width+'.png';
+ await page.screenshot({path:path.join('dist',goalVisual),fullPage:false});
+
  // WAI-ARIA tablist: keyboard navigation must be predictable at 320/390.
  ensure(await page.locator('.nx-goal-detail-tab[tabindex="0"]').count()===1,
    'Goal Details must expose exactly one keyboard tab stop');
