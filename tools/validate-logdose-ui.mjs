@@ -816,6 +816,20 @@ try {
     ensure(draft.entries.length===0 && Math.abs(draft.kits[0].remaining[0]-1)<.01 &&
       Math.abs(draft.kits[0].remaining[1]-10)<.01,'Draft handoff unexpectedly changed inventory/history');
     verified.push('new-vial handoff preserves unsaved draft with no deduction');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(902,9)];
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'Normal Today Log Dose must show exactly three methods for a designated injectable');
+    ensure(await page.locator('.nx-dose-use-summary #nx-dose-use-setup').count()===0,
+      'Optional preferences must not interrupt the dose entry form');
+    ensure(await page.locator('.nx-dose-more-options #nx-dose-use-setup').count()===1,
+      'Optional dose preferences must remain accessible');
+    await page.evaluate(()=>closeModal());
+    verified.push('normal Today Log Dose designated injectable conditional methods');
     // New physical injectable vial: routes are source-conditional, not all-form choices.
     await seed(page,theme);
     await page.evaluate(()=>{
