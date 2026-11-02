@@ -705,8 +705,8 @@ function nexusUseSetupModal(name,onSaved) {
   const preferred=(["mg","mcg"].includes(old.unit)||(old.unit==="IU"&&c.unit==="IU"))?old.unit:(["mg","mcg","IU"].includes(c.unit)?c.unit:"mg");
   const m=openModal(`
     <div class="nx-use-setup" aria-label="Set up how you use ${esc(name)}">
-      <div class="nx-use-head"><div><span class="nx-use-kicker">USE SETUP</span><h2>How do you use ${esc(name)}?</h2><p>Set this once. Change it in Stash whenever you need.</p></div><button id="nx-use-close" type="button" aria-label="Close setup">✕</button></div>
-      <label class="field-label" for="nx-use-family">ADMINISTRATION</label>
+      <div class="nx-use-head"><div><span class="nx-use-kicker">PREFERENCES</span><h2>Dose preferences</h2><p>${esc(name)} · Optional defaults. Your saved dose history stays unchanged.</p></div><button id="nx-use-close" type="button" aria-label="Close dose preferences"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <label class="field-label" for="nx-use-family">PREFERRED PRODUCT FORM</label>
       <select id="nx-use-family" class="inp">${["Injectable","Nasal","Topical","Oral","Other"].map(x=>`<option value="${x}"${initialForm===x?" selected":""}>${x}</option>`).join("")}</select>
 
       <label class="field-label" for="nx-use-unit">PREFERRED DOSE UNIT</label>
@@ -717,8 +717,8 @@ function nexusUseSetupModal(name,onSaved) {
         <label><input type="radio" name="nx-use-mode" value="untracked"${old.trackingMode==="untracked"?" checked":""}><span><strong>Doses only</strong><small>Save administrations without changing stock.</small></span></label>
       </fieldset>
       <div id="nx-use-source-group"><label class="field-label" for="nx-use-source">USUAL PHYSICAL SOURCE</label><select id="nx-use-source" class="inp"></select><p id="nx-use-source-help" class="nx-use-help" role="status"></p></div>
-      <p class="nx-use-help">Setting a method does not create prepared inventory. Existing records will remain unchanged.</p>
-      <button id="nx-use-save" type="button" class="btn-primary">Save use setup</button>
+      <p class="nx-use-help">A saved form does not create a capsule or nasal bottle. Selecting an unlabelled usual vial confirms its physical form. Existing history is unchanged.</p>
+      <button id="nx-use-save" type="button" class="btn-primary">Save preferences</button>
     </div>`,"#A78BFA");
   const family=m.querySelector("#nx-use-family");
   const sourceInput=m.querySelector("#nx-use-source"),sourceGroup=m.querySelector("#nx-use-source-group");
