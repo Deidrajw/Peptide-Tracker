@@ -1,3 +1,6 @@
+## 2026-11-01 — Log Dose #14 first targeted closure pass
+- Added stronger Entry/Review geometry assertions at `e301cafa` for true internal clipping (title/header vs sheet edge, body/footer ownership, primary action in visual viewport), not merely outer viewport bounds. 320/390 both themes LIVE/DEMO Chromium CI PENDING, iPhone keyboard/VoiceOver NOT TESTED. Other-form and shared header rows remain partial; no layout redesign approved or shipped.
+
 ## 2026-11-01 — user screenshot rejection and PR124 modal/stock-truth correction (QA pending)
 - Add Kit (#03/#04/#05/#06): Header/close must stay above intro and Step 1 progress; existing split/warped order rejected on physical screenshots. Code `33e12915`/`1fde47f8` header and text order, `f9f140eb`/CSS `2447f68d` standardized close, `2447f68d` harmonized vial vs other picker. Targeted dual-engine layout assertions `a48e4db1`/`07d4bcaf`. NEW-HEAD FULL QA AND PHYSICAL ACCEPTANCE PENDING.
 - Stash source→nasal bottle (#12/#13): User rejected `Empty / 0mg` as compound status while transferred mass remains in prepared bottle. Display-only `9b8bc029`/`5b2e58a4` shows prepared mass and `Transferred` source; original accounting unchanged. WebKit/Chromium QA NOT VERIFIED. Nasal entry copy `26e23dc4` clarified.
