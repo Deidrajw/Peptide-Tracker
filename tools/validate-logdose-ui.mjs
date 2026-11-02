@@ -344,8 +344,26 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
+    // Both fields require descriptions that clarify history vs protocol effects.
+    for(const [id,help] of [['#nx-dose-as-needed','#nx-dose-independent-help'],['#esc','#nx-dose-escalation-help']]){
+      ensure(await page.locator(id).getAttribute('aria-describedby')===help.slice(1),
+        id+' lacks linked accessible explanation');
+      ensure((await page.locator(help).innerText()).trim().length>=35,
+        id+' explanatory text is missing');
+    }
+    await page.locator('#nx-dose-as-needed').check();
+    await page.locator('#esc').check();
+    ensure(await page.locator('#nx-dose-as-needed').isChecked()&&await page.locator('#esc').isChecked(),
+      'Both independent and escalation toggles must respond independently');
     await optSummary.click();
     ensure(await optional.getAttribute('open')===null,'Optional panel should collapse without saving');
+    await optSummary.click();
+    ensure(await page.locator('#nx-dose-as-needed').isChecked()&&await page.locator('#esc').isChecked(),
+      'Collapsing and reopening must preserve unsaved checkbox choices');
+    await page.locator('#nx-dose-as-needed').uncheck();
+    await page.locator('#esc').uncheck();
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')===null,'Optional panel must collapse without save');
     ensure(await page.locator('.nx-method-option').count()===7,
       'Seven saved-route options including Other should remain available');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
