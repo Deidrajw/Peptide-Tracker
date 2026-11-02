@@ -54,6 +54,20 @@ try {
   // Custom compound path: not in the curated library, intentionally entered by the user.
   // Selecting must NOT persist a kit or mutate the pre-existing inventory.
   await page.locator('[data-kit-form="vial"]').click();
+  const kitHeader=await page.locator('.modal.nx-stash-kit-editor').evaluate(modal=>{
+    const head=modal.querySelector('.nx-unified-header .nx-dose-head');
+    const intro=modal.querySelector('.nx-unified-body>.nx-kit-editor-intro');
+    const progress=modal.querySelector('.nx-unified-body>.nx-kit-wizard-progress');
+    const close=head?.querySelector('#x');
+    const hr=head?.getBoundingClientRect(),cr=close?.getBoundingClientRect();
+    return {head:!!head,intro:!!intro,progress:!!progress,
+      ordered:!!(intro&&progress&&(intro.compareDocumentPosition(progress)&Node.DOCUMENT_POSITION_FOLLOWING)),
+      close:!!close,height:cr?.height,aligned:!!(hr&&cr&&cr.top>=hr.top-2&&cr.bottom<=hr.bottom+2),
+      viewport:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth};
+  });
+  assert.ok(kitHeader.head&&kitHeader.intro&&kitHeader.progress&&kitHeader.ordered&&
+    kitHeader.close&&kitHeader.height>=44&&kitHeader.aligned&&kitHeader.scroll<=kitHeader.viewport+2,
+    'Add Kit sheet header/intro/progress order or close alignment: '+JSON.stringify(kitHeader));
   await page.locator('#nx-kit-combobox-input').fill('SLU-PP-332');
   assert.equal(await page.locator('#nx-kit-combobox-list [role="option"]').filter({hasText:'SLU-PP-332'}).count(),1,
     'SLU-PP-332 must now resolve as a curated compound');
@@ -571,6 +585,20 @@ try {
   assert.ok((await page.locator('.nx-kit-card').filter({hasText:'Oxytocin'}).allTextContents())
     .some(text=>text.includes('Prepared bottle')&&text.includes('10.00 mg')),
     'Stash must make source-linked prepared Oxytocin mass visible');
+  
+  const preparedCard=await page.locator('.nx-kit-card').filter({hasText:'Oxytocin'}).first().evaluate(card=>({
+    label:card.querySelector('.nx-kit-overview-label')?.textContent?.trim(),
+    value:card.querySelector('.nx-kit-primary-value')?.textContent?.trim(),
+    badge:card.querySelector('.nx-card-status')?.textContent?.trim(),
+    detail:card.textContent
+  }));
+  assert.equal(preparedCard.label,'PREPARED NASAL BOTTLE',
+    'Full nasal transfer should show available prepared bottle in primary card');
+  assert.ok(preparedCard.value.includes('10 mg')&&
+    preparedCard.value.includes('remaining in prepared bottle')&&
+    !/Empty/i.test(preparedCard.badge||'')&&
+    preparedCard.detail.includes('Transferred to prepared nasal bottle'),
+    'Transferred stock incorrectly represented as empty or consumed: '+JSON.stringify(preparedCard));
   await page.evaluate(()=>doseModal('Oxytocin'));
   const nasalPicker=await page.locator('#nx-use-nasal').count();
   if(nasalPicker)await page.locator('#nx-use-nasal').click();
