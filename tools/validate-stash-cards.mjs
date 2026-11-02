@@ -317,8 +317,11 @@ try{
       'Mixed-form kit must show the current injectable vial balance, not kit-wide nasal mass: '+primary);
     ensure(await nasalLine.count()===1,'One subtle secondary nasal stock line required');
     const line=await nasalLine.innerText();
-    ensure(line.includes('3 mg source')&&line.includes('2 mg prepared'),
-      'Nasal remaining source and prepared balances must be separate: '+line);
+    ensure(line==='Nasal · 2 mg prepared',
+      'Compact nasal line must be concise and show only available prepared stock: '+line);
+    const overview=mixed.locator('.nx-stash-pane[data-pane="overview"] .nx-kit-separate-stocks');
+    ensure(await overview.innerText().then(x=>x.includes('7.00 mg')&&x.includes('3.00 mg')&&x.includes('2.00 mg · 4.00 mL')),
+      'Detailed injectable, nasal source and prepared balances must remain distinct in Overview');
     ensure(await mixed.locator('.nx-kit-source-breakdown').count()===0,
       'Dense three-row stock breakdown belongs in Details, not the compact card');
     const track=mixed.locator('.nx-kit-primary-vial .nx-kit-overview-track');
