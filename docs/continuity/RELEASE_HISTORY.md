@@ -1,3 +1,8 @@
+## 2026-11-02 — final approved Dose preferences spacing target (UNRELEASED)
+- User accepted tighter preview and indicated readiness to go. Application CSS commit 5ea01fd33d17dd2163e3c6c683e6e74349cce575 makes Dose preferences font-weight 400 and closes visible title-to-preferences gap while retaining independent >=44px summary and preference hit areas, >=48px checkbox rows. Only CSS modified; no data, storage, dosing, inventory or nasal LIVE gates changed.
+- Exact-head CI, final full-app DEMO/LIVE package, physical iPhone acceptance and release clearance must be verified before production. PR124 draft/unmerged; main baseline da585ab3; overall P0 remains blocking until verified resolved. No merge/deploy yet.
+- NEXT: check five workflows and final screenshots/artifacts; assess P0 clearance and authorization before merging or deploying.
+
 ## 2026-11-02 — PR124 final label-parity QA 5/5 PASS, NOT RELEASED
 - Candidate v0.9.20-beta, exact application/test 4fa74b8d, main da585ab3. Changed only Log Dose optional disclosure computed text-transform to match existing 11px bold uppercase admin field-label style; visual text remains uppercase, no JS/migrations/stock/history changes. Prior ef723d61 Chromium failure fixed rather than ignored.
 - Exact-source CI: Chromium #41524937984, WebKit #41524937951, mobile #41524938061, nested #41524937947, writer #41524938305 all SUCCESS (writer 3 jobs). Chromium canonical artifact #13179992122 540 entries CRC PASS, 26-file LIVE ZIP CRC PASS, root index, isolated full-app DEMO 3,098,278 bytes, offline HTML byte-identical, CSS Git blob 1b14c653742352c203cd5935584b1f8b82f9dce6. Eight optional dose screenshots 320/390 light/dark LIVE/DEMO inspected; four pairwise pixel identical.
