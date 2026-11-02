@@ -306,7 +306,7 @@ function stashView() {
           ${secondaryBits.length?`<div class="nx-kit-detail-secondary">${secondaryBits.join(" · ")}</div>`:""}
           ${(()=>{const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-detail-secondary">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
           ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Vial form not confirmed · ${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} require a physical form label before stock-backed logging.</div>`:""}
-          ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">${action.label}</button>`:""}
+          ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">Open another vial</button>`:""}
         </div>
         <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
           <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
