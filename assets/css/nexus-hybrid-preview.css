@@ -4276,12 +4276,13 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 .modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) > .nx-nasal-actual-prep{
   display:flex!important;flex:1 1 0%!important;
   flex-direction:column!important;min-height:0!important;overflow:hidden!important;
+  height:100%!important;max-height:100%!important;
 }
 .modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) .nx-dose-head{
   flex:0 0 auto!important;margin-bottom:8px!important;
 }
 .modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) #nx-nasal-record-review{
-  flex:1 1 0%!important;min-height:0!important;max-height:none!important;
+  flex:1 1 0%!important;min-height:0!important;height:0!important;max-height:none!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   scroll-padding-bottom:18px;
