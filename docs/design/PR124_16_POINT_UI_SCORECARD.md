@@ -1,3 +1,7 @@
+## 2026-11-02 — #11 direct historical nasal-source action implemented, browser verification pending
+- App `7f06617e`: within Stash Details > Vials, an eligible opened, explicitly reserved nasal-source with remaining mg shows one **Prepare nasal bottle** action in isolated DEMO. This invokes existing unified preparation Review/Confirm (not an extra "Record prepared nasal spray" action) and is omitted when source remaining mass is zero; retains original vial history. LIVE remains OFF.
+- Exact UI regression `1cb85019`: actionable view; no pre-confirm mutation; no post-full-transfer action; 320/390 and light/dark in both browser engines. Chromium/WebKit CI still pending. **#11 PARTIAL until exact-head browser pass and real-iPhone UAT**. P0 mixed-writer BLOCKING, no merge/deploy.
+
 ## 2026-11-01 — Engineering delta after consolidation; user-device signoff NOT CLAIMED
 **Source/test baseline:** application `1cc45e4622baa18250c3105c31990018946a12ef`; Chromium #41390039557 PASS, WebKit #41390039507 PASS, mobile #41390039506 PASS, nested #41390039533 PASS, writer #41390039503 PASS. Exact demo/live artifact #13117342031 CRC checked. This is not a physical iPhone UAT pass and P0 remains blocking.
 
