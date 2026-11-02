@@ -1,3 +1,8 @@
+## 2026-11-02 — #15 computed parity regression and corrective QA
+- ef723d61 Chromium #41524017555 FAILED summary transform uppercase vs Method/Site none even though 11px size, 700 weight, t3 colour, spacing, font matched. CSS 4fa74b8d corrects only transform; heading remains visibly uppercase.
+- Exact 4fa74b8d mobile #41524938061 PASS; writer #41524938305 PASS all 3 jobs; nested #41524937947 PASS; WebKit #41524937951 PASS. Chromium/build #41524937984 NOT YET COMPLETE. WebKit artifact CRC PASS; local browser BLOCKED by policy, final corrected Chromium visual NOT YET VERIFIED, physical iPhone #15 NOT TESTED. No release or data changes, P0 BLOCKING and nasal LIVE OFF.
+- ONE NEXT ACTION: final Chromium and 320/390 screenshot review, then focused real-iPhone acceptance.
+
 ## 2026-11-02 — #15 updated screenshot field-label parity (PR124 DRAFT, incomplete final QA)
 - CSS ef723d61 sets optional summary actual field-label computed typography, not a separate heading. Test tools/validate-logdose-ui.mjs compares summary computed font, size, weight, colour, spacing and text transform with Administration Method and Site labels. Preserve two checkboxes, their actions, Dose preferences, disclosure keyboard focus, Review stages and source/accounting.
 - Exact-head mobile #41524016473 PASS, writer #41524016416 PASS (3/3 jobs), nested #41524016572 PASS; Chromium/build #41524017555 NOT YET COMPLETE, WebKit #41524016420 NOT YET COMPLETE. Nested evidence artifact #13178447196 ZIP CRC PASS. Final 320/390 light/dark Additional Options screenshot inspection BLOCKED until Chromium artifact; physical iPhone #15 NOT TESTED on update. Never upgrade pending status to Pass.
