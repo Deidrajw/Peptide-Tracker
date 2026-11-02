@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 Add Kit title capitalization follow-up (NOT RELEASED)
+- `1fde47f8` restores `Add Kit`/`Edit Kit` title casing in draft modal shell. UI text only, no saved-data impact. CI/physical acceptance outstanding; no merge/deploy; P0 writer blocking; LIVE nasal gates OFF.
+
 ## 2026-11-01 — PR124 user screenshot corrective sprint (NOT RELEASED)
 - Draft branch commits `33e12915`, `f9f140eb`, `451ad88b`, `5158401c`, `2447f68d`, `26e23dc4`: Add Kit header hierarchy, consistent 48px rounded SVG close, eligible Vial choice visual parity, no-clipping sheet constraints, unified compound picker styling, human-readable nasal intro. `ce5d33d1`: non-exact custom-enter picker visibility after predecessor Chromium failure.
 - `9b8bc029`/`5b2e58a4`: computed `Prepared`/available prepared bottle and `Transferred` original-vial display when confirmed source mass exists in nasal bottle; **no underlying quantities, ledger, history, or storage migration changed**. Test `a48e4db1` and `07d4bcaf` added. New-head CI and fully isolated artifact audit pending; prior passes not sufficient for user-rejected geometry. Full 16-point UAT incomplete, no merge/deploy, P0 legacy mixed-writer BLOCKING, LIVE nasal gates OFF.
