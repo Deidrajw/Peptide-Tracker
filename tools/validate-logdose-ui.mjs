@@ -388,6 +388,22 @@ try {
       typography.preference.size==='13px' &&
       typography.preference.color!==typography.heading.color,
       'Dose preferences must be smaller and secondary: '+JSON.stringify(typography));
+    const optionSpacing=await optional.evaluate(el=>{
+      const body=el.querySelector('.nx-dose-options-body');
+      const preference=el.querySelector('.nx-dose-pref-link');
+      const boxes=[...el.querySelectorAll('.nx-dose-option-check')];
+      const prefBox=preference.getBoundingClientRect();
+      const firstBox=boxes[0].getBoundingClientRect();
+      const secondBox=boxes[1].getBoundingClientRect();
+      return {border:parseFloat(getComputedStyle(preference).borderBottomWidth),
+        gapAfterPreference:firstBox.top-prefBox.bottom,
+        gapBetweenChecks:secondBox.top-firstBox.bottom,
+        bodyGap:getComputedStyle(body).rowGap,
+        prefHeight:prefBox.height};
+    });
+    ensure(optionSpacing.border===0&&optionSpacing.gapAfterPreference<=8&&
+      optionSpacing.gapBetweenChecks<=8&&optionSpacing.prefHeight>=44,
+      'Additional options divider must be absent, spacing compact and taps accessible: '+JSON.stringify(optionSpacing));
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
