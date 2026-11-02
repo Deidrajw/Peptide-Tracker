@@ -4171,3 +4171,65 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 .modal .nx-form-compound-combobox #nx-form-match-list [role="option"]{
   min-height:48px!important;font-size:14px!important;
 }
+
+/* PR124: One compound-picker presentation across vial and other forms.
+   Five results + Browse all share a single containing sheet scroll owner. */
+.modal.nx-stash-kit-editor #nx-kit-combobox-list,
+.modal .nx-form-compound-combobox #nx-form-match-list{
+  position:static!important;left:auto!important;top:auto!important;
+  display:block;max-height:none!important;overflow:visible!important;
+  overscroll-behavior:auto!important;box-shadow:none!important;
+  margin:6px 0 0!important;padding:7px!important;
+  width:100%!important;box-sizing:border-box!important;
+  border-radius:13px!important;border:1px solid var(--border-sub)!important;
+  background:var(--surface-2)!important;
+}
+.modal.nx-stash-kit-editor #nx-kit-combobox-list[hidden],
+.modal .nx-form-compound-combobox #nx-form-match-list[hidden]{display:none!important}
+.modal.nx-stash-kit-editor #nx-kit-combobox-list button,
+.modal .nx-form-compound-combobox #nx-form-match-list button{
+  display:block;width:100%;box-sizing:border-box;
+  min-height:48px!important;border:0!important;
+  border-radius:9px!important;background:transparent!important;
+  color:var(--t1)!important;text-align:left!important;
+  padding:12px!important;font-size:14px!important;line-height:1.4!important;
+}
+.modal.nx-stash-kit-editor #nx-kit-combobox-list button+button,
+.modal .nx-form-compound-combobox #nx-form-match-list button+button{
+  border-top:1px solid var(--border-sub)!important;border-radius:0!important;
+}
+.modal.nx-stash-kit-editor #nx-kit-combobox-input,
+.modal .nx-form-compound-combobox #nx-form-name{
+  box-sizing:border-box;min-height:48px!important;font-size:16px!important;
+  width:100%;border-radius:13px!important;
+}
+/* Close control geometry must be defined by header, not individual pages. */
+.modal .nx-dose-head.nx-shared-sheet-header,
+.modal .nx-unified-header .nx-dose-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;min-width:0!important;max-width:100%!important;
+}
+.modal .nx-dose-head.nx-shared-sheet-header > div,
+.modal .nx-unified-header .nx-dose-head > div{flex:1 1 0!important;min-width:0!important}
+.modal .nx-dose-close{
+  display:grid!important;place-items:center!important;
+  align-self:center!important;flex:0 0 48px!important;
+  width:48px!important;height:48px!important;
+  padding:0!important;margin:0!important;line-height:0!important;
+}
+.modal .nx-dose-close svg{
+  display:block!important;width:22px!important;height:22px!important;
+  margin:0!important;transform:none!important;stroke-width:2.6!important;
+}
+.modal .nx-dose-close:has(svg)::after{display:none!important}
+/* New and edited source forms never inherit a full-height picker canvas. */
+.modal.nx-open-vial-choice-sheet .nx-open-vial-form-choice{
+  display:block!important;min-height:0!important;height:auto!important;
+  max-height:none!important;max-width:100%!important;box-sizing:border-box!important;
+}
+.modal.nx-open-vial-choice-sheet,
+.modal.nx-open-vial-editor{
+  overflow-x:hidden!important;box-sizing:border-box!important;
+  width:min(100%,560px)!important;min-width:0!important;
+  border-radius:24px 24px 0 0!important;
+}
