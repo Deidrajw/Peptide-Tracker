@@ -943,6 +943,7 @@ try {
   assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
     'Returning to SubQ must restore the injection-site field');
   await page.locator('#nx-dose-entered').fill('1.5');
+  await page.locator('.nx-dose-more-options summary').click();
   await page.locator('#nx-dose-use-setup').click();
   assert.equal(await page.locator('.nx-use-setup').count(),1,
     'Edit defaults must open the real use-setup editor');
@@ -1007,7 +1008,9 @@ try {
       vials:[{id:'oral-source',sequenceNumber:1,status:'open',vialMg:5,remainingMg:4,intendedUse:'Oral'}]});
     doseModal('Fictional Source Selector');
   });
-  await page.locator('[data-admin-method="Oral"]').click();
+  await page.locator('#nx-use-oral-vial').click();
+  assert.deepEqual(await page.locator('.nx-method-option').allTextContents(),['Oral'],
+    'An explicitly selected Oral source must not expose injectable methods');
   assert.equal(await page.locator('#nx-dose-method').inputValue(),'Oral',
     'Oral form must be independently selectable for same compound');
   const oralEligible=await page.evaluate(()=>{
