@@ -411,7 +411,7 @@ try {
       const geometry=await page.locator('.nx2-dose-modal').evaluate(modal=>{
         const rect=selector=>{const el=modal.querySelector(selector);if(!el)return null;
           const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
-        const scroll=modal.querySelector('.nx-dose-scroll');
+        const scroll=modal.querySelector('.nx-dose-review-stage:not([hidden]), .nx-dose-scroll:not([hidden])');
         const sheet=modal.getBoundingClientRect();
         const visual=window.visualViewport;
         const docStyle=getComputedStyle(modal);
@@ -424,7 +424,7 @@ try {
           vh:window.innerHeight,visibleBottom,pageScrollWidth:document.documentElement.scrollWidth,
           sheet:{left:sheet.left,right:sheet.right,top:sheet.top,bottom:sheet.bottom,width:sheet.width,height:sheet.height},
           header:rect('.nx-dose-fixed-header'),title:rect('.nx-dose-fixed-header .nx-dose-title'),
-          scrollBody:rect('.nx-dose-scroll'),scrollHeight:scroll?.scrollHeight,clientHeight:scroll?.clientHeight,
+          scrollBody:scroll?(()=>{const b=scroll.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})():null,scrollHeight:scroll?.scrollHeight,clientHeight:scroll?.clientHeight,
           scrollOverflowY:scroll?getComputedStyle(scroll).overflowY:null,
           modalOverflowY:docStyle.overflowY,
           close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
