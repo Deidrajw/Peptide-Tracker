@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 optional disclosure same as administration label (NOT RELEASED)
+- Candidate draft PR #124, CSS commit ef723d618a9c178a20778cf3ec7039d4d65ddc80; no release version increment or production deployment. User-specified Additional dose options heading now takes actual Administration Method/Site field-label style: 11px/700/uppercase/0.055em/themed t3. Preferences and checkbox copy, functionality, saved state and dose math unchanged; no migration.
+- Exact-head mobile #41524016473 SUCCESS, writer #41524016416 SUCCESS (three jobs), DS2 nested #41524016572 SUCCESS. Chromium/build #41524017555 and WebKit #41524016420 still running at latest check; screenshot and exact-source final package acceptance pending. Physical iPhone #15 NOT TESTED on new label correction. P0 release BLOCKING and both LIVE nasal gates OFF. NOT MERGED OR DEPLOYED.
+
 ## 2026-11-02 — PR124 optional-dose restrained typography (NOT RELEASED)
 - Draft candidate v0.9.20-beta: CSS 37e1aee0, regression f7111443, not merged/deployed. Replaced 20px optional heading with 14px/600 disclosure, checkbox copy 14px/500, preferences secondary 13px/500 while retaining main heading, storage/ledger/math/history. Exact CI and artifact QA in progress; physical #15 acceptance pending; release P0 blocking, nasal LIVE OFF.
 
