@@ -1,3 +1,8 @@
+## 2026-11-02 — final approved Dose preferences spacing target (UNRELEASED)
+- User accepted tighter preview and indicated readiness to go. Application CSS commit 5ea01fd33d17dd2163e3c6c683e6e74349cce575 makes Dose preferences font-weight 400 and closes visible title-to-preferences gap while retaining independent >=44px summary and preference hit areas, >=48px checkbox rows. Only CSS modified; no data, storage, dosing, inventory or nasal LIVE gates changed.
+- Exact-head CI, final full-app DEMO/LIVE package, physical iPhone acceptance and release clearance must be verified before production. PR124 draft/unmerged; main baseline da585ab3; overall P0 remains blocking until verified resolved. No merge/deploy yet.
+- NEXT: check five workflows and final screenshots/artifacts; assess P0 clearance and authorization before merging or deploying.
+
 ## 2026-11-02 — focused iPhone #15 spacing and divider correction (NOT RELEASED)
 - User screenshot requested only removal of divider and correction of excessive vertical gaps in Log Dose Additional dose options; preserve all typography, checkbox/pref actions and other flows. CSS 914eb2482ab91df61bb5c6ae7962a470300060cf removes top divider and preference/option separators and compacts summary, preference and checkbox spacing with >=44px touch targets. No JS, storage, calculation or inventory changes.
 - Branch PR124 remains draft/unmerged; this new CSS has NOT YET PASSED exact-head browser/WebKit/mobile/writer QA or physical iPhone. Previous 4fa74b8d five-way PASS applies only to previous CSS. Both LIVE nasal gates OFF, overall P0 release BLOCKING, no deploy/merge.
