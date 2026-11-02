@@ -305,7 +305,6 @@ function stashView() {
         <div class="nx-kit-detail-setup">
           ${secondaryBits.length?`<div class="nx-kit-detail-secondary">${secondaryBits.join(" · ")}</div>`:""}
           ${(()=>{const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-detail-secondary">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
-      ${activeVialForCard?.intendedUse==="nasal-source"?`<div class="nx-kit-detail-secondary">Nasal source vial. Prepared bottles are tracked separately in mg and mL; injection setup does not apply here.</div>`:`<div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Optional · units, tracking and usual vial";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Edit dose preferences for ${esc(s.name)}">Dose preferences</button></div>`}
           ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Vial form not confirmed · ${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} require a physical form label before stock-backed logging.</div>`:""}
           ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">${action.label}</button>`:""}
         </div>
@@ -327,6 +326,7 @@ function stashView() {
           </div>
           ${s.notes?`<div class="nx-kit-note"><div class="nx-kit-overview-label">KIT NOTE</div><p>${esc(s.notes)}</p></div>`:""}
           ${s.testResultAttachment?.dataUrl?`<div class="nx-kit-note"><div class="nx-kit-overview-label">TEST RESULTS</div><div class="nx-kit-file-record"><span class="nx-kit-file-record-name">${esc(s.testResultAttachment.name||"Attached test results")}</span><button type="button" class="nx-kit-test-view" data-kit-id="${esc(s.id)}">View file</button><button type="button" class="nx-kit-test-download" data-kit-id="${esc(s.id)}">Download</button></div></div>`:""}
+      ${activeVialForCard?.intendedUse==="nasal-source"?`<div class="nx-kit-detail-secondary">Nasal source vial. Prepared bottles are tracked separately in mg and mL; injection setup does not apply here.</div>`:`<div class="nx-kit-use-setup-row"><span>${(()=>{const u=typeof nexusUseSetupFor==="function"?nexusUseSetupFor(s.name):null;return u?esc((typeof nexusUseFamily==="function"?nexusUseFamily(u.method):u.method)+" · "+u.unit+" · "+(u.trackingMode==="untracked"?"Doses only":"Doses + stock")):"Optional · units, tracking and usual vial";})()}</span><button type="button" class="nx-stash-use-setup" data-compound="${esc(s.name)}" aria-label="Edit dose preferences for ${esc(s.name)}">Dose preferences</button></div>`}
           <div class="nx-kit-overview-actions">
             <button class="editsupply" data-id="${s.id}">Edit details</button>
             <button class="compound-intel-btn" data-name="${esc(s.name)}">Compound Intel</button>
