@@ -433,7 +433,6 @@ try {
             titleInside:!!title&&!!header&&title.left>=header.left+4&&title.right<=header.right-4&&title.top>=header.top-2,
             bodyBetween:!!body&&!!header&&!!footer&&body.top>=header.bottom-2&&body.bottom<=footer.top+2,
             footerInside:!!footer&&footer.left>=sheet.left-2&&footer.right<=sheet.right+2&&footer.bottom<=sheet.bottom+2}};
-        };
       });
       ensure(geometry.sheet&&geometry.header&&geometry.close&&geometry.footer,
         stage+' missing Log Dose shell: '+JSON.stringify(geometry));
