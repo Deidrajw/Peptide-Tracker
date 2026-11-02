@@ -2717,15 +2717,29 @@ function todayLogDosePicker() {
     k.name && k.kitStatus!=="done" &&
     (k.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0.01)
   ).map(k=>k.name);
-  const formStockNames=(state.formulationStocks||[]).filter(f=>
-    f.compound && (Number(f.remainingCount)>0||Number(f.remainingMg)>0||Number(f.remainingMl)>0)
-  ).map(f=>f.compound);
+  // Unprepared raw powder and topical stock belongs in Stash, not the
+  // administered-dose selector. A separately usable capsule, spray or vial
+  // still permits the same compound to be logged.
+  const usableForms=(state.formulationStocks||[]).filter(f=>f.compound&&(
+    (f.containerType==="capsule-bottle"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
+    (f.containerType==="nasal-bottle"&&Number(f.remainingMg)>0&&Number(f.remainingMl)>0&&
+      Number(f.mgPerSpray)>0&&Number(f.mlPerSpray)>0)));
+  const formStockNames=usableForms.map(f=>f.compound);
+  const unpreparedNames=new Set((state.formulationStocks||[])
+    .filter(f=>f.compound&&["raw-powder","topical-container"].includes(f.containerType))
+    .map(f=>f.compound));
+  const hasUsableVial=name=>(state.supplies||[]).some(k=>
+    k.name===name&&k.kitStatus!=="done"&&
+    (k.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0.01));
   const names=[...new Set([...Object.entries(allPeptides()).filter(([n,d])=>
     (d.status||"active")==="active" &&
     (!componentOnly.has(n) || blendNames.has(n) ||
       (state.supplies||[]).some(k=>!k.isBlend && k.name===n) ||
       (d.doses||[]).some(dose=>!dose.blendSource)
-    )).map(([n])=>n),...blendNames,...stockedNames,...formStockNames])].sort((a,b)=>a.localeCompare(b));
+    )).map(([n])=>n),...blendNames,...stockedNames,...formStockNames])]
+    .filter(name=>!unpreparedNames.has(name)||blendNames.has(name)||
+      hasUsableVial(name)||usableForms.some(f=>f.compound===name))
+    .sort((a,b)=>a.localeCompare(b));
   const m=openModal(`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px"><div><div class="mono" style="font-size:11px;letter-spacing:1px;color:var(--t4)">TODAY</div><h2 style="font-size:20px;color:var(--t1);margin:3px 0">Log a dose</h2></div><button type="button" id="x" aria-label="Close" style="font-size:20px;color:var(--t3)">✕</button></div>
     <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Choose a compound or log multiple compounds together.</p>
     ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#C6A6F2!important;background-image:none!important;box-shadow:none!important;color:#24182F!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid transparent;border-radius:13px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No eligible tracked or stocked compounds yet. Add a compound or inventory in Stash.</p>`}
