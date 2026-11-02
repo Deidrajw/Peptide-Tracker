@@ -1,3 +1,6 @@
+## 2026-11-01 — PR124 Chromium candidate artifacts verified, NOT RELEASED
+- CI source d4b18b8; Chromium #41387143307 success; artifact #13116101650 valid (412-entry outer ZIP, 26-file LIVE ZIP and standalone isolated full-app DEMO), 320/390 dark/light capsule and spray Review dock visual evidence inspected. This is QA for unmerged PR #124 only; current release remains v0.9.20-beta, no production data or migration. Cloudflare parity against branch intentionally not verified, mixed-writer P0 blocking and LIVE nasal gates OFF; shared-header/16-point physical acceptance unfinished.
+
 ## 2026-11-01 — PR124 #14 capsule/spray Review action-dock candidate (NOT RELEASED)
 - App CSS `9d409122`, tests through `d4b18b8`: review-only bounded capsule/spray Log Dose sheet, one scrolling summary, anchored Edit/Confirm controls. No JS, dose math, persisted schema, source attribution, ledger or data migration changes. Entry remains compact.
 - Root cause evidenced by WebKit `bb213bb7` SUCCESS screenshot artifact #13115950372: 320 Review confirmation actions below initial visible sheet despite passing header checks. Corrected same-source CI pending; all 16-point and physical iPhone acceptance incomplete. PR draft, P0 BLOCKING, live nasal OFF, unmerged/undeployed.
