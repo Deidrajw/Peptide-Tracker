@@ -1,3 +1,7 @@
+## 2026-11-01 — PR124 #14 capsule/spray Review action-dock candidate (NOT RELEASED)
+- App CSS `9d409122`, tests through `d4b18b8`: review-only bounded capsule/spray Log Dose sheet, one scrolling summary, anchored Edit/Confirm controls. No JS, dose math, persisted schema, source attribution, ledger or data migration changes. Entry remains compact.
+- Root cause evidenced by WebKit `bb213bb7` SUCCESS screenshot artifact #13115950372: 320 Review confirmation actions below initial visible sheet despite passing header checks. Corrected same-source CI pending; all 16-point and physical iPhone acceptance incomplete. PR draft, P0 BLOCKING, live nasal OFF, unmerged/undeployed.
+
 ## 2026-11-01 — PR124 normal Log Dose QA green (NOT RELEASED)
 - Source `ddd6e42a` (test-only change) all five CI workflows SUCCESS. Chromium #41385255742 artifact #13115620770 348 entries CRC PASS; standalone FULL APP DEMO and 26-file exact-source LIVE ZIP verified, fictional in-memory demo isolation declared, no live sync. Injectable Log Dose 8/8 fixture cases PASS; 320/390 dark/light Review screenshot grid inspected. WebKit #41385255709 artifact #13114684921 screenshot ZIP CRC PASS and Open Vial chooser inspected at four variants.
 - Version remains v0.9.20-beta; no runtime/CSS or schema modifications during this #14 QA fix. Draft PR124 only; not merged or deployed; entire 16-point screen matrix, physical iPhone UAT, and P0 mixed writer release clearance still INCOMPLETE. Both LIVE nasal gates OFF.
