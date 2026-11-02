@@ -830,6 +830,24 @@ try {
       'Optional dose preferences must remain accessible');
     await page.evaluate(()=>closeModal());
     verified.push('normal Today Log Dose designated injectable conditional methods');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(903,9);
+      kit.vials[0].intendedUse='Injectable';kit.totalVials=2;
+      kit.vials.push({id:'fictional-nasal-reserve',status:'open',intendedUse:'nasal-source',
+        vialMg:10,remainingMg:3,sequenceNumber:2});
+      state.supplies=[kit];
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'A separate nasal-reserved vial must not hide the injectable path or add nasal methods');
+    ensure(await page.locator('.nx-kit-confirm-nasal').count()===0,
+      'Nasal reservation must never appear as an injection source');
+    ensure((await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg))).join('|')==='9|3',
+      'Opening source-specific Log Dose mutated mixed physical stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('mixed injectable and nasal-reserved vials retain injectable-only logging');
+
     // New physical injectable vial: routes are source-conditional, not all-form choices.
     await seed(page,theme);
     await page.evaluate(()=>{
