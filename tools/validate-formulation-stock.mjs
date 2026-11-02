@@ -227,6 +227,30 @@ try {
       formBounds.closeH>=44&&formBounds.saveH>=44&&
       formBounds.inputFont>=16&&formBounds.numericFont>=16,
       form+' narrow field, zoom prevention or action geometry: '+JSON.stringify(formBounds));
+    // #08 remaining form parity: inspect the actual expanded suggestion surface
+    // and verify keyboard selection/return focus on both raw and topical editors.
+    const optionBounds=await page.locator('#nx-form-match-list [role="option"]').evaluateAll(items=>
+      items.map(el=>({height:el.getBoundingClientRect().height,right:el.getBoundingClientRect().right})));
+    assert.ok(optionBounds.length===5&&optionBounds.every(x=>x.height>=44&&x.right<=formBounds.viewport+2),
+      form+' suggestion list must preserve five accessible iPhone-sized choices: '+JSON.stringify(optionBounds));
+    const pickerScroll=await page.locator('#nx-form-match-list').evaluate(el=>({
+      client:el.clientHeight,scroll:el.scrollHeight,overflow:getComputedStyle(el).overflowY
+    }));
+    assert.ok(pickerScroll.scroll<=pickerScroll.client+2,
+      form+' picker must not introduce a second vertical scroller: '+JSON.stringify(pickerScroll));
+    await captureVisual(form+'-picker','.nx-form-compound-combobox');
+    await page.locator('#nx-form-name').press('ArrowDown');
+    assert.equal(await page.locator('#nx-form-match-list [role="option"]').first().evaluate(el=>el===document.activeElement),
+      true,form+' ArrowDown must focus first option');
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,
+      form+' Enter must close picker');
+    assert.equal(await page.locator('#nx-form-name').evaluate(el=>el===document.activeElement),true,
+      form+' selection must restore input focus');
+    await page.locator('#nx-form-name').fill('Fictional Custom '+form);
+    await page.locator('#nx-form-name').press('Enter');
+    assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Custom '+form,
+      form+' custom Enter must not silently select a different compound');
     await captureVisual(form+'-entry','.modal .nx-form-stock-editor');
     assert.equal(await page.locator(field).count(),1,form+' must expose only its relevant numeric field');
     await page.locator('.modal #x').click();
