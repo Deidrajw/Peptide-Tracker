@@ -1,3 +1,9 @@
+## 2026-11-02 — candidate v0.9.20-beta final spacing source, complete automated QA (NOT RELEASED)
+- PR124 draft: application CSS 5ea01fd3, main da585ab3. Dose preferences is regular weight and closer to its field-label header, with 44px+ action targets and 48px checkbox rows; no JS, localStorage, inventory, dose-history, migration, or nasal LIVE gate changes.
+- All five exact-source jobs SUCCESS: Chromium #41547092367, WebKit #41547092364, mobile #41547092333, DS2 nested #41547092384, shared-writer #41547092346 (P0 mixed writer + two-tab PASS).
+- Build artifact #13190285462 source-manifest 5ea01fd3; outer ZIP 540 entries CRC PASS, full fictional isolated DEMO 3,099,232 bytes, LIVE ZIP 26 files/root index CRC PASS, offline DEMO ZIP CRC PASS with byte-identical HTML, CSS Git hash matched. Eight Additional Options screenshots inspected, 3/4 LIVE-DEMO pairs show negligible chevron raster difference; layout consistent.
+- Physical iPhone/VoiceOver final exact-source acceptance NOT VERIFIED. NOT MERGED, NOT DEPLOYED, no production storage changes; both nasal LIVE gates OFF. Overall release P0 remains BLOCKED pending final acceptance and explicit merge/deploy approval.
+
 ## 2026-11-02 — final approved Dose preferences spacing target (UNRELEASED)
 - User accepted tighter preview and indicated readiness to go. Application CSS commit 5ea01fd33d17dd2163e3c6c683e6e74349cce575 makes Dose preferences font-weight 400 and closes visible title-to-preferences gap while retaining independent >=44px summary and preference hit areas, >=48px checkbox rows. Only CSS modified; no data, storage, dosing, inventory or nasal LIVE gates changed.
 - Exact-head CI, final full-app DEMO/LIVE package, physical iPhone acceptance and release clearance must be verified before production. PR124 draft/unmerged; main baseline da585ab3; overall P0 remains blocking until verified resolved. No merge/deploy yet.
