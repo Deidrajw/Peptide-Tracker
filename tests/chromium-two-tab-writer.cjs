@@ -71,30 +71,43 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   saved=await a.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
   assert.equal(saved.supplies[0].vials[0].remainingMg,8);
   assert.equal(saved.settings.theme,'light');
-  // Fresh history edit; concurrent stale inventory sees rejection, and history survives.
+  // Deterministic two-tab order: hold A's *real* Web Lock while B queues.
+  // The expected loser is not chosen by scheduler luck. The test still proves
+  // the held history write is durable, B cannot write while locked, and B's
+  // stale full-state snapshot is rejected with no lost inventory update.
   await Promise.all([init(a),init(b)]);
   const history=a.evaluate(async()=>{
-   const r=await window.__writer.transaction(window.__tabState,next=>{
-    next.supplementLogs.push({id:'H2',date:'2026-11-02',taken:['fictional supplement']});
-    return {next};
-   });window.__tabState=r.next;return true;
+   try{
+    const r=await window.__writer.transaction(window.__tabState,async next=>{
+     window.__historyHeld=true;
+     await new Promise(resolve=>window.__releaseHistory=resolve);
+     next.supplementLogs.push({id:'H2',date:'2026-11-02',taken:['fictional supplement']});
+     return {next};
+    });window.__tabState=r.next;return {ok:true};
+   }catch(e){return {ok:false,error:String(e.message)}}
   });
+  await a.waitForFunction(()=>window.__historyHeld===true);
   const competing=b.evaluate(async()=>{
    try{
     const r=await window.__writer.transaction(window.__tabState,next=>{
      next.supplies[0].vials[0].remainingMg=1;return {next};
-    });
-    window.__tabState=r.next;return {ok:true};
-   }catch(e){return {ok:false,error:e.message}}
+    });window.__tabState=r.next;return {ok:true};
+   }catch(e){return {ok:false,error:String(e.message)}}
   });
+  await pause(120);
+  const whileHeld=await b.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
+  assert.equal(whileHeld.supplies[0].vials[0].remainingMg,8,'Competing inventory cannot write during held history lock');
+  assert.equal(whileHeld.supplementLogs.length,1,'History remains unchanged before held transaction finishes');
+  await a.evaluate(()=>window.__releaseHistory());
   const outcomes=await Promise.all([history,competing]);
-  // Whichever wins the lock may commit; the other must reject (no lost update).
+  assert.deepEqual(outcomes[0],{ok:true},'First lock holder must commit the history edit');
+  assert.equal(outcomes[1].ok,false,'Stale competing inventory must reject');
+  assert.match(outcomes[1].error,/changed|blocked|reload/i,'Stale transaction must report conflict');
   const snapshot=await a.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
-  assert.ok(!(outcomes[0]===true&&outcomes[1].ok===true),'Two stale full-state snapshots cannot both commit');
   assert.equal(snapshot.settings.theme,'light');
   assert.equal(snapshot.peptides.Fictional.doses.length,1);
-  if(outcomes[0])assert.ok(snapshot.supplementLogs.some(x=>x.id==='H2'));
-  if(outcomes[1].ok)assert.equal(snapshot.supplies[0].vials[0].remainingMg,1);
+  assert.equal(snapshot.supplies[0].vials[0].remainingMg,8,'Stale loser cannot debit vial');
+  assert.deepEqual(snapshot.supplementLogs.map(x=>x.id),['H1','H2'],'History edit must survive and not duplicate');
   // Explicit failed-write acknowledgement: quota failure cannot swap in-memory state.
   await init(a);
   const failed=await a.evaluate(key=>async function(){
