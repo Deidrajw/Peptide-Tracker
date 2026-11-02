@@ -364,27 +364,19 @@ try {
       return {method:style('.nx-method-option.is-selected'),
         summary:style('.nx-dose-more-options > summary'),
         label:style('.nx-dose-option-check > span'),
-        helper:style('.nx-dose-option-description'),
-        primary:token('--t1'),secondary:token('--t3'),
-        helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
+        preference:style('.nx-dose-pref-link'),
+        primary:token('--t1'),helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
     });
-    ensure(typography.method&&typography.summary&&typography.label&&typography.helper,
-      'Missing Log Dose typography reference: '+JSON.stringify(typography));
-    ensure(typography.summary.font===typography.method.font &&
-      typography.label.font===typography.method.font &&
-      typography.helper.font===typography.method.font,
-      'Additional dose options must use the neighbouring Log Dose UI font: '+JSON.stringify(typography));
-    ensure(typography.summary.color===typography.primary &&
-      typography.label.color===typography.method.color &&
-      typography.label.color===typography.primary &&
-      typography.helper.color===typography.secondary,
-      'Additional dose options must match form text colours in current theme: '+JSON.stringify(typography));
-    ensure(typography.summary.size==='14px'&&typography.label.size==='14px'&&
-      typography.helper.size==='12px'&&typography.helpCount===1 &&
-      Number(typography.summary.weight)===650&&Number(typography.label.weight)===500 &&
-      Number(typography.helper.weight)===400 &&
-      typography.summary.transform==='none'&&typography.label.transform==='none',
-      'Additional dose options font size/weight must match approved Log Dose hierarchy with original copy: '+JSON.stringify(typography));
+    ensure(typography.method&&typography.summary&&typography.label&&typography.preference,
+      'Missing Log Dose controls for typography comparison: '+JSON.stringify(typography));
+    for(const key of ['summary','label','preference']){
+      ensure(typography[key].font===typography.method.font &&
+        typography[key].size==='14px'&&Number(typography[key].weight)===500&&
+        typography[key].color===typography.primary &&
+        typography[key].transform==='none',
+        'Additional dose options '+key+' must match sibling form controls: '+JSON.stringify(typography));
+    }
+    ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
     visualEvidence['Additional options']={filename:optionsShot,typography,layout:checkboxLayout};
@@ -406,6 +398,10 @@ try {
       'Seven saved-route options including Other should remain available');
     ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
       'SubQ not marked as selected');
+    ensure(await page.locator('#site option[value="Abdomen — mid-left"]').count()===1,
+      'Mid-abdomen site choice must be restored for SubQ');
+    ensure(await page.locator('#site option[value="Thigh — left (SubQ)"]').textContent()==='Thigh — left',
+      'Selected route must not repeat SubQ in site display');
     await page.locator('#site').selectOption('Abdomen — lower left');
     ensure(await page.locator('#site').inputValue()==='Abdomen — lower left',
       'SubQ site button did not synchronise saved site value');
@@ -413,6 +409,8 @@ try {
     ensure(await page.locator('#nx-dose-method').inputValue()==='IM' &&
       await page.locator('#site option[value="Deltoid — left (IM)"]').count()===1,
       'Method switching failed to update IM regions and canonical value');
+    ensure(await page.locator('#site option[value="Deltoid — left (IM)"]').textContent()==='Deltoid — left',
+      'Selected route must not repeat IM in site display');
     await page.locator('.nx-method-option[data-admin-method="Nasal"]').click();
     ensure(await page.locator('#nx-nasal-method-note').isVisible(),
       'Nasal guidance did not appear within administration fields');
