@@ -1,3 +1,6 @@
+## 2026-11-01 — PR #124 unmerged toast visual correction (not a release)
+- Dev-only commits `fb9d7c8f` and `3b3cb5dd`: pause/resume transient Undo feedback under modal, add regression. Data model, stored entries and reversal code unchanged. No user data imported, no production deployment, no merge. Final same-head test/artifact approval PENDING. Chromium #41377738544 and WebKit #41377738574 passed on prior `7bb4e07c`; do not transfer these Pass results to newer head. Shared-writer #41382344475 fails two-tab scenario; P0 remains blocking. Physical iPhone/VoiceOver untested.
+
 ## 2026-11-01 — PR124 Open Vial corrected WebKit evidence (NOT RELEASED)
 - Test-only `7bb4e07c` with runtime `21efdf23`: WebKit #41377738574 SUCCESS (136-file screenshot artifact #13111679623, CRC verified). 320/390 dark/light screenshots of compact Open Vial show header and title clear of rounded border. Chromium #41377738544 still running when observed; full screenshot matrix/physical iPhone acceptance incomplete.
 - Screenshot review also exposed transient `Undo` snackbar overlaying chooser controls after prior fictional dose. OPEN UX risk; do not hide or discard Undo as a test shortcut. No production release, no data migration or ledger edits; PR draft/unmerged, P0 mixed-writer BLOCKING, LIVE nasal gates OFF.
