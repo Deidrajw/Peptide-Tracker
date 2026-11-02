@@ -687,7 +687,7 @@ function nexusAdminSites(method) {
   return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — mid-left","Abdomen — mid-right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
 }
 function nexusAdminSiteLabel(site) {
-  return String(site||"").replace(/\\s*\\((?:SubQ|IM)\\)$/,"");
+  return String(site||"").replace(/\s*\((?:SubQ|IM)\)$/,"");
 }
 
 /* PR124 additive use preferences: no migration or historical record mutation. */
