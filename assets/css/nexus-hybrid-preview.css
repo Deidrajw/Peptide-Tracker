@@ -4282,7 +4282,8 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   flex:0 0 auto!important;margin-bottom:8px!important;
 }
 .modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) #nx-nasal-record-review{
-  flex:1 1 0%!important;min-height:0!important;height:0!important;max-height:none!important;
+  flex:0 1 auto!important;min-height:0!important;height:auto!important;
+  max-height:clamp(140px,calc(92dvh - 390px),480px)!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   scroll-padding-bottom:18px;
