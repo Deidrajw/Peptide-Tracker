@@ -102,6 +102,14 @@ async function nexusCommitCurrentState(){
   _nexusLastSavedSnapshot=writer.expected();
   return true;
  }catch(error){
+  // Legacy handlers can mutate the in-memory object before requesting an
+  // exclusive commit. A rejected/uncertain write must not leave phantom
+  // doses, status changes or stock edits visible in that tab. Preserve the
+  // unsaved form DOM for correction; restore only the last verified snapshot.
+  // Never silently rebase another tab's concurrent changes.
+  try{
+   if(typeof _nexusLastSavedSnapshot==="string")state=JSON.parse(_nexusLastSavedSnapshot);
+  }catch(restoreError){console.error("Nexus last verified snapshot could not be restored",restoreError)}
   console.error("Nexus reviewed legacy transaction rejected",error);
   showSaveWarning();
   return false;
