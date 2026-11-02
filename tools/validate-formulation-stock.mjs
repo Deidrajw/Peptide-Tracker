@@ -488,6 +488,22 @@ try {
   assert.equal(dualAfter.second,2,'Explicit second source must deduct exactly one capsule');
   assert.equal(dualAfter.source,'fictional-second-capsules','Saved source attribution must identify chosen bottle');
 
+  // Fresh / old saved records must expose an empty formulation ledger before
+  // a confirmed preparation creates its destination. Never erase existing stock.
+  const formulationSchema=await page.evaluate(()=>{
+    const fresh=defaultState();
+    const recovered=migrate({...fresh,formulationStocks:undefined});
+    const existing={id:'fictional-preserved-bottle',remainingMg:3};
+    const preserved=migrate({...fresh,formulationStocks:[existing]});
+    return {fresh:Array.isArray(fresh.formulationStocks)&&fresh.formulationStocks.length===0,
+      recovered:Array.isArray(recovered.formulationStocks)&&recovered.formulationStocks.length===0,
+      preserved:preserved.formulationStocks.length===1&&
+        preserved.formulationStocks[0].id===existing.id&&
+        preserved.formulationStocks[0].remainingMg===3};
+  });
+  assert.deepEqual(formulationSchema,{fresh:true,recovered:true,preserved:true},
+    'New and legacy states must initialize formulation stock without dropping saved bottles');
+
   // A nasal-source label is a reservation, not ready-to-use stock. The pure
   // transfer planner must accept that explicit source only when a destination
   // container and exact mass are provided; preview never changes state.
