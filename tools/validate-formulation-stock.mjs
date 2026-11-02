@@ -664,6 +664,22 @@ try {
         {id:'source-a',sequenceNumber:1,status:'open',vialMg:10,remainingMg:7,intendedUse:'SubQ'},
         {id:'source-b',status:'sealed',vialMg:10,remainingMg:10}]});
     openNewVialModal(992211);
+    // A previous reversible action must not paint over the next foreground form.
+    // Closing that form must restore the still-actionable Undo, not discard it.
+    showUndoToast('Fictional dose prepared · Undo',()=>{});
+    const transientUndo=document.querySelector('#undo-btn')?.parentElement;
+    if(!transientUndo || transientUndo.style.visibility!=='hidden' ||
+       transientUndo.getAttribute('aria-hidden')!=='true')
+      throw Error('Undo toast must be visually and accessibly suppressed under an open sheet');
+    closeModal();
+    if(transientUndo.style.visibility==='hidden' ||
+       transientUndo.getAttribute('aria-hidden')==='true' ||
+       !transientUndo.querySelector('#undo-btn'))
+      throw Error('Undo action must resume when sheet closes');
+    openNewVialModal(992211);
+    if(transientUndo.style.visibility!=='hidden')
+      throw Error('Undo toast reappeared over reopened sheet');
+    transientUndo.remove();toastEl=null;clearTimeout(toastTimer);toastTimer=null;
     const chooser=document.querySelector('.nx-open-vial-choice-sheet');
     if(!chooser || chooser.querySelectorAll('.nx-open-vial-form-options button').length!==2 ||
        chooser.querySelector('#rv-totalvials')) throw Error('Open Vial must ask Injectable/Nasal BEFORE vial details');
