@@ -4365,6 +4365,35 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 }
 .modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body{padding:0 0 8px!important;}
 .modal.nx2-dose-modal .nx-dose-form .nx-dose-option-check{margin:0!important;}
+/* PR124 physical iPhone UAT: optional dose controls are primary form text,
+   rather than muted miniature disclosure labels. Preserve all checkbox wiring. */
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-more-options>summary,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body .nx-dose-option-check,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body .nx-dose-option-check>span,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-pref-link {
+  font-family:inherit!important;font-size:16px!important;font-weight:500!important;
+  line-height:1.45!important;letter-spacing:0!important;text-transform:none!important;
+  color:var(--t1)!important;
+}
+/* Keep the confirmation compact and reading from top to bottom, with no
+   inflated dose hero/forced space between amount and the verification rows. */
+.modal.nx2-dose-modal .nx-dose-review-stage.nx-dose-confirm-screen{
+  display:block!important;min-height:0!important;padding:16px 18px 22px!important;
+  align-content:start!important;justify-content:start!important;
+}
+.modal.nx2-dose-modal .nx-dose-confirm-heading{margin-bottom:14px!important}
+.modal.nx2-dose-modal .nx-dose-confirm-heading h2{font-size:22px!important;margin:0 0 5px!important}
+.modal.nx2-dose-modal .nx-dose-confirm-hero{
+  display:flex!important;flex-direction:column!important;flex:none!important;
+  min-height:0!important;height:auto!important;padding:13px 16px!important;
+  gap:2px!important;margin:0 0 7px!important;background:var(--surface-2)!important;
+}
+.modal.nx2-dose-modal .nx-dose-confirm-hero strong{font-size:30px!important}
+.modal.nx2-dose-modal .nx-dose-confirm-rows{margin-top:0!important;padding-top:0!important}
+.modal.nx2-dose-modal .nx-dose-confirm-row{padding:10px 0!important}
+.nx-inventory-only-notice .nx-dose-form-message{font-size:15px;line-height:1.55;color:var(--t2);margin:12px 0 18px}
+.nx-inventory-only-notice #nx-inventory-only-go{min-height:48px;width:100%}
+
 /* A compound with nasal stock retains the original compact Open vial bar.
    Secondary nasal counts are just one supporting line, not a second dashboard. */
 .nexus-screen-stash .nx-kit-card .nx-kit-nasal-summary {
