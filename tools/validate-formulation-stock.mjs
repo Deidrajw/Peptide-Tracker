@@ -212,8 +212,15 @@ try {
     return page.locator('.modal.nx-form-log-sheet').evaluate(el=>{
       const bounds=el.getBoundingClientRect();
       const head=el.querySelector('.nx-dose-head');
-      const close=head.querySelector('#x').getBoundingClientRect();
+      const hb=head?.getBoundingClientRect();
+      const title=head?.querySelector('.nx-dose-title')?.getBoundingClientRect();
+      const close=head?.querySelector('#x')?.getBoundingClientRect();
       return {sheetRight:bounds.right,sheetHeight:bounds.height,
+        headerInside:!!hb&&hb.left>=bounds.left-2&&hb.right<=bounds.right+2&&hb.top>=bounds.top-2,
+        titleInside:!!title&&!!hb&&title.left>=hb.left+4&&title.right<=hb.right-4&&title.top>=hb.top-2,
+        closeInside:!!close&&!!hb&&close.left>=bounds.left+4&&close.right<=bounds.right-4&&
+          close.top>=hb.top-2&&close.bottom<=hb.bottom+2,
+        headerCount:el.querySelectorAll('.nx-dose-head').length,
         viewportWidth:document.documentElement.clientWidth,viewportHeight:window.innerHeight,
         scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,
         closeWidth:close.width,closeHeight:close.height,
@@ -226,12 +233,16 @@ try {
   const oralLayout=await formLayout();
   assert.ok(!oralLayout.pageOverflow&&oralLayout.sheetRight<=oralLayout.viewportWidth+2,
     'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
+  assert.ok(oralLayout.headerCount===1&&oralLayout.headerInside&&oralLayout.titleInside&&oralLayout.closeInside,
+    'Capsule header/title/close clipped inside sheet: '+JSON.stringify(oralLayout));
   assert.ok(oralLayout.outlinedClose&&oralLayout.sheetHeight<=oralLayout.viewportHeight+2&&oralLayout.closeWidth>=43.99&&oralLayout.closeHeight>=43.99,
     'Capsule sheet height/close target: '+JSON.stringify(oralLayout));
   assert.ok(oralLayout.closeSvgColor!=='rgba(0, 0, 0, 0)'&&oralLayout.closeSvgColor!=='transparent'&&oralLayout.duplicateIconDisplay==='none',
     'Capsule close must render one visible SVG, not a duplicate masked glyph: '+JSON.stringify(oralLayout));
+  await captureVisual('capsule-log-entry','.modal.nx-form-log-sheet');
   await page.locator('#nx-capsule-count').fill('2');
   await page.locator('#nx-capsule-review').click();
+  await captureVisual('capsule-log-review','.modal.nx-form-log-sheet');
   assert.equal(await page.locator('#nx-capsule-entry-fields').isHidden(),true,
     'Capsule review should replace entry controls, not duplicate them');
   assert.equal(await page.locator('#nx-capsule-confirm').isVisible(),true);
@@ -244,12 +255,16 @@ try {
   const nasalLayout=await formLayout();
   assert.ok(!nasalLayout.pageOverflow&&nasalLayout.sheetRight<=nasalLayout.viewportWidth+2,
     'Spray sheet viewport overflow: '+JSON.stringify(nasalLayout));
+  assert.ok(nasalLayout.headerCount===1&&nasalLayout.headerInside&&nasalLayout.titleInside&&nasalLayout.closeInside,
+    'Prepared spray header/title/close clipped inside sheet: '+JSON.stringify(nasalLayout));
   assert.ok(nasalLayout.outlinedClose&&nasalLayout.sheetHeight<=nasalLayout.viewportHeight+2&&nasalLayout.closeWidth>=44&&nasalLayout.closeHeight>=44,
     'Spray sheet height/close target: '+JSON.stringify(nasalLayout));
   assert.ok(nasalLayout.closeSvgColor!=='rgba(0, 0, 0, 0)'&&nasalLayout.closeSvgColor!=='transparent'&&nasalLayout.duplicateIconDisplay==='none',
     'Spray close must render one visible SVG, not a duplicate masked glyph: '+JSON.stringify(nasalLayout));
+  await captureVisual('spray-log-entry','.modal.nx-form-log-sheet');
   await page.locator('#nx-spray-count').fill('2');
   await page.locator('#nx-spray-review').click();
+  await captureVisual('spray-log-review','.modal.nx-form-log-sheet');
   assert.equal(await page.locator('#nx-spray-entry-fields').isHidden(),true,
     'Spray review should replace entry controls');
   const reviewedSpray=await page.locator('#nx-spray-summary').textContent();
