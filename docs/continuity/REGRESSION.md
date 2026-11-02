@@ -1,3 +1,6 @@
+## 2026-11-01 — Shared header title-inset test corrected
+- Initial `9b9e6ca0` assertion failed both engines for capsule form: measured title beginning at same inset as its header, but erroneously required another 4px nested inset. Actual header and X within sheet, no horizontal overflow. `bb213bb7` requires title ≥10px from sheet left and contained by header (±2px), rather than inventing internal extra padding. Tests exact-head pending; no visual acceptance or app CSS change claimed.
+
 ## 2026-11-01 — #14 capsule and prepared-spray browser visibility coverage candidate
 - Test-only `9b9e6ca0`: `validate-formulation-stock.mjs` captures `capsule-log-entry`, `capsule-log-review`, `spray-log-entry`, `spray-log-review` foreground/target PNGs across Chromium/WebKit, 320/390, both themes, LIVE/isolated DEMO. Assert shared header/title/close inside modal, no duplicate header, existing 44–48px SVG X and no horizontal overflow. Source TEST CODED, exact-head results pending, no iPhone software keyboard/VoiceOver.
 
