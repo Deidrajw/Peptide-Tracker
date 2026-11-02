@@ -350,11 +350,14 @@ function stashView() {
              });
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
+              const wasTransferredToBottle=v.intendedUse==="nasal-source"&&rem<=0.000001&&
+                (state.formulationStocks||[]).some(b=>b.containerType==="nasal-bottle"&&
+                  b.recordedPreparation&&String(b.sourceVialId)===String(v.id)&&Number(b.remainingMg)>0);
               const num=v.sequenceNumber||"—";
               return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
-                  <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${isActive?"Open":"Finished"}</span></div>
-                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${v.intendedUse==="nasal-source"&&rem<=0.000001&&(state.formulationStocks||[]).some(b=>b.containerType==="nasal-bottle"&&b.recordedPreparation&&String(b.sourceVialId)===String(v.id)&&Number(b.remainingMg)>0)?"Transferred to prepared nasal bottle":rem.toFixed(2)+" mg remaining in vial"}${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
+                  <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${wasTransferredToBottle?"Transferred":isActive?"Open":"Finished"}</span></div>
+                  <div class="nx-kit-list-meta">${v.reconDate?"Opened "+fmtDate(v.reconDate):"Opening date unavailable"} · ${wasTransferredToBottle?"Transferred to prepared nasal bottle":rem.toFixed(2)+" mg remaining in vial"}${v.intendedUse?" · "+esc(v.intendedUse):""}</div>
                   ${(s.linkedPreparationPlans||[]).filter(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer").map(p=>`<div class="nx-stash-plan-status"><span>Plan saved · ${esc(p.kind||"Other")}</span><small>Vial inventory unchanged</small></div>`).join("")}
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
