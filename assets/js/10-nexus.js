@@ -2433,7 +2433,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
        '<dt>Source vial after transfer</dt><dd>'+(remaining-mg).toFixed(2)+' mg</dd>'+
        '<dt>Prepared bottle after transfer</dt><dd>'+mg.toFixed(2)+' mg / '+total.toFixed(2)+' mL</dd>'+
        '<dt>Nominal pump amount</dt><dd>'+(mg*1000/total*pump).toFixed(2)+' mcg/spray</dd>'+
-       '</dl><p class="nx-shared-review-footnote">One confirmed transfer between two linked stocks. No material disappears, and it is not counted twice.</p>';
+       '</dl><p class="nx-shared-review-footnote">One confirmed transfer between two linked stocks; the original vial and prepared bottle stay distinct. Amounts are nominal arithmetic only and do not verify pump delivery, sterility, compatibility or route suitability.</p>';
    }
    // The mobile sheet is the single scroll owner. A tall entry form can leave
    // Review off screen after the section swap unless we reset its position.
