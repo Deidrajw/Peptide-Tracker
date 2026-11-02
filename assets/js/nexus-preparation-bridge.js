@@ -144,14 +144,18 @@
    fail("Positive source, final volume and pump calibration required");
   if(Math.abs(input.bacMl+input.salineMl-input.volumeMl)>0.000001)
    fail("Record the actual total liquid volume; components do not reconcile");
-  if(!Array.isArray(snapshot?.formulationStocks))
-   fail("Prepared-container inventory is unavailable. No inventory changed.");
-  if(snapshot.formulationStocks.some(c=>String(c.id)===input.destinationContainerId))
+  // Older snapshots may predate the first prepared container. An absent field
+  // means an empty collection, not a duplicate destination. Malformed existing
+  // data still fails closed; never replace or discard a non-array collection.
+  if(snapshot?.formulationStocks!==undefined&&!Array.isArray(snapshot.formulationStocks))
+   fail("Prepared-container inventory is invalid. No inventory changed.");
+  if((snapshot.formulationStocks||[]).some(c=>String(c.id)===input.destinationContainerId))
    fail("A prepared container already has this identifier. No inventory changed.");
   const kits=(snapshot.supplies||[]).filter(k=>String(k.id)===String(input.sourceKitId));
   if(kits.length!==1)fail("Unique physical source kit required");
   const kit=kits[0];
   const next=JSON.parse(JSON.stringify(snapshot));
+  if(next.formulationStocks===undefined)next.formulationStocks=[];
   next.formulationStocks.push({
    id:input.destinationContainerId,compound:kit.name,containerType:"nasal-bottle",
    method:"Nasal",remainingMl:input.volumeMl,remainingMg:0,mgPerSpray:null,
