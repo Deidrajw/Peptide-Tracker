@@ -344,13 +344,44 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
-    // Both fields require descriptions that clarify history vs protocol effects.
-    for(const [id,help] of [['#nx-dose-as-needed','#nx-dose-independent-help'],['#esc','#nx-dose-escalation-help']]){
-      ensure(await page.locator(id).getAttribute('aria-describedby')===help.slice(1),
-        id+' lacks linked accessible explanation');
-      ensure((await page.locator(help).innerText()).trim().length>=35,
-        id+' explanatory text is missing');
-    }
+    // #15 is a styling request: verify actual computed UI font and theme
+    // colours against neighbouring Log Dose method buttons (not new copy).
+    const typography=await optional.evaluate(el=>{
+      const modal=el.closest('.nx2-dose-modal');
+      const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
+        const s=getComputedStyle(node);return {
+          font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,
+          color:s.color,spacing:s.letterSpacing,transform:s.textTransform
+        };
+      };
+      const token=(name)=>{
+        const probe=document.createElement('span');
+        probe.style.color='var('+name+')';
+        el.appendChild(probe);
+        const color=getComputedStyle(probe).color;probe.remove();return color;
+      };
+      return {method:style('.nx-method-option.is-selected'),
+        summary:style('.nx-dose-more-options > summary'),
+        label:style('.nx-dose-option-check > span'),
+        helper:style('.nx-dose-option-description'),
+        primary:token('--t1'),secondary:token('--t3'),
+        helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
+    });
+    ensure(typography.method&&typography.summary&&typography.label&&typography.helper,
+      'Missing Log Dose typography reference: '+JSON.stringify(typography));
+    ensure(typography.summary.font===typography.method.font &&
+      typography.label.font===typography.method.font &&
+      typography.helper.font===typography.method.font,
+      'Additional dose options must use the neighbouring Log Dose UI font: '+JSON.stringify(typography));
+    ensure(typography.summary.color===typography.primary &&
+      typography.label.color===typography.method.color &&
+      typography.label.color===typography.primary &&
+      typography.helper.color===typography.secondary,
+      'Additional dose options must match form text colours in current theme: '+JSON.stringify(typography));
+    ensure(parseFloat(typography.summary.size)>=14&&parseFloat(typography.label.size)>=14 &&
+      parseFloat(typography.helper.size)>=12&&typography.helpCount===1,
+      'Options typography or original helper copy changed: '+JSON.stringify(typography));
+
     await page.locator('#nx-dose-as-needed').check();
     await page.locator('#esc').check();
     ensure(await page.locator('#nx-dose-as-needed').isChecked()&&await page.locator('#esc').isChecked(),
