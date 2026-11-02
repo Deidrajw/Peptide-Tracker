@@ -966,6 +966,20 @@ function nexusChoosePhysicalForm(name,occTime){
    showErrorBanner("This vial is reserved for nasal preparation, but no prepared bottle is available. Nothing logged. Open New Vial → Nasal in Stash to review the prepared source.");
    return true;
  }
+ // Stored powder and topical containers are INVENTORY, not confirmed administered
+ // sources. A separately prepared capsule, nasal bottle or labelled open vial
+ // remains eligible even when the same compound has unprepared stock.
+ const rawOnly=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="raw-powder"&&Number(x.remainingMg)>0);
+ const topicalOnly=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="topical-container"&&Number(x.remainingMl)>0);
+ if(!capsules&&!nasal&&!injectableVial&&!oralVial&&(rawOnly||topicalOnly)){
+   const explanation=rawOnly
+     ?"Raw powder is inventory, not a usable dose. First record the prepared product separately, such as capsules, a spray bottle, or a confirmed vial."
+     :"Topical products are managed in Stash. Application logging is not enabled yet; no dose or inventory was changed.";
+   const m=openModal('<section class="nx-dose-form nx-inventory-only-notice"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · INVENTORY</div><h2 class="nx-dose-title">Not ready to log</h2><p class="nx-dose-subtitle">'+esc(name)+'</p></div><button id="x" type="button" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><p class="nx-dose-form-message">'+esc(explanation)+'</p><button id="nx-inventory-only-go" class="btn-primary" type="button">View inventory in Stash</button></section>',"#A78BFA");
+   m.querySelector("#x").onclick=closeModal;
+   m.querySelector("#nx-inventory-only-go").onclick=()=>{closeModal();tab="stash";state._stashSub="other";render();window.scrollTo(0,0);};
+   return true;
+ }
  if(!capsules&&!nasal&&!oralVial)return false;
  const availableVial=injectableVial;
  const choices=Number(capsules)+Number(nasal)+Number(availableVial)+Number(oralVial);
@@ -1219,7 +1233,7 @@ function doseModal(name, existing, occTime, formChoice) {
   review.className="nx-dose-review-stage nx-dose-confirm-screen";
   review.setAttribute("aria-label","Review dose");
   review.hidden=true;
-  review.innerHTML='<div class="nx-dose-confirm-heading"><span class="nx-dose-confirm-eyebrow">FINAL CHECK</span><h2 id="nx-dose-review-title">Review dose</h2><p>Confirm the details before adding this entry to your history.</p></div><div class="nx-dose-confirm-hero"><span>DOSE</span><strong id="nx-dose-review-amount"></strong><span id="nx-dose-review-compound"></span></div><div id="nx-dose-review-rows" class="nx-dose-confirm-rows"></div><p class="nx-dose-confirm-safety" role="status">Nothing is saved until you tap Confirm & save. Inventory is checked again when saving.</p>';
+  review.innerHTML='<div class="nx-dose-confirm-heading"><h2 id="nx-dose-review-title">Review dose</h2><p>Check the amount and source before saving.</p></div><div class="nx-dose-confirm-hero"><span>AMOUNT</span><strong id="nx-dose-review-amount"></strong><span id="nx-dose-review-compound"></span></div><div id="nx-dose-review-rows" class="nx-dose-confirm-rows"></div><p class="nx-dose-confirm-safety" role="status">Nothing is saved until you tap Confirm & save. Inventory is checked again when saving.</p>';
   doseScroll.insertAdjacentElement("afterend",review);
   const saveButton=m.querySelector("#save");
   const reviewButton=document.createElement("button");
@@ -1273,6 +1287,16 @@ function doseModal(name, existing, occTime, formChoice) {
     if(note)note.textContent=on?"Check your entry, then confirm once.":"Your entry stays here until you review and save.";
     if(on)review.querySelector("#nx-dose-review-title")?.focus?.();
   };
+  // Clear only the stale missing-amount warning once input is corrected.
+  // Do not hide independent source, allocation or failed-save errors.
+  const clearStaleAmountError=()=>{
+    const notice=m.querySelector("#nx-validation-message");
+    if(notice&&notice.textContent.includes("Enter an amount greater than zero"))notice.remove();
+  };
+  m.querySelectorAll("#nx-dose-entered,#dose,#sprays").forEach(input=>
+    input.addEventListener("input",()=>{
+      if(Number(input.value)>0&&Number.isFinite(Number(input.value)))clearStaleAmountError();
+    }));
   reviewButton.onclick=()=>{
     const amount=Number(doseVal("dose"));
     const date=doseVal("date");
@@ -1291,6 +1315,7 @@ function doseModal(name, existing, occTime, formChoice) {
       }
       return;
     }
+    clearStaleAmountError();
     showDoseReview(true);
   };
   backButton.onclick=()=>showDoseReview(false);
