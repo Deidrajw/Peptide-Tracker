@@ -321,6 +321,23 @@ try{
     ensure(await mixed.locator('.nx-kit-primary-vial .nx-kit-overview-track').count()===0,'Mixed compact card shows misleading single-vial progress');
     ensure(await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg).join(',')+':'+state.formulationStocks[0].remainingMg)==='7,3:2','Stash render mutated stock');
     ensure(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Mixed card horizontal overflow at mobile width');
+    await page.evaluate(()=>{
+      const kit=state.supplies[0];
+      kit.vials[0].intendedUse='';
+      kit.vials[1].status='sealed';
+      state.formulationStocks=[];
+      render();
+    });
+    const pending=card(88001);
+    ensure((await pending.locator('.nx-stash-go-vial-method').innerText()).trim()==='Confirm vial form',
+      'Unlabelled inventory must prioritize physical confirmation, not preferences');
+    await pending.locator('.nx-kit-detail-button').click();
+    ensure((await pending.locator('.nx-kit-detail-warning').innerText()).includes('Vial form not confirmed'),
+      'Physical-vial status warning missing');
+    ensure(await pending.locator('.nx-kit-detail-panel > .nx-kit-detail-setup .nx-stash-use-setup').count()===0,
+      'Optional preferences interrupt urgent vial status');
+    ensure((await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').innerText()).trim()==='Dose preferences',
+      'Dose preferences must be secondary to source confirmation');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
