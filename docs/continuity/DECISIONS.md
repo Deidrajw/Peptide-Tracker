@@ -1,3 +1,8 @@
+## 2026-11-02 — Additional dose options must use the existing section hierarchy (binding visual correction)
+- User physical screenshots reject a flat 16px regular-weight trio of disclosure heading, Dose preferences and checkbox copy even when computed font-family/colour matches. This is a VISUAL HIERARCHY failure, not merely a typeface mismatch.
+- Approved correction target: “Additional dose options” same shared heading rule as “Your dose” (20px, 750, primary theme text, -0.025em); preferences a subordinate 14px/600, secondary theme text and 48px navigational row; checkbox labels 14px/500, primary form text and 48px targets. Use the SAME font-family inherited from Log Dose, not a separate special family. No stacked CSS exceptions; remove old conflicting rules, preserve all click handlers/drafts/stock.
+- Open/close disclosure retains visible keyboard focus only; do not show a disruptive purple frame for pointer interaction. This is targeted DS2 consistency work, not approval for broader redesign, merging, deployment, migrations or nasal LIVE feature changes.
+
 ## 2026-11-02 — second physical iPhone UAT: four failures; corrected upstream (PR #124 DRAFT)
 - User requires excluding raw/topical-only products from the TOP-LEVEL Today compound dropdown, not merely blocking their downstream dose form. Preserve separately usable capsules/nasal/injectable sources and their histories.
 - Additional dose options must inherit the existing Log Dose sheet font family/size/theme primary color; remove competing legacy overrides instead of adding new overrides.
