@@ -231,6 +231,23 @@ try {
         pageOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
     });
   };
+  const assertFormReviewDock=async(stage,summarySelector,backSelector,saveSelector)=>{
+    const g=await page.locator('.modal.nx-form-log-sheet').evaluate((modal,s)=>{
+      const rect=q=>{const el=modal.querySelector(q);if(!el)return null;const b=el.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height,width:b.width};};
+      const summary=modal.querySelector(s.summary);
+      return {sheet:rect(':scope'),header:rect('.nx-dose-head'),summary:rect(s.summary),
+        back:rect(s.back),save:rect(s.save),viewport:innerHeight,
+        modalOverflow:getComputedStyle(modal).overflowY,
+        summaryOverflow:summary?getComputedStyle(summary).overflowY:null,
+        horizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
+    },{summary:summarySelector,back:backSelector,save:saveSelector});
+    assert.ok(g.sheet&&g.header&&g.summary&&g.back&&g.save&&!g.horizontalOverflow&&
+      g.modalOverflow==='hidden'&&['scroll','auto'].includes(g.summaryOverflow)&&
+      g.summary.top>=g.header.bottom-2&&g.summary.bottom<=g.back.top+2&&
+      g.back.bottom<=g.save.top+2&&g.save.height>=44&&
+      g.save.top>=0&&g.save.bottom<=g.viewport+2&&g.save.bottom<=g.sheet.bottom+2,
+      stage+' Review does not retain an accessible docked confirmation and single scrollport: '+JSON.stringify(g));
+  };
   const oralLayout=await formLayout();
   assert.ok(!oralLayout.pageOverflow&&oralLayout.sheetRight<=oralLayout.viewportWidth+2,
     'Capsule sheet viewport overflow: '+JSON.stringify(oralLayout));
@@ -243,6 +260,7 @@ try {
   await captureVisual('capsule-log-entry','.modal.nx-form-log-sheet');
   await page.locator('#nx-capsule-count').fill('2');
   await page.locator('#nx-capsule-review').click();
+  await assertFormReviewDock('Capsule','#nx-capsule-summary','#nx-capsule-back','#nx-capsule-save');
   await captureVisual('capsule-log-review','.modal.nx-form-log-sheet');
   assert.equal(await page.locator('#nx-capsule-entry-fields').isHidden(),true,
     'Capsule review should replace entry controls, not duplicate them');
@@ -265,6 +283,7 @@ try {
   await captureVisual('spray-log-entry','.modal.nx-form-log-sheet');
   await page.locator('#nx-spray-count').fill('2');
   await page.locator('#nx-spray-review').click();
+  await assertFormReviewDock('Prepared spray','#nx-spray-summary','#nx-spray-back','#nx-spray-save');
   await captureVisual('spray-log-review','.modal.nx-form-log-sheet');
   assert.equal(await page.locator('#nx-spray-entry-fields').isHidden(),true,
     'Spray review should replace entry controls');
