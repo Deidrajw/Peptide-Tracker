@@ -1,3 +1,10 @@
+## 2026-11-02 — computed field-label parity corrected, 4/5 workflows PASS (NO RELEASE)
+- Main da585ab3458394ddf5e88e283b210933beeab810; PR124 draft/unmerged; source CSS 4fa74b8d7a78882653daa505d8a6ecce370ffcda. Earlier ef723d61 Chromium/build #41524017555 FAILED specifically summary text-transform uppercase versus Method/Site computed none. All other compared CSS properties matched. Fixed only summary transform to none at 4fa74b8d; heading stays uppercase from literal text.
+- Exact 4fa74b8d: mobile #41524938061 SUCCESS; shared writer #41524938305 SUCCESS (3 jobs, mixed-writer P0 and real two-tab); nested #41524937947 SUCCESS; WebKit #41524937951 SUCCESS. Chromium/build #41524937984 IN PROGRESS at last query; screenshots and canonical artifact pending. WebKit evidence artifact #13179227978 CRC PASS (312 entries).
+- Local browser BLOCKED by policy. Source-patched candidate LIVE ZIP 26 files CRC PASS, full-app isolated fictional DEMO, offline ZIP matching HTML, CSS git blob 1b14c653742352c203cd5935584b1f8b82f9dce6 equal to commit. Candidate not independently browser certified, no production writes.
+- Physical iPhone #15 not tested on corrected build. No merge, deployment, nasal LIVE enablement or destructive migration. P0 release BLOCKING; no authorization to merge/deploy.
+- ONE NEXT ACTION: Chromium final result, 320/390 light/dark screenshot review and canonical artifact; then physical iPhone typography #15 acceptance.
+
 ## 2026-11-02 — field-label typography parity #15, exact-head QA running (NO RELEASE)
 - Main da585ab3458394ddf5e88e283b210933beeab810, PR124 draft/unmerged; CSS change ef723d618a9c178a20778cf3ec7039d4d65ddc80. User's screenshot requests ADDITIONAL DOSE OPTIONS match ADMINISTRATION METHOD and ADMINISTRATION SITE exactly, not a distinct 14px or 20px headline.
 - CSS optional disclosure explicitly matches 11px/700/uppercase/0.055em/1.4 line-height/theme t3/inherited font (existing field labels); does not change checkbox copy, preferences, JS or persistence. Existing tools/validate-logdose-ui.mjs asserts actual computed summary parity to #nx-method-label and site label and 320/390 dark/light geometry.
