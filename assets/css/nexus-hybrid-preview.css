@@ -3808,8 +3808,10 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .modal.nx2-dose-modal .nx-dose-more-options>summary{
   display:flex;align-items:center;justify-content:space-between;
   min-height:48px!important;cursor:pointer;list-style:none;
-  /* Typography comes from the SAME .field-label as Administration Method/Site.
-     Do not redefine its size, weight, colour or tracking here. */
+  /* Match Administration Method and Administration Site field labels exactly. */
+  font-family:inherit!important;font-size:11px!important;line-height:1.4!important;
+  letter-spacing:.055em!important;text-transform:uppercase!important;
+  font-weight:700!important;color:var(--t3)!important;
   margin:0!important;border-radius:10px;
 }
 .modal.nx2-dose-modal .nx-dose-more-options>summary:focus:not(:focus-visible){outline:none}
