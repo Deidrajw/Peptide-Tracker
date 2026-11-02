@@ -1,3 +1,8 @@
+## 2026-11-02 — #15 updated screenshot field-label parity (PR124 DRAFT, incomplete final QA)
+- CSS ef723d61 sets optional summary actual field-label computed typography, not a separate heading. Test tools/validate-logdose-ui.mjs compares summary computed font, size, weight, colour, spacing and text transform with Administration Method and Site labels. Preserve two checkboxes, their actions, Dose preferences, disclosure keyboard focus, Review stages and source/accounting.
+- Exact-head mobile #41524016473 PASS, writer #41524016416 PASS (3/3 jobs), nested #41524016572 PASS; Chromium/build #41524017555 NOT YET COMPLETE, WebKit #41524016420 NOT YET COMPLETE. Nested evidence artifact #13178447196 ZIP CRC PASS. Final 320/390 light/dark Additional Options screenshot inspection BLOCKED until Chromium artifact; physical iPhone #15 NOT TESTED on update. Never upgrade pending status to Pass.
+- No production writes, merge or deployment, both LIVE nasal gates OFF, release P0 BLOCKING. ONE NEXT ACTION: collect final Chromium/WebKit results and screenshots, then focused physical iPhone visual acceptance.
+
 ## 2026-11-02 — Continue PR124, verify remaining typography release checks (NO RELEASE)
 - Main verified da585ab3458394ddf5e88e283b210933beeab810, PR124 head c09fbe87182785d9e792f2e8780e06e9075e265c draft/unmerged.
 - Exact application/test f7111443f6d44c849f06a2c8c60e806ac51d92f5: WebKit #41521142546 SUCCESS, mobile #41521142518 SUCCESS, DS2 nested #41521142569 SUCCESS, shared inventory writer #41521142440 SUCCESS. Chromium/build #41521142367 remains IN PROGRESS at last read; no false Pass or screenshots asserted. Focused physical iPhone #15 NOT TESTED on updated 14px/13px hierarchy, prior visual rejection remains unresolved.
