@@ -3832,8 +3832,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   display:flex!important;align-items:center!important;gap:12px!important;
   min-height:48px!important;color:var(--t1)!important;
   font-family:inherit!important;
-  /* Ordinary option labels follow the form's 14px .inp type, not its heading. */
-  font-size:14px!important;font-weight:500!important;line-height:1.5!important;
+  /* Ordinary option labels follow the computed 16px dose input, not the heading. */
+  font-size:16px!important;font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;margin:0!important;
   cursor:pointer;
 }
