@@ -333,7 +333,7 @@ try {
       viewport:document.documentElement.clientWidth,
       label:el.textContent.trim()
     }));
-    ensure(optBefore.label==='Additional dose options'&&optBefore.height>=44&&optBefore.right<=optBefore.viewport+2,
+    ensure(optBefore.label==='ADDITIONAL DOSE OPTIONS'&&optBefore.height>=44&&optBefore.right<=optBefore.viewport+2,
       'Additional dose options touch/viewport geometry: '+JSON.stringify(optBefore));
     await optSummary.click();
     ensure(await optional.getAttribute('open')!==null,'Additional dose options disclosure must expand');
@@ -345,9 +345,8 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
-    // #15: user-approved secondary form hierarchy. Additional dose options is
-    // NOT a second Your dose heading; checkboxes are 14px option labels and
-    // Dose preferences is a quieter 13px action. All keep the same font family.
+    // #15: share the ACTUAL Administration Method/Site field-label typography.
+    // The disclosure must not define its own heading style.
     const typography=await optional.evaluate(el=>{
       const modal=el.closest('.nx2-dose-modal');
       const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
@@ -366,6 +365,7 @@ try {
         form:style('.nx-dose-form'),
         input:style('#nx-dose-entered'),
         heading:style('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title'),
+        fieldLabel:style('#nx-method-label'),siteLabel:style('#nx-dose-site-field .field-label'),
         summary:style('.nx-dose-more-options > summary'),
         label:style('.nx-dose-option-check > span'),
         preference:style('.nx-dose-pref-link'),
@@ -374,12 +374,11 @@ try {
     ensure(typography.form&&typography.input&&typography.heading&&typography.summary&&
       typography.label&&typography.preference,
       'Missing actual Log Dose components for hierarchy comparison: '+JSON.stringify(typography));
-    ensure(typography.summary.font===typography.heading.font &&
-      typography.summary.size==='14px' &&
-      parseFloat(typography.summary.weight)>=600 &&
-      parseFloat(typography.summary.size)<parseFloat(typography.heading.size) &&
-      typography.summary.color===typography.heading.color,
-      'Additional dose options must be a subordinate disclosure, not a primary heading: '+JSON.stringify(typography));
+    ensure(typography.fieldLabel&&typography.siteLabel&&
+      ['font','size','weight','color','spacing','transform'].every(k=>
+        typography.summary[k]===typography.fieldLabel[k] &&
+        typography.summary[k]===typography.siteLabel[k]),
+      'Additional dose options MUST match the actual Administration Method/Site label: '+JSON.stringify(typography));
     ensure(typography.label.font===typography.input.font &&
       typography.label.size==='14px' &&
       typography.label.color===typography.input.color &&
@@ -387,8 +386,7 @@ try {
       'Checkbox copy must use 14px supporting option typography: '+JSON.stringify(typography));
     ensure(typography.preference.font===typography.input.font &&
       typography.preference.size==='13px' &&
-      typography.preference.color!==typography.heading.color &&
-      parseFloat(typography.preference.weight)<parseFloat(typography.summary.weight),
+      typography.preference.color!==typography.heading.color,
       'Dose preferences must be smaller and secondary: '+JSON.stringify(typography));
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
@@ -939,15 +937,15 @@ try {
       const checkbox=document.querySelector('.nx-dose-option-check>span');
       const preference=document.querySelector('.nx-dose-pref-link');
       const heading=document.querySelector('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title');
+      const fieldLabel=document.querySelector('#nx-method-label');
+      const siteLabel=document.querySelector('#nx-dose-site-field .field-label');
       const input=document.querySelector('#nx-dose-entered');
       const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
-      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),heading:sample(heading),input:sample(input)};
+      return {summary:sample(summary),fieldLabel:sample(fieldLabel),siteLabel:sample(siteLabel),checkbox:sample(checkbox),preference:sample(preference),heading:sample(heading),input:sample(input)};
     });
-    ensure(typeSystem.summary.family===typeSystem.heading.family &&
-      typeSystem.summary.size==='14px' &&
-      parseFloat(typeSystem.summary.size)<parseFloat(typeSystem.heading.size) &&
-      typeSystem.summary.color===typeSystem.heading.color,
-      'Additional options must be smaller than Your dose: '+JSON.stringify(typeSystem));
+    ensure(['family','size','color','weight'].every(k=>
+      typeSystem.summary[k]===typeSystem.fieldLabel[k]&&typeSystem.summary[k]===typeSystem.siteLabel[k]),
+      'Additional options must match actual Administration Method and Site: '+JSON.stringify(typeSystem));
     ensure(typeSystem.checkbox.family===typeSystem.input.family &&
       typeSystem.checkbox.size==='14px' &&
       typeSystem.checkbox.color===typeSystem.input.color,
