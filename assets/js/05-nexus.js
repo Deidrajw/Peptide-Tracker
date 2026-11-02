@@ -949,16 +949,16 @@ function nexusChoosePhysicalForm(name,occTime){
  // A nasal-reserved VIAL is not an injectable or an administered spray.
  // If bottle preparation failed there is no valid nasal dose source: block
  // instead of defaulting silently to SubQ.
- if(!capsules&&!nasal&&nasalSourceOnly){
+ const injectableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
+   ["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0&&
+   nexusPhysicalForm(v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
+     k.preparationMethod||k.administrationMethod||k.route)==="Injectable"));
+ if(!capsules&&!nasal&&nasalSourceOnly&&!injectableVial){
    showErrorBanner("This vial is reserved for nasal preparation, but no prepared bottle is available. Nothing logged. Open New Vial → Nasal in Stash to review the prepared source.");
    return true;
  }
  if(!capsules&&!nasal)return false;
- const availableVial=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
-   ["open","active"].includes(v.status)&&Number(getVialRemainingMg(k,v))>0&&
-   nexusPhysicalForm(v.intendedUse)!=="nasal-source"&&
-   nexusPhysicalForm(v.intendedUse)!=="Nasal"&&
-   nexusPhysicalForm(k.preparationMethod||k.administrationMethod||k.route)!=="Nasal"));
+ const availableVial=injectableVial;
  const choices=Number(capsules)+Number(nasal)+Number(availableVial);
  if(choices===1){if(capsules)nexusCapsuleDoseModal(name,occTime);else if(nasal)nexusNasalDoseModal(name,occTime);else doseModal(name,null,occTime,"vial");return true;}
  const m=openModal('<div class="nx-dose-form"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">PRODUCT FORM</div><h2 class="nx-dose-title">What did you use?</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button id="x" type="button" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
