@@ -378,9 +378,15 @@ try {
       typography.label.color===typography.primary &&
       typography.helper.color===typography.secondary,
       'Additional dose options must match form text colours in current theme: '+JSON.stringify(typography));
-    ensure(parseFloat(typography.summary.size)>=14&&parseFloat(typography.label.size)>=14 &&
-      parseFloat(typography.helper.size)>=12&&typography.helpCount===1,
-      'Options typography or original helper copy changed: '+JSON.stringify(typography));
+    ensure(typography.summary.size==='14px'&&typography.label.size==='14px'&&
+      typography.helper.size==='12px'&&typography.helpCount===1 &&
+      Number(typography.summary.weight)===650&&Number(typography.label.weight)===500 &&
+      Number(typography.helper.weight)===400 &&
+      typography.summary.transform==='none'&&typography.label.transform==='none',
+      'Additional dose options font size/weight must match approved Log Dose hierarchy with original copy: '+JSON.stringify(typography));
+    const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
+    await optional.screenshot({path:path.join('dist',optionsShot)});
+    visualEvidence['Additional options']={filename:optionsShot,typography,layout:checkboxLayout};
 
     await page.locator('#nx-dose-as-needed').check();
     await page.locator('#esc').check();
