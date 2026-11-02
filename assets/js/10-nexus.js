@@ -301,15 +301,15 @@ function stashView() {
         ${mixedForms?`<div class="nx-kit-prepared-summary nx-kit-nasal-summary" role="status">${preparedNasalMg>0?"Nasal · "+preparedNasalMg.toFixed(preparedNasalMg%1?1:0)+" mg prepared":"Nasal source · "+nasalReservedMg.toFixed(nasalReservedMg%1?1:0)+" mg remaining"}</div>`:""}
       </div>
       <div class="nx-kit-actions nx-kit-actions-three nx-hybrid-two-actions">
-        ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Confirm vial form</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
+        ${unresolvedOpenVials.length?`<button type="button" class="nx-stash-go-vial-method nx-kit-next-action" data-kit-id="${esc(String(s.id))}">Identify vial form</button>`:action?`<button class="${action.cls} nx-kit-next-action" data-id="${s.id}">${action.label}</button>`:""}
         <button type="button" class="nx-kit-detail-button" data-id="${s.id}" aria-expanded="false" aria-controls="nx-kit-details-${s.id}">Details <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
       </div>
       <div class="nx-kit-detail-panel" id="nx-kit-details-${s.id}" hidden>
         <div class="nx-kit-detail-setup">
           ${secondaryBits.length?`<div class="nx-kit-detail-secondary">${secondaryBits.join(" · ")}</div>`:""}
           ${(()=>{const pc=getPreparedRemainingCount(s.name,s.id);return pc?`<div class="nx-kit-detail-secondary">${pc} prepared dose${pc===1?"":"s"} ready to log</div>`:"";})()}
-          ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Vial form not confirmed · ${unresolvedOpenVials.length} open vial${unresolvedOpenVials.length===1?"":"s"} require a physical form label before stock-backed logging.</div>`:""}
-          ${unresolvedOpenVials.length&&action?`<button type="button" class="${action.cls} nx-kit-secondary-open" data-id="${s.id}">Open another vial</button>`:""}
+          ${unresolvedOpenVials.length?`<div class="nx-kit-detail-warning">Confirm the physical form of each open vial before logging a dose. This identification does not deduct stock or alter history.</div>`:""}
+
         </div>
         <div class="nx-stash-tabs" role="tablist" aria-label="Kit detail sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;margin:12px 0">
           <button type="button" role="tab" aria-selected="true" tabindex="0" class="nx-stash-tab" data-panel="overview" style="min-height:44px;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:650">Overview</button>
@@ -2344,13 +2344,13 @@ document.addEventListener("click",e=>{
  document.addEventListener("click",e=>{
   const btn=e.target.closest?.(".nx-stash-go-vial-method");
   if(!btn)return;
-  const card=btn.closest(".nx-kit-card");
-  if(!card)return;
-  const details=card.querySelector(".nx-kit-detail-button");
-  const panel=card.querySelector(".nx-kit-detail-panel");
-  if(panel?.hidden)details?.click();
-  card.querySelector('.nx-stash-tab[data-panel="vials"]')?.click();
-  card.querySelector(".nx-stash-set-vial-method")?.focus();
+  // Take the user straight to the one-time physical-form decision, rather
+  // than expanding an unhelpful warning and an unrelated Open another vial CTA.
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(btn.dataset.kitId));
+  if(!kit)return;
+  const vial=(kit.vials||[]).find(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01&&!nexusPhysicalForm(v.intendedUse)&&!nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route));
+  if(vial)nexusStashSetLegacyVialMethod(kit.id,vial.id);
+  else showErrorBanner("All currently open vials are labelled. Reopen Stash to review their details.");
  });
 
 /* Explicit one-time legacy vial identification lives in Stash.
