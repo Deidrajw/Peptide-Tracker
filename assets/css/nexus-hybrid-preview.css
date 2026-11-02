@@ -4263,3 +4263,57 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 .modal.nx-form-log-sheet:has(#nx-spray-confirm:not([hidden])) .nx-prepared-spray-entry > .hint{
   flex:0 0 auto!important;margin:8px 0 0!important;
 }
+
+/* PR124 consolidated review-shell repair — nasal actual transfer.
+   Same pinned actions / single summary scroll owner as capsule and spray Review.
+   This is display-only; no inventory accounting or gate changes. */
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])){
+  display:flex!important;flex-direction:column!important;
+  height:min(92dvh,840px)!important;max-height:min(92dvh,840px)!important;
+  overflow:hidden!important;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom))!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) > .nx-nasal-actual-prep{
+  display:flex!important;flex:1 1 0%!important;
+  flex-direction:column!important;min-height:0!important;overflow:hidden!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) .nx-dose-head{
+  flex:0 0 auto!important;margin-bottom:8px!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) #nx-nasal-record-review{
+  flex:1 1 0%!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  scroll-padding-bottom:18px;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) :is(#nx-nasal-confirm-row,#nx-nasal-record-back,#nx-nasal-record-save){
+  flex:0 0 auto!important;box-sizing:border-box!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) #nx-nasal-confirm-row{
+  margin:7px 0 0!important;padding:8px 0!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) :is(#nx-nasal-record-back,#nx-nasal-record-save){
+  margin-top:5px!important;min-height:48px!important;width:100%!important;
+}
+.modal.nx-nasal-shared-review:has(#nx-nasal-record-review:not([hidden])) .nx-nasal-actual-prep > .hint{
+  display:none!important;
+}
+/* Goal Details: keep the shared heading stable; allow one body scrollbar and
+   preserve the three 44px tabs at 320px without shrinking touch areas. */
+.modal:has(> .nx-shared-goal-sheet){
+  overflow-x:hidden!important;overscroll-behavior-y:contain;
+  max-height:min(92dvh,840px)!important;
+}
+.modal .nx-shared-goal-sheet{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.modal .nx-shared-goal-sheet .nx-dose-head{
+  align-items:center!important;min-width:0!important;
+}
+.modal .nx-shared-goal-sheet :is(.nx-dose-kicker,.nx-dose-title,.nx-dose-subtitle){
+  max-width:100%!important;overflow-wrap:anywhere!important;
+}
+.modal .nx-shared-goal-sheet .nx-goal-detail-tabs{min-width:0!important}
+.modal .nx-shared-goal-sheet .nx-goal-detail-tab{min-height:44px!important;white-space:normal!important;overflow-wrap:anywhere}
+@media(max-width:380px){
+  .modal .nx-shared-goal-sheet .nx-goal-detail-tabs{gap:4px!important}
+  .modal .nx-shared-goal-sheet .nx-goal-detail-tab{padding:9px 2px!important;font-size:12px!important}
+}
