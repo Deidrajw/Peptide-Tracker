@@ -338,6 +338,14 @@ try{
       'Optional preferences interrupt urgent vial status');
     ensure((await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').innerText()).trim()==='Dose preferences',
       'Dose preferences must be secondary to source confirmation');
+    const prePreferences=await page.evaluate(()=>JSON.stringify(state.supplies));
+    await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').click();
+    ensure(await page.locator('.nx-use-setup').isVisible(),'Stash Dose preferences button did not open editor');
+    ensure(await page.locator('#nx-use-close').evaluate(el=>el.getBoundingClientRect().height)>=48,
+      'Dose preferences close target must be at least 48px');
+    await page.locator('#nx-use-close').click();
+    ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===prePreferences,
+      'Opening/cancelling preferences altered stock');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
     results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
