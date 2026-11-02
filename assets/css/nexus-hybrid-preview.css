@@ -3808,10 +3808,9 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .modal.nx2-dose-modal .nx-dose-more-options>summary{
   display:flex;align-items:center;justify-content:space-between;
   min-height:48px!important;cursor:pointer;list-style:none;
-  /* This is an optional form disclosure, not a second “Your dose” heading. */
-  font-family:inherit!important;font-size:14px!important;font-weight:600!important;
-  line-height:1.45!important;color:var(--t1)!important;letter-spacing:0!important;
-  text-transform:none!important;border-radius:10px;
+  /* Typography comes from the SAME .field-label as Administration Method/Site.
+     Do not redefine its size, weight, colour or tracking here. */
+  margin:0!important;border-radius:10px;
 }
 .modal.nx2-dose-modal .nx-dose-more-options>summary:focus:not(:focus-visible){outline:none}
 .modal.nx2-dose-modal .nx-dose-more-options>summary:focus-visible{
