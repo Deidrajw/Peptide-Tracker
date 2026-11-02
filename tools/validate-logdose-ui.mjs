@@ -363,19 +363,21 @@ try {
         const color=getComputedStyle(probe).color;probe.remove();return color;
       };
       return {method:style('.nx-method-option.is-selected'),
+        form:style('.nx-dose-form'),
         summary:style('.nx-dose-more-options > summary'),
         label:style('.nx-dose-option-check > span'),
         preference:style('.nx-dose-pref-link'),
         primary:token('--t1'),helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
     });
-    ensure(typography.method&&typography.summary&&typography.label&&typography.preference,
+    ensure(typography.form&&typography.summary&&typography.label&&typography.preference,
       'Missing Log Dose controls for typography comparison: '+JSON.stringify(typography));
     for(const key of ['summary','label','preference']){
-      ensure(typography[key].font===typography.method.font &&
-        typography[key].size==='16px'&&Number(typography[key].weight)===500&&
-        typography[key].color===typography.primary &&
+      ensure(typography[key].font===typography.form.font &&
+        typography[key].size===typography.form.size &&
+        Number(typography[key].weight)===500 &&
+        typography[key].color===typography.form.color &&
         typography[key].transform==='none',
-        'Additional dose options '+key+' must match sibling form controls: '+JSON.stringify(typography));
+        'Additional dose options '+key+' must use canonical Log Dose form text: '+JSON.stringify(typography));
     }
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
@@ -925,7 +927,7 @@ try {
       const summary=document.querySelector('.nx-dose-more-options>summary');
       const checkbox=document.querySelector('.nx-dose-option-check>span');
       const preference=document.querySelector('.nx-dose-pref-link');
-      const normal=document.querySelector('#nx-dose-entered');
+      const normal=document.querySelector('.nx-dose-form');
       const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
       return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),normal:sample(normal)};
     });
