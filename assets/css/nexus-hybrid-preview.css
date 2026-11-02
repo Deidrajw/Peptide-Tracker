@@ -4355,7 +4355,7 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
 }
 .modal.nx2-dose-modal .nx-dose-pref-link{
   font-family:inherit!important;font-size:13px!important;
-  font-weight:500!important;line-height:1.5!important;
+  font-weight:400!important;line-height:1.35!important;
   letter-spacing:0!important;text-transform:none!important;
   color:var(--t2)!important;background:transparent!important;
   border:0!important;border-bottom:0!important;
@@ -4363,11 +4363,12 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   margin:0!important;min-height:48px!important;
 }
 /* #15 iPhone spacing: compact option stack, no preference/checkbox separator. */
-.modal.nx2-dose-modal .nx-dose-more-options{border-top:0!important;margin-top:12px!important;padding-top:0!important}
-.modal.nx2-dose-modal .nx-dose-more-options>summary{min-height:44px!important}
-.modal.nx2-dose-modal .nx-dose-options-body{padding:0 0 4px!important;gap:4px!important}
-.modal.nx2-dose-modal .nx-dose-pref-link{min-height:44px!important;padding:6px 0!important;border:0!important;box-shadow:none!important}
-.modal.nx2-dose-modal .nx-dose-option-check{min-height:48px!important;padding:4px 0!important;border:0!important;box-shadow:none!important}
+.modal.nx2-dose-modal .nx-dose-more-options{border-top:0!important;margin-top:4px!important;padding-top:0!important}
+/* Keep full-size independent hit targets while bringing the two text baselines closer. */
+.modal.nx2-dose-modal .nx-dose-more-options>summary{min-height:44px!important;align-items:flex-end!important;padding-bottom:2px!important}
+.modal.nx2-dose-modal .nx-dose-options-body{padding:0 0 2px!important;gap:0!important}
+.modal.nx2-dose-modal .nx-dose-pref-link{min-height:44px!important;align-items:flex-start!important;padding:4px 0 0!important;border:0!important;box-shadow:none!important}
+.modal.nx2-dose-modal .nx-dose-option-check{min-height:48px!important;padding:2px 0!important;border:0!important;box-shadow:none!important}
 .modal.nx2-dose-modal .nx-dose-pref-link::before,
 .modal.nx2-dose-modal .nx-dose-pref-link::after,
 .modal.nx2-dose-modal .nx-dose-option-check::before,
