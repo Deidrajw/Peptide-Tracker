@@ -1,3 +1,8 @@
+## User physical iPhone return — 2026-11-02, source 6aa89c00
+- User-provided 19-point scorecard: 18 Pass; #15 Additional dose options typography Fail. Device/iOS not supplied; fictional full-app DEMO only. Screenshots submitted for mixed Stash/Review/Additional options.
+- User identified ADDITIONAL failures not captured by prior pass ticks: (A) raw powder inventory surfaced through generic Log Dose although no prepared/usable physical form; (B) Review dose too vertically loose; (C) old missing-amount warning persisted after a positive amount was entered; (D) unlabeled opened vial warning showed no next action and unrelated Open another vial. The earlier #08 and #14 ticks are not final acceptance for these newly reported behaviours. Topical user preference: do not force it into Log Dose; application tracking is a separate unresolved product choice.
+- Targeted PR branch commits 160efd3a, 4ea917ca, 1fd19d57 are CODED, not device accepted. Five exact-head CI and new full-app artifacts pending. Follow-up focused tests: #15 typography, powder-only vs valid prepared source, stale warning after input, compact Review content and safe-area, direct “Identify vial form” flow. Do not merge/deploy; P0 release gate and nasal LIVE OFF.
+
 # Nexus PR #124 — 19-point grouped acceptance evidence (2026-11-02)
 
 **Status: CI VERIFIED / PHYSICAL ACCEPTANCE OPEN, NOT A RELEASE**. Application source `47c4894e1746ca3bd5892b45c179f472482ad3e9`, main `da585ab3458394ddf5e88e283b210933beeab810`. PR #124 draft/unmerged/undeployed; primary Cloudflare not updated. No production storage access or writes. Both LIVE nasal gates OFF and release P0 BLOCKING.
