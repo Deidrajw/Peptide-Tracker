@@ -3776,9 +3776,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   background:transparent!important;border:0!important;
   box-shadow:none!important;padding:0 2px!important;margin:0!important;
 }
-.modal.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title,
-.modal.nx2-dose-modal .nx-dose-more-options>summary{
-  /* One section-heading rule: “Your dose” and its optional peer. */
+.modal.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title{
+  /* Keep the approved main section heading distinct from optional controls. */
   font-size:20px!important;line-height:1.3!important;font-weight:750!important;
   color:var(--t1)!important;letter-spacing:-.025em!important;
 }
@@ -3809,8 +3808,10 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
 .modal.nx2-dose-modal .nx-dose-more-options>summary{
   display:flex;align-items:center;justify-content:space-between;
   min-height:48px!important;cursor:pointer;list-style:none;
-  font-family:inherit!important;text-transform:none!important;
-  border-radius:10px;
+  /* This is an optional form disclosure, not a second “Your dose” heading. */
+  font-family:inherit!important;font-size:14px!important;font-weight:600!important;
+  line-height:1.45!important;color:var(--t1)!important;letter-spacing:0!important;
+  text-transform:none!important;border-radius:10px;
 }
 .modal.nx2-dose-modal .nx-dose-more-options>summary:focus:not(:focus-visible){outline:none}
 .modal.nx2-dose-modal .nx-dose-more-options>summary:focus-visible{
@@ -3832,8 +3833,8 @@ html[data-theme="light"] .nexus-screen-stash .nx-kit-card.nx-kit-condensed .nx-k
   display:flex!important;align-items:center!important;gap:12px!important;
   min-height:48px!important;color:var(--t1)!important;
   font-family:inherit!important;
-  /* Ordinary option labels follow the computed 16px dose input, not the heading. */
-  font-size:16px!important;font-weight:500!important;line-height:1.5!important;
+  /* Secondary checkbox labels match ordinary supporting options, not headline text. */
+  font-size:14px!important;font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;margin:0!important;
   cursor:pointer;
 }
@@ -4345,15 +4346,15 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   }
 }
 
-/* The summary is a section heading. These are secondary form controls:
-   one navigational action, then two checkboxes. No competing typography rules. */
+/* Optional dose controls are secondary to the primary dose fields:
+   one expandable disclosure, one quieter preferences link, then two checkboxes. */
 .modal.nx2-dose-modal .nx-dose-more-options .nx-dose-option-check>span{
   font:inherit!important;letter-spacing:inherit!important;
   color:inherit!important;
 }
 .modal.nx2-dose-modal .nx-dose-pref-link{
-  font-family:inherit!important;font-size:14px!important;
-  font-weight:600!important;line-height:1.5!important;
+  font-family:inherit!important;font-size:13px!important;
+  font-weight:500!important;line-height:1.5!important;
   letter-spacing:0!important;text-transform:none!important;
   color:var(--t2)!important;background:transparent!important;
   border:0!important;border-bottom:1px solid var(--border-sub)!important;
