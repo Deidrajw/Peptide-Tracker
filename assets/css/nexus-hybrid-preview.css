@@ -4348,3 +4348,28 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
+
+/* PR124 iPhone visual rejection: secondary dose controls share main form typography.
+   No checkbox behavior, dose, source or storage effect. */
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-more-options>summary,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body .nx-dose-option-check,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body .nx-dose-option-check>span,
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-pref-link {
+  font-family:inherit!important;font-size:14px!important;font-weight:500!important;
+  line-height:1.45!important;letter-spacing:0!important;text-transform:none!important;
+  color:var(--t1)!important;
+}
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-pref-link {
+  background:transparent!important;border:0!important;border-bottom:1px solid var(--border-sub)!important;
+  padding:10px 0!important;border-radius:0!important;margin:0 0 10px!important;min-height:44px!important;
+}
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-options-body{padding:0 0 8px!important;}
+.modal.nx2-dose-modal .nx-dose-form .nx-dose-option-check{margin:0!important;}
+/* A compound with nasal stock retains the original compact Open vial bar.
+   Secondary nasal counts are just one supporting line, not a second dashboard. */
+.nexus-screen-stash .nx-kit-card .nx-kit-nasal-summary {
+  display:block!important;max-width:100%;margin:8px 0 2px!important;padding:0!important;
+  border:0!important;background:transparent!important;border-radius:0!important;
+  color:var(--t3)!important;font-size:12px!important;font-weight:450!important;
+  line-height:1.45!important;overflow-wrap:anywhere;
+}
