@@ -1,3 +1,9 @@
+## 2026-11-02 — second physical iPhone UAT: four failures; corrected upstream (PR #124 DRAFT)
+- User requires excluding raw/topical-only products from the TOP-LEVEL Today compound dropdown, not merely blocking their downstream dose form. Preserve separately usable capsules/nasal/injectable sources and their histories.
+- Additional dose options must inherit the existing Log Dose sheet font family/size/theme primary color; remove competing legacy overrides instead of adding new overrides.
+- STEP 1 entry and STEP 2 Review are strictly mutually exclusive. Respect hidden attribute; condense only the actual second-step Review. Preserve validated calculations, amount correction, draft, Back and source restrictions.
+- No merge/deploy approval; P0 blocking, nasal LIVE OFF.
+
 ## 2026-11-02 — PR124 real-iPhone acceptance feedback: powder-only inventory and guided vial identification
 - User explicitly considers raw powder an inventory/preparation input, not a doseable physical form. Prevent unprepared raw powder alone from entering Log Dose; existing confirmed capsules, prepared spray, and compatible labelled vial remain independently eligible. Do not infer a dose from physical stock or deduct any stock on denied entry.
 - User does not want topical product application forced into injectable-style Log Dose. Until a distinct application-recording UX is defined/approved, retain topical as inventory-only and do not fabricate application history or units.
