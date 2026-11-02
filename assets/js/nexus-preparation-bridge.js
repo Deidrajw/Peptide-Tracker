@@ -144,8 +144,10 @@
    fail("Positive source, final volume and pump calibration required");
   if(Math.abs(input.bacMl+input.salineMl-input.volumeMl)>0.000001)
    fail("Record the actual total liquid volume; components do not reconcile");
-  if(!Array.isArray(snapshot?.formulationStocks)||snapshot.formulationStocks.some(c=>String(c.id)===input.destinationContainerId))
-   fail("Unique new nasal container required");
+  if(!Array.isArray(snapshot?.formulationStocks))
+   fail("Prepared-container inventory is unavailable. No inventory changed.");
+  if(snapshot.formulationStocks.some(c=>String(c.id)===input.destinationContainerId))
+   fail("A prepared container already has this identifier. No inventory changed.");
   const kits=(snapshot.supplies||[]).filter(k=>String(k.id)===String(input.sourceKitId));
   if(kits.length!==1)fail("Unique physical source kit required");
   const kit=kits[0];
