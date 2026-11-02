@@ -345,9 +345,9 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
-    // #15: actual hierarchy, not superficial font-family parity. The disclosure
-    // must match “Your dose” section heading while its option rows use the
-    // SAME 14px type as ordinary dose inputs, and Preferences reads secondary.
+    // #15: user-approved secondary form hierarchy. Additional dose options is
+    // NOT a second Your dose heading; checkboxes are 14px option labels and
+    // Dose preferences is a quieter 13px action. All keep the same font family.
     const typography=await optional.evaluate(el=>{
       const modal=el.closest('.nx2-dose-modal');
       const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
@@ -375,20 +375,21 @@ try {
       typography.label&&typography.preference,
       'Missing actual Log Dose components for hierarchy comparison: '+JSON.stringify(typography));
     ensure(typography.summary.font===typography.heading.font &&
-      typography.summary.size===typography.heading.size &&
-      typography.summary.weight===typography.heading.weight &&
+      typography.summary.size==='14px' &&
+      parseFloat(typography.summary.weight)>=600 &&
+      parseFloat(typography.summary.size)<parseFloat(typography.heading.size) &&
       typography.summary.color===typography.heading.color,
-      'Additional dose options must share Your dose heading typography: '+JSON.stringify(typography));
+      'Additional dose options must be a subordinate disclosure, not a primary heading: '+JSON.stringify(typography));
     ensure(typography.label.font===typography.input.font &&
-      typography.label.size===typography.input.size &&
-      typography.label.color===typography.input.color,
-      'Checkbox copy must share ordinary Log Dose input typography: '+JSON.stringify(typography));
+      typography.label.size==='14px' &&
+      typography.label.color===typography.input.color &&
+      parseFloat(typography.label.weight)===500,
+      'Checkbox copy must use 14px supporting option typography: '+JSON.stringify(typography));
     ensure(typography.preference.font===typography.input.font &&
-      parseFloat(typography.preference.size)<parseFloat(typography.input.size) &&
-      parseFloat(typography.preference.size)>=14 &&
+      typography.preference.size==='13px' &&
       typography.preference.color!==typography.heading.color &&
-      parseFloat(typography.preference.weight)<parseFloat(typography.heading.weight),
-      'Dose preferences must be smaller/secondary, never another heading: '+JSON.stringify(typography));
+      parseFloat(typography.preference.weight)<parseFloat(typography.summary.weight),
+      'Dose preferences must be smaller and secondary: '+JSON.stringify(typography));
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
@@ -943,16 +944,16 @@ try {
       return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),heading:sample(heading),input:sample(input)};
     });
     ensure(typeSystem.summary.family===typeSystem.heading.family &&
-      typeSystem.summary.size===typeSystem.heading.size &&
-      typeSystem.summary.weight===typeSystem.heading.weight &&
+      typeSystem.summary.size==='14px' &&
+      parseFloat(typeSystem.summary.size)<parseFloat(typeSystem.heading.size) &&
       typeSystem.summary.color===typeSystem.heading.color,
-      'Additional options heading differs from Your dose: '+JSON.stringify(typeSystem));
+      'Additional options must be smaller than Your dose: '+JSON.stringify(typeSystem));
     ensure(typeSystem.checkbox.family===typeSystem.input.family &&
-      typeSystem.checkbox.size===typeSystem.input.size &&
+      typeSystem.checkbox.size==='14px' &&
       typeSystem.checkbox.color===typeSystem.input.color,
-      'Checkbox option copy differs from main form: '+JSON.stringify(typeSystem));
+      'Checkbox labels must be 14px ordinary options: '+JSON.stringify(typeSystem));
     ensure(typeSystem.preference.family===typeSystem.input.family &&
-      parseFloat(typeSystem.preference.size)<parseFloat(typeSystem.input.size) &&
+      typeSystem.preference.size==='13px' &&
       typeSystem.preference.color!==typeSystem.heading.color,
       'Dose preferences hierarchy must be secondary: '+JSON.stringify(typeSystem));
     ensure(await page.locator('.nx-dose-review-stage').isHidden(),
