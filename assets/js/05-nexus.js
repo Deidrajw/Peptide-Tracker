@@ -1001,7 +1001,11 @@ function doseModal(name, existing, occTime, formChoice) {
   const isUntracked=!existing&&useSetup?.trackingMode==="untracked";
   const editingUntracked=!!existing&&existing.trackingMode==="untracked";
   const setupMethod=useSetup?.form==="Injectable"?"SubQ":useSetup?.form||useSetup?.method;
-  const initialMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
+  // A physical injectable vial can only be logged through an injectable route.
+  // Existing historical entries retain their recorded route in the edit flow.
+  const injectableEntry=!existing&&formChoice==="vial";
+  const requestedMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
+  const initialMethod=injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
   const preferredUnit=["mg","mcg"].includes(existing?.enteredUnit)?existing.enteredUnit:
     (["mg","mcg"].includes(useSetup?.unit)?useSetup.unit:c.unit);
   const massSelectable=["mg","mcg"].includes(c.unit);
@@ -1117,9 +1121,9 @@ function doseModal(name, existing, occTime, formChoice) {
     <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD · THIS DOSE</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
-      ${NEXUS_ADMIN_METHODS.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
+      ${(injectableEntry?["SubQ","IM","IV"]:NEXUS_ADMIN_METHODS).map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
     </div>
-    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${NEXUS_ADMIN_METHODS.map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
+    <select id="nx-dose-method" aria-label="Administration method (synchronised value)" tabindex="-1" class="nx-admin-native-value" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">${(injectableEntry?["SubQ","IM","IV"]:NEXUS_ADMIN_METHODS).map(method=>`<option value="${method}"${method===initialMethod?" selected":""}>${method}</option>`).join("")}</select>
     <div id="nx-dose-site-field"><label class="field-label" for="site">ADMINISTRATION SITE · OPTIONAL</label>
     <select id="site" class="inp" style="margin-bottom:14px;min-height:46px"></select></div>
     <p id="nx-nasal-method-note" role="status" class="nx-nasal-method-note"${initialMethod==="Nasal"?"":" hidden"}>Nasal spray-count conversion requires a validated nasal preparation. Selecting Nasal does not convert an injectable vial.</p>
@@ -1611,7 +1615,7 @@ function doseModal(name, existing, occTime, formChoice) {
     // Both injection routes use the same exact injectable source family.
     // Stay in the current sheet; never reopen the physical-form picker.
     // Rebuild only the site list, clearing a site that belongs to another route.
-    if(["SubQ","IM"].includes(nextMethod)&&["SubQ","IM"].includes(methodInput.value)){
+    if(["SubQ","IM","IV"].includes(nextMethod)&&["SubQ","IM","IV"].includes(methodInput.value)){
       methodInput.value=nextMethod;
       siteInput.value="";
       f.site="";
