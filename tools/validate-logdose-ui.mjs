@@ -345,9 +345,9 @@ try {
       'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
     ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
       'Both independent-log and escalation options must be available');
-    // #15 physical iPhone rejected earlier 14px secondary typography. Verify
-    // 16px ordinary form-control readability, plus font/theme colour parity.
-    // The uppercase 12px method FIELD LABEL is not the comparison baseline.
+    // #15: actual hierarchy, not superficial font-family parity. The disclosure
+    // must match “Your dose” section heading while its option rows use the
+    // SAME 14px type as ordinary dose inputs, and Preferences reads secondary.
     const typography=await optional.evaluate(el=>{
       const modal=el.closest('.nx2-dose-modal');
       const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
@@ -364,21 +364,29 @@ try {
       };
       return {method:style('.nx-method-option.is-selected'),
         form:style('.nx-dose-form'),
+        input:style('#nx-dose-entered'),
+        heading:style('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title'),
         summary:style('.nx-dose-more-options > summary'),
         label:style('.nx-dose-option-check > span'),
         preference:style('.nx-dose-pref-link'),
         primary:token('--t1'),helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
     });
-    ensure(typography.form&&typography.summary&&typography.label&&typography.preference,
-      'Missing Log Dose controls for typography comparison: '+JSON.stringify(typography));
-    for(const key of ['summary','label','preference']){
-      ensure(typography[key].font===typography.form.font &&
-        typography[key].size===typography.form.size &&
-        Number(typography[key].weight)===500 &&
-        typography[key].color===typography.primary &&
-        typography[key].transform==='none',
-        'Additional dose options '+key+' must use canonical Log Dose form text: '+JSON.stringify(typography));
-    }
+    ensure(typography.form&&typography.input&&typography.heading&&typography.summary&&
+      typography.label&&typography.preference,
+      'Missing actual Log Dose components for hierarchy comparison: '+JSON.stringify(typography));
+    ensure(typography.summary.font===typography.heading.font &&
+      typography.summary.size===typography.heading.size &&
+      typography.summary.weight===typography.heading.weight &&
+      typography.summary.color===typography.heading.color,
+      'Additional dose options must share Your dose heading typography: '+JSON.stringify(typography));
+    ensure(typography.label.font===typography.input.font &&
+      typography.label.size===typography.input.size &&
+      typography.label.color===typography.input.color,
+      'Checkbox copy must share ordinary Log Dose input typography: '+JSON.stringify(typography));
+    ensure(typography.preference.font===typography.input.font &&
+      typography.preference.size===typography.input.size &&
+      typography.preference.color!==typography.heading.color,
+      'Dose preferences must be a readable secondary control, not another heading: '+JSON.stringify(typography));
     ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
     const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
     await optional.screenshot({path:path.join('dist',optionsShot)});
@@ -927,19 +935,24 @@ try {
       const summary=document.querySelector('.nx-dose-more-options>summary');
       const checkbox=document.querySelector('.nx-dose-option-check>span');
       const preference=document.querySelector('.nx-dose-pref-link');
-      const normal=document.querySelector('.nx-dose-form');
-      const primary=document.querySelector('.nx-method-option.is-selected');
+      const heading=document.querySelector('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title');
+      const input=document.querySelector('#nx-dose-entered');
       const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
-      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),normal:sample(normal),primary:sample(primary)};
+      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),heading:sample(heading),input:sample(input)};
     });
-    for(const key of ['summary','checkbox','preference']){
-      ensure(typeSystem[key].family===typeSystem.normal.family,
-        key+' font differs from main Log Dose: '+JSON.stringify(typeSystem));
-      ensure(typeSystem[key].size===typeSystem.normal.size,
-        key+' font size differs from main Log Dose: '+JSON.stringify(typeSystem));
-      ensure(typeSystem[key].color===typeSystem.primary.color,
-        key+' text colour differs from readable main Log Dose controls: '+JSON.stringify(typeSystem));
-    }
+    ensure(typeSystem.summary.family===typeSystem.heading.family &&
+      typeSystem.summary.size===typeSystem.heading.size &&
+      typeSystem.summary.weight===typeSystem.heading.weight &&
+      typeSystem.summary.color===typeSystem.heading.color,
+      'Additional options heading differs from Your dose: '+JSON.stringify(typeSystem));
+    ensure(typeSystem.checkbox.family===typeSystem.input.family &&
+      typeSystem.checkbox.size===typeSystem.input.size &&
+      typeSystem.checkbox.color===typeSystem.input.color,
+      'Checkbox option copy differs from main form: '+JSON.stringify(typeSystem));
+    ensure(typeSystem.preference.family===typeSystem.input.family &&
+      typeSystem.preference.size===typeSystem.input.size &&
+      typeSystem.preference.color!==typeSystem.heading.color,
+      'Dose preferences hierarchy must be secondary: '+JSON.stringify(typeSystem));
     ensure(await page.locator('.nx-dose-review-stage').isHidden(),
       'STEP 2 REVIEW LEAK: Review visible inside Step 1');
     ensure(await page.locator('.nx-dose-scroll').isVisible(),
