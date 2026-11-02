@@ -1,3 +1,7 @@
+## 2026-11-01 — #14 Log Dose non-clipping acceptance expansion
+- `tools/validate-logdose-ui.mjs` `e301cafa`: Entry/Focused/Review in Chromium 320/390, dark/light, LIVE-source/isolated DEMO; require title and fixed header inset inside sheet, scroll body between header/footer, modal overflow hidden, one vertical scroll owner, close and primary CTA ≥44px in visual viewport, and no document horizontal overflow. Screenshot/JSON evidence retained by existing harness. A focus event is not a real iOS software keyboard.
+- First candidate `e0687dc8` failed Node syntax before browser execution (#41384282835), correction at `e301cafa`; final browser result PENDING. Do not conflate green other workflow results with #14 device acceptance. P0 and live gates unchanged.
+
 ## 2026-11-01 — Undo toast / foreground modal regression
 - Case: after a fictional reversible action, open the Open Vial form chooser; the Undo toast must be hidden from sight, hit testing and accessibility while the sheet is present. Closing the sheet must restore the button with remaining six-second opportunity. Reopening must hide again. Test added at `3b3cb5dd` in `tools/validate-formulation-stock.mjs`, **NOT TESTED at exact-head yet**.
 - Previous Open Vial alignment: Chromium #41377738544 and WebKit #41377738574 completed success on `7bb4e07c`, screenshot review previously identified transient toast overlap. Full 320/390 both theme, both engines and physical iPhone acceptance **NOT COMPLETE**.
