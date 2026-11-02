@@ -1,3 +1,6 @@
+## 2026-11-01 — Shared capsule/prepare spray header audit corrected
+- Test-only `9b9e6ca0` both engines FAIL at artificial title-in-header +4px inset assertion; header and close were within sheet, no 320px overflow. `bb213bb7` corrects measure to border clearance ≥10px. New screenshots/CI pending, all #04/#05/#07/#09/#14 physical acceptance still OPEN.
+
 ## 2026-11-01 — #04/#05/#07/#09/#14 cross-form header and review evidence gate
 - `9b9e6ca0` adds explicit capsule + prepared spray Log Dose Entry/Review screenshots and per-sheet shared header/close inset checks, Chromium/WebKit × 320/390 × light/dark × LIVE/DEMO. Both engines' new-head results PENDING. Do not treat earlier normal injectable 8/8 PASS as all #14 acceptance. No new UI/CSS changes, real iPhone still pending.
 
