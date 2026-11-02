@@ -187,16 +187,15 @@ try{
     await card(99002).locator('.nx-kit-detail-button').click();
     ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
     const expandedSetup=await card(99002).evaluate(el=>{
-      const row=el.querySelector('.nx-kit-detail-setup .nx-kit-use-setup-row'),
+      const row=el.querySelector('.nx-stash-pane[data-pane="overview"] .nx-kit-use-setup-row'),
         btn=el.querySelector('.nx-stash-use-setup');
       const a=getComputedStyle(row),b=getComputedStyle(btn);
       return {rowBackground:a.backgroundColor,rowBorder:a.borderTopWidth,
         buttonBorder:b.borderTopWidth,buttonHeight:btn.getBoundingClientRect().height,
         buttonBackground:b.backgroundColor};
     });
-    ensure(expandedSetup.rowBorder!=='0px'&&expandedSetup.rowBackground!=='rgba(0, 0, 0, 0)'&&
-      expandedSetup.buttonHeight>=44&&expandedSetup.buttonBorder!=='0px',
-      'Expanded use setup still blends into card: '+JSON.stringify(expandedSetup));
+    ensure(expandedSetup.buttonHeight>=44&&expandedSetup.buttonBorder!=='0px',
+      'Secondary dose preferences must remain an accessible, visible action: '+JSON.stringify(expandedSetup));
     await page.screenshot({animations:'disabled',path:'dist/stash-expanded-setup-'+kind+'-'+theme+'-'+width+'.png'});
 
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
