@@ -375,7 +375,7 @@ try {
       ensure(typography[key].font===typography.form.font &&
         typography[key].size===typography.form.size &&
         Number(typography[key].weight)===500 &&
-        typography[key].color===typography.form.color &&
+        typography[key].color===typography.primary &&
         typography[key].transform==='none',
         'Additional dose options '+key+' must use canonical Log Dose form text: '+JSON.stringify(typography));
     }
@@ -928,16 +928,17 @@ try {
       const checkbox=document.querySelector('.nx-dose-option-check>span');
       const preference=document.querySelector('.nx-dose-pref-link');
       const normal=document.querySelector('.nx-dose-form');
+      const primary=document.querySelector('.nx-method-option.is-selected');
       const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
-      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),normal:sample(normal)};
+      return {summary:sample(summary),checkbox:sample(checkbox),preference:sample(preference),normal:sample(normal),primary:sample(primary)};
     });
     for(const key of ['summary','checkbox','preference']){
       ensure(typeSystem[key].family===typeSystem.normal.family,
         key+' font differs from main Log Dose: '+JSON.stringify(typeSystem));
       ensure(typeSystem[key].size===typeSystem.normal.size,
         key+' font size differs from main Log Dose: '+JSON.stringify(typeSystem));
-      ensure(typeSystem[key].color===typeSystem.normal.color,
-        key+' text colour differs from main Log Dose: '+JSON.stringify(typeSystem));
+      ensure(typeSystem[key].color===typeSystem.primary.color,
+        key+' text colour differs from readable main Log Dose controls: '+JSON.stringify(typeSystem));
     }
     ensure(await page.locator('.nx-dose-review-stage').isHidden(),
       'STEP 2 REVIEW LEAK: Review visible inside Step 1');
