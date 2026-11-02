@@ -1,3 +1,8 @@
+## 2026-11-02 — Goal Details screenshot UAT fail, Stash typography test false negative
+- Physical iPhone Goal Details screenshot FAIL visual hierarchy (#04/#16). Scope-only CSS 47c4894e improves hierarchy/section rhythm and de-emphasizes progress disclaimer; 320/390 light/dark browser screenshot/physical UAT PENDING.
+- Exact eda83573 Chromium/build #41491503562 and WebKit #41491503765 FAIL on invalid Stash heading assertion: title was 23px DM Sans matching shared sheet, while diagnostic compared title to document body system-ui and required <=22px. 48px close and no unselected radio PASS in failure payload. Corrected QA to compare sheet font and allow 20–24px at 0657a259; new exact CI pending, do not claim PASS.
+- Independent isolated pure Node planner test PASS: first fictional 30mg nasal container with 1mL+9mL recorded liquid, 10mL total, source debited once in proposed next snapshot, duplicate/malformed/insufficient guarded, original snapshot not mutated. **Actual UI confirm/durable write/physical acceptance NOT TESTED** on corrected build.
+
 ## 2026-11-02 — iPhone Goal/Stash typography rejection and first nasal container test
 - User screenshots: Goal Details typography/hierarchy inconsistent (#04/#16), Stash Vial Setup likewise (#04); visual UAT FAIL/OPEN. Prior automated geometry PASS remains valid only for tested dimensions/interaction, not appearance.
 - Source c7e960d1: presentation-only scoped DS2 typography rules for those two modals. NO exact-head Chromium/WebKit screenshots reviewed yet. No on-device Pass claimed.
