@@ -1631,7 +1631,7 @@ function doseModal(name, existing, occTime, formChoice) {
       escalation:!!m.querySelector("#esc")?.checked,
       asNeeded:!!m.querySelector("#nx-dose-as-needed")?.checked,
       symptoms:f.symptoms,rows:[]};
-    closeModal();doseModal(name,null,null,"vial");
+    closeModal();doseModal(name,null,null,["SubQ","IM","IV"].includes(nextMethod)?"vial":"legacy-route");
   });
   methodInput.onchange=()=>{
     // Nasal spray conversion is currently a compound-level mode. Never silently
