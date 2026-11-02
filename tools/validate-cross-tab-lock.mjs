@@ -573,5 +573,77 @@ try{
    console.log("PASS: real Mark Kit Done displays stock consequence, opens partial-outflow route without writes, and retires 2 exact vials in one durable exclusive transaction");
  }
 
+
+ // Legacy-handler rejection must not leave optimistic mutations displayed
+ // after another tab has committed a settings/history change.
+ {
+   await a.evaluate(()=>{
+     closeModal();
+     const fresh=buildDemoState("weight_loss");
+     fresh.profile.onboardingDone=true;
+     fresh.settings.dismissedReminders={};
+     state=fresh;_demoActive=false;
+     localStorage.setItem(STORE_KEY,JSON.stringify(fresh));
+     _nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);
+     _nexusSharedWriter=null;
+   });
+   await b.reload({waitUntil:"domcontentloaded"});
+   await b.waitForFunction(()=>typeof nexusCommitCurrentState==="function");
+   const baseline=await b.evaluate(()=>({
+     durable:localStorage.getItem(STORE_KEY),
+     memory:JSON.stringify(state)
+   }));
+   assert.equal(baseline.durable,baseline.memory,"Stale-tab fixture must start from matching state");
+   const changed=await a.evaluate(async()=>{
+     const ok=await nexusCommitScopedStateChange({
+       kind:"setting",key:"phaseRemindersEnabled",value:true
+     });
+     return {ok,durable:localStorage.getItem(STORE_KEY)};
+   });
+   assert.equal(changed.ok,true,"Fresh tab must persist its settings update");
+   const rejected=await b.evaluate(async()=>{
+     state.settings.dismissedReminders={fictionalNotice:true};
+     const result=await nexusCommitCurrentState();
+     return {result,durable:localStorage.getItem(STORE_KEY),
+       memory:JSON.stringify(state),blocked:nexusWriter().status().blocked,
+       alert:!!document.querySelector("#nexus-storage-warning")};
+   });
+   assert.equal(rejected.result,false,"Stale legacy-handler save must reject");
+   assert.equal(rejected.durable,changed.durable,"Stale save must not overwrite durable fresh settings");
+   assert.equal(rejected.memory,baseline.memory,"Rejected legacy optimistic change must roll back to last verified snapshot");
+   assert.equal(rejected.blocked,true,"Stale writer must remain blocked until reload");
+   assert.equal(rejected.alert,true,"Rejected save must visibly warn user");
+   console.log("PASS: actual two-tab stale legacy handler rolls back in-memory optimistic change; durable settings preserved and warning shown");
+ }
+ // Failure on actual Storage.setItem must not be acknowledged as a saved
+ // change or leave an unsaved optimistic mutation in app state.
+ {
+   await a.reload({waitUntil:"domcontentloaded"});
+   await a.waitForFunction(()=>typeof nexusCommitCurrentState==="function");
+   const failed=await a.evaluate(async()=>{
+     const original=Storage.prototype.setItem;
+     const durable=localStorage.getItem(STORE_KEY);
+     const expected=JSON.stringify(state);
+     state.settings.dismissedReminders={fictionalWriteFailure:true};
+     Storage.prototype.setItem=function(key,value){
+       if(key===STORE_KEY)throw new Error("fictional quota/write failure");
+       return original.call(this,key,value);
+     };
+     let ok;
+     try{ok=await nexusCommitCurrentState()}
+     finally{Storage.prototype.setItem=original}
+     return {ok,durable:localStorage.getItem(STORE_KEY),
+       memory:JSON.stringify(state),expected,
+       blocked:nexusWriter().status().blocked,
+       warning:!!document.querySelector("#nexus-storage-warning")};
+   });
+   assert.equal(failed.ok,false,"Failed write must not acknowledge success");
+   assert.equal(failed.durable,failed.expected,"Failed write must preserve durable state");
+   assert.equal(failed.memory,failed.expected,"Failed legacy write must roll back optimistic app state");
+   assert.equal(failed.blocked,true,"Uncertain write should block until reload");
+   assert.equal(failed.warning,true,"Failed write must show a warning");
+   console.log("PASS: actual failed Storage write rejects legacy save, restores verified state and surfaces warning");
+ }
+
  await context.close();
 }finally{await browser.close()}
