@@ -1,3 +1,8 @@
+## 2026-11-02 — final approved Dose preferences spacing target (UNRELEASED)
+- User accepted tighter preview and indicated readiness to go. Application CSS commit 5ea01fd33d17dd2163e3c6c683e6e74349cce575 makes Dose preferences font-weight 400 and closes visible title-to-preferences gap while retaining independent >=44px summary and preference hit areas, >=48px checkbox rows. Only CSS modified; no data, storage, dosing, inventory or nasal LIVE gates changed.
+- Exact-head CI, final full-app DEMO/LIVE package, physical iPhone acceptance and release clearance must be verified before production. PR124 draft/unmerged; main baseline da585ab3; overall P0 remains blocking until verified resolved. No merge/deploy yet.
+- NEXT: check five workflows and final screenshots/artifacts; assess P0 clearance and authorization before merging or deploying.
+
 ## 2026-11-02 — label-parity screenshot correction verified in browser, real iPhone still pending
 - Binding user request is literal uppercase ADDITIONAL DOSE OPTIONS with exactly Administration Method/Site field-label styling, not a new 20px/14px heading. At 4fa74b8d Chromium computed style parity and 320/390 light/dark LIVE/DEMO screenshots passed. Checkbox and preferences copy/handlers are preserved. This does not grant permission for production deployment or undo P0 controls. Real-device UAT still required.
 
