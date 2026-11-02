@@ -235,7 +235,9 @@ try {
     const g=await page.locator('.modal.nx-form-log-sheet').evaluate((modal,s)=>{
       const rect=q=>{const el=modal.querySelector(q);if(!el)return null;const b=el.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height,width:b.width};};
       const summary=modal.querySelector(s.summary);
-      return {sheet:rect(':scope'),header:rect('.nx-dose-head'),summary:rect(s.summary),
+      const sheet=modal.getBoundingClientRect();
+      return {sheet:{top:sheet.top,bottom:sheet.bottom,left:sheet.left,right:sheet.right,height:sheet.height,width:sheet.width},
+        header:rect('.nx-dose-head'),summary:rect(s.summary),
         back:rect(s.back),save:rect(s.save),viewport:innerHeight,
         modalOverflow:getComputedStyle(modal).overflowY,
         summaryOverflow:summary?getComputedStyle(summary).overflowY:null,
