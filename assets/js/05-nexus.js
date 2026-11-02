@@ -1018,7 +1018,7 @@ function doseModal(name, existing, occTime, formChoice) {
     (kit.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(kit,v)>0.01&&
       nexusPhysicalForm(v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
         kit.preparationMethod||kit.administrationMethod||kit.route)==="Injectable"));
-  const injectableEntry=!existing&&formChoice!=="legacy-route"&&
+  const injectableEntry=!existing&&formChoice!=="legacy-route"&&formChoice!=="oral-vial"&&
     (formChoice==="vial"||injectableSourceConfirmed);
   const requestedMethod=nexusAdminMethod(existing?.method||existing?.route||draft?.method||setupMethod||cData.route);
   const initialMethod=formChoice==="oral-vial"?"Oral":injectableEntry&&!["SubQ","IM","IV"].includes(requestedMethod)?"SubQ":requestedMethod;
