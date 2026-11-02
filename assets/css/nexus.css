@@ -2553,7 +2553,7 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 }
 
 /* PR124: preferences are secondary to the source-specific dose action. */
-.nx-dose-pref-link{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:48px;padding:11px 12px;margin:2px 0 12px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);font-family:'DM Sans',-apple-system,sans-serif;color:var(--t1);font-size:15px;font-weight:500;text-align:left;line-height:1.5}
+.nx-dose-pref-link{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:48px;padding:11px 12px;margin:2px 0 12px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);font-family:inherit;color:var(--t1);font-size:15px;font-weight:500;text-align:left;line-height:1.5}
 .nx-dose-pref-link:focus-visible{outline:2px solid var(--accent,#A78BFA);outline-offset:2px}
 .nx-use-head{align-items:center}
 #nx-use-close{display:grid;place-items:center;min-width:48px;width:48px;height:48px;border:1px solid var(--border-sub);border-radius:14px;background:var(--surface-2)}
