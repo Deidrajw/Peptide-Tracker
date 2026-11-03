@@ -2,7 +2,9 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const appSource=fs.readFileSync(require("node:path").join(__dirname,"../assets/js/04-nexus.js"),"utf8");
 assert.match(appSource,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/,
- "Preparation writes must remain gated until LIVE acceptance");
+ "General transfers must remain independently gated");
+assert.match(appSource,/const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = false;/,
+ "Recorded nasal preparation must have a separate disabled gate");
 assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/,
  "Prepared-dose writes must remain independently gated");
 
