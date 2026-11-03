@@ -8,6 +8,20 @@ assert.match(appSource,/const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = false;/
 assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/,
  "Prepared-dose writes must remain independently gated");
 
+// UI entry points must reference only the recorded-preparation switch.
+for(const moduleName of ["09-nexus.js","10-nexus.js"]){
+ const entry=fs.readFileSync(require("node:path").join(__dirname,"../assets/js",moduleName),"utf8");
+ assert.doesNotMatch(entry,/NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED/,
+  moduleName+" must not expose generic transfer controls through nasal preparation");
+ assert.match(entry,/NEXUS_RECORDED_NASAL_PREPARATION_ENABLED/,
+  moduleName+" must use the recorded-preparation gate");
+}
+const nasalCommit=appSource.slice(appSource.indexOf("async function nexusCommitRecordedNasalPreparation("),
+ appSource.indexOf("const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED"));
+assert.match(nasalCommit,/if\(!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED\)/,
+ "Live recorded preparation must check its own gate");
+assert.doesNotMatch(nasalCommit,/if\(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED\)/,
+ "Generic transfer gate must not control recorded preparation");
 const {create}=require("../assets/js/nexus-write-coordinator.js");
 const bridge=require("../assets/js/nexus-preparation-bridge.js");
 const prepared=require("../assets/js/nexus-prepared-dose-transaction.js");
