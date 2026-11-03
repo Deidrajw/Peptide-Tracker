@@ -1,3 +1,6 @@
+## 2026-11-02 — nasal preparation-only release scope
+- User wants LIVE nasal preparation saving deployed. Engineering approach: prepare a separately tested preparation-only candidate; do not enable nasal dose logging in the same release. Any source normalization must occur inside the exclusive snapshot transaction, never as an unlocked preliminary mutation. Preserve original vial IDs, prior-use reconciliation, historical records and DS2. User's request to deploy is not permission to bypass safety checks. No nasal gates changed in current test-only branch.
+
 ## 2026-11-02 — PR126 metadata release merged under existing authorized scope
 - The previously approved post-SubQ restoration release includes v0.9.21-beta metadata reconciliation only; PR126 merge 6b64d0140afe01e866d710dd6134300f696407f2. No new feature scope or nasal safety-gate authorization. Cloudflare release status must be evidenced independently; a successful GitHub merge or CI build alone is not proof. Preserve localStorage, saved history, writer safeguards, approved DS2 UI and both nasal LIVE gates OFF. Physical SubQ picker verification remains optional post-release UAT.
 
