@@ -38,6 +38,7 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8777/ >/dev/null && break; sleep 1; done
           node tests/chromium-two-tab-writer.cjs
           node tools/validate-cross-tab-lock.mjs
+          node tests/nasal-live-ui-browser.cjs
   shared-writer:
     runs-on: ubuntu-latest
     timeout-minutes: 8
