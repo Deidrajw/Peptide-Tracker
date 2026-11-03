@@ -1,3 +1,6 @@
+## 2026-11-02 — Operational metadata follow-up after authorized PR125 deployment
+- User explicitly requested SubQ sites restored and deployment afterward. PR125 merged and Cloudflare source-verified. The main production release check failed strictly on stale version and release notes, so PR126 is a metadata-only remediation advancing to v0.9.21-beta. Preserve previously deployed SubQ source and the physical iPhone 4/4 nasal acceptance scope. Do not infer authorization to turn on nasal LIVE transfer/dosing: both gates remain OFF. No data migrations or production inventory rewrites.
+
 ## 2026-11-02 — PR125 physical UAT accepted, SubQ sites restoration approved and release authorized
 - User reported 4/4 PASS on fd68a110 physical iPhone nasal flow: navigation, historical review, known past use, unknown balance block. VoiceOver not separately verified. User then identified missing SubQ site options and explicitly instructed restoration of Left flank, Right flank, Left glute, Right glute and "Deploy after". Authorizes PR125 merge and deployment after exact-source regression QA passes; DOES NOT authorize enabling either LIVE nasal preparation or administration gate, import, data rewrite or migration. Preserve old saved site strings and all existing route logic.
 
