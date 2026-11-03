@@ -11,7 +11,7 @@ try{
     const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});
     const page=await ctx.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
+    await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'load'});
     await page.evaluate(t=>{
       state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
       document.documentElement.dataset.theme=t;
