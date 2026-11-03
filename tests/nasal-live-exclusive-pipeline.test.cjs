@@ -142,6 +142,44 @@ const dose={
     destinationContainerId:"RET-REPLAY-B"})),/changed|blocked/);
   assert.equal(retroWrites,1,"Stale retrospective replay must not persist");
  }
+ // A sealed source opening and stock transfer must share exactly one
+ // exclusively verified persistence operation, without mutating the input.
+ const sealedStart=()=>({
+  supplies:[{id:"SEALED-K",name:"Fictional Sealed",activeKit:false,isBlend:false,
+   vialMg:5,openedVials:0,vials:[{id:"SEALED-V",status:"sealed",expectedMg:5}]}],
+  formulationStocks:[],preparations:[],peptides:{},customPeptides:{}
+ });
+ let sealedDurable=JSON.stringify(sealedStart()),sealedWrites=0;
+ const sealedWriter=create({
+  read:()=>sealedDurable,write:s=>{sealedDurable=s;sealedWrites++},lock,
+  initialSnapshot:sealedDurable
+ });
+ const sealedInput={id:"SEALED-TRANSFER",destinationContainerId:"SEALED-BOTTLE",
+  sourceKitId:"SEALED-K",sourceVialId:"SEALED-V",amountMg:5,
+  bacMl:1,salineMl:9,volumeMl:10,mlPerSpray:.1,openSealed:true,
+  confirmed:true,priorUseStatus:"none",date:"2026-11-02T10:00:00"};
+ const beforeSealed=sealedStart();
+ const sealedResult=await sealedWriter.transaction(beforeSealed,s=>
+  bridge.planRecordedNasalLocked(s,sealedInput));
+ assert.equal(sealedWrites,1,"Opening and transfer must be a single write");
+ assert.equal(beforeSealed.supplies[0].vials[0].status,"sealed",
+  "Planner cannot mutate input source");
+ assert.equal(sealedResult.next.supplies[0].vials[0].status,"open");
+ assert.equal(sealedResult.next.supplies[0].vials[0].remainingMg,0);
+ assert.equal(sealedResult.next.supplies[0].vials[0].id,"SEALED-V");
+ assert.equal(sealedResult.next.supplies[0].openedVials,1);
+ assert.equal(sealedResult.next.formulationStocks[0].sourceVialId,"SEALED-V");
+ assert.equal(sealedResult.next.formulationStocks[0].remainingMg,5);
+ assert.deepEqual(sealedResult.next.peptides,{});
+ const previousSaved=sealedDurable;
+ const invalidSealed=create({read:()=>sealedDurable,write:s=>{
+  sealedDurable=s;sealedWrites++;
+ },lock,initialSnapshot:sealedDurable});
+ await assert.rejects(invalidSealed.transaction(JSON.parse(sealedDurable),s=>
+  bridge.planRecordedNasalLocked(s,{...sealedInput,id:"REPEAT",
+   destinationContainerId:"REPEAT-BOTTLE"})),/sealed|Source/i);
+ assert.equal(sealedDurable,previousSaved,"Duplicate source opening must not change stock");
+ assert.equal(sealedWrites,1);
  assert.ok(attempts>=6,"Exclusive lock must mediate every attempted transaction");
  console.log("PASS: exact source nasal prep -> prepared spray -> undo; stale tab, validation, readback and no double debit");
 })().catch(e=>{console.error(e);process.exitCode=1});
