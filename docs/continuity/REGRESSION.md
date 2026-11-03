@@ -1,3 +1,6 @@
+## 2026-11-02 — Cloudflare deployment user-confirmed; independent production QA outstanding
+- User confirmed deployment of PR124 to Cloudflare after merge 0eca7507. Five exact-source premerge workflows PASS, physical iPhone UAT user-reported 16/16 PASS. Direct read-only fetch to primary URL failed (cache miss), so postdeployment served-source integrity, assets and runtime smoke tests NOT TESTED; do not mark PASS. Nasal LIVE gates OFF in reviewed source. NEXT: read-only live source/asset verification.
+
 ## 2026-11-02 — PR124 MERGED safety/acceptance summary; host verification outstanding
 - Exact source 5ea01fd3: Chromium #41547092367 PASS, WebKit #41547092364 PASS, mobile #41547092333 PASS, nested #41547092384 PASS, writer #41547092346 (mixed-writer P0 + two-tab) PASS. User iPhone #01–16 all PASS, Notes None; real-device evidence user-reported. Canonical source LIVE 26-file ZIP, DEMO, 320/390 light/dark verified premerge; main CSS blob exact match post-merge.
 - Merge commit 0eca7507 verified; Cloudflare primary served commit and runtime NOT VERIFIED due access failure. No production storage mutation, no live nasal gate enablement. No claimed real-browser postdeployment Pass.
