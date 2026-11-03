@@ -3137,6 +3137,45 @@ function editUpdateModal(log, update) {
   };
 }
 
+
+/* Priority 4: reuse supplements without copying check-in symptoms, mood or history.
+   Recent entries are date-scoped; templates are opt-in named selections. */
+function nexusWireSupplementShortcuts(modal, dateValue, taken, refresh) {
+  const bar=modal.querySelector("#nx-supp-shortcuts");
+  if(!bar)return;
+  const repeat=bar.querySelector("#nx-supp-repeat");
+  const browse=bar.querySelector("#nx-supp-templates");
+  const save=bar.querySelector("#nx-supp-save-template");
+  const panel=modal.querySelector("#nx-supp-template-list");
+  const previous=()=> (state.supplementLogs||[]).filter(l=>Array.isArray(l.taken)&&l.taken.length&&dayKey(l.date)<dayKey(dateValue())).sort((a,b)=>dayKey(b.date).localeCompare(dayKey(a.date)))[0];
+  const getTemplates=()=>Array.isArray(state.settings.supplementTemplates)?state.settings.supplementTemplates.filter(t=>t&&typeof t.name==="string"&&Array.isArray(t.taken)):[];
+  const apply=names=>{taken.clear();names.filter(n=>typeof n==="string"&&n.trim()).forEach(n=>taken.add(n));refresh();};
+  const paint=()=>{
+    const prev=previous();
+    repeat.disabled=!prev;
+    repeat.textContent=prev?"Use previous day":"No previous supplements";
+    repeat.title=prev?"Reuse selections from "+dayKey(prev.date):"No earlier supplement log available";
+    const templates=getTemplates();
+    panel.innerHTML=templates.length?templates.map((t,i)=>'<button type="button" class="nx-supp-template-option" data-template-index="'+i+'"><strong>'+esc(t.name)+'</strong><span>'+t.taken.length+' selected</span></button>').join(""):'<p class="nx-supp-template-empty">No templates yet. Select supplements and choose Save as template.</p>';
+    panel.querySelectorAll("[data-template-index]").forEach(button=>button.onclick=()=>{const t=templates[Number(button.dataset.templateIndex)];if(t){apply(t.taken);panel.hidden=true;browse.setAttribute("aria-expanded","false");}});
+  };
+  repeat.onclick=()=>{const prev=previous();if(prev)apply(prev.taken);};
+  browse.onclick=()=>{panel.hidden=!panel.hidden;browse.setAttribute("aria-expanded",String(!panel.hidden));if(!panel.hidden)paint();};
+  save.onclick=async()=>{
+    if(!taken.size){alert("Select supplements before saving a template.");return;}
+    const value=prompt("Name this supplement template (e.g. Morning essentials):");
+    if(value===null)return;
+    const name=value.trim().slice(0,50);
+    if(!name){alert("Enter a template name.");return;}
+    const templates=getTemplates();
+    if(templates.some(t=>t.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert("A template with this name already exists.");return;}
+    state.settings.supplementTemplates=[...templates,{name,taken:[...taken]}];
+    if(!await nexusCommitCurrentState()){showSaveWarning();return;}
+    panel.hidden=false;browse.setAttribute("aria-expanded","true");paint();
+  };
+  paint();
+}
+
 function dailyModal(existing, prefillDate) {
   // Intercept: if called fresh and today already has a check-in, show the today sheet instead
   if (!existing && !prefillDate) {
@@ -3166,6 +3205,7 @@ function dailyModal(existing, prefillDate) {
     <label class="field-label">NOTES</label><textarea id="notes" class="inp" placeholder="e.g. more nauseous than yesterday…" style="min-height:54px;resize:vertical;margin-bottom:18px">${esc(f.notes||"")}</textarea>
     ${`
     <label class="field-label">SUPPLEMENTS TODAY <span style="color:var(--t4);font-weight:400;letter-spacing:0">(optional)</span></label>
+    <div id="nx-supp-shortcuts" class="nx-supp-shortcuts" role="group" aria-label="Reuse supplements"><button type="button" id="nx-supp-repeat">Use previous day</button><button type="button" id="nx-supp-templates" aria-expanded="false" aria-controls="nx-supp-template-list">My templates</button><button type="button" id="nx-supp-save-template">Save as template</button></div><div id="nx-supp-template-list" class="nx-supp-template-list" hidden></div>
     <input id="supp-search" class="inp" type="search" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:8px">
 
     <button type="button" id="supp-toggle" aria-expanded="false" style="width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:11px;color:var(--t2);margin-bottom:8px"><span>Browse all supplements</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-results" style="max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:12px;margin-bottom:14px" hidden></div><button type="button" id="supp-selected-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--t2);margin-bottom:8px"><span id="supp-selected-count">Selected today (0)</span><span class="nx-chevron-slot" aria-hidden="true"></span></button><div id="supp-chips" style="margin-bottom:8px" aria-label="Selected supplements" hidden></div>
@@ -3279,6 +3319,7 @@ function dailyModal(existing, prefillDate) {
     });
   };
   if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};renderSuppSearch();}
+  nexusWireSupplementShortcuts(m,()=>m.querySelector("#date").value,suppTaken2,()=>{suppSelectionTouched=true;suppSelectedOpen=true;renderSuppSearch();});
   const suppDateInput=m.querySelector("#date");
   if(suppDateInput)suppDateInput.addEventListener("change",()=>{
     const log=state.supplementLogs.find(l=>dayKey(l.date)===suppDateInput.value);
@@ -3322,6 +3363,7 @@ function supplementModal(prefillDate) {
   const supps = state.settings.supplements || (state.settings.supplements=[]);
   const taken = new Set(existing?.taken||[]);
   openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-weight:700">Supplements · ${fmtDate(today)}</span><button id="x" aria-label="Close">✕</button></div>
+    <div id="nx-supp-shortcuts" class="nx-supp-shortcuts" role="group" aria-label="Reuse supplements"><button type="button" id="nx-supp-repeat">Use previous day</button><button type="button" id="nx-supp-templates" aria-expanded="false" aria-controls="nx-supp-template-list">My templates</button><button type="button" id="nx-supp-save-template">Save as template</button></div><div id="nx-supp-template-list" class="nx-supp-template-list" hidden></div>
     <input id="supp-search" type="search" class="inp" autocomplete="off" placeholder="Search supplements..." aria-label="Find a supplement" style="margin-bottom:10px">
 
     
@@ -3355,6 +3397,7 @@ function supplementModal(prefillDate) {
     });
   };
   input.oninput=()=>{dropdownOpen=true;paint();};paint();
+  nexusWireSupplementShortcuts(modal,()=>today,taken,()=>{selectedOpen=true;paint();});
   modal.querySelector("#suppsave").onclick=async()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
     if(taken.size)state.supplementLogs.push({id:uid(),date:today,taken:[...taken]});
