@@ -1,3 +1,6 @@
+## 2026-11-02 — PR125 physical UAT accepted, SubQ sites restoration approved and release authorized
+- User reported 4/4 PASS on fd68a110 physical iPhone nasal flow: navigation, historical review, known past use, unknown balance block. VoiceOver not separately verified. User then identified missing SubQ site options and explicitly instructed restoration of Left flank, Right flank, Left glute, Right glute and "Deploy after". Authorizes PR125 merge and deployment after exact-source regression QA passes; DOES NOT authorize enabling either LIVE nasal preparation or administration gate, import, data rewrite or migration. Preserve old saved site strings and all existing route logic.
+
 ## 2026-11-02 — PR125 QA result does not authorize LIVE nasal activation
 - Exact-head fictional retrospective reconciliation and browser QA validated at fd68a110. Continue to require explicit separate approval and safe exclusive persistence review before enabling either LIVE nasal feature flag; passing DEMO planner does not mean production can log Oxytocin sprays. Physical iPhone acceptance is next and cannot be substituted by Chromium/WebKit mobile emulation. Preserve historical dose/source truth; known prior sprays produce bottle-only nominal adjustment, unknown prior use remains unverified/blocked, and no fabricated prior dose logs.
 
