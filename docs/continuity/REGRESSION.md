@@ -1,3 +1,6 @@
+## 2026-11-02 — nasal LIVE safety branch regression expansion (NOT YET EXECUTED)
+- Branch feature/nasal-live-preparation-safety-20261102, test source 02ecbf97. Added exclusive writer retrospective known prior sprays and unknown prior-use cases; asserts single write, source depletion, bottle source linkage, verified/unverified balance, original occurredAt, no invented dose history and stale-tab replay rejection. Automated execution pending; DO NOT label PASS. Known LIVE sealed/legacy source handling gap requires independent regression and fix before production gate enablement. Both nasal LIVE flags OFF.
+
 ## 2026-11-02 — physical iPhone SubQ UAT PASS; LIVE nasal blocked-state observed
 - User's physical iPhone v0.9.21-beta results: Left flank PASS, Right flank PASS, Left glute PASS, Right glute PASS (4/4). No independent VoiceOver session reported.
 - LIVE nasal form Review shown for Oxytocin but save displays "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved." Source assets/js/10-nexus.js contains the deliberate non-DEMO rejection message. This is an expected, observed BLOCKED safety state; no confirmation of inventory mutation. Never mark LIVE preparation PASS. Both nasal LIVE gates remain OFF. Main build #41572795053 SUCCESS after the earlier pending state.
