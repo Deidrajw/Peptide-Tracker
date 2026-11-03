@@ -1,3 +1,6 @@
+## 2026-11-02 — PR125 QA result does not authorize LIVE nasal activation
+- Exact-head fictional retrospective reconciliation and browser QA validated at fd68a110. Continue to require explicit separate approval and safe exclusive persistence review before enabling either LIVE nasal feature flag; passing DEMO planner does not mean production can log Oxytocin sprays. Physical iPhone acceptance is next and cannot be substituted by Chromium/WebKit mobile emulation. Preserve historical dose/source truth; known prior sprays produce bottle-only nominal adjustment, unknown prior use remains unverified/blocked, and no fabricated prior dose logs.
+
 ## 2026-11-02 — Historical nasal source reconciliation without fabricated doses
 - User requires shared Open New Vial → Nasal preparation screen for existing vial, no extra disconnected step; Nasal above Other. User's existing Oxytocin scenario: entire 5 mg transferred, some sprays already used. Immutable historical transaction records occurredAt and recordedAt separately; documented known prior sprays get a distinct auditable bottle-only adjustment, not invented dose history. Unknown past use must not be advertised as verified usable stock or eligible for new logging. Protect original vial/kit IDs, other vials, Check-In and all records. Keep both nasal LIVE gates OFF and require full review/approval before enabling.
 
