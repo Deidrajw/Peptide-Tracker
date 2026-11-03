@@ -20,8 +20,11 @@ for(const file of ['assets/js/04-nexus.js','assets/js/10-nexus.js','assets/js/11
    throw Error('Prepared/source transactions bypass shared writer');
  if(file.includes('10-')&&(!text.includes('await writer.transaction(saved,')||!text.includes('saveButton.disabled=true')))
    throw Error('Formulation stock bypasses exclusive shared writer');
- if(file.includes('11-')&&(!text.includes('await writer.transaction(state,()=>({next}))')||text.includes('writer.saveLegacy(next)')))
-   throw Error('Manual restoration must use exclusive validated writer');
+ if(file.includes('11-')&&(!text.includes('const originalRaw=writer.expected()')||
+      !text.includes('await writer.transaction(original,()=>({next}))')||
+      !text.includes('localStorage.setItem(recoveryKey,oldRaw)')||
+      text.includes('writer.saveLegacy(next)')))
+   throw Error('Manual restore must compare the exact durable snapshot under exclusive writer and preserve recovery copy');
  if(file.includes('12-')&&(!text.includes('await writer.transaction(state,()=>({next}))')||text.includes('writer.saveLegacy(next)')))
    throw Error('Onboarding restoration must use exclusive validated writer');
 }
