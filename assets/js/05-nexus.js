@@ -3156,8 +3156,30 @@ function nexusWireSupplementShortcuts(modal, dateValue, taken, refresh) {
     repeat.textContent=prev?"Use previous day":"No previous supplements";
     repeat.title=prev?"Reuse selections from "+dayKey(prev.date):"No earlier supplement log available";
     const templates=getTemplates();
-    panel.innerHTML=templates.length?templates.map((t,i)=>'<button type="button" class="nx-supp-template-option" data-template-index="'+i+'"><strong>'+esc(t.name)+'</strong><span>'+t.taken.length+' selected</span></button>').join(""):'<p class="nx-supp-template-empty">No templates yet. Select supplements and choose Save as template.</p>';
+    panel.innerHTML=templates.length?templates.map((t,i)=>'<div class="nx-supp-template-row">'+
+      '<button type="button" class="nx-supp-template-option" data-template-index="'+i+'" aria-label="Use '+esc(t.name)+' template"><strong>'+esc(t.name)+'</strong><span>'+t.taken.length+' selected</span></button>'+
+      '<button type="button" class="nx-supp-template-manage" data-rename-template="'+i+'" aria-label="Rename '+esc(t.name)+' template" title="Rename template"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4z"/></svg></button>'+
+      '<button type="button" class="nx-supp-template-manage" data-delete-template="'+i+'" aria-label="Delete '+esc(t.name)+' template" title="Delete template"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6M10 10v7m4-7v7"/></svg></button>'+
+      '</div>').join(""):'<p class="nx-supp-template-empty">No templates yet. Select supplements and choose Save as template.</p>';
     panel.querySelectorAll("[data-template-index]").forEach(button=>button.onclick=()=>{const t=templates[Number(button.dataset.templateIndex)];if(t){apply(t.taken);panel.hidden=true;browse.setAttribute("aria-expanded","false");}});
+    panel.querySelectorAll("[data-rename-template]").forEach(button=>button.onclick=async()=>{
+      const index=Number(button.dataset.renameTemplate),template=templates[index];
+      if(!template)return;
+      const entered=prompt("Rename supplement template:",template.name);
+      if(entered===null)return;
+      const name=entered.trim();
+      if(!name||name.length>50){alert("Template name must be 1–50 characters.");return;}
+      if(templates.some((t,i)=>i!==index&&t.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert("A template with this name already exists.");return;}
+      if(name===template.name)return;
+      const nextTemplates=templates.map((t,i)=>i===index?{...t,name}:t);
+      if(await nexusCommitScopedStateChange({kind:"setting",key:"supplementTemplates",value:nextTemplates}))paint();
+    });
+    panel.querySelectorAll("[data-delete-template]").forEach(button=>button.onclick=async()=>{
+      const index=Number(button.dataset.deleteTemplate),template=templates[index];
+      if(!template||!confirm('Delete template "'+template.name+'"? Previous supplement logs are not affected.'))return;
+      const nextTemplates=templates.filter((_,i)=>i!==index);
+      if(await nexusCommitScopedStateChange({kind:"setting",key:"supplementTemplates",value:nextTemplates}))paint();
+    });
   };
   repeat.onclick=()=>{const prev=previous();if(prev)apply(prev.taken);};
   browse.onclick=()=>{panel.hidden=!panel.hidden;browse.setAttribute("aria-expanded",String(!panel.hidden));if(!panel.hidden)paint();};
