@@ -102,6 +102,39 @@ const dose={
  })),/readback/);
  assert.equal(bad.status().blocked,true,"Readback mismatch must fail closed");
  durable=corrupted;
+ // Retrospective LIVE-planner safety: known prior use must debit only the prepared
+ // bottle, and unknown prior use must never become verified available stock.
+ const retrospectiveSource=()=>({
+  supplies:[{id:"RET-K",name:"Fictional Retrospective",activeKit:true,isBlend:false,
+   vials:[{id:"RET-V",status:"open",remainingMg:5,expectedMg:5,intendedUse:null}]}],
+  formulationStocks:[],preparations:[],peptides:{},customPeptides:{}
+ });
+ const retroInput={id:"RET-T",destinationContainerId:"RET-B",sourceKitId:"RET-K",
+  sourceVialId:"RET-V",amountMg:5,bacMl:1,salineMl:9,volumeMl:10,
+  mlPerSpray:.1,confirmed:true,adoptUnlabelled:true,
+  occurredAt:"2026-10-29T12:00:00",recordedAt:"2026-11-02T20:00:00",
+  priorUseStatus:"known",priorSprays:4};
+ for(const prior of ["known","unknown"]){
+  let retroDurable=JSON.stringify(retrospectiveSource()),retroWrites=0;
+  const retroAdapter={read:()=>retroDurable,write:s=>{retroDurable=s;retroWrites++},lock};
+  const retroWriter=create({...retroAdapter,initialSnapshot:retroDurable});
+  const outcome=await retroWriter.transaction(JSON.parse(retroDurable),s=>
+   bridge.planRecordedNasal(s,{...retroInput,priorUseStatus:prior,
+    ...(prior==="unknown"?{priorSprays:undefined}:{})}));
+  const bottle=outcome.next.formulationStocks[0];
+  assert.equal(retroWrites,1,"Retrospective transfer must be a single durable write");
+  assert.equal(outcome.next.supplies[0].vials[0].remainingMg,0);
+  assert.equal(bottle.sourceVialId,"RET-V");
+  assert.equal(bottle.balanceStatus,prior==="known"?"verified":"unverified");
+  assert.equal(bottle.remainingMg,prior==="known"?4.8:5);
+  assert.equal(bottle.recordedPreparation.occurredAt,retroInput.occurredAt);
+  assert.deepEqual(outcome.next.peptides,{},"Do not invent historical dose records");
+  const stale=create({...retroAdapter,initialSnapshot:JSON.stringify(retrospectiveSource())});
+  await assert.rejects(stale.transaction(retrospectiveSource(),s=>
+   bridge.planRecordedNasal(s,{...retroInput,id:"RET-REPLAY",
+    destinationContainerId:"RET-REPLAY-B"})),/changed|blocked/);
+  assert.equal(retroWrites,1,"Stale retrospective replay must not persist");
+ }
  assert.ok(attempts>=6,"Exclusive lock must mediate every attempted transaction");
  console.log("PASS: exact source nasal prep -> prepared spray -> undo; stale tab, validation, readback and no double debit");
 })().catch(e=>{console.error(e);process.exitCode=1});
