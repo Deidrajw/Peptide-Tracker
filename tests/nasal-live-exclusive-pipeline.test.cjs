@@ -180,6 +180,22 @@ const dose={
    destinationContainerId:"REPEAT-BOTTLE"})),/sealed|Source/i);
  assert.equal(sealedDurable,previousSaved,"Duplicate source opening must not change stock");
  assert.equal(sealedWrites,1);
+ // Missing canonical mass in a legacy open vial is not permission to
+ // infer original strength as current stock.
+ const legacy=sealedStart();
+ legacy.supplies[0].activeKit=true;
+ legacy.supplies[0].vials[0].status="open";
+ legacy.supplies[0].vials[0].intendedUse=null;
+ delete legacy.supplies[0].vials[0].remainingMg;
+ let legacyDurable=JSON.stringify(legacy),legacyWrites=0;
+ const legacyWriter=create({read:()=>legacyDurable,
+  write:s=>{legacyDurable=s;legacyWrites++},lock,initialSnapshot:legacyDurable});
+ await assert.rejects(legacyWriter.transaction(legacy,s=>
+  bridge.planRecordedNasalLocked(s,{...sealedInput,id:"LEGACY-TRANSFER",
+   destinationContainerId:"LEGACY-BOTTLE",openSealed:false,adoptUnlabelled:true})),
+  /legacy vial mass|Unverified legacy/i);
+ assert.equal(legacyWrites,0,"Unknown actual stock must not be guessed or written");
+ assert.equal(legacyDurable,JSON.stringify(legacy));
  assert.ok(attempts>=6,"Exclusive lock must mediate every attempted transaction");
  console.log("PASS: exact source nasal prep -> prepared spray -> undo; stale tab, validation, readback and no double debit");
 })().catch(e=>{console.error(e);process.exitCode=1});
