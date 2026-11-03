@@ -36,5 +36,6 @@ jobs:
           path: |
             dist/*_VISUAL_webkit_*.png
             dist/*_VISUAL_webkit_*.json
+            dist/*_RETROSPECTIVE_webkit_*.png
           if-no-files-found: warn
           retention-days: 30
