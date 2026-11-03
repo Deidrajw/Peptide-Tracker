@@ -1,3 +1,8 @@
+## 2026-11-03 — Priority 4 PR130 QA milestone (unmerged)
+- Stash search plus Check-In and standalone Supplements reuse now code-complete as draft: previous-day draft, named template create/apply/rename/delete. Includes protected scoped writer and no history migration. Automated CI and Chromium fictional interaction testing have demonstrated several flows; full screenshot/real iPhone acceptance still outstanding. Do not advance roadmap lane to COMPLETE merely because code exists.
+- Priority 2 onboarding and Priority 5 platform integrations remain future work. Priority 4 customizable Today dashboard/contextual actions also OPEN.
+- NEXT: finish exact-head CI and artifact review, then physical iPhone template and Stash search acceptance, before any separate release approval.
+
 ## 2026-11-03 — Priority 4 first implementation candidate (DRAFT PR130)
 - User accepted simple supplements entry points: Use previous day and My templates in the existing Check-In flow rather than a new tab. PR130 implements Stash search across Vial kits, Other forms and Supplies; prior-date supplements reuse; named supplement templates. Records remain local-first; optional templates in settings; no automatic log or saved-history migration.
 - Retain Priority 2 Onboarding 2.0, Priority 3 remaining core workflow quality, Priority 4 additional configurable Today, quick actions/smart history, Priority 5 cloud/native expansion as OPEN / NOT quietly completed.
