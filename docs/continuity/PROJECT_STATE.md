@@ -1,3 +1,10 @@
+## 2026-11-03 — Priority 4 Stash search and supplement reuse PR130 (DRAFT / NOT RELEASED)
+- Verified base main 1e51840959cd21de01f6e1a48152a486850317fe (PR129 merged). Current app title v0.9.23-beta; independent Cloudflare parity for this merged commit was NOT verified in this work session (direct fetch cache miss).
+- New branch feature/p4-stash-search-supplement-repeat-20261103, draft PR #130. Code at 66be75d41df7c8b96118394d2400b324b93aa985: UI-only Stash search for vial kits, other formulations and supplies; separate no-results text; Check-In and standalone Supplements repeat most recent previous-dated supplement log, opt-in named templates stored in settings.supplementTemplates; none auto-log, alter dose/inventory or copy symptoms and mood. Styling appended to nexus.css; no destructive migration.
+- Verification pending: exact-head Chromium, WebKit, mobile 320/390 light/dark, mixed writer, nested, date changes, save failure, template persistence, full-app isolated DEMO and LIVE ZIP. No physical iPhone or VoiceOver acceptance. No release approval, merge, deployment or production data writes.
+- RELEASE STATUS: PROPOSED + CODED on DRAFT branch, TESTS NOT VERIFIED, ARTIFACTS INCOMPLETE, UNMERGED, NOT DEPLOYED.
+- ONE NEXT ACTION: execute complete exact-head regression and artifact parity for PR130; fix any failures before requesting iPhone acceptance or merge/deploy authorization.
+
 ## 2026-11-03 — PR129 exact-source artifact and five-workflow acceptance; NOT RELEASED
 - Verified latest main `383c6b7a88c6d2903454bdfe256684b4c455d93e` (v0.9.22-beta production baseline); PR #129 branch `fix/restore-canonical-snapshot-20261103`, CI-qualified application/test commit `afbeadb905ea350f2190edc408894397e3b8c2a9`. Candidate v0.9.23-beta. No merge, Cloudflare deploy or production data access.
 - Five workflow groups SUCCESS at exact candidate: full build/Chromium #41668328314; WebKit #41668328877; shared writer/real Chromium two-tab/mixed writer P0 #41668328302; mobile #41668328375; DS2 nested #41668328438. These are automated checks, NOT physical iPhone/VoiceOver.
