@@ -2371,7 +2371,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
       </div>
       <p class="nx-stash-method-explain">This older vial has no saved product form. Choose its physical formulation, not the injection route of an individual dose. Confirming will not change remaining inventory or past history.</p>
       <fieldset class="nx-stash-method-choices"><legend>Product form</legend>
-        ${["Injectable","Oral","Topical","Other","nasal-source"].map(form=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(form)}"><span>${esc(form==="nasal-source"?"For nasal preparation · not yet a spray":form)}</span></label>`).join("")}
+        ${["Injectable","Oral","Topical","nasal-source","Other"].map(form=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(form)}"><span>${esc(form==="nasal-source"?"Nasal":form)}</span></label>`).join("")}
       </fieldset>
       <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm product form</button>
     </div>`);
@@ -2392,9 +2392,9 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
       showErrorBanner("A method was already confirmed. No changes made.");return;
     }
     if(form==="nasal-source"){
-      // Older unlabelled opened vials can join the same actual-preparation
-      // Review. Never persist an intermediate reserved vial before transfer.
-      if(!_demoActive){showErrorBanner("Live nasal preparation remains safety-gated. Nothing saved.");return;}
+      // Reuse the Open New Vial → Nasal preparation screen for an existing
+      // unclassified open source. Navigation is read-only until final review.
+      // Both LIVE preparation and administration transaction gates stay OFF.
       closeModal();
       nexusRecordNasalPreparation(kitId,vialId,{adoptUnlabelled:true});
       return;
@@ -2418,7 +2418,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  const sealedMass=Number(vial?.expectedMg ?? vial?.vialMg ?? kit?.vialMg);
  const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
    Number.isFinite(sealedMass)&&sealedMass>0;
- const validLegacy=!!vial&&adoptUnlabelled&&_demoActive&&!kit?.isBlend&&
+ const validLegacy=!!vial&&adoptUnlabelled&&!kit?.isBlend&&
    ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
    !nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route)&&
    Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
