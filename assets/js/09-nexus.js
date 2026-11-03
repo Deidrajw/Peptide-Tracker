@@ -1795,11 +1795,11 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   if(!["Injectable","nasal-source"].includes(selectedForm)){showErrorBanner("Choose Injectable or Nasal. Nothing saved.");return;}
   // The LIVE nasal gate must be checked BEFORE the first vial or kit write.
   // A blocked transfer must never leave a newly opened nasal-reserved vial.
-  if(selectedForm==="nasal-source"&&!_demoActive&&!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED){
+  if(selectedForm==="nasal-source"&&!_demoActive&&!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED){
     showErrorBanner("Live nasal preparation is safety-gated. No vial opened and no inventory changed.");
     return;
   }
-  if(selectedForm==="nasal-source"&&(_demoActive||NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)){
+  if(selectedForm==="nasal-source"&&(_demoActive||NEXUS_RECORDED_NASAL_PREPARATION_ENABLED)){
     // An already open nasal source remains selectable for subsequent recorded
     // bottles. Never silently substitute another vial or discard remaining mg.
     const existingSources=(s.vials||[]).filter(v=>["open","active"].includes(v.status)&&
