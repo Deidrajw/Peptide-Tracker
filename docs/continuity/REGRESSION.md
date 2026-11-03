@@ -1,3 +1,8 @@
+## 2026-11-02 — PR124 MERGED safety/acceptance summary; host verification outstanding
+- Exact source 5ea01fd3: Chromium #41547092367 PASS, WebKit #41547092364 PASS, mobile #41547092333 PASS, nested #41547092384 PASS, writer #41547092346 (mixed-writer P0 + two-tab) PASS. User iPhone #01–16 all PASS, Notes None; real-device evidence user-reported. Canonical source LIVE 26-file ZIP, DEMO, 320/390 light/dark verified premerge; main CSS blob exact match post-merge.
+- Merge commit 0eca7507 verified; Cloudflare primary served commit and runtime NOT VERIFIED due access failure. No production storage mutation, no live nasal gate enablement. No claimed real-browser postdeployment Pass.
+- ONE NEXT ACTION: Cloudflare deployment commit/assets integrity check then postdeploy smoke checks and release status update.
+
 ## 2026-11-02 — PR124 full physical iPhone regression ACCEPTED 16/16, no exceptions
 - User-provided exact source 5ea01fd3 acceptance: #01–#16 all PASS, FAIL 0, BLOCKED 0, NOT TESTED 0; Notes None. All prior OPEN iPhone scorecard rows now closed for this tested scope. Real-device user report; no independent VoiceOver recording or PWA source instrumentation claimed.
 - Chromium/build #41547092367, WebKit #41547092364, mobile #41547092333, nested #41547092384, writer #41547092346 all SUCCESS; mixed writer P0 and real Chromium two-tab PASS. Final source-matched 26-file LIVE and fictional full-app DEMO artifact #13190285462 already CRC/manifest verified. Nasal LIVE OFF; preserved production history/inventory.
