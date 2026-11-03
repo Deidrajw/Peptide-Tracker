@@ -2404,8 +2404,8 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
   };
 }
 
-/* Experimental isolated-DEMO actual preparation flow; production transfers
- * remain disabled until legacy cross-tab writers are fully coordinated. */
+/* Shared recorded-preparation Review: DEMO uses fictional in-memory state;
+ * LIVE uses the separate exclusive, verified preparation-only transaction. */
 function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabelled=false}={}){
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
@@ -2438,7 +2438,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  '<p id="nx-nasal-record-preview" role="status" class="nx-dose-untracked-note"></p>'+
  '<div id="nx-nasal-record-review" class="nx-dose-review" hidden aria-live="polite"></div>'+ '<label class="nx-dose-option-check" id="nx-nasal-confirm-row" hidden><input type="checkbox" id="nx-nasal-record-confirm"><span>I confirm this preparation and transfer actually happened, using the source and amounts shown.</span></label>'+
  '<button type="button" id="nx-nasal-record-back" class="btn-secondary" hidden style="min-height:44px;width:100%">Back to edit</button>'+ '<button type="button" id="nx-nasal-record-save" class="btn-primary" style="min-height:48px;width:100%">Review preparation and transfer</button>'+
- '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. Live transfers remain safety-gated.</p></section>',"#A78BFA");
+ '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. No inventory changes until confirmed saving succeeds.</p></section>',"#A78BFA");
   m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-nasal-shared-review");
  m.querySelector("#x").onclick=closeModal;
  const inputs=["nx-nasal-source-mg","nx-nasal-bac","nx-nasal-saline","nx-nasal-pump"].map(id=>m.querySelector("#"+id));
@@ -2560,8 +2560,8 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
     const result=globalThis.NexusPreparationBridge.planRecordedNasal(sourceSnapshot,recorded);
     state=result.next;committed=true;closeModal();render();
    }else{
-    // Live commit stays blocked by the central safety flag until ALL ordinary
-    // state writers also obey exclusive cross-tab coordination.
+    // LIVE: one exclusively locked full-snapshot transaction, with readback
+    // before any in-memory state swap. Prepared nasal dose logging stays OFF.
     const result=await nexusCommitRecordedNasalPreparation(recorded);
     if(!result?.container)throw Error("Verified prepared container missing");
     committed=true;closeModal();render();
@@ -2575,7 +2575,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    }else{
     showErrorBanner(_demoActive?
      "Preparation was not recorded: "+String(error?.message||"source or destination verification failed")+". No inventory changed.":
-     "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+     (nexusWriter().status().blocked
+       ? "Preparation could not be verified in saved inventory. Do not retry in this tab; reload and inspect Stash before doing anything else."
+       : "Preparation not saved: "+String(error?.message||"inventory validation failed")+". Review source and try again after correcting the issue."));
    }
    button.disabled=false;
   }
