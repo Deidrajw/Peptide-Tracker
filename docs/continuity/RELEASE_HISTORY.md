@@ -1,3 +1,6 @@
+## 2026-11-02 — UNRELEASED PR125 verified development build fd68a110
+- Draft PR125; existing open-vial Nasal selection reuses standard form, retrospective preparation occurredAt/recordedAt, known previous spray adjustment versus unknown unverified balance, guarded prepared-dose eligibility. Five exact-head automated workflow checks PASS (Chromium #41566530752, WebKit #41566531004, mobile #41566531038, writer #41566530758, nested #41566530883). 16 retrospective screenshot cases examined across engines; 26-file LIVE ZIP and isolated full-app DEMO source-manifest/CRC verified. App version still v0.9.20-beta; candidate unreleased, unmerged, undeployed. Both nasal LIVE gates remain OFF; no data migration. Physical iPhone and VoiceOver NOT TESTED; no production acceptance.
+
 ## 2026-11-02 — UNRELEASED candidate: legacy open-vial Nasal screen reuse
 - Branch feature/nasal-existing-vial-flow-20261102 application commit b0f2446c. Routes older unlabelled open vial Nasal selection to same existing preparation form as Open New Vial; label Nasal ordered ahead of Other. No live commit permission and no data migration. Both LIVE nasal gates OFF. Static checks only; no tested release, no artifacts, no merge/deployment. Retrospective balance reconciliation and dates remain incomplete.
 
