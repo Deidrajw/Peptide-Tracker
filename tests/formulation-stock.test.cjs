@@ -59,3 +59,6 @@ assert.equal(topicalStock.next.formulationStocks[0].remainingMg,500);
 const topAdjust=stock.edit(rawAdjust.next,{id:'topical-1',remainingMl:25,transactionId:'top-adjust-1'});
 assert.equal(topAdjust.next.formulationStocks[1].transactions[0].before.remainingMl,30);
 console.log('PASS: formulation separation, immutable vials/history, guarded write, stale save, failed save and invalid containers');
+
+// Priority 4 regression: supplement reuse, templates, and Stash discoverability contracts.
+require("./p4-supplement-reuse.test.cjs");
