@@ -12,7 +12,7 @@ function nexusRenderOtherFormCards(){
       <button type="button" class="nx-form-edit nx-other-stock-adjust" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
     </div>`;
   }).join("");
-  return packageCards || '<p class="nx-stash-other-empty">No other forms added yet.</p>';
+  return packageCards || (nexusStashSearchTerm.trim() ? '<p class="nx-stash-other-empty" role="status">No matching forms. Try a different search or clear the search field.</p>' : '<p class="nx-stash-other-empty">No other forms added yet.</p>');
 }
 
 function stashView() {
