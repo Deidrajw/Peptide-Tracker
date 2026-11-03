@@ -1,3 +1,9 @@
+## 2026-11-03 — PR130 P4 candidate source test milestone (NOT RELEASED)
+- Candidate application source `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`. Stash search, prior-day supplement reuse and create/apply/rename/delete templates implemented. Current built version remains v0.9.23-beta; next release version unassigned. Draft PR #130, no merge/deploy approval.
+- Shared writer (including focused P4 templates) #41742486753 SUCCESS, mobile #41742486815 SUCCESS, WebKit #41742486586 SUCCESS, DS2 nested #41742486845 SUCCESS. Chromium/build #41742486604 in progress at observation. Direct fictional Chromium interaction test 320/390 light/dark PASS; one check-in and supplement entry save/date update PASS. No physical iPhone/VoiceOver UAT.
+- Full isolated DEMO and exact-source 26-file LIVE ZIP from artifact #13281293279 extracted and CRC-verified; offline DEMO byte identical, five blob hashes match GitHub head. No actual user data imported or written, no destructive migration. Release notes docs/releases/PR130_PRIORITY4_CANDIDATE.md.
+- SOURCE CODED + TESTED PARTIAL → PR DRAFT → UNMERGED → UNDEPLOYED → NOT PHYSICAL IPHONE ACCEPTED.
+
 ## 2026-11-03 — Priority 4 search/reuse PR130 CANDIDATE ONLY
 - Main at branch creation 1e51840959cd21de01f6e1a48152a486850317fe; draft PR130 branch feature/p4-stash-search-supplement-repeat-20261103. Candidate code through 66be75d41df7c8b96118394d2400b324b93aa985.
 - Proposed: read-only Stash search, date-specific repeat previous supplement selection, named templates in optional settings.supplementTemplates. Existing check-in/supplement histories preserved; no automated replacement/migration and no inventory write.
