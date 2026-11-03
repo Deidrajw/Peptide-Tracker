@@ -550,7 +550,7 @@ function importData(e) {
       ["Check-ins",(incoming.dailyLogs||[]).length],
       ["Weight records",(incoming.weightLogs||[]).length],
       ["Supplement entries",(incoming.supplementLogs||[]).length],
-      ["Stash kits",Object.keys(incoming.peptideKits||{}).length]
+      ["Stash kits",Array.isArray(incoming.supplies)?incoming.supplies.length:0]
     ];
     const summary=counts.map(([name,n])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub)"><span>${esc(name)}</span><strong>${n}</strong></div>`).join("");
     openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -585,7 +585,13 @@ function importData(e) {
           state=next;
         }else{
           const writer=nexusWriter();
-          const result=await writer.transaction(state,()=>({next}));
+          // The in-memory app state has been migrated/normalised and may
+          // serialize differently from the durable JSON. Compare against the
+          // exact writer-owned original snapshot, not migrated UI state.
+          // A concurrent tab change still rejects inside the exclusive lock.
+          const originalRaw=writer.expected();
+          const original=originalRaw===null?null:JSON.parse(originalRaw);
+          const result=await writer.transaction(original,()=>({next}));
           _nexusLastSavedSnapshot=writer.expected();
           state=result.next;
         }
@@ -598,7 +604,17 @@ function importData(e) {
         // The independent recovery backup above remains available to the user.
         showSaveWarning();
         console.error("Backup restore failed",err);
-        alert("Restore failed. Existing records were retained where browser storage permitted.");
+        const reason=String(err?.message||err||"");
+        // A stale CAS rejects BEFORE writing, unlike uncertain write/readback
+        // failures. Explain the distinction without claiming an uncertain
+        // storage outcome succeeded or failed.
+        const stale=/Saved data changed|prior write was uncertain|Writes blocked until reloaded/i.test(reason);
+        const recoveryFailed=/QuotaExceeded|quota|storage is full/i.test(reason);
+        alert(stale?
+          "Restore blocked: saved browser data changed since this screen loaded, or a previous write is uncertain. Reload, inspect your existing records and backup before another attempt.":
+          recoveryFailed?
+          "Restore could not be verified because browser storage is full or unavailable. Preserve your JSON backup and check existing records before retrying.":
+          "Restore could not be verified. Existing data might have changed; reopen and inspect your records before retrying. Your original JSON file was not modified.");
       }
     };
   };

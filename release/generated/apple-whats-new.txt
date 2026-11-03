@@ -1,4 +1,4 @@
-Recorded nasal preparation saving with protected source-to-bottle inventory
-- Save confirmed nasal preparation in Stash: The reviewed preparation record opens the exact source vial when needed and transfers recorded mass into a linked nasal bottle using one exclusive, readback-verified inventory transaction.
-- Independently gated preparation-only release: Recorded preparation is enabled; generic preparation transfers and inventory-backed nasal dose administration remain disabled. Missing verified remaining balances are blocked before review.
-- Preserve source IDs, history and stale-tab protection: Exact-source and retrospective known/unknown use checks, failed-write acknowledgement, stale-tab rejection and fictional Chromium Review/Confirm/Save acceptance were added.
+Reliable backup restoration and LIVE preparation saving
+- Restore JSON backups without false stale-state conflicts: Backup & Restore compares the exact durable source snapshot under the exclusive storage lock, rather than the normalized in-memory display state. Concurrent-tab and uncertain writes remain blocked.
+- Show the real Stash inventory count in restore preview: Backup review counts supplies rather than the obsolete peptideKits field and retains the requirement to explicitly confirm replacement.
+- Use the durable source for confirmed nasal preparation: Preparation validates that the selected vial matches the normalized saved inventory, then commits against the exact durable snapshot under one exclusive lock. Stale tabs, uncertain writes and unverified source balances remain blocked.

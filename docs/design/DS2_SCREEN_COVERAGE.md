@@ -1,3 +1,7 @@
+## 2026-11-03 — v0.9.23-beta restore preview and Stash nasal error-state candidate
+- Settings → Backup & Restore preview counts `supplies` kit records rather than obsolete `peptideKits`, preserving original design, typed RESTORE consent and recovery copy. Stale conflict now has explicit reload/verify guidance; unknown write outcomes remain conservative. Stash → Prepare Nasal Bottle identifies stale normalized source and unverified source balances without asserting that an uncertain write did not occur.
+- Functional source code and fictional VM tests committed in draft PR #129; exact-head 320/390 WebKit/Chromium and physical iPhone acceptance PENDING. No published design changes or real data migration.
+
 ## 2026-11-02 — PR125 nasal iPhone acceptance and SubQ site correction
 - User reported 4/4 PASS for nasal form navigation, historical Review, known prior use and unknown balance protection at fd68a110. After that test, user reported missing Left flank, Right flank, Left glute and Right glute in SubQ Log Dose and approved their restoration and release after QA. These exact four site values restored by 35a8ff0b in current SubQ picker, with automated 320/390 LIVE/DEMO tests at e7e1a316. Physical iPhone acceptance of subsequent SubQ correction NOT YET tested; both nasal LIVE gates remain OFF.
 

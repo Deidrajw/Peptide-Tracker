@@ -65,5 +65,57 @@ assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false
     await context.close();
    }
   }
+  // Real browser reproduction: use Settings → Backup & Restore to load a
+  // fictional sparse older backup, then record a nasal preparation on that
+  // restored inventory with an in-memory-only view field. This exercises both
+  // distinct user-reported problem paths without touching production origin.
+  const legacyContext=await browser.newContext({viewport:{width:390,height:844}});
+  const legacyPage=await legacyContext.newPage();
+  legacyPage.on("dialog",dialog=>dialog.accept());
+  await legacyPage.goto("http://127.0.0.1:8777/",{waitUntil:"domcontentloaded"});
+  await legacyPage.waitForFunction(()=>typeof nexusRecordNasalPreparation==="function"&&typeof importData==="function");
+  const oldBackup={profile:{onboardingDone:true,name:"Fictional QA"},
+   peptides:{"Fictional QA Sample":{doses:[]}},customPeptides:{},dailyLogs:[],
+   supplies:[{id:"legacy-qa-kit",name:"Fictional QA Sample",activeKit:false,
+    openedVials:0,isBlend:false,vialMg:5,
+    vials:[{id:"legacy-qa-vial",status:"sealed",expectedMg:5}]}]};
+  await legacyPage.evaluate(saved=>{
+   const jsonFile=new File([JSON.stringify(saved)],"fictional-old-backup.json",
+    {type:"application/json"});
+   importData({target:{files:[jsonFile],value:""}});
+  },oldBackup);
+  await legacyPage.locator("#nx-restore-word").fill("RESTORE");
+  await legacyPage.locator("#nx-import-confirm").click();
+  await legacyPage.waitForFunction(()=>{
+   const raw=localStorage.getItem("peptide-tracker-html-v1");
+   return raw&&JSON.parse(raw).supplies.some(k=>k.id==="legacy-qa-kit");
+  },null,{timeout:15000});
+  const imported=await legacyPage.evaluate(()=>{
+   const raw=localStorage.getItem("peptide-tracker-html-v1");
+   const before=JSON.stringify(state)!==raw;
+   state._qaUiOnlyTransient="not-persisted";
+   return {before,after:JSON.stringify(state)!==raw,
+    source:state.supplies.find(k=>k.id==="legacy-qa-kit")?.vials?.[0]?.status};
+  });
+  assert.equal(imported.after,true,"In-memory-only display fields must differ from durable JSON");
+  assert.equal(imported.source,"sealed","Imported exact source vial must exist");
+  await legacyPage.evaluate(()=>
+   nexusRecordNasalPreparation("legacy-qa-kit","legacy-qa-vial",{openSealed:true}));
+  for(const [id,value] of Object.entries({"nx-nasal-source-mg":"5","nx-nasal-bac":"1",
+   "nx-nasal-saline":"9","nx-nasal-pump":"0.1"}))
+   await legacyPage.locator("#"+id).fill(value);
+  await legacyPage.locator("#nx-nasal-record-save").click();
+  await legacyPage.locator("#nx-nasal-record-confirm").check();
+  await legacyPage.locator("#nx-nasal-record-save").click();
+  await legacyPage.waitForFunction(()=>{
+   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1")||"{}");
+   return (saved.formulationStocks||[]).some(b=>b.sourceVialId==="legacy-qa-vial");
+  },null,{timeout:15000});
+  assert.equal(await legacyPage.evaluate(()=>{
+   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1"));
+   return saved.supplies.find(k=>k.id==="legacy-qa-kit").vials[0].remainingMg;
+  }),0);
+  console.log("PASS: actual Settings restore of fictional old backup followed by LIVE nasal save despite UI-only state difference");
+  await legacyContext.close();
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1});

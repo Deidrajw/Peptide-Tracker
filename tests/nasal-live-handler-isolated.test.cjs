@@ -26,11 +26,12 @@ const input={id:"fictional-transfer",destinationContainerId:"fictional-bottle",
  sourceKitId:"fictional-kit",sourceVialId:"fictional-vial",
  amountMg:5,bacMl:1,salineMl:9,volumeMl:10,mlPerSpray:0.1,
  confirmed:true,openSealed:true,priorUseStatus:"none",date:"2026-11-02T12:00:00"};
-function harness(initial,{writeOverride}={}){
+function harness(initial,{writeOverride,uiState}={}){
  let durable=JSON.stringify(initial),writes=0;
  const coordinator=create({initialSnapshot:durable,read:()=>durable,
   write:value=>{writes++;durable=writeOverride?writeOverride(value):value},lock});
- const sandbox={state:initial,_demoActive:false,
+ const sandbox={state:uiState||initial,_demoActive:false,
+  migrate:raw=>({...raw,settings:{...raw.settings,normalizedOnLoad:true}}),
   NEXUS_RECORDED_NASAL_PREPARATION_ENABLED:true,
   NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED:false,
   _nexusLastSavedSnapshot:null,
@@ -56,6 +57,23 @@ function harness(initial,{writeOverride}={}){
  assert.equal(h.sandbox._nexusLastSavedSnapshot,h.durable);
  assert.equal(stored.customPeptides["Fictional Sample"],undefined,
   "Preparation must not invent logged administrations");
+ // Production bug reproduction: boot migration adds UI defaults but has not
+ // written them to localStorage. The exact persisted source still matches.
+ const durableOnly=fixture();
+ const uiNormalized=JSON.parse(JSON.stringify(durableOnly));
+ uiNormalized.settings={normalizedOnLoad:true};
+ const migrated=harness(durableOnly,{uiState:uiNormalized});
+ const migratedResult=await migrated.sandbox.commit({...input,
+  id:"migrated-fictional-transfer",destinationContainerId:"migrated-bottle"});
+ assert.equal(migrated.writes,1,"Migration-only differences must not block a valid save");
+ assert.equal(migratedResult.container.sourceVialId,"fictional-vial");
+ // But actual edits to source stock in this tab MUST NOT be silently
+ // overwritten by a canonical raw snapshot transaction.
+ const altered=fixture();
+ altered.supplies[0].vials[0].expectedMg=7;
+ const conflict=harness(fixture(),{uiState:altered});
+ await assert.rejects(conflict.sandbox.commit(input),/Source inventory differs/i);
+ assert.equal(conflict.writes,0,"Divergent physical source must remain unchanged");
  const blocked=harness(fixture());
  blocked.sandbox.NEXUS_RECORDED_NASAL_PREPARATION_ENABLED=false;
  await assert.rejects(blocked.sandbox.commit(input),/unavailable|acceptance/i);

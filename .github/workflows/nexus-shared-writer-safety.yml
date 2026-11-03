@@ -68,6 +68,7 @@ jobs:
           node tests/prepared-formulation-lifecycle.test.cjs
           node tests/nasal-live-exclusive-pipeline.test.cjs
           node tests/nasal-live-handler-isolated.test.cjs
+          node tests/restore-canonical-snapshot.test.cjs
           node tests/retrospective-nasal-preparation.test.cjs
           node tests/formulation-stock.test.cjs
           node tools/validate-storage-writers.mjs
