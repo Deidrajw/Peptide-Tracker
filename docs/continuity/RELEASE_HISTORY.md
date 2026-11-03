@@ -1,3 +1,8 @@
+## 2026-11-03 — Priority 4 search/reuse PR130 CANDIDATE ONLY
+- Main at branch creation 1e51840959cd21de01f6e1a48152a486850317fe; draft PR130 branch feature/p4-stash-search-supplement-repeat-20261103. Candidate code through 66be75d41df7c8b96118394d2400b324b93aa985.
+- Proposed: read-only Stash search, date-specific repeat previous supplement selection, named templates in optional settings.supplementTemplates. Existing check-in/supplement histories preserved; no automated replacement/migration and no inventory write.
+- Tests, release artifacts, complete in-chat full-app demo and manual iPhone acceptance NOT VERIFIED / INCOMPLETE. No release tag, merged commit, verified Cloudflare deploy or release authorization.
+
 ## 2026-11-03 — PR129 v0.9.23-beta exact-source acceptance, NOT RELEASED
 - Tested application/test source `afbeadb905ea350f2190edc408894397e3b8c2a9`, baseline main `383c6b7a88c6d2903454bdfe256684b4c455d93e`. Draft PR #129 unmerged; production remains v0.9.22-beta; primary Cloudflare not deployed with this candidate.
 - Five workflow groups SUCCESS: #41668328314 Chromium/full, #41668328877 WebKit, #41668328302 writer/real two-tab/P0, #41668328375 mobile, #41668328438 nested DS2. GitHub release artifact #13248295392 downloaded/inspected: 548-entry artifact CRC; 26-file LIVE ZIP CRC and manifest/source parity; standalone full-app fictional isolated DEMO byte-identical to offline ZIP index. Representative screenshots reviewed. Physical iPhone/VoiceOver NOT TESTED.
