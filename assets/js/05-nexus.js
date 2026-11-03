@@ -684,7 +684,7 @@ function nexusAdminMethod(value) {
 function nexusAdminSites(method) {
   // Keep legacy stored site strings selectable; shorten only their visible labels.
   // Mid-abdomen options restore the previously requested mid-stomach choices.
-  return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — mid-left","Abdomen — mid-right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
+  return {SubQ:["Abdomen — upper left","Abdomen — upper right","Abdomen — mid-left","Abdomen — mid-right","Abdomen — lower left","Abdomen — lower right","Thigh — left (SubQ)","Thigh — right (SubQ)","Upper arm — left (SubQ)","Upper arm — right (SubQ)","Left flank","Right flank","Left glute","Right glute"],IM:["Deltoid — left (IM)","Deltoid — right (IM)","Vastus lateralis — left (IM)","Vastus lateralis — right (IM)","Ventrogluteal — left (IM)","Ventrogluteal — right (IM)"],IV:[],Oral:[],Nasal:[],Topical:[],Other:[]}[method]||[];
 }
 function nexusAdminSiteLabel(site) {
   return String(site||"").replace(/\s*\((?:SubQ|IM)\)$/,"");
