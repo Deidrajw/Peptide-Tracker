@@ -79,6 +79,22 @@ try {
       state.peptides.Retatrutide.doses=[];
       doseModal('Retatrutide');
     });
+    // Regression: PR125 must not drop legacy SubQ site options from the
+    // current Log Dose control. Verify native values (history compatibility)
+    // and labelled visibility in LIVE and the isolated full-app DEMO.
+    const requiredSites=['Left flank','Right flank','Left glute','Right glute'];
+    const available=await page.locator('#site option').evaluateAll(nodes=>nodes.map(n=>n.value));
+    for(const site of requiredSites)ensure(available.includes(site),
+      'Missing restored SubQ administration site: '+site);
+    ensure(await page.locator('#nx-dose-site-field').isVisible(),
+      'SubQ site picker must remain visible');
+    await page.locator('#site').selectOption('Left flank');
+    ensure(await page.locator('#site').inputValue()==='Left flank',
+      'Restored flank must be selectable without renaming saved site');
+    await page.locator('#site').selectOption('Right glute');
+    ensure(await page.locator('#site').inputValue()==='Right glute',
+      'Restored glute must be selectable without renaming saved site');
+    verified.push('subq-left-right-flank-and-glute-restored');
     const unlabelled=page.locator('.nx-confirm-legacy-vial');
     ensure(await unlabelled.count()===1,'Unlabelled usable open vial not offered for explicit method confirmation');
     ensure((await page.locator('.nx-dose-source-legacy').innerText()).includes('6.75'),

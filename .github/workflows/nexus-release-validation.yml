@@ -35,6 +35,7 @@ jobs:
           node tests/preparation-ledger.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/prepared-formulation-lifecycle.test.cjs
+          node tests/retrospective-nasal-preparation.test.cjs
           node --check assets/js/nexus-use-source-eligibility.js
           node tests/use-source-eligibility.test.cjs
           node --check assets/js/nexus-prepared-dose-transaction.js
@@ -118,6 +119,7 @@ jobs:
           node tools/validate-cross-tab-lock.mjs
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
+          node tools/validate-retrospective-nasal.mjs
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
           node tools/validate-protocol-design.mjs

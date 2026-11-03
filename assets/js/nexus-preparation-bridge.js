@@ -154,8 +154,32 @@
   const kits=(snapshot.supplies||[]).filter(k=>String(k.id)===String(input.sourceKitId));
   if(kits.length!==1)fail("Unique physical source kit required");
   const kit=kits[0];
+  // Backdated physical event and the audit entry are separate timestamps.
+  const occurredAt=input.occurredAt||input.date;
+  if(!occurredAt||!Number.isFinite(Date.parse(occurredAt)))fail("Actual preparation date required");
+  const recordedAt=input.recordedAt||input.date||occurredAt;
+  if(!Number.isFinite(Date.parse(recordedAt)))fail("Invalid entry date");
+  if(input.priorUseStatus!=null&&!["none","known","unknown"].includes(input.priorUseStatus))
+   fail("Invalid prior-use reconciliation");
+  const priorUseStatus=input.priorUseStatus||"none";
+  if(priorUseStatus==="known"&&(!Number.isSafeInteger(input.priorSprays)||input.priorSprays<=0))
+   fail("Positive whole prior spray count required");
+  if(priorUseStatus!=="known"&&input.priorSprays!=null)
+   fail("Cannot assume undocumented prior use");
   const next=JSON.parse(JSON.stringify(snapshot));
   if(next.formulationStocks===undefined)next.formulationStocks=[];
+  // Adopt an unlabelled open source in this cloned transaction only.
+  if(input.adoptUnlabelled){
+   const k=next.supplies.find(k=>String(k.id)===String(input.sourceKitId));
+   const v=k?.vials?.find(v=>String(v.id)===String(input.sourceVialId));
+   if(!k||k.isBlend||!v||!["open","active"].includes(v.status)||
+      (v.intendedUse&&v.intendedUse!=="undecided")||
+      k.preparationMethod||k.administrationMethod||k.route)
+    fail("Exact unlabelled opened vial required");
+   if(!Number.isFinite(v.remainingMg)||v.remainingMg<input.amountMg)
+    fail("Unverified legacy vial mass; no inventory changed");
+   v.intendedUse="nasal-source";
+  }
   next.formulationStocks.push({
    id:input.destinationContainerId,compound:kit.name,containerType:"nasal-bottle",
    method:"Nasal",remainingMl:input.volumeMl,remainingMg:0,mgPerSpray:null,
@@ -174,8 +198,25 @@
    bacMl:input.bacMl,salineMl:input.salineMl,finalVolumeMl:input.volumeMl,
    recordedPumpMl:input.mlPerSpray,calibrationKind:"recorded-nominal",
    sourceKitId:input.sourceKitId,sourceVialId:input.sourceVialId,
-   sourceAmountMg:input.amountMg,createdAt:input.date||null
+   sourceAmountMg:input.amountMg,createdAt:occurredAt,
+   occurredAt,recordedAt,priorUseStatus,
+   reconciliationStatus:priorUseStatus==="unknown"?"pending":"reconciled"
   };
+  // Prior consumption is a bottle-only adjustment, not fabricated dose history.
+  if(priorUseStatus==="known"){
+   const usedMg=round(input.priorSprays*nominal);
+   const usedMl=round(input.priorSprays*input.mlPerSpray);
+   if(usedMg>bottle.remainingMg+1e-7||usedMl>bottle.remainingMl+1e-7)
+    fail("Past spray use exceeds prepared stock");
+   bottle.remainingMg=round(bottle.remainingMg-usedMg);
+   bottle.remainingMl=round(bottle.remainingMl-usedMl);
+   bottle.transactions.push({id:input.id+"-prior-use",kind:"retrospective-use-adjustment",
+    sprays:input.priorSprays,amountMg:usedMg,volumeMl:usedMl,
+    occurredAfter:occurredAt,recordedAt,sourceContainerId:bottle.id});
+   bottle.recordedPreparation.priorSprays=input.priorSprays;
+  }
+  // Unknown prior use must never appear as confirmed usable inventory.
+  bottle.balanceStatus=priorUseStatus==="unknown"?"unverified":"verified";
   // This is an arithmetic record of user-entered values, not proof of actual
   // spray delivery, sterility, stability, compatibility or route suitability.
   return {...transferred,container:bottle};

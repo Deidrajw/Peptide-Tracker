@@ -2371,7 +2371,7 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
       </div>
       <p class="nx-stash-method-explain">This older vial has no saved product form. Choose its physical formulation, not the injection route of an individual dose. Confirming will not change remaining inventory or past history.</p>
       <fieldset class="nx-stash-method-choices"><legend>Product form</legend>
-        ${["Injectable","Oral","Topical","Other","nasal-source"].map(form=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(form)}"><span>${esc(form==="nasal-source"?"For nasal preparation · not yet a spray":form)}</span></label>`).join("")}
+        ${["Injectable","Oral","Topical","nasal-source","Other"].map(form=>`<label><input type="radio" name="nx-stash-vial-use" value="${esc(form)}"><span>${esc(form==="nasal-source"?"Nasal":form)}</span></label>`).join("")}
       </fieldset>
       <button type="button" class="btn-primary" id="nx-stash-method-confirm" disabled>Confirm product form</button>
     </div>`);
@@ -2392,9 +2392,9 @@ function nexusStashSetLegacyVialMethod(kitId,vialId){
       showErrorBanner("A method was already confirmed. No changes made.");return;
     }
     if(form==="nasal-source"){
-      // Older unlabelled opened vials can join the same actual-preparation
-      // Review. Never persist an intermediate reserved vial before transfer.
-      if(!_demoActive){showErrorBanner("Live nasal preparation remains safety-gated. Nothing saved.");return;}
+      // Reuse the Open New Vial → Nasal preparation screen for an existing
+      // unclassified open source. Navigation is read-only until final review.
+      // Both LIVE preparation and administration transaction gates stay OFF.
       closeModal();
       nexusRecordNasalPreparation(kitId,vialId,{adoptUnlabelled:true});
       return;
@@ -2418,7 +2418,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  const sealedMass=Number(vial?.expectedMg ?? vial?.vialMg ?? kit?.vialMg);
  const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
    Number.isFinite(sealedMass)&&sealedMass>0;
- const validLegacy=!!vial&&adoptUnlabelled&&_demoActive&&!kit?.isBlend&&
+ const validLegacy=!!vial&&adoptUnlabelled&&!kit?.isBlend&&
    ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
    !nexusPhysicalForm(kit.preparationMethod||kit.administrationMethod||kit.route)&&
    Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
@@ -2432,6 +2432,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  '<label class="field-label" for="nx-nasal-bac">BAC WATER USED (mL)</label><input class="inp" id="nx-nasal-bac" type="number" min="0" step="any" placeholder="Recorded volume">'+
  '<label class="field-label" for="nx-nasal-saline">SALINE USED (mL)</label><input class="inp" id="nx-nasal-saline" type="number" min="0" step="any" placeholder="Recorded volume">'+
  '<label class="field-label" for="nx-nasal-pump">RECORDED PUMP VOLUME (mL/spray)</label><input class="inp" id="nx-nasal-pump" type="number" min="0" step="any" placeholder="Recorded pump volume">'+
+ '<label class="field-label" for="nx-nasal-occurred">ACTUAL PREPARATION DATE</label><input class="inp" id="nx-nasal-occurred" type="date" value="'+esc(localDatetime().slice(0,10))+'">'+
+ '<label class="field-label" for="nx-nasal-prior-status">SPRAYS ALREADY USED</label><select class="inp" id="nx-nasal-prior-status">'+(adoptUnlabelled?'<option value="unknown">Used, total unknown</option><option value="known">I know the total</option><option value="none">None</option>':'<option value="none">None</option><option value="known">I know the total</option><option value="unknown">Used, total unknown</option>')+'</select>'+
+ '<div id="nx-nasal-prior-count-row" hidden><label class="field-label" for="nx-nasal-prior-count">TOTAL PREVIOUS SPRAYS</label><input class="inp" id="nx-nasal-prior-count" type="number" min="1" step="1" placeholder="Whole sprays already used"></div>'+
  '<p id="nx-nasal-record-preview" role="status" class="nx-dose-untracked-note"></p>'+
  '<div id="nx-nasal-record-review" class="nx-dose-review" hidden aria-live="polite"></div>'+ '<label class="nx-dose-option-check" id="nx-nasal-confirm-row" hidden><input type="checkbox" id="nx-nasal-record-confirm"><span>I confirm this preparation and transfer actually happened, using the source and amounts shown.</span></label>'+
  '<button type="button" id="nx-nasal-record-back" class="btn-secondary" hidden style="min-height:44px;width:100%">Back to edit</button>'+ '<button type="button" id="nx-nasal-record-save" class="btn-primary" style="min-height:48px;width:100%">Review preparation and transfer</button>'+
@@ -2440,12 +2443,15 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  m.querySelector("#x").onclick=closeModal;
  const inputs=["nx-nasal-source-mg","nx-nasal-bac","nx-nasal-saline","nx-nasal-pump"].map(id=>m.querySelector("#"+id));
  const preview=m.querySelector("#nx-nasal-record-preview"),values=()=>inputs.map(x=>Number(x.value));
+ const occurred=m.querySelector("#nx-nasal-occurred"),priorStatus=m.querySelector("#nx-nasal-prior-status"),priorCount=m.querySelector("#nx-nasal-prior-count"),priorRow=m.querySelector("#nx-nasal-prior-count-row");
+ const priorValid=()=>priorStatus.value!=="known"||(priorCount.value.trim()!==""&&Number.isSafeInteger(Number(priorCount.value))&&Number(priorCount.value)>0);
  const review=m.querySelector("#nx-nasal-record-review"),confirmRow=m.querySelector("#nx-nasal-confirm-row"),back=m.querySelector("#nx-nasal-record-back"),save=m.querySelector("#nx-nasal-record-save");
  let reviewing=false;
  const setReview=active=>{
    reviewing=active;
    inputs.forEach(input=>{input.closest("label")?.classList.toggle("nx-review-field",active);input.hidden=active;});
    m.querySelectorAll('label[for^="nx-nasal-"]').forEach(label=>{label.hidden=active;});
+   occurred.hidden=active;priorStatus.hidden=active;priorRow.hidden=active||priorStatus.value!=="known";
    preview.hidden=active;review.hidden=!active;confirmRow.hidden=!active;back.hidden=!active;
    m.querySelector("#nx-nasal-record-confirm").checked=false;
    save.textContent=active?"Confirm completed preparation and transfer":"Review preparation and transfer";
@@ -2458,7 +2464,10 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
        '<dt>Recorded liquids</dt><dd>'+bac.toFixed(2)+' mL BAC water + '+saline.toFixed(2)+' mL saline = '+total.toFixed(2)+' mL</dd>'+
        '<dt>Source vial after transfer</dt><dd>'+(remaining-mg).toFixed(2)+' mg</dd>'+
        '<dt>Prepared bottle after transfer</dt><dd>'+mg.toFixed(2)+' mg / '+total.toFixed(2)+' mL</dd>'+
-       '<dt>Nominal pump amount</dt><dd>'+(mg*1000/total*pump).toFixed(2)+' mcg/spray</dd>'+
+       '<dt>Nominal pump amount</dt><dd>'+(mg*1000/total*pump).toFixed(2)+' mcg/spray</dd>'+ 
+       '<dt>Actual preparation date</dt><dd>'+esc(occurred.value)+'</dd>'+
+       '<dt>Sprays already used</dt><dd>'+esc(priorStatus.value==="none"?"None":priorStatus.value==="unknown"?"Used · amount unknown":priorCount.value)+'</dd>'+
+       '<dt>Current bottle balance</dt><dd>'+esc(priorStatus.value==="unknown"?"Unverified · logging blocked":priorStatus.value==="known"?Math.max(0,mg-Number(priorCount.value)*(mg/total*pump)).toFixed(2)+" mg / "+Math.max(0,total-Number(priorCount.value)*pump).toFixed(2)+" mL (nominal)":mg.toFixed(2)+" mg / "+total.toFixed(2)+" mL (initial)")+'</dd>'+
        '</dl><p class="nx-shared-review-footnote">One confirmed transfer between two linked stocks; the original vial and prepared bottle stay distinct. Amounts are nominal arithmetic only and do not verify pump delivery, sterility, compatibility or route suitability.</p>';
    }
    // The mobile sheet is the single scroll owner. A tall entry form can leave
@@ -2470,13 +2479,17 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  const refresh=()=>{
   const [mg,bac,saline,pump]=values(),volume=bac+saline;
   const valid=inputs.every(x=>x.value.trim()!=="")&&
-   [mg,bac,saline,pump].every(Number.isFinite)&&mg>0&&bac>=0&&saline>=0&&volume>0&&pump>0&&pump<=volume;
+   [mg,bac,saline,pump].every(Number.isFinite)&&mg>0&&bac>=0&&saline>=0&&volume>0&&pump>0&&pump<=volume&&
+   Boolean(occurred.value)&&Number.isFinite(Date.parse(occurred.value))&&Date.parse(occurred.value)<=Date.now()&&priorValid()&&
+   (priorStatus.value!=="known"||(Number(priorCount.value)*pump<=volume+1e-7&&Number(priorCount.value)*mg/volume*pump<=mg+1e-7));
   preview.textContent=valid?"Final volume "+volume.toFixed(2)+" mL · Nominal "+(mg/volume).toFixed(3)+
    " mg/mL · "+(mg*1000/volume*pump).toFixed(2)+" mcg/spray; no stock changes before confirmation.":
    "Enter recorded mass, liquid volumes and pump volume.";
   return valid;
  };
- inputs.forEach(x=>x.oninput=refresh);refresh();
+ inputs.forEach(x=>x.oninput=refresh);
+ priorStatus.onchange=()=>{priorRow.hidden=priorStatus.value!=="known";refresh();};
+ priorCount.oninput=refresh;occurred.oninput=refresh;refresh();
  m.querySelector("#nx-nasal-record-save").onclick=async()=>{
   if(!refresh()||values()[0]>(openSealed?sealedMass:getVialRemainingMg(kit,vial))){
    showErrorBanner("Actual transfer exceeds verified source balance or has invalid values. Nothing saved.");return;
@@ -2497,7 +2510,10 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
   const recorded={
    id:"nasal-transfer-"+uid(),destinationContainerId:nextContainerId(),
    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
-   volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime()
+   volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime(),
+   occurredAt:occurred.value+"T12:00:00",recordedAt:localDatetime(),
+   adoptUnlabelled:!!adoptUnlabelled,priorUseStatus:priorStatus.value,
+   ...(priorStatus.value==="known"?{priorSprays:Number(priorCount.value)}:{})
   };
   let committed=false;
   try{
@@ -2508,7 +2524,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
     // source opening in a fictional working snapshot and credit the prepared
     // bottle only through the checked pure planner, in ONE committed state swap.
     let sourceSnapshot=state;
-    if(!openSealed&&(adoptUnlabelled||!Number.isFinite(vial.remainingMg))){
+    if(!openSealed&&!Number.isFinite(vial.remainingMg)){
       // Promote a verified legacy source ONLY in the fictional working copy,
       // never before Review or on an unsuccessful planner result.
       const observed=getVialRemainingMg(kit,vial);
@@ -2520,7 +2536,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
       if(!v||!["open","active"].includes(v.status))
         throw Error("Exact legacy source changed");
       v.remainingMg=observed;
-      if(adoptUnlabelled)v.intendedUse="nasal-source";
+      // The pure planner sets nasal-source only in its verified final snapshot.
       // Preserve the exact physical source ID, original strength and history.
     }
     if(openSealed){
