@@ -1,3 +1,7 @@
+## 2026-11-02 — scope-specific #15 physical acceptance; remaining 16-point iPhone P0 OPEN
+- User reported 4/4 PASS for final 5ea01fd3 Additional Dose Options #15 (type/spacing, preferences, two checkboxes, light/dark); all five exact-source GitHub workflows PASS including writer gate. Explicit merge/deploy approval received in later message.
+- This is NOT all-16 acceptance. Binding 16-point scorecard still records other iPhone and VoiceOver OPEN/previous FAIL surfaces. Maintain release P0 HOLD until that matrix is cleared. Both nasal LIVE feature flags OFF. No production merge/deploy.
+
 ## 2026-11-02 — PR124 mixed-source Stash and Log Dose source-conditional controls (QA PASS, NOT iPhone accepted)
 - Exact tested source 825e2310: compact mixed-kit card distinguishes injectable open-vial mg, nasal-reserved source mg and prepared nasal bottle mg/mL without adding stock or showing single-vial progress; 8 fictional 320/390 light/dark LIVE/DEMO Stash Card matrices PASS in Chromium/build #41413098060. Physical injectable Log Dose limits routes to SubQ/IM/IV; historical Oral source remains selectable in legacy route editor. Log Dose browser 184 flows/8 matrices PASS; WebKit #41413098124, mobile #41413098025, nested #41413098462, writer #41413097993 SUCCESS.
 - Full 16-point iPhone/VoiceOver acceptance remains OPEN; both nasal LIVE flags OFF, P0 release BLOCKING. Unmerged/undeployed. User has not accepted a real iPhone release.
