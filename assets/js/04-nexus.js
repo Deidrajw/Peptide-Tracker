@@ -2268,7 +2268,24 @@ async function nexusCommitRecordedNasalPreparation(input) {
   if(!globalThis.NexusPreparationBridge?.planRecordedNasalLocked || !input?.confirmed)
     throw Error("Confirmed recorded preparation with verified planner required");
   const writer=nexusWriter();
-  const result=await writer.transaction(state,snapshot=>
+  // Boot migration may add normalized/default fields to UI state without any
+  // corresponding storage write. The CAS must compare the exact saved JSON,
+  // not the migrated in-memory object, or a valid first LIVE transaction fails.
+  const raw=writer.expected();
+  if(typeof raw!=="string"||!raw)throw Error("Saved inventory unavailable. Reload before saving");
+  const stored=JSON.parse(raw);
+  const normalized=migrate(JSON.parse(raw));
+  const getSource=source=>{
+    const k=(source.supplies||[]).find(k=>String(k.id)===String(input.sourceKitId));
+    return {kit:k||null,vial:(k?.vials||[]).find(v=>String(v.id)===String(input.sourceVialId))||null};
+  };
+  const visible=getSource(state),verified=getSource(normalized);
+  if(!visible.kit||!verified.kit||!visible.vial||!verified.vial||
+     JSON.stringify(visible.kit)!==JSON.stringify(verified.kit))
+    throw Error("Source inventory differs from last saved data. Reload Stash before preparing");
+  // This remains a single exclusive compare-and-swap. A competing tab write
+  // after the snapshot was read is rejected by the coordinator under Web Lock.
+  const result=await writer.transaction(stored,snapshot=>
     globalThis.NexusPreparationBridge.planRecordedNasalLocked(snapshot,input));
   state=result.next;
   _nexusLastSavedSnapshot=writer.expected();
