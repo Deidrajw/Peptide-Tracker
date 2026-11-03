@@ -947,7 +947,7 @@ function nexusNasalDoseModal(name,occTime){
 
 function nexusChoosePhysicalForm(name,occTime){
  const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.remainingCount>0);
- const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
+ const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.balanceStatus!=="unverified"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
  const nasalSourceOnly=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
    ["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0&&
    ["nasal-source","Nasal"].includes(v.intendedUse)));
