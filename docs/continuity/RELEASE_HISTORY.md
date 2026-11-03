@@ -1,3 +1,8 @@
+## 2026-11-02 — approved PR124 release request BLOCKED, NOT MERGED / NOT DEPLOYED
+- User gave explicit merge/deploy approval after final #15 iPhone 4/4 PASS. Application source 5ea01fd3, five exact-source CI workflows PASS, writer mixed P0 technical gate PASS; artifact #13190285462 source/ZIP verified. 
+- Blocking: approved DS2 16-point physical iPhone/VoiceOver UAT scorecard remains incomplete outside #15. Browser checks do not constitute real iPhone acceptance; previous physical failures not cleared. No merge/deployment, no storage/migration or nasal LIVE gate enablement. Cloudflare primary production not independently reachable for verification from this environment.
+- Proposed candidate v0.9.20-beta; RELEASE STATUS: proposed/tested/user #15 accepted/merge approved but release held pending P0 UAT closure.
+
 ## 2026-11-02 — PR124 physical iPhone #15 accepted, still NOT RELEASED
 - Final application CSS 5ea01fd3: user-reported physical iPhone PASS for typography/spacing, disclosure/preferences, both checkboxes and light/dark. Automated five-way source-exact CI PASS (Chromium #41547092367; WebKit #41547092364; mobile #41547092333; nested #41547092384; writer #41547092346). Full-app fictional DEMO + 26-file LIVE ZIP canonical artifact #13190285462 CRC/source validated.
 - Data impact: no code-driven storage migration in this final spacing CSS change. Scope acceptance is not VoiceOver testing nor authorization to deploy. Draft PR124 unmerged and undeployed; nasal LIVE OFF. Pending explicit release approval and blocker assessment.
