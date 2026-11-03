@@ -47,6 +47,7 @@
     if(matches.length!==1)fail("Explicit unique prepared source required");
     const s=matches[0];
     if(s.compound!==compound||s.containerType!=="nasal-bottle"||s.method!=="Nasal")fail("Prepared container compound or route mismatch");
+    if(s.balanceStatus==="unverified")fail("Retrospective prepared bottle balance must be reconciled before logging");
     if(!positive(s.mgPerSpray)||!positive(s.mlPerSpray))fail("Verified bottle-specific spray and delivery conversion required");
     if(!finite(s.remainingMg)||s.remainingMg<0||!finite(s.remainingMl)||s.remainingMl<0)fail("Invalid prepared stock balances");
     if(!Array.isArray(s.transactions))fail("Source transaction history unavailable");
