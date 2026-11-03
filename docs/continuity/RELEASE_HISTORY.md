@@ -1,3 +1,6 @@
+## 2026-11-02 — UNRELEASED candidate: legacy open-vial Nasal screen reuse
+- Branch feature/nasal-existing-vial-flow-20261102 application commit b0f2446c. Routes older unlabelled open vial Nasal selection to same existing preparation form as Open New Vial; label Nasal ordered ahead of Other. No live commit permission and no data migration. Both LIVE nasal gates OFF. Static checks only; no tested release, no artifacts, no merge/deployment. Retrospective balance reconciliation and dates remain incomplete.
+
 ## 2026-11-02 — v0.9.20-beta PR124 USER-CONFIRMED DEPLOYED on Cloudflare
 - GitHub PR124 merge commit 0eca75079626936ef1570be3c0a3e5b8c21c8f69; user stated "confirmed deployed" for primary https://nexuspeplog.pages.dev/. Hosting claim is user-confirmed, not independently asset/commit verified (direct fetch returned cache miss).
 - Application source 5ea01fd3 exact-source five workflows PASS, 16/16 user-reported iPhone acceptance PASS. No manual storage writes/migration. Both nasal LIVE gates intended OFF. Independent Cloudflare source integrity and production smoke checks still outstanding.
