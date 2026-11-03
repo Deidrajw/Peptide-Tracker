@@ -1,3 +1,6 @@
+## 2026-11-02 — PR125 retrospective nasal cross-engine test coverage added, RUNS PENDING
+- Fictional test covers existing unlabelled 5mg vial to linked 5mg bottle, known 3-spray debit, unknown unverified status, historical event/record dates, no fabricated dose, immutable rollback/duplicate/overdraw. Browser script checks single shared form, Nasal above Other, 320/390 light/dark, review values, screenshots and demo commit in Chromium and WebKit. Wired into release and WebKit jobs; workflow run completion and screenshots NOT YET VERIFIED at documentation time. LIVE gates remain false in source; physical iPhone NOT TESTED.
+
 ## 2026-11-02 — Nasal existing-vial shared screen candidate b0f2446c (UNTESTED)
 - Static source checks PASS: Nasal radio above Other; one shared nexusRecordNasalPreparation entry for existing unlabelled open vial; old early LIVE navigation block removed; validLegacy opening supports display in LIVE; both LIVE gates remain false in assets/js/04-nexus.js. These are source assertions, not runtime PASS. Browser, WebKit, mobile, writer, physical iPhone, artifact integrity, retrospective dose/balance QA NOT TESTED. Do not merge/deploy; user backup untouched.
 
