@@ -373,7 +373,7 @@ function stashView() {
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
                 
-                ${_demoActive&&isActive&&v.intendedUse==="nasal-source"&&rem>0.000001?`<button type="button" class="nx-kit-record-nasal-direct nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Prepare nasal bottle from vial ${num}">Prepare nasal bottle</button>`:""}
+                ${(_demoActive||NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)&&isActive&&v.intendedUse==="nasal-source"&&rem>0.000001?`<button type="button" class="nx-kit-record-nasal-direct nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Prepare nasal bottle from vial ${num}">Prepare nasal bottle</button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button></div>`;
              };
             return `<div class="nx-kit-record-list">${ordered.slice(0,5).map(renderVial).join("")}</div>
@@ -2318,7 +2318,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
 document.addEventListener("click",e=>{
  const btn=e.target.closest?.(".nx-kit-record-nasal-direct");
  if(!btn)return;
- if(!_demoActive)return;
+ if(!_demoActive&&!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)return;
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(btn.dataset.kitId));
  const vial=(kit?.vials||[]).find(v=>String(v.id)===String(btn.dataset.vialId));
  if(!vial||vial.intendedUse!=="nasal-source"||!["open","active"].includes(vial.status)||
