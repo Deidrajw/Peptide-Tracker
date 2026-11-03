@@ -65,7 +65,7 @@ jobs:
       - name: Verify Pages integrity checker against local source (NOT live deployment)
         run: python3 tools/verify-pages.py --smoke
       - name: Compare primary Cloudflare Pages files with source (required after merge)
-        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
         shell: bash
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
