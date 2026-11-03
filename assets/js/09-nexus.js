@@ -2030,7 +2030,7 @@ function stashSortModal() {
 }
 
 function equipmentView() {
-  const items = state.equipmentItems || [];
+  const items = (state.equipmentItems || []).filter(item=>nexusStashMatches(item.type,item.brand,item.notes,item.unitLabel));
   items.forEach(normalizeSupplyUnits); // defensive: never render a silently-ignored second active unit
   const isDone = (item) => (item.units||[]).length>0 && (item.units||[]).every(u=>u.status==="empty");
   const liveItems = items.filter(i=>!isDone(i));
@@ -2140,6 +2140,7 @@ function equipmentView() {
 
   // One clear add action: within the empty state until inventory exists, then above the list.
   const supplyAddButton = '<button type="button" id="add-equipment" class="nx-supplies-add"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add supply</span></button>';
+  if (!items.length && nexusStashSearchTerm.trim()) return '<div class="nx-stash-no-results" role="status">No matching supplies. Try a different search or clear the search field.</div>';
   if (!items.length) return '<section class="nx-supplies-empty" aria-labelledby="nx-supplies-empty-title">'+
     '<span class="nx-supplies-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M4 12h16M11 16h2"/></svg></span>'+
     '<h2 id="nx-supplies-empty-title">Keep your supplies in one place</h2>'+
