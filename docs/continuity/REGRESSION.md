@@ -1,3 +1,7 @@
+## 2026-11-02 — PR127 safety test execution and gate pinning
+- Previous PR127 head fd6ec0cc: release/build #41575379964 PASS; WebKit #41575379918 PASS; mobile #41575379965 PASS; shared-writer #41575379895 PASS, including expanded retrospective exclusive writer test. New commit 96bc3c82 adds explicit source assertions that both nasal LIVE feature flags remain OFF. New-head workflows not yet verified. This proves gated test behaviour, NOT production enabled preparation.
+- P0 remaining: sealed source or unverified older open-vial inventory requires safe snapshot preparation before planner. Real LIVE saving, iPhone acceptance and VoiceOver remain BLOCKED/NOT TESTED.
+
 ## 2026-11-02 — nasal LIVE safety branch regression expansion (NOT YET EXECUTED)
 - Branch feature/nasal-live-preparation-safety-20261102, test source 02ecbf97. Added exclusive writer retrospective known prior sprays and unknown prior-use cases; asserts single write, source depletion, bottle source linkage, verified/unverified balance, original occurredAt, no invented dose history and stale-tab replay rejection. Automated execution pending; DO NOT label PASS. Known LIVE sealed/legacy source handling gap requires independent regression and fix before production gate enablement. Both nasal LIVE flags OFF.
 
