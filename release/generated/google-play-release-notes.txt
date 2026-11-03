@@ -1,4 +1,4 @@
-Restored SubQ injection sites and clearer nasal preparation tracking
-- Restored four SubQ administration-site choices: Left flank, Right flank, Left glute and Right glute are available again in Log Dose; prior saved site names and histories are preserved.
-- Connected nasal vial setup to the shared preparation Review: Existing unlabelled open vials now enter the same nasal preparation form as Open New Vial, with historical preparation date, recorded liquids, known prior-spray reconciliation or an unverified-balance warning. LIVE transfer and spray saving remain disabled.
-- Preserved source and balance protections: Exact source-to-container reconciliation is tested using fictional data. Unknown prior use blocks inventory-backed spray logging and never fabricates historical doses.
+Recorded nasal preparation saving with protected source-to-bottle inventory
+- Save confirmed nasal preparation in Stash: The reviewed preparation record opens the exact source vial when needed and transfers recorded mass into a linked nasal bottle using one exclusive, readback-verified inventory transaction.
+- Independently gated preparation-only release: Recorded preparation is enabled; generic preparation transfers and inventory-backed nasal dose administration remain disabled. Missing verified remaining balances are blocked before review.
+- Preserve source IDs, history and stale-tab protection: Exact-source and retrospective known/unknown use checks, failed-write acknowledgement, stale-tab rejection and fictional Chromium Review/Confirm/Save acceptance were added.

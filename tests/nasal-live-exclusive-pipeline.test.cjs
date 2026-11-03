@@ -1,4 +1,27 @@
 const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const appSource=fs.readFileSync(require("node:path").join(__dirname,"../assets/js/04-nexus.js"),"utf8");
+assert.match(appSource,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/,
+ "General transfers must remain independently gated");
+assert.match(appSource,/const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;/,
+ "Recorded nasal preparation has its own enabled release gate");
+assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/,
+ "Prepared-dose writes must remain independently gated");
+
+// UI entry points must reference only the recorded-preparation switch.
+for(const moduleName of ["09-nexus.js","10-nexus.js"]){
+ const entry=fs.readFileSync(require("node:path").join(__dirname,"../assets/js",moduleName),"utf8");
+ assert.doesNotMatch(entry,/NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED/,
+  moduleName+" must not expose generic transfer controls through nasal preparation");
+ assert.match(entry,/NEXUS_RECORDED_NASAL_PREPARATION_ENABLED/,
+  moduleName+" must use the recorded-preparation gate");
+}
+const nasalCommit=appSource.slice(appSource.indexOf("async function nexusCommitRecordedNasalPreparation("),
+ appSource.indexOf("const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED"));
+assert.match(nasalCommit,/if\(!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED\)/,
+ "Live recorded preparation must check its own gate");
+assert.doesNotMatch(nasalCommit,/if\(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED\)/,
+ "Generic transfer gate must not control recorded preparation");
 const {create}=require("../assets/js/nexus-write-coordinator.js");
 const bridge=require("../assets/js/nexus-preparation-bridge.js");
 const prepared=require("../assets/js/nexus-prepared-dose-transaction.js");
@@ -102,6 +125,93 @@ const dose={
  })),/readback/);
  assert.equal(bad.status().blocked,true,"Readback mismatch must fail closed");
  durable=corrupted;
+ // Retrospective LIVE-planner safety: known prior use must debit only the prepared
+ // bottle, and unknown prior use must never become verified available stock.
+ const retrospectiveSource=()=>({
+  supplies:[{id:"RET-K",name:"Fictional Retrospective",activeKit:true,isBlend:false,
+   vials:[{id:"RET-V",status:"open",remainingMg:5,expectedMg:5,intendedUse:null}]}],
+  formulationStocks:[],preparations:[],peptides:{},customPeptides:{}
+ });
+ const retroInput={id:"RET-T",destinationContainerId:"RET-B",sourceKitId:"RET-K",
+  sourceVialId:"RET-V",amountMg:5,bacMl:1,salineMl:9,volumeMl:10,
+  mlPerSpray:.1,confirmed:true,adoptUnlabelled:true,
+  occurredAt:"2026-10-29T12:00:00",recordedAt:"2026-11-02T20:00:00",
+  priorUseStatus:"known",priorSprays:4};
+ for(const prior of ["known","unknown"]){
+  let retroDurable=JSON.stringify(retrospectiveSource()),retroWrites=0;
+  const retroAdapter={read:()=>retroDurable,write:s=>{retroDurable=s;retroWrites++},lock};
+  const retroWriter=create({...retroAdapter,initialSnapshot:retroDurable});
+  const outcome=await retroWriter.transaction(JSON.parse(retroDurable),s=>
+   bridge.planRecordedNasal(s,{...retroInput,priorUseStatus:prior,
+    ...(prior==="unknown"?{priorSprays:undefined}:{})}));
+  const bottle=outcome.next.formulationStocks[0];
+  assert.equal(retroWrites,1,"Retrospective transfer must be a single durable write");
+  assert.equal(outcome.next.supplies[0].vials[0].remainingMg,0);
+  assert.equal(bottle.sourceVialId,"RET-V");
+  assert.equal(bottle.balanceStatus,prior==="known"?"verified":"unverified");
+  assert.equal(bottle.remainingMg,prior==="known"?4.8:5);
+  assert.equal(bottle.recordedPreparation.occurredAt,retroInput.occurredAt);
+  assert.deepEqual(outcome.next.peptides,{},"Do not invent historical dose records");
+  const stale=create({...retroAdapter,initialSnapshot:JSON.stringify(retrospectiveSource())});
+  await assert.rejects(stale.transaction(retrospectiveSource(),s=>
+   bridge.planRecordedNasal(s,{...retroInput,id:"RET-REPLAY",
+    destinationContainerId:"RET-REPLAY-B"})),/changed|blocked/);
+  assert.equal(retroWrites,1,"Stale retrospective replay must not persist");
+ }
+ // A sealed source opening and stock transfer must share exactly one
+ // exclusively verified persistence operation, without mutating the input.
+ const sealedStart=()=>({
+  supplies:[{id:"SEALED-K",name:"Fictional Sealed",activeKit:false,isBlend:false,
+   vialMg:5,openedVials:0,vials:[{id:"SEALED-V",status:"sealed",expectedMg:5}]}],
+  formulationStocks:[],preparations:[],peptides:{},customPeptides:{}
+ });
+ let sealedDurable=JSON.stringify(sealedStart()),sealedWrites=0;
+ const sealedWriter=create({
+  read:()=>sealedDurable,write:s=>{sealedDurable=s;sealedWrites++},lock,
+  initialSnapshot:sealedDurable
+ });
+ const sealedInput={id:"SEALED-TRANSFER",destinationContainerId:"SEALED-BOTTLE",
+  sourceKitId:"SEALED-K",sourceVialId:"SEALED-V",amountMg:5,
+  bacMl:1,salineMl:9,volumeMl:10,mlPerSpray:.1,openSealed:true,
+  confirmed:true,priorUseStatus:"none",date:"2026-11-02T10:00:00"};
+ const beforeSealed=sealedStart();
+ const sealedResult=await sealedWriter.transaction(beforeSealed,s=>
+  bridge.planRecordedNasalLocked(s,sealedInput));
+ assert.equal(sealedWrites,1,"Opening and transfer must be a single write");
+ assert.equal(beforeSealed.supplies[0].vials[0].status,"sealed",
+  "Planner cannot mutate input source");
+ assert.equal(sealedResult.next.supplies[0].vials[0].status,"open");
+ assert.equal(sealedResult.next.supplies[0].vials[0].remainingMg,0);
+ assert.equal(sealedResult.next.supplies[0].vials[0].id,"SEALED-V");
+ assert.equal(sealedResult.next.supplies[0].openedVials,1);
+ assert.equal(sealedResult.next.formulationStocks[0].sourceVialId,"SEALED-V");
+ assert.equal(sealedResult.next.formulationStocks[0].remainingMg,5);
+ assert.deepEqual(sealedResult.next.peptides,{});
+ const previousSaved=sealedDurable;
+ const invalidSealed=create({read:()=>sealedDurable,write:s=>{
+  sealedDurable=s;sealedWrites++;
+ },lock,initialSnapshot:sealedDurable});
+ await assert.rejects(invalidSealed.transaction(JSON.parse(sealedDurable),s=>
+  bridge.planRecordedNasalLocked(s,{...sealedInput,id:"REPEAT",
+   destinationContainerId:"REPEAT-BOTTLE"})),/sealed|Source/i);
+ assert.equal(sealedDurable,previousSaved,"Duplicate source opening must not change stock");
+ assert.equal(sealedWrites,1);
+ // Missing canonical mass in a legacy open vial is not permission to
+ // infer original strength as current stock.
+ const legacy=sealedStart();
+ legacy.supplies[0].activeKit=true;
+ legacy.supplies[0].vials[0].status="open";
+ legacy.supplies[0].vials[0].intendedUse=null;
+ delete legacy.supplies[0].vials[0].remainingMg;
+ let legacyDurable=JSON.stringify(legacy),legacyWrites=0;
+ const legacyWriter=create({read:()=>legacyDurable,
+  write:s=>{legacyDurable=s;legacyWrites++},lock,initialSnapshot:legacyDurable});
+ await assert.rejects(legacyWriter.transaction(legacy,s=>
+  bridge.planRecordedNasalLocked(s,{...sealedInput,id:"LEGACY-TRANSFER",
+   destinationContainerId:"LEGACY-BOTTLE",openSealed:false,adoptUnlabelled:true})),
+  /legacy vial mass|Unverified legacy/i);
+ assert.equal(legacyWrites,0,"Unknown actual stock must not be guessed or written");
+ assert.equal(legacyDurable,JSON.stringify(legacy));
  assert.ok(attempts>=6,"Exclusive lock must mediate every attempted transaction");
  console.log("PASS: exact source nasal prep -> prepared spray -> undo; stale tab, validation, readback and no double debit");
 })().catch(e=>{console.error(e);process.exitCode=1});

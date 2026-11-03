@@ -222,5 +222,38 @@
   return {...transferred,container:bottle};
  }
 
- return {plan,commit,planFormulation,planRecordedNasal};
+ // A sealed source is converted to an open source only inside the isolated
+ // transaction candidate. This helper is pure and cannot persist inventory.
+ function planRecordedNasalLocked(snapshot,input){
+  if(!input?.confirmed)fail("Confirmed transaction required");
+  const source=JSON.parse(JSON.stringify(snapshot));
+  const kits=(source.supplies||[]).filter(k=>String(k.id)===String(input.sourceKitId));
+  if(kits.length!==1||kits[0].isBlend)fail("Unique non-blend source required");
+  const kit=kits[0];
+  const vials=(kit.vials||[]).filter(v=>String(v.id)===String(input.sourceVialId));
+  if(vials.length!==1)fail("Exact physical source required");
+  const vial=vials[0];
+  if(input.openSealed){
+   if(vial.status!=="sealed"||input.adoptUnlabelled)
+    fail("Source is not the requested sealed vial");
+   const exact=Number(vial.expectedMg??vial.vialMg??kit.vialMg);
+   if(!Number.isFinite(exact)||exact<=0||!Number.isFinite(input.amountMg)||input.amountMg>exact+1e-7)
+    fail("Sealed source strength is not verified");
+   vial.status="open";
+   vial.intendedUse="nasal-source";
+   vial.remainingMg=exact;
+   vial.vialMg=exact;
+   vial.expectedMg=exact;
+   kit.activeKit=true;
+   kit.openedVials=(Number(kit.openedVials)||0)+1;
+   vial.reconDate=input.date;
+   kit.reconDate=input.date;
+   kit.reconHistory=kit.reconHistory||[];
+   kit.reconHistory.push({id:input.id+"-source-open",date:input.date,
+    vialId:vial.id,kind:"recorded-nasal-preparation-source"});
+  }
+  return planRecordedNasal(source,input);
+ }
+
+ return {plan,commit,planFormulation,planRecordedNasal,planRecordedNasalLocked};
 });

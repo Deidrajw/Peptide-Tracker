@@ -2238,7 +2238,8 @@ function nexusPreviewPreparationTransaction(input) {
 // Committed transfers are intentionally unavailable in DEMO mode and until a
 // complete validated snapshot can be persisted through one storage write.
 // Internal guarded boundary only. No UI invokes this until full release QA.
-const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false; // Release safety gate; do not enable until all writers share atomic coordination.
+const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false; // Generic preparation transfer remains independently safety-gated.
+const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true; // Preparation-only release; generic transfers and prepared-dose logging remain OFF.
 async function nexusCommitPreparationTransfer(input) {
   if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)throw Error("Preparation transfers remain safety-gated");
   if(_demoActive)throw Error("Transfers unavailable in demo mode");
@@ -2261,14 +2262,14 @@ async function nexusCommitPreparationTransfer(input) {
  * State swaps only after the writer's full-snapshot readback succeeds.
  */
 async function nexusCommitRecordedNasalPreparation(input) {
-  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)
+  if(!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED)
     throw Error("Recorded nasal transfers are unavailable until mixed-writer acceptance");
   if(_demoActive)throw Error("Use the in-memory fictional planner in demo mode");
-  if(!globalThis.NexusPreparationBridge?.planRecordedNasal || !input?.confirmed)
+  if(!globalThis.NexusPreparationBridge?.planRecordedNasalLocked || !input?.confirmed)
     throw Error("Confirmed recorded preparation with verified planner required");
   const writer=nexusWriter();
   const result=await writer.transaction(state,snapshot=>
-    globalThis.NexusPreparationBridge.planRecordedNasal(snapshot,input));
+    globalThis.NexusPreparationBridge.planRecordedNasalLocked(snapshot,input));
   state=result.next;
   _nexusLastSavedSnapshot=writer.expected();
   return result;

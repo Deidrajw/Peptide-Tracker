@@ -1,3 +1,10 @@
+## 2026-11-03 — preparation-only v0.9.22-beta candidate activation on unmerged branch
+- User requested deployment of LIVE nasal preparation saving. After verified exclusive source-to-container writer and fictional 4/4 Chromium LIVE Review/Confirm/Save checks, enable only the recorded nasal preparation gate on PR127 development branch. Leave generic transfer and prepared-dose administration OFF; never infer missing actual legacy vial balances. New confirmed transfers only debit selected source and credit exact linked bottle, preserving existing history and storage.
+- Gate enablement in development does not establish production deployment or physical iPhone acceptance. Final exact-head release CI, artifacts, approved merge and independent primary Cloudflare parity are required. No destructive migration authorized.
+
+## 2026-11-02 — nasal preparation-only release scope
+- User wants LIVE nasal preparation saving deployed. Engineering approach: prepare a separately tested preparation-only candidate; do not enable nasal dose logging in the same release. Any source normalization must occur inside the exclusive snapshot transaction, never as an unlocked preliminary mutation. Preserve original vial IDs, prior-use reconciliation, historical records and DS2. User's request to deploy is not permission to bypass safety checks. No nasal gates changed in current test-only branch.
+
 ## 2026-11-02 — PR126 metadata release merged under existing authorized scope
 - The previously approved post-SubQ restoration release includes v0.9.21-beta metadata reconciliation only; PR126 merge 6b64d0140afe01e866d710dd6134300f696407f2. No new feature scope or nasal safety-gate authorization. Cloudflare release status must be evidenced independently; a successful GitHub merge or CI build alone is not proof. Preserve localStorage, saved history, writer safeguards, approved DS2 UI and both nasal LIVE gates OFF. Physical SubQ picker verification remains optional post-release UAT.
 

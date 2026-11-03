@@ -373,7 +373,7 @@ function stashView() {
                 </div>
                 ${isActive&&(s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(v.id)&&p.status==="planned-no-transfer")?`<button type="button" class="nx-kit-create-preparation nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="View preparation plan for vial ${num}">View plan <span aria-hidden="true">›</span></button>`:""}
                 
-                ${_demoActive&&isActive&&v.intendedUse==="nasal-source"&&rem>0.000001?`<button type="button" class="nx-kit-record-nasal-direct nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Prepare nasal bottle from vial ${num}">Prepare nasal bottle</button>`:""}
+                ${(_demoActive||NEXUS_RECORDED_NASAL_PREPARATION_ENABLED)&&isActive&&v.intendedUse==="nasal-source"&&rem>0.000001?`<button type="button" class="nx-kit-record-nasal-direct nx-stash-view-plan" data-kit-id="${esc(String(s.id))}" data-vial-id="${esc(String(v.id))}" aria-label="Prepare nasal bottle from vial ${num}">Prepare nasal bottle</button>`:""}
                 <button type="button" class="vial-actions-btn nx-kit-list-action" data-kit="${s.id}" data-vial="${v.id}" aria-label="Actions for vial ${num}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button></div>`;
              };
             return `<div class="nx-kit-record-list">${ordered.slice(0,5).map(renderVial).join("")}</div>
@@ -2318,7 +2318,7 @@ function nexusCreateLinkedPreparation(kitId,vialId){
 document.addEventListener("click",e=>{
  const btn=e.target.closest?.(".nx-kit-record-nasal-direct");
  if(!btn)return;
- if(!_demoActive)return;
+ if(!_demoActive&&!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED)return;
  const kit=(state.supplies||[]).find(k=>String(k.id)===String(btn.dataset.kitId));
  const vial=(kit?.vials||[]).find(v=>String(v.id)===String(btn.dataset.vialId));
  if(!vial||vial.intendedUse!=="nasal-source"||!["open","active"].includes(vial.status)||
@@ -2416,7 +2416,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  // remainingMg field can be absent or zero before opening; that is NOT a
  // prepared/open balance and must not disqualify an otherwise valid source.
  const sealedMass=Number(vial?.expectedMg ?? vial?.vialMg ?? kit?.vialMg);
- const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
+ const validNew=!!vial&&openSealed&&!kit?.isBlend&&vial.status==="sealed"&&
    Number.isFinite(sealedMass)&&sealedMass>0;
  const validLegacy=!!vial&&adoptUnlabelled&&!kit?.isBlend&&
    ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
@@ -2424,6 +2424,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    Number.isFinite(getVialRemainingMg(kit,vial))&&getVialRemainingMg(kit,vial)>0;
  if(!kit||!vial||(!validExisting&&!validNew&&!validLegacy)){
   showErrorBanner("An exact eligible nasal preparation source is required. Nothing saved.");return;
+ }
+ if(!_demoActive&&!openSealed&&!Number.isFinite(vial.remainingMg)){
+  showErrorBanner("This opened vial has no verified remaining balance. Confirm its balance in Stash before preparing a bottle. No inventory changed.");return;
  }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
@@ -2438,7 +2441,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  '<p id="nx-nasal-record-preview" role="status" class="nx-dose-untracked-note"></p>'+
  '<div id="nx-nasal-record-review" class="nx-dose-review" hidden aria-live="polite"></div>'+ '<label class="nx-dose-option-check" id="nx-nasal-confirm-row" hidden><input type="checkbox" id="nx-nasal-record-confirm"><span>I confirm this preparation and transfer actually happened, using the source and amounts shown.</span></label>'+
  '<button type="button" id="nx-nasal-record-back" class="btn-secondary" hidden style="min-height:44px;width:100%">Back to edit</button>'+ '<button type="button" id="nx-nasal-record-save" class="btn-primary" style="min-height:48px;width:100%">Review preparation and transfer</button>'+
- '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. Live transfers remain safety-gated.</p></section>',"#A78BFA");
+ '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. This records preparation inventory, not nasal administration.</p></section>',"#A78BFA");
   m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-nasal-shared-review");
  m.querySelector("#x").onclick=closeModal;
  const inputs=["nx-nasal-source-mg","nx-nasal-bac","nx-nasal-saline","nx-nasal-pump"].map(id=>m.querySelector("#"+id));
@@ -2512,7 +2515,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
    volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime(),
    occurredAt:occurred.value+"T12:00:00",recordedAt:localDatetime(),
-   adoptUnlabelled:!!adoptUnlabelled,priorUseStatus:priorStatus.value,
+   adoptUnlabelled:!!adoptUnlabelled,openSealed:!!openSealed,priorUseStatus:priorStatus.value,
    ...(priorStatus.value==="known"?{priorSprays:Number(priorCount.value)}:{})
   };
   let committed=false;
@@ -2575,7 +2578,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    }else{
     showErrorBanner(_demoActive?
      "Preparation was not recorded: "+String(error?.message||"source or destination verification failed")+". No inventory changed.":
-     "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+     (/safety-gated|unavailable until|mixed-writer acceptance/i.test(String(error?.message||""))?
+      "Nasal preparation saving is not enabled yet. Nothing saved.":
+      "Preparation save could not be verified. Reopen Stash and check the source vial and prepared bottle before retrying. Do not repeat the transfer until its status is confirmed."));
    }
    button.disabled=false;
   }

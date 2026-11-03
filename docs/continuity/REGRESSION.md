@@ -1,3 +1,14 @@
+## 2026-11-03 — PR127 LIVE nasal preparation acceptance evidence and pending new head
+- Test-only app head b16d1a85: shared-writer #41596599433 passed. Actual DOM form Review/Confirm/Save via intercepted test-only gate passed 320/390 light/dark (4/4) in Chromium with exclusively fictional stock and no production access. Handler-in-VM test passed single write, stale tab, failed readback, missing legacy balance and disabled-default case.
+- Preparation-only flag subsequently enabled on release branch, generic transfer and nasal administration flags remain OFF. Release head 4ffa2739 initially FAIL build/WebKit due stale generated release metadata; regenerated in-app, Apple/Google, runtime and index version through 9321cad. Exact latest-head CI still PENDING. User's physical iPhone LIVE save and VoiceOver NOT TESTED. Never upgrade test-only PASS to physical UAT.
+
+## 2026-11-02 — PR127 safety test execution and gate pinning
+- Previous PR127 head fd6ec0cc: release/build #41575379964 PASS; WebKit #41575379918 PASS; mobile #41575379965 PASS; shared-writer #41575379895 PASS, including expanded retrospective exclusive writer test. New commit 96bc3c82 adds explicit source assertions that both nasal LIVE feature flags remain OFF. New-head workflows not yet verified. This proves gated test behaviour, NOT production enabled preparation.
+- P0 remaining: sealed source or unverified older open-vial inventory requires safe snapshot preparation before planner. Real LIVE saving, iPhone acceptance and VoiceOver remain BLOCKED/NOT TESTED.
+
+## 2026-11-02 — nasal LIVE safety branch regression expansion (NOT YET EXECUTED)
+- Branch feature/nasal-live-preparation-safety-20261102, test source 02ecbf97. Added exclusive writer retrospective known prior sprays and unknown prior-use cases; asserts single write, source depletion, bottle source linkage, verified/unverified balance, original occurredAt, no invented dose history and stale-tab replay rejection. Automated execution pending; DO NOT label PASS. Known LIVE sealed/legacy source handling gap requires independent regression and fix before production gate enablement. Both nasal LIVE flags OFF.
+
 ## 2026-11-02 — physical iPhone SubQ UAT PASS; LIVE nasal blocked-state observed
 - User's physical iPhone v0.9.21-beta results: Left flank PASS, Right flank PASS, Left glute PASS, Right glute PASS (4/4). No independent VoiceOver session reported.
 - LIVE nasal form Review shown for Oxytocin but save displays "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved." Source assets/js/10-nexus.js contains the deliberate non-DEMO rejection message. This is an expected, observed BLOCKED safety state; no confirmation of inventory mutation. Never mark LIVE preparation PASS. Both nasal LIVE gates remain OFF. Main build #41572795053 SUCCESS after the earlier pending state.
