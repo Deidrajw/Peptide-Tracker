@@ -3169,8 +3169,8 @@ function nexusWireSupplementShortcuts(modal, dateValue, taken, refresh) {
     if(!name){alert("Enter a template name.");return;}
     const templates=getTemplates();
     if(templates.some(t=>t.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert("A template with this name already exists.");return;}
-    state.settings.supplementTemplates=[...templates,{name,taken:[...taken]}];
-    if(!await nexusCommitCurrentState()){showSaveWarning();return;}
+    const nextTemplates=[...templates,{name,taken:[...taken]}];
+    if(!await nexusCommitScopedStateChange({kind:"setting",key:"supplementTemplates",value:nextTemplates}))return;
     panel.hidden=false;browse.setAttribute("aria-expanded","true");paint();
   };
   paint();
