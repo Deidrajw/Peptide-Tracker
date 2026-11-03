@@ -1,9 +1,4 @@
-A more consistent Nexus, with safer inventory history
-- Refined navigation and visual hierarchy: Unified the iPhone-first screen hierarchy, navigation rows, disclosures, button geometry and sheet actions across Today, Trends, Profile, Settings and related detail screens.
-- Calendar day logs and all logs: Added the approved Calendar day-view and All Logs workflow while preserving logged dates, details, history and editing.
-- Cleaner Protocol and Plans cards: Reduced card density, refined disclosure and action placement, and preserved existing protocol schedules, histories and actions.
-- Unified kit and Supplies experience: Aligned premixed and standard kit cards, vial details, inventory actions, supply presentation and guided editing to the approved design language.
-- Consistent blend dosing and inventory links: Kept premixed blends in standard Log Dose and kit workflows with explicit source transaction tracking and preserved historical ingredient associations.
-- Protect historical prepared doses from uncertain refunds: Deletion is blocked when an unused prepared batch lacks a verifiable original kit, vial or blend transaction. The original record and stock remain unchanged rather than crediting the currently open vial. User-reported isolated physical iPhone warning acceptance passed 12/12 checks.
-- Clearer What's New and update history: Consolidated in-app release history presentation and prepared notices that appear only for verified published releases.
-- More consistent touch targets and contrast safeguards: Improved selected buttons, modal actions, spacing and focus presentation; a stabilized computed-colour audit found zero sub-4.5:1 text contrast candidates across nine main screens in both themes at 390px. Broader VoiceOver and whole-app device acceptance remain untested.
+Restored SubQ injection sites and clearer nasal preparation tracking
+- Restored four SubQ administration-site choices: Left flank, Right flank, Left glute and Right glute are available again in Log Dose; prior saved site names and histories are preserved.
+- Connected nasal vial setup to the shared preparation Review: Existing unlabelled open vials now enter the same nasal preparation form as Open New Vial, with historical preparation date, recorded liquids, known prior-spray reconciliation or an unverified-balance warning. LIVE transfer and spray saving remain disabled.
+- Preserved source and balance protections: Exact source-to-container reconciliation is tested using fictional data. Unknown prior use blocks inventory-backed spray logging and never fabricates historical doses.
