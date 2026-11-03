@@ -1,3 +1,7 @@
+## 2026-11-02 — PR124 full 16-point physical iPhone acceptance COMPLETE
+- User returned exact source 5ea01fd3 final checklist: 16/16 PASS, 0 FAIL, 0 BLOCKED, 0 NOT TESTED, Notes None, including Stash, form-specific pickers, inventory, Log Dose and Goal Details/iPhone accessibility. Supersedes previous rejected-device screenshots for same scoped corrected screens; previous issues retained below historically. Physical result is user-reported, not independent VoiceOver instrumentation.
+- 5/5 application CI PASS, mixed-writer safety P0 gate PASS, complete fictional DEMO/LIVE source-verified. User granted merge/deploy approval. Preserve both nasal LIVE OFF and production localStorage. UAT P0 CLEARED, pending approved merge and independently verified Cloudflare serving resulting commit.
+
 ## 2026-11-02 — scope-specific #15 physical acceptance; remaining 16-point iPhone P0 OPEN
 - User reported 4/4 PASS for final 5ea01fd3 Additional Dose Options #15 (type/spacing, preferences, two checkboxes, light/dark); all five exact-source GitHub workflows PASS including writer gate. Explicit merge/deploy approval received in later message.
 - This is NOT all-16 acceptance. Binding 16-point scorecard still records other iPhone and VoiceOver OPEN/previous FAIL surfaces. Maintain release P0 HOLD until that matrix is cleared. Both nasal LIVE feature flags OFF. No production merge/deploy.
