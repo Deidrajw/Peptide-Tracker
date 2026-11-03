@@ -44,12 +44,20 @@ const historyBefore=JSON.stringify(state.supplementLogs);
 const button=()=>({disabled:false,onclick:null,textContent:"",attributes:{},setAttribute(k,v){this.attributes[k]=v;}});
 const repeat=button(),browse=button(),save=button();
 const bar={querySelector:s=>({"#nx-supp-repeat":repeat,"#nx-supp-templates":browse,"#nx-supp-save-template":save})[s]};
-const panel={hidden:true,innerHTML:"",querySelectorAll(){
- return [...this.innerHTML.matchAll(/data-template-index="(\d+)"/g)].map(match=>({dataset:{templateIndex:match[1]},onclick:null}));
+const controls={};
+const panel={hidden:true,innerHTML:"",querySelectorAll(selector){
+ const fields={"[data-template-index]":["templateIndex","template-index"],"[data-rename-template]":["renameTemplate","rename-template"],"[data-delete-template]":["deleteTemplate","delete-template"]};
+ const selected=fields[selector];
+ if(!selected)return [];
+ const [property,attribute]=selected;
+ const matches=[...this.innerHTML.matchAll(new RegExp('data-'+attribute+'="(\\d+)"','g'))];
+ const elements=matches.map(match=>({dataset:{[property]:match[1]},onclick:null}));
+ controls[selector]=elements;
+ return elements;
 }};
 const modal={querySelector:s=>({"#nx-supp-shortcuts":bar,"#nx-supp-template-list":panel})[s]};
 let refreshed=0,commits=0,promptValue="Morning",allowWrite=true,alerts=[];
-const scope={state,dayKey:d=>String(d).slice(0,10),esc:v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"),prompt:()=>promptValue,alert:m=>alerts.push(m),nexusCommitScopedStateChange:async operation=>{
+const scope={state,dayKey:d=>String(d).slice(0,10),esc:v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"),prompt:()=>promptValue,confirm:()=>true,alert:m=>alerts.push(m),nexusCommitScopedStateChange:async operation=>{
  commits++;
  if(!allowWrite)return false;
  const next=planner(state,operation).next;
@@ -68,14 +76,25 @@ assert.equal(JSON.stringify(state.supplementLogs),historyBefore,"repeat cannot a
  assert.equal(commits,1);
  assert.deepEqual(state.settings.supplementTemplates[0],{name:"Morning",taken:["Beta","Alpha"]});
  assert.equal(JSON.stringify(state.supplementLogs),historyBefore,"templates do not change historical check-ins");
- promptValue="morning";
+ promptValue="Morning updated";
+ await controls["[data-rename-template]"][0].onclick();
+ assert.equal(state.settings.supplementTemplates[0].name,"Morning updated","rename persists");
+ assert.deepEqual(state.settings.supplementTemplates[0].taken,["Beta","Alpha"],"rename preserves selection");
+ promptValue="morning updated";
  await save.onclick();
- assert.equal(commits,1,"duplicate title rejected before writer");
+ assert.equal(commits,2,"duplicate title rejected before writer");
  assert.ok(alerts.some(x=>/already exists/i.test(x)));
  promptValue="Evening";allowWrite=false;
  await save.onclick();
  assert.equal(state.settings.supplementTemplates.length,1,"failed writer must not show phantom template");
  assert.ok(!panel.innerHTML.includes("Evening"),"failed template must not be rendered");
+ const countBefore=state.settings.supplementTemplates.length;
+ await controls["[data-delete-template]"][0].onclick();
+ assert.equal(state.settings.supplementTemplates.length,countBefore,"failed delete preserves template");
+ allowWrite=true;
+ await controls["[data-delete-template]"][0].onclick();
+ assert.equal(state.settings.supplementTemplates.length,0,"delete removes only template");
+ assert.equal(JSON.stringify(state.supplementLogs),historyBefore,"rename/delete preserve histories");
  assert.ok(refreshed>=1);
  console.log("P4 supplement reuse and Stash source contracts PASS");
 })().catch(e=>{console.error(e);process.exitCode=1;});
