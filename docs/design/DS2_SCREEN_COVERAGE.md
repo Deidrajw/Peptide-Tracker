@@ -1,3 +1,6 @@
+## 2026-11-03 — v0.9.22-beta nasal preparation form production release
+- Stash / Supplies nasal preparation Review → Confirm → Save now available in LIVE after PR127 merge 383c6b7a; verified fictional 320/390 dark/light Chromium 4/4 actual form save and WebKit/mobile/nested CI. Generic preparation transfer and nasal administration remain disabled. Sealed source opening and bottle transfer are one readback-verified inventory transaction; opened legacy source with unverified remainingMg blocks before Review. No new DS2 redesign. Physical iPhone save and independent VoiceOver acceptance NOT TESTED.
+
 ## 2026-11-02 — PR125 nasal iPhone acceptance and SubQ site correction
 - User reported 4/4 PASS for nasal form navigation, historical Review, known prior use and unknown balance protection at fd68a110. After that test, user reported missing Left flank, Right flank, Left glute and Right glute in SubQ Log Dose and approved their restoration and release after QA. These exact four site values restored by 35a8ff0b in current SubQ picker, with automated 320/390 LIVE/DEMO tests at e7e1a316. Physical iPhone acceptance of subsequent SubQ correction NOT YET tested; both nasal LIVE gates remain OFF.
 
