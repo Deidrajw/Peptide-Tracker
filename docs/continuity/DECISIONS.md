@@ -1,3 +1,6 @@
+## 2026-11-02 — authorized full PR124 merge completed; no unverified deployment claim
+- User approved PR124 merge and Cloudflare deploy after user-reported all-16 iPhone PASS. GitHub merged at 0eca75079626936ef1570be3c0a3e5b8c21c8f69. Preserve prior approved UI, saved records and both nasal LIVE gates OFF; no destructive migration. Post-merge live hosting could not be accessed to independently verify Cloudflare served the commit, so status remains deployment unverified until actual hosting evidence.
+
 ## 2026-11-02 — full PR124 iPhone 16/16 accepted; merge/deploy authorized
 - User explicitly submitted all 16 physical iPhone acceptance cases PASS on source 5ea01fd3, with zero Fail/Blocked/Not Tested and no notes; this closes previous broad 16-point UAT P0 in the authoritative scorecard. User also explicitly granted merge/deploy approval. Preserve accepted final Dose preferences spacing and DS2 design; no further redesign.
 - Mixed-writer technical P0 exact-source CI succeeded. Nasal LIVE gates must remain OFF. No destructive migration, production localStorage reset or rewriting user records authorized. The user-reported #16 iPhone accessibility PASS does not claim separately captured VoiceOver evidence.
