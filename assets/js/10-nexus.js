@@ -2425,6 +2425,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  if(!kit||!vial||(!validExisting&&!validNew&&!validLegacy)){
   showErrorBanner("An exact eligible nasal preparation source is required. Nothing saved.");return;
  }
+ if(!_demoActive&&!openSealed&&!Number.isFinite(vial.remainingMg)){
+  showErrorBanner("This opened vial has no verified remaining balance. Confirm its balance in Stash before preparing a bottle. No inventory changed.");return;
+ }
  const m=openModal('<section class="nx-form-stock-editor nx-nasal-actual-prep">'+
  '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARATION</div><h2 class="nx-dose-title">Prepare nasal bottle</h2><div class="nx-dose-subtitle">Actual preparation and bottle transfer</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close preparation"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
  '<p class="hint">Preparing '+esc(kit.name)+' · '+(openSealed?sealedMass:getVialRemainingMg(kit,vial)).toFixed(2)+' mg in source vial. No inventory changes until you confirm.</p>'+
