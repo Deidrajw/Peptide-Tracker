@@ -1,3 +1,9 @@
+## 2026-11-03 — Priority 4 first implementation candidate (DRAFT PR130)
+- User accepted simple supplements entry points: Use previous day and My templates in the existing Check-In flow rather than a new tab. PR130 implements Stash search across Vial kits, Other forms and Supplies; prior-date supplements reuse; named supplement templates. Records remain local-first; optional templates in settings; no automatic log or saved-history migration.
+- Retain Priority 2 Onboarding 2.0, Priority 3 remaining core workflow quality, Priority 4 additional configurable Today, quick actions/smart history, Priority 5 cloud/native expansion as OPEN / NOT quietly completed.
+- Safety: exact-source inventory, P0 guarded writers, backup restore and date-specific check-ins protected. This is a draft release candidate, no merge/deploy approval. Browser/device and artifact acceptance not certified.
+- ONE NEXT ACTION: run exact latest PR130 QA, repair failures, verify full isolated demo and live release ZIP before seeking physical iPhone acceptance.
+
 ## 2026-11-03 — P0 backup restoration and nasal saved-state integrity follow-up
 - User evidence: Settings restore shows stale-snapshot conflict even when welcome import works; restore preview misleadingly shows 0 Stash kits due obsolete field. LIVE nasal preparation can show uncertain-save warning. Draft PR #129 v0.9.23-beta addresses canonical durable CAS on restore, normalized-source verified durable CAS on nasal prep and precise warnings. Keep staged until exact-head testing and physical iPhone UAT; preserve v0.9.22-beta production with no migration. ONE NEXT ACTION: obtain exact-head browser regression and release source parity, then request explicit deployment approval.
 
