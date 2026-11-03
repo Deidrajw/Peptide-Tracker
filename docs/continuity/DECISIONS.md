@@ -1,3 +1,7 @@
+## 2026-11-02 — full PR124 iPhone 16/16 accepted; merge/deploy authorized
+- User explicitly submitted all 16 physical iPhone acceptance cases PASS on source 5ea01fd3, with zero Fail/Blocked/Not Tested and no notes; this closes previous broad 16-point UAT P0 in the authoritative scorecard. User also explicitly granted merge/deploy approval. Preserve accepted final Dose preferences spacing and DS2 design; no further redesign.
+- Mixed-writer technical P0 exact-source CI succeeded. Nasal LIVE gates must remain OFF. No destructive migration, production localStorage reset or rewriting user records authorized. The user-reported #16 iPhone accessibility PASS does not claim separately captured VoiceOver evidence.
+
 ## 2026-11-02 — explicit PR124 merge/deploy approval, conditional on safety release gates
 - User said Yes, approve in direct response to proposal to merge PR124 and deploy verified Cloudflare release, preserving all data and keeping both nasal LIVE gates OFF. This is explicit authorization, not a mandate to ignore unresolved P0 blockers. Engineering review identifies remaining 16-point physical UAT beyond #15 as open; deployment held until release clearance. No additional visual changes approved.
 
