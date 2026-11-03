@@ -35,6 +35,7 @@ jobs:
           node tests/preparation-ledger.test.cjs
           node tests/preparation-bridge.test.cjs
           node tests/prepared-formulation-lifecycle.test.cjs
+          node tests/retrospective-nasal-preparation.test.cjs
           node --check assets/js/nexus-use-source-eligibility.js
           node tests/use-source-eligibility.test.cjs
           node --check assets/js/nexus-prepared-dose-transaction.js
