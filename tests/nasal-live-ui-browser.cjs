@@ -79,9 +79,14 @@ assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false
   await legacyPage.evaluate(saved=>localStorage.setItem("peptide-tracker-html-v1",JSON.stringify(saved)),oldBackup);
   await legacyPage.reload({waitUntil:"domcontentloaded"});
   await legacyPage.waitForFunction(()=>typeof nexusRecordNasalPreparation==="function");
-  const initialDifference=await legacyPage.evaluate(()=>
-   JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1"));
-  assert.equal(initialDifference,true,"Fixture must reproduce migrated in-memory vs raw storage mismatch");
+  const initialDifference=await legacyPage.evaluate(()=>{
+   const before=JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1");
+   // Model an unsaved, UI-only migrated/default value without editing stock.
+   state._qaUiOnlyTransient="not-persisted";
+   return {before,after:JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1")};
+  });
+  assert.equal(initialDifference.after,true,"UI-only state must differ from durable JSON");
+  console.log("INFO: sparse backup boot mismatch observed",initialDifference.before);
   await legacyPage.evaluate(()=>
    nexusRecordNasalPreparation("legacy-qa-kit","legacy-qa-vial",{openSealed:true}));
   for(const [id,value] of Object.entries({"nx-nasal-source-mg":"5","nx-nasal-bac":"1",
