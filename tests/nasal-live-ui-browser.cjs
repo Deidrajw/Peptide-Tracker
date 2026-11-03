@@ -65,28 +65,40 @@ assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false
     await context.close();
    }
   }
-  // Regression for real imported backups: localStorage contains an older
-  // sparse snapshot, while migrate(loadState()) adds UI defaults in memory.
-  // The prior LIVE handler rejected that harmless difference as a stale save.
+  // Real browser reproduction: use Settings → Backup & Restore to load a
+  // fictional sparse older backup, then record a nasal preparation on that
+  // restored inventory with an in-memory-only view field. This exercises both
+  // distinct user-reported problem paths without touching production origin.
   const legacyContext=await browser.newContext({viewport:{width:390,height:844}});
   const legacyPage=await legacyContext.newPage();
+  legacyPage.on("dialog",dialog=>dialog.accept());
   await legacyPage.goto("http://127.0.0.1:8777/",{waitUntil:"domcontentloaded"});
+  await legacyPage.waitForFunction(()=>typeof nexusRecordNasalPreparation==="function"&&typeof importData==="function");
   const oldBackup={profile:{onboardingDone:true,name:"Fictional QA"},
-   peptides:{},customPeptides:{},dailyLogs:[],
+   peptides:{"Fictional QA Sample":{doses:[]}},customPeptides:{},dailyLogs:[],
    supplies:[{id:"legacy-qa-kit",name:"Fictional QA Sample",activeKit:false,
     openedVials:0,isBlend:false,vialMg:5,
     vials:[{id:"legacy-qa-vial",status:"sealed",expectedMg:5}]}]};
-  await legacyPage.evaluate(saved=>localStorage.setItem("peptide-tracker-html-v1",JSON.stringify(saved)),oldBackup);
-  await legacyPage.reload({waitUntil:"domcontentloaded"});
-  await legacyPage.waitForFunction(()=>typeof nexusRecordNasalPreparation==="function");
-  const initialDifference=await legacyPage.evaluate(()=>{
-   const before=JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1");
-   // Model an unsaved, UI-only migrated/default value without editing stock.
+  await legacyPage.evaluate(saved=>{
+   const jsonFile=new File([JSON.stringify(saved)],"fictional-old-backup.json",
+    {type:"application/json"});
+   importData({target:{files:[jsonFile],value:""}});
+  },oldBackup);
+  await legacyPage.locator("#nx-restore-word").fill("RESTORE");
+  await legacyPage.locator("#nx-import-confirm").click();
+  await legacyPage.waitForFunction(()=>{
+   const raw=localStorage.getItem("peptide-tracker-html-v1");
+   return raw&&JSON.parse(raw).supplies.some(k=>k.id==="legacy-qa-kit");
+  },null,{timeout:15000});
+  const imported=await legacyPage.evaluate(()=>{
+   const raw=localStorage.getItem("peptide-tracker-html-v1");
+   const before=JSON.stringify(state)!==raw;
    state._qaUiOnlyTransient="not-persisted";
-   return {before,after:JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1")};
+   return {before,after:JSON.stringify(state)!==raw,
+    source:state.supplies.find(k=>k.id==="legacy-qa-kit")?.vials?.[0]?.status};
   });
-  assert.equal(initialDifference.after,true,"UI-only state must differ from durable JSON");
-  console.log("INFO: sparse backup boot mismatch observed",initialDifference.before);
+  assert.equal(imported.after,true,"In-memory-only display fields must differ from durable JSON");
+  assert.equal(imported.source,"sealed","Imported exact source vial must exist");
   await legacyPage.evaluate(()=>
    nexusRecordNasalPreparation("legacy-qa-kit","legacy-qa-vial",{openSealed:true}));
   for(const [id,value] of Object.entries({"nx-nasal-source-mg":"5","nx-nasal-bac":"1",
@@ -101,36 +113,9 @@ assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false
   },null,{timeout:15000});
   assert.equal(await legacyPage.evaluate(()=>{
    const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1"));
-   return saved.supplies[0].vials[0].remainingMg;
+   return saved.supplies.find(k=>k.id==="legacy-qa-kit").vials[0].remainingMg;
   }),0);
-  console.log("PASS: actual LIVE nasal Review/Confirm/Save after sparse backup boot migration");
+  console.log("PASS: actual Settings restore of fictional old backup followed by LIVE nasal save despite UI-only state difference");
   await legacyContext.close();
-
-  // Exercise the actual Settings restore modal with an existing raw backup
-  // and a migrated UI state. No production origin or user data involved.
-  const restoreContext=await browser.newContext({viewport:{width:390,height:844}});
-  const restorePage=await restoreContext.newPage();
-  restorePage.on("dialog",dialog=>dialog.accept());
-  await restorePage.goto("http://127.0.0.1:8777/",{waitUntil:"domcontentloaded"});
-  await restorePage.evaluate(saved=>
-   localStorage.setItem("peptide-tracker-html-v1",JSON.stringify(saved)),oldBackup);
-  await restorePage.reload({waitUntil:"domcontentloaded"});
-  await restorePage.waitForFunction(()=>typeof importData==="function");
-  await restorePage.evaluate(()=>{
-   const next={peptides:{"Fictional New":{doses:[]}},profile:{name:"QA",onboardingDone:true},
-    dailyLogs:[],weightLogs:[],supplementLogs:[],
-    supplies:[{id:"restored-qa-kit",name:"Fictional New",
-     vials:[{id:"restored-qa-vial",status:"sealed",expectedMg:2}]}]};
-   importData({target:{files:[new File([JSON.stringify(next)],"fictional-backup.json",
-     {type:"application/json"})],value:""}});
-  });
-  await restorePage.locator("#nx-restore-word").fill("RESTORE");
-  await restorePage.locator("#nx-import-confirm").click();
-  await restorePage.waitForFunction(()=>{
-   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1")||"{}");
-   return (saved.supplies||[]).some(k=>k.id==="restored-qa-kit");
-  },null,{timeout:15000});
-  console.log("PASS: actual Settings Backup & Restore modal with migrated initial state");
-  await restoreContext.close();
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1});
