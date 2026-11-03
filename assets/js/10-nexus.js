@@ -2586,7 +2586,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
        if(/Unverified legacy|Canonical source balance unavailable|Explicitly nasal-labelled|Insufficient exact source/i.test(reason))
          return "Preparation source balance or vial status needs verification in Stash. No source transfer was confirmed. Check the original vial and bottle before retrying.";
        return "Preparation save could not be verified. Reopen Stash and check the source vial and prepared bottle before retrying. Do not repeat the transfer until its status is confirmed.";
-     })()));
+     })());
    }
    button.disabled=false;
   }
