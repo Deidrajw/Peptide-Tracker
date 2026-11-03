@@ -3161,6 +3161,8 @@ function nexusWireSupplementShortcuts(modal, dateValue, taken, refresh) {
   };
   repeat.onclick=()=>{const prev=previous();if(prev)apply(prev.taken);};
   browse.onclick=()=>{panel.hidden=!panel.hidden;browse.setAttribute("aria-expanded",String(!panel.hidden));if(!panel.hidden)paint();};
+  const trackedDate=modal.querySelector("#date");
+  if(trackedDate)trackedDate.addEventListener("change",paint);
   save.onclick=async()=>{
     if(!taken.size){alert("Select supplements before saving a template.");return;}
     const value=prompt("Name this supplement template (e.g. Morning essentials):");
