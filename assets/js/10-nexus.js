@@ -23,7 +23,7 @@ function stashView() {
   const aps = allPeptides();
 
   // ── Filter ────────────────────────────────────────────────────────────────
-  let entries = [...state.supplies].filter(s=>nexusStashMatches(s.name,s.kitName,s.brand,s.notes,s.vialMg));
+  let entries = [...state.supplies].filter(s=>nexusStashMatches(s.name,s.kitName,s.brand,s.notes,s.vialMg,s.preparationMethod,s.administrationMethod,s.route,s.form));
   const preparedCompoundNames = new Set((state.preparedDoses||[]).filter(pd=>pd.remainingCount>0).flatMap(pd=>getSyringeComponents(pd).map(c=>c.compoundName)));
   if (filter!=="all") {
     entries = entries.filter(s=>{
