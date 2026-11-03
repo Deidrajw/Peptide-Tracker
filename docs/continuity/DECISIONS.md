@@ -1,3 +1,6 @@
+## 2026-11-02 — Nasal existing-vial entry uses existing preparation screen (development only)
+- User clarified that choosing Nasal in Stash → How is this vial used? must go directly into the same preparation-details screen as Open New Vial → Nasal, then Review; Nasal ordered above Other, simplified label. Avoid separate classification-save step or duplicate screen. This is a workflow connection, NOT permission to enable nasal LIVE inventory/dose writes. Retroactive preparation date and already-used spray balance remain safety requirements. Preserve all prior records, saved data and accepted DS2 styling.
+
 ## 2026-11-02 — authorized full PR124 merge completed; no unverified deployment claim
 - User approved PR124 merge and Cloudflare deploy after user-reported all-16 iPhone PASS. GitHub merged at 0eca75079626936ef1570be3c0a3e5b8c21c8f69. Preserve prior approved UI, saved records and both nasal LIVE gates OFF; no destructive migration. Post-merge live hosting could not be accessed to independently verify Cloudflare served the commit, so status remains deployment unverified until actual hosting evidence.
 
