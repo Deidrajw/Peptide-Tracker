@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.21-beta",
+  "version": "v0.9.22-beta",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,39 +9,39 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "cd93e430de56ef7c37a9776404d2fd014f3528e0",
-    "pullRequest": 125
+    "baselineMainCommit": "bd15c43f7a1b718098b232082903a90d854c15ba",
+    "pullRequest": 127
   },
-  "headline": "Restored SubQ injection sites and clearer nasal preparation tracking",
+  "headline": "Recorded nasal preparation saving with protected source-to-bottle inventory",
   "changes": [
     {
-      "key": "subq-restored-sites",
-      "title": "Restored four SubQ administration-site choices",
-      "detail": "Left flank, Right flank, Left glute and Right glute are available again in Log Dose; prior saved site names and histories are preserved.",
-      "screen": "Today / Log Dose",
-      "kind": "fix"
-    },
-    {
-      "key": "nasal-retrospective-ui",
-      "title": "Connected nasal vial setup to the shared preparation Review",
-      "detail": "Existing unlabelled open vials now enter the same nasal preparation form as Open New Vial, with historical preparation date, recorded liquids, known prior-spray reconciliation or an unverified-balance warning. LIVE transfer and spray saving remain disabled.",
+      "key": "nasal-preparation-live",
+      "title": "Save confirmed nasal preparation in Stash",
+      "detail": "The reviewed preparation record opens the exact source vial when needed and transfers recorded mass into a linked nasal bottle using one exclusive, readback-verified inventory transaction.",
       "screen": "Stash / Supplies",
-      "kind": "improvement"
+      "kind": "feature"
     },
     {
-      "key": "inventory-guards",
-      "title": "Preserved source and balance protections",
-      "detail": "Exact source-to-container reconciliation is tested using fictional data. Unknown prior use blocks inventory-backed spray logging and never fabricates historical doses.",
-      "screen": "Stash / Log Dose",
+      "key": "nasal-preparation-release-isolation",
+      "title": "Independently gated preparation-only release",
+      "detail": "Recorded preparation is enabled; generic preparation transfers and inventory-backed nasal dose administration remain disabled. Missing verified remaining balances are blocked before review.",
+      "screen": "Stash / Supplies",
       "kind": "fix"
+    },
+    {
+      "key": "cross-tab-safety",
+      "title": "Preserve source IDs, history and stale-tab protection",
+      "detail": "Exact-source and retrospective known/unknown use checks, failed-write acknowledgement, stale-tab rejection and fictional Chromium Review/Confirm/Save acceptance were added.",
+      "screen": "Stash / History",
+      "kind": "improvement"
     }
   ],
-  "dataImpact": "No destructive migration, automatic historical edits, or inventory rewrite. Existing production localStorage, backups, protocols, Check-Ins, dose history and original vial/source identifiers remain unchanged. The four restored SubQ values use the existing saved-site spelling. Both LIVE nasal preparation and administration safety gates remain OFF.",
+  "dataImpact": "No destructive migration or automatic overwrite of existing localStorage, backups, protocols, Check-Ins or dose history. New user-confirmed preparation records debit the selected source vial and credit its linked prepared nasal bottle atomically. Historical prep timestamps and prior-use reconciliation are preserved. An open vial without verifiable remainingMg is rejected rather than inferred.",
   "limitations": [
-    "Nasal preparation and inventory-backed spray logging remain unavailable in LIVE; the retrospective workflow is validated in isolated fictional DEMO only.",
-    "User-reported physical iPhone nasal workflow acceptance passed 4/4 on prior source fd68a110; the subsequent four-site SubQ restoration passed automated browser regressions but has not received separate physical iPhone/VoiceOver acceptance.",
-    "Dose and spray arithmetic is nominal; the app cannot independently verify pump calibration, delivery, sterility or suitability. No safety claim follows from calculator test success.",
-    "Primary Cloudflare deployment must be independently verified against the final release metadata commit before publication status is marked published."
+    "Prepared nasal administration/dose logging remains OFF. Generic transfer controls remain OFF.",
+    "Nominal concentration and spray arithmetic do not verify actual pump delivery, sterility, compatibility, stability or route suitability.",
+    "Current branch is a candidate until exact-head CI, full LIVE/DEMO parity, approved merge and independent Cloudflare verification finish.",
+    "A physical iPhone LIVE saving test and independent VoiceOver acceptance have not been performed for this candidate."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
