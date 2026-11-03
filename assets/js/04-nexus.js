@@ -2264,11 +2264,11 @@ async function nexusCommitRecordedNasalPreparation(input) {
   if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)
     throw Error("Recorded nasal transfers are unavailable until mixed-writer acceptance");
   if(_demoActive)throw Error("Use the in-memory fictional planner in demo mode");
-  if(!globalThis.NexusPreparationBridge?.planRecordedNasal || !input?.confirmed)
+  if(!globalThis.NexusPreparationBridge?.planRecordedNasalLocked || !input?.confirmed)
     throw Error("Confirmed recorded preparation with verified planner required");
   const writer=nexusWriter();
   const result=await writer.transaction(state,snapshot=>
-    globalThis.NexusPreparationBridge.planRecordedNasal(snapshot,input));
+    globalThis.NexusPreparationBridge.planRecordedNasalLocked(snapshot,input));
   state=result.next;
   _nexusLastSavedSnapshot=writer.expected();
   return result;
