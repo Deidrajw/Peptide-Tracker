@@ -1,3 +1,17 @@
+## 2026-11-03 — PR130 direct browser + focused CI evidence at app source 9ba0c147
+| Case | Status | Evidence |
+| --- | --- | --- |
+| P4-STASH-01 | PASS — direct Chromium fictional demo | Search single vial kit by text, 0 match state, no supplies mutation, 320/390 dark/light |
+| P4-STASH-02 | PASS — direct Chromium fictional demo | Search Other forms and Supplies produces distinct no-match messages, 320/390 dark/light |
+| P4-STASH-03 | PARTIAL | Switching categories/search keyboard focus and global horizontal overflow tested in Chromium; physical keyboard/VoiceOver and filter+sort combined manual testing NOT TESTED |
+| P4-SUPP-01 | PASS — direct Chromium and focused VM | Latest strictly earlier logged supplements copied to draft, later/same-date histories preserved |
+| P4-SUPP-02 | PASS — direct Chromium | Changing check-in date updates previous-selection availability; explicit check-in Save creates one record/date |
+| P4-SUPP-03 | PASS — focused CI + direct Chromium | Create, rename, delete named templates; duplicate rejected; failed save/delete verified in CI; optional settings protected by exclusive writer |
+| P4-SUPP-04 | PASS — direct Chromium | Applying template leaves existing mood/symptoms/doses/inventory and previous supplement logs unchanged until explicit Save |
+| P4-REG-01 | PASS — automated protected workflows, scope-limited | Shared writer #41742486753, mobile #41742486815, nested #41742486845, WebKit #41742486586 SUCCESS; real iPhone NOT TESTED |
+| P4-ART-01 | PARTIAL | ZIP CRC PASS, 26-file LIVE, DEMO byte parity, five GitHub blob matches; full Chromium build #41742486604 IN PROGRESS; physical iPhone/VoiceOver NOT TESTED |
+All direct in-session browser checks use the self-contained fictional DEMO only; local Chromium is not physical iPhone Safari. Candidate no merge/deploy.
+
 ## 2026-11-03 — Priority 4 PR130 regression matrix (NOT TESTED, required before merge)
 | Case | Expected | Latest evidence |
 | --- | --- | --- |
