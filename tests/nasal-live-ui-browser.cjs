@@ -65,5 +65,67 @@ assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false
     await context.close();
    }
   }
+  // Regression for real imported backups: localStorage contains an older
+  // sparse snapshot, while migrate(loadState()) adds UI defaults in memory.
+  // The prior LIVE handler rejected that harmless difference as a stale save.
+  const legacyContext=await browser.newContext({viewport:{width:390,height:844}});
+  const legacyPage=await legacyContext.newPage();
+  await legacyPage.goto("http://127.0.0.1:8777/",{waitUntil:"domcontentloaded"});
+  const oldBackup={profile:{onboardingDone:true,name:"Fictional QA"},
+   peptides:{},customPeptides:{},dailyLogs:[],
+   supplies:[{id:"legacy-qa-kit",name:"Fictional QA Sample",activeKit:false,
+    openedVials:0,isBlend:false,vialMg:5,
+    vials:[{id:"legacy-qa-vial",status:"sealed",expectedMg:5}]}]};
+  await legacyPage.evaluate(saved=>localStorage.setItem("peptide-tracker-html-v1",JSON.stringify(saved)),oldBackup);
+  await legacyPage.reload({waitUntil:"domcontentloaded"});
+  await legacyPage.waitForFunction(()=>typeof nexusRecordNasalPreparation==="function");
+  const initialDifference=await legacyPage.evaluate(()=>
+   JSON.stringify(state)!==localStorage.getItem("peptide-tracker-html-v1"));
+  assert.equal(initialDifference,true,"Fixture must reproduce migrated in-memory vs raw storage mismatch");
+  await legacyPage.evaluate(()=>
+   nexusRecordNasalPreparation("legacy-qa-kit","legacy-qa-vial",{openSealed:true}));
+  for(const [id,value] of Object.entries({"nx-nasal-source-mg":"5","nx-nasal-bac":"1",
+   "nx-nasal-saline":"9","nx-nasal-pump":"0.1"}))
+   await legacyPage.locator("#"+id).fill(value);
+  await legacyPage.locator("#nx-nasal-record-save").click();
+  await legacyPage.locator("#nx-nasal-record-confirm").check();
+  await legacyPage.locator("#nx-nasal-record-save").click();
+  await legacyPage.waitForFunction(()=>{
+   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1")||"{}");
+   return (saved.formulationStocks||[]).some(b=>b.sourceVialId==="legacy-qa-vial");
+  },null,{timeout:15000});
+  assert.equal(await legacyPage.evaluate(()=>{
+   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1"));
+   return saved.supplies[0].vials[0].remainingMg;
+  }),0);
+  console.log("PASS: actual LIVE nasal Review/Confirm/Save after sparse backup boot migration");
+  await legacyContext.close();
+
+  // Exercise the actual Settings restore modal with an existing raw backup
+  // and a migrated UI state. No production origin or user data involved.
+  const restoreContext=await browser.newContext({viewport:{width:390,height:844}});
+  const restorePage=await restoreContext.newPage();
+  restorePage.on("dialog",dialog=>dialog.accept());
+  await restorePage.goto("http://127.0.0.1:8777/",{waitUntil:"domcontentloaded"});
+  await restorePage.evaluate(saved=>
+   localStorage.setItem("peptide-tracker-html-v1",JSON.stringify(saved)),oldBackup);
+  await restorePage.reload({waitUntil:"domcontentloaded"});
+  await restorePage.waitForFunction(()=>typeof importData==="function");
+  await restorePage.evaluate(()=>{
+   const next={peptides:{"Fictional New":{doses:[]}},profile:{name:"QA",onboardingDone:true},
+    dailyLogs:[],weightLogs:[],supplementLogs:[],
+    supplies:[{id:"restored-qa-kit",name:"Fictional New",
+     vials:[{id:"restored-qa-vial",status:"sealed",expectedMg:2}]}]};
+   importData({target:{files:[new File([JSON.stringify(next)],"fictional-backup.json",
+     {type:"application/json"})],value:""}});
+  });
+  await restorePage.locator("#nx-restore-word").fill("RESTORE");
+  await restorePage.locator("#nx-import-confirm").click();
+  await restorePage.waitForFunction(()=>{
+   const saved=JSON.parse(localStorage.getItem("peptide-tracker-html-v1")||"{}");
+   return (saved.supplies||[]).some(k=>k.id==="restored-qa-kit");
+  },null,{timeout:15000});
+  console.log("PASS: actual Settings Backup & Restore modal with migrated initial state");
+  await restoreContext.close();
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1});
