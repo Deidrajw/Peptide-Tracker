@@ -1,3 +1,16 @@
+## 2026-11-03 — Priority 4 PR130 regression matrix (NOT TESTED, required before merge)
+| Case | Expected | Latest evidence |
+| --- | --- | --- |
+| P4-STASH-01 | Stash search filters vial kits by name/kit alias/notes; no kit history or balances changed | NOT TESTED |
+| P4-STASH-02 | Search handles other physical forms and Supplies independently, with distinct no-results vs genuinely empty | NOT TESTED |
+| P4-STASH-03 | Filter/sort/group, tab switching and search restore focus at 320/390 light/dark | NOT TESTED |
+| P4-SUPP-01 | Use previous day selects latest strictly earlier supplement log; no future/day overwrite | NOT TESTED |
+| P4-SUPP-02 | Check-In date change recomputes prior source; drafts preserve saved same-date history before user confirms | NOT TESTED |
+| P4-SUPP-03 | Named template saves to optional settings collection via protected writer; duplicates and empty selection rejected; failure not acknowledged as saved | NOT TESTED |
+| P4-SUPP-04 | Apply template only changes selected supplements; no mood, symptom, note, date or previous record replacement | NOT TESTED |
+| P4-REG-01 | Protected Today, Check-In unique/date/edit, Log Dose source/inventory/undo, nasal gates, Calendar/Plans, backup restore and cross-tab stale rejection | NOT TESTED |
+| P4-ART-01 | Exact source Chromium/WebKit/mobile/nested/writer CI, 320/390 theme captures, complete isolated DEMO, LIVE ZIP, physical iPhone/VoiceOver | NOT TESTED |
+
 ## 2026-11-03 — PR129 exact-source automated evidence and remaining acceptance
 - At tested `afbeadb905ea350f2190edc408894397e3b8c2a9`: full Chromium/build #41668328314 PASS; real Chromium writer/2-tab/mixed-writer P0 #41668328302 PASS; mobile #41668328375 PASS; DS2 nested #41668328438 PASS; WebKit #41668328877 PASS. Checks include fictional migrated restore, correct supplies preview, stale-tab and uncertain-write rejection, nasal selected-source validation and exact raw source CAS. No personal data used.
 - Artifact #13248295392 inspected: 548 outer ZIP entries CRC PASS; LIVE 26 files, correct root and source parity PASS; standalone/offline DEMO byte parity and memory-only fictional data/network isolation PASS. Representative 320/390 dark/light screenshots inspected. All visual observations, real iPhone, VoiceOver, keyboard-device acceptance NOT TESTED here.
