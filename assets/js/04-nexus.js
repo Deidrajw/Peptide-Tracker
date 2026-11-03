@@ -2255,14 +2255,15 @@ async function nexusCommitPreparationTransfer(input) {
   return result.event;
 }
 
-/* Exact source-to-prepared-bottle live transaction is fully planned under one
- * exclusive commit; public controls remain gated until ALL legacy state writers
- * are coordinated. Never use a separately saved empty bottle or provisional debit.
- * State swaps only after the writer's full-snapshot readback succeeds.
+/* Preparation-only LIVE gate. The unrelated generic transfer and prepared-dose
+ * gates remain OFF. A recorded preparation is saved by one exclusive transaction
+ * after durable readback; no interim source/bottle write or history fabrication.
+ * This gate must only ship after exact-source browser/writer safety acceptance.
  */
+const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;
 async function nexusCommitRecordedNasalPreparation(input) {
-  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)
-    throw Error("Recorded nasal transfers are unavailable until mixed-writer acceptance");
+  if(!NEXUS_RECORDED_NASAL_PREPARATION_ENABLED)
+    throw Error("Recorded nasal preparations are not enabled in this release");
   if(_demoActive)throw Error("Use the in-memory fictional planner in demo mode");
   if(!globalThis.NexusPreparationBridge?.planRecordedNasal || !input?.confirmed)
     throw Error("Confirmed recorded preparation with verified planner required");
