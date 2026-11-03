@@ -1,3 +1,8 @@
+## 2026-11-02 — release review audit after explicit approval (BLOCKED)
+- Exact source 5ea01fd3: Chromium #41547092367 PASS, WebKit #41547092364 PASS, mobile #41547092333 PASS, nested #41547092384 PASS, writer #41547092346 three jobs PASS; full-app CRC and screenshots verified. Real iPhone #15 four user-reported PASS.
+- Other required physical-iPhone 16-point scorecard rows NOT fully accepted, older FAIL/OPEN evidence retained; VoiceOver #16 NOT TESTED. Therefore complete UAT gate BLOCKED. Overall release P0 BLOCKED, despite mixed writer technical P0 PASS.
+- No merge, deployment or production verification performed. PRIMARY NEXT: single consolidated physical verification for open scorecard rows and final P0 re-review; keep nasal LIVE OFF.
+
 ## 2026-11-02 — focused real iPhone #15 UAT user-reported 4/4 PASS
 - Candidate application CSS 5ea01fd3, user completed device checklist: (1) typography/final spacing PASS; (2) disclosure and preferences PASS; (3) both checkbox controls PASS; (4) light/dark appearance PASS. Evidence: user-provided checklist result; not an automated test or VoiceOver acceptance.
 - Exact source five CI workflows PASS and canonical artifact verified as documented immediately below. Other protected workflows limited to existing automated coverage; no claim of universal real-device acceptance. No merge/deploy; both nasal LIVE gates OFF.
