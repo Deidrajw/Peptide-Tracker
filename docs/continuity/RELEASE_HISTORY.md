@@ -1,3 +1,7 @@
+## 2026-11-02 — v0.9.20-beta PR124 USER-CONFIRMED DEPLOYED on Cloudflare
+- GitHub PR124 merge commit 0eca75079626936ef1570be3c0a3e5b8c21c8f69; user stated "confirmed deployed" for primary https://nexuspeplog.pages.dev/. Hosting claim is user-confirmed, not independently asset/commit verified (direct fetch returned cache miss).
+- Application source 5ea01fd3 exact-source five workflows PASS, 16/16 user-reported iPhone acceptance PASS. No manual storage writes/migration. Both nasal LIVE gates intended OFF. Independent Cloudflare source integrity and production smoke checks still outstanding.
+
 ## 2026-11-02 — v0.9.20-beta PR124 MERGED; Cloudflare deployment VERIFICATION INCOMPLETE
 - User exact-source physical iPhone acceptance 16/16 PASS, zero failures, blocked or not-tested; user approval received. Five exact application CI workflows passed, including mixed-writer and two-tab safety; canonical artifact #13190285462 full fictional DEMO and 26-file LIVE ZIP verified. Changes: source-aware Log Dose and administration, DS2 form/stash hierarchy, inventory-preparation safety and final restrained optional-dose typography/spacing; both nasal LIVE gates remain OFF. Saved data/history protected; no authorized migration/reset.
 - Merge PR #124 GitHub SUCCESS at 0eca75079626936ef1570be3c0a3e5b8c21c8f69; main CSS blob 022bea2a408a1570d2f621b0d423ba6d9ccdb6b3 identical to tested application. Deployment may auto-trigger via existing Cloudflare Git integration; primary URL and assets were NOT accessible from tools, so no independent proof of production deployment.
