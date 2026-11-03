@@ -2575,7 +2575,9 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    }else{
     showErrorBanner(_demoActive?
      "Preparation was not recorded: "+String(error?.message||"source or destination verification failed")+". No inventory changed.":
-     "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved.");
+     (/safety-gated|unavailable until|mixed-writer acceptance/i.test(String(error?.message||""))?
+      "Nasal preparation saving is not enabled yet. Nothing saved.":
+      "Preparation save could not be verified. Reopen Stash and check the source vial and prepared bottle before retrying. Do not repeat the transfer until its status is confirmed."));
    }
    button.disabled=false;
   }
