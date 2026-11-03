@@ -1,4 +1,11 @@
 const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const appSource=fs.readFileSync(require("node:path").join(__dirname,"../assets/js/04-nexus.js"),"utf8");
+assert.match(appSource,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/,
+ "Preparation writes must remain gated until LIVE acceptance");
+assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/,
+ "Prepared-dose writes must remain independently gated");
+
 const {create}=require("../assets/js/nexus-write-coordinator.js");
 const bridge=require("../assets/js/nexus-preparation-bridge.js");
 const prepared=require("../assets/js/nexus-prepared-dose-transaction.js");
