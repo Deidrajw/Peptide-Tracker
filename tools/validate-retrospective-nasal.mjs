@@ -50,7 +50,7 @@ try{
   assert.equal(await page.locator("#nx-nasal-record-review").isVisible(),true);
   const summary=await page.locator("#nx-nasal-record-review").innerText();
   assert.ok(summary.includes("2026-10-29"),"Historical date visible in review");
-  assert.ok(summary.includes(prior==="unknown"?"Unverified":"Nominal balance reduced"),"Prior use displayed accurately");
+  assert.ok(summary.includes(prior==="unknown"?"Unverified · logging blocked":"4.70 mg / 4.70 mL (nominal)"),"Retrospective balance and prior use displayed accurately: "+summary);
   fs.mkdirSync("dist",{recursive:true});
   await page.screenshot({path:"dist/Nexus_"+version+"_RETROSPECTIVE_"+engine.name()+"_"+width+"_"+theme+"_"+prior+".png"});
   await page.locator("#nx-nasal-record-confirm").check();
