@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.22-beta",
+  "version": "v0.9.23-beta",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,39 +9,39 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "bd15c43f7a1b718098b232082903a90d854c15ba",
-    "pullRequest": 127
+    "baselineMainCommit": "383c6b7a88c6d2903454bdfe256684b4c455d93e",
+    "pullRequest": 129
   },
-  "headline": "Recorded nasal preparation saving with protected source-to-bottle inventory",
+  "headline": "Reliable backup restoration and LIVE preparation saving",
   "changes": [
     {
-      "key": "nasal-preparation-live",
-      "title": "Save confirmed nasal preparation in Stash",
-      "detail": "The reviewed preparation record opens the exact source vial when needed and transfers recorded mass into a linked nasal bottle using one exclusive, readback-verified inventory transaction.",
-      "screen": "Stash / Supplies",
-      "kind": "feature"
-    },
-    {
-      "key": "nasal-preparation-release-isolation",
-      "title": "Independently gated preparation-only release",
-      "detail": "Recorded preparation is enabled; generic preparation transfers and inventory-backed nasal dose administration remain disabled. Missing verified remaining balances are blocked before review.",
-      "screen": "Stash / Supplies",
+      "key": "restore-canonical-snapshot",
+      "title": "Restore JSON backups without false stale-state conflicts",
+      "detail": "Backup & Restore compares the exact durable source snapshot under the exclusive storage lock, rather than the normalized in-memory display state. Concurrent-tab and uncertain writes remain blocked.",
+      "screen": "More / Backup & Restore",
       "kind": "fix"
     },
     {
-      "key": "cross-tab-safety",
-      "title": "Preserve source IDs, history and stale-tab protection",
-      "detail": "Exact-source and retrospective known/unknown use checks, failed-write acknowledgement, stale-tab rejection and fictional Chromium Review/Confirm/Save acceptance were added.",
-      "screen": "Stash / History",
-      "kind": "improvement"
+      "key": "restore-stash-count",
+      "title": "Show the real Stash inventory count in restore preview",
+      "detail": "Backup review counts supplies rather than the obsolete peptideKits field and retains the requirement to explicitly confirm replacement.",
+      "screen": "More / Backup & Restore",
+      "kind": "fix"
+    },
+    {
+      "key": "nasal-canonical-save",
+      "title": "Use the durable source for confirmed nasal preparation",
+      "detail": "Preparation validates that the selected vial matches the normalized saved inventory, then commits against the exact durable snapshot under one exclusive lock. Stale tabs, uncertain writes and unverified source balances remain blocked.",
+      "screen": "Stash / Prepare Nasal Bottle",
+      "kind": "fix"
     }
   ],
-  "dataImpact": "No destructive migration or automatic overwrite of existing localStorage, backups, protocols, Check-Ins or dose history. New user-confirmed preparation records debit the selected source vial and credit its linked prepared nasal bottle atomically. Historical prep timestamps and prior-use reconciliation are preserved. An open vial without verifiable remainingMg is rejected rather than inferred.",
+  "dataImpact": "No automatic migration, backup deletion, history overwrite or destructive rewrite. Restore remains an explicit full-state replacement with a recovery copy, and rejects concurrent changes or missing storage capacity. Confirmed nasal preparation continues to debit only the exact verified source and credit a linked bottle in one readback-verified transaction; other saved data is preserved.",
   "limitations": [
-    "Prepared nasal administration/dose logging remains OFF. Generic transfer controls remain OFF.",
-    "Nominal concentration and spray arithmetic do not verify actual pump delivery, sterility, compatibility, stability or route suitability.",
-    "Current branch is a candidate until exact-head CI, full LIVE/DEMO parity, approved merge and independent Cloudflare verification finish.",
-    "A physical iPhone LIVE saving test and independent VoiceOver acceptance have not been performed for this candidate."
+    "A storage-write failure or stale concurrent-tab change still blocks restore/preparation; do not retry uncertain transfers before verifying Stash.",
+    "Generic preparation transfers and prepared nasal dose logging remain disabled.",
+    "No claim that saved records reflect actual spray delivery, sterility or suitability. Calculator outputs are nominal.",
+    "This is a branch candidate only until CI, physical iPhone acceptance, approved merge and primary Cloudflare parity."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
