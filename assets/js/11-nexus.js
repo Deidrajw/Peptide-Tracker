@@ -604,7 +604,17 @@ function importData(e) {
         // The independent recovery backup above remains available to the user.
         showSaveWarning();
         console.error("Backup restore failed",err);
-        alert("Restore failed. Existing records were retained where browser storage permitted.");
+        const reason=String(err?.message||err||"");
+        // A stale CAS rejects BEFORE writing, unlike uncertain write/readback
+        // failures. Explain the distinction without claiming an uncertain
+        // storage outcome succeeded or failed.
+        const stale=/Saved data changed|prior write was uncertain|Writes blocked until reloaded/i.test(reason);
+        const recoveryFailed=/QuotaExceeded|quota|storage is full/i.test(reason);
+        alert(stale?
+          "Restore blocked: saved browser data changed since this screen loaded, or a previous write is uncertain. Reload, inspect your existing records and backup before another attempt.":
+          recoveryFailed?
+          "Restore could not be verified because browser storage is full or unavailable. Preserve your JSON backup and check existing records before retrying.":
+          "Restore could not be verified. Existing data might have changed; reopen and inspect your records before retrying. Your original JSON file was not modified.");
       }
     };
   };
