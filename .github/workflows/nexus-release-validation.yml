@@ -119,6 +119,7 @@ jobs:
           node tools/validate-cross-tab-lock.mjs
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
+          node tools/validate-retrospective-nasal.mjs
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
           node tools/validate-protocol-design.mjs
