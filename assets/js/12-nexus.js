@@ -92,10 +92,14 @@ function nxOpenCompoundSheet(trigger) {
 
 function wireBody() {
   // nexus api key
-  const nks=$("#nexus-key-save"); if(nks) nks.onclick=()=>{
+  const nks=$("#nexus-key-save"); if(nks) nks.onclick=async()=>{
     const v=document.getElementById("nexus-key-input").value.trim();
-    state.settings.nexusApiKey=v; saveState();
-    nks.textContent=v?"✓ Key saved":"Key cleared"; setTimeout(()=>nks.textContent="Save API Key",2000);
+    if(nks.disabled)return;
+    nks.disabled=true;nks.textContent="Saving…";
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"nexusApiKey",value:v});
+    nks.disabled=false;
+    if(!ok){nks.textContent="Save API Key";return;}
+    nks.textContent=v?"✓ Key saved":"Key cleared";setTimeout(()=>{if(nks.isConnected)nks.textContent="Save API Key";},2000);
   };
   const gnp=$("#goto-profile-nexus"); if(gnp) gnp.onclick=()=>{ state._profileReturn=tab; tab="profile"; render(); window.scrollTo(0,0); };
   const pbk=$("#profile-back"); if(pbk) pbk.onclick=()=>{ const ret=state._profileReturn||"home"; state._profileReturn=null; tab=ret; render(); window.scrollTo(0,0); };
@@ -175,34 +179,46 @@ function wireBody() {
   const ainp=$("#amino-input");
   if(ainp) ainp.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();aminoSend(ainp.value);ainp.value="";} });
   document.querySelectorAll(".edit-supp-log").forEach(b=>b.onclick=()=>supplementModal(b.dataset.date));
-  document.querySelectorAll(".del-supp-log").forEach(b=>b.onclick=()=>{
-    state.supplementLogs=(state.supplementLogs||[]).filter(s=>dayKey(s.date)!==b.dataset.date);
-    saveState();render();
+  document.querySelectorAll(".del-supp-log").forEach(b=>b.onclick=async()=>{
+    if(b.disabled)return;b.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-log-delete",date:b.dataset.date});
+    if(!ok){b.disabled=false;return;}
+    render();
   });
   document.querySelectorAll(".qa-supp").forEach(b=>b.onclick=()=>supplementModal());
   const tlt=$("#timeline-toggle"); if(tlt) tlt.onclick=()=>{state._timelineOpen=!state._timelineOpen;renderBody();};
-  const as=$("#add-supp"); if(as) as.onclick=()=>{
+  const as=$("#add-supp"); if(as) as.onclick=async()=>{
     const inp=document.getElementById("new-supp"); const v=(inp?.value||"").trim();
-    if(!v) return;
-    if(!state.settings.supplements) state.settings.supplements=[];
-    if(state.settings.supplements.some(s=>s.toLocaleLowerCase()===v.toLocaleLowerCase())){
+    if(!v||as.disabled)return;
+    if((state.settings.supplements||[]).some(s=>s.toLocaleLowerCase()===v.toLocaleLowerCase())){
       alert("This supplement is already in your list."); return;
     }
-    state.settings.supplements.push(v);
-    state.settings.supplements.sort((a,b)=>a.localeCompare(b));
-    saveState(); renderBody();
+    as.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-list-add",name:v});
+    if(!ok){as.disabled=false;showErrorBanner("Supplement was not saved. Your entry is still available; reload to review saved changes.");return;}
+    renderBody();
   };
   const ni=document.getElementById("new-supp"); if(ni) ni.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("add-supp")?.click();}});
-  document.querySelectorAll(".del-supp").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".del-supp").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name;
-    if(!confirm("Remove "+name+" from your supplement list? Historical supplement logs will be preserved.")) return;
-    state.settings.supplements=(state.settings.supplements||[]).filter(s=>s!==name);
-    saveState(); renderBody();
+    if(b.disabled||!confirm("Remove "+name+" from your supplement list? Historical supplement logs will be preserved.")) return;
+    b.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"supplement-list-remove",name});
+    if(!ok){b.disabled=false;showErrorBanner("Supplement was not removed. No save was confirmed.");return;}
+    renderBody();
   });
   const er=$("#enablerem");  if(er) er.onclick=enableReminders;
   const dr=$("#disablerem"); if(dr) dr.onclick=disableReminders;
-  const epr=$("#enablephaserem");  if(epr) epr.onclick=()=>{ state.settings.phaseRemindersEnabled=true; saveState(); render(); };
-  const dpr=$("#disablephaserem"); if(dpr) dpr.onclick=()=>{ state.settings.phaseRemindersEnabled=false; saveState(); render(); };
+  const epr=$("#enablephaserem"); if(epr) epr.onclick=async()=>{
+    if(epr.disabled)return;epr.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"phaseRemindersEnabled",value:true});
+    if(!ok){epr.disabled=false;return;}render();
+  };
+  const dpr=$("#disablephaserem"); if(dpr) dpr.onclick=async()=>{
+    if(dpr.disabled)return;dpr.disabled=true;
+    const ok=await nexusCommitScopedStateChange({kind:"setting",key:"phaseRemindersEnabled",value:false});
+    if(!ok){dpr.disabled=false;return;}render();
+  };
   // weekly digest
   const od=$("#opendigest"); if(od) od.onclick=weeklyDigestModal;
   // theme toggle
@@ -222,7 +238,7 @@ function wireBody() {
     };
   });
   document.querySelectorAll(".supply-edit").forEach(b=>b.onclick=()=>{const e=(state.equipmentItems||[]).find(x=>x.id===+b.dataset.id);if(e)equipmentModal(e);});
-  document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".supply-delete").forEach(b=>b.onclick=()=>confirmAction("Delete this supply and its history?",async()=>{state.equipmentItems=(state.equipmentItems||[]).filter(x=>x.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".supply-log-use").forEach(b=>b.onclick=()=>logSupplyUseModal(+b.dataset.id));
   document.querySelectorAll(".supply-activate-next").forEach(b=>b.onclick=()=>activateNextSupplyUnit(+b.dataset.id));
   document.querySelectorAll(".supply-restock").forEach(b=>b.onclick=()=>restockSupplyModal(+b.dataset.id));
@@ -256,7 +272,7 @@ function wireBody() {
     } catch(e) { console.error(e); }
   };
   const nd=document.getElementById("nuke-data"); if(nd) nd.onclick=()=>{
-    confirmAction("⚠️ Remove ALL data? This cannot be undone.",()=>{localStorage.removeItem(STORE_KEY);state=migrate(null);tab="home";render();});
+    confirmAction("⚠️ Remove ALL data? This cannot be undone.",async()=>{try{if(!await nexusEraseSavedState())return;state=migrate(null);tab="home";render();}catch(e){console.error(e);showSaveWarning();}});
   };
   const delBtns=[
     ["del-health-all","Remove all health data (macros, weight, activity, measurements)?",()=>{
@@ -280,7 +296,7 @@ function wireBody() {
   ];
   delBtns.forEach(([id,msg,fn])=>{
     const el=document.getElementById(id);
-    if(el) el.onclick=()=>confirmAction("⚠️ "+msg+" This cannot be undone.",()=>{fn();saveState();render();});
+    if(el) el.onclick=()=>confirmAction("⚠️ "+msg+" This cannot be undone.",async()=>{const saved=await nexusCommitScopedStateChange({kind:"bulk-delete",target:id});if(saved)render();});
   });
   // quick log
   const nxAddLogToggle=document.getElementById("nx-add-log-toggle");
@@ -310,23 +326,41 @@ function wireBody() {
   });
   const resetProtocolFilter=document.querySelector("#nx-protocol-reset-filter");
   if(resetProtocolFilter) resetProtocolFilter.onclick=()=>{state._protocolStatusFilter="all";renderBody();};
+  // P-14 global pause/resume: the action is confirmed before any exclusive write.
+  // Existing individually paused protocols are excluded by nexusBulkProtocolAction.
+  const pauseAll=document.querySelector("#nx-pause-all-protocols");
+  if(pauseAll)pauseAll.onclick=()=>{
+    const count=(state.protocols||[]).filter(p=>["active","in_progress"].includes(p.status)).length;
+    if(!count)return;
+    confirmAction("Pause "+count+" active protocol"+(count===1?"":"s")+"? Existing dose history, individual pauses and inventory will remain unchanged.",()=>{
+      nexusBulkProtocolAction("pause");
+    },{confirmLabel:"Pause protocols",cancelLabel:"Cancel",tone:"warning"});
+  };
+  const resumeAll=document.querySelector("#nx-resume-all-protocols");
+  if(resumeAll)resumeAll.onclick=()=>{
+    const count=(state.protocols||[]).filter(p=>p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt).length;
+    if(!count)return;
+    confirmAction("Resume "+count+" protocol"+(count===1?"":"s")+" paused by Pause All? Protocols already paused individually will remain paused.",()=>{
+      nexusBulkProtocolAction("resume");
+    },{confirmLabel:"Resume protocols",cancelLabel:"Cancel",tone:"success"});
+  };
   const np=$("#new-protocol"); if(np) np.onclick=()=>protocolBuilderModal();
   const esp=$("#empty-setup-protocol"); if(esp) esp.onclick=()=>{tab="protocols";render();window.scrollTo(0,0);};
-  document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p){p.status="active";saveState();renderBody();}
+    if(p){p.status="active";if(!await nexusCommitCurrentState())return;renderBody();}
   });
-  document.querySelectorAll(".proto-pause").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".proto-pause").forEach(b=>b.onclick=async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p){pauseProtocol(p);saveState();renderBody();}
+    if(p){pauseProtocol(p);if(!await nexusCommitCurrentState())return;renderBody();}
   });
-  document.querySelectorAll(".proto-resume").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".proto-resume").forEach(b=>b.onclick=async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p&&p.pausedAt){ resumeProtocol(p); saveState(); renderBody(); }
+    if(p&&p.pausedAt){ resumeProtocol(p); if(!await nexusCommitCurrentState())return; renderBody(); }
   });
-  document.querySelectorAll(".proto-complete").forEach(b=>b.onclick=()=>confirmAction("Mark protocol as completed?",()=>{
+  document.querySelectorAll(".proto-complete").forEach(b=>b.onclick=()=>confirmAction("Mark protocol as completed?",async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p){p.status="completed";saveState();renderBody();}
+    if(p){p.status="completed";if(!await nexusCommitCurrentState())return;renderBody();}
   }, { confirmLabel: "Complete", cancelLabel: "Cancel", tone: "success" }));
   document.querySelectorAll(".proto-log-first").forEach(b=>b.onclick=()=>{
     doseModal(b.dataset.name);
@@ -418,7 +452,7 @@ function wireBody() {
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
     if(p) protocolBuilderModal(p);
   });
-  document.querySelectorAll(".proto-del").forEach(b=>b.onclick=()=>confirmAction("Delete this protocol?",()=>{state.protocols=(state.protocols||[]).filter(p=>String(p.id)!==String(b.dataset.id));saveState();renderBody();}));
+  document.querySelectorAll(".proto-del").forEach(b=>b.onclick=()=>confirmAction("Delete this protocol?",async()=>{state.protocols=(state.protocols||[]).filter(p=>String(p.id)!==String(b.dataset.id));if(!await nexusCommitCurrentState())return;renderBody();}));
   document.querySelectorAll(".plans-sub").forEach(b=>b.onclick=()=>{state._plansSub=b.dataset.sub;renderBody();});
   document.querySelectorAll(".manage-plan-btn").forEach(b=>b.onclick=()=>managePlanItemMenu(b.dataset.type, b.dataset.id));
   document.querySelectorAll(".nx-open-goal").forEach(b=>b.onclick=()=>goalDetailModal(b.dataset.id));
@@ -448,7 +482,7 @@ function wireBody() {
     else if(type==="protocol") protocolModal(item);
     else shoppingModal(item);
   });
-  document.querySelectorAll(".plan-del").forEach(b=>b.onclick=()=>{const {type,id}=b.dataset,label=type==="goal"?"goal":type==="research"?"research item":"shopping item";confirmAction(`Delete this ${label}?`,()=>{if(!state.plans)return;const key=type==="goal"?"goals":type==="research"?"research":"shopping";state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));saveState();renderBody();});});
+  document.querySelectorAll(".plan-del").forEach(b=>b.onclick=()=>{const {type,id}=b.dataset,label=type==="goal"?"goal":type==="research"?"research item":"shopping item";confirmAction(`Delete this ${label}?`,async()=>{if(!state.plans)return;const key=type==="goal"?"goals":type==="research"?"research":"shopping";state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));if(!await nexusCommitCurrentState())return;renderBody();});});
   document.querySelectorAll(".qa-weight").forEach(b=>b.onclick=()=>weightModal());
   const qd=$("#today-log-dose"); if(qd) qd.onclick=()=>todayLogDosePicker();
   const nxCustomize=$("#nx-qa-customize");if(nxCustomize)nxCustomize.onclick=nxQuickCustomize;
@@ -459,7 +493,7 @@ function wireBody() {
   const qc=$("#qa-combo"); if(qc) qc.onclick=()=>comboDoseModal();
   const restoreAlerts=$("#restore-dismissed-alerts"); if(restoreAlerts) restoreAlerts.onclick=()=>{
     const count=Object.keys(state.settings.dismissedReminders||{}).length;
-    confirmAction(`Restore ${count} dismissed alert${count===1?"":"s"}?`,()=>{state.settings.dismissedReminders={};saveState();render();});
+    confirmAction(`Restore ${count} dismissed alert${count===1?"":"s"}?`,async()=>{state.settings.dismissedReminders={};if(!await nexusCommitCurrentState())return;render();});
   };
   document.querySelectorAll(".qa-measure").forEach(b=>b.onclick=()=>measureModal());
   document.querySelectorAll(".qa-macro").forEach(b=>b.onclick=()=>macroModal());
@@ -472,11 +506,11 @@ function wireBody() {
   document.querySelectorAll(".skipdose").forEach(b=>b.onclick=()=>skipDoseModal(b.dataset.name, b.dataset.date));
   document.querySelectorAll(".resolveoverdue").forEach(b=>b.onclick=()=>resolveOverdueModal(b.dataset.name, b.dataset.date));
   document.querySelectorAll(".whathappened").forEach(b=>b.onclick=()=>resolveOverdueModal(b.dataset.name, b.dataset.date, {takenLateFirst:true}));
-  document.querySelectorAll(".undoskip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".undoskip").forEach(b=>b.onclick=async()=>{
     const entry = state.peptides[b.dataset.name] || state.customPeptides[b.dataset.name];
     if (!entry || !entry.skips) return;
     entry.skips = entry.skips.filter(s => dayKey(s.date) !== dayKey(b.dataset.date));
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return;render();
   });
   document.querySelectorAll(".compound-intel-btn").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
@@ -522,7 +556,7 @@ function wireBody() {
     const dose=tgt[name]&&tgt[name].doses.find(d=>d.id===id);
     if(dose) doseModal(name,dose);
   });
-  document.querySelectorAll(".colorpick").forEach(c=>c.onchange=()=>{
+  document.querySelectorAll(".colorpick").forEach(c=>c.onchange=async()=>{
     // onchange (not oninput) is deliberate: oninput fires continuously while dragging the
     // native color picker's spectrum/slider, and renderBody() rebuilds the whole page —
     // including this very <input> element — on every single one of those events. That
@@ -533,23 +567,23 @@ function wireBody() {
     const name=c.dataset.name; const builtin=!!PEPTIDES[name];
     const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:cfg(name).defaultSchedule,doses:[]};
-    tgt[name].customColor=c.value; saveState(); renderBody();
+    tgt[name].customColor=c.value; if(!await nexusCommitCurrentState())return; renderBody();
   });
-  document.querySelectorAll(".resetcolor").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".resetcolor").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name; const builtin=!!PEPTIDES[name];
     const tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[name]) delete tgt[name].customColor; saveState(); renderBody();
+    if(tgt[name]) delete tgt[name].customColor; if(!await nexusCommitCurrentState())return; renderBody();
   });
-  document.querySelectorAll(".deldose").forEach(b=>b.onclick=()=>confirmAction("Delete this dose entry?",()=>{
+  document.querySelectorAll(".deldose").forEach(b=>b.onclick=async()=>confirmAction("Delete this dose entry?",async()=>{
     const name=b.dataset.name,id=+b.dataset.id,builtin=!!PEPTIDES[name],tgt=builtin?state.peptides:state.customPeptides;
     if(tgt[name]){
       const dose = tgt[name].doses.find(d=>d.id===id);
       if (dose && reverseDoseInventoryEffect(dose)===false)return;
       tgt[name].doses=tgt[name].doses.filter(d=>d.id!==id);
     }
-    saveState();render();
+    if(!await nexusCommitCurrentState())return;render();
   }));
-  document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".histtoggle").forEach(b=>b.onclick=async()=>{
     const box=document.querySelector(`.histbox[data-name="${CSS.escape(b.dataset.name)}"]`);
     if(box){
       const opening=box.style.display==="none";
@@ -558,24 +592,24 @@ function wireBody() {
       b.textContent=opening?"Close history":"History ("+box.querySelectorAll(".nx-dose-history-record").length+")";
     }
   });
-  document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tunetoggle").forEach(b=>b.onclick=async()=>{
     const box=document.querySelector(`.tunebox[data-name="${CSS.escape(b.dataset.name)}"]`);
     if(box) box.style.display=box.style.display==="none"?"block":"none";
   });
-  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=()=>nxOpenCompoundSheet(b));
-  document.querySelectorAll(".tunerange").forEach(r=>r.oninput=()=>{
+  document.querySelectorAll(".moremenu").forEach(b=>b.onclick=async()=>nxOpenCompoundSheet(b));
+  document.querySelectorAll(".tunerange").forEach(r=>{r.oninput=()=>{const tv=r.closest(".tunebox")?.querySelector(".tuneval");if(tv)tv.textContent=parseFloat(r.value)+" days";};r.onchange=async()=>{
     const name=r.dataset.name; const days=parseFloat(r.value);
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:days,doses:[]};
-    tgt[name].scheduleDays=days; saveState();
+    tgt[name].scheduleDays=days; if(!await nexusCommitCurrentState())return;
     const tv=r.closest(".tunebox")?.querySelector(".tuneval"); if(tv) tv.textContent=days+" days";
-  });
-  document.querySelectorAll(".route-btn").forEach(b=>b.onclick=()=>{
+  };});
+  document.querySelectorAll(".route-btn").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, route=b.dataset.route;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]};
     tgt[name].route = route;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     // In place, same reason as sched-mode-btn below — selecting a route shouldn't collapse
     // the panel you're actively adjusting.
     const box = b.closest(".tunebox");
@@ -590,21 +624,21 @@ function wireBody() {
       if (nasalUi) nasalUi.style.display = route==="Nasal" ? "block" : "none";
     }
   });
-  document.querySelectorAll(".route-mcgperspray").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".route-mcgperspray").forEach(inp=>inp.onchange=async()=>{
     const name=inp.dataset.name;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) return;
     const v = parseFloat(inp.value);
     tgt[name].mcgPerSpray = isNaN(v) ? null : v;
-    saveState();
+    if(!await nexusCommitCurrentState())return;
   });
-  document.querySelectorAll(".sched-mode-btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".sched-mode-btn").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, mode=b.dataset.mode;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]};
     tgt[name].scheduleType = mode;
     if(mode==="weekdays" && !(tgt[name].scheduleWeekdays||[]).length) tgt[name].scheduleWeekdays=[1,3,5]; // sensible default: Mon/Wed/Fri
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     // Update in place (no full re-render) so the settings panel stays open
     const box = b.closest(".tunebox");
     if (box) {
@@ -626,7 +660,7 @@ function wireBody() {
       });
     }
   });
-  document.querySelectorAll(".sched-wd-chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".sched-wd-chip").forEach(b=>b.onclick=async()=>{
     const name=b.dataset.name, day=+b.dataset.day;
     const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides;
     if(!tgt[name]) return;
@@ -634,7 +668,7 @@ function wireBody() {
     if(cur.has(day)) cur.delete(day); else cur.add(day);
     if(cur.size===0) return; // require at least one day selected
     tgt[name].scheduleWeekdays=[...cur].sort((a,b)=>a-b);
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     const on=cur.has(day), cc=cfg(name).color;
     b.style.background = on ? cc+"22" : "var(--surface-3)";
     b.style.borderColor = on ? cc : "var(--border)";
@@ -645,19 +679,19 @@ function wireBody() {
   // This is the actual dosing engine's source of truth; full re-render since the number
   // of time-row inputs changes.
   const getTgt = (name) => { const builtin=!!PEPTIDES[name]; const tgt=builtin?state.peptides:state.customPeptides; if(!tgt[name]) tgt[name]={status:"active",scheduleDays:7,doses:[]}; return tgt[name]; };
-  document.querySelectorAll(".dpd-inc").forEach(b=>b.onclick=()=>{
-    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.min(4,(t.dosesPerDay||1)+1); saveState(); render();
+  document.querySelectorAll(".dpd-inc").forEach(b=>b.onclick=async()=>{
+    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.min(4,(t.dosesPerDay||1)+1); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".dpd-dec").forEach(b=>b.onclick=()=>{
-    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.max(1,(t.dosesPerDay||1)-1); saveState(); render();
+  document.querySelectorAll(".dpd-dec").forEach(b=>b.onclick=async()=>{
+    const t=getTgt(b.dataset.name); t.dosesPerDay=Math.max(1,(t.dosesPerDay||1)-1); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".dpd-time-input").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".dpd-time-input").forEach(inp=>inp.onchange=async()=>{
     const t=getTgt(inp.dataset.name), i=+inp.dataset.i;
     if(!t.times) t.times=getOccurrenceTimes(t);
-    t.times[i]=inp.value; saveState();
+    t.times[i]=inp.value; if(!await nexusCommitCurrentState())return;
   });
   document.querySelectorAll(".dpd-amt-input").forEach(inp=>{
-    inp.oninput = () => {
+    inp.oninput = async () => {
       // Live-update the total line as they type, without a full re-render (which would
       // steal focus mid-entry) — reads straight from the sibling inputs' current values,
       // not saved state, so it reflects exactly what's on screen right now.
@@ -679,17 +713,17 @@ function wireBody() {
         }
       }
     };
-    inp.onchange=()=>{
+    inp.onchange=async()=>{
       const t=getTgt(inp.dataset.name), i=+inp.dataset.i;
       if(!t.doseAmounts) t.doseAmounts=[];
-      t.doseAmounts[i]=inp.value.trim(); saveState();
+      t.doseAmounts[i]=inp.value.trim(); if(!await nexusCommitCurrentState())return;
     };
   });
   // Protocol phase controls — phases live on the compound record itself (t.phases), the
   // same object dosesPerDay/times/scheduleDays already live on. Toggling ON seeds one
   // phase from whatever the compound's current schedule already is, so switching to
   // phases never silently resets a working schedule.
-  document.querySelectorAll(".phases-toggle").forEach(cb=>cb.onchange=()=>{
+  document.querySelectorAll(".phases-toggle").forEach(cb=>cb.onchange=async()=>{
     const t=getTgt(cb.dataset.name);
     if (cb.checked) {
       if (!t.phases || !t.phases.length) {
@@ -699,56 +733,61 @@ function wireBody() {
     } else {
       t.phases = [];
     }
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; saveState(); render(); });
-  document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); saveState(); render(); });
-  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); saveState(); render(); });
-  document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; saveState(); render(); });
-  document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); saveState(); });
-  document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); if(!await nexusCommitCurrentState())return; });
+  document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi];
     if (!ph.schedule) ph.schedule={};
     if (b.dataset.mode==="weekly") { ph.schedule.scheduleWeekdays = ph.schedule.scheduleWeekdays&&ph.schedule.scheduleWeekdays.length ? ph.schedule.scheduleWeekdays : [0]; }
     else { ph.schedule.scheduleWeekdays = null; if(!ph.schedule.scheduleDays) ph.schedule.scheduleDays=1; }
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-wd-chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-wd-chip").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi], day=+b.dataset.day;
     const cur=new Set(ph.schedule.scheduleWeekdays||[]);
     if(cur.has(day)) cur.delete(day); else cur.add(day);
     if(cur.size===0) return;
-    ph.schedule.scheduleWeekdays=[...cur].sort((a,b)=>a-b); saveState(); render();
+    ph.schedule.scheduleWeekdays=[...cur].sort((a,b)=>a-b); if(!await nexusCommitCurrentState())return; render();
   });
-  document.querySelectorAll(".phase-interval").forEach(inp=>inp.onchange=()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].schedule.scheduleDays=Math.max(1,parseFloat(inp.value)||1); saveState(); });
-  document.querySelectorAll(".phase-dpd-inc").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.min(4,(ph.schedule.dosesPerDay||1)+1); saveState(); render(); });
-  document.querySelectorAll(".phase-dpd-dec").forEach(b=>b.onclick=()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.max(1,(ph.schedule.dosesPerDay||1)-1); saveState(); render(); });
-  document.querySelectorAll(".phase-time").forEach(inp=>inp.onchange=()=>{
+  document.querySelectorAll(".phase-interval").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].schedule.scheduleDays=Math.max(1,parseFloat(inp.value)||1); if(!await nexusCommitCurrentState())return; });
+  document.querySelectorAll(".phase-dpd-inc").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.min(4,(ph.schedule.dosesPerDay||1)+1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-dpd-dec").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name), ph=t.phases[+b.dataset.pi]; ph.schedule.dosesPerDay=Math.max(1,(ph.schedule.dosesPerDay||1)-1); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-time").forEach(inp=>inp.onchange=async()=>{
     const t=getTgt(inp.dataset.name), ph=t.phases[+inp.dataset.pi], ti=+inp.dataset.ti;
     if(!ph.schedule.times) ph.schedule.times=[];
-    ph.schedule.times[ti]=inp.value; saveState();
+    ph.schedule.times[ti]=inp.value; if(!await nexusCommitCurrentState())return;
   });
-  document.querySelectorAll(".phase-add").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".phase-add").forEach(b=>b.onclick=async()=>{
     const t=getTgt(b.dataset.name);
     const last=t.phases[t.phases.length-1];
     t.phases.push({ durationWeeks:4, dose:last?.dose||"", schedule: last?.schedule ? JSON.parse(JSON.stringify(last.schedule)) : {scheduleDays:7,dosesPerDay:1,times:["08:00"]} });
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return; render();
   });
   // home filters
   // Scroll position is preserved across these re-renders — they're filters/expansion
   // within the same page, not navigation to a different screen, so jumping to the top
   // would be jarring and wrong.
   const preserveScroll = (fn) => { const y = window.scrollY; fn(); requestAnimationFrame(()=>window.scrollTo(0,y)); };
-  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=()=>preserveScroll(()=>{
+  document.querySelectorAll(".nx-track-select").forEach(el=>el.onchange=async()=>{
     const allowed=["checkin","supplements","weight","nutrition"];
     const selected=Array.isArray(state.settings.todayTrackingActivities)?[...state.settings.todayTrackingActivities]:["checkin","supplements"];
     const next=new Set(selected.filter(id=>allowed.includes(id)));
-    if(el.checked) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
-    state.settings.todayTrackingActivities=allowed.filter(id=>next.has(id));
-    saveState(); render();
+    const requested=el.checked;
+    if(requested) next.add(el.dataset.activity); else next.delete(el.dataset.activity);
+    const value=allowed.filter(id=>next.has(id)),y=window.scrollY;
+    el.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"setting",key:"todayTrackingActivities",value});
+    if(!saved){el.checked=!requested;el.disabled=false;return;}
+    render();
+    requestAnimationFrame(()=>window.scrollTo(0,y));
     const panel=document.querySelector(".nx-daily-tracking");
     if(panel)panel.open=true;
-  }));
+  });
   document.querySelectorAll(".nx-activity-period").forEach(btn=>btn.onclick=()=>{
     state._todayActivityPeriod=btn.dataset.period;
     document.querySelectorAll(".nx-activity-period").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));
@@ -793,11 +832,11 @@ function wireBody() {
       choices().forEach(x=>x.checked=next);
       refresh();
     };
-    const dismissIds=ids=>{
+    const dismissIds=async ids=>{
       const existing=state.settings.dismissedReminders||{};
       ids.forEach(id=>{if(id)existing[id]=Date.now();});
       state.settings.dismissedReminders=existing;
-      saveState();closeAlerts();render();
+      if(!await nexusCommitCurrentState())return;closeAlerts();render();
     };
     if(selected)selected.onclick=()=>{
       const ids=choices().filter(x=>x.checked).map(x=>x.dataset.id);
@@ -820,7 +859,7 @@ function wireBody() {
     };
   }
   const weekToggle=$("#week-toggle"); if(weekToggle) weekToggle.onclick=()=>preserveScroll(()=>{ state._weekExpanded=!state._weekExpanded; render(); });
-  document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._homeView=b.dataset.view; saveState(); render(); }));
+  document.querySelectorAll(".hv-nav").forEach(b=>b.onclick=()=>preserveScroll(async()=>{ state._homeView=b.dataset.view; if(!await nexusCommitCurrentState())return;render(); }));
   // History is a direct action: expand and reveal records in one tap, without the ellipsis.
   document.querySelectorAll(".nx-open-compound-history").forEach(el=>el.onclick=()=>preserveScroll(()=>{
     if (!(state._todayExpandedCompounds instanceof Set)) state._todayExpandedCompounds = new Set();
@@ -862,40 +901,40 @@ function wireBody() {
   }));
   const todayCalendar=$("#nx-open-calendar"); if(todayCalendar) todayCalendar.onclick=()=>{ tab="calendar"; render(); window.scrollTo(0,0); };
   const viewUp=$("#view-upcoming"); if(viewUp) viewUp.onclick=()=>preserveScroll(()=>{ state._homeView="upcoming"; render(); });
-  document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(()=>{ state._allStatusFilter=b.dataset.status; saveState(); render(); }));
+  document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(async()=>{ state._allStatusFilter=b.dataset.status; if(!await nexusCommitCurrentState())return;render(); }));
   // pause/resume/delete compound
-  document.querySelectorAll(".pausepep").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".pausepep").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="paused";saveState();render();}
+    if(tgt[n]){tgt[n].status="paused";if(!await nexusCommitCurrentState())return;render();}
   });
-  document.querySelectorAll(".resumepep").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".resumepep").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="active";saveState();render();}
+    if(tgt[n]){tgt[n].status="active";if(!await nexusCommitCurrentState())return;render();}
   });
   // today sheet
   document.querySelectorAll(".opentodaysheet").forEach(b=>b.onclick=()=>{
     const log=state.dailyLogs.find(l=>l.id===+b.dataset.id); if(log) todayLogSheet(log);
   });
   document.querySelectorAll(".editdaily").forEach(b=>b.onclick=()=>dailyModal(state.dailyLogs.find(l=>l.id===+b.dataset.id)));
-  document.querySelectorAll(".deldaily").forEach(b=>b.onclick=()=>confirmAction("Delete this check-in?",()=>{state.dailyLogs=state.dailyLogs.filter(l=>l.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".deldaily").forEach(b=>b.onclick=()=>confirmAction("Delete this check-in?",async()=>{state.dailyLogs=state.dailyLogs.filter(l=>l.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".edit-update").forEach(b=>b.onclick=()=>{
     const uid2=+b.dataset.uid, lid=+b.dataset.lid;
     const entry=state.dailyLogs.find(l=>l.id===lid);
     const update=entry&&(entry.updates||[]).find(u=>u.id===uid2);
     if(update){ closeModal(); editUpdateModal(entry,update); }
   });
-  document.querySelectorAll(".del-update").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".del-update").forEach(b=>b.onclick=async()=>{
     const uid2=+b.dataset.uid, lid=+b.dataset.lid;
     const entry=state.dailyLogs.find(l=>l.id===lid);
-    if(entry){entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2);saveState();render();}
+    if(entry){entry.updates=(entry.updates||[]).filter(u=>u.id!==uid2);if(!await nexusCommitCurrentState())return;render();}
   });
   // weight/measure/macro edit+delete
   document.querySelectorAll(".editweight").forEach(b=>b.onclick=()=>weightModal(state.weightLogs.find(w=>w.id===+b.dataset.id)));
   document.querySelectorAll(".editmeasure").forEach(b=>b.onclick=()=>measureModal(state.measurementLogs.find(m=>m.id===+b.dataset.id)));
   document.querySelectorAll(".editmacro").forEach(b=>b.onclick=()=>macroModal(null,state.macroLogs.find(m=>m.id===+b.dataset.id)));
-  document.querySelectorAll(".delmacro").forEach(b=>b.onclick=()=>{state.macroLogs=state.macroLogs.filter(m=>m.id!==+b.dataset.id);saveState();render();});
-  document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);saveState();render();}));
-  document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);saveState();render();}));
+  document.querySelectorAll(".delmacro").forEach(b=>b.onclick=async()=>{state.macroLogs=state.macroLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();});
+  document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",async()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
+  document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",async()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   // stash
   const av=$("#addvial"); if(av)av.onclick=()=>supplyModal();
   const qaAdd=$("#qa-addkit"); if(qaAdd) qaAdd.onclick=()=>supplyModal(null);
@@ -975,9 +1014,9 @@ function wireBody() {
   });
   document.querySelectorAll(".manage-kit-btn").forEach(b=>b.onclick=()=>manageKitMenu(+b.dataset.id));
   document.querySelectorAll(".markkitdone").forEach(b=>b.onclick=()=>markKitDoneModal(+b.dataset.id));
-  document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".reopenkit").forEach(b=>b.onclick=async()=>{
     const kit=state.supplies.find(s=>s.id===+b.dataset.id); if(!kit) return;
-    kit.kitStatus=null; saveState(); renderBody();
+    kit.kitStatus=null; if(!await nexusCommitCurrentState())return;renderBody();
   });
   document.querySelectorAll(".editsupply").forEach(b=>b.onclick=()=>{
     const kit = state.supplies.find(s=>s.id===+b.dataset.id);
@@ -995,20 +1034,20 @@ function wireBody() {
   document.querySelectorAll(".edit-outflow").forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); editOutflowModal(+b.dataset.kit, +b.dataset.tx); });
   document.querySelectorAll(".undo-outflow").forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); undoOutflowModal(+b.dataset.kit, +b.dataset.tx); });
   document.querySelectorAll(".preparedoses").forEach(b=>b.onclick=()=>prepareDosesModal(b.dataset.name));
-  document.querySelectorAll(".toggleactivekit").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".toggleactivekit").forEach(b=>b.onclick=async()=>{
     const id=+b.dataset.id;
     const kit=state.supplies.find(s=>s.id===id); if(!kit) return;
     const willActivate=!kit.activeKit;
-    if (!willActivate) { kit.activeKit=false; saveState(); render(); return; }
+    if (!willActivate) { kit.activeKit=false; if(!await nexusCommitCurrentState())return;render();return; }
     // Multiple simultaneously-active kits per compound is now supported by choice —
     // confirm rather than silently retiring whatever else is currently open, same rule as
     // every other "open a vial" entry point.
-    confirmOpenIfOtherKitOpen(kit, () => { kit.activeKit=true; saveState(); render(); });
+    confirmOpenIfOtherKitOpen(kit, async () => { kit.activeKit=true; if(!await nexusCommitCurrentState())return;render(); });
   });
-  document.querySelectorAll(".delsupply").forEach(b=>b.onclick=()=>confirmAction("Delete this kit?",()=>{
+  document.querySelectorAll(".delsupply").forEach(b=>b.onclick=()=>confirmAction("Delete this kit?",async()=>{
     const s=state.supplies.find(x=>x.id===+b.dataset.id);
     if(s){const othersExist=state.supplies.filter(x=>x.id!==+b.dataset.id&&x.name===s.name).length>0;if(!othersExist){if(state.peptides[s.name])state.peptides[s.name].status="archived";else if(state.customPeptides[s.name])state.customPeptides[s.name].status="archived";}}
-    state.supplies=state.supplies.filter(x=>x.id!==+b.dataset.id);saveState();render();
+    state.supplies=state.supplies.filter(x=>x.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();
   }));
   // calendar
   const csw=$("#cs-week"); if(csw)csw.onclick=()=>{state._calSub="week";render();};
@@ -1131,22 +1170,22 @@ function wireBody() {
   const mis=$("#mix-search"); if(mis)mis.oninput=()=>{state._mixSearch=mis.value;renderBody();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
   document.querySelectorAll(".mix-type-chip").forEach(b=>b.onclick=()=>{state._mixTypeFilter=b.dataset.t;renderBody();});
   const lsd=$("#ls-discover"); if(lsd)lsd.onclick=()=>{state._learnSub="discover";renderBody();};
-  document.querySelectorAll(".discitem").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".discitem").forEach(b=>b.onclick=async()=>{
     const n=b.dataset.name;
     state._discoverOpen=n;
     // Recently Viewed — most-recent-first, capped at 8, deduped. Settled/persisted state
     // (not session-only) since this is exactly the kind of "remembered where I was
     // browsing" preference worth keeping across visits.
-    if (!state.settings.recentDiscoverViews) state.settings.recentDiscoverViews=[];
-    state.settings.recentDiscoverViews = [n, ...state.settings.recentDiscoverViews.filter(x=>x!==n)].slice(0,8);
-    saveState();
+    const recent=Array.isArray(state.settings.recentDiscoverViews)?state.settings.recentDiscoverViews:[];
+    const saved=await nexusCommitScopedStateChange({kind:"setting",key:"recentDiscoverViews",value:[n,...recent.filter(x=>x!==n)].slice(0,8)});
+    if(!saved)return;
     render(); window.scrollTo(0,0);
   });
   const bd=$("#backdisc"); if(bd)bd.onclick=()=>{state._discoverOpen=null;renderBody();window.scrollTo(0,0);};
   const ds=$("#disc-search"); if(ds)ds.oninput=()=>{ state._discoverSearch=ds.value; renderBody(); const ns=$("#disc-search"); if(ns){ns.focus();ns.setSelectionRange(ns.value.length,ns.value.length);} };
   const dc=$("#disc-clear"); if(dc)dc.onclick=()=>{ state._discoverSearch=""; renderBody(); const ns=$("#disc-search"); if(ns)ns.focus(); };
   document.querySelectorAll(".disc-filter").forEach(b=>b.onclick=()=>{state._discoverFilter=b.dataset.cat;renderBody();});
-  document.querySelectorAll(".disc-track").forEach(b=>b.onclick=()=>{ initCompoundTracking(b.dataset.name); saveState(); render(); });
+  document.querySelectorAll(".disc-track").forEach(b=>b.onclick=async()=>{ initCompoundTracking(b.dataset.name);if(!await nexusCommitCurrentState())return;render(); });
   document.querySelectorAll(".disc-track-blend").forEach(b=>b.onclick=()=>addBlendKitModal(b.dataset.name));
   document.querySelectorAll(".disc-remove").forEach(b=>b.onclick=()=>{
     const name=b.dataset.name;
@@ -1158,19 +1197,19 @@ function wireBody() {
       </div>`,"#ff7c7c");
     document.querySelector(".modal #x").onclick=closeModal;
     document.querySelector(".modal #rm-cancel").onclick=closeModal;
-    document.querySelector(".modal #rm-confirm").onclick=()=>{
+    document.querySelector(".modal #rm-confirm").onclick=async()=>{
       const n=document.querySelector(".modal #rm-confirm").dataset.name;
       if(state.peptides[n]) state.peptides[n].status="archived";
       else if(state.customPeptides[n]) state.customPeptides[n].status="archived";
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
   });
   document.querySelectorAll(".archivepep").forEach(b=>b.onclick=()=>{
     const n=b.dataset.name;
-    confirmAction(`Remove ${n} from Today?`,()=>{
+    confirmAction(`Remove ${n} from Today?`,async()=>{
       if(state.peptides[n]) state.peptides[n].status="archived";
       else if(state.customPeptides[n]) state.customPeptides[n].status="archived";
-      saveState(); render();
+      if(!await nexusCommitCurrentState())return;render();
     });
   });
   const addcust=$("#add-custom-compound"); if(addcust) addcust.onclick=()=>{
@@ -1206,7 +1245,7 @@ function wireBody() {
       ci.style.display=v==="__custom__"?"block":"none";
       if(v==="__custom__") ci.focus();
     };
-    document.querySelector(".modal #cc-save").onclick=()=>{
+    document.querySelector(".modal #cc-save").onclick=async()=>{
       const sel=document.querySelector(".modal #cc-name").value;
       const name=(sel==="__custom__"?document.querySelector(".modal #cc-custom").value:sel).trim();
       if(!name||name==="— select or type below —"){document.querySelector(".modal #cc-name").style.borderColor="#ff7c7c";return;}
@@ -1215,7 +1254,7 @@ function wireBody() {
       // If it's a known PEPTIDES compound, initialize it properly
       if(PEPTIDES[name]){ state.peptides[name]={ status:"active", scheduleDays:PEPTIDES[name].defaultSchedule, doses:[] }; }
       else { state.customPeptides[name]={ status:"active", scheduleDays:sched, doses:[], unit }; }
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
   };
   document.querySelectorAll(".guideitem").forEach(b=>b.onclick=()=>{state._guideOpen=+b.dataset.i;render();window.scrollTo(0,0);});
@@ -1229,7 +1268,7 @@ function wireBody() {
     state._settingsDetail=key; render(); window.scrollTo(0,0);
   });
   const sdBack=$("#settings-detail-back"); if(sdBack) sdBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
-  const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=()=>{ state.settings.measureUnit=state.settings.measureUnit==="in"?"cm":"in"; saveState(); render(); };
+  const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=async()=>{ const value=state.settings.measureUnit==="in"?"cm":"in"; muToggle.disabled=true; const saved=await nexusCommitScopedStateChange({kind:"setting",key:"measureUnit",value}); if(saved)render();else muToggle.disabled=false; };
   const suppSearch=$("#supp-search");
   if(suppSearch){ suppSearch.oninput=()=>{ state._supplementSearch=suppSearch.value; renderBody(); const n=$("#supp-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
   const ep2=$("#editprofile2"); if(ep2)ep2.onclick=profileModal;
@@ -1240,8 +1279,8 @@ function wireBody() {
   const im=$("#imp"); if(im)im.onchange=importData;
   const imOpen=$("#nx-import-open"); if(imOpen)imOpen.onclick=()=>im?.click();
   const imh=$("#imp-health"); if(imh)imh.onclick=()=>healthModal();
-  const wu=$("#wunit"); if(wu)wu.onclick=()=>{state.settings.weightUnit=state.settings.weightUnit==="lbs"?"kg":"lbs";saveState();render();};
-  const dro=$("#dayrollover"); if(dro)dro.onchange=()=>{ const h=parseInt(dro.value,10); state.settings.dayRolloverHour=(h>0&&h<=12)?h:0; saveState(); render(); };
+  const wu=$("#wunit"); if(wu)wu.onclick=async()=>{const value=state.settings.weightUnit==="lbs"?"kg":"lbs";wu.disabled=true;const saved=await nexusCommitScopedStateChange({kind:"setting",key:"weightUnit",value});if(saved)render();else wu.disabled=false;};
+  const dro=$("#dayrollover"); if(dro)dro.onchange=async()=>{ const h=parseInt(dro.value,10),value=(h>0&&h<=12)?h:0,previous=state.settings.dayRolloverHour;dro.disabled=true;const saved=await nexusCommitScopedStateChange({kind:"setting",key:"dayRolloverHour",value});if(saved)render();else{dro.value=String(previous||0);dro.disabled=false;} };
 }
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
@@ -1373,7 +1412,7 @@ function showOnboarding() {
   const STEPS=["Welcome","Goal","Stats","Done"];
   let restoreCandidate=null;
   function countsForBackup(v){return {compounds:Object.keys(v.peptides||{}).length,checkins:(v.dailyLogs||[]).length,protocols:(v.protocols||[]).length,kits:(v.supplies||[]).length};}
-  function safeRestore(){
+  async function safeRestore(){
     if(!restoreCandidate) return;
     const active=loadState();
     const hasRecords=!!(active&&((active.dailyLogs||[]).length||(active.supplies||[]).length||(active.protocols||[]).length||Object.keys(active.peptides||{}).length));
@@ -1387,8 +1426,22 @@ function showOnboarding() {
       if(!next||!next.profile||!next.settings||!next.peptides)throw Error("Could not prepare backup");
       next.profile.onboardingDone=true;
       const before=state;
-      try{state=next;saveState();const stored=localStorage.getItem(STORE_KEY);if(!stored||stored!==JSON.stringify(next))throw Error("Could not verify saved backup");}
-      catch(e){state=before;const original=localStorage.getItem(backupKey);if(original!==null)localStorage.setItem(STORE_KEY,original);throw e;}
+      try{
+        if(_demoActive){
+          state=next; // isolated fictional onboarding restore
+        }else{
+          const writer=nexusWriter();
+          const result=await writer.transaction(state,()=>({next}));
+          _nexusLastSavedSnapshot=writer.expected();
+          state=next;
+        }
+      }catch(e){
+        state=before;
+        // Never blindly overwrite storage with a recovery copy after failure.
+        // Another tab may have updated the saved data; keep backup for review.
+        showSaveWarning();
+        throw e;
+      }
       closeModal();render();
     }catch(e){alert("Restore was not completed. Existing saved records have not been replaced. "+e.message);}
   }
@@ -1436,7 +1489,7 @@ function showOnboarding() {
     m.querySelector("#ob-sw")?.addEventListener("input",e=>{data.startWeight=e.target.value;});
     m.querySelector("#ob-gw")?.addEventListener("input",e=>{data.goalWeight=e.target.value;});
   }
-  function finish(){
+  async function finish(){
     if(data.name)state.profile.name=data.name;
     if(data.startWeight)state.profile.startWeight=data.startWeight;
     if(data.goalWeight)state.profile.goalWeight=data.goalWeight;
@@ -1454,7 +1507,7 @@ function showOnboarding() {
         state.plans.goals.push({id:uid(),name:GOAL_LABELS[gid]||gid,category:GOAL_LABELS[gid]||gid,status:"active",compounds:[],metrics:"",notes:"Set during onboarding"});
       });
     }
-    saveState();closeModal();render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   }
   const m=openModal(`<div id="ob-wrap"><div id="ob-body">${buildOb()}</div><div id="ob-nav">${buildNav()}</div></div>`,"#A78BFA");
   wireOb();
@@ -1512,9 +1565,13 @@ sinceLastVisitSummary = computeSinceLastVisit();
 // could silently break by running early. This is what actually eliminates the two-model
 // coexistence for good, rather than leaving every kit to migrate lazily whenever
 // something first happens to touch it.
-preserveOriginalState();
-migrateToInventoryV2();
-saveState();
-if(!state.profile.onboardingDone){render();showOnboarding();}
-else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
-else render();
+// Gate startup migrations on exclusive durable readback, without ever
+// mistaking an unacknowledged legacy save for successful persistence.
+(async()=>{
+ preserveOriginalState();
+ migrateToInventoryV2();
+ if(!await nexusCommitCurrentState()){render();return;}
+ if(!state.profile.onboardingDone){render();showOnboarding();}
+ else if(shouldShowPublishedRelease()){render();showPublishedReleaseModal();}
+ else render();
+})().catch(error=>{console.error("Nexus startup persistence rejected",error);showSaveWarning();render();});

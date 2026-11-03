@@ -26,22 +26,61 @@ try{
         page.on('pageerror',error=>errors.push(error.message));
         page.on('dialog',dialog=>dialog.accept());
         await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
-        await page.evaluate((t)=>{
+        // Startup now waits for exclusive durable readback before first render.
+        // Do not open a test modal over the initial LOADING shell: the delayed
+        // first render can legitimately replace it and invalidate selectors.
+        await page.waitForFunction(()=>{const root=document.querySelector('#app');
+          return root && !root.textContent.includes('LOADING…');});
+        await page.evaluate(async(t)=>{
           // CI browser contexts are disposable and isolated from any real user data.
-          state=buildDemoState('weight_loss');
-          state.profile.onboardingDone=true;
-          state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          // LIVE test fixtures must be durably initialized through the SAME
+          // exclusive writer as real app handlers; assigning state alone leaves
+          // the writer snapshot stale and allows startup to overwrite the fixture.
+          const fixture=buildDemoState('weight_loss');
+          fixture.profile.onboardingDone=true;
+          fixture.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          if(_demoActive)state=fixture;
+          else {
+            const writer=nexusWriter(),raw=writer.expected();
+            const before=raw===null?null:JSON.parse(raw);
+            const saved=await writer.transaction(before,()=>({next:fixture}));
+            state=saved.next;_nexusLastSavedSnapshot=writer.expected();
+          }
           document.documentElement.dataset.theme=t;
         },theme);
+        // Diagnose modal removal instead of masking a real browser failure with retries.
+        await page.evaluate(()=>{
+          globalThis.__checkinCloseStacks=[];
+          const originalClose=closeModal;
+          closeModal=function(...args){
+            if(modalEl)globalThis.__checkinCloseStacks.push((new Error('Check-In modal closed')).stack);
+            return originalClose(...args);
+          };
+        });
         // DS2: create a new supplement directly in the daily logger even with an empty catalogue.
         // Preserve historical records; catalogue addition does not itself save a taken log.
-        await page.evaluate(()=>{
+        const modalProbe=await page.evaluate(()=>{
           state.settings.supplements=[];
           state.supplementLogs=[];
           supplementModal('2032-11-09');
+          return {search:document.querySelectorAll('.modal #supp-search').length,
+            modals:document.querySelectorAll('.modal').length,
+            appLoading:document.querySelector('#app')?.textContent?.includes('LOADING…'),
+            modalText:document.querySelector('.modal')?.textContent?.slice(0,150)};
         });
+        console.log('CHECKIN first modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(modalProbe));
+        assert(modalProbe.search===1,'Supplement modal missing immediately after open: '+JSON.stringify(modalProbe)+'; page errors='+errors.join('; '));
         assert(await page.locator('.modal #nx2-new-supp').count()===0,'Duplicate supplement input remains');
-        await page.locator('.modal #supp-search').fill('Fictional Vitamin B');
+        await page.waitForTimeout(200);
+        const delayedProbe=await page.evaluate(()=>({
+          search:document.querySelectorAll('.modal #supp-search').length,
+          modal:document.querySelectorAll('.modal').length,
+          closeStacks:globalThis.__checkinCloseStacks,
+          activeModal:!!modalEl
+        }));
+        console.log('CHECKIN delayed modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(delayedProbe));
+        assert(delayedProbe.search===1,'Supplement modal disappeared: '+JSON.stringify(delayedProbe));
+        await page.locator('.modal #supp-search').fill('Fictional Vitamin B',{timeout:3000});
         assert(await page.locator('.modal [data-add-search="modal"]').count()===1,'Unified Add search action absent');
         await page.locator('.modal [data-add-search="modal"]').click();
         const beforeConfirm=await page.evaluate(()=>({
@@ -50,6 +89,11 @@ try{
         }));
         assert(beforeConfirm.catalog&&!beforeConfirm.logged,'Inline supplement entry must not auto-log a taken supplement');
         await page.locator('.modal #suppsave').click();
+        // Save is async: Playwright click acknowledgement is NOT durable-save
+        // acknowledgement. Wait for the successful handler to close its modal
+        // before opening the next Check-In sheet, or its delayed close can
+        // accidentally dismiss the new sheet.
+        await page.locator('.modal #suppsave').waitFor({state:'detached',timeout:8000});
         const afterConfirm=await page.evaluate(()=>({
           logged:(state.supplementLogs||[]).find(l=>dayKey(l.date)==='2032-11-09')?.taken||[]
         }));
@@ -60,23 +104,40 @@ try{
           render();
         });
         // Empty-catalogue Daily Check-In also permits inline supplement creation.
-        await page.evaluate(()=>{
+        const checkinProbe=await page.evaluate(()=>{
           state.settings.supplements=[];
-          dailyModal(null);
+          // Use an explicit fictional date, not the existing-today redirect.
+          dailyModal(null,'2032-11-10');
+          return {modal:!!document.querySelector('.modal'), search:!!document.querySelector('.modal #supp-search'),
+            text:document.querySelector('.modal')?.textContent?.slice(0,350),
+            alerts:[...document.querySelectorAll('[role="alert"]')].map(x=>x.textContent?.slice(0,150)),
+            closeStacks:globalThis.__checkinCloseStacks?.slice(-3)};
         });
+        console.log('CHECKIN second modal '+width+'/'+theme+'/'+kind+' '+JSON.stringify(checkinProbe)+' pageerrors='+errors.join('; '));
+        assert(checkinProbe.search,'Daily Check-In search field did not open: '+JSON.stringify(checkinProbe)+' pageerrors='+errors.join('; '));
         assert(await page.locator('.modal #nx2-checkin-new-supp').count()===0,'Check-In duplicate supplement input remains');
         await page.locator('.modal #supp-search').fill('Fictional Zinc');
         assert(await page.locator('.modal [data-add-search="checkin"]').count()===1,'Check-In unified Add action absent');
         await page.locator('.modal [data-add-search="checkin"]').click();
+        // Inline catalogue Add is an async exclusive save; wait for durable
+        // readback before replacing the fictional fixture and opening another
+        // editor. An in-memory catalogue mutation alone is not acknowledgement.
+        await page.waitForFunction(()=>{
+          if(_demoActive)return state.settings.supplements.includes('Fictional Zinc');
+          const writer=nexusWriter(),raw=localStorage.getItem(STORE_KEY);
+          return !writer.status().inFlight && !!raw &&
+            JSON.parse(raw).settings?.supplements?.includes('Fictional Zinc');
+        });
         const checkinInline=await page.evaluate(()=>({
           catalog:state.settings.supplements.includes('Fictional Zinc'),
           saved:(state.supplementLogs||[]).some(l=>(l.taken||[]).includes('Fictional Zinc'))
         }));
         assert(checkinInline.catalog&&!checkinInline.saved,
           'Check-In catalogue addition must not implicitly write taken history');
-        await page.evaluate(()=>{
+        await page.evaluate(async()=>{
           closeModal();
           state.settings.supplements=['Magnesium Citrate','Psyllium Husk'];
+          if(!await nexusCommitCurrentState())throw Error('Fictional catalogue reset not acknowledged');
           render();
         });
         const before=await snapshot(page,testDay);
@@ -109,6 +170,7 @@ try{
         assert(await supplement.count()>0,'Supplement browse option missing');
         await supplement.click();
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const created=await snapshot(page,testDay);
         assert(created.entries.length===1,'Create did not save one daily log');
         const saved=created.entries[0];
@@ -123,6 +185,7 @@ try{
         assert(await page.locator('.modal #moods .moodbtn[data-v="4"]').getAttribute('aria-pressed')==='true','Mood missing from Edit');
         await restored.fill('Edited synthetic Check-In note');
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const edited=await snapshot(page,testDay);
         assert(edited.entries.length===1,'Edit duplicated Check-In date');
         assert(edited.entries[0].notes==='Edited synthetic Check-In note','Edit did not persist notes');
@@ -133,6 +196,7 @@ try{
         await page.evaluate(date=>dailyModal(null,date),collisionDay);
         await page.locator('.modal #notes').fill('Separate date entry');
         await page.locator('.modal #save').click();
+        await page.locator('.modal #save').waitFor({state:'detached',timeout:8000}); // verified async save finished
         const second=await snapshot(page,collisionDay);
         assert(second.entries.length===1,'Setup collision date failed');
         await page.evaluate(date=>dailyModal(state.dailyLogs.find(l=>dayKey(l.date)===date)),testDay);

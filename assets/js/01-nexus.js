@@ -50,10 +50,407 @@ function showSaveWarning() {
   warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
   document.body.appendChild(warning);
 }
-function saveState() {
-  if(_demoActive) return; // never write demo data to localStorage
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-  catch(e) { console.error('Nexus save failed', e); showSaveWarning(); }
+// All durable application state writes share one exclusive Web Lock and one
+// storage key. The retired synchronous gateway is forbidden by CI. Reviewed
+// optimistic legacy handlers await the exclusive write and roll back on failure.
+// LIVE nasal controls remain separately disabled until release safety approval.
+let _nexusLastSavedSnapshot = (()=>{try{return localStorage.getItem(STORE_KEY)}catch{return null}})();
+let _nexusSharedWriter=null;
+function nexusWriter() {
+  if(!_nexusSharedWriter){
+    if(!globalThis.NexusWriteCoordinator) throw Error("Shared state writer is unavailable");
+    const lock=(typeof navigator!=="undefined"&&navigator.locks&&typeof navigator.locks.request==="function")
+      ? (name,action)=>navigator.locks.request(name,{mode:"exclusive"},action):null;
+    _nexusSharedWriter=globalThis.NexusWriteCoordinator.create({
+      read:()=>localStorage.getItem(STORE_KEY),
+      write:serialized=>localStorage.setItem(STORE_KEY,serialized),
+      remove:()=>localStorage.removeItem(STORE_KEY),
+      lock,lockName:STORE_KEY+":inventory-transfer",initialSnapshot:_nexusLastSavedSnapshot
+    });
+  }
+  return _nexusSharedWriter;
+}
+async function nexusEraseSavedState() {
+  if(_demoActive)throw Error("Cannot erase real data while demo is active");
+  try {
+    const writer=nexusWriter();
+    await writer.eraseExclusive(state);
+    _nexusLastSavedSnapshot=writer.expected();
+    return true;
+  }catch(error){
+    console.error("Nexus erase rejected",error);
+    showSaveWarning();
+    return false;
+  }
+}
+// The synchronous saveState gateway was retired: app writes require awaited exclusive readback.
+
+/* Transitional exclusive CAS for reviewed legacy handlers whose validated
+ * mutation is already applied to app state. Snapshot the proposed state before
+ * awaiting the shared lock, never silently merge another tab's changes.
+ * The caller MUST await the boolean and cannot close/re-render on failure.
+ */
+async function nexusCommitCurrentState(){
+ if(_demoActive)return true;
+ try{
+  const writer=nexusWriter();
+  const raw=writer.expected();
+  const before=raw===null?null:JSON.parse(raw);
+  const proposed=JSON.parse(JSON.stringify(state));
+  const result=await writer.transaction(before,()=>({next:proposed}));
+  state=result.next;
+  _nexusLastSavedSnapshot=writer.expected();
+  return true;
+ }catch(error){
+  // Legacy handlers can mutate the in-memory object before requesting an
+  // exclusive commit. A rejected/uncertain write must not leave phantom
+  // doses, status changes or stock edits visible in that tab. Preserve the
+  // unsaved form DOM for correction; restore only the last verified snapshot.
+  // Never silently rebase another tab's concurrent changes.
+  try{
+   if(typeof _nexusLastSavedSnapshot==="string")state=JSON.parse(_nexusLastSavedSnapshot);
+  }catch(restoreError){console.error("Nexus last verified snapshot could not be restored",restoreError)}
+  console.error("Nexus reviewed legacy transaction rejected",error);
+  showSaveWarning();
+  return false;
+ }
+}
+
+/* P0 migration: strictly scoped settings and dated supplement-history saves.
+ * No live state mutation before verified durable commit, no silent rebase.
+ * All callers must await the result before displaying save success.
+ */
+function nexusPlanScopedStateChange(snapshot,operation){
+ const fail=message=>{throw Error(message)};
+ if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
+ const next=JSON.parse(JSON.stringify(snapshot));
+ if(operation.kind==="setting"){
+  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","remindersEnabled","lastNotifyDate"];
+  if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
+  if(operation.key==="remindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid notification toggle");
+  if(operation.key==="lastNotifyDate"&&(typeof operation.value!=="string"||!/^(?:\d{4}-\d{2}-\d{2})?$/.test(operation.value)))fail("Invalid notification date");
+  if(operation.key==="nexusApiKey"&&typeof operation.value!=="string")fail("Invalid API key");
+  if(operation.key==="phaseRemindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid reminder choice");
+  if(operation.key==="nxUsageEnabled"&&typeof operation.value!=="boolean")fail("Invalid shortcut tracking choice");
+  if(operation.key==="nxUsageCounts"&&(!operation.value||Array.isArray(operation.value)||typeof operation.value!=="object"||Object.keys(operation.value).some(key=>!/^[-a-zA-Z0-9_]{1,80}$/.test(key)||!Number.isSafeInteger(operation.value[key])||operation.value[key]<0)))fail("Invalid shortcut counters");
+  if(operation.key==="measureUnit"&&!["in","cm"].includes(operation.value))fail("Invalid measurement unit");
+  if(operation.key==="weightUnit"&&!["lbs","kg"].includes(operation.value))fail("Invalid weight unit");
+  if(operation.key==="dayRolloverHour"&&(!Number.isInteger(operation.value)||operation.value<0||operation.value>12))fail("Invalid rollover hour");
+  if(operation.key==="todayTrackingActivities"&&(!Array.isArray(operation.value)||operation.value.some(x=>!["checkin","supplements","weight","nutrition","measurements"].includes(x))||new Set(operation.value).size!==operation.value.length))fail("Invalid tracking activities");
+  if(operation.key==="recentDiscoverViews"&&(!Array.isArray(operation.value)||operation.value.length>8||operation.value.some(x=>typeof x!=="string"||x.length>160)||new Set(operation.value).size!==operation.value.length))fail("Invalid recent discovery views");
+  if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
+  next.settings[operation.key]=operation.value;
+ }else if(operation.kind==="bulk-delete"){
+  const target=operation.target;
+  const allowed=["del-health-all","del-health-imported","del-activity","del-doses","del-logs","del-stash","del-workouts"];
+  if(!allowed.includes(target))fail("Unsupported destructive operation");
+  const requireLog=field=>{if(!Array.isArray(next[field]))fail("Invalid "+field+" history");};
+  const imported=r=>r.sourceType||r.notes?.includes("Apple Health")||r.notes==="Health Auto Export"||r.note==="Apple Health";
+  if(target==="del-health-all"){
+   for(const field of ["macroLogs","weightLogs","activityLogs","measurementLogs"]){requireLog(field);next[field]=[];}
+  }else if(target==="del-health-imported"){
+   for(const field of ["macroLogs","weightLogs","activityLogs","measurementLogs"]){requireLog(field);next[field]=next[field].filter(r=>!imported(r));}
+  }else if(target==="del-activity"){requireLog("activityLogs");next.activityLogs=[];}
+  else if(target==="del-logs"){requireLog("dailyLogs");next.dailyLogs=[];}
+  else if(target==="del-stash"){requireLog("supplies");next.supplies=[];}
+  else if(target==="del-workouts"){requireLog("activityLogs");next.activityLogs=next.activityLogs.filter(r=>!r.isWorkout);}
+  else{
+   if(!next.peptides||typeof next.peptides!=="object")fail("Dose history unavailable");
+   for(const field of ["peptides","customPeptides"]){
+    for(const item of Object.values(next[field]||{})){
+     if(item){if(!Array.isArray(item.doses))fail("Invalid dose history");item.doses=[];}
+    }
+   }
+  }
+ }else if(operation.kind==="dated-log-upsert"){
+  const field=operation.field,record=operation.record;
+  if(!["macroLogs","weightLogs","measurementLogs"].includes(field))fail("Unsupported dated log");
+  if(!Array.isArray(next[field])||!record||typeof record!=="object"||Array.isArray(record))fail("Invalid dated log record");
+  if((typeof record.id!=="number"&&typeof record.id!=="string")||!String(record.id).trim())fail("Exact dated log ID required");
+  if(typeof record.date!=="string"||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(record.date))fail("Valid dated log date required");
+  if(next[field].filter(x=>String(x.id)===String(record.id)).length>1)fail("Ambiguous dated log ID");
+  if(field==="macroLogs"){
+   next[field]=next[field].filter(x=>String(x.id)!==String(record.id)&&dayKey(x.date)!==dayKey(record.date));
+  }else{
+   next[field]=next[field].filter(x=>String(x.id)!==String(record.id));
+  }
+  next[field].push(JSON.parse(JSON.stringify(record)));
+ }else if(operation.kind==="supplement-list-add"){
+  const value=operation.name;
+  if(typeof value!=="string"||!value.trim()||value.trim().length>160)fail("Valid supplement name required");
+  if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
+  const list=next.settings.supplements||[];
+  if(!Array.isArray(list))fail("Supplement preferences invalid");
+  if(list.some(x=>String(x).toLocaleLowerCase()===value.trim().toLocaleLowerCase()))fail("Supplement already exists");
+  next.settings.supplements=[...list,value.trim()].sort((a,b)=>a.localeCompare(b));
+ }else if(operation.kind==="supplement-list-remove"){
+  const list=next.settings?.supplements;
+  if(!Array.isArray(list)||typeof operation.name!=="string"||!list.includes(operation.name))
+    fail("Exact supplement name unavailable");
+  next.settings.supplements=list.filter(x=>x!==operation.name);
+  // Preserve dated supplement records verbatim.
+ }else if(operation.kind==="supplement-log-upsert"){
+  if(typeof operation.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(!Array.isArray(next.supplementLogs)||!Array.isArray(operation.taken))
+    fail("Supplement history and selected items required");
+  if(operation.taken.some(x=>typeof x!=="string"||!x.trim())||
+     new Set(operation.taken).size!==operation.taken.length)fail("Invalid duplicate supplement selection");
+  const matches=next.supplementLogs.filter(x=>dayKey(x.date)===operation.date);
+  if(matches.length>1)fail("Ambiguous dated supplement history");
+  if(operation.expectedId==null&&matches.length)fail("Dated supplement history changed since editor opened");
+  if(operation.expectedId!=null&&(matches.length!==1||String(matches[0].id)!==String(operation.expectedId)))
+    fail("Original dated supplement entry changed");
+  next.supplementLogs=next.supplementLogs.filter(x=>dayKey(x.date)!==operation.date);
+  if(operation.taken.length){
+    if(operation.expectedId==null&&(operation.id==null||String(operation.id).trim()===""))fail("New history ID required");
+    const id=operation.expectedId!=null?matches[0].id:operation.id;
+    if(next.supplementLogs.some(x=>String(x.id)===String(id)))fail("Duplicate supplement history ID");
+    next.supplementLogs.push({...matches[0],id,date:operation.date,taken:[...operation.taken]});
+  }
+ }else if(operation.kind==="supplement-log-delete"){
+  if(typeof operation.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(operation.date))fail("Valid exact date required");
+  if(!Array.isArray(next.supplementLogs))fail("Supplement log history unavailable");
+  const existing=next.supplementLogs.filter(x=>dayKey(x.date)===operation.date);
+  if(existing.length!==1)fail("Unique dated supplement record required");
+  next.supplementLogs=next.supplementLogs.filter(x=>dayKey(x.date)!==operation.date);
+ }else fail("Unsupported scoped save");
+ return {next};
+}
+async function nexusCommitScopedStateChange(operation){
+ if(_demoActive){
+  const result=nexusPlanScopedStateChange(state,operation);
+  state=result.next;return true;
+ }
+ try{
+  const writer=nexusWriter();
+  const serialized=writer.expected();
+  if(typeof serialized!=="string")throw Error("Durable scoped state unavailable; reload before saving");
+  const durable=JSON.parse(serialized);
+  // Rendering populates top-level _UI fields without saving them. They must
+  // not make an unrelated settings edit fail, but unsaved persistent changes
+  // must still fail closed instead of being silently discarded.
+  const persistent=value=>{
+    const copy={...value};
+    for(const key of Object.keys(copy))if(key.startsWith("_"))delete copy[key];
+    return JSON.stringify(copy);
+  };
+  if(persistent(state)!==persistent(durable))
+    throw Error("Unsaved persistent changes are pending; reload before saving");
+  const transient=Object.fromEntries(Object.entries(state).filter(([key])=>key.startsWith("_")));
+  // Expected durable bytes are checked against live storage inside the same
+  // exclusive lock. Another tab's edits can never be silently rebased.
+  const result=await writer.transaction(durable,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
+  state={...result.next,...transient};_nexusLastSavedSnapshot=writer.expected();
+  return true;
+ }catch(error){
+  console.error("Scoped state save rejected",error);
+  showSaveWarning();
+  return false;
+ }
+}
+
+/* PR124 first exclusive Log Dose slice: untracked (no stock debit).
+ * Keep the live in-memory state unchanged until the locked, durable commit
+ * succeeds. Do not retry or rebase a stale tab's dose without review.
+ */
+async function nexusCommitUntrackedDose(name,dose,editing){
+  const builtin=!!PEPTIDES[name];
+  const bucket=builtin?"peptides":"customPeptides";
+  const apply=next=>{
+    if(!next[bucket])next[bucket]={};
+    const record=next[bucket][name]||(next[bucket][name]={enabled:true,scheduleDays:cfg(name).defaultSchedule,doses:[]});
+    const existing=(record.doses||[]).find(d=>String(d.id)===String(dose.id));
+    if(editing&&!existing)throw Error("Original untracked dose no longer exists");
+    if(!editing&&existing)throw Error("Dose ID already exists");
+    record.doses=(record.doses||[]).filter(d=>String(d.id)!==String(dose.id));
+    record.doses.push({...dose});
+    const fulfilled=(record.reschedules||[]).find(r=>!r.doseId&&dayKey(r.newDate)===dayKey(dose.date));
+    if(fulfilled)fulfilled.doseId=dose.id;
+    return next;
+  };
+  if(_demoActive){
+    // DEMO remains strictly in memory; no live localStorage writes or locks.
+    state=apply(JSON.parse(JSON.stringify(state)));
+    return true;
+  }
+  try{
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>({next:apply(prior)}));
+    // The shared coordinator returns only after storage readback succeeded.
+    state=result.next;
+    _nexusLastSavedSnapshot=writer.expected();
+    return true;
+  }catch(e){
+    console.error("Nexus exclusive untracked dose save failed",e);
+    showSaveWarning();
+    return false;
+  }
+}
+
+
+/* Physical product classification is not the route used on an individual dose.
+ * Legacy SubQ/IM labels are interpreted read-only as Injectable; no migration
+ * or change to saved historical dose.method / exact source identifiers.
+ * A nasal-source vial is an ingredient for preparation, NEVER a nasal bottle.
+ */
+function nexusPhysicalForm(value){
+  const x=String(value||"").trim().toLowerCase();
+  if(["injectable","subq","subcutaneous","sq","sc","im","intramuscular","iv","intravenous"].includes(x))return "Injectable";
+  if(["oral","po"].includes(x))return "Oral";
+  if(["topical"].includes(x))return "Topical";
+  if(["nasal","intranasal"].includes(x))return "Nasal";
+  if(["nasal-source","nasal preparation source"].includes(x))return "NasalSource";
+  if(x==="other")return "Other";
+  return null;
+}
+function nexusDoseMethodForm(method){
+  return ["SubQ","IM","IV"].includes(method)?"Injectable":nexusPhysicalForm(method);
+}
+function nexusPhysicalVialCompatible(formLabel,doseMethod){
+  // IV requires independently verified suitability; an injectable label alone
+  // is insufficient and the current backed writer deliberately excludes IV.
+  if(doseMethod==="IV"||doseMethod==="Nasal")return false;
+  const form=nexusPhysicalForm(formLabel);
+  return !!form&&form===nexusDoseMethodForm(doseMethod);
+}
+
+/* PR124 exclusive physical vial dose, new fresh doses only.
+ * Explicit already-migrated open vial IDs; never infer sealed/legacy sources,
+ * prepared stock, finished draft deductions or blend ledger allocations.
+ */
+function nexusPlanBackedPhysicalDose(snapshot,entry){
+  const fail=m=>{throw Error(m)};
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const {name,dose,method,steps,nativeUnit,expectedMassMg,builtin}=entry;
+  if(!name||!dose||!dose.id||!dose.date||dose.trackingMode!=="backed")fail("Valid dose record required");
+  if(!Array.isArray(steps)||!steps.length)fail("Exact source vial required");
+  if(!Number.isFinite(expectedMassMg)||expectedMassMg<=0)fail("Invalid mass");
+  if(!["mg","mcg"].includes(nativeUnit))fail("Unsupported mass unit for physical vial");
+  if(!["SubQ","IM","Topical","Oral","Other"].includes(method))fail("Unsupported physical vial administration method");
+  const bucket=builtin?"peptides":"customPeptides";
+  const target=next[bucket]||(next[bucket]={});
+  const record=target[name]||(target[name]={enabled:true,scheduleDays:7,doses:[]});
+  if((record.doses||[]).some(d=>String(d.id)===String(dose.id)))fail("Duplicate dose ID");
+  const allocations=[],seen=new Set();
+  let total=0;
+  for(const step of steps){
+    if(step.finished)fail("Previously drawn vial requires separate reconciliation");
+    if(step.kitId==null||step.vialId==null)fail("Unidentified physical vial");
+    const key=String(step.kitId)+":"+String(step.vialId);
+    if(seen.has(key))fail("Duplicate vial allocation");
+    seen.add(key);
+    if(!Number.isFinite(step.mg)||step.mg<=0)fail("Invalid source allocation");
+    const kit=(next.supplies||[]).find(k=>String(k.id)===String(step.kitId));
+    if(!kit||kit.name!==name||kit.isBlend||!kit.activeKit)fail("Incompatible physical kit");
+    const vial=(kit.vials||[]).find(v=>String(v.id)===String(step.vialId));
+    if(!vial||!["open","active"].includes(vial.status)||!Number.isFinite(vial.remainingMg)||vial.remainingMg<=0)fail("Open migrated vial required");
+    const route=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+      (kit.preparationMethod||kit.administrationMethod||kit.route);
+    if(!nexusPhysicalVialCompatible(route,method))fail("Vial formulation incompatible with this administration method");
+    const mg=Math.round(step.mg*100)/100;
+    if(Math.abs(mg-step.mg)>0.000001)fail("Unsupported source precision");
+    if(mg>vial.remainingMg+0.000001)fail("Insufficient exact vial balance");
+    vial.remainingMg=Math.round((vial.remainingMg-mg)*100)/100;
+    if(vial.remainingMg<=0.01){vial.remainingMg=0;vial.status="empty";}
+    const amount=nativeUnit==="mcg"?mg*1000:mg;
+    allocations.push({kitId:kit.id,vialId:vial.id,amount});
+    total+=mg;
+  }
+  if(Math.abs(total-expectedMassMg)>0.001)fail("Source allocation must match dose");
+  record.doses=(record.doses||[]).concat([{...dose,allocations,kitId:null,fromPreparedId:undefined}]);
+  const reschedule=(record.reschedules||[]).find(r=>!r.doseId&&String(r.newDate||"").slice(0,10)===String(dose.date).slice(0,10));
+  if(reschedule)reschedule.doseId=dose.id;
+  return {next,dose:record.doses[record.doses.length-1],allocations};
+}
+async function nexusCommitBackedPhysicalDose(entry){
+  try{
+    if(_demoActive){
+      const result=nexusPlanBackedPhysicalDose(state,entry);
+      state=result.next;return result;
+    }
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry));
+    state=result.next;
+    _nexusLastSavedSnapshot=writer.expected();
+    return result;
+  }catch(e){
+    console.error("Nexus exclusive physical dose failed",e);
+    if(!_demoActive)showSaveWarning();
+    return null;
+  }
+}
+
+
+/* PR124 backed-dose correction boundary. Corrections are scoped to a recorded
+ * exact physical source. Old prepared/blend/unknown-source histories fail closed.
+ * No vial substitution or automatic historical source attribution is allowed.
+ */
+function nexusPlanBackedDoseChange(snapshot,entry){
+  const fail=m=>{throw Error(m)};
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const {name,doseId,operation,patch={},nativeUnit,builtin}=entry;
+  if(!name||doseId==null||!["edit","undo"].includes(operation))fail("Backed dose correction required");
+  if(!["mg","mcg"].includes(nativeUnit))fail("Verified mass unit required");
+  const bucket=builtin?"peptides":"customPeptides";
+  const record=next[bucket]?.[name];
+  const index=record?.doses?.findIndex(d=>String(d.id)===String(doseId))??-1;
+  if(index<0)fail("Original dose missing");
+  const old=record.doses[index];
+  if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
+     !Array.isArray(old.allocations)||old.allocations.length!==1)fail("Unsupported historic source: review manually");
+  if(index!==record.doses.length-1)fail("Only the most recent dose can be corrected through this safety path");
+  const original=old.allocations[0];
+  if(original.kitId==null||original.vialId==null)fail("Original exact source missing");
+  const originalAmount=Number(original.amount);
+  const originalMg=nativeUnit==="mcg"?originalAmount/1000:originalAmount;
+  if(!Number.isFinite(originalMg)||originalMg<=0)fail("Invalid original allocation");
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(original.kitId));
+  const vial=(kit?.vials||[]).find(v=>String(v.id)===String(original.vialId));
+  if(!kit||kit.name!==name||kit.isBlend||!vial||!["open","active","empty"].includes(vial.status)||
+     !Number.isFinite(vial.remainingMg))fail("Original vial unavailable; no correction");
+  const matchedMethod=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+    (kit.preparationMethod||kit.administrationMethod||kit.route);
+  if(!nexusPhysicalVialCompatible(matchedMethod,old.method))fail("Original vial formulation no longer matches the historical dose");
+  const nextDose=operation==="undo"?null:{...old,...patch,id:old.id,
+    allocations:old.allocations.map(a=>({...a}))};
+  if(nextDose&&(nextDose.method!==old.method||nextDose.trackingMode!=="backed"||
+     nextDose.fromPreparedId||nextDose.isBlendDose))fail("Dose source or method cannot change");
+  const nextAmount=operation==="undo"?0:Number(nextDose.dose);
+  const nextMg=operation==="undo"?0:nativeUnit==="mcg"?nextAmount/1000:nextAmount;
+  if(!Number.isFinite(nextMg)||nextMg<0||(operation==="edit"&&nextMg<=0)||
+     Math.abs(nextMg*100-Math.round(nextMg*100))>0.00001)fail("Invalid corrected mass");
+  const delta=nextMg-originalMg;
+  if(delta>vial.remainingMg+0.000001)fail("Insufficient original vial for correction");
+  const restored=Math.round((vial.remainingMg-delta)*100)/100;
+  if(restored<0||restored>Number(vial.vialMg||kit.vialMg||Infinity)+0.000001)
+    fail("Correction exceeds original vial capacity");
+  vial.remainingMg=restored;
+  if(restored<=0.01){vial.remainingMg=0;vial.status="empty";}
+  else if(vial.status==="empty")vial.status="open";
+  if(operation==="undo"){
+    record.doses.splice(index,1);
+    (record.reschedules||[]).forEach(r=>{if(String(r.doseId)===String(old.id))r.doseId=null});
+  }else{
+    nextDose.allocations=[{...original,amount:nativeUnit==="mcg"?Math.round(nextMg*100000)/100:nextMg}];
+    record.doses[index]=nextDose;
+  }
+  next.nexusDoseAudit=next.nexusDoseAudit||[];
+  next.nexusDoseAudit.push({id:String(doseId)+":"+operation+":"+String(next.nexusDoseAudit.length+1),
+    doseId:old.id,compound:name,operation,kitId:kit.id,vialId:vial.id,
+    beforeMg:originalMg,afterMg:nextMg,previousDose:JSON.parse(JSON.stringify(old))});
+  return {next,operation,dose:nextDose,source:{kitId:kit.id,vialId:vial.id,remainingMg:vial.remainingMg}};
+}
+async function nexusCommitBackedDoseChange(entry){
+  try{
+    if(_demoActive){const result=nexusPlanBackedDoseChange(state,entry);state=result.next;return result;}
+    const writer=nexusWriter();
+    const result=await writer.transaction(state,prior=>nexusPlanBackedDoseChange(prior,entry));
+    state=result.next;_nexusLastSavedSnapshot=writer.expected();return result;
+  }catch(e){
+    console.error("Nexus exclusive backed dose correction rejected",e);
+    if(!_demoActive)showSaveWarning();
+    return null;
+  }
 }
 
 function enterDemoMode(scenario) {

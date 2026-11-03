@@ -5,7 +5,8 @@ import { execFileSync } from 'node:child_process';
 const VERSION = JSON.parse(fs.readFileSync('release/release.json','utf8')).version;
 execFileSync(process.execPath, ['tools/generate-release-notes.mjs', '--check'], {stdio:'inherit'});
 const DIST = 'dist';
-const JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
+const ORDERED_APP_JS = Array.from({length: 12}, (_, i) => 'assets/js/' + String(i + 1).padStart(2, '0') + '-nexus.js');
+const JS = [...ORDERED_APP_JS.slice(0,3), 'assets/js/nexus-preparation-ledger.js', 'assets/js/nexus-preparation-bridge.js', 'assets/js/nexus-formulation-stock.js', 'assets/js/nexus-prepared-dose-transaction.js', 'assets/js/nexus-write-coordinator.js', ...ORDERED_APP_JS.slice(3)];
 const CSS = ['assets/css/nexus.css', 'assets/css/nexus-disclosures.css', 'assets/css/nexus-contrast.css', 'assets/css/nexus-hybrid-preview.css'];
 const ICONS = ['assets/icons/nexus-icon-180.png', 'assets/icons/nexus-icon-192.png', 'assets/icons/nexus-icon-512.png', 'assets/icons/nexus-icon-1024.png'];
 const LIVE_FILES = ['index.html', ...CSS, ...JS, ...ICONS];
@@ -167,9 +168,26 @@ execFileSync('python3', ['-c', [
  "with zipfile.ZipFile(sys.argv[1], 'w', compression=zipfile.ZIP_DEFLATED) as z:",
  ' for name in sys.argv[2:]: z.write(name, name)'
 ].join('\n'), liveFile, ...LIVE_FILES]);
+// pull_request jobs check out a synthetic merge commit by default. Record the
+// verified PR HEAD SHA in candidate artifacts instead of mislabelling the
+// ephemeral merge SHA as the branch source. Release files remain exact checkout
+// bytes; this metadata identifies the actual source ref for independent parity.
+function releaseSourceCommit(){
+  const eventPath=process.env.GITHUB_EVENT_PATH;
+  if(eventPath){
+    try {
+      const event=JSON.parse(fs.readFileSync(eventPath,'utf8'));
+      const head=event.pull_request?.head?.sha;
+      if(typeof head==='string' && /^[0-9a-f]{40}$/.test(head))return head;
+    }catch(error){
+      console.warn('Cannot inspect GitHub event payload for PR head',error.message);
+    }
+  }
+  return process.env.GITHUB_SHA || 'local-checkout-unverified';
+}
 const manifest = {
  version: VERSION,
- source_commit: process.env.GITHUB_SHA || 'local-checkout-unverified',
+ source_commit: releaseSourceCommit(),
  live_files: LIVE_FILES,
  live_zip: path.basename(liveFile),
  standalone_demo: path.basename(demoFile),

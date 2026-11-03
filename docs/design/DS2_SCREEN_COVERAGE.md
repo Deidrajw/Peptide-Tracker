@@ -1,3 +1,95 @@
+## 2026-11-02 — PR124 full 16-point physical iPhone acceptance COMPLETE
+- User returned exact source 5ea01fd3 final checklist: 16/16 PASS, 0 FAIL, 0 BLOCKED, 0 NOT TESTED, Notes None, including Stash, form-specific pickers, inventory, Log Dose and Goal Details/iPhone accessibility. Supersedes previous rejected-device screenshots for same scoped corrected screens; previous issues retained below historically. Physical result is user-reported, not independent VoiceOver instrumentation.
+- 5/5 application CI PASS, mixed-writer safety P0 gate PASS, complete fictional DEMO/LIVE source-verified. User granted merge/deploy approval. Preserve both nasal LIVE OFF and production localStorage. UAT P0 CLEARED, pending approved merge and independently verified Cloudflare serving resulting commit.
+
+## 2026-11-02 — scope-specific #15 physical acceptance; remaining 16-point iPhone P0 OPEN
+- User reported 4/4 PASS for final 5ea01fd3 Additional Dose Options #15 (type/spacing, preferences, two checkboxes, light/dark); all five exact-source GitHub workflows PASS including writer gate. Explicit merge/deploy approval received in later message.
+- This is NOT all-16 acceptance. Binding 16-point scorecard still records other iPhone and VoiceOver OPEN/previous FAIL surfaces. Maintain release P0 HOLD until that matrix is cleared. Both nasal LIVE feature flags OFF. No production merge/deploy.
+
+## 2026-11-02 — PR124 mixed-source Stash and Log Dose source-conditional controls (QA PASS, NOT iPhone accepted)
+- Exact tested source 825e2310: compact mixed-kit card distinguishes injectable open-vial mg, nasal-reserved source mg and prepared nasal bottle mg/mL without adding stock or showing single-vial progress; 8 fictional 320/390 light/dark LIVE/DEMO Stash Card matrices PASS in Chromium/build #41413098060. Physical injectable Log Dose limits routes to SubQ/IM/IV; historical Oral source remains selectable in legacy route editor. Log Dose browser 184 flows/8 matrices PASS; WebKit #41413098124, mobile #41413098025, nested #41413098462, writer #41413097993 SUCCESS.
+- Full 16-point iPhone/VoiceOver acceptance remains OPEN; both nasal LIVE flags OFF, P0 release BLOCKING. Unmerged/undeployed. User has not accepted a real iPhone release.
+
+## 2026-11-02 — PR124 latest #02/#11/#15 exact-source UI QA (NOT PHYSICAL ACCEPTANCE)
+- Code: #11 isolated-DEMO reserved nasal-source direct action; #15 additional dose option accessible explanations; #02 noninjectable site clearing verified without runtime/ledger changes. Chromium/build #41394215775, WebKit #41394215749, mobile #41394215762, nested #41394215774, writer #41394215758 SUCCESS at exact test source `fbdaafea`. Source matched artifact #13118603875 includes 26-file LIVE ZIP, standalone isolated full-app DEMO, offline zip (all CRC PASS). WebKit artifact #13119235667 screenshot sampler reviewed at 320/390. Physical 16-point UAT/VoiceOver NOT ACCEPTED; writer P0 blocking, nasal LIVE OFF, no merge or deployment.
+
+## 2026-11-01 — PR124 shared form QA delta (NOT PHYSICALLY ACCEPTED)
+- App source `1cc45e46` implements 48px SVG close consistency for three remaining Open Vial sheets, responsive 320/390 Open Vial details fields, actual nasal preparation Review with viewport-anchored consent/Back/Confirm, and Goal Details tab keyboard navigation. Actual nasal CTA clipping reproduced (offscreen y=1081 > 844), then corrected and inspected in Chromium/WebKit both themes/widths.
+- Exact-source five workflows PASS (#41390039557 Chromium/build, #41390039507 WebKit, #41390039506 mobile, #41390039533 nested, #41390039503 writer). Full-app DEMO and LIVE exact-source ZIP CRC-verified artifact #13117342031; still candidate only.
+- 16-point physical acceptance remains OPEN, especially #02 legacy routes, #08 topical/raw parity, #11 historical nasal fallback, #15 options, #16 iPhone keyboard/VoiceOver. No merge/deploy; P0 mixed writer blocking; live nasal gates OFF.
+
+## 2026-11-01 — Capsule/prepared-spray Review layout corrective candidate
+- Actual WebKit screenshot evidence (#13115950372) showed off-fold Review actions at 320px despite passing close/header; app CSS `9d409122` anchors Review actions with one summary scrollport only while preserving compact Entry. New full 16-cell UI test at `d4b18b8` pending CI. No acceptance of iPhone keyboard, VoiceOver or other 16 rows.
+
+## 2026-11-01 — Log Dose normal injectable visual gate verification
+- Test source `ddd6e42a`: all five CI SUCCESS, normal injectable Log Dose 8/8 browser cases 320/390 light/dark LIVE/isolated DEMO, 4 LIVE Review screenshots manually inspected with visible header, Edit details, Confirm Log, no observed clipping. Other forms, physical iPhone/VoiceOver/software keyboard and 16-item UAT incomplete. No UI runtime changes and no merge/deploy.
+
+## 2026-11-01 — Log Dose #14 first targeted closure pass
+- Added stronger Entry/Review geometry assertions at `e301cafa` for true internal clipping (title/header vs sheet edge, body/footer ownership, primary action in visual viewport), not merely outer viewport bounds. 320/390 both themes LIVE/DEMO Chromium CI PENDING, iPhone keyboard/VoiceOver NOT TESTED. Other-form and shared header rows remain partial; no layout redesign approved or shipped.
+
+## 2026-11-01 — user screenshot rejection and PR124 modal/stock-truth correction (QA pending)
+- Add Kit (#03/#04/#05/#06): Header/close must stay above intro and Step 1 progress; existing split/warped order rejected on physical screenshots. Code `33e12915`/`1fde47f8` header and text order, `f9f140eb`/CSS `2447f68d` standardized close, `2447f68d` harmonized vial vs other picker. Targeted dual-engine layout assertions `a48e4db1`/`07d4bcaf`. NEW-HEAD FULL QA AND PHYSICAL ACCEPTANCE PENDING.
+- Stash source→nasal bottle (#12/#13): User rejected `Empty / 0mg` as compound status while transferred mass remains in prepared bottle. Display-only `9b8bc029`/`5b2e58a4` shows prepared mass and `Transferred` source; original accounting unchanged. WebKit/Chromium QA NOT VERIFIED. Nasal entry copy `26e23dc4` clarified.
+- Log Dose (#14) method availability and default nasal confusion remains OPEN: recommend verified source-aware methods (prepared spray from bottle; injection from eligible physical vial) with history preserved; do not silently remove other saved routes or change their history. User withheld physical iPhone retest. P0 writer BLOCKING, LIVE nasal OFF; no merge/deploy.
+
+## 2026-11-01 — PR124 16-point shared compound picker corrective checkpoint
+- Persistent per-item implementation/browser/physical matrix is `docs/design/PR124_16_POINT_UI_SCORECARD.md`. Other-form combobox e394603f, CSS 0ed9d03e, Browse-all role fix bc8325a5 and Vial picker parity f743adba are CODED; regression bedff373/cc568a3f/1fab968c checks 320/390 light/dark and single scroll/keyboard.
+- Pre-correction browser failed 6-vs-5 real choices; newest exact-source CI still pending. No physical iPhone pass; remaining modal/Goal/Additional options/legacy nasal sheet polish PARTIAL. Preserve exact-source nasal accounting and accepted parents, P0 BLOCKED, LIVE nasal OFF; no merge/deploy.
+
+## 2026-11-01 — PR124 shared form geometry refinement, not acceptance
+- Coded CSS-only candidate `2b19a5de` aligns form-choice, Log Dose capsule/spray, nasal preparation and Goal Details titles/close targets, 48px close, 16px inputs and narrow review wrapping. All 16 user-required corrections remain open until picker, legacy flows, optional dose options, source/bottle clarity and safe-area/keyboard issues are resolved and verified.
+- Current candidate visual Chromium/WebKit 320px/390px light/dark NOT TESTED; physical iPhone/VoiceOver NOT TESTED; prior user screenshot failures retained. Separate exact-source Oxytocin ledger PASS at `66959ba7` is not presentation acceptance. P0 blocked; nasal LIVE OFF; draft/no deployment.
+
+## 2026-11-01 — Physical iPhone PR124 screenshot rejection, corrective retest withheld
+- 13 iPhone Edge fictional full-app DEMO screenshots demonstrate FAILED DS2 UAT for Open Vial form choice, nasal/capsule sheet sizing/headers, close buttons, Add Kit and picker parity, nasal preparation Review, and Stash source/bottle clarity. Automated browser green predecessor does not mark physical surfaces accepted. Approved contract: exactly two opening form choices Injectable/Nasal BEFORE vial entry; relevant next screen; linked physical/ready nasal inventory; one confirmed DEMO transfer; no extra post-confirm Record CTA.
+- Corrective code through dd4949ab is CODED / NEEDS NEW EXACT-SOURCE CI, not visually accepted: shared SVG 48px close controls, compact container-backed sheet CSS, form-first selector, DEMO one-confirmation nasal source-to-bottle, linked mg/mL, conditional context. Remaining open surface audit: all source and compound comboboxes, Goal Details, Additional options, historical nasal fallback entry, light/dark keyboard and safe areas. Physical retest user explicitly withheld until ALL sixteen agreed issues are fixed. No merge/deploy, P0 blocked.
+
+## 2026-10-31/Nov 1 UTC — PR124 integrated Log Dose and Stash DS2 candidate (not accepted on device)
+- Draft source at b69bb16f (app/CSS), browser test at 1341f629. Stash compact card retains identity/remaining/action geometry and Supplies-matched light gradient. Log Dose DS2 restores visible administration method grid, transparent content area instead of nested blob, hierarchical Your Dose title, consistent selectable method buttons, grouped Additional dose options and consistent checked/unchecked appearance. Opened vial detail sorts by numeric sequence. Nasal plan includes readable kit → vial → separate actual preparation → eligible stock explanation.
+- WebKit #41266340383 SUCCESS. Latest Chromium full/parity #41266340372 was in progress at observation; 320/390 dark/light screenshot review, exact-source artifacts and physical iPhone acceptance remain open. UI changes do not solve oral capsule automatic dose deduction, prepared nasal transfers or P0 mixed-writer safety.
+- Preserve accepted DS2 Today/Calendar/Plans/Supplies/etc; no redesign of protected parent screens, no data rewrite. Next: review full Chromium result then deliver source-matched full-app isolated DEMO for physical tests.
+
+## 2026-10-31 — Stash kit collapsed hierarchy candidate (PR #124; not physically accepted)
+- Based on user iPhone screenshot of KLOW, previous compact styling only reduced typography without reducing nested panel structure. New collapsed design uses identity/status + kit/vial count, remaining open-vial or sealed-kit stock, one context-based primary action and Details. Setup warnings become concise inline status; administration-method and secondary vial actions remain in expanded details.
+- App code 2185e4c0 (assets/js/10-nexus.js), CSS 37e65754 (assets/css/nexus-hybrid-preview.css), browser geometry regression 981f7319 (tools/validate-stash-cards.mjs) plus corrected sealed-kit parity 8eb7b791. Protected layout rules: 320/390, dark/light, >=44px controls, readable >=15px title, no double scroll / clipped chevrons, open-vial math remains canonical. Target collapsed height <255px in fixture, measured by automated browser, NOT inferred from font size.
+- First new full QA #41258079351 failed old trust test label for unopened kit, fixed at 8eb7b791; subsequent tests pending. No iPhone physical acceptance or new deployment. Preserve kit details tabs, manage menu, open-new-vial action, use setup, inventory and history.
+
+## 2026-10-31 — Backup & Restore child physical iPhone acceptance PASS
+- User-reported actual iPhone Safari checklist 9/9 PASS with zero notes, fictional full-app DEMO and JSON only, production data untouched: settings navigation, long filename, native keyboard/actions, typed RESTORE gating, Cancel/X no-write, external keyboard/VoiceOver focus return and light/dark readability. Independent browser Chromium #41178820238 and screenshot-fixed #41211810566 both SUCCESS; four settled local visual frames previously inspected. Mark ONLY Backup & Restore child-screen physical acceptance complete; broader Settings, production migration, and other PR124 features remain subject to their own acceptance.
+
+## 2026-10-31 — Expanded restore modal visual audit: automated PASS, settled snapshots pending
+- Expanded GitHub Chromium #41178820238 SUCCESS; four actual restore-preview screenshots from artifact #13034107579 inspected at 320/390 × light/dark. Title, long filename, counts, consent, cancel/restore actions present and fit; QA JSON confirms overflow=false, 44px actions. Several screenshots rendered mid-entrance with low opacity; not valid settled contrast visual evidence. Timing-only screenshot correction b445679eb8ad346c4906f558271ad0615647f91b pending CI. iPhone Safari keyboard and VoiceOver not accepted. Keep parent screens unchanged and physical acceptance OPEN.
+
+## 2026-10-31 — Settings Backup modal independent Chromium acceptance, physical acceptance open
+- Source matched corrected Chromium #41178615573 SUCCESS; verified artifact #13033234592 and 4/4 independently run real Chromium 320/390 light/dark full-app fictional DEMO restore modal tests. Long filename wraps, 44px actions/zero overflow, keyboard typing and focus return, Cancel/Close strict no-write equality PASS. 320px 420px-height keyboard-space approximation shows input and actions visible; actual Safari on-screen keyboard/VoiceOver not tested. New committed test matrix CI #41178820238 pending final verification. Preserve accepted parent screens; do NOT close physical iPhone acceptance.
+
+## 2026-10-31 — Backup/Units child screenshot evidence inspected; modal acceptance pending
+- Independently opened nested evidence archive 13034276111, inspected 320px/390px light/dark screenshots of Backup & Restore and Units detail. No apparent horizontal overflow or lost controls; two Import/Export button labels wrap at 320 but remain legible. Existing nested audit run 41178615575 PASS. This is detail-screen visual evidence only and does NOT establish soft-keyboard or restore-preview fit. New four-case fictional standalone browser matrix committed in tools/validate-trust-ui.mjs at 1e7b647; run 41178820238 pending; physical iPhone/VoiceOver NOT TESTED. Keep these acceptance items OPEN.
+
+## 2026-10-31 — Settings child screenshots inspected, modal acceptance open
+- 8 actual screenshots from nested artifact 13034276111 inspected: 320/390 light/dark Backup & Restore and Units detail child screens visually contained, with wrapped rollover at 320px. Screenshots do not capture restore confirmation or virtual keyboard. Fictional browser assertions added 56a52f86; Chromium 41178814456 pending. Parent layouts preserved, child acceptance OPEN.
+
+## 2026-10-31 — Profile/Settings nested child audit: targeted code, acceptance still OPEN
+- Inspected assets/js/11-nexus.js Settings details and backup restore flow. Concrete defects: Units weight/measurement/day-rollover controls 32px targets; backup restore arbitrary filename without wrapping; rigid narrow action row; no explicit focus return after Cancel/Close; misleading unconditional recovery-copy success copy. Scoped fix acddbe2d (44px controls, wrapping, responsive actions, focus, conditional message) on draft PR124. Existing Profile/Settings parent and accepted screen structure not changed. Browser 320/390 light/dark, virtual keyboard, VoiceOver, no-write fixture QA PENDING; do not mark screen accepted. Other Profile, Trends/Nexus, and DS2 child journeys remain OPEN.
+
+## 2026-10-31 — Evidence-based retirement sheet UX pass (PR124 DRAFT)
+- 320/390 light/dark fictional screenshots in nested audit #41170501525 PASS and artifact #13030128989 inspected. At 320px both themes, header displayed long `MARK KIT DONE — FICTIONAL RETIREMENT` across two lines, action `Only removing part? Log Outflow instead` and primary `Mark Done & Remove Remaining Stock` also wrapped to two lines. Technical phrase `retired vial-by-vial with exact physical attribution` was unnecessary mental load. Targeted copy-only fix b6a5b778 shortens title to Mark Kit Done, moves kit name into help text, uses clear consequence and `Log Partial Outflow`/`Remove All & Mark Done`. Safety guards and accepted Stash parent unchanged. Browser label assertion updated 67b6f5b. Current-head 320/390 light/dark screenshots and physical iPhone reacceptance PENDING. This is one scoped child-sheet fix, NOT completion of whole DS2 or P-11/12/13.
+
+## 2026-10-30 — PR124 compact Stash/use setup design candidate (CODED; ACCEPTANCE PENDING)
+- User-approved P-11/12/13 integrated preview implemented as targeted prototype in branch: kit card padding/primary stock typography reduced, preference summary + 44px Use setup action, native Stash Vials/History/actions retained. New dose unit row and setup sheet follow DS2 controls. iPhone 320/390 light/dark and screen reader/keyboard physical acceptance NOT TESTED; other accepted DS2 subpages not redesigned. No production deploy, no data migration. Next: full exact-source browser visual QA and physical iPhone before marking complete.
+
+## 2026-10-29 — APPROVED: inventory as background, exception-only source UI (CODED, QA PENDING)
+- User explicitly approved removing permanent Inventory source section, auto-selecting only ONE verified compatible open physical vial, subtle stock status, exact-vial chooser only for multiple compatible open vials or prepared/legacy exception, and moving ordinary preparation/method setup into Stash (existing Stash Create Preparation and vial details retained). Targeted app commit 155dcf97 changes normal Log Dose source section to exception-only, simplifies stock status and human-visible vial labels; CSS commit 8958076 adds restrained stock styling. Existing physical vial eligibility, source IDs, ledger, shortages, legacy method confirmation fallback, two-stage review/Back, PRN and calculations unchanged. No Stash navigation move or storage migration; one-time legacy fallback still available in Log Dose for existing records, routine vial setup stays in Stash. Exact-head CI and complete matching LIVE/DEMO NOT YET VERIFIED; iPhone acceptance NOT TESTED for these changes. Main baseline da585ab3, PR124 draft/unmerged/undeployed. ONE NEXT ACTION: verify latest four CI checks and resolve failures; then download/verify matching isolated full-app DEMO and LIVE ZIP before guided physical iPhone review.
+
+## 2026-10-29 — PR124 two-stage Log Dose review candidate
+- Approved iPhone review redesign coded: entry screen → Review & confirm within same modal, original fields mounted on Back, premium dose hero and tidy summary typography, 48px sticky actions, raw kit/vial database IDs omitted from review but saved source ledger retained. Full Chromium 320/390 light/dark LIVE/DEMO 8/8 PASS on 1da9f3c; mobile, WebKit and nested CI also PASS. NOT physically iPhone accepted, not merged/deployed. Preserve previously approved Stash/Calendar/Plans DS2 and personal storage.
+
+## 2026-10-29 — PR124 source selection/kit preparation mobile coverage
+- Log Dose explicit same-kit physical vial buttons (kit, vial number, use, balance, 48px targets), no ambiguous default. Existing kit Vials panel adds linked no-transfer Create Preparation action that wraps at narrow iPhone widths. Existing purchased product Add Kit remains separate. Chromium fictional 320/390 light/dark LIVE/DEMO browser run 40912034303 SUCCESS at 2680aba5; newest CSS/source exact-head browser and physical iPhone not yet accepted.
+
+## 2026-10-29 — PR #124 Stash/Log Dose exact-source preview
+- Stash existing-vial Create Preparation writes only no-transfer plan linked by kitId/vialId. Log Dose two eligible same-kit vials display individual 48px source choices, with explicit selection rather than first-vial inference. Browser and iPhone coverage not yet accepted, full app unchanged on production. Preserve prior DS2 styling; follow up on in-kit preparation detail and linked history QA.
+
 # Nexus Design System 2.0 — Complete Surface Coverage Register
 **Updated:** 2026-10-27 | **PR:** #123 DRAFT / UNMERGED | **Purpose:** track EVERY screen and subpage; no automatic completion from a passing test.
 
@@ -217,3 +309,29 @@ User identified inconsistent shading on Stash Add, wizard Continue, Save reactio
 - Root cause isolated in `applyNexusSheetStructure()` in `assets/js/04-nexus.js`: generic sheet adapter detects any final DIV with exactly two buttons, moves buttons into `.nx-unified-footer` and removes the container. This unintentionally stripped `.nx-ingredient-actions` before scoped CSS could stack it. Targeted source fix `6471d2cb`: exclude only `.nx-ingredient-actions` from that generic footer move, retaining intended full-width grid and existing onclick handlers; all other sheets retain adapter behaviour. No storage writes or saved-data migration.
 - Corrected-source nested #40765564957, mobile #40765564935, build/parity #40765564849 were IN PROGRESS at documentation time. Physical iPhone retest and exact-new-source LIVE and DEMO parity NOT VERIFIED. Continue hold PR #123 draft/unmerged and release BLOCKED on inventory user acceptance and no deployment authorisation.
 - ONE NEXT ACTION: verify corrected nested workflow assertions and screenshot evidence; then new-source LIVE/DEMO parity and physical Safari preview. USER NEXT ACTION: none until new browser preview confirmed; then check Back/Intel footer and chevrons.
+
+
+## 2026-10-29 — Draft PR #124 new Stash formulation surfaces
+- New Other formulations Stash section, Add Capsules modal, Add Nasal Bottle modal and audited Adjust forms coded. Uses existing DS2 card spacing and 44px controls; full browser 320/390 light/dark tests pending. These are additional additive inventory records, not existing vial kit redesigns. Physical iPhone acceptance NOT TESTED.
+- Existing Stash kit details/Inventory and historical vials remain approved and untouched; no medical-safety conversion or new route deductions. Do not merge/deploy absent release approval.
+
+
+## 2026-10-29 — Add Kit form architecture (draft PR #124)
+- Approved UX: Stash Add Kit launches a single five-choice form selection with explanatory card-buttons; Vials retains approved editor, others create form-specific package cards in normal kit list. Separate Other formulations section removed. Open New Vial has per-vial non-transferring intended-use selection. CSS target 44px+ controls at 320px/390px, light/dark. Browser CI pending; physical iPhone acceptance required. No merge/deployment.
+
+
+## 2026-10-31 — Stash density correction / form parity on draft PR #124
+- User review screenshots identify previously unaccepted oversized Vial cards, separate vertical boxed non-vial search results, and disproportionate Nasal/Capsule package cards in Vial kits. Targeted correction: responsive tighter cards, shared Vial compound combobox UX (5 results + View all), separate Vial kits / Other forms / Supplies segmented sections, compact non-vial stock row. Candidate commits 3bd53037, 3addc141, 5408ca8b, 18533dc8. User physical iPhone acceptance pending; preserve approved kit editor/detail flows, production stored source attribution and dosing safety. This specifically supersedes the previous mixed-display assumption without deleting or reclassifying records.
+
+## 2026-11-01 — PR124 user-request scorecard (current corrective sprint)
+| Requested item | State | Evidence / remaining gate |
+| --- | --- | --- |
+| Shared form header and close control parity | Implemented, automated CI passed on 5b7f878e | CSS 2b19a5de; physical iPhone pending |
+| Compact five-result compound search on non-vial Add Product | Implemented, new-head QA pending | Existing combobox plus keyboard/browse/no-result refinements 108f1559; check all four stock forms |
+| View all compounds and custom-name option | Implemented, new-head QA pending | 108f1559; test touch, keyboard and search dismissal |
+| Capsule, nasal, raw and topical form-flow parity | Partially implemented | Cross-screen end-to-end inspection outstanding |
+| Nasal exact-source transfer and bottle accounting | Passed on previous tested source 66959ba7 | Preserve source IDs, single transfer and dose debit; new-head recheck needed |
+| 320px / 390px light and dark comprehensive corrective audit | Not tested on 108f1559 | Four configurations required; previous 5b7f878e five CI workflows succeeded |
+| Remaining user-reported 16-point DS2 corrections | Incomplete | Reconcile individual screenshot items before sign-off; do not count CSS-only work as completion |
+| Full-app isolated DEMO and exact-source LIVE ZIP | Not verified for current head | Regenerate and inspect before release |
+| P0 writer and LIVE nasal safety gates | BLOCKING / OFF | No merge or deploy |

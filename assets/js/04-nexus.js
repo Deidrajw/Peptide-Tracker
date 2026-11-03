@@ -288,7 +288,8 @@ function auditKitLedger(kit) {
     ? kit.vials.reduce((a,v)=>a+(v.remainingMg!=null?v.remainingMg:0),0)
     : getKitRemainingMg(kit);
 
-  const accountedMg = administeredDirectMg + preparedTotalMg + outflowMg + remainingMg;
+  const preparationTransferMg = (kit.preparationTransfers||[]).filter(t=>t.kind==='transfer').reduce((sum,t)=>sum+(Number(t.amountMg)||0),0);
+  const accountedMg = administeredDirectMg + preparedTotalMg + outflowMg + preparationTransferMg + remainingMg;
   const diffMg = Math.round((startingMg-accountedMg)*100)/100;
 
   return {
@@ -298,6 +299,7 @@ function auditKitLedger(kit) {
     administeredFromPreparedMg: Math.round(administeredFromPreparedMg*100)/100,
     preparedTotalMg: Math.round(preparedTotalMg*100)/100,
     outflowMg: Math.round(outflowMg*100)/100,
+    preparationTransferMg: Math.round(preparationTransferMg*100)/100,
     adjustmentMg: Math.round(adjustmentMg*100)/100,
     untaggedHistoricalMg: Math.round(untaggedHistoricalMg*100)/100,
     remainingMg: Math.round(remainingMg*100)/100,
@@ -332,6 +334,7 @@ function inventoryReconciliationModal() {
           Administered (direct): ${r.administeredDirectMg}mg<br>
           Prepared (ever drawn): ${r.preparedTotalMg}mg <span style="color:var(--t5)">— includes ${r.administeredFromPreparedMg}mg since administered</span><br>
           Outflow/waste: ${r.outflowMg}mg<br>
+          Prepared-container transfers: ${r.preparationTransferMg}mg<br>
           ${r.adjustmentMg>0?`<span style="color:var(--t5)">Manual corrections applied: ${r.adjustmentMg}mg (already reflected in remaining, not a balance input)</span><br>`:""}
           Remaining: ${r.remainingMg}mg<br>
           <b style="color:${Math.abs(r.diffMg)>0.05?"#F9C87D":"var(--t3)"}">Difference: ${r.diffMg}mg ${Math.abs(r.diffMg)<=0.05?"✓":""}</b>
@@ -572,7 +575,7 @@ function backfillVialMetadata(kit) {
   opened.filter(v=>!v.reconDate).forEach(v=>{ if (v.legacyUsedMg==null) { v.legacyUsedMg = 0; changed=true; } });
 
   kit._vialsBackfilled = true;
-  if (changed) saveState();
+  
 }
 
 // Targeted repair for a specific known bug signature from an earlier version of the
@@ -603,7 +606,7 @@ function repairVialSequenceOrder(kit) {
     }
   }
   kit._vialsSeqOrderRepaired = true;
-  if (changed) saveState();
+  
 }
 
 function repairVialIdentityConflicts(kit) {
@@ -624,7 +627,7 @@ function repairVialIdentityConflicts(kit) {
     fixedAny = true;
   });
   kit._vialsRepaired = true;
-  if (fixedAny) saveState();
+  
 }
 
 function ensureKitVials(kit) {
@@ -675,7 +678,7 @@ function ensureKitVials(kit) {
   kit._vialsRepaired = true; // freshly migrated — nothing to repair yet
   // Persist immediately — this is a one-time migration; sequence numbers and legacy usage
   // snapshots must never be regenerated on a later render.
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
   return vials;
 }
 function getActiveVial(kit) { return ensureKitVials(kit).find(v=>v.status==="active"||v.status==="open") || null; }
@@ -844,7 +847,7 @@ function migrateToInventoryV2() {
   state._preV2SuppliesBackup = JSON.parse(JSON.stringify(state.supplies||[]));
   (state.supplies||[]).forEach(kit => migrateKitToV2(kit));
   state.inventoryModelVersion = 2;
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
 }
 
 // Per-kit migration — the actual conversion logic, callable either from the app-wide
@@ -944,7 +947,7 @@ function kitOwnedVialCount(kit) { const vials = ensureKitVials(kit); return vial
 // Auto-empties a vial the instant it's driven to ~0 — no separate "finish" step.
 // Returns a plan/result rather than throwing when short, so the caller decides whether
 // to prompt for the next vial or block the transaction outright.
-function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
+function consumeCompoundInventory({ kit, amountMg, reason, transactionId, vialId }) {
   // Premixed blends are one physical preparation with one total-mg outflow. The
   // existing ledger remains authoritative; no independent component stock writes.
   if(kit.isBlend){
@@ -966,7 +969,7 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
       if(getBlendOpenVialRemainingMg(kit)<=0.01){
         vial.status="empty";kit.emptyVials=(kit.emptyVials||0)+1;kit.reconDate=null;
       }
-      saveState();
+      /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
     }
     return {transactionId:id,totalMg:amountMg,allocations,
       remainingNeeded:committed?0:Math.max(0,requested-available),committed,
@@ -975,7 +978,16 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
   migrateKitToV2(kit); // lazy, per-kit only — never touches any other kit
   const allocations = [];
   let remaining = Math.round(amountMg*100)/100;
-  const openVial = kitOpenVialV2(kit);
+  // Multiple open vials require explicit physical-source identity. Legacy single-open
+  // callers remain compatible; ambiguous calls MUST NOT change any balance.
+  const openChoices=(kit.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&Number(v.remainingMg)>0.01);
+  if(openChoices.length>1&&!vialId) {
+    return {transactionId:transactionId||uid(),totalMg:amountMg,allocations:[],remainingNeeded:remaining,committed:false,reason:"exact-vial-required",hasSealedVial:kitSealedVialsV2(kit).length>0};
+  }
+  const openVial=vialId?openChoices.find(v=>String(v.id)===String(vialId)):openChoices[0]||null;
+  if(vialId&&!openVial) {
+    return {transactionId:transactionId||uid(),totalMg:amountMg,allocations:[],remainingNeeded:remaining,committed:false,reason:"source-not-open",hasSealedVial:kitSealedVialsV2(kit).length>0};
+  }
   if (openVial && remaining > 0.001) {
     const take = Math.min(remaining, openVial.remainingMg);
     if (take > 0.001) {
@@ -991,7 +1003,7 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId }) {
     remainingNeeded: committed ? 0 : remaining, committed,
     hasSealedVial: kitSealedVialsV2(kit).length > 0, reason: reason || "dose",
   };
-  if (committed) saveState();
+  
   return result;
 }
 
@@ -1010,7 +1022,7 @@ function openNextVialV2(kit, { reconDate, bacMl } = {}) {
   sealed.reconDate = reconDate || localDatetime();
   sealed.bacMl = bacMl != null ? bacMl : kit.bacMl;
   sealed.remainingMg = sealed.vialMg;
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
   return sealed;
 }
 
@@ -1056,7 +1068,7 @@ function undoConsumeCompoundInventory(kit, transactionResult) {
         showErrorBanner("Blend preparation could not be reversed safely: original transaction not found.");
       }
     }
-    saveState();return;
+    return;
   }  transactionResult.allocations.forEach(a => {
     const v = (kit.vials||[]).find(v=>v.id===a.vialId);
     if (!v) return;
@@ -1064,7 +1076,7 @@ function undoConsumeCompoundInventory(kit, transactionResult) {
     v.remainingMg = Math.round((v.remainingMg + a.amountMg)*100)/100;
     if (wasEmpty && v.remainingMg > 0.01) v.status = "open";
   });
-  saveState();
+  /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
 }
 
 // Reverses whatever inventory effect a dose record had, called right before it's deleted
@@ -1163,7 +1175,7 @@ function reverseDoseInventoryEffect(dose) {
       const kit=state.supplies.find(k=>String(k.id)===String(a.kitId));
       if(!refundBlendLedgerAmount(kit,a.ledgerId,doseToMg(a.amount,cfg(kit.name).unit)))return false;
     }
-    saveState();return true;
+    return true;
   }
   if (dose.fromPreparedId) {
     const pd = (state.preparedDoses||[]).find(p=>p.id===dose.fromPreparedId);
@@ -1293,9 +1305,9 @@ function deletePreparedDoseModal(pd) {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     if(deletePreparedDose(pd)===false)return;
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 // ═══════════════ END INVENTORY MODEL V2 (domain layer only — not yet wired to any screen) ═══════════════
@@ -1400,9 +1412,9 @@ function reopenVialModal(kitId, vialId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
   m.querySelector("#confirm").onclick = () => {
-    confirmOpenIfOtherKitOpen(s, () => {
+    confirmOpenIfOtherKitOpen(s, async () => {
       reopenVial(s, vial);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     });
   };
 }
@@ -1414,17 +1426,27 @@ function vialActionsMenu(kitId, vialId) {
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
   const c = cfg(s.name);
   const isFinished = vial.status==="finished"||vial.status==="empty";
+  const isOpen = ["open","active"].includes(vial.status);
+  const canSetMethod = isOpen && Number(vial.remainingMg)>0.01 && !(vial.intendedUse && vial.intendedUse!=="undecided") && !(typeof nexusExplicitAdminMethod==="function" && nexusExplicitAdminMethod(s.preparationMethod||s.administrationMethod||s.route));
+  const hasPreparationPlan = (s.linkedPreparationPlans||[]).some(p=>String(p.sourceVialId)===String(vial.id) && p.status==="planned-no-transfer");
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">VIAL ACTIONS</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
+    ${canSetMethod?`<button id="va-method" class="nx-vial-menu-action" type="button">Set administration method<small>Identify how this specific vial will be used</small></button>`:""}
+    ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
+    ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
     <button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date, BAC water amount, or notes</div></button>
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
+  const methodAction=m.querySelector("#va-method");
+  if(methodAction)methodAction.onclick=()=>{closeModal();nexusStashSetLegacyVialMethod(kitId,vialId);};
+  const planAction=m.querySelector("#va-plan");
+  if(planAction)planAction.onclick=()=>{closeModal();nexusCreateLinkedPreparation(kitId,vialId);};
   m.querySelector("#va-edit").onclick = () => { closeModal(); editVialReconModal(kitId, vialId); };
   m.querySelector("#va-adjust").onclick = () => { closeModal(); adjustVialRemainingModal(kitId, vialId); };
   const reopenBtn = m.querySelector("#va-reopen");
@@ -1521,7 +1543,7 @@ function manageKitMenu(kitId) {
     const btn=card.querySelector(".nx-kit-detail-button");
     if(btn){const panel=card.querySelector(".nx-kit-detail-panel"); if(panel){panel.hidden=false;btn.setAttribute("aria-expanded","true");card.scrollIntoView({block:"nearest",behavior:"smooth"});btn.focus({preventScroll:true});}}
   };
-  m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=()=>{
+  m.querySelectorAll(".nx-stash-action").forEach(btn=>btn.onclick=async()=>{
     const id=btn.dataset.action;
     if(id==="details"){openDetails();return;}
     closeModal();
@@ -1542,8 +1564,8 @@ function manageKitMenu(kitId) {
     else if(id==="intel") { state._intelReturn={tab,_aminoSub:state._aminoSub,_learnSub:state._learnSub,_discoverOpen:state._discoverOpen}; state._compoundIntel=s.name; tab="trends"; render(); window.scrollTo(0,0); }
     else if(id==="finish-kit") markKitDoneModal(kitId);
     else if(id==="blend-finish-kit") finishBlendKitModal(kitId);
-    else if(id==="reopen") { s.kitStatus=null; saveState(); renderBody(); }
-    else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",()=>{
+    else if(id==="reopen") { s.kitStatus=null; if(!await nexusCommitCurrentState())return;renderBody(); }
+    else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",async()=>{
       const kit=state.supplies.find(x=>x.id===kitId);
       if(kit){
         const othersExist=state.supplies.some(x=>x.id!==kitId&&x.name===kit.name);
@@ -1553,7 +1575,7 @@ function manageKitMenu(kitId) {
         }
       }
       state.supplies=state.supplies.filter(x=>x.id!==kitId);
-      saveState();render();
+      if(!await nexusCommitCurrentState())return;render();
     });
   });
 }
@@ -1581,39 +1603,109 @@ function manageKitMenu(kitId) {
 function addToOpenVialWouldOverRemove(addMg, kitVialMg, fromSealed) {
   return !!fromSealed && kitVialMg > 0 && addMg < kitVialMg * 0.9;
 }
-// Applies the addition and returns what's needed to undo it exactly.
-function applyAddToOpenVial(kit, vial, addMg, fromSealed) {
-  const snap = { beforeRemaining: vial.remainingMg, beforeVialMg: vial.vialMg, removedSealedId: null };
-  vial.remainingMg = Math.round((vial.remainingMg + addMg)*100)/100;
-  vial.vialMg = Math.round((vial.vialMg + addMg)*100)/100;
-  if (fromSealed) {
-    const sealedVial = ensureKitVials(kit).find(v=>v.status==="sealed");
-    if (sealedVial) { snap.removedSealedId = sealedVial.id; kit.vials = kit.vials.filter(v=>v.id!==sealedVial.id); kit.totalVials = Math.max(0,(kit.totalVials||0)-1); }
+// Pure, exact-vial stock planner. The caller supplies unique IDs and persists the
+// whole state inside nexusWriter().transaction; no mutation of live state before readback.
+function planAddToOpenVial(snapshot, input) {
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Exact source kit unavailable; reload Stash");
+  const vial=kit.vials.find(v=>String(v.id)===String(input.vialId));
+  if(!vial||!["active","open"].includes(vial.status))throw Error("Selected open vial changed; reopen this form");
+  if(Number(vial.remainingMg)!==Number(input.expectedRemainingMg) ||
+     Number(vial.vialMg)!==Number(input.expectedVialMg))throw Error("Vial balance changed; reopen this form");
+  const amount=Number(input.addMg);
+  if(!Number.isFinite(amount)||amount<=0||Math.round(amount*100)/100!==amount)
+    throw Error("Enter a positive mg amount with no more than two decimal places");
+  if(!Number.isFinite(Number(vial.remainingMg))||!Number.isFinite(Number(vial.vialMg)))
+    throw Error("Unverified vial amount");
+  if((kit.wasteLog||[]).some(x=>String(x.id)===String(input.eventId)))
+    throw Error("Addition already recorded");
+  const source=input.fromSealed
+    ? kit.vials.find(v=>String(v.id)===String(input.sourceSealedId)) : null;
+  if(input.fromSealed){
+    if(!source||source.id===vial.id||source.status!=="sealed")
+      throw Error("Selected sealed source vial is no longer available");
+    // An entire sealed vial is consumed; partial/mismatched amounts cannot
+    // silently discard or create stock. Use a separate adjustment instead.
+    if(Math.abs(Number(source.remainingMg)-amount)>0.001 ||
+       Math.abs(Number(source.vialMg)-amount)>0.001)
+      throw Error("Amount must match the exact sealed source vial");
   }
-  if (!kit.wasteLog) kit.wasteLog = [];
-  // The amount is always MILLIGRAMS (the field is "MG TO ADD") — this used to print it with the
-  // compound's own unit, so 0.4mg on an mcg-dosed compound was logged as "0.4mcg", off by 1000x.
-  kit.wasteLog.push({ id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: -addMg, type: "addition",
-    reason: `Added ${addMg}mg to the open vial${fromSealed?" (from a sealed vial, now removed from count)":""} — not done with it yet, chose not to open a separate one.`,
-    notes: "", status: "active", vialId: vial.id });
-  return snap;
+  const before={remainingMg:vial.remainingMg,vialMg:vial.vialMg};
+  const after={remainingMg:Math.round((Number(vial.remainingMg)+amount)*100)/100,
+    vialMg:Math.round((Number(vial.vialMg)+amount)*100)/100};
+  if(!Number.isFinite(after.remainingMg)||!Number.isFinite(after.vialMg))
+    throw Error("Invalid resulting vial amount");
+  vial.remainingMg=after.remainingMg;vial.vialMg=after.vialMg;
+  const targetAfterSnapshot=JSON.parse(JSON.stringify(vial));
+  const sourceCopy=source?JSON.parse(JSON.stringify(source)):null;
+  if(source){
+    kit.vials=kit.vials.filter(v=>String(v.id)!==String(source.id));
+    kit.totalVials=Math.max(0,(kit.totalVials||0)-1);
+  }
+  if(!Array.isArray(kit.wasteLog))kit.wasteLog=[];
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:-amount,type:"addition",status:"active",vialId:vial.id,
+    reason:`Added ${amount}mg to open vial${source?" from exact sealed vial":""}`,
+    notes:"",sourceSealedVialId:source?source.id:null,
+    sourceSealedVialSnapshot:sourceCopy,stockBefore:before,stockAfter:after,
+    targetAfterSnapshot});
+  return {next,eventId:input.eventId};
 }
-function undoAddToOpenVial(kit, vial, snap) {
-  vial.remainingMg = snap.beforeRemaining; vial.vialMg = snap.beforeVialMg;
-  if (snap.removedSealedId && !kit.vials.find(v=>v.id===snap.removedSealedId)) {
-    kit.vials.push({ id: snap.removedSealedId, status:"sealed", vialMg: kit.vialMg, remainingMg: kit.vialMg });
-    kit.totalVials = (kit.totalVials||0)+1;
+function planUndoAddToOpenVial(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Source kit unavailable");
+  const events=kit.wasteLog||[];
+  const idx=events.findIndex(x=>String(x.id)===String(input.eventId));
+  const event=events[idx];
+  if(!event||event.type!=="addition"||event.status!=="active"||
+     !event.stockBefore||!event.stockAfter)
+    throw Error("This addition cannot be reversed automatically");
+  const vial=kit.vials.find(v=>String(v.id)===String(event.vialId));
+  if(!vial||!["active","open"].includes(vial.status))
+    throw Error("Vial lifecycle changed; review history before reversing");
+  if(Number(vial.remainingMg)!==Number(event.stockAfter.remainingMg)||
+     Number(vial.vialMg)!==Number(event.stockAfter.vialMg))
+    throw Error("Vial balance changed; automatic undo blocked");
+  if(!event.targetAfterSnapshot||JSON.stringify(vial)!==JSON.stringify(event.targetAfterSnapshot))
+    throw Error("Vial details changed; automatic undo blocked");
+  // Do not undo an older addition over later operations on the same vial.
+  if(events.slice(idx+1).some(e=>String(e.vialId)===String(event.vialId)&&e.status!=="reversed"))
+    throw Error("Later vial events exist; automatic undo blocked");
+  if(events.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Undo already recorded");
+  const source=event.sourceSealedVialSnapshot;
+  if(source){
+    if(kit.vials.some(v=>String(v.id)===String(source.id)))
+      throw Error("Original sealed vial ID is already in use");
+    if(source.status!=="sealed"||Number(source.remainingMg)!==-Number(event.mg))
+      throw Error("Original sealed source cannot be restored safely");
+    kit.vials.push(JSON.parse(JSON.stringify(source)));
+    kit.totalVials=(kit.totalVials||0)+1;
   }
-  kit.wasteLog.pop(); // removes the addition-audit entry just added — it's the last one
+  vial.remainingMg=event.stockBefore.remainingMg;
+  vial.vialMg=event.stockBefore.vialMg;
+  event.status="reversed";event.reversedAt=input.loggedAt;event.reversalId=input.undoEventId;
+  events.push({id:input.undoEventId,date:input.date,loggedAt:input.loggedAt,
+    type:"addition-reversal",status:"active",vialId:vial.id,mg:0,amountMg:-Number(event.mg),
+    reversesEventId:event.id,reason:"Reversed exact recorded vial addition",notes:""});
+  return {next,eventId:input.undoEventId};
 }
 
 function addToOpenVialModal(kitId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const vial = getActiveVial(s);
-  if (!vial) { showErrorBanner("No open vial to add to — open one first."); return; }
-  const c = cfg(s.name);
-  const sealedCount = ensureKitVials(s).filter(v=>v.status==="sealed").length;
+  // Do not invoke the legacy read-time migration/repair while opening a
+  // stock-mutating form: those paths still save synchronously outside Web Locks.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before an exclusive stock change.");return;
+  }
+  const vial=s.vials.find(v=>v.status==="active"||v.status==="open");
+  if(!vial){showErrorBanner("No open vial to add to — open one first.");return;}
+  const c=cfg(s.name);
+  const sealedVials=s.vials.filter(v=>v.status==="sealed");
+  const sealedCount=sealedVials.length;
+  const sealedOptions=sealedVials.map((v,i)=>`<option value="${esc(String(v.id))}">Vial ${esc(String(v.sequenceNumber||i+1))} · ${Number(v.remainingMg)} mg sealed</option>`).join("");
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADD TO OPEN VIAL</span>
@@ -1626,6 +1718,7 @@ function addToOpenVialModal(kitId) {
       <input id="atv-fromsealed" type="checkbox" ${sealedCount>0?"checked":""} ${sealedCount>0?"":"disabled"} style="accent-color:${c.color}">
       This came from one of my sealed vials${sealedCount>0?` (${sealedCount} available)`:" (none sealed right now)"}
     </label>
+    ${sealedCount?`<label class="field-label" for="atv-source">SEALED SOURCE VIAL</label><select id="atv-source" class="inp" style="width:100%;min-height:46px;margin-bottom:12px"><option value="">Choose the exact sealed vial</option>${sealedOptions}</select>`:""}
     <div id="atv-hint" style="font-size:10px;color:var(--t5);margin-bottom:18px">Checked: removes one sealed vial from your count, since its powder is now in this one. Unchecked: just adds the mg (e.g. a vial you hadn't logged into Nexus yet).</div>
     <button id="atv-save" class="btn-primary" style="background:${c.color}">Add to Open Vial</button>
   `, c.color);
@@ -1635,7 +1728,14 @@ function addToOpenVialModal(kitId) {
   // (right for the default amount, a full vial), but it used to stay ticked after the amount was
   // changed to something small — so adding 0.4mg silently deleted an entire 5mg sealed vial from
   // inventory. A partial amount can't be a whole vial's worth, so editing it unticks the box.
-  const atvMg = m.querySelector("#atv-mg"), atvBox = m.querySelector("#atv-fromsealed"), atvHint = m.querySelector("#atv-hint");
+  const atvMg = m.querySelector("#atv-mg"), atvBox = m.querySelector("#atv-fromsealed"), atvHint = m.querySelector("#atv-hint"), sourcePicker=m.querySelector("#atv-source");
+  if(sourcePicker){
+    sourcePicker.onchange=()=>{
+      const selected=sealedVials.find(v=>String(v.id)===String(sourcePicker.value));
+      if(selected&&atvBox.checked)atvMg.value=String(selected.remainingMg);
+    };
+    atvBox.onchange=()=>{sourcePicker.disabled=!atvBox.checked;};
+  }
   const atvHintDefault = atvHint.textContent;
   atvMg.oninput = () => {
     const v = parseFloat(atvMg.value);
@@ -1647,10 +1747,54 @@ function addToOpenVialModal(kitId) {
     }
   };
 
-  const commitAdd = (addMg, fromSealed) => {
-    const snap = applyAddToOpenVial(s, vial, addMg, fromSealed);
-    saveState(); closeModal(); render();
-    showUndoToast(`Added ${addMg}mg to open ${esc(s.name)} vial · Undo`, () => { undoAddToOpenVial(s, vial, snap); saveState(); render(); });
+  const saveButton=m.querySelector("#atv-save");
+  const commitAdd=async(addMg,fromSealed)=>{
+    if(saveButton.disabled)return;
+    saveButton.disabled=true;
+    try{
+      const source=fromSealed
+        ? sealedVials.find(x=>String(x.id)===String(sourcePicker?.value)) : null;
+      if(fromSealed&&!source)throw Error("Choose the exact sealed source vial");
+      const input={kitId:s.id,vialId:vial.id,expectedRemainingMg:vial.remainingMg,
+        expectedVialMg:vial.vialMg,addMg,fromSealed,
+        sourceSealedId:source?source.id:null,eventId:uid(),
+        date:localDate(),loggedAt:new Date().toISOString()};
+      let result;
+      if(_demoActive)result=planAddToOpenVial(state,input);
+      else{
+        const savedRaw=localStorage.getItem(STORE_KEY);
+        if(!savedRaw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(savedRaw);
+        // An unrelated UI-only save may be newer; validate the exact kit,
+        // but the writer still requires an exclusive lock and fresh snapshot.
+        const savedKit=(saved.supplies||[]).find(k=>String(k.id)===String(s.id));
+        if(!savedKit||JSON.stringify(savedKit)!==JSON.stringify(s))
+          throw Error("This kit changed since opening the form; reopen it");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planAddToOpenVial(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;
+      closeModal();render();
+      showUndoToast(`Added ${addMg}mg to open ${esc(s.name)} vial · Undo`,async()=>{
+        try{
+          const inverse={kitId:s.id,eventId:input.eventId,undoEventId:uid(),
+            date:localDate(),loggedAt:new Date().toISOString()};
+          let undone;
+          if(_demoActive)undone=planUndoAddToOpenVial(state,inverse);
+          else{
+            const writer=nexusWriter();
+            const raw=localStorage.getItem(STORE_KEY);
+            if(!raw)throw Error("Saved inventory unavailable; reload");
+            undone=await writer.transaction(JSON.parse(raw),
+              snapshot=>planUndoAddToOpenVial(snapshot,inverse));
+            _nexusLastSavedSnapshot=writer.expected();
+          }
+          state=undone.next;render();
+        }catch(e){showErrorBanner("Undo blocked: "+e.message);}
+      });
+    }catch(e){showErrorBanner("Addition not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
   m.querySelector("#atv-save").onclick = () => {
     const addMg = parseFloat(atvMg.value);
@@ -1669,61 +1813,156 @@ function addToOpenVialModal(kitId) {
   };
 }
 
+// PR124: restocks and their inverse are immutable, exact-vial transactions.
+// A restock is inventory, not an administered dose or a preparation plan.
+function planExclusiveVialRestock(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!kit.vials.every(v=>Number.isFinite(Number(v.remainingMg))))
+    throw Error("Kit inventory needs reconciliation before restocking");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("Kit changed; reopen Add Vials");
+  const count=Number(input.count),mg=Number(input.mg),cost=Number(input.cost);
+  if(!Number.isSafeInteger(count)||count<1||count>1000)throw Error("Enter 1–1000 vials");
+  if(!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg)
+    throw Error("Vial strength must be a positive mg amount with at most two decimals");
+  if(!Number.isFinite(cost)||cost<0||Math.round(cost*100)/100!==cost)
+    throw Error("Additional cost must be a nonnegative amount with at most two decimals");
+  if(!Array.isArray(input.vialIds)||input.vialIds.length!==count||
+     new Set(input.vialIds.map(String)).size!==count||
+     input.vialIds.some(id=>id==null||String(id)===""))
+    throw Error("Unique identifiers required for every added vial");
+  const existing=new Set(kit.vials.map(v=>String(v.id)));
+  if(input.vialIds.some(id=>existing.has(String(id))))throw Error("Vial identifier already exists");
+  kit.restockLog=Array.isArray(kit.restockLog)?kit.restockLog:[];
+  if(kit.restockLog.some(e=>String(e.id)===String(input.eventId)))throw Error("Restock event already recorded");
+  const before={totalVials:kit.totalVials,vialMg:kit.vialMg,cost:kit.cost};
+  if(!Number.isSafeInteger(Number(kit.totalVials))||Number(kit.totalVials)<0)
+    throw Error("Kit total needs reconciliation");
+  const updatedCost=Math.round(((Number(kit.cost)||0)+cost)*100)/100;
+  if(!Number.isFinite(updatedCost))throw Error("Invalid resulting cost");
+  kit.vials.push(...input.vialIds.map(id=>({id,status:"sealed",vialMg:mg,remainingMg:mg})));
+  kit.totalVials=Number(kit.totalVials)+count;
+  kit.vialMg=mg;
+  if(cost)kit.cost=updatedCost;
+  const after={totalVials:kit.totalVials,vialMg:kit.vialMg,cost:kit.cost};
+  kit.restockLog.push({id:input.eventId,type:"vial-restock",status:"active",date:input.date,
+    loggedAt:input.loggedAt,addedVialIds:[...input.vialIds],addedVials:input.vialIds.map(id=>({id,status:"sealed",vialMg:mg,remainingMg:mg})),
+    count,mgPerVial:mg,additionalCost:cost,before,after});
+  return {next,eventId:input.eventId};
+}
+function planUndoExclusiveVialRestock(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(k=>String(k.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials)||!Array.isArray(kit.restockLog))
+    throw Error("Restock kit or history unavailable");
+  const idx=kit.restockLog.findIndex(e=>String(e.id)===String(input.eventId));
+  const event=kit.restockLog[idx];
+  if(!event||event.type!=="vial-restock"||event.status!=="active")
+    throw Error("This restock is not available for automatic undo");
+  if(kit.restockLog.slice(idx+1).some(e=>e.status==="active"))
+    throw Error("Later restock exists; review inventory before undo");
+  if(kit.restockLog.some(e=>String(e.id)===String(input.undoEventId)))
+    throw Error("Reversal event ID already exists");
+  if(Number(kit.totalVials)!==Number(event.after.totalVials)||
+     Number(kit.vialMg)!==Number(event.after.vialMg)||
+     Number(kit.cost||0)!==Number(event.after.cost||0))
+    throw Error("Kit totals or cost changed; automatic undo blocked");
+  const originals=event.addedVials||[];
+  if(originals.length!==event.count)throw Error("Original restock attribution incomplete");
+  for(const v of originals){
+    const found=kit.vials.filter(x=>String(x.id)===String(v.id));
+    if(found.length!==1||JSON.stringify(found[0])!==JSON.stringify(v))
+      throw Error("Added vial was used or changed; automatic undo blocked");
+    const hasActivity=(kit.wasteLog||[]).some(x=>String(x.vialId)===String(v.id));
+    const hasPreparation=(kit.linkedPreparationPlans||[]).some(x=>String(x.sourceVialId)===String(v.id));
+    const hasDose=Object.values(next.peptides||{}).concat(Object.values(next.customPeptides||{}))
+      .some(comp=>(comp.doses||[]).some(d=>(d.allocations||[]).some(a=>String(a.vialId)===String(v.id))||
+        ((d.vialId!=null&&String(d.vialId)===String(v.id))&&(d.kitId==null||String(d.kitId)===String(kit.id)))));
+    if(hasActivity||hasPreparation||hasDose)
+      throw Error("Added vial has attached history; automatic undo blocked");
+  }
+  const ids=new Set(event.addedVialIds.map(String));
+  kit.vials=kit.vials.filter(v=>!ids.has(String(v.id)));
+  kit.totalVials=event.before.totalVials;
+  if(Object.prototype.hasOwnProperty.call(event.before,"vialMg")&&event.before.vialMg!==undefined)
+    kit.vialMg=event.before.vialMg;
+  else delete kit.vialMg;
+  if(event.before.cost!==undefined)kit.cost=event.before.cost;
+  else delete kit.cost;
+  event.status="reversed";event.reversedAt=input.loggedAt;event.reversalId=input.undoEventId;
+  kit.restockLog.push({id:input.undoEventId,type:"vial-restock-reversal",status:"active",
+    date:input.date,loggedAt:input.loggedAt,reversesEventId:event.id,addedVialIds:[...event.addedVialIds]});
+  return {next,eventId:input.undoEventId};
+}
 function addVialsModal(kitId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const c = cfg(s.name);
-  const m = openModal(`
+  const s=state.supplies.find(x=>x.id===kitId);if(!s)return;
+  // Legacy migration is still synchronous; don't run it during this exclusive action.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before exclusive restocking.");return;
+  }
+  const c=cfg(s.name),expectedKit=JSON.stringify(s);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADD VIALS</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <span class="mono" style="font-size:13px;letter-spacing:1.5px;color:${c.color}">ADD VIALS</span>
+      <button id="x" aria-label="Close Add Vials" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:16px">Adds sealed vials to this ${esc(s.name)} kit — for restocking the same product. A genuinely different product or strength is usually clearer as its own kit (Stash → Add Kit).</div>
+    <div class="hint" style="margin-bottom:16px">Adds individually identified sealed vials to this ${esc(s.name)} kit. The existing vial history stays unchanged.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div><label class="field-label">NUMBER OF VIALS</label><input id="av-count" type="number" min="1" step="1" class="inp" value="1" style="margin-bottom:14px"></div>
-      <div><label class="field-label">MG PER VIAL</label><input id="av-mg" type="number" step="0.01" class="inp" value="${s.vialMg||''}" style="margin-bottom:14px"></div>
+      <div><label class="field-label" for="av-count">NUMBER OF VIALS</label><input id="av-count" type="number" min="1" max="1000" step="1" class="inp" value="1" style="margin-bottom:14px"></div>
+      <div><label class="field-label" for="av-mg">MG PER VIAL</label><input id="av-mg" type="number" min="0.01" step="0.01" class="inp" value="${s.vialMg||''}" style="margin-bottom:14px"></div>
     </div>
     <div id="av-mismatch" style="display:none;background:#F9C87D11;border:1px solid #F9C87D44;border-radius:8px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:#F9C87D"></div>
-    <label class="field-label">ADDITIONAL COST (optional)</label>
-    <input id="av-cost" type="number" step="0.01" class="inp" placeholder="e.g. 100.00" style="margin-bottom:18px">
+    <label class="field-label" for="av-cost">ADDITIONAL COST (optional)</label>
+    <input id="av-cost" type="number" min="0" step="0.01" class="inp" placeholder="e.g. 100.00" style="margin-bottom:18px">
     <button id="av-save" class="btn-primary" style="background:${c.color}">Add to This Kit</button>
-  `, c.color);
-  m.querySelector("#x").onclick = closeModal;
-  const mgInput = m.querySelector("#av-mg");
-  const mismatchBox = m.querySelector("#av-mismatch");
-  const checkMismatch = () => {
-    const v = parseFloat(mgInput.value);
-    if (s.vialMg && v && Math.abs(v - s.vialMg) > 0.001) {
-      mismatchBox.style.display = "block";
-      mismatchBox.textContent = `This kit's existing vials are ${s.vialMg}mg each — these new ones would be ${v}mg. They'll still be tracked correctly (each vial keeps its own strength), but if this is really a separate product, a new kit would keep Stash clearer.`;
-    } else {
-      mismatchBox.style.display = "none";
-    }
+  `,c.color);
+  m.querySelector("#x").onclick=closeModal;
+  const mgInput=m.querySelector("#av-mg"),mismatchBox=m.querySelector("#av-mismatch"),saveButton=m.querySelector("#av-save");
+  mgInput.oninput=()=>{
+    const strength=Number(mgInput.value);
+    if(s.vialMg&&strength>0&&Math.abs(strength-Number(s.vialMg))>0.001){
+      mismatchBox.style.display="block";
+      mismatchBox.textContent=`This kit's existing vials are ${s.vialMg}mg each — these new ones would be ${strength}mg. Each vial keeps its own strength; use a separate kit if appropriate.`;
+    }else mismatchBox.style.display="none";
   };
-  mgInput.oninput = checkMismatch;
-  m.querySelector("#av-save").onclick = () => {
-    const count = parseInt(m.querySelector("#av-count").value);
-    const mg = parseFloat(mgInput.value);
-    if (!count || count<1) { showErrorBanner("Enter at least 1 vial."); return; }
-    if (!mg || mg<=0) { showErrorBanner("Enter a valid mg per vial."); return; }
-    const cost = parseFloat(m.querySelector("#av-cost").value)||0;
-    const addedIds = [];
-    s.vials = s.vials || [];
-    for (let i=0;i<count;i++) {
-      const v = { id: uid(), status: "sealed", vialMg: mg, remainingMg: mg };
-      s.vials.push(v);
-      addedIds.push(v.id);
-    }
-    s.totalVials = (s.totalVials||0) + count;
-    s.vialMg = mg; // kit-level value tracks the most recently added strength, same as activateVial already treats it
-    if (cost) s.cost = (parseFloat(s.cost)||0) + cost;
-    saveState(); closeModal(); render();
-    showUndoToast(`Added ${count} vial${count===1?"":"s"} to ${esc(s.name)} · Undo`, () => {
-      s.vials = (s.vials||[]).filter(v => !addedIds.includes(v.id));
-      s.totalVials = Math.max(0, (s.totalVials||0) - count);
-      if (cost) s.cost = Math.max(0, (parseFloat(s.cost)||0) - cost);
-      saveState(); render();
-    });
+  saveButton.onclick=async()=>{
+    if(saveButton.disabled)return;
+    const countRaw=m.querySelector("#av-count").value.trim(),mgRaw=mgInput.value.trim(),costRaw=m.querySelector("#av-cost").value.trim();
+    const count=Number(countRaw),mg=Number(mgRaw),cost=costRaw===""?0:Number(costRaw);
+    if(!countRaw||!Number.isSafeInteger(count)||count<1||count>1000){showErrorBanner("Enter 1–1000 whole vials.");return;}
+    if(!mgRaw||!Number.isFinite(mg)||mg<=0||Math.round(mg*100)/100!==mg){showErrorBanner("Enter a valid mg amount (two decimal places maximum).");return;}
+    if(!Number.isFinite(cost)||cost<0||Math.round(cost*100)/100!==cost){showErrorBanner("Enter a valid additional cost.");return;}
+    const event={kitId:s.id,expectedKit,count,mg,cost,vialIds:Array.from({length:count},()=>uid()),
+      eventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    saveButton.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveVialRestock(state,event);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),savedKit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!savedKit||JSON.stringify(savedKit)!==expectedKit)throw Error("Kit changed; reopen this form");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveVialRestock(snapshot,event));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+      showUndoToast(`Added ${count} vial${count===1?"":"s"} to ${esc(s.name)} · Undo`,async()=>{
+        const inverse={kitId:s.id,eventId:event.eventId,undoEventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+        try{
+          let reversed;
+          if(_demoActive)reversed=planUndoExclusiveVialRestock(state,inverse);
+          else{
+            const raw=localStorage.getItem(STORE_KEY);if(!raw)throw Error("Saved inventory unavailable; reload");
+            const writer=nexusWriter();
+            reversed=await writer.transaction(JSON.parse(raw),snapshot=>planUndoExclusiveVialRestock(snapshot,inverse));
+            _nexusLastSavedSnapshot=writer.expected();
+          }
+          state=reversed.next;render();
+        }catch(e){showErrorBanner("Restock undo blocked: "+e.message);}
+      });
+    }catch(e){showErrorBanner("Vials not saved: "+e.message);}
+    finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
 }
 
@@ -1734,48 +1973,107 @@ function addVialsModal(kitId) {
 // Deliberately NOT a silent overwrite: it always logs the delta as a wasteLog "adjustment"
 // entry, same as every other correction path this session, so the audit trail stays
 // truthful even when the correction itself isn't a normal consumption event.
+// Exact-vial, immutable correction planner. A correction is never inferred from
+// another log: one verified edit and one attributable adjustment record per commit.
+function planExclusiveVialAdjustment(snapshot,input){
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const kit=(next.supplies||[]).find(s=>String(s.id)===String(input.kitId));
+  if(!kit||!Array.isArray(kit.vials))throw Error("Kit inventory unavailable");
+  if(JSON.stringify(kit)!==input.expectedKit)throw Error("This kit changed; reopen the correction");
+  const matches=kit.vials.filter(v=>String(v.id)===String(input.vialId));
+  if(matches.length!==1)throw Error("Exact vial identity unavailable or duplicated");
+  const vial=matches[0];
+  if(vial.remainingMg===undefined||!Number.isFinite(Number(vial.remainingMg))||Number(vial.remainingMg)<0)
+    throw Error("Vial needs inventory reconciliation");
+  if(JSON.stringify(vial)!==input.expectedVial)throw Error("Vial changed; reopen the correction");
+  const capacity=Number(vial.vialMg!=null?vial.vialMg:kit.vialMg);
+  if(!Number.isFinite(capacity)||capacity<=0)
+    throw Error("Verified vial capacity required");
+  const requested=Number(input.newMg);
+  if(!Number.isFinite(requested)||requested<0||requested>capacity||
+     Math.round(requested*100)/100!==requested)
+    throw Error("Actual remaining must be within 0 and vial capacity, in 0.01mg increments");
+  if(vial.status==="transferred"&&requested>0)
+    throw Error("Transferred source must use the source-transfer reversal, not a manual stock correction");
+  const reason=typeof input.reason==="string"?input.reason.trim():"";
+  if(!reason)throw Error("A reason is required for every correction");
+  if(!input.eventId||String(input.eventId).trim()==="")
+    throw Error("A unique correction event is required");
+  kit.wasteLog=Array.isArray(kit.wasteLog)?kit.wasteLog:[];
+  if(kit.wasteLog.some(w=>String(w.id)===String(input.eventId)))
+    throw Error("Correction event already exists");
+  const before={remainingMg:vial.remainingMg,status:vial.status};
+  const deltaMg=Math.round((requested-Number(vial.remainingMg))*100)/100;
+  vial.remainingMg=requested<=0.01?0:requested;
+  if(vial.remainingMg===0&&vial.status!=="sealed")vial.status="empty";
+  else if(vial.remainingMg>0&&(vial.status==="empty"||vial.status==="transferred"))vial.status="open";
+  const after={remainingMg:vial.remainingMg,status:vial.status};
+  // Keep existing adjustment-log semantics: mg is the absolute difference,
+  // not a second physical stock deduction; sign/direction is in notes.
+  kit.wasteLog.push({id:input.eventId,date:input.date,loggedAt:input.loggedAt,
+    mg:Math.abs(deltaMg),type:"adjustment",reason:`Manual correction: ${reason}`,
+    notes:`${deltaMg<0?"Reduced":"Increased"} by ${Math.abs(deltaMg).toFixed(2)}mg — set to ${vial.remainingMg.toFixed(2)}mg`,
+    status:"active",vialId:vial.id,adjustmentDeltaMg:deltaMg,stockBefore:before,stockAfter:after});
+  return {next,eventId:input.eventId};
+}
 function adjustVialRemainingModal(kitId, vialId) {
-  const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
-  migrateKitToV2(s);
-  const vial = (s.vials||[]).find(v=>v.id===vialId); if(!vial || vial.remainingMg===undefined) return;
-  const c = cfg(s.name);
-  const capMg = vial.vialMg!=null ? vial.vialMg : (s.vialMg||0);
-  // Vial capacity/remaining is always plain mg, matching vial.remainingMg's own scale and
-  // the "KIT TOTAL: X/Y mg" display everywhere else — never the compound's dose unit
-  // (mcg for BPC-157 etc.), which is a different scale for a different kind of number.
-  // The Log Outflow whole-vial fix hit this exact same mistake; repeating it here would
-  // have made "4.49" silently become 0.00449mg.
-  const m = openModal(`
+  const s=state.supplies.find(x=>String(x.id)===String(kitId));if(!s)return;
+  // Do not run legacy migration/backfill during this lock-protected stock edit.
+  if(!Array.isArray(s.vials)||!s.vials.every(v=>Number.isFinite(Number(v.remainingMg)))){
+    showErrorBanner("This kit needs inventory reconciliation before a correction.");return;
+  }
+  const matching=s.vials.filter(v=>String(v.id)===String(vialId));
+  if(matching.length!==1||matching[0].remainingMg===undefined){
+    showErrorBanner("Select one identifiable vial to correct.");return;
+  }
+  const vial=matching[0],c=cfg(s.name),capMg=Number(vial.vialMg!=null?vial.vialMg:s.vialMg);
+  if(!Number.isFinite(capMg)||capMg<=0){
+    showErrorBanner("Vial capacity must be verified before correction.");return;
+  }
+  const expectedKit=JSON.stringify(s),expectedVial=JSON.stringify(vial);
+  const m=openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">ADJUST REMAINING AMOUNT</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+      <button id="x" aria-label="Close correction" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:16px">Nexus currently shows <b>${vial.remainingMg.toFixed(2)}mg</b> remaining in this vial (capacity: ${capMg}mg). Set what's actually true — the difference is logged as an adjustment, not silently overwritten.</div>
-    <label class="field-label">ACTUAL REMAINING AMOUNT (mg)</label>
-    <input id="adj-amount" type="number" step="0.01" class="inp" value="${vial.remainingMg.toFixed(2)}" style="margin-bottom:14px">
-    <label class="field-label">WHY (required)</label>
+    <div class="hint" style="margin-bottom:16px">Nexus currently shows <b>${Number(vial.remainingMg).toFixed(2)}mg</b> in this vial (capacity: ${capMg}mg). Set what is physically true. This writes an attributed adjustment to history.</div>
+    <label class="field-label" for="adj-amount">ACTUAL REMAINING AMOUNT (mg)</label>
+    <input id="adj-amount" type="number" min="0" max="${capMg}" step="0.01" class="inp" value="${Number(vial.remainingMg).toFixed(2)}" style="margin-bottom:14px">
+    <label class="field-label" for="adj-reason">WHY (required)</label>
     <textarea id="adj-reason" class="inp" placeholder="e.g. Correcting inventory bug — vial was wrongly marked empty by a Log Outflow issue" style="min-height:60px;resize:vertical;margin-bottom:18px"></textarea>
     <button id="adj-save" class="btn-primary" style="background:${c.color}">Save Correction</button>
-  `, c.color);
-  m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#adj-save").onclick = () => {
-    const newMgRaw = parseFloat(m.querySelector("#adj-amount").value);
-    const reasonText = m.querySelector("#adj-reason").value.trim();
-    if (isNaN(newMgRaw) || newMgRaw<0) { showErrorBanner("Enter a valid amount, 0 or more."); return; }
-    if (!reasonText) { showErrorBanner("A reason is required for a manual inventory correction — this becomes part of your audit trail."); return; }
-    const newMg = Math.min(capMg, newMgRaw);
-    const deltaMg = Math.round((newMg - vial.remainingMg)*100)/100;
-    const wasEmptyOrTransferred = vial.status==="empty"||vial.status==="transferred";
-    vial.remainingMg = Math.round(newMg*100)/100;
-    if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; if (vial.status!=="sealed") vial.status = "empty"; }
-    else if (wasEmptyOrTransferred) { vial.status = "open"; }
-    if (!s.wasteLog) s.wasteLog = [];
-    s.wasteLog.push({
-      id: uid(), date: localDate(), loggedAt: new Date().toISOString(), mg: Math.abs(deltaMg), type: "adjustment",
-      reason: `Manual correction: ${reasonText}`, notes: `${deltaMg<0?"Reduced":"Increased"} by ${Math.abs(deltaMg).toFixed(2)}mg — set to ${newMg.toFixed(2)}mg`,
-      status: "active", vialId: vial.id,
-    });
-    saveState(); closeModal(); render();
+  `,c.color);
+  m.querySelector("#x").onclick=closeModal;
+  const button=m.querySelector("#adj-save");
+  button.onclick=async()=>{
+    if(button.disabled)return;
+    const rawMg=m.querySelector("#adj-amount").value.trim();
+    const requested=rawMg===""?NaN:Number(rawMg);
+    const reason=m.querySelector("#adj-reason").value.trim();
+    if(!Number.isFinite(requested)||requested<0||requested>capMg||
+       Math.round(requested*100)/100!==requested){
+      showErrorBanner("Enter a valid amount between 0 and vial capacity (maximum two decimals).");return;
+    }
+    if(!reason){showErrorBanner("A reason is required for a manual inventory correction — it becomes part of the audit trail.");return;}
+    const input={kitId:s.id,vialId:vial.id,expectedKit,expectedVial,newMg:requested,reason,
+      eventId:uid(),date:localDate(),loggedAt:new Date().toISOString()};
+    button.disabled=true;
+    try{
+      let result;
+      if(_demoActive)result=planExclusiveVialAdjustment(state,input);
+      else{
+        const raw=localStorage.getItem(STORE_KEY);
+        if(!raw)throw Error("Saved inventory unavailable; reload");
+        const saved=JSON.parse(raw),currentKit=(saved.supplies||[]).find(x=>String(x.id)===String(s.id));
+        if(!currentKit||JSON.stringify(currentKit)!==expectedKit)
+          throw Error("This kit changed; reopen the correction");
+        const writer=nexusWriter();
+        result=await writer.transaction(saved,snapshot=>planExclusiveVialAdjustment(snapshot,input));
+        _nexusLastSavedSnapshot=writer.expected();
+      }
+      state=result.next;closeModal();render();
+    }catch(e){showErrorBanner("Correction not saved: "+e.message);}
+    finally{if(button.isConnected)button.disabled=false;}
   };
 }
 
@@ -1796,7 +2094,7 @@ function editVialReconModal(kitId, vialId) {
     <button id="ev-save" class="btn-primary" style="background:${c.color}">Save Changes</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#ev-save").onclick = () => {
+  m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
     vial.reconDate = newDate;
     if (isActiveVial) {
@@ -1804,7 +2102,7 @@ function editVialReconModal(kitId, vialId) {
       const bacInput = m.querySelector("#ev-bac");
       if (bacInput) s.bacMl = parseFloat(bacInput.value)||s.bacMl;
     }
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -1855,9 +2153,9 @@ function undoReconstitutionModal(kitId, vialId) {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     undoReconstitution(s, vial);
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
 
@@ -1909,10 +2207,109 @@ function getTotalUsableMg(compoundName) {
 // same compound at once (e.g. a 10mg-vial kit and a 30mg-vial kit open simultaneously).
 // activeKit no longer implies "the only one" — it just means "currently open," and a
 // compound can have several.
-function getEligibleSourceKits(name) {
+// Preparation bridge: new records are opt-in. Never infer route from a legacy kit,
+// or reinterpret previously logged doses. Transfer transactions are NOT committed
+// against existing vial ledgers until the two ledgers share one atomic boundary.
+function nexusPreparationForKit(kit, method) {
+  const p=(state.preparations||[]).find(p=>String(p.sourceKitId)===String(kit.id)&&p.method===method&&p.containerType==="vial");
+  return p||null;
+}
+function nexusEligiblePreparedSources(name, method) {
+  return (state.preparations||[]).filter(p=>p.compound===name&&p.method===method&&
+    Number.isFinite(p.remainingMg)&&p.remainingMg>0&&
+    (method!=="Nasal"||p.containerType==="nasal-bottle"));
+}
+async function nexusCreatePreparationRecord(input) {
+  if(!globalThis.NexusPreparationLedger)throw Error("Preparation ledger unavailable");
+  const p=globalThis.NexusPreparationLedger.createPreparation(input);
+  if((state.preparations||[]).some(x=>String(x.id)===String(p.id)))throw Error("Duplicate preparation");
+  state.preparations=state.preparations||[];
+  state.preparations.push(p);if(!await nexusCommitCurrentState())throw Error("Preparation record not durably saved");
+  return p;
+}
+function nexusPreviewPreparationTransaction(input) {
+  if(!globalThis.NexusPreparationLedger)throw Error("Preparation ledger unavailable");
+  const copy=JSON.parse(JSON.stringify(state.preparations||[]));
+  const event=globalThis.NexusPreparationLedger.transact(copy,input);
+  // Preview only: no saveState, no existing vial deduction. A real transfer
+  // must reconcile the canonical kit ledger before these values can be saved.
+  return {event,preparations:copy};
+}
+// Committed transfers are intentionally unavailable in DEMO mode and until a
+// complete validated snapshot can be persisted through one storage write.
+// Internal guarded boundary only. No UI invokes this until full release QA.
+const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false; // Release safety gate; do not enable until all writers share atomic coordination.
+async function nexusCommitPreparationTransfer(input) {
+  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)throw Error("Preparation transfers remain safety-gated");
+  if(_demoActive)throw Error("Transfers unavailable in demo mode");
+  if(!globalThis.NexusPreparationBridge||!input?.id)throw Error("Explicit preparation transfer required");
+  const writer=nexusWriter();
+  // The explicit destination type selects exactly one immutable ledger.
+  // A physical-to-formulation transfer never writes to the legacy preparation
+  // array and never creates measured spray calibration.
+  const planner=input?.kind==="transfer-to-formulation"
+    ?globalThis.NexusPreparationBridge.planFormulation
+    :globalThis.NexusPreparationBridge.plan;
+  const result=await writer.transaction(state,snapshot=>planner(snapshot,input));
+  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  return result.event;
+}
+
+/* Exact source-to-prepared-bottle live transaction is fully planned under one
+ * exclusive commit; public controls remain gated until ALL legacy state writers
+ * are coordinated. Never use a separately saved empty bottle or provisional debit.
+ * State swaps only after the writer's full-snapshot readback succeeds.
+ */
+async function nexusCommitRecordedNasalPreparation(input) {
+  if(!NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED)
+    throw Error("Recorded nasal transfers are unavailable until mixed-writer acceptance");
+  if(_demoActive)throw Error("Use the in-memory fictional planner in demo mode");
+  if(!globalThis.NexusPreparationBridge?.planRecordedNasal || !input?.confirmed)
+    throw Error("Confirmed recorded preparation with verified planner required");
+  const writer=nexusWriter();
+  const result=await writer.transaction(state,snapshot=>
+    globalThis.NexusPreparationBridge.planRecordedNasal(snapshot,input));
+  state=result.next;
+  _nexusLastSavedSnapshot=writer.expected();
+  return result;
+}
+
+// PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
+// but live controls remain disabled until every state writer shares the same
+// cross-tab transaction coordination. Never silently bypass this release gate.
+const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
+async function nexusCommitPreparedNasalOperation(operation) {
+  if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
+    throw Error("Prepared nasal logging is disabled pending shared-writer cross-tab acceptance");
+  if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
+  if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
+  const writer=nexusWriter();
+  // A single gated execution boundary owns the exact-source planner,
+  // exclusive lock and verified readback. No UI can reach this until the
+  // separate cross-tab legacy-writer migration is fully accepted.
+  const result=await globalThis.NexusPreparedDoseTransaction.executeExclusive(
+    writer,state,operation,{enabled:true}
+  );
+  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  return result;
+}
+
+function getEligibleSourceKits(name, method) {
+  // Shared source discovery agrees with Log Dose and the authoritative writer:
+  // vial-level physical FORM overrides kit defaults; legacy SubQ/IM are read
+  // as Injectable without altering saved labels. Explicit routes must never
+  // infer compatibility from an unlabelled vial or a nasal preparation plan.
+  // No-method callers retain the existing unscoped lookup contract.
   return (state.supplies||[]).filter(s=>s.name===name && s.activeKit)
-    .map(s => { migrateKitToV2(s); return { kit: s, vial: getActiveVial(s) }; })
-    .filter(x => x.vial && getVialRemainingMg(x.kit, x.vial) > 0.01);
+    .map(s=>{migrateKitToV2(s);return {kit:s,vial:getActiveVial(s)};})
+    .filter(({kit,vial})=>{
+      if(!vial || !["open","active"].includes(vial.status) ||
+          getVialRemainingMg(kit,vial)<=0.01)return false;
+      if(method==null)return true;
+      const formLabel=vial.intendedUse&&vial.intendedUse!=="undecided"
+        ?vial.intendedUse:(kit.preparationMethod||kit.administrationMethod||kit.route);
+      return nexusPhysicalVialCompatible(formLabel,method);
+    });
 }
 // Which kit to default to when more than one is eligible: the person's own last choice
 // for this compound, if it's still valid — otherwise the one with the LEAST remaining, a
@@ -1945,7 +2342,13 @@ function suggestAllocation(compoundName, neededAmount, unit) {
   // exactly the same overstatement already found and fixed for Log Dose and Prepare
   // Dose's own row population, just one level removed — this is the shared function all
   // four of those (and Mixed Syringe's add/re-select) ultimately call through.
-  const kits = (state.supplies||[]).filter(k=>k.name===compoundName && k.activeKit)
+  // Do not silently infer a first vial when a kit has two physical open sources.
+  // Until explicit vial selection is wired into the editor, return insufficient/ambiguous,
+  // rather than constructing allocations against the wrong vial.
+  const candidateKits=(state.supplies||[]).filter(k=>k.name===compoundName && k.activeKit);
+  if(candidateKits.some(k=>(k.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&getVialRemainingMg(k,v)>0.001).length>1))
+    return null;
+  const kits = candidateKits
     .map(k=>({ kit:k, vial: getActiveVial(k) }))
     .filter(x=>x.vial && getVialRemainingMg(x.kit, x.vial)>0.001)
     .sort((a,b)=>getVialRemainingMg(a.kit,a.vial)-getVialRemainingMg(b.kit,b.vial));
@@ -2197,9 +2600,35 @@ function openModal(innerHTML, color="#7DF9C0") {
   modalEl = h(`<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true" tabindex="-1" style="border-color:${color}33;box-shadow:0 0 40px ${color}22"></div></div>`);
   modalEl.querySelector(".modal").innerHTML = innerHTML;
   modalEl.querySelector(".modal").classList.add("nx-sheet");
+  // Preserve original #x button/event identity while applying one visual and
+  // accessible close control across product and legacy sheets alike.
+  // Include legacy icon-only close controls that use a named ID rather
+  // than #x (e.g. Protocol Details / restore preview). Do not restyle text
+  // actions labelled "Close", or replace their click handlers.
+  modalEl.querySelectorAll('.modal button#x, .modal button[aria-label^="Close"]').forEach(button=>{
+    if(button.id!=="x"&&!/^[×✕✖✗X]$/.test((button.textContent||"").trim()))return;
+    button.type="button";
+    button.classList.add("nx-dose-close");
+    if(!button.hasAttribute("aria-label"))button.setAttribute("aria-label","Close");
+    // Single approved outline X everywhere: preserve button identity, handlers
+    // and accessible name while removing conflicting text/mask variants.
+    const svgNS="http://www.w3.org/2000/svg";
+    const svg=document.createElementNS(svgNS,"svg");
+    svg.setAttribute("viewBox","0 0 24 24");
+    svg.setAttribute("width","22");svg.setAttribute("height","22");
+    svg.setAttribute("fill","none");svg.setAttribute("stroke","currentColor");
+    svg.setAttribute("stroke-width","2.6");svg.setAttribute("stroke-linecap","round");
+    svg.setAttribute("aria-hidden","true");
+    const path=document.createElementNS(svgNS,"path");
+    path.setAttribute("d","M18 6 6 18M6 6l12 12");
+    svg.appendChild(path);button.replaceChildren(svg);
+  });
   if (modalEl.querySelector(".modal > .nx-dose-form")) modalEl.querySelector(".modal").classList.add("nx2-dose-modal");
   modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal("backdrop"); });
   document.body.appendChild(modalEl);
+  // A transient Undo action must not cover choices inside a foreground sheet.
+  // Keep its remaining lifetime available when the sheet is dismissed.
+  pauseUndoToast();
   applyNexusSheetStructure(modalEl.querySelector(".modal"));
   refineNexusSheet(modalEl.querySelector(".modal"));
   return modalEl.querySelector(".modal");
@@ -2211,7 +2640,11 @@ function closeModal(reason) {
   const dismissed = reason === "backdrop" || reason === "escape";
   const onDismiss = dismissed ? modalEl._nexusOnUserDismiss : null;
   const prior=nexusPriorFocus;
+  // Validation belongs to the dismissed screen, not the next sheet or navigation destination.
+  const staleValidation=document.getElementById("nx-validation-message");
+  if(staleValidation)staleValidation.remove();
   modalEl.remove(); modalEl=null; nexusPriorFocus=null;
+  resumeUndoToast();
   if (prior && prior.isConnected && typeof prior.focus === "function") try { prior.focus({preventScroll:true}); } catch(e) {}
   if (typeof onDismiss === "function") onDismiss();
 }
@@ -2278,15 +2711,38 @@ function todayLogDosePicker() {
   const blendKits=(state.supplies||[]).filter(k=>k.isBlend && k.kitStatus!=="done");
   const blendNames=new Set(blendKits.map(k=>k.name));
   const componentOnly=new Set(blendKits.flatMap(k=>(k.composition||[]).map(c=>c.compound)));
+  // Any physically stocked compound must be discoverable even without a
+  // protocol/schedule; discovery never silently creates a protocol.
+  const stockedNames=(state.supplies||[]).filter(k=>
+    k.name && k.kitStatus!=="done" &&
+    (k.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0.01)
+  ).map(k=>k.name);
+  // Unprepared raw powder and topical stock belongs in Stash, not the
+  // administered-dose selector. A separately usable capsule, spray or vial
+  // still permits the same compound to be logged.
+  const usableForms=(state.formulationStocks||[]).filter(f=>f.compound&&(
+    (f.containerType==="capsule-bottle"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
+    (f.containerType==="nasal-bottle"&&Number(f.remainingMg)>0&&Number(f.remainingMl)>0&&
+      Number(f.mgPerSpray)>0&&Number(f.mlPerSpray)>0)));
+  const formStockNames=usableForms.map(f=>f.compound);
+  const unpreparedNames=new Set((state.formulationStocks||[])
+    .filter(f=>f.compound&&["raw-powder","topical-container"].includes(f.containerType))
+    .map(f=>f.compound));
+  const hasUsableVial=name=>(state.supplies||[]).some(k=>
+    k.name===name&&k.kitStatus!=="done"&&
+    (k.vials||[]).some(v=>["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0.01));
   const names=[...new Set([...Object.entries(allPeptides()).filter(([n,d])=>
     (d.status||"active")==="active" &&
     (!componentOnly.has(n) || blendNames.has(n) ||
       (state.supplies||[]).some(k=>!k.isBlend && k.name===n) ||
       (d.doses||[]).some(dose=>!dose.blendSource)
-    )).map(([n])=>n),...blendNames])];
+    )).map(([n])=>n),...blendNames,...stockedNames,...formStockNames])]
+    .filter(name=>!unpreparedNames.has(name)||blendNames.has(name)||
+      hasUsableVial(name)||usableForms.some(f=>f.compound===name))
+    .sort((a,b)=>a.localeCompare(b));
   const m=openModal(`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px"><div><div class="mono" style="font-size:11px;letter-spacing:1px;color:var(--t4)">TODAY</div><h2 style="font-size:20px;color:var(--t1);margin:3px 0">Log a dose</h2></div><button type="button" id="x" aria-label="Close" style="font-size:20px;color:var(--t3)">✕</button></div>
     <p style="font-size:12px;color:var(--t3);margin:0 0 12px">Choose a compound or log multiple compounds together.</p>
-    ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#C6A6F2!important;background-image:none!important;box-shadow:none!important;color:#24182F!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid transparent;border-radius:13px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No active compounds yet. Add a compound in Your schedule first.</p>`}
+    ${names.length ? `<label for="today-dose-compound" class="field-label">COMPOUND</label><select id="today-dose-compound" class="inp" style="width:100%;margin:6px 0 12px"><option value="">Select a compound…</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select><button type="button" id="today-dose-single" class="btn-primary nexus-dose-continue" style="display:block!important;width:100%;min-height:48px;margin-bottom:10px;background:#C6A6F2!important;background-image:none!important;box-shadow:none!important;color:#24182F!important;opacity:1!important;visibility:visible!important;text-align:center;font-weight:700;border:1px solid transparent;border-radius:13px">Continue to dose log</button>` : `<p style="color:var(--t3);font-size:13px">No eligible tracked or stocked compounds yet. Add a compound or inventory in Stash.</p>`}
     ${names.length>=2 ? `<button type="button" id="today-dose-combo" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;color:var(--t1);background:var(--surface-2);font-weight:600">Log combo dose →</button>` : ""}
   `,"#A78BFA");
   m.classList.add("nx-dose-picker");
@@ -2299,7 +2755,7 @@ function todayLogDosePicker() {
     const blendKit=blendKits.find(k=>k.name===name);
     closeModal();
     if(blendKit){ if(!blendKit.reconDate) openBlendVialModal(blendKit.id); else logBlendDoseModal(blendKit.id); }
-    else doseModal(name);
+    else if(!nexusChoosePhysicalForm(name)) doseModal(name); // Usable capsules/sprays/vials route to their exact-source form; keep dose-only fallback for legacy schedules.
   };
   const combo=m.querySelector("#today-dose-combo");
   if(combo) combo.onclick=()=>{closeModal();comboDoseModal();};
@@ -2320,32 +2776,50 @@ function snoozeModal(id) {
     <button type="button" id="dismiss-reminder" style="width:100%;min-height:44px;text-align:left;padding:12px 14px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--t2);font-size:13px">Dismiss this alert</button>
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#dismiss-reminder").onclick=()=>{
+  m.querySelector("#dismiss-reminder").onclick=async()=>{
     if(!state.settings.dismissedReminders) state.settings.dismissedReminders={};
     state.settings.dismissedReminders[id]=Date.now();
-    saveState();closeModal();render();
-    showUndoToast("Alert dismissed",()=>{delete state.settings.dismissedReminders[id];saveState();render();});
+    if(!await nexusCommitCurrentState())return;closeModal();render();
+    showUndoToast("Alert dismissed",async()=>{delete state.settings.dismissedReminders[id];if(!await nexusCommitCurrentState())return;render();});
   };
-  m.querySelectorAll(".snooze-opt").forEach(b=>b.onclick=()=>{
+  m.querySelectorAll(".snooze-opt").forEach(b=>b.onclick=async()=>{
     if (!state.settings.snoozedReminders) state.settings.snoozedReminders={};
     state.settings.snoozedReminders[id] = Date.now() + (+b.dataset.days)*86400000;
-    saveState(); closeModal(); render();
+    if(!await nexusCommitCurrentState())return;closeModal();render();
   });
 }
 
 // ─── Universal undo toast ────────────────────────────────────────────────────
 // One shared snackbar for any reversible action. `undoFn` restores prior state and
 // re-renders; nothing else builds its own bespoke undo UI. Auto-dismisses after 6s.
-let toastEl = null, toastTimer = null;
+let toastEl = null, toastTimer = null, toastDeadline = 0, toastRemaining = 6000;
+function pauseUndoToast() {
+  if (!toastEl) return;
+  if (toastTimer) { clearTimeout(toastTimer); toastTimer=null; toastRemaining=Math.max(0,toastDeadline-Date.now()); }
+  toastEl.style.visibility="hidden";
+  toastEl.style.pointerEvents="none";
+  toastEl.setAttribute("aria-hidden","true");
+}
+function resumeUndoToast() {
+  if (!toastEl || modalEl) return;
+  toastEl.style.visibility="";
+  toastEl.style.pointerEvents="";
+  toastEl.removeAttribute("aria-hidden");
+  clearTimeout(toastTimer);
+  toastDeadline=Date.now()+toastRemaining;
+  toastTimer=setTimeout(()=>{if(toastEl){toastEl.remove();toastEl=null;}toastTimer=null;},toastRemaining);
+}
 function showUndoToast(message, undoFn) {
-  if (toastEl) { toastEl.remove(); clearTimeout(toastTimer); }
+  if (toastEl) { toastEl.remove(); clearTimeout(toastTimer); toastTimer=null; }
+  toastRemaining=6000;
   toastEl = h(`<div style="position:fixed;left:16px;right:16px;bottom:86px;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px #0006">
     <span style="font-size:12.5px;color:var(--t1)">${esc(message)}</span>
     <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;padding:4px 6px">UNDO</button>
   </div>`);
   toastEl.querySelector("#undo-btn").onclick = () => { clearTimeout(toastTimer); toastEl.remove(); toastEl=null; undoFn(); };
   document.body.appendChild(toastEl);
-  toastTimer = setTimeout(()=>{ if(toastEl){toastEl.remove();toastEl=null;} }, 6000);
+  if (modalEl) pauseUndoToast();
+  else resumeUndoToast();
 }
 
 // ─── Symptom picker (shared) ────────────────────────────────────────────────────
@@ -2520,13 +2994,13 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
       </div>`;
     addBtn.parentNode.insertBefore(form,addBtn);
     form.querySelector("#cs-cancel").onclick=()=>{form.remove();addBtn.style.display="";};
-    form.querySelector("#cs-save").onclick=()=>{
+    form.querySelector("#cs-save").onclick=async()=>{
       const name=(form.querySelector("#cs-name-inline").value||"").trim();
       if(!name) return;
       if(!state.settings.customSymptoms) state.settings.customSymptoms=[];
       if(!state.settings.customSymptoms.find(c=>c.name.toLowerCase()===name.toLowerCase())){
         state.settings.customSymptoms.push({name,category:"Other"});
-        saveState();
+        if(!await nexusCommitCurrentState())return;
       }
       selected.push({name,intensity:2});
       state._symPickerOpen=state._symPickerOpen||{};

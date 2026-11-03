@@ -60,22 +60,28 @@ function adherenceCalendar() {
 
 // ─── Dosing Timeline ──────────────────────────────────────────────────────────
 
-function supplyModal(existing, presetName) {
+function supplyModal(existing, presetName, forceVials=false) {
+  // Every general Add Kit action starts at one common package-form choice.
+  // Calls from existing dose/vial flows with presetName retain the old editor.
+  if(!existing && !presetName && !forceVials) {
+    nexusKitFormPicker();
+    return;
+  }
   const f = existing ? {...existing} : {
     id:uid(), name:presetName||"", totalVials:"", vialMg:"",
     bacMl:"", reconDate:"", expiryDays:"", cost:"", currency:"CAD", notes:""
   };
   const c = cfg(f.name);
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span class="mono" style="font-size:13px;color:#C9A0FF;letter-spacing:1.5px">${existing?"EDIT KIT":"ADD KIT"}</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-dose-head nx-shared-sheet-header">
+      <div><span class="nx-dose-kicker">STASH · INVENTORY</span><h2 class="nx-dose-title">${existing?"Edit Kit":"Add Kit"}</h2></div>
+      <button id="x" class="nx-dose-close" type="button" aria-label="Close kit editor"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     ${!existing?`<button id="sw-blend" style="background:transparent;border:none;padding:0;font-size:11.5px;color:#C9A0FF;margin-bottom:14px;text-align:left">Adding a blend of multiple compounds in one vial? →</button>`:""}
     <label class="field-label">COMPOUND</label>
     <select id="sname" class="inp" style="margin-bottom:14px">
       <option value="">— select compound —</option>
-      ${[...new Set([...Object.keys(PEPTIDES), ...LIBRARY.filter(l=>!l.blend).map(l=>l.name), ...Object.keys(state.customPeptides||{})])].sort().map(n=>`<option value="${esc(n)}" ${f.name===n?"selected":""}>${esc(n)}</option>`).join("")}
+      ${[...new Set([...Object.keys(PEPTIDES), ...LIBRARY.filter(l=>!l.blend).map(l=>l.name), ...Object.keys(state.customPeptides||{}), ...(state.supplies||[]).map(k=>k.name), ...(state.formulationStocks||[]).map(k=>k.compound)].filter(Boolean))].sort().map(n=>`<option value="${esc(n)}" ${f.name===n?"selected":""}>${esc(n)}</option>`).join("")}
     </select>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label class="field-label">NUMBER OF VIALS</label><input id="stv" type="number" class="inp" value="${f.totalVials}" placeholder="e.g. 10" ${existing?"disabled style=\"opacity:0.55\"":""} style="margin-bottom:${existing?"4":"14"}px"></div>
@@ -112,12 +118,17 @@ function supplyModal(existing, presetName) {
   `, "#C9A0FF");
   const kitTestResult=nexusKitTestResultControl(m,"ssave",existing?.testResultAttachment);
   // Presentation-only layer: shared compact editor anatomy; all original IDs and handlers stay intact.
-  m.classList.add("nx-stash-kit-editor");
-  const originalTitle=m.querySelector(".mono");
-  if(originalTitle){originalTitle.classList.add("nx-kit-editor-eyebrow");originalTitle.parentElement.classList.add("nx-kit-editor-header");
-    originalTitle.textContent=existing?"Edit kit":"Add kit";
+  m.classList.add("nx-stash-kit-editor","nx-shared-form-sheet");
+  const originalTitle=m.querySelector(".nx-dose-title");
+  if(originalTitle){
     const intro=document.createElement("p");intro.className="nx-kit-editor-intro";intro.textContent=existing?"Update kit details without changing vial quantities or history.":"Record a kit and its vial details. You can open a vial later.";
-    originalTitle.parentElement.insertAdjacentElement("afterend",intro);
+    // Intro belongs in the scroll body, not between the header's title and X.
+    // Never allow wizard-stage reparenting to move the sheet header.
+    const editorBody=m.querySelector(".nx-unified-body")||m;
+    const header=editorBody.querySelector(":scope > .nx-dose-head");
+    const fixedHeader=m.querySelector(":scope > .nx-unified-header");
+    if(header&&fixedHeader){header.classList.add("nx-sheet-title-row");fixedHeader.appendChild(header);}
+    editorBody.prepend(intro);
   }
   const openLabel=m.querySelector("#shasopen")?.closest("label");
   if(openLabel)openLabel.classList.add("nx-kit-editor-open-toggle");
@@ -150,7 +161,7 @@ function supplyModal(existing, presetName) {
   m.querySelector("#svmg").oninput = updateConc;
   m.querySelector("#sbac").oninput = updateConc;
   updateConc();
-  m.querySelector("#ssave").onclick = () => {
+  m.querySelector("#ssave").onclick = async () => {
     if(kitTestResult.isPending()){showErrorBanner("Wait for the test-result file to finish loading.");return;}
     const name=m.querySelector("#sname").value.trim(); if(!name||name==="— select compound —") return;
     const bacMl = +m.querySelector("#sbac").value||0;
@@ -168,7 +179,7 @@ function supplyModal(existing, presetName) {
       // which could silently drift out of sync with the kit's actual vial state.
       const rec = { ...existing, bacMl, expiryDays, storageLocation, cost, currency, notes, testResultAttachment:kitTestResult.getValue() };
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
       return;
     }
 
@@ -198,7 +209,7 @@ function supplyModal(existing, presetName) {
       testResultAttachment:kitTestResult.getValue(),
       vials,
     };
-    const finishCreate = () => {
+    const finishCreate = async () => {
       state.supplies = state.supplies.filter(x=>x.id!==f.id); state.supplies.push(rec);
       // Inventory does NOT imply tracking. Adding a kit used to silently create a fully
       // "active" tracked peptide entry (empty doses) — which is exactly why compounds you
@@ -209,7 +220,7 @@ function supplyModal(existing, presetName) {
       // one of those paths already creates its own tracker entry independently when it
       // actually happens, so nothing here needs to pre-create it. Buying/stocking a
       // compound is an inventory fact, not a decision to start tracking it.
-      saveState(); closeModal(); render();
+      if(!await nexusCommitCurrentState())return;closeModal();render();
     };
     // Only ask if this new kit is ALSO being created with a vial already open — a purely
     // sealed new kit isn't opening anything, so there's nothing to confirm.
@@ -298,7 +309,7 @@ function supplyModal(existing, presetName) {
       const q=input.value.toLowerCase().trim();
       const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,5);
       list.replaceChildren();
-      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.textContent=o.name;b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;closeList();};list.appendChild(b);});
+      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.setAttribute("aria-selected",String(input.value.trim().toLocaleLowerCase()===o.name.toLocaleLowerCase()));b.textContent=o.name;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;input.focus({preventScroll:true});closeList();};list.appendChild(b);});
       const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";
       browse.textContent="View all compounds";
       browse.onpointerdown=e=>e.preventDefault();
@@ -307,6 +318,22 @@ function supplyModal(existing, presetName) {
         input.value=o.name;
       });};
       list.appendChild(browse);
+      if(q && !options.some(o=>o.name.trim().toLocaleLowerCase()===q.toLocaleLowerCase())){
+        const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
+        create.textContent='＋ Use "'+input.value.trim()+'" as a custom compound';
+        create.setAttribute("role","option");create.onpointerdown=e=>e.preventDefault();
+        create.onclick=()=>{
+          const name=input.value.trim().replace(/\s+/g," ");
+          if(!name || name.length>120)return;
+          const duplicate=options.find(o=>o.name.trim().toLocaleLowerCase()===name.toLocaleLowerCase());
+          const chosen=duplicate?duplicate.value:name;
+          if(!duplicate){const opt=document.createElement("option");opt.value=name;opt.textContent=name;originalSelect.appendChild(opt);options.push({name,value:name});}
+          originalSelect.value=chosen;
+          originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
+          input.value=chosen;input.focus({preventScroll:true});closeList();
+        };
+        list.appendChild(create);
+      }
       list.hidden=false;input.setAttribute("aria-expanded","true");
     };
     input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
@@ -681,7 +708,7 @@ function healthModal() {
     const ccr=body.querySelector("#csv-clearrange"); if(ccr) ccr.onclick=()=>{ csvDateFrom=""; csvDateTo=""; csvPreview(); };
     const imp=body.querySelector("#csv-imp"); if(imp) imp.onclick=csvDoImport;
   }
-  function csvDoImport() {
+  async function csvDoImport() {
     if (!csvRows?.length) return;
     const filteredImport = csvRows.filter(r=>{
       if(csvDateFrom && r.date < csvDateFrom) return false;
@@ -740,7 +767,7 @@ function healthModal() {
         } else { skipped++; }
       });
     }
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     const parts=[imported&&`${imported} added`,replaced&&`${replaced} replaced`,merged&&`${merged} merged`,skipped&&`${skipped} skipped`].filter(Boolean);
     body.innerHTML=`<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#7DF9C0;font-weight:700;margin-bottom:8px">Import complete</div><div style="font-size:12px;color:var(--t4);line-height:1.6">${parts.join(" · ")}</div><div style="font-size:11px;color:var(--t5);margin-top:8px;color:#A78BFA">Batch ID: ${String(importBatchId).slice(0,8)}</div></div><button id="done" class="btn-primary" style="background:#7DF9C0;margin-top:8px">DONE</button>`;
     body.querySelector("#done").onclick=()=>{closeModal();render();};
@@ -776,7 +803,7 @@ function healthModal() {
     body.querySelector("#bp").onclick=pick;
     body.querySelector("#wk-imp").onclick=workoutDoImport;
   }
-  function workoutDoImport() {
+  async function workoutDoImport() {
     if (!workoutRows?.length) return;
     const workoutMeta={sourceType:"workout_csv",isWorkout:true,importBatchId,importedAt,importSource:importFileName};
     let added=0, skipped=0;
@@ -792,7 +819,7 @@ function healthModal() {
       ['durationMin','distanceKm','avgHR','maxHR','mets','hrZone1','hrZone2','hrZone3','hrZone4','hrZone5'].forEach(k=>{if(r[k]!=null)e[k]=r[k];});
       state.activityLogs.push(e); added++;
     });
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     body.innerHTML=`<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#A78BFA;font-weight:700;margin-bottom:8px">Workouts imported</div><div style="font-size:12px;color:var(--t4)">${added} added · ${skipped} already existed</div></div><button id="done" class="btn-primary" style="background:#A78BFA;margin-top:8px">DONE</button>`;
     body.querySelector("#done").onclick=()=>{closeModal();render();};
   }
@@ -864,7 +891,7 @@ function healthModal() {
     });
     const imp = body.querySelector("#imp"); if (imp) imp.onclick = doImport;
   }
-  function doImport() {
+  async function doImport() {
     const wk=new Set(state.weightLogs.map(w=>dayKey(w.date)));
     const waistK=new Set(state.measurementLogs.map(x=>dayKey(x.date)));
     const ak=new Set(state.activityLogs.map(a=>dayKey(a.date)));
@@ -887,7 +914,7 @@ function healthModal() {
       const e={id:uid(),date:r.date}; if(sel.steps)e.steps=r.value; if(sel.activeCalories&&cal)e.activeCalories=cal.value; if(sel.restingHR&&hr)e.restingHR=hr.value;
       if(e.steps||e.activeCalories||e.restingHR) state.activityLogs.push(e);
     });
-    saveState();
+    if(!await nexusCommitCurrentState())return;
     body.innerHTML = `<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-size:15px;color:#7DF9C0;font-weight:700;margin-bottom:8px">Import complete</div><div style="font-size:12px;color:var(--t4)">Check Trends to see it overlaid on your cycle.</div></div><button id="done" class="btn-primary" style="background:#7DF9C0">DONE</button>`;
     body.querySelector("#done").onclick = () => { closeModal(); render(); };
   }
@@ -940,21 +967,21 @@ function healthModal() {
     };
     const deleteByBatch = bid => {
       const sidBid = String(bid); // data-bid attrs are strings; importBatchId is a number — compare as strings
-      confirmAction("Delete this import batch? This cannot be undone.",()=>{
+      confirmAction("Delete this import batch? This cannot be undone.",async()=>{
         state.macroLogs    = state.macroLogs.filter(r=>String(r.importBatchId)!==sidBid);
         state.weightLogs   = state.weightLogs.filter(r=>String(r.importBatchId)!==sidBid);
         state.activityLogs = state.activityLogs.filter(r=>String(r.importBatchId)!==sidBid);
-        saveState(); render(); manageImports();
+        if(!await nexusCommitCurrentState())return;render();manageImports();
       });
     };
     const deleteByType = srcType => {
       const label = srcLabel[srcType]||srcType;
-      confirmAction(`Delete all ${label} imports (tracked and legacy)? Manual entries are not affected.`,()=>{
+      confirmAction(`Delete all ${label} imports (tracked and legacy)? Manual entries are not affected.`,async()=>{
         const match = r => r.sourceType===srcType || isLegacyMatch(r,srcType);
         state.macroLogs    = state.macroLogs.filter(r=>!match(r));
         state.weightLogs   = state.weightLogs.filter(r=>!match(r));
         state.activityLogs = state.activityLogs.filter(r=>!match(r));
-        saveState(); render(); manageImports();
+        if(!await nexusCommitCurrentState())return;render();manageImports();
       });
     };
 

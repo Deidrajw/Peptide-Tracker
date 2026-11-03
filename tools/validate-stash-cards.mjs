@@ -69,13 +69,54 @@ try{
     ensure(await card(99001).count()===1,'Sealed standard kit missing');
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
-    ensure(await card(99001).locator('.nx-kit-vial-unopened').count()===1,'Sealed kit must show No vial open');
+    ensure(await card(99001).locator('.nx-kit-compact-context').innerText().then(x=>x.includes('0 open')),'Sealed kit must identify zero open vials');
     ensure(await card(99001).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed standard kit should show primary action and Kit details');
     ensure(await card(99003).locator('.nx-hybrid-two-actions>button').count()===2,'Sealed blend kit should show primary action and Kit details');
     ensure(await card(99002).locator('.nx-hybrid-two-actions>button').count()===2,'Open vial should show contextual action and details');
-    ensure(await card(99001).locator('.nx-kit-primary-empty').isVisible(),'No-vial state must be prominent');
+    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('mg')),'Sealed kit must show available mg');
     ensure(await card(99001).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Sealed kit shows misleading progress');
-    ensure(await card(99001).locator('.nx-kit-primary-value').innerText().then(x=>x.includes('No vial open')),'Sealed kit not labeled');
+    ensure(await card(99001).locator('.nx-kit-primary-vial .nx-kit-overview-label').innerText().then(x=>x.includes('AVAILABLE STOCK')),'Sealed kit must distinguish stored stock from an open vial');
+    // Actual compact structure, not a typography-only reduction. Assertions run at 320/390,
+    // both themes, LIVE and isolated DEMO fixtures.
+    const compact=await card(99002).evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      const actions=[...el.querySelectorAll('.nx-kit-actions-three>button')];
+      return {height:r.height,width:r.width,viewport:document.documentElement.clientWidth,
+        actionHeights:actions.map(x=>x.getBoundingClientRect().height),
+        titleSize:parseFloat(getComputedStyle(el.querySelector('.nx-kit-card-title')).fontSize),
+        nestedVisible:!!el.querySelector('.nx-kit-primary-vial .nx-kit-overview-track'),
+        setupInDetails:!!el.querySelector('.nx-kit-detail-panel .nx-stash-use-setup')};
+    });
+    ensure(compact.width<=compact.viewport+2,'Compact card overflows iPhone: '+JSON.stringify(compact));
+    ensure(compact.height<255,'Collapsed card remains excessively tall: '+JSON.stringify(compact));
+    ensure(compact.actionHeights.length===2&&compact.actionHeights.every(h=>h>=44),'Compact actions must have 44px touch targets: '+JSON.stringify(compact));
+    ensure(compact.titleSize>=15,'Compact typography must remain readable: '+JSON.stringify(compact));
+    ensure(compact.setupInDetails,'Use setup must remain accessible in expanded details');
+    const actionVisual=await card(99002).evaluate(el=>{
+      const p=el.querySelector('.nx-kit-next-action'),d=el.querySelector('.nx-kit-detail-button');
+      const a=getComputedStyle(p),b=getComputedStyle(d);
+      const rgb=str=>{const v=(str.match(/[0-9.]+/g)||[]).slice(0,3).map(Number);return v};
+      const lum=v=>{let c=v.map(x=>{const y=x/255;return y<=.04045?y/12.92:Math.pow((y+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+      const ratio=(x,y)=>{const a=lum(rgb(x)),b=lum(rgb(y));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
+      return {primaryBg:a.backgroundColor,secondaryBg:b.backgroundColor,
+        primaryContrast:ratio(a.color,a.backgroundColor),secondaryContrast:ratio(b.color,b.backgroundColor),
+        radiusP:parseFloat(a.borderTopLeftRadius),radiusD:parseFloat(b.borderTopLeftRadius),
+        primaryHeight:p.getBoundingClientRect().height,secondaryHeight:d.getBoundingClientRect().height};
+    });
+    ensure(actionVisual.primaryBg!==actionVisual.secondaryBg,'Primary and Details lost hierarchy: '+JSON.stringify(actionVisual));
+    ensure(actionVisual.primaryContrast>=4.5&&actionVisual.secondaryContrast>=4.5,
+      'Stash actions fail AA text contrast: '+JSON.stringify(actionVisual));
+    ensure(Math.abs(actionVisual.radiusP-actionVisual.radiusD)<1 &&
+      actionVisual.primaryHeight>=44&&actionVisual.secondaryHeight>=44,
+      'Stash actions inconsistent geometry: '+JSON.stringify(actionVisual));
+
+    const vialSurface=await card(99002).locator('.nx-kit-primary-vial').evaluate(el=>({
+      background:getComputedStyle(el).backgroundColor,
+      border:getComputedStyle(el).borderTopWidth
+    }));
+    ensure(vialSurface.background==='rgba(0, 0, 0, 0)'&&vialSurface.border==='0px',
+      'Compact card still has nested vial panel surface: '+JSON.stringify(vialSurface));
+    ensure(await card(99002).locator('.nx-kit-condensed').count()===0,'Nested compact card regression');
     ensure(await card(99003).locator('.nx-kit-primary-vial [role="progressbar"]').count()===0,'Unprepared blend shows fake percent progress');
     ensure(await card(99003).locator('.nx-kit-overview-number').count()===1,'Blend missing kit-wide inventory under Overview');
     ensure(await card(99002).locator('.nx-kit-primary-vial [role="progressbar"]').count()===1,'Open vial progress is missing');
@@ -108,14 +149,60 @@ try{
       ensure(parity,'Stash card header missing stacked status/unified ellipsis for kit '+id);
     }
 
+    // Physical iPhone report: Stored and Healthy badges must share one baseline,
+    // and the light primary action must not expose the older underlying background.
+    const badgeAndCta=await page.evaluate(()=>{
+      const cards=[...document.querySelectorAll('.nx-kit-card.nx-kit-condensed')];
+      const badges=cards.map(c=>c.querySelector('.nx-card-status > *')).filter(Boolean);
+      const primary=cards[0]?.querySelector('.nx-kit-next-action');
+      const styles=primary?getComputedStyle(primary):null;
+      return {badgeHeights:badges.map(b=>Math.round(b.getBoundingClientRect().height)),
+        badgeFont:badges.map(b=>getComputedStyle(b).fontSize),
+        ctaBgImage:styles?.backgroundImage||'',ctaWidth:primary?.getBoundingClientRect().width||0,
+        ctaClientWidth:primary?.clientWidth||0};
+    });
+    ensure(badgeAndCta.badgeHeights.every(x=>x===26)&&new Set(badgeAndCta.badgeFont).size===1,
+      'Stash status pills lack identical DS2 geometry: '+JSON.stringify(badgeAndCta));
+    ensure(badgeAndCta.ctaClientWidth>0&&badgeAndCta.ctaWidth>=44,
+      'Stash primary CTA clipped by grid: '+JSON.stringify(badgeAndCta));
+    if(theme==='light')ensure(badgeAndCta.ctaBgImage.includes('linear-gradient'),
+      'Light primary CTA lost the Supplies lavender gradient: '+JSON.stringify(badgeAndCta));
+
+    // Green-tinted vial details came from compound-specific inline CSS, not DS2.
+    await page.evaluate(()=>openNewVialModal(99001));
+    ensure(await page.locator('.nx-open-vial-form-options button').count()===2, 'Form choices missing');
+    await page.locator('#nx-open-injectable').click();
+    ensure(await page.locator('.nx-open-vial-details').count()===1,
+      'Open New Vial lacks neutral DS2 details panel');
+    const detailsBg=await page.locator('.nx-open-vial-details').evaluate(el=>{
+      const st=getComputedStyle(el);
+      return {bg:st.backgroundColor,border:st.borderTopColor};
+    });
+    ensure(!detailsBg.bg.includes('0, 255, 0')&&detailsBg.border!=='rgba(0, 0, 0, 0)',
+      'Open New Vial details panel missing neutral surface: '+JSON.stringify(detailsBg));
+    await page.evaluate(()=>closeModal());
     // Onboarding is independent of these fictional inventory fixtures; close any
     // introductory overlay before testing a real pointer tap on the Stash details.
     await page.evaluate(()=>document.querySelectorAll('.modal-bg').forEach(el=>el.remove()));
     await card(99002).locator('.nx-kit-detail-button').click();
     ensure(await card(99002).locator('.nx-kit-detail-button').getAttribute('aria-expanded')==='true' && await page.locator('#nx-kit-details-99002').evaluate(x=>!x.hidden),'Kit details not expandable');
+    const expandedSetup=await card(99002).evaluate(el=>{
+      const row=el.querySelector('.nx-stash-pane[data-pane="overview"] .nx-kit-use-setup-row'),
+        btn=el.querySelector('.nx-stash-use-setup');
+      const a=getComputedStyle(row),b=getComputedStyle(btn);
+      return {rowBackground:a.backgroundColor,rowBorder:a.borderTopWidth,
+        buttonBorder:b.borderTopWidth,buttonHeight:btn.getBoundingClientRect().height,
+        buttonBackground:b.backgroundColor};
+    });
+    ensure(expandedSetup.buttonHeight>=44&&expandedSetup.buttonBorder!=='0px',
+      'Secondary dose preferences must remain an accessible, visible action: '+JSON.stringify(expandedSetup));
+    await page.screenshot({animations:'disabled',path:'dist/stash-expanded-setup-'+kind+'-'+theme+'-'+width+'.png'});
+
     ensure(await page.locator('.nx-kit-card').first().evaluate(x=>x.getBoundingClientRect().width<=window.innerWidth+1),'Kit overflows viewport');
     const before=await page.evaluate(()=>JSON.stringify(state.supplies));
     await page.evaluate(()=>supplyModal());
+    ensure(await page.locator('.nx-kit-type-choice').count()===5,'Unified Add Kit form options missing');
+    await page.locator('[data-kit-form="vial"]').click();
     ensure(await page.locator('.nx-stash-kit-editor').count()===1,'Kit editor styling hook missing');
     ensure(await page.locator('.nx-stash-kit-editor #ssave').count()===1,'Original Save handler target missing');
     ensure(await page.locator('.nx-stash-kit-editor #sname').count()===1 && await page.locator('.nx-stash-kit-editor #stv').count()===1 && await page.locator('.nx-stash-kit-editor #svmg').count()===1 && await page.locator('.nx-stash-kit-editor #sbac').count()===1 && await page.locator('.nx-stash-kit-editor #sloc').count()===1,'Kit fields lost');
@@ -191,10 +278,91 @@ try{
       ensure(await page.locator('.nx-kit-file-viewer').count()===0,'Viewer failed to close for kit '+id);
     }
 
+    // Regression: the displayed vial sequence must be numeric, not the
+    // storage array's arbitrary insertion order (real iPhone report 5,2,1,4).
+    await page.evaluate(()=>{
+      const kit=state.supplies.find(k=>k.id===99002);
+      kit.vials=[
+        {id:99025,sequenceNumber:5,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99022,sequenceNumber:2,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99021,sequenceNumber:1,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50},
+        {id:99024,sequenceNumber:4,status:'finished',vialMg:50,remainingMg:0,legacyUsedMg:50}
+      ];
+      kit.activeKit=false;
+      render();
+    });
+    await card(99002).locator('.nx-kit-detail-button').click();
+    await card(99002).locator('.nx-stash-tab[data-panel="vials"]').click();
+    const vialOrder=await card(99002).locator('.nx-kit-vial-row .nx-kit-list-top strong').allTextContents();
+    ensure(vialOrder.join('|')==='Vial 1|Vial 2|Vial 4|Vial 5',
+      'Opened vial details must display numeric sequence order: '+JSON.stringify(vialOrder));
+    // Fictional mixed physical stock: source-specific numbers must remain distinct.
+    await page.evaluate(()=>{
+      state._stashSub='kits';state._stashFilter='all';state._stashGroup='none';
+      state.supplies=[{id:88001,name:'Selank',activeKit:true,totalVials:2,vialMg:10,bacMl:2,
+        _vialsBackfilled:true,_vialsRepaired:true,reconDate:'2026-10-20T09:00:00',
+        vials:[{id:88011,status:'open',intendedUse:'Injectable',vialMg:10,remainingMg:7,sequenceNumber:1,reconDate:'2026-10-20T09:00:00'},
+               {id:88012,status:'open',intendedUse:'nasal-source',vialMg:10,remainingMg:3,sequenceNumber:2,reconDate:'2026-10-20T09:00:00'}],
+        doseLog:[],wasteLog:[]}];
+      state.formulationStocks=[{id:'fictional-bottle',compound:'Selank',sourceKitId:88001,
+        containerType:'nasal-bottle',method:'Nasal',recordedPreparation:true,
+        remainingMg:2,remainingMl:4,mgPerSpray:0.05,mlPerSpray:0.1}];
+      render();
+    });
+    const mixed=card(88001),nasalLine=mixed.locator('.nx-kit-nasal-summary');
+    ensure(await mixed.locator('.nx-kit-primary-vial > .nx-kit-overview-label').innerText()==='OPEN VIAL',
+      'Mixed-form kit must retain the original Open vial card label');
+    const primary=await mixed.locator('.nx-kit-primary-value').innerText();
+    ensure(primary.includes('7 mg')&&primary.includes('of 10 mg remaining'),
+      'Mixed-form kit must show the current injectable vial balance, not kit-wide nasal mass: '+primary);
+    ensure(await nasalLine.count()===1,'One subtle secondary nasal stock line required');
+    const line=await nasalLine.innerText();
+    ensure(line==='Nasal · 2 mg prepared',
+      'Compact nasal line must be concise and show only available prepared stock: '+line);
+    await mixed.locator('.nx-kit-detail-button').click();
+    const overview=mixed.locator('.nx-stash-pane[data-pane="overview"] .nx-kit-separate-stocks');
+    ensure(await overview.innerText().then(x=>x.includes('7.00 mg')&&x.includes('3.00 mg')&&x.includes('2.00 mg · 4.00 mL')),
+      'Detailed injectable, nasal source and prepared balances must remain distinct in Overview');
+    ensure(await mixed.locator('.nx-kit-source-breakdown').count()===0,
+      'Dense three-row stock breakdown belongs in Details, not the compact card');
+    const track=mixed.locator('.nx-kit-primary-vial .nx-kit-overview-track');
+    ensure(await track.count()===1&&await track.getAttribute('aria-valuenow')==='70',
+      'Original current-vial progress bar must be retained at the true injectable-vial percentage');
+    ensure(await mixed.locator('.nx-kit-detail-button').count()===1,
+      'Additional stock breakdown must remain accessible through Details');
+    ensure(await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg).join(',')+':'+state.formulationStocks[0].remainingMg)==='7,3:2',
+      'Stash render mutated stock');
+    ensure(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),
+      'Mixed card horizontal overflow at mobile width');
+    await page.evaluate(()=>{
+      const kit=state.supplies[0];
+      kit.vials[0].intendedUse='';
+      kit.vials[1].status='sealed';
+      state.formulationStocks=[];
+      render();
+    });
+    const pending=card(88001);
+    ensure((await pending.locator('.nx-stash-go-vial-method').innerText()).trim()==='Identify vial form',
+      'Unlabelled inventory must prioritize the direct one-time physical-form action over preferences');
+    await pending.locator('.nx-kit-detail-button').click();
+    ensure((await pending.locator('.nx-kit-detail-warning').innerText()).includes('Confirm the physical form'),
+      'Physical-vial status must explain why identification is needed');
+    ensure(await pending.locator('.nx-kit-detail-panel > .nx-kit-detail-setup .nx-stash-use-setup').count()===0,
+      'Optional preferences interrupt urgent vial status');
+    ensure((await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').innerText()).trim()==='Dose preferences',
+      'Dose preferences must be secondary to source confirmation');
+    const prePreferences=await page.evaluate(()=>JSON.stringify(state.supplies));
+    await pending.locator('.nx-stash-pane[data-pane="overview"] .nx-stash-use-setup').click();
+    ensure(await page.locator('.nx-use-setup').isVisible(),'Stash Dose preferences button did not open editor');
+    ensure(await page.locator('#nx-use-close').evaluate(el=>el.getBoundingClientRect().height)>=48,
+      'Dose preferences close target must be at least 48px');
+    await page.locator('#nx-use-close').click();
+    ensure(await page.evaluate(()=>JSON.stringify(state.supplies))===prePreferences,
+      'Opening/cancelling preferences altered stock');
     ensure(errors.length===0,'Page errors: '+errors.join('; '));
-    results.push({kind,width,theme,status:'PASS',checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
+    results.push({kind,width,theme,status:'PASS',compactCardHeightPx:Math.round(compact.height),checks:['sealed no 100%','blend no 100%','owned total','open vial percentage','history disclosure','actions retained','viewport']});
     await ctx.close();
   }
 }finally{await browser.close()}
 fs.writeFileSync('dist/Nexus_'+VERSION+'_STASH_CARDS_QA.json',JSON.stringify({version:VERSION,results},null,2));
-console.log('Stash Cards browser QA PASS: '+results.length+' LIVE/DEMO mobile theme configurations');
+console.log('Stash Cards browser QA PASS: '+results.length+' LIVE/DEMO mobile theme configurations; collapsed open-vial card heights '+results.map(x=>x.width+'px/'+x.theme+'/'+x.kind+'='+x.compactCardHeightPx+'px').join(', '));

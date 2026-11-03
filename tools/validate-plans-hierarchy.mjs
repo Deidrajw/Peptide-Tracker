@@ -1,10 +1,47 @@
 import fs from 'node:fs'; import path from 'node:path'; import {chromium} from 'playwright';
 const VERSION=JSON.parse(fs.readFileSync('release/release.json','utf8')).version,demo=path.resolve('dist/Nexus_'+VERSION+'_FULL_DEMO.html');if(!fs.existsSync(demo))throw Error('Demo missing');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),results=[];const ensure=(x,msg)=>{if(!x)throw Error(msg)};
+
+// Exercise the actual Goal wizard Continue handlers and assert every transition.
+// The wizard replaces/repositions panel content synchronously, which can detach
+// Playwright's moving button between its actionability check and pointer click.
+// Other checks cover real touch geometry; use DOM click for rapid wizard steps.
+async function advanceGoalToReview(page){
+  const transitions=await page.evaluate(()=>{
+    const labels=[];
+    for(let i=0;i<4;i++){
+      const next=document.querySelector('.modal #nx-g-next');
+      const step=document.querySelector('.modal #nx-g-step-label');
+      if(!next||!step)throw Error('Goal wizard controls unavailable');
+      const before=step.textContent||'';
+      if(next.hidden)break;
+      next.click();
+      const after=step.textContent||'';
+      if(before===after)throw Error('Goal wizard Continue did not advance: '+before);
+      labels.push({before,after});
+    }
+    return {labels,reviewVisible:!!document.querySelector('.modal #g-save')?.getClientRects().length};
+  });
+  ensure(transitions.reviewVisible&&transitions.labels.length>=1,
+    'Goal wizard did not reach Review: '+JSON.stringify(transitions));
+}
+
 try { for(const mode of ['live','demo'])for(const width of [320,390])for(const theme of ['light','dark']){
  const ctx=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(mode==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
- await page.evaluate(t=>{state=buildDemoState('weight_loss');state.profile.onboardingDone=true;state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());},theme);
+ await page.waitForFunction(()=>{const app=document.querySelector('#app');return app&&!app.textContent.includes('LOADING…');});
+ await page.evaluate(async t=>{
+   state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
+   state.plans={goals:[{id:'g',name:'Fictional goal',category:'Recovery',status:'active',notes:'Fictional note',compounds:['Retatrutide']}],research:[{id:'r',compound:'Selank',status:'researching',reason:'Fictional research note',notes:'Research notes'}],shopping:[{id:'s',item:'Fictional supply',status:'needed',category:'supply'}]};
+   state._plansSub='research';document.documentElement.dataset.theme=t;tab='plans';render();
+   if(!_demoActive){
+     const writer=nexusWriter(),raw=writer.expected(),before=raw===null?null:JSON.parse(raw);
+     const fixture=JSON.parse(JSON.stringify(state));
+     const result=await writer.transaction(before,()=>({next:fixture}));
+     state=result.next;_nexusLastSavedSnapshot=writer.expected();render();
+   }
+   document.querySelectorAll('.modal-bg').forEach(x=>x.remove());
+ },theme);
  // Allow the approved 250ms theme background transition to settle before contrast sampling.
  // Immediate reads mix light-mode text with the outgoing dark-mode surface.
  await page.waitForTimeout(400);
@@ -268,15 +305,76 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('.nx-plan-2-goal .manage-plan-btn').first().click();
  ensure(await page.locator('.nx-goal-quick-status[data-status="planned"]').getAttribute('aria-pressed')==='true','Quick status selected state not retained');
  await page.locator('.nx-goal-quick-status[data-status="active"]').click();
+ // Status save is asynchronous. Wait for the durable save acknowledgement to
+ // close its sheet and complete the card rerender before measuring geometry.
+ // Otherwise Playwright can briefly measure a detached pre-rerender button as 0px.
+ await page.locator('.nx-goal-quick-status').first().waitFor({state:'detached',timeout:15000});
+ await page.locator('.nx-plan-item .nx-open-goal').first().waitFor({state:'visible',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].status==='active'),'Goal status could not be restored');
 
  ensure(await page.locator('.nx-plan-item details>summary').count()===0,'Legacy duplicate Goal disclosure persists');
  ensure(await page.locator('.nx-plan-item .nx-open-goal').count()===1,'Single View goal entry missing');
  ensure((await headRules('.nx-plan-item .nx-plan-head')).ok,'Goal status/menu parity failed');
- ensure(await page.locator('.nx-plan-item .nx-open-goal').first().evaluate(e=>e.getBoundingClientRect().height)>=44,'View goal touch target too small');
+ const viewGoalGeometry=await page.locator('.nx-plan-item .nx-open-goal:visible').first().evaluate(e=>({height:e.getBoundingClientRect().height,minHeight:getComputedStyle(e).minHeight,classes:e.className,screen:innerWidth,connected:e.isConnected}));
+ ensure(viewGoalGeometry.height>=44,'View goal touch target too small: '+JSON.stringify(viewGoalGeometry));
  await page.locator('.nx-plan-item .nx-open-goal').first().click();
  ensure(await page.locator('.nx-goal-detail').count()===1,'Goal detail sheet did not open');
  ensure(await page.locator('.nx-goal-detail-tab').count()===3,'Goal detail sections missing');
+ ensure(await page.locator('.nx-goal-detail .nx-dose-close svg[aria-hidden="true"]').count()===1,
+   'Goal Details close button must use the same outline SVG affordance as shared forms');
+ ensure(await page.locator('.nx-goal-detail .nx-dose-head .nx-dose-title').count()===1,
+   'Goal Details must reuse shared DS2 header and title hierarchy');
+ const goalControls=await page.locator('.nx-goal-detail .nx-dose-close, .nx-goal-detail-tab').evaluateAll(els=>
+   els.map(e=>({height:e.getBoundingClientRect().height,width:e.getBoundingClientRect().width})));
+ ensure(goalControls.length===4&&goalControls.every(x=>x.height>=44),
+   'Goal Details close and tabs require 44px targets: '+JSON.stringify(goalControls));
+
+ // #16: verify the actual Goal Details sheet/header/close/tab content at
+ // both iPhone widths, in both themes and LIVE-source/isolated DEMO.
+ // Geometry is browser evidence, not a physical iOS keyboard/VoiceOver pass.
+ await page.waitForTimeout(350);
+ const goalViewport=await page.locator('.nx-goal-detail').evaluate(detail=>{
+   const sheet=detail.closest('.modal');
+   const head=detail.querySelector('.nx-dose-head');
+   const title=detail.querySelector('.nx-dose-title');
+   const close=detail.querySelector('.nx-dose-close');
+   const tabs=detail.querySelector('.nx-goal-detail-tabs');
+   const content=detail.querySelector('#nx-goal-detail-content');
+   const rect=node=>{const b=node.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height}};
+   const roots=[sheet,head,title,close,tabs,content].map(rect);
+   return {viewport:document.documentElement.clientWidth,height:innerHeight,
+     documentWidth:document.documentElement.scrollWidth,
+     sheet:roots[0],head:roots[1],title:roots[2],close:roots[3],
+     tabs:roots[4],content:roots[5],
+     titleReadable:getComputedStyle(title).visibility==='visible',
+     sheetOverflow:getComputedStyle(sheet).overflowY};
+ });
+ ensure(goalViewport.documentWidth<=goalViewport.viewport+2&&
+   [goalViewport.sheet,goalViewport.head,goalViewport.title,goalViewport.close,
+     goalViewport.tabs,goalViewport.content].every(x=>x.left>=-2&&x.right<=goalViewport.viewport+2)&&
+   goalViewport.head.top>=goalViewport.sheet.top-2&&
+   goalViewport.close.top>=goalViewport.sheet.top-2&&
+   goalViewport.close.bottom<=goalViewport.height+2&&
+   goalViewport.tabs.top>=goalViewport.head.top-2&&
+   goalViewport.titleReadable&&goalViewport.close.width>=44,
+   'Goal Details must retain visible DS2 header, title, close and three tabs at iPhone widths: '+JSON.stringify(goalViewport));
+ const goalVisual='Nexus_'+VERSION+'_GOAL_DETAILS_'+mode+'_'+theme+'_'+width+'.png';
+ await page.screenshot({path:path.join('dist',goalVisual),fullPage:false});
+
+ // WAI-ARIA tablist: keyboard navigation must be predictable at 320/390.
+ ensure(await page.locator('.nx-goal-detail-tab[tabindex="0"]').count()===1,
+   'Goal Details must expose exactly one keyboard tab stop');
+ await page.locator('.nx-goal-detail-tab[data-tab="overview"]').focus();
+ await page.keyboard.press('ArrowRight');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="connections"]').getAttribute('aria-selected')==='true'&&
+   await page.locator('.nx-goal-detail-tab[data-tab="connections"]').evaluate(e=>document.activeElement===e),
+   'Right arrow must focus and select Connections tab');
+ await page.keyboard.press('End');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="activity"]').getAttribute('aria-selected')==='true',
+   'End must activate the final Goal Details tab');
+ await page.keyboard.press('Home');
+ ensure(await page.locator('.nx-goal-detail-tab[data-tab="overview"]').getAttribute('aria-selected')==='true',
+   'Home must activate the first Goal Details tab');
  await page.locator('.nx-goal-detail-tab[data-tab="connections"]').click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('No protocols linked yet')),'Missing linked protocols should show honest empty state');
  await page.locator('#nx-goal-detail-close').click();
@@ -285,9 +383,13 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#nx-g-next').click(); // Progress -> Connections
  ensure(await page.locator('#g-evidence-symptom').isVisible(),'Connections field must be visible');
  await page.locator('#g-evidence-symptom').selectOption('Skin irritation');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].evidenceSymptom==='Skin irritation'&&state.dailyLogs.length===2),'Evidence selection or original Check-In history mutated');
  await page.locator('.nx-open-goal').first().click();
  await page.locator('.nx-goal-detail-tab[data-tab="activity"]').click();
@@ -314,9 +416,13 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#g-p-target').fill('180');
  await page.locator('#g-p-unit').fill('lb');
  await page.locator('#g-p-source').selectOption('weightLogs');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.source==='weightLogs'&&state.weightLogs.length===2),'Numeric model save or weight history preservation failed');
  await page.locator('.nx-open-goal').first().click();
  ensure(await page.locator('#nx-goal-detail-content').innerText().then(t=>t.includes('185')&&t.includes('75%')),'Goal weight progress did not use latest dated record');
@@ -325,24 +431,36 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('subjective');
  await page.locator('#g-p-rating').selectOption('4');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.rating===4),'Subjective rating save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('milestones');
  await page.locator('#g-p-milestones').fill(['One','Two'].join(String.fromCharCode(10)));
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.milestones.length===2),'Milestones save failed');
  await page.evaluate(()=>goalModal(state.plans.goals[0]));
  await page.locator('#nx-g-next').click(); // Basics -> Progress
  await page.locator('#g-progress-type').selectOption('exploratory');
- while(await page.locator('#nx-g-next').isVisible())await page.locator('#nx-g-next').click();
+ await advanceGoalToReview(page);
  ensure(await page.locator('#g-save').isVisible(),'Review save not visible');
  await page.locator('#g-save').click();
+ // The app saves Goals asynchronously through its exclusive writer; only
+ // successful durable acknowledgment closes the wizard. Never open another
+ // editor while a preceding Save handler can still dismiss it.
+ await page.locator('#g-save').waitFor({state:'detached',timeout:10000});
  ensure(await page.evaluate(()=>state.plans.goals[0].progressModel.type==='exploratory'&&state.plans.goals[0].notes==='Fictional note'),'Exploratory save or legacy notes preservation failed');
 
  await page.evaluate(()=>{state._plansSub='shopping';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove());});

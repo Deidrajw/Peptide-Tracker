@@ -34,7 +34,7 @@ function renderSettingsDetailScreen(key) {
   if (key === "appupdates") return appUpdatesView();
   const titles = {reminders:"Dose Alerts", phasereminders:"Protocol Phase Alerts", units:"Units & Preferences", health:"Health & Data", privacy:"Privacy & Data", backup:"Backup & Restore", datamanagement:"Data Management", usage:"Shortcut Activity", developer:"Developer Options"};
   const backBtn = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer">‹</button>
+    <button id="settings-detail-back" aria-label="Back to settings" style="color:var(--t2);font-size:24px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <span style="font-size:17px;font-weight:700;color:var(--t1)">${esc(titles[key]||"Settings")}</span>
   </div>`;
   let content = "";
@@ -55,14 +55,14 @@ function renderPhaseRemindersDetail() {
   return `<div style="padding:16px 18px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;margin-bottom:14px">
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:22px">📈</span>
-      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — you'll see in-app alerts before and when a protocol phase changes":"Off — no phase-transition alerts"}</div></div>
+      <div style="flex:1"><div style="font-size:14px;color:var(--t1);font-weight:600">Protocol Phase Alerts</div><div style="font-size:11px;color:var(--t4);margin-top:2px">${enabled?"On — phase starts, changes and protocol-end reviews":"Off — no protocol schedule alerts"}</div></div>
       ${enabled
         ? `<button id="disablephaserem" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:7px 14px;font-size:12px">Turn off</button>`
         : `<button id="enablephaserem" style="background:#7DF9C018;border:1px solid #7DF9C044;color:#7DF9C0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600">Enable</button>`}
     </div>
   </div>
   <div style="font-size:11px;color:var(--t5);line-height:1.6;padding:0 4px">
-    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Fires 3 days before a phase transition, and on the transition day itself, for any compound with a multi-phase protocol configured. Automatically derived from each protocol's phase durations — nothing to set up per-compound.
+    These are <b>in-app alerts only</b> — Nexus can't send background/push notifications while closed in this build, so alerts appear in Needs Attention when you open the app. Reminders appear 7, 3 or 1 day before applicable phase changes, when Phase 1 or another phase starts, and 7 or 1 day before a protocol's scheduled end. When an active protocol's schedule has elapsed, a review alert appears until dismissed, snoozed or resolved by updating its status. An elapsed schedule is <b>not</b> automatically marked Completed, and no dose or history is changed. Paused protocols don't generate reminders. Dates are derived from each protocol's saved phases and pause adjustments.
   </div>`;
 }
 
@@ -93,16 +93,16 @@ function renderUnitsDetail() {
   return `<div style="padding:4px 4px;background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;overflow:hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Weight unit</span>
-      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.weightUnit}</button>
+      <button id="wunit" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.weightUnit}</button>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 12px;border-bottom:1px solid var(--border-sub)">
       <span style="font-size:13px;color:var(--t2)">Measurement unit</span>
-      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:32px">${state.settings.measureUnit}</button>
+      <button id="munit-toggle" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;min-height:44px;min-width:54px">${state.settings.measureUnit}</button>
     </div>
     <div style="padding:13px 12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <span style="font-size:13px;color:var(--t2)">My day rolls over at</span>
-        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:32px">
+        <select id="dayrollover" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;min-height:44px;max-width:100%">
           ${[0,1,2,3,4,5,6].map(h=>`<option value="${h}"${(Number(state.settings.dayRolloverHour)||0)===h?" selected":""}>${h===0?"Midnight (default)":h+":00 AM"}</option>`).join("")}
         </select>
       </div>
@@ -206,7 +206,7 @@ function renderDeveloperDetail() {
 // "WHICH VIAL" picker and remembered-choice defaulting. Uses a dedicated test compound
 // name specifically so it can never collide with or affect a real tracked compound.
 const MULTIKIT_TEST_NAME = "Test Multi-Kit Peptide";
-function loadMultiKitTestScenario() {
+async function loadMultiKitTestScenario() {
   // Wipe any previous run of this test first, so re-running it doesn't pile up kits.
   state.supplies = (state.supplies||[]).filter(s=>s.name!==MULTIKIT_TEST_NAME);
   if (state.customPeptides) delete state.customPeptides[MULTIKIT_TEST_NAME];
@@ -224,18 +224,18 @@ function loadMultiKitTestScenario() {
   state.supplies = [...(state.supplies||[]), kitA, kitB];
   state.customPeptides = state.customPeptides || {};
   state.customPeptides[MULTIKIT_TEST_NAME] = { status: "active", scheduleDays: 1, doses: [] };
-  saveState();
+  if(!await nexusCommitCurrentState())return;
   tab = "stash";
   render();
-  showUndoToast(`Test scenario loaded — ${esc(MULTIKIT_TEST_NAME)} (30mg kit open, 10mg kit sealed) · Remove`, () => {
+  showUndoToast(`Test scenario loaded — ${esc(MULTIKIT_TEST_NAME)} (30mg kit open, 10mg kit sealed) · Remove`, async () => {
     state.supplies = (state.supplies||[]).filter(s=>s.name!==MULTIKIT_TEST_NAME);
     if (state.customPeptides) delete state.customPeptides[MULTIKIT_TEST_NAME];
     if (state.lastSourceKit) delete state.lastSourceKit[MULTIKIT_TEST_NAME];
-    saveState(); render();
+    if(!await nexusCommitCurrentState())return;render();
   });
 }
 
-function forceVialRepairModal() {
+async function forceVialRepairModal() {
   const kits = state.supplies||[];
   let touched = 0;
   kits.forEach(kit=>{
@@ -245,7 +245,7 @@ function forceVialRepairModal() {
     ensureKitVials(kit);
     if (JSON.stringify(kit.vials) !== before) touched++;
   });
-  saveState(); render();
+  if(!await nexusCommitCurrentState())return;render();
   const c = touched>0 ? "#7DF9C0" : "var(--t3)";
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -275,10 +275,11 @@ function devResetAllModal() {
   `, "#ff7c7c");
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#cancel").onclick = closeModal;
-  m.querySelector("#confirm").onclick = () => {
+  m.querySelector("#confirm").onclick = async () => {
     if (m.querySelector("#erase-confirm").value.trim().toUpperCase()!=="ERASE") return;
-    try { localStorage.removeItem(STORE_KEY); } catch(e) {}
-    location.reload();
+    const button=m.querySelector("#confirm");button.disabled=true;
+    try {if(await nexusEraseSavedState())location.reload();else button.disabled=false;}
+    catch(e){console.error("Nexus erase failed",e);showSaveWarning();button.disabled=false;}
   };
 }
 
@@ -439,7 +440,7 @@ function importAppleHealth(e) {
     const finish = () => {
       bar.style.width = "100%";
       status.textContent = "Applying data…";
-      setTimeout(() => {
+      setTimeout(async () => {
         const existingWt = new Set(state.weightLogs.map(w=>dayKey(w.date)));
         let wtAdded=0, hrAdded=0, hrvAdded=0, macroAdded=0;
 
@@ -514,7 +515,7 @@ function importAppleHealth(e) {
           }
         });
 
-        saveState();
+        if(!await nexusCommitCurrentState())return;
         status.innerHTML = `<span style="color:#7DF9C0">✓ ${wtAdded} weight · ${hrAdded} HR · ${hrvAdded} HRV · ${macroAdded} macro days · ${activityAdded} activity days imported</span>`;
         const btn=document.querySelector(".modal #ah-go");
         if(btn){btn.textContent="Done — Close"; btn.disabled=false; btn.onclick=()=>{closeModal();render();};}
@@ -555,19 +556,20 @@ function importData(e) {
     openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <strong style="font-size:17px;color:var(--t1)">Review backup before restore</strong>
       <button id="nx-import-close" aria-label="Close restore preview" style="min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t1);font-size:22px">×</button></div>
-      <p style="font-size:12px;color:var(--t2);line-height:1.6">File: ${esc(file.name)}. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6;overflow-wrap:anywhere">File: <strong>${esc(file.name)}</strong>. Import will <b>replace</b> this browser's records; it will not merge them. Export your current records first.</p>
       <div style="font-size:12px;color:var(--t2);margin:12px 0">${summary}</div>
       <label for="nx-restore-word" style="display:block;font-size:12px;font-weight:650;color:var(--t1);margin-bottom:6px">Type RESTORE to confirm</label>
       <input id="nx-restore-word" class="inp" autocomplete="off" autocapitalize="characters" placeholder="RESTORE">
       <p style="font-size:11px;color:var(--t3);margin:8px 0 14px">Nexus saves a local recovery copy before replacement if browser storage permits.</p>
-      <div style="display:flex;gap:8px"><button id="nx-import-cancel" style="flex:1;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
-      <button id="nx-import-confirm" disabled style="flex:1;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="nx-import-cancel" style="flex:1 1 110px;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--t1)">Cancel</button>
+      <button id="nx-import-confirm" disabled style="flex:1 1 150px;min-height:44px;border:0;border-radius:10px;background:#A78BFA;color:#1A1728;font-weight:700;opacity:.5">Restore backup</button></div>`);
     const box=document.querySelector(".modal");if(!box)return;
-    box.querySelector("#nx-import-close").onclick=closeModal;
-    box.querySelector("#nx-import-cancel").onclick=closeModal;
+    const cancelRestore=()=>{closeModal();document.querySelector("#nx-import-open")?.focus();};
+    box.querySelector("#nx-import-close").onclick=cancelRestore;
+    box.querySelector("#nx-import-cancel").onclick=cancelRestore;
     const word=box.querySelector("#nx-restore-word"),go=box.querySelector("#nx-import-confirm");
     word.oninput=()=>{go.disabled=word.value.trim()!=="RESTORE";go.style.opacity=go.disabled?".5":"1";};
-    go.onclick=()=>{
+    go.onclick=async()=>{
       if(word.value.trim()!=="RESTORE")return;
       const oldState=state,oldRaw=localStorage.getItem(STORE_KEY);
       const recoveryKey=STORE_KEY+"-before-manual-restore-"+new Date().toISOString().replace(/[:.]/g,"-");
@@ -575,15 +577,26 @@ function importData(e) {
         if(oldRaw!==null)localStorage.setItem(recoveryKey,oldRaw);
         const next=migrate(incoming),serialized=JSON.stringify(next);
         if(!next||!serialized)throw Error("Invalid restored state");
-        localStorage.setItem(STORE_KEY,serialized);
-        if(localStorage.getItem(STORE_KEY)!==serialized)throw Error("Restore read-back mismatch");
-        state=next;
+        // A restore is an explicit replacement but must still reject stale
+        // storage and share the guarded writer. Never overwrite another tab.
+        if(_demoActive){
+          // Fictional demo restores are in-memory only; never invoke the
+          // production storage coordinator against isolated demo fixtures.
+          state=next;
+        }else{
+          const writer=nexusWriter();
+          const result=await writer.transaction(state,()=>({next}));
+          _nexusLastSavedSnapshot=writer.expected();
+          state=result.next;
+        }
         closeModal();render();
-        alert("Backup restored. A local recovery copy of the previous records was saved.");
+        alert(oldRaw!==null?"Backup restored. A local recovery copy of the previous records was saved.":"Backup restored. No previous saved browser records were available for a recovery copy.");
       }catch(err){
         state=oldState;
-        try{if(oldRaw!==null)localStorage.setItem(STORE_KEY,oldRaw);else localStorage.removeItem(STORE_KEY);}
-        catch(rollbackError){console.error("Restore rollback failed",rollbackError);showSaveWarning();}
+        // Do not attempt a second blind write on failure: storage may have
+        // advanced concurrently, or the previous write outcome may be unknown.
+        // The independent recovery backup above remains available to the user.
+        showSaveWarning();
         console.error("Backup restore failed",err);
         alert("Restore failed. Existing records were retained where browser storage permitted.");
       }
@@ -1136,7 +1149,7 @@ function protocolBuilderModal(existing) {
     rebuildModal();
   }
 
-  function saveProto(status){
+  async function saveProto(status){
     if(!proto.name.trim()){proto.name=proto.goal||"New Protocol";}
     proto.status=status;
     if(!state.protocols)state.protocols=[];
@@ -1151,7 +1164,7 @@ function protocolBuilderModal(existing) {
     // Protocol tab and its reminders while the real dosing engine silently keeps using
     // the old numbers.
     if (status==="active" || status==="in_progress") syncProtocolToCompoundData(proto);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   }
 
   const m=openModal(`<div id="proto-builder-wrap" style="display:flex;flex-direction:column;max-height:85vh">
@@ -1334,6 +1347,46 @@ function getProtocolPhaseInfo(p, c) {
 
 // Phase-aware timeline summary: use existing pause-aware phase dates, never
 // infer a countdown from the number of compounds or logged administrations.
+// Post-protocol follow-up is informational: logging a dose never reactivates a protocol.
+function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
+  if(!dose||dose.asNeeded||!Array.isArray(state.protocols))return false;
+  const date=dayKey(dose.date);
+  const eligible=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>c.name===name)).map(p=>{
+    const component=(p.compounds||[]).find(c=>c.name===name);
+    const info=getProtocolPhaseInfo(p,component);
+    const end=info?.phases?.[info.phases.length-1]?.endDate||null;
+    const ended=!!end&&date>=end;
+    return {p,end,eligible:(ended || (p.status==="completed"&&(!end||date>=end)))&&p.status!=="archived"};
+  }).filter(x=>x.eligible).sort((a,b)=>String(b.end||"").localeCompare(String(a.end||"")));
+  // A newer active same-compound protocol covering this dose takes precedence over
+  // older completed protocols; don't nag when dosing is already covered by a plan.
+  const coveredByCurrent=(state.protocols||[]).some(p=>
+    p.status!=="completed"&&p.status!=="archived"&&p.status!=="paused"&&
+    (p.compounds||[]).some(c=>{
+      if(c.name!==name)return false;
+      const info=getProtocolPhaseInfo(p,c);
+      return !!info&&!info.done&&!info.notStartedYet &&
+        info.phases?.some(ph=>date>=ph.startDate&&date<ph.endDate);
+    }));
+  if(coveredByCurrent)return false;
+  const chosen=eligible[0];if(!chosen)return false;
+  const key=String(chosen.p.id)+"|"+name;
+  if((state.protocolDoseFollowupAcknowledged||{})[key])return false;
+  const m=openModal(`<section class="nx-postprotocol-followup">
+    <div class="nx-form-stock-editor-head"><strong>Protocol follow-up</strong><button id="x" type="button" aria-label="Close">✕</button></div>
+    <h2 style="font-size:20px;margin:8px 0">You're still logging ${esc(name)}</h2>
+    <p class="hint">Your previous protocol, ${esc(chosen.p.name||name)}, has ${chosen.p.status==="completed"?"been marked completed":"reached the end of its schedule"}. Your dose has already been saved. Would you like to update the protocol or start another?</p>
+    <button type="button" id="nexus-followup-update" class="btn-primary" style="min-height:48px">Update existing protocol</button>
+    <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
+    <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
+  </section>`,"#A78BFA");
+  const dismiss=async(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();if(!await nexusCommitCurrentState())return;closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
+  m.querySelector("#x").onclick=dismiss;
+  m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
+  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss(false);protocolBuilderModal(chosen.p);};
+  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss(false);protocolBuilderModal();};
+  return true;
+}
 function protocolCountdownSummary(p) {
   if (p.status==="completed") return {label:"Completed", detail:"Marked complete"};
   const entries=(p.compounds||[]).map(c=>getProtocolPhaseInfo(p,c)).filter(Boolean);
@@ -1380,7 +1433,7 @@ function nexusProtocolDetails(protocolId, initialTab="overview") {
     const fill=info?.done?100:info?.current?Math.max(0,Math.min(100,Math.round(100*(1-info.daysLeft/(info.totalWeeks*7))))):0;
     return '<button type="button" class="nx-proto-detail-compound" data-proto-comp="'+esc(c.name)+'"><span class="nx-proto-detail-compound-head"><strong>'+esc(c.name)+'</strong><span aria-hidden="true">›</span></span><span>'+esc(stage)+'</span>'+(info?.current||info?.done?'<span class="nx-proto-detail-bar" aria-hidden="true"><span style="width:'+fill+'%"></span></span>':"")+'<small>'+esc(detail)+'</small></button>';
   }).join("");
-  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
+  const m=openModal('<div class="nx-proto-detail-page"><div class="nx-proto-detail-top"><h2>'+esc(p.name)+'</h2><button type="button" id="x" class="nx-proto-detail-close" aria-label="Close Protocol details">✕</button></div><div class="nx-proto-detail-context">Overview</div><div id="nx-proto-detail-body"></div></div>',"#A78BFA");
   m.querySelector(".nx-proto-detail-close").onclick=closeModal;
   const show=(view)=>{
 
@@ -1466,16 +1519,16 @@ function manageProtocolMenu(protoId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#mp-edit").onclick = () => { closeModal(); protocolBuilderModal(p); };
   const pauseBtn = m.querySelector("#mp-pause");
-  if (pauseBtn) pauseBtn.onclick = () => { closeModal(); pauseProtocol(p); saveState(); renderBody(); };
+  if (pauseBtn) pauseBtn.onclick = async () => { pauseProtocol(p); if(!await nexusCommitCurrentState())return;closeModal();renderBody(); };
   const completeBtn = m.querySelector("#mp-complete");
-  if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", () => {
-    p.status="completed"; saveState(); renderBody(); protocolCompletionCelebration(p.name);
+  if (completeBtn) completeBtn.onclick = () => { closeModal(); confirmAction("Mark protocol as completed?", async () => {
+    p.status="completed";if(!await nexusCommitCurrentState())return;renderBody();protocolCompletionCelebration(p.name);
   }, { confirmLabel: "Complete", cancelLabel: "Cancel", tone: "success" }); };
   const resumeBtn = m.querySelector("#mp-resume");
-  if (resumeBtn) resumeBtn.onclick = () => { closeModal(); resumeProtocol(p); saveState(); renderBody(); };
+  if (resumeBtn) resumeBtn.onclick = async () => { resumeProtocol(p);if(!await nexusCommitCurrentState())return;closeModal();renderBody(); };
   m.querySelector("#mp-pastpause").onclick = () => { closeModal(); recordPastPauseModal(protoId); };
-  m.querySelector("#mp-delete").onclick = () => { closeModal(); confirmAction("Delete this protocol?", () => {
-    state.protocols=(state.protocols||[]).filter(x=>String(x.id)!==String(protoId)); saveState(); renderBody();
+  m.querySelector("#mp-delete").onclick = () => { closeModal(); confirmAction("Delete this protocol?", async () => {
+    state.protocols=(state.protocols||[]).filter(x=>String(x.id)!==String(protoId));if(!await nexusCommitCurrentState())return;renderBody();
   }); };
 }
 
@@ -1500,7 +1553,7 @@ function recordPastPauseModal(protoId) {
     <button id="rpp-save" class="btn-primary">Save pause interval</button>
   `, "#F9C87D");
   m.querySelector("#x").onclick = closeModal;
-  m.querySelector("#rpp-save").onclick = () => {
+  m.querySelector("#rpp-save").onclick = async () => {
     const startVal = m.querySelector("#rpp-start").value;
     const endVal = m.querySelector("#rpp-end").value;
     const errEl = m.querySelector("#rpp-err");
@@ -1517,8 +1570,63 @@ function recordPastPauseModal(protoId) {
     if (overlaps) return showErr("This overlaps a pause interval already recorded for this protocol.");
     p.pauseHistory = p.pauseHistory || [];
     p.pauseHistory.push({ pausedAt, resumedAt });
-    saveState(); closeModal(); renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
+}
+
+/* PR124 P-14: coordinated bulk pause/resume. Only changes running protocols and
+ * records their previous status. All other statuses, inventory and dose history stay intact.
+ * Persistent writes use Nexus's exclusive coordinator to reject stale-tab updates.
+ */
+async function nexusBulkProtocolAction(direction) {
+  if(!["pause","resume"].includes(direction))return false;
+  const eligible = (state.protocols||[]).filter(p=>direction==="pause"
+    ?["active","in_progress"].includes(p.status)
+    :p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt);
+  if(!eligible.length)return false;
+  const targetIds=new Set(eligible.map(p=>String(p.id)));
+  const updatedAt=localDatetime();
+  const mutate=prior=>{
+    const next=JSON.parse(JSON.stringify(prior));
+    const current=(next.protocols||[]).filter(p=>targetIds.has(String(p.id)));
+    if(current.length!==targetIds.size)throw Error("Protocol list changed. Reload before retrying.");
+    for(const p of current){
+      if(direction==="pause"){
+        if(!["active","in_progress"].includes(p.status))throw Error("One protocol is no longer active.");
+        p.nexusBulkPausedFrom=p.status;
+        p.status="paused";
+        p.pausedAt=updatedAt;
+      }else{
+        if(p.status!=="paused"||!p.pausedAt||!p.nexusBulkPausedFrom)throw Error("One protocol pause has changed.");
+        const priorStatus=p.nexusBulkPausedFrom;
+        if(!["active","in_progress"].includes(priorStatus))throw Error("Unrecognised original protocol status.");
+        p.pauseHistory=Array.isArray(p.pauseHistory)?p.pauseHistory:[];
+        p.pauseHistory.push({pausedAt:p.pausedAt,resumedAt:updatedAt});
+        const days=Math.max(0,Math.round((new Date(updatedAt)-new Date(p.pausedAt))/86400000));
+        p.pauseDaysAccumulated=(Number(p.pauseDaysAccumulated)||0)+days;
+        p.pausedAt=null;
+        p.status=priorStatus;
+        delete p.nexusBulkPausedFrom;
+      }
+    }
+    return next;
+  };
+  try{
+    if(_demoActive){
+      state=mutate(state);
+    }else{
+      const writer=nexusWriter();
+      const result=await writer.transaction(state,prior=>({next:mutate(prior)}));
+      state=result.next;
+      _nexusLastSavedSnapshot=writer.expected();
+    }
+    renderBody();
+    return true;
+  }catch(error){
+    console.error("Nexus bulk protocol action rejected",error);
+    showSaveWarning();
+    return false;
+  }
 }
 
 function protocolsView() {
@@ -1548,6 +1656,9 @@ function protocolsView() {
   const matchesFilter=filterGroups[filter]||filterGroups.all;
   const visibleProtos=protos.filter(matchesFilter);
   const filters=[["all","All"],["not_started","Not started"],["in_progress","In progress"],["paused","Paused"],["completed","Completed"],["archived","Archived"]];
+  const bulkCanPause=protos.filter(p=>["active","in_progress"].includes(p.status)).length;
+  const bulkCanResume=protos.filter(p=>p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt).length;
+  const bulkActions=(bulkCanPause||bulkCanResume)?`<div class="nx-protocol-bulk-actions" aria-label="Protocol schedule controls">${bulkCanPause?`<button type="button" id="nx-pause-all-protocols" class="nx-protocol-bulk-btn">Pause all protocols <span>${bulkCanPause}</span></button>`:""}${bulkCanResume?`<button type="button" id="nx-resume-all-protocols" class="nx-protocol-bulk-btn nx-protocol-bulk-resume">Resume all paused by this action <span>${bulkCanResume}</span></button>`:""}</div>`:"";
   const filterBar='<div class="nx-protocol-filter-row" role="group" aria-label="Filter protocols by status" style="display:flex;gap:7px;overflow-x:auto;padding:3px 0 10px;scrollbar-width:none;max-width:100%">'+filters.map(([key,label])=>'<button type="button" class="nx-protocol-filter" data-status="'+key+'" aria-pressed="'+(filter===key)+'" style="min-height:44px;padding:8px 10px;white-space:nowrap;flex:0 0 auto;border-radius:999px;border:1px solid '+(filter===key?'#A78BFA':'var(--border)')+';background:'+(filter===key?'#A78BFA22':'var(--surface-2)')+';color:'+(filter===key?'#A78BFA':'var(--t3)')+';font-size:12px;font-weight:650">'+label+'</button>').join('')+'</div>';
   const live=visibleProtos.filter(p=>["active","in_progress","paused"].includes(p.status));
   const planned=visibleProtos.filter(p=>p.status==="planned");
@@ -1628,7 +1739,7 @@ function protocolsView() {
   };
 
   const section=(title,color,cards)=>cards.length?`<div class="nexus-protocol-section-label" style="color:${color}">${title} <span style="opacity:.7">${cards.length}</span></div>${cards.map(protoCard).join("")}`:"";
-  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${filterBar}${!visibleProtos.length&&protos.length?`<div class="nx-protocol-empty-filter" role="status" style="padding:20px 10px;text-align:center;color:var(--t4);font-size:12px">No protocols match this status.<br><button type="button" id="nx-protocol-reset-filter" style="min-height:44px;margin-top:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">Show all protocols</button></div>`:""}${!live.length&&!planned.length&&!drafts.length&&!done.length&&!protos.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
+  return `<h1 class="serif greet">Protocol</h1><button id="new-protocol" class="btn-primary nx-proto-create"><span aria-hidden="true">＋</span> Create protocol</button>${bulkActions}${filterBar}${!visibleProtos.length&&protos.length?`<div class="nx-protocol-empty-filter" role="status" style="padding:20px 10px;text-align:center;color:var(--t4);font-size:12px">No protocols match this status.<br><button type="button" id="nx-protocol-reset-filter" style="min-height:44px;margin-top:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">Show all protocols</button></div>`:""}${!live.length&&!planned.length&&!drafts.length&&!done.length&&!protos.length?`<div style="text-align:center;padding:24px;color:var(--t4);font-size:12px;line-height:1.6">No protocols yet.<br>Build one to connect your goal, inventory, and doses.</div>`:""}${section("LIVE","#7DF9C0",live)}${section("PLANNED","#8AB4FF",planned)}${section("DRAFTS","var(--t4)",drafts)}${done.length?`<details class="nexus-protocol-archive"><summary>Completed & archived (${done.length})</summary>${section("COMPLETED","var(--t5)",done)}</details>`:""}`;
 
 }
 
@@ -1656,12 +1767,12 @@ function managePlanItemMenu(type, id) {
   `, "#7DF9C0");
   m.querySelector("#x").onclick = closeModal;
   if(type==="goal"){
-    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=()=>{
+    m.querySelectorAll(".nx-goal-quick-status").forEach(button=>button.onclick=async()=>{
       const next=button.dataset.status;
       if(!["planned","active","paused","completed"].includes(next))return;
       const current=state.plans?.goals?.find(goal=>String(goal.id)===String(id));
       if(!current)return;
-      if((current.status||"active")!==next){current.status=next;saveState();}
+      if((current.status||"active")!==next){current.status=next;if(!await nexusCommitCurrentState())return;}
       closeModal();renderBody();
     });
   }
@@ -1671,9 +1782,9 @@ function managePlanItemMenu(type, id) {
     else if(type==="research") researchModal(item);
     else shoppingModal(item);
   };
-  m.querySelector("#pm-delete").onclick = () => { closeModal(); confirmAction(`Delete this ${label}?`, () => {
+  m.querySelector("#pm-delete").onclick = () => { closeModal(); confirmAction(`Delete this ${label}?`, async () => {
     if(!state.plans) return;
-    state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id)); saveState(); renderBody();
+    state.plans[key]=state.plans[key].filter(x=>String(x.id)!==String(id));if(!await nexusCommitCurrentState())return;renderBody();
   }); };
 }
 
@@ -1703,14 +1814,19 @@ function goalDetailModal(goalId) {
   const matchingCheckIns=()=>g.evidenceSymptom?(state.dailyLogs||[]).filter(l=>l.date&&(l.symptoms||[]).some(v=>(typeof v==="string"?v:v?.name)===g.evidenceSymptom)).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,12):[];
   const checkInEvidence=()=>!g.evidenceSymptom?'<div class="nx-muted" role="status">No Check-In symptom selected. Edit this goal to connect one.</div>':matchingCheckIns().length?'<div class="nx-muted" style="margin-bottom:9px">Recorded observations for '+el(g.evidenceSymptom)+'. No protocol causality is implied.</div>'+matchingCheckIns().map(l=>{const item=(l.symptoms||[]).find(v=>(typeof v==="string"?v:v?.name)===g.evidenceSymptom);const intensity=item&&typeof item==="object"&&item.intensity!=null?' · Intensity: '+el(item.intensity):'';const reflection=typeof l.notes==='string'&&l.notes.trim()?'<div class="nx-goal-reflection" style="margin-top:10px"><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:.6px">CHECK-IN REFLECTION FROM THE SAME ENTRY</div><div style="font-size:12px;line-height:1.55;color:var(--t2);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:5px">'+el(l.notes.trim())+'</div></div>':'';const origin=l.id!=null?'<button type="button" class="nx-goal-checkin-source" data-checkin-id="'+el(String(l.id))+'" style="min-height:44px;margin-top:6px;color:var(--accent,#A78BFA);font-size:12px;background:transparent;border:0;text-align:left;padding:8px 0">View original Check-In</button>':'';return '<div style="border-bottom:1px solid var(--border-sub);padding:12px 0"><div style="font-size:12px;font-weight:650;color:var(--t1)">'+el(fmtDate(l.date))+'</div><div class="nx-muted">'+el(g.evidenceSymptom)+intensity+'</div>'+reflection+origin+'</div>';}).join(''):'<div class="nx-muted" role="status">No existing Check-Ins contain this symptom.</div>';
   const content=()=>active==="overview"
-    ? '<div class="nx-goal-detail-section"><div style="font-size:12px;font-weight:650;color:var(--t2);margin-bottom:7px">'+el(modelLabel)+'</div><div class="nx-muted" style="margin-bottom:14px">'+modelSummary()+'</div><div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL CONTEXT</div><div style="font-size:13px;line-height:1.6;color:var(--t2)">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</div>'+(g.targetDate?'<div class="nx-muted" style="margin-top:10px">Target date: '+el(fmtDate(g.targetDate))+'</div>':'')+(g.notes?'<div class="nx-muted" style="margin-top:10px">'+el(g.notes)+'</div>':'')+'<div class="nx-muted" style="margin-top:12px">Progress tracking will appear here once a measurement or review method is configured. No progress is inferred from protocol activity alone.</div></div>'
+    ? '<div class="nx-goal-detail-section nx-goal-hierarchy">'+
+      '<section class="nx-goal-overview-panel"><div class="nx-goal-eyebrow">PROGRESS METHOD</div><h3 class="nx-goal-section-title">'+el(modelLabel)+'</h3><p class="nx-goal-section-body">'+modelSummary()+'</p></section>'+
+      '<section class="nx-goal-context-panel"><h3 class="nx-goal-section-title">Goal context</h3><p class="nx-goal-section-body">'+(g.metrics?el(g.metrics):'No success metric defined yet. You can add one when editing this goal.')+'</p></section>'+
+      (g.targetDate?'<section class="nx-goal-target-panel"><div class="nx-goal-eyebrow">TARGET DATE</div><div class="nx-goal-target-value">'+el(fmtDate(g.targetDate))+'</div></section>':'')+
+      (g.notes?'<section class="nx-goal-notes-panel"><h3 class="nx-goal-section-title">Notes</h3><p class="nx-goal-section-body">'+el(g.notes)+'</p></section>':'')+
+      '<p class="nx-goal-progress-disclaimer">Progress tracking requires a configured measurement or review method. Protocol activity alone does not establish progress.</p></div>'
     :active==="connections"
     ? '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">LINKED PROTOCOLS</div>'+(linked.length?linked.map(p=>'<button type="button" class="nx-goal-open-protocol" data-protocol-id="'+el(String(p.id))+'" style="width:100%;min-height:54px;text-align:left;padding:12px;border:1px solid var(--border-sub);background:var(--surface-2);border-radius:12px;margin-bottom:9px;color:var(--t1)"><span style="display:flex;align-items:center;justify-content:space-between;gap:8px"><strong style="font-size:13px">'+el(p.name)+'</strong><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="nx-muted" style="display:block;margin-top:4px">'+el(p.status||'draft')+' · View protocol overview</span></button>').join(''):'<div class="nx-muted" role="status">No protocols linked yet. Edit a protocol and choose this goal in its Review step.</div>')+'<div class="nx-muted" style="margin-top:12px">Connections provide context, not evidence of treatment effectiveness.</div>'
     : '<div class="mono" style="font-size:10px;color:var(--t4);letter-spacing:1px;margin-bottom:9px">GOAL ACTIVITY · CHECK-IN</div>'+checkInEvidence()+'<div class="nx-muted" style="margin-top:12px">Other Journal sources and contextual Insights are planned separately. Reflections are read from original Check-Ins, not copied into Goals.</div>';
-  const modal=openModal('<div class="nx-goal-detail" style="padding-bottom:8px"><div style="display:flex;gap:10px;align-items:start;margin-bottom:14px"><div style="flex:1;min-width:0"><div class="mono" style="color:#A78BFA;font-size:10px;letter-spacing:1px">GOAL DETAILS</div><div style="font-size:19px;font-weight:700;color:var(--t1);margin-top:4px">'+el(g.name)+'</div><div class="nx-muted">'+el(g.category||'Personal goal')+' · '+el(g.status||'active')+'</div></div><button id="nx-goal-detail-close" aria-label="Close goal details" style="min-height:44px;min-width:44px;border-radius:12px;color:var(--t2);background:var(--surface-2);border:1px solid var(--border)">×</button></div><div style="display:flex;gap:6px;margin-bottom:16px" role="tablist" aria-label="Goal details sections">'+['overview','connections','activity'].map(t=>'<button class="nx-goal-detail-tab" role="tab" data-tab="'+t+'" style="min-height:44px;flex:1;border-radius:10px;font-size:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--t2)">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div><div id="nx-goal-detail-content" role="tabpanel"></div></div>','#A78BFA');
-  const paint=()=>{modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{const chosen=b.dataset.tab===active;b.setAttribute('aria-selected',chosen);b.style.background=chosen?'#A78BFA22':'var(--surface-2)';b.style.borderColor=chosen?'#A78BFA':'var(--border)';});modal.querySelector('#nx-goal-detail-content').innerHTML=content();modal.querySelectorAll('.nx-goal-checkin-source').forEach(b=>{b.onclick=()=>{const source=(state.dailyLogs||[]).find(l=>String(l.id)===b.dataset.checkinId);if(source){closeModal();dailyModal(source);}};});modal.querySelectorAll('.nx-goal-open-protocol').forEach(b=>{b.onclick=()=>{const id=b.dataset.protocolId;closeModal();tab="protocols";render();window.scrollTo(0,0);nexusProtocolDetails(id);};});};
+  const modal=openModal('<div class="nx-goal-detail nx-shared-goal-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">PLANS · GOAL DETAILS</div><h2 class="nx-dose-title">'+el(g.name)+'</h2><div class="nx-dose-subtitle">'+el(g.category||'Personal goal')+' · '+el(g.status||'active')+'</div></div><button id="nx-goal-detail-close" class="nx-dose-close" type="button" aria-label="Close goal details"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="nx-goal-detail-tabs" role="tablist" aria-label="Goal details sections">'+['overview','connections','activity'].map(t=>'<button class="nx-goal-detail-tab" type="button" role="tab" id="nx-goal-tab-'+t+'" aria-controls="nx-goal-detail-content" data-tab="'+t+'">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div><div id="nx-goal-detail-content" role="tabpanel"></div></div>','#A78BFA');
+  const paint=()=>{modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{const chosen=b.dataset.tab===active;b.setAttribute('aria-selected',chosen);b.tabIndex=chosen?0:-1;b.style.background=chosen?'#A78BFA22':'var(--surface-2)';b.style.borderColor=chosen?'#A78BFA':'var(--border)';});modal.querySelector('#nx-goal-detail-content').innerHTML=content();modal.querySelectorAll('.nx-goal-checkin-source').forEach(b=>{b.onclick=()=>{const source=(state.dailyLogs||[]).find(l=>String(l.id)===b.dataset.checkinId);if(source){closeModal();dailyModal(source);}};});modal.querySelectorAll('.nx-goal-open-protocol').forEach(b=>{b.onclick=()=>{const id=b.dataset.protocolId;closeModal();tab="protocols";render();window.scrollTo(0,0);nexusProtocolDetails(id);};});};
   modal.querySelector('#nx-goal-detail-close').onclick=closeModal;
-  modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>b.onclick=()=>{active=b.dataset.tab;paint();});
+  modal.querySelectorAll('.nx-goal-detail-tab').forEach(b=>{b.onclick=()=>{active=b.dataset.tab;paint();};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const tabs=[...modal.querySelectorAll('.nx-goal-detail-tab')],i=tabs.indexOf(b),next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[next]?.click();tabs[next]?.focus();};});
   paint();
 }
 
@@ -1910,7 +2026,7 @@ function goalModal(existing) {
     currentStep=Math.min(3,currentStep+1);paintWizard();
   };
   paintWizard();
-  m.querySelector("#g-save").onclick=()=>{
+  m.querySelector("#g-save").onclick=async()=>{
     const name=(m.querySelector("#g-name").value||"").trim();if(!name)return;
     const type=m.querySelector("#g-progress-type").value;
     const val=id=>m.querySelector("#"+id)?.value?.trim()||"";
@@ -1924,7 +2040,7 @@ function goalModal(existing) {
     const updated={...g,name,category:m.querySelector("#g-cat").value,status:m.querySelector("#g-status").value,compounds:selC,metrics:m.querySelector("#g-metrics").value,targetDate:m.querySelector("#g-target").value,notes:m.querySelector("#g-notes").value,evidenceSymptom:m.querySelector("#g-evidence-symptom").value,progressModel:{...(g.progressModel||{}),...progressModel}};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.goals.findIndex(x=>x.id===g.id);idx>=0?state.plans.goals[idx]=updated:state.plans.goals.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function researchModal(existing) {
@@ -1946,12 +2062,12 @@ function researchModal(existing) {
   const rp=m.querySelector("#rcomp-picker");
   const refreshR=()=>{rp.innerHTML=compoundPickerHTML(selComp,"rcomp");wireCompoundPicker(rp,selComp,"rcomp",refreshR);};
   wireCompoundPicker(rp,selComp,"rcomp",refreshR);
-  m.querySelector("#r-save").onclick=()=>{
+  m.querySelector("#r-save").onclick=async()=>{
     const compound=selComp[0]||"";if(!compound)return;
     const updated={...r,compound,status:m.querySelector("#r-status").value,reason:m.querySelector("#r-reason").value,goal:m.querySelector("#r-goal").value,notes:m.querySelector("#r-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.research.findIndex(x=>String(x.id)===String(r.id));idx>=0?state.plans.research[idx]=updated:state.plans.research.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function protocolModal(existing) {
@@ -1972,12 +2088,12 @@ function protocolModal(existing) {
   const pp=m.querySelector("#pcomp-picker");
   const refreshP=()=>{pp.innerHTML=compoundPickerHTML(selC,"pcomp");wireCompoundPicker(pp,selC,"pcomp",refreshP);};
   wireCompoundPicker(pp,selC,"pcomp",refreshP);
-  m.querySelector("#p-save").onclick=()=>{
+  m.querySelector("#p-save").onclick=async()=>{
     const name=(m.querySelector("#p-name").value||"").trim();if(!name)return;
     const updated={...pr,name,goal:m.querySelector("#p-goal").value,status:m.querySelector("#p-status").value,compounds:selC,startDate:m.querySelector("#p-start").value,duration:m.querySelector("#p-dur").value,notes:m.querySelector("#p-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.protocols.findIndex(x=>String(x.id)===String(pr.id));idx>=0?state.plans.protocols[idx]=updated:state.plans.protocols.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 function shoppingModal(existing) {
@@ -1995,12 +2111,12 @@ function shoppingModal(existing) {
     <div class="nx-plan-edit-footer"><button type="button" id="s-save" class="btn-primary">${existing?"Save changes":"Add item"}</button></div>`,"#A78BFA");
   m.classList.add("nx-plan-edit-modal","nx-plan-shopping-edit");
   m.querySelector("#x").onclick=closeModal;
-  m.querySelector("#s-save").onclick=()=>{
+  m.querySelector("#s-save").onclick=async()=>{
     const item=(m.querySelector("#s-item").value||"").trim();if(!item)return;
     const updated={...s,item,category:m.querySelector("#s-cat").value,status:m.querySelector("#s-status").value,qty:m.querySelector("#s-qty").value,goal:m.querySelector("#s-goal").value,notes:m.querySelector("#s-notes").value};
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     const idx=state.plans.shopping.findIndex(x=>x.id===s.id);idx>=0?state.plans.shopping[idx]=updated:state.plans.shopping.push(updated);
-    saveState();closeModal();renderBody();
+    if(!await nexusCommitCurrentState())return;closeModal();renderBody();
   };
 }
 
@@ -2084,15 +2200,15 @@ function checkAndNotify() {
   if((due.length||overdue.length)&&"Notification" in window&&Notification.permission==="granted"){
     const msg=overdue.length?`💉 ${overdue[0]} overdue`:`💉 ${due[0]} due today`;
     try{new Notification("Nexus",{body:msg,icon:"/icon.png"});}catch(e){}
-    state.settings.lastNotifyDate=today; saveState();
+    void nexusCommitScopedStateChange({kind:"setting",key:"lastNotifyDate",value:today});
   }
 }
 function enableReminders() {
   if(!("Notification" in window)){alert("Notifications not supported in this browser.");return;}
-  Notification.requestPermission().then(p=>{ state.settings.remindersEnabled=p==="granted"; if(p!=="granted")alert("Please allow notifications in your browser settings."); saveState(); render(); });
+  Notification.requestPermission().then(async p=>{const saved=await nexusCommitScopedStateChange({kind:"setting",key:"remindersEnabled",value:p==="granted"});if(!saved)return;if(p!=="granted")alert("Please allow notifications in your browser settings.");render();});
 }
 function disableReminders() {
-  state.settings.remindersEnabled=false; saveState(); render();
+  void nexusCommitScopedStateChange({kind:"setting",key:"remindersEnabled",value:false}).then(saved=>{if(saved)render();});
 }
 // Phase 2A: five primary destinations, with secondary destinations retained in More.
 // The existing screen renderers and application state are unchanged.

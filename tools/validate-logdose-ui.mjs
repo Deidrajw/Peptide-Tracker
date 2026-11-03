@@ -10,6 +10,11 @@ const ensure=(ok,why)=>{if(!ok)throw Error(why)};
 async function seed(page, theme) {
   await page.evaluate(t=>{
     state=buildDemoState('weight_loss');
+    // This viewport/theme UI matrix injects synthetic fixtures directly into state.
+    // Keep them in isolated memory on BOTH code builds: the exclusive writer
+    // correctly rejects unsaved fixture snapshots. Real localStorage/Web Lock
+    // persistence and two-tab contention are tested independently in CI.
+    _demoActive=true;
     state.profile.onboardingDone=true;
     document.documentElement.dataset.theme=t;
     state.peptides.Retatrutide={enabled:true,status:'active',route:'SubQ',
@@ -23,7 +28,7 @@ async function seed(page, theme) {
         sequenceNumber:1,reconDate:'2026-10-20T09:00:00'}];
       for(let i=0;i<sealed;i++)vials.push({id:20000+id+i,status:'sealed',
         vialMg:10,remainingMg:10,sequenceNumber:i+2});
-      return {id,name:'Retatrutide',activeKit:true,totalVials:1+sealed,
+      return {id,name:'Retatrutide',preparationMethod:'SubQ',activeKit:true,totalVials:1+sealed,
         openedVials:1,vialMg:10,bacMl:2,_vialsBackfilled:true,
         _vialsRepaired:true,vials,wasteLog:[]};
     };
@@ -36,36 +41,210 @@ async function stateSnapshot(page){return page.evaluate(()=>({
   prepared:state.preparedDoses.map(p=>({...p})),
   draft:state._pendingDoseDraft
 }));}
-async function setDose(page,amount){await page.locator('#dose').fill(String(amount));}
-async function openDose(page){await page.evaluate(()=>doseModal('Retatrutide'));}
+async function setDose(page,amount){const sel=(await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose';await page.locator(sel).fill(String(amount));}
+async function openDose(page){
+  await page.evaluate(()=>doseModal('Retatrutide'));
+  // This legacy regression intentionally starts with the first source. The current
+  // product requires a tap when multiple eligible physical vials are available.
+  // Distinct-vial no-default behaviour is asserted separately in formulation QA.
+  const choices=page.locator('.kit-opt');
+  if(await choices.count()>1)await choices.first().click();
+}
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
-  const next=modal.locator('#nx-dose-step-next');
-  for(let i=0;i<3 && !(await modal.locator('#save').isVisible());i++){
-    ensure(await next.isVisible(),'Continue unavailable before review');
-    await next.click();
-    if(!(await modal.locator('#save').isVisible()) && !(await next.isVisible()))break;
+  if(await modal.locator('#nx-dose-review-open').isVisible())await modal.locator('#nx-dose-review-open').click();
+  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
+  const prompt=page.locator('.nx-reaction-invite');
+  if(await prompt.count()){
+    ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
+    await prompt.locator('#nx-reaction-later').click();
   }
-  if(await modal.locator('#save').isVisible()){
-    await modal.locator('#save').click();
-    // New doses have a skippable invitation; edits must not show it.
-    const prompt=page.locator('.nx-reaction-invite');
-    if(await prompt.count()){
-      ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
-      await prompt.locator('#nx-reaction-later').click();
-    }
-  }
-  // Invalid entry must remain unsaved on Entry, with feedback from step validation.
-  else ensure(await modal.locator('.nx-dose-step-error').isVisible(),'Invalid entry lacks step validation feedback');
 }
 try {
   for(const width of [320,390])for(const theme of ['dark','light'])for(const kind of ['live','demo']){
+    const visualEvidence={};
     const context=await browser.newContext({viewport:{width,height:820},isMobile:true,hasTouch:true});
     const page=await context.newPage();const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     page.on('dialog',async d=>d.accept());
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
     await seed(page,theme);let verified=[];
+    // Fictional legacy-inventory scenario: one OPEN vial
+    // with an actual positive balance but no vial/kit administration-method label.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(787,6.75,2);
+      delete kit.preparationMethod;delete kit.route;delete kit.administrationMethod;
+      delete kit.vials[0].intendedUse;
+      state.supplies=[kit];
+      state.peptides.Retatrutide.doses=[];
+      doseModal('Retatrutide');
+    });
+    const unlabelled=page.locator('.nx-confirm-legacy-vial');
+    ensure(await unlabelled.count()===1,'Unlabelled usable open vial not offered for explicit method confirmation');
+    ensure((await page.locator('.nx-dose-source-legacy').innerText()).includes('6.75'),
+      'Legacy vial balance obscured or misrepresented as zero');
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
+      'Unlabelled vial incorrectly called insufficient inventory');
+    await unlabelled.first().click();
+    const afterConfirm=await page.evaluate(()=>({
+      method:state.supplies[0].vials[0].intendedUse,
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length
+    }));
+    ensure(afterConfirm.method==='Injectable' && afterConfirm.remaining===6.75 && afterConfirm.history===0,
+      'Explicit product-form confirmation mutated dose balance/history or failed to label exact vial: '+JSON.stringify(afterConfirm));
+    await setDose(page,1.25);
+    await page.waitForTimeout(600); // 500 ms allocation-input debounce
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
+      'Labelled vial with sufficient balance still shows shortfall');
+    await clickSave(page);
+    // Exclusive backed-dose commits complete asynchronously after the click handler.
+    // Wait for the durable, visible result rather than racing the Web Lock promise.
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1 ||
+      !!document.querySelector('.nx-error-banner, .error-banner'),null,{timeout:5000}).catch(()=>{});
+    const saved=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      allocations:state.peptides.Retatrutide.doses.at(-1)?.allocations
+    }));
+    ensure(Math.abs(saved.remaining-5.5)<0.001 && saved.history===1 &&
+      saved.allocations?.some(a=>String(a.vialId)===String(10787)),
+      'Confirmed legacy exact-source dose failed single vial deduction: '+JSON.stringify(saved));
+    verified.push('legacy-unlabelled-method-confirmation-and-exact-vial-debit');
+    // Edit the newly recorded backed dose using the actual dose sheet. It
+    // must correct the SAME physical vial, not append a second dose entry.
+    await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
+    await setDose(page,1.5);
+    await page.waitForTimeout(600);
+    await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses[0]?.dose==='1.5',{},{timeout:5000});
+    const backedEdited=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      amount:state.peptides.Retatrutide.doses[0]?.allocations?.[0]?.amount,
+      audit:state.nexusDoseAudit?.length||0
+    }));
+    ensure(Math.abs(backedEdited.remaining-5.25)<.001&&backedEdited.history===1&&
+      Math.abs(backedEdited.amount-1.5)<.001&&backedEdited.audit===1,
+      'Exclusive backed-dose edit did not reconcile exact source and single history: '+JSON.stringify(backedEdited));
+    const undo=await page.evaluate(async()=>nexusCommitBackedDoseChange({
+      name:'Retatrutide',doseId:state.peptides.Retatrutide.doses[0]?.id,
+      operation:'undo',nativeUnit:'mg',builtin:true
+    }));
+    ensure(!!undo,'Exclusive backed dose undo rejected valid latest exact-vial source');
+    const reversed=await page.evaluate(()=>({
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length,
+      audit:state.nexusDoseAudit?.length||0
+    }));
+    ensure(Math.abs(reversed.remaining-6.75)<.001&&reversed.history===0&&reversed.audit===2,
+      'Exclusive backed dose undo failed to restore original source: '+JSON.stringify(reversed));
+    verified.push('exclusive-single-source-backed-edit-and-exact-vial-undo');
+
+    await page.evaluate(()=>{closeModal();});
+    await seed(page,theme);
+    // Stash-first explicit legacy method setup: do not change stock or history.
+    await page.evaluate(()=>{closeModal();});
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(788,6.25,1);
+      delete kit.preparationMethod; delete kit.route;delete kit.administrationMethod;
+      delete kit.vials[0].intendedUse;
+      state.supplies=[kit];
+      nexusStashSetLegacyVialMethod(788,10788);
+    });
+    ensure(await page.locator('.nx-stash-method-choices input').count()>=2,
+      'Stash legacy vial method options missing');
+    ensure(await page.locator('#nx-stash-method-confirm').isDisabled(),'Unselected method should not save');
+    await page.locator('.nx-stash-method-choices input[value="Injectable"]').check();
+    await page.locator('#nx-stash-method-confirm').click();
+    const stashSetup=await page.evaluate(()=>({
+      method:state.supplies[0].vials[0].intendedUse,
+      remaining:state.supplies[0].vials[0].remainingMg,
+      history:state.peptides.Retatrutide.doses.length
+    }));
+    ensure(stashSetup.method==='Injectable' && stashSetup.remaining===6.25 && stashSetup.history===0,
+      'Stash form confirmation changed quantity/history or failed: '+JSON.stringify(stashSetup));
+    await page.evaluate(()=>doseModal('Retatrutide'));
+    ensure(await page.locator('.nx-confirm-legacy-vial').count()===0,
+      'Stash-confirmed legacy vial still triggers Log Dose fallback');
+    ensure(await page.locator('#nx-dose-inventory-status').count()===1,
+      'Single Stash-verified vial not automatically recognized');
+    await page.evaluate(()=>closeModal());
+    verified.push('stash-first-method-setup-preserves-stock-and-unblocks-single-source-dose');
+    await seed(page,theme);
+    // A source chosen from two OPEN vials with ample stock must NOT inherit a
+    // provisional 2mg allocation when the requested dose is 4mg. This reproduces
+    // the iPhone report: selected vial shows ample mg but Step 1 says 2mg missing.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(998,4,0);
+      kit.vials.push({id:39998,status:'open',vialMg:10,remainingMg:9,
+        sequenceNumber:2,intendedUse:'SubQ'});
+      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      state._pendingDoseDraft={name:'Retatrutide',dose:'4',date:localDatetime(),
+        method:'SubQ',rows:[{kitId:998,vialId:39998,mg:2}]};
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.kit-opt').count()===2,'Expected explicit choice of two open vials');
+    await page.locator('.kit-opt[data-vial="39998"]').click();
+    ensure(!(await page.locator('#alloc-panel').innerText()).includes('still needs a source'),
+      'Stale provisional source allocation falsely reports shortage against sufficient vial');
+    ensure((await page.locator('#nx-dose-inventory-status').count())===0,
+      'Multiple eligible open vials must not show single-source automatic inventory ready');
+    verified.push('sufficient-selected-vial-clears-stale-provisional-shortfall');
+    await page.evaluate(()=>closeModal());
+    await seed(page,theme);
+    // Two physical open vials in ONE kit: Confirm draw must use the row's
+    // exact vial ID, never a kit-level first-open guess.
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(888,0.5,0);
+      kit.vials.push({id:38888,status:'open',vialMg:10,remainingMg:3,
+        sequenceNumber:2,intendedUse:'SubQ',reconDate:'2026-10-25T09:00:00'});
+      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      doseModal('Retatrutide');
+      window.__qaRealDraw=drawFromVialModal;window.__qaDrawId=null;
+      drawFromVialModal=function(kit,vial){window.__qaDrawId=vial.id;};
+    });
+    ensure(await page.locator('.kit-opt').count()===2,
+      'Multiple open vials not exposed as exact physical sources');
+    await page.locator('.kit-opt[data-vial="38888"]').click();
+    await setDose(page,4);
+    // The shipped dose editor intentionally debounces allocation rendering by
+    // 500 ms while typing. Wait for that existing behaviour rather than asserting
+    // against the stale first-render panel.
+    await page.locator('#alloc-panel .alloc-draw').first().waitFor({state:'visible',timeout:5000});
+    ensure(await page.locator('#alloc-panel .alloc-draw').count()>0,
+      'Exact source allocation omitted Confirm draw');
+    await page.locator('#alloc-panel .alloc-draw').first().click();
+    const exactDraw=await page.evaluate(()=>window.__qaDrawId);
+    ensure(exactDraw===38888,
+      'Confirm draw targeted a different physical vial: '+String(exactDraw));
+    await page.evaluate(()=>{drawFromVialModal=window.__qaRealDraw;closeModal();});
+    verified.push('multiple-open-vials-confirm-draw-targets-exact-vial-id');
+    await seed(page,theme);
+
+    const routeIsolation=await page.evaluate(()=>{
+      const subq=window.__fixtureKit(9331,8),nasal=window.__fixtureKit(9332,7);
+      const unknown=window.__fixtureKit(9333,5),unlabelled=window.__fixtureKit(9334,4);
+      subq.preparationMethod='SubQ';nasal.preparationMethod='Nasal';
+      unknown.preparationMethod='Unknown';
+      delete unlabelled.preparationMethod; // factory defaults SubQ; explicitly test absent metadata
+      state.supplies=[subq,nasal,unknown,unlabelled];
+      const result={
+        subq:getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id),
+        im:getEligibleSourceKits('Retatrutide','IM').map(x=>x.kit.id),
+        iv:getEligibleSourceKits('Retatrutide','IV').map(x=>x.kit.id),
+        nasal:getEligibleSourceKits('Retatrutide','Nasal').map(x=>x.kit.id),
+        oral:getEligibleSourceKits('Retatrutide','Oral').map(x=>x.kit.id)
+      };
+      subq.vials[0].intendedUse='nasal-source';
+      result.reservedSubq=getEligibleSourceKits('Retatrutide','SubQ').map(x=>x.kit.id);
+      state.supplies=[];
+      return result;
+    });
+    ensure(JSON.stringify(routeIsolation)==='{"subq":[9331],"im":[9331],"iv":[],"nasal":[],"oral":[],"reservedSubq":[]}',
+      'Physical-form isolation failed: injection routes must share only verified injectable stock, IV/nasal/unlabelled must remain blocked: '+JSON.stringify(routeIsolation));
+    verified.push('same compound separate SubQ/nasal physical stock remains route-isolated');
     // Regression: compound View details/taken-today action must not throw ReferenceError fmtT.
     const completedAction=await page.evaluate(()=>{
       const entry={id:91827,date:'2026-10-27T15:03',dose:'2.5',site:'Abdomen'};
@@ -139,6 +318,160 @@ try {
 
 
 
+    // Administration form preserves six original routes plus Other; site selection and
+    // method changes must keep native storage fields synchronised.
+    await page.evaluate(()=>{state.supplies=[window.__fixtureKit(9101,6,1)];state.supplies[0].preparationMethod='';});
+    await openDose(page);
+    // DS2 #15: Additional dose options must be one legible, keyboard-reachable
+    // disclosure in every narrow viewport/theme, without horizontal overflow.
+    const optional=page.locator('.nx2-dose-modal .nx-dose-more-options');
+    ensure(await optional.count()===1,'Exactly one Additional dose options disclosure required');
+    const optSummary=optional.locator('summary');
+    const optBefore=await optSummary.evaluate(el=>({
+      height:el.getBoundingClientRect().height,
+      right:el.getBoundingClientRect().right,
+      viewport:document.documentElement.clientWidth,
+      label:el.textContent.trim()
+    }));
+    ensure(optBefore.label==='ADDITIONAL DOSE OPTIONS'&&optBefore.height>=44&&optBefore.right<=optBefore.viewport+2,
+      'Additional dose options touch/viewport geometry: '+JSON.stringify(optBefore));
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')!==null,'Additional dose options disclosure must expand');
+    const checkboxLayout=await optional.locator('.nx-dose-option-check').evaluateAll(els=>
+      els.map(el=>({height:el.getBoundingClientRect().height,
+        right:el.getBoundingClientRect().right,
+        viewport:document.documentElement.clientWidth})));
+    ensure(checkboxLayout.length===2&&checkboxLayout.every(g=>g.height>=44&&g.right<=g.viewport+2),
+      'Optional dose checkbox rows should fit and meet touch targets: '+JSON.stringify(checkboxLayout));
+    ensure(await page.locator('#nx-dose-as-needed').count()===1&&await page.locator('#esc').count()===1,
+      'Both independent-log and escalation options must be available');
+    // #15: share the ACTUAL Administration Method/Site field-label typography.
+    // The disclosure must not define its own heading style.
+    const typography=await optional.evaluate(el=>{
+      const modal=el.closest('.nx2-dose-modal');
+      const style=selector=>{const node=modal.querySelector(selector);if(!node)return null;
+        const s=getComputedStyle(node);return {
+          font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,
+          color:s.color,spacing:s.letterSpacing,transform:s.textTransform
+        };
+      };
+      const token=(name)=>{
+        const probe=document.createElement('span');
+        probe.style.color='var('+name+')';
+        el.appendChild(probe);
+        const color=getComputedStyle(probe).color;probe.remove();return color;
+      };
+      return {method:style('.nx-method-option.is-selected'),
+        form:style('.nx-dose-form'),
+        input:style('#nx-dose-entered'),
+        heading:style('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title'),
+        fieldLabel:style('#nx-method-label'),siteLabel:style('#nx-dose-site-field .field-label'),
+        summary:style('.nx-dose-more-options > summary'),
+        label:style('.nx-dose-option-check > span'),
+        preference:style('.nx-dose-pref-link'),
+        primary:token('--t1'),helpCount:modal.querySelectorAll('.nx-dose-option-description').length};
+    });
+    ensure(typography.form&&typography.input&&typography.heading&&typography.summary&&
+      typography.label&&typography.preference,
+      'Missing actual Log Dose components for hierarchy comparison: '+JSON.stringify(typography));
+    ensure(typography.fieldLabel&&typography.siteLabel&&
+      ['font','size','weight','color','spacing','transform'].every(k=>
+        typography.summary[k]===typography.fieldLabel[k] &&
+        typography.summary[k]===typography.siteLabel[k]),
+      'Additional dose options MUST match the actual Administration Method/Site label: '+JSON.stringify(typography));
+    ensure(typography.label.font===typography.input.font &&
+      typography.label.size==='14px' &&
+      typography.label.color===typography.input.color &&
+      parseFloat(typography.label.weight)===500,
+      'Checkbox copy must use 14px supporting option typography: '+JSON.stringify(typography));
+    ensure(typography.preference.font===typography.input.font &&
+      typography.preference.size==='13px' &&
+      typography.preference.color!==typography.heading.color,
+      'Dose preferences must be smaller and secondary: '+JSON.stringify(typography));
+    const optionSpacing=await optional.evaluate(el=>{
+      const body=el.querySelector('.nx-dose-options-body');
+      const preference=el.querySelector('.nx-dose-pref-link');
+      const boxes=[...el.querySelectorAll('.nx-dose-option-check')];
+      const prefBox=preference.getBoundingClientRect();
+      const firstBox=boxes[0].getBoundingClientRect();
+      const secondBox=boxes[1].getBoundingClientRect();
+      return {border:parseFloat(getComputedStyle(preference).borderBottomWidth),
+        gapAfterPreference:firstBox.top-prefBox.bottom,
+        gapBetweenChecks:secondBox.top-firstBox.bottom,
+        bodyGap:getComputedStyle(body).rowGap,
+        prefHeight:prefBox.height};
+    });
+    ensure(optionSpacing.border===0&&optionSpacing.gapAfterPreference<=8&&
+      optionSpacing.gapBetweenChecks<=8&&optionSpacing.prefHeight>=44,
+      'Additional options divider must be absent, spacing compact and taps accessible: '+JSON.stringify(optionSpacing));
+    ensure(typography.helpCount===0,'Unrequested explanatory helper text must not reappear');
+    const optionsShot='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_ADDITIONAL_OPTIONS.png';
+    await optional.screenshot({path:path.join('dist',optionsShot)});
+    visualEvidence['Additional options']={filename:optionsShot,typography,layout:checkboxLayout};
+
+    await page.locator('#nx-dose-as-needed').check();
+    await page.locator('#esc').check();
+    ensure(await page.locator('#nx-dose-as-needed').isChecked()&&await page.locator('#esc').isChecked(),
+      'Both independent and escalation toggles must respond independently');
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')===null,'Optional panel should collapse without saving');
+    await optSummary.click();
+    ensure(await page.locator('#nx-dose-as-needed').isChecked()&&await page.locator('#esc').isChecked(),
+      'Collapsing and reopening must preserve unsaved checkbox choices');
+    await page.locator('#nx-dose-as-needed').uncheck();
+    await page.locator('#esc').uncheck();
+    await optSummary.click();
+    ensure(await optional.getAttribute('open')===null,'Optional panel must collapse without save');
+    ensure(await page.locator('.nx-method-option').count()===7,
+      'Seven saved-route options including Other should remain available');
+    ensure(await page.locator('.nx-method-option[data-admin-method="SubQ"]').getAttribute('aria-pressed')==='true',
+      'SubQ not marked as selected');
+    ensure(await page.locator('#site option[value="Abdomen — mid-left"]').count()===1,
+      'Mid-abdomen site choice must be restored for SubQ');
+    ensure(await page.locator('#site option[value="Thigh — left (SubQ)"]').textContent()==='Thigh — left',
+      'Selected route must not repeat SubQ in site display');
+    await page.locator('#site').selectOption('Abdomen — lower left');
+    ensure(await page.locator('#site').inputValue()==='Abdomen — lower left',
+      'SubQ site button did not synchronise saved site value');
+    await page.locator('.nx-method-option[data-admin-method="IM"]').click();
+    ensure(await page.locator('#nx-dose-method').inputValue()==='IM' &&
+      await page.locator('#site option[value="Deltoid — left (IM)"]').count()===1,
+      'Method switching failed to update IM regions and canonical value');
+    ensure(await page.locator('#site option[value="Deltoid — left (IM)"]').textContent()==='Deltoid — left',
+      'Selected route must not repeat IM in site display');
+    await page.locator('.nx-method-option[data-admin-method="Nasal"]').click();
+    ensure(await page.locator('#nx-nasal-method-note').isVisible(),
+      'Nasal guidance did not appear within administration fields');
+    // #02: Non-injectable methods must never expose an irrelevant site.
+    // Exercise IV last: choosing an injectable physical source correctly narrows the available methods.
+    for(const nonInjection of ['Nasal','Oral','Topical','Other','IV']){
+      await page.locator('.nx-method-option[data-admin-method="'+nonInjection+'"]').click();
+      ensure(await page.locator('#nx-dose-method').inputValue()===nonInjection,
+        nonInjection+' selection did not update canonical method');
+      ensure(await page.locator('#nx-dose-site-field').isHidden() &&
+        await page.locator('#site').isDisabled() &&
+        await page.locator('#site').inputValue()==='',
+        nonInjection+' must hide, disable and clear irrelevant administration site');
+    }
+    await page.locator('.nx-method-option[data-admin-method="SubQ"]').click();
+    ensure(await page.locator('#nx-nasal-method-note').isHidden(),
+      'Nasal guidance persisted after switching out of nasal mode');
+    await page.locator('#x').click();
+    verified.push('six 3x2 method buttons, region/site selection and saved value synchronisation');
+    // Log Combo Dose must not solicit symptoms; legacy symptom data must survive.
+    const historicalSymptoms=await page.evaluate(()=>{
+      state._comboSymptoms=[{name:'Fictional historical symptom',intensity:2}];
+      const before=JSON.stringify(state._comboSymptoms);
+      comboDoseModal();
+      return {before,after:JSON.stringify(state._comboSymptoms)};
+    });
+    ensure(historicalSymptoms.before===historicalSymptoms.after,
+      'Opening Combo Dose modified previously retained symptom data');
+    ensure(await page.locator('#combo-sym').count()===0 &&
+      await page.getByText('SYMPTOMS AFTER THIS DOSE (shared)').count()===0,
+      'Combo Dose still exposes the removed symptom picker');
+    await page.locator('#x').click();
+    verified.push('Combo Dose has no symptom picker and historical symptom data remains unchanged');
     // A: Actual user confirmation, same recorded ID preserved after edit,
     // reapply edited amount to the original open vial only.
     await page.evaluate(()=>state.supplies=[window.__fixtureKit(9101,6,1)]);
@@ -148,7 +481,7 @@ try {
     ensure(await fixedHeader.count()===1,'Dose title and mode switch are not in fixed header');
     ensure(await fixedHeader.locator('.nx-dose-head > #x').count()===1,
       'Close control escaped fixed header (invalid modal HTML nesting)');
-    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Dose source"]').count()===1 &&
+    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Source choices when needed"]').count()===1 &&
       await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Administration details"]').count()===1,
       'Dose sections escaped scrolling body (invalid modal HTML nesting)');
     const layout=await page.locator('.nx2-dose-modal').evaluate(modal=>{
@@ -160,34 +493,119 @@ try {
     ensure(layout.bodyHeight>80 && layout.bodyTop>=layout.headerBottom-2 &&
       layout.bodyBottom<=layout.footerTop+2,
       'Scroll body overlaps sticky header/footer: '+JSON.stringify(layout));
-    ensure(await fixedHeader.locator('.nx-dose-head').count()===1 &&
-      await fixedHeader.locator('.nx-dose-mode-switch').count()===1,
-      'Quick/Guided selector incorrectly lives inside the scrolling fields');
+    // Prior iPhone screenshots showed clipped Log Dose headers/actions. Assert
+    // actual viewport geometry in entry AND Review, not just DOM containment.
+    const doseViewport=async stage=>{
+      // The 250ms slideUp entrance starts 20px below the viewport. Measure only
+      // after that transform settles, while still asserting true footer clipping.
+      await page.locator('.nx2-dose-modal').evaluate(modal=>
+        Promise.all(modal.getAnimations({subtree:false}).map(animation=>
+          animation.finished.catch(()=>{}))));
+      const geometry=await page.locator('.nx2-dose-modal').evaluate(modal=>{
+        const rect=selector=>{const el=modal.querySelector(selector);if(!el)return null;
+          const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
+        const scroll=modal.querySelector('.nx-dose-review-stage:not([hidden]), .nx-dose-scroll:not([hidden])');
+        const sheet=modal.getBoundingClientRect();
+        const visual=window.visualViewport;
+        const docStyle=getComputedStyle(modal);
+        const body=scroll?.getBoundingClientRect();
+        const header=modal.querySelector('.nx-dose-fixed-header')?.getBoundingClientRect();
+        const footer=modal.querySelector('.nx-dose-footer')?.getBoundingClientRect();
+        const title=modal.querySelector('.nx-dose-fixed-header .nx-dose-title')?.getBoundingClientRect();
+        const visibleBottom=visual?visual.offsetTop+visual.height:window.innerHeight;
+        return {viewport:document.documentElement.clientWidth,
+          vh:window.innerHeight,visibleBottom,pageScrollWidth:document.documentElement.scrollWidth,
+          sheet:{left:sheet.left,right:sheet.right,top:sheet.top,bottom:sheet.bottom,width:sheet.width,height:sheet.height},
+          header:rect('.nx-dose-fixed-header'),title:rect('.nx-dose-fixed-header .nx-dose-title'),
+          scrollBody:scroll?(()=>{const b=scroll.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})():null,scrollHeight:scroll?.scrollHeight,clientHeight:scroll?.clientHeight,
+          scrollOverflowY:scroll?getComputedStyle(scroll).overflowY:null,
+          modalOverflowY:docStyle.overflowY,
+          close:rect('.nx-dose-fixed-header #x'),footer:rect('.nx-dose-footer'),
+          action:(()=>{const active=Array.from(modal.querySelectorAll('.nx-dose-footer .btn-primary')).find(el=>!el.hidden&&getComputedStyle(el).display!=='none');if(!active)return null;const b=active.getBoundingClientRect();return {id:active.id,left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};})(),
+          internal:{headerInside:!!header&&header.left>=sheet.left-2&&header.right<=sheet.right+2&&header.top>=sheet.top-2,
+            titleInside:!!title&&!!header&&title.left>=header.left+4&&title.right<=header.right-4&&title.top>=header.top-2,
+            bodyBetween:!!body&&!!header&&!!footer&&body.top>=header.bottom-2&&body.bottom<=footer.top+2,
+            footerInside:!!footer&&footer.left>=sheet.left-2&&footer.right<=sheet.right+2&&footer.bottom<=sheet.bottom+2}};
+      });
+      ensure(geometry.sheet&&geometry.header&&geometry.close&&geometry.footer,
+        stage+' missing Log Dose shell: '+JSON.stringify(geometry));
+      ensure(geometry.pageScrollWidth<=geometry.viewport+2 &&
+        [geometry.sheet,geometry.header,geometry.close,geometry.footer].every(box=>
+          box.left>=-2&&box.right<=geometry.viewport+2),
+        stage+' has horizontally clipped Log Dose UI: '+JSON.stringify(geometry));
+      ensure(geometry.close.width>=44&&geometry.close.height>=44&&
+        geometry.close.top>=-2&&geometry.close.bottom<=geometry.visibleBottom+2&&
+        geometry.footer.top>=-2&&geometry.footer.bottom<=geometry.visibleBottom+2,
+        stage+' close or sticky footer outside viewport: '+JSON.stringify(geometry));
+      ensure(geometry.title&&geometry.scrollBody&&geometry.action&&
+        Object.values(geometry.internal).every(Boolean)&&
+        geometry.action.width>=44&&geometry.action.height>=44&&
+        geometry.action.left>=-2&&geometry.action.right<=geometry.viewport+2&&
+        geometry.action.top>=-2&&geometry.action.bottom<=geometry.visibleBottom+2,
+        stage+' title, scroll region or action clipped inside sheet: '+JSON.stringify(geometry));
+      ensure(geometry.scrollOverflowY==='auto'||geometry.scrollOverflowY==='scroll',
+        stage+' dose body is not the intended scroll owner: '+JSON.stringify(geometry));
+      ensure(geometry.modalOverflowY==='hidden'||geometry.modalOverflowY==='clip',
+        stage+' has competing modal/body vertical scroll owners: '+JSON.stringify(geometry));
+      return geometry;
+    };
+
+    // Browser-only focus proxy: this does NOT emulate a physical iOS keyboard.
+    // Preserve screenshots/geometry so visual reviewers can inspect actual
+    // entry, focused-field, and Review states for every width/theme/build.
+    const captureDose=async(label)=>{
+    // Remove synthetic demo banner from screenshot-only visual sample.
+    await page.evaluate(()=>{const bar=document.querySelector('#demo-banner');if(bar)bar.style.display='none';});
+      const metrics=await doseViewport(label);
+      const filename='Nexus_'+VERSION+'_LOG_DOSE_'+kind+'_'+theme+'_'+width+'_'+label.toLowerCase()+'.png';
+      await page.screenshot({path:path.join('dist',filename),fullPage:false});
+      visualEvidence[label]={filename,metrics};
+    };
+    fs.mkdirSync('dist',{recursive:true});
+    await captureDose('Entry');
+    ensure(await fixedHeader.locator('.nx-dose-head').count()===1,'Sticky dose header missing');
+    ensure(await page.locator('.nx-dose-mode-switch, .nx-dose-step-nav').count()===0,
+      'Legacy Quick/Guided step navigation still visible');
     await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=el.scrollHeight});
-    ensure(await fixedHeader.locator('[data-dose-mode="quick"]').isVisible() &&
-      await fixedHeader.locator('[data-dose-mode="guided"]').isVisible(),
-      'Quick / Guided mode switch disappears after body scrolling');
-    await page.locator('.nx2-dose-modal .nx-dose-scroll').evaluate(el=>{el.scrollTop=0});
-    ensure(await page.locator('.nx2-dose-modal').count()===1,'Log Dose modal absent');
-    ensure(await page.locator('.nx2-dose-modal #save').innerText().then(x=>x.includes('CONFIRM LOG')),'Confirm footer missing');
+    ensure(await page.locator('.nx2-dose-modal #nx-dose-review-open').isVisible(),'Entry screen review action missing');
     await setDose(page,2);
+    const focusedField=page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose');
+    await focusedField.focus();
+    const focusState=await focusedField.evaluate(el=>{
+      el.scrollIntoView({block:'nearest'});
+      const b=el.getBoundingClientRect();
+      return {focused:document.activeElement===el,top:b.top,bottom:b.bottom,
+        viewport:window.innerHeight,scrollWidth:document.documentElement.scrollWidth,
+        clientWidth:document.documentElement.clientWidth};
+    });
+    ensure(focusState.focused&&focusState.top>=-2&&focusState.bottom<=focusState.viewport+2&&
+      focusState.scrollWidth<=focusState.clientWidth+2,
+      'Focused dose input hidden or horizontally clipped: '+JSON.stringify(focusState));
+    await captureDose('Focused');
+    visualEvidence.Focused.focusState=focusState;
     await page.waitForTimeout(650);
-    // DS2 review must show useful source labels while retaining full traceability.
-    await page.locator('#nx-dose-step-next').click();
-    ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review stage missing');
+    await page.locator('#nx-dose-review-open').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
+    await captureDose('Review');
+    const reviewBack=await page.locator('#nx-dose-review-back').evaluate(el=>{
+      const b=el.getBoundingClientRect();return {width:b.width,height:b.height,
+        top:b.top,bottom:b.bottom,viewport:innerHeight};
+    });
+    ensure(reviewBack.height>=44&&reviewBack.width>=44&&reviewBack.top>=-2&&
+      reviewBack.bottom<=reviewBack.viewport+2,
+      'Review Edit details falls below 44px or clips: '+JSON.stringify(reviewBack));
+    visualEvidence.Review.backTarget=reviewBack;
     const preview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(preview.includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
-      'Raw kit/vial IDs leaked into primary Review rows: '+preview);
-    const idDetails=page.locator('#nx-dose-source-ids');
-    ensure(await idDetails.count()===1 && await idDetails.isVisible(),
-      'Optional source IDs disclosure missing');
-    await idDetails.locator('summary').click();
-    ensure((await idDetails.innerText()).includes('9101'),'Traceable source ID missing from disclosure');
-    ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,
-      'Opening Review unexpectedly persisted a dose');
-    await page.locator('#nx-dose-step-back').click();
-    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'New Log Dose still exposes old observations');
+    ensure((await page.locator('#nx-dose-review-compound').innerText()).includes('Retatrutide') && !preview.includes('9101') && !preview.includes('19101'),
+      'Raw source IDs leaked into primary review: '+preview);
+    ensure(!(await page.locator('#nx-dose-review-rows').innerText()).includes('9101'),'Internal source ID shown in user review');
+    await page.locator('#nx-dose-review-back').click();
+    ensure((await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').inputValue())==='2','Back did not preserve dose draft');
+    await page.locator('#nx-dose-review-open').click();
+    ensure((await page.evaluate(()=>state.peptides.Retatrutide.doses.length))===0,'Review mutated dose history');
+    ensure(!(await page.locator('.nx-dose-optional').isVisible()),'Old observations are expanded by default');
     await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
     let first=await stateSnapshot(page);
     ensure(first.entries.length===1,'Single vial confirmation failed to create one dose');
     ensure(Math.abs(first.kits[0].remaining[0]-4)<.01,'Confirmed 2 mg did not deduct exactly 2 mg');
@@ -203,6 +621,7 @@ try {
     verified.push('post-dose optional invitation and link to original dose');
     await page.evaluate(()=>doseModal('Retatrutide',state.peptides.Retatrutide.doses[0]));
     await setDose(page,3);await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses[0]?.dose==='3',null,{timeout:5000});
     let edited=await stateSnapshot(page);
     ensure(edited.entries.length===1 && edited.entries[0].id===originalId,'Editing duplicated a dose record');
     ensure(Math.abs(edited.kits[0].remaining[0]-3)<.01,'Edit failed to reverse and reapply deduction');
@@ -348,6 +767,8 @@ try {
     ensure(await page.locator('#alloc-add-kit').count()===1,'Use another vial action absent');
     await page.locator('#alloc-add-kit').click();
     ensure(await page.locator('.alloc-mg-input').count()===2,'Second vial allocation not rendered');
+    ensure((await page.locator('.nx2-source-identifiers').nth(1).textContent()).includes('19105'),
+      'Second open vial must be pinned by exact physical vial ID before saving');
     const editableSource=page.locator('#alloc-rows .nx-hybrid-source-row').first();
     ensure(await editableSource.count()===1,'Editable source row missing in multi-vial mode');
     const technical=editableSource.locator('xpath=following-sibling::details[contains(concat(" ", normalize-space(@class), " "), " nx2-source-identifiers ")][1]');
@@ -359,15 +780,15 @@ try {
     ensure(sourceNames.length===2 && sourceNames.some(x=>x.includes('Kit 1')) &&
       sourceNames.some(x=>x.includes('Kit 2')) && sourceNames.every(x=>!x.includes('9104')&&!x.includes('9105')),
       'Multi-kit sources should use distinct human-readable ordinals: '+JSON.stringify(sourceNames));
-    await page.locator('#nx-dose-step-next').click();
+    await page.locator('#nx-dose-review-open').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Source 1')&&splitReview.includes('Source 2')&&splitReview.includes('Total allocated'),'Multi-vial Review omits structured source rows');
+    ensure(splitReview.includes('Vial used'),'Multi-vial Review omits selected physical source summary');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
-    const splitIds=page.locator('#nx-dose-source-ids');
-    await splitIds.locator('summary').click();
-    const auditIds=await splitIds.innerText();
-    ensure(auditIds.includes('9104')&&auditIds.includes('9105'),'Multi-vial Review loses selected kit identity in source identifiers');
+    ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
     await clickSave(page);
+    // Exclusive save callbacks are async even in isolated fictional demo mode.
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
     const split=await stateSnapshot(page);
     ensure(split.entries.length===1,'Multi-vial save generated zero/duplicate records');
     ensure(split.entries[0].allocations?.length===2,'Multi-vial allocation lost vial identity');
@@ -386,7 +807,12 @@ try {
     });
     await openDose(page);
     ensure(await page.locator('.src-opt[data-src="8109"]').count()===1,'Prepared source selector missing');
-    await page.locator('#nx-dose-step-next').click();
+    ensure(await page.locator('#dose').inputValue()==='2',
+      'Auto-selected prepared syringe failed to prefill canonical measured amount');
+    ensure(Number(await page.locator('#nx-dose-entered').inputValue())>0,
+      'Auto-selected prepared syringe left visible dose entry blank');
+    await page.locator('#nx-dose-review-open').click();
+    await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const preparedReview=await page.locator('#nx-dose-review-rows').innerText();
     ensure(preparedReview.includes('Prepared dose')&&preparedReview.includes('8109')===false,'Prepared review source is unclear');
     await clickSave(page);
@@ -416,8 +842,226 @@ try {
     ensure(draft.entries.length===0 && Math.abs(draft.kits[0].remaining[0]-1)<.01 &&
       Math.abs(draft.kits[0].remaining[1]-10)<.01,'Draft handoff unexpectedly changed inventory/history');
     verified.push('new-vial handoff preserves unsaved draft with no deduction');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(902,9)];
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'Normal Today Log Dose must show exactly three methods for a designated injectable');
+    ensure(await page.locator('.nx-dose-use-summary #nx-dose-use-setup').count()===0,
+      'Optional preferences must not interrupt the dose entry form');
+    ensure(await page.locator('.nx-dose-more-options #nx-dose-use-setup').count()===1,
+      'Optional dose preferences must remain accessible');
+    await page.evaluate(()=>closeModal());
+    verified.push('normal Today Log Dose designated injectable conditional methods');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(903,9);
+      kit.vials[0].intendedUse='Injectable';kit.totalVials=2;
+      kit.vials.push({id:'fictional-nasal-reserve',status:'open',intendedUse:'nasal-source',
+        vialMg:10,remainingMg:3,sequenceNumber:2});
+      state.supplies=[kit];
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'A separate nasal-reserved vial must not hide the injectable path or add nasal methods');
+    ensure(await page.locator('.nx-kit-confirm-nasal').count()===0,
+      'Nasal reservation must never appear as an injection source');
+    ensure((await page.evaluate(()=>state.supplies[0].vials.map(v=>v.remainingMg))).join('|')==='9|3',
+      'Opening source-specific Log Dose mutated mixed physical stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('mixed injectable and nasal-reserved vials retain injectable-only logging');
+
+    // New physical injectable vial: routes are source-conditional, not all-form choices.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(901,9)];
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      state.formulationStocks=[{id:'fictional-nasal',compound:'Retatrutide',sourceKitId:901,
+        containerType:'nasal-bottle',method:'Nasal',recordedPreparation:true,
+        remainingMg:1,remainingMl:2,mgPerSpray:.05,mlPerSpray:.1}];
+      doseModal('Retatrutide',null,null,'vial');
+    });
+    const routes=await page.locator('.nx-method-option').allTextContents();
+    ensure(routes.join('|')==='SubQ|IM|IV','Injectable route choices incorrect: '+routes.join('|'));
+    await page.locator('[data-admin-method="IM"]').click();
+    ensure(await page.locator('#nx-dose-method').inputValue()==='IM','IM route selection failed');
+    await page.locator('[data-admin-method="IV"]').click();
+    ensure(await page.locator('#nx-dose-method').inputValue()==='IV','IV route selection failed');
+    ensure(await page.locator('#nx-dose-site-field').isHidden(),'IV must not show an injection site');
+    ensure(await page.locator('#nx-iv-method-note').isVisible(),
+      'IV must disclose its existing verified-source safety limitation');
+    ensure(await page.locator('[data-admin-method="Nasal"]').count()===0,'Nasal route exposed on injectable source');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,'Route selection mutated injectable stock');
+    verified.push('source-conditional injectable routes and untouched nasal balance');
+    await page.evaluate(()=>closeModal());
+
+    // PR124 physical iPhone acceptance follow-up: raw powder/topical are
+    // inventory-only until a separately prepared, usable physical form exists.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.formulationStocks=[{id:'fixture-raw-only',compound:'Retatrutide',
+        containerType:'raw-powder',method:'Unassigned',remainingMg:30}];
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.nx-inventory-only-notice').isVisible(),
+      'Raw powder alone incorrectly entered injectable Log Dose');
+    ensure(await page.locator('.nx-method-option').count()===0,
+      'Raw powder must not expose injection route controls');
+    await page.locator('#nx-inventory-only-go').click();
+    ensure(await page.evaluate(()=>tab==='stash'&&state._stashSub==='other'),
+      'Raw-only notice must offer working Stash navigation');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===30,
+      'Opening raw-only notice mutated raw stock');
+    verified.push('raw powder inventory-only gate, no phantom dose/debit and actionable Stash link');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.formulationStocks=[{id:'fixture-topical-only',compound:'Retatrutide',
+        containerType:'topical-container',method:'Topical',remainingMl:20}];
+      doseModal('Retatrutide');
+    });
+    ensure(await page.locator('.nx-inventory-only-notice').isVisible(),
+      'Topical inventory alone incorrectly entered injectable Log Dose');
+    ensure(await page.locator('.nx-method-option').count()===0,
+      'Topical inventory must not expose injection route controls');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMl)===20,
+      'Topical-only notice changed stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('topical inventory-only gate without fabricated application log');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(951,9);kit.vials[0].intendedUse='Injectable';
+      state.supplies=[kit];state.formulationStocks=[{id:'fixture-raw-also',
+        compound:'Retatrutide',containerType:'raw-powder',method:'Unassigned',remainingMg:30}];
+      doseModal('Retatrutide');
+    });
+    ensure((await page.locator('.nx-method-option').allTextContents()).join('|')==='SubQ|IM|IV',
+      'Raw stock must not hide a separately verified injectable vial');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===30,
+      'Injectable entry touched independent raw stock');
+    await page.locator('#nx-dose-entered').fill('');
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('#nx-validation-message').isVisible(),
+      'Missing positive amount should remain validated');
+    await page.locator('#nx-dose-entered').fill('5');
+    ensure(await page.locator('#nx-validation-message').count()===0,
+      'Missing-amount warning persisted after valid input');
+    const typeSystem=await page.evaluate(()=>{
+      const summary=document.querySelector('.nx-dose-more-options>summary');
+      const checkbox=document.querySelector('.nx-dose-option-check>span');
+      const preference=document.querySelector('.nx-dose-pref-link');
+      const heading=document.querySelector('.nx-dose-scroll>.nx-dose-section[aria-label="Administration details"]>.nx-dose-section-title');
+      const fieldLabel=document.querySelector('#nx-method-label');
+      const siteLabel=document.querySelector('#nx-dose-site-field .field-label');
+      const input=document.querySelector('#nx-dose-entered');
+      const sample=el=>{const x=getComputedStyle(el);return {family:x.fontFamily,size:x.fontSize,color:x.color,weight:x.fontWeight}};
+      return {summary:sample(summary),fieldLabel:sample(fieldLabel),siteLabel:sample(siteLabel),checkbox:sample(checkbox),preference:sample(preference),heading:sample(heading),input:sample(input)};
+    });
+    ensure(['family','size','color','weight'].every(k=>
+      typeSystem.summary[k]===typeSystem.fieldLabel[k]&&typeSystem.summary[k]===typeSystem.siteLabel[k]),
+      'Additional options must match actual Administration Method and Site: '+JSON.stringify(typeSystem));
+    ensure(typeSystem.checkbox.family===typeSystem.input.family &&
+      typeSystem.checkbox.size==='14px' &&
+      typeSystem.checkbox.color===typeSystem.input.color,
+      'Checkbox labels must be 14px ordinary options: '+JSON.stringify(typeSystem));
+    ensure(typeSystem.preference.family===typeSystem.input.family &&
+      typeSystem.preference.size==='13px' &&
+      typeSystem.preference.color!==typeSystem.heading.color,
+      'Dose preferences hierarchy must be secondary: '+JSON.stringify(typeSystem));
+    ensure(await page.locator('.nx-dose-review-stage').isHidden(),
+      'STEP 2 REVIEW LEAK: Review visible inside Step 1');
+    ensure(await page.locator('.nx-dose-scroll').isVisible(),
+      'Step 1 entry should be visible before Review');
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-review-stage').isVisible(),
+      'Review must appear only after requesting Step 2');
+    ensure(await page.locator('.nx-dose-scroll').isHidden(),
+      'Step 1 form leaked into Step 2');
+    ensure(await page.locator('#nx-dose-review-amount').innerText()==='5 mg',
+      'Review did not reflect newly entered valid amount');
+    ensure(await page.locator('#nx-dose-review-rows .nx-dose-confirm-row').count()>=3,
+      'Second-step review detail rows missing');
+    await page.locator('#nx-dose-review-back').click();
+    ensure(await page.locator('.nx-dose-review-stage').isHidden(),
+      'Review remained visible after returning to Step 1');
+    ensure(await page.locator('.nx-dose-scroll').isVisible(),
+      'Step 1 missing after Edit details');
+    await page.locator('#nx-dose-review-open').click();
+    const spacing=await page.evaluate(()=>{
+      const hero=document.querySelector('.nx-dose-confirm-hero').getBoundingClientRect();
+      const rows=document.querySelector('#nx-dose-review-rows').getBoundingClientRect();
+      return Math.round(rows.top-hero.bottom);
+    });
+    ensure(spacing>=0&&spacing<=24,'Review amount/rows too far apart: '+spacing+'px');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
+      'Review without Confirm mutated an injectable vial');
+    await page.evaluate(()=>closeModal());
+    verified.push('live validation, exact Log Dose font/colour/size parity, isolated Step 1/2 and no write before confirm');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(952,9);
+      delete kit.preparationMethod;
+      delete kit.administrationMethod;
+      delete kit.route;
+      state.supplies=[kit];tab='stash';state._stashSub='kits';render();
+    });
+    ensure(await page.locator('.nx-stash-go-vial-method').count()>0,
+      'Unlabelled vial must offer Identify vial form');
+    await page.locator('.nx-stash-go-vial-method').first().click();
+    ensure(await page.locator('.nx-stash-method-sheet').isVisible(),
+      'Identify vial form did not open the actionable physical-form sheet directly');
+    ensure(await page.locator('.nx-kit-secondary-open').count()===0,
+      'Obsolete Open another vial action remains in this flow');
+    ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
+      'Opening physical-form choice debited an unlabelled vial');
+    await page.evaluate(()=>closeModal());
+    verified.push('direct one-time unlabelled vial choice with no debit or unrelated CTA');
+    // Today dropdown itself, NOT only the downstream dose form, excludes
+    // stocked raw powder / topical without a separately usable physical form.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[];
+      state.formulationStocks=[
+        {id:'fixture-powder',compound:'AHK-Cu',containerType:'raw-powder',remainingMg:100},
+        {id:'fixture-topical',compound:'SNAP-8',containerType:'topical-container',remainingMl:50},
+        {id:'fixture-capsule',compound:'Retatrutide',containerType:'capsule-bottle',
+          method:'Oral',remainingCount:30,mgPerCapsule:5}
+      ];
+      todayLogDosePicker();
+    });
+    const onlyOptions=await page.locator('#today-dose-compound option').allTextContents();
+    ensure(!onlyOptions.includes('AHK-Cu'),
+      'Today Log Dose picker lists powder-only AHK-Cu: '+onlyOptions.join('|'));
+    ensure(!onlyOptions.includes('SNAP-8'),
+      'Today Log Dose picker lists topical-only SNAP-8: '+onlyOptions.join('|'));
+    ensure(onlyOptions.includes('Retatrutide'),
+      'Usable capsules should remain loggable in Today');
+    await page.locator('#today-dose-compound').selectOption({label:'Retatrutide'});
+    await page.locator('#today-dose-single').click();
+    ensure(await page.locator('.nx-capsule-entry #nx-capsule-count').isVisible(),
+      'Today capsule selection fell through to generic injectable dose');
+    ensure(await page.evaluate(()=>state.formulationStocks[0].remainingMg)===100,
+      'Choosing a capsule touched raw powder inventory');
+    await page.evaluate(()=>closeModal());
+    verified.push('Today selector hides powder-only/topical-only; usable capsule routes to exact form');
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      state.supplies=[window.__fixtureKit(953,8)];
+      state.supplies[0].name='AHK-Cu';
+      state.supplies[0].vials[0].intendedUse='Injectable';
+      state.formulationStocks=[{id:'raw-mixed',compound:'AHK-Cu',
+        containerType:'raw-powder',remainingMg:100}];
+      todayLogDosePicker();
+    });
+    const mixedOptions=await page.locator('#today-dose-compound option').allTextContents();
+    ensure(mixedOptions.includes('AHK-Cu'),
+      'Valid injectable vial should remain selectable despite unrelated raw stock');
+    await page.evaluate(()=>closeModal());
+    verified.push('mixed raw powder plus independently usable injectable remains discoverable');
     ensure(errors.length===0,'Browser JS errors: '+errors.join(' | '));
-    results.push({width,theme,kind,status:'PASS',verified});
+    results.push({width,theme,kind,status:'PASS',verified,visualEvidence});
     await context.close();
   }
 }finally{await browser.close();}

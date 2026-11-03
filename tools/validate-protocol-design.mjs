@@ -18,7 +18,87 @@ try{
     const page=await ctx.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
-    await page.evaluate(value=>{state=buildDemoState('weight_loss');document.documentElement.dataset.theme=value},theme);
+    // Startup is an awaited exclusive write; initialize fictional tests only
+    // after the first render and commit LIVE fixtures via the same coordinator.
+    await page.waitForFunction(()=>{const root=document.querySelector('#app');
+      return root&&!root.textContent.includes('LOADING…');});
+    await page.evaluate(async value=>{
+      const fixture=buildDemoState('weight_loss');
+      fixture.profile.onboardingDone=true;
+      // The fictional starter kits can use legacy vial shapes. Real Nexus
+      // normalizes its inventory during boot before it acknowledges storage.
+      // Normalize this synthetic fixture before the first durable save too;
+      // otherwise rendering lazily adds supplies[].vials and the correct
+      // exclusive writer rejects an unrelated settings edit as unsaved stock.
+      state=fixture;
+      migrateToInventoryV2();
+      (state.supplies||[]).forEach(kit=>{
+        if(!kit.isBlend){migrateKitToV2(kit);ensureKitVials(kit);}
+      });
+      const normalized=JSON.parse(JSON.stringify(state));
+      if(_demoActive)state=normalized;
+      else {
+        const writer=nexusWriter(),raw=writer.expected();
+        const before=raw===null?null:JSON.parse(raw);
+        const result=await writer.transaction(before,()=>({next:normalized}));
+        state=result.next;_nexusLastSavedSnapshot=writer.expected();
+      }
+      document.documentElement.dataset.theme=value;
+    },theme);
+    // Source-backed fictional protocol reminders: day boundaries, pauses and
+    // non-destructive manual completion. Run in LIVE and standalone DEMO.
+    const protocolAlerts=await page.evaluate(()=>{
+      const previous=JSON.parse(JSON.stringify(state));
+      try {
+        const name=Object.keys(PEPTIDES)[0],today=localDate();
+        const phase=(weeks=1)=>({type:"dose",durationWeeks:weeks,dose:1});
+        state.peptides={};state.customPeptides={};state.supplies=[];
+        state.settings.phaseRemindersEnabled=true;
+        const proto={id:"qa-reminder-protocol",name:"Fictional reminder schedule",status:"active",
+          startDate:today,compounds:[{name,phases:[phase(),phase()]}]};
+        state.protocols=[proto];
+        const alerts=()=>buildReminders().filter(x=>x.type==="phase").map(x=>x.title);
+        const first=alerts();
+        // A seven-day phase warning must not compete with a Phase 1 starts-today
+        // alert. Use a 2-week opening phase to test the pure upcoming transition.
+        proto.compounds[0].phases=[phase(2),phase()];
+        proto.startDate=addDays(today,-7);const inSeven=alerts();
+        proto.compounds[0].phases=[phase(),phase()];
+        proto.startDate=addDays(today,-6);const nextDay=alerts();
+        proto.startDate=addDays(today,-7);const transition=alerts();
+        proto.compounds[0].phases=[phase()];
+        proto.startDate=today;const seven=alerts();
+        proto.startDate=addDays(today,-6);const one=alerts();
+        proto.startDate=addDays(today,-7);const ended=alerts();
+        proto.status="paused";proto.pausedAt=today;const paused=alerts();
+        proto.status="completed";const completed=alerts();
+        proto.status="active";proto.startDate=addDays(today,1);const future=alerts();
+        proto.status="planned";const plannedFuture=alerts();
+        proto.startDate=today;const plannedStart=alerts();
+        proto.startDate=addDays(today,-2);const plannedOverdue=alerts();
+        const stateBefore=JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
+        alerts();
+        const unchanged=stateBefore===JSON.stringify({protocols:state.protocols,peptides:state.peptides,supplies:state.supplies});
+        return {first,inSeven,nextDay,transition,seven,one,ended,paused,completed,future,plannedFuture,plannedStart,plannedOverdue,unchanged};
+      } finally {state=previous;}
+    });
+    check(protocolAlerts.first.some(x=>x.includes("Phase 1 starts today")) &&
+      protocolAlerts.inSeven.some(x=>x.includes("phase change in 7 days")),
+      "Protocol Phase 1/7-day transition alert missing: "+JSON.stringify(protocolAlerts));
+    check(protocolAlerts.nextDay.some(x=>x.includes("enters Phase 2 tomorrow")) &&
+      protocolAlerts.transition.some(x=>x.includes("enters Phase 2 today")),
+      "Phase transition day alerts missing: "+JSON.stringify(protocolAlerts));
+    check(protocolAlerts.seven.some(x=>x.includes("ends in 7 days")) &&
+      protocolAlerts.one.some(x=>x.includes("ends in 1 day")) &&
+      protocolAlerts.ended.some(x=>x.includes("protocol schedule ended")),
+      "Protocol 7-day/1-day/end-day reminders missing: "+JSON.stringify(protocolAlerts));
+    check(!protocolAlerts.paused.length && !protocolAlerts.completed.length &&
+      protocolAlerts.future.some(x=>x.includes("Phase 1 starts tomorrow")) &&
+      protocolAlerts.plannedFuture.some(x=>x.includes("Phase 1 starts tomorrow")) &&
+      protocolAlerts.plannedStart.some(x=>x.includes("Phase 1 starts today")) &&
+      !protocolAlerts.plannedOverdue.length && protocolAlerts.unchanged,
+      "Protocol pause/completion/future/non-destructive reminder regression: "+JSON.stringify(protocolAlerts));
+
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
@@ -160,6 +240,27 @@ try{
     check(/0\s*of\s*1/.test(synced.active)&&/0\s*of\s*1/.test(synced.inProgress)&&synced.doseCount===0,
       "Synced activation/first dose not reflected in Today without inventory writes: "+JSON.stringify(synced));
 
+    // Rendering may add ephemeral top-level _UI keys to state; the scoped
+    // writer must accept those while rejecting any unsaved persistent edits.
+    // Do not reset the page from storage here: test the actual rendered state.
+    const trackingBaseline=await page.evaluate(()=>{
+      if(_demoActive)return {mode:'demo'};
+      const observed=localStorage.getItem(STORE_KEY),expected=nexusWriter().expected();
+      if(observed!==expected)throw Error('Protocol QA fixture storage changed externally');
+      const saved=JSON.parse(observed);
+      const persistent=v=>JSON.stringify(Object.fromEntries(
+        Object.entries(v).filter(([key])=>!key.startsWith('_'))));
+      const changed=Object.keys({...saved,...state}).filter(key=>
+        JSON.stringify(state[key])!==JSON.stringify(saved[key]));
+      return {mode:'live',matches:persistent(state)===persistent(saved),
+        transientChanges:changed.filter(key=>key.startsWith('_')),
+        persistentChanges:changed.filter(key=>!key.startsWith('_')),
+        inMemoryLength:JSON.stringify(state).length,storedLength:observed.length};
+    });
+    console.log('PROTOCOL tracking fixture '+width+'/'+theme+'/'+kind+' '+JSON.stringify(trackingBaseline));
+    check(trackingBaseline.mode==='demo'||trackingBaseline.matches,
+      'Protocol/Today has unsaved persistent differences before scoped preference save: '+JSON.stringify(trackingBaseline));
+
     const tracking=page.locator('.nx-daily-tracking');
     check(await tracking.count()===1,'Daily tracking disclosure missing');
     check(!(await tracking.evaluate(el=>el.open)),'Daily tracking must default collapsed');
@@ -168,7 +269,20 @@ try{
     check(await tracking.locator('.nx-track-select').count()===4,'Tracking preferences missing');
     const weightCheckbox=tracking.locator('.nx-track-select[data-activity="weight"]');
     await weightCheckbox.check();
-    check(await page.evaluate(()=>state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
+    // Checkbox change commits through an awaited exclusive Web Lock. The click
+    // itself does not await that handler; assert the durable readback instead
+    // of racing an optional preference field before the transaction finishes.
+    await page.waitForFunction(()=>{
+      const selected=state.settings?.todayTrackingActivities;
+      if(!Array.isArray(selected)||!selected.includes('weight'))return false;
+      if(_demoActive)return true;
+      const saved=JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+      return Array.isArray(saved?.settings?.todayTrackingActivities)
+        && saved.settings.todayTrackingActivities.includes('weight')
+        && _nexusLastSavedSnapshot===localStorage.getItem(STORE_KEY);
+    },null,{timeout:10000});
+    check(await page.evaluate(()=>Array.isArray(state.settings.todayTrackingActivities)
+      && state.settings.todayTrackingActivities.includes('weight')),'Selected tracking preferences not saved');
     check(await page.locator('.nx-today-activity.nx-week-pulse').count()===1,'Compact weekly pulse missing');
     check(await page.locator('.nx-today-activity .nx-activity-period').count()===0,'Retired activity periods unexpectedly reappeared');
     check(await page.locator('.nx-today-activity .nx-week-score').count()===1,'Weekly pulse score missing');
