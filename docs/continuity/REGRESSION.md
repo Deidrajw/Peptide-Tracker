@@ -1,3 +1,8 @@
+## 2026-11-02 — physical iPhone SubQ UAT PASS; LIVE nasal blocked-state observed
+- User's physical iPhone v0.9.21-beta results: Left flank PASS, Right flank PASS, Left glute PASS, Right glute PASS (4/4). No independent VoiceOver session reported.
+- LIVE nasal form Review shown for Oxytocin but save displays "Nasal preparation saving is unavailable until inventory transactions are fully protected. Nothing saved." Source assets/js/10-nexus.js contains the deliberate non-DEMO rejection message. This is an expected, observed BLOCKED safety state; no confirmation of inventory mutation. Never mark LIVE preparation PASS. Both nasal LIVE gates remain OFF. Main build #41572795053 SUCCESS after the earlier pending state.
+- Next regression focus: atomic source/bottle writer transaction, stale-tab denial, failed-write readback, duplicate confirmation, known/unknown prior use under LIVE transaction gates, without touching personal data.
+
 ## 2026-11-02 — postmerge v0.9.21-beta production parity PASS
 - Cloudflare production parity #41572794925 SUCCESS at exact PR126 merge commit 6b64d014; log: verified=true, v0.9.21-beta, 16 hosted files matched, evidence #13202331896. GitHub Pages deployment #41572794063 PASS, integrity #41572794970 PASS. Main mobile #41572794937 PASS. Postmerge build #41572795053 pending at this entry, therefore NOT TESTED as completed. Physical SubQ four-site iPhone/VoiceOver NOT TESTED. No safety gate enabled and no personal data written.
 
