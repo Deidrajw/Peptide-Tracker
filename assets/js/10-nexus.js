@@ -2441,7 +2441,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  '<p id="nx-nasal-record-preview" role="status" class="nx-dose-untracked-note"></p>'+
  '<div id="nx-nasal-record-review" class="nx-dose-review" hidden aria-live="polite"></div>'+ '<label class="nx-dose-option-check" id="nx-nasal-confirm-row" hidden><input type="checkbox" id="nx-nasal-record-confirm"><span>I confirm this preparation and transfer actually happened, using the source and amounts shown.</span></label>'+
  '<button type="button" id="nx-nasal-record-back" class="btn-secondary" hidden style="min-height:44px;width:100%">Back to edit</button>'+ '<button type="button" id="nx-nasal-record-save" class="btn-primary" style="min-height:48px;width:100%">Review preparation and transfer</button>'+
- '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. Live transfers remain safety-gated.</p></section>',"#A78BFA");
+ '<p class="hint">Arithmetic only; Nexus cannot verify pump delivery, sterility, compatibility or route suitability. This records preparation inventory, not nasal administration.</p></section>',"#A78BFA");
   m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-nasal-shared-review");
  m.querySelector("#x").onclick=closeModal;
  const inputs=["nx-nasal-source-mg","nx-nasal-bac","nx-nasal-saline","nx-nasal-pump"].map(id=>m.querySelector("#"+id));
