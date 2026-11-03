@@ -1,3 +1,6 @@
+## 2026-11-02 — Nasal existing-vial shared screen candidate b0f2446c (UNTESTED)
+- Static source checks PASS: Nasal radio above Other; one shared nexusRecordNasalPreparation entry for existing unlabelled open vial; old early LIVE navigation block removed; validLegacy opening supports display in LIVE; both LIVE gates remain false in assets/js/04-nexus.js. These are source assertions, not runtime PASS. Browser, WebKit, mobile, writer, physical iPhone, artifact integrity, retrospective dose/balance QA NOT TESTED. Do not merge/deploy; user backup untouched.
+
 ## 2026-11-02 — Cloudflare deployment user-confirmed; independent production QA outstanding
 - User confirmed deployment of PR124 to Cloudflare after merge 0eca7507. Five exact-source premerge workflows PASS, physical iPhone UAT user-reported 16/16 PASS. Direct read-only fetch to primary URL failed (cache miss), so postdeployment served-source integrity, assets and runtime smoke tests NOT TESTED; do not mark PASS. Nasal LIVE gates OFF in reviewed source. NEXT: read-only live source/asset verification.
 
