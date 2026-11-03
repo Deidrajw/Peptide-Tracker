@@ -1,3 +1,8 @@
+## 2026-11-02 — PR124 full physical iPhone regression ACCEPTED 16/16, no exceptions
+- User-provided exact source 5ea01fd3 acceptance: #01–#16 all PASS, FAIL 0, BLOCKED 0, NOT TESTED 0; Notes None. All prior OPEN iPhone scorecard rows now closed for this tested scope. Real-device user report; no independent VoiceOver recording or PWA source instrumentation claimed.
+- Chromium/build #41547092367, WebKit #41547092364, mobile #41547092333, nested #41547092384, writer #41547092346 all SUCCESS; mixed writer P0 and real Chromium two-tab PASS. Final source-matched 26-file LIVE and fictional full-app DEMO artifact #13190285462 already CRC/manifest verified. Nasal LIVE OFF; preserved production history/inventory.
+- NEXT: approved PR merge and independently verify Cloudflare exact main SHA. No preemptive deployment PASS.
+
 ## 2026-11-02 — release review audit after explicit approval (BLOCKED)
 - Exact source 5ea01fd3: Chromium #41547092367 PASS, WebKit #41547092364 PASS, mobile #41547092333 PASS, nested #41547092384 PASS, writer #41547092346 three jobs PASS; full-app CRC and screenshots verified. Real iPhone #15 four user-reported PASS.
 - Other required physical-iPhone 16-point scorecard rows NOT fully accepted, older FAIL/OPEN evidence retained; VoiceOver #16 NOT TESTED. Therefore complete UAT gate BLOCKED. Overall release P0 BLOCKED, despite mixed writer technical P0 PASS.
