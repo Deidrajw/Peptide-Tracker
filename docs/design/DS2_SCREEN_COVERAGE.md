@@ -1,3 +1,7 @@
+## 2026-11-03 — P4 DS2 responsive evidence (candidate PR130)
+- 320/390 dark/light Chromium fictional full-app DEMO: Stash search on existing page, Other forms/Supplies matching empty states, inline supplement use/reuse/template list, rename/delete 44px SVG actions and docked Save visible in sampled 320px screenshot; body scrollWidth=viewport, no JS errors. Direct source-matched demo is not independent physical iPhone.
+- Template manage actions are minimal and scoped to existing check-in; no extra top-level tab, no altered kit card hierarchy, no changes to dose or calculator interfaces. WebKit general workflow #41742486586 SUCCESS. Manual Safari keyboard, safe area, VoiceOver and actual UAT NOT TESTED.
+
 ## 2026-11-03 — P4 Stash search and Check-In reuse (DRAFT PR130)
 - Stash: single search field after existing categories, preserving approved kit cards, status, tabs, quick actions and filter/sort. Search is ephemeral UI state; empty vs no matching records distinguished in Vial kits / Other forms / Supplies.
 - Daily Check-In + Supplements modal: 44px reusable supplement controls, inline template options, no extra navigation tab. Named templates apply selections only, not symptoms/mood; scoped validated writer for template persistence. Check date change updates previous-log eligibility. No destructive schema migration.
