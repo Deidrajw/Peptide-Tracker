@@ -1,3 +1,7 @@
+## 2026-11-03 — v0.9.22-beta PR127 NASAL PREPARATION CANDIDATE (NOT PUBLISHED)
+- Draft PR #127, main baseline bd15c43f. Enables recorded nasal preparation source-to-bottle saving only, with generic transfer and prepared nasal administration OFF. Adds atomic sealed source open/transfer, one-write stale/readback protection, old-vial unverified balance pre-review warning and separate preparation release flag. Existing user data, old dose history, protocol and inventory IDs preserved; new explicit confirmed transfers update selected vial and linked prepared bottle only.
+- Fictional Chromium real LIVE DOM form passed 4/4 at 320/390 light/dark on test-only head b16d1a85; shared-writer handler tests and mixed writer gate PASS. Later v0.9.22 metadata head 4ffa2739 initially FAIL due stale generated in-app metadata/page title. Regenerated all channel outputs and runtime title through commit 9321cad. Latest exact-source CI, final ZIP/DEMO verification, merge, Cloudflare source parity and physical iPhone acceptance PENDING. No production release claimed.
+
 ## 2026-11-02 — PR127 test-only progress (NOT RELEASED)
 - Draft PR127, main baseline bd15c43f. Previous test head fd6ec0cc exact-head release/build #41575379964, WebKit #41575379918, mobile #41575379965 and shared writer #41575379895 all SUCCESS. Follow-up test commit 96bc3c82 pins both LIVE nasal gates OFF and requires new-head CI. No LIVE save code changed, no package published, no merge/Cloudflare deployment, no personal data impact. Candidate remains BLOCKED on exclusive sealed/legacy source handling.
 
