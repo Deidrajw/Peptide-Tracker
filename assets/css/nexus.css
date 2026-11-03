@@ -2685,3 +2685,11 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-supp-template-option span,.nx-supp-template-empty{color:var(--t4);font-size:12px}
 .nx-supp-template-empty{padding:14px;margin:0;line-height:1.5}
 @media(max-width:350px){.nx-supp-shortcuts button{flex-basis:calc(50% - 4px);padding-left:7px;padding-right:7px}}
+
+
+.nx-supp-template-row{display:flex;align-items:stretch;gap:0;background:var(--surface);border-bottom:1px solid var(--border-sub)}
+.nx-supp-template-row:last-child{border-bottom:0}
+.nx-supp-template-row .nx-supp-template-option{min-width:0;flex:1;border-bottom:0;padding:10px 12px}
+.nx-supp-template-manage{min-height:48px;min-width:44px;display:grid;place-items:center;background:transparent;color:var(--t3);border-left:1px solid var(--border-sub)}
+.nx-supp-template-manage:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
+@media(max-width:350px){.nx-supp-template-row .nx-supp-template-option span{font-size:11px}}
