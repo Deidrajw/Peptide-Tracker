@@ -868,7 +868,7 @@ function nexusCapsuleDoseModal(name,occTime){
    DEMO invokes the already audited pure planner on fictional state only. */
 function nexusNasalDoseModal(name,occTime){
  const bottles=(state.formulationStocks||[]).filter(c=>c.compound===name&&c.containerType==="nasal-bottle"&&
-  c.method==="Nasal"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
+  c.method==="Nasal"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
  const unit=cfg(name).unit;
  if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
