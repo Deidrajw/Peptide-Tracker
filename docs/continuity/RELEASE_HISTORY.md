@@ -1,3 +1,6 @@
+## 2026-11-02 — PR127 test-only progress (NOT RELEASED)
+- Draft PR127, main baseline bd15c43f. Previous test head fd6ec0cc exact-head release/build #41575379964, WebKit #41575379918, mobile #41575379965 and shared writer #41575379895 all SUCCESS. Follow-up test commit 96bc3c82 pins both LIVE nasal gates OFF and requires new-head CI. No LIVE save code changed, no package published, no merge/Cloudflare deployment, no personal data impact. Candidate remains BLOCKED on exclusive sealed/legacy source handling.
+
 ## 2026-11-02 — v0.9.21-beta physical iPhone SubQ acceptance completed, nasal LIVE remains disabled
 - User reported four restored SubQ Log Dose site options PASS on physical iPhone (Left/Right flank and Left/Right glute); independent VoiceOver not performed. User's LIVE nasal review screenshot shows expected fail-closed notification that nothing was saved. This does not enable or validate production nasal preparation. Main postmerge build #41572795053 SUCCESS, Cloudflare 16/16 parity already verified. No new code release, data migration, or storage changes.
 - Follow-up requires independent safety review and explicit authorization before LIVE nasal gates can change.
