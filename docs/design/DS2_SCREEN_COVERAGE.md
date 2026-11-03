@@ -1,3 +1,8 @@
+## 2026-11-03 — P4 Stash search and Check-In reuse (DRAFT PR130)
+- Stash: single search field after existing categories, preserving approved kit cards, status, tabs, quick actions and filter/sort. Search is ephemeral UI state; empty vs no matching records distinguished in Vial kits / Other forms / Supplies.
+- Daily Check-In + Supplements modal: 44px reusable supplement controls, inline template options, no extra navigation tab. Named templates apply selections only, not symptoms/mood; scoped validated writer for template persistence. Check date change updates previous-log eligibility. No destructive schema migration.
+- Visual/interaction acceptance OPEN at 320/390, both themes, keyboard/VoiceOver and real iPhone; tests and exact-source screenshots pending. No released change or approved visual redesign.
+
 ## 2026-11-03 — v0.9.23-beta restore preview and Stash nasal error-state candidate
 - Settings → Backup & Restore preview counts `supplies` kit records rather than obsolete `peptideKits`, preserving original design, typed RESTORE consent and recovery copy. Stale conflict now has explicit reload/verify guidance; unknown write outcomes remain conservative. Stash → Prepare Nasal Bottle identifies stale normalized source and unverified source balances without asserting that an uncertain write did not occur.
 - Functional source code and fictional VM tests committed in draft PR #129; exact-head 320/390 WebKit/Chromium and physical iPhone acceptance PENDING. No published design changes or real data migration.
