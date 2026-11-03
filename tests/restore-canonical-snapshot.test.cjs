@@ -72,12 +72,12 @@ function createHarness({stale=false,quota=false}={}){
  await stale.submit();
  assert.equal(stale.writes,0,"Competing tab data must never be overwritten");
  assert.equal(JSON.parse(stale.storage.get("peptide-tracker-html-v1")).marker,"OTHER-TAB");
- assert.ok(stale.alerts.some(s=>s.includes("Restore failed")));
+ assert.ok(stale.alerts.some(s=>s.includes("Restore blocked")));
  assert.match(stale.errors[0][1].message,/changed|uncertain/);
  const quota=createHarness({quota:true});
  await quota.submit();
  assert.equal(quota.writes,0,"Failure to make recovery copy must cancel restore");
  assert.equal(JSON.parse(quota.storage.get("peptide-tracker-html-v1")).supplies[0].id,"OLD-KIT");
- assert.ok(quota.alerts.some(s=>s.includes("Restore failed")));
+ assert.ok(quota.alerts.some(s=>s.includes("Restore could not be verified")));
  console.log("PASS: real Settings restore handler canonical migrated-state CAS, stash preview count, recovery copy, stale-tab and quota fail-closed");
 })().catch(e=>{console.error(e);process.exitCode=1});
