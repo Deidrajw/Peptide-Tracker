@@ -2416,7 +2416,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
  // remainingMg field can be absent or zero before opening; that is NOT a
  // prepared/open balance and must not disqualify an otherwise valid source.
  const sealedMass=Number(vial?.expectedMg ?? vial?.vialMg ?? kit?.vialMg);
- const validNew=!!vial&&openSealed&&_demoActive&&!kit?.isBlend&&vial.status==="sealed"&&
+ const validNew=!!vial&&openSealed&&!kit?.isBlend&&vial.status==="sealed"&&
    Number.isFinite(sealedMass)&&sealedMass>0;
  const validLegacy=!!vial&&adoptUnlabelled&&!kit?.isBlend&&
    ["open","active"].includes(vial.status)&&!nexusPhysicalForm(vial.intendedUse)&&
@@ -2512,7 +2512,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
    sourceKitId:kit.id,sourceVialId:vial.id,amountMg,bacMl,salineMl,
    volumeMl:bacMl+salineMl,mlPerSpray,confirmed:true,date:localDatetime(),
    occurredAt:occurred.value+"T12:00:00",recordedAt:localDatetime(),
-   adoptUnlabelled:!!adoptUnlabelled,priorUseStatus:priorStatus.value,
+   adoptUnlabelled:!!adoptUnlabelled,openSealed:!!openSealed,priorUseStatus:priorStatus.value,
    ...(priorStatus.value==="known"?{priorSprays:Number(priorCount.value)}:{})
   };
   let committed=false;
