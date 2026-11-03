@@ -550,7 +550,7 @@ function importData(e) {
       ["Check-ins",(incoming.dailyLogs||[]).length],
       ["Weight records",(incoming.weightLogs||[]).length],
       ["Supplement entries",(incoming.supplementLogs||[]).length],
-      ["Stash kits",Object.keys(incoming.peptideKits||{}).length]
+      ["Stash kits",Array.isArray(incoming.supplies)?incoming.supplies.length:0]
     ];
     const summary=counts.map(([name,n])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub)"><span>${esc(name)}</span><strong>${n}</strong></div>`).join("");
     openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -585,7 +585,13 @@ function importData(e) {
           state=next;
         }else{
           const writer=nexusWriter();
-          const result=await writer.transaction(state,()=>({next}));
+          // The in-memory app state has been migrated/normalised and may
+          // serialize differently from the durable JSON. Compare against the
+          // exact writer-owned original snapshot, not migrated UI state.
+          // A concurrent tab change still rejects inside the exclusive lock.
+          const originalRaw=writer.expected();
+          const original=originalRaw===null?null:JSON.parse(originalRaw);
+          const result=await writer.transaction(original,()=>({next}));
           _nexusLastSavedSnapshot=writer.expected();
           state=result.next;
         }
