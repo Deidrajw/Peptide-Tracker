@@ -1,5 +1,7 @@
+let nexusStashSearchTerm = ""; // UI-only; never persist a search query with user records.
+const nexusStashMatches = (...values) => !nexusStashSearchTerm.trim() || values.some(v=>String(v??"").toLocaleLowerCase().includes(nexusStashSearchTerm.trim().toLocaleLowerCase()));
 function nexusRenderOtherFormCards(){
-  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).map(x=>{
+  const packageCards=(Array.isArray(state.formulationStocks)?state.formulationStocks:[]).filter(x=>nexusStashMatches(x.compound,x.containerType,x.label,x.notes)).map(x=>{
     const typeNames={"capsule-bottle":"Capsules","nasal-bottle":"Nasal spray","raw-powder":"Raw powder","topical-container":"Topical"};
     const amount=x.containerType==="capsule-bottle"
       ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
@@ -21,7 +23,7 @@ function stashView() {
   const aps = allPeptides();
 
   // ── Filter ────────────────────────────────────────────────────────────────
-  let entries = [...state.supplies];
+  let entries = [...state.supplies].filter(s=>nexusStashMatches(s.name,s.kitName,s.brand,s.notes,s.vialMg));
   const preparedCompoundNames = new Set((state.preparedDoses||[]).filter(pd=>pd.remainingCount>0).flatMap(pd=>getSyringeComponents(pd).map(c=>c.compoundName)));
   if (filter!=="all") {
     entries = entries.filter(s=>{
@@ -68,6 +70,7 @@ function stashView() {
     ${stashSubBtn("other","Other forms")}
     ${stashSubBtn("equipment","Supplies")}
   </div>
+  <div class="nx-stash-search-wrap"><input id="nx-stash-search" class="inp nx-stash-search" type="search" autocomplete="off" aria-label="Search Stash" placeholder="Search Stash..." value="${esc(nexusStashSearchTerm)}"></div>
 `;
 
   if(stashSub==="equipment") return html + equipmentView();
@@ -147,7 +150,7 @@ function stashView() {
     </button>
   </div>`;
 
-  if (!entries.length) html += emptyState(filter==="all" ? "No kits tracked yet" : `Nothing matches "${FILTER_LABELS[filter]}"`, filter==="all" ? "Add your first compound kit to start tracking supply, doses, and expiry in one place." : "Try a different filter, or switch back to All.");
+  if (!entries.length) html += emptyState(nexusStashSearchTerm.trim() ? "No matching kits" : filter==="all" ? "No kits tracked yet" : `Nothing matches "${FILTER_LABELS[filter]}"`, nexusStashSearchTerm.trim() ? "Try a different search or clear the search field." : filter==="all" ? "Add your first compound kit to start tracking supply, doses, and expiry in one place." : "Try a different filter, or switch back to All.");
 
   const renderKitCard = (s) => {
     const c = cfg(s.name);
