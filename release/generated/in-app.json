@@ -1,8 +1,8 @@
 {
   "version": "v0.9.22-beta",
   "channel": "beta",
-  "publicationStatus": "unverified",
-  "publishedAt": null,
+  "publicationStatus": "published",
+  "publishedAt": "2026-11-03",
   "title": "Recorded nasal preparation saving with protected source-to-bottle inventory",
   "changes": [
     {
@@ -31,7 +31,7 @@
   "limitations": [
     "Prepared nasal administration/dose logging remains OFF. Generic transfer controls remain OFF.",
     "Nominal concentration and spray arithmetic do not verify actual pump delivery, sterility, compatibility, stability or route suitability.",
-    "Current branch is a candidate until exact-head CI, full LIVE/DEMO parity, approved merge and independent Cloudflare verification finish.",
+    "The production source release v0.9.22-beta was independently verified against merge commit 383c6b7a by Cloudflare parity workflow #41600060574 (16/16 files). Subsequent release-metadata publication requires independent verification.",
     "A physical iPhone LIVE saving test and independent VoiceOver acceptance have not been performed for this candidate."
   ],
   "history": [

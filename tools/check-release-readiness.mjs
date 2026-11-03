@@ -18,7 +18,7 @@ const noteFingerprint=m=>JSON.stringify({
   limitations:m.limitations,privacyChanged:m.privacyChanged,permissionsChanged:m.permissionsChanged
 });
 const validText=s=>typeof s==='string' && s.trim().length>=10;
-function validate(manifest,previous,changed,strict){
+function validate(manifest,previous,changed,strict,publicationOnly=false){
   const issues=[],warnings=[];
   if(!/^v\d+\.\d+\.\d+(?:-[a-z][a-z0-9.-]*)?$/.test(manifest.version||''))issues.push('Invalid semantic release version');
   if(!validText(manifest.headline) || !Array.isArray(manifest.changes) || manifest.changes.length===0 ||
@@ -36,7 +36,7 @@ function validate(manifest,previous,changed,strict){
      (!manifest.publication.commit||!manifest.publication.publishedAt))
     issues.push('Published status requires verified commit and date');
   const appChanges=changed.filter(changedSource);
-  if(appChanges.length && previous){
+  if(appChanges.length && previous && !publicationOnly){
     const sameNotes=noteFingerprint(manifest)===noteFingerprint(previous);
     const sameVersion=manifest.version===previous.version;
     if(sameNotes || sameVersion){
@@ -56,21 +56,48 @@ function refBase(){
   if(branch==='main')return 'HEAD^';
   try{return git('merge-base','HEAD','origin/main');}catch{return 'HEAD^';}
 }
+// Publishing a previously source-verified release may regenerate ONLY the
+// release metadata block in 02-nexus.js. No other executable app change is
+// exempt from version/notes advancement.
+function metadataOnlyPublication(manifest,previous,changed,base){
+  if(!previous||manifest.version!==previous.version||
+     previous.publication?.status!=="unverified"||
+     manifest.publication?.status!=="published"||
+     !manifest.publication?.commit||!manifest.publication?.publishedAt)return false;
+  const appChanges=changed.filter(changedSource);
+  if(appChanges.length!==1||appChanges[0]!=="assets/js/02-nexus.js")return false;
+  for(const field of ["headline","changes","dataImpact","privacyChanged","permissionsChanged"]){
+    if(JSON.stringify(manifest[field])!==JSON.stringify(previous[field]))return false;
+  }
+  const sourcePath="assets/js/02-nexus.js";
+  const before=git("show",base+":"+sourcePath);
+  const after=fs.readFileSync(sourcePath,"utf8").trimEnd();
+  const start="// BEGIN GENERATED RELEASE META",end="// END GENERATED RELEASE META";
+  const strip=s=>{
+    const a=s.indexOf(start),b=s.indexOf(end);
+    if(a<0||b<a||s.indexOf(start,a+start.length)>=0||
+       s.indexOf(end,b+end.length)>=0)return null;
+    return s.slice(0,a)+start+"\n"+end+s.slice(b+end.length);
+  };
+  return strip(before)!==null&&strip(before)===strip(after);
+}
 function run(){
   const mode=process.argv.includes('--production')?'production':'candidate';
   const strict=mode==='production';
   const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
-  let previous=null,changed=[];
+  let previous=null,changed=[],publicationOnly=false;
   try{
     const base=refBase();
     changed=git('diff','--name-only',base,'HEAD').split('\n').filter(Boolean);
     previous=JSON.parse(git('show',base+':'+manifestPath));
+    publicationOnly=metadataOnlyPublication(manifest,previous,changed,base);
   }catch(error){
     // Fail closed in production: a missing Git base cannot certify completeness.
     if(strict)throw Error('Cannot compare release against previous source: '+error.message);
     console.warn('RELEASE READINESS UNVERIFIED: Git comparison unavailable in candidate mode');
   }
-  const result=validate(manifest,previous,changed,strict);
+  const result=validate(manifest,previous,changed,strict,publicationOnly);
+  if(publicationOnly)console.log('Verified metadata-only publication update; no app logic changed');
   for(const msg of result.warnings)console.warn('RELEASE PREPARATION REQUIRED: '+msg);
   for(const msg of result.issues)console.error('RELEASE READINESS FAIL: '+msg);
   if(result.issues.length)process.exitCode=1;
@@ -88,7 +115,9 @@ function test(){
     [validate(prev,prev,['assets/css/nexus.css'],false).warnings.length>0,'draft warning'],
     [validate(prev,prev,['docs/continuity/PROJECT_STATE.md'],true).issues.length===0,'docs-only accepted'],
     [validate({...m,changes:[{key:'a',title:'Short'}]},prev,['index.html'],true).issues.length>0,'incomplete item blocked'],
-    [validate({...m,publication:{status:'published'}},prev,[],true).issues.length>0,'false published status blocked']
+    [validate({...m,publication:{status:'published'}},prev,[],true).issues.length>0,'false published status blocked'],
+    [validate(prev,prev,['assets/js/02-nexus.js'],true,false).issues.length>0,'unverified app change cannot bypass release gate'],
+    [validate(prev,prev,['assets/js/02-nexus.js'],true,true).issues.length===0,'explicitly verified metadata-only change permitted']
   ];
   for(const [passed,label] of checks)if(!passed)throw Error('FAIL '+label);
   console.log('Release readiness tests PASS '+checks.length+'/'+checks.length);
