@@ -2536,7 +2536,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
       if(!v||!["open","active"].includes(v.status))
         throw Error("Exact legacy source changed");
       v.remainingMg=observed;
-      if(adoptUnlabelled)v.intendedUse="nasal-source";
+      // The pure planner sets nasal-source only in its verified final snapshot.
       // Preserve the exact physical source ID, original strength and history.
     }
     if(openSealed){
