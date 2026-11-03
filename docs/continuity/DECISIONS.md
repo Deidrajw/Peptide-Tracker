@@ -1,3 +1,8 @@
+## 2026-11-03 — Priority 4 UX scope decision, PR130
+- User accepted simpler Check-In discovery for supplement reuse: Use previous day and My templates directly in existing Check-In, not a new top-level tab. Recent supplement log selection is copied into a draft only; preserve selected date and one check-in per date. Saved templates are optional explicit named selections; never copy mood, symptoms or unrelated records.
+- Stash search augments approved DS2 layout and existing filter/sort; search query remains UI-only and cannot change inventory balances. Applies across Vial kits, Other forms and Supplies.
+- This approval starts **draft development**, not approval to merge or deploy. Protect P0 write coordination, source-specific dose history and nasal prepared-dose gating; no destructive data migration.
+
 ## 2026-11-03 — PR129 release safety boundary remains in force
 - Independent artifact/CI review does NOT imply approval to merge or deploy PR129. The candidate remains v0.9.23-beta on a draft branch; main production baseline stays v0.9.22-beta until independently verified otherwise.
 - Do not permit a documentation-only commit to imply that previously tested app-source CI covered its new head. Record the tested source SHA separately from subsequent continuity commits.
