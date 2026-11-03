@@ -75,7 +75,7 @@ assert.equal(JSON.stringify(state.supplementLogs),historyBefore,"repeat cannot a
  promptValue="Evening";allowWrite=false;
  await save.onclick();
  assert.equal(state.settings.supplementTemplates.length,1,"failed writer must not show phantom template");
- assert.equal(panel.hidden,true);
+ assert.ok(!panel.innerHTML.includes("Evening"),"failed template must not be rendered");
  assert.ok(refreshed>=1);
  console.log("P4 supplement reuse and Stash source contracts PASS");
 })().catch(e=>{console.error(e);process.exitCode=1;});
