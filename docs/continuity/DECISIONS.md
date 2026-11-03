@@ -1,3 +1,6 @@
+## 2026-11-02 — Historical nasal source reconciliation without fabricated doses
+- User requires shared Open New Vial → Nasal preparation screen for existing vial, no extra disconnected step; Nasal above Other. User's existing Oxytocin scenario: entire 5 mg transferred, some sprays already used. Immutable historical transaction records occurredAt and recordedAt separately; documented known prior sprays get a distinct auditable bottle-only adjustment, not invented dose history. Unknown past use must not be advertised as verified usable stock or eligible for new logging. Protect original vial/kit IDs, other vials, Check-In and all records. Keep both nasal LIVE gates OFF and require full review/approval before enabling.
+
 ## 2026-11-02 — Nasal existing-vial entry uses existing preparation screen (development only)
 - User clarified that choosing Nasal in Stash → How is this vial used? must go directly into the same preparation-details screen as Open New Vial → Nasal, then Review; Nasal ordered above Other, simplified label. Avoid separate classification-save step or duplicate screen. This is a workflow connection, NOT permission to enable nasal LIVE inventory/dose writes. Retroactive preparation date and already-used spray balance remain safety requirements. Preserve all prior records, saved data and accepted DS2 styling.
 
