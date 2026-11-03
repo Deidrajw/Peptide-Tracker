@@ -1,3 +1,8 @@
+## 2026-11-03 — P4 reusable template lifecycle, safety-approved design candidate
+- Add rename and delete to My templates to avoid unmanageable duplicate routines; retain existing Check-In/standalone Supplements picker and no new top-level navigation. Explicit confirmation for template deletion; only the named template setting is removed, never dated supplement logs.
+- Optional settings.supplementTemplates has bounded validated names/selection counts and protected exclusive readback through nexusCommitScopedStateChange; no automatic template creation, application or check-in save. UI search remains transient.
+- This extends already authorized draft feature scope only and is not authorization to merge/deploy or overwrite any production storage. Real iPhone acceptance and user approval remain separate gates.
+
 ## 2026-11-03 — Priority 4 UX scope decision, PR130
 - User accepted simpler Check-In discovery for supplement reuse: Use previous day and My templates directly in existing Check-In, not a new top-level tab. Recent supplement log selection is copied into a draft only; preserve selected date and one check-in per date. Saved templates are optional explicit named selections; never copy mood, symptoms or unrelated records.
 - Stash search augments approved DS2 layout and existing filter/sort; search query remains UI-only and cannot change inventory balances. Applies across Vial kits, Other forms and Supplies.
