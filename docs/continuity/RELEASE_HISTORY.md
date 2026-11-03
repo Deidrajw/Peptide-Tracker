@@ -1,3 +1,8 @@
+## 2026-11-02 — PR124 v0.9.20-beta release acceptance COMPLETE; APPROVED, MERGE PENDING
+- Exact tested application source 5ea01fd33d17dd2163e3c6c683e6e74349cce575; main baseline da585ab3. Physical iPhone user acceptance 16/16 PASS, 0 FAIL/BLOCKED/NOT TESTED, Notes None, superseding earlier UAT rejections. Five exact-source workflows PASS incl mixed-writer safety and Chromium two-tab. Canonical artifact #13190285462 source/CRC verified: standalone fictional full-app DEMO and 26-file LIVE ZIP.
+- Scope: PR124 form-specific preparation/inventory, source-aware Log Dose, capsule and draft flows, DS2 visual revisions, latest compact preferences. Existing data must remain intact; no new destructive migration approved. Both nasal LIVE features stay OFF. Physical user-reported UAT, not separately instrumented VoiceOver.
+- User explicitly approved merge/deployment. STATUS at this entry: tested/physical accepted/release authorized; NOT YET MERGED OR DEPLOYED. Cloudflare production source verification required post-merge.
+
 ## 2026-11-02 — approved PR124 release request BLOCKED, NOT MERGED / NOT DEPLOYED
 - User gave explicit merge/deploy approval after final #15 iPhone 4/4 PASS. Application source 5ea01fd3, five exact-source CI workflows PASS, writer mixed P0 technical gate PASS; artifact #13190285462 source/ZIP verified. 
 - Blocking: approved DS2 16-point physical iPhone/VoiceOver UAT scorecard remains incomplete outside #15. Browser checks do not constitute real iPhone acceptance; previous physical failures not cleared. No merge/deployment, no storage/migration or nasal LIVE gate enablement. Cloudflare primary production not independently reachable for verification from this environment.
