@@ -1,3 +1,6 @@
+## 2026-11-02 — explicit PR124 merge/deploy approval, conditional on safety release gates
+- User said Yes, approve in direct response to proposal to merge PR124 and deploy verified Cloudflare release, preserving all data and keeping both nasal LIVE gates OFF. This is explicit authorization, not a mandate to ignore unresolved P0 blockers. Engineering review identifies remaining 16-point physical UAT beyond #15 as open; deployment held until release clearance. No additional visual changes approved.
+
 ## 2026-11-02 — binding physical iPhone #15 acceptance of final spacing
 - User approved final 5ea01fd3 UI on a physical iPhone with four PASS results: typography/spacing, disclosure/preferences, both checkbox controls, and light/dark appearance. Maintain approved compact label style and no separator; do not redesign this section without new reason/approval.
 - This acceptance applies to this UI scope only. It is not explicit PR merge/production deployment authorization; both nasal LIVE gates remain OFF.
