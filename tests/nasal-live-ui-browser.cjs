@@ -1,15 +1,15 @@
 /* Browser acceptance of the real LIVE nasal preparation form.
  * All data is invented in a fresh Chromium context on a local test server.
- * The production feature gate remains OFF: only the intercepted 04-nexus.js
- * response is changed for this automated browser run.
+ * The release-candidate preparation gate is ON, but the test browser uses
+ * only fictional inventory on an isolated local origin.
  */
 const fs=require("node:fs");
 const assert=require("node:assert/strict");
 const {chromium}=require("playwright");
 const application=fs.readFileSync("assets/js/04-nexus.js","utf8");
-const from="const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = false;";
-assert.ok(application.includes(from),"Preparation release gate must remain disabled in source");
-const testOnly=application.replace(from,"const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;");
+const from="const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;";
+assert.ok(application.includes(from),"Preparation-only release gate must be enabled in candidate");
+const testOnly=application;
 assert.match(testOnly,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/);
 assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/);
 (async()=>{
