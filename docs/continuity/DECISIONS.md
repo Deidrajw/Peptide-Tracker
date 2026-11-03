@@ -1,3 +1,8 @@
+## 2026-11-03 — PR129 release safety boundary remains in force
+- Independent artifact/CI review does NOT imply approval to merge or deploy PR129. The candidate remains v0.9.23-beta on a draft branch; main production baseline stays v0.9.22-beta until independently verified otherwise.
+- Do not permit a documentation-only commit to imply that previously tested app-source CI covered its new head. Record the tested source SHA separately from subsequent continuity commits.
+- Real backup restore replaces stored state only after user confirmation and durable compare-and-swap with recovery copy; never automatically test against personal production data. Generic transfer and prepared nasal dose-logging gates remain OFF; preparation-only functionality from v0.9.22 is separate.
+
 ## 2026-11-03 — protect raw-versus-migrated storage CAS on restore and preparation
 - A writer.transaction() must compare against the exact writer-owned durable JSON, not a migrated/normalised application object, which may differ on boot without user changes. Restore is an explicit confirmed replacement, still guarded by exact raw CAS, readback and a separate recovery copy; never silently overwrite a competing tab. Nasal preparation additionally validates the selected normalized saved kit matches displayed kit before transaction, then uses raw CAS; no guessed source balance and no automatic correction of user records. Fix backup preview Stash count from supplies. Preserve both independent generic-transfer and prepared-nasal-administration OFF switches. This is approved development/diagnosis only; no merge/deployment without explicit authorization.
 
