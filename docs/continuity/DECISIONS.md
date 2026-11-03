@@ -1,3 +1,6 @@
+## 2026-11-02 — PR126 metadata release merged under existing authorized scope
+- The previously approved post-SubQ restoration release includes v0.9.21-beta metadata reconciliation only; PR126 merge 6b64d0140afe01e866d710dd6134300f696407f2. No new feature scope or nasal safety-gate authorization. Cloudflare release status must be evidenced independently; a successful GitHub merge or CI build alone is not proof. Preserve localStorage, saved history, writer safeguards, approved DS2 UI and both nasal LIVE gates OFF. Physical SubQ picker verification remains optional post-release UAT.
+
 ## 2026-11-02 — Operational metadata follow-up after authorized PR125 deployment
 - User explicitly requested SubQ sites restored and deployment afterward. PR125 merged and Cloudflare source-verified. The main production release check failed strictly on stale version and release notes, so PR126 is a metadata-only remediation advancing to v0.9.21-beta. Preserve previously deployed SubQ source and the physical iPhone 4/4 nasal acceptance scope. Do not infer authorization to turn on nasal LIVE transfer/dosing: both gates remain OFF. No data migrations or production inventory rewrites.
 
