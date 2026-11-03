@@ -2467,7 +2467,7 @@ function nexusRecordNasalPreparation(kitId,vialId,{openSealed=false,adoptUnlabel
        '<dt>Nominal pump amount</dt><dd>'+(mg*1000/total*pump).toFixed(2)+' mcg/spray</dd>'+ 
        '<dt>Actual preparation date</dt><dd>'+esc(occurred.value)+'</dd>'+
        '<dt>Sprays already used</dt><dd>'+esc(priorStatus.value==="none"?"None":priorStatus.value==="unknown"?"Used · amount unknown":priorCount.value)+'</dd>'+
-       '<dt>Current bottle balance</dt><dd>'+esc(priorStatus.value==="unknown"?"Unverified · logging blocked":priorStatus.value==="known"?"Nominal balance reduced by documented sprays":"Initial nominal balance")+'</dd>'+
+       '<dt>Current bottle balance</dt><dd>'+esc(priorStatus.value==="unknown"?"Unverified · logging blocked":priorStatus.value==="known"?Math.max(0,mg-Number(priorCount.value)*(mg/total*pump)).toFixed(2)+" mg / "+Math.max(0,total-Number(priorCount.value)*pump).toFixed(2)+" mL (nominal)":mg.toFixed(2)+" mg / "+total.toFixed(2)+" mL (initial)")+'</dd>'+
        '</dl><p class="nx-shared-review-footnote">One confirmed transfer between two linked stocks; the original vial and prepared bottle stay distinct. Amounts are nominal arithmetic only and do not verify pump delivery, sterility, compatibility or route suitability.</p>';
    }
    // The mobile sheet is the single scroll owner. A tall entry form can leave
