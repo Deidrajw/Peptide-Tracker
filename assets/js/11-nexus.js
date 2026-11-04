@@ -9,7 +9,7 @@ function renderSettingsTabContent() {
     ${rightText?`<span style="font-size:12px;color:${rightColor||"var(--t4)"};flex-shrink:0">${rightText}</span>`:""}
     <svg class="nx-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
   </button>`;
-  const sectionLabel = (t) => `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:18px 0 2px;padding:0 6px">${t}</div>`;
+  const sectionLabel = (t) => `<div class="mono nx-category-eyebrow" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:18px 0 2px;padding:0 6px">${t}</div>`;
 
   return `
     ${sectionLabel("NOTIFICATIONS")}
