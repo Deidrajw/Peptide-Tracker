@@ -69,7 +69,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
     });
     // Auditable regressions for confirmed 44px tap targets and descriptive action names.
     // A DOM/computed check is distinct from later real iPhone VoiceOver acceptance.
-    if(['Calendar','Plans','Stash','Settings appupdates','Today'].includes(name)){
+    if(['Calendar','Plans','Stash','Settings appupdates','Settings reminders','Settings phasereminders','Learn','Profile','Today'].includes(name)){
       const violations=await page.evaluate(screen=>{
         const errors=[];
         const required=screen==='Calendar'?['cal-prev','cal-next','theme-toggle','profile-btn']:
@@ -80,6 +80,20 @@ for(const width of [320,390])for(const theme of ['light','dark']){
           if(!el){errors.push('missing '+id);continue}
           const rect=el.getBoundingClientRect();
           if(rect.width<43.5||rect.height<43.5)errors.push(id+' target '+Math.round(rect.width)+'x'+Math.round(rect.height));
+        }
+        // Phase 2: test only visible secondary actions; mutually exclusive
+        // reminder buttons vary by saved fixture state.
+        const extra=screen==='Settings reminders'?['enablerem','disablerem']:
+          screen==='Settings phasereminders'?['enablephaserem','disablephaserem']:
+          screen==='Stash'?['qa-addkit']:
+          screen==='Profile'?['timeline-toggle']:
+          screen==='Learn'?['ls-guides','ls-mixing','ls-calc']:[];
+        for(const id of extra){
+          const el=document.getElementById(id);
+          if(!el)continue;
+          const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+          if(style.display==='none'||style.visibility==='hidden'||rect.width===0)continue;
+          if(rect.height<43.5)errors.push(id+' secondary target height '+Math.round(rect.height));
         }
         if(screen==='Settings appupdates' && document.getElementById('au-back')?.getAttribute('aria-label')!=='Back to Settings')errors.push('App Updates Back missing contextual accessible name');
         if(screen==='Calendar'){
