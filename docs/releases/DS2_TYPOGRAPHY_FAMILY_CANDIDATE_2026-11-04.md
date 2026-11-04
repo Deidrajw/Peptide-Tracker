@@ -1,3 +1,10 @@
+## 2026-11-04 — new local 112-state typography QA; exact GitHub-head CI still pending
+- Full local Chromium/Python Playwright check using source-matched fictional FULL APP DEMO: 23 screens × 2 iPhone widths (320/390) × two themes = **92/92** with no computed font-role assertion or document overflow errors; plus five real sheet openers × four configurations = **20/20** opened with DM Sans and no document overflow. Total **112 local configurations, 0 test errors**. Technical DM Mono assertions reached visible Calendar weight values, not merely a hidden element.
+- Test is a local Python translation of current role assertions using isolated `page.set_content`; **not the exact committed JS audit running on GitHub**. The current PR test-only commit `26fdfe2f` has no confirmed Actions run. GitHub previous six groups SUCCESS at unchanged application code `545fc018`, with verified 26-file LIVE and complete fictional DEMO packages. Do not conflate them with latest test-head CI.
+- Local audit evidence: `Nexus_PR132_Final_Local_Audit.json`, report `Nexus_PR132_Final_Typography_QA_2026-11-04.md` (conversation artifacts).
+- Physical iPhone, VoiceOver, Dynamic Type, real font-file network loading and released deployment remain **NOT TESTED / NOT DONE**. No application/storage/dose/inventory/nasal-gate changes, no merge or deploy.
+- **NEXT ONE ACTION:** secure exact test-commit GitHub Chromium audit evidence and inspect snapshots, then physical iPhone accessibility acceptance.
+
 ## 2026-11-04 follow-up — verified workflow artifacts (not physical acceptance)
 - GitHub Actions PR code-source commit `545fc018eaaccd71ca7a9c4c38747f6f65ff6bdc`: global Chromium #41809012361, shared writer #41809012377, nested navigation #41809012415, WebKit #41809012428, mobile #41809012375, build/parity #41809012370 — all completed SUCCESS.
 - Chromium artifact #13310519296 independently downloaded: ZIP 114 entries CRC PASS; summary 112 states, 0 failures, 0 horizontal overflow. Representative 320/390 light/dark Calendar, Learn, Supplements, Journal, Health, Today captures visually inspected.
