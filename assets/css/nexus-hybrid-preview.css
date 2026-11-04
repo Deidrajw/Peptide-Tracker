@@ -4406,3 +4406,13 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   color:var(--t3)!important;font-size:12px!important;font-weight:450!important;
   line-height:1.45!important;overflow-wrap:anywhere;
 }
+
+/* DS2 global audit A11Y-01: real, not merely visual, tap targets.
+   Scope to named existing controls; keep approved colours and navigation. */
+#cal-prev,#cal-next,#au-back{
+  box-sizing:border-box!important;
+  min-width:44px!important;min-height:44px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex-shrink:0;
+}
+#theme-toggle,#profile-btn{box-sizing:border-box!important;min-width:44px!important;min-height:44px!important}
