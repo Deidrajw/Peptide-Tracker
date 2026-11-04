@@ -2034,7 +2034,7 @@ function renderTodayCompoundSection(started) {
     </button>`;
   }
   if (needsAction.length) {
-    out += `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin-bottom:8px">DUE / NEEDS ACTION</div>`;
+    out += `<div class="mono nx-category-eyebrow" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin-bottom:8px">DUE / NEEDS ACTION</div>`;
     out += needsAction.map(([n,d],i)=>renderCompoundCardCompact(n,d,"today",i===0)).join("");
   }
   if (completed.length) {
