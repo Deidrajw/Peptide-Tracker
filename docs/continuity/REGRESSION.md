@@ -1,3 +1,7 @@
+## 2026-11-03 — PR130 protected Log Dose regression FAIL, corrected fixture retest pending
+- Initial exact app-head build #41742486604: FAIL in tools/validate-logdose-ui.mjs:79, TypeError setting doses of undefined synthetic Retatrutide. This was a test-fixture boot assumption, not proof of a passed protected flow. Shared-writer #41742486753 PASS, mobile #41742486815 PASS, nested #41742486845 PASS, WebKit #41742486586 PASS.
+- Test-only stabilization commit 575c419d awaits final #41743566053 Chromium PASS/FAIL. Maintain Log Dose full-suite gate BLOCKED until independently checked, irrespective of isolated P4 direct-browser PASS.
+
 ## 2026-11-03 — PR130 direct browser + focused CI evidence at app source 9ba0c147
 | Case | Status | Evidence |
 | --- | --- | --- |
