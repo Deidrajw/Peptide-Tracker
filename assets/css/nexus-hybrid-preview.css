@@ -4416,3 +4416,13 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   flex-shrink:0;
 }
 #theme-toggle,#profile-btn{box-sizing:border-box!important;min-width:44px!important;min-height:44px!important}
+
+/* DS2 A11Y-02: measured secondary actions below 44px.
+   Increase vertical hit area only; preserve compact widths, wrapping, colours,
+   existing event handlers and 320px seven-column Calendar geometry. */
+#enablerem,#disablerem,#enablephaserem,#disablephaserem,
+#timeline-toggle,#qa-addkit,
+#ls-guides,#ls-mixing,#ls-calc{
+  box-sizing:border-box!important;
+  min-height:44px!important;
+}
