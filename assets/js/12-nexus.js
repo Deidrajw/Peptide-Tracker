@@ -1274,7 +1274,7 @@ function wireBody() {
   const suppSearch=$("#supp-search");
   if(suppSearch){ suppSearch.oninput=()=>{ state._supplementSearch=suppSearch.value; renderBody(); const n=$("#supp-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
   const ep2=$("#editprofile2"); if(ep2)ep2.onclick=profileModal;
-  const auBack=$("#au-back"); if(auBack) auBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
+  const auBack=$("#au-back"); if(auBack){ auBack.setAttribute("aria-label","Back to Settings"); auBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); }; }
   document.querySelectorAll(".au-tab").forEach(b=>b.onclick=()=>{ state._appUpdatesTab=b.dataset.tab; render(); });
   // data
   const ex=$("#exp"); if(ex)ex.onclick=exportData;
