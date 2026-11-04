@@ -36,7 +36,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
   if(!fixture.demo||!fixture.kits||!fixture.checkins)throw Error('Fictional data guard failed '+JSON.stringify(fixture));
   for(const [name,pageTab,sub,profile,detail] of views){
    try{
-    await page.evaluate(({pageTab,sub,profile,detail,theme})=>{
+    await page.evaluate(({name,pageTab,sub,profile,detail,theme})=>{
      document.documentElement.dataset.theme=theme;
      closeModal();tab=pageTab;
      if(sub)state._aminoSub=sub;
@@ -44,7 +44,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
      if(pageTab==='stash')state._stashSub=name==='Stash Supplies'?'equipment':'kits';
      state._settingsDetail=detail||null;
      state._guideOpen=null;state._discoverOpen=null;render();
-    },{pageTab,sub,profile,detail,theme});
+    },{name,pageTab,sub,profile,detail,theme});
     await page.waitForTimeout(60);
     const report=await page.evaluate(()=>{
      const isVisible=e=>{let r=e.getBoundingClientRect(),s=getComputedStyle(e);
