@@ -1,3 +1,7 @@
+## 2026-11-04 — final Stash acceptance / no-deploy instruction
+- 2026-11-04 (Toronto): User-reported physical iPhone Stash root navigation UAT 2/2 PASS, Notes None: Other forms -> Today -> Stash => Vial kits (PASS); Supplies -> Today -> Stash => Vial kits (PASS). This closes targeted post-release navigation physical acceptance, in addition to prior 7/7 PR130 feature device report. No independent hardware capture today. Release remains v0.9.24-beta, PR130 merge 699fd373, Cloudflare parity historical run 41777262228 (16/16), artifact 13296814536. Verified main baseline 755dea5e (docs-only successor). Audit-only PR131 CLOSED/UNMERGED. No app source, user data, nasal gates, merge or deployment changed.
+- User requests continue documented next priority without merge or deployment. DS2 gap audit may be documented in a separate branch, not redesign accepted UI or treat historical draft notes as current.
+
 ## 2026-11-04 UTC — PR130 release and Stash root navigation
 - User-approved release after reporting seven iPhone/VoiceOver Pass checks; requested Stash fresh visit open on Vial kits rather than remembered Other forms. Primary bottom-nav now resets transient category to Vial kits. In-screen category switches and new Other form post-save remain intentional. No persistent data changes.
 - PR130 merged 699fd373. Independent Cloudflare parity #41777262228 verified 16 core production files match merged app. The audit PR131 remains unmerged because its sole purpose was read-only verification.

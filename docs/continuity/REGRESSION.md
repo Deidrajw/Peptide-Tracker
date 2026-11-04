@@ -1,3 +1,8 @@
+## 2026-11-04 — physical iPhone Stash root regression closeout
+- STASH-ROOT-OTHER: PASS (user-reported physical iPhone), Other forms -> Today -> Stash lands Vial kits.
+- STASH-ROOT-SUPPLIES: PASS (user-reported physical iPhone), Supplies -> Today -> Stash lands Vial kits.
+- Notes None; no new automated test today. NEXT ONE ACTION: Audit current-source DS2 remaining deep screens/states at 320/390 light/dark, including Log Dose, Calendar, Plans, Stash, Check-In/Supplements, Trends, Weight/Nutrition and More/Settings; check nested editors/confirmations/errors, keyboard/safe areas/scroll ownership, VoiceOver focus, text resizing and reduced motion. Past targeted CI and iPhone PASS are not proof of all-screen compliance. Preserve approved screens; only propose evidence-backed corrective code with separate approval/release gates. Future work lanes: onboarding/What's New, Today personalization, core workflows and platform integration. Generic transfers and prepared nasal administration remain OFF; recorded preparation flow stays protected.
+
 ## 2026-11-04 UTC — PR130 release QA, primary parity and device evidence
 - User-reported physical iPhone 7/7 PASS for P4 Stash search, categories/filters, prior-day supplement draft, template lifecycle, Check-In protected history, keyboard/sheets/Save and light/dark VoiceOver labels. Last-added Stash root reset NOT YET PHYSICALLY TESTED.
 - Stash root regression added to tools/validate-release.mjs: enter Stash, select Other forms, leave/return and require Vial kits; repeat after Supplies. All 8 Chromium LIVE/fictional DEMO x 320/390 x light/dark validation PASS in #41775888216. WebKit #41775888249, mobile #41775888274, shared writer #41775888287 and DS2 nested #41775888218 PASS.
