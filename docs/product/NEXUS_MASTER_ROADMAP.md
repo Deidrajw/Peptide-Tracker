@@ -1,3 +1,8 @@
+## 2026-11-04 — APPROVED typography families implemented as UNRELEASED candidate
+- Explicit user decision: DM Sans UI; Fraunces major editorial titles; DM Mono selectively technical numbers. Earlier 13px explanatory/11px eyebrow/13px Journal label preview approved. Code/test source commit 983a58d3d7e8b2a9ab6a0c068dbcde39866dba26 on draft PR132; main 755dea5e / production v0.9.24-beta unchanged. Scoped CSS tokens override historic system/SF Pro card stacks; category/technical role separation and named explanatory markup in JS07/08/10/11. No data migrations, writer/dose/inventory maths or nasal gates touched.
+- New exact-source Chromium font/size checks added; QA at this source **NOT VERIFIED**, full-app DEMO/LIVE package matching this source **INCOMPLETE**, physical iPhone/VoiceOver NOT TESTED. Font-download fallback and 320/390 wrapping still need checking; prior 6/6 passes apply to previous source only. No merge/deploy.
+- ONE NEXT ACTION: retrieve/execute latest-source Chromium/WebKit/mobile/writer/nested/build QA, inspect snapshots and verify exact candidate artifacts.
+
 ## 2026-11-04 Toronto — A11Y-02 EXACT-SOURCE QA + DEMO/LIVE VERIFIED; semantic typography proposal only
 - Verified production main 755dea5eed417c1515543779fd81be77b6a504de / v0.9.24-beta; draft PR #132 is OPEN/UNMERGED/UNDEPLOYED. A11Y-02 final application/test source fd719b68dec475b8859c8a2380edbe190e6b603f (subsequent commits documentation-only), no migrations or production data touched.
 - ALL SIX source-exact CI groups SUCCESS: nested #41803336119, WebKit #41803336156, mobile #41803336325, full build/parity #41803336049, global Chromium #41803336431, shared writer #41803336124.
