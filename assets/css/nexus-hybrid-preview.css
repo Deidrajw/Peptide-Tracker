@@ -4476,6 +4476,36 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
   font-weight:650;letter-spacing:.045em;
 }
 
+/* DS2 typography follow-up: supply measurement uses a distinct number and context.
+   Scoped to Supplies; preserves source values, progress and actions. */
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity {
+  display:flex!important;flex-wrap:wrap!important;align-items:baseline!important;
+  column-gap:10px!important;row-gap:3px!important;min-width:0!important;
+  letter-spacing:normal!important;line-height:1.2!important;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-number {
+  font-family:var(--nx-font-numeric)!important;font-size:31px!important;
+  line-height:1.15!important;font-weight:750!important;letter-spacing:-.035em!important;
+  font-variant-numeric:tabular-nums;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-context {
+  font-family:var(--nx-font-ui)!important;font-size:13px!important;
+  line-height:1.45!important;font-weight:450!important;letter-spacing:normal!important;
+  color:var(--t3)!important;overflow-wrap:normal;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-kit-overview-label {
+  font-family:var(--nx-font-ui)!important;font-size:11px!important;
+  line-height:1.45!important;letter-spacing:.065em!important;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-subtle {
+  font-family:var(--nx-font-ui)!important;font-size:13px!important;
+  line-height:1.5!important;letter-spacing:normal!important;
+  overflow-wrap:anywhere;
+}
+@media(max-width:360px){
+  #app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-number{font-size:29px!important}
+}
+
 /* DS2 approved readable descriptions in Learn and imported Health context. */
 #app .nx-explanatory-copy,
 #app .nx-health-source p{
