@@ -1,3 +1,9 @@
+## 2026-11-03 — PR130 7/7 physical iPhone acceptance + authorized release scope
+- User reported seven Pass results, explicitly including Stash search categories/clear/filters, previous-day unsaved selection, template create/apply/rename/delete, Check-In historical protection, keyboard/sheet/sticky Save, light/dark and VoiceOver labels. This is user-reported acceptance of earlier approved feature source.
+- User explicitly requested `Deployed.` and in the same message requested a Stash-opening correction. Treat as release approval conditional on standard release safety/CI gates, not authorization to omit verification.
+- Design rationale: fresh navigation to Stash defaults to Vial kits (primary inventory); switching to Other forms/Supplies persists only *during* current Stash visit, and adding a new Other form should still show its saved result. Scope limited to transient `_stashSub` navigation state; no storage migration or history changes.
+- Canonical next release version `v0.9.24-beta`; do not merge/deploy a candidate with failed CI, missing source-exact artifacts, or ambiguous Cloudflare deployment. Physical device proof for the later reset is distinct from the 7 prior passes and must not be fabricated.
+
 ## 2026-11-03 — P4 reusable template lifecycle, safety-approved design candidate
 - Add rename and delete to My templates to avoid unmanageable duplicate routines; retain existing Check-In/standalone Supplements picker and no new top-level navigation. Explicit confirmation for template deletion; only the named template setting is removed, never dated supplement logs.
 - Optional settings.supplementTemplates has bounded validated names/selection counts and protected exclusive readback through nexusCommitScopedStateChange; no automatic template creation, application or check-in save. UI search remains transient.
