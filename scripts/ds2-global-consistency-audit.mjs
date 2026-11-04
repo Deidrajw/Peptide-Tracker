@@ -67,6 +67,38 @@ for(const width of [320,390])for(const theme of ['light','dark']){
      return {overflow:document.documentElement.scrollWidth>innerWidth+2,items:all,modalVisible:
       [...document.querySelectorAll('#app [role="dialog"],#app .modal,#app .sheet')].filter(isVisible).length};
     });
+    // Auditable regressions for confirmed 44px tap targets and descriptive action names.
+    // A DOM/computed check is distinct from later real iPhone VoiceOver acceptance.
+    if(['Calendar','Plans','Stash','Settings appupdates','Today'].includes(name)){
+      const violations=await page.evaluate(screen=>{
+        const errors=[];
+        const required=screen==='Calendar'?['cal-prev','cal-next','theme-toggle','profile-btn']:
+          screen==='Plans'||screen==='Stash'?['theme-toggle','profile-btn']:
+          screen==='Settings appupdates'?['au-back']:[];
+        for(const id of required){
+          const el=document.getElementById(id);
+          if(!el){errors.push('missing '+id);continue}
+          const rect=el.getBoundingClientRect();
+          if(rect.width<43.5||rect.height<43.5)errors.push(id+' target '+Math.round(rect.width)+'x'+Math.round(rect.height));
+        }
+        if(screen==='Calendar'){
+          for(const [id,text] of [['cal-prev','Previous calendar month'],['cal-next','Next calendar month']])
+            if(document.getElementById(id)?.getAttribute('aria-label')!==text)
+              errors.push('missing contextual name '+id);
+        }
+        if(screen==='Today'){
+          const buttons=[...document.querySelectorAll('.nx-daily-tracking .nx-track-action')];
+          if(buttons.length!==4)errors.push('expected four daily tracking actions, got '+buttons.length);
+          for(const btn of buttons){
+            const name=btn.getAttribute('aria-label')||'';
+            if(!/^(Log|Edit|Update) (Daily check-in|Supplements|Weight|Nutrition)$/.test(name))
+              errors.push('ambiguous daily activity action '+name);
+          }
+        }
+        return errors;
+      },name);
+      if(violations.length)throw Error('A11Y scoped target regression: '+violations.join('; '));
+    }
     observations.push({width,theme,screen:name,tab:pageTab,overflow:report.overflow,items:report.items,modalVisible:report.modalVisible});
     await page.screenshot({path:path.join(root,`${width}-${theme}-${name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()}.png`),fullPage:true,animations:'disabled'});
    }catch(err){errors.push({width,theme,screen:name,error:String(err)});}
