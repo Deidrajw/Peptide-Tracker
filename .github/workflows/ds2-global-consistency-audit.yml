@@ -4,6 +4,14 @@ on:
     paths:
       - 'scripts/ds2-global-consistency-audit.mjs'
       - '.github/workflows/ds2-global-consistency-audit.yml'
+  # Branch-only QA trigger: no production workflow, no main branch pushes.
+  # Enables source-exact audit when connector commits do not produce PR synchronize runs.
+  push:
+    branches:
+      - 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104'
+    paths:
+      - 'scripts/ds2-global-consistency-audit.mjs'
+      - '.github/workflows/ds2-global-consistency-audit.yml'
   workflow_dispatch:
 jobs:
   source-matched-visual-inventory:
