@@ -1,0 +1,35 @@
+name: Nexus DS2 global typography button modal audit
+on:
+  pull_request:
+    paths:
+      - 'scripts/ds2-global-consistency-audit.mjs'
+      - '.github/workflows/ds2-global-consistency-audit.yml'
+  workflow_dispatch:
+jobs:
+  source-matched-visual-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Serve checked-out app on localhost
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/nexus-ds2-http.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+      - name: Audit computed typography buttons and dialogs with fictional data
+        env:
+          NEXUS_AUDIT_URL: http://127.0.0.1:4173
+        run: node scripts/ds2-global-consistency-audit.mjs
+      - name: Upload evidence even if assertions fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-ds2-global-consistency-evidence
+          path: artifacts/ds2-global-consistency/
+          if-no-files-found: warn
