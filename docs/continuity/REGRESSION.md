@@ -1,3 +1,47 @@
+## 2026-11-03 — PR130 iPhone acceptance and new Stash entry-default regression
+- User-reported 7/7 PASS physical iPhone: Stash search 3 categories; search clear/no-result/filters/sort; previous-day supplement draft; template create/apply/rename/delete; Check-In mood/symptom/notes/day history; keyboard/scroll/sheets/sticky Save; light/dark and VoiceOver labels. These results refer to previously tested feature source, not the later Stash-entry change.
+- Reproduction/root cause: `state._stashSub` is intentionally kept during in-page category switches and Other-form Save, but a fresh bottom-tab tap did not reset the subcategory. Added conditional in primary-nav `goTo("stash")` to set `_stashSub="kits"`. New `tools/validate-release.mjs` browser regression: Vial kits on initial Stash tap; switch Other forms, leave to Today, return and verify kits; switch Supplies, leave, return and verify kits. Run across 320/390, dark/light, LIVE/isolated full DEMO.
+- Expected UI-only fix, no persistent schema or inventory writes. New candidate full Chromium #41775888216 and WebKit #41775888249, mobile #41775888274, writer #41775888287, nested #41775888218 PENDING. Do not count device acceptance for post-UAT correction or software QA as passed until actual evidence.
+
+## 2026-11-03 — PR130 corrected exact-source CI release gate PASSED (physical iPhone still OPEN)
+- Corrected source `575c419d22982a2a26e608fb202c92cbc9ba4341`: full Chromium/build #41743566053 **PASS**; WebKit #41743566091 **PASS**; mobile #41743566060 **PASS**; shared writer, actual two-tab lock and mixed-writer P0 #41743566133 **PASS**; DS2 nested #41743566086 **PASS**. This supersedes the prior `#41742486604` FAIL for current candidate only; keep prior failure documented as an actual failed run and corrected test fixture.
+- Full Chromium logs: Check-In data integrity PASS 8 isolated LIVE/DEMO 320/390 light/dark combinations; vial-source regression PASS 8 combinations/96 safety assertions; Log Dose end-to-end PASS 8 combinations/256 flows; save failure warning PASS 8; Stash Cards, Panels, Actions, Plans, Combo, onboarding/privacy and related QA passed. `tests/p4-supplement-reuse.test.cjs` focused supplement/template regressions PASS.
+- Verified release artifact #13283570424: outer ZIP 548 entries CRC PASS; root LIVE ZIP 26 files CRC PASS; isolated full-app standalone DEMO equals offline ZIP index; manifest confirms source `575c419d`, fictional/memory-only mode, sync disabled. GitHub Actions Chrome visual matrix 8/8 PASS; direct P4 Chromium fixtures 320/390 light/dark PASS from prior review. No source/data migration or LIVE writes outside fictional isolated tests.
+- `P4-STASH-01`, `P4-STASH-02`, `P4-SUPP-01`–`P4-SUPP-04`: **PASS (automated/direct fictional Chromium)**. `P4-STASH-03`: **PARTIAL**, combined filter/sort/group visual/keyboard manual acceptance still outstanding. `P4-REG-01`: **PASS (automated suite only)**. `P4-ART-01`: **PASS (exact-source automated artifacts)**, physical iPhone/VoiceOver **NOT TESTED**. Does NOT constitute manual device or clinical calculator validation.
+- Physical iPhone acceptance checklist still NOT TESTED: Stash three categories and search clear/no-results/filter/sort; Check-In previous-day date specificity and selection-only draft; template create/apply/rename/delete; 320/390 dark/light layout, docked Save and keyboard focus; unchanged historical mood/notes/symptoms, inventory and local backup.
+- User has not approved merge/deploy. PR130 remains DRAFT, LIVE production unchanged.
+
+## 2026-11-03 — PR130 protected Log Dose regression FAIL, corrected fixture retest pending
+- Initial exact app-head build #41742486604: FAIL in tools/validate-logdose-ui.mjs:79, TypeError setting doses of undefined synthetic Retatrutide. This was a test-fixture boot assumption, not proof of a passed protected flow. Shared-writer #41742486753 PASS, mobile #41742486815 PASS, nested #41742486845 PASS, WebKit #41742486586 PASS.
+- Test-only stabilization commit 575c419d awaits final #41743566053 Chromium PASS/FAIL. Maintain Log Dose full-suite gate BLOCKED until independently checked, irrespective of isolated P4 direct-browser PASS.
+
+## 2026-11-03 — PR130 direct browser + focused CI evidence at app source 9ba0c147
+| Case | Status | Evidence |
+| --- | --- | --- |
+| P4-STASH-01 | PASS — direct Chromium fictional demo | Search single vial kit by text, 0 match state, no supplies mutation, 320/390 dark/light |
+| P4-STASH-02 | PASS — direct Chromium fictional demo | Search Other forms and Supplies produces distinct no-match messages, 320/390 dark/light |
+| P4-STASH-03 | PARTIAL | Switching categories/search keyboard focus and global horizontal overflow tested in Chromium; physical keyboard/VoiceOver and filter+sort combined manual testing NOT TESTED |
+| P4-SUPP-01 | PASS — direct Chromium and focused VM | Latest strictly earlier logged supplements copied to draft, later/same-date histories preserved |
+| P4-SUPP-02 | PASS — direct Chromium | Changing check-in date updates previous-selection availability; explicit check-in Save creates one record/date |
+| P4-SUPP-03 | PASS — focused CI + direct Chromium | Create, rename, delete named templates; duplicate rejected; failed save/delete verified in CI; optional settings protected by exclusive writer |
+| P4-SUPP-04 | PASS — direct Chromium | Applying template leaves existing mood/symptoms/doses/inventory and previous supplement logs unchanged until explicit Save |
+| P4-REG-01 | PASS — automated protected workflows, scope-limited | Shared writer #41742486753, mobile #41742486815, nested #41742486845, WebKit #41742486586 SUCCESS; real iPhone NOT TESTED |
+| P4-ART-01 | PARTIAL | ZIP CRC PASS, 26-file LIVE, DEMO byte parity, five GitHub blob matches; full Chromium build #41742486604 IN PROGRESS; physical iPhone/VoiceOver NOT TESTED |
+All direct in-session browser checks use the self-contained fictional DEMO only; local Chromium is not physical iPhone Safari. Candidate no merge/deploy.
+
+## 2026-11-03 — Priority 4 PR130 regression matrix (NOT TESTED, required before merge)
+| Case | Expected | Latest evidence |
+| --- | --- | --- |
+| P4-STASH-01 | Stash search filters vial kits by name/kit alias/notes; no kit history or balances changed | NOT TESTED |
+| P4-STASH-02 | Search handles other physical forms and Supplies independently, with distinct no-results vs genuinely empty | NOT TESTED |
+| P4-STASH-03 | Filter/sort/group, tab switching and search restore focus at 320/390 light/dark | NOT TESTED |
+| P4-SUPP-01 | Use previous day selects latest strictly earlier supplement log; no future/day overwrite | NOT TESTED |
+| P4-SUPP-02 | Check-In date change recomputes prior source; drafts preserve saved same-date history before user confirms | NOT TESTED |
+| P4-SUPP-03 | Named template saves to optional settings collection via protected writer; duplicates and empty selection rejected; failure not acknowledged as saved | NOT TESTED |
+| P4-SUPP-04 | Apply template only changes selected supplements; no mood, symptom, note, date or previous record replacement | NOT TESTED |
+| P4-REG-01 | Protected Today, Check-In unique/date/edit, Log Dose source/inventory/undo, nasal gates, Calendar/Plans, backup restore and cross-tab stale rejection | NOT TESTED |
+| P4-ART-01 | Exact source Chromium/WebKit/mobile/nested/writer CI, 320/390 theme captures, complete isolated DEMO, LIVE ZIP, physical iPhone/VoiceOver | NOT TESTED |
+
 ## 2026-11-03 — PR129 exact-source automated evidence and remaining acceptance
 - At tested `afbeadb905ea350f2190edc408894397e3b8c2a9`: full Chromium/build #41668328314 PASS; real Chromium writer/2-tab/mixed-writer P0 #41668328302 PASS; mobile #41668328375 PASS; DS2 nested #41668328438 PASS; WebKit #41668328877 PASS. Checks include fictional migrated restore, correct supplies preview, stale-tab and uncertain-write rejection, nasal selected-source validation and exact raw source CAS. No personal data used.
 - Artifact #13248295392 inspected: 548 outer ZIP entries CRC PASS; LIVE 26 files, correct root and source parity PASS; standalone/offline DEMO byte parity and memory-only fictional data/network isolation PASS. Representative 320/390 dark/light screenshots inspected. All visual observations, real iPhone, VoiceOver, keyboard-device acceptance NOT TESTED here.

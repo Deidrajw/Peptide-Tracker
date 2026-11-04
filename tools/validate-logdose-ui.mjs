@@ -68,6 +68,9 @@ try {
     page.on('pageerror',e=>errors.push(e.message));
     page.on('dialog',async d=>d.accept());
     await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
+    // Never inject a fictional regression fixture until page boot has completed.
+    await page.waitForLoadState('load');
+    await page.waitForFunction(()=>typeof state==='object'&&typeof doseModal==='function');
     await seed(page,theme);let verified=[];
     // Fictional legacy-inventory scenario: one OPEN vial
     // with an actual positive balance but no vial/kit administration-method label.
@@ -76,6 +79,8 @@ try {
       delete kit.preparationMethod;delete kit.route;delete kit.administrationMethod;
       delete kit.vials[0].intendedUse;
       state.supplies=[kit];
+      // Re-establish the explicit fictional case after async app boot; never infer a real user's dose history.
+      state.peptides.Retatrutide ??={enabled:true,status:'active',route:'SubQ',scheduleDays:7,doses:[],lastDose:2};
       state.peptides.Retatrutide.doses=[];
       doseModal('Retatrutide');
     });
@@ -196,7 +201,7 @@ try {
       const kit=window.__fixtureKit(998,4,0);
       kit.vials.push({id:39998,status:'open',vialMg:10,remainingMg:9,
         sequenceNumber:2,intendedUse:'SubQ'});
-      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      state.supplies=[kit];state.peptides.Retatrutide ??={enabled:true,status:'active',route:'SubQ',scheduleDays:7,doses:[],lastDose:2};state.peptides.Retatrutide.doses=[];
       state._pendingDoseDraft={name:'Retatrutide',dose:'4',date:localDatetime(),
         method:'SubQ',rows:[{kitId:998,vialId:39998,mg:2}]};
       doseModal('Retatrutide');
@@ -216,7 +221,7 @@ try {
       const kit=window.__fixtureKit(888,0.5,0);
       kit.vials.push({id:38888,status:'open',vialMg:10,remainingMg:3,
         sequenceNumber:2,intendedUse:'SubQ',reconDate:'2026-10-25T09:00:00'});
-      state.supplies=[kit];state.peptides.Retatrutide.doses=[];
+      state.supplies=[kit];state.peptides.Retatrutide ??={enabled:true,status:'active',route:'SubQ',scheduleDays:7,doses:[],lastDose:2};state.peptides.Retatrutide.doses=[];
       doseModal('Retatrutide');
       window.__qaRealDraw=drawFromVialModal;window.__qaDrawId=null;
       drawFromVialModal=function(kit,vial){window.__qaDrawId=vial.id;};

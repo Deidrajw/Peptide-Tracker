@@ -1,38 +1,45 @@
 {
-  "version": "v0.9.23-beta",
+  "version": "v0.9.24-beta",
   "channel": "beta",
   "publicationStatus": "unverified",
   "publishedAt": null,
-  "title": "Reliable backup restoration and LIVE preparation saving",
+  "title": "Faster Stash navigation and reusable supplement routines",
   "changes": [
     {
-      "key": "restore-canonical-snapshot",
-      "title": "Restore JSON backups without false stale-state conflicts",
-      "detail": "Backup & Restore compares the exact durable source snapshot under the exclusive storage lock, rather than the normalized in-memory display state. Concurrent-tab and uncertain writes remain blocked.",
-      "screen": "More / Backup & Restore",
+      "key": "p4-stash-search",
+      "title": "Find supplies and compound inventory faster",
+      "detail": "Search Vial kits, Other forms and Supplies by compound or relevant inventory information without changing stock balances.",
+      "screen": "Stash",
+      "kind": "improvement"
+    },
+    {
+      "key": "p4-stash-default",
+      "title": "Open Stash on Vial kits",
+      "detail": "A fresh visit through primary navigation now starts on Vial kits, while in-screen category switching and the post-save Other forms destination stay available.",
+      "screen": "Stash",
       "kind": "fix"
     },
     {
-      "key": "restore-stash-count",
-      "title": "Show the real Stash inventory count in restore preview",
-      "detail": "Backup review counts supplies rather than the obsolete peptideKits field and retains the requirement to explicitly confirm replacement.",
-      "screen": "More / Backup & Restore",
-      "kind": "fix"
+      "key": "p4-supplement-repeat",
+      "title": "Reuse supplements from an earlier day",
+      "detail": "Use previous day copies the most recent earlier dated supplement selection into a draft; Check-In mood, symptoms, notes and prior logs remain unchanged.",
+      "screen": "Today / Daily Check-In / Supplements",
+      "kind": "improvement"
     },
     {
-      "key": "nasal-canonical-save",
-      "title": "Use the durable source for confirmed nasal preparation",
-      "detail": "Preparation validates that the selected vial matches the normalized saved inventory, then commits against the exact durable snapshot under one exclusive lock. Stale tabs, uncertain writes and unverified source balances remain blocked.",
-      "screen": "Stash / Prepare Nasal Bottle",
-      "kind": "fix"
+      "key": "p4-supplement-templates",
+      "title": "Save and manage supplement templates",
+      "detail": "Create, apply, rename and delete optional named supplement selections using guarded settings saves; templates never automatically save a daily check-in.",
+      "screen": "Today / Daily Check-In / Supplements",
+      "kind": "feature"
     }
   ],
-  "dataImpact": "No automatic migration, backup deletion, history overwrite or destructive rewrite. Restore remains an explicit full-state replacement with a recovery copy, and rejects concurrent changes or missing storage capacity. Confirmed nasal preparation continues to debit only the exact verified source and credit a linked bottle in one readback-verified transaction; other saved data is preserved.",
+  "dataImpact": "No destructive migration, historical record rewrite or automatic check-in save. The new optional settings.supplementTemplates field stores explicitly named selections through the exclusive writer, with readback validation; inventory history, backup files and existing dated logs are preserved. Stash search and chosen subcategory are transient UI state.",
   "limitations": [
-    "A storage-write failure or stale concurrent-tab change still blocks restore/preparation; do not retry uncertain transfers before verifying Stash.",
-    "Generic preparation transfers and prepared nasal dose logging remain disabled.",
-    "No claim that saved records reflect actual spray delivery, sterility or suitability. Calculator outputs are nominal.",
-    "This is a branch candidate only until CI, physical iPhone acceptance, approved merge and primary Cloudflare parity."
+    "Generic preparation transfers and prepared nasal dose administration remain disabled; the separately enabled recorded nasal preparation workflow is unchanged.",
+    "Search and supplement templates are local to the current browser; account synchronization remains future work.",
+    "Synthetic calculator regression results do not establish clinical dosing or sterile preparation guidance.",
+    "Physical iPhone acceptance was user-reported as 7/7 PASS before the small Stash entrypoint correction; that specific correction requires updated acceptance before final release signoff."
   ],
   "history": [
     {

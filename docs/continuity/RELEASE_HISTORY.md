@@ -1,3 +1,33 @@
+## 2026-11-03 — v0.9.24-beta PR130 RELEASE CANDIDATE, user authorized, NOT YET DEPLOYED
+- Baseline main `1e51840959cd21de01f6e1a48152a486850317fe` v0.9.23-beta; draft PR130 adds Stash search (kits/other forms/supplies), previous-day supplement reuse, named template create/apply/rename/delete and guarded settings writer. Subsequent side quest defaults fresh Stash navigation to Vial kits; no changes to in-screen category picker or Other form post-save navigation.
+- User-reported iPhone/VoiceOver acceptance 7/7 PASS for the preceding P4 candidate; user explicitly instructed deployment and new navigation correction. Correction itself is not separately physically accepted.
+- New `v0.9.24-beta` release metadata generated from `release/release.json` and app title. No automatic migration, historical rewrite, real production data access, or opened vial stock side effect.
+- Previous `575c419d` application/test candidate had 5/5 automated CI PASS and source-matched complete DEMO/LIVE artifact. New v0.9.24-beta candidate 5 workflow groups #41775888216 / #41775888249 / #41775888274 / #41775888287 / #41775888218 **PENDING** at this checkpoint. New release package, merge commit, Cloudflare primary parity and physical correction acceptance NOT YET VERIFIED.
+- RELEASE STATUS: CODED / USER-APPROVED FEATURE UAT / release preparation IN PROGRESS / PR UNMERGED / NOT DEPLOYED. Release only after latest corrected-source CI and artifact parity checks.
+
+## 2026-11-03 — PR130 Priority 4 candidate automation-qualified; NOT MERGED/DEPLOYED
+- Candidate source `575c419d22982a2a26e608fb202c92cbc9ba4341`, app feature changes through `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`; main baseline `1e51840959cd21de01f6e1a48152a486850317fe`. Built base version `v0.9.23-beta`; future release version NOT assigned.
+- New P4 experiences: search Vial kits/Other forms/Supplies; reuse previous earlier-date supplement log into unsaved draft; named supplement template create/apply/rename/delete. Scoped writer validates bounded optional settings.supplementTemplates; preserves historical supplementLogs, dailyLogs, saved-dose sources and inventory. No destructive migration, automatic check-in, production data access or user-record changes.
+- Final corrected-source workflow results all SUCCESS: Chromium/build #41743566053, WebKit #41743566091, mobile #41743566060, shared writer/real two-tab #41743566133, nested DS2 #41743566086. Earlier failed #41742486604 was synthetic test fixture, corrected by test-only commit `575c419d`, preserved in historical record. Chromium confirmed 8 LIVE/DEMO 320/390 dark/light, 256 dose flows, 96 vial safety assertions and 8 Check-In data tests.
+- Artifact #13283570424 (exact-source GitHub Actions): outer 548 entry CRC PASS; root LIVE ZIP 26 entries CRC PASS; standalone full-app DEMO and offline DEMO index identical, in-memory isolated fixture with sync OFF. Real iPhone/Safari/VoiceOver and UAT NOT TESTED. Draft PR130, no merge/deploy/release authorization; primary Cloudflare new-release parity N/A until approved deployment.
+- NEXT: physical iPhone acceptance of isolated candidate, then separate explicit merge/deploy decision.
+
+## 2026-11-03 — PR130 full-browser failure and test-only retry (NOT RELEASED)
+- Full Chromium/build #41742486604 failed in synthetic Log Dose setup `tools/validate-logdose-ui.mjs:79` (undefined fictional Retatrutide fixture), after other validated protected sections passed. This failed workflow remains FAILED and is not called PASS.
+- Source and test-only change `575c419d22982a2a26e608fb202c92cbc9ba4341` waits for page load/app readiness and explicitly resets fictional Retatrutide before test mutation; production JS, calculations, history, UI and deployment are unchanged.
+- Corrected-test workflows: full #41743566053 and WebKit #41743566091 IN PROGRESS at last observation; mobile #41743566060, shared writer #41743566133, DS2 nested #41743566086 SUCCESS. No release authorization, merge, deployed candidate or physical iPhone acceptance.
+
+## 2026-11-03 — PR130 P4 candidate source test milestone (NOT RELEASED)
+- Candidate application source `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`. Stash search, prior-day supplement reuse and create/apply/rename/delete templates implemented. Current built version remains v0.9.23-beta; next release version unassigned. Draft PR #130, no merge/deploy approval.
+- Shared writer (including focused P4 templates) #41742486753 SUCCESS, mobile #41742486815 SUCCESS, WebKit #41742486586 SUCCESS, DS2 nested #41742486845 SUCCESS. Chromium/build #41742486604 in progress at observation. Direct fictional Chromium interaction test 320/390 light/dark PASS; one check-in and supplement entry save/date update PASS. No physical iPhone/VoiceOver UAT.
+- Full isolated DEMO and exact-source 26-file LIVE ZIP from artifact #13281293279 extracted and CRC-verified; offline DEMO byte identical, five blob hashes match GitHub head. No actual user data imported or written, no destructive migration. Release notes docs/releases/PR130_PRIORITY4_CANDIDATE.md.
+- SOURCE CODED + TESTED PARTIAL → PR DRAFT → UNMERGED → UNDEPLOYED → NOT PHYSICAL IPHONE ACCEPTED.
+
+## 2026-11-03 — Priority 4 search/reuse PR130 CANDIDATE ONLY
+- Main at branch creation 1e51840959cd21de01f6e1a48152a486850317fe; draft PR130 branch feature/p4-stash-search-supplement-repeat-20261103. Candidate code through 66be75d41df7c8b96118394d2400b324b93aa985.
+- Proposed: read-only Stash search, date-specific repeat previous supplement selection, named templates in optional settings.supplementTemplates. Existing check-in/supplement histories preserved; no automated replacement/migration and no inventory write.
+- Tests, release artifacts, complete in-chat full-app demo and manual iPhone acceptance NOT VERIFIED / INCOMPLETE. No release tag, merged commit, verified Cloudflare deploy or release authorization.
+
 ## 2026-11-03 — PR129 v0.9.23-beta exact-source acceptance, NOT RELEASED
 - Tested application/test source `afbeadb905ea350f2190edc408894397e3b8c2a9`, baseline main `383c6b7a88c6d2903454bdfe256684b4c455d93e`. Draft PR #129 unmerged; production remains v0.9.22-beta; primary Cloudflare not deployed with this candidate.
 - Five workflow groups SUCCESS: #41668328314 Chromium/full, #41668328877 WebKit, #41668328302 writer/real two-tab/P0, #41668328375 mobile, #41668328438 nested DS2. GitHub release artifact #13248295392 downloaded/inspected: 548-entry artifact CRC; 26-file LIVE ZIP CRC and manifest/source parity; standalone full-app fictional isolated DEMO byte-identical to offline ZIP index. Representative screenshots reviewed. Physical iPhone/VoiceOver NOT TESTED.

@@ -1,4 +1,5 @@
-Reliable backup restoration and LIVE preparation saving
-- Restore JSON backups without false stale-state conflicts: Backup & Restore compares the exact durable source snapshot under the exclusive storage lock, rather than the normalized in-memory display state. Concurrent-tab and uncertain writes remain blocked.
-- Show the real Stash inventory count in restore preview: Backup review counts supplies rather than the obsolete peptideKits field and retains the requirement to explicitly confirm replacement.
-- Use the durable source for confirmed nasal preparation: Preparation validates that the selected vial matches the normalized saved inventory, then commits against the exact durable snapshot under one exclusive lock. Stale tabs, uncertain writes and unverified source balances remain blocked.
+Faster Stash navigation and reusable supplement routines
+- Find supplies and compound inventory faster: Search Vial kits, Other forms and Supplies by compound or relevant inventory information without changing stock balances.
+- Open Stash on Vial kits: A fresh visit through primary navigation now starts on Vial kits, while in-screen category switching and the post-save Other forms destination stay available.
+- Reuse supplements from an earlier day: Use previous day copies the most recent earlier dated supplement selection into a draft; Check-In mood, symptoms, notes and prior logs remain unchanged.
+- Save and manage supplement templates: Create, apply, rename and delete optional named supplement selections using guarded settings saves; templates never automatically save a daily check-in.

@@ -117,6 +117,22 @@ try {
         if (modalMetrics.w>width+1 || modalMetrics.sw>modalMetrics.cw+3) throw Error('Check-In horizontal overflow '+JSON.stringify(modalMetrics));
         await page.screenshot({path:'dist/'+kind+'-'+theme+'-'+width+'-checkin.png'});
         await page.evaluate(()=>closeModal());
+        // Fresh bottom-nav entry resets only Stash's in-page subcategory, not inventory data.
+        await page.locator('.tabbar button[data-tab="stash"]').click();
+        if((await page.locator('.stash-sub-btn[data-sub="kits"]').getAttribute('aria-pressed'))!=='true')
+          throw Error('Fresh Stash entry did not show Vial kits');
+        await page.locator('.stash-sub-btn[data-sub="other"]').click();
+        if((await page.locator('.stash-sub-btn[data-sub="other"]').getAttribute('aria-pressed'))!=='true')
+          throw Error('Could not switch Stash to Other forms');
+        await page.locator('.tabbar button[data-tab="home"]').click();
+        await page.locator('.tabbar button[data-tab="stash"]').click();
+        if((await page.locator('.stash-sub-btn[data-sub="kits"]').getAttribute('aria-pressed'))!=='true')
+          throw Error('Returning to Stash retained Other forms instead of Vial kits');
+        await page.locator('.stash-sub-btn[data-sub="equipment"]').click();
+        await page.locator('.tabbar button[data-tab="home"]').click();
+        await page.locator('.tabbar button[data-tab="stash"]').click();
+        if((await page.locator('.stash-sub-btn[data-sub="kits"]').getAttribute('aria-pressed'))!=='true')
+          throw Error('Returning to Stash retained Supplies instead of Vial kits');
         const tabs=await page.locator('.tabbar button').allTextContents();
         for(let tabIndex=0;tabIndex<Math.min(5,tabs.length);tabIndex++){
           await page.locator('.tabbar button').nth(tabIndex).click();

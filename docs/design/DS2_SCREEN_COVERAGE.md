@@ -1,3 +1,16 @@
+## 2026-11-03 — Stash root-entry consistency, v0.9.24-beta PR130
+- Entering Stash via bottom primary navigation now resets its transient subcategory to Vial kits, consistent with Calendar opening on current month and Plans root entry. Explicit in-Stash switches to Other forms and Supplies persist within visit. Add Other Form Save still takes user directly to its category. No approved kit card or segmented control visual redesign.
+- Browser leave/reenter assertion added at both 320/390 and light/dark, with LIVE and isolated DEMO. Physical iPhone for latest reset is still NOT TESTED; prior P4 7/7 iPhone Pass predates reset.
+
+## 2026-11-03 — P4 DS2 responsive evidence (candidate PR130)
+- 320/390 dark/light Chromium fictional full-app DEMO: Stash search on existing page, Other forms/Supplies matching empty states, inline supplement use/reuse/template list, rename/delete 44px SVG actions and docked Save visible in sampled 320px screenshot; body scrollWidth=viewport, no JS errors. Direct source-matched demo is not independent physical iPhone.
+- Template manage actions are minimal and scoped to existing check-in; no extra top-level tab, no altered kit card hierarchy, no changes to dose or calculator interfaces. WebKit general workflow #41742486586 SUCCESS. Manual Safari keyboard, safe area, VoiceOver and actual UAT NOT TESTED.
+
+## 2026-11-03 — P4 Stash search and Check-In reuse (DRAFT PR130)
+- Stash: single search field after existing categories, preserving approved kit cards, status, tabs, quick actions and filter/sort. Search is ephemeral UI state; empty vs no matching records distinguished in Vial kits / Other forms / Supplies.
+- Daily Check-In + Supplements modal: 44px reusable supplement controls, inline template options, no extra navigation tab. Named templates apply selections only, not symptoms/mood; scoped validated writer for template persistence. Check date change updates previous-log eligibility. No destructive schema migration.
+- Visual/interaction acceptance OPEN at 320/390, both themes, keyboard/VoiceOver and real iPhone; tests and exact-source screenshots pending. No released change or approved visual redesign.
+
 ## 2026-11-03 — v0.9.23-beta restore preview and Stash nasal error-state candidate
 - Settings → Backup & Restore preview counts `supplies` kit records rather than obsolete `peptideKits`, preserving original design, typed RESTORE consent and recovery copy. Stale conflict now has explicit reload/verify guidance; unknown write outcomes remain conservative. Stash → Prepare Nasal Bottle identifies stale normalized source and unverified source balances without asserting that an uncertain write did not occur.
 - Functional source code and fictional VM tests committed in draft PR #129; exact-head 320/390 WebKit/Chromium and physical iPhone acceptance PENDING. No published design changes or real data migration.

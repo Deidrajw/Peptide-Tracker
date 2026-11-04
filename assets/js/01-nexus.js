@@ -125,7 +125,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
  if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
  const next=JSON.parse(JSON.stringify(snapshot));
  if(operation.kind==="setting"){
-  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","remindersEnabled","lastNotifyDate"];
+  const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","supplementTemplates","remindersEnabled","lastNotifyDate"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="remindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid notification toggle");
   if(operation.key==="lastNotifyDate"&&(typeof operation.value!=="string"||!/^(?:\d{4}-\d{2}-\d{2})?$/.test(operation.value)))fail("Invalid notification date");
@@ -138,6 +138,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
   if(operation.key==="dayRolloverHour"&&(!Number.isInteger(operation.value)||operation.value<0||operation.value>12))fail("Invalid rollover hour");
   if(operation.key==="todayTrackingActivities"&&(!Array.isArray(operation.value)||operation.value.some(x=>!["checkin","supplements","weight","nutrition","measurements"].includes(x))||new Set(operation.value).size!==operation.value.length))fail("Invalid tracking activities");
   if(operation.key==="recentDiscoverViews"&&(!Array.isArray(operation.value)||operation.value.length>8||operation.value.some(x=>typeof x!=="string"||x.length>160)||new Set(operation.value).size!==operation.value.length))fail("Invalid recent discovery views");
+  if(operation.key==="supplementTemplates"&&(!Array.isArray(operation.value)||operation.value.length>24||operation.value.some(t=>!t||typeof t.name!=="string"||!t.name.trim()||t.name.length>50||!Array.isArray(t.taken)||t.taken.length>40||t.taken.some(n=>typeof n!=="string"||!n.trim()||n.length>160)||new Set(t.taken).size!==t.taken.length)||new Set(operation.value.map(t=>t.name.trim().toLocaleLowerCase())).size!==operation.value.length))fail("Invalid supplement templates");
   if(!next.settings||typeof next.settings!=="object")fail("Settings unavailable");
   next.settings[operation.key]=operation.value;
  }else if(operation.kind==="bulk-delete"){

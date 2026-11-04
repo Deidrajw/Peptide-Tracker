@@ -2668,3 +2668,28 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   font-family:inherit;font-size:12px;line-height:1.5;font-weight:400;
   color:var(--t3);margin:0;
 }
+
+
+/* P4 discovery: understated mobile-first search and supplement reuse */
+.nx-stash-search-wrap{margin:10px 0 14px}
+.nx-stash-search{width:100%;min-height:48px;box-sizing:border-box;border-radius:12px}
+.nx-stash-no-results{padding:24px 12px;text-align:center;color:var(--t3);font-size:13px;line-height:1.5}
+.nx-supp-shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.nx-supp-shortcuts button{min-height:44px;padding:9px 12px;border:1px solid var(--border-sub);border-radius:11px;background:var(--surface-2);color:var(--t2);font-size:12px;font-weight:600;flex:1 1 auto}
+.nx-supp-shortcuts button:disabled{opacity:.48;cursor:not-allowed}
+.nx-supp-shortcuts button:focus-visible,.nx-supp-template-option:focus-visible,.nx-stash-search:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.nx-supp-template-list{margin:0 0 12px;border:1px solid var(--border-sub);border-radius:12px;overflow:hidden}
+.nx-supp-template-list[hidden]{display:none}
+.nx-supp-template-option{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:10px 12px;width:100%;text-align:left;color:var(--t1);background:var(--surface);font-size:12px;border-bottom:1px solid var(--border-sub)}
+.nx-supp-template-option:last-child{border-bottom:0}
+.nx-supp-template-option span,.nx-supp-template-empty{color:var(--t4);font-size:12px}
+.nx-supp-template-empty{padding:14px;margin:0;line-height:1.5}
+@media(max-width:350px){.nx-supp-shortcuts button{flex-basis:calc(50% - 4px);padding-left:7px;padding-right:7px}}
+
+
+.nx-supp-template-row{display:flex;align-items:stretch;gap:0;background:var(--surface);border-bottom:1px solid var(--border-sub)}
+.nx-supp-template-row:last-child{border-bottom:0}
+.nx-supp-template-row .nx-supp-template-option{min-width:0;flex:1;border-bottom:0;padding:10px 12px}
+.nx-supp-template-manage{min-height:48px;min-width:44px;display:grid;place-items:center;background:transparent;color:var(--t3);border-left:1px solid var(--border-sub)}
+.nx-supp-template-manage:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
+@media(max-width:350px){.nx-supp-template-row .nx-supp-template-option span{font-size:11px}}

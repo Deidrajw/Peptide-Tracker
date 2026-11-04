@@ -1,3 +1,19 @@
+## 2026-11-03 — PR130 7/7 physical iPhone acceptance + authorized release scope
+- User reported seven Pass results, explicitly including Stash search categories/clear/filters, previous-day unsaved selection, template create/apply/rename/delete, Check-In historical protection, keyboard/sheet/sticky Save, light/dark and VoiceOver labels. This is user-reported acceptance of earlier approved feature source.
+- User explicitly requested `Deployed.` and in the same message requested a Stash-opening correction. Treat as release approval conditional on standard release safety/CI gates, not authorization to omit verification.
+- Design rationale: fresh navigation to Stash defaults to Vial kits (primary inventory); switching to Other forms/Supplies persists only *during* current Stash visit, and adding a new Other form should still show its saved result. Scope limited to transient `_stashSub` navigation state; no storage migration or history changes.
+- Canonical next release version `v0.9.24-beta`; do not merge/deploy a candidate with failed CI, missing source-exact artifacts, or ambiguous Cloudflare deployment. Physical device proof for the later reset is distinct from the 7 prior passes and must not be fabricated.
+
+## 2026-11-03 — P4 reusable template lifecycle, safety-approved design candidate
+- Add rename and delete to My templates to avoid unmanageable duplicate routines; retain existing Check-In/standalone Supplements picker and no new top-level navigation. Explicit confirmation for template deletion; only the named template setting is removed, never dated supplement logs.
+- Optional settings.supplementTemplates has bounded validated names/selection counts and protected exclusive readback through nexusCommitScopedStateChange; no automatic template creation, application or check-in save. UI search remains transient.
+- This extends already authorized draft feature scope only and is not authorization to merge/deploy or overwrite any production storage. Real iPhone acceptance and user approval remain separate gates.
+
+## 2026-11-03 — Priority 4 UX scope decision, PR130
+- User accepted simpler Check-In discovery for supplement reuse: Use previous day and My templates directly in existing Check-In, not a new top-level tab. Recent supplement log selection is copied into a draft only; preserve selected date and one check-in per date. Saved templates are optional explicit named selections; never copy mood, symptoms or unrelated records.
+- Stash search augments approved DS2 layout and existing filter/sort; search query remains UI-only and cannot change inventory balances. Applies across Vial kits, Other forms and Supplies.
+- This approval starts **draft development**, not approval to merge or deploy. Protect P0 write coordination, source-specific dose history and nasal prepared-dose gating; no destructive data migration.
+
 ## 2026-11-03 — PR129 release safety boundary remains in force
 - Independent artifact/CI review does NOT imply approval to merge or deploy PR129. The candidate remains v0.9.23-beta on a draft branch; main production baseline stays v0.9.22-beta until independently verified otherwise.
 - Do not permit a documentation-only commit to imply that previously tested app-source CI covered its new head. Record the tested source SHA separately from subsequent continuity commits.
