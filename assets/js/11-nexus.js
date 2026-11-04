@@ -2250,6 +2250,9 @@ function renderTabbar() {
       state._protoCalSub = 'month';
       state._calOff = 0;
     }
+    // Primary Stash navigation opens its default root, not a remembered Other forms/Supplies tab.
+    // In-page category switching and the Add Other Form post-save destination still persist within that visit.
+    if (id === "stash") state._stashSub = "kits";
     if (id === "plans") state._plansSub = "goals";
     if (id === "trends") state._nxHistorySelected = null; // Fresh tab entry starts at Trends home.
     // A fresh Profile visit should not resurrect the last Settings subpage.
