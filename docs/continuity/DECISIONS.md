@@ -1,3 +1,8 @@
+## 2026-11-04 UTC — PR130 release and Stash root navigation
+- User-approved release after reporting seven iPhone/VoiceOver Pass checks; requested Stash fresh visit open on Vial kits rather than remembered Other forms. Primary bottom-nav now resets transient category to Vial kits. In-screen category switches and new Other form post-save remain intentional. No persistent data changes.
+- PR130 merged 699fd373. Independent Cloudflare parity #41777262228 verified 16 core production files match merged app. The audit PR131 remains unmerged because its sole purpose was read-only verification.
+- Device signoff for this final post-UAT navigation tweak is not yet reported, and no claim of clinical calculator validation or enabled prepared nasal administration is made.
+
 ## 2026-11-03 — PR130 7/7 physical iPhone acceptance + authorized release scope
 - User reported seven Pass results, explicitly including Stash search categories/clear/filters, previous-day unsaved selection, template create/apply/rename/delete, Check-In historical protection, keyboard/sheet/sticky Save, light/dark and VoiceOver labels. This is user-reported acceptance of earlier approved feature source.
 - User explicitly requested `Deployed.` and in the same message requested a Stash-opening correction. Treat as release approval conditional on standard release safety/CI gates, not authorization to omit verification.
