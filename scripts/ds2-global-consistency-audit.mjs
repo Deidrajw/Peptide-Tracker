@@ -73,10 +73,11 @@ for(const width of [320,390])for(const theme of ['light','dark']){
   }
   // Explicit known safe openers; screenshots of dialogs must reflect actual rendered state.
   for(const opener of [
-   {screen:'Today Log Dose',tab:'home',selector:'#nx-qa-dose'},
+   {screen:'Today Log Dose',tab:'home',selector:'#today-log-dose'},
    {screen:'Plans Add Goal',tab:'plans',selector:'#add-goal'},
-   {screen:'Stash Add Kit',tab:'stash',selector:'#stash-add'},
-   {screen:'Settings Backup',tab:'profile',profile:'settings',detail:'backup',selector:'#settings-import-backup'}
+   {screen:'Stash Add Kit',tab:'stash',selector:'#qa-addkit'},
+   {screen:'Trends Pattern',tab:'trends',selector:'#nx-open-pattern'},
+   {screen:'Trends Symptom Timing',tab:'trends',selector:'#nx-open-symptom-timing'}
   ]){
    try{
     await page.evaluate(({tab:pageTab,profile,detail,theme})=>{
