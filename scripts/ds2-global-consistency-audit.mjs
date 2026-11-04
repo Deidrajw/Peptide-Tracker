@@ -114,6 +114,42 @@ for(const width of [320,390])for(const theme of ['light','dark']){
       },name);
       if(violations.length)throw Error('A11Y scoped target regression: '+violations.join('; '));
     }
+    // Approved font-family decision (2026-11-04): ensure actual computed
+    // family roles across every route and both iPhone viewport widths.
+    const typeErrors=await page.evaluate(screen=>{
+      const errors=[],font=el=>getComputedStyle(el).fontFamily;
+      const contains=(el,value)=>el&&font(el).includes(value);
+      if(!contains(document.body,'DM Sans'))errors.push('body does not use DM Sans');
+      const root=document.querySelector('#app');
+      if(root&&!contains(root,'DM Sans'))errors.push('application root does not use DM Sans');
+      for(const el of document.querySelectorAll('#app :is(.nx2-page-title,.page-title,.serif)')){
+        const rect=el.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0&&!contains(el,'Fraunces'))
+          errors.push('editorial title missing Fraunces: '+(el.className||el.tagName));
+      }
+      for(const el of document.querySelectorAll('#app .mono:not(.nx-technical-value):not(.nx-mono-number)')){
+        const rect=el.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0&&!contains(el,'DM Sans'))
+          errors.push('categorical .mono missing DM Sans: '+(el.textContent||'').trim().slice(0,32));
+        if(errors.length>20)break;
+      }
+      for(const el of document.querySelectorAll('#app .nx-category-eyebrow')){
+        const rect=el.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0&&parseFloat(getComputedStyle(el).fontSize)<10.5)
+          errors.push('category eyebrow under 11px');
+      }
+      for(const el of document.querySelectorAll('#app :is(.nx-daily-track-note,.nx-cal-hub p,.nx-cal-hub-note,.nx2-supp-catalogue-note,.nx-explanatory-copy,.nx-health-source p)')){
+        const rect=el.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0&&parseFloat(getComputedStyle(el).fontSize)<12.5)
+          errors.push('explanatory copy under 13px '+(el.className||el.tagName));
+      }
+      if(screen==='Journal'){
+        for(const el of document.querySelectorAll('#app :is(.nx-journal-search-label,.nx-journal-filter-label)'))
+          if(parseFloat(getComputedStyle(el).fontSize)<12.5)errors.push('journal label under 13px');
+      }
+      return errors;
+    },name);
+    if(typeErrors.length)throw Error('DS2 approved font-role regression: '+typeErrors.join('; '));
     observations.push({width,theme,screen:name,tab:pageTab,overflow:report.overflow,items:report.items,modalVisible:report.modalVisible});
     await page.screenshot({path:path.join(root,`${width}-${theme}-${name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()}.png`),fullPage:true,animations:'disabled'});
    }catch(err){errors.push({width,theme,screen:name,error:String(err)});}
