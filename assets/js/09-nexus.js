@@ -2109,7 +2109,7 @@ function equipmentView() {
       <div class="nx-supply-current">
         <div class="nx-kit-overview-label">CURRENT OPEN ${esc((item.unitLabel||"UNIT").toUpperCase())}</div>
         ${activeUnit?`
-          <div class="nx-kit-primary-value">${remaining%1===0?remaining:remaining.toFixed(1)} <span>of ${item.unitSize} ${esc(item.unitOfMeasure)} left</span></div>
+          <div class="nx-kit-primary-value nx-supply-quantity" aria-label="${remaining%1===0?remaining:remaining.toFixed(1)} of ${item.unitSize} ${esc(item.unitOfMeasure)} left"><span class="nx-supply-quantity-number nx-technical-value">${remaining%1===0?remaining:remaining.toFixed(1)}</span><span class="nx-supply-quantity-context">of ${item.unitSize} ${esc(item.unitOfMeasure)} left</span></div>
           <div class="nx-kit-overview-track" role="progressbar" aria-label="Current supply remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%;background:${st.color}"></span></div>
         `:`<div class="nx-kit-primary-value"><span>No ${esc(item.unitLabel)} open</span></div><div class="nx-supply-subtle">${sealedCount} sealed available</div>`}
         ${isBacWater&&activeUnit?.openedDate?`<div class="nx-supply-subtle">Opened ${fmtDate(activeUnit.openedDate)} · use by ${fmtDate(useByDate)}</div>`:""}
