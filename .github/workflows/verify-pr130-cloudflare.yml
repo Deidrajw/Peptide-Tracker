@@ -1,0 +1,28 @@
+name: Nexus PR130 post-merge Cloudflare parity (read-only)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/verify-pr130-cloudflare.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-cloudflare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout exact merged source files
+        uses: actions/checkout@v4
+      - name: Byte-compare all 16 public app entry files with Cloudflare primary
+        run: python3 tools/verify-pages.py --attempts 20 --interval 12 --output dist/Nexus_PR130_CLOUDFLARE_PARITY.json
+      - name: Preserve source parity evidence even if deployment is delayed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-PR130-postmerge-cloudflare-parity
+          path: dist/Nexus_PR130_CLOUDFLARE_PARITY.json
+          retention-days: 30
+          if-no-files-found: warn
