@@ -9,7 +9,7 @@ if(!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/.test(base))throw Error('Loca
 const root='artifacts/ds2-global-consistency';
 await fs.mkdir(root,{recursive:true});
 const views=[
- ['Today','home'],['Calendar','calendar'],['Plans','plans'],['Protocols','protocols'],['Stash','stash'],
+ ['Today','home'],['Calendar','calendar'],['Plans','plans'],['Protocols','protocols'],['Stash','stash'],['Stash Supplies','stash'],
  ['Trends','trends'],['Ask','amino','chat'],['Journal','amino','journal'],
  ['Learn','amino','learn'],['Explore','amino','explore'],
  ['Profile','profile',null,'profile'],['Settings','profile',null,'settings'],
@@ -41,6 +41,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
      closeModal();tab=pageTab;
      if(sub)state._aminoSub=sub;
      if(profile)state._profileTab=profile;
+     if(pageTab==='stash')state._stashSub=name==='Stash Supplies'?'equipment':'kits';
      state._settingsDetail=detail||null;
      state._guideOpen=null;state._discoverOpen=null;render();
     },{pageTab,sub,profile,detail,theme});
@@ -155,6 +156,25 @@ for(const width of [320,390])for(const theme of ['light','dark']){
         const rect=el.getBoundingClientRect();
         if(rect.width>0&&rect.height>0&&parseFloat(getComputedStyle(el).fontSize)<12.5)
           errors.push('explanatory copy under 13px '+(el.className||el.tagName));
+      }
+      if(screen==='Stash Supplies'){
+        const cards=[...document.querySelectorAll('#app .nx-supply-kit-card')];
+        if(!cards.length)errors.push('fictional Supplies fixture missing');
+        for(const card of cards){
+          const amount=card.querySelector('.nx-supply-quantity-number');
+          if(!amount)continue; // Sealed supplies intentionally have no numeric remaining balance.
+          const context=card.querySelector('.nx-supply-quantity-context');
+          const label=card.querySelector('.nx-kit-overview-label');
+          const notes=[...card.querySelectorAll('.nx-supply-subtle')];
+          if(!contains(amount,'DM Mono'))errors.push('supply quantity missing DM Mono');
+          if(!contains(context,'DM Sans')||getComputedStyle(context).letterSpacing!=='normal')
+            errors.push('supply context family/spacing mismatch');
+          if(!label||parseFloat(getComputedStyle(label).fontSize)<10.5)
+            errors.push('supply eyebrow under 11px');
+          for(const note of notes)
+            if(parseFloat(getComputedStyle(note).fontSize)<12.5)
+              errors.push('supply explanatory copy under 13px');
+        }
       }
       if(screen==='Journal'){
         for(const el of document.querySelectorAll('#app :is(.nx-journal-search-label,.nx-journal-filter-label)'))
