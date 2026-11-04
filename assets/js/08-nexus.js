@@ -908,7 +908,7 @@ function learnContent() {
   const sub = state._learnSub || "guides";
   const subBtn = (id,l) => `<button id="ls-${id}" class="${sub===id?"on":""}">${l}</button>`;
   let html = `<div class="seg" style="margin:0 0 18px">${subBtn("guides","Guides")}${subBtn("discover","Discover")}${subBtn("mixing","Stacking")}${subBtn("calc","Dose Calc")}</div>`;
-  if(sub!=="calc") html += `<div class="nx-learn-quick"><div style="font-weight:650;color:var(--t1);margin-bottom:7px">Quick tool</div><button type="button" id="nx-learn-calc">Dose calculator →</button><p style="font-size:11px;color:var(--t4);margin:8px 0 0">Concentration and volume conversions only; not a clinical dose verification.</p></div>`;
+  if(sub!=="calc") html += `<div class="nx-learn-quick"><div style="font-weight:650;color:var(--t1);margin-bottom:7px">Quick tool</div><button type="button" id="nx-learn-calc">Dose calculator →</button><p class="nx-explanatory-copy" style="font-size:11px;color:var(--t4);margin:8px 0 0">Concentration and volume conversions only; not a clinical dose verification.</p></div>`;
   if (sub === "mixing") { return html+mixingChartView(); }
   if (sub === "calc")    { return html+reconCalcView(); }
   if (sub === "discover") {
