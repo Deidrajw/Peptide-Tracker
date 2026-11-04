@@ -1,3 +1,9 @@
+## 2026-11-04 — PR132 typography fail-closed test gate and verified local rerun
+- QA script commit `c65ec12`: all collected errors now set failure exit code (previously only page/setup errors did), closing false-green CI risk.
+- Local 320/390 light/dark Chromium with isolated fictional full app: **92/92** routes, **20/20** modals, zero errors/overflow; **120 visible Calendar numeric elements** checked for DM Mono. `Nexus_PR132_Current_Local_Regression.json` in conversation artifacts. This is local Python-equivalent QA, NOT exact CI.
+- Six existing GitHub jobs SUCCESS for source `545fc018`, archive/DEMO parity previously verified; subsequent changes test/docs only. Final test-head CI, network font loading, Dynamic Type, iPhone and VoiceOver **NOT VERIFIED**.
+- One next action: get exact-head Chromium Actions artifact; keep draft, no merge/deploy.
+
 ## 2026-11-04 Toronto — approved DM Sans/Fraunces/DM Mono implementation and local QA
 - Approved typography system now CODED in draft PR132, app/test SHA 983a58d3d7e8b2a9ab6a0c068dbcde39866dba26; deployed main 755dea5e/v0.9.24-beta unchanged, no merge/deploy. Shared DM Sans CSS and former Today SF Pro override replaced; existing Fraunces titles retained; DM Mono only explicitly technical values; scoped approved 13px explanation/11px category/13px Journal labels. Only CSS + presentational JS07/08/10/11 changed. Full release notes: docs/releases/DS2_TYPOGRAPHY_FAMILY_CANDIDATE_2026-11-04.md.
 - Source-matching check: all five changed application files GitHub blob SHA EXACT MATCH to locally reconstructed source, 21 remaining files from prior verified source bundle. 26-file LIVE ZIP CRC PASS, all 12 numbered JS syntax PASS. Isolated fictional, no-live FULL APP DEMO generated from same actual modules, integrity checks PASS; no user-data migration.
