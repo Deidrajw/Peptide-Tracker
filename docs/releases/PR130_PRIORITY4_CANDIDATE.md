@@ -1,3 +1,10 @@
+## v0.9.24-beta — final pre-merge scope (2026-11-03)
+- User reported physical iPhone acceptance 7/7 Pass for P4 Stash search, supplement reuse/templates, Check-In record protection, keyboard, light/dark, VoiceOver; user explicitly requested deployment. This covers the P4 features before the subsequent small Stash entrypoint fix, not fresh physical acceptance of that fix.
+- Additional same-session side quest: primary bottom-tab entry into Stash now starts on Vial kits instead of remembered Other forms/Supplies. Explicit in-screen category selections remain until departure; a saved Other form still opens Other forms. This is transient view state only, no persistent data or inventory impact. Added 8-configuration browser leave/reenter test.
+- Release version moved from v0.9.23-beta (previous production baseline) to v0.9.24-beta, including canonical JSON, app title, runtime metadata and three generated note formats; source baseline main 1e518409 and PR #130. Publication remains unverified until actual source-matched Cloudflare deployment.
+- Five new-source CI workflows for metadata source a2823b5b: Chromium/build #41775888216 IN PROGRESS at writing; WebKit #41775888249 SUCCESS, mobile #41775888274 SUCCESS, shared writer #41775888287 SUCCESS, nested #41775888218 SUCCESS. Do not claim full candidate QA before Chromium results.
+- Release gate: verified full-app DEMO and exact-source LIVE ZIP for v0.9.24-beta; approved GitHub merge then independent Cloudflare 16-file byte parity. No new live nasal dose controls or destructive state changes.
+
 ## Final corrected-source CI qualification (2026-11-03; NOT RELEASED)
 - Current qualified test/source SHA: `575c419d22982a2a26e608fb202c92cbc9ba4341` (application source remains unchanged since `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`).
 - GitHub Actions five workflow groups PASS: full Chromium/build #41743566053, WebKit #41743566091, mobile #41743566060, shared writer and real 2-tab #41743566133, nested DS2 #41743566086. Prior failed Chromium #41742486604 retained as historical test-fixture failure, resolved by test-only change to initialize synthetic Retatrutide fixture after boot.
