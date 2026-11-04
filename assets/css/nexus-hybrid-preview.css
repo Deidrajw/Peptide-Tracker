@@ -4475,3 +4475,11 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
   font-size:var(--nx-type-eyebrow)!important;
   font-weight:650;letter-spacing:.045em;
 }
+
+/* DS2 approved readable descriptions in Learn and imported Health context. */
+#app .nx-explanatory-copy,
+#app .nx-health-source p{
+ font-family:var(--nx-font-ui)!important;
+ font-size:var(--nx-type-explanation)!important;
+ line-height:1.5!important;
+}
