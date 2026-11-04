@@ -81,6 +81,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
           const rect=el.getBoundingClientRect();
           if(rect.width<43.5||rect.height<43.5)errors.push(id+' target '+Math.round(rect.width)+'x'+Math.round(rect.height));
         }
+        if(screen==='Settings appupdates' && document.getElementById('au-back')?.getAttribute('aria-label')!=='Back to Settings')errors.push('App Updates Back missing contextual accessible name');
         if(screen==='Calendar'){
           for(const [id,text] of [['cal-prev','Previous calendar month'],['cal-next','Next calendar month']])
             if(document.getElementById(id)?.getAttribute('aria-label')!==text)
