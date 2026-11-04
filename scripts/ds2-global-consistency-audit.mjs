@@ -133,6 +133,19 @@ for(const width of [320,390])for(const theme of ['light','dark']){
           errors.push('categorical .mono missing DM Sans: '+(el.textContent||'').trim().slice(0,32));
         if(errors.length>20)break;
       }
+      // Technical measurements must retain the explicitly approved DM Mono role.
+      // Check rendered values only: hidden review stages and inactive sheets are not visible UI.
+      for(const el of document.querySelectorAll('#app :is(.nx-technical-value,.nx-mono-number,#pd-count,.nx-cal-weight,.nx-dose-confirm-hero strong)')){
+        const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+        if(rect.width>0&&rect.height>0&&style.visibility!=='hidden'&&style.display!=='none'&&!contains(el,'DM Mono'))
+          errors.push('technical numeric value missing DM Mono: '+(el.id||el.className||el.tagName));
+      }
+      for(const el of document.querySelectorAll('#app :is(button,input,textarea,select)')){
+        const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+        if(rect.width>0&&rect.height>0&&style.visibility!=='hidden'&&style.display!=='none'&&!contains(el,'DM Sans'))
+          errors.push('interactive control missing DM Sans: '+(el.id||el.tagName));
+        if(errors.length>20)break;
+      }
       for(const el of document.querySelectorAll('#app .nx-category-eyebrow')){
         const rect=el.getBoundingClientRect();
         if(rect.width>0&&rect.height>0&&parseFloat(getComputedStyle(el).fontSize)<10.5)
