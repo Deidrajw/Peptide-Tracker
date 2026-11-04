@@ -1,3 +1,9 @@
+## 2026-11-04 Toronto — PR132 audit gate fixed, local 112-state rerun verified
+- Main `755dea5e`; PR132 remains draft/unmerged/undeployed; tested app source `545fc018` remains unchanged. GitHub QA script `c65ec12` fixed false-green exit behaviour: any audit error or overflow now fails CI.
+- Local Playwright Chromium fictional full-app: **92/92** screen checks + **20/20** modal checks PASS at 320/390 light/dark; zero overflow, errors or failed font roles, 120 visible Calendar mono-technical checks. Exact-current-script GitHub Actions **NOT VERIFIED** (latest visible runs still at `545fc018`). Prior six groups SUCCESS only for original code source.
+- Verified 26-file LIVE ZIP and complete isolated demo are unchanged application source. Remaining acceptance: exact current-head CI, actual font download, Dynamic Type, VoiceOver and physical iPhone. No saved data, dosing, inventory, nasal gates, merge or deployment changed. Current report in `docs/releases/DS2_TYPOGRAPHY_FAMILY_CANDIDATE_2026-11-04.md`; regression evidence in `docs/continuity/REGRESSION.md`.
+- **ONE NEXT ACTION:** obtain successful exact-head GitHub audit evidence, then physical iPhone typography acceptance. No merge/deploy.
+
 ## 2026-11-04 Toronto — PR132 final test-role assertion committed; current-head CI pending
 - PR132 draft/unmerged: new test-only commit `26fdfe2f7e94a42669e62b81119ded0e86a7a966` adds visible explicit technical DM Mono and interactive DM Sans checks to existing 320/390 light/dark global audit, without modifying app files. Main unchanged `755dea5e`, primary previously verified v0.9.24-beta, no deployment.
 - Previous exact application-source six CI workflow groups at `545fc018` remain all SUCCESS; GitHub Actions branch runs queried after test-only commit still show no fresh run for `26fdfe2f`. **Current-test-code CI: NOT VERIFIED.** Do not inherit earlier green status.
