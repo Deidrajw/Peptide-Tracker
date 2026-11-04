@@ -211,4 +211,6 @@ typography:Object.fromEntries(['title','heading','body','label','metric','button
 }))};
 await fs.writeFile(path.join(root,'summary.json'),JSON.stringify(summarized,null,2));
 console.log(JSON.stringify(summarized,null,2));
-if(errors.some(e=>e.setupError||e.pageError))process.exitCode=1;
+// CI must fail on ANY captured assertion/opening failure, not just setup/page errors.
+// An informational summary with failed screens must never produce a green check.
+if(errors.length || summarized.overflow.length)process.exitCode=1;
