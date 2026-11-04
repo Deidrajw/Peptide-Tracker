@@ -1,7 +1,8 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**', main]
+    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    # PR132 scoped QA branch trigger
   pull_request:
     branches: [main]
   workflow_dispatch:
