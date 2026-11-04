@@ -1,3 +1,8 @@
+## 2026-11-03 — PR130 full-browser failure and test-only retry (NOT RELEASED)
+- Full Chromium/build #41742486604 failed in synthetic Log Dose setup `tools/validate-logdose-ui.mjs:79` (undefined fictional Retatrutide fixture), after other validated protected sections passed. This failed workflow remains FAILED and is not called PASS.
+- Source and test-only change `575c419d22982a2a26e608fb202c92cbc9ba4341` waits for page load/app readiness and explicitly resets fictional Retatrutide before test mutation; production JS, calculations, history, UI and deployment are unchanged.
+- Corrected-test workflows: full #41743566053 and WebKit #41743566091 IN PROGRESS at last observation; mobile #41743566060, shared writer #41743566133, DS2 nested #41743566086 SUCCESS. No release authorization, merge, deployed candidate or physical iPhone acceptance.
+
 ## 2026-11-03 — PR130 P4 candidate source test milestone (NOT RELEASED)
 - Candidate application source `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`. Stash search, prior-day supplement reuse and create/apply/rename/delete templates implemented. Current built version remains v0.9.23-beta; next release version unassigned. Draft PR #130, no merge/deploy approval.
 - Shared writer (including focused P4 templates) #41742486753 SUCCESS, mobile #41742486815 SUCCESS, WebKit #41742486586 SUCCESS, DS2 nested #41742486845 SUCCESS. Chromium/build #41742486604 in progress at observation. Direct fictional Chromium interaction test 320/390 light/dark PASS; one check-in and supplement entry save/date update PASS. No physical iPhone/VoiceOver UAT.
