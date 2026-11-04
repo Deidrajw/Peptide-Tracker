@@ -198,6 +198,8 @@ for(const width of [320,390])for(const theme of ['light','dark']){
    try{
     await page.evaluate(({tab:pageTab,profile,detail,theme})=>{
      closeModal();document.documentElement.dataset.theme=theme;tab=pageTab;
+     // The previous screen may have left Stash in Supplies. Modal checks need Vial kits.
+     if(pageTab==='stash')state._stashSub='kits';
      if(profile)state._profileTab=profile;state._settingsDetail=detail||null;render();
     },{...opener,pageTab:opener.tab,theme});
     const el=page.locator(opener.selector).first();
