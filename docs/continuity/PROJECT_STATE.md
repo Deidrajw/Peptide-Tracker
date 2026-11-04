@@ -1,3 +1,8 @@
+## 2026-11-04 — Supplies typography local correction on draft PR132
+- JS09 `8a215dd5`, CSS `b03fb34b`: supply quantity/context now separately styled DM Mono/DM Sans; 11px eyebrow, 13px explanation, no storage/maths changes. QA test `8efea35e` covers Supplies as additional screen. Full source bundle exact GitHub blobs for edited CSS/JS09; 26-file CRC PASS; fictional isolated full-app demo rebuilt. Local Chromium 92/92 routes +20/20 modals PASS, supply-specific four width/theme states PASS, zero overflow.
+- Exact-head CI #41901155799 was in progress, NOT VERIFIED PASS at writing. Main `755dea5e` unchanged, draft PR132 unmerged/undeployed, production v0.9.24-beta. Need WebKit/mobile/build and physical iPhone/font-loading UAT.
+- **ONE NEXT ACTION:** inspect exact-source CI artifacts for Supplies candidate, then iPhone acceptance; no merge/deploy.
+
 ## 2026-11-04 Toronto — PR132 EXACT-HEAD GLOBAL AUDIT SUCCESS, physical iPhone next
 - Verified baseline main `755dea5eed417c1515543779fd81be77b6a504de` (production previously source-verified v0.9.24-beta), draft PR132 branch `docs/v0924-iphone-acceptance-ds2-reconcile-20261104` remains unmerged and undeployed. Application bytes unchanged versus source-matched six-group CI commit `545fc018eaaccd71ca7a9c4c38747f6f65ff6bdc`.
 - Closed missing CI trigger with branch-restricted `push` path filter in `.github/workflows/ds2-global-consistency-audit.yml`; commit `80c21cc53314af681bfda5fdbf6e04b767fcd167`. No main triggers or deployment workflow added. This invokes existing Chromium audit with newer technical DM Mono + DM Sans controls assertions and fail-closed errors.
