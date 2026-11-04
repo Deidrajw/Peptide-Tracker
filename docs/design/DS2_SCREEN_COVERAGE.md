@@ -1,3 +1,7 @@
+## 2026-11-03 — Stash root-entry consistency, v0.9.24-beta PR130
+- Entering Stash via bottom primary navigation now resets its transient subcategory to Vial kits, consistent with Calendar opening on current month and Plans root entry. Explicit in-Stash switches to Other forms and Supplies persist within visit. Add Other Form Save still takes user directly to its category. No approved kit card or segmented control visual redesign.
+- Browser leave/reenter assertion added at both 320/390 and light/dark, with LIVE and isolated DEMO. Physical iPhone for latest reset is still NOT TESTED; prior P4 7/7 iPhone Pass predates reset.
+
 ## 2026-11-03 — P4 DS2 responsive evidence (candidate PR130)
 - 320/390 dark/light Chromium fictional full-app DEMO: Stash search on existing page, Other forms/Supplies matching empty states, inline supplement use/reuse/template list, rename/delete 44px SVG actions and docked Save visible in sampled 320px screenshot; body scrollWidth=viewport, no JS errors. Direct source-matched demo is not independent physical iPhone.
 - Template manage actions are minimal and scoped to existing check-in; no extra top-level tab, no altered kit card hierarchy, no changes to dose or calculator interfaces. WebKit general workflow #41742486586 SUCCESS. Manual Safari keyboard, safe area, VoiceOver and actual UAT NOT TESTED.
