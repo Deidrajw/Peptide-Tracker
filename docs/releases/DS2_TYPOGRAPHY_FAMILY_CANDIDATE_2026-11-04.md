@@ -1,3 +1,11 @@
+## 2026-11-04 follow-up — verified workflow artifacts (not physical acceptance)
+- GitHub Actions PR code-source commit `545fc018eaaccd71ca7a9c4c38747f6f65ff6bdc`: global Chromium #41809012361, shared writer #41809012377, nested navigation #41809012415, WebKit #41809012428, mobile #41809012375, build/parity #41809012370 — all completed SUCCESS.
+- Chromium artifact #13310519296 independently downloaded: ZIP 114 entries CRC PASS; summary 112 states, 0 failures, 0 horizontal overflow. Representative 320/390 light/dark Calendar, Learn, Supplements, Journal, Health, Today captures visually inspected.
+- Build artifact #13310399254 independently downloaded: outer ZIP 548 entries CRC PASS, manifest source `545fc018`; LIVE ZIP 26 files CRC PASS and exact manifest membership; standalone FULL APP DEMO and offline DEMO ZIP verified, offline index byte-identical to standalone DEMO; fictional sample mode, no live data writes/import/sync from this verification.
+- Compare `545fc018..bfbc7631` shows **no application file changes** but later additions to `scripts/ds2-global-consistency-audit.mjs` (36 lines) plus documentation updates. Therefore the last workflow run proves the app-source candidate but NOT the current test-script revision. Re-run current PR-head audit to close this gap.
+- Physical iPhone/VoiceOver, Dynamic Type and actual externally downloaded custom font glyphs NOT VERIFIED. Production v0.9.24-beta unchanged; PR #132 DRAFT, unmerged, undeployed. No clinical calculator safety certification.
+- **ONE NEXT ACTION:** run current PR-head global browser audit and check typography screenshots/font download/large text; then seek real iPhone acceptance. No merge/deploy.
+
 # Nexus DS2 Typography — Unreleased Candidate Evidence
 **Date:** 2026-11-04 (Toronto). **Baseline main:** `755dea5eed417c1515543779fd81be77b6a504de` (production `v0.9.24-beta`). **Draft PR:** #132 (UNMERGED, UNDEPLOYED). **Application / test source:** `983a58d3d7e8b2a9ab6a0c068dbcde39866dba26`. Later documentation-only commits do not alter code. No production data touched.
 
