@@ -1,3 +1,10 @@
+## Final corrected-source CI qualification (2026-11-03; NOT RELEASED)
+- Current qualified test/source SHA: `575c419d22982a2a26e608fb202c92cbc9ba4341` (application source remains unchanged since `9ba0c14756c5a02ff6d9ea5f3423c326746f6b1e`).
+- GitHub Actions five workflow groups PASS: full Chromium/build #41743566053, WebKit #41743566091, mobile #41743566060, shared writer and real 2-tab #41743566133, nested DS2 #41743566086. Prior failed Chromium #41742486604 retained as historical test-fixture failure, resolved by test-only change to initialize synthetic Retatrutide fixture after boot.
+- #41743566053 browser logs: Check-In 8 configurations PASS; 8 Log Dose LIVE/DEMO configurations/256 flows PASS; vial-source 96 assertions PASS; nasal/stock/protocol/Plans protections PASS. Calculator's standalone 14 guard/examples PASS is not independent clinical validation.
+- Exact corrected-source artifact #13283570424: 548-entry outer archive CRC PASS, 26-file root LIVE ZIP CRC PASS, source manifest matches 575c419d, isolated full-app DEMO and offline index byte-equal, 8 Chromium 320/390 light/dark LIVE/DEMO PASS. Full original release packages, not feature-only mockups.
+- Retained gates: manual physical iPhone and VoiceOver/keyboard acceptance NOT TESTED, next release version unassigned, no user approval to merge or deploy; production unaffected.
+
 # Nexus Priority 4 — PR #130 release-candidate notes
 Date: 2026-11-03 | Status: DRAFT, NOT RELEASED
 
