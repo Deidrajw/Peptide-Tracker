@@ -4426,3 +4426,52 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   box-sizing:border-box!important;
   min-height:44px!important;
 }
+
+/* DS2 TYPOGRAPHY v1 — approved 2026-11-04.
+   DM Sans = functional UI, Fraunces = existing editorial headings,
+   DM Mono = explicitly technical/aligned numerics.
+   Keep original sizes/colour for components not in approved role treatment. */
+:root{
+  --nx-font-ui:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --nx-font-display:"Fraunces",Georgia,serif;
+  --nx-font-numeric:"DM Mono",ui-monospace,SFMono-Regular,monospace;
+  --nx-type-explanation:13px;
+  --nx-type-eyebrow:11px;
+  --nx-type-form-label:13px;
+}
+html body,html body #app,html body #app :is(button,input,textarea,select){
+  font-family:var(--nx-font-ui)!important;
+}
+/* Explicitly supersede the earlier SF Pro card exception, not the accepted geometry. */
+#app .nx-compound-card,#app .nx-hybrid-expanded-compound{
+  font-family:var(--nx-font-ui)!important;
+}
+/* The legacy .mono class is applied widely to nontechnical category/eyebrow text.
+   DM Sans is the safe default; a dedicated numeric role restores true monospacing. */
+#app .mono,#app .field-label{
+  font-family:var(--nx-font-ui)!important;
+}
+#app :is(.nx-technical-value,.nx-mono-number,#pd-count,.nx-cal-weight,.nx-dose-confirm-hero strong){
+  font-family:var(--nx-font-numeric)!important;
+  font-variant-numeric:tabular-nums;
+}
+/* Page and editorial titles retain the existing approved Fraunces treatment. */
+#app :is(.serif,.nx2-page-title,.page-title){
+  font-family:var(--nx-font-display)!important;
+}
+/* Bounded readable-copy correction: actual explanatory text, not numerical grids. */
+#app :is(.nx-daily-track-note,.nx-cal-hub p,.nx-cal-hub-note,.nx2-supp-catalogue-note){
+  font-size:var(--nx-type-explanation)!important;line-height:1.5!important;
+}
+/* This selector only changes legacy compact category copy; number-labelled
+   measurement controls retain their scoped sizing and numeric role. */
+#app :is(.nx-journal-search-label,.nx-journal-filter-label){
+  font-family:var(--nx-font-ui)!important;
+  font-size:var(--nx-type-form-label)!important;line-height:1.4!important;
+}
+/* Documented section eyebrow class for gradually migrating old .mono markup. */
+#app .nx-category-eyebrow{
+  font-family:var(--nx-font-ui)!important;
+  font-size:var(--nx-type-eyebrow)!important;
+  font-weight:650;letter-spacing:.045em;
+}
