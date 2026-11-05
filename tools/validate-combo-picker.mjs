@@ -63,6 +63,23 @@ try {
   ensure(await page.locator('.combo-dose-input[data-n="Test Compound 01"]').count()===1,'Favorite did not select first compound');
   ensure(await page.locator('.combo-preset-del').count()===1,'Favorite delete action missing');
   ensure(await page.locator('.combo-preset-del').getAttribute('aria-label')!==null,'Favorite delete action unlabeled');
+  // A separate-injection or IM choice must not silently use the legacy mixed-SubQ writer.
+  await page.locator('input[name="nx-combo-grouping"][value="separate"]').check();
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate setup not displayed');
+  await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('1');
+  await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('1');
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate injections advanced to unsafe confirmation');
+  await page.locator('#nx-combo-back').click();
+  await page.locator('input[name="nx-combo-grouping"][value="mixed"]').check();
+  await page.locator('#nx-combo-continue').click();
+  await page.locator('#nx-combo-method').selectOption('IM');
+  ensure(await page.locator('#combo-site option').count()===6,'IM site choices not shared with Log Dose');
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('#nx-combo-setup-step').isVisible(),'IM advanced to unsupported confirmation');
+  ensure(await page.evaluate(()=>Object.values(state.customPeptides).every(p=>(p.doses||[]).length===0)),'Blocked paths wrote dose history');
+
   ensure(errors.length===0,'Page exceptions: '+errors.join('; '));
   results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate delete','no exceptions']});
   await ctx.close();
