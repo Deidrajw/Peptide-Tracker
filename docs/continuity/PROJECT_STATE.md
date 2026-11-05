@@ -1,3 +1,9 @@
+## 2026-11-05 — Approved Combo Dose UI coded on draft PR135; exact-head QA PENDING
+- Verified main baseline 21b9e42a; application 05-nexus.js focused-form commit 9e22381d, DS2 CSS commit 9c71219f; branch feature/combo-dose-stepper-vial-details-20261105, draft PR #135. User approved interactive focused setup proposal but did NOT approve merge/deploy.
+- Coded focused single active compound panel, numbered accessible navigation, prominent name, purple selection cards, streamlined header, SVG disclosure alignment, disabled no-eligible-vial display. Existing transaction/ledger remains untouched. This is code-complete candidate, NOT tested or user-accepted.
+- Local source candidate passed node --check on 05 JS and zipped file integrity; no browser screenshot, exact GitHub Actions, served Google font validation or full new-source LIVE/DEMO ZIP yet. Earlier #42063375466 CI PASS applies to pre-redesign source only.
+- NEXT ACTION: retrieve CI for 9c71219f; resolve browser regressions and rebuild matching fictional standalone FULL DEMO and LIVE artifacts. Physical iPhone UAT after that. Release-notes gate remains separate. No merge/deploy.
+
 ## 2026-11-05 — PR135 physical iPhone feedback: UX + DEMO font parity BLOCKERS (PROPOSED, NOT CODED)
 - User screenshots of Combo Dose show duplicated header, browser-blue radio, picker chevron inconsistency, flattened compound heading/labels, cramped source copy, misaligned View vial disclosure, and six-compound long-form scalability failure. Current PASS CI qualifies automated functions, NOT user-accepted visual design.
 - Source audit: LIVE CSS imports Google Fonts (DM Sans/DM Mono/Fraunces); standalone offline FULL DEMO strips that import and bundles no @font-face. CSS still declares DM Sans, so offline/file demo can silently fall back. Require a served-font visual QA path and honest fallback labeling; never infer actual font load from CSS declarations.
