@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 still UNRELEASED, latest unit-safe revision
+- Draft PR135 latest code 1dd305d9 and latest test 472cb093; no version change, merge, deployment or migration. Adds entered mg/mcg conversion parity, strict 1mcg inventory ledger precision and exact-vial BAC history readback. Prior 08a0a84b full build PASS does not cover these changes; matching final artifacts and physical iPhone unqualified. Source matching demo/live reference-only files exist from 08a0. Production saved records remain untouched; separate stale release-notes gate #41971160513 unresolved.
+
 ## 2026-11-05 — PR135 unreleased candidate unit-parity revision
 - Not released or deployed. Development code/test SHA 3e558dbf on draft PR135 extends approved Combo Dose with preferred mg/mcg selection, mass-preserving unit switching, canonical native dose history, entered unit audit, strict small-mass inventory precision and shortfall checks. Existing production localStorage untouched, migrations none. QA for latest-source in progress; no new release tag. Prior 08a0a84b browser/full-demo/live 8/8 PASS does not qualify unit revision. Physical iPhone and independent calculator safety pending.
 
