@@ -145,11 +145,15 @@ try {
       Math.abs(Number(first?.dose)-0.3)<0.0001&&first?.enteredUnit==='mcg'&&first?.enteredAmount==='300'&&
       Math.abs(first?.allocations?.[0]?.amount-0.3)<0.0001;
     const remaining=state.supplies[0].vials[0].remainingMg;
+    const micro=planAndApplyComboDoses([{name:'Test Compound 03',doseVal:'1'},{name:'Test Compound 04',doseVal:'1'}],
+      '2026-11-05T09:00','Abdomen — upper left','','combo-micro',[],opts);
+    const microDeducted=micro.ok&&Math.abs(state.supplies[0].vials[0].remainingMg-(remaining-0.001))<0.0000001;
+    const afterMicro=state.supplies[0].vials[0].remainingMg;
     const bad=planAndApplyComboDoses([{name:'Test Compound 03',doseVal:'999999'},{name:'Test Compound 04',doseVal:'1'}],
       '2026-11-05T09:00','Abdomen — upper left','','combo-short',[],opts);
-    return {good,bad:!bad.ok&&!!bad.shortfall,unchanged:state.supplies[0].vials[0].remainingMg===remaining};
+    return {good,microDeducted,bad:!bad.ok&&!!bad.shortfall,unchanged:state.supplies[0].vials[0].remainingMg===afterMicro};
   });
-  ensure(unitCheck.good&&unitCheck.bad&&unitCheck.unchanged,
+  ensure(unitCheck.good&&unitCheck.microDeducted&&unitCheck.bad&&unitCheck.unchanged,
     'mcg preference caused native-unit or inventory mismatch: '+JSON.stringify(unitCheck));
   await page.evaluate(()=>{
     state.supplies=[];
