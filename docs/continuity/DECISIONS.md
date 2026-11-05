@@ -1,3 +1,6 @@
+## 2026-11-05 — Screenshot correction to approved Combo Setup
+- Preserve approved Select → Setup → Review and session-first design; Inventory Source requires intentional vertical separation from Dose Amount, implemented as 20px group gap. Compact mg/mcg native selector must expose an explicit DS2 outline chevron rather than rely on browser-dependent select-arrow painting. Maintain both units and mass-preserving conversions. This is a targeted corrective UI request, not a redesign or deployment approval.
+
 ## 2026-11-05 — User approved shared-session-first Combo Setup refinement
 - User explicitly approved the recommended layout after evaluating the annotated iPhone screenshot: one editable shared session section above the focused compound, then compound-specific dose/source/site and Next compound as its natural endpoint. Shared date, time and administration method are never repeated for each compound; shared site only for mixed syringe and individual site for separate injections. Session summary remains editable and collapses on compound navigation. This is development design approval, NOT PR merge/deployment approval.
 
