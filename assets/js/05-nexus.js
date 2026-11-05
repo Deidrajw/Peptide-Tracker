@@ -235,7 +235,7 @@ function comboDoseModal() {
     m.querySelector("#nx-combo-continue").style.display=next===2?"none":"";
     if(next===2){
       const summary=m.querySelector("#nx-combo-review-summary");
-      const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Method",comboMethod.value]];
+      const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Source mode","Draw now"],["Date & time",m.querySelector("#combo-date")?.value||"Not recorded"],["Method",comboMethod.value]];
       if(selectedGrouping()==="mixed")rows.push(["Site",comboSite.value]);
       sel.forEach(name=>{
         const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value||"Amount missing";
