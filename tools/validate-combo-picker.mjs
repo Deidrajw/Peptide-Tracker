@@ -63,25 +63,53 @@ try {
   ensure(await page.locator('.combo-dose-input[data-n="Test Compound 01"]').count()===1,'Favorite did not select first compound');
   ensure(await page.locator('.combo-preset-del').count()===1,'Favorite delete action missing');
   ensure(await page.locator('.combo-preset-del').getAttribute('aria-label')!==null,'Favorite delete action unlabeled');
-  // A separate-injection or IM choice must not silently use the legacy mixed-SubQ writer.
+  // Method + individual site behavior: the new source-aware planner must encode
+  // separate records with their actual site, not copy the shared mixed site.
   await page.locator('input[name="nx-combo-grouping"][value="separate"]').check();
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate setup not displayed');
   await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('1');
   await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('1');
+  ensure(await page.locator('.nx-combo-individual-site-select:visible').count()===2,'Separate injection sites are not independently visible');
+  await page.locator('.nx-combo-individual-site-select[data-n="Test Compound 01"]').selectOption('Abdomen — upper left');
+  await page.locator('.nx-combo-individual-site-select[data-n="Test Compound 02"]').selectOption('Thigh — right (SubQ)');
+  ensure(!await page.locator('#nx-combo-shared-site').isVisible(),'Shared site still visible for separate injections');
   await page.locator('#nx-combo-continue').click();
-  ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate injections advanced to unsafe confirmation');
-  await page.locator('#nx-combo-back').click();
-  await page.locator('input[name="nx-combo-grouping"][value="mixed"]').check();
+  ensure(await page.locator('#nx-combo-review-step').isVisible(),'Separate review not shown');
+  ensure((await page.locator('#nx-combo-review-summary').innerText()).includes('Thigh — right (SubQ)'),'Separate site missing in review');
+  await page.locator('#save').click();
+  ensure(await page.evaluate(()=>{
+    const a=state.customPeptides['Test Compound 01'].doses;
+    const b=state.customPeptides['Test Compound 02'].doses;
+    return a.length===1&&b.length===1&&a[0].method==='SubQ'&&b[0].method==='SubQ'&&
+      a[0].site==='Abdomen — upper left'&&b[0].site==='Thigh — right (SubQ)'&&
+      a[0].comboId===b[0].comboId&&a[0].comboAdministration==='separate_injection'&&
+      b[0].comboAdministration==='separate_injection';
+  }),'Separate injections were not attributed correctly');
+  // The IM choices must be exactly the regular Log Dose method-specific list.
+  await page.evaluate(()=>{
+    state._comboSelected=['Test Compound 01','Test Compound 02'];
+    comboDoseModal();
+  });
   await page.locator('#nx-combo-continue').click();
   await page.locator('#nx-combo-method').selectOption('IM');
-  ensure(await page.locator('#combo-site option').count()===6,'IM site choices not shared with Log Dose');
+  ensure(await page.locator('#combo-site option').count()===6,'IM sites do not match regular Log Dose');
+  await page.locator('#combo-site').selectOption('Deltoid — left (IM)');
+  await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('2');
+  await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('2');
   await page.locator('#nx-combo-continue').click();
-  ensure(await page.locator('#nx-combo-setup-step').isVisible(),'IM advanced to unsupported confirmation');
-  ensure(await page.evaluate(()=>Object.values(state.customPeptides).every(p=>(p.doses||[]).length===0)),'Blocked paths wrote dose history');
+  ensure(await page.locator('#nx-combo-review-step').isVisible(),'IM review not shown');
+  await page.locator('#save').click();
+  ensure(await page.evaluate(()=>{
+    const a=state.customPeptides['Test Compound 01'].doses;
+    const b=state.customPeptides['Test Compound 02'].doses;
+    return a.length===2&&b.length===2&&a[1].method==='IM'&&b[1].method==='IM'&&
+      a[1].site==='Deltoid — left (IM)'&&b[1].site==='Deltoid — left (IM)'&&
+      a[1].comboAdministration==='mixed_syringe'&&b[1].comboAdministration==='mixed_syringe';
+  }),'IM method/site not preserved on every dose record');
 
   ensure(errors.length===0,'Page exceptions: '+errors.join('; '));
-  results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate delete','no exceptions']});
+  results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate sites and attribution','mixed IM attribution','no exceptions']});
   await ctx.close();
  }
 }finally{await browser.close();}
