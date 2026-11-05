@@ -126,6 +126,51 @@ try {
   }),'IM method/site not preserved on every dose record');
 
 
+  // Unit parity safety: custom preferences can display mcg while the
+  // historical cfg() unit remains mg. 300 mcg MUST deduct exactly 0.3 mg,
+  // save 0.3 in native historical units and remember the entered unit.
+  const unitCheck=await page.evaluate(()=>{
+    state.supplies=[
+      {id:'KU',name:'Test Compound 03',activeKit:true,vialMg:10,totalVials:1,openedVials:1,
+       _vialsBackfilled:true,_vialsRepaired:true,
+       vials:[{id:'VU',status:'open',vialMg:10,remainingMg:5,intendedUse:'Injectable'}]}
+    ];
+    state.customPeptides['Test Compound 03'].unit='mcg';
+    const opts={method:'SubQ',grouping:'mixed',units:{'Test Compound 03':'mcg','Test Compound 04':'mg'},
+      sources:{'Test Compound 03':'KU:VU'}};
+    const items=[{name:'Test Compound 03',doseVal:'300'},{name:'Test Compound 04',doseVal:'1'}];
+    const valid=planAndApplyComboDoses(items,'2026-11-05T09:00','Abdomen — upper left','','combo-unit',[],opts);
+    const first=valid.doses?.find(x=>x.name==='Test Compound 03')?.dose;
+    const good=valid.ok&&Math.abs(state.supplies[0].vials[0].remainingMg-4.7)<0.0001&&
+      Math.abs(Number(first?.dose)-0.3)<0.0001&&first?.enteredUnit==='mcg'&&first?.enteredAmount==='300'&&
+      Math.abs(first?.allocations?.[0]?.amount-0.3)<0.0001;
+    const remaining=state.supplies[0].vials[0].remainingMg;
+    const bad=planAndApplyComboDoses([{name:'Test Compound 03',doseVal:'999999'},{name:'Test Compound 04',doseVal:'1'}],
+      '2026-11-05T09:00','Abdomen — upper left','','combo-short',[],opts);
+    return {good,bad:!bad.ok&&!!bad.shortfall,unchanged:state.supplies[0].vials[0].remainingMg===remaining};
+  });
+  ensure(unitCheck.good&&unitCheck.bad&&unitCheck.unchanged,
+    'mcg preference caused native-unit or inventory mismatch: '+JSON.stringify(unitCheck));
+  await page.evaluate(()=>{
+    state.supplies=[];
+    state._comboDoses={};state._comboUnits={};state._comboSelected=['Test Compound 03','Test Compound 04'];
+    comboDoseModal();
+  });
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('.nx-combo-unit[data-n="Test Compound 03"]').inputValue()==='mcg',
+    'Custom preferred mcg unit not displayed in Combo Dose');
+  await page.locator('.combo-dose-input[data-n="Test Compound 03"]').fill('300');
+  await page.locator('.nx-combo-unit[data-n="Test Compound 03"]').selectOption('mg');
+  ensure(Math.abs(Number(await page.locator('.combo-dose-input[data-n="Test Compound 03"]').inputValue())-0.3)<0.00001,
+    'Changing from mcg to mg changed physical dose by 1000x');
+  await page.locator('.nx-combo-unit[data-n="Test Compound 03"]').selectOption('mcg');
+  ensure(Math.abs(Number(await page.locator('.combo-dose-input[data-n="Test Compound 03"]').inputValue())-300)<0.00001,
+    'Changing back to mcg did not restore the original amount');
+  await page.locator('#nx-combo-back').click();
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('.nx-combo-unit[data-n="Test Compound 03"]').inputValue()==='mcg',
+    'Step navigation lost the chosen unit');
+  await page.evaluate(()=>{closeModal();});
   // A labelled nasal vial must never be an injectable source, even when
   // the compound's name matches. Selecting an unavailable exact vial fails
   // before any physical inventory deduction.
