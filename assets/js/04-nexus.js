@@ -1421,6 +1421,45 @@ function reopenVialModal(kitId, vialId) {
 
 // Vial actions — Edit reconstitution / Undo reconstitution. Kept as a lightweight sheet
 // rather than inline buttons per vial, since these are correction actions, not routine ones.
+// Stash / Vials: an intentionally read-only physical-vial preparation record.
+// Never substitute kit defaults for missing per-vial BAC or dates, and never
+// modify inventory merely by opening this view.
+function viewVialPreparationModal(kitId,vialId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
+  if(!kit||!vial){showErrorBanner("This vial record is no longer available.");return;}
+  const history=(kit.reconHistory||[])
+    .filter(record=>String(record.vialId)===String(vial.id))
+    .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  const entry=history[0]||{};
+  const water=vial.bacMl??entry.bacMl;
+  const date=vial.reconDate||entry.date;
+  const notes=vial.notes||entry.notes;
+  const amount=vial.vialMg??kit.vialMg;
+  const amountNumber=Number(amount),waterNumber=Number(water);
+  const row=(label,value)=>`<div class="nx-vial-prep-row" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-sub)"><span style="font-size:12px;color:var(--t4)">${label}</span><strong style="font-size:13px;text-align:right;color:var(--t1);max-width:65%;overflow-wrap:anywhere">${esc(String(value))}</strong></div>`;
+  const m=openModal(`
+    <section class="nx-vial-prep-view" aria-label="Vial preparation details">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <div><span class="nx-dose-kicker">STASH · VIAL RECORD</span>
+          <h2 class="nx-dose-title" style="font-size:19px;margin:5px 0 4px">${esc(kit.name)} · Vial ${esc(vial.sequenceNumber||vial.vialNumber||"—")}</h2>
+          <p class="nx-dose-subtitle" style="margin:0">Read-only preparation details</p>
+        </div>
+        <button id="nx-vial-prep-close" type="button" aria-label="Close vial preparation" style="flex-shrink:0;min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t2);font-size:20px">×</button>
+      </div>
+      ${row("Status",vial.status==="open"||vial.status==="active"?"Open":vial.status||"Not recorded")}
+      ${row("Nominal vial amount",Number.isFinite(amountNumber)&&amountNumber>0?amountNumber+" mg":"Not recorded")}
+      ${row("BAC water added",Number.isFinite(waterNumber)&&waterNumber>0?waterNumber+" mL":"Not recorded for this vial")}
+      ${row("Reconstituted",date?fmtDate(date):"Not recorded")}
+      ${row("Form",vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Not recorded for this vial")}
+      ${row("Current remaining",typeof getVialRemainingMg==="function"?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Not available")}
+      ${notes?`<div style="margin-top:14px"><span style="font-size:12px;color:var(--t4)">Preparation notes</span><p style="font-size:13px;color:var(--t2);line-height:1.5;margin:6px 0">${esc(String(notes))}</p></div>`:""}
+      <p style="font-size:11px;color:var(--t4);line-height:1.5;margin-top:14px">Only details recorded for this exact vial are shown. Kit-level defaults do not establish how a vial was prepared.</p>
+    </section>
+  `,cfg(kit.name).color);
+  m.querySelector("#nx-vial-prep-close").onclick=closeModal;
+}
+
 function vialActionsMenu(kitId, vialId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
