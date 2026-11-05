@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 approved visual refinement candidate; unreleased
+- User approved redesigned UX, not release. Coded draft PR commits 9e22381d JS and 9c71219f CSS; source is unmerged and undeployed. Previous verified production remains v0.9.24-beta. No storage migration, no production user data access or writes.
+- Change: focused single compound Setup/navigation, DS2 lavender grouping controls, concise title, corrected SVG disclosure, disabled absent source. Previous unit safety remains. New exact-head CI/artifacts and physical iPhone UAT pending. Offline DEMO DM Sans parity gap unresolved; separate stale release notes gate unresolved.
+
 ## 2026-11-05 — PR135 final candidate qualified by automated CI (UNRELEASED)
 - No new release, version bump, merge, deployment or migration. Candidate source 1dd305d9369c6121c012975012a48cfc7458aaab in draft PR135: mg/mcg mass-conserving entry, precise 1mcg accounting, strict shortfall rejection, vialId-specific BAC reconHistory readback, approved Combo Dose stepper.
 - Five exact-source workflows SUCCESS: build #42063375466, WebKit #42063375521, mobile #42063375520, writer #42063375318, nested #42063375449. GitHub workflow artifact #13434406691: outer 548 ZIP entries CRC PASS, 26-member complete LIVE ZIP CRC PASS, full isolated fictional DEMO, offline DEMO and 8/8 Combo browser PASS.
