@@ -28,6 +28,19 @@ try {
     document.documentElement.dataset.theme=theme;
     comboDoseModal();
   },theme);
+  ensure(await page.locator('#x').evaluate(el=>el.getBoundingClientRect().height>=44&&el.getBoundingClientRect().width>=44),
+    'Combo Dose close button below 44px iPhone touch target');
+  ensure(await page.locator('#nx-combo-continue').evaluate(el=>el.getBoundingClientRect().height>=44),
+    'Combo step Continue action below 44px');
+  const comboFits=()=>page.evaluate(()=>{
+    const root=document.documentElement,modal=document.querySelector('.modal');
+    return {page:root.scrollWidth-root.clientWidth,modal:modal?modal.scrollWidth-modal.clientWidth:0};
+  });
+  const checkFits=async stage=>{
+    const widths=await comboFits();
+    ensure(widths.page<=2&&widths.modal<=2,stage+' horizontal overflow: '+JSON.stringify(widths));
+  };
+  await checkFits('Select');
   const list=page.locator('#combo-choices');
   ensure(await list.count()===1,'Combo selection list missing');
   ensure(await page.locator('.combo-compound-toggle').count()>=50,'50 tracked compounds not offered');
@@ -45,6 +58,7 @@ try {
   ensure(await page.locator('#combo-selected-count').innerText().then(s=>s.includes('2 selected')),'Multi-select count failed');
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Setup step not displayed');
+  await checkFits('Setup');
   await page.locator('.combo-dose-input[data-n="Test Compound 49"]').fill('1.25');
   await page.locator('#combo-notes').fill('Fictional combo draft note');
   await page.locator('#nx-combo-back').click();
@@ -76,6 +90,7 @@ try {
   ensure(!await page.locator('#nx-combo-shared-site').isVisible(),'Shared site still visible for separate injections');
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-review-step').isVisible(),'Separate review not shown');
+  await checkFits('Review');
   ensure((await page.locator('#nx-combo-review-summary').innerText()).includes('Thigh — right (SubQ)'),'Separate site missing in review');
   await page.locator('#save').click();
   await page.locator('#nx-combo-review-step').waitFor({state:'detached'});
