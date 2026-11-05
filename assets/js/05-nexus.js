@@ -96,9 +96,9 @@ function comboDoseModal() {
   }).join("");
 
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:#A78BFA;letter-spacing:1.5px">LOG COMBO DOSE</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <div class="nx-dose-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px">
+      <div><div class="nx-dose-kicker">LOGGING · COMBO</div><h2 class="nx-dose-title">Log Combo Dose</h2></div>
+      <button id="x" type="button" aria-label="Close Combo Dose" style="min-width:44px;min-height:44px;background:transparent;border:0;color:var(--t4);font-size:20px">×</button>
     </div>
     <div class="hint" style="margin-bottom:14px">Log multiple injectable compounds together. Each dose retains its own source, administration method and history.</div>
     <nav class="nx-combo-steps" aria-label="Combo dose steps" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px">
