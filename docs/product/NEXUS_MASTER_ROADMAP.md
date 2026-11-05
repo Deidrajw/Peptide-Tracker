@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 next QA priority: approved session-first hierarchy
+- User approved shared-session-first Combo Setup; JS/CSS and browser assertions coded at 929ac0e9/f8d5ee00/3daaf99c on draft branch. Next: exact-source pinned browser CI, full LIVE/DEMO artifact integrity, 320/390 visual and loaded-font check, then iPhone UAT. Five regular workflow dependency failures and separate stale release notes gate remain blockers. No merge/deploy approval.
+
 ## 2026-11-05 — PR135 next gating priority after pinned Combo QA PASS
 - Target pinned browser #42094294724 SUCCESS at app source 0520415d, eight Combo tests and protected vial/formulation/Check-In PASS; exact build artifact #13447181982 CRC validated. Remaining blockers: five original workflows fail unavailable npm Playwright-core 1.65.0; pin 1.64.1 in existing CI without weakening safeguards, verify network-loaded DM Sans/Fraunces/DM Mono, physical iPhone UAT/VoiceOver, and independent calculator safety. Separate production stale release-notes gate still unresolved. No merge/deploy approval. ONE NEXT ACTION: restore full five-workflow CI green.
 
