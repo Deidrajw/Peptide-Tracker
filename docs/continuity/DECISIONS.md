@@ -1,3 +1,6 @@
+## 2026-11-05 — Combo Dose header must inherit DS2 form typography
+- User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
+
 ## 2026-11-05 — Explicit DS2 dropdown cues for Combo Session Details
 - Preserve native select controls for Administration Method and Administration Site, with consistent visible outline SVG chevrons independent of browser-native background-image appearance. Chevron is decorative and cannot intercept taps. Applies within approved session-first Combo Setup only; this screenshot-driven correction does not authorize release/merge/deploy.
 
