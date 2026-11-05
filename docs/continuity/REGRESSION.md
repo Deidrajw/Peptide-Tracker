@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 approved UX change regression matrix — unverified on revised source
+- New cases: one active panel for 2/6 compounds, pips select each compound, inputs persist on navigation and Back/Continue, mg↔mcg preserves mass, no mixed/separate source mismatch, lavender selected state rather than native blue, single/individual sites according to grouping, 44px tap controls, aligned SVG disclosure, unavailable vial blocks review, no earlier stock deduction.
+- 320/390px dark/light, keyboard and scroll, realistic six compound test, served font-face checks, WebKit and iPhone VoiceOver remain NOT TESTED on 9c71219f; prior five workflow passes on 1dd305d9 no longer qualify new source.
+- Local node syntax for 05 source PASS, local complete ZIP archive CRC PASS only (not CI/build). No clinical calculator certification.
+
 ## 2026-11-05 — PR135 final application SHA 1dd305d9 QA evidence
 - Exact-source GitHub Actions at 1dd305d9: build #42063375466 SUCCESS; WebKit #42063375521 SUCCESS; mobile #42063375520 SUCCESS; writer #42063375318 SUCCESS; nested #42063375449 SUCCESS.
 - Artifact #13434406691 independent ZIP CRC: outer 548 entries PASS; LIVE 26 manifest-matched files PASS; offline DEMO 2 entries PASS. Standalone full-app fictional DEMO included. Combo picker browser report: LIVE and DEMO × light/dark × 320/390 = 8/8 PASS. General browser states 8/8 PASS. These are automated, not physical iPhone tests.
