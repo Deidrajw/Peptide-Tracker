@@ -1,3 +1,6 @@
+## 2026-11-05 — Explicit DS2 dropdown cues for Combo Session Details
+- Preserve native select controls for Administration Method and Administration Site, with consistent visible outline SVG chevrons independent of browser-native background-image appearance. Chevron is decorative and cannot intercept taps. Applies within approved session-first Combo Setup only; this screenshot-driven correction does not authorize release/merge/deploy.
+
 ## 2026-11-05 — Screenshot correction to approved Combo Setup
 - Preserve approved Select → Setup → Review and session-first design; Inventory Source requires intentional vertical separation from Dose Amount, implemented as 20px group gap. Compact mg/mcg native selector must expose an explicit DS2 outline chevron rather than rely on browser-dependent select-arrow painting. Maintain both units and mass-preserving conversions. This is a targeted corrective UI request, not a redesign or deployment approval.
 
