@@ -244,7 +244,7 @@ function comboDoseModal() {
         rows.push(["Source",selection?.selectedOptions?.[0]?.textContent||"Not selected"]);
         if(selectedGrouping()==="separate")rows.push(["Site",comboIndividualSites[name]||"Not selected"]);
       });
-      summary.replaceChildren(...rows.map(([key,val])=>{const row=document.createElement("div");row.style.cssText="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--border-sub)";const label=document.createElement("span");label.textContent=key;const value=document.createElement("strong");value.textContent=val;row.append(label,value);return row;}));
+      summary.replaceChildren(...rows.map(([key,val])=>{const row=document.createElement("div");row.style.cssText="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--border-sub)";const label=document.createElement("span");label.textContent=key;label.style.cssText="min-width:0;overflow-wrap:anywhere;flex:1";const value=document.createElement("strong");value.textContent=val;value.style.cssText="min-width:0;overflow-wrap:anywhere;flex:1;text-align:right;font-weight:600";row.append(label,value);return row;}));
     }
   };
   m.querySelector("#nx-combo-continue").onclick=()=>{
