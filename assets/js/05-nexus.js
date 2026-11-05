@@ -22,6 +22,16 @@ function comboDoseModal() {
   if (!state._comboSelected) state._comboSelected = [];
   let sel = state._comboSelected.filter(n=>names.includes(n));
   state._comboSelected = [...sel];
+  // Modal-local choices are never written to persistent settings on navigation.
+  const comboSources={};
+  const comboIndividualSites={};
+  const sourceOptionsFor=(name,method)=>{
+    const eligible=typeof getEligibleSourceKits==="function"?getEligibleSourceKits(name,method):[];
+    return eligible.map(({kit,vial})=>({
+      value:String(kit.id)+":"+String(vial.id),
+      label:(kit.kitName||kit.name)+" · Vial "+(vial.number||vial.vialNumber||String(vial.id).slice(-4))
+    }));
+  };
 
   // Prepared & Ready — actual prepared mixed syringes, distinct from favorites below.
   // A favorite is a reusable recipe for what to draw; a prepared syringe is a specific
@@ -66,7 +76,13 @@ function comboDoseModal() {
     const v = (state._comboDoses||{})[n]||"";
     return `<div style="margin-bottom:10px">
       <label class="field-label">${esc(n)} DOSE (${c.unit})</label>
-      <input class="combo-dose-input" data-n="${esc(n)}" type="number" class="inp" placeholder="e.g. 2" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
+      <input class="combo-dose-input" data-n="${esc(n)}" type="number" min="0" step="any" inputmode="decimal" aria-label="${esc(n)} dose amount" class="inp" placeholder="Enter amount" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
+      <label class="field-label" style="display:block;margin-top:10px" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
+      <select id="nx-combo-source-${sel.indexOf(n)}" class="inp nx-combo-source" data-n="${esc(n)}" aria-label="${esc(n)} vial source" style="min-height:44px;margin-bottom:4px"></select>
+      <div class="nx-combo-individual-site" data-n="${esc(n)}" hidden style="margin-top:10px">
+        <label class="field-label">ADMINISTRATION SITE · ${esc(n)}</label>
+        <select class="inp nx-combo-individual-site-select" data-n="${esc(n)}" aria-label="${esc(n)} administration site" style="min-height:44px"></select>
+      </div>
       <button type="button" class="nx-combo-vial-info" data-n="${esc(n)}" aria-expanded="false" style="min-height:44px;display:flex;align-items:center;gap:8px;margin-top:6px;color:var(--t3);font-size:12px;background:transparent;border:0">View vial preparation <span aria-hidden="true">⌄</span></button>
       <div class="nx-combo-vial-detail" data-n="${esc(n)}" hidden style="padding:12px;background:var(--surface-2);border-radius:10px;font-size:12px;color:var(--t3);line-height:1.6"></div>
     </div>`;
@@ -111,7 +127,7 @@ function comboDoseModal() {
     </div>
 <label class="field-label" for="nx-combo-method">ADMINISTRATION METHOD</label>
     <select id="nx-combo-method" class="inp" style="margin-bottom:14px"><option value="SubQ">SubQ</option><option value="IM">IM</option></select>
-    <label class="field-label" for="combo-site">ADMINISTRATION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px"></select>
+    <div id="nx-combo-shared-site"><label class="field-label" for="combo-site">ADMINISTRATION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px"></select></div>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
       <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
@@ -137,15 +153,39 @@ function comboDoseModal() {
   const comboPanels=["nx-combo-select-step","nx-combo-setup-step","nx-combo-review-step"];
   const comboMethod=m.querySelector("#nx-combo-method");
   const comboSite=m.querySelector("#combo-site");
+  const selectedGrouping=()=>m.querySelector('input[name="nx-combo-grouping"]:checked')?.value||"mixed";
   const refreshComboSites=()=>{
     const allowed=nexusAdminSites(comboMethod.value);
     const previous=comboSite.value||state._comboSite||"";
     comboSite.innerHTML=allowed.map(site=>`<option value="${esc(site)}">${esc(nexusAdminSiteLabel(site))}</option>`).join("");
     comboSite.value=allowed.includes(previous)?previous:(allowed[0]||"");
+    const separate=selectedGrouping()==="separate";
+    m.querySelector("#nx-combo-shared-site").hidden=separate;
+    m.querySelector("#nx-combo-shared-site").style.display=separate?"none":"";
+    m.querySelectorAll(".nx-combo-individual-site").forEach(container=>{
+      container.hidden=!separate;
+      container.style.display=separate?"":"none";
+      const select=container.querySelector("select"),name=container.dataset.n;
+      const current=comboIndividualSites[name]||select.value;
+      select.innerHTML=allowed.map(site=>`<option value="${esc(site)}">${esc(nexusAdminSiteLabel(site))}</option>`).join("");
+      select.value=allowed.includes(current)?current:(allowed[0]||"");
+      comboIndividualSites[name]=select.value;
+    });
+    m.querySelectorAll(".nx-combo-source").forEach(select=>{
+      const name=select.dataset.n;
+      const choices=sourceOptionsFor(name,comboMethod.value);
+      const prior=comboSources[name]||select.value||"auto";
+      const hasKit=(state.supplies||[]).some(k=>k.name===name);
+      select.innerHTML=hasKit
+        ? '<option value="auto">Use eligible open vials automatically</option>'+choices.map(c=>`<option value="${esc(c.value)}">${esc(c.label)}</option>`).join("")
+        : '<option value="auto">Untracked · no vial in Stash</option>';
+      select.value=choices.some(c=>c.value===prior)?prior:"auto";
+      comboSources[name]=select.value;
+      if(hasKit&&!choices.length)select.innerHTML='<option value="auto">No eligible open '+esc(comboMethod.value)+' vial</option>';
+    });
   };
   comboMethod.onchange=refreshComboSites;
   refreshComboSites();
-  const selectedGrouping=()=>m.querySelector('input[name="nx-combo-grouping"]:checked')?.value||"mixed";
   const showComboStep=(next)=>{
     comboStep=next;
     comboPanels.forEach((id,i)=>{m.querySelector("#"+id).hidden=i!==next;m.querySelector("#"+id).style.display=i===next?"":"none";});
@@ -156,23 +196,39 @@ function comboDoseModal() {
     m.querySelector("#nx-combo-continue").style.display=next===2?"none":"";
     if(next===2){
       const summary=m.querySelector("#nx-combo-review-summary");
-      const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Method",comboMethod.value],["Site",comboSite.value]];
-      sel.forEach(name=>rows.push([name,m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value||"Amount missing"]));
+      const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Method",comboMethod.value]];
+      if(selectedGrouping()==="mixed")rows.push(["Site",comboSite.value]);
+      sel.forEach(name=>{
+        const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value||"Amount missing";
+        const selection=m.querySelector(`.nx-combo-source[data-n="${CSS.escape(name)}"]`);
+        rows.push([name,amount+" "+cfg(name).unit]);
+        rows.push(["Source",selection?.selectedOptions?.[0]?.textContent||"Not selected"]);
+        if(selectedGrouping()==="separate")rows.push(["Site",comboIndividualSites[name]||"Not selected"]);
+      });
       summary.replaceChildren(...rows.map(([key,val])=>{const row=document.createElement("div");row.style.cssText="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--border-sub)";const label=document.createElement("span");label.textContent=key;const value=document.createElement("strong");value.textContent=val;row.append(label,value);return row;}));
     }
   };
   m.querySelector("#nx-combo-continue").onclick=()=>{
     if(comboStep===0&&sel.length<2){showErrorBanner("Select at least two compounds for a combo dose.");return;}
     if(comboStep===1){
-      if(selectedGrouping()!=="mixed"){showErrorBanner("Separate injections require a verified per-dose transaction path. No doses were saved.");return;}
-      if(comboMethod.value!=="SubQ"){showErrorBanner("IM combo logging is not enabled until method attribution is verified. No doses were saved.");return;}
       if(sel.some(name=>!(Number(m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value)>0))){showErrorBanner("Enter a positive dose amount for each compound.");return;}
+      const valid=nexusAdminSites(comboMethod.value);
+      if(selectedGrouping()==="mixed"&&!valid.includes(comboSite.value)){showErrorBanner("Choose an eligible administration site.");return;}
+      if(selectedGrouping()==="separate"&&sel.some(name=>!valid.includes(comboIndividualSites[name]))){showErrorBanner("Choose an administration site for every injection.");return;}
+      if(sel.some(name=>(state.supplies||[]).some(k=>k.name===name)&&!sourceOptionsFor(name,comboMethod.value).length)){
+        showErrorBanner("A selected compound has no eligible open "+comboMethod.value+" vial. Review Stash before logging.");return;
+      }
     }
     showComboStep(Math.min(2,comboStep+1));
   };
   m.querySelector("#nx-combo-back").onclick=()=>showComboStep(Math.max(0,comboStep-1));
   m.querySelectorAll('input[name="nx-combo-grouping"]').forEach(radio=>radio.onchange=()=>{
-    m.querySelector("#nx-combo-continue").textContent=radio.value==="separate"&&radio.checked?"Continue to setup":"Continue";
+    refreshComboSites();
+  });
+  m.querySelector("#combo-dose-fields").addEventListener("change",event=>{
+    const select=event.target;
+    if(select.matches(".nx-combo-source"))comboSources[select.dataset.n]=select.value;
+    if(select.matches(".nx-combo-individual-site-select"))comboIndividualSites[select.dataset.n]=select.value;
   });
   showComboStep(0);
 
@@ -257,6 +313,7 @@ function comboDoseModal() {
     m.querySelector("#combo-selected-count").textContent=sel.length+" selected";
     m.querySelector("#combo-dose-section").style.display=sel.length?"":"none";
     m.querySelector("#combo-dose-fields").innerHTML=doseInputs();
+    refreshComboSites();
     const fav=m.querySelector("#combo-fav-section");
     fav.style.display=sel.length>=2?"":"none";
     if(sel.length<2){m.querySelector("#combo-savefav").checked=false;m.querySelector("#combo-favname-wrap").style.display="none";}
@@ -299,14 +356,17 @@ function comboDoseModal() {
     m.querySelector("#save").onclick = async () => {
       try {
         if (!sel.length) return;
-        if(comboStep!==2||selectedGrouping()!=="mixed"||comboMethod.value!=="SubQ"){showErrorBanner("This administration choice cannot be committed by the current combo writer.");return;}
+        if(comboStep!==2||!["SubQ","IM"].includes(comboMethod.value)||!["mixed","separate"].includes(selectedGrouping())){showErrorBanner("Review the injection method and grouping before logging.");return;}
         const date = m.querySelector("#combo-date").value;
         const site = m.querySelector("#combo-site").value;
         const notes = m.querySelector("#combo-notes").value;
         const comboId = uid();
         const items = sel.map(name => ({ name, doseVal: (m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)||{}).value || "" }));
-        const result = planAndApplyComboDoses(items, date, site, notes, comboId, []);
+        const method=comboMethod.value,grouping=selectedGrouping();
+        const result = planAndApplyComboDoses(items, date, site, notes, comboId, [],
+          {method,grouping,sites:{...comboIndividualSites},sources:{...comboSources}});
         if (!result.ok) {
+          if(result.error){showErrorBanner(result.error+" Nothing was saved.");return;}
           const {name, doseVal, unit, have, noOpenVial, kitId, hasSealedBackup} = result.shortfall;
           // Preserve everything typed so far regardless of which path below is taken, so
           // nothing is lost if the person has to come back to this combo.
@@ -329,7 +389,7 @@ function comboDoseModal() {
             );
             return;
           }
-          if (hasSealedBackup && kit) {
+          if (hasSealedBackup && kit && method==="SubQ" && !comboSources[name]) {
             // Something's open but this dose needs more than what's left — finish that
             // vial (using up the remainder, not discarding it) and open the next sealed
             // one, as one atomic action, then retry the combo immediately. No modal
