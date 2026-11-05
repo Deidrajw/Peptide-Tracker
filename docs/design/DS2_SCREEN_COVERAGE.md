@@ -1,3 +1,8 @@
+## 2026-11-05 — Combo Dose + Stash read-only Vial candidate coverage (PR135, UNRELEASED)
+- Design direction approved: three-step Select/Setup/Review, minimal chrome, shared Log Dose title/site vocabulary, SubQ/IM only, 44px controls and method-specific injection sites. Current candidate 08a0a84b, main 21b9e42a, no merge/deploy.
+- Coded source includes per-compound preparation disclosure, source selector, site assignment for separate injections and Stash Vials View vial detail sheet. Route/physical eligibility and prepared delegation guarded. Exact-head 320/390 light/dark QA and physical iPhone/VoiceOver NOT QUALIFIED at writing; no production user-data migration.
+- ONE NEXT ACTION: inspect latest-source full browser/visual evidence and run real-device acceptance before release request.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.
