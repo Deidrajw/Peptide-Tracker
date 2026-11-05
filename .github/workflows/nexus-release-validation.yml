@@ -1,7 +1,8 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**', main]
+    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    # PR132 scoped QA branch trigger
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -57,7 +58,7 @@ jobs:
         shell: bash
         run: |
           node tools/check-release-readiness.mjs --self-test
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
             node tools/check-release-readiness.mjs --candidate
           else
             node tools/check-release-readiness.mjs --production
@@ -68,7 +69,7 @@ jobs:
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
             python3 tools/verify-pages.py --attempts 1 --interval 0 --output dist/Nexus_CLOUDFLARE_PARITY.json
           else
             python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json

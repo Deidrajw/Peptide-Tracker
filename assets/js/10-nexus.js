@@ -140,7 +140,7 @@ function stashView() {
     </section>`;
   }
 
-  html += `<div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR KITS</div>
+  html += `<div class="mono nx-category-eyebrow" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">YOUR KITS</div>
   <div style="display:flex;gap:8px;margin-bottom:16px">
     <button id="stash-filter-btn" style="flex:1;padding:9px 12px;border-radius:10px;background:${filter!=="all"?"var(--surface-3)":"var(--surface-2)"};border:1px solid ${filter!=="all"?"var(--t3)":"var(--border-sub)"};color:${filter!=="all"?"var(--t1)":"var(--t3)"};font-size:12px;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between">
       <span>Filter: ${esc(FILTER_LABELS[filter])}</span><span class="nx-chevron-slot" aria-hidden="true"></span>
@@ -1902,7 +1902,7 @@ function homeView() {
     <summary><span class="nexus-today-details-copy"><span class="nexus-today-details-title">Daily tracking</span><span class="nexus-today-details-meta">${selectedTracking.length?`${recordedTracking} of ${selectedTracking.length} recorded · ${trackingPct}%`:"Choose activities to track"} · ${todayLog?"Check-in saved":"Check-in pending"}</span></span><span class="nx-today-disclosure-label" aria-hidden="true">View tracking</span></summary>
     <div class="nexus-today-details-body nx-daily-tracking-body">
       ${selectedTracking.length?`<div class="nx-daily-track-progress" role="progressbar" aria-label="Selected daily tracking activities recorded" aria-valuemin="0" aria-valuemax="${selectedTracking.length}" aria-valuenow="${recordedTracking}"><span style="width:${trackingPct}%"></span></div>`:""}
-      ${trackingItems.map(t=>`<div class="nx-daily-tracking-row"><label class="nx-track-preference"><input type="checkbox" class="nx-track-select" data-activity="${t.id}" ${configured.includes(t.id)?"checked":""} aria-label="Include ${t.label} in daily tracking progress"><span class="nx-daily-track-name">${t.label}</span></label><span class="nx-daily-track-status">${t.recorded?"✓ ":""}${t.detail}</span><button type="button" class="${t.cls} nx-track-action" ${t.extra}>${t.button}</button></div>`).join("")}
+      ${trackingItems.map(t=>`<div class="nx-daily-tracking-row"><label class="nx-track-preference"><input type="checkbox" class="nx-track-select" data-activity="${t.id}" ${configured.includes(t.id)?"checked":""} aria-label="Include ${t.label} in daily tracking progress"><span class="nx-daily-track-name">${t.label}</span></label><span class="nx-daily-track-status">${t.recorded?"✓ ":""}${t.detail}</span><button type="button" class="${t.cls} nx-track-action" aria-label="${esc(t.button+" "+t.label)}" ${t.extra}>${t.button}</button></div>`).join("")}
       <p class="nx-daily-track-note">Choose what counts toward your daily tracking progress. Recorded statuses come from saved entries.</p>
     </div>
   </details>`;

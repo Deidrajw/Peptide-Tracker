@@ -2,6 +2,14 @@ name: Nexus shared inventory writer safety
 on:
   pull_request:
     branches: [main]
+  # PR132 scoped QA branch trigger. Only test workflows; no main/release/deploy action.
+  push:
+    branches: ['docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    paths:
+      - 'assets/**'
+      - 'index.html'
+      - '.github/workflows/nexus-shared-writer-safety.yml'
+    # PR132 scoped QA branch trigger
   workflow_dispatch:
 permissions:
   contents: read

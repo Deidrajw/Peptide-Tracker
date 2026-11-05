@@ -9,7 +9,7 @@ function renderSettingsTabContent() {
     ${rightText?`<span style="font-size:12px;color:${rightColor||"var(--t4)"};flex-shrink:0">${rightText}</span>`:""}
     <svg class="nx-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
   </button>`;
-  const sectionLabel = (t) => `<div class="mono" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:18px 0 2px;padding:0 6px">${t}</div>`;
+  const sectionLabel = (t) => `<div class="mono nx-category-eyebrow" style="font-size:9px;color:var(--t5);letter-spacing:1.5px;margin:18px 0 2px;padding:0 6px">${t}</div>`;
 
   return `
     ${sectionLabel("NOTIFICATIONS")}
@@ -1301,9 +1301,9 @@ function protocolCalendarView() {
   else {for(let i=0;i<firstDay;i++) cells.push(null);for(let d=1;d<=daysInMonth;d++) cells.push(d);}
 
   return subBar+overview+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <button id="cal-prev" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">‹</button>
+    <button id="cal-prev" type="button" aria-label="Previous calendar month" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">‹</button>
     <span style="font-size:14px;font-weight:600;color:var(--t1)">${monthLabel}</span>
-    <button id="cal-next" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">›</button>
+    <button id="cal-next" type="button" aria-label="Next calendar month" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--surface-2)">›</button>
   </div>
   <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:3px">
     ${["S","M","T","W","T","F","S"].map(d=>`<div style="text-align:center;font-size:9px;color:var(--t5);padding:3px 0">${d}</div>`).join("")}

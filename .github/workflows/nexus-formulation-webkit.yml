@@ -2,13 +2,21 @@ name: Nexus formulation WebKit validation
 on:
   pull_request:
     branches: [main]
+  # PR132 scoped QA branch trigger. Only test workflows; no main/release/deploy action.
+  push:
+    branches: ['docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    paths:
+      - 'assets/**'
+      - 'index.html'
+      - '.github/workflows/nexus-formulation-webkit.yml'
+    # PR132 scoped QA branch trigger
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   formulation-webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

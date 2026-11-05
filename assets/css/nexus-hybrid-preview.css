@@ -4406,3 +4406,110 @@ html[data-theme="light"] .nexus-screen-protocols .nx-protocol-bulk-resume{
   color:var(--t3)!important;font-size:12px!important;font-weight:450!important;
   line-height:1.45!important;overflow-wrap:anywhere;
 }
+
+/* DS2 global audit A11Y-01: real, not merely visual, tap targets.
+   Scope to named existing controls; keep approved colours and navigation. */
+#cal-prev,#cal-next,#au-back{
+  box-sizing:border-box!important;
+  min-width:44px!important;min-height:44px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex-shrink:0;
+}
+#theme-toggle,#profile-btn{box-sizing:border-box!important;min-width:44px!important;min-height:44px!important}
+
+/* DS2 A11Y-02: measured secondary actions below 44px.
+   Increase vertical hit area only; preserve compact widths, wrapping, colours,
+   existing event handlers and 320px seven-column Calendar geometry. */
+#enablerem,#disablerem,#enablephaserem,#disablephaserem,
+#timeline-toggle,#qa-addkit,
+#ls-guides,#ls-mixing,#ls-calc{
+  box-sizing:border-box!important;
+  min-height:44px!important;
+}
+
+/* DS2 TYPOGRAPHY v1 — approved 2026-11-04.
+   DM Sans = functional UI, Fraunces = existing editorial headings,
+   DM Mono = explicitly technical/aligned numerics.
+   Keep original sizes/colour for components not in approved role treatment. */
+:root{
+  --nx-font-ui:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --nx-font-display:"Fraunces",Georgia,serif;
+  --nx-font-numeric:"DM Mono",ui-monospace,SFMono-Regular,monospace;
+  --nx-type-explanation:13px;
+  --nx-type-eyebrow:11px;
+  --nx-type-form-label:13px;
+}
+html body,html body #app,html body #app :is(button,input,textarea,select){
+  font-family:var(--nx-font-ui)!important;
+}
+/* Explicitly supersede the earlier SF Pro card exception, not the accepted geometry. */
+#app .nx-compound-card,#app .nx-hybrid-expanded-compound{
+  font-family:var(--nx-font-ui)!important;
+}
+/* The legacy .mono class is applied widely to nontechnical category/eyebrow text.
+   DM Sans is the safe default; a dedicated numeric role restores true monospacing. */
+#app .mono,#app .field-label{
+  font-family:var(--nx-font-ui)!important;
+}
+#app :is(.nx-technical-value,.nx-mono-number,#pd-count,.nx-cal-weight,.nx-dose-confirm-hero strong){
+  font-family:var(--nx-font-numeric)!important;
+  font-variant-numeric:tabular-nums;
+}
+/* Page and editorial titles retain the existing approved Fraunces treatment. */
+#app :is(.serif,.nx2-page-title,.page-title){
+  font-family:var(--nx-font-display)!important;
+}
+/* Bounded readable-copy correction: actual explanatory text, not numerical grids. */
+#app :is(.nx-daily-track-note,.nx-cal-hub p,.nx-cal-hub-note,.nx2-supp-catalogue-note){
+  font-size:var(--nx-type-explanation)!important;line-height:1.5!important;
+}
+/* This selector only changes legacy compact category copy; number-labelled
+   measurement controls retain their scoped sizing and numeric role. */
+#app :is(.nx-journal-search-label,.nx-journal-filter-label){
+  font-family:var(--nx-font-ui)!important;
+  font-size:var(--nx-type-form-label)!important;line-height:1.4!important;
+}
+/* Documented section eyebrow class for gradually migrating old .mono markup. */
+#app .nx-category-eyebrow{
+  font-family:var(--nx-font-ui)!important;
+  font-size:var(--nx-type-eyebrow)!important;
+  font-weight:650;letter-spacing:.045em;
+}
+
+/* DS2 typography follow-up: supply measurement uses a distinct number and context.
+   Scoped to Supplies; preserves source values, progress and actions. */
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity {
+  display:flex!important;flex-wrap:wrap!important;align-items:baseline!important;
+  column-gap:10px!important;row-gap:3px!important;min-width:0!important;
+  letter-spacing:normal!important;line-height:1.2!important;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-number {
+  font-family:var(--nx-font-numeric)!important;font-size:31px!important;
+  line-height:1.15!important;font-weight:750!important;letter-spacing:-.035em!important;
+  font-variant-numeric:tabular-nums;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-context {
+  font-family:var(--nx-font-ui)!important;font-size:13px!important;
+  line-height:1.45!important;font-weight:450!important;letter-spacing:normal!important;
+  color:var(--t3)!important;overflow-wrap:normal;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-kit-overview-label {
+  font-family:var(--nx-font-ui)!important;font-size:11px!important;
+  line-height:1.45!important;letter-spacing:.065em!important;
+}
+#app .nx-supply-kit-card .nx-supply-current .nx-supply-subtle {
+  font-family:var(--nx-font-ui)!important;font-size:13px!important;
+  line-height:1.5!important;letter-spacing:normal!important;
+  overflow-wrap:anywhere;
+}
+@media(max-width:360px){
+  #app .nx-supply-kit-card .nx-supply-current .nx-supply-quantity-number{font-size:29px!important}
+}
+
+/* DS2 approved readable descriptions in Learn and imported Health context. */
+#app .nx-explanatory-copy,
+#app .nx-health-source p{
+ font-family:var(--nx-font-ui)!important;
+ font-size:var(--nx-type-explanation)!important;
+ line-height:1.5!important;
+}
