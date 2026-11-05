@@ -3123,7 +3123,7 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
   for (const {name, doseVal} of items) {
     const cc = cfg(name);
     const converted=method?nativeValueFor(name,doseVal):doseVal;
-    const nativeDoseVal=converted===null?null:String(converted);
+    const nativeDoseVal=converted===null?null:(method?String(converted):converted);
     if(method&&nativeDoseVal===null)return {ok:false,error:"Unsupported or invalid dose unit for "+name+". Nothing was deducted."};
     if (!doseVal || parseFloat(doseVal)<=0) { plan.push({ name, doseVal, eligible:[], neededMg:0, tracked:false }); continue; }
     // A compound with NO kit at all isn't inventory-tracked — nothing to validate (e.g. a
