@@ -1,3 +1,9 @@
+## 2026-11-05 — PR135 unit-parity safety implementation and QA pending
+- Verified main SHA 21b9e42a213f74e3e372266a9fb65c12a9c731da unchanged; PR #135 draft/unmerged/undeployed. Source 08a0a84bb0e8c94ae2a3321fe729f21f88058c77 full build #41986359105 SUCCESS, associated full-app artifact #13397066246 downloaded, CRC 548 entries PASS, matching source manifest, 26-file LIVE ZIP, 8/8 fictional Combo picker results; prior mobile/writer/nested/WebKit SUCCESS.
+- Latest application/test SHA 3e558dbfcba2531d41acbff6b0ddb72e4b689cfb (after source 08a0). Added per-compound mg/mcg selector in compact inline amount row, mass-preserving toggle, canonical historical native-unit conversion, original entered-unit audit, 1mcg precision and strict preflight shortage rejection. Test includes 300mcg→0.3mg, 1mcg→0.001mg, insufficient-stock no mutation and draft-unit preservation.
+- Latest-source all-five CI groups IN PROGRESS, no qualified final matching artifacts yet. Physical iPhone Safari, typography, Dynamic Type and VoiceOver untested. Calculator-safety assertions not independently certified. Preserve LIVE nasal gates OFF; no production data manipulation.
+- ONE NEXT ACTION: inspect latest exact-source CI and artifacts, correct failures, then physical iPhone UAT before any merge/deploy approval request.
+
 ## 2026-11-05 — PR135 intermediate QA verified, final source pending
 - Source 76002d433f1dea6323455147928e06b77fb8ba21 all five CI groups SUCCESS, including full build #41985374541. GitHub artifact #13396087673 downloaded and ZIP CRC verified; manifest matches 76002d43, Combo picker browser 8/8 fictional LIVE/DEMO 320/390 light/dark PASS. This evidence does not qualify newer app source.
 - Latest application/test source 08a0a84bb0e8c94ae2a3321fe729f21f88058c77: mobile #41986359195, nested #41986359132, writer #41986359255, WebKit #41986359290 SUCCESS; full build/browser #41986359105 IN PROGRESS at observation. Later commits docs-only.
