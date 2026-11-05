@@ -65,6 +65,12 @@ try {
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Setup step not displayed');
   await checkFits('Setup');
+  ensure(await page.locator('#nx-combo-session-card').count()===1,'Shared session card missing');
+  ensure(await page.locator('#nx-combo-session-fields').isVisible(),'Initial session configuration must be discoverable');
+  const order=await page.evaluate(()=>{const session=document.querySelector('#nx-combo-session-card'),compound=document.querySelector('#nx-combo-compound-navigation'),next=document.querySelector('#nx-combo-next-compound');return !!(session&&compound&&next&&(session.compareDocumentPosition(compound)&Node.DOCUMENT_POSITION_FOLLOWING)&&(compound.compareDocumentPosition(next)&Node.DOCUMENT_POSITION_FOLLOWING));});
+  ensure(order,'Shared session must precede compound and Next compound must end active panel');
+  ensure(await page.locator('#nx-combo-session-toggle').getAttribute('aria-expanded')==='true','Session toggle missing expanded semantics');
+
   await page.locator('.combo-dose-input[data-n="Test Compound 49"]').fill('1.25');
   await page.locator('#combo-notes').fill('Fictional combo draft note');
   await page.locator('#nx-combo-back').click();
@@ -90,6 +96,11 @@ try {
   ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate setup not displayed');
   await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('1');
   await activate('Test Compound 02');
+  ensure(!(await page.locator('#nx-combo-session-fields').isVisible()),'Shared session should collapse after advancing compounds');
+  ensure((await page.locator('#nx-combo-session-summary').innerText()).includes('SubQ'),'Session summary missing administration method');
+  await page.locator('#nx-combo-session-toggle').click();
+  ensure(await page.locator('#nx-combo-session-fields').isVisible(),'Session edit cannot reopen');
+  await page.locator('#nx-combo-session-toggle').click();
   await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('1');
   ensure(await page.locator('.nx-combo-individual-site-select:visible').count()===1,'Focused Setup must show one individual site');
   await activate('Test Compound 01');
