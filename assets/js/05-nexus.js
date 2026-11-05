@@ -74,7 +74,7 @@ function comboDoseModal() {
   const doseInputs = () => sel.map(n=>{
     const c = cfg(n);
     const v = (state._comboDoses||{})[n]||"";
-    return `<div style="margin-bottom:10px">
+    return `<div style="margin-bottom:16px">
       <label class="field-label">${esc(n)} DOSE (${c.unit})</label>
       <input class="combo-dose-input" data-n="${esc(n)}" type="number" min="0" step="any" inputmode="decimal" aria-label="${esc(n)} dose amount" class="inp" placeholder="Enter amount" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
       <label class="field-label" style="display:block;margin-top:10px" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
@@ -103,9 +103,9 @@ function comboDoseModal() {
     <label style="display:flex;gap:10px;align-items:center;min-height:48px;font-size:13px;color:var(--t2)"><input type="radio" name="nx-combo-grouping" value="separate"> Separate injections</label>
     <p style="font-size:11px;color:var(--t4);margin-bottom:14px">Each separately administered injection will have its own site.</p>
     ${presets.length?`<div class="nx-combo-presets"><label class="field-label" for="nx-combo-preset-select">SAVED COMBINATIONS</label><select id="nx-combo-preset-select" class="inp" aria-label="Load saved combination"><option value="">Choose a favourite…</option>${presets.map(p=>`<option value="${esc(String(p.id))}">${esc(p.name)}</option>`).join("")}</select><details class="nx-combo-manage"><summary>Manage favourites</summary><div class="nx-combo-manage-options">${presetChips}</div></details></div>`:""}
-    <section class="nx-combo-picker-panel" aria-label="Compounds in this syringe" style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:16px;background:var(--surface)">
+    <section class="nx-combo-picker-panel" aria-label="Selected compounds" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px">
-        <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
+        <label class="field-label" for="combo-search" style="margin:0">SELECT COMPOUNDS</label>
         <span id="combo-selected-count" style="font-size:11px;color:var(--t4);white-space:nowrap">${sel.length} selected</span>
       </div>
       <input id="combo-search" class="inp" type="search" autocomplete="off" placeholder="Search ${names.length} compounds…" aria-controls="combo-choices" style="margin-bottom:8px;min-height:46px;width:100%">
