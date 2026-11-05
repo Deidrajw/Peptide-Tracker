@@ -4555,3 +4555,19 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
   padding-right:38px!important;
 }
 .nx-combo-compound-panel select:disabled{background-image:none}
+
+
+/* PR135 approved shared-session-first Combo Setup */
+.nx-combo-session-card{padding:14px;margin:0 0 22px;border:1px solid var(--border);border-radius:15px;background:var(--surface-2)}
+.nx-combo-session-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.nx-combo-session-header-text{flex:1;min-width:0}
+.nx-combo-session-heading{color:var(--t1);font-family:var(--nx-font-ui,'DM Sans',sans-serif);font-weight:700;font-size:15px;line-height:1.35}
+.nx-combo-session-summary{font-size:12px;color:var(--t3);line-height:1.55;margin:5px 0 0;overflow-wrap:anywhere}
+.nx-combo-session-toggle{min-height:44px;min-width:56px;padding:0 12px;color:var(--t2);background:var(--surface-3);border:1px solid var(--border);border-radius:11px;font-size:13px;font-family:var(--nx-font-ui,'DM Sans',sans-serif);font-weight:600}
+.nx-combo-session-fields{padding-top:14px;margin-top:12px;border-top:1px solid var(--border)}
+.nx-combo-session-fields[hidden]{display:none!important}
+.nx-combo-session-fields #combo-date{min-width:0}
+.nx-combo-session-fields #combo-date-now{min-height:44px}
+#nx-combo-setup-step #combo-dose-section{margin-top:2px}
+#nx-combo-setup-step .nx-combo-compound-buttons{margin:20px 0 4px}
+@media(max-width:350px){.nx-combo-session-card{padding:12px}.nx-combo-session-summary{font-size:11px}}
