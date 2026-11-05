@@ -263,6 +263,11 @@ function comboDoseModal() {
       select.value=choices.some(c=>c.value===prior)?prior:"auto";
       comboSources[name]=select.value;
       if(hasKit&&!choices.length){select.innerHTML='<option value="auto">No eligible open vial</option>';select.disabled=true;select.setAttribute('aria-invalid','true');select.title='No eligible open vial for this method. Review Stash before logging.';}else{select.disabled=false;select.removeAttribute('aria-invalid');select.removeAttribute('title');}
+      const info=m.querySelector(`.nx-combo-vial-info[data-n="${CSS.escape(name)}"]`);
+      if(info){
+        info.hidden=!choices.length;info.style.display=choices.length?"flex":"none";
+        if(!choices.length){info.setAttribute("aria-expanded","false");const details=info.nextElementSibling;if(details)details.hidden=true;}
+      }
     });
     updateActiveCompound();
   };
