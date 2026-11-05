@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 focused Combo QA milestone (still UNRELEASED)
+- Draft branch application source 0520415d, pinned Chromium Combo/vial/formulation/Check-In workflow #42094294724 SUCCESS and artifact #13447181982 322 outer CRC, 26 member LIVE ZIP CRC, fictional complete FULL APP DEMO and offline DEMO CRC. Eight Combo browser states PASS at 320/390 dark/light. Distinct online-font candidate file generated but network loaded-font proof pending.
+- Five ordinary workflow suites blocked by Playwright 1.65.0 dependency error, real iPhone/VoiceOver/Dynamic Type not accepted, clinical calculator safety not certified; production release-notes gate remains separate. No new tag, merge, deployment, storage migration or production data access.
+
 ## 2026-11-05 — PR135 focused Combo redesign candidate, NOT released
 - No tag, merge, Cloudflare deployment, or user-data migration. UI source 9e22381d + 9c71219f + ce0f8ee0 + dfe54a8b; material unit safety correction 0520415d; optional network-font fictional DEMO builder 97ce9525; scoped pinned QA workflow. Locally verified eight prior-source UI states with fictional DEMO; first pinned QA found custom mcg regression, fixed but exact new-source tests pending. No production data access. Independent clinical calculator or font loading certification not claimed. Stale production release-notes gate separate.
 
