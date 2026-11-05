@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.25-beta",
+  "version": "v0.9.25-beta.1",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -13,7 +13,7 @@
     "pullRequest": 135,
     "mergedAppCommit": "fe51ace9bc9fd82ed78072038f335917e995562c"
   },
-  "headline": "Session-first Combo Dose with exact-vial preparation and consistent DS2 controls",
+  "headline": "Session-first Combo Dose, exact-vial details and DS2 refinements",
   "changes": [
     {
       "key": "combo-3-step",
@@ -50,7 +50,8 @@
     "LIVE nasal administration and generic preparation transfers remain OFF; previously approved recorded preparation flow remains unchanged.",
     "The full offline DEMO intentionally uses fallback fonts. LIVE source preserves external DM Sans/Fraunces/DM Mono import; actual online font-file rendering and VoiceOver/Dynamic Type were not independently accepted in this release session.",
     "Automated vial-source and measurement regressions passed; synthetic calculator diagnostics do not establish independent clinical certification.",
-    "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed."
+    "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed.",
+    "Release metadata is reconciled after merge; app source parity was independently verified at squash merge fe51ace9 before metadata publication."
   ],
   "privacyChanged": false,
   "permissionsChanged": false

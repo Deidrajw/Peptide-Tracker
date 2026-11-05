@@ -1,5 +1,5 @@
-Faster Stash navigation and reusable supplement routines
-- Find supplies and compound inventory faster: Search Vial kits, Other forms and Supplies by compound or relevant inventory information without changing stock balances.
-- Open Stash on Vial kits: A fresh visit through primary navigation now starts on Vial kits, while in-screen category switching and the post-save Other forms destination stay available.
-- Reuse supplements from an earlier day: Use previous day copies the most recent earlier dated supplement selection into a draft; Check-In mood, symptoms, notes and prior logs remain unchanged.
-- Save and manage supplement templates: Create, apply, rename and delete optional named supplement selections using guarded settings saves; templates never automatically save a daily check-in.
+Session-first Combo Dose, exact-vial details and DS2 refinements
+- Simpler Combo Dose logging: Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.
+- Clear mg/mcg entry with strict inventory accounting: Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.
+- View preparation details for the selected physical vial: Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.
+- Consistent dose header, selection chevrons and field spacing: Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.
