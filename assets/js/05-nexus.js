@@ -405,6 +405,10 @@ function comboDoseModal() {
 
   try {
     m.querySelector("#save").onclick = async () => {
+      const confirm=m.querySelector("#save");
+      if(confirm.disabled)return;
+      confirm.disabled=true;
+      confirm.textContent="Saving…";
       try {
         if (!sel.length) return;
         if(comboSourceMode!=="draw"){showErrorBanner("Choose the prepared syringe from the list; this form cannot subtract its inventory twice.");return;}
@@ -477,6 +481,7 @@ function comboDoseModal() {
         state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
         if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
+      finally { if(confirm.isConnected){confirm.disabled=false;confirm.textContent="CONFIRM & LOG DOSES";} }
     };
   } catch(e) { showErrorBanner("comboDoseModal save-button wiring: "+e.message); }
 }
