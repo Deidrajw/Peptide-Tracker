@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 DS2 Combo Dose header correction, NOT RELEASED
+- JS 06e957d1, CSS 12e9a828: bring formerly unstyled Dose Log kicker/title under scoped DS2 modal hierarchy; use semantic header, DM Sans 11px eyebrow + 23px/21px title and 48px outlined close button. No data/storage changes, vial deductions or nasal LIVE changes.
+- Local Chromium 320/390 light/dark 4/4 measured header geometry/type PASS and close interaction PASS; 26-file reconstructed candidate LIVE ZIP and complete isolated fictional DEMO CRC validated with exact modified JS/CSS git blob parity. Full GitHub CI and physical iPhone/online fonts not yet accepted. No new tag, merge or deploy.
+
 ## 2026-11-05 — PR135 administration method/site dropdown cues, NOT RELEASED
 - Application candidate JS 3e466511, CSS f5a134e2: native shared Session Details Method and Site selects have visible outline SVG chevrons; no data format, calculations, vial deductions or storage effects. Preserves DS2, LIVE nasal OFF.
 - Local fictional isolated full-app Chromium 320/390 light/dark 4/4 passed selector visual geometry and interaction; source blob hashes and constructed candidate 26-file LIVE/isolated full DEMO CRC PASS. GitHub exact-head release CI, real iPhone and online font-face acceptance PENDING. Draft PR135 not merged/deployed.
