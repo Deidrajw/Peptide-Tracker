@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 automated QA continuation
+- Application SHA 06e00aa1: mobile 41981657821 PASS; shared writer 41981657816 PASS; WebKit 41981657820 PASS; nested 41981657931 PASS; build/browser 41981657892 FAIL. Failure: old validate-combo-picker.mjs assumed visible amount field on Select. Exact-source LIVE/DEMO build and archive validation steps PASS before browser test failure. No claim of full-browser PASS.
+- Test updates b0057d0f and 3868ea4b: navigate Select→Setup, preserve typed amount/notes across Back/Continue, assert unsupported separate/IM choices do not advance or write history; FINAL HEAD RUNS PENDING, NOT TESTED. Real iPhone and voiceover NOT TESTED.
+
 ## 2026-11-05 — PR #135 candidate regression matrix (NOT TESTED on final head)
 - Select: searchable compound multi-select and favourites, prepared-syringe delegation, correct selected counts and draft persistence — NOT TESTED.
 - Setup: combo positive amounts, date/time, shared notes; nexusAdminSites parity for SubQ and IM; no loss of entered values on step navigation — NOT TESTED.
