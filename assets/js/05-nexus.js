@@ -93,7 +93,7 @@ function comboDoseModal() {
       <span class="mono" style="font-size:13px;color:#A78BFA;letter-spacing:1.5px">LOG COMBO DOSE</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
-    <div class="hint" style="margin-bottom:14px">For compounds you draw into one syringe and inject together. Each still logs as its own dose behind the scenes — supply, schedule, and trends stay accurate per compound.</div>
+    <div class="hint" style="margin-bottom:14px">Log multiple injectable compounds together. Each dose retains its own source, administration method and history.</div>
     <nav class="nx-combo-steps" aria-label="Combo dose steps" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px">
       ${["Select","Setup","Review"].map((label,i)=>`<div class="nx-combo-step" data-step="${i}" style="text-align:center"><div class="nx-combo-step-bar" style="height:4px;border-radius:6px;background:${i===0?"#A78BFA":"var(--border)"}"></div><div style="font-size:12px;margin-top:6px;color:var(--t3)">${label}</div></div>`).join("")}
     </nav>
@@ -101,8 +101,7 @@ function comboDoseModal() {
     <label class="field-label">HOW ARE YOU ADMINISTERING THESE?</label>
     <label style="display:flex;gap:10px;align-items:center;min-height:48px;font-size:13px;color:var(--t2)"><input type="radio" name="nx-combo-grouping" value="mixed" checked> One mixed syringe</label>
     <label style="display:flex;gap:10px;align-items:center;min-height:48px;font-size:13px;color:var(--t2)"><input type="radio" name="nx-combo-grouping" value="separate"> Separate injections</label>
-    <p style="font-size:11px;color:var(--t4);margin-bottom:14px">Separate injections require independently attributed sites and source validation before logging can be enabled.</p>
-    ${preparedSection}
+    <p style="font-size:11px;color:var(--t4);margin-bottom:14px">Each separately administered injection will have its own site.</p>
     ${presets.length?`<div class="nx-combo-presets"><label class="field-label" for="nx-combo-preset-select">SAVED COMBINATIONS</label><select id="nx-combo-preset-select" class="inp" aria-label="Load saved combination"><option value="">Choose a favourite…</option>${presets.map(p=>`<option value="${esc(String(p.id))}">${esc(p.name)}</option>`).join("")}</select><details class="nx-combo-manage"><summary>Manage favourites</summary><div class="nx-combo-manage-options">${presetChips}</div></details></div>`:""}
     <section class="nx-combo-picker-panel" aria-label="Compounds in this syringe" style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:16px;background:var(--surface)">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px">
@@ -117,6 +116,16 @@ function comboDoseModal() {
     </section>
     </section>
     <section id="nx-combo-setup-step" aria-label="Configure doses" hidden>
+    <div id="nx-combo-preparation-mode" style="margin-bottom:14px">
+      <div role="group" aria-label="Source mode" style="display:flex;gap:8px;margin-bottom:10px">
+        <button type="button" data-source-mode="draw" aria-pressed="true" class="nx-combo-mode-btn" style="min-height:44px;flex:1;border:1px solid var(--border);border-radius:22px;background:var(--surface-3);color:var(--t1)">Draw now</button>
+        <button type="button" data-source-mode="prepared" aria-pressed="false" class="nx-combo-mode-btn" style="min-height:44px;flex:1;border:1px solid var(--border);border-radius:22px;color:var(--t3)">Prepared</button>
+      </div>
+      <div id="nx-combo-prepared-sources" hidden style="font-size:12px;color:var(--t3)">
+        ${preparedSection || '<p>No prepared mixed syringes available. Return to Draw now to log vial doses.</p>'}
+      </div>
+    </div>
+    <div id="nx-combo-draw-fields">
     <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
       <label class="field-label">DOSE AMOUNTS</label><div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
     </div>
@@ -132,6 +141,7 @@ function comboDoseModal() {
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
       <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
       <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
+    </div>
     </div>
     </section>
     <section id="nx-combo-review-step" aria-label="Review combo doses" hidden>
@@ -149,17 +159,39 @@ function comboDoseModal() {
   // Review-first interaction; the original planner/commit path remains the only writer.
   // Unsupported site-specific multi-injection and IM transactions remain blocked rather
   // than inventing a method or incorrectly sharing a site across historical records.
-  let comboStep=0;
+  let comboStep=0,comboSourceMode="draw";
   const comboPanels=["nx-combo-select-step","nx-combo-setup-step","nx-combo-review-step"];
   const comboMethod=m.querySelector("#nx-combo-method");
   const comboSite=m.querySelector("#combo-site");
   const selectedGrouping=()=>m.querySelector('input[name="nx-combo-grouping"]:checked')?.value||"mixed";
+  const refreshSourceMode=()=>{
+    const separate=selectedGrouping()==="separate";
+    if(separate)comboSourceMode="draw";
+    m.querySelector("#nx-combo-preparation-mode").hidden=separate;
+    m.querySelector("#nx-combo-preparation-mode").style.display=separate?"none":"";
+    m.querySelector("#nx-combo-draw-fields").hidden=comboSourceMode==="prepared";
+    m.querySelector("#nx-combo-draw-fields").style.display=comboSourceMode==="prepared"?"none":"";
+    const prepared=m.querySelector("#nx-combo-prepared-sources");
+    prepared.hidden=comboSourceMode!=="prepared";
+    prepared.style.display=comboSourceMode==="prepared"?"":"none";
+    m.querySelectorAll(".nx-combo-mode-btn").forEach(btn=>{
+      const active=btn.dataset.sourceMode===comboSourceMode;
+      btn.setAttribute("aria-pressed",String(active));
+      btn.style.background=active?"var(--surface-3)":"transparent";
+      btn.style.color=active?"var(--t1)":"var(--t3)";
+    });
+  };
+  m.querySelectorAll(".nx-combo-mode-btn").forEach(btn=>btn.onclick=()=>{
+    comboSourceMode=btn.dataset.sourceMode;
+    refreshSourceMode();
+  });
   const refreshComboSites=()=>{
     const allowed=nexusAdminSites(comboMethod.value);
     const previous=comboSite.value||state._comboSite||"";
     comboSite.innerHTML=allowed.map(site=>`<option value="${esc(site)}">${esc(nexusAdminSiteLabel(site))}</option>`).join("");
     comboSite.value=allowed.includes(previous)?previous:(allowed[0]||"");
     const separate=selectedGrouping()==="separate";
+    refreshSourceMode();
     m.querySelector("#nx-combo-shared-site").hidden=separate;
     m.querySelector("#nx-combo-shared-site").style.display=separate?"none":"";
     m.querySelectorAll(".nx-combo-individual-site").forEach(container=>{
@@ -211,6 +243,10 @@ function comboDoseModal() {
   m.querySelector("#nx-combo-continue").onclick=()=>{
     if(comboStep===0&&sel.length<2){showErrorBanner("Select at least two compounds for a combo dose.");return;}
     if(comboStep===1){
+      if(comboSourceMode==="prepared"&&selectedGrouping()==="mixed"){
+        showErrorBanner("Choose an available prepared syringe above. It opens the existing prepared-dose confirmation.");
+        return;
+      }
       if(sel.some(name=>!(Number(m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value)>0))){showErrorBanner("Enter a positive dose amount for each compound.");return;}
       const valid=nexusAdminSites(comboMethod.value);
       if(selectedGrouping()==="mixed"&&!valid.includes(comboSite.value)){showErrorBanner("Choose an eligible administration site.");return;}
@@ -364,6 +400,7 @@ function comboDoseModal() {
     m.querySelector("#save").onclick = async () => {
       try {
         if (!sel.length) return;
+        if(comboSourceMode!=="draw"){showErrorBanner("Choose the prepared syringe from the list; this form cannot subtract its inventory twice.");return;}
         if(comboStep!==2||!["SubQ","IM"].includes(comboMethod.value)||!["mixed","separate"].includes(selectedGrouping())){showErrorBanner("Review the injection method and grouping before logging.");return;}
         const date = m.querySelector("#combo-date").value;
         const site = m.querySelector("#combo-site").value;
