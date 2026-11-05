@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 Combo Dose modal header correction
+- Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
+
 ## 2026-11-05 — Shared Combo Session dropdown affordance
 - User screenshot identified missing chevrons for Administration Method and Administration Site. Explicit outline SVG arrow with pointer-events:none added to native selects (JS 3e466511, CSS f5a134e2). Local Chromium 320/390 x dark/light 4/4 geometry and selection functional PASS; physical Safari and online fonts not verified. No visual redesign or saved-data migration.
 
