@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 final application SHA 1dd305d9 QA evidence
+- Exact-source GitHub Actions at 1dd305d9: build #42063375466 SUCCESS; WebKit #42063375521 SUCCESS; mobile #42063375520 SUCCESS; writer #42063375318 SUCCESS; nested #42063375449 SUCCESS.
+- Artifact #13434406691 independent ZIP CRC: outer 548 entries PASS; LIVE 26 manifest-matched files PASS; offline DEMO 2 entries PASS. Standalone full-app fictional DEMO included. Combo picker browser report: LIVE and DEMO × light/dark × 320/390 = 8/8 PASS. General browser states 8/8 PASS. These are automated, not physical iPhone tests.
+- Unit conversion, exact-vial reconHistory and strict 1mcg shortfall logic are part of verified source; calculator clinical safety NOT CERTIFIED. Physical iPhone, VoiceOver, Dynamic Type and actual online font acceptance NOT TESTED. Release-notes gate from prior production build separately unresolved. CI Cloudflare parity false because candidate is not deployed.
+
 ## 2026-11-05 — PR135 exact-source QA handoff
 - Latest app source 1dd305d9, test 472cb093; required 8 fictional LIVE/DEMO × light/dark × 320/390 Combo tests: search/drafts/favourites, shared/individual injection sites, mixed IM history, source-route exclusion, matched BAC history, Prepared delegation, unit toggle mg↔mcg, 300mcg=0.3mg, 1mcg=0.001mg and strict insufficient-stock rejection. Exact latest tests PENDING.
 - Earlier 08a0a84b full build #41986359105 SUCCESS and artifact #13397066246 CRC PASS, but predates unit fixes and vialId reconHistory fallback. Other exact code-source WebKit/mobile/writer/nested at 08a0 SUCCESS. Never mark new code PASS solely from earlier runs.
