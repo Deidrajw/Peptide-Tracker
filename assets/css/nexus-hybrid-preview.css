@@ -4630,3 +4630,44 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
 .nx-combo-session-fields .nx-combo-session-select-wrap > select:disabled + .nx-combo-session-select-chevron{
   opacity:.38;
 }
+
+
+/* PR135: Combo Dose uses the same DS2 modal typography as other dose sheets.
+   Scope to this modal: no app-wide heading changes or layout redesign. */
+.modal.nx-combo-dose-modal .nx-combo-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;min-width:0;min-height:48px;margin:0 0 18px;
+}
+.modal.nx-combo-dose-modal .nx-combo-header-copy{
+  flex:1;min-width:0;
+}
+.modal.nx-combo-dose-modal .nx-combo-header .nx-dose-kicker{
+  display:block;margin:0 0 5px;
+  font-family:var(--nx-font-ui,'DM Sans',sans-serif);
+  font-size:11px;font-weight:700;line-height:1.4;
+  letter-spacing:.09em;text-transform:uppercase;
+  color:var(--t3);
+}
+.modal.nx-combo-dose-modal .nx-combo-header .nx-dose-title{
+  margin:0;
+  font-family:var(--nx-font-ui,'DM Sans',sans-serif);
+  font-size:23px;font-weight:750;line-height:1.2;
+  letter-spacing:-.025em;
+  color:var(--t1);overflow-wrap:anywhere;
+}
+.modal.nx-combo-dose-modal .nx-combo-close{
+  display:grid;place-items:center;flex:0 0 48px;
+  box-sizing:border-box;width:48px;height:48px;
+  min-width:48px;min-height:48px;padding:0;
+  border:1px solid var(--border-sub);border-radius:13px;
+  background:var(--surface-2);color:var(--t2);
+}
+.modal.nx-combo-dose-modal .nx-combo-close svg{
+  display:block;width:20px;height:20px;stroke:currentColor;
+}
+.modal.nx-combo-dose-modal .nx-combo-close:focus-visible{
+  outline:3px solid var(--accent,#a78bfa);outline-offset:2px;
+}
+@media(max-width:350px){
+  .modal.nx-combo-dose-modal .nx-combo-header .nx-dose-title{font-size:21px}
+}
