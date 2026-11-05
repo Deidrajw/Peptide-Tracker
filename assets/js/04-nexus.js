@@ -3052,7 +3052,7 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
     return {ok:false,error:"Only SubQ and IM are available in Combo Dose."};
   if(!["mixed","separate"].includes(grouping))
     return {ok:false,error:"Unknown combo administration grouping."};
-  if(!Array.isArray(items)||items.length<2)
+  if(method&&(!Array.isArray(items)||items.length<2))
     return {ok:false,error:"Select at least two compounds."};
   if(method&&(!date||!Number.isFinite(new Date(date).getTime())))
     return {ok:false,error:"Choose a valid date and time."};
