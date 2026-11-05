@@ -32,6 +32,17 @@ function comboDoseModal() {
   // Modal-local choices are never written to persistent settings on navigation.
   const comboSources={};
   const comboIndividualSites={};
+  const comboUnits={...(state._comboUnits||{})};
+  const comboNativeUnit=name=>cfg(name).unit;
+  const comboDisplayUnit=name=>{
+    if(["mg","mcg"].includes(comboUnits[name]))return comboUnits[name];
+    // Older drafts held numbers in native units, never reinterpret them.
+    if(state._comboDoses?.[name]!==undefined)return comboNativeUnit(name);
+    const preference=nexusUseSetupFor(name)?.unit;
+    const custom=state.customPeptides?.[name]?.unit;
+    return ["mg","mcg"].includes(preference)?preference:
+      ["mg","mcg"].includes(custom)?custom:comboNativeUnit(name);
+  };
   const sourceOptionsFor=(name,method)=>{
     const eligible=typeof getEligibleSourceKits==="function"?getEligibleSourceKits(name,method):[];
     return eligible.map(({kit,vial})=>({
@@ -82,7 +93,11 @@ function comboDoseModal() {
     const c = cfg(n);
     const v = (state._comboDoses||{})[n]||"";
     return `<div style="margin-bottom:16px">
-      <label class="field-label">${esc(n)} DOSE (${c.unit})</label>
+      <label class="field-label">${esc(n)} DOSE</label>
+      <label class="field-label" for="nx-combo-unit-${sel.indexOf(n)}">UNIT</label>
+      <select id="nx-combo-unit-${sel.indexOf(n)}" class="inp nx-combo-unit" data-n="${esc(n)}" aria-label="${esc(n)} amount unit" style="min-height:44px;margin-bottom:8px">
+        ${["mg","mcg"].map(u=>`<option value="${u}"${comboDisplayUnit(n)===u?" selected":""}>${u}</option>`).join("")}
+      </select>
       <input class="combo-dose-input" data-n="${esc(n)}" type="number" min="0" step="any" inputmode="decimal" aria-label="${esc(n)} dose amount" class="inp" placeholder="Enter amount" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
       <label class="field-label" style="display:block;margin-top:10px" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
       <select id="nx-combo-source-${sel.indexOf(n)}" class="inp nx-combo-source" data-n="${esc(n)}" aria-label="${esc(n)} vial source" style="min-height:44px;margin-bottom:4px"></select>
@@ -240,7 +255,7 @@ function comboDoseModal() {
       sel.forEach(name=>{
         const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value||"Amount missing";
         const selection=m.querySelector(`.nx-combo-source[data-n="${CSS.escape(name)}"]`);
-        rows.push([name,amount+" "+cfg(name).unit]);
+        rows.push([name,amount+" "+comboDisplayUnit(name)]);
         rows.push(["Source",selection?.selectedOptions?.[0]?.textContent||"Not selected"]);
         if(selectedGrouping()==="separate")rows.push(["Site",comboIndividualSites[name]||"Not selected"]);
       });
@@ -272,6 +287,15 @@ function comboDoseModal() {
     const select=event.target;
     if(select.matches(".nx-combo-source"))comboSources[select.dataset.n]=select.value;
     if(select.matches(".nx-combo-individual-site-select"))comboIndividualSites[select.dataset.n]=select.value;
+    if(select.matches(".nx-combo-unit")){
+      const name=select.dataset.n,previous=comboDisplayUnit(name),next=select.value;
+      const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`);
+      if(amount&&amount.value&&["mg","mcg"].includes(previous)&&["mg","mcg"].includes(next)){
+        const converted=mgToUnit(doseToMg(amount.value,previous),next);
+        if(Number.isFinite(converted)&&converted>0)amount.value=String(Number(converted.toPrecision(12)));
+      }
+      comboUnits[name]=next;
+    }
   });
   showComboStep(0);
 
@@ -349,6 +373,7 @@ function comboDoseModal() {
     const n=btn.dataset.n;
     sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];
     state._comboSelected=[...sel];
+    state._comboUnits={...comboUnits};
     const previousScroll=comboList.scrollTop;
     comboList.innerHTML=compoundToggles();
     filterChoices();
@@ -419,14 +444,16 @@ function comboDoseModal() {
         const comboId = uid();
         const items = sel.map(name => ({ name, doseVal: (m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)||{}).value || "" }));
         const method=comboMethod.value,grouping=selectedGrouping();
+        const enteredUnits=Object.fromEntries(sel.map(name=>[name,comboDisplayUnit(name)]));
         const result = planAndApplyComboDoses(items, date, site, notes, comboId, [],
-          {method,grouping,sites:{...comboIndividualSites},sources:{...comboSources}});
+          {method,grouping,sites:{...comboIndividualSites},sources:{...comboSources},units:enteredUnits});
         if (!result.ok) {
           if(result.error){showErrorBanner(result.error+" Nothing was saved.");return;}
           const {name, doseVal, unit, have, noOpenVial, kitId, hasSealedBackup} = result.shortfall;
           // Preserve everything typed so far regardless of which path below is taken, so
           // nothing is lost if the person has to come back to this combo.
           state._comboDate = date; state._comboSite = site; state._comboNotes = notes;
+          state._comboUnits={...comboUnits};
           state._comboDoses = state._comboDoses||{};
           items.forEach(it=>{ state._comboDoses[it.name] = it.doseVal; });
           const kit = kitId!=null ? state.supplies.find(s=>s.id===kitId) : null;
@@ -478,7 +505,7 @@ function comboDoseModal() {
           const favName = (nameInput?.value||"").trim() || sel.join(" + ");
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
-        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
+        state._comboSelected = []; state._comboDoses = {}; state._comboUnits = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
         if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
       finally { if(confirm.isConnected){confirm.disabled=false;confirm.textContent="CONFIRM & LOG DOSES";} }
