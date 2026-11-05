@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 approved Combo session vs compound hierarchy
+- Shared session card (date/time, method, mixed shared site, notes and favourite) now precedes one-at-a-time compound detail and navigation, with concise editable summary on subsequent compounds. Separate sites remain inside the individual compound card. Implemented at 929ac0e9/f8d5ee00, regression tests 3daaf99c. 320/390 light/dark, long names, keyboard, webfont and physical iPhone require new head verification. No deploy.
+
 ## 2026-11-05 — PR135 focused Combo DS2 browser milestone
 - One-active-compound Setup, lavender grouped controls, SVG chevron and readable source paths passed targeted pinned Chromium Combo QA #42094294724 in 8 fictional 320/390 light/dark LIVE/DEMO states at app SHA 0520415d. Protected vial/formulation/Check-In tests PASS. Original five CI suites still blocked by dependency installation; physical iPhone and network-loaded approved typography NOT ACCEPTED. No merge/deploy.
 
