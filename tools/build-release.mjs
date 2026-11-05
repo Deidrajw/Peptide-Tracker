@@ -217,6 +217,7 @@ const manifest = {
  live_zip: path.basename(liveFile),
  standalone_demo: path.basename(demoFile),
  offline_demo_zip: path.basename(offlineDemoZip),
+ online_font_qa_demo: path.basename(fontPreviewFile),
  orphan_warning_demo: path.basename(orphanDemoFile),
  orphan_warning_zip: path.basename(orphanZip),
  demo_storage: 'ephemeral in-memory only',
