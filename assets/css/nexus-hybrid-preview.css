@@ -4605,3 +4605,28 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
 .nx-combo-compound-panel .nx-combo-unit-control:focus-within .nx-combo-unit-chevron{
   color:#b99ae5;
 }
+
+
+/* PR135 shared Combo session: consistently visible dropdown affordance on iPhone.
+   SVG is decorative and pointer-transparent; native selects remain interactive. */
+.nx-combo-session-fields .nx-combo-session-select-wrap{
+  position:relative;min-width:0;
+}
+.nx-combo-session-fields .nx-combo-session-select-wrap > select{
+  width:100%;box-sizing:border-box;
+  padding-right:44px!important;
+  -webkit-appearance:none!important;appearance:none!important;
+  background-image:none!important;
+  cursor:pointer;
+}
+.nx-combo-session-fields .nx-combo-session-select-chevron{
+  position:absolute;right:14px;top:23px;
+  transform:translateY(-50%);pointer-events:none;
+  color:var(--t2);opacity:1;z-index:1;
+}
+.nx-combo-session-fields .nx-combo-session-select-wrap:focus-within .nx-combo-session-select-chevron{
+  color:#b99ae5;
+}
+.nx-combo-session-fields .nx-combo-session-select-wrap > select:disabled + .nx-combo-session-select-chevron{
+  opacity:.38;
+}
