@@ -1,3 +1,6 @@
+## 2026-11-05 — Approved shared-session-first Combo UX refinement, NOT RELEASED
+- Draft PR135 source JS commit 929ac0e9, CSS f8d5ee00, test 3daaf99c. Shared date/time/method, mixed shared site and shared notes/favourite now appear once in a collapsible editable session panel ahead of active compound, preserving Select → Setup → Review and existing state IDs. No inventory, record, storage migration, nasal gate or production data changes. New CI/build artifacts pending. No merge/deploy/iPhone acceptance.
+
 ## 2026-11-05 — PR135 focused Combo QA milestone (still UNRELEASED)
 - Draft branch application source 0520415d, pinned Chromium Combo/vial/formulation/Check-In workflow #42094294724 SUCCESS and artifact #13447181982 322 outer CRC, 26 member LIVE ZIP CRC, fictional complete FULL APP DEMO and offline DEMO CRC. Eight Combo browser states PASS at 320/390 dark/light. Distinct online-font candidate file generated but network loaded-font proof pending.
 - Five ordinary workflow suites blocked by Playwright 1.65.0 dependency error, real iPhone/VoiceOver/Dynamic Type not accepted, clinical calculator safety not certified; production release-notes gate remains separate. No new tag, merge, deployment, storage migration or production data access.
