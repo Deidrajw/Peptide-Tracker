@@ -1,3 +1,6 @@
+## 2026-11-05 — Combo Dose Setup dose/source spacing and unit affordance
+- iPhone screenshot feedback: Inventory Source label too close to Dose Amount and mg selector appeared without a chevron. Scoped JS ecddbd56 and CSS 4797c74d add a visible SVG arrow and a 20px group gap. Local Chromium full-app fictional 320/390 light/dark 4/4 measurements confirm 20px gap, chevron visibility and mg to mcg conversion. Await exact-head CI, network font and iPhone UAT.
+
 ## 2026-11-05 — PR135 approved Combo session vs compound hierarchy
 - Shared session card (date/time, method, mixed shared site, notes and favourite) now precedes one-at-a-time compound detail and navigation, with concise editable summary on subsequent compounds. Separate sites remain inside the individual compound card. Implemented at 929ac0e9/f8d5ee00, regression tests 3daaf99c. 320/390 light/dark, long names, keyboard, webfont and physical iPhone require new head verification. No deploy.
 
