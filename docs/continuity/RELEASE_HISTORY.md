@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 Combo UI correction, candidate only — NOT RELEASED
+- Source JS ecddbd56, CSS 4797c74d: separate Inventory Source with 20px gap, expose native mg/mcg select via visible noninteractive SVG chevron; no changes to amount conversion, persisted dose/history, vial accounting, production storage or LIVE nasal gates.
+- Fictional local Chromium 320/390 light/dark 4/4 unit/spacing checks PASS; 26-source-file LIVE ZIP + isolated offline full-app DEMO structural/CRC checks PASS; GitHub exact-head full CI, real font loading and physical iPhone NOT TESTED as of checkpoint. PR135 draft, no version bump/merge/deploy.
+
 ## 2026-11-05 — PR135 corrective QA commit f9a111f8, NOT RELEASED
 - On draft/unmerged PR135 (main 21b9e42a), corrected numbered Combo compound navigation to collapse shared session details after advance. Previous source 01ac831b failed browser/full CI on this assertion; local fictional Chromium focused 320/390 light/dark 4/4 PASS. Prior build artifact #13448229868 structurally intact but predates correction. WebKit old source timed out at Goal Details; exact-head rerun ongoing. No version bump, merge, deployment, migration or production data writes. LIVE nasal OFF, iPhone/loaded-font/calculator certification unresolved.
 
