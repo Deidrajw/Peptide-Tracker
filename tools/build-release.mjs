@@ -89,6 +89,31 @@ if(demo.includes('onclick="exitDemoMode()"')||demo.includes('onclick="demoPicker
 const demoFile = path.join(DIST, 'Nexus_' + VERSION + '_FULL_DEMO.html');
 const liveFile = path.join(DIST, 'Nexus_' + VERSION + '_LIVE_GitHub.zip');
 fs.writeFileSync(demoFile, demo, 'utf8');
+
+// Optional online-font FULL-APP DEMO: identical isolated fictional application,
+// but restores the approved LIVE Google Fonts stylesheet for served/browser QA.
+// The ordinary standalone/offline DEMO remains fully self-contained with safe
+// system-font fallback; this variant must never be used as proof of offline fonts.
+const fontImport=fs.readFileSync(CSS[0],'utf8').match(/@import url\('([^']+)'\)/)?.[1];
+if(!fontImport || !fontImport.startsWith('https://fonts.googleapis.com/'))
+  throw Error('Approved Nexus font stylesheet is missing from LIVE CSS');
+const fontPreviewFile=path.join(DIST,'Nexus_'+VERSION+'_ONLINE_FONT_QA_FULL_DEMO.html');
+let fontPreview=demo.replace('</head>','<link rel="stylesheet" href="'+fontImport+'" data-nexus-font-qa="optional-network">\n</head>');
+const fontCheck=String.raw`<div id="nx-font-qa-status" role="status" style="position:fixed;right:8px;top:calc(42px + env(safe-area-inset-top));padding:5px 9px;background:#292436;color:#fff;border:1px solid #b99ae5;border-radius:9px;z-index:75;font:12px sans-serif;max-width:240px">Fonts: checking…</div>
+<script>(async function(){
+ const names=['DM Sans','Fraunces','DM Mono'];
+ const el=document.getElementById('nx-font-qa-status');
+ try{
+   await Promise.all(names.map(name=>document.fonts.load('14px "'+name+'"')));
+   await document.fonts.ready;
+   const loaded=names.filter(name=>Array.from(document.fonts).some(face=>face.family.replaceAll('"','').replaceAll("'",'')===name&&face.status==='loaded'));
+   el.textContent=loaded.length===names.length?'Fonts: all 3 loaded ✓':'Font fallback: '+names.filter(name=>!loaded.includes(name)).join(', ');
+   el.dataset.fontQa=loaded.length===names.length?'pass':'fallback';
+ }catch(e){el.textContent='Font network unavailable — fallback';el.dataset.fontQa='fallback';}
+})();</script>`;
+fontPreview=fontPreview.replace('</body>',fontCheck+'\n</body>');
+fs.writeFileSync(fontPreviewFile,fontPreview,'utf8');
+
 // A standalone 1.8MB HTML file is often displayed as an inert attachment inside
 // messaging/document viewers rather than opened in a full JavaScript browser.
 // Exact-source isolated historical deletion-warning fixture for physical Safari acceptance.
