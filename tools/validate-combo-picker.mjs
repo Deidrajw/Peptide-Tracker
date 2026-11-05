@@ -78,6 +78,7 @@ try {
   ensure(await page.locator('#nx-combo-review-step').isVisible(),'Separate review not shown');
   ensure((await page.locator('#nx-combo-review-summary').innerText()).includes('Thigh — right (SubQ)'),'Separate site missing in review');
   await page.locator('#save').click();
+  await page.locator('#nx-combo-review-step').waitFor({state:'detached'});
   ensure(await page.evaluate(()=>{
     const a=state.customPeptides['Test Compound 01'].doses;
     const b=state.customPeptides['Test Compound 02'].doses;
@@ -100,6 +101,7 @@ try {
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-review-step').isVisible(),'IM review not shown');
   await page.locator('#save').click();
+  await page.locator('#nx-combo-review-step').waitFor({state:'detached'});
   ensure(await page.evaluate(()=>{
     const a=state.customPeptides['Test Compound 01'].doses;
     const b=state.customPeptides['Test Compound 02'].doses;
