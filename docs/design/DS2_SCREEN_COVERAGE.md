@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 compact dose/units candidate (UNMERGED)
+- Combo Dose Setup now aligns Dose Amount + mg/mcg in one compact responsive row, preserving 44px inputs at 320/390. Changing selected units converts physical amount; Review displays user-entered unit while history/inventory preserve native mass. Test commit 3e558dbf; exact-source mobile/nested/writer SUCCESS, WebKit/browser still pending when documented. iPhone acceptance NOT TESTED.
+
 ## 2026-11-05 — Combo Dose + Stash read-only Vial candidate coverage (PR135, UNRELEASED)
 - Design direction approved: three-step Select/Setup/Review, minimal chrome, shared Log Dose title/site vocabulary, SubQ/IM only, 44px controls and method-specific injection sites. Current candidate 08a0a84b, main 21b9e42a, no merge/deploy.
 - Coded source includes per-compound preparation disclosure, source selector, site assignment for separate injections and Stash Vials View vial detail sheet. Route/physical eligibility and prepared delegation guarded. Exact-head 320/390 light/dark QA and physical iPhone/VoiceOver NOT QUALIFIED at writing; no production user-data migration.
