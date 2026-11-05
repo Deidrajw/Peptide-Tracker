@@ -4571,3 +4571,37 @@ html body,html body #app,html body #app :is(button,input,textarea,select){
 #nx-combo-setup-step #combo-dose-section{margin-top:2px}
 #nx-combo-setup-step .nx-combo-compound-buttons{margin:20px 0 4px}
 @media(max-width:350px){.nx-combo-session-card{padding:12px}.nx-combo-session-summary{font-size:11px}}
+
+
+/* PR135 iPhone Combo Setup: distinguish consecutive fields and expose a
+   real chevron on the narrow mg/mcg unit select independent of UA painting. */
+.nx-combo-compound-panel .nx-combo-inventory-group{
+  margin-top:20px;
+}
+.nx-combo-compound-panel .nx-combo-inventory-group > .field-label{
+  display:block;
+  margin:0 0 8px!important;
+}
+.nx-combo-compound-panel .nx-combo-unit-control{
+  position:relative;
+  min-width:0;
+}
+.nx-combo-compound-panel .nx-combo-unit-control > .nx-combo-unit{
+  box-sizing:border-box;
+  padding-right:34px!important;
+  background-image:none!important;
+  -webkit-appearance:none;
+  appearance:none;
+  cursor:pointer;
+}
+.nx-combo-compound-panel .nx-combo-unit-chevron{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--t2);
+  pointer-events:none;
+}
+.nx-combo-compound-panel .nx-combo-unit-control:focus-within .nx-combo-unit-chevron{
+  color:#b99ae5;
+}
