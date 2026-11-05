@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 shared administration chevron visual regression
+- Screenshot failure: Session Details Administration Method and Administration Site had no dropdown affordance in user's iPhone screenshot. JS 3e466511 + CSS f5a134e2 add explicit decorative SVG chevrons, preserving native select semantics and existing options; no changes to saved data.
+- Local real Chromium 320/390 light/dark isolated full-app via set_content: 4/4 PASS visual DOM geometry, both SVGs 18px visible and within selects, pointer-events:none; native IM/SubQ and Site selections functional; zero page errors. 390 dark screenshot inspected. Node JS syntax PASS, ZIP CRC PASS, GitHub blob hashes match. NOT TESTED: physical iPhone/Safari/VoiceOver/Dynamic Type, online font loads and full exact-head CI.
+
 ## 2026-11-05 — PR135 screenshot-driven Combo source-spacing/unit selector QA
 - User screenshot showed Inventory Source label crowded against dose input and a unit select with no visible drop indicator. JS ecddbd56 adds SVG chevron and semantic select wrapper; CSS 4797c74d adds 20px gap. Native select option mg/mcg remains; conversion handler untouched.
 - Local Chromium full-app isolated fictional DEMO via set_content at 320/390 light/dark 4/4 PASS: both compounds chosen, unit select opened programmatically, 0.3mg to 300mcg preserved mass 4/4, 20.0px measured input-to-source gap 4/4, SVG visible 4/4, no page errors. JS syntax PASS, exact GitHub blobs matched. Physical iPhone, VoiceOver, real loaded fonts, latest CI and calculator certification NOT TESTED.
