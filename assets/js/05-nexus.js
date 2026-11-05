@@ -156,11 +156,9 @@ function comboDoseModal() {
       </div>
     </div>
     <div id="nx-combo-draw-fields">
-    <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
-      <div id="nx-combo-compound-navigation" class="nx-combo-compound-navigation" aria-label="Compound setup navigation"><div class="nx-combo-current-heading"><span id="nx-combo-current-count" aria-live="polite"></span><span id="nx-combo-completion-count"></span></div><div id="nx-combo-compound-pips" class="nx-combo-compound-pips"></div></div>
-      <div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
-      <div class="nx-combo-compound-buttons"><button type="button" id="nx-combo-prev-compound" class="btn-secondary">Previous</button><button type="button" id="nx-combo-next-compound" class="btn-secondary">Next compound <span aria-hidden="true">→</span></button></div>
-    </div>
+    <section id="nx-combo-session-card" class="nx-combo-session-card" aria-label="Shared session details">
+      <div class="nx-combo-session-header"><div class="nx-combo-session-header-text"><div class="nx-combo-session-heading">Session details</div><p id="nx-combo-session-summary" class="nx-combo-session-summary" aria-live="polite">Date, method and administration details</p></div><button type="button" id="nx-combo-session-toggle" class="nx-combo-session-toggle" aria-controls="nx-combo-session-fields" aria-expanded="true">Done</button></div>
+      <div id="nx-combo-session-fields" class="nx-combo-session-fields">
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input id="combo-date" type="datetime-local" class="inp" value="${esc(state._comboDate||localDatetime())}" style="flex:1">
@@ -174,6 +172,14 @@ function comboDoseModal() {
       <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
       <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
     </div>
+      </div>
+    </section>
+    <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
+      <div id="nx-combo-compound-navigation" class="nx-combo-compound-navigation" aria-label="Compound setup navigation"><div class="nx-combo-current-heading"><span id="nx-combo-current-count" aria-live="polite"></span><span id="nx-combo-completion-count"></span></div><div id="nx-combo-compound-pips" class="nx-combo-compound-pips"></div></div>
+      <div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
+      <div class="nx-combo-compound-buttons"><button type="button" id="nx-combo-prev-compound" class="btn-secondary">Previous</button><button type="button" id="nx-combo-next-compound" class="btn-secondary">Next compound <span aria-hidden="true">→</span></button></div>
+    </div>
+
     </div>
     </section>
     <section id="nx-combo-review-step" aria-label="Review combo doses" hidden>
@@ -196,6 +202,31 @@ function comboDoseModal() {
   const comboMethod=m.querySelector("#nx-combo-method");
   const comboSite=m.querySelector("#combo-site");
   const selectedGrouping=()=>m.querySelector('input[name="nx-combo-grouping"]:checked')?.value||"mixed";
+  const sessionCard=m.querySelector("#nx-combo-session-card");
+  const sessionFields=m.querySelector("#nx-combo-session-fields");
+  const sessionToggle=m.querySelector("#nx-combo-session-toggle");
+  const sessionSummary=m.querySelector("#nx-combo-session-summary");
+  let sessionExpanded=true;
+  const updateSessionSummary=()=>{
+    const date=m.querySelector("#combo-date")?.value||"Date not set";
+    const mode=selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections";
+    const method=m.querySelector("#nx-combo-method")?.value||"";
+    const site=selectedGrouping()==="mixed"?m.querySelector("#combo-site")?.value:"";
+    const dateText=date.includes("T")?date.replace("T"," · "):date;
+    sessionSummary.textContent=[dateText,method,mode,site].filter(Boolean).join(" · ");
+  };
+  const setSessionExpanded=expanded=>{
+    sessionExpanded=!!expanded;
+    sessionFields.hidden=!sessionExpanded;
+    sessionFields.style.display=sessionExpanded?"":"none";
+    sessionToggle.textContent=sessionExpanded?"Done":"Edit";
+    sessionToggle.setAttribute("aria-expanded",String(sessionExpanded));
+    updateSessionSummary();
+  };
+  sessionToggle.onclick=()=>setSessionExpanded(!sessionExpanded);
+  sessionCard.addEventListener("change",updateSessionSummary);
+  sessionCard.addEventListener("input",updateSessionSummary);
+  updateSessionSummary();
   const updateActiveCompound=()=>{
     if(!sel.length)return;
     activeCompoundIndex=Math.max(0,Math.min(activeCompoundIndex,sel.length-1));
@@ -209,7 +240,7 @@ function comboDoseModal() {
     m.querySelector("#nx-combo-prev-compound").disabled=activeCompoundIndex===0;
     m.querySelector("#nx-combo-next-compound").disabled=activeCompoundIndex===sel.length-1;
   };
-  const moveActiveCompound=delta=>{activeCompoundIndex=Math.max(0,Math.min(sel.length-1,activeCompoundIndex+delta));updateActiveCompound();m.querySelector("#nx-combo-compound-navigation")?.scrollIntoView({block:"nearest",behavior:"instant"});};
+  const moveActiveCompound=delta=>{activeCompoundIndex=Math.max(0,Math.min(sel.length-1,activeCompoundIndex+delta));setSessionExpanded(false);updateActiveCompound();m.querySelector("#nx-combo-compound-navigation")?.scrollIntoView({block:"nearest",behavior:"instant"});};
   m.querySelector("#nx-combo-prev-compound").onclick=()=>moveActiveCompound(-1);
   m.querySelector("#nx-combo-next-compound").onclick=()=>moveActiveCompound(1);
   m.querySelector("#combo-dose-fields").addEventListener("input",event=>{if(event.target.matches(".combo-dose-input")){const name=event.target.dataset.n;const displayed=m.querySelector(`.nx-combo-unit[data-n="${CSS.escape(name)}"]`)?.value;if(["mg","mcg"].includes(displayed)){comboUnits[name]=displayed;state._comboUnits={...comboUnits};}state._comboDoses=state._comboDoses||{};state._comboDoses[name]=event.target.value;updateActiveCompound();}});
@@ -281,7 +312,7 @@ function comboDoseModal() {
     m.querySelector("#nx-combo-back").style.display=next===0?"none":"";
     m.querySelector("#nx-combo-continue").hidden=next===2;
     m.querySelector("#nx-combo-continue").style.display=next===2?"none":"";
-    if(next===1)updateActiveCompound();
+    if(next===1){updateActiveCompound();updateSessionSummary();}
     if(next===2){
       const summary=m.querySelector("#nx-combo-review-summary");
       const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Source mode","Draw now"],["Date & time",m.querySelector("#combo-date")?.value||"Not recorded"],["Method",comboMethod.value]];
@@ -462,7 +493,7 @@ function comboDoseModal() {
     box.replaceChildren(...rows);
   });
     const comboDateNowBtn = m.querySelector("#combo-date-now");
-  if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
+  if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();updateSessionSummary();};
   try {
     const favCheck = m.querySelector("#combo-savefav");
     if (favCheck) favCheck.onchange = () => { const w=m.querySelector("#combo-favname-wrap"); if(w) w.style.display = favCheck.checked ? "block" : "none"; };
