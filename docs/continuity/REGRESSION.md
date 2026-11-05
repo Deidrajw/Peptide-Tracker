@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 exact-source QA handoff
+- Latest app source 1dd305d9, test 472cb093; required 8 fictional LIVE/DEMO × light/dark × 320/390 Combo tests: search/drafts/favourites, shared/individual injection sites, mixed IM history, source-route exclusion, matched BAC history, Prepared delegation, unit toggle mg↔mcg, 300mcg=0.3mg, 1mcg=0.001mg and strict insufficient-stock rejection. Exact latest tests PENDING.
+- Earlier 08a0a84b full build #41986359105 SUCCESS and artifact #13397066246 CRC PASS, but predates unit fixes and vialId reconHistory fallback. Other exact code-source WebKit/mobile/writer/nested at 08a0 SUCCESS. Never mark new code PASS solely from earlier runs.
+- Physical iPhone Safari, fonts, Dynamic Type, VoiceOver and clinical calculator certification NOT TESTED. Production Cloudflare remains deployed at main 21b9e42a; draft PR135 unmerged.
+
 ## 2026-11-05 — Unit/conversion candidate tests added, latest results pending
 - New Combo QA: custom preferred mcg vs cfg-native mg, 300mcg entered consumes 0.3mg, saved dose stays native string with enteredUnit/enteredAmount, 1mcg consumes 0.001mg rather than rounding to zero, shortage rejects without mutating stock; changing unit mg↔mcg preserves physical quantity, Back retains selected unit. Added at source/test commit 3e558dbf. **NOT TESTED** on that final exact source yet; all workflows running at writing.
 - Previous unchanged-source 08a0a84b full-browser workflow #41986359105 SUCCESS, downloaded artifact #13397066246 CRC PASS, 8/8 LIVE/DEMO 320/390 theme Combo picker QA PASS; shared writer, mobile, nested, WebKit SUCCESS. That does not qualify new unit fixes.
