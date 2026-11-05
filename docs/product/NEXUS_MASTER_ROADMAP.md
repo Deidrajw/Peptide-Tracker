@@ -1,3 +1,22 @@
+## 2026-11-05 — PR135 next QA priority: approved session-first hierarchy
+- User approved shared-session-first Combo Setup; JS/CSS and browser assertions coded at 929ac0e9/f8d5ee00/3daaf99c on draft branch. Next: exact-source pinned browser CI, full LIVE/DEMO artifact integrity, 320/390 visual and loaded-font check, then iPhone UAT. Five regular workflow dependency failures and separate stale release notes gate remain blockers. No merge/deploy approval.
+
+## 2026-11-05 — PR135 next gating priority after pinned Combo QA PASS
+- Target pinned browser #42094294724 SUCCESS at app source 0520415d, eight Combo tests and protected vial/formulation/Check-In PASS; exact build artifact #13447181982 CRC validated. Remaining blockers: five original workflows fail unavailable npm Playwright-core 1.65.0; pin 1.64.1 in existing CI without weakening safeguards, verify network-loaded DM Sans/Fraunces/DM Mono, physical iPhone UAT/VoiceOver, and independent calculator safety. Separate production stale release-notes gate still unresolved. No merge/deploy approval. ONE NEXT ACTION: restore full five-workflow CI green.
+
+## 2026-11-05 — Active next priority: PR135 focused Combo Dose release qualification
+- User approved focused Combo Dose UI on existing draft PR135, not release. App source 0520415d includes one-compound-at-a-time Setup, lavender grouping choice, aligned chevrons, source availability and corrected unit preference draft preservation. Programmatic unit safety issue from pinned CI #42094053764 was fixed, latest CI/browser requalification pending. Local isolated Chromium 8 six-compound UI states and 4 preferred-mcg cases PASS; font loaded-face/physical iPhone untested.
+- Separate stale production release-notes gate remains; protect data, DS2, Stash, prepared doses and disabled nasal LIVE. No deploy without explicit authorization.
+- ONE NEXT ACTION: qualify latest exact-source pinned Combo browser and full checks, then artifact and physical-device acceptance.
+
+## 2026-11-05 — PR135 source safety qualification priority
+- Unit-parity and small-mass inventory defect fixed in candidate source 3e558dbf: explicit mg/mcg choice, native historical conversion, 1mcg debit, strict shortage rejection, no production data changes. Next priority remains final exact-source browser/artifact verification and physical iPhone UAT. Draft PR135 unmerged; separate production release-notes gate unresolved. No merge/deploy.
+
+## 2026-11-05 — Active draft PR135: Combo Dose and per-vial preparation visibility
+- USER APPROVED 3-stage Combo Dose direction. Candidate application source 08a0a84b, draft PR135, main 21b9e42a, no merge/deploy. Select searchable compounds, Setup SubQ/IM and mixed/separate site choices plus exact open-source selection, concise Review; Prepared delegates to existing syringe confirmation. Stash View vial read-only details are added. Preserve approved DS2 and existing data/write-coordinator protections.
+- PENDING exact-head full browser + artifacts, Stash/Combo screenshots 320/390 light/dark, physical iPhone accessibility acceptance. Independent calculator-safety requirements remain; production release-notes gate failure #41971160513 to be corrected in separate PR without weakening gate.
+- ONE NEXT ACTION: qualify PR135 exact-source QA and matching full app DEMO/LIVE artifacts, address failures before any approval request.
+
 ## 2026-11-04 Toronto — approved DM Sans/Fraunces/DM Mono implementation and local QA
 - Approved typography system now CODED in draft PR132, app/test SHA 983a58d3d7e8b2a9ab6a0c068dbcde39866dba26; deployed main 755dea5e/v0.9.24-beta unchanged, no merge/deploy. Shared DM Sans CSS and former Today SF Pro override replaced; existing Fraunces titles retained; DM Mono only explicitly technical values; scoped approved 13px explanation/11px category/13px Journal labels. Only CSS + presentational JS07/08/10/11 changed. Full release notes: docs/releases/DS2_TYPOGRAPHY_FAMILY_CANDIDATE_2026-11-04.md.
 - Source-matching check: all five changed application files GitHub blob SHA EXACT MATCH to locally reconstructed source, 21 remaining files from prior verified source bundle. 26-file LIVE ZIP CRC PASS, all 12 numbered JS syntax PASS. Isolated fictional, no-live FULL APP DEMO generated from same actual modules, integrity checks PASS; no user-data migration.

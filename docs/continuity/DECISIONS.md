@@ -1,3 +1,39 @@
+## 2026-11-05 — Combo Dose header must inherit DS2 form typography
+- User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
+
+## 2026-11-05 — Explicit DS2 dropdown cues for Combo Session Details
+- Preserve native select controls for Administration Method and Administration Site, with consistent visible outline SVG chevrons independent of browser-native background-image appearance. Chevron is decorative and cannot intercept taps. Applies within approved session-first Combo Setup only; this screenshot-driven correction does not authorize release/merge/deploy.
+
+## 2026-11-05 — Screenshot correction to approved Combo Setup
+- Preserve approved Select → Setup → Review and session-first design; Inventory Source requires intentional vertical separation from Dose Amount, implemented as 20px group gap. Compact mg/mcg native selector must expose an explicit DS2 outline chevron rather than rely on browser-dependent select-arrow painting. Maintain both units and mass-preserving conversions. This is a targeted corrective UI request, not a redesign or deployment approval.
+
+## 2026-11-05 — User approved shared-session-first Combo Setup refinement
+- User explicitly approved the recommended layout after evaluating the annotated iPhone screenshot: one editable shared session section above the focused compound, then compound-specific dose/source/site and Next compound as its natural endpoint. Shared date, time and administration method are never repeated for each compound; shared site only for mixed syringe and individual site for separate injections. Session summary remains editable and collapses on compound navigation. This is development design approval, NOT PR merge/deployment approval.
+
+## 2026-11-05 — Approved focused Combo UX implementation safety note
+- User approved one active compound at a time, lavender grouping selection, simplified header, and shared control styling; draft-only approval, not merge/deploy. Preserve one shared site for mixed syringe and individual sites for separate injections. Record displayed mg/mcg unit before recording draft amount; changing unit must preserve mass.
+- Offline DEMO remains fully fictional/self-contained and may use fallback fonts. Additional optional online-font QA DEMO is required to test actual loaded DM Sans, Fraunces, DM Mono faces before release; computed CSS family alone is insufficient. No font binaries distributed.
+
+## 2026-11-05 — USER APPROVED PR135 focused Combo Dose redesign
+- User explicitly approved previous conversational interactive design: keep Select → Setup → Review, lavender non-native grouping selector, simplified “Combo dose” header, one active compound at a time with numbered navigation, distinct compound heading, DS2 chevron and readable inventory source, shared injection site only in mixed mode, per-compound sites in separate mode. This is UI approval, NOT merge/deploy approval.
+- Approved font QA gate: DM Sans/Fraunces/DM Mono must be verified as actually loaded in a network-served demo; isolated standalone offline HTML may use system fallback but must not be considered proof of visual font parity.
+- Preserve historic native dose-unit representation, unit conversion mass, strict shortfall rejection, per-vial reconHistory association, protected storage and LIVE nasal gates OFF.
+
+## 2026-11-05 — Unit choice without historical rewrites
+- Combo Dose Setup mg/mcg unit choice may differ from historical cfg(name).unit; always convert the numeric entered value by mass before vial deductions, store native numeric dose as a string in established historical unit, and keep enteredAmount/enteredUnit as audit metadata. Changing the unit must convert the visible value rather than silently relabeling the same number. Old untyped Combo drafts retain native interpretation. Unknown/non-mass unit combinations must fail closed.
+- For newly staged Combo dose allocation, preserve 0.000001mg balance precision; strict mass shortfall checks replace 0.01mg tolerance that could underallocate tiny mcg doses. Existing legacy planner callers keep previous logic unless explicitly using new staged method. No migration or historical reprocessing.
+
+## 2026-11-05 — implementation safety decisions for approved Combo UX
+- Keep previously approved Select → Setup → Review and low-density DS2 hierarchy. Combo method restricted to SubQ and IM, reusing nexusAdminSites values from standard Log Dose. Explicit non-injectable route entries excluded from selection. Shared physical syringe gets one site; separate injections get independent sites and separate method/site dose records grouped by comboId.
+- Existing prepared syringes must use their existing prepared-dose confirmation, never double-debit vial stock. Actual open vial choices may be explicit or deliberately automatic across eligible open vials; labelled nasal vials are ineligible for SubQ/IM. A mixed-syringe history entry is not a claim of physical/chemical compatibility.
+- Stash View vial and inline Combo View preparation are read-only, exact-vial-specific; use vialId-matched reconHistory when vial fields are missing, but never infer BAC volume/date from unrelated kit defaults. Keep 44px controls and approved DS2 fonts/spacing.
+- Candidate PR135 remains unmerged and undeployed while exact-source browser tests, artifact integrity, physical iPhone and existing safety gates are outstanding. Design approval does not waive release approval or calculator safety requirements.
+
+## 2026-11-05 — Combo Dose approved UX direction (NOT release approval)
+- User approved 3-step Select → Setup → Review pattern based on screenshots. Keep calm/minimal DS2, search/selection first, compound dose/source on setup, concise review. Combo Dose limited to SubQ and IM, reusing the EXACT nexusAdminSites(method) choices/labels from regular Log Dose. One mixed syringe has one administration site; separate injections require individual sites and accounting.
+- Read-only View preparation under an individual source; kit/vial details may differ, never infer missing BAC amount or overwrite saved historical data. Do not claim compatibility of physical compounds when logging a mix.
+- Staged implementation draft PR #135 includes explicit guard: mixed SubQ only until verified separate/IM transaction path exists. User approval applies to design direction, not merge/deploy, new write behaviour or unsafe source assumptions.
+
 ## 2026-11-04 Toronto — approved DM Sans/Fraunces/DM Mono implementation and local QA
 - Approved typography system now CODED in draft PR132, app/test SHA 983a58d3d7e8b2a9ab6a0c068dbcde39866dba26; deployed main 755dea5e/v0.9.24-beta unchanged, no merge/deploy. Shared DM Sans CSS and former Today SF Pro override replaced; existing Fraunces titles retained; DM Mono only explicitly technical values; scoped approved 13px explanation/11px category/13px Journal labels. Only CSS + presentational JS07/08/10/11 changed. Full release notes: docs/releases/DS2_TYPOGRAPHY_FAMILY_CANDIDATE_2026-11-04.md.
 - Source-matching check: all five changed application files GitHub blob SHA EXACT MATCH to locally reconstructed source, 21 remaining files from prior verified source bundle. 26-file LIVE ZIP CRC PASS, all 12 numbered JS syntax PASS. Isolated fictional, no-live FULL APP DEMO generated from same actual modules, integrity checks PASS; no user-data migration.

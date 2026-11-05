@@ -1,0 +1,39 @@
+name: PR135 stable pinned browser QA
+on:
+  push:
+    branches:
+      - feature/combo-dose-stepper-vial-details-20261105
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  combo-ux-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install published stable Playwright 1.64.1
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium
+      - name: Build isolated exact-source DEMO and LIVE candidate
+        run: node tools/build-release.mjs
+      - name: Combo Dose browser and protected vial regression
+        run: |
+          python3 -m http.server 8777 >/tmp/nexus-http.log 2>&1 &
+          node tools/validate-combo-picker.mjs
+          node tools/validate-vial-safety.mjs
+          node tools/validate-formulation-stock.mjs
+          node tools/validate-checkin.mjs
+      - name: Upload candidate diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PR135-pinned-combo-evidence
+          path: dist/
+          if-no-files-found: warn
+          retention-days: 14

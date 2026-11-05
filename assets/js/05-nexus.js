@@ -17,11 +17,39 @@ function comboDoseModal() {
     ...(state.comboPresets||[]).flatMap(p=>p.compounds||[]),
     ...(state._comboSelected||[])
   ]);
-  const names = Object.keys(aps).filter(n=>aps[n]?.route!=="Nasal" &&
-    (!blendConstituents.has(n)||standaloneKits.has(n)||independentlyUsed.has(n))).sort();
+  const names = Object.keys(aps).filter(n=>{
+    // Combo Dose is an injectable workflow. Exclude explicitly non-injectable
+    // tracked routes rather than offering oral/nasal/topical/IV records in its picker.
+    // An unspecified legacy route remains selectable but still needs an eligible
+    // SubQ/IM vial before a stock-backed dose can be committed.
+    const route=aps[n]?.route||(typeof nexusUseSetupFor==="function"?nexusUseSetupFor(n)?.method:null);
+    const explicit=typeof nexusExplicitAdminMethod==="function"?nexusExplicitAdminMethod(route):null;
+    return !explicit||["SubQ","IM"].includes(explicit);
+  }).filter(n=>!blendConstituents.has(n)||standaloneKits.has(n)||independentlyUsed.has(n)).sort();
   if (!state._comboSelected) state._comboSelected = [];
   let sel = state._comboSelected.filter(n=>names.includes(n));
   state._comboSelected = [...sel];
+  // Modal-local choices are never written to persistent settings on navigation.
+  const comboSources={};
+  const comboIndividualSites={};
+  const comboUnits={...(state._comboUnits||{})};
+  const comboNativeUnit=name=>cfg(name).unit;
+  const comboDisplayUnit=name=>{
+    if(["mg","mcg"].includes(comboUnits[name]))return comboUnits[name];
+    // Older drafts held numbers in native units, never reinterpret them.
+    if(state._comboDoses?.[name]!==undefined)return comboNativeUnit(name);
+    const preference=nexusUseSetupFor(name)?.unit;
+    const custom=state.customPeptides?.[name]?.unit;
+    return ["mg","mcg"].includes(preference)?preference:
+      ["mg","mcg"].includes(custom)?custom:comboNativeUnit(name);
+  };
+  const sourceOptionsFor=(name,method)=>{
+    const eligible=typeof getEligibleSourceKits==="function"?getEligibleSourceKits(name,method):[];
+    return eligible.map(({kit,vial})=>({
+      value:String(kit.id)+":"+String(vial.id),
+      label:(kit.kitName||kit.name)+" · Vial "+(vial.number||vial.vialNumber||String(vial.id).slice(-4))
+    }));
+  };
 
   // Prepared & Ready — actual prepared mixed syringes, distinct from favorites below.
   // A favorite is a reusable recipe for what to draw; a prepared syringe is a specific
@@ -64,23 +92,55 @@ function comboDoseModal() {
   const doseInputs = () => sel.map(n=>{
     const c = cfg(n);
     const v = (state._comboDoses||{})[n]||"";
-    return `<div style="margin-bottom:10px">
-      <label class="field-label">${esc(n)} DOSE (${c.unit})</label>
-      <input class="combo-dose-input" data-n="${esc(n)}" type="number" class="inp" placeholder="e.g. 2" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
+    return `<div class="nx-combo-compound-panel" data-compound="${esc(n)}" style="margin-bottom:16px">
+      <div class="nx-combo-compound-heading"><span class="nx-combo-compound-index">COMPOUND ${sel.indexOf(n)+1} OF ${sel.length}</span><h3>${esc(n)}</h3></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;min-width:0">
+        <div style="flex:1;min-width:0">
+          <label class="field-label">DOSE AMOUNT</label>
+          <input class="combo-dose-input" data-n="${esc(n)}" type="number" min="0" step="any" inputmode="decimal" aria-label="${esc(n)} dose amount" placeholder="Enter amount" value="${esc(v)}" style="width:100%;min-height:46px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
+        </div>
+        <div class="nx-combo-unit-field" style="flex:0 0 96px;min-width:0">
+          <label class="field-label" for="nx-combo-unit-${sel.indexOf(n)}">UNIT</label>
+          <div class="nx-combo-unit-control">
+            <select id="nx-combo-unit-${sel.indexOf(n)}" class="inp nx-combo-unit" data-n="${esc(n)}" aria-label="${esc(n)} amount unit, choose mg or mcg" style="min-height:46px;width:100%">
+              ${["mg","mcg"].map(u=>`<option value="${u}"${comboDisplayUnit(n)===u?" selected":""}>${u}</option>`).join("")}
+            </select>
+            <svg class="nx-combo-unit-chevron" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="nx-combo-inventory-group">
+        <label class="field-label" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
+        <select id="nx-combo-source-${sel.indexOf(n)}" class="inp nx-combo-source" data-n="${esc(n)}" aria-label="${esc(n)} vial source" style="min-height:44px;margin-bottom:4px"></select>
+      </div>
+      <div class="nx-combo-individual-site" data-n="${esc(n)}" hidden style="margin-top:10px">
+        <label class="field-label">ADMINISTRATION SITE · ${esc(n)}</label>
+        <select class="inp nx-combo-individual-site-select" data-n="${esc(n)}" aria-label="${esc(n)} administration site" style="min-height:44px"></select>
+      </div>
+      <button type="button" class="nx-combo-vial-info" data-n="${esc(n)}" aria-expanded="false" style="min-height:44px;display:flex;align-items:center;gap:8px;margin-top:6px;color:var(--t3);font-size:12px;background:transparent;border:0">View vial preparation <svg class="nx-combo-disclosure-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="nx-combo-vial-detail" data-n="${esc(n)}" hidden style="padding:12px;background:var(--surface-2);border-radius:10px;font-size:12px;color:var(--t3);line-height:1.6"></div>
     </div>`;
   }).join("");
 
   const m = openModal(`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:#A78BFA;letter-spacing:1.5px">LOG COMBO DOSE</span>
-      <button id="x" style="color:var(--t4);font-size:18px">✕</button>
+    <header class="nx-dose-head nx-combo-header">
+      <div class="nx-combo-header-copy"><div class="nx-dose-kicker">DOSE LOG</div><h2 class="nx-dose-title">Combo dose</h2></div>
+      <button id="x" class="nx-dose-close nx-combo-close" type="button" aria-label="Close Combo Dose"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </header>
+    <div class="hint nx-combo-intro" style="margin-bottom:14px">Select compounds, configure each dose and review before logging.</div>
+    <nav class="nx-combo-steps" aria-label="Combo dose steps" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px">
+      ${["Select","Setup","Review"].map((label,i)=>`<div class="nx-combo-step" data-step="${i}" style="text-align:center"><div class="nx-combo-step-bar" style="height:4px;border-radius:6px;background:${i===0?"#A78BFA":"var(--border)"}"></div><div style="font-size:12px;margin-top:6px;color:var(--t3)">${label}</div></div>`).join("")}
+    </nav>
+    <section id="nx-combo-select-step" aria-label="Select compounds and injection grouping">
+    <label class="field-label">INJECTION GROUPING</label>
+    <div class="nx-combo-grouping" role="group" aria-label="Injection grouping">
+      <label class="nx-combo-group-option"><input type="radio" name="nx-combo-grouping" value="mixed" checked><span class="nx-combo-group-option-content"><strong>One mixed syringe</strong><small>One shared injection site</small></span><span class="nx-combo-radio-mark" aria-hidden="true"></span></label>
+      <label class="nx-combo-group-option"><input type="radio" name="nx-combo-grouping" value="separate"><span class="nx-combo-group-option-content"><strong>Separate injections</strong><small>Individual sites for each compound</small></span><span class="nx-combo-radio-mark" aria-hidden="true"></span></label>
     </div>
-    <div class="hint" style="margin-bottom:14px">For compounds you draw into one syringe and inject together. Each still logs as its own dose behind the scenes — supply, schedule, and trends stay accurate per compound.</div>
-    ${preparedSection}
     ${presets.length?`<div class="nx-combo-presets"><label class="field-label" for="nx-combo-preset-select">SAVED COMBINATIONS</label><select id="nx-combo-preset-select" class="inp" aria-label="Load saved combination"><option value="">Choose a favourite…</option>${presets.map(p=>`<option value="${esc(String(p.id))}">${esc(p.name)}</option>`).join("")}</select><details class="nx-combo-manage"><summary>Manage favourites</summary><div class="nx-combo-manage-options">${presetChips}</div></details></div>`:""}
-    <section class="nx-combo-picker-panel" aria-label="Compounds in this syringe" style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:16px;background:var(--surface)">
+    <section class="nx-combo-picker-panel" aria-label="Selected compounds" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px">
-        <label class="field-label" for="combo-search" style="margin:0">COMPOUNDS IN THIS SYRINGE</label>
+        <label class="field-label" for="combo-search" style="margin:0">SELECT COMPOUNDS</label>
         <span id="combo-selected-count" style="font-size:11px;color:var(--t4);white-space:nowrap">${sel.length} selected</span>
       </div>
       <input id="combo-search" class="inp" type="search" autocomplete="off" placeholder="Search ${names.length} compounds…" aria-controls="combo-choices" style="margin-bottom:8px;min-height:46px;width:100%">
@@ -89,22 +149,228 @@ function comboDoseModal() {
       </div>
       <div style="font-size:11px;color:var(--t4);margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>Scroll for more compounds</span><span aria-hidden="true">↓</span></div>
     </section>
-    <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
-      <label class="field-label">DOSE AMOUNTS</label><div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
+    </section>
+    <section id="nx-combo-setup-step" aria-label="Configure doses" hidden>
+    <div id="nx-combo-preparation-mode" style="margin-bottom:14px">
+      <div role="group" aria-label="Source mode" style="display:flex;gap:8px;margin-bottom:10px">
+        <button type="button" data-source-mode="draw" aria-pressed="true" class="nx-combo-mode-btn" style="min-height:44px;flex:1;border:1px solid var(--border);border-radius:22px;background:var(--surface-3);color:var(--t1)">Draw now</button>
+        <button type="button" data-source-mode="prepared" aria-pressed="false" class="nx-combo-mode-btn" style="min-height:44px;flex:1;border:1px solid var(--border);border-radius:22px;color:var(--t3)">Prepared</button>
+      </div>
+      <div id="nx-combo-prepared-sources" hidden style="font-size:12px;color:var(--t3)">
+        ${preparedSection || '<p>No prepared mixed syringes available. Return to Draw now to log vial doses.</p>'}
+      </div>
     </div>
+    <div id="nx-combo-draw-fields">
+    <section id="nx-combo-session-card" class="nx-combo-session-card" aria-label="Shared session details">
+      <div class="nx-combo-session-header"><div class="nx-combo-session-header-text"><div class="nx-combo-session-heading">Session details</div><p id="nx-combo-session-summary" class="nx-combo-session-summary" aria-live="polite">Date, method and administration details</p></div><button type="button" id="nx-combo-session-toggle" class="nx-combo-session-toggle" aria-controls="nx-combo-session-fields" aria-expanded="true">Done</button></div>
+      <div id="nx-combo-session-fields" class="nx-combo-session-fields">
     <label class="field-label">DATE & TIME</label>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input id="combo-date" type="datetime-local" class="inp" value="${esc(state._comboDate||localDatetime())}" style="flex:1">
       <button id="combo-date-now" type="button" style="padding:0 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:600;white-space:nowrap">Now</button>
     </div>
-    <label class="field-label">INJECTION SITE</label><select id="combo-site" class="inp" style="margin-bottom:14px">${SITES.map(s=>`<option${s===(state._comboSite||SITES[0])?" selected":""}>${esc(s)}</option>`).join("")}</select>
+<label class="field-label" for="nx-combo-method">ADMINISTRATION METHOD</label>
+    <div class="nx-combo-session-select-wrap"><select id="nx-combo-method" class="inp" aria-label="Administration method" style="margin-bottom:14px"><option value="SubQ">SubQ</option><option value="IM">IM</option></select><svg class="nx-combo-session-select-chevron" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div id="nx-combo-shared-site"><label class="field-label" for="combo-site">ADMINISTRATION SITE</label><div class="nx-combo-session-select-wrap"><select id="combo-site" class="inp" aria-label="Shared administration site" style="margin-bottom:14px"></select><svg class="nx-combo-session-select-chevron" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
     <label class="field-label">NOTES (shared)</label><textarea id="combo-notes" class="inp" placeholder="Anything worth capturing…" style="min-height:54px;resize:vertical;margin-bottom:14px">${esc(state._comboNotes||"")}</textarea>
     <div id="combo-fav-section" style="${sel.length>=2?"":"display:none"}">
       <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--t3)"><input id="combo-savefav" type="checkbox" style="accent-color:#A78BFA"> Save this combo as a favourite</label>
       <div id="combo-favname-wrap" style="display:none;margin-bottom:16px"><input id="combo-favname" class="inp" placeholder="Name this combo, e.g. Morning stack"></div>
     </div>
-    <button id="save" class="btn-primary" style="background:#A78BFA">LOG ${sel.length||""} DOSE${sel.length===1?"":"S"}</button>
+      </div>
+    </section>
+    <div id="combo-dose-section" style="${sel.length?"":"display:none"}">
+      <div id="nx-combo-compound-navigation" class="nx-combo-compound-navigation" aria-label="Compound setup navigation"><div class="nx-combo-current-heading"><span id="nx-combo-current-count" aria-live="polite"></span><span id="nx-combo-completion-count"></span></div><div id="nx-combo-compound-pips" class="nx-combo-compound-pips"></div></div>
+      <div id="combo-dose-fields" style="margin-bottom:6px">${doseInputs()}</div>
+      <div class="nx-combo-compound-buttons"><button type="button" id="nx-combo-prev-compound" class="btn-secondary">Previous</button><button type="button" id="nx-combo-next-compound" class="btn-secondary">Next compound <span aria-hidden="true">→</span></button></div>
+    </div>
+
+    </div>
+    </section>
+    <section id="nx-combo-review-step" aria-label="Review combo doses" hidden>
+      <h3 style="font-size:16px;font-weight:650;margin-bottom:12px">Review before logging</h3>
+      <div id="nx-combo-review-summary" aria-live="polite" style="font-size:13px;line-height:1.8;color:var(--t2);margin-bottom:14px"></div>
+      <p role="status" style="font-size:12px;color:var(--t3);line-height:1.6">Review only. Inventory and source checks still run when you confirm.</p>
+      <button id="save" class="btn-primary" style="background:#A78BFA">CONFIRM & LOG DOSES</button>
+    </section>
+    <div class="nx-combo-nav" style="display:flex;gap:10px;align-items:center;margin-top:14px">
+      <button id="nx-combo-back" type="button" class="btn-secondary" style="min-height:46px;flex:1" hidden>Back</button>
+      <button id="nx-combo-continue" type="button" class="btn-primary" style="background:#A78BFA;min-height:46px;flex:2">Continue</button>
+    </div>
   `, "#A78BFA");
+
+  m.classList.add("nx-combo-dose-modal");
+
+  // Review-first interaction; the original planner/commit path remains the only writer.
+  // Unsupported site-specific multi-injection and IM transactions remain blocked rather
+  // than inventing a method or incorrectly sharing a site across historical records.
+  let comboStep=0,comboSourceMode="draw",activeCompoundIndex=0;
+  const comboPanels=["nx-combo-select-step","nx-combo-setup-step","nx-combo-review-step"];
+  const comboMethod=m.querySelector("#nx-combo-method");
+  const comboSite=m.querySelector("#combo-site");
+  const selectedGrouping=()=>m.querySelector('input[name="nx-combo-grouping"]:checked')?.value||"mixed";
+  const sessionCard=m.querySelector("#nx-combo-session-card");
+  const sessionFields=m.querySelector("#nx-combo-session-fields");
+  const sessionToggle=m.querySelector("#nx-combo-session-toggle");
+  const sessionSummary=m.querySelector("#nx-combo-session-summary");
+  let sessionExpanded=true;
+  const updateSessionSummary=()=>{
+    const date=m.querySelector("#combo-date")?.value||"Date not set";
+    const mode=selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections";
+    const method=m.querySelector("#nx-combo-method")?.value||"";
+    const site=selectedGrouping()==="mixed"?m.querySelector("#combo-site")?.value:"";
+    const dateText=date.includes("T")?date.replace("T"," · "):date;
+    sessionSummary.textContent=[dateText,method,mode,site].filter(Boolean).join(" · ");
+  };
+  const setSessionExpanded=expanded=>{
+    sessionExpanded=!!expanded;
+    sessionFields.hidden=!sessionExpanded;
+    sessionFields.style.display=sessionExpanded?"":"none";
+    sessionToggle.textContent=sessionExpanded?"Done":"Edit";
+    sessionToggle.setAttribute("aria-expanded",String(sessionExpanded));
+    updateSessionSummary();
+  };
+  sessionToggle.onclick=()=>setSessionExpanded(!sessionExpanded);
+  sessionCard.addEventListener("change",updateSessionSummary);
+  sessionCard.addEventListener("input",updateSessionSummary);
+  updateSessionSummary();
+  const updateActiveCompound=()=>{
+    if(!sel.length)return;
+    activeCompoundIndex=Math.max(0,Math.min(activeCompoundIndex,sel.length-1));
+    const current=sel[activeCompoundIndex];
+    m.querySelectorAll(".nx-combo-compound-panel").forEach(panel=>{const visible=panel.dataset.compound===current;panel.hidden=!visible;panel.style.display=visible?"":"none";});
+    m.querySelector("#nx-combo-current-count").textContent="Compound "+(activeCompoundIndex+1)+" of "+sel.length;
+    const done=sel.filter(name=>Number(m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value)>0).length;
+    m.querySelector("#nx-combo-completion-count").textContent=done+" of "+sel.length+" doses entered";
+    const pips=m.querySelector("#nx-combo-compound-pips");
+    pips.replaceChildren(...sel.map((name,i)=>{const btn=document.createElement("button");btn.type="button";btn.className="nx-combo-compound-pip"+(i===activeCompoundIndex?" is-active":"");btn.textContent=String(i+1);btn.setAttribute("aria-label","Configure "+name+", compound "+(i+1)+" of "+sel.length);btn.setAttribute("aria-current",i===activeCompoundIndex?"step":"false");btn.onclick=()=>{activeCompoundIndex=i;setSessionExpanded(false);updateActiveCompound();};return btn;}));
+    m.querySelector("#nx-combo-prev-compound").disabled=activeCompoundIndex===0;
+    m.querySelector("#nx-combo-next-compound").disabled=activeCompoundIndex===sel.length-1;
+  };
+  const moveActiveCompound=delta=>{activeCompoundIndex=Math.max(0,Math.min(sel.length-1,activeCompoundIndex+delta));setSessionExpanded(false);updateActiveCompound();m.querySelector("#nx-combo-compound-navigation")?.scrollIntoView({block:"nearest",behavior:"instant"});};
+  m.querySelector("#nx-combo-prev-compound").onclick=()=>moveActiveCompound(-1);
+  m.querySelector("#nx-combo-next-compound").onclick=()=>moveActiveCompound(1);
+  m.querySelector("#combo-dose-fields").addEventListener("input",event=>{if(event.target.matches(".combo-dose-input")){const name=event.target.dataset.n;const displayed=m.querySelector(`.nx-combo-unit[data-n="${CSS.escape(name)}"]`)?.value;if(["mg","mcg"].includes(displayed)){comboUnits[name]=displayed;state._comboUnits={...comboUnits};}state._comboDoses=state._comboDoses||{};state._comboDoses[name]=event.target.value;updateActiveCompound();}});
+  const refreshSourceMode=()=>{
+    const separate=selectedGrouping()==="separate";
+    if(separate)comboSourceMode="draw";
+    m.querySelector("#nx-combo-preparation-mode").hidden=separate;
+    m.querySelector("#nx-combo-preparation-mode").style.display=separate?"none":"";
+    m.querySelector("#nx-combo-draw-fields").hidden=comboSourceMode==="prepared";
+    m.querySelector("#nx-combo-draw-fields").style.display=comboSourceMode==="prepared"?"none":"";
+    const prepared=m.querySelector("#nx-combo-prepared-sources");
+    prepared.hidden=comboSourceMode!=="prepared";
+    prepared.style.display=comboSourceMode==="prepared"?"":"none";
+    m.querySelectorAll(".nx-combo-mode-btn").forEach(btn=>{
+      const active=btn.dataset.sourceMode===comboSourceMode;
+      btn.setAttribute("aria-pressed",String(active));
+      btn.style.background=active?"var(--surface-3)":"transparent";
+      btn.style.color=active?"var(--t1)":"var(--t3)";
+    });
+  };
+  m.querySelectorAll(".nx-combo-mode-btn").forEach(btn=>btn.onclick=()=>{
+    comboSourceMode=btn.dataset.sourceMode;
+    refreshSourceMode();
+  });
+  const refreshComboSites=()=>{
+    const allowed=nexusAdminSites(comboMethod.value);
+    const previous=comboSite.value||state._comboSite||"";
+    comboSite.innerHTML=allowed.map(site=>`<option value="${esc(site)}">${esc(nexusAdminSiteLabel(site))}</option>`).join("");
+    comboSite.value=allowed.includes(previous)?previous:(allowed[0]||"");
+    const separate=selectedGrouping()==="separate";
+    refreshSourceMode();
+    m.querySelector("#nx-combo-shared-site").hidden=separate;
+    m.querySelector("#nx-combo-shared-site").style.display=separate?"none":"";
+    m.querySelectorAll(".nx-combo-individual-site").forEach(container=>{
+      container.hidden=!separate;
+      container.style.display=separate?"":"none";
+      const select=container.querySelector("select"),name=container.dataset.n;
+      const current=comboIndividualSites[name]||select.value;
+      select.innerHTML=allowed.map(site=>`<option value="${esc(site)}">${esc(nexusAdminSiteLabel(site))}</option>`).join("");
+      select.value=allowed.includes(current)?current:(allowed[0]||"");
+      comboIndividualSites[name]=select.value;
+    });
+    m.querySelectorAll(".nx-combo-source").forEach(select=>{
+      const name=select.dataset.n;
+      const choices=sourceOptionsFor(name,comboMethod.value);
+      const prior=comboSources[name]||select.value||"auto";
+      const hasKit=(state.supplies||[]).some(k=>k.name===name);
+      select.innerHTML=hasKit
+        ? '<option value="auto">Use eligible open vials automatically</option>'+choices.map(c=>`<option value="${esc(c.value)}">${esc(c.label)}</option>`).join("")
+        : '<option value="auto">Untracked · no vial in Stash</option>';
+      select.value=choices.some(c=>c.value===prior)?prior:"auto";
+      comboSources[name]=select.value;
+      if(hasKit&&!choices.length){select.innerHTML='<option value="auto">No eligible open vial</option>';select.disabled=true;select.setAttribute('aria-invalid','true');select.title='No eligible open vial for this method. Review Stash before logging.';}else{select.disabled=false;select.removeAttribute('aria-invalid');select.removeAttribute('title');}
+      const info=m.querySelector(`.nx-combo-vial-info[data-n="${CSS.escape(name)}"]`);
+      if(info){
+        info.hidden=!choices.length;info.style.display=choices.length?"flex":"none";
+        if(!choices.length){info.setAttribute("aria-expanded","false");const details=info.nextElementSibling;if(details)details.hidden=true;}
+      }
+    });
+    updateActiveCompound();
+  };
+  comboMethod.onchange=refreshComboSites;
+  refreshComboSites();
+  const showComboStep=(next)=>{
+    comboStep=next;
+    comboPanels.forEach((id,i)=>{m.querySelector("#"+id).hidden=i!==next;m.querySelector("#"+id).style.display=i===next?"":"none";});
+    m.querySelectorAll(".nx-combo-step").forEach((el,i)=>{el.querySelector(".nx-combo-step-bar").style.background=i<=next?"#A78BFA":"var(--border)";el.setAttribute("aria-current",i===next?"step":"false");});
+    m.querySelector("#nx-combo-back").hidden=next===0;
+    m.querySelector("#nx-combo-back").style.display=next===0?"none":"";
+    m.querySelector("#nx-combo-continue").hidden=next===2;
+    m.querySelector("#nx-combo-continue").style.display=next===2?"none":"";
+    if(next===1){updateActiveCompound();updateSessionSummary();}
+    if(next===2){
+      const summary=m.querySelector("#nx-combo-review-summary");
+      const rows=[["Administration",selectedGrouping()==="mixed"?"One mixed syringe":"Separate injections"],["Source mode","Draw now"],["Date & time",m.querySelector("#combo-date")?.value||"Not recorded"],["Method",comboMethod.value]];
+      if(selectedGrouping()==="mixed")rows.push(["Site",comboSite.value]);
+      sel.forEach(name=>{
+        const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value||"Amount missing";
+        const selection=m.querySelector(`.nx-combo-source[data-n="${CSS.escape(name)}"]`);
+        rows.push([name,amount+" "+comboDisplayUnit(name)]);
+        rows.push(["Source",selection?.selectedOptions?.[0]?.textContent||"Not selected"]);
+        if(selectedGrouping()==="separate")rows.push(["Site",comboIndividualSites[name]||"Not selected"]);
+      });
+      summary.replaceChildren(...rows.map(([key,val])=>{const row=document.createElement("div");row.style.cssText="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--border-sub)";const label=document.createElement("span");label.textContent=key;label.style.cssText="min-width:0;overflow-wrap:anywhere;flex:1";const value=document.createElement("strong");value.textContent=val;value.style.cssText="min-width:0;overflow-wrap:anywhere;flex:1;text-align:right;font-weight:600";row.append(label,value);return row;}));
+    }
+  };
+  m.querySelector("#nx-combo-continue").onclick=()=>{
+    if(comboStep===0&&sel.length<2){showErrorBanner("Select at least two compounds for a combo dose.");return;}
+    if(comboStep===1){
+      if(comboSourceMode==="prepared"&&selectedGrouping()==="mixed"){
+        showErrorBanner("Choose an available prepared syringe above. It opens the existing prepared-dose confirmation.");
+        return;
+      }
+      if(sel.some(name=>!(Number(m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value)>0))){showErrorBanner("Enter a positive dose amount for each compound.");return;}
+      const valid=nexusAdminSites(comboMethod.value);
+      if(selectedGrouping()==="mixed"&&!valid.includes(comboSite.value)){showErrorBanner("Choose an eligible administration site.");return;}
+      if(selectedGrouping()==="separate"&&sel.some(name=>!valid.includes(comboIndividualSites[name]))){showErrorBanner("Choose an administration site for every injection.");return;}
+      if(sel.some(name=>(state.supplies||[]).some(k=>k.name===name)&&!sourceOptionsFor(name,comboMethod.value).length)){
+        showErrorBanner("A selected compound has no eligible open "+comboMethod.value+" vial. Review Stash before logging.");return;
+      }
+    }
+    showComboStep(Math.min(2,comboStep+1));
+  };
+  m.querySelector("#nx-combo-back").onclick=()=>showComboStep(Math.max(0,comboStep-1));
+  m.querySelectorAll('input[name="nx-combo-grouping"]').forEach(radio=>radio.onchange=()=>{
+    refreshComboSites();
+  });
+  m.querySelector("#combo-dose-fields").addEventListener("change",event=>{
+    const select=event.target;
+    if(select.matches(".nx-combo-source"))comboSources[select.dataset.n]=select.value;
+    if(select.matches(".nx-combo-individual-site-select"))comboIndividualSites[select.dataset.n]=select.value;
+    if(select.matches(".nx-combo-unit")){
+      const name=select.dataset.n,previous=comboDisplayUnit(name),next=select.value;
+      const amount=m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`);
+      if(amount&&amount.value&&["mg","mcg"].includes(previous)&&["mg","mcg"].includes(next)){
+        const converted=mgToUnit(doseToMg(amount.value,previous),next);
+        if(Number.isFinite(converted)&&converted>0)amount.value=String(Number(converted.toPrecision(12)));
+      }
+      comboUnits[name]=next;
+      state._comboUnits={...comboUnits};
+    }
+  });
+  showComboStep(0);
 
   // Each wiring block is independently try/caught: previously, if any single block
   // threw during setup (e.g. a null element from an unexpected data shape), every
@@ -180,6 +446,7 @@ function comboDoseModal() {
     const n=btn.dataset.n;
     sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];
     state._comboSelected=[...sel];
+    state._comboUnits={...comboUnits};
     const previousScroll=comboList.scrollTop;
     comboList.innerHTML=compoundToggles();
     filterChoices();
@@ -187,17 +454,53 @@ function comboDoseModal() {
     m.querySelector("#combo-selected-count").textContent=sel.length+" selected";
     m.querySelector("#combo-dose-section").style.display=sel.length?"":"none";
     m.querySelector("#combo-dose-fields").innerHTML=doseInputs();
+    activeCompoundIndex=0;
+    refreshComboSites();
     const fav=m.querySelector("#combo-fav-section");
     fav.style.display=sel.length>=2?"":"none";
     if(sel.length<2){m.querySelector("#combo-savefav").checked=false;m.querySelector("#combo-favname-wrap").style.display="none";}
-    m.querySelector("#save").textContent="LOG "+(sel.length||"")+" DOSE"+(sel.length===1?"":"S");
+    m.querySelector("#save").textContent="CONFIRM & LOG DOSES";
   };
   comboList.querySelectorAll(".combo-compound-toggle").forEach(btn=>{
     btn.setAttribute("role","checkbox");btn.setAttribute("aria-checked",String(sel.includes(btn.dataset.n)));
     btn.style.minHeight="44px";
   });
-  const comboDateNowBtn = m.querySelector("#combo-date-now");
-  if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
+  // Read-only preparation disclosure: distinguish each physical vial and do not guess
+  // missing diluent amounts or attribute a dose to the wrong kit.
+  m.querySelector("#combo-dose-fields").addEventListener("click",event=>{
+    const button=event.target.closest(".nx-combo-vial-info");
+    if(!button)return;
+    const box=button.nextElementSibling;
+    const opening=box.hidden;
+    box.hidden=!opening;button.setAttribute("aria-expanded",String(opening));
+    if(!opening)return;
+    const source=m.querySelector(`.nx-combo-source[data-n="${CSS.escape(button.dataset.n)}"]`)?.value||"auto";
+    const eligible=sourceOptionsFor(button.dataset.n,comboMethod.value);
+    const displayed=source==="auto"?eligible:eligible.filter(x=>x.value===source);
+    if(!displayed.length){box.textContent="No verified open vial for this compound and administration method. Preparation not recorded.";return;}
+    const rows=displayed.map(choice=>{
+      const [kitId,vialId]=choice.value.split(":");
+      const kit=(state.supplies||[]).find(k=>String(k.id)===kitId&&k.name===button.dataset.n);
+      const vial=kit?.vials?.find(v=>String(v.id)===vialId);
+      const outer=document.createElement("div");outer.style.marginBottom="10px";
+      const title=document.createElement("strong");title.textContent=choice.label;
+      const details=document.createElement("div");
+      const matchedHistory=(kit?.reconHistory||[])
+        .filter(record=>String(record.vialId)===String(vial?.id))
+        .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")))[0]||{};
+      const water=vial?.bacMl??matchedHistory.bacMl;
+      const date=vial?.reconDate||matchedHistory.date;
+      details.textContent="BAC water added: "+(Number(water)>0?water+" mL":"Not recorded for this vial")+" · Reconstituted: "+(date?String(date):"Not recorded");
+      const usage=document.createElement("div");
+      usage.textContent="Remaining: "+(vial&&kit?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Unknown")+" · "+(vial?.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Physical form not recorded");
+      const note=document.createElement("div");
+      note.textContent="Read-only vial record. A kit-level default is not a substitute for this vial's actual preparation.";
+      outer.append(title,details,usage,note);return outer;
+    });
+    box.replaceChildren(...rows);
+  });
+    const comboDateNowBtn = m.querySelector("#combo-date-now");
+  if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();updateSessionSummary();};
   try {
     const favCheck = m.querySelector("#combo-savefav");
     if (favCheck) favCheck.onchange = () => { const w=m.querySelector("#combo-favname-wrap"); if(w) w.style.display = favCheck.checked ? "block" : "none"; };
@@ -205,19 +508,30 @@ function comboDoseModal() {
 
   try {
     m.querySelector("#save").onclick = async () => {
+      const confirm=m.querySelector("#save");
+      if(confirm.disabled)return;
+      confirm.disabled=true;
+      confirm.textContent="Saving…";
       try {
         if (!sel.length) return;
+        if(comboSourceMode!=="draw"){showErrorBanner("Choose the prepared syringe from the list; this form cannot subtract its inventory twice.");return;}
+        if(comboStep!==2||!["SubQ","IM"].includes(comboMethod.value)||!["mixed","separate"].includes(selectedGrouping())){showErrorBanner("Review the injection method and grouping before logging.");return;}
         const date = m.querySelector("#combo-date").value;
         const site = m.querySelector("#combo-site").value;
         const notes = m.querySelector("#combo-notes").value;
         const comboId = uid();
         const items = sel.map(name => ({ name, doseVal: (m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)||{}).value || "" }));
-        const result = planAndApplyComboDoses(items, date, site, notes, comboId, []);
+        const method=comboMethod.value,grouping=selectedGrouping();
+        const enteredUnits=Object.fromEntries(sel.map(name=>[name,comboDisplayUnit(name)]));
+        const result = planAndApplyComboDoses(items, date, site, notes, comboId, [],
+          {method,grouping,sites:{...comboIndividualSites},sources:{...comboSources},units:enteredUnits});
         if (!result.ok) {
+          if(result.error){showErrorBanner(result.error+" Nothing was saved.");return;}
           const {name, doseVal, unit, have, noOpenVial, kitId, hasSealedBackup} = result.shortfall;
           // Preserve everything typed so far regardless of which path below is taken, so
           // nothing is lost if the person has to come back to this combo.
           state._comboDate = date; state._comboSite = site; state._comboNotes = notes;
+          state._comboUnits={...comboUnits};
           state._comboDoses = state._comboDoses||{};
           items.forEach(it=>{ state._comboDoses[it.name] = it.doseVal; });
           const kit = kitId!=null ? state.supplies.find(s=>s.id===kitId) : null;
@@ -236,7 +550,7 @@ function comboDoseModal() {
             );
             return;
           }
-          if (hasSealedBackup && kit) {
+          if (hasSealedBackup && kit && method==="SubQ" && !comboSources[name]) {
             // Something's open but this dose needs more than what's left — finish that
             // vial (using up the remainder, not discarding it) and open the next sealed
             // one, as one atomic action, then retry the combo immediately. No modal
@@ -269,9 +583,10 @@ function comboDoseModal() {
           const favName = (nameInput?.value||"").trim() || sel.join(" + ");
           state.comboPresets = [...(state.comboPresets||[]), { id: uid(), name: favName, compounds: [...sel] }];
         }
-        state._comboSelected = []; state._comboDoses = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
+        state._comboSelected = []; state._comboDoses = {}; state._comboUnits = {}; state._comboDate = null; state._comboSite = null; state._comboNotes = "";
         if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved. Keep this entry open and reload after exporting a backup.");return;} closeModal(); render();
       } catch(e) { showErrorBanner("comboDoseModal save action: "+e.message); }
+      finally { if(confirm.isConnected){confirm.disabled=false;confirm.textContent="CONFIRM & LOG DOSES";} }
     };
   } catch(e) { showErrorBanner("comboDoseModal save-button wiring: "+e.message); }
 }

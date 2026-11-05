@@ -1,3 +1,31 @@
+## 2026-11-05 — PR135 Combo Dose modal header correction
+- Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
+
+## 2026-11-05 — Shared Combo Session dropdown affordance
+- User screenshot identified missing chevrons for Administration Method and Administration Site. Explicit outline SVG arrow with pointer-events:none added to native selects (JS 3e466511, CSS f5a134e2). Local Chromium 320/390 x dark/light 4/4 geometry and selection functional PASS; physical Safari and online fonts not verified. No visual redesign or saved-data migration.
+
+## 2026-11-05 — Combo Dose Setup dose/source spacing and unit affordance
+- iPhone screenshot feedback: Inventory Source label too close to Dose Amount and mg selector appeared without a chevron. Scoped JS ecddbd56 and CSS 4797c74d add a visible SVG arrow and a 20px group gap. Local Chromium full-app fictional 320/390 light/dark 4/4 measurements confirm 20px gap, chevron visibility and mg to mcg conversion. Await exact-head CI, network font and iPhone UAT.
+
+## 2026-11-05 — PR135 approved Combo session vs compound hierarchy
+- Shared session card (date/time, method, mixed shared site, notes and favourite) now precedes one-at-a-time compound detail and navigation, with concise editable summary on subsequent compounds. Separate sites remain inside the individual compound card. Implemented at 929ac0e9/f8d5ee00, regression tests 3daaf99c. 320/390 light/dark, long names, keyboard, webfont and physical iPhone require new head verification. No deploy.
+
+## 2026-11-05 — PR135 focused Combo DS2 browser milestone
+- One-active-compound Setup, lavender grouped controls, SVG chevron and readable source paths passed targeted pinned Chromium Combo QA #42094294724 in 8 fictional 320/390 light/dark LIVE/DEMO states at app SHA 0520415d. Protected vial/formulation/Check-In tests PASS. Original five CI suites still blocked by dependency installation; physical iPhone and network-loaded approved typography NOT ACCEPTED. No merge/deploy.
+
+## 2026-11-05 — Approved Combo Dose focused Setup (PR135 DRAFT)
+- User approved refined Combo UI: concise heading, lavender injected-group selection cards, one visible compound per Setup screen, 44px numbered navigation, distinct compound heading, same source/site selectors and SVG chevrons for mixed/separate modes. Coded JS05/CSS candidate with exact-vial-only disclosure and unavailable-source handling. Revert-free DS2 modification; no app-wide typography role changes.
+- Local Chromium source 0520415d full isolated DEMO: 8 focused-UI states at 320/390 light/dark mixed/separate (previous app source dfe54a8b) and 4 custom-mcg mass-equivalence checks on final source 0520415d PASS. Remote loaded font face/physical iPhone UAT NOT TESTED. Official five workflow CI still fails Playwright dependency; scoped pinned browser QA pending.
+- Next: exact-head CI, artifacts, online-font verification and iPhone UAT; no merge/deploy.
+
+## 2026-11-05 — PR135 compact dose/units candidate (UNMERGED)
+- Combo Dose Setup now aligns Dose Amount + mg/mcg in one compact responsive row, preserving 44px inputs at 320/390. Changing selected units converts physical amount; Review displays user-entered unit while history/inventory preserve native mass. Test commit 3e558dbf; exact-source mobile/nested/writer SUCCESS, WebKit/browser still pending when documented. iPhone acceptance NOT TESTED.
+
+## 2026-11-05 — Combo Dose + Stash read-only Vial candidate coverage (PR135, UNRELEASED)
+- Design direction approved: three-step Select/Setup/Review, minimal chrome, shared Log Dose title/site vocabulary, SubQ/IM only, 44px controls and method-specific injection sites. Current candidate 08a0a84b, main 21b9e42a, no merge/deploy.
+- Coded source includes per-compound preparation disclosure, source selector, site assignment for separate injections and Stash Vials View vial detail sheet. Route/physical eligibility and prepared delegation guarded. Exact-head 320/390 light/dark QA and physical iPhone/VoiceOver NOT QUALIFIED at writing; no production user-data migration.
+- ONE NEXT ACTION: inspect latest-source full browser/visual evidence and run real-device acceptance before release request.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.

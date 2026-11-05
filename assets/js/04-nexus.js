@@ -1421,6 +1421,45 @@ function reopenVialModal(kitId, vialId) {
 
 // Vial actions — Edit reconstitution / Undo reconstitution. Kept as a lightweight sheet
 // rather than inline buttons per vial, since these are correction actions, not routine ones.
+// Stash / Vials: an intentionally read-only physical-vial preparation record.
+// Never substitute kit defaults for missing per-vial BAC or dates, and never
+// modify inventory merely by opening this view.
+function viewVialPreparationModal(kitId,vialId) {
+  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
+  const vial=kit?.vials?.find(v=>String(v.id)===String(vialId));
+  if(!kit||!vial){showErrorBanner("This vial record is no longer available.");return;}
+  const history=(kit.reconHistory||[])
+    .filter(record=>String(record.vialId)===String(vial.id))
+    .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  const entry=history[0]||{};
+  const water=vial.bacMl??entry.bacMl;
+  const date=vial.reconDate||entry.date;
+  const notes=vial.notes||entry.notes;
+  const amount=vial.vialMg??kit.vialMg;
+  const amountNumber=Number(amount),waterNumber=Number(water);
+  const row=(label,value)=>`<div class="nx-vial-prep-row" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-sub)"><span style="font-size:12px;color:var(--t4)">${label}</span><strong style="font-size:13px;text-align:right;color:var(--t1);max-width:65%;overflow-wrap:anywhere">${esc(String(value))}</strong></div>`;
+  const m=openModal(`
+    <section class="nx-vial-prep-view" aria-label="Vial preparation details">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <div><span class="nx-dose-kicker">STASH · VIAL RECORD</span>
+          <h2 class="nx-dose-title" style="font-size:19px;margin:5px 0 4px">${esc(kit.name)} · Vial ${esc(vial.sequenceNumber||vial.vialNumber||"—")}</h2>
+          <p class="nx-dose-subtitle" style="margin:0">Read-only preparation details</p>
+        </div>
+        <button id="nx-vial-prep-close" type="button" aria-label="Close vial preparation" style="flex-shrink:0;min-width:44px;min-height:44px;border:0;background:transparent;color:var(--t2);font-size:20px">×</button>
+      </div>
+      ${row("Status",vial.status==="open"||vial.status==="active"?"Open":vial.status||"Not recorded")}
+      ${row("Nominal vial amount",Number.isFinite(amountNumber)&&amountNumber>0?amountNumber+" mg":"Not recorded")}
+      ${row("BAC water added",Number.isFinite(waterNumber)&&waterNumber>0?waterNumber+" mL":"Not recorded for this vial")}
+      ${row("Reconstituted",date?fmtDate(date):"Not recorded")}
+      ${row("Form",vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Not recorded for this vial")}
+      ${row("Current remaining",typeof getVialRemainingMg==="function"?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Not available")}
+      ${notes?`<div style="margin-top:14px"><span style="font-size:12px;color:var(--t4)">Preparation notes</span><p style="font-size:13px;color:var(--t2);line-height:1.5;margin:6px 0">${esc(String(notes))}</p></div>`:""}
+      <p style="font-size:11px;color:var(--t4);line-height:1.5;margin-top:14px">Only details recorded for this exact vial are shown. Kit-level defaults do not establish how a vial was prepared.</p>
+    </section>
+  `,cfg(kit.name).color);
+  m.querySelector("#nx-vial-prep-close").onclick=closeModal;
+}
+
 function vialActionsMenu(kitId, vialId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
@@ -3042,15 +3081,55 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
 // test_comboDose_noOrphanedDose in the regression suite, which guards the exact failure
 // mode that once produced an untagged dose (kitId set, no allocations) that silently
 // never touched vial.remainingMg.
-function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) {
+function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], opts={}) {
+  // All optional arguments are additive; older standalone combo callers retain
+  // their original planning contract. New multi-injection UI supplies per-dose
+  // injection sites, explicit administration method and optional exact source.
+  const method=opts.method||null,grouping=opts.grouping||"mixed";
+  const verifiedSites=method?nexusAdminSites(method):null;
+  if(method&&!(method==="SubQ"||method==="IM"))
+    return {ok:false,error:"Only SubQ and IM are available in Combo Dose."};
+  if(!["mixed","separate"].includes(grouping))
+    return {ok:false,error:"Unknown combo administration grouping."};
+  if(method&&(!Array.isArray(items)||items.length<2))
+    return {ok:false,error:"Select at least two compounds."};
+  if(method&&(!date||!Number.isFinite(new Date(date).getTime())))
+    return {ok:false,error:"Choose a valid date and time."};
+  const namedSites=opts.sites||{};
+  // Normalize entered mg/mcg before inventory planning; historical doses and
+  // allocation amounts remain in cfg(name).unit. Older callers retain their
+  // native-unit API when opts.method is omitted.
+  const enteredUnitFor=name=>method?(opts.units?.[name]||cfg(name).unit):cfg(name).unit;
+  const nativeValueFor=(name,value)=>{
+    const native=cfg(name).unit,entered=enteredUnitFor(name);
+    if(!["mg","mcg"].includes(native)||!["mg","mcg"].includes(entered))return null;
+    const mg=doseToMg(value,entered);
+    return Number.isFinite(mg)&&mg>0?mgToUnit(mg,native):null;
+  };
+  if(method){
+    for(const item of items){
+      const assigned=grouping==="separate"?namedSites[item.name]:site;
+      if(!verifiedSites.includes(assigned))
+        return {ok:false,error:"Choose an eligible "+method+" site for "+item.name+"."};
+      const amount=Number(item.doseVal);
+      if(!Number.isFinite(amount)||amount<=0)
+        return {ok:false,error:"Enter a positive dose amount for "+item.name+"."};
+      const amountMg=doseToMg(amount,enteredUnitFor(item.name));
+      if(!Number.isFinite(amountMg)||amountMg<=0||nativeValueFor(item.name,amount)===null)
+        return {ok:false,error:"Invalid dose unit or amount for "+item.name+"."};
+    }
+  }
   const plan = [];
   for (const {name, doseVal} of items) {
     const cc = cfg(name);
+    const converted=method?nativeValueFor(name,doseVal):doseVal;
+    const nativeDoseVal=converted===null?null:(method?String(converted):converted);
+    if(method&&nativeDoseVal===null)return {ok:false,error:"Unsupported or invalid dose unit for "+name+". Nothing was deducted."};
     if (!doseVal || parseFloat(doseVal)<=0) { plan.push({ name, doseVal, eligible:[], neededMg:0, tracked:false }); continue; }
     // A compound with NO kit at all isn't inventory-tracked — nothing to validate (e.g. a
     // supplement never added to Stash).
     const anyKitExists = (state.supplies||[]).some(s=>s.name===name);
-    if (!anyKitExists) { plan.push({ name, doseVal, eligible:[], neededMg:0, tracked:false }); continue; }
+    if (!anyKitExists) { plan.push({ name, doseVal:nativeDoseVal, enteredValue:doseVal, enteredUnit:enteredUnitFor(name), eligible:[], neededMg:0, tracked:false }); continue; }
     // Sum across EVERY currently-open vial for this compound — across DIFFERENT kits (two
     // separate strengths/batches both active at once is a real, supported state) — not
     // just one "default" kit. Note this does NOT mean multiple open vials within the SAME
@@ -3059,16 +3138,24 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) 
     // deliberately left alone here too. The same-kit "not enough in this one, more exists
     // sealed" case is resolved differently below, by finishing the old vial and opening a
     // new one atomically rather than ever having two open at once in one kit.
-    const eligible = getEligibleSourceKits(name)
+    let eligible = getEligibleSourceKits(name,method)
       .sort((a,b)=>getVialRemainingMg(a.kit,a.vial)-getVialRemainingMg(b.kit,b.vial));
+    // An exact vial choice never silently drains an unrelated kit.
+    const preferred=opts.sources?.[name];
+    if(preferred&&preferred!=="auto"){
+      eligible=eligible.filter(e=>String(e.kit.id)+":"+String(e.vial.id)===String(preferred));
+      if(!eligible.length)return {ok:false,error:"The selected physical vial is not currently available for "+name+" via "+method+". No inventory changed."};
+    }
+    if(method&&!eligible.length)
+      return {ok:false,error:"No verified open "+method+" vial is available for "+name+". Review its physical form in Stash before logging."};
     eligible.forEach(e=>migrateKitToV2(e.kit));
-    const neededMg = doseToMg(doseVal, cc.unit);
-    plan.push({ name, doseVal, eligible, neededMg, tracked:true });
+    const neededMg = doseToMg(nativeDoseVal, cc.unit);
+    plan.push({ name, doseVal:nativeDoseVal, enteredValue:doseVal, enteredUnit:enteredUnitFor(name), eligible, neededMg, tracked:true });
   }
   const shortfall = plan.find(p => {
     if (!p.tracked) return false;
     const totalAvailable = p.eligible.reduce((s,e)=>s+getVialRemainingMg(e.kit,e.vial), 0);
-    return totalAvailable + 0.01 < p.neededMg;
+    return totalAvailable + (method?0.0000005:0.01) < p.neededMg;
   });
   if (shortfall) {
     const cc = cfg(shortfall.name);
@@ -3093,15 +3180,25 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) 
       let remaining = p.neededMg;
       allocations = [];
       for (const {kit, vial} of p.eligible) {
-        if (remaining <= 0.001) break;
+        if (remaining <= (method?0.0000005:0.001)) break;
         const take = Math.min(remaining, vial.remainingMg);
-        vial.remainingMg = Math.round((vial.remainingMg-take)*100)/100;
-        if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; vial.status = "empty"; }
+        // For new staged mg/mcg flows retain six decimal mg precision so even
+        // 1mcg (0.001mg) actually leaves the vial; do not round it away.
+        vial.remainingMg = method
+          ? Math.round((vial.remainingMg-take)*1000000)/1000000
+          : Math.round((vial.remainingMg-take)*100)/100;
+        if (vial.remainingMg <= (method?0.0000005:0.01)) { vial.remainingMg = 0; vial.status = "empty"; }
         allocations.push({ kitId: kit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) });
         remaining -= take;
       }
     }
-    return { name: p.name, dose: { id: uid(), date, dose: p.doseVal, site, symptoms: symptoms.map(s=>({...s})), notes, escalation:false, kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
+    return { name: p.name, dose: { id: uid(), date, dose: p.doseVal,
+      site: grouping==="separate"?(namedSites[p.name]||site):site,
+      ...(method?{enteredUnit:p.enteredUnit,enteredAmount:String(p.enteredValue)}:{}),
+      ...(method?{method,trackingMode:p.tracked?"backed":"untracked"}:{}),
+      comboAdministration:grouping==="mixed"?"mixed_syringe":"separate_injection",
+      symptoms: symptoms.map(s=>({...s})), notes, escalation:false,
+      kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
   });
   return { ok:true, doses };
 }

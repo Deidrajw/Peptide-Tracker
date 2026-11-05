@@ -1,3 +1,73 @@
+## 2026-11-05 — PR135 Combo header DS2 typography regression
+- Scoped modal class and semantic header with SVG close JS 06e957d1; DS2 style CSS 12e9a828. Local full-app fictional Chromium 320/390 x light/dark 4/4 PASS: computed title font-family DM Sans, font-size 21/23px, font-weight 750, kicker 11px/700, close 48px x 48px, no overlap, dismissal functional, zero page errors. Exact Git blob hash and LIVE/offline package CRC PASS.
+- Not accepted: real iPhone, real online font faces, VoiceOver/Dynamic Type, GitHub exact-head full QA. Calculation safety remains separately gated. No production changes.
+
+## 2026-11-05 — PR135 shared administration chevron visual regression
+- Screenshot failure: Session Details Administration Method and Administration Site had no dropdown affordance in user's iPhone screenshot. JS 3e466511 + CSS f5a134e2 add explicit decorative SVG chevrons, preserving native select semantics and existing options; no changes to saved data.
+- Local real Chromium 320/390 light/dark isolated full-app via set_content: 4/4 PASS visual DOM geometry, both SVGs 18px visible and within selects, pointer-events:none; native IM/SubQ and Site selections functional; zero page errors. 390 dark screenshot inspected. Node JS syntax PASS, ZIP CRC PASS, GitHub blob hashes match. NOT TESTED: physical iPhone/Safari/VoiceOver/Dynamic Type, online font loads and full exact-head CI.
+
+## 2026-11-05 — PR135 screenshot-driven Combo source-spacing/unit selector QA
+- User screenshot showed Inventory Source label crowded against dose input and a unit select with no visible drop indicator. JS ecddbd56 adds SVG chevron and semantic select wrapper; CSS 4797c74d adds 20px gap. Native select option mg/mcg remains; conversion handler untouched.
+- Local Chromium full-app isolated fictional DEMO via set_content at 320/390 light/dark 4/4 PASS: both compounds chosen, unit select opened programmatically, 0.3mg to 300mcg preserved mass 4/4, 20.0px measured input-to-source gap 4/4, SVG visible 4/4, no page errors. JS syntax PASS, exact GitHub blobs matched. Physical iPhone, VoiceOver, real loaded fonts, latest CI and calculator certification NOT TESTED.
+- Release gate BLOCKING until latest-head full Chrome/WebKit/mobile/writer/nested and exact-source artifact verification. No merge/deploy.
+
+## 2026-11-05 — PR135 shared-session collapse defect fixed, exact-source rerun pending
+- Failed exact-head browser #42097123562 and full #42097123547 on 01ac831b: "Shared session should collapse after advancing compounds". Failure attributable to numbered .nx-combo-compound-pip click handler not calling setSessionExpanded(false), unlike Next/Previous. Code fix f9a111f8 modifies only that handler. Local Chromium 320/390 dark/light 4/4 isolated fictional full-app checks PASS: initial open, pip collapse, aria false, Edit reopen, zero page errors.
+- WebKit #42097123542 also FAIL at separate Goal Details .nx-goal-detail selector timeout. Pending root-cause investigation and exact-source rerun. At checkpoint corrected-head mobile #42113813541 SUCCESS, nested #42113813549 SUCCESS, other tests IN PROGRESS; not a blanket PASS. No physical iPhone/VoiceOver/font-face acceptance.
+
+## 2026-11-05 — PR135 shared-session-first hierarchy tests, unverified
+- Added to tools/validate-combo-picker.mjs at 3daaf99c: session card exists before compound navigation; session fields initially visible; Next compound follows active panel; aria-expanded true; after moving to another compound, shared session fields collapse, summary includes method, Edit reopens controls and Done re-collapses. Existing six-compound, unit, site, source and protected vial tests retained.
+- Exact-source pinned workflow #42096806637 queued at checkpoint, NOT TESTED. Original five workflows still affected by unavailable Playwright dependency; no iPhone, font-face loaded or clinical calculator certification. No permission to merge/deploy.
+
+## 2026-11-05 — PR135 pinned browser qualification SUCCESS at 0520415d
+- GitHub Actions #42094294724 (PR135 stable pinned browser QA) SUCCESS using published Playwright 1.64.1. Build-release, Combo picker browser 8/8 fictional LIVE/DEMO × 320/390 × light/dark, vial safety, formulation stock and Check-In tests completed successfully. Downloaded artifact #13447181982: 322 ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS; offline fictional DEMO 2 files CRC PASS. The earlier #42094053764 custom mcg unit failure was fixed in 0520415d and rerun passed.
+- Local exact full-app isolated demo 0520415d custom preferred mcg 300->0.3mg->300 checked at 320/390 light/dark 4/4 PASS, zero page errors. Earlier six-compound one-panel 8/8 from dfe54a8b passed. This does not constitute iPhone/VoiceOver or online loaded fonts.
+- Five standard workflows still fail dependency install (unavailable playwright-core 1.65.0); these original gates are NOT PASS. Network font/real iPhone/clinical calculator still NOT TESTED or independently certified. No merge or deploy.
+
+## 2026-11-05 — PR135 focused Combo safety checkpoint
+- Local Chromium set_content dfe54a8b fictional full-app 8 states (320/390 x light/dark x mixed/separate), six compounds: focused panel, navigation, draft preserved, mg->mcg basic parity, site visibility, no overflow or page errors PASS. Not actual network-served browser or iPhone.
+- Pinned GitHub QA #42094053764 FAIL: custom preferred mcg to mg misconverted after input. Fixed source 0520415d by recording display unit before draft amount. Exact-head CI #42094294724 pending. All five ordinary CI workflows blocked during npm install on unavailable playwright-core 1.65.0; scoped QA pins published 1.64.1.
+- Online DM Sans/Fraunces/DM Mono faces, physical device keyboard/Dynamic Type/VoiceOver, and clinical calculator certification NOT TESTED. Nasal LIVE unchanged.
+
+## 2026-11-05 — PR135 approved UX change regression matrix — unverified on revised source
+- New cases: one active panel for 2/6 compounds, pips select each compound, inputs persist on navigation and Back/Continue, mg↔mcg preserves mass, no mixed/separate source mismatch, lavender selected state rather than native blue, single/individual sites according to grouping, 44px tap controls, aligned SVG disclosure, unavailable vial blocks review, no earlier stock deduction.
+- 320/390px dark/light, keyboard and scroll, realistic six compound test, served font-face checks, WebKit and iPhone VoiceOver remain NOT TESTED on 9c71219f; prior five workflow passes on 1dd305d9 no longer qualify new source.
+- Local node syntax for 05 source PASS, local complete ZIP archive CRC PASS only (not CI/build). No clinical calculator certification.
+
+## 2026-11-05 — PR135 final application SHA 1dd305d9 QA evidence
+- Exact-source GitHub Actions at 1dd305d9: build #42063375466 SUCCESS; WebKit #42063375521 SUCCESS; mobile #42063375520 SUCCESS; writer #42063375318 SUCCESS; nested #42063375449 SUCCESS.
+- Artifact #13434406691 independent ZIP CRC: outer 548 entries PASS; LIVE 26 manifest-matched files PASS; offline DEMO 2 entries PASS. Standalone full-app fictional DEMO included. Combo picker browser report: LIVE and DEMO × light/dark × 320/390 = 8/8 PASS. General browser states 8/8 PASS. These are automated, not physical iPhone tests.
+- Unit conversion, exact-vial reconHistory and strict 1mcg shortfall logic are part of verified source; calculator clinical safety NOT CERTIFIED. Physical iPhone, VoiceOver, Dynamic Type and actual online font acceptance NOT TESTED. Release-notes gate from prior production build separately unresolved. CI Cloudflare parity false because candidate is not deployed.
+
+## 2026-11-05 — PR135 exact-source QA handoff
+- Latest app source 1dd305d9, test 472cb093; required 8 fictional LIVE/DEMO × light/dark × 320/390 Combo tests: search/drafts/favourites, shared/individual injection sites, mixed IM history, source-route exclusion, matched BAC history, Prepared delegation, unit toggle mg↔mcg, 300mcg=0.3mg, 1mcg=0.001mg and strict insufficient-stock rejection. Exact latest tests PENDING.
+- Earlier 08a0a84b full build #41986359105 SUCCESS and artifact #13397066246 CRC PASS, but predates unit fixes and vialId reconHistory fallback. Other exact code-source WebKit/mobile/writer/nested at 08a0 SUCCESS. Never mark new code PASS solely from earlier runs.
+- Physical iPhone Safari, fonts, Dynamic Type, VoiceOver and clinical calculator certification NOT TESTED. Production Cloudflare remains deployed at main 21b9e42a; draft PR135 unmerged.
+
+## 2026-11-05 — Unit/conversion candidate tests added, latest results pending
+- New Combo QA: custom preferred mcg vs cfg-native mg, 300mcg entered consumes 0.3mg, saved dose stays native string with enteredUnit/enteredAmount, 1mcg consumes 0.001mg rather than rounding to zero, shortage rejects without mutating stock; changing unit mg↔mcg preserves physical quantity, Back retains selected unit. Added at source/test commit 3e558dbf. **NOT TESTED** on that final exact source yet; all workflows running at writing.
+- Previous unchanged-source 08a0a84b full-browser workflow #41986359105 SUCCESS, downloaded artifact #13397066246 CRC PASS, 8/8 LIVE/DEMO 320/390 theme Combo picker QA PASS; shared writer, mobile, nested, WebKit SUCCESS. That does not qualify new unit fixes.
+- Physical iPhone / VoiceOver, calculator safety certification remain NOT TESTED/BLOCKED; no production release authorization.
+
+## 2026-11-05 — PR135 targeted regression status, source 08a0a84b
+- Combo Select: 50-compound searchable scroll/selection, favourites and draft preservation; Setup shared vs individual SubQ sites, IM 6-option parity, Draw now vs Prepared; Review source/date/time, and long label 320px wrapping — exact latest-source browser QA **NOT TESTED/PENDING**. Previous browser #41981657892 FAIL due old test filling hidden Setup; #41984116004 FAIL due asynchronous previous save closing during new modal; harness now awaits closure. No false Pass.
+- Physical source planner: exact K1:V1 injectable selection, Nasal K2:V2 rejection, no pre-validation stock debit; per-dose site/method and comboId historical attribution — new browser tests added; exact latest results **PENDING**.
+- Stash: View vial 44px target, exact vial BAC vs unrelated kit default, no state mutation on open, vial list ordering — tests added; latest browser **PENDING**.
+- Unchanged protected flows: Check-In, Log Dose, Protocol, Stash inventory, prepared doses, nasal LIVE gates, cross-tab stale rejection. Prior 76002d43 mobile #41985374318 SUCCESS, shared writer #41985374361 SUCCESS, nested #41985374264 SUCCESS, WebKit #41985374213 SUCCESS. Full-source 08a0a84b reruns not yet verified; never treat earlier green as covering later edits.
+- Real iPhone Safari, keyboard, VoiceOver, Dynamic Type, online fonts: NOT TESTED. Calculator safety certification: NOT VERIFIED.
+
+## 2026-11-05 — PR135 automated QA continuation
+- Application SHA 06e00aa1: mobile 41981657821 PASS; shared writer 41981657816 PASS; WebKit 41981657820 PASS; nested 41981657931 PASS; build/browser 41981657892 FAIL. Failure: old validate-combo-picker.mjs assumed visible amount field on Select. Exact-source LIVE/DEMO build and archive validation steps PASS before browser test failure. No claim of full-browser PASS.
+- Test updates b0057d0f and 3868ea4b: navigate Select→Setup, preserve typed amount/notes across Back/Continue, assert unsupported separate/IM choices do not advance or write history; FINAL HEAD RUNS PENDING, NOT TESTED. Real iPhone and voiceover NOT TESTED.
+
+## 2026-11-05 — PR #135 candidate regression matrix (NOT TESTED on final head)
+- Select: searchable compound multi-select and favourites, prepared-syringe delegation, correct selected counts and draft persistence — NOT TESTED.
+- Setup: combo positive amounts, date/time, shared notes; nexusAdminSites parity for SubQ and IM; no loss of entered values on step navigation — NOT TESTED.
+- Review: method, site, compound amounts and source validation; no writes until explicit confirm; separate/IM must fail closed — NOT TESTED.
+- Data safety: mixed SubQ transaction, multiple source/vial allocation and insufficient inventory; saved history, check-in, protocols, nasal LIVE disabled — NOT TESTED.
+- UI: 320/390, light/dark, open keyboard, sheet scroll, 44px touch targets, VoiceOver/iPhone — NOT TESTED.
+- User-reported deployment runs before draft: #41971159528 + parity #41971160574 success; release-artifact #41971160513 FAILED stale release notes gate. These are not PR135 test results.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.

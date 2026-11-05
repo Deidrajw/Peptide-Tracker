@@ -961,6 +961,7 @@ function wireBody() {
   const tdk=$("#toggle-done-kits"); if(tdk) tdk.onclick=()=>{state._showDoneKits=!state._showDoneKits;renderBody();};
   document.querySelectorAll(".finishvial").forEach(b=>b.onclick=()=>finishVialModal(+b.dataset.id));
   document.querySelectorAll(".vial-actions-btn").forEach(b=>b.onclick=()=>vialActionsMenu(+b.dataset.kit, +b.dataset.vial));
+  document.querySelectorAll(".nx-stash-view-vial").forEach(b=>b.onclick=()=>viewVialPreparationModal(b.dataset.kit,b.dataset.vial));
   // Stash detail tabs are presentation-only: never recalculate or save inventory.
   document.querySelectorAll(".nx-kit-test-view").forEach(button=>button.onclick=()=>nexusOpenSavedKitTestResult(button.dataset.kitId));
   document.querySelectorAll(".nx-kit-test-download").forEach(button=>button.onclick=()=>nexusDownloadKitTestResult(button.dataset.kitId));

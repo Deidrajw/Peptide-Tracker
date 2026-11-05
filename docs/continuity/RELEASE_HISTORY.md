@@ -1,3 +1,52 @@
+## 2026-11-05 — PR135 DS2 Combo Dose header correction, NOT RELEASED
+- JS 06e957d1, CSS 12e9a828: bring formerly unstyled Dose Log kicker/title under scoped DS2 modal hierarchy; use semantic header, DM Sans 11px eyebrow + 23px/21px title and 48px outlined close button. No data/storage changes, vial deductions or nasal LIVE changes.
+- Local Chromium 320/390 light/dark 4/4 measured header geometry/type PASS and close interaction PASS; 26-file reconstructed candidate LIVE ZIP and complete isolated fictional DEMO CRC validated with exact modified JS/CSS git blob parity. Full GitHub CI and physical iPhone/online fonts not yet accepted. No new tag, merge or deploy.
+
+## 2026-11-05 — PR135 administration method/site dropdown cues, NOT RELEASED
+- Application candidate JS 3e466511, CSS f5a134e2: native shared Session Details Method and Site selects have visible outline SVG chevrons; no data format, calculations, vial deductions or storage effects. Preserves DS2, LIVE nasal OFF.
+- Local fictional isolated full-app Chromium 320/390 light/dark 4/4 passed selector visual geometry and interaction; source blob hashes and constructed candidate 26-file LIVE/isolated full DEMO CRC PASS. GitHub exact-head release CI, real iPhone and online font-face acceptance PENDING. Draft PR135 not merged/deployed.
+
+## 2026-11-05 — PR135 Combo UI correction, candidate only — NOT RELEASED
+- Source JS ecddbd56, CSS 4797c74d: separate Inventory Source with 20px gap, expose native mg/mcg select via visible noninteractive SVG chevron; no changes to amount conversion, persisted dose/history, vial accounting, production storage or LIVE nasal gates.
+- Fictional local Chromium 320/390 light/dark 4/4 unit/spacing checks PASS; 26-source-file LIVE ZIP + isolated offline full-app DEMO structural/CRC checks PASS; GitHub exact-head full CI, real font loading and physical iPhone NOT TESTED as of checkpoint. PR135 draft, no version bump/merge/deploy.
+
+## 2026-11-05 — PR135 corrective QA commit f9a111f8, NOT RELEASED
+- On draft/unmerged PR135 (main 21b9e42a), corrected numbered Combo compound navigation to collapse shared session details after advance. Previous source 01ac831b failed browser/full CI on this assertion; local fictional Chromium focused 320/390 light/dark 4/4 PASS. Prior build artifact #13448229868 structurally intact but predates correction. WebKit old source timed out at Goal Details; exact-head rerun ongoing. No version bump, merge, deployment, migration or production data writes. LIVE nasal OFF, iPhone/loaded-font/calculator certification unresolved.
+
+## 2026-11-05 — Approved shared-session-first Combo UX refinement, NOT RELEASED
+- Draft PR135 source JS commit 929ac0e9, CSS f8d5ee00, test 3daaf99c. Shared date/time/method, mixed shared site and shared notes/favourite now appear once in a collapsible editable session panel ahead of active compound, preserving Select → Setup → Review and existing state IDs. No inventory, record, storage migration, nasal gate or production data changes. New CI/build artifacts pending. No merge/deploy/iPhone acceptance.
+
+## 2026-11-05 — PR135 focused Combo QA milestone (still UNRELEASED)
+- Draft branch application source 0520415d, pinned Chromium Combo/vial/formulation/Check-In workflow #42094294724 SUCCESS and artifact #13447181982 322 outer CRC, 26 member LIVE ZIP CRC, fictional complete FULL APP DEMO and offline DEMO CRC. Eight Combo browser states PASS at 320/390 dark/light. Distinct online-font candidate file generated but network loaded-font proof pending.
+- Five ordinary workflow suites blocked by Playwright 1.65.0 dependency error, real iPhone/VoiceOver/Dynamic Type not accepted, clinical calculator safety not certified; production release-notes gate remains separate. No new tag, merge, deployment, storage migration or production data access.
+
+## 2026-11-05 — PR135 focused Combo redesign candidate, NOT released
+- No tag, merge, Cloudflare deployment, or user-data migration. UI source 9e22381d + 9c71219f + ce0f8ee0 + dfe54a8b; material unit safety correction 0520415d; optional network-font fictional DEMO builder 97ce9525; scoped pinned QA workflow. Locally verified eight prior-source UI states with fictional DEMO; first pinned QA found custom mcg regression, fixed but exact new-source tests pending. No production data access. Independent clinical calculator or font loading certification not claimed. Stale production release-notes gate separate.
+
+## 2026-11-05 — PR135 approved visual refinement candidate; unreleased
+- User approved redesigned UX, not release. Coded draft PR commits 9e22381d JS and 9c71219f CSS; source is unmerged and undeployed. Previous verified production remains v0.9.24-beta. No storage migration, no production user data access or writes.
+- Change: focused single compound Setup/navigation, DS2 lavender grouping controls, concise title, corrected SVG disclosure, disabled absent source. Previous unit safety remains. New exact-head CI/artifacts and physical iPhone UAT pending. Offline DEMO DM Sans parity gap unresolved; separate stale release notes gate unresolved.
+
+## 2026-11-05 — PR135 final candidate qualified by automated CI (UNRELEASED)
+- No new release, version bump, merge, deployment or migration. Candidate source 1dd305d9369c6121c012975012a48cfc7458aaab in draft PR135: mg/mcg mass-conserving entry, precise 1mcg accounting, strict shortfall rejection, vialId-specific BAC reconHistory readback, approved Combo Dose stepper.
+- Five exact-source workflows SUCCESS: build #42063375466, WebKit #42063375521, mobile #42063375520, writer #42063375318, nested #42063375449. GitHub workflow artifact #13434406691: outer 548 ZIP entries CRC PASS, 26-member complete LIVE ZIP CRC PASS, full isolated fictional DEMO, offline DEMO and 8/8 Combo browser PASS.
+- Production Cloudflare parity for unreleased source false (expected); production unchanged. Physical iPhone and independent calculator-safety certification pending. Previous separate release-notes gate #41971160513 remains open. Release status: coded/tested/PR draft, not merged/deployed/physical-iPhone-accepted.
+
+## 2026-11-05 — PR135 still UNRELEASED, latest unit-safe revision
+- Draft PR135 latest code 1dd305d9 and latest test 472cb093; no version change, merge, deployment or migration. Adds entered mg/mcg conversion parity, strict 1mcg inventory ledger precision and exact-vial BAC history readback. Prior 08a0a84b full build PASS does not cover these changes; matching final artifacts and physical iPhone unqualified. Source matching demo/live reference-only files exist from 08a0. Production saved records remain untouched; separate stale release-notes gate #41971160513 unresolved.
+
+## 2026-11-05 — PR135 unreleased candidate unit-parity revision
+- Not released or deployed. Development code/test SHA 3e558dbf on draft PR135 extends approved Combo Dose with preferred mg/mcg selection, mass-preserving unit switching, canonical native dose history, entered unit audit, strict small-mass inventory precision and shortfall checks. Existing production localStorage untouched, migrations none. QA for latest-source in progress; no new release tag. Prior 08a0a84b browser/full-demo/live 8/8 PASS does not qualify unit revision. Physical iPhone and independent calculator safety pending.
+
+## 2026-11-05 — PR135 unreleased candidate update (NOT a release)
+- Main 21b9e42a / production previously verified 16/16 Cloudflare source parity (user-provided deployment run #41971159528, parity #41971160574), no deployment changes this session. Draft PR #135 expanded from earlier staged form to per-compound SubQ/IM method/site attribution, selected eligible vial sources, Prepared handoff, summary review, 44px Stash View vial read-only details. Latest application source 08a0a84b, never merged or deployed. No migration or production data writes.
+- QA: prior source 76002d43 mobile/nested/writer/WebKit SUCCESS but full build still in progress at record; earlier browser FAIL runs 41981657892 and 41984116004 corrected by test step sequencing/async closure; final exact-source browser, LIVE/demo source parity, physical iPhone NOT TESTED. No clinical calculator validation. Production release-artifacts stale notes gate #41971160513 remains separate.
+- ONE NEXT ACTION: verify exact-head CI and release artifacts, then physical iPhone acceptance; separate explicit release authorization required.
+
+## 2026-11-05 — Unreleased development note, draft PR #135
+- No new version, merge or deployment. Branch feature/combo-dose-stepper-vial-details-20261105 from main 21b9e42a; candidate staged Combo Dose presentation and read-only vial-preparation disclosure. New data schema: none. User records: no migration planned. Separate/IM confirmation remain blocked pending verified transactional implementation. QA/artifacts/physical iPhone: not qualified; no release claimed.
+- Previous merged PR132 production workflow reported SUCCESS #41971159528, parity SUCCESS #41971160574 (16/16), release artifacts FAILED #41971160513 at release-notes gate. Fix required separately; keep strict safety gate.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.
