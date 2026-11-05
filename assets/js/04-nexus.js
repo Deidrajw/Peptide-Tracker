@@ -3042,7 +3042,34 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
 // test_comboDose_noOrphanedDose in the regression suite, which guards the exact failure
 // mode that once produced an untagged dose (kitId set, no allocations) that silently
 // never touched vial.remainingMg.
-function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) {
+function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], opts={}) {
+  // All optional arguments are additive; older standalone combo callers retain
+  // their original planning contract. New multi-injection UI supplies per-dose
+  // injection sites, explicit administration method and optional exact source.
+  const method=opts.method||null,grouping=opts.grouping||"mixed";
+  const verifiedSites=method?nexusAdminSites(method):null;
+  if(method&&!(method==="SubQ"||method==="IM"))
+    return {ok:false,error:"Only SubQ and IM are available in Combo Dose."};
+  if(!["mixed","separate"].includes(grouping))
+    return {ok:false,error:"Unknown combo administration grouping."};
+  if(!Array.isArray(items)||items.length<2)
+    return {ok:false,error:"Select at least two compounds."};
+  if(method&&(!date||!Number.isFinite(new Date(date).getTime())))
+    return {ok:false,error:"Choose a valid date and time."};
+  const namedSites=opts.sites||{};
+  if(method){
+    for(const item of items){
+      const assigned=grouping==="separate"?namedSites[item.name]:site;
+      if(!verifiedSites.includes(assigned))
+        return {ok:false,error:"Choose an eligible "+method+" site for "+item.name+"."};
+      const amount=Number(item.doseVal);
+      if(!Number.isFinite(amount)||amount<=0)
+        return {ok:false,error:"Enter a positive dose amount for "+item.name+"."};
+      const amountMg=doseToMg(amount,cfg(item.name).unit);
+      if(!Number.isFinite(amountMg)||amountMg<=0)
+        return {ok:false,error:"Invalid dose unit or amount for "+item.name+"."};
+    }
+  }
   const plan = [];
   for (const {name, doseVal} of items) {
     const cc = cfg(name);
@@ -3059,8 +3086,16 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) 
     // deliberately left alone here too. The same-kit "not enough in this one, more exists
     // sealed" case is resolved differently below, by finishing the old vial and opening a
     // new one atomically rather than ever having two open at once in one kit.
-    const eligible = getEligibleSourceKits(name)
+    let eligible = getEligibleSourceKits(name,method)
       .sort((a,b)=>getVialRemainingMg(a.kit,a.vial)-getVialRemainingMg(b.kit,b.vial));
+    // An exact vial choice never silently drains an unrelated kit.
+    const preferred=opts.sources?.[name];
+    if(preferred&&preferred!=="auto"){
+      eligible=eligible.filter(e=>String(e.kit.id)+":"+String(e.vial.id)===String(preferred));
+      if(!eligible.length)return {ok:false,error:"The selected physical vial is not currently available for "+name+" via "+method+". No inventory changed."};
+    }
+    if(method&&!eligible.length)
+      return {ok:false,error:"No verified open "+method+" vial is available for "+name+". Review its physical form in Stash before logging."};
     eligible.forEach(e=>migrateKitToV2(e.kit));
     const neededMg = doseToMg(doseVal, cc.unit);
     plan.push({ name, doseVal, eligible, neededMg, tracked:true });
@@ -3101,7 +3136,12 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[]) 
         remaining -= take;
       }
     }
-    return { name: p.name, dose: { id: uid(), date, dose: p.doseVal, site, symptoms: symptoms.map(s=>({...s})), notes, escalation:false, kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
+    return { name: p.name, dose: { id: uid(), date, dose: p.doseVal,
+      site: grouping==="separate"?(namedSites[p.name]||site):site,
+      ...(method?{method,trackingMode:p.tracked?"backed":"untracked"}:{}),
+      comboAdministration:grouping==="mixed"?"mixed_syringe":"separate_injection",
+      symptoms: symptoms.map(s=>({...s})), notes, escalation:false,
+      kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
   });
   return { ok:true, doses };
 }
