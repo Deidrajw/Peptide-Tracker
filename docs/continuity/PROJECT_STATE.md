@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 continuation QA triage
+- Verified main 21b9e42a unchanged; draft PR #135 remains unmerged/undeployed. Initial application SHA 06e00aa1 had WebKit #41981657820 PASS, mobile #41981657821 PASS, shared writer #41981657816 PASS, nested #41981657931 PASS. Full build #41981657892 FAILED at browser combo picker test: legacy test filled a dose field hidden behind new Setup step; artifact build and archive checks passed before browser failure.
+- Updated staged picker navigation/draft-preservation test b0057d0f; added explicit fail-closed separate/IM no-dose-history test 3868ea4b. Exact-final-head CI NOT YET VERIFIED. No merge/deploy; no physical iPhone acceptance.
+- Important safety blocker: planAndApplyComboDoses in JS04 currently writes shared-site, untyped dose records and mutates vial balances before commit. Do NOT enable IM/separate logging by changing only UI; design audited per-dose transaction, method/site and rollback/acknowledgement first. One next action: qualify exact-head #135 browser suite and implement safe per-dose attribution.
+
 ## 2026-11-05 Toronto — user-approved Combo Dose direction, draft PR #135 (UNMERGED)
 - Verified GitHub main 21b9e42a213f74e3e372266a9fb65c12a9c731da, merged PR #132; primary Cloudflare parity 16/16 and deployment workflows #41971159528 / #41971160574 were reported successful in handoff, NOT independently re-run this session. Live title remains v0.9.24-beta.
 - Branch feature/combo-dose-stepper-vial-details-20261105; draft PR #135. User APPROVED Select → Setup → Review UI direction, SubQ/IM-only candidate and exact Log Dose site lists, minimal visual density and expandable vial-preparation lookup; NO merge/deploy approval.
