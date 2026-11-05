@@ -1,3 +1,7 @@
+## 2026-11-05 — Unreleased development note, draft PR #135
+- No new version, merge or deployment. Branch feature/combo-dose-stepper-vial-details-20261105 from main 21b9e42a; candidate staged Combo Dose presentation and read-only vial-preparation disclosure. New data schema: none. User records: no migration planned. Separate/IM confirmation remain blocked pending verified transactional implementation. QA/artifacts/physical iPhone: not qualified; no release claimed.
+- Previous merged PR132 production workflow reported SUCCESS #41971159528, parity SUCCESS #41971160574 (16/16), release artifacts FAILED #41971160513 at release-notes gate. Fix required separately; keep strict safety gate.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.
