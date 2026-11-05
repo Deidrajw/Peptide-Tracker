@@ -3096,6 +3096,16 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
   if(method&&(!date||!Number.isFinite(new Date(date).getTime())))
     return {ok:false,error:"Choose a valid date and time."};
   const namedSites=opts.sites||{};
+  // Normalize entered mg/mcg before inventory planning; historical doses and
+  // allocation amounts remain in cfg(name).unit. Older callers retain their
+  // native-unit API when opts.method is omitted.
+  const enteredUnitFor=name=>method?(opts.units?.[name]||cfg(name).unit):cfg(name).unit;
+  const nativeValueFor=(name,value)=>{
+    const native=cfg(name).unit,entered=enteredUnitFor(name);
+    if(!["mg","mcg"].includes(native)||!["mg","mcg"].includes(entered))return null;
+    const mg=doseToMg(value,entered);
+    return Number.isFinite(mg)&&mg>0?mgToUnit(mg,native):null;
+  };
   if(method){
     for(const item of items){
       const assigned=grouping==="separate"?namedSites[item.name]:site;
@@ -3104,19 +3114,21 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       const amount=Number(item.doseVal);
       if(!Number.isFinite(amount)||amount<=0)
         return {ok:false,error:"Enter a positive dose amount for "+item.name+"."};
-      const amountMg=doseToMg(amount,cfg(item.name).unit);
-      if(!Number.isFinite(amountMg)||amountMg<=0)
+      const amountMg=doseToMg(amount,enteredUnitFor(item.name));
+      if(!Number.isFinite(amountMg)||amountMg<=0||nativeValueFor(item.name,amount)===null)
         return {ok:false,error:"Invalid dose unit or amount for "+item.name+"."};
     }
   }
   const plan = [];
   for (const {name, doseVal} of items) {
     const cc = cfg(name);
+    const nativeDoseVal=method?nativeValueFor(name,doseVal):doseVal;
+    if(method&&nativeDoseVal===null)return {ok:false,error:"Unsupported or invalid dose unit for "+name+". Nothing was deducted."};
     if (!doseVal || parseFloat(doseVal)<=0) { plan.push({ name, doseVal, eligible:[], neededMg:0, tracked:false }); continue; }
     // A compound with NO kit at all isn't inventory-tracked — nothing to validate (e.g. a
     // supplement never added to Stash).
     const anyKitExists = (state.supplies||[]).some(s=>s.name===name);
-    if (!anyKitExists) { plan.push({ name, doseVal, eligible:[], neededMg:0, tracked:false }); continue; }
+    if (!anyKitExists) { plan.push({ name, doseVal:nativeDoseVal, enteredValue:doseVal, enteredUnit:enteredUnitFor(name), eligible:[], neededMg:0, tracked:false }); continue; }
     // Sum across EVERY currently-open vial for this compound — across DIFFERENT kits (two
     // separate strengths/batches both active at once is a real, supported state) — not
     // just one "default" kit. Note this does NOT mean multiple open vials within the SAME
@@ -3136,8 +3148,8 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
     if(method&&!eligible.length)
       return {ok:false,error:"No verified open "+method+" vial is available for "+name+". Review its physical form in Stash before logging."};
     eligible.forEach(e=>migrateKitToV2(e.kit));
-    const neededMg = doseToMg(doseVal, cc.unit);
-    plan.push({ name, doseVal, eligible, neededMg, tracked:true });
+    const neededMg = doseToMg(nativeDoseVal, cc.unit);
+    plan.push({ name, doseVal:nativeDoseVal, enteredValue:doseVal, enteredUnit:enteredUnitFor(name), eligible, neededMg, tracked:true });
   }
   const shortfall = plan.find(p => {
     if (!p.tracked) return false;
@@ -3177,6 +3189,7 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
     }
     return { name: p.name, dose: { id: uid(), date, dose: p.doseVal,
       site: grouping==="separate"?(namedSites[p.name]||site):site,
+      ...(method?{enteredUnit:p.enteredUnit,enteredAmount:String(p.enteredValue)}:{}),
       ...(method?{method,trackingMode:p.tracked?"backed":"untracked"}:{}),
       comboAdministration:grouping==="mixed"?"mixed_syringe":"separate_injection",
       symptoms: symptoms.map(s=>({...s})), notes, escalation:false,
