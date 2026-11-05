@@ -40,6 +40,12 @@ try {
     const widths=await comboFits();
     ensure(widths.page<=2&&widths.modal<=2,stage+' horizontal overflow: '+JSON.stringify(widths));
   };
+  const activate=async name=>{
+    const index=await page.locator('.nx-combo-compound-panel').evaluateAll((panels,name)=>panels.findIndex(el=>el.dataset.compound===name),name);
+    ensure(index>=0,'Missing compound panel '+name);
+    await page.locator('.nx-combo-compound-pip').nth(index).click();
+    ensure(await page.locator('.nx-combo-compound-panel:visible').count()===1,'Exactly one active compound required');
+  };
   await checkFits('Select');
   const list=page.locator('#combo-choices');
   ensure(await list.count()===1,'Combo selection list missing');
@@ -83,9 +89,12 @@ try {
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-setup-step').isVisible(),'Separate setup not displayed');
   await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('1');
+  await activate('Test Compound 02');
   await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('1');
-  ensure(await page.locator('.nx-combo-individual-site-select:visible').count()===2,'Separate injection sites are not independently visible');
+  ensure(await page.locator('.nx-combo-individual-site-select:visible').count()===1,'Focused Setup must show one individual site');
+  await activate('Test Compound 01');
   await page.locator('.nx-combo-individual-site-select[data-n="Test Compound 01"]').selectOption('Abdomen — upper left');
+  await activate('Test Compound 02');
   await page.locator('.nx-combo-individual-site-select[data-n="Test Compound 02"]').selectOption('Thigh — right (SubQ)');
   ensure(!await page.locator('#nx-combo-shared-site').isVisible(),'Shared site still visible for separate injections');
   await page.locator('#nx-combo-continue').click();
@@ -112,6 +121,7 @@ try {
   ensure(await page.locator('#combo-site option').count()===6,'IM sites do not match regular Log Dose');
   await page.locator('#combo-site').selectOption('Deltoid — left (IM)');
   await page.locator('.combo-dose-input[data-n="Test Compound 01"]').fill('2');
+  await activate('Test Compound 02');
   await page.locator('.combo-dose-input[data-n="Test Compound 02"]').fill('2');
   await page.locator('#nx-combo-continue').click();
   ensure(await page.locator('#nx-combo-review-step').isVisible(),'IM review not shown');
@@ -229,7 +239,7 @@ try {
   ensure(await page.locator('#nx-combo-draw-fields').isVisible(),'Draw now state did not restore inputs');
 
   ensure(errors.length===0,'Page exceptions: '+errors.join('; '));
-  results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate sites and attribution','mixed IM attribution','source vial isolation','prepared-mode disclosure','no exceptions']});
+  results.push({kind,width,theme,status:'PASS',cases:['focused compound navigation','draft preservation across panels','one visible individual site','50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate sites and attribution','mixed IM attribution','source vial isolation','prepared-mode disclosure','no exceptions']});
   await ctx.close();
  }
 }finally{await browser.close();}
