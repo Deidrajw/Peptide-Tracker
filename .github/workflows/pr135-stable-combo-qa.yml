@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - feature/combo-dose-stepper-vial-details-20261105
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 jobs:
   combo-ux-browser:
