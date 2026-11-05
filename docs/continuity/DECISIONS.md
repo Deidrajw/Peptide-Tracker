@@ -1,3 +1,7 @@
+## 2026-11-05 — Approved focused Combo UX implementation safety note
+- User approved one active compound at a time, lavender grouping selection, simplified header, and shared control styling; draft-only approval, not merge/deploy. Preserve one shared site for mixed syringe and individual sites for separate injections. Record displayed mg/mcg unit before recording draft amount; changing unit must preserve mass.
+- Offline DEMO remains fully fictional/self-contained and may use fallback fonts. Additional optional online-font QA DEMO is required to test actual loaded DM Sans, Fraunces, DM Mono faces before release; computed CSS family alone is insufficient. No font binaries distributed.
+
 ## 2026-11-05 — USER APPROVED PR135 focused Combo Dose redesign
 - User explicitly approved previous conversational interactive design: keep Select → Setup → Review, lavender non-native grouping selector, simplified “Combo dose” header, one active compound at a time with numbered navigation, distinct compound heading, DS2 chevron and readable inventory source, shared injection site only in mixed mode, per-compound sites in separate mode. This is UI approval, NOT merge/deploy approval.
 - Approved font QA gate: DM Sans/Fraunces/DM Mono must be verified as actually loaded in a network-served demo; isolated standalone offline HTML may use system fallback but must not be considered proof of visual font parity.
