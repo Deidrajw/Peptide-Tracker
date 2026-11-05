@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 pinned browser qualification SUCCESS at 0520415d
+- GitHub Actions #42094294724 (PR135 stable pinned browser QA) SUCCESS using published Playwright 1.64.1. Build-release, Combo picker browser 8/8 fictional LIVE/DEMO × 320/390 × light/dark, vial safety, formulation stock and Check-In tests completed successfully. Downloaded artifact #13447181982: 322 ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS; offline fictional DEMO 2 files CRC PASS. The earlier #42094053764 custom mcg unit failure was fixed in 0520415d and rerun passed.
+- Local exact full-app isolated demo 0520415d custom preferred mcg 300->0.3mg->300 checked at 320/390 light/dark 4/4 PASS, zero page errors. Earlier six-compound one-panel 8/8 from dfe54a8b passed. This does not constitute iPhone/VoiceOver or online loaded fonts.
+- Five standard workflows still fail dependency install (unavailable playwright-core 1.65.0); these original gates are NOT PASS. Network font/real iPhone/clinical calculator still NOT TESTED or independently certified. No merge or deploy.
+
 ## 2026-11-05 — PR135 focused Combo safety checkpoint
 - Local Chromium set_content dfe54a8b fictional full-app 8 states (320/390 x light/dark x mixed/separate), six compounds: focused panel, navigation, draft preserved, mg->mcg basic parity, site visibility, no overflow or page errors PASS. Not actual network-served browser or iPhone.
 - Pinned GitHub QA #42094053764 FAIL: custom preferred mcg to mg misconverted after input. Fixed source 0520415d by recording display unit before draft amount. Exact-head CI #42094294724 pending. All five ordinary CI workflows blocked during npm install on unavailable playwright-core 1.65.0; scoped QA pins published 1.64.1.
