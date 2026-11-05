@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 Combo header DS2 typography regression
+- Scoped modal class and semantic header with SVG close JS 06e957d1; DS2 style CSS 12e9a828. Local full-app fictional Chromium 320/390 x light/dark 4/4 PASS: computed title font-family DM Sans, font-size 21/23px, font-weight 750, kicker 11px/700, close 48px x 48px, no overlap, dismissal functional, zero page errors. Exact Git blob hash and LIVE/offline package CRC PASS.
+- Not accepted: real iPhone, real online font faces, VoiceOver/Dynamic Type, GitHub exact-head full QA. Calculation safety remains separately gated. No production changes.
+
 ## 2026-11-05 — PR135 shared administration chevron visual regression
 - Screenshot failure: Session Details Administration Method and Administration Site had no dropdown affordance in user's iPhone screenshot. JS 3e466511 + CSS f5a134e2 add explicit decorative SVG chevrons, preserving native select semantics and existing options; no changes to saved data.
 - Local real Chromium 320/390 light/dark isolated full-app via set_content: 4/4 PASS visual DOM geometry, both SVGs 18px visible and within selects, pointer-events:none; native IM/SubQ and Site selections functional; zero page errors. 390 dark screenshot inspected. Node JS syntax PASS, ZIP CRC PASS, GitHub blob hashes match. NOT TESTED: physical iPhone/Safari/VoiceOver/Dynamic Type, online font loads and full exact-head CI.
