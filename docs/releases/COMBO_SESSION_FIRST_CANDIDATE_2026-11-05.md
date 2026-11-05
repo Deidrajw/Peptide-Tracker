@@ -28,3 +28,11 @@ No existing data migration, history rewrite or production data edits. Original s
 ## Release
 PR draft / no new version / not merged / not deployed / no physical iPhone acceptance.
 Next action: qualify pinned source-exact browser QA and artifacts, then iPhone UAT; release authorization is separate.
+
+## November 5 iPhone screenshot correction (PR135 unreleased)
+- UX feedback: Inventory Source label visually crowded the preceding dose input, and the mg/mcg dropdown lacked a visible chevron.
+- JS ecddbd56: dedicated outline SVG chevron and accessible native mg/mcg select inside a unit-control wrapper; Inventory Source field group. Existing unit-change handler and full dose calculation path unchanged.
+- CSS 4797c74d: 20px field-group separation, 96px unit control with a persistent SVG cue independent of browser native appearance.
+- Data impact: none to persisted records, prepared dose attribution, unit storage, vial deduction, schema or LIVE nasal gates.
+- Local test evidence: Chromium set_content complete fictional isolated DEMO, 320/390 light/dark 4/4; mg to mcg 0.3 -> 300, 20px measured input-to-source gap, visible unit SVG, zero page errors; Node JS syntax PASS; exact GitHub JS/CSS blobs match rebuilt 26-file LIVE ZIP; ZIP CRC and offline DEMO parity PASS.
+- Incomplete: latest GitHub CI browser/build/WebKit/mobile/writer/nested queued or running at checkpoint; physical iPhone Safari/VoiceOver/Dynamic Type and online-loaded fonts not accepted. No release tag, merge or deploy approved.
