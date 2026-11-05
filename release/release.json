@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.24-beta",
+  "version": "v0.9.25-beta",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,46 +9,48 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "1e51840959cd21de01f6e1a48152a486850317fe",
-    "pullRequest": 130
+    "baselineMainCommit": "21b9e42a213f74e3e372266a9fb65c12a9c731da",
+    "pullRequest": 135,
+    "mergedAppCommit": "fe51ace9bc9fd82ed78072038f335917e995562c"
   },
-  "headline": "Faster Stash navigation and reusable supplement routines",
+  "headline": "Session-first Combo Dose with exact-vial preparation and consistent DS2 controls",
   "changes": [
     {
-      "key": "p4-stash-search",
-      "title": "Find supplies and compound inventory faster",
-      "detail": "Search Vial kits, Other forms and Supplies by compound or relevant inventory information without changing stock balances.",
-      "screen": "Stash",
-      "kind": "improvement"
-    },
-    {
-      "key": "p4-stash-default",
-      "title": "Open Stash on Vial kits",
-      "detail": "A fresh visit through primary navigation now starts on Vial kits, while in-screen category switching and the post-save Other forms destination stay available.",
-      "screen": "Stash",
-      "kind": "fix"
-    },
-    {
-      "key": "p4-supplement-repeat",
-      "title": "Reuse supplements from an earlier day",
-      "detail": "Use previous day copies the most recent earlier dated supplement selection into a draft; Check-In mood, symptoms, notes and prior logs remain unchanged.",
-      "screen": "Today / Daily Check-In / Supplements",
-      "kind": "improvement"
-    },
-    {
-      "key": "p4-supplement-templates",
-      "title": "Save and manage supplement templates",
-      "detail": "Create, apply, rename and delete optional named supplement selections using guarded settings saves; templates never automatically save a daily check-in.",
-      "screen": "Today / Daily Check-In / Supplements",
+      "key": "combo-3-step",
+      "title": "Simpler Combo Dose logging",
+      "detail": "Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.",
+      "screen": "Today / Log Dose / Combo Dose",
       "kind": "feature"
+    },
+    {
+      "key": "combo-unit-parity",
+      "title": "Clear mg/mcg entry with strict inventory accounting",
+      "detail": "Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.",
+      "screen": "Today / Log Dose / Combo Dose",
+      "kind": "safety"
+    },
+    {
+      "key": "exact-vial-preparation",
+      "title": "View preparation details for the selected physical vial",
+      "detail": "Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.",
+      "screen": "Stash / Combo Dose",
+      "kind": "improvement"
+    },
+    {
+      "key": "combo-ds2-polish",
+      "title": "Consistent dose header, selection chevrons and field spacing",
+      "detail": "Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.",
+      "screen": "Today / Log Dose / Combo Dose",
+      "kind": "fix"
     }
   ],
-  "dataImpact": "No destructive migration, historical record rewrite or automatic check-in save. The new optional settings.supplementTemplates field stores explicitly named selections through the exclusive writer, with readback validation; inventory history, backup files and existing dated logs are preserved. Stash search and chosen subcategory are transient UI state.",
+  "dataImpact": "No destructive migration or overwrite of existing production localStorage (peptide-tracker-html-v1). No automatic rewrite of old dose records, saved history, kit records, Check-Ins or inventory. New Combo Dose records retain the established native numeric dose format plus optional enteredAmount/enteredUnit audit metadata. Successful logged doses only debit eligible exact vial sources through the existing guarded exclusive writer. Demo data remains entirely isolated.",
   "limitations": [
-    "Generic preparation transfers and prepared nasal dose administration remain disabled; the separately enabled recorded nasal preparation workflow is unchanged.",
-    "Search and supplement templates are local to the current browser; account synchronization remains future work.",
-    "Synthetic calculator regression results do not establish clinical dosing or sterile preparation guidance.",
-    "Physical iPhone acceptance was user-reported as 7/7 PASS before the small Stash entrypoint correction; that specific correction requires updated acceptance before final release signoff."
+    "Prepared-dose use delegates to the established prepared-syringe confirmation flow; unsupported administration-method and multi-source combinations fail closed rather than inventing new physical transactions.",
+    "LIVE nasal administration and generic preparation transfers remain OFF; previously approved recorded preparation flow remains unchanged.",
+    "The full offline DEMO intentionally uses fallback fonts. LIVE source preserves external DM Sans/Fraunces/DM Mono import; actual online font-file rendering and VoiceOver/Dynamic Type were not independently accepted in this release session.",
+    "Automated vial-source and measurement regressions passed; synthetic calculator diagnostics do not establish independent clinical certification.",
+    "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
