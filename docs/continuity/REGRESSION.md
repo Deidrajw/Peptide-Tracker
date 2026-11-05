@@ -1,3 +1,10 @@
+## 2026-11-05 — PR135 targeted regression status, source 08a0a84b
+- Combo Select: 50-compound searchable scroll/selection, favourites and draft preservation; Setup shared vs individual SubQ sites, IM 6-option parity, Draw now vs Prepared; Review source/date/time, and long label 320px wrapping — exact latest-source browser QA **NOT TESTED/PENDING**. Previous browser #41981657892 FAIL due old test filling hidden Setup; #41984116004 FAIL due asynchronous previous save closing during new modal; harness now awaits closure. No false Pass.
+- Physical source planner: exact K1:V1 injectable selection, Nasal K2:V2 rejection, no pre-validation stock debit; per-dose site/method and comboId historical attribution — new browser tests added; exact latest results **PENDING**.
+- Stash: View vial 44px target, exact vial BAC vs unrelated kit default, no state mutation on open, vial list ordering — tests added; latest browser **PENDING**.
+- Unchanged protected flows: Check-In, Log Dose, Protocol, Stash inventory, prepared doses, nasal LIVE gates, cross-tab stale rejection. Prior 76002d43 mobile #41985374318 SUCCESS, shared writer #41985374361 SUCCESS, nested #41985374264 SUCCESS, WebKit #41985374213 SUCCESS. Full-source 08a0a84b reruns not yet verified; never treat earlier green as covering later edits.
+- Real iPhone Safari, keyboard, VoiceOver, Dynamic Type, online fonts: NOT TESTED. Calculator safety certification: NOT VERIFIED.
+
 ## 2026-11-05 — PR135 automated QA continuation
 - Application SHA 06e00aa1: mobile 41981657821 PASS; shared writer 41981657816 PASS; WebKit 41981657820 PASS; nested 41981657931 PASS; build/browser 41981657892 FAIL. Failure: old validate-combo-picker.mjs assumed visible amount field on Select. Exact-source LIVE/DEMO build and archive validation steps PASS before browser test failure. No claim of full-browser PASS.
 - Test updates b0057d0f and 3868ea4b: navigate Select→Setup, preserve typed amount/notes across Back/Continue, assert unsupported separate/IM choices do not advance or write history; FINAL HEAD RUNS PENDING, NOT TESTED. Real iPhone and voiceover NOT TESTED.
