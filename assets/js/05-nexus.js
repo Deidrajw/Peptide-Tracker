@@ -17,8 +17,15 @@ function comboDoseModal() {
     ...(state.comboPresets||[]).flatMap(p=>p.compounds||[]),
     ...(state._comboSelected||[])
   ]);
-  const names = Object.keys(aps).filter(n=>aps[n]?.route!=="Nasal" &&
-    (!blendConstituents.has(n)||standaloneKits.has(n)||independentlyUsed.has(n))).sort();
+  const names = Object.keys(aps).filter(n=>{
+    // Combo Dose is an injectable workflow. Exclude explicitly non-injectable
+    // tracked routes rather than offering oral/nasal/topical/IV records in its picker.
+    // An unspecified legacy route remains selectable but still needs an eligible
+    // SubQ/IM vial before a stock-backed dose can be committed.
+    const route=aps[n]?.route||(typeof nexusUseSetupFor==="function"?nexusUseSetupFor(n)?.method:null);
+    const explicit=typeof nexusExplicitAdminMethod==="function"?nexusExplicitAdminMethod(route):null;
+    return !explicit||["SubQ","IM"].includes(explicit);
+  }).filter(n=>!blendConstituents.has(n)||standaloneKits.has(n)||independentlyUsed.has(n)).sort();
   if (!state._comboSelected) state._comboSelected = [];
   let sel = state._comboSelected.filter(n=>names.includes(n));
   state._comboSelected = [...sel];
