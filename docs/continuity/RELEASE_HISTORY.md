@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 administration method/site dropdown cues, NOT RELEASED
+- Application candidate JS 3e466511, CSS f5a134e2: native shared Session Details Method and Site selects have visible outline SVG chevrons; no data format, calculations, vial deductions or storage effects. Preserves DS2, LIVE nasal OFF.
+- Local fictional isolated full-app Chromium 320/390 light/dark 4/4 passed selector visual geometry and interaction; source blob hashes and constructed candidate 26-file LIVE/isolated full DEMO CRC PASS. GitHub exact-head release CI, real iPhone and online font-face acceptance PENDING. Draft PR135 not merged/deployed.
+
 ## 2026-11-05 — PR135 Combo UI correction, candidate only — NOT RELEASED
 - Source JS ecddbd56, CSS 4797c74d: separate Inventory Source with 20px gap, expose native mg/mcg select via visible noninteractive SVG chevron; no changes to amount conversion, persisted dose/history, vial accounting, production storage or LIVE nasal gates.
 - Fictional local Chromium 320/390 light/dark 4/4 unit/spacing checks PASS; 26-source-file LIVE ZIP + isolated offline full-app DEMO structural/CRC checks PASS; GitHub exact-head full CI, real font loading and physical iPhone NOT TESTED as of checkpoint. PR135 draft, no version bump/merge/deploy.
