@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 final candidate qualified by automated CI (UNRELEASED)
+- No new release, version bump, merge, deployment or migration. Candidate source 1dd305d9369c6121c012975012a48cfc7458aaab in draft PR135: mg/mcg mass-conserving entry, precise 1mcg accounting, strict shortfall rejection, vialId-specific BAC reconHistory readback, approved Combo Dose stepper.
+- Five exact-source workflows SUCCESS: build #42063375466, WebKit #42063375521, mobile #42063375520, writer #42063375318, nested #42063375449. GitHub workflow artifact #13434406691: outer 548 ZIP entries CRC PASS, 26-member complete LIVE ZIP CRC PASS, full isolated fictional DEMO, offline DEMO and 8/8 Combo browser PASS.
+- Production Cloudflare parity for unreleased source false (expected); production unchanged. Physical iPhone and independent calculator-safety certification pending. Previous separate release-notes gate #41971160513 remains open. Release status: coded/tested/PR draft, not merged/deployed/physical-iPhone-accepted.
+
 ## 2026-11-05 — PR135 still UNRELEASED, latest unit-safe revision
 - Draft PR135 latest code 1dd305d9 and latest test 472cb093; no version change, merge, deployment or migration. Adds entered mg/mcg conversion parity, strict 1mcg inventory ledger precision and exact-vial BAC history readback. Prior 08a0a84b full build PASS does not cover these changes; matching final artifacts and physical iPhone unqualified. Source matching demo/live reference-only files exist from 08a0. Production saved records remain untouched; separate stale release-notes gate #41971160513 unresolved.
 
