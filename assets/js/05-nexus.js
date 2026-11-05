@@ -99,15 +99,20 @@ function comboDoseModal() {
           <label class="field-label">DOSE AMOUNT</label>
           <input class="combo-dose-input" data-n="${esc(n)}" type="number" min="0" step="any" inputmode="decimal" aria-label="${esc(n)} dose amount" placeholder="Enter amount" value="${esc(v)}" style="width:100%;min-height:46px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
         </div>
-        <div style="flex:0 0 86px;min-width:0">
+        <div class="nx-combo-unit-field" style="flex:0 0 96px;min-width:0">
           <label class="field-label" for="nx-combo-unit-${sel.indexOf(n)}">UNIT</label>
-          <select id="nx-combo-unit-${sel.indexOf(n)}" class="inp nx-combo-unit" data-n="${esc(n)}" aria-label="${esc(n)} amount unit" style="min-height:46px;width:100%">
-            ${["mg","mcg"].map(u=>`<option value="${u}"${comboDisplayUnit(n)===u?" selected":""}>${u}</option>`).join("")}
-          </select>
+          <div class="nx-combo-unit-control">
+            <select id="nx-combo-unit-${sel.indexOf(n)}" class="inp nx-combo-unit" data-n="${esc(n)}" aria-label="${esc(n)} amount unit, choose mg or mcg" style="min-height:46px;width:100%">
+              ${["mg","mcg"].map(u=>`<option value="${u}"${comboDisplayUnit(n)===u?" selected":""}>${u}</option>`).join("")}
+            </select>
+            <svg class="nx-combo-unit-chevron" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
         </div>
       </div>
-      <label class="field-label" style="display:block;margin-top:10px" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
-      <select id="nx-combo-source-${sel.indexOf(n)}" class="inp nx-combo-source" data-n="${esc(n)}" aria-label="${esc(n)} vial source" style="min-height:44px;margin-bottom:4px"></select>
+      <div class="nx-combo-inventory-group">
+        <label class="field-label" for="nx-combo-source-${sel.indexOf(n)}">INVENTORY SOURCE</label>
+        <select id="nx-combo-source-${sel.indexOf(n)}" class="inp nx-combo-source" data-n="${esc(n)}" aria-label="${esc(n)} vial source" style="min-height:44px;margin-bottom:4px"></select>
+      </div>
       <div class="nx-combo-individual-site" data-n="${esc(n)}" hidden style="margin-top:10px">
         <label class="field-label">ADMINISTRATION SITE · ${esc(n)}</label>
         <select class="inp nx-combo-individual-site-select" data-n="${esc(n)}" aria-label="${esc(n)} administration site" style="min-height:44px"></select>
