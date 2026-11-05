@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 focused Combo DS2 browser milestone
+- One-active-compound Setup, lavender grouped controls, SVG chevron and readable source paths passed targeted pinned Chromium Combo QA #42094294724 in 8 fictional 320/390 light/dark LIVE/DEMO states at app SHA 0520415d. Protected vial/formulation/Check-In tests PASS. Original five CI suites still blocked by dependency installation; physical iPhone and network-loaded approved typography NOT ACCEPTED. No merge/deploy.
+
 ## 2026-11-05 — Approved Combo Dose focused Setup (PR135 DRAFT)
 - User approved refined Combo UI: concise heading, lavender injected-group selection cards, one visible compound per Setup screen, 44px numbered navigation, distinct compound heading, same source/site selectors and SVG chevrons for mixed/separate modes. Coded JS05/CSS candidate with exact-vial-only disclosure and unavailable-source handling. Revert-free DS2 modification; no app-wide typography role changes.
 - Local Chromium source 0520415d full isolated DEMO: 8 focused-UI states at 320/390 light/dark mixed/separate (previous app source dfe54a8b) and 4 custom-mcg mass-equivalence checks on final source 0520415d PASS. Remote loaded font face/physical iPhone UAT NOT TESTED. Official five workflow CI still fails Playwright dependency; scoped pinned browser QA pending.
