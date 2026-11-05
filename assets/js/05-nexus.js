@@ -236,7 +236,7 @@ function comboDoseModal() {
     const done=sel.filter(name=>Number(m.querySelector(`.combo-dose-input[data-n="${CSS.escape(name)}"]`)?.value)>0).length;
     m.querySelector("#nx-combo-completion-count").textContent=done+" of "+sel.length+" doses entered";
     const pips=m.querySelector("#nx-combo-compound-pips");
-    pips.replaceChildren(...sel.map((name,i)=>{const btn=document.createElement("button");btn.type="button";btn.className="nx-combo-compound-pip"+(i===activeCompoundIndex?" is-active":"");btn.textContent=String(i+1);btn.setAttribute("aria-label","Configure "+name+", compound "+(i+1)+" of "+sel.length);btn.setAttribute("aria-current",i===activeCompoundIndex?"step":"false");btn.onclick=()=>{activeCompoundIndex=i;updateActiveCompound();};return btn;}));
+    pips.replaceChildren(...sel.map((name,i)=>{const btn=document.createElement("button");btn.type="button";btn.className="nx-combo-compound-pip"+(i===activeCompoundIndex?" is-active":"");btn.textContent=String(i+1);btn.setAttribute("aria-label","Configure "+name+", compound "+(i+1)+" of "+sel.length);btn.setAttribute("aria-current",i===activeCompoundIndex?"step":"false");btn.onclick=()=>{activeCompoundIndex=i;setSessionExpanded(false);updateActiveCompound();};return btn;}));
     m.querySelector("#nx-combo-prev-compound").disabled=activeCompoundIndex===0;
     m.querySelector("#nx-combo-next-compound").disabled=activeCompoundIndex===sel.length-1;
   };
