@@ -1,3 +1,11 @@
+## 2026-11-05 — PR #135 candidate regression matrix (NOT TESTED on final head)
+- Select: searchable compound multi-select and favourites, prepared-syringe delegation, correct selected counts and draft persistence — NOT TESTED.
+- Setup: combo positive amounts, date/time, shared notes; nexusAdminSites parity for SubQ and IM; no loss of entered values on step navigation — NOT TESTED.
+- Review: method, site, compound amounts and source validation; no writes until explicit confirm; separate/IM must fail closed — NOT TESTED.
+- Data safety: mixed SubQ transaction, multiple source/vial allocation and insufficient inventory; saved history, check-in, protocols, nasal LIVE disabled — NOT TESTED.
+- UI: 320/390, light/dark, open keyboard, sheet scroll, 44px touch targets, VoiceOver/iPhone — NOT TESTED.
+- User-reported deployment runs before draft: #41971159528 + parity #41971160574 success; release-artifact #41971160513 FAILED stale release notes gate. These are not PR135 test results.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.
