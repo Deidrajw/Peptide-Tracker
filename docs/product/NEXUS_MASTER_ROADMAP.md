@@ -1,3 +1,8 @@
+## 2026-11-05 — Active next priority: PR135 focused Combo Dose release qualification
+- User approved focused Combo Dose UI on existing draft PR135, not release. App source 0520415d includes one-compound-at-a-time Setup, lavender grouping choice, aligned chevrons, source availability and corrected unit preference draft preservation. Programmatic unit safety issue from pinned CI #42094053764 was fixed, latest CI/browser requalification pending. Local isolated Chromium 8 six-compound UI states and 4 preferred-mcg cases PASS; font loaded-face/physical iPhone untested.
+- Separate stale production release-notes gate remains; protect data, DS2, Stash, prepared doses and disabled nasal LIVE. No deploy without explicit authorization.
+- ONE NEXT ACTION: qualify latest exact-source pinned Combo browser and full checks, then artifact and physical-device acceptance.
+
 ## 2026-11-05 — PR135 source safety qualification priority
 - Unit-parity and small-mass inventory defect fixed in candidate source 3e558dbf: explicit mg/mcg choice, native historical conversion, 1mcg debit, strict shortage rejection, no production data changes. Next priority remains final exact-source browser/artifact verification and physical iPhone UAT. Draft PR135 unmerged; separate production release-notes gate unresolved. No merge/deploy.
 
