@@ -1,3 +1,6 @@
+## 2026-11-05 — Shared Combo Session dropdown affordance
+- User screenshot identified missing chevrons for Administration Method and Administration Site. Explicit outline SVG arrow with pointer-events:none added to native selects (JS 3e466511, CSS f5a134e2). Local Chromium 320/390 x dark/light 4/4 geometry and selection functional PASS; physical Safari and online fonts not verified. No visual redesign or saved-data migration.
+
 ## 2026-11-05 — Combo Dose Setup dose/source spacing and unit affordance
 - iPhone screenshot feedback: Inventory Source label too close to Dose Amount and mg selector appeared without a chevron. Scoped JS ecddbd56 and CSS 4797c74d add a visible SVG arrow and a 20px group gap. Local Chromium full-app fictional 320/390 light/dark 4/4 measurements confirm 20px gap, chevron visibility and mg to mcg conversion. Await exact-head CI, network font and iPhone UAT.
 
