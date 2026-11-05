@@ -1,3 +1,7 @@
+## Latest candidate clarification — 2026-11-05
+- Draft/unmerged/undeployed: application SHA 1dd305d9, test SHA 472cb093. Approved UI is intact; new per-compound mg/mcg input choice and exact vialId reconstitution-history fallback are candidate-only. Staged writer converts displayed units into existing native dose units and retains audit metadata without historical migration. 1mcg stock deductions use six-decimal mg precision, shortage checks fail closed.
+- 08a0a84b QA PASS is prior baseline only. New-source CI/complete fictional full-app DEMO/offline ZIP/exact LIVE ZIP **INCOMPLETE** until exact-source checks and downloads. Physical iPhone/VoiceOver/Dynamic Type **NOT TESTED**. Clinical calculator safety **NOT CERTIFIED**.
+
 ## 2026-11-05 candidate follow-up — unit-parity and source qualification
 - Draft PR135 source/test SHA 3e558dbf (unmerged/undeployed): compact dose amount/unit row with mg/mcg select, mass-preserving value conversion, stored native dose + entered amount/unit audit, 1mcg inventory precision and strict shortage preflight for staged injections. Historical recorded doses are not modified.
 - Source 08a0a84b full build #41986359105 SUCCESS; downloaded artifact #13397066246 manifest source matched, outer ZIP 548 entries CRC PASS, LIVE 26 file ZIP, 8/8 fictional Combo picker browser results. This predates latest unit work, so final SOURCE MATCHED QA and packaging **INCOMPLETE**.
