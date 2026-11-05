@@ -1,3 +1,7 @@
+## 2026-11-05 — PR135 shared-session-first hierarchy tests, unverified
+- Added to tools/validate-combo-picker.mjs at 3daaf99c: session card exists before compound navigation; session fields initially visible; Next compound follows active panel; aria-expanded true; after moving to another compound, shared session fields collapse, summary includes method, Edit reopens controls and Done re-collapses. Existing six-compound, unit, site, source and protected vial tests retained.
+- Exact-source pinned workflow #42096806637 queued at checkpoint, NOT TESTED. Original five workflows still affected by unavailable Playwright dependency; no iPhone, font-face loaded or clinical calculator certification. No permission to merge/deploy.
+
 ## 2026-11-05 — PR135 pinned browser qualification SUCCESS at 0520415d
 - GitHub Actions #42094294724 (PR135 stable pinned browser QA) SUCCESS using published Playwright 1.64.1. Build-release, Combo picker browser 8/8 fictional LIVE/DEMO × 320/390 × light/dark, vial safety, formulation stock and Check-In tests completed successfully. Downloaded artifact #13447181982: 322 ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS; offline fictional DEMO 2 files CRC PASS. The earlier #42094053764 custom mcg unit failure was fixed in 0520415d and rerun passed.
 - Local exact full-app isolated demo 0520415d custom preferred mcg 300->0.3mg->300 checked at 320/390 light/dark 4/4 PASS, zero page errors. Earlier six-compound one-panel 8/8 from dfe54a8b passed. This does not constitute iPhone/VoiceOver or online loaded fonts.
