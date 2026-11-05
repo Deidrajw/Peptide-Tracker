@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 source safety qualification priority
+- Unit-parity and small-mass inventory defect fixed in candidate source 3e558dbf: explicit mg/mcg choice, native historical conversion, 1mcg debit, strict shortage rejection, no production data changes. Next priority remains final exact-source browser/artifact verification and physical iPhone UAT. Draft PR135 unmerged; separate production release-notes gate unresolved. No merge/deploy.
+
 ## 2026-11-05 — Active draft PR135: Combo Dose and per-vial preparation visibility
 - USER APPROVED 3-stage Combo Dose direction. Candidate application source 08a0a84b, draft PR135, main 21b9e42a, no merge/deploy. Select searchable compounds, Setup SubQ/IM and mixed/separate site choices plus exact open-source selection, concise Review; Prepared delegates to existing syringe confirmation. Stash View vial read-only details are added. Preserve approved DS2 and existing data/write-coordinator protections.
 - PENDING exact-head full browser + artifacts, Stash/Combo screenshots 320/390 light/dark, physical iPhone accessibility acceptance. Independent calculator-safety requirements remain; production release-notes gate failure #41971160513 to be corrected in separate PR without weakening gate.
