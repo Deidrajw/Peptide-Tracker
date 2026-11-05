@@ -260,7 +260,7 @@ function comboDoseModal() {
     const fav=m.querySelector("#combo-fav-section");
     fav.style.display=sel.length>=2?"":"none";
     if(sel.length<2){m.querySelector("#combo-savefav").checked=false;m.querySelector("#combo-favname-wrap").style.display="none";}
-    m.querySelector("#save").textContent="LOG "+(sel.length||"")+" DOSE"+(sel.length===1?"":"S");
+    m.querySelector("#save").textContent="CONFIRM & LOG DOSES";
   };
   comboList.querySelectorAll(".combo-compound-toggle").forEach(btn=>{
     btn.setAttribute("role","checkbox");btn.setAttribute("aria-checked",String(sel.includes(btn.dataset.n)));
