@@ -123,10 +123,10 @@ function comboDoseModal() {
   }).join("");
 
   const m = openModal(`
-    <div class="nx-dose-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px">
-      <div><div class="nx-dose-kicker">DOSE LOG</div><h2 class="nx-dose-title">Combo dose</h2></div>
-      <button id="x" type="button" aria-label="Close Combo Dose" style="min-width:44px;min-height:44px;background:transparent;border:0;color:var(--t4);font-size:20px">×</button>
-    </div>
+    <header class="nx-dose-head nx-combo-header">
+      <div class="nx-combo-header-copy"><div class="nx-dose-kicker">DOSE LOG</div><h2 class="nx-dose-title">Combo dose</h2></div>
+      <button id="x" class="nx-dose-close nx-combo-close" type="button" aria-label="Close Combo Dose"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </header>
     <div class="hint nx-combo-intro" style="margin-bottom:14px">Select compounds, configure each dose and review before logging.</div>
     <nav class="nx-combo-steps" aria-label="Combo dose steps" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px">
       ${["Select","Setup","Review"].map((label,i)=>`<div class="nx-combo-step" data-step="${i}" style="text-align:center"><div class="nx-combo-step-bar" style="height:4px;border-radius:6px;background:${i===0?"#A78BFA":"var(--border)"}"></div><div style="font-size:12px;margin-top:6px;color:var(--t3)">${label}</div></div>`).join("")}
@@ -198,6 +198,8 @@ function comboDoseModal() {
       <button id="nx-combo-continue" type="button" class="btn-primary" style="background:#A78BFA;min-height:46px;flex:2">Continue</button>
     </div>
   `, "#A78BFA");
+
+  m.classList.add("nx-combo-dose-modal");
 
   // Review-first interaction; the original planner/commit path remains the only writer.
   // Unsupported site-specific multi-injection and IM transactions remain blocked rather
