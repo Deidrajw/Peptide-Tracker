@@ -212,7 +212,7 @@ function comboDoseModal() {
   const moveActiveCompound=delta=>{activeCompoundIndex=Math.max(0,Math.min(sel.length-1,activeCompoundIndex+delta));updateActiveCompound();m.querySelector("#nx-combo-compound-navigation")?.scrollIntoView({block:"nearest",behavior:"instant"});};
   m.querySelector("#nx-combo-prev-compound").onclick=()=>moveActiveCompound(-1);
   m.querySelector("#nx-combo-next-compound").onclick=()=>moveActiveCompound(1);
-  m.querySelector("#combo-dose-fields").addEventListener("input",event=>{if(event.target.matches(".combo-dose-input")){state._comboDoses=state._comboDoses||{};state._comboDoses[event.target.dataset.n]=event.target.value;updateActiveCompound();}});
+  m.querySelector("#combo-dose-fields").addEventListener("input",event=>{if(event.target.matches(".combo-dose-input")){const name=event.target.dataset.n;const displayed=m.querySelector(`.nx-combo-unit[data-n="${CSS.escape(name)}"]`)?.value;if(["mg","mcg"].includes(displayed)){comboUnits[name]=displayed;state._comboUnits={...comboUnits};}state._comboDoses=state._comboDoses||{};state._comboDoses[name]=event.target.value;updateActiveCompound();}});
   const refreshSourceMode=()=>{
     const separate=selectedGrouping()==="separate";
     if(separate)comboSourceMode="draw";
