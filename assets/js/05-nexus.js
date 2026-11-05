@@ -67,6 +67,8 @@ function comboDoseModal() {
     return `<div style="margin-bottom:10px">
       <label class="field-label">${esc(n)} DOSE (${c.unit})</label>
       <input class="combo-dose-input" data-n="${esc(n)}" type="number" class="inp" placeholder="e.g. 2" value="${esc(v)}" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--t1);font-size:13px">
+      <button type="button" class="nx-combo-vial-info" data-n="${esc(n)}" aria-expanded="false" style="min-height:44px;display:flex;align-items:center;gap:8px;margin-top:6px;color:var(--t3);font-size:12px;background:transparent;border:0">View vial preparation <span aria-hidden="true">⌄</span></button>
+      <div class="nx-combo-vial-detail" data-n="${esc(n)}" hidden style="padding:12px;background:var(--surface-2);border-radius:10px;font-size:12px;color:var(--t3);line-height:1.6"></div>
     </div>`;
   }).join("");
 
@@ -264,7 +266,29 @@ function comboDoseModal() {
     btn.setAttribute("role","checkbox");btn.setAttribute("aria-checked",String(sel.includes(btn.dataset.n)));
     btn.style.minHeight="44px";
   });
-  const comboDateNowBtn = m.querySelector("#combo-date-now");
+  // Read-only preparation disclosure: distinguish each physical vial and do not guess
+  // missing diluent amounts or attribute a dose to the wrong kit.
+  m.querySelector("#combo-dose-fields").addEventListener("click",event=>{
+    const button=event.target.closest(".nx-combo-vial-info");
+    if(!button)return;
+    const box=button.nextElementSibling;
+    const opening=box.hidden;
+    box.hidden=!opening;button.setAttribute("aria-expanded",String(opening));
+    if(!opening)return;
+    const matching=(state.supplies||[]).filter(k=>!k.isBlend&&k.name===button.dataset.n);
+    if(!matching.length){box.textContent="No matching vial kit in Stash. Preparation not recorded.";return;}
+    box.replaceChildren(...matching.map(kit=>{
+      const vial=typeof getActiveVial==="function"?getActiveVial(kit):null;
+      const outer=document.createElement("div");outer.style.marginBottom="10px";
+      const title=document.createElement("strong");title.textContent=(kit.kitName||kit.name)+" · "+(vial?"Active vial":"No active vial");
+      const detail=document.createElement("div");
+      const liquid=vial?.bacMl??kit.bacMl, date=vial?.reconDate??kit.reconDate;
+      detail.textContent="Liquid added: "+(liquid!=null&&Number(liquid)>0?liquid+" mL":"Not recorded")+" · Reconstituted: "+(date?String(date):"Not recorded");
+      const note=document.createElement("div");note.textContent="Read-only reference. Select and verify the exact physical vial before saving.";
+      outer.append(title,detail,note);return outer;
+    }));
+  });
+    const comboDateNowBtn = m.querySelector("#combo-date-now");
   if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
   try {
     const favCheck = m.querySelector("#combo-savefav");
