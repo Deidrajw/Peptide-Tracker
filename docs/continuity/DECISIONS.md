@@ -1,3 +1,8 @@
+## 2026-11-05 — post-PR132 release metadata proposal, not a new design decision
+- Keep approved DS2 typography: DM Sans ordinary UI, Fraunces editorial headings, DM Mono intentionally technical values; preserve geometry, 44px action targets, accessible control labels and data behavior.
+- The new branch proposes `v0.9.25-beta` metadata to document PR132, leaving production's v0.9.24-beta untouched until separately authorized merge/deploy. The stale-notes safety gate stays enabled rather than bypassed.
+- Do not treat automated typography screenshots as physical iPhone/VoiceOver acceptance. No storage migration, dose logic or nasal LIVE gate changes.
+
 ## 2026-11-04 Toronto — approved DM Sans/Fraunces/DM Mono implementation and local QA
 - Approved typography system now CODED in draft PR132, app/test SHA 983a58d3d7e8b2a9ab6a0c068dbcde39866dba26; deployed main 755dea5e/v0.9.24-beta unchanged, no merge/deploy. Shared DM Sans CSS and former Today SF Pro override replaced; existing Fraunces titles retained; DM Mono only explicitly technical values; scoped approved 13px explanation/11px category/13px Journal labels. Only CSS + presentational JS07/08/10/11 changed. Full release notes: docs/releases/DS2_TYPOGRAPHY_FAMILY_CANDIDATE_2026-11-04.md.
 - Source-matching check: all five changed application files GitHub blob SHA EXACT MATCH to locally reconstructed source, 21 remaining files from prior verified source bundle. 26-file LIVE ZIP CRC PASS, all 12 numbered JS syntax PASS. Isolated fictional, no-live FULL APP DEMO generated from same actual modules, integrity checks PASS; no user-data migration.

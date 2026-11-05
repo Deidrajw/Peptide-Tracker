@@ -1,3 +1,9 @@
+## 2026-11-05 — PR132 deployed, stale release-notes gate unresolved pending proposed metadata QA
+- Main `21b9e42a213f74e3e372266a9fb65c12a9c731da`; deployment #41971159528 PASS; Cloudflare core parity #41971160574 PASS (16 checked files only).
+- Post-merge release artifact #41971160513 FAIL at stale release-note gate; JavaScript syntax PASS; build, browser, and artifact QA SKIPPED. Never convert skip to pass.
+- Candidate manifest `v0.9.25-beta` on `fix/pr132-release-readiness-metadata-20261105` is not qualified. Required: exact-head gate, artifact ZIP/DEMO data boundaries, 320/390 light/dark checks, protected navigation/check-in/inventory/writer and live nasal gates unchanged.
+- Real device: physical iPhone Safari, font download, large text, VoiceOver, keyboard, sheets, reachability and scroll remain NOT TESTED. Calculator safety is not independently certified.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.

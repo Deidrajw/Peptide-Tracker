@@ -1,3 +1,11 @@
+## 2026-11-05 Toronto — PR132 post-deploy release-readiness metadata candidate (UNMERGED)
+- Verified main SHA `21b9e42a213f74e3e372266a9fb65c12a9c731da`, merged PR132; primary Cloudflare previously verified 16/16 core source files via run #41971160574 and deployment run #41971159528 SUCCESS. The comparison does not encompass all support assets; no new deployment in this session.
+- Production still advertises v0.9.24-beta. Post-merge release artifact #41971160513 FAILED at stale canonical release notes; syntax gate PASS, later artifact/browser stages SKIPPED.
+- Separate follow-up branch `fix/pr132-release-readiness-metadata-20261105` proposes v0.9.25-beta candidate metadata for approved DS2 typography (DM Sans/Fraunces/DM Mono), scoped controls/labels and Supplies type hierarchy. Not merged; not deployed; no data migration or changes to browser storage, nasal LIVE gates or calculators.
+- Existing draft PR133 documents deployment evidence independently and remains unmerged. This correction is separate.
+- Remaining gate: exact-branch release artifact workflow and full LIVE/isolated DEMO qualification, plus physical iPhone Safari/VoiceOver/Dynamic Type and real loaded font checks. Do not call success or release completion before evidence.
+- **ONE NEXT ACTION:** verify the new metadata PR's CI and correct remaining gate failures before seeking explicit approval to merge/deploy.
+
 ## 2026-11-04 Toronto — PR132 WebKit exact-source qualification SUCCESS (unreleased)
 - Verified GitHub main `755dea5eed417c1515543779fd81be77b6a504de`, draft/unmerged PR132 head `6d8ac2c14f57179ad34a255cee975eec3c0c2169`; production previously source-confirmed v0.9.24-beta, not deployed from this PR.
 - **WebKit GitHub run #41913969164 SUCCESS**, test SHA `592b2a7fec9bec2caf9e8a279e60d8c744810493`. All named job steps PASS: catalogue validation, complete fictional DEMO build, WebKit dependency install, Stash iPhone emulation, formulation and retrospective nasal tests, visual artifact upload. Only workflow timeout and docs differ from application source `4f144fda`; no app-code change.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.24-beta",
+  "version": "v0.9.25-beta",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,46 +9,46 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "1e51840959cd21de01f6e1a48152a486850317fe",
-    "pullRequest": 130
+    "baselineMainCommit": "21b9e42a213f74e3e372266a9fb65c12a9c731da",
+    "pullRequest": 132
   },
-  "headline": "Faster Stash navigation and reusable supplement routines",
+  "headline": "Consistent Nexus typography and accessible mobile controls",
   "changes": [
     {
-      "key": "p4-stash-search",
-      "title": "Find supplies and compound inventory faster",
-      "detail": "Search Vial kits, Other forms and Supplies by compound or relevant inventory information without changing stock balances.",
-      "screen": "Stash",
+      "key": "ds2-typography",
+      "title": "Apply the approved typography system",
+      "detail": "Use DM Sans for UI and explanatory copy, retain Fraunces for editorial headings, and use DM Mono selectively for technical numbers.",
+      "screen": "Today / Calendar / Stash / Plans / Learn / More",
       "kind": "improvement"
     },
     {
-      "key": "p4-stash-default",
-      "title": "Open Stash on Vial kits",
-      "detail": "A fresh visit through primary navigation now starts on Vial kits, while in-screen category switching and the post-save Other forms destination stay available.",
-      "screen": "Stash",
+      "key": "ds2-accessibility",
+      "title": "Improve control sizing and accessible names",
+      "detail": "Restore at least 44px targets for identified calendar, header, secondary and back actions; add contextual accessible labels while preserving existing layouts.",
+      "screen": "Calendar / Today / App Updates / Shared controls",
       "kind": "fix"
     },
     {
-      "key": "p4-supplement-repeat",
-      "title": "Reuse supplements from an earlier day",
-      "detail": "Use previous day copies the most recent earlier dated supplement selection into a draft; Check-In mood, symptoms, notes and prior logs remain unchanged.",
-      "screen": "Today / Daily Check-In / Supplements",
+      "key": "ds2-supplies",
+      "title": "Clarify Supplies typography",
+      "detail": "Distinguish technical quantities from supporting labels and explanations without altering supply calculations or inventory.",
+      "screen": "Stash / Supplies",
       "kind": "improvement"
     },
     {
-      "key": "p4-supplement-templates",
-      "title": "Save and manage supplement templates",
-      "detail": "Create, apply, rename and delete optional named supplement selections using guarded settings saves; templates never automatically save a daily check-in.",
-      "screen": "Today / Daily Check-In / Supplements",
-      "kind": "feature"
+      "key": "ds2-consistency-tests",
+      "title": "Expand layout and typography regression evidence",
+      "detail": "Add browser-computed font role and touch target checks across 320px and 390px, dark and light, without changing user records.",
+      "screen": "Full app",
+      "kind": "improvement"
     }
   ],
-  "dataImpact": "No destructive migration, historical record rewrite or automatic check-in save. The new optional settings.supplementTemplates field stores explicitly named selections through the exclusive writer, with readback validation; inventory history, backup files and existing dated logs are preserved. Stash search and chosen subcategory are transient UI state.",
+  "dataImpact": "No migration, destructive write, inventory mutation, dose calculation change, or saved-data rewrite. PR132 introduces scoped presentational typography and accessibility improvements plus QA tests only; keep existing localStorage, backups and history untouched.",
   "limitations": [
-    "Generic preparation transfers and prepared nasal dose administration remain disabled; the separately enabled recorded nasal preparation workflow is unchanged.",
-    "Search and supplement templates are local to the current browser; account synchronization remains future work.",
-    "Synthetic calculator regression results do not establish clinical dosing or sterile preparation guidance.",
-    "Physical iPhone acceptance was user-reported as 7/7 PASS before the small Stash entrypoint correction; that specific correction requires updated acceptance before final release signoff."
+    "Physical iPhone Safari, downloaded web-font rendering, Dynamic Type and VoiceOver acceptance are still pending.",
+    "Post-merge release-artifact gate failed against stale prior release metadata; this proposed manifest correction is unmerged and its full CI has not yet passed.",
+    "Existing nasal LIVE safety gates remain unchanged; independent calculator safety certification is not claimed.",
+    "Cloudflare 16-core-file parity for PR132 was verified separately; the remaining support assets were not fully independently compared."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
