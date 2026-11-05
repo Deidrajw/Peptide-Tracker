@@ -1,3 +1,6 @@
+## 2026-11-05 — User approved shared-session-first Combo Setup refinement
+- User explicitly approved the recommended layout after evaluating the annotated iPhone screenshot: one editable shared session section above the focused compound, then compound-specific dose/source/site and Next compound as its natural endpoint. Shared date, time and administration method are never repeated for each compound; shared site only for mixed syringe and individual site for separate injections. Session summary remains editable and collapses on compound navigation. This is development design approval, NOT PR merge/deployment approval.
+
 ## 2026-11-05 — Approved focused Combo UX implementation safety note
 - User approved one active compound at a time, lavender grouping selection, simplified header, and shared control styling; draft-only approval, not merge/deploy. Preserve one shared site for mixed syringe and individual sites for separate injections. Record displayed mg/mcg unit before recording draft amount; changing unit must preserve mass.
 - Offline DEMO remains fully fictional/self-contained and may use fallback fonts. Additional optional online-font QA DEMO is required to test actual loaded DM Sans, Fraunces, DM Mono faces before release; computed CSS family alone is insufficient. No font binaries distributed.
