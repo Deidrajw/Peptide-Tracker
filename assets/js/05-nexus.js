@@ -332,18 +332,26 @@ function comboDoseModal() {
     const opening=box.hidden;
     box.hidden=!opening;button.setAttribute("aria-expanded",String(opening));
     if(!opening)return;
-    const matching=(state.supplies||[]).filter(k=>!k.isBlend&&k.name===button.dataset.n);
-    if(!matching.length){box.textContent="No matching vial kit in Stash. Preparation not recorded.";return;}
-    box.replaceChildren(...matching.map(kit=>{
-      const vial=typeof getActiveVial==="function"?getActiveVial(kit):null;
+    const source=m.querySelector(`.nx-combo-source[data-n="${CSS.escape(button.dataset.n)}"]`)?.value||"auto";
+    const eligible=sourceOptionsFor(button.dataset.n,comboMethod.value);
+    const displayed=source==="auto"?eligible:eligible.filter(x=>x.value===source);
+    if(!displayed.length){box.textContent="No verified open vial for this compound and administration method. Preparation not recorded.";return;}
+    const rows=displayed.map(choice=>{
+      const [kitId,vialId]=choice.value.split(":");
+      const kit=(state.supplies||[]).find(k=>String(k.id)===kitId&&k.name===button.dataset.n);
+      const vial=kit?.vials?.find(v=>String(v.id)===vialId);
       const outer=document.createElement("div");outer.style.marginBottom="10px";
-      const title=document.createElement("strong");title.textContent=(kit.kitName||kit.name)+" · "+(vial?"Active vial":"No active vial");
-      const detail=document.createElement("div");
-      const liquid=vial?.bacMl??kit.bacMl, date=vial?.reconDate??kit.reconDate;
-      detail.textContent="Liquid added: "+(liquid!=null&&Number(liquid)>0?liquid+" mL":"Not recorded")+" · Reconstituted: "+(date?String(date):"Not recorded");
-      const note=document.createElement("div");note.textContent="Read-only reference. Select and verify the exact physical vial before saving.";
-      outer.append(title,detail,note);return outer;
-    }));
+      const title=document.createElement("strong");title.textContent=choice.label;
+      const details=document.createElement("div");
+      const water=vial?.bacMl, date=vial?.reconDate;
+      details.textContent="Liquid added: "+(Number(water)>0?water+" mL":"Not recorded for this vial")+" · Reconstituted: "+(date?String(date):"Not recorded");
+      const usage=document.createElement("div");
+      usage.textContent="Remaining: "+(vial&&kit?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Unknown")+" · "+(vial?.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Physical form not recorded");
+      const note=document.createElement("div");
+      note.textContent="Read-only vial record. A kit-level default is not a substitute for this vial's actual preparation.";
+      outer.append(title,details,usage,note);return outer;
+    });
+    box.replaceChildren(...rows);
   });
     const comboDateNowBtn = m.querySelector("#combo-date-now");
   if(comboDateNowBtn)comboDateNowBtn.onclick=()=>{m.querySelector("#combo-date").value=localDatetime();};
