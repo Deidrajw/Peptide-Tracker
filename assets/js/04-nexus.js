@@ -3155,7 +3155,7 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
   const shortfall = plan.find(p => {
     if (!p.tracked) return false;
     const totalAvailable = p.eligible.reduce((s,e)=>s+getVialRemainingMg(e.kit,e.vial), 0);
-    return totalAvailable + 0.01 < p.neededMg;
+    return totalAvailable + (method?0.0000005:0.01) < p.neededMg;
   });
   if (shortfall) {
     const cc = cfg(shortfall.name);
@@ -3180,10 +3180,14 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       let remaining = p.neededMg;
       allocations = [];
       for (const {kit, vial} of p.eligible) {
-        if (remaining <= 0.001) break;
+        if (remaining <= (method?0.0000005:0.001)) break;
         const take = Math.min(remaining, vial.remainingMg);
-        vial.remainingMg = Math.round((vial.remainingMg-take)*100)/100;
-        if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; vial.status = "empty"; }
+        // For new staged mg/mcg flows retain six decimal mg precision so even
+        // 1mcg (0.001mg) actually leaves the vial; do not round it away.
+        vial.remainingMg = method
+          ? Math.round((vial.remainingMg-take)*1000000)/1000000
+          : Math.round((vial.remainingMg-take)*100)/100;
+        if (vial.remainingMg <= (method?0.0000005:0.01)) { vial.remainingMg = 0; vial.status = "empty"; }
         allocations.push({ kitId: kit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) });
         remaining -= take;
       }
