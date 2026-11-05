@@ -296,6 +296,19 @@ try{
     const vialOrder=await card(99002).locator('.nx-kit-vial-row .nx-kit-list-top strong').allTextContents();
     ensure(vialOrder.join('|')==='Vial 1|Vial 2|Vial 4|Vial 5',
       'Opened vial details must display numeric sequence order: '+JSON.stringify(vialOrder));
+    const beforeVialView=await page.evaluate(()=>JSON.stringify(state.supplies.find(k=>k.id===99002).vials));
+    const viewAction=card(99002).locator('.nx-stash-view-vial').first();
+    ensure(await viewAction.count()===1,'Opened vial lacks discoverable View vial action');
+    ensure(await viewAction.evaluate(el=>el.getBoundingClientRect().height>=44),'View vial tap target below 44px');
+    await viewAction.click();
+    ensure(await page.locator('.nx-vial-prep-view').count()===1,'Read-only vial detail sheet missing');
+    const detailText=await page.locator('.nx-vial-prep-view').innerText();
+    ensure(detailText.includes('Not recorded for this vial'),'Missing vial BAC incorrectly inferred from kit-level default');
+    ensure(detailText.includes('Read-only preparation details'),'Vial details not clearly read only');
+    await page.locator('#nx-vial-prep-close').click();
+    ensure(await page.locator('.nx-vial-prep-view').count()===0,'Vial detail did not close');
+    ensure(await page.evaluate(()=>JSON.stringify(state.supplies.find(k=>k.id===99002).vials))===beforeVialView,
+      'Opening read-only vial view unexpectedly modified recorded vial data');
     // Fictional mixed physical stock: source-specific numbers must remain distinct.
     await page.evaluate(()=>{
       state._stashSub='kits';state._stashFilter='all';state._stashGroup='none';
