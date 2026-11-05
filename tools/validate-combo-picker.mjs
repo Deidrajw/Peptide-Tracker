@@ -210,6 +210,18 @@ try {
   await page.locator('.nx-combo-vial-info[data-n="Test Compound 03"]').click();
   const preparation=await page.locator('.nx-combo-vial-detail[data-n="Test Compound 03"]').innerText();
   ensure(preparation.includes('1.5 mL')&&!preparation.includes('2 mL'),'Vial preparation disclosure mixed different physical vials');
+  await page.evaluate(()=>{
+    state.supplies[0].vials[0].bacMl=null;
+    state.supplies[0].reconHistory=[
+      {vialId:'unrelated',bacMl:9,date:'2026-10-27T10:00'},
+      {vialId:'V1',bacMl:1.5,date:'2026-10-28T08:00'}
+    ];
+  });
+  await page.locator('.nx-combo-vial-info[data-n="Test Compound 03"]').click();
+  await page.locator('.nx-combo-vial-info[data-n="Test Compound 03"]').click();
+  const fromHistory=await page.locator('.nx-combo-vial-detail[data-n="Test Compound 03"]').innerText();
+  ensure(fromHistory.includes('1.5 mL')&&!fromHistory.includes('9 mL'),
+    'VialId-matched reconstitution history not isolated from unrelated vial');
   await page.locator('.nx-combo-mode-btn[data-source-mode="prepared"]').click();
   ensure(await page.locator('#nx-combo-prepared-sources').isVisible(),'Prepared state did not open');
   ensure(!await page.locator('#nx-combo-draw-fields').isVisible(),'Prepared state exposed draw-now inventory fields');
