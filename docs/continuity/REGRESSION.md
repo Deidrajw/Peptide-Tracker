@@ -1,3 +1,8 @@
+## 2026-11-05 — PR135 focused Combo safety checkpoint
+- Local Chromium set_content dfe54a8b fictional full-app 8 states (320/390 x light/dark x mixed/separate), six compounds: focused panel, navigation, draft preserved, mg->mcg basic parity, site visibility, no overflow or page errors PASS. Not actual network-served browser or iPhone.
+- Pinned GitHub QA #42094053764 FAIL: custom preferred mcg to mg misconverted after input. Fixed source 0520415d by recording display unit before draft amount. Exact-head CI #42094294724 pending. All five ordinary CI workflows blocked during npm install on unavailable playwright-core 1.65.0; scoped QA pins published 1.64.1.
+- Online DM Sans/Fraunces/DM Mono faces, physical device keyboard/Dynamic Type/VoiceOver, and clinical calculator certification NOT TESTED. Nasal LIVE unchanged.
+
 ## 2026-11-05 — PR135 approved UX change regression matrix — unverified on revised source
 - New cases: one active panel for 2/6 compounds, pips select each compound, inputs persist on navigation and Back/Continue, mg↔mcg preserves mass, no mixed/separate source mismatch, lavender selected state rather than native blue, single/individual sites according to grouping, 44px tap controls, aligned SVG disclosure, unavailable vial blocks review, no earlier stock deduction.
 - 320/390px dark/light, keyboard and scroll, realistic six compound test, served font-face checks, WebKit and iPhone VoiceOver remain NOT TESTED on 9c71219f; prior five workflow passes on 1dd305d9 no longer qualify new source.
