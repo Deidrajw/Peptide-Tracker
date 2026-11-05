@@ -1,3 +1,8 @@
+## 2026-11-05 — Unit/conversion candidate tests added, latest results pending
+- New Combo QA: custom preferred mcg vs cfg-native mg, 300mcg entered consumes 0.3mg, saved dose stays native string with enteredUnit/enteredAmount, 1mcg consumes 0.001mg rather than rounding to zero, shortage rejects without mutating stock; changing unit mg↔mcg preserves physical quantity, Back retains selected unit. Added at source/test commit 3e558dbf. **NOT TESTED** on that final exact source yet; all workflows running at writing.
+- Previous unchanged-source 08a0a84b full-browser workflow #41986359105 SUCCESS, downloaded artifact #13397066246 CRC PASS, 8/8 LIVE/DEMO 320/390 theme Combo picker QA PASS; shared writer, mobile, nested, WebKit SUCCESS. That does not qualify new unit fixes.
+- Physical iPhone / VoiceOver, calculator safety certification remain NOT TESTED/BLOCKED; no production release authorization.
+
 ## 2026-11-05 — PR135 targeted regression status, source 08a0a84b
 - Combo Select: 50-compound searchable scroll/selection, favourites and draft preservation; Setup shared vs individual SubQ sites, IM 6-option parity, Draw now vs Prepared; Review source/date/time, and long label 320px wrapping — exact latest-source browser QA **NOT TESTED/PENDING**. Previous browser #41981657892 FAIL due old test filling hidden Setup; #41984116004 FAIL due asynchronous previous save closing during new modal; harness now awaits closure. No false Pass.
 - Physical source planner: exact K1:V1 injectable selection, Nasal K2:V2 rejection, no pre-validation stock debit; per-dose site/method and comboId historical attribution — new browser tests added; exact latest results **PENDING**.
