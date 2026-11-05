@@ -108,8 +108,50 @@ try {
       a[1].comboAdministration==='mixed_syringe'&&b[1].comboAdministration==='mixed_syringe';
   }),'IM method/site not preserved on every dose record');
 
+
+  // A labelled nasal vial must never be an injectable source, even when
+  // the compound's name matches. Selecting an unavailable exact vial fails
+  // before any physical inventory deduction.
+  const backed=await page.evaluate(()=>{
+    state.supplies=[
+      {id:'K1',name:'Test Compound 03',activeKit:true,vialMg:10,totalVials:1,openedVials:1,
+       _vialsBackfilled:true,_vialsRepaired:true,vials:[{id:'V1',status:'open',vialMg:10,remainingMg:8,bacMl:1.5,reconDate:'2026-10-28T08:00',intendedUse:'Injectable'}]},
+      {id:'K2',name:'Test Compound 03',activeKit:true,vialMg:10,totalVials:1,openedVials:1,
+       _vialsBackfilled:true,_vialsRepaired:true,vials:[{id:'V2',status:'open',vialMg:10,remainingMg:7,bacMl:2,reconDate:'2026-10-29T09:00',intendedUse:'Nasal'}]}
+    ];
+    const items=[{name:'Test Compound 03',doseVal:'2'},{name:'Test Compound 04',doseVal:'1'}];
+    const opts={method:'SubQ',grouping:'mixed',sources:{'Test Compound 03':'K2:V2'}};
+    const bad=planAndApplyComboDoses(items,'2026-11-05T09:00','Abdomen — upper left','', 'combo-bad',[],opts);
+    const unchanged=state.supplies[0].vials[0].remainingMg===8&&state.supplies[1].vials[0].remainingMg===7;
+    opts.sources['Test Compound 03']='K1:V1';
+    const good=planAndApplyComboDoses(items,'2026-11-05T09:00','Abdomen — upper left','', 'combo-good',[],opts);
+    return {bad:!bad.ok&&!!bad.error,unchanged,good:good.ok&&
+      good.doses[0].dose.allocations.length===1&&
+      good.doses[0].dose.allocations[0].vialId==='V1'&&
+      good.doses[0].dose.method==='SubQ'&&
+      state.supplies[0].vials[0].remainingMg===6&&
+      state.supplies[1].vials[0].remainingMg===7};
+  });
+  ensure(backed.bad&&backed.unchanged&&backed.good,'Selected-source or nasal-vial safety assertions failed: '+JSON.stringify(backed));
+  await page.evaluate(()=>{
+    state._comboSelected=['Test Compound 03','Test Compound 04'];
+    comboDoseModal();
+  });
+  await page.locator('#nx-combo-continue').click();
+  ensure(await page.locator('.nx-combo-source[data-n="Test Compound 03"] option').count()===2,
+    'Incorrect eligible source options; nasal vial should not appear');
+  await page.locator('.nx-combo-source[data-n="Test Compound 03"]').selectOption('K1:V1');
+  await page.locator('.nx-combo-vial-info[data-n="Test Compound 03"]').click();
+  const preparation=await page.locator('.nx-combo-vial-detail[data-n="Test Compound 03"]').innerText();
+  ensure(preparation.includes('1.5 mL')&&!preparation.includes('2 mL'),'Vial preparation disclosure mixed different physical vials');
+  await page.locator('.nx-combo-mode-btn[data-source-mode="prepared"]').click();
+  ensure(await page.locator('#nx-combo-prepared-sources').isVisible(),'Prepared state did not open');
+  ensure(!await page.locator('#nx-combo-draw-fields').isVisible(),'Prepared state exposed draw-now inventory fields');
+  await page.locator('.nx-combo-mode-btn[data-source-mode="draw"]').click();
+  ensure(await page.locator('#nx-combo-draw-fields').isVisible(),'Draw now state did not restore inputs');
+
   ensure(errors.length===0,'Page exceptions: '+errors.join('; '));
-  results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate sites and attribution','mixed IM attribution','no exceptions']});
+  results.push({kind,width,theme,status:'PASS',cases:['50-item bounded scroll','filter','multi-select','draft notes/amount','saved favorite and date','separate sites and attribution','mixed IM attribution','source vial isolation','prepared-mode disclosure','no exceptions']});
   await ctx.close();
  }
 }finally{await browser.close();}
