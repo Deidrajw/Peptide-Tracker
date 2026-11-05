@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 corrective QA commit f9a111f8, NOT RELEASED
+- On draft/unmerged PR135 (main 21b9e42a), corrected numbered Combo compound navigation to collapse shared session details after advance. Previous source 01ac831b failed browser/full CI on this assertion; local fictional Chromium focused 320/390 light/dark 4/4 PASS. Prior build artifact #13448229868 structurally intact but predates correction. WebKit old source timed out at Goal Details; exact-head rerun ongoing. No version bump, merge, deployment, migration or production data writes. LIVE nasal OFF, iPhone/loaded-font/calculator certification unresolved.
+
 ## 2026-11-05 — Approved shared-session-first Combo UX refinement, NOT RELEASED
 - Draft PR135 source JS commit 929ac0e9, CSS f8d5ee00, test 3daaf99c. Shared date/time/method, mixed shared site and shared notes/favourite now appear once in a collapsible editable session panel ahead of active compound, preserving Select → Setup → Review and existing state IDs. No inventory, record, storage migration, nasal gate or production data changes. New CI/build artifacts pending. No merge/deploy/iPhone acceptance.
 
