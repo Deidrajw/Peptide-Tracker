@@ -417,8 +417,12 @@ function comboDoseModal() {
       const outer=document.createElement("div");outer.style.marginBottom="10px";
       const title=document.createElement("strong");title.textContent=choice.label;
       const details=document.createElement("div");
-      const water=vial?.bacMl, date=vial?.reconDate;
-      details.textContent="Liquid added: "+(Number(water)>0?water+" mL":"Not recorded for this vial")+" · Reconstituted: "+(date?String(date):"Not recorded");
+      const matchedHistory=(kit?.reconHistory||[])
+        .filter(record=>String(record.vialId)===String(vial?.id))
+        .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")))[0]||{};
+      const water=vial?.bacMl??matchedHistory.bacMl;
+      const date=vial?.reconDate||matchedHistory.date;
+      details.textContent="BAC water added: "+(Number(water)>0?water+" mL":"Not recorded for this vial")+" · Reconstituted: "+(date?String(date):"Not recorded");
       const usage=document.createElement("div");
       usage.textContent="Remaining: "+(vial&&kit?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Unknown")+" · "+(vial?.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Physical form not recorded");
       const note=document.createElement("div");
