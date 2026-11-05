@@ -1,3 +1,6 @@
+## 2026-11-05 — PR135 focused Combo redesign candidate, NOT released
+- No tag, merge, Cloudflare deployment, or user-data migration. UI source 9e22381d + 9c71219f + ce0f8ee0 + dfe54a8b; material unit safety correction 0520415d; optional network-font fictional DEMO builder 97ce9525; scoped pinned QA workflow. Locally verified eight prior-source UI states with fictional DEMO; first pinned QA found custom mcg regression, fixed but exact new-source tests pending. No production data access. Independent clinical calculator or font loading certification not claimed. Stale production release-notes gate separate.
+
 ## 2026-11-05 — PR135 approved visual refinement candidate; unreleased
 - User approved redesigned UX, not release. Coded draft PR commits 9e22381d JS and 9c71219f CSS; source is unmerged and undeployed. Previous verified production remains v0.9.24-beta. No storage migration, no production user data access or writes.
 - Change: focused single compound Setup/navigation, DS2 lavender grouping controls, concise title, corrected SVG disclosure, disabled absent source. Previous unit safety remains. New exact-head CI/artifacts and physical iPhone UAT pending. Offline DEMO DM Sans parity gap unresolved; separate stale release notes gate unresolved.
