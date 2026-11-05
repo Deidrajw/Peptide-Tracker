@@ -1,3 +1,8 @@
+## 2026-11-05 — USER APPROVED PR135 focused Combo Dose redesign
+- User explicitly approved previous conversational interactive design: keep Select → Setup → Review, lavender non-native grouping selector, simplified “Combo dose” header, one active compound at a time with numbered navigation, distinct compound heading, DS2 chevron and readable inventory source, shared injection site only in mixed mode, per-compound sites in separate mode. This is UI approval, NOT merge/deploy approval.
+- Approved font QA gate: DM Sans/Fraunces/DM Mono must be verified as actually loaded in a network-served demo; isolated standalone offline HTML may use system fallback but must not be considered proof of visual font parity.
+- Preserve historic native dose-unit representation, unit conversion mass, strict shortfall rejection, per-vial reconHistory association, protected storage and LIVE nasal gates OFF.
+
 ## 2026-11-05 — Unit choice without historical rewrites
 - Combo Dose Setup mg/mcg unit choice may differ from historical cfg(name).unit; always convert the numeric entered value by mass before vial deductions, store native numeric dose as a string in established historical unit, and keep enteredAmount/enteredUnit as audit metadata. Changing the unit must convert the visible value rather than silently relabeling the same number. Old untyped Combo drafts retain native interpretation. Unknown/non-mass unit combinations must fail closed.
 - For newly staged Combo dose allocation, preserve 0.000001mg balance precision; strict mass shortfall checks replace 0.01mg tolerance that could underallocate tiny mcg doses. Existing legacy planner callers keep previous logic unless explicitly using new staged method. No migration or historical reprocessing.
