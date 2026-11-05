@@ -1,3 +1,8 @@
+## 2026-11-05 candidate follow-up — unit-parity and source qualification
+- Draft PR135 source/test SHA 3e558dbf (unmerged/undeployed): compact dose amount/unit row with mg/mcg select, mass-preserving value conversion, stored native dose + entered amount/unit audit, 1mcg inventory precision and strict shortage preflight for staged injections. Historical recorded doses are not modified.
+- Source 08a0a84b full build #41986359105 SUCCESS; downloaded artifact #13397066246 manifest source matched, outer ZIP 548 entries CRC PASS, LIVE 26 file ZIP, 8/8 fictional Combo picker browser results. This predates latest unit work, so final SOURCE MATCHED QA and packaging **INCOMPLETE**.
+- Further acceptance requires updated exact-source browser/WebKit/329-390 viewport checks, iPhone Safari/VoiceOver, and calculator safety gates. No merge/deploy.
+
 # Nexus — Combo Dose stepper and View Vial (unreleased candidate)
 
 Date: 2026-11-05 (Toronto). Production version remains v0.9.24-beta. Base main 21b9e42a213f74e3e372266a9fb65c12a9c731da. Development draft PR #135, never merged or deployed by this work.
