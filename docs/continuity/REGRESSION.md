@@ -1,3 +1,7 @@
+## 2026-11-06 — PR142 artifact integrity independently verified; physical UAT pending
+- Source 16b46009 official CI build artifact #13480805159 downloaded and inspected with Python zipfile; 549 outer entries CRC PASS. Embedded LIVE ZIP 26 expected root-relative files CRC PASS, all 17 local script src targets present and ordered 01–12. Manifest SHA exactly 16b46009 and version v0.9.25-beta.1. Full-app fictional standalone DEMO and offline ZIP CRC PASS with byte-exact index parity. Independent dynamic click-through/physical iPhone and VoiceOver NOT TESTED in this checkpoint; static guards do not qualify all interactions.
+- Five source workflows SUCCESS as last observed; WebKit #42168122013 IN PROGRESS. Release status unmerged, undeployed. No real data modified.
+
 ## 2026-11-06 — Restore isolated VM regression harness fix after observed CI FAIL
 - Shared-writer workflow #42167932554 FAILED in tests/restore-canonical-snapshot.test.cjs because it extracted Settings restore handler without supplying newly referenced real nexusBackedDoseStorageError. Source fix 16b46009 adds classifier extraction from 01-nexus into the VM and checks actual calls: stale CAS emits no global warning; recovery-copy quota triggers warning; verified success clears earlier notice. It retains original single-write/recovery-copy/rollback assertions.
 - Corrected-head CI PENDING; do not label green until obtained. This is an uncovered coupling in a test harness, not a reason to remove the source safety guard.
