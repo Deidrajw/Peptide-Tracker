@@ -1,3 +1,8 @@
+## 2026-11-05 — Data-integrity incident must pre-empt feature roadmap
+- User-reported device-storage error after rejected dose requires P0 before calculator, search or nasal features. No user data edits, imports, restores or speculative second dose records. Private backup used only locally to understand existence of records; no private data may enter repo/PR/tests.
+- Distinguish physical source/planner invalidation, CAS conflict from stale tabs, and actual device-storage write failure. A generic planner error must not imply the device cannot save. Retain fail-closed exact-vial allocation, Web Lock and readback; a durable saved snapshot may be used to avoid false comparisons with transient UI navigation state. Genuine failed-write warning stays conspicuous but is dismissible and can reappear on future failed writes.
+- Missing Today component remains a separate unresolved UI state/display investigation; backup contains relevant record but live-device visual state isn't verified. No silent repair of history.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 
