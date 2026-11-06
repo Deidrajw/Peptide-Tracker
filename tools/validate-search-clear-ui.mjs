@@ -21,7 +21,7 @@ try{
    await btn.click();
   };
   await page.locator('.modal #supp-search').fill('Mag');await page.locator('#supp-results button.add').first().click();
-  const selected=await page.locator('#supp-selected-count').innerText();await clear('.modal #supp-search');
+  const selected=await page.locator('#supp-selected-count').innerText();await clear('#supp-search');
   ok(await page.locator('.modal #supp-search').inputValue()===''&&await page.locator('#supp-selected-count').innerText()===selected,'Supplement selection lost');
   await page.evaluate(()=>{closeModal();state.peptides.Retatrutide={enabled:true,status:'active',route:'SubQ',scheduleDays:7,doses:[]};state.peptides['GHK-Cu']={enabled:true,status:'active',route:'SubQ',scheduleDays:7,doses:[]};comboDoseModal()});
   await page.locator('#combo-search').fill('Reta');await page.locator('#combo-choices .combo-compound-toggle:visible').first().click();
