@@ -304,7 +304,7 @@ function supplyModal(existing, presetName, forceVials=false) {
     input.value=originalSelect.selectedOptions[0]?.value?originalSelect.selectedOptions[0].textContent:"";
     if(existing){input.readOnly=true;input.setAttribute("aria-label","Compound (locked for existing kit)");}
     let lastChosen={value:originalSelect.value,label:input.value},queryActive=false;
-    const rememberChosen=()=>{lastChosen={value:originalSelect.value,label:input.value};queryActive=false;const x=combo.querySelector(".nx-search-clear");if(x)x.hidden=true;};
+    const rememberChosen=()=>{lastChosen={value:originalSelect.value,label:input.value};queryActive=false;const x=combo.querySelector(".nx-search-clear");if(x){x.hidden=true;x.style.display="none";}};
     const closeList=()=>{list.hidden=true;input.setAttribute("aria-expanded","false");};
     const showOptions=()=>{
       if(existing)return;
