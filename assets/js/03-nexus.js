@@ -846,6 +846,7 @@ function nexusBrowseAllCompounds(modal, options, choose, initialQuery="") {
     if(!matching.length){const empty=document.createElement("p");empty.className="nx-browser-empty";empty.textContent="No matching compounds";items.appendChild(empty);}
   };
   search.value=initialQuery;search.oninput=render;render();
+  nexusWireSearchClear(search,render,"Clear compound browser search");
   search.focus({preventScroll:true});
 }
 
