@@ -47,13 +47,13 @@ function launch({changeObserved=false,writeFails=false}={}){
  assert.equal(stale.raw,before,'Stale tab must never overwrite concurrent changes');
  assert.equal(stale.writes,0,'Stale tab must not call write');
  assert.equal(stale.warnings,0,'Real stale-state conflict is not proof of device storage failure');
- assert.match(stale.ctx._nexusBackedPhysicalDoseFailure,/Saved data changed/i);
+ assert.match(vm.runInContext('_nexusBackedPhysicalDoseFailure',stale.ctx),/Saved data changed/i);
 
  const bad=launch();bad.entry.steps[0].vialId=999;
  assert.equal(await bad.ctx.nexusCommitBackedPhysicalDose(bad.entry),null);
  assert.equal(bad.writes,0,'Planner rejection must not write');
  assert.equal(bad.warnings,0,'Invalid vial should not trigger false device-storage warning');
- assert.match(bad.ctx._nexusBackedPhysicalDoseFailure,/selected vial/i);
+ assert.match(vm.runInContext('_nexusBackedPhysicalDoseFailure',bad.ctx),/selected vial/i);
 
  const failed=launch({writeFails:true});
  assert.equal(await failed.ctx.nexusCommitBackedPhysicalDose(failed.entry),null);
