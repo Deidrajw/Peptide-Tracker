@@ -54,6 +54,7 @@ jobs:
           node tests/backed-dose-state-recovery.test.cjs
           node tests/paused-dose-visibility.test.cjs
           node tests/compound-status-history.test.cjs
+          node tests/restore-warning-classification.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
           node tools/validate-ux-consistency.mjs
