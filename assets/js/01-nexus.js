@@ -523,7 +523,7 @@ async function nexusCommitBackedDoseChange(entry){
     state=result.next;_nexusLastSavedSnapshot=writer.expected();return result;
   }catch(e){
     console.error("Nexus exclusive backed dose correction rejected",e);
-    if(!_demoActive&&nexusBackedDoseStorageError(e))showSaveWarning();
+    if(!_demoActive&&(["QuotaExceededError","SecurityError","NotAllowedError"].includes(e?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(e?.message||""))))showSaveWarning();
     else if(typeof showErrorBanner==="function")showErrorBanner("Correction was not saved. The exact original source or saved state could not be verified.");
     return null;
   }
