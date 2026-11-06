@@ -1,3 +1,7 @@
+## 2026-11-05 — PR136 calculator recovery test checkpoint
+- Live-source isolated V8 tests PASS: 1200mg/6mL/400mg, 1mL overflow with drawing suppressed and selector available, 3mL restores 2mL mathematical result, concentration 200mg/mL shown both states, five capacity options, source syntax PASS. Concentration live-update ID fixed at 7be76b5c; overflow concentration preserved at 341467a3.
+- Expanded test source 648d2404 passed V8 assertion-equivalent execution but exact latest-head GitHub CI NOT VERIFIED. Real Chromium/WebKit after the newer change, iPhone keyboard, VoiceOver, actual device, font download and independent clinical certification NOT TESTED.
+
 ## 2026-11-05 — Draft PR136 calculator recovery test plan (UNTESTED)
 - Repro: enter valid 1200 mg vial, 6 mL diluent, 400 mg dose with 1 mL selection; capacity error remains and selector must be visible and actionable (expected 2 mL, not a valid drawing instruction in 1 mL).
 - Change selected capacity to 3 mL without editing dose; warning clears, summary may show valid mathematical volume with appropriate mL scale. Change back to 1 mL, warning returns and drawing guidance is absent; selection remains available.
