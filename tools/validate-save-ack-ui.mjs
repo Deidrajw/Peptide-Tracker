@@ -25,7 +25,22 @@ try{
   },theme);
   // Fail with a useful regression message if product-form selection changes.
   if(await page.locator(".nx-form-choice-sheet").count())throw Error("Save-ack injectable fixture unexpectedly opened product-form picker");
-  await page.locator("#nx-dose-entered").waitFor({state:"visible",timeout:5000});
+  try {
+    await page.locator("#nx-dose-entered").waitFor({state:"visible",timeout:5000});
+  } catch (error) {
+    const diagnostic=await page.evaluate(()=>({
+      heading:document.querySelector(".modal")?.innerText?.slice(0,500),
+      doseInputCount:document.querySelectorAll("#nx-dose-entered").length,
+      formChoiceCount:document.querySelectorAll(".nx-form-choice-sheet").length,
+      modalCount:document.querySelectorAll(".modal").length,
+      reviewCount:document.querySelectorAll("#nx-dose-review-open").length,
+      route:state.peptides?.Retatrutide?.route,
+      kits:(state.supplies||[]).map(s=>({name:s.name,id:s.id,activeKit:s.activeKit,vials:s.vials?.map(v=>({id:v.id,status:v.status,remainingMg:v.remainingMg}))})),
+      formulationStocks:state.formulationStocks?.length,
+      preparedDoses:state.preparedDoses?.length
+    }));
+    throw Error("Save-ack amount field unavailable "+width+"/"+theme+"/"+mode+": "+JSON.stringify(diagnostic)+"; "+String(error));
+  }
   await page.locator("#nx-dose-entered").fill("1");
   // Assert what a person sees before Review. The canonical hidden field may
   // be empty until its normal input handler/review reconciliation runs.
