@@ -18,7 +18,20 @@ try{
    ok(await btn.isVisible(),selector+' clear hidden');
    const m=await btn.boundingBox();ok(m&&m.width>=44&&m.height>=44,selector+' clear size');
    ok((await btn.getAttribute('aria-label')||'').includes('Clear'),selector+' accessible label');
+   const visual=await btn.evaluate(el=>{
+    const svg=el.querySelector('svg'),a=el.getBoundingClientRect(),g=svg?.getBoundingClientRect();
+    const css=getComputedStyle(el);
+    return {iconWidth:g?.width,iconHeight:g?.height,stroke:svg?.getAttribute('stroke-width'),
+      midOffset:g?Math.abs((g.top+g.height/2)-(a.top+a.height/2)):999,
+      border:css.borderTopWidth,background:css.backgroundColor,
+      colour:css.color,textColour:getComputedStyle(document.querySelector('.nx-search-clear-wrap input')).color};
+   });
+   ok(visual.iconWidth===17&&visual.iconHeight===17&&visual.stroke==='1.8',selector+' DS2 SVG geometry');
+   ok(visual.midOffset<1,selector+' SVG not vertically centred');
+   ok(visual.border==='0px'&&visual.background==='rgba(0, 0, 0, 0)',selector+' unexpected button chrome');
+   ok(visual.colour!==visual.textColour,selector+' icon should be muted relative to input');
    await btn.click();
+   ok(!(await btn.isVisible()),selector+' clear control remains visible with empty query');
   };
   await page.locator('.modal #supp-search').fill('Mag');await page.locator('#supp-results button.add').first().click();
   const selected=await page.locator('#supp-selected-count').innerText();await clear('#supp-search');
