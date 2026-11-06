@@ -937,8 +937,18 @@ function wireBody() {
   document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",async()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",async()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   // stash
-  const stashSearch=$("#nx-stash-search");
-  if(stashSearch) stashSearch.oninput=()=>{nexusStashSearchTerm=stashSearch.value;renderBody();const refreshed=$("#nx-stash-search");if(refreshed){refreshed.focus();refreshed.setSelectionRange(refreshed.value.length,refreshed.value.length);}};
+  // Stash redraws the search input after filtering: rebind both typing and clear.
+  const wireStashSearch=()=>{
+    const input=$("#nx-stash-search");if(!input)return;
+    input.oninput=()=>{
+      nexusStashSearchTerm=input.value;renderBody();wireStashSearch();
+      const refreshed=$("#nx-stash-search");if(refreshed){refreshed.focus();refreshed.setSelectionRange(refreshed.value.length,refreshed.value.length);}
+    };
+    nexusWireSearchClear(input,()=>{
+      nexusStashSearchTerm="";renderBody();wireStashSearch();
+    },"Clear Stash search");
+  };
+  wireStashSearch();
   const av=$("#addvial"); if(av)av.onclick=()=>supplyModal();
   const qaAdd=$("#qa-addkit"); if(qaAdd) qaAdd.onclick=()=>supplyModal(null);
   const qaPrep=$("#qa-prepare"); if(qaPrep) qaPrep.onclick=prepareChoiceModal;
