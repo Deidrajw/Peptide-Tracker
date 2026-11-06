@@ -2211,7 +2211,7 @@ function doseModal(name, existing, occTime, formChoice) {
         });
       }finally{saveButton.disabled=false;}
       if(!result){
-        showErrorBanner("Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open, export a backup and reload before retrying.");
+        showErrorBanner(_nexusBackedPhysicalDoseFailure||"Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open and check history before retrying.");
         return;
       }
       closeModal();render();
