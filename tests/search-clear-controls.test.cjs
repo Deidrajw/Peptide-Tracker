@@ -14,4 +14,10 @@ assert.match(picker,/nexusWireSearchClear\(comboSearch,filterChoices,"Clear comb
 assert.match(settings,/nexusWireSearchClear\(journalSearch,\(\)=>journalSearch\.oninput\?\.\(\),"Clear activity log search"\)/);
 assert.match(settings,/nexusWireSearchClear\(input,\(\)=>\{\s*nexusStashSearchTerm="";renderBody\(\);wireStashSearch\(\);/);
 assert.doesNotMatch(picker.slice(picker.indexOf("function nexusWireSearchClear("),picker.indexOf("// ─── Daily check-in modal")),/saveState\(|localStorage\.|nexusCommit|\.delete\(/);
-console.log("PASS: supplement search clear 44px accessible, selection-safe check-in/modal/Settings wiring");
+const protocol=fs.readFileSync("assets/js/11-nexus.js","utf8");
+const discover=fs.readFileSync("assets/js/08-nexus.js","utf8");
+assert.match(protocol,/nexusWireSearchClear\(cs,\(\)=>cs\.oninput\?\.\(\),"Clear protocol compound search"\)/);
+assert.match(discover,/id="disc-clear" type="button" aria-label="Clear Discover search"/);
+assert.match(discover,/min-width:44px;min-height:44px/);
+assert.match(discover,/stroke="currentColor" stroke-width="2"/);
+console.log("PASS: accessible query clear source contracts for Supplements, Combo, Stash, Logs, Protocol and Discover");
