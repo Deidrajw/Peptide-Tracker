@@ -1,3 +1,6 @@
+## 2026-11-05 — PR137 guard-only separation, no release changes
+- Candidate publication marker and generated notes staged at 5008e106 were reverted forward at ce44f403 to preserve fail-closed release sequencing. Draft PR137 now changes only the readiness gate, immutable production verification reference and planning/continuity documentation. No version bump, publication metadata, app JS/CSS, production deployment or storage mutation. Exact-head CI PENDING.
+
 ## 2026-11-05 — v0.9.25-beta.1 publication marker reconciliation CANDIDATE, NOT RELEASED
 - Proposed separate draft PR137, not merged/deployed. Source c2054a58 release safety guard, 4bbcb3be verified Cloudflare provenance, 5008e106 publication/status generated outputs, bebd19e1 strict real-source self-test. All changes are release metadata, generated NEXUS_RELEASE in JS02, guard and documentation; no new user-data schema, dose calculation, stock attribution, LIVE nasal control or general app logic.
 - Independent production parity and post-release full QA for existing v0.9.25-beta.1 remain Pass at commit 1eb093cb; this new PR's CI and artifact status PENDING. Do not represent candidate as published, merged or deployed.
