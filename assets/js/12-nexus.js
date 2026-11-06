@@ -1272,8 +1272,20 @@ function wireBody() {
   });
   const sdBack=$("#settings-detail-back"); if(sdBack) sdBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
   const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=async()=>{ const value=state.settings.measureUnit==="in"?"cm":"in"; muToggle.disabled=true; const saved=await nexusCommitScopedStateChange({kind:"setting",key:"measureUnit",value}); if(saved)render();else muToggle.disabled=false; };
-  const suppSearch=$("#supp-search");
-  if(suppSearch){ suppSearch.oninput=()=>{ state._supplementSearch=suppSearch.value; renderBody(); const n=$("#supp-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
+  // Rebind search and clear after Settings redraws the list; no data writes.
+  const wireSuppLibrarySearch=()=>{
+    const input=$("#supp-search");if(!input)return;
+    input.oninput=()=>{
+      state._supplementSearch=input.value;
+      renderBody();wireSuppLibrarySearch();
+      const next=$("#supp-search");if(next){next.focus();next.setSelectionRange(next.value.length,next.value.length);}
+    };
+    nexusWireSearchClear(input,()=>{
+      state._supplementSearch="";renderBody();wireSuppLibrarySearch();
+      $("#supp-search")?.focus();
+    },"Clear supplement search");
+  };
+  wireSuppLibrarySearch();
   const ep2=$("#editprofile2"); if(ep2)ep2.onclick=profileModal;
   const auBack=$("#au-back"); if(auBack){ auBack.setAttribute("aria-label","Back to Settings"); auBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); }; }
   document.querySelectorAll(".au-tab").forEach(b=>b.onclick=()=>{ state._appUpdatesTab=b.dataset.tab; render(); });
