@@ -43,6 +43,12 @@ assert.match(markup,/Calculated volume exceeds the selected syringe capacity/,
 const refreshed=view({_recon:{...glutathione,syringe:'3mL'}},String);
 assert.ok(refreshed.includes('2.000 mL per dose'),
   'Valid 3 mL selection can render result without changing entered dose');
+assert.match(markup,/id="rc-conc-hint"/,
+  'Concentration hint must have the live-update target ID');
+assert.match(markup,/Creates 200.00 mg\\/mL solution/,
+  '1200 mg in 6 mL should show 200 mg/mL, not a stale prior concentration');
+assert.ok(source.includes('if(concEl)concEl.textContent=conc?'),
+  'Changed input must refresh the concentration without rebuilding focused inputs');
 assert.ok(source.includes('selectedSyringeLabel.textContent'),
   'Dynamic selection must update visible capacity label');
 console.log('PASS: calculator guards + 1200mg/6mL/400mg syringe recovery and selector placement');
