@@ -13,7 +13,9 @@ function nxCompoundMenuIcon(kind) {
 }
 function nxCompoundStatusHistoryHTML(data) {
   const records=Array.isArray(data.statusHistory)?data.statusHistory:[];
-  if(!records.length)return '<div class="nx-status-history-empty" style="font-size:11px;color:var(--t4);margin:12px 0">No dated compound status changes recorded yet. Earlier pauses may not have an audit trail.</div>';
+  if(!records.length)return data.status==="paused"
+    ?'<div class="nx-status-history-empty" style="font-size:11px;color:var(--t4);margin:12px 0">This pause predates recorded status history; its date is unknown.</div>'
+    :"";
   return '<details class="nx-compound-status-history" style="margin:12px 0;border-top:1px solid var(--border-sub);padding-top:8px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:12px;color:var(--t3)">Status history ('+records.length+')</summary>'+
     records.slice().reverse().map(item=>'<div style="padding:7px 0;font-size:12px;color:var(--t3)">'+esc(fmtDT(item.at))+' · '+esc(item.from==='paused'?'Paused':'Active')+' → '+esc(item.to==='paused'?'Paused':'Active')+'</div>').join('')+'</details>';
 }
@@ -37,7 +39,7 @@ function peptideCardHTML(name, data, opts={}) {
         <span style="display:block;margin-top:2px;color:var(--t5)">${doses.length} dose${doses.length===1?"":"s"} logged · history in Trends</span>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="resumepep" data-name="${esc(name)}" style="flex:1;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600">▶ Resume</button>
+        <button class="resumepep" data-name="${esc(name)}" style="flex:1;min-height:44px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600">▶ Resume</button>
         <button class="histtoggle" data-name="${esc(name)}" style="background:transparent;color:var(--t4);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:12px">History (${doses.length})</button>
       </div>
       ${nxCompoundStatusHistoryHTML(data)}
