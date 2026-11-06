@@ -1,0 +1,14 @@
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const picker=fs.readFileSync("assets/js/05-nexus.js","utf8");
+const settings=fs.readFileSync("assets/js/12-nexus.js","utf8");
+assert.match(picker,/function nexusWireSearchClear\(input, onClear, label\)/);
+assert.match(picker,/min-width:44px;min-height:44px/);
+assert.match(picker,/clear\.setAttribute\("aria-label",label\|\|"Clear search"\)/);
+assert.match(picker,/clear\.onclick=\(\)=>\{input\.value="";onClear\?\.\(\);refresh\(\);input\.focus\(\);\}/);
+assert.match(picker,/nexusWireSearchClear\(suppSearch,\(\)=>\{suppDropdownOpen=false;renderSuppSearch\(\);\},"Clear supplement search"\)/);
+assert.match(picker,/nexusWireSearchClear\(input,\(\)=>\{dropdownOpen=false;paint\(\);\},"Clear supplement search"\)/);
+assert.match(settings,/nexusWireSearchClear\(input,\(\)=>\{/);
+assert.match(settings,/state\._supplementSearch="";renderBody\(\);wireSuppLibrarySearch\(\);/);
+assert.doesNotMatch(picker.slice(picker.indexOf("function nexusWireSearchClear("),picker.indexOf("// ─── Daily check-in modal")),/saveState\(|localStorage\.|nexusCommit|\.delete\(/);
+console.log("PASS: supplement search clear 44px accessible, selection-safe check-in/modal/Settings wiring");
