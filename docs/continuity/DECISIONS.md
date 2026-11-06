@@ -1,3 +1,7 @@
+## 2026-11-06 — P0 restore error semantics approved
+- Treat failed restore CAS/stale compare, previous-write uncertainty and actual browser-storage errors as distinct. Only known device-storage failures display global red persistent warning. A stale or uncertain restore instead prompts reload/review of current records and independent JSON backups. Verified successful restore clears any stale warning.
+- Preserve non-merging restore semantics, pre-replacement recovery copy, exclusive Web Lock/CAS/readback rejection and no speculative retries; never overwrite user's localStorage or silently auto-restore. Approval was to complete P0 fix/testing, not to merge/deploy while earlier hold remained active.
+
 ## 2026-11-05 — Compound pause provenance unresolved; no silent status recovery
 - Compound-level pause/resume records currently have NO timestamp or audit event in the saved backup; protocol-level pauseHistory is separate and cannot date this compound status. An unrelated log is not evidence the user pressed Pause. No automatic correction to active status; user explicitly unsure how pause occurred and requests read-only investigation.
 - Fix confirmed `pausepep`-wired Resume in paused expanded card before final release; require fictional regression. Consider durable append-only compound status-change audit (timestamp, action, actor/source where available, prior/new status), only after product review; preserve historical records and localStorage integrity.
