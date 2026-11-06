@@ -1,3 +1,6 @@
+## 2026-11-06 — Future protocol-first multi-compound UX request recorded; not approved design
+- User expressed friction adding/managing multiple compounds in protocols, with four example groupings (body recomposition, mitochondrial, sleep/cognitive, tissue repair). Capture as Issue #145 and roadmap concept; preserve current protocol/plan/dose data and approved DS2. Proposed single protocol-level multi-select and per-compound editing are hypotheses requiring interactive preview and user's design decision, NOT an instruction to implement, recommend combining, or administer any substances. PR143 remains independent. No release approval.
+
 ## 2026-11-06 — DS2 search-clear icon refinement approved as targeted scope
 - User directed a 16–18px thin-outline X (implemented 17px/1.8px), muted secondary icon colour, exact 44x44 tap region centred at input right, no extra surface decoration, visible only when search query is nonempty. Existing lavender focus, field proportions and typography remain protected. Clear changes query/filter only, never selected supplements, draft data or historical records. Apply through reusable helper across Issue #140; this is implementation direction, NOT merge/deploy approval.
 
