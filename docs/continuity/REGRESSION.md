@@ -1,3 +1,9 @@
+## 2026-11-05 — Draft PR136 calculator recovery test plan (UNTESTED)
+- Repro: enter valid 1200 mg vial, 6 mL diluent, 400 mg dose with 1 mL selection; capacity error remains and selector must be visible and actionable (expected 2 mL, not a valid drawing instruction in 1 mL).
+- Change selected capacity to 3 mL without editing dose; warning clears, summary may show valid mathematical volume with appropriate mL scale. Change back to 1 mL, warning returns and drawing guidance is absent; selection remains available.
+- Invalid numeric, zero, >vial mass, mg/mcg, 30u/50u/100u/1mL/3mL, narrow/mobile keyboard, light/dark, dynamic update and state preservation. Calculator safety assertions and LIVE nasal gates must remain protected.
+- Readback structural inspection of PR136 app source PASSED; browser/CI, exact-source artifact, physical iPhone/VoiceOver and clinical certification NOT TESTED.
+
 ## 2026-11-05 — PR135 Combo header DS2 typography regression
 - Scoped modal class and semantic header with SVG close JS 06e957d1; DS2 style CSS 12e9a828. Local full-app fictional Chromium 320/390 x light/dark 4/4 PASS: computed title font-family DM Sans, font-size 21/23px, font-weight 750, kicker 11px/700, close 48px x 48px, no overlap, dismissal functional, zero page errors. Exact Git blob hash and LIVE/offline package CRC PASS.
 - Not accepted: real iPhone, real online font faces, VoiceOver/Dynamic Type, GitHub exact-head full QA. Calculation safety remains separately gated. No production changes.
