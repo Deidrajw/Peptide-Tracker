@@ -444,7 +444,7 @@ async function nexusCommitBackedPhysicalDose(entry){
     const result=await writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry));
     state=result.next;
     _nexusLastSavedSnapshot=writer.expected();
-    clearSaveWarningAfterVerifiedWrite();
+    if(typeof clearSaveWarningAfterVerifiedWrite==="function")clearSaveWarningAfterVerifiedWrite();
     return result;
   }catch(e){
     console.error("Nexus exclusive physical dose failed",e);
