@@ -1,3 +1,7 @@
+## 2026-11-06 — PR142 P0 draft qualification, NOT A RELEASE
+- Application/test commit 9c6bc851, docs-only branch successor 6a8ef9d4: six CI workflows SUCCESS (#42178890166 build, #42178890101 pinned Chromium, #42178890190 WebKit, #42178890121 mobile, #42178890194 writer, #42178890109 DS2); prior #42177818543 SyntaxError FAIL repaired by test-only correction. Build passed 8 fictional save failure-ack cases, 256 Log Dose flows, 96 vial assertions and measurement math 80/80 diagnostics (not independent clinical certification).
+- GitHub artifact #13484304312 independently downloaded: outer 549-member ZIP CRC PASS, version v0.9.25-beta.1, manifest source_commit 9c6bc851; LIVE ZIP 26 files CRC PASS; fully isolated standalone fictional DEMO HTML matches offline demo ZIP HTML bytes. Branch remains draft/unmerged/undeployed; no user-data writes or migrations, preserved exact-vial/DS2/nasal LIVE OFF. Physical iPhone / VoiceOver / Dynamic Type NOT TESTED, separate merge and deployment permission required.
+
 ## 2026-11-06 — PR142 visible dose synchronization P0 candidate, NOT RELEASED
 - Applied source correction 2a86b843 after CI diagnostics revealed hidden canonical #dose empty despite visible input. Review now reuses existing unit conversion and validates all ordinary source/inventory gates. No schema change, historical edits, inventory writes, import/restore, or production deployment. Full CI and physical iPhone QA pending, PR draft.
 
