@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 test contract correction; UNRELEASED
+- Commit 44d559d4 updates outdated shared search-clear source signature regex and adds DS2 style checks after full build #42266163455 failed before artifact creation; five independent mobile/WebKit/writer/DS2/pinned suites passed at preceding head. Exact-source release artifact and full browser QA await re-run. No application changes, migration, merge, deployment or iPhone UAT.
+
 ## 2026-11-06 — PR143 search clear DS2 styling candidate; NOT RELEASED
 - Commit 82c99d03 on feature/search-clear-controls-issue140-20261106: 17px/1.8 outline SVG, muted var(--t4) and centred 44px no-chrome target in shared clear helper; retains query-clear function and aria-label. No migration or production data handling. Full exact-head regression, complete DEMO/LIVE packaging, real iPhone acceptance remain pending; PR unmerged, Cloudflare unchanged.
 
