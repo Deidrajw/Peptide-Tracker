@@ -1,3 +1,6 @@
+## 2026-11-05 — More / Calculator syringe error recovery
+- Existing DS2 purple layout preserved. Added 5-choice syringe capacity card before conditional warning/results so recovery is always visible. Live concentration text now tracks edited inputs. Actual Chromium 320/390 dark/light 4/4 screenshot-driven interactions PASS, no page errors. Candidate draft PR136; physical iPhone/VoiceOver and full latest-source CI still outstanding. Not deployed.
+
 ## 2026-11-05 — PR135 Combo Dose modal header correction
 - Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
 
