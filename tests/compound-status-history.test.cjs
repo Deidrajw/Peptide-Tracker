@@ -32,7 +32,7 @@ assert.equal(resumed.peptides['Example A'].status,'active');
 assert.equal(resumed.peptides['Example A'].statusHistory.length,2);
 assert.equal(resumed.peptides['Example A'].resumedAt,resume.at);
 assert.throws(()=>ctx.plan(paused,{...change,to:'paused',from:'active',at:'bad'}),/Valid status change timestamp/);
-assert.throws(()=>ctx.plan(paused,{...resume,at:change.at}),/Duplicate status event|Compound status changed/);
+assert.throws(()=>ctx.plan(resumed,change),/Duplicate status event/);
 const c=coordinator.create({read:()=>JSON.stringify(original),write:()=>{},lock:(_name,fn)=>fn(),initialSnapshot:JSON.stringify(original)});
 assert.equal(typeof c.transaction,'function');
 assert.ok(ui.includes('if(!confirm(message))return;'), 'Pause requires positive confirmation');
