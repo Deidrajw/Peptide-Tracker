@@ -1,3 +1,7 @@
+## 2026-11-05 — Draft PR136 calculator correction candidate, NOT RELEASED
+- App changes b2905eb8 selector recovery, 7be76b5c live concentration target, 341467a3 preserve valid concentration under overflow; test 648d2404, live-source V8 checks PASS. Draft PR136 remains unmerged/undeployed, no version bump, no storage migration or nasal flag changes.
+- Five GitHub workflows SUCCESS on PREVIOUS app b2905eb8, full build/browser #42134349679 in progress when checked. No final exact-new-source artifact/CI or physical iPhone/VoiceOver/clinical certification evidence. Nasal calculator in issue #138 only.
+
 ## 2026-11-05 — PR136 calculator syringe recovery — CANDIDATE, NOT RELEASED
 - Verified main cbd84c93 (v0.9.25-beta.1), draft PR #136 branch fix/calculator-syringe-recovery-20261105, scoped app source b2905eb8. Capacity picker moved outside conditionally hidden results, so prior capacity error no longer blocks recovery. Original capacity guard and no-drawing error remain unchanged; no storage change, migration, live nasal flags, or inventory writes. Nasal spray calculator is separate proposal, NOT CODED.
 - Source structural readback passed. Six exact-source CI workflows triggered at b2905eb8 (runs 42134349694, 42134349658, 42134349701, 42134349692, 42134349676, 42134349679) IN PROGRESS at checkpoint; no PASS claim yet. FULL LIVE/isolated DEMO packages, browser screenshot checks and physical iPhone/VoiceOver NOT VERIFIED. Unmerged, undeployed, no release version change.
