@@ -22,7 +22,21 @@ try{
   },theme);
   // Fail with a useful regression message if product-form selection changes.\n  if(await page.locator(".nx-form-choice-sheet").count())throw Error("Save-ack injectable fixture unexpectedly opened product-form picker");\n  await page.locator("#nx-dose-entered").waitFor({state:"visible",timeout:5000});\n  await page.locator("#nx-dose-entered").fill("1");
   await page.locator("#nx-dose-review-open").click();
-  await page.locator("#save").waitFor({state:"visible"});
+  // Review must expose Confirm Log. Diagnose a rejected review rather than
+  // waiting 30 seconds for an intentionally hidden control.
+  if(!(await page.locator("#save").isVisible())){
+    const review=await page.evaluate(()=>({
+      date:document.querySelector(".modal #date")?.value,
+      amount:document.querySelector(".modal #dose")?.value,
+      unit:document.querySelector(".modal #nx-dose-unit")?.value,
+      method:document.querySelector(".modal #nx-dose-method")?.value,
+      reviewHidden:document.querySelector(".modal .nx-dose-review-stage")?.hidden,
+      note:document.querySelector(".modal #nx-validation-message")?.textContent,
+      source:document.querySelector(".modal .nx-dose-source-exception")?.innerText.slice(0,250),
+      visibleAlerts:[...document.querySelectorAll('[role="alert"]')].filter(x=>x.getBoundingClientRect().width>0).map(x=>x.textContent.slice(0,200))
+    }));
+    throw Error("Save-ack review failed "+width+"/"+theme+"/"+mode+": "+JSON.stringify(review));
+  }
   // Fresh inventory-backed dosing no longer calls synchronous saveState().
   // Simulate the EXCLUSIVE commit failing, not a retired persistence path.
   // Synthetic fixtures remain isolated in memory and never write real storage.
