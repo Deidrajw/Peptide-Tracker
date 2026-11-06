@@ -3358,7 +3358,7 @@ function nexusWireSearchClear(input, onClear, label) {
   wrapper.append(clear);
   const refresh=()=>{clear.hidden=!input.value;};
   input.addEventListener("input",refresh);
-  clear.onclick=()=>{input.value="";onClear?.();refresh();input.focus();};
+  clear.onclick=()=>{input.value="";onClear?.();refresh();(input.isConnected?input:(input.id?document.getElementById(input.id):null))?.focus();};
   refresh();
 }
 
