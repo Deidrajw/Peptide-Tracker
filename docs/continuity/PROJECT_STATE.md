@@ -1,3 +1,8 @@
+## 2026-11-06 — Issue140 failed full QA triage; Stash gate retained
+- Full build/parity #42174178408 FAILED after fictional Log Dose flows at tools/validate-stash-cards.mjs:69: Sealed standard kit missing following fixture transition Supplies to Kits. Five other workflow groups on old 5fba0770 SUCCESS. Root cause NOT established; preserve assertion.
+- Test-only diagnostic cfeda32b388480b4aecffd7838644d7e2261f65a reports current stash subtab/filter/group/search, expected kit IDs, rendered kit IDs, and viewport/theme/mode on failure. Search app implementation unchanged; latest CI pending. App-wide picker audit and selection-preserving browser tests incomplete; no merge/deploy.
+- ONE NEXT ACTION: collect diagnostic rerun of failed full build, resolve actual fixture or app defect, then complete app-wide search clear controls and validate packages.
+
 ## 2026-11-06 — Issue #140 supplement search-clear first slice (UNRELEASED)
 - User authorized the four-item sprint including issue #140, with no merge/deploy. Separate feature branch feature/search-clear-controls-issue140-20261106 based on main a0482abc42060ad4b31108538a207bf983df90d7, deliberately isolated from P0 draft PR142 and calculator draft PR136.
 - Implemented reusable nexusWireSearchClear in 05-nexus.js, with 44px outline-X button, nonempty-only visibility, accessible name, query-only clear and focus restoration. Applied to DAILY CHECK-IN supplements, supplement logging modal, and Settings supplements; 12-nexus.js reattaches controlled Settings search handlers after renderBody replaces the input. No selection/dose/stock/history or localStorage writes on clear.
