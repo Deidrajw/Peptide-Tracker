@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 follow-up CI and protected WebKit failure (UNRESOLVED)
+- Full build #42273263128 finished source/checks/package build and artifact validation PASS, browser matrix running; no overall full PASS or downloadable complete candidate yet. Other same-source workflows: mobile #42273263077 PASS, nested #42273263208 PASS, shared writer #42273263264 PASS, pinned Chromium #42273263062 PASS. WebKit #42273263382 FAIL: tools/validate-formulation-stock.mjs:75 goal detail locator timed out, screenshot/real device not inspected. Requested failed-job rerun accepted; exact result pending. Preserve failure until proved transient or fixed. No false PASS for newer DS2 test additions.
+
 ## 2026-11-06 — PR143 measured search-clear UI coverage committed, awaiting CI
 - tools/validate-search-clear-ui.mjs commit 57938562 adds runtime computed SVG 17x17, 1.8 stroke, <1px centre alignment, no border/background, muted icon vs input, 44px target, aria name, and hidden-after-clear assertions for six search contexts in eight fictional LIVE/DEMO width/theme sessions. Existing selected supplement/compound, Stash, logs, browser and symptom-intensity checks preserved. No execution PASS claimed yet; exact-head browser CI pending.
 
