@@ -903,13 +903,21 @@ function wireBody() {
   const viewUp=$("#view-upcoming"); if(viewUp) viewUp.onclick=()=>preserveScroll(()=>{ state._homeView="upcoming"; render(); });
   document.querySelectorAll(".all-status-chip").forEach(b=>b.onclick=()=>preserveScroll(async()=>{ state._allStatusFilter=b.dataset.status; if(!await nexusCommitCurrentState())return;render(); }));
   // pause/resume/delete compound
-  document.querySelectorAll(".pausepep").forEach(b=>b.onclick=async()=>{
-    const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="paused";if(!await nexusCommitCurrentState())return;render();}
-  });
-  document.querySelectorAll(".resumepep").forEach(b=>b.onclick=async()=>{
-    const n=b.dataset.name,builtin=!!PEPTIDES[n],tgt=builtin?state.peptides:state.customPeptides;
-    if(tgt[n]){tgt[n].status="active";if(!await nexusCommitCurrentState())return;render();}
+  document.querySelectorAll(".pausepep, .resumepep").forEach(b=>b.onclick=async()=>{
+    const n=b.dataset.name,builtin=!!PEPTIDES[n];
+    const record=(builtin?state.peptides:state.customPeptides)?.[n];
+    if(!record||b.disabled)return;
+    const from=record.status||"active";
+    const to=b.classList.contains("pausepep")?"paused":"active";
+    if(from===to)return;
+    const message=to==="paused"
+      ?"Pause "+n+"? Upcoming reminders will stop, but all logged doses and inventory will be preserved. Today's date will be recorded in Status history."
+      :"Resume "+n+"? Its upcoming schedule will become active again. The date will be recorded in Status history.";
+    if(!confirm(message))return;
+    b.disabled=true;
+    const saved=await nexusCommitScopedStateChange({kind:"compound-status",name:n,builtin,from,to,at:new Date().toISOString()});
+    if(!saved){b.disabled=false;return;}
+    render();
   });
   // today sheet
   document.querySelectorAll(".opentodaysheet").forEach(b=>b.onclick=()=>{
