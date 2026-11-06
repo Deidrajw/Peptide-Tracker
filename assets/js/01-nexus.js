@@ -324,7 +324,8 @@ async function nexusCommitUntrackedDose(name,dose,editing){
     return true;
   }catch(e){
     console.error("Nexus exclusive untracked dose save failed",e);
-    showSaveWarning();
+    if(nexusBackedDoseStorageError(e))showSaveWarning();
+    else if(typeof showErrorBanner==="function")showErrorBanner("Dose was not saved. Check the saved history and source before retrying.");
     return false;
   }
 }
@@ -522,7 +523,8 @@ async function nexusCommitBackedDoseChange(entry){
     state=result.next;_nexusLastSavedSnapshot=writer.expected();return result;
   }catch(e){
     console.error("Nexus exclusive backed dose correction rejected",e);
-    if(!_demoActive)showSaveWarning();
+    if(!_demoActive&&nexusBackedDoseStorageError(e))showSaveWarning();
+    else if(typeof showErrorBanner==="function")showErrorBanner("Correction was not saved. The exact original source or saved state could not be verified.");
     return null;
   }
 }
