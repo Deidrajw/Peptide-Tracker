@@ -1,3 +1,10 @@
+## 2026-11-05 — P0 Issue141 / draft PR142 paused-dose visibility correction
+- Verified backup status-vs-protocol inconsistency root cause in active-only Today/Completed collection; specific UI correction coded (9009000b, 041501d5), fictional 4/4 local Chromium PASS, CI gates pending. Do not silently unpause or modify real records. After PR142 QA, ask if user's compound pause was intentional, then decide separate state correction if wanted. Keep calculator PR136, search Issue140, nasal Issue138 queued after P0.
+
+## 2026-11-05 — P0 incident supersedes previously queued priorities
+- Issue #141 / draft PR #142: backed dose false stale-state rejection, misleading persistent device storage warning and unexplained missing Today component despite stored records. Immediate priority: exact-head CI/fictional reproduction, protect all production data and confirm real-iPhone result; no release before QA and explicit approval.
+- Pending after P0: calculator PR136 exact-source qualification; app-wide search clear controls Issue140; independent read-only nasal calculator Issue138. No scope mixing or silent release.
+
 ## 2026-11-05 — PR135 next QA priority: approved session-first hierarchy
 - User approved shared-session-first Combo Setup; JS/CSS and browser assertions coded at 929ac0e9/f8d5ee00/3daaf99c on draft branch. Next: exact-source pinned browser CI, full LIVE/DEMO artifact integrity, 320/390 visual and loaded-font check, then iPhone UAT. Five regular workflow dependency failures and separate stale release notes gate remain blockers. No merge/deploy approval.
 

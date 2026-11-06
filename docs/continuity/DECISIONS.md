@@ -1,3 +1,24 @@
+## 2026-11-06 — Complete independently executable development and QA before requesting iPhone testing
+- User explicitly requested no further interruptions for physical iPhone testing while P0 #142, calculator #136, app-wide search Issue140/PR143, and read-only nasal Issue138/PR144 still have development or automated QA gaps. Developer should independently complete coding, rigorous automated tests, complete matching LIVE and isolated full-app DEMO packages, release notes and documented guided QA steps first.
+- Ask for physical iPhone acceptance only after all independently executable work is genuinely qualified. Do not imply tests can run in background; each chat must perform work and report actual progress. Explicit merge/deployment approval remains mandatory and is NOT granted by this sequencing instruction. Never test with production personal data or turn on nasal LIVE.
+
+## 2026-11-06 — P0 restore error semantics approved
+- Treat failed restore CAS/stale compare, previous-write uncertainty and actual browser-storage errors as distinct. Only known device-storage failures display global red persistent warning. A stale or uncertain restore instead prompts reload/review of current records and independent JSON backups. Verified successful restore clears any stale warning.
+- Preserve non-merging restore semantics, pre-replacement recovery copy, exclusive Web Lock/CAS/readback rejection and no speculative retries; never overwrite user's localStorage or silently auto-restore. Approval was to complete P0 fix/testing, not to merge/deploy while earlier hold remained active.
+
+## 2026-11-05 — Compound pause provenance unresolved; no silent status recovery
+- Compound-level pause/resume records currently have NO timestamp or audit event in the saved backup; protocol-level pauseHistory is separate and cannot date this compound status. An unrelated log is not evidence the user pressed Pause. No automatic correction to active status; user explicitly unsure how pause occurred and requests read-only investigation.
+- Fix confirmed `pausepep`-wired Resume in paused expanded card before final release; require fictional regression. Consider durable append-only compound status-change audit (timestamp, action, actor/source where available, prior/new status), only after product review; preserve historical records and localStorage integrity.
+
+## 2026-11-05 — Historical recorded doses always visible independently of current status
+- A saved dose is evidence of an actual log, not an eligibility vote from current protocol status. Today/Completed must render logged doses today from paused/inactive compounds as ordinary compound cards. The active schedule completion denominator and Coming Up remain limited to actually active scheduled compounds; show a separate count of off-schedule recorded doses to avoid falsely saying no entry was logged.
+- Do NOT automatically set a paused compound to active based on saved dose or active parent protocol: a true pause may be intentional. User decision needed before changing that durable state. Calendar day recorded logs include all statuses; future projection should not silently resume paused.
+
+## 2026-11-05 — Data-integrity incident must pre-empt feature roadmap
+- User-reported device-storage error after rejected dose requires P0 before calculator, search or nasal features. No user data edits, imports, restores or speculative second dose records. Private backup used only locally to understand existence of records; no private data may enter repo/PR/tests.
+- Distinguish physical source/planner invalidation, CAS conflict from stale tabs, and actual device-storage write failure. A generic planner error must not imply the device cannot save. Retain fail-closed exact-vial allocation, Web Lock and readback; a durable saved snapshot may be used to avoid false comparisons with transient UI navigation state. Genuine failed-write warning stays conspicuous but is dismissible and can reappear on future failed writes.
+- Missing Today component remains a separate unresolved UI state/display investigation; backup contains relevant record but live-device visual state isn't verified. No silent repair of history.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 

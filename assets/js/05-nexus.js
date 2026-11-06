@@ -1613,6 +1613,17 @@ function doseModal(name, existing, occTime, formChoice) {
       if(Number(input.value)>0&&Number.isFinite(Number(input.value)))clearStaleAmountError();
     }));
   reviewButton.onclick=()=>{
+    // Mobile input events, autofill and intermediate form redraws can leave
+    // the canonical hidden mass stale even when a visible amount is present.
+    // Reconcile from the user-visible entry using the SAME validated unit
+    // conversion as the input handler before invoking all normal review gates.
+    const visibleAmount=m.querySelector("#nx-dose-entered");
+    const canonicalAmount=m.querySelector("#dose");
+    if(visibleAmount&&canonicalAmount){
+      const enteredUnit=m.querySelector("#nx-dose-unit")?.value||c.unit;
+      const converted=nexusUseMassValue(visibleAmount.value,enteredUnit,c.unit);
+      canonicalAmount.value=visibleAmount.value!==""&&converted!==null?String(Number(converted.toPrecision(12))):"";
+    }
     const amount=Number(doseVal("dose"));
     const date=doseVal("date");
     if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date and time before reviewing.");return;}
@@ -2211,7 +2222,7 @@ function doseModal(name, existing, occTime, formChoice) {
         });
       }finally{saveButton.disabled=false;}
       if(!result){
-        showErrorBanner("Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open, export a backup and reload before retrying.");
+        showErrorBanner(_nexusBackedPhysicalDoseFailure||"Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open and check history before retrying.");
         return;
       }
       closeModal();render();
