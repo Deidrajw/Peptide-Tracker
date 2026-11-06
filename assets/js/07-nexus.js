@@ -1872,7 +1872,10 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   // top of peptideCardHTML's own card, which was creating the card-inside-a-card look.
   if (isExpanded) return peptideCardHTML(name, data, {showCollapseChevron:true, view});
 
-  if (status === "paused") {
+  // A paused compound's actual saved dose remains a normal history card in
+  // Today/Completed; the pause only suppresses prospective scheduling.
+  const hasRecordedDoseToday=(data.doses||[]).some(dose=>doseDayFor(data,dose)===localDate());
+  if (status === "paused" && !((view==="today"||view==="completed")&&hasRecordedDoseToday)) {
     return `<div class="card nx-compound-card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
       <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
         <div style="width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0"></div>
@@ -1976,8 +1979,10 @@ function renderTodayCompoundSection(started) {
   started.forEach(pair=>{
     const [n,d] = pair;
     const cat = isCompoundRelevantToday(getDoseStatus(n,d));
-    if (cat==="needs_action") needsAction.push(pair);
-    else if (cat==="completed") completed.push(pair);
+    const recordedToday=(d.doses||[]).some(dose=>doseDayFor(d,dose)===localDate());
+    if (recordedToday && d.status!=="active") completed.push(pair);
+    else if (cat==="needs_action") needsAction.push(pair);
+    else if (cat==="completed" || recordedToday) completed.push(pair);
   });
   // Sort Due/Needs Action by actual dose-INSTANCE urgency, not compound order — this is
   // what makes the top of Today read as "what do I need to do next" instead of a static
