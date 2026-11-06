@@ -1,3 +1,8 @@
+## 2026-11-05 — Calculator recovery UX; nasal calculator proposed
+- User reported inability to choose a larger syringe when previous selected capacity causes a warning; preserve access to capacity choices even when rendering a drawing guide is unsafe. Avoid the workaround requiring a smaller temporary dose.
+- Keep calculation validity distinct from equipment capacity feedback. Fail closed on drawing visualization when over capacity. Small scoped UX correction on draft PR136; not merge/deploy permission.
+- User requested a nasal-spray dosing calculator in the calculator section. This is a product proposal only: separate delivery-mode interface; physical bottle volume/pump calibration; distinguish final volume from additive volumes; concentration and mcg/spray as informational math; no live nasal stock/dose writes or release-gate enablement without separate approval and tests.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 
