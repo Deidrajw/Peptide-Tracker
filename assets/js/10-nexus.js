@@ -712,6 +712,12 @@ function reconCalcView() {
       ${[["daily","Daily","1×/day"],["twice","Twice","2×/day"],["weekly","Weekly","1×/wk"]].map(([v,l,s])=>`<button data-id="freq" data-val="${v}" onclick="calcPillClick(this)" style="flex:1;padding:8px 6px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid ${(r.freq||"daily")===v?"#A78BFA":"var(--border-sub)"};background:${(r.freq||"daily")===v?"#A78BFA22":"transparent"};color:${(r.freq||"daily")===v?"#A78BFA":"var(--t4)"};display:flex;flex-direction:column;align-items:center;gap:2px">${l}<span style="font-size:10px;font-weight:400;opacity:0.7">${s}</span></button>`).join("")}
     </div>`)}
   </div>
+  <section id="rc-syringe-choice" aria-label="Syringe capacity" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px">Select syringe capacity</div>
+    <div style="font-size:11px;color:var(--t4);margin-bottom:12px">You can change this even when the calculated volume exceeds the current selection.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">${Object.keys(SYRINGES).map(s=>pill(s,r.syringe||"100u","syringe")).join("")}</div>
+    <div style="font-size:11px;color:var(--t4);margin-top:10px" id="rc-syringe-label">${syr.label}</div>
+  </section>
   <div id="rc-validation" role="status" aria-live="polite" style="display:${check.error?"block":"none"};margin-bottom:12px;padding:12px 14px;border-radius:10px;border:1px solid #D97777;background:#D9777718;color:var(--t1);font-size:12px;line-height:1.5">${esc(check.error||"")}</div>
   <div id="rc-results">${mlPerDose!=null?`<div style="background:var(--surface-2);border:1px solid #A78BFA44;border-radius:14px;padding:16px 18px;margin-bottom:14px">
     <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">Calculation summary</div>
@@ -729,10 +735,7 @@ function reconCalcView() {
     <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;margin-bottom:12px">
       ${syringeSVG}
       <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">Calculated ${syr.isVol?((syringeMl||0).toFixed(3)+" mL"):(syringeUnits||0).toFixed(1)+" U-100 units"} · ${(mlPerDose).toFixed(3)} mL</div>
-      <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px">
-        ${Object.keys(SYRINGES).map(s=>pill(s,r.syringe||"100u","syringe")).join("")}
-      </div>
-      <div style="text-align:center;font-size:10px;color:var(--t5);margin-top:4px">${syr.label}</div>
+
     </div>
     <!-- Supply summary -->
     ${totalDoses!=null?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
@@ -772,6 +775,8 @@ function wireReconCalc() {
     if(!state._recon) state._recon={vialMg:"5",bacMl:"2",dose:"",unit:"mg",freq:"daily",syringe:"100u"};
     const check=nxReconValidate(state._recon);
     const {vmg,bac,doseRaw,doseMg,conc,mlPerDose}=check;
+    const selectedSyringeLabel=document.getElementById("rc-syringe-label");
+    if(selectedSyringeLabel)selectedSyringeLabel.textContent=({"30u":"30-unit (0.3 mL)","50u":"50-unit (0.5 mL)","100u":"100-unit (1 mL)","1mL":"1 mL","3mL":"3 mL"})[state._recon.syringe||"100u"]||"Choose a supported syringe";
     const validationEl=document.getElementById("rc-validation");
     if(validationEl){validationEl.textContent=check.error||"";validationEl.style.display=check.error?"block":"none";}
     // Update concentration hint inline (no re-render)
@@ -821,8 +826,7 @@ function wireReconCalc() {
         </div>
         <div style="background:var(--surface);border:1px solid var(--border-sub);border-radius:12px;padding:14px;margin-bottom:12px">${svg}
           <div style="text-align:center;font-size:12px;color:#7DF9C0;font-weight:600;margin-top:4px">Calculated ${syr2.isVol?(syringeMl2||0).toFixed(3)+" mL":syringeUnits.toFixed(1)+" U-100 units"} · ${mlPerDose.toFixed(3)} mL</div>
-          <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:12px">${Object.keys({"30u":1,"50u":1,"100u":1,"1mL":1,"3mL":1}).map(s=>pill2(s,r2.syringe||"100u","syringe")).join("")}</div>
-          <div style="text-align:center;font-size:10px;color:var(--t5);margin-top:4px">${syr2.label}</div>
+
         </div>
         ${totalDoses!=null?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
           ${[[r2.freq==="twice"?"Twice daily":r2.freq==="weekly"?"Weekly":"Daily","Frequency"],[totalDoses+"","Doses"],[durationDays+"d","Duration"]].map(([v,l])=>`<div style="background:var(--surface);border-radius:10px;padding:10px 6px"><div style="font-size:16px;font-weight:700;color:var(--t1)">${v}</div><div style="font-size:9px;color:var(--t5);letter-spacing:1px;margin-top:2px">${l.toUpperCase()}</div></div>`).join("")}
