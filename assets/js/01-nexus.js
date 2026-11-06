@@ -141,7 +141,7 @@ function nexusPlanScopedStateChange(snapshot,operation){
     fail("Exact compound identifier required");
   if(!["active","paused"].includes(from)||!["active","paused"].includes(to)||from===to)
     fail("Valid compound status transition required");
-  if(typeof at!=="string"||!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/.test(at)||!Number.isFinite(Date.parse(at)))
+  if(typeof at!=="string"||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(at)||!Number.isFinite(Date.parse(at)))
     fail("Valid status change timestamp required");
   const bucket=builtin?"peptides":"customPeptides";
   const record=next[bucket]?.[name];
