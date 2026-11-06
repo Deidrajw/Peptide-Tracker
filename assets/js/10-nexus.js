@@ -756,11 +756,12 @@ function reconCalcView() {
     <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:8px">${title}</div>${body}</div>
   </div>`;
   const pill=(val,cur,id)=>`<button data-id="${id}" data-val="${val}" onclick="calcPillClick(this)" style="padding:5px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid ${cur===val?"#A78BFA":"var(--border-sub)"};background:${cur===val?"#A78BFA22":"transparent"};color:${cur===val?"#A78BFA":"var(--t4)"}">${val}</button>`;
-  return `${nxCalcModeTabs("injection")}<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+  return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <button id="reconback" style="background:var(--surface-2);border:1px solid var(--border);color:var(--t3);border-radius:8px;min-width:44px;min-height:44px;font-size:22px" aria-label="Back to guides">‹</button>
     <h1 class="serif" style="font-size:20px;margin:0;color:var(--t1);flex:1">Dose Calculator</h1>
     <button onclick="state._recon=null;renderBody();" style="background:transparent;border:1px solid var(--border-sub);color:var(--t4);border-radius:8px;padding:5px 12px;font-size:11px">Reset</button>
   </div>
+  ${nxCalcModeTabs("injection")}
   <div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:16px 18px;margin-bottom:14px">
     ${step(1,"What's in your vial?",`<div style="display:flex;gap:10px;flex-wrap:wrap">
       <div style="flex:1;min-width:120px"><label class="field-label">Peptide amount (mg)</label><input id="rc-vmg" type="number" min="0" step="any" inputmode="decimal" aria-label="Vial amount in milligrams" class="inp" value="${esc(r.vialMg)}" placeholder="e.g. 5"></div>
