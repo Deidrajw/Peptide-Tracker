@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 current QA checkpoint; NOT RELEASED
+- Candidate packages built and validated within in-progress full workflow #42273263128 but no independently inspected/uploaded artifacts at checkpoint. Same-source mobile/nested/writer/pinned Chromium successful; WebKit failed at Goal Details and rerun requested. No merge/deploy, no data migration, physical Safari/VoiceOver and clinical calculator certification still not proven.
+
 ## 2026-11-06 — PR143 browser visual regression gate; NOT RELEASED
 - Test-only commit 57938562 adds precise search-clear icon geometry/chrome/visibility assertions to full fictional application browser matrix. No app source or saved-data changes; PR draft, unmerged, no deploy. Await full build artifact and exact-head browser suite; no physical iPhone/VoiceOver acceptance.
 
