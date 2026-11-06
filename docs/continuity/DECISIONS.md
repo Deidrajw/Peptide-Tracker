@@ -1,3 +1,6 @@
+## 2026-11-06 — Query clear must not obscure authoritative combobox selections
+- Reuse query-only clear for independent search queries. Vial Kit, Other Forms and blend compound combobox text currently doubles as visible selected compound: do NOT clear it while preserving a hidden underlying selection, and do NOT trigger handlers that remove a selected item when user only wants to clear a search query. First separate query from selection or add explicitly conditional behaviour, preserve DS2/44px targets, then verify with fictional browser tests. No merge/deploy approval.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 
