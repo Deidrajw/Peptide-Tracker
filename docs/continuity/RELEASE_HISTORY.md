@@ -1,3 +1,6 @@
+## 2026-11-06 — PR142 visible dose synchronization P0 candidate, NOT RELEASED
+- Applied source correction 2a86b843 after CI diagnostics revealed hidden canonical #dose empty despite visible input. Review now reuses existing unit conversion and validates all ordinary source/inventory gates. No schema change, historical edits, inventory writes, import/restore, or production deployment. Full CI and physical iPhone QA pending, PR draft.
+
 ## 2026-11-06 — PR142 restore-warning error semantics candidate (NOT RELEASED)
 - Targeted fix 14cdebb9 in assets/js/11-nexus.js distinguishes CAS/previous uncertainty from real device-storage errors using shared classifier; verified restore removes previously displayed warning. Fictional regression e166f337 and workflow f337723c. Existing restore still replaces instead of merges, uses recovery-copy + guarded CAS/readback. No data migration, live user data accessed or modified, merge or Cloudflare deployment.
 - Latest CI and exact-artifact integrity, physical iPhone acceptance, VoiceOver and independent calculator safety PENDING/UNVERIFIED. Publication version remains production v0.9.25-beta.1. Do not mark release completed or deploy without explicit approval.
