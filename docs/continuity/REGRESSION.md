@@ -1,3 +1,6 @@
+## 2026-11-06 — PR142 P0 exact-head build gate retest
+- Earlier #42177818543: FAIL in browser QA step from JavaScript SyntaxError at tools/validate-save-ack-ui.mjs:34 due to literal `\\n` sequences; 8 LIVE/DEMO matrix and 256 Log Dose flows logged PASS before failure, not whole-workflow acceptance. Test-only correction 9c6bc851 restores seven real line breaks. Retest #42178890166 and companion five workflows IN PROGRESS, not PASS at checkpoint. Physical iPhone, complete artifact parity, dose save acknowledgement end-to-end and real-data verification NOT TESTED. Keep draft PR142, no merge/deploy.
+
 ## 2026-11-06 — PR142 hidden canonical dose failure newly diagnosed; source fix unqualified
 - Full build #42172491186 failed in validate-save-ack-ui.mjs. Diagnostics: visible dose field filled with 1, hidden #dose empty, valid date/SubQ/exact open vial; Review correctly showed amount error and kept #save hidden. Protected preceding Log Dose browser suite 8x configurations /256 flows passed.
 - Source fix 2a86b843 synchronizes visible mass into hidden canonical dose at Review using nexusUseMassValue from selected mg/mcg to compound unit; validates existing amount/date/source, does not bypass or commit. New CI source run #42174745610 in progress; no release PASS claim.
