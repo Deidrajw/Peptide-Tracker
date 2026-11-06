@@ -1,3 +1,7 @@
+## 2026-11-06 — PR143 full QA false-negative source signature corrected (pending rerun)
+- Full CI #42266163455 FAIL at tests/search-clear-controls.test.cjs:5 checking old helper signature (three args), while actual helper safely supports options={} for query-aware selection. Failure precedes browser and artifact stages; no release artifact available from that run. Five sibling workflows SUCCESS, not substitute for failed full gate.
+- Test-only 44d559d4 revises assertion to exact four-arg signature and adds DS2 17px/1.8px/icon, 44px tap, muted styling/position, query-only display assertions. No application behaviour modified. Exact head #42272145892 pending; browser/iPhone statuses remain NOT TESTED for latest source until completed.
+
 ## 2026-11-06 — PR143 DS2 search-clear icon refinement; qualification PENDING
 - Commit 82c99d03 (05-nexus.js shared helper) sets 17px outline SVG, 1.8 stroke, muted var(--t4), right-edge 44x44 centered tappable button with display none when query blank, aria-label retained. Scope is visual; query-only clear callback and picker selections unchanged in source. Source inspection only, NOT a browser PASS.
 - Required regression: 320/390 light/dark focused+unfocused icon size/alignment; 44x44 computed hit rect; keyboard and VoiceOver label/activation; clear results without clearing supplements, symptom intensity, selections, drafts, history; compare all helper callers and dedicated native clear controls; no loss of lavender focus styling. Status NOT TESTED until actual execution.
