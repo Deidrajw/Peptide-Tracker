@@ -16,7 +16,7 @@ try{
     state.profile.onboardingDone=true;
     document.documentElement.dataset.theme=t;
     state.peptides.Retatrutide={enabled:true,status:"active",route:"SubQ",scheduleDays:7,doses:[],lastDose:2};
-    state.preparedDoses=[];state.lastSourceKit={};
+    // Isolate this failure-ack test to one injectable source. The default\n    // fictional demo may also contain prepared capsule/nasal stocks, which\n    // correctly opens the product-form picker instead of #nx-dose-entered.\n    state.formulationStocks=[];state.preparedDoses=[];state.lastSourceKit={};
     state.supplies=[{id:91001,name:"Retatrutide",activeKit:true,preparationMethod:"SubQ",totalVials:1,openedVials:1,vialMg:10,bacMl:2,_vialsBackfilled:true,_vialsRepaired:true,vials:[{id:91002,status:"open",intendedUse:"SubQ",vialMg:10,remainingMg:6,reconDate:"2026-10-20T10:00",sequenceNumber:1}],wasteLog:[]}];
     doseModal("Retatrutide");
   },theme);
