@@ -120,7 +120,9 @@ async function nexusCommitCurrentState(){
    if(typeof _nexusLastSavedSnapshot==="string")state=JSON.parse(_nexusLastSavedSnapshot);
   }catch(restoreError){console.error("Nexus last verified snapshot could not be restored",restoreError)}
   console.error("Nexus reviewed legacy transaction rejected",error);
-  showSaveWarning();
+  if(nexusBackedDoseStorageError(error))showSaveWarning();
+  else if(typeof showErrorBanner==="function")
+    showErrorBanner("Save blocked: the current state could not be verified. Reload and review your data before retrying.");
   return false;
  }
 }
@@ -133,7 +135,28 @@ function nexusPlanScopedStateChange(snapshot,operation){
  const fail=message=>{throw Error(message)};
  if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
  const next=JSON.parse(JSON.stringify(snapshot));
- if(operation.kind==="setting"){
+ if(operation.kind==="compound-status"){
+  const {name,builtin,from,to,at}=operation;
+  if(typeof name!=="string"||!name.trim()||name.length>180||typeof builtin!=="boolean")
+    fail("Exact compound identifier required");
+  if(!["active","paused"].includes(from)||!["active","paused"].includes(to)||from===to)
+    fail("Valid compound status transition required");
+  if(typeof at!=="string"||!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/.test(at)||!Number.isFinite(Date.parse(at)))
+    fail("Valid status change timestamp required");
+  const bucket=builtin?"peptides":"customPeptides";
+  const record=next[bucket]?.[name];
+  if(!record||typeof record!=="object"||(record.status||"active")!==from)
+    fail("Compound status changed; reopen and review before retrying");
+  if(record.statusHistory!=null&&!Array.isArray(record.statusHistory))
+    fail("Existing compound status history needs reconciliation");
+  const history=record.statusHistory||[];
+  if(history.length>=1000)fail("Status history limit reached; export before changing");
+  if(history.some(x=>x?.at===at&&x?.to===to))fail("Duplicate status event");
+  record.status=to;
+  if(to==="paused")record.pausedAt=at;
+  else record.resumedAt=at;
+  record.statusHistory=history.concat([{at,from,to,source:"manual-confirmed"}]);
+ }else if(operation.kind==="setting"){
   const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","supplementTemplates","remindersEnabled","lastNotifyDate"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="remindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid notification toggle");
@@ -254,7 +277,9 @@ async function nexusCommitScopedStateChange(operation){
   return true;
  }catch(error){
   console.error("Scoped state save rejected",error);
-  showSaveWarning();
+  if(nexusBackedDoseStorageError(error))showSaveWarning();
+  else if(typeof showErrorBanner==="function")
+    showErrorBanner("Changes were not saved because the current saved state could not be verified. Review the latest data before retrying.");
   return false;
  }
 }
