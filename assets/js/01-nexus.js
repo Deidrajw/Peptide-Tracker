@@ -324,7 +324,7 @@ async function nexusCommitUntrackedDose(name,dose,editing){
     return true;
   }catch(e){
     console.error("Nexus exclusive untracked dose save failed",e);
-    if(nexusBackedDoseStorageError(e))showSaveWarning();
+    if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(e?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(e?.message||"")))showSaveWarning();
     else if(typeof showErrorBanner==="function")showErrorBanner("Dose was not saved. Check the saved history and source before retrying.");
     return false;
   }
