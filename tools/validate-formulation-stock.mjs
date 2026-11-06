@@ -64,14 +64,28 @@ try {
   // #16 cross-engine Goal Details: actual shared sheet, roving tabs and
   // narrow viewport in both fictional LIVE-source and isolated full DEMO.
   // These are browser visual/focus proxies, not physical iOS VoiceOver.
-  await page.evaluate(()=>{
+  const goalOpen=await page.evaluate(()=>{
     if(!state.plans)state.plans={goals:[],research:[],shopping:[]};
     state.plans.goals.push({id:'fictional-goal-crossengine',
       name:'Fictional goal with readable detail',category:'Personal',
       status:'active',notes:'Fictional notes for browser visual inspection',
       progressModel:{type:'exploratory'}});
-    goalDetailModal('fictional-goal-crossengine');
+    const fixtureFound=state.plans.goals.some(g=>g.id==='fictional-goal-crossengine');
+    let exception=null;
+    try{goalDetailModal('fictional-goal-crossengine');}catch(error){exception=String(error?.stack||error);}
+    return {fixtureFound,exception,immediateDetail:!!document.querySelector('.nx-goal-detail'),
+      modalCount:document.querySelectorAll('.modal').length,tab,version:typeof CURRENT_CHANGELOG_VERSION};
   });
+  // Capture whether app startup overwrites an initially opened sheet in WebKit.
+  await page.waitForTimeout(100);
+  const goalLater=await page.evaluate(()=>({
+    detail:!!document.querySelector('.nx-goal-detail'),
+    fixtureFound:!!state.plans?.goals?.some(g=>g.id==='fictional-goal-crossengine'),
+    modalCount:document.querySelectorAll('.modal').length,
+    foreground:document.querySelector('.modal-bg:last-of-type .modal')?.className||'none'
+  }));
+  assert.ok(goalOpen.fixtureFound&&goalOpen.immediateDetail&&goalLater.detail,
+    'Goal Details sheet must open and persist: '+JSON.stringify({goalOpen,goalLater,width,theme,kind}));
   await page.locator('.nx-goal-detail').evaluate(el=>
     Promise.all(el.closest('.modal').getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))));
   const goalGeometry=await page.locator('.nx-goal-detail').evaluate(detail=>{
