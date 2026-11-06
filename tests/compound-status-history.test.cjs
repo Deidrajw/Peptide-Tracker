@@ -42,4 +42,8 @@ assert.ok(!ui.includes('tgt[n].status="active";if(!await nexusCommitCurrentState
 assert.ok(card.includes('<button class="resumepep" data-name="${esc(name)}" style="flex:1'), 'Expanded paused Resume must use resumepep');
 assert.ok(card.includes('nxCompoundStatusHistoryHTML(data)'), 'Status history visible in compound cards');
 assert.ok(root.includes('clearSaveWarningAfterVerifiedWrite()'), 'Verified save must dismiss stale global warning');
+// Reminder cards must use dailyModal's existing-record lookup. Calling
+// todayLogSheet() without its required log previously crashed iOS Safari.
+assert.ok(ui.includes('else if(type==="checkin"){ dailyModal(); }'), 'Reminder check-in routes through safe dailyModal');
+assert.ok(!ui.includes('else if(type==="checkin"){ todayLogSheet(); }'), 'Reminder must not call sheet without a record');
 console.log('PASS: fictional pause confirmation contract, immutable dated status audit, resume, dose/stock/protocol preservation and UI wiring');
