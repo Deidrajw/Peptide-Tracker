@@ -1,3 +1,6 @@
+## 2026-11-06 — DS2 search-clear icon refinement approved as targeted scope
+- User directed a 16–18px thin-outline X (implemented 17px/1.8px), muted secondary icon colour, exact 44x44 tap region centred at input right, no extra surface decoration, visible only when search query is nonempty. Existing lavender focus, field proportions and typography remain protected. Clear changes query/filter only, never selected supplements, draft data or historical records. Apply through reusable helper across Issue #140; this is implementation direction, NOT merge/deploy approval.
+
 ## 2026-11-06 — Query clear must not obscure authoritative combobox selections
 - Reuse query-only clear for independent search queries. Vial Kit, Other Forms and blend compound combobox text currently doubles as visible selected compound: do NOT clear it while preserving a hidden underlying selection, and do NOT trigger handlers that remove a selected item when user only wants to clear a search query. First separate query from selection or add explicitly conditional behaviour, preserve DS2/44px targets, then verify with fictional browser tests. No merge/deploy approval.
 
