@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 qualified artifact, WebKit remains BLOCKED; NOT RELEASED
+- Full artifact #13532792832 on application/test source 81eaf030 qualified by independent archive and DEMO isolation check (549 outer, 26 LIVE, 3,173,208-byte standalone fictional DEMO). Full browser matrix PASS; WebKit rerun #42273263382 failed same protected Goal Details timeout. Diagnostics-only 1b9c1cd1 committed; exact new CI pending. No application code, migration, merge/deployment, or personal data modification.
+
 ## 2026-11-06 — PR143 exact-source release candidate verified; NOT DEPLOYED
 - Full build #42273263128 SUCCESS on 81eaf030; downloaded artifact #13532792832 and independently passed outer 549-entry ZIP CRC, inner 26-file exact-source LIVE ZIP CRC/path/script checks, standalone fictional FULL APP DEMO 3,173,208 bytes, offline index byte parity and source-guard inspection. Eight search-clear LIVE/DEMO mobile viewport/theme contexts passed and protected suites passed; WebKit Goal Details failed original run and rerun pending. No new version, merge, production writes, deployment or physical iPhone acceptance. Release candidate for review only.
 
