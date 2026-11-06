@@ -1,3 +1,8 @@
+## 2026-11-06 — PR142 hidden canonical dose failure newly diagnosed; source fix unqualified
+- Full build #42172491186 failed in validate-save-ack-ui.mjs. Diagnostics: visible dose field filled with 1, hidden #dose empty, valid date/SubQ/exact open vial; Review correctly showed amount error and kept #save hidden. Protected preceding Log Dose browser suite 8x configurations /256 flows passed.
+- Source fix 2a86b843 synchronizes visible mass into hidden canonical dose at Review using nexusUseMassValue from selected mg/mcg to compound unit; validates existing amount/date/source, does not bypass or commit. New CI source run #42174745610 in progress; no release PASS claim.
+- Test requisite: amount=1 mg, hidden amount initially blank, Review correctly advances without duplicating a dose; invalid amount or unit stays blocked; quota/CAS failed write preserves stock and history; test real iPhone keyboard/autofill. NOT YET VERIFIED.
+
 ## 2026-11-06 — Dose save-ack confirmation screen CI failure investigation (UNRESOLVED)
 - PR142 docs-head full build/parity #42170884100 FAILED in tools/validate-save-ack-ui.mjs after 256 Log Dose protected browser flows PASS: #save was in DOM but hidden for 30s. This is a true red QA gate. Source showDoseReview(on) only reveals #save when reviewButton validator accepts positive synced hidden #dose, valid date, compatible exact vial.
 - Local isolated standalone fictional FULL_APP_DEMO in Chromium 390/dark with equivalent injector fixture: amount=1mg, hidden #dose=1, date valid, method SubQ, exact vial selected; Review reveals #save, no visible errors. LIVE/other viewports NOT PROVEN by local reproduction.
