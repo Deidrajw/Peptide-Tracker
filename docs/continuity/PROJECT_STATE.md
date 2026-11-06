@@ -1,3 +1,8 @@
+## 2026-11-06 — PR136 calculator safety regression extended; exact-head CI required
+- Separate PR142 P0 six-workflow QA and exact-source artifact independently passed; PR142 remains draft/unmerged, physical iPhone pending. PR136 stays a separate draft based on main a0482abc and is NOT released.
+- Calculator test-only commit dcd094da59fea308bb774896128ed803b0868ec8 extends tools/validate-recon-safety.mjs to assert a blocked 1mL / theoretical 2mL draw retains 200mg/mL concentration and 400mg entered dose, while 30u also fails closed. No application JS, calculations, storage, stock, or nasal LIVE flag changed in that commit. Exact-head CI and independent LIVE/full-app DEMO artifact NOT YET VERIFIED; do not equate historical CI with this head.
+- ONE NEXT ACTION: qualify PR136 exact-head six CI workflows and independently verify full-app DEMO/LIVE artifact; do not merge/deploy without separate approval.
+
 ## 2026-11-06 — PR136 exact-current-head calculator qualification requested (UNRELEASED)
 - User authorized continuation of four tracked workstreams, PR142 P0 first, PR136 calculator safety qualification second, search clear Issue140 third, read-only nasal calculator Issue138 fourth. Maintain independent release boundaries and no deploy/merge without explicit release authorization.
 - Verified PR136 remains draft/open at application/test/documentation head 0f6ac840470f54c7eb6cfe70f7de92cf06c5715c, based on a0482abc main. Existing syringe-capacity correction remains coded: accessible 1mL/3mL selection during valid 2mL overflow, suppression of unsafe draw guidance, live concentration preserved. Prior source-local Chromium 4/4 PASS and six earlier-source CI SUCCESS, but no exact-head CI run surfaced for 0f6ac840.
