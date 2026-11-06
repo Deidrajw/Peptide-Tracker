@@ -1001,6 +1001,8 @@ function addBlendKitModal(blendNameOrKit) {
       trigger.setAttribute("aria-controls",results.id);
       popup.append(results);wrapper.append(trigger,popup);
       const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
+      let queryActive=false,lastChosen={value:sel.value,label:"",compound:composition[+sel.dataset.i]?.compound||""};
+      const rememberChosen=()=>{lastChosen={value:sel.value,label:trigger.value,compound:sel.value};queryActive=false;const x=wrapper.querySelector(".nx-search-clear");if(x)x.hidden=true;};
       const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
       // Floating overlay: never adds height to a composition row or creates a second scroll surface.
       const position=()=>{
@@ -1018,7 +1020,7 @@ function addBlendKitModal(blendNameOrKit) {
           const button=document.createElement("button");button.type="button";button.textContent=opt.textContent;
           button.className="nx-blend-compound-option";button.setAttribute("role","option");
           button.onpointerdown=e=>e.preventDefault();
-          button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;close();sel.dispatchEvent(new Event("change",{bubbles:true}));};
+          button.onclick=()=>{sel.value=opt.value;trigger.value=opt.textContent;rememberChosen();close();sel.dispatchEvent(new Event("change",{bubbles:true}));};
           results.appendChild(button);
         });
 
@@ -1027,15 +1029,21 @@ function addBlendKitModal(blendNameOrKit) {
         browse.textContent="View all compounds";
         browse.onpointerdown=e=>e.preventDefault();
         browse.onclick=()=>{close();nexusBrowseAllCompounds(m,[...sel.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value})),option=>{
-          sel.value=option.value;trigger.value=option.name;sel.dispatchEvent(new Event("change",{bubbles:true}));
+          sel.value=option.value;trigger.value=option.name;rememberChosen();sel.dispatchEvent(new Event("change",{bubbles:true}));
         },"");};
         results.appendChild(browse);
         position();
       };
       const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
       trigger.value=sel.value?label():"";
+      lastChosen={value:sel.value,label:trigger.value,compound:composition[+sel.dataset.i]?.compound||""};
+      nexusWireSearchClear(trigger,()=>{
+        sel.value=lastChosen.value;trigger.value=lastChosen.label;
+        composition[+sel.dataset.i].compound=lastChosen.compound;
+        queryActive=false;close();
+      },"Clear blend compound search",{isQuery:()=>queryActive});
       trigger.onfocus=open;
-      trigger.oninput=()=>{sel.value="";composition[+sel.dataset.i].compound="";open();};
+      trigger.oninput=()=>{queryActive=true;sel.value="";composition[+sel.dataset.i].compound="";open();};
       trigger.onkeydown=e=>{if(e.key==="Escape"){close();trigger.blur();}if(e.key==="ArrowDown"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.focus();}if(e.key==="Enter"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.click();}};
       results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
       wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
