@@ -3016,6 +3016,7 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
   search.onfocus=()=>{state._symPickerBrowseOpen=true;draw()};
   search.onclick=()=>{state._symPickerBrowseOpen=true;draw()};
   search.oninput=()=>{state._symPickerBrowseOpen=true;draw()};
+  nexusWireSearchClear(search,()=>{state._symPickerBrowseOpen=false;draw()},"Clear symptom search");
   search.onkeydown=e=>{if(e.key==="Escape"){state._symPickerBrowseOpen=false;draw();search.blur()}
     if(e.key==="ArrowDown"){state._symPickerBrowseOpen=true;draw();const first=results.querySelector(".nx-sym-add");if(first){e.preventDefault();first.focus()}}};
   draw();
