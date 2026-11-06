@@ -1,3 +1,7 @@
+## 2026-11-06 — PR136 independent exact-code safety checkpoint; unreleased
+- Exact GitHub assets/js/10-nexus.js blob 87d82eba8d48b3dd857e2ece2890590705c70d09 independently extracted nxReconValidate and evaluated 22 finite/invalid/overflow/recovery assertions in an isolated JavaScript environment: 22 PASS, 0 FAIL. Confirmed 1200mg/6mL and entered 400mg with selected 1mL returns no draw, keeps 200mg/mL concentration/400mg dose; 3mL recovery yields 2mL. Invalid masses, diluents, units and syringe selections stay fail-closed. Pure numerical code checks are NOT browser UI or clinical certification; latest-head GitHub CI and complete exact-source artifacts still NOT VERIFIED. No application code change, no deployment.
+- ONE NEXT ACTION: qualify exact-head browser/CI and complete isolated DEMO/LIVE artifacts on this branch after source changes are settled; user iPhone testing deferred until all independent work finished.
+
 ## 2026-11-06 — PR136 syringe-overflow safety assertions extended, NOT YET QUALIFIED
 - Test-only commit dcd094da: 1200mg/6mL and entered 400mg in 1mL syringe should fail closed (no draw); keep 200mg/mL concentration and 400mg mass, and changing to another undersized 30u also rejects. Existing 3mL selection recovery must still show theoretical 2.000mL without re-entering dose. Exact-head CI/browser results pending; prior passing runs do not qualify new test source. Physical iPhone/VoiceOver/clinical certification NOT TESTED. PR136 draft/unmerged/undeployed.
 
