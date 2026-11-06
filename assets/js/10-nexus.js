@@ -639,7 +639,7 @@ function nxReconValidate(r) {
   const cap=({"30u":0.3,"50u":0.5,"100u":1,"1mL":1,"3mL":3})[r.syringe||"100u"];
   if(!cap)return invalid("Select a supported syringe.");
   if(!Number.isFinite(mlPerDose)||mlPerDose<=0)return invalid("Calculated volume is invalid.");
-  if(mlPerDose>cap+1e-10)return invalid("Calculated volume exceeds the selected syringe capacity. No drawing instruction is shown.");
+  if(mlPerDose>cap+1e-10)return {vmg,bac,doseRaw,doseMg,conc,mlPerDose:null,error:"Calculated volume exceeds the selected syringe capacity. No drawing instruction is shown."};
   if(mlPerDose*100<0.5)return invalid("Calculated draw is under 0.5 U-100 units; this visual cannot show a reliable mark.");
   return {vmg,bac,doseRaw,doseMg,conc,mlPerDose,error:null};
 }
