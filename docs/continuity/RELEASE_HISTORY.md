@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 exact-source release candidate verified; NOT DEPLOYED
+- Full build #42273263128 SUCCESS on 81eaf030; downloaded artifact #13532792832 and independently passed outer 549-entry ZIP CRC, inner 26-file exact-source LIVE ZIP CRC/path/script checks, standalone fictional FULL APP DEMO 3,173,208 bytes, offline index byte parity and source-guard inspection. Eight search-clear LIVE/DEMO mobile viewport/theme contexts passed and protected suites passed; WebKit Goal Details failed original run and rerun pending. No new version, merge, production writes, deployment or physical iPhone acceptance. Release candidate for review only.
+
 ## 2026-11-06 — PR143 current QA checkpoint; NOT RELEASED
 - Candidate packages built and validated within in-progress full workflow #42273263128 but no independently inspected/uploaded artifacts at checkpoint. Same-source mobile/nested/writer/pinned Chromium successful; WebKit failed at Goal Details and rerun requested. No merge/deploy, no data migration, physical Safari/VoiceOver and clinical calculator certification still not proven.
 
