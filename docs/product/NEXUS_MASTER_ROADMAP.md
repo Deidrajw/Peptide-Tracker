@@ -1,3 +1,7 @@
+## 2026-11-05 — P0 incident supersedes previously queued priorities
+- Issue #141 / draft PR #142: backed dose false stale-state rejection, misleading persistent device storage warning and unexplained missing Today component despite stored records. Immediate priority: exact-head CI/fictional reproduction, protect all production data and confirm real-iPhone result; no release before QA and explicit approval.
+- Pending after P0: calculator PR136 exact-source qualification; app-wide search clear controls Issue140; independent read-only nasal calculator Issue138. No scope mixing or silent release.
+
 ## 2026-11-05 — PR135 next QA priority: approved session-first hierarchy
 - User approved shared-session-first Combo Setup; JS/CSS and browser assertions coded at 929ac0e9/f8d5ee00/3daaf99c on draft branch. Next: exact-source pinned browser CI, full LIVE/DEMO artifact integrity, 320/390 visual and loaded-font check, then iPhone UAT. Five regular workflow dependency failures and separate stale release notes gate remain blockers. No merge/deploy approval.
 
