@@ -703,7 +703,7 @@ function reconCalcView() {
       <div style="flex:1;min-width:120px"><label class="field-label">Peptide amount (mg)</label><input id="rc-vmg" type="number" min="0" step="any" inputmode="decimal" aria-label="Vial amount in milligrams" class="inp" value="${esc(r.vialMg)}" placeholder="e.g. 5"></div>
       <div style="flex:1;min-width:120px"><label class="field-label">BAC water to add (mL)</label><input id="rc-bac" type="number" min="0" step="any" inputmode="decimal" aria-label="Diluent amount in millilitres" class="inp" value="${esc(r.bacMl)}" placeholder="e.g. 2">
         <div style="font-size:10px;color:var(--t5);margin-top:4px">Enter volume actually used</div>
-      </div></div>${conc?`<div style="margin-top:10px;font-size:12px;color:#A78BFA">Creates <b>${conc.toFixed(2)} mg/mL</b> solution</div>`:""}`)}
+      </div></div><div id="rc-conc-hint" aria-live="polite" style="margin-top:10px;font-size:12px;color:#A78BFA">${conc?`Creates ${conc.toFixed(2)} mg/mL solution`:""}</div>`)}
     ${step(2,"Your dose per injection?",`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
       <div style="flex:2;min-width:100px"><label class="field-label">Dose amount</label><input id="rc-dose" type="number" min="0" step="any" inputmode="decimal" aria-label="Dose amount" class="inp" value="${esc(r.dose)}" placeholder="e.g. 2"></div>
       <div style="display:flex;gap:4px;padding-bottom:8px">${["mg","mcg"].map(u=>pill(u,r.unit||"mg","unit")).join("")}</div>
