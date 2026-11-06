@@ -1,3 +1,7 @@
+## 2026-11-05 — User-queued app-wide search reset UX (Issue #139)
+- After PR136 release qualification, audit every searchable Nexus control and add a consistent, accessible trailing clear X with 44–48px touch target. Search reset must affect only filter query, never selected supplements/compounds or saved data. Initial source surface: 03 compound browser/blend, 04 symptoms, 05 Combo and Supplement, 06 Journal, 07 kit combobox, 08 history/Discover (existing X), 09 compound history, 10 Stash/mix/formulation, 11 supplements/compound/protocol pickers. Inventory is preliminary; full-screen manual audit required.
+- Protect approved DS2 hierarchy, focus, keyboard, 320/390 light/dark, histories and draft persistence. Dedicated scoped PR + full LIVE/isolated DEMO, CI, device tests. Issue #138 nasal read-only calculator separately remains open; live nasal gates off.
+
 ## 2026-11-05 — Active calculator delivery checkpoint
 - PR136 implements syringe overflow recovery and stale concentration fix, protected no-draw guard. Latest app source 341467a3, test 648d2404, local isolated actual Chromium 320/390 dark/light 4/4 PASS; full LIVE and fictional DEMO candidate integrity reconstructed/validated. Earlier six GitHub CI workflows PASS on b2905eb8 only; exact latest app-source CI pending. No merge/deploy or data changes.
 - NEXT after PR136 qualification: nasal spray *read-only* calculation mode tracked as issue #138. No nasal LIVE writer/administration gate enablement permitted by this design issue.
