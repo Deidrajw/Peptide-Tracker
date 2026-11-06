@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 full-app source parity and local Protocol/Discover 4/4 PASS
+- Six changed JS blobs (03,04,05,08,11,12) match current GitHub byte-exact; 26-file full LIVE candidate ZIP CRC PASS and isolated full-app standalone DEMO byte equals offline index. Local Chromium 320/390 dark/light 4/4 PASS for Protocol Builder clear/magnifier and Discover 44px clear; no JS page errors. Latest GitHub full #42256170024 pending after prior test-only false SVG count #42254391969 FAIL corrected at 683b049c. Physical iPhone and VoiceOver NOT TESTED; selected-value combobox audit remains open.
+
 ## 2026-11-06 — PR143 browser test locator corrected, not yet PASS
 - Full build #42194662930 FAIL at tools/validate-search-clear-ui.mjs on a CSS :has() locator incorrectly looking for modal ancestor inside the search wrapper; test-only 71790a4b uses exact input selector #supp-search. Existing 44px, visible, aria-label, query-only and selection-preservation checks remain blocking. Protected Log Dose suite 256 flows PASS before failure, no complete build PASS. Local Chromium tests for new compound browser and Check-In Symptoms passed 320/390 light/dark 4/4, preserving chosen symptom intensity, fictional data only. Latest full CI pending, physical iPhone NOT TESTED.
 
