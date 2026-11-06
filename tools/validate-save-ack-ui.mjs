@@ -20,7 +20,7 @@ try{
     state.supplies=[{id:91001,name:"Retatrutide",activeKit:true,preparationMethod:"SubQ",totalVials:1,openedVials:1,vialMg:10,bacMl:2,_vialsBackfilled:true,_vialsRepaired:true,vials:[{id:91002,status:"open",intendedUse:"SubQ",vialMg:10,remainingMg:6,reconDate:"2026-10-20T10:00",sequenceNumber:1}],wasteLog:[]}];
     doseModal("Retatrutide");
   },theme);
-  await page.locator("#nx-dose-entered").fill("1");
+  // Fail with a useful regression message if product-form selection changes.\n  if(await page.locator(".nx-form-choice-sheet").count())throw Error("Save-ack injectable fixture unexpectedly opened product-form picker");\n  await page.locator("#nx-dose-entered").waitFor({state:"visible",timeout:5000});\n  await page.locator("#nx-dose-entered").fill("1");
   await page.locator("#nx-dose-review-open").click();
   await page.locator("#save").waitFor({state:"visible"});
   // Fresh inventory-backed dosing no longer calls synchronous saveState().
