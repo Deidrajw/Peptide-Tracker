@@ -1,3 +1,6 @@
+## 2026-11-05 — Today/Completed paused logged-dose visibility P0
+- Render recorded dose card from paused/inactive compounds in Today and Completed, without an added due/upcoming card. Separate understated `+ N dose recorded for paused or inactive compounds · See Completed` line after hero clarifies why hero counts only active schedule slots. Fictional full app 320/390 dark/light local Chromium 4/4 PASS with zero errors, source exact; physical iPhone/VoiceOver acceptance pending. No redesign or status migration.
+
 ## 2026-11-05 — P0 storage-warning iPhone layout (PR142 draft)
 - True device-storage warning uses a 44x44 outlined dismiss-X with accessible label, below content and above bottom nav; planner/CAS rejection no longer mislabels device as unable to save. Isolated full-app Chromium 320/390 light/dark 4/4 PASS: visible/dismissible/reappears on another simulated failure, zero browser errors; visual dark-mode 320/390 screenshots inspected. Physical Safari keyboard, safe-area, VoiceOver and real-device screenshots NOT ACCEPTED. No release approval.
 
