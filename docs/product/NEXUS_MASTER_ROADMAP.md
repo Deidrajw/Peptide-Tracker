@@ -1,3 +1,8 @@
+## 2026-11-05 — Queued next UX priority after PR136: app-wide search clear controls (Issue #140)
+- User explicitly requested audit of every search input, especially Supplements and compound selection. Add accessible clear-X control for nonempty search text; preserve selected items, drafts and all saved history; restore full results after clearing. Standardize 44–48px touch targets, DS2 light/dark, 320/390px, iPhone keyboard/focus and modal/bottom-sheet behaviour.
+- Sequence: complete and qualify calculator PR136 first, then open scoped search audit/implementation PR. Nasal calculator proposal remains separate Issue #138. No unapproved merge/deploy, no data migrations.
+- NEXT ACTION remains exact-current-source PR136 CI and artifact/iPhone qualification before beginning Issue #140.
+
 ## 2026-11-05 — User-queued app-wide search reset UX (Issue #139)
 - After PR136 release qualification, audit every searchable Nexus control and add a consistent, accessible trailing clear X with 44–48px touch target. Search reset must affect only filter query, never selected supplements/compounds or saved data. Initial source surface: 03 compound browser/blend, 04 symptoms, 05 Combo and Supplement, 06 Journal, 07 kit combobox, 08 history/Discover (existing X), 09 compound history, 10 Stash/mix/formulation, 11 supplements/compound/protocol pickers. Inventory is preliminary; full-screen manual audit required.
 - Protect approved DS2 hierarchy, focus, keyboard, 320/390 light/dark, histories and draft persistence. Dedicated scoped PR + full LIVE/isolated DEMO, CI, device tests. Issue #138 nasal read-only calculator separately remains open; live nasal gates off.
