@@ -53,6 +53,7 @@ jobs:
           node tests/write-coordinator.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
+          node tests/search-clear-controls.test.cjs
           node tools/validate-ux-consistency.mjs
       - name: Gate stale release notes against changed application source
         shell: bash
