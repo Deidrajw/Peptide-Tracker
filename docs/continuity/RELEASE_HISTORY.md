@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 browser visual regression gate; NOT RELEASED
+- Test-only commit 57938562 adds precise search-clear icon geometry/chrome/visibility assertions to full fictional application browser matrix. No app source or saved-data changes; PR draft, unmerged, no deploy. Await full build artifact and exact-head browser suite; no physical iPhone/VoiceOver acceptance.
+
 ## 2026-11-06 — PR143 test contract correction; UNRELEASED
 - Commit 44d559d4 updates outdated shared search-clear source signature regex and adds DS2 style checks after full build #42266163455 failed before artifact creation; five independent mobile/WebKit/writer/DS2/pinned suites passed at preceding head. Exact-source release artifact and full browser QA await re-run. No application changes, migration, merge, deployment or iPhone UAT.
 
