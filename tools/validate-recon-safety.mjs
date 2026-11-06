@@ -20,4 +20,30 @@ for(const invalid of rejected){
   assert.ok(result.error,'Expected an explicit error for '+JSON.stringify(invalid));
   assert.equal(result.mlPerDose,null,'Invalid input must never produce a draw volume');
 }
-console.log('PASS: 14 isolated calculator guards and examples');
+
+const glutathione={vialMg:'1200',bacMl:'6',dose:'400',unit:'mg',syringe:'1mL'};
+assert.equal(check(glutathione).mlPerDose,null,'An oversized selected syringe must suppress drawing guidance');
+assert.match(check(glutathione).error,/exceeds the selected syringe capacity/i);
+assert.equal(check({...glutathione,syringe:'3mL'}).mlPerDose,2,'Changing syringe without changing dose should recover 2 mL mathematical draw');
+const viewEnd=source.indexOf('function calcPillClick(btn)',b);
+assert.ok(viewEnd>b,'Calculator view source must exist');
+const view=new Function('state','esc',source.slice(a,viewEnd)+';return reconCalcView();');
+const markup=view({_recon:glutathione},String);
+const pickerPos=markup.indexOf('id="rc-syringe-choice"');
+const validationPos=markup.indexOf('id="rc-validation"');
+const resultPos=markup.indexOf('id="rc-results"');
+assert.ok(pickerPos>=0&&pickerPos<validationPos&&validationPos<resultPos,
+  'Syringe selector must appear before capacity warning and conditional result');
+assert.match(markup,/data-id="syringe" data-val="3mL"/,
+  '3 mL selector must remain accessible while previous 1 mL is over capacity');
+assert.ok(!markup.slice(resultPos).includes('data-id="syringe"'),
+  'Conditional results must not contain duplicate syringe controls');
+assert.match(markup,/Calculated volume exceeds the selected syringe capacity/,
+  'Capacity warning is still shown with no drawing instruction');
+const refreshed=view({_recon:{...glutathione,syringe:'3mL'}},String);
+assert.ok(refreshed.includes('2.000 mL per dose'),
+  'Valid 3 mL selection can render result without changing entered dose');
+assert.ok(source.includes('selectedSyringeLabel.textContent'),
+  'Dynamic selection must update visible capacity label');
+console.log('PASS: calculator guards + 1200mg/6mL/400mg syringe recovery and selector placement');
+
