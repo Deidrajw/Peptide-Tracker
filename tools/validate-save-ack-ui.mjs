@@ -21,13 +21,17 @@ try{
     doseModal("Retatrutide");
   },theme);
   // Fail with a useful regression message if product-form selection changes.\n  if(await page.locator(".nx-form-choice-sheet").count())throw Error("Save-ack injectable fixture unexpectedly opened product-form picker");\n  await page.locator("#nx-dose-entered").waitFor({state:"visible",timeout:5000});\n  await page.locator("#nx-dose-entered").fill("1");
+  // Assert what a person sees before Review. The canonical hidden field may
+  // be empty until its normal input handler/review reconciliation runs.
+  const visibleBeforeReview=await page.locator("#nx-dose-entered").inputValue();
+  if(visibleBeforeReview!=="1")throw Error("Visible dose amount changed before review: "+JSON.stringify({width,theme,mode,visibleBeforeReview}));
   await page.locator("#nx-dose-review-open").click();
   // Review must expose Confirm Log. Diagnose a rejected review rather than
   // waiting 30 seconds for an intentionally hidden control.
   if(!(await page.locator("#save").isVisible())){
     const review=await page.evaluate(()=>({
       date:document.querySelector(".modal #date")?.value,
-      amount:document.querySelector(".modal #dose")?.value,
+      amount:document.querySelector(".modal #dose")?.value,\n      visibleAmount:document.querySelector(".modal #nx-dose-entered")?.value,
       unit:document.querySelector(".modal #nx-dose-unit")?.value,
       method:document.querySelector(".modal #nx-dose-method")?.value,
       reviewHidden:document.querySelector(".modal .nx-dose-review-stage")?.hidden,
