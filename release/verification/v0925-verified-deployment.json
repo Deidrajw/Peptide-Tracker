@@ -1,0 +1,30 @@
+{
+  "sourceWorkflowRun": 42132318807,
+  "workflowArtifactId": 13463926884,
+  "workflowArtifactMember": "cloudflare-production-parity.json",
+  "workflowArtifactMemberSha256": "713cacd2baf121b4f4e9dac1aa0bf53b0ca4a899a5f27210fc7ad18114f3ab15",
+  "verified": true,
+  "productionUrl": "https://nexuspeplog.pages.dev/",
+  "version": "v0.9.25-beta.1",
+  "verifiedSourceCommit": "1eb093cb692a77f45528c4c03ba40c86c8bff68e",
+  "checkedAt": "2026-11-05T23:49:41.215Z",
+  "matchedFiles": [
+    "index.html",
+    "assets/css/nexus.css",
+    "assets/css/nexus-disclosures.css",
+    "assets/css/nexus-contrast.css",
+    "assets/js/01-nexus.js",
+    "assets/js/02-nexus.js",
+    "assets/js/03-nexus.js",
+    "assets/js/04-nexus.js",
+    "assets/js/05-nexus.js",
+    "assets/js/06-nexus.js",
+    "assets/js/07-nexus.js",
+    "assets/js/08-nexus.js",
+    "assets/js/09-nexus.js",
+    "assets/js/10-nexus.js",
+    "assets/js/11-nexus.js",
+    "assets/js/12-nexus.js"
+  ],
+  "note": "Provenance reference to completed GitHub Actions run/artifact, not an assertion of medical safety or physical iPhone acceptance."
+}
