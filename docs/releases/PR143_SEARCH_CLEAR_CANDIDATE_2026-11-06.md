@@ -15,3 +15,8 @@
 **Release state:** Proposed/coded development only; not merged, deployed or physical-device accepted. No deployment authorized.
 
 **Next action:** Validate current protected CI, implement safe final search selection/query separation in outstanding comboboxes, rerun exact-source full-app QA, then qualify final LIVE/DEMO packages; request physical iPhone acceptance only when independent sprint work complete.
+
+## 2026-11-06 later qualification checkpoint
+- Independently rebuilt full-current-app 26-file LIVE candidate from official artifact c426ae52 and the only two subsequent changed app modules (08 Discover, 11 Protocol Builder). Git blob parity checked against GitHub for all changed JS files 03,04,05,08,11,12; index/CSS source blobs also matched. LIVE ZIP CRC PASS, full fictional isolated standalone DEMO equals offline DEMO index.html bytes and ZIP CRC PASS.
+- Actual Chromium on reconstructed exact current app source 320/390 × light/dark 4/4 PASS: Protocol Builder compound query clearing with retained SVG magnifier, 44px accessible clear X and no JS errors; Discover existing clear control is 44px/ARIA and clears query. These are local real browser tests, not physical iPhone or exact-head GitHub CI.
+- Latest corrected GitHub Actions build #42256170024 remains IN PROGRESS at documentation checkpoint. WebKit/mobile/writer/DS2 SUCCESS, pinned Chromium PENDING. Current remaining unsafe-to-clear selected-value comboboxes are tracked as incomplete, not described as fully finished. No merge/deploy.
