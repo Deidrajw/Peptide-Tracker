@@ -1,3 +1,7 @@
+## 2026-11-06 — PR142 restore-warning error semantics candidate (NOT RELEASED)
+- Targeted fix 14cdebb9 in assets/js/11-nexus.js distinguishes CAS/previous uncertainty from real device-storage errors using shared classifier; verified restore removes previously displayed warning. Fictional regression e166f337 and workflow f337723c. Existing restore still replaces instead of merges, uses recovery-copy + guarded CAS/readback. No data migration, live user data accessed or modified, merge or Cloudflare deployment.
+- Latest CI and exact-artifact integrity, physical iPhone acceptance, VoiceOver and independent calculator safety PENDING/UNVERIFIED. Publication version remains production v0.9.25-beta.1. Do not mark release completed or deploy without explicit approval.
+
 ## 2026-11-05 — PR142 scope extended: paused same-day dose visibility, NOT RELEASED
 - Source 9009000b (Today source list, paused record explanation) and 041501d5 (render paused saved dose as real Completed card), test 085ae514 + workflow 20fdd366. Found factual active-only filter in Home, separate from original save warning. Preserves status, schedule denominator, history, vial source and inventory untouched; historical logs must remain visible independent of paused status. Local Chromium 320/390 light/dark 4/4 PASS using fictional fixtures, candidate full-app DEMO + 26-file LIVE ZIP CRC PASS. Exact current GitHub CI/physical iPhone acceptance still pending, NOT MERGED/DEPLOYED.
 
