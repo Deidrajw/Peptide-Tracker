@@ -378,7 +378,7 @@ function nexusBackedDoseStorageError(error){
   const code=String(error?.name||"");
   const message=String(error?.message||"");
   return ["QuotaExceededError","SecurityError","NotAllowedError"].includes(code)||
-    /Storage readback mismatch|Storage adapter required|Unable to preserve pre-upgrade state/i.test(message);
+    /Storage readback mismatch|Storage adapter required|Unable to preserve pre-upgrade state|quota|localStorage|storage write failed/i.test(message);
 }
 function nexusBackedDoseFailureMessage(error){
   const message=String(error?.message||"");
