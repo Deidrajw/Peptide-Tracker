@@ -1,3 +1,6 @@
+## 2026-11-05 — P0 storage-warning iPhone layout (PR142 draft)
+- True device-storage warning uses a 44x44 outlined dismiss-X with accessible label, below content and above bottom nav; planner/CAS rejection no longer mislabels device as unable to save. Isolated full-app Chromium 320/390 light/dark 4/4 PASS: visible/dismissible/reappears on another simulated failure, zero browser errors; visual dark-mode 320/390 screenshots inspected. Physical Safari keyboard, safe-area, VoiceOver and real-device screenshots NOT ACCEPTED. No release approval.
+
 ## 2026-11-05 — PR135 Combo Dose modal header correction
 - Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
 
