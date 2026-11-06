@@ -24,6 +24,13 @@ for(const invalid of rejected){
 const glutathione={vialMg:'1200',bacMl:'6',dose:'400',unit:'mg',syringe:'1mL'};
 assert.equal(check(glutathione).mlPerDose,null,'An oversized selected syringe must suppress drawing guidance');
 assert.match(check(glutathione).error,/exceeds the selected syringe capacity/i);
+assert.equal(check(glutathione).conc,200,
+  'Overflow must retain the correctly calculated concentration for user review');
+assert.equal(check(glutathione).doseMg,400,
+  'Overflow must retain the entered dose mass without silently modifying it');
+assert.equal(check({...glutathione,syringe:'30u'}).mlPerDose,null,
+  'Switching to another undersized syringe must remain fail-closed');
+
 assert.equal(check({...glutathione,syringe:'3mL'}).mlPerDose,2,'Changing syringe without changing dose should recover 2 mL mathematical draw');
 const viewEnd=source.indexOf('function calcPillClick(btn)',b);
 assert.ok(viewEnd>b,'Calculator view source must exist');
