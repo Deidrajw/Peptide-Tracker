@@ -1,3 +1,10 @@
+## 2026-11-05 — PR136 expanded calculator QA checkpoint
+- Verified main a0482abc (three documentation-only commits beyond baseline cbd84c93). Draft PR136 unmerged. Application changes b2905eb8 picker, 7be76b5c live concentration target, 341467a3 concentration preserved on capacity error; regression script 648d2404. No deployment.
+- Live-source V8 check for 1200mg / 6mL / 400mg: 1mL produces capacity error with all five syringe choices visible, 3mL produces 2.000mL result with no dose re-entry, valid concentration remains 200.00mg/mL in both states. JS parse and expanded test under V8 assertion shim PASS. NOT a browser/clinical certification.
+- Earlier source b2905eb8: shared writer #42134349692, mobile #42134349658, DS2 nested #42134349694, pinned browser #42134349676, WebKit #42134349701 SUCCESS; full build #42134349679 still in progress at checkpoint. These predate latest concentration fixes; exact latest-head QA pending.
+- Nasal math-only calculator separately tracked in issue #138, not yet coded; LIVE nasal operations remain gated off. No localStorage migration, production record access or inventory change.
+- ONE NEXT ACTION: obtain exact-head PR136 CI and full package parity, then physical iPhone acceptance and explicit release approval.
+
 ## 2026-11-05 — Draft PR #136 calculator syringe recovery
 - Verified main baseline cbd84c93b7fe0a79c9216e1ecc20948d167d42c4 (v0.9.25-beta.1). Branch fix/calculator-syringe-recovery-20261105, committed app source b2905eb8a593b59f9e4b50e275f58f126986c7af, draft PR #136 unmerged/undeployed.
 - Physical iPhone user report: a dose over the remembered 1 mL syringe triggers validation hiding the entire results section and its syringe selector; user had to lower the dose as a workaround. Scoped fix moves selectable syringe capacities above validation/results; retains original fail-closed out-of-capacity and sub-0.5 U-100 visualization guards, with no new drawing instruction. Selected capacity label updates.
