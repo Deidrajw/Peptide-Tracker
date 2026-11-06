@@ -1,3 +1,7 @@
+## 2026-11-06 — PR143 independent local Chromium search-clear test 4/4 PASS (partial feature)
+- Downloaded official failed-build artifact #13483236598 at source 5fba0770, extracted complete fictional full-app DEMO, ran local Chromium via Playwright set_content 320px/390px x dark/light. In supplementModal with fictional Magnesium/Creatine catalogue: type Mag, select matching supplement, press accessible X, assert query empty, prior selected-count unchanged, clear button hidden at empty, its bounding box width and height >=44px, and zero page errors. 4/4 configurations PASS. This is LOCAL source browser evidence, not exact-latest-head CI, WebKit/iPhone, and it covers only the supplement modal (not all searchable pickers).
+- On same source, local Chromium fixture supplies→kits transition with 3 fictional kit IDs rendered as expected; unable to reproduce older CI Stash missing-kit assertion locally. Strict CI gate stays FAILED pending exact diagnostic rerun; test diagnostic cfeda32b committed. No merge/deploy.
+
 ## 2026-11-06 — PR143 Stash card browser failure unresolved
 - Full QA #42174178408 FAIL on prior search source 5fba0770: missing sealed kit 99001 from expected Stash card DOM after switching Supplies to Kits; protected dose suites preceding passed, but entire CI is NOT PASS.
 - Test-only cfeda32b adds precise failure diagnostics for state subtab/filter/group/search, fixture and rendered IDs, viewport/theme/mode. Strict assertion remains blocking; current head CI pending. iPhone and released package checks NOT TESTED.
