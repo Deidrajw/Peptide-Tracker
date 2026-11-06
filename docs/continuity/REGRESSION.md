@@ -1,3 +1,7 @@
+## 2026-11-06 — PR143 Stash card browser failure unresolved
+- Full QA #42174178408 FAIL on prior search source 5fba0770: missing sealed kit 99001 from expected Stash card DOM after switching Supplies to Kits; protected dose suites preceding passed, but entire CI is NOT PASS.
+- Test-only cfeda32b adds precise failure diagnostics for state subtab/filter/group/search, fixture and rendered IDs, viewport/theme/mode. Strict assertion remains blocking; current head CI pending. iPhone and released package checks NOT TESTED.
+
 ## 2026-11-06 — Issue #140 supplement search-clear first slice (UNRELEASED)
 - User authorized the four-item sprint including issue #140, with no merge/deploy. Separate feature branch feature/search-clear-controls-issue140-20261106 based on main a0482abc42060ad4b31108538a207bf983df90d7, deliberately isolated from P0 draft PR142 and calculator draft PR136.
 - Implemented reusable nexusWireSearchClear in 05-nexus.js, with 44px outline-X button, nonempty-only visibility, accessible name, query-only clear and focus restoration. Applied to DAILY CHECK-IN supplements, supplement logging modal, and Settings supplements; 12-nexus.js reattaches controlled Settings search handlers after renderBody replaces the input. No selection/dose/stock/history or localStorage writes on clear.
