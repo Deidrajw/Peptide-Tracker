@@ -157,6 +157,22 @@ function test(){
     [validate({...m,publication:{status:'published'}},prev,[],true).issues.length>0,'false published status blocked']
   ];
   for(const [passed,label] of checks)if(!passed)throw Error('FAIL '+label);
+  // A release-publication draft must prove the real checked-in Git change is
+  // metadata-only, not merely pass a synthetic boolean fixture.
+  const current=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
+  if(current.publication?.status==='published'){
+    const base=refBase();
+    try{
+      const earlier=JSON.parse(git('show',base+':'+manifestPath));
+      const changed=git('diff','--name-only',base,'HEAD').split('\n').filter(Boolean);
+      if(earlier.publication?.status==='unverified' &&
+         changed.includes('assets/js/02-nexus.js') &&
+         !publicationOnlyEligible(current,earlier,changed,base))
+        throw Error('Published metadata draft failed real provenance/JS-only integrity gate');
+    }catch(error){
+      throw Error('Publication-only self-test failed: '+error.message);
+    }
+  }
   console.log('Release readiness tests PASS '+checks.length+'/'+checks.length);
 }
 if(process.argv.includes('--self-test'))test();else run();
