@@ -1,3 +1,8 @@
+## 2026-11-06 — Nasal calculator draft PR144 opened; source precision tightened
+- Draft PR #144 https://github.com/Deidrajw/Peptide-Tracker/pull/144 targets PR136 branch rather than main. Source fix 467833de removes floating epsilon from theoretical actuation count, conservatively floors finalMl/pumpMl without rounding up. LIVE nasal administration remains OFF; app data unchanged.
+- Exact-head CI only DS2 nested navigation #42175209673 succeeded at last observed PR144 head; release/browser/clinical safety tests not yet qualified on PR144 dependent base. Standalone full-app DEMO/LIVE release files not created. No merge or deployment.
+- ONE NEXT ACTION: qualify PR136, then run exact-source PR144 full numerical, Chromium/WebKit/mobile safety checks and inspect artifacts before iPhone UAT.
+
 ## 2026-11-06 — Issue #138 nasal calculator separate read-only candidate (NOT RELEASED)
 - Branch feature/read-only-nasal-calculator-issue138-20261106 based on draft PR #136 source 0f6ac840470f54c7eb6cfe70f7de92cf06c5715c, not main. Keep separate dependent PR; calculator safety PR136 and P0 PR142 remain unmerged/undeployed. No production data writes.
 - Implemented a two-mode More → Dose Calculator switch in 10-nexus.js. Existing Injection calculator untouched apart from adding mode tabs. Nasal spray mode computes theoretical concentration mg/mL, mcg per calibrated actuation, maximum theoretical actuations from **confirmed final solution volume**, entered compound mass in mg/mcg and explicitly measured pump mL/actuation. No IU conversion, automatic dose recommendation or hidden default pump size. Input validation fail-closed for invalid/nonfinite/negative/oversized/unsafe numeric values.
