@@ -1,3 +1,7 @@
+## 2026-11-06 — Search clear fictional local Chromium PASS in one context; app-wide incomplete
+- Downloaded original CI artifact #13483236598 from source 5fba0770 and independently executed Playwright Chromium set_content on complete fictional app at 320/390 x dark/light. Supplement modal clear-query 44px and selection preservation PASS 4/4; no page errors. Local Stash kit fixture transition rendered all three expected IDs; previous CI Stash failure not reproduced. Strict full build gate remains FAIL at #42174178408; new test-diagnostic CI #42192075358 in progress at checkpoint. Do not conflate targeted local passes with completed app-wide controls or latest branch QA.
+- ONE NEXT ACTION: read PR143 diagnostics, fix exact failure, extend clear controls across every searchable picker and run full-source QA; keep PR draft/no deployment.
+
 ## 2026-11-06 — Issue140 failed full QA triage; Stash gate retained
 - Full build/parity #42174178408 FAILED after fictional Log Dose flows at tools/validate-stash-cards.mjs:69: Sealed standard kit missing following fixture transition Supplies to Kits. Five other workflow groups on old 5fba0770 SUCCESS. Root cause NOT established; preserve assertion.
 - Test-only diagnostic cfeda32b388480b4aecffd7838644d7e2261f65a reports current stash subtab/filter/group/search, expected kit IDs, rendered kit IDs, and viewport/theme/mode on failure. Search app implementation unchanged; latest CI pending. App-wide picker audit and selection-preserving browser tests incomplete; no merge/deploy.
