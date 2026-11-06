@@ -1,3 +1,6 @@
+## 2026-11-06 — P0 retried diagnostic full QA build PASSED, writer cancelled/retrying
+- #42192563916 full build/browser SUCCESS on test-only 2dde3713 over unchanged P0 application source 9c6bc851. 8 fictional failed-save acknowledgement configurations PASS; math diagnostic 80/80. Pinned Chromium, WebKit, mobile, DS2 nested PASS. Shared writer #42192563557 has 2 jobs SUCCESS and one CANCELLED at 127807887803, rerun explicitly requested: NOT VERIFIED until result. Previously intermittent #nx-dose-entered absence did not reproduce in latest passing build, root cause remains unconfirmed. Preserve strict gate and report intermittent nature, no release.
+
 ## 2026-11-06 — P0 new browser amount-field failure; strict gate remains
 - Later full build #42191143165 FAIL (docs-only head after prior six PASSES): #nx-dose-entered locator never visible in tools/validate-save-ack-ui.mjs at 5s, after Log Dose end-to-end 256 protected flows PASS. Other five workflows passed. Root cause NOT VERIFIED; treat latest release qualification as blocked, do not waive gate.
 - Test-only 2dde371 adds failure diagnostics (modal heading, form chooser count, amount/review DOM controls, fixture route/vial/prepared sources, width/theme/LIVE-DEMO mode) while preserving original assertion. New CI pending, physical iPhone NOT TESTED, no merge/deploy.
