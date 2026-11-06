@@ -392,6 +392,7 @@ function wireBody() {
     const empty=$("#nx-journal-search-empty");
     if(empty)empty.hidden=visibleDays!==0;
   };
+  if(journalSearch)nexusWireSearchClear(journalSearch,()=>journalSearch.oninput?.(),"Clear activity log search");
   const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
   const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
   document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
