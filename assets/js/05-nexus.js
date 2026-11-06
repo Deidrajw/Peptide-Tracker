@@ -436,6 +436,7 @@ function comboDoseModal() {
     else if(empty)empty.remove();
   };
   comboSearch.oninput=filterChoices;
+  nexusWireSearchClear(comboSearch,filterChoices,"Clear combo compound search");
   comboList.onclick=e=>{
     const btn=e.target.closest(".combo-compound-toggle");
     if(!btn)return;
