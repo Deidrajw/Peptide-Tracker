@@ -45,7 +45,7 @@ assert.ok(refreshed.includes('2.000 mL per dose'),
   'Valid 3 mL selection can render result without changing entered dose');
 assert.match(markup,/id="rc-conc-hint"/,
   'Concentration hint must have the live-update target ID');
-assert.match(markup,/Creates 200.00 mg\\/mL solution/,
+assert.ok(markup.includes('Creates 200.00 mg/mL solution'),
   '1200 mg in 6 mL should show 200 mg/mL, not a stale prior concentration');
 assert.ok(source.includes('if(concEl)concEl.textContent=conc?'),
   'Changed input must refresh the concentration without rebuilding focused inputs');
