@@ -3337,6 +3337,30 @@ function nexusConfigureCheckinSheet(modal, actionIds) {
   if(!footer.children.length)footer.remove();
 }
 
+// Search clear affordance: UI-only, does not mutate selected items or stored logs.
+// Reuse across check-in and supplement modal, with a 44px target for iPhone.
+function nexusWireSearchClear(input, onClear, label) {
+  if (!input || input.parentElement?.classList.contains("nx-search-clear-wrap")) return;
+  const wrapper=document.createElement("span");
+  wrapper.className="nx-search-clear-wrap";
+  wrapper.style.cssText="position:relative;display:block;width:100%;margin-bottom:10px";
+  input.parentNode.insertBefore(wrapper,input);
+  wrapper.appendChild(input);
+  input.style.marginBottom="0";
+  input.style.width="100%";
+  input.style.paddingRight="52px";
+  const clear=document.createElement("button");
+  clear.type="button";clear.className="nx-search-clear";
+  clear.setAttribute("aria-label",label||"Clear search");
+  clear.textContent="×";
+  clear.style.cssText="position:absolute;right:0;top:0;min-width:44px;min-height:44px;height:100%;border:0;background:transparent;color:var(--t2);font-size:23px;cursor:pointer";
+  wrapper.append(clear);
+  const refresh=()=>{clear.hidden=!input.value;};
+  input.addEventListener("input",refresh);
+  clear.onclick=()=>{input.value="";onClear?.();refresh();input.focus();};
+  refresh();
+}
+
 // ─── Daily check-in modal ────────────────────────────────────────────────────
 function todayLogSheet(log) {
   const mood = MOODS.find(m=>m.v===log.mood);
@@ -3657,7 +3681,7 @@ function dailyModal(existing, prefillDate) {
       suppSearch.value="";suppDropdownOpen=false;renderSuppSearch();
     });
   };
-  if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};renderSuppSearch();}
+  if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};nexusWireSearchClear(suppSearch,()=>{suppDropdownOpen=false;renderSuppSearch();},"Clear supplement search");renderSuppSearch();}
   nexusWireSupplementShortcuts(m,()=>m.querySelector("#date").value,suppTaken2,()=>{suppSelectionTouched=true;suppSelectedOpen=true;renderSuppSearch();});
   const suppDateInput=m.querySelector("#date");
   if(suppDateInput)suppDateInput.addEventListener("change",()=>{
@@ -3735,7 +3759,7 @@ function supplementModal(prefillDate) {
       input.value="";dropdownOpen=false;paint();
     });
   };
-  input.oninput=()=>{dropdownOpen=true;paint();};paint();
+  input.oninput=()=>{dropdownOpen=true;paint();};nexusWireSearchClear(input,()=>{dropdownOpen=false;paint();},"Clear supplement search");paint();
   nexusWireSupplementShortcuts(modal,()=>today,taken,()=>{selectedOpen=true;paint();});
   modal.querySelector("#suppsave").onclick=async()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);
