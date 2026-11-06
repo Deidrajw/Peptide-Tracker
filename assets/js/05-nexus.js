@@ -3340,7 +3340,7 @@ function nexusConfigureCheckinSheet(modal, actionIds) {
 
 // Search clear affordance: UI-only, does not mutate selected items or stored logs.
 // Reuse across check-in and supplement modal, with a 44px target for iPhone.
-function nexusWireSearchClear(input, onClear, label) {
+function nexusWireSearchClear(input, onClear, label, options={}) {
   if (!input || input.parentElement?.classList.contains("nx-search-clear-wrap")) return;
   const wrapper=document.createElement("span");
   wrapper.className="nx-search-clear-wrap";
@@ -3356,7 +3356,7 @@ function nexusWireSearchClear(input, onClear, label) {
   clear.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
   clear.style.cssText="position:absolute;right:0;top:0;min-width:44px;min-height:44px;height:100%;border:0;background:transparent;color:var(--t2);font-size:23px;cursor:pointer";
   wrapper.append(clear);
-  const refresh=()=>{clear.hidden=!input.value;};
+  const refresh=()=>{clear.hidden=!input.value || (typeof options.isQuery==="function" && !options.isQuery());};
   input.addEventListener("input",refresh);
   clear.onclick=()=>{input.value="";onClear?.();refresh();(input.isConnected?input:(input.id?document.getElementById(input.id):null))?.focus();};
   refresh();
