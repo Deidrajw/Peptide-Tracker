@@ -2130,7 +2130,7 @@ function nexusAddFormulationModal(type,existingId=null){
   const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
   const closeMatches=()=>{matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false");};
   let lastChosen=compoundInput.value,queryActive=false;
-  const rememberChosen=()=>{lastChosen=compoundInput.value;queryActive=false;const x=m.querySelector(".nx-form-compound-combobox .nx-search-clear");if(x)x.hidden=true;};
+  const rememberChosen=()=>{lastChosen=compoundInput.value;queryActive=false;const x=m.querySelector(".nx-form-compound-combobox .nx-search-clear");if(x){x.hidden=true;x.style.display="none";}};
   function refreshCompoundMatches(){
     if(existing)return;
     const query=compoundInput.value.trim().toLocaleLowerCase();
