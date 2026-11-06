@@ -1,3 +1,7 @@
+## 2026-11-05 — Active calculator delivery checkpoint
+- PR136 implements syringe overflow recovery and stale concentration fix, protected no-draw guard. Latest app source 341467a3, test 648d2404, local isolated actual Chromium 320/390 dark/light 4/4 PASS; full LIVE and fictional DEMO candidate integrity reconstructed/validated. Earlier six GitHub CI workflows PASS on b2905eb8 only; exact latest app-source CI pending. No merge/deploy or data changes.
+- NEXT after PR136 qualification: nasal spray *read-only* calculation mode tracked as issue #138. No nasal LIVE writer/administration gate enablement permitted by this design issue.
+
 ## 2026-11-05 — PR135 next QA priority: approved session-first hierarchy
 - User approved shared-session-first Combo Setup; JS/CSS and browser assertions coded at 929ac0e9/f8d5ee00/3daaf99c on draft branch. Next: exact-source pinned browser CI, full LIVE/DEMO artifact integrity, 320/390 visual and loaded-font check, then iPhone UAT. Five regular workflow dependency failures and separate stale release notes gate remain blockers. No merge/deploy approval.
 
