@@ -3353,10 +3353,12 @@ function nexusWireSearchClear(input, onClear, label, options={}) {
   const clear=document.createElement("button");
   clear.type="button";clear.className="nx-search-clear";
   clear.setAttribute("aria-label",label||"Clear search");
-  clear.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
-  clear.style.cssText="position:absolute;right:0;top:0;min-width:44px;min-height:44px;height:100%;border:0;background:transparent;color:var(--t2);font-size:23px;cursor:pointer";
+  clear.innerHTML='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  // A quiet 17px DS2 glyph inside an accessible 44px hit area. No extra button chrome.
+  clear.style.cssText="position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;height:44px;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center;border:0;border-radius:0;box-shadow:none;background:transparent;color:var(--t4);cursor:pointer";
+
   wrapper.append(clear);
-  const refresh=()=>{clear.hidden=!input.value || (typeof options.isQuery==="function" && !options.isQuery());};
+  const refresh=()=>{const show=!!input.value && (typeof options.isQuery!=="function" || options.isQuery());clear.hidden=!show;clear.style.display=show?"grid":"none";};
   input.addEventListener("input",refresh);
   clear.onclick=()=>{input.value="";onClear?.();refresh();(input.isConnected?input:(input.id?document.getElementById(input.id):null))?.focus();};
   refresh();
