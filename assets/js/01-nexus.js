@@ -126,7 +126,7 @@ async function nexusCommitCurrentState(){
    if(typeof _nexusLastSavedSnapshot==="string")state=JSON.parse(_nexusLastSavedSnapshot);
   }catch(restoreError){console.error("Nexus last verified snapshot could not be restored",restoreError)}
   console.error("Nexus reviewed legacy transaction rejected",error);
-  if(nexusBackedDoseStorageError(error))showSaveWarning();
+  if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(error?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(error?.message||"")))showSaveWarning();
   else if(typeof showErrorBanner==="function")
     showErrorBanner("Save blocked: the current state could not be verified. Reload and review your data before retrying.");
   return false;
@@ -280,11 +280,11 @@ async function nexusCommitScopedStateChange(operation){
   // exclusive lock. Another tab's edits can never be silently rebased.
   const result=await writer.transaction(durable,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
   state={...result.next,...transient};_nexusLastSavedSnapshot=writer.expected();
-  clearSaveWarningAfterVerifiedWrite();
+  if(typeof clearSaveWarningAfterVerifiedWrite==="function")clearSaveWarningAfterVerifiedWrite();
   return true;
  }catch(error){
   console.error("Scoped state save rejected",error);
-  if(nexusBackedDoseStorageError(error))showSaveWarning();
+  if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(error?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(error?.message||"")))showSaveWarning();
   else if(typeof showErrorBanner==="function")
     showErrorBanner("Changes were not saved because the current saved state could not be verified. Review the latest data before retrying.");
   return false;
