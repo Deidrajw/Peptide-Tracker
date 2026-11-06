@@ -59,6 +59,12 @@ function showSaveWarning() {
   warning.append(copy,dismiss);
   document.body.appendChild(warning);
 }
+// A successful verified write resolves a previous save-error notice.
+function clearSaveWarningAfterVerifiedWrite() {
+  const banner=document.getElementById("nexus-storage-warning");
+  if(banner)banner.remove();
+  _saveWarningShown=false;
+}
 // All durable application state writes share one exclusive Web Lock and one
 // storage key. The retired synchronous gateway is forbidden by CI. Reviewed
 // optimistic legacy handlers await the exclusive write and roll back on failure.
@@ -274,6 +280,7 @@ async function nexusCommitScopedStateChange(operation){
   // exclusive lock. Another tab's edits can never be silently rebased.
   const result=await writer.transaction(durable,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
   state={...result.next,...transient};_nexusLastSavedSnapshot=writer.expected();
+  clearSaveWarningAfterVerifiedWrite();
   return true;
  }catch(error){
   console.error("Scoped state save rejected",error);
@@ -437,6 +444,7 @@ async function nexusCommitBackedPhysicalDose(entry){
     const result=await writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry));
     state=result.next;
     _nexusLastSavedSnapshot=writer.expected();
+    clearSaveWarningAfterVerifiedWrite();
     return result;
   }catch(e){
     console.error("Nexus exclusive physical dose failed",e);
