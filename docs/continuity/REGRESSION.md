@@ -1,3 +1,7 @@
+## 2026-11-05 — v0.9.25-beta.1 post-release exact-source suite closure
+- SUCCESS full build/browser #42132318868, source 1eb093cb, official artifact #13464777105; 8/8 browser matrix (LIVE/DEMO 320/390 dark/light) PASS. Outer 549-entry ZIP CRC PASS, LIVE 26-entry ZIP CRC PASS, ordered numbered scripts/manifest source SHA PASS, complete isolated DEMO and offline byte parity PASS. Cloudflare source/version parity #42132318807 SUCCESS; docs-only current-head parity #42132773345 SUCCESS. Earlier PR source six exact-source workflows PASS.
+- Not evidence of actual download of DM Sans/Fraunces/DM Mono, physical Safari/VoiceOver/Dynamic Type, or independent clinical calculator certification; record those as NOT TESTED. No migration or user data access.
+
 ## 2026-11-05 — PR135 Combo header DS2 typography regression
 - Scoped modal class and semantic header with SVG close JS 06e957d1; DS2 style CSS 12e9a828. Local full-app fictional Chromium 320/390 x light/dark 4/4 PASS: computed title font-family DM Sans, font-size 21/23px, font-weight 750, kicker 11px/700, close 48px x 48px, no overlap, dismissal functional, zero page errors. Exact Git blob hash and LIVE/offline package CRC PASS.
 - Not accepted: real iPhone, real online font faces, VoiceOver/Dynamic Type, GitHub exact-head full QA. Calculation safety remains separately gated. No production changes.
