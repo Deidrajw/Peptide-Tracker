@@ -1,3 +1,7 @@
+## 2026-11-05 — Calculator concentration should survive capacity-only errors
+- Keep valid concentration and the syringe selector visible during a capacity warning, but withhold draw instruction/result. Reuse the existing live update target rc-conc-hint so changing vial input refreshes concentration without destroying focused fields. This does not lower the original drawing safety guard.
+- Nasal spray math-only calculator tracked separately in issue #138. Do not enable nasal stock/admin LIVE flags as a side effect of calculator UI.
+
 ## 2026-11-05 — Calculator recovery UX; nasal calculator proposed
 - User reported inability to choose a larger syringe when previous selected capacity causes a warning; preserve access to capacity choices even when rendering a drawing guide is unsafe. Avoid the workaround requiring a smaller temporary dose.
 - Keep calculation validity distinct from equipment capacity feedback. Fail closed on drawing visualization when over capacity. Small scoped UX correction on draft PR136; not merge/deploy permission.
