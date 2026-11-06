@@ -314,7 +314,7 @@ function wireBody() {
       const action=card.dataset.action||"";
       const [type,name]=action.split("|");
       if(type==="dose"&&name){ doseModal(name); }
-      else if(type==="checkin"){ todayLogSheet(); }
+      else if(type==="checkin"){ dailyModal(); }
       else if(type==="stash"){ tab="stash"; render(); window.scrollTo(0,0); }
       else if(type==="ics"&&name){ exportICSWithTimePicker(name); }
       else if(type==="protocol"&&name){ state._compoundIntel=name; state._intelReturn={tab, _aminoSub:state._aminoSub, _learnSub:state._learnSub, _discoverOpen:state._discoverOpen}; render(); window.scrollTo(0,0); }
