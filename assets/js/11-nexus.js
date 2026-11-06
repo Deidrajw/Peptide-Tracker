@@ -594,6 +594,8 @@ function importData(e) {
           const result=await writer.transaction(original,()=>({next}));
           _nexusLastSavedSnapshot=writer.expected();
           state=result.next;
+          // A verified restore is also a verified durable write.
+          clearSaveWarningAfterVerifiedWrite();
         }
         closeModal();render();
         alert(oldRaw!==null?"Backup restored. A local recovery copy of the previous records was saved.":"Backup restored. No previous saved browser records were available for a recovery copy.");
@@ -602,7 +604,10 @@ function importData(e) {
         // Do not attempt a second blind write on failure: storage may have
         // advanced concurrently, or the previous write outcome may be unknown.
         // The independent recovery backup above remains available to the user.
-        showSaveWarning();
+        // A stale compare-and-swap or uncertain prior transaction is not proof
+        // that this device cannot save. Preserve the real storage alert for
+        // quota, access and readback failures only.
+        if(nexusBackedDoseStorageError(err))showSaveWarning();
         console.error("Backup restore failed",err);
         const reason=String(err?.message||err||"");
         // A stale CAS rejects BEFORE writing, unlike uncertain write/readback
