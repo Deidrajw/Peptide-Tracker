@@ -8,7 +8,7 @@ const handler=source.slice(start,end);
 const refs=[...handler.matchAll(/if\(!await nexusCommitCurrentState\(\)\)\{showErrorBanner\("Dose could not be saved/g)];
 if(refs.length!==3)throw Error("Expected 3 guarded exclusive-CAS Log Dose paths, found "+refs.length);
 if(!handler.includes("await nexusCommitUntrackedDose(name,dose,editingUntracked)")||!root.includes("writer.transaction(state,prior=>({next:apply(prior)}))"))throw Error("Exclusive untracked Log Dose acknowledgement missing");
-if(!handler.includes("await nexusCommitBackedPhysicalDose(")||!root.includes("writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry))"))throw Error("Exclusive backed physical dose acknowledgement missing");
+if(!handler.includes("await nexusCommitBackedPhysicalDose(")||!(root.includes("const expected=writer.expected();")&&root.includes("const durable=JSON.parse(expected);")&&root.includes("writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry))")))throw Error("Exclusive backed physical dose acknowledgement missing");
 if(!root.includes("async function nexusCommitCurrentState()")||!root.includes("await writer.transaction(before,()=>({next:proposed}))"))throw Error("Exclusive CAS readback acknowledgement missing");
 if(!root.includes("async function nexusCommitCurrentState(){\n if(_demoActive)return true;")||!root.includes("// DEMO remains strictly in memory; no live localStorage writes or locks."))throw Error("DEMO save acknowledgement or isolated memory boundary missing");
 if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved.'))throw Error("Combo save acknowledgement missing");
