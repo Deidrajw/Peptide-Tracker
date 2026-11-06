@@ -1,3 +1,7 @@
+## 2026-11-06 — Future UX request captured in Issue #145; current work stays PR143
+- Created [Issue #145](https://github.com/Deidrajw/Peptide-Tracker/issues/145) for protocol-first multi-compound management and ingredient overlap visibility. User examples A–D captured as non-clinical design fixtures; no protocol changes authorized or made. Added roadmap entry. PR143 search-clear remains sole active sprint and requires full exact-head browser/artifact QA. P0 and clinical safety gates remain separate, no merge/deploy.
+- ONE NEXT ACTION: finish PR143 full build/browser qualification and verified exact-source full-app DEMO/LIVE packages; defer Issue #145 design preview until current priority is done.
+
 ## 2026-11-06 — PR143 DS2 browser measurement gate added (UNRELEASED)
 - Test-only 57938562ede6cb1ba1b648e8715f1e3b930fa05b extends tools/validate-search-clear-ui.mjs from functional-only checks to measured 17px SVG/1.8 stroke, vertical centering (<1px), 44px target, no button chrome, muted icon relative to input, hidden after clear across LIVE/DEMO × 320/390 × dark/light. Existing selection, draft and history checks retained. These are new assertions, NOT passed browser evidence until exact-head CI completes.
 - Prior test signature correction 44d559d4 triggered #42272145892 full build; in progress at checkpoint. New source triggers fresh CI. Complete exact-source LIVE/full-app DEMO and real iPhone still pending. No release or production changes.
