@@ -3352,7 +3352,7 @@ function nexusWireSearchClear(input, onClear, label) {
   const clear=document.createElement("button");
   clear.type="button";clear.className="nx-search-clear";
   clear.setAttribute("aria-label",label||"Clear search");
-  clear.textContent="×";
+  clear.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
   clear.style.cssText="position:absolute;right:0;top:0;min-width:44px;min-height:44px;height:100%;border:0;background:transparent;color:var(--t2);font-size:23px;cursor:pointer";
   wrapper.append(clear);
   const refresh=()=>{clear.hidden=!input.value;};
