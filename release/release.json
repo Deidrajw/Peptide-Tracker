@@ -3,9 +3,9 @@
   "version": "v0.9.25-beta.1",
   "channel": "beta",
   "publication": {
-    "status": "unverified",
-    "publishedAt": null,
-    "commit": null,
+    "status": "published",
+    "publishedAt": "2026-11-05T23:50:08.443Z",
+    "commit": "1eb093cb692a77f45528c4c03ba40c86c8bff68e",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
