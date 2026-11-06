@@ -664,7 +664,8 @@ function nxNasalCalcValidate(v){
   if(!Number.isFinite(massMg)||massMg<=0)return {...empty,error:"Converted mass must be positive and finite."};
   if(pumpMl>finalMl)return {...empty,error:"Pump volume exceeds the entered final solution volume."};
   const mgPerMl=massMg/finalMl,mcgPerActuation=mgPerMl*pumpMl*1000;
-  const theoreticalActuations=Math.floor(finalMl/pumpMl+1e-10);
+  // Conservative theoretical upper bound; never round up to an extra actuation.
+  const theoreticalActuations=Math.floor(finalMl/pumpMl);
   if(!Number.isFinite(mgPerMl)||!Number.isFinite(mcgPerActuation)||mcgPerActuation<=0||
      !Number.isSafeInteger(theoreticalActuations)||theoreticalActuations<=0)
     return {...empty,error:"The entered values are outside the calculator's safe numeric range."};
