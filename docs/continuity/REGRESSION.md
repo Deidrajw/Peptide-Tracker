@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 measured search-clear UI coverage committed, awaiting CI
+- tools/validate-search-clear-ui.mjs commit 57938562 adds runtime computed SVG 17x17, 1.8 stroke, <1px centre alignment, no border/background, muted icon vs input, 44px target, aria name, and hidden-after-clear assertions for six search contexts in eight fictional LIVE/DEMO width/theme sessions. Existing selected supplement/compound, Stash, logs, browser and symptom-intensity checks preserved. No execution PASS claimed yet; exact-head browser CI pending.
+
 ## 2026-11-06 — PR143 full QA false-negative source signature corrected (pending rerun)
 - Full CI #42266163455 FAIL at tests/search-clear-controls.test.cjs:5 checking old helper signature (three args), while actual helper safely supports options={} for query-aware selection. Failure precedes browser and artifact stages; no release artifact available from that run. Five sibling workflows SUCCESS, not substitute for failed full gate.
 - Test-only 44d559d4 revises assertion to exact four-arg signature and adds DS2 17px/1.8px/icon, 44px tap, muted styling/position, query-only display assertions. No application behaviour modified. Exact head #42272145892 pending; browser/iPhone statuses remain NOT TESTED for latest source until completed.
