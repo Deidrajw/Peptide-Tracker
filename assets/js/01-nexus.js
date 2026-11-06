@@ -47,7 +47,16 @@ function showSaveWarning() {
   warning.id = 'nexus-storage-warning';
   warning.setAttribute('role', 'alert');
   warning.style.cssText = 'position:fixed;z-index:99999;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));padding:14px 16px;border-radius:12px;background:#702626;color:#fff;box-shadow:0 6px 25px #0007;font:600 14px/1.5 system-ui,sans-serif';
-  warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
+  const copy=document.createElement('span');
+  copy.textContent='Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
+  copy.style.cssText='display:block;padding-right:42px';
+  const dismiss=document.createElement('button');
+  dismiss.type='button';
+  dismiss.setAttribute('aria-label','Dismiss storage warning');
+  dismiss.style.cssText='position:absolute;right:8px;top:8px;min-width:44px;min-height:44px;border:1px solid #ffffff66;border-radius:10px;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer';
+  dismiss.innerHTML='<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  dismiss.onclick=()=>{warning.remove();_saveWarningShown=false;};
+  warning.append(copy,dismiss);
   document.body.appendChild(warning);
 }
 // All durable application state writes share one exclusive Web Lock and one
