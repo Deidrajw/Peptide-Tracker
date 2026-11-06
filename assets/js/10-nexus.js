@@ -644,7 +644,71 @@ function nxReconValidate(r) {
   return {vmg,bac,doseRaw,doseMg,conc,mlPerDose,error:null};
 }
 
+let nxCalculatorMode="injection";
+let nxNasalDraft={mass:"",unit:"mg",finalMl:"",pumpMl:""};
+function nxSetCalculatorMode(mode){if(!["injection","nasal"].includes(mode))return;nxCalculatorMode=mode;renderBody();}
+function nxResetNasalCalculator(){nxNasalDraft={mass:"",unit:"mg",finalMl:"",pumpMl:""};renderBody();}
+// Independent informational calculator; never writes an administration,
+// inventory deduction, preparation record or historical user state.
+function nxNasalCalcValidate(v){
+  const rawMass=String(v.mass??"").trim(),rawVol=String(v.finalMl??"").trim(),rawPump=String(v.pumpMl??"").trim();
+  const empty={mgPerMl:null,mcgPerActuation:null,theoreticalActuations:null,error:null};
+  if(!["mg","mcg"].includes(v.unit||"mg"))return {...empty,error:"Choose a mass unit of mg or mcg; IU has no automatic mass conversion."};
+  if(!rawMass&&!rawVol&&!rawPump)return empty;
+  for(const [raw,label] of [[rawMass,"Compound mass"],[rawVol,"Final solution volume"],[rawPump,"Calibrated pump output"]]){
+    if(raw&&(!Number.isFinite(Number(raw))||Number(raw)<=0))return {...empty,error:label+" must be a positive finite number."};
+  }
+  if(!rawMass||!rawVol||!rawPump)return empty;
+  const massMg=(v.unit||"mg")==="mcg"?Number(rawMass)/1000:Number(rawMass);
+  const finalMl=Number(rawVol),pumpMl=Number(rawPump);
+  if(!Number.isFinite(massMg)||massMg<=0)return {...empty,error:"Converted mass must be positive and finite."};
+  if(pumpMl>finalMl)return {...empty,error:"Pump volume exceeds the entered final solution volume."};
+  const mgPerMl=massMg/finalMl,mcgPerActuation=mgPerMl*pumpMl*1000;
+  // Conservative theoretical upper bound; never round up to an extra actuation.
+  const theoreticalActuations=Math.floor(finalMl/pumpMl);
+  if(!Number.isFinite(mgPerMl)||!Number.isFinite(mcgPerActuation)||mcgPerActuation<=0||
+     !Number.isSafeInteger(theoreticalActuations)||theoreticalActuations<=0)
+    return {...empty,error:"The entered values are outside the calculator's safe numeric range."};
+  return {mgPerMl,mcgPerActuation,theoreticalActuations,error:null};
+}
+function nxCalcModeTabs(active){
+  const tab=(mode,label)=>'<button type="button" role="tab" aria-selected="'+(active===mode)+'" onclick="nxSetCalculatorMode(&#39;'+mode+'&#39;)" style="flex:1;min-height:48px;border:1px solid '+(active===mode?"#A78BFA":"var(--border-sub)")+';border-radius:10px;color:var(--t1);background:'+(active===mode?"#A78BFA22":"var(--surface-2)")+';font-weight:650">'+label+'</button>';
+  return '<div role="tablist" aria-label="Calculator mode" style="display:flex;gap:8px;margin-bottom:16px">'+tab("injection","Injection")+tab("nasal","Nasal spray")+'</div>';
+}
+function nxNasalCalcResults(v){
+  const result=nxNasalCalcValidate(v);
+  if(result.error)return '<p role="alert" style="border:1px solid #D97777;border-radius:10px;padding:12px;color:var(--t1)">'+esc(result.error)+'</p>';
+  if(result.mgPerMl===null)return '<p style="color:var(--t4);font-size:12px">Enter all three confirmed values to see the theoretical calculation. No record will be saved.</p>';
+  const fmt=x=>Number(x.toPrecision(8)).toLocaleString("en-CA",{maximumFractionDigits:6});
+  return '<div role="status" aria-live="polite" style="display:grid;gap:10px">'+
+    '<div><span style="font-size:11px;color:var(--t4)">Concentration</span><div style="font-size:20px;font-weight:700;color:var(--t1)">'+fmt(result.mgPerMl)+' mg/mL</div></div>'+
+    '<div><span style="font-size:11px;color:var(--t4)">Theoretical amount per actuation</span><div style="font-size:20px;font-weight:700;color:var(--t1)">'+fmt(result.mcgPerActuation)+' mcg</div></div>'+
+    '<div><span style="font-size:11px;color:var(--t4)">Maximum theoretical actuations</span><div style="font-size:20px;font-weight:700;color:var(--t1)">'+result.theoreticalActuations+'</div></div>'+
+    '</div>';
+}
+function nxNasalCalcInput(el){
+  const fields={ "nx-nasal-mass":"mass","nx-nasal-unit":"unit","nx-nasal-final":"finalMl","nx-nasal-pump":"pumpMl" };
+  const key=fields[el.id];if(!key)return;
+  nxNasalDraft[key]=el.value;
+  const result=document.getElementById("nx-nasal-result");
+  if(result)result.innerHTML=nxNasalCalcResults(nxNasalDraft);
+}
+function nxNasalCalcView(){
+  const v=nxNasalDraft;
+  const row=(id,label,value,placeholder)=>'<label style="display:block;margin-bottom:14px;color:var(--t2);font-size:12px;font-weight:600">'+label+'<input id="'+id+'" type="number" inputmode="decimal" min="0" step="any" class="inp" style="width:100%;margin-top:6px;min-height:48px" placeholder="'+placeholder+'" value="'+esc(value)+'" oninput="nxNasalCalcInput(this)"></label>';
+  return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><button id="reconback" type="button" style="min-width:44px;min-height:44px;border:1px solid var(--border);border-radius:8px;color:var(--t2)" aria-label="Back to guides">‹</button><h1 class="serif" style="font-size:20px;color:var(--t1);flex:1">Dose Calculator</h1><button type="button" style="min-height:44px;color:var(--t2)" onclick="nxResetNasalCalculator()">Reset</button></div>'+
+    nxCalcModeTabs("nasal")+
+    '<section style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:16px;margin-bottom:14px"><h2 style="font-size:16px;color:var(--t1);margin:0 0 8px">Nasal spray · theoretical calculation</h2><p style="font-size:12px;color:var(--t4);line-height:1.6;margin-bottom:16px">Read-only estimate from confirmed mass, final solution volume and measured pump output. This does not record or recommend an administered dose.</p>'+
+    row("nx-nasal-mass","Total compound mass",v.mass,"e.g. 5")+
+    '<label for="nx-nasal-unit" style="display:block;font-size:12px;color:var(--t2);font-weight:600;margin-bottom:14px">Mass unit<select id="nx-nasal-unit" class="inp" style="width:100%;min-height:48px;margin-top:6px" onchange="nxNasalCalcInput(this)"><option value="mg"'+((v.unit||"mg")==="mg"?" selected":"") +'>mg</option><option value="mcg"'+(v.unit==="mcg"?" selected":"")+'>mcg</option></select></label>'+
+    row("nx-nasal-final","Confirmed FINAL solution volume (mL)",v.finalMl,"e.g. 5")+
+    row("nx-nasal-pump","Calibrated mL per actuation",v.pumpMl,"e.g. 0.1")+
+    '</section><section style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:16px;margin-bottom:14px"><h2 style="font-size:15px;color:var(--t1);margin:0 0 12px">Calculation</h2><div id="nx-nasal-result">'+nxNasalCalcResults(v)+'</div></section>'+
+    '<p style="font-size:12px;color:var(--t4);line-height:1.6">Assumes uniform concentration and the stated pump calibration. Priming, residual loss, spray delivery, compound stability and device variation can change actual output. Added diluent volume is not necessarily final volume. This tool does not establish a safe or effective dosing amount.</p>';
+}
+
 function reconCalcView() {
+  if(nxCalculatorMode==="nasal")return nxNasalCalcView();
   const r = state._recon || { vialMg:"", bacMl:"", dose:"", unit:"mg", freq:"daily", syringe:"100u" };
   const check=nxReconValidate(r);
   const {vmg,bac,doseRaw,doseMg,conc,mlPerDose}=check;
@@ -698,6 +762,7 @@ function reconCalcView() {
     <h1 class="serif" style="font-size:20px;margin:0;color:var(--t1);flex:1">Dose Calculator</h1>
     <button onclick="state._recon=null;renderBody();" style="background:transparent;border:1px solid var(--border-sub);color:var(--t4);border-radius:8px;padding:5px 12px;font-size:11px">Reset</button>
   </div>
+  ${nxCalcModeTabs("injection")}
   <div style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:14px;padding:16px 18px;margin-bottom:14px">
     ${step(1,"What's in your vial?",`<div style="display:flex;gap:10px;flex-wrap:wrap">
       <div style="flex:1;min-width:120px"><label class="field-label">Peptide amount (mg)</label><input id="rc-vmg" type="number" min="0" step="any" inputmode="decimal" aria-label="Vial amount in milligrams" class="inp" value="${esc(r.vialMg)}" placeholder="e.g. 5"></div>
