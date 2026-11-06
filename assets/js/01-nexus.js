@@ -363,20 +363,51 @@ function nexusPlanBackedPhysicalDose(snapshot,entry){
   if(reschedule)reschedule.doseId=dose.id;
   return {next,dose:record.doses[record.doses.length-1],allocations};
 }
+let _nexusBackedPhysicalDoseFailure="";
+function nexusBackedDoseStorageError(error){
+  // CAS conflicts and planner rejections are NOT evidence that device storage failed.
+  const code=String(error?.name||"");
+  const message=String(error?.message||"");
+  return ["QuotaExceededError","SecurityError","NotAllowedError"].includes(code)||
+    /Storage readback mismatch|Storage adapter required|Unable to preserve pre-upgrade state/i.test(message);
+}
+function nexusBackedDoseFailureMessage(error){
+  const message=String(error?.message||"");
+  if(/Saved data changed|prior write was uncertain|Writes blocked until reloaded/i.test(message))
+    return "Saved data changed or an earlier save is uncertain. No dose was saved. Keep your backup and reload before checking the exact vial.";
+  if(/Inventory operation already pending/i.test(message))
+    return "Another save is still pending. Nothing was saved. Keep this draft and check the recorded history before retrying.";
+  if(/Duplicate dose ID/i.test(message))
+    return "This dose already has a saved record ID. Nothing was added. Check today's history to avoid a duplicate.";
+  if(/Insufficient exact vial balance|Open migrated vial required|Unidentified physical vial|Incompatible physical kit|Vial formulation incompatible/i.test(message))
+    return "The exact selected vial could not be verified for this entry. No dose was saved. Review the source vial and its preparation before retrying.";
+  if(nexusBackedDoseStorageError(error))
+    return "Device storage could not confirm this write. Nothing was confirmed saved. Export a backup and check browser storage.";
+  return "This dose could not be verified or saved. Check the source and saved history before retrying. ("+message+")";
+}
 async function nexusCommitBackedPhysicalDose(entry){
+  _nexusBackedPhysicalDoseFailure="";
   try{
     if(_demoActive){
       const result=nexusPlanBackedPhysicalDose(state,entry);
       state=result.next;return result;
     }
     const writer=nexusWriter();
-    const result=await writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry));
+    // UI navigation, opened forms and filters can change transient state without
+    // a durable write. Do not compare that working UI object byte-for-byte with
+    // storage. The coordinator still performs exact CAS+lock+readback against
+    // its own last verified snapshot, rejecting real cross-tab changes.
+    const expected=writer.expected();
+    if(typeof expected!=="string")throw Error("Verified saved state unavailable");
+    const durable=JSON.parse(expected);
+    const result=await writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry));
     state=result.next;
     _nexusLastSavedSnapshot=writer.expected();
     return result;
   }catch(e){
     console.error("Nexus exclusive physical dose failed",e);
-    if(!_demoActive)showSaveWarning();
+    _nexusBackedPhysicalDoseFailure=nexusBackedDoseFailureMessage(e);
+    if(!_demoActive&&nexusBackedDoseStorageError(e))showSaveWarning();
     return null;
   }
 }
