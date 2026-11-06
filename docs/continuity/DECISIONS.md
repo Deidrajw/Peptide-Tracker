@@ -1,3 +1,7 @@
+## 2026-11-05 — Compound pause provenance unresolved; no silent status recovery
+- Compound-level pause/resume records currently have NO timestamp or audit event in the saved backup; protocol-level pauseHistory is separate and cannot date this compound status. An unrelated log is not evidence the user pressed Pause. No automatic correction to active status; user explicitly unsure how pause occurred and requests read-only investigation.
+- Fix confirmed `pausepep`-wired Resume in paused expanded card before final release; require fictional regression. Consider durable append-only compound status-change audit (timestamp, action, actor/source where available, prior/new status), only after product review; preserve historical records and localStorage integrity.
+
 ## 2026-11-05 — Historical recorded doses always visible independently of current status
 - A saved dose is evidence of an actual log, not an eligibility vote from current protocol status. Today/Completed must render logged doses today from paused/inactive compounds as ordinary compound cards. The active schedule completion denominator and Coming Up remain limited to actually active scheduled compounds; show a separate count of off-schedule recorded doses to avoid falsely saying no entry was logged.
 - Do NOT automatically set a paused compound to active based on saved dose or active parent protocol: a true pause may be intentional. User decision needed before changing that durable state. Calendar day recorded logs include all statuses; future projection should not silently resume paused.
