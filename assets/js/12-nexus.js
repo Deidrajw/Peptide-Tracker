@@ -112,7 +112,14 @@ function wireBody() {
   const asj=$("#as-journal"); if(asj) asj.onclick=()=>{state._aminoSub="journal";renderBody();};
   if(state._aminoSub==="journal"){
     const jsearch=$("#journal-search");
-    if(jsearch){ jsearch.oninput=()=>{ state._journalQuery=jsearch.value; renderBody(); const n=$("#journal-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
+    if(jsearch){
+      const wireJournalSearch=()=>{
+        const input=$("#journal-search");if(!input)return;
+        input.oninput=()=>{state._journalQuery=input.value;renderBody();wireJournalSearch();const n=$("#journal-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+        nexusWireSearchClear(input,()=>{state._journalQuery="";renderBody();wireJournalSearch();},"Clear journal search");
+      };
+      wireJournalSearch();
+    }
     const journalFilter=$("#journal-compound-filter"); if(journalFilter)journalFilter.onchange=()=>{state._journalCompound=journalFilter.value;renderBody();};
     document.querySelectorAll("[data-jump-type]").forEach(card=>card.onclick=()=>{
       const t=card.dataset.jumpType;
@@ -1120,6 +1127,7 @@ function wireBody() {
       if(!shown)document.getElementById("nx-library-list")?.insertAdjacentHTML("beforeend",'<div class="nx-library-empty" id="nx-library-empty">No matching compounds.</div>');
     };
     nxLibrarySearch.dispatchEvent(new Event("input"));
+    nexusWireSearchClear(nxLibrarySearch,()=>nxLibrarySearch.oninput?.(),"Clear compound history search");
   }
   document.querySelectorAll(".nx-library-item:not(.nx-library-ingredient)").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
   document.querySelectorAll(".nx-library-ingredient").forEach(b=>b.onclick=()=>{
@@ -1181,7 +1189,12 @@ function wireBody() {
   const lsc=$("#ls-calc"); if(lsc)lsc.onclick=()=>{state._learnSub="calc";renderBody();};
   if(state._learnSub==="calc") wireReconCalc();
   const mixb=$("#mixback"); if(mixb)mixb.onclick=()=>{state._learnSub="guides";renderBody();};
-  const mis=$("#mix-search"); if(mis)mis.oninput=()=>{state._mixSearch=mis.value;renderBody();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+  const wireMixSearch=()=>{
+    const input=$("#mix-search");if(!input)return;
+    input.oninput=()=>{state._mixSearch=input.value;renderBody();wireMixSearch();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+    nexusWireSearchClear(input,()=>{state._mixSearch="";renderBody();wireMixSearch();},"Clear stacking search");
+  };
+  wireMixSearch();
   document.querySelectorAll(".mix-type-chip").forEach(b=>b.onclick=()=>{state._mixTypeFilter=b.dataset.t;renderBody();});
   const lsd=$("#ls-discover"); if(lsd)lsd.onclick=()=>{state._learnSub="discover";renderBody();};
   document.querySelectorAll(".discitem").forEach(b=>b.onclick=async()=>{
