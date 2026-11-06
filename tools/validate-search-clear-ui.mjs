@@ -40,7 +40,29 @@ try{
   await page.evaluate(()=>{tab='calendar';state._protoCalSub='logs';state._logsMode='all';state._logsSearch='';render()});
   await page.locator('#nx-journal-search').fill('nomatchinghistory');await clear('#nx-journal-search');
   ok(await page.locator('#nx-journal-search').inputValue()===''&&await page.evaluate(()=>state._logsSearch)==='','History query clear failed');
+  await page.evaluate(()=>{
+   const modal=openModal('<div>Fictional compound form</div>','#A78BFA');
+   window.__qaBrowseChoice=[];
+   nexusBrowseAllCompounds(modal,[{name:'Selank'},{name:'Retatrutide'}],o=>window.__qaBrowseChoice.push(o.name),'Sela');
+  });
+  ok(await page.locator('#nx-browser-search').inputValue()==='Sela','Browser query fixture missing');
+  await clear('#nx-browser-search');
+  ok(await page.locator('#nx-browser-search').inputValue()===''&&await page.locator('.nx-browser-choice').count()===2,'Compound browser query not cleared');
+  ok(await page.evaluate(()=>window.__qaBrowseChoice.length)===0,'Compound browser clear incorrectly selected item');
+  await page.evaluate(()=>{
+   document.querySelector('.nx-compound-browser')?.remove();
+   const container=document.createElement('div');container.id='qa-symptom-search';
+   window.__qaSymptoms=[{name:'Headache',intensity:2}];
+   container.innerHTML=symptomPickerHTML(window.__qaSymptoms,'#A78BFA');
+   document.querySelector('.modal').appendChild(container);
+   wireSymptomPicker(container,window.__qaSymptoms,'#A78BFA',()=>{});
+   const input=container.querySelector('#nx-sym-combobox');
+   input.value='Head';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  await clear('#nx-sym-combobox');
+  ok(await page.locator('#nx-sym-combobox').inputValue()==='','Symptom query not cleared');
+  ok(await page.evaluate(()=>window.__qaSymptoms.length===1&&window.__qaSymptoms[0].intensity===2),'Symptom clear modified selected symptom');
   ok(!errors.length,'JS page errors: '+errors.join('; '));count++;await ctx.close();
  }
- console.log('PASS: '+count+' LIVE/DEMO viewport/theme sessions for supplement, combo, Stash and history search clear without lost selections');
+ console.log('PASS: '+count+' LIVE/DEMO viewport/theme sessions for supplement, combo, Stash, history, compound browser and symptom search clear without lost selections');
 }finally{await browser.close()}
