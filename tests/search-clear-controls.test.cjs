@@ -24,4 +24,16 @@ assert.match(protocol,/nexusWireSearchClear\(cs,\(\)=>cs\.oninput\?\.\(\),"Clear
 assert.match(discover,/id="disc-clear" type="button" aria-label="Clear Discover search"/);
 assert.match(discover,/min-width:44px;min-height:44px/);
 assert.match(discover,/stroke="currentColor" stroke-width="2"/);
-console.log("PASS: accessible query clear source contracts for Supplements, Combo, Stash, Logs, Protocol and Discover");
+// Selection-aware compound pickers must hide the query-only X after a choice,
+ // including the inline display style used by the shared DS2 clear helper.
+for (const [path,label] of [
+  ["assets/js/07-nexus.js","Clear vial compound search"],
+  ["assets/js/10-nexus.js","Clear other-form compound search"],
+  ["assets/js/03-nexus.js","Clear blend compound search"]
+]) {
+  const source=fs.readFileSync(path,"utf8");
+  assert.ok(source.includes(label),path+": missing selection-aware clear");
+  assert.match(source,/if\(x\)\{x\.hidden=true;x\.style\.display="none";\}/,path+": selected compound leaves clear X visible");
+  assert.match(source,/\{isQuery:\(\)=>queryActive\}/,path+": selected value not distinguished from search query");
+}
+console.log("PASS: accessible query clear source contracts for Supplements, Combo, Stash, Logs, Protocol and Discover and selected-value comboboxes");
