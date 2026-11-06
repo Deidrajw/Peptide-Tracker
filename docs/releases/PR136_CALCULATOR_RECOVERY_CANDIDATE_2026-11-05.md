@@ -24,3 +24,8 @@
 - Read-only nasal spray calculator is separate proposed issue #138, NOT CODED, LIVE nasal administration gates remain OFF.
 - Release status: CODED, locally browser tested, complete isolated candidate artifacts generated. DRAFT PR, NOT MERGED, NOT DEPLOYED, physical iPhone NOT ACCEPTED.
 - Next action: rerun all checks at exact latest app source, inspect current source-matched GitHub build and physical iPhone, then request separate explicit merge/deploy approval.
+
+## 2026-11-06 — Independent exact-source candidate qualification (not a release)
+- Reconstructed 26-file LIVE candidate, isolated complete standalone FULL-APP DEMO and offline DEMO using earlier source-qualified artifact #13465261560 plus the two later calculator corrections. Git blob of assets/js/10-nexus.js independently matches current GitHub 87d82eba8d48b3dd857e2ece2890590705c70d09; 26 ZIP source members CRC PASS; DEMO/offline byte parity PASS; Node syntax PASS.
+- Exact rebuilt fictional full-app Chromium interactive 320/390 × dark/light 4/4 PASS: 1200mg/6mL/400mg chosen 1mL fails closed with accessible syringe selector and concentration 200mg/mL; 3mL selection without dose re-entry yields mathematical 2.000mL and clears capacity warning; zero page errors. Earlier independently evaluated 22/22 finite/invalid/recovery guard assertions PASS.
+- These are reconstructed-source browser/structural checks, NOT final exact-GitHub-head CI, real iPhone/VoiceOver or independently clinically certified dosing. Existing candidate source does not change stored data. CI attempted via branch push workflow edits 127fbe62 but no verifiable exact-head workflow result surfaced through the available PR-run lookup. Draft/unmerged/undeployed. Nasal LIVE OFF. No merge/deploy without user approval.
