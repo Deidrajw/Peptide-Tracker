@@ -1,8 +1,8 @@
 {
   "version": "v0.9.25-beta.1",
   "channel": "beta",
-  "publicationStatus": "published",
-  "publishedAt": "2026-11-05T23:50:08.443Z",
+  "publicationStatus": "unverified",
+  "publishedAt": null,
   "title": "Session-first Combo Dose, exact-vial details and DS2 refinements",
   "changes": [
     {
