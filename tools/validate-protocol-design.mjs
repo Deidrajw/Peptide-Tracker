@@ -302,7 +302,16 @@ try{
     check(await field.count()===1,'Search input missing');
     check((await field.getAttribute('placeholder')).includes('Search compounds'),'Search placeholder incorrect');
     check(!(await field.getAttribute('placeholder')).includes('🔍'),'Search emoji still present');
-    check(await page.locator('.nx-proto-compound-search svg').count()===1,'Outline magnifier missing');
+    check(await page.locator('.nx-proto-compound-search > svg:has(circle)').count()===1,'Outline magnifier missing');
+    await field.fill('GHK');
+    const clear=page.locator('.nx-proto-compound-search .nx-search-clear');
+    check(await clear.isVisible(),'Protocol compound query clear control missing');
+    check((await clear.getAttribute('aria-label'))==='Clear protocol compound search','Protocol clear action lacks accessible name');
+    const clearBox=await clear.boundingBox();
+    check(clearBox&&clearBox.width>=44&&clearBox.height>=44,'Protocol clear target under 44px');
+    await clear.click();
+    check(await field.inputValue()==='','Protocol clear did not empty query');
+
 
     check(await page.locator('#pb-browse-all').count()===1,'Protocol full-library action missing');
     await page.locator('#pb-browse-all').click();
