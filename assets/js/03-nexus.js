@@ -1002,7 +1002,7 @@ function addBlendKitModal(blendNameOrKit) {
       popup.append(results);wrapper.append(trigger,popup);
       const label=()=>sel.selectedOptions[0]?.textContent||"Select compound";
       let queryActive=false,lastChosen={value:sel.value,label:"",compound:composition[+sel.dataset.i]?.compound||""};
-      const rememberChosen=()=>{lastChosen={value:sel.value,label:trigger.value,compound:sel.value};queryActive=false;const x=wrapper.querySelector(".nx-search-clear");if(x)x.hidden=true;};
+      const rememberChosen=()=>{lastChosen={value:sel.value,label:trigger.value,compound:sel.value};queryActive=false;const x=wrapper.querySelector(".nx-search-clear");if(x){x.hidden=true;x.style.display="none";}};
       const close=()=>{popup.hidden=true;trigger.setAttribute("aria-expanded","false");};
       // Floating overlay: never adds height to a composition row or creates a second scroll surface.
       const position=()=>{
