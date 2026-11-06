@@ -1,3 +1,8 @@
+## 2026-11-06 — PR143 DS2 search-clear icon refinement; qualification PENDING
+- Commit 82c99d03 (05-nexus.js shared helper) sets 17px outline SVG, 1.8 stroke, muted var(--t4), right-edge 44x44 centered tappable button with display none when query blank, aria-label retained. Scope is visual; query-only clear callback and picker selections unchanged in source. Source inspection only, NOT a browser PASS.
+- Required regression: 320/390 light/dark focused+unfocused icon size/alignment; 44x44 computed hit rect; keyboard and VoiceOver label/activation; clear results without clearing supplements, symptom intensity, selections, drafts, history; compare all helper callers and dedicated native clear controls; no loss of lavender focus styling. Status NOT TESTED until actual execution.
+- Physical iPhone Safari/VoiceOver/Dynamic Type NOT TESTED; no merge/deploy.
+
 ## 2026-11-06 — PR143 full-app source parity and local Protocol/Discover 4/4 PASS
 - Six changed JS blobs (03,04,05,08,11,12) match current GitHub byte-exact; 26-file full LIVE candidate ZIP CRC PASS and isolated full-app standalone DEMO byte equals offline index. Local Chromium 320/390 dark/light 4/4 PASS for Protocol Builder clear/magnifier and Discover 44px clear; no JS page errors. Latest GitHub full #42256170024 pending after prior test-only false SVG count #42254391969 FAIL corrected at 683b049c. Physical iPhone and VoiceOver NOT TESTED; selected-value combobox audit remains open.
 
