@@ -1183,6 +1183,12 @@ function nexusCapsuleDoseModal(name,occTime){
 /* Form-aware prepared spray entry. Real prepared stock use remains gated;
    DEMO invokes the already audited pure planner on fictional state only. */
 function nexusNasalDoseModal(name,occTime){
+ // Do not invite a LIVE save when the protected prepared-dose writer is gated.
+ // This check occurs before a modal is opened or any draft/stock can be modified.
+ if(!_demoActive&&!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED){
+  showErrorBanner("Nasal spray dose logging is not enabled in this version. No dose or bottle deduction was saved. Prepared bottle inventory remains available in Stash.");
+  return;
+ }
  const bottles=(state.formulationStocks||[]).filter(c=>c.compound===name&&c.containerType==="nasal-bottle"&&
   c.method==="Nasal"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
  const unit=cfg(name).unit;
@@ -1246,7 +1252,15 @@ function nexusNasalDoseModal(name,occTime){
    if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}
    else result=await nexusCommitPreparedNasalOperation({type:"dose",tx});
   }catch(error){console.error("Prepared nasal dose blocked",error);
-   showErrorBanner(_demoActive?"Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":"Live nasal logging is unavailable until inventory saving is fully protected. Nothing saved.");
+   showErrorBanner(_demoActive?
+    "Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":
+    /disabled pending|safety.gated|unavailable/i.test(String(error?.message||""))?
+      "Nasal spray dose logging is not enabled in this version. Nothing saved.":
+    /changed|stale|reload|lock|concurrent|snapshot/i.test(String(error?.message||""))?
+      "Saved inventory changed or could not be verified. Reload before trying again. Nothing saved.":
+    /quota|storage|readback|persist/i.test(String(error?.message||""))?
+      "Nasal dose could not be verified in device storage. Nothing was confirmed saved; reload and check your history.":
+      "Unable to verify the prepared bottle or dose. Nothing saved. Review the bottle in Stash.");
    btn.disabled=false;return;
   }
   closeModal();render();
