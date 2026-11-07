@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 completed automated picker qualification; no release decision
+- Vial Kit, Other Forms and Blend selected-value comboboxes preserve canonical compound on query-only clear. The 17px/1.8 SVG on 44px target is hidden after a selection and appears only on active search. Previously approved DS2 unchanged. Six exact-head suites and complete candidate verified on 8aba617b; this is QA evidence, not new user approval to merge/deploy. Physical iPhone acceptance remains necessary. Multi-compound protocol redesign Issue #145 remains separately deferred.
+
 ## 2026-11-06 — Future protocol-first multi-compound UX request recorded; not approved design
 - User expressed friction adding/managing multiple compounds in protocols, with four example groupings (body recomposition, mitochondrial, sleep/cognitive, tissue repair). Capture as Issue #145 and roadmap concept; preserve current protocol/plan/dose data and approved DS2. Proposed single protocol-level multi-select and per-compound editing are hypotheses requiring interactive preview and user's design decision, NOT an instruction to implement, recommend combining, or administer any substances. PR143 remains independent. No release approval.
 
