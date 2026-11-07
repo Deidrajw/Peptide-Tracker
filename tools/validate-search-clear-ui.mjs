@@ -26,7 +26,7 @@ try{
       border:css.borderTopWidth,background:css.backgroundColor,
       colour:css.color,textColour:getComputedStyle(document.querySelector('.nx-search-clear-wrap input')).color};
    });
-   ok(visual.iconWidth===17&&visual.iconHeight===17&&visual.stroke==='1.8',selector+' DS2 SVG geometry');
+   ok(visual.iconWidth===16&&visual.iconHeight===16&&visual.stroke==='1.6',selector+' DS2 SVG geometry');
    ok(visual.midOffset<1,selector+' SVG not vertically centred');
    ok(visual.border==='0px'&&visual.background==='rgba(0, 0, 0, 0)',selector+' unexpected button chrome');
    ok(visual.colour!==visual.textColour,selector+' icon should be muted relative to input');
