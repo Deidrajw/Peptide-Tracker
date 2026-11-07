@@ -13,8 +13,11 @@ try{
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof buildDemoState==='function'&&typeof reconCalcView==='function');
-  // Complete the initial UI overlay before interacting with the injected fictional calculator fixture.
-  if(await page.locator('#ob-skip').isVisible()) await page.locator('#ob-skip').click();
+  // Calculator tests inject a fictional state and do not exercise onboarding persistence.
+  // Close the first-run modal synchronously: Skip triggers an asynchronous save/render
+  // that can overwrite the injected fixture after the test has started.
+  await page.waitForFunction(()=>!!document.querySelector('#ob-wrap') || !!state?.profile?.onboardingDone);
+  await page.evaluate(()=>{ if(document.querySelector('#ob-wrap')) closeModal(); });
   await page.evaluate(t=>{
    state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
    document.documentElement.dataset.theme=t;
