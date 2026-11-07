@@ -1,3 +1,6 @@
+## 2026-11-07 — Draft PR150 nasal handler writer correction, NOT RELEASED
+- Scoped application code 72410ab5 replaces in-memory snapshot CAS with canonical durable comparison for prepared nasal execution, keeping the gate OFF. Test-only Node VM and test-script routed Chromium two-tab app-handler cases at fc74181c; exact-head full CI and matching artifacts pending. No release version change, schema migration, real data write, production update, merge or deployment. Independently accepted iPhone UI remains protected.
+
 ## 2026-11-07 — PR150 complete artifact and six-suite qualification, development only
 - Draft integrated source 597ce4b8; six workflow SUCCESS 42346314574/42346314662/42346314643/42346314570/42346314575/42346314789. GitHub official artifact #13563792574 manifest 597ce4b8, 549-entry outer CRC, 26-root-file LIVE CRC and 12 ordered scripts, complete offline fictional DEMO identical to standalone HTML CRC PASS. All downloadable as candidate; no release/version bump, data migration, merge or Cloudflare deployment; nasal LIVE OFF. Physical iPhone/VoiceOver and true LIVE administration blocked.
 

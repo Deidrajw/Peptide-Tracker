@@ -1,3 +1,6 @@
+## 2026-11-07 — Canonical prepared nasal handler state boundary
+- A prepared nasal operation must use shared writer.expected() durable state, never transient render-only _UI properties as CAS bytes. Reject any difference in persistent fields rather than silently rebase or overwrite. Preserve top-level transient fields only following exclusive readback-confirmed success. Tests may alter a single script flag exclusively inside isolated fictional browser fixture; checked-in LIVE and deployed flags must remain OFF. This is engineering qualification, not authorization to release spray logging.
+
 ## 2026-11-07 — PR150 combined CI qualification does not unlock nasal administration
 - Integrated PR142 writer and PR146 approved UX with PR149 fail-closed warning; exact-head all six CI workflows SUCCESS at 597ce4b8, confirming candidate engineering tests only. The read-only calculator is separate from dose logging; independent theoretical arithmetic and regular writer checks are not permission to enable NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED. No actual LIVE spray save, clinical dose certification, iPhone acceptance or deployment approval. Preserve existing storage and user designs; draft remains unmerged.
 
