@@ -4,7 +4,7 @@ const picker=fs.readFileSync("assets/js/05-nexus.js","utf8");
 const settings=fs.readFileSync("assets/js/12-nexus.js","utf8");
 assert.match(picker,/function nexusWireSearchClear\(input, onClear, label, options=\{\}\)/);
 assert.match(picker,/width:44px;height:44px;min-width:44px;min-height:44px/);
-assert.match(picker,/width="17" height="17"[^>]*stroke-width="1\.8"/);
+assert.match(picker,/width="16" height="16"[^>]*stroke-width="1\.6"/);
 assert.match(picker,/color:var\(--t4\)/);
 assert.match(picker,/top:50%;transform:translateY\(-50%\)/);
 assert.match(picker,/clear\.style\.display=show\?"grid":"none"/);
