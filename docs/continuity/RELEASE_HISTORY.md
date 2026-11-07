@@ -1,3 +1,6 @@
+## 2026-11-07 — PR150 draft integration only (NOT A RELEASE)
+- Source base PR146 5738e3ba plus reconciled PR142 writer patches and PR149 nasal preflight; draft PR150 opened for review. No version promotion, production data access, storage migration, Cloudflare deployment or user release. CI at integrated head and exact-source artifacts unverified at documentation checkpoint; nasal LIVE gate OFF; physical iPhone/VoiceOver NOT TESTED for combined candidate. Protected UI and safety checks must qualify before release consideration.
+
 ## 2026-11-06 — PR146 user iPhone UI acceptance recorded; separate P0 nasal LIVE gate NOT RELEASED
 - User-reported iPhone PASS 5/5 on PR146 single-X search, injection recovery, input persistence, read-only nasal calculator usability and scrolling/keyboard/light/dark appearance. This does not approve PR146 merge/deploy, VoiceOver, clinical calculation or nasal LIVE logging.
 - Main v0.9.25-beta.1 still hard-gates prepared nasal dose logging OFF; related physical-vial-to-bottle preparation gate ON. Generic LIVE error text masks all save causes. Issue #148 opened to implement guarded exact-source LIVE prepared spray dose/undo with cross-tab writer integrity. PR142 remains separate unmerged P0. No production updates or migration; LIVE nasal OFF.
