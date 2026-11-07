@@ -1,3 +1,6 @@
+## 2026-11-07 — PR150 combined CI qualification does not unlock nasal administration
+- Integrated PR142 writer and PR146 approved UX with PR149 fail-closed warning; exact-head all six CI workflows SUCCESS at 597ce4b8, confirming candidate engineering tests only. The read-only calculator is separate from dose logging; independent theoretical arithmetic and regular writer checks are not permission to enable NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED. No actual LIVE spray save, clinical dose certification, iPhone acceptance or deployment approval. Preserve existing storage and user designs; draft remains unmerged.
+
 ## 2026-11-07 — Issue148 draft integration boundaries
 - Reconcile PR142 backed-dose save error classification, PR146 user-accepted search and read-only calculator and PR149 early nasal warning in a new draft PR150, preserving all three originals. This is an engineering integration candidate, not approval to release or enable LIVE spray administration. Preserve Web Lock/CAS/readback and exact source allocations; never permit unverified stale writes, silently conflate vial/bottle balances or change production localStorage. No merge/deploy until separately authorised.
 
