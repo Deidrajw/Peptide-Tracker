@@ -54,6 +54,21 @@ try{
   assert.equal(await undo.isVisible(),true,'Visible LIVE Undo toast required');
   assert.equal(await undo.evaluate(el=>el.getBoundingClientRect().height>=44),true,'Undo touch target below 44px');
   await undo.click();
+  await page.waitForTimeout(220);
+  const diagnosis=await page.evaluate(({key,txId,doseId})=>{
+    const durable=JSON.parse(localStorage.getItem(key)||'{}');
+    const persistent=v=>{const copy={...v};for(const k of Object.keys(copy))if(k.startsWith('_'))delete copy[k];return copy};
+    const current=persistent(state),saved=persistent(durable);
+    const changed=Object.keys({...current,...saved}).filter(k=>JSON.stringify(current[k])!==JSON.stringify(saved[k]));
+    let plannerError=null;
+    try{NexusPreparedDoseTransaction.reverseDose(durable,{transactionId:txId,reversalId:'diagnostic-only',compound:'Fictional Spray QA',doseId,sourceId:'test-bottle'});}
+    catch(error){plannerError=error.message;}
+    return {error:document.querySelector('#nx-validation-message')?.textContent||null,
+      changed,plannerError,writer:nexusWriter().status(),
+      stock:durable.formulationStocks?.find(x=>x.id==='test-bottle'),
+      history:durable.customPeptides?.['Fictional Spray QA']?.doses};
+  },{key,txId:bottle.transactions[0].id,doseId:bottle.transactions[0].doseId});
+  console.log('NASAL LIVE UI UNDO DIAG '+width+'/'+theme,JSON.stringify(diagnosis));
   await page.waitForFunction(key=>{
     const saved=JSON.parse(localStorage.getItem(key)||'{}');
     return saved.customPeptides?.['Fictional Spray QA']?.doses?.length===0&&
