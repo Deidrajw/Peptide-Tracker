@@ -2331,15 +2331,17 @@ async function nexusCommitRecordedNasalPreparation(input) {
   return result;
 }
 
-// PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
-// but live controls remain disabled until every state writer shares the same
-// cross-tab transaction coordination. Never silently bypass this release gate.
-const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
+// Prepared nasal LIVE logging release candidate. Every stock/history change
+// is committed through the shared exclusive writer with durable readback.
+// Enable only on this unmerged release branch until full QA and approval.
+const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true;
 async function nexusCommitPreparedNasalOperation(operation) {
   if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
     throw Error("Prepared nasal logging is disabled pending shared-writer cross-tab acceptance");
   if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
   if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
+  if(operation?.type==="dose"&&!operation.tx?.expectedSource)
+    throw Error("Prepared bottle was not verified at review; reopen the dose form");
   const writer=nexusWriter();
   // Rendering may add transient root _UI fields. The prepared engine must use
   // canonical durable bytes rather than an in-memory render snapshot, but it

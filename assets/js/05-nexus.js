@@ -1208,6 +1208,7 @@ function nexusNasalDoseModal(name,occTime){
  m.querySelector("#x").onclick=closeModal;
  const source=m.querySelector("#nx-spray-source"),qty=m.querySelector("#nx-spray-count"),
   date=m.querySelector("#nx-spray-date"),box=m.querySelector("#nx-spray-confirm");
+ let reviewedSource=null;
  const current=()=>bottles.find(x=>String(x.id)===source.value);
  const valid=()=>{
   const b=current(),n=Number(qty.value);
@@ -1224,6 +1225,10 @@ function nexusNasalDoseModal(name,occTime){
    showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
   }
   const b=current(),n=Number(qty.value);
+  // Preserve exact reviewed source characteristics, not merely a bottle ID.
+  // Any concurrent preparation, correction or recalibration invalidates review.
+  reviewedSource={id:String(b.id),remainingMg:b.remainingMg,remainingMl:b.remainingMl,
+    mgPerSpray:b.mgPerSpray,mlPerSpray:b.mlPerSpray,transactionCount:(b.transactions||[]).length};
   m.querySelector("#nx-spray-summary").innerHTML=
     '<div class="nx-shared-review-title">Check prepared spray entry</div>'+
     '<dl class="nx-shared-review-grid">'+
@@ -1237,16 +1242,17 @@ function nexusNasalDoseModal(name,occTime){
     '</dl><p class="nx-shared-review-footnote">Recorded spray values are nominal. Nothing saved yet.</p>';
   box.hidden=false;m.querySelector("#nx-spray-entry-fields").hidden=true;
  };
- m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
+ m.querySelector("#nx-spray-back").onclick=()=>{reviewedSource=null;box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
  m.querySelector("#nx-spray-save").onclick=async()=>{
-  if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
+  if(!reviewedSource||!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
    showErrorBanner("Source or amount changed; nothing saved.");return;
   }
   const b=current(),n=Number(qty.value),btn=m.querySelector("#nx-spray-save");
   if(btn.disabled)return;btn.disabled=true;
   const tx={id:"spray-dose-"+uid(),doseId:String(uid()),compound:name,sourceId:b.id,
    sprays:n,method:"Nasal",sourceKind:"formulation-container",trackingMode:"backed",
-   nativeUnit:unit,date:date.value,notes:m.querySelector("#nx-spray-notes").value};
+   nativeUnit:unit,date:date.value,notes:m.querySelector("#nx-spray-notes").value,
+   expectedSource:{...reviewedSource}};
   let result;
   try{
    if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}

@@ -20,19 +20,19 @@ try{
    document.documentElement.dataset.theme=t;
    window.__nasalQABefore=JSON.stringify(state);
    window.__nasalQAStorage=localStorage.getItem('peptide-tracker-html-v1');
-   // Exercise the LIVE gate in both channels without permitting a real write.
+   // With no eligible prepared bottle, enabled LIVE logging must fail closed.
    _demoActive=false;
    nexusNasalDoseModal('Fictional Compound');
   },theme);
   const warning=page.locator('#nx-validation-message');
-  assert.equal(await warning.isVisible(),true,'LIVE gate must show accessible warning');
-  assert.match(await warning.innerText(),/not enabled in this version.*No dose or bottle deduction was saved/i);
+  assert.equal(await warning.isVisible(),true,'Missing prepared bottle must show accessible warning');
+  assert.match(await warning.innerText(),/No verified prepared nasal bottle/i);
   assert.equal(await warning.getAttribute('role'),'alert');
-  assert.equal(await page.locator('.nx-prepared-spray-entry').count(),0,'Disabled save form must never appear');
+  assert.equal(await page.locator('.nx-prepared-spray-entry').count(),0,'Unavailable source must not open a save form');
   assert.equal(await page.evaluate(()=>JSON.stringify(state)===window.__nasalQABefore),true,'No app state mutation');
   assert.equal(await page.evaluate(()=>localStorage.getItem('peptide-tracker-html-v1')===window.__nasalQAStorage),true,'No storage mutation');
   assert.deepEqual(errors,[],'No JS errors');
   await context.close();count++;
  }
- console.log('PASS: '+count+' LIVE/DEMO 320/390 dark/light fictional sessions: early nasal warning, no misleading form, no state/storage writes');
+ console.log('PASS: '+count+' LIVE/DEMO 320/390 dark/light fictional sessions: missing source rejected, no misleading form, no state/storage writes');
 }finally{await browser.close();}

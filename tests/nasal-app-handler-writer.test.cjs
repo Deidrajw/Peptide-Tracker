@@ -6,7 +6,7 @@ const {create}=require("../assets/js/nexus-write-coordinator.js");
 // Extract and execute the actual app handler with a test-only TRUE gate in a
 // Node VM. This never edits 04-nexus.js, public LIVE flags or real storage.
 const src=fs.readFileSync("assets/js/04-nexus.js","utf8");
-assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*false\s*;/);
+assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*true\s*;/);
 const begin=src.indexOf("async function nexusCommitPreparedNasalOperation(");
 const end=src.indexOf("\nfunction getEligibleSourceKits(",begin);
 assert.ok(begin>0&&end>begin,"real prepared app handler must exist");
@@ -16,7 +16,7 @@ const fixture=()=>({
   formulationStocks:[{id:"bottle-test",compound:"Fictional A",containerType:"nasal-bottle",method:"Nasal",remainingMg:4,remainingMl:2,mgPerSpray:.1,mlPerSpray:.05,transactions:[]}],
   peptides:{"Fictional A":{doses:[]}},customPeptides:{},preparations:[]
 });
-const tx=id=>({type:"dose",tx:{id:"t"+id,doseId:"d"+id,compound:"Fictional A",sourceId:"bottle-test",sprays:2,method:"Nasal",trackingMode:"backed",sourceKind:"formulation-container",nativeUnit:"mg",date:"2026-11-07T12:00:00"}});
+const tx=id=>({type:"dose",tx:{id:"t"+id,doseId:"d"+id,compound:"Fictional A",sourceId:"bottle-test",sprays:2,method:"Nasal",trackingMode:"backed",sourceKind:"formulation-container",nativeUnit:"mg",date:"2026-11-07T12:00:00",expectedSource:{id:"bottle-test",remainingMg:4,remainingMl:2,mgPerSpray:.1,mlPerSpray:.05,transactionCount:0}}});
 function context(start,{enabled=true,write}={}){
  let raw=JSON.stringify(start),writes=0,lastSaved=null;
  const writer=create({read:()=>raw,write:x=>{writes++;if(write)write(x);else raw=x},initialSnapshot:raw,lock:(_name,fn)=>fn()});
@@ -69,5 +69,5 @@ function context(start,{enabled=true,write}={}){
  await assert.rejects(quota.run(tx(6)),/quota/);
  assert.equal(quota.sandbox.state.formulationStocks[0].remainingMg,4);
  assert.equal(quota.writer.status().blocked,true);
- console.log("PASS real nasal app handler: default-off, transient UI, exact durable writer, stale/persistent rejection, bottle debit, history, exact undo, no double vial debit, quota rollback");
+ console.log("PASS real nasal app handler: LIVE branch gate, opt-out, transient UI, exact durable writer, stale/persistent rejection, bottle debit, history, exact undo, no double vial debit, quota rollback");
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,18 +1,12 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-// TEST-ONLY Chromium route rewrites the one OFF constant in a private browser
-// context. Checked-in LIVE source and deployed app always keep the gate OFF.
+// Test the actual enabled LIVE-source handler with disposable fictional data.
+// This browser never visits production or uses a real user's storage.
 const url='http://127.0.0.1:8777/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 try{
  const context=await browser.newContext();
- await context.route('**/assets/js/04-nexus.js',async route=>{
-  const response=await route.fetch();
-  const original=await response.text();
-  const off='const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;';
-  assert.equal(original.split(off).length,2,'Require exactly one production gate OFF statement');
-  await route.fulfill({response,body:original.replace(off,'const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true; /* FICTIONAL CI ONLY */')});
- });
+
  const a=await context.newPage(),b=await context.newPage(),errors=[];
  for(const page of [a,b])page.on('pageerror',err=>errors.push(err.message));
  await Promise.all([a.goto(url,{waitUntil:'domcontentloaded'}),b.goto(url,{waitUntil:'domcontentloaded'})]);
@@ -35,7 +29,7 @@ try{
   state._qaVisiblePanel='today';
   _nexusSharedWriter=null;_nexusLastSavedSnapshot=canonical;
  },{key})));
- const tx=id=>({type:'dose',tx:{id:'qa-t'+id,doseId:'qa-d'+id,compound:'Fictional Spray QA',sourceId:'qa-nasal',sprays:2,method:'Nasal',trackingMode:'backed',sourceKind:'formulation-container',nativeUnit:'mg',date:'2026-11-07T12:00:00'}});
+ const tx=id=>({type:'dose',tx:{id:'qa-t'+id,doseId:'qa-d'+id,compound:'Fictional Spray QA',sourceId:'qa-nasal',sprays:2,method:'Nasal',trackingMode:'backed',sourceKind:'formulation-container',nativeUnit:'mg',date:'2026-11-07T12:00:00',expectedSource:{id:'qa-nasal',remainingMg:4,remainingMl:2,mgPerSpray:.1,mlPerSpray:.05,transactionCount:0}}});
  const pair=await Promise.all([a.evaluate(op=>nexusCommitPreparedNasalOperation(op).then(()=>({ok:true}),e=>({ok:false,error:e.message})),tx(1)),b.evaluate(op=>nexusCommitPreparedNasalOperation(op).then(()=>({ok:true}),e=>({ok:false,error:e.message})),tx(2))]);
  assert.equal(pair.filter(r=>r.ok).length,1,'Only one real application handler save can win');
  assert.match(pair.find(r=>!r.ok).error,/changed|uncertain|reload|blocked/i);
