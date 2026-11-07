@@ -2887,7 +2887,7 @@ function showUndoToast(message, undoFn) {
   toastRemaining=6000;
   toastEl = h(`<div style="position:fixed;left:16px;right:16px;bottom:86px;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px #0006">
     <span style="font-size:12.5px;color:var(--t1)">${esc(message)}</span>
-    <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;padding:4px 6px">UNDO</button>
+    <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;min-height:44px;min-width:48px;padding:8px 10px">UNDO</button>
   </div>`);
   toastEl.querySelector("#undo-btn").onclick = () => { clearTimeout(toastTimer); toastEl.remove(); toastEl=null; undoFn(); };
   document.body.appendChild(toastEl);

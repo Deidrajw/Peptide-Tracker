@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs tools/validate-search-clear-ui.mjs tools/validate-calculator-recovery-ui.mjs tools/validate-nasal-readonly-ui.mjs tools/validate-nasal-live-preflight-ui.mjs tools/validate-nasal-exclusive-writer.mjs tools/validate-nasal-app-handler-browser.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs tools/validate-search-clear-ui.mjs tools/validate-calculator-recovery-ui.mjs tools/validate-nasal-readonly-ui.mjs tools/validate-nasal-live-preflight-ui.mjs tools/validate-nasal-exclusive-writer.mjs tools/validate-nasal-app-handler-browser.mjs tools/validate-nasal-live-form-ui.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
@@ -57,6 +57,7 @@ jobs:
           node tests/restore-warning-classification.test.cjs
           node tests/nasal-live-gate-preflight.test.cjs
           node tests/nasal-app-handler-writer.test.cjs
+          node tests/nasal-reviewed-source.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
           node tests/search-clear-controls.test.cjs
@@ -128,6 +129,7 @@ jobs:
           node tools/validate-cross-tab-lock.mjs
           node tools/validate-nasal-exclusive-writer.mjs
           node tools/validate-nasal-app-handler-browser.mjs
+          node tools/validate-nasal-live-form-ui.mjs
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
           node tools/validate-retrospective-nasal.mjs
