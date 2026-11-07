@@ -42,6 +42,7 @@ jobs:
           node --check assets/js/nexus-prepared-dose-transaction.js
           node tests/prepared-dose-transaction.test.cjs
           node tests/prepared-exclusive-execution.test.cjs
+          node tests/nasal-save-gate-ux.test.cjs
           node tests/add-to-open-vial-exclusive.test.cjs
           node tests/add-vials-exclusive.test.cjs
           node tests/adjust-vial-exclusive.test.cjs
