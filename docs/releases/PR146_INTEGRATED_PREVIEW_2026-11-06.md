@@ -23,3 +23,10 @@ No app storage schema modification or data migration intended; production record
 ## Release status
 Coded on draft PR146, NOT merged, NOT deployed, NOT physically accepted. Merge/deployment require separate explicit user approval.  
 Next action: retrieve final exact-head six-suite results, correct any failures, and validate official source-matched complete fictional DEMO and LIVE packages prior to iPhone UAT.
+
+## 2026-11-06 — Additional integration quality checkpoint
+- Five of six workflows at cd33f205 succeeded; full build #42333716977 failed at the symptom search X target width check. Added **only scoped** CSS protection for true 44 x 44 pixel button in symptom picker at ca8685f3; browser diagnostics 23f01f16 now include measured width, height, viewport, theme and build channel if this assertion fails.
+- Local full-app fictional Playwright Chromium in set_content mode (320/390px, dark/light) passed 4/4 for 44px symptom clear geometry with zero page errors, 4/4 for injection 1mL fail-closed and 3mL recovery, 4/4 for nasal theoretical 5mg/5mL/0.1mL, invalid pump and transient no-state-change. These do not certify clinical safety, WebKit, VoiceOver or physical iPhone operation.
+- Corrected-css candidate artifacts built from exact prior combined application source and GitHub-matching CSS SHA 581f07df: standalone full-app fictional HTML DEMO 3,181,583 bytes, offline demo ZIP (1 root index byte parity and CRC PASS), complete LIVE 26-member root ZIP CRC PASS. Do not deploy from candidate. New integrated full CI #42334795581 and peers were running at evidence checkpoint; no final overall CI verdict yet.
+- No data migration, production writes, main branch changes, or nasal LIVE feature enabling. Draft PR146 remains unmerged and undeployed.
+
