@@ -52,4 +52,70 @@ try{
  assert.deepEqual(errors,[]);
  console.log('PASS fictional real Chromium app-handler two-tab: one winner, stale reject, dose history, exact bottle debit/Undo, physical vial unchanged, no page errors');
  await context.close();
+ // End-to-end ACTUAL enabled LIVE UI path, not just the pure planner:
+ // review/confirm writes the one prepared bottle and history, and visible Undo
+ // reverses exactly that entry. Every browser context uses fictional storage.
+ for(const width of [320,390]){
+  const uiCtx=await browser.newContext({viewport:{width,height:844},isMobile:true,hasTouch:true});
+  const page=await uiCtx.newPage(),uiErrors=[];
+  page.on('pageerror',e=>uiErrors.push(e.message));
+  await page.goto(url,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>typeof nexusNasalDoseModal==='function'&&typeof buildDemoState==='function'&&NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED===true);
+  await page.evaluate(()=>{
+   if(document.querySelector('.modal'))closeModal();
+   const f=buildDemoState('weight_loss');
+   f.profile.onboardingDone=true;
+   f.customPeptides=f.customPeptides||{};
+   f.customPeptides['Fictional Spray UI']={enabled:true,status:'active',unit:'mg',route:'Nasal',doses:[]};
+   f.supplies.push({id:'ui-kit',name:'Fictional Spray UI',activeKit:true,
+    vials:[{id:'ui-vial',status:'open',intendedUse:'nasal-source',remainingMg:15}]});
+   f.formulationStocks=f.formulationStocks||[];
+   f.formulationStocks.push({id:'ui-bottle',compound:'Fictional Spray UI',containerType:'nasal-bottle',
+    method:'Nasal',remainingMg:4,remainingMl:2,mgPerSpray:.1,mlPerSpray:.05,transactions:[]});
+   localStorage.setItem(STORE_KEY,JSON.stringify(f));
+   state=f;_nexusSharedWriter=null;_nexusLastSavedSnapshot=localStorage.getItem(STORE_KEY);_demoActive=false;
+   nexusNasalDoseModal('Fictional Spray UI');
+  });
+  assert.equal(await page.locator('.nx-prepared-spray-entry').count(),1,'Enabled verified bottle must open LIVE nasal form');
+  await page.locator('#nx-spray-count').fill('2');
+  await page.locator('#nx-spray-review').click();
+  assert.equal(await page.locator('#nx-spray-confirm').isVisible(),true,'Review must be accessible before save');
+  await page.locator('#nx-spray-save').click();
+  await page.waitForFunction(()=>{
+   const raw=localStorage.getItem('peptide-tracker-html-v1');
+   if(!raw)return false;
+   const s=JSON.parse(raw);
+   return s.customPeptides?.['Fictional Spray UI']?.doses?.length===1;
+  },null,{timeout:15000});
+  const saved=await page.evaluate(()=>{
+   const s=JSON.parse(localStorage.getItem(STORE_KEY));
+   return {b:s.formulationStocks.find(x=>x.id==='ui-bottle'),
+    dose:s.customPeptides['Fictional Spray UI'].doses[0],
+    vial:s.supplies.find(k=>k.id==='ui-kit').vials[0].remainingMg,
+    matches:JSON.stringify(s)===_nexusLastSavedSnapshot};
+  });
+  assert.equal(saved.b.remainingMg,3.8);
+  assert.equal(saved.b.remainingMl,1.9);
+  assert.equal(saved.b.transactions.length,1);
+  assert.equal(saved.dose.sourceContainerId,'ui-bottle');
+  assert.equal(saved.vial,15,'Original physical vial must not be double deducted');
+  assert.equal(saved.matches,true,'LIVE save acknowledgement requires durable readback');
+  await page.locator('#undo-btn').click();
+  await page.waitForFunction(()=>{
+   const s=JSON.parse(localStorage.getItem('peptide-tracker-html-v1')||'{}');
+   return s.customPeptides?.['Fictional Spray UI']?.doses?.length===0 &&
+    s.formulationStocks?.find(x=>x.id==='ui-bottle')?.transactions?.length===2;
+  },null,{timeout:15000});
+  const after=await page.evaluate(()=>{
+   const s=JSON.parse(localStorage.getItem(STORE_KEY));
+   return {b:s.formulationStocks.find(x=>x.id==='ui-bottle'),
+    vial:s.supplies.find(k=>k.id==='ui-kit').vials[0].remainingMg};
+  });
+  assert.equal(after.b.remainingMg,4);
+  assert.equal(after.b.remainingMl,2);
+  assert.equal(after.vial,15);
+  assert.deepEqual(uiErrors,[]);
+  console.log('PASS real LIVE nasal Review/Save/Undo UI, fictional exact bottle & history',width);
+  await uiCtx.close();
+ }
 }finally{await browser.close()}
