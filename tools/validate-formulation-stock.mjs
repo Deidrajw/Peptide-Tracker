@@ -153,7 +153,16 @@ try {
   await createVial.click();
   assert.equal(await page.locator('#sname').inputValue(),'Fictional Unlisted Compound','Custom vial selection must set canonical kit field');
   assert.equal(await page.locator('#nx-kit-combobox-input').inputValue(),'Fictional Unlisted Compound');
-  assert.equal(await page.evaluate(()=>JSON.stringify(state.supplies)),before,'Selecting custom compound must not save a kit');
+  // When a canonical option is selected, hide X even though shared helper uses inline grid.
+  const kitClear=page.locator('.nx-kit-combobox .nx-search-clear');
+  assert.equal(await kitClear.isVisible(),false,'Selected vial compound must not show a clear-query X');
+  await page.locator('#nx-kit-combobox-input').fill('NAD');
+  assert.equal(await kitClear.isVisible(),true,'Typing into vial picker must show query-only X');
+  await kitClear.click();
+  assert.equal(await kitClear.isVisible(),false,'Vial query clear must hide X after restoring selection');
+  assert.equal(await page.locator('#nx-kit-combobox-input').inputValue(),'Fictional Unlisted Compound','Vial query clear must restore selected label');
+  assert.equal(await page.locator('#sname').inputValue(),'Fictional Unlisted Compound','Vial query clear must retain canonical compound');
+  assert.equal(await page.evaluate(()=>JSON.stringify(state.supplies)),before,'Selecting custom compound or clearing query must not save a kit');
   // Reopen picker: dismiss unsaved fictional draft, then test Other forms.
   await page.locator('.modal #x').click();
   await page.evaluate(()=>supplyModal(null,null));
@@ -219,6 +228,13 @@ try {
   await createForm.click();
   assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound');
   assert.equal(await page.locator('#nx-form-match-list').isHidden(),true,'Explicit custom selection must close matches');
+  const formClear=page.locator('.nx-form-compound-combobox .nx-search-clear');
+  assert.equal(await formClear.isVisible(),false,'Selected Other Forms compound must not show X');
+  await page.locator('#nx-form-name').fill('NAD');
+  assert.equal(await formClear.isVisible(),true,'Other Forms typed query must show X');
+  await formClear.click();
+  assert.equal(await page.locator('#nx-form-name').inputValue(),'Fictional Unlisted Compound','Other Forms clear must restore selected compound');
+  assert.equal(await formClear.isVisible(),false,'Other Forms selected compound must hide X after clearing query');
   await page.locator('#nx-form-name').fill('Fictional Slew');
   await page.locator('#nx-form-count').fill('30');
   await page.locator('#nx-form-strength').fill('5');
