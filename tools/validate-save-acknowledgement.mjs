@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import {createRequire} from "node:module";
 const source=fs.readFileSync("assets/js/05-nexus.js","utf8");
 const root=fs.readFileSync("assets/js/01-nexus.js","utf8");
 const start=source.indexOf('m.querySelector("#save").onclick = async () => {',source.indexOf("const preparedBatches"));
@@ -18,7 +19,7 @@ if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Quick
 const nasalSource=fs.readFileSync("assets/js/04-nexus.js","utf8");
 if(!nasalSource.includes("NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false"))
  throw Error("General preparation transfer safety gate removed");
-const approval=require("node:module").createRequire(import.meta.url)("../release/nasal-live-candidate-authorization.json");
+const approval=createRequire(import.meta.url)("../release/nasal-live-candidate-authorization.json");
 if(approval.issue!==148||approval.draft_pr!==151||approval.permission!=="development-only-not-merge-or-deploy"||
    !nasalSource.includes("NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true")||
    !nasalSource.includes("NexusPreparedDoseTransaction.executeExclusive(")||
