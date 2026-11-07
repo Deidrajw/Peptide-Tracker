@@ -1,3 +1,7 @@
+## 2026-11-06 — Nasal LIVE fail-closed UX implemented separately from writer unlock
+- User wants actual LIVE nasal spray logging, but production feature flag must remain disabled until mixed-writer coordination and verified dose/undo stock conservation. Draft PR149 intentionally changes only misleading LIVE interaction: warn before entry form, distinguish disabled operation from stale/invalid/storage failures. No "successful nasal save" may be represented; no flag flip or production data migration. Full Issue #148 remains open.
+- Keep previously user-accepted PR146 physical iPhone five UI behaviours untouched. PR142 draft P0 reliability work is independent, requires cross-branch reconciliation only after evidence. Never infer release approval from "continue".
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 
