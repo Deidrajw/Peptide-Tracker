@@ -16,7 +16,7 @@ try{
   const clear=async selector=>{
    const btn=page.locator('.nx-search-clear-wrap:has('+selector+') .nx-search-clear');
    ok(await btn.isVisible(),selector+' clear hidden');
-   const m=await btn.boundingBox();ok(m&&m.width>=44&&m.height>=44,selector+' clear size');
+   const m=await btn.boundingBox();ok(m&&m.width>=44&&m.height>=44,selector+' clear size '+JSON.stringify(m)+' viewport '+width+' '+theme+' '+kind);
    ok((await btn.getAttribute('aria-label')||'').includes('Clear'),selector+' accessible label');
    const visual=await btn.evaluate(el=>{
     const svg=el.querySelector('svg'),a=el.getBoundingClientRect(),g=svg?.getBoundingClientRect();
