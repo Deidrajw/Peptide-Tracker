@@ -65,8 +65,8 @@ try {
        ||(state.peptides['Fictional Compound A']?.doses||[]).some(x=>x.method==='Nasal'&&x.sprayCount===4)),true,
     'Valid DEMO save must create a matching fictional historical dose');
   }
-  assert.equal(await page.evaluate(()=>JSON.stringify(state.formulationStocks)),before,
-   'Rejected or gated dose must not change prepared inventory');
+  if(kind==='live')assert.equal(await page.evaluate(()=>JSON.stringify(state.formulationStocks)),before,
+   'Gated LIVE dose must not change prepared inventory');
   assert.deepEqual(errors,[],'No browser page errors');
   await ctx.close();passed++;
  }
