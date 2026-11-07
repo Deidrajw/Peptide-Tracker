@@ -1,47 +1,46 @@
 {
-  "version": "v0.9.25-beta.1",
+  "version": "v0.9.26-beta",
   "channel": "beta",
   "publicationStatus": "unverified",
   "publishedAt": null,
-  "title": "Session-first Combo Dose, exact-vial details and DS2 refinements",
+  "title": "Guarded prepared nasal spray logging, exact-bottle debit and Undo, and approved iPhone UX",
   "changes": [
     {
-      "key": "combo-3-step",
-      "title": "Simpler Combo Dose logging",
-      "detail": "Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.",
-      "screen": "Today / Log Dose / Combo Dose",
+      "key": "nasal-guarded-admin",
+      "title": "Log a verified prepared nasal spray dose",
+      "detail": "Review exact prepared bottle and whole spray count, then save a linked administration, prepared stock debit and immutable ledger under a shared Web Lock with optimistic stale-state protection and readback-confirmed storage.",
+      "screen": "Today / Log Dose / Prepared Nasal",
       "kind": "feature"
     },
     {
-      "key": "combo-unit-parity",
-      "title": "Clear mg/mcg entry with strict inventory accounting",
-      "detail": "Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.",
-      "screen": "Today / Log Dose / Combo Dose",
+      "key": "nasal-undo",
+      "title": "Restore the exact prepared bottle on Undo",
+      "detail": "Undo reverses the original spray transaction, restores only the prepared bottle balance and removes its exact history dose without recrediting or re-debiting original physical vials. Stale/edited/repeated reversals fail closed.",
+      "screen": "Today / Calendar / Stash",
       "kind": "safety"
     },
     {
-      "key": "exact-vial-preparation",
-      "title": "View preparation details for the selected physical vial",
-      "detail": "Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.",
-      "screen": "Stash / Combo Dose",
-      "kind": "improvement"
+      "key": "writer-state",
+      "title": "Protect existing saved records in concurrent tabs",
+      "detail": "Canonical durable comparison ignores temporary rendering fields but blocks unsaved persistent changes, stale tabs, invalid sources, insufficient balances and unverified writes.",
+      "screen": "Log Dose / Stash / Settings",
+      "kind": "safety"
     },
     {
-      "key": "combo-ds2-polish",
-      "title": "Consistent dose header, selection chevrons and field spacing",
-      "detail": "Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.",
-      "screen": "Today / Log Dose / Combo Dose",
-      "kind": "fix"
+      "key": "ui-preserved",
+      "title": "Preserve previously accepted search and calculator experiences",
+      "detail": "Keep the single aligned 44px search-clear button, syringe-size recovery, and independent read-only theoretical nasal calculator without redesigning approved DS2 screens.",
+      "screen": "Check-In / Supplements / More / Calculator",
+      "kind": "improvement"
     }
   ],
-  "dataImpact": "No destructive migration or overwrite of existing production localStorage (peptide-tracker-html-v1). No automatic rewrite of old dose records, saved history, kit records, Check-Ins or inventory. New Combo Dose records retain the established native numeric dose format plus optional enteredAmount/enteredUnit audit metadata. Successful logged doses only debit eligible exact vial sources through the existing guarded exclusive writer. Demo data remains entirely isolated.",
+  "dataImpact": "No destructive migration, reset, import, background sync, or rewrite of existing production storage key peptide-tracker-html-v1. On user-confirmed successful prepared nasal administration only, add one dated dose/history record and one exact prepared-bottle ledger event with balance deduction in one exclusive verified write. Undo reverses that one event without changing physical vial balance. Failed, stale, invalid or insufficient source operations must not acknowledge success; full-app DEMO uses isolated fictional state.",
   "limitations": [
-    "Prepared-dose use delegates to the established prepared-syringe confirmation flow; unsupported administration-method and multi-source combinations fail closed rather than inventing new physical transactions.",
-    "LIVE nasal administration and generic preparation transfers remain OFF; previously approved recorded preparation flow remains unchanged.",
-    "The full offline DEMO intentionally uses fallback fonts. LIVE source preserves external DM Sans/Fraunces/DM Mono import; actual online font-file rendering and VoiceOver/Dynamic Type were not independently accepted in this release session.",
-    "Automated vial-source and measurement regressions passed; synthetic calculator diagnostics do not establish independent clinical certification.",
-    "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed.",
-    "Release metadata is reconciled after merge; app source parity was independently verified at squash merge fe51ace9 before metadata publication."
+    "This is an UNMERGED and UNDEPLOYED v0.9.26-beta release candidate; user GO authorized development and validation, not publication. Real LIVE on production main remains disabled until separately approved release.",
+    "Only verified prepared nasal bottles with calibrated per-actuation fields are eligible. No added medical dosing recommendation or independent pump stability/clinical safety certification.",
+    "Generic preparation transfer controls remain OFF. Recorded nasal preparation flow remains independently controlled and unchanged.",
+    "Physical iPhone Safari and VoiceOver acceptance of this enabled-source candidate are pending. Automated Chromium/WebKit does not constitute physical iPhone testing.",
+    "No assumption that a successful GitHub PR merge alone establishes primary Cloudflare source parity."
   ],
   "history": [
     {

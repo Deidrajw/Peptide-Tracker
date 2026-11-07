@@ -1,7 +1,7 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104', 'integration/pr143-search-pr136-pr144-calculators-20261106']
     # PR132 scoped QA branch trigger
   pull_request:
     branches: [main]
@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs tools/validate-search-clear-ui.mjs tools/validate-calculator-recovery-ui.mjs tools/validate-nasal-readonly-ui.mjs tools/validate-nasal-live-preflight-ui.mjs tools/validate-nasal-exclusive-writer.mjs tools/validate-nasal-app-handler-browser.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
@@ -51,14 +51,22 @@ jobs:
           node tests/stash-retirement-ux.test.cjs
           node --check assets/js/nexus-write-coordinator.js
           node tests/write-coordinator.test.cjs
+          node tests/backed-dose-state-recovery.test.cjs
+          node tests/paused-dose-visibility.test.cjs
+          node tests/compound-status-history.test.cjs
+          node tests/restore-warning-classification.test.cjs
+          node tests/nasal-live-gate-preflight.test.cjs
+          node tests/nasal-app-handler-writer.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
+          node tests/search-clear-controls.test.cjs
+          node tests/nasal-calculator-readonly.test.cjs
           node tools/validate-ux-consistency.mjs
       - name: Gate stale release notes against changed application source
         shell: bash
         run: |
           node tools/check-release-readiness.mjs --self-test
-          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == refs/heads/release/* || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
             node tools/check-release-readiness.mjs --candidate
           else
             node tools/check-release-readiness.mjs --production
@@ -69,7 +77,7 @@ jobs:
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.ref }}" == refs/heads/release/* || "${{ github.ref }}" == "refs/heads/docs/v0924-iphone-acceptance-ds2-reconcile-20261104" ]]; then
             python3 tools/verify-pages.py --attempts 1 --interval 0 --output dist/Nexus_CLOUDFLARE_PARITY.json
           else
             python3 tools/verify-pages.py --attempts 10 --interval 12 --output dist/Nexus_CLOUDFLARE_PARITY.json
@@ -118,6 +126,8 @@ jobs:
           npx playwright install --with-deps chromium
           python3 -m http.server 8777 >/tmp/nexus-server.log 2>&1 &
           node tools/validate-cross-tab-lock.mjs
+          node tools/validate-nasal-exclusive-writer.mjs
+          node tools/validate-nasal-app-handler-browser.mjs
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
           node tools/validate-retrospective-nasal.mjs
@@ -126,6 +136,10 @@ jobs:
           node tools/validate-protocol-design.mjs
           node tools/validate-vial-safety.mjs
           node tools/validate-logdose-ui.mjs
+          node tools/validate-search-clear-ui.mjs
+          node tools/validate-calculator-recovery-ui.mjs
+          node tools/validate-nasal-readonly-ui.mjs
+          node tools/validate-nasal-live-preflight-ui.mjs
           node tools/validate-save-ack-ui.mjs
           node tools/validate-combo-picker.mjs
           node tools/validate-stash-actions.mjs

@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import {createRequire} from "node:module";
 const source=fs.readFileSync("assets/js/05-nexus.js","utf8");
 const root=fs.readFileSync("assets/js/01-nexus.js","utf8");
 const start=source.indexOf('m.querySelector("#save").onclick = async () => {',source.indexOf("const preparedBatches"));
@@ -8,12 +9,20 @@ const handler=source.slice(start,end);
 const refs=[...handler.matchAll(/if\(!await nexusCommitCurrentState\(\)\)\{showErrorBanner\("Dose could not be saved/g)];
 if(refs.length!==3)throw Error("Expected 3 guarded exclusive-CAS Log Dose paths, found "+refs.length);
 if(!handler.includes("await nexusCommitUntrackedDose(name,dose,editingUntracked)")||!root.includes("writer.transaction(state,prior=>({next:apply(prior)}))"))throw Error("Exclusive untracked Log Dose acknowledgement missing");
-if(!handler.includes("await nexusCommitBackedPhysicalDose(")||!root.includes("writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry))"))throw Error("Exclusive backed physical dose acknowledgement missing");
+if(!handler.includes("await nexusCommitBackedPhysicalDose(")||!(root.includes("const expected=writer.expected();")&&root.includes("const durable=JSON.parse(expected);")&&root.includes("writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry))")))throw Error("Exclusive backed physical dose acknowledgement missing");
 if(!root.includes("async function nexusCommitCurrentState()")||!root.includes("await writer.transaction(before,()=>({next:proposed}))"))throw Error("Exclusive CAS readback acknowledgement missing");
 if(!root.includes("async function nexusCommitCurrentState(){\n if(_demoActive)return true;")||!root.includes("// DEMO remains strictly in memory; no live localStorage writes or locks."))throw Error("DEMO save acknowledgement or isolated memory boundary missing");
 if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Combo doses were not saved.'))throw Error("Combo save acknowledgement missing");
 if(!source.includes('if(!await nexusCommitCurrentState()){showErrorBanner("Quick dose could not be saved.'))throw Error("Quick save acknowledgement missing");
-for(const flag of ["NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false","NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false"]){
- if(!fs.readFileSync("assets/js/04-nexus.js","utf8").includes(flag))throw Error("Safety release flag removed: "+flag);
-}
+// Release candidate #151 permits prepared nasal logging only through the
+// independently audited shared writer. Unrelated preparation transfers stay OFF.
+const nasalSource=fs.readFileSync("assets/js/04-nexus.js","utf8");
+if(!nasalSource.includes("NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false"))
+ throw Error("General preparation transfer safety gate removed");
+const approval=createRequire(import.meta.url)("../release/nasal-live-candidate-authorization.json");
+if(approval.issue!==148||approval.draft_pr!==151||approval.permission!=="development-only-not-merge-or-deploy"||
+   !nasalSource.includes("NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true")||
+   !nasalSource.includes("NexusPreparedDoseTransaction.executeExclusive(")||
+   !nasalSource.includes("const serialized=writer.expected();"))
+ throw Error("Prepared nasal activation lacks scoped candidate authority and canonical exclusive writer");
 console.log("PASS: 3 exclusive-CAS + 2 specialized Log Dose branches, combo and quick logging require verified persistence before success; prepared stock remains gated");

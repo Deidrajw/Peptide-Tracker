@@ -15,6 +15,9 @@ try {
   const page=await ctx.newPage();const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
+  await page.waitForLoadState('load');
+  await page.waitForFunction(()=>typeof comboDoseModal==='function'&&typeof buildDemoState==='function');
+  await page.waitForTimeout(250);
   await page.evaluate(theme=>{
     state=buildDemoState('weight_loss');
     state.profile.onboardingDone=true;
@@ -26,6 +29,7 @@ try {
     state._comboSelected=[];state._comboDoses={};state._comboSymptoms=[];state._comboDate=null;state._comboSite=null;state._comboNotes='';
     state.preparedDoses=[];state.comboPresets=[{id:'pair-1',name:'Favorite pair',compounds:['Test Compound 01','Test Compound 02']}];
     document.documentElement.dataset.theme=theme;
+    if(document.querySelector('.modal'))closeModal();
     comboDoseModal();
   },theme);
   ensure(await page.locator('#x').evaluate(el=>el.getBoundingClientRect().height>=44&&el.getBoundingClientRect().width>=44),

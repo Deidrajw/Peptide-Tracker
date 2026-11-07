@@ -1,0 +1,9 @@
+{
+  "issue": 148,
+  "draft_pr": 151,
+  "permission": "development-only-not-merge-or-deploy",
+  "approved_on": "2026-11-07",
+  "verified_writer_sha": "fc74181c91d68377ccac293a668ceb084ea4bda2",
+  "release_gate": "CI and physical iPhone acceptance pending; distinct merge/deploy approval required",
+  "notes": "User GO authorized preparing the guarded LIVE nasal logging candidate. This file is not merge/deployment approval. Shared writer safety checks remain mandatory."
+}
