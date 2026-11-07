@@ -2693,3 +2693,12 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
 .nx-supp-template-manage{min-height:48px;min-width:44px;display:grid;place-items:center;background:transparent;color:var(--t3);border-left:1px solid var(--border-sub)}
 .nx-supp-template-manage:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px}
 @media(max-width:350px){.nx-supp-template-row .nx-supp-template-option span{font-size:11px}}
+
+/* PR143: A search field wrapped by Nexus has exactly one accessible clear action.
+   WebKit/Blink otherwise paint their native cancel X alongside our DS2 button. */
+.nx-search-clear-wrap input[type="search"]::-webkit-search-cancel-button,
+.nx-search-clear-wrap input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}

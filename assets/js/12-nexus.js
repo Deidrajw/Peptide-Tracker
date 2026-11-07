@@ -112,7 +112,14 @@ function wireBody() {
   const asj=$("#as-journal"); if(asj) asj.onclick=()=>{state._aminoSub="journal";renderBody();};
   if(state._aminoSub==="journal"){
     const jsearch=$("#journal-search");
-    if(jsearch){ jsearch.oninput=()=>{ state._journalQuery=jsearch.value; renderBody(); const n=$("#journal-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
+    if(jsearch){
+      const wireJournalSearch=()=>{
+        const input=$("#journal-search");if(!input)return;
+        input.oninput=()=>{state._journalQuery=input.value;renderBody();wireJournalSearch();const n=$("#journal-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+        nexusWireSearchClear(input,()=>{state._journalQuery="";renderBody();wireJournalSearch();},"Clear journal search");
+      };
+      wireJournalSearch();
+    }
     const journalFilter=$("#journal-compound-filter"); if(journalFilter)journalFilter.onchange=()=>{state._journalCompound=journalFilter.value;renderBody();};
     document.querySelectorAll("[data-jump-type]").forEach(card=>card.onclick=()=>{
       const t=card.dataset.jumpType;
@@ -392,6 +399,7 @@ function wireBody() {
     const empty=$("#nx-journal-search-empty");
     if(empty)empty.hidden=visibleDays!==0;
   };
+  if(journalSearch)nexusWireSearchClear(journalSearch,()=>journalSearch.oninput?.(),"Clear activity log search");
   const journalDate=$("#nx-journal-date");if(journalDate)journalDate.onchange=()=>{state._logsDate=journalDate.value;renderBody();};
   const journalToday=$("#nx-journal-today");if(journalToday)journalToday.onclick=()=>{state._logsDate=localDate();renderBody();};
   document.querySelectorAll(".nx-journal-day-step").forEach(b=>b.onclick=()=>{const source=state._logsDate||localDate();state._logsDate=addDays(source,Number(b.dataset.offset));renderBody();});
@@ -936,8 +944,18 @@ function wireBody() {
   document.querySelectorAll(".delmeasure").forEach(b=>b.onclick=()=>confirmAction("Delete this measurement?",async()=>{state.measurementLogs=state.measurementLogs.filter(m=>m.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   document.querySelectorAll(".delweight").forEach(b=>b.onclick=()=>confirmAction("Delete this weight entry?",async()=>{state.weightLogs=state.weightLogs.filter(w=>w.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();}));
   // stash
-  const stashSearch=$("#nx-stash-search");
-  if(stashSearch) stashSearch.oninput=()=>{nexusStashSearchTerm=stashSearch.value;renderBody();const refreshed=$("#nx-stash-search");if(refreshed){refreshed.focus();refreshed.setSelectionRange(refreshed.value.length,refreshed.value.length);}};
+  // Stash redraws the search input after filtering: rebind both typing and clear.
+  const wireStashSearch=()=>{
+    const input=$("#nx-stash-search");if(!input)return;
+    input.oninput=()=>{
+      nexusStashSearchTerm=input.value;renderBody();wireStashSearch();
+      const refreshed=$("#nx-stash-search");if(refreshed){refreshed.focus();refreshed.setSelectionRange(refreshed.value.length,refreshed.value.length);}
+    };
+    nexusWireSearchClear(input,()=>{
+      nexusStashSearchTerm="";renderBody();wireStashSearch();
+    },"Clear Stash search");
+  };
+  wireStashSearch();
   const av=$("#addvial"); if(av)av.onclick=()=>supplyModal();
   const qaAdd=$("#qa-addkit"); if(qaAdd) qaAdd.onclick=()=>supplyModal(null);
   const qaPrep=$("#qa-prepare"); if(qaPrep) qaPrep.onclick=prepareChoiceModal;
@@ -1109,6 +1127,7 @@ function wireBody() {
       if(!shown)document.getElementById("nx-library-list")?.insertAdjacentHTML("beforeend",'<div class="nx-library-empty" id="nx-library-empty">No matching compounds.</div>');
     };
     nxLibrarySearch.dispatchEvent(new Event("input"));
+    nexusWireSearchClear(nxLibrarySearch,()=>nxLibrarySearch.oninput?.(),"Clear compound history search");
   }
   document.querySelectorAll(".nx-library-item:not(.nx-library-ingredient)").forEach(b=>b.onclick=()=>{state._nxHistorySelected=b.dataset.nxCompound;renderBody();window.scrollTo({top:0,behavior:"instant"});});
   document.querySelectorAll(".nx-library-ingredient").forEach(b=>b.onclick=()=>{
@@ -1170,7 +1189,12 @@ function wireBody() {
   const lsc=$("#ls-calc"); if(lsc)lsc.onclick=()=>{state._learnSub="calc";renderBody();};
   if(state._learnSub==="calc") wireReconCalc();
   const mixb=$("#mixback"); if(mixb)mixb.onclick=()=>{state._learnSub="guides";renderBody();};
-  const mis=$("#mix-search"); if(mis)mis.oninput=()=>{state._mixSearch=mis.value;renderBody();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+  const wireMixSearch=()=>{
+    const input=$("#mix-search");if(!input)return;
+    input.oninput=()=>{state._mixSearch=input.value;renderBody();wireMixSearch();const n=$("#mix-search");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);}};
+    nexusWireSearchClear(input,()=>{state._mixSearch="";renderBody();wireMixSearch();},"Clear stacking search");
+  };
+  wireMixSearch();
   document.querySelectorAll(".mix-type-chip").forEach(b=>b.onclick=()=>{state._mixTypeFilter=b.dataset.t;renderBody();});
   const lsd=$("#ls-discover"); if(lsd)lsd.onclick=()=>{state._learnSub="discover";renderBody();};
   document.querySelectorAll(".discitem").forEach(b=>b.onclick=async()=>{
@@ -1272,8 +1296,20 @@ function wireBody() {
   });
   const sdBack=$("#settings-detail-back"); if(sdBack) sdBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); };
   const muToggle=$("#munit-toggle"); if(muToggle) muToggle.onclick=async()=>{ const value=state.settings.measureUnit==="in"?"cm":"in"; muToggle.disabled=true; const saved=await nexusCommitScopedStateChange({kind:"setting",key:"measureUnit",value}); if(saved)render();else muToggle.disabled=false; };
-  const suppSearch=$("#supp-search");
-  if(suppSearch){ suppSearch.oninput=()=>{ state._supplementSearch=suppSearch.value; renderBody(); const n=$("#supp-search"); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} }; }
+  // Rebind search and clear after Settings redraws the list; no data writes.
+  const wireSuppLibrarySearch=()=>{
+    const input=$("#supp-search");if(!input)return;
+    input.oninput=()=>{
+      state._supplementSearch=input.value;
+      renderBody();wireSuppLibrarySearch();
+      const next=$("#supp-search");if(next){next.focus();next.setSelectionRange(next.value.length,next.value.length);}
+    };
+    nexusWireSearchClear(input,()=>{
+      state._supplementSearch="";renderBody();wireSuppLibrarySearch();
+      $("#supp-search")?.focus();
+    },"Clear supplement search");
+  };
+  wireSuppLibrarySearch();
   const ep2=$("#editprofile2"); if(ep2)ep2.onclick=profileModal;
   const auBack=$("#au-back"); if(auBack){ auBack.setAttribute("aria-label","Back to Settings"); auBack.onclick=()=>{ state._settingsDetail=null; render(); window.scrollTo(0,0); }; }
   document.querySelectorAll(".au-tab").forEach(b=>b.onclick=()=>{ state._appUpdatesTab=b.dataset.tab; render(); });

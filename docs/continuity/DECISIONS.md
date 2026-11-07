@@ -1,3 +1,19 @@
+## 2026-11-06 — User rejects double search X and calculator omissions in iPhone screenshots
+- One clear action per search input is required; native type=search WebKit/Blink X must not coexist with Nexus's own accessible 44px clear control. Prefer ONE quieter thin-outline 16px/1.6 muted X over previous heavy/double icon, with unchanged field proportions/lavender focus. This is a targeted corrective candidate, NOT visual acceptance yet. Avoid general native search suppression where no custom clear exists.
+- User reiterates injection calculator recovery and separate nasal calculator must be delivered, not just roadmap items. PR136 and PR144 already code these on different draft branches; green PR143 QA cannot be used to claim those features delivered. Preserve syringe capacity safety guard, no invented volume/injection instruction on overflow; keep nasal LIVE gates OFF. Integration/release requires exact-source cross-branch reconciliation, preview and explicit approval.
+
+## 2026-11-06 — PR143 completed automated picker qualification; no release decision
+- Vial Kit, Other Forms and Blend selected-value comboboxes preserve canonical compound on query-only clear. The 17px/1.8 SVG on 44px target is hidden after a selection and appears only on active search. Previously approved DS2 unchanged. Six exact-head suites and complete candidate verified on 8aba617b; this is QA evidence, not new user approval to merge/deploy. Physical iPhone acceptance remains necessary. Multi-compound protocol redesign Issue #145 remains separately deferred.
+
+## 2026-11-06 — Future protocol-first multi-compound UX request recorded; not approved design
+- User expressed friction adding/managing multiple compounds in protocols, with four example groupings (body recomposition, mitochondrial, sleep/cognitive, tissue repair). Capture as Issue #145 and roadmap concept; preserve current protocol/plan/dose data and approved DS2. Proposed single protocol-level multi-select and per-compound editing are hypotheses requiring interactive preview and user's design decision, NOT an instruction to implement, recommend combining, or administer any substances. PR143 remains independent. No release approval.
+
+## 2026-11-06 — DS2 search-clear icon refinement approved as targeted scope
+- User directed a 16–18px thin-outline X (implemented 17px/1.8px), muted secondary icon colour, exact 44x44 tap region centred at input right, no extra surface decoration, visible only when search query is nonempty. Existing lavender focus, field proportions and typography remain protected. Clear changes query/filter only, never selected supplements, draft data or historical records. Apply through reusable helper across Issue #140; this is implementation direction, NOT merge/deploy approval.
+
+## 2026-11-06 — Query clear must not obscure authoritative combobox selections
+- Reuse query-only clear for independent search queries. Vial Kit, Other Forms and blend compound combobox text currently doubles as visible selected compound: do NOT clear it while preserving a hidden underlying selection, and do NOT trigger handlers that remove a selected item when user only wants to clear a search query. First separate query from selection or add explicitly conditional behaviour, preserve DS2/44px targets, then verify with fictional browser tests. No merge/deploy approval.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 

@@ -2129,6 +2129,8 @@ function nexusAddFormulationModal(type,existingId=null){
   const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
   const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
   const closeMatches=()=>{matchList.hidden=true;compoundInput.setAttribute("aria-expanded","false");};
+  let lastChosen=compoundInput.value,queryActive=false;
+  const rememberChosen=()=>{lastChosen=compoundInput.value;queryActive=false;const x=m.querySelector(".nx-form-compound-combobox .nx-search-clear");if(x){x.hidden=true;x.style.display="none";}};
   function refreshCompoundMatches(){
     if(existing)return;
     const query=compoundInput.value.trim().toLocaleLowerCase();
@@ -2145,12 +2147,12 @@ function nexusAddFormulationModal(type,existingId=null){
       const option=document.createElement("button");option.type="button";option.setAttribute("role","option");option.textContent=name;
       option.setAttribute("aria-selected",String(compoundInput.value.trim().toLocaleLowerCase()===name.toLocaleLowerCase()));
       option.onpointerdown=e=>e.preventDefault();
-      option.onclick=()=>{compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();};matchList.appendChild(option);
+      option.onclick=()=>{compoundInput.value=name;rememberChosen();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();};matchList.appendChild(option);
     });
     const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";browse.textContent="View all compounds";
     // Browse opens the library: it is not an additional compound option.
     browse.onpointerdown=e=>e.preventDefault();
-    browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));});};
+    browse.onclick=()=>{closeMatches();nexusBrowseAllCompounds(m,candidates.map(name=>({name,value:name})),chosen=>{compoundInput.value=chosen.name;rememberChosen();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));});};
     matchList.appendChild(browse);
     if(query && !candidates.some(name=>name.trim().toLocaleLowerCase()===query)){
       const create=document.createElement("button");create.type="button";create.className="nx-kit-create-custom";
@@ -2160,7 +2162,7 @@ function nexusAddFormulationModal(type,existingId=null){
       create.onclick=()=>{
         const name=compoundInput.value.trim().replace(/\s+/g," ");
         if(!name || name.length>120)return;
-        compoundInput.value=name;compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();
+        compoundInput.value=name;rememberChosen();compoundInput.dispatchEvent(new Event("change",{bubbles:true}));compoundInput.focus({preventScroll:true});closeMatches();
       };
       matchList.appendChild(create);
     }
@@ -2169,13 +2171,16 @@ function nexusAddFormulationModal(type,existingId=null){
   if(!existing){
     compoundInput.addEventListener("focus",refreshCompoundMatches);
     compoundInput.addEventListener("input",()=>{
-      refreshCompoundMatches();
+      queryActive=true;refreshCompoundMatches();
       // A prior focusout frame can close results after a keyboard selection
       // while the user resumes typing. Respect the current input focus.
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(document.activeElement===compoundInput)refreshCompoundMatches();
       }));
     });
+    nexusWireSearchClear(compoundInput,()=>{
+      compoundInput.value=lastChosen;queryActive=false;closeMatches();
+    },"Clear other-form compound search",{isQuery:()=>queryActive});
     compoundInput.addEventListener("keydown",e=>{
       if(e.key==="Escape"){closeMatches();return;}
       if(e.key==="ArrowDown"&&!matchList.hidden){e.preventDefault();matchList.querySelector('[role="option"]')?.focus();}
