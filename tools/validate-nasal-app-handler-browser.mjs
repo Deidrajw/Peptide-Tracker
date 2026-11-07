@@ -100,7 +100,25 @@ try{
   assert.equal(saved.dose.sourceContainerId,'ui-bottle');
   assert.equal(saved.vial,15,'Original physical vial must not be double deducted');
   assert.equal(saved.matches,true,'LIVE save acknowledgement requires durable readback');
+  const preUndo=await page.evaluate(()=>{
+   const durable=JSON.parse(_nexusLastSavedSnapshot);
+   const persistentKeys=[...new Set([...Object.keys(state),...Object.keys(durable)])].filter(k=>!k.startsWith('_'));
+   return {changedPersistentKeys:persistentKeys.filter(k=>JSON.stringify(state[k])!==JSON.stringify(durable[k])),
+    toast:!!document.querySelector('#undo-btn'),writer:nexusWriter().status()};
+  });
+  console.log('NASAL UI pre-Undo diagnostics',width,JSON.stringify(preUndo));
+  const uiConsoleErrors=[];
+  page.on('console',msg=>{if(msg.type()==='error')uiConsoleErrors.push(msg.text())});
   await page.locator('#undo-btn').click();
+  await page.waitForTimeout(400);
+  const postUndo=await page.evaluate(()=>{
+   const s=JSON.parse(localStorage.getItem(STORE_KEY));
+   return {doseCount:s.customPeptides?.['Fictional Spray UI']?.doses?.length,
+    historyCount:s.formulationStocks?.find(x=>x.id==='ui-bottle')?.transactions?.length,
+    warning:document.querySelector('#nx-validation-message')?.textContent||'',
+    writer:nexusWriter().status()};
+  });
+  console.log('NASAL UI post-Undo diagnostics',width,JSON.stringify(postUndo),'browser console errors',JSON.stringify(uiConsoleErrors));
   await page.waitForFunction(()=>{
    const s=JSON.parse(localStorage.getItem('peptide-tracker-html-v1')||'{}');
    return s.customPeptides?.['Fictional Spray UI']?.doses?.length===0 &&
