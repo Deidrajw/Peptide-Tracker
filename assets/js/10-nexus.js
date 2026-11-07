@@ -1765,6 +1765,12 @@ function homeView() {
   const started=sortActiveCards(Object.entries(aps).filter(e=>isActive(e)&&hasStarted(e)));
   const notStarted=Object.entries(aps).filter(e=>isActive(e)&&!hasStarted(e));
   const paused=Object.entries(aps).filter(e=>isPaused(e));
+  // Historical dose visibility is independent of current scheduling status.
+  // A compound paused after its dose was logged must still appear in Today
+  // and Completed. Keep it OUT of scheduled/Upcoming occurrence calculations.
+  const recordedInactiveToday=Object.entries(aps).filter(e=>
+    !isActive(e)&&(e[1].doses||[]).some(d=>doseDayFor(e[1],d)===today));
+  const visibleToday=started.concat(recordedInactiveToday);
   let html=`<div class="nx-today-header"><div class="nx-today-greeting"><h1 class="serif greet">${greeting}, ${esc(state.profile.name||"there")}</h1><div class="hint">${now.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</div></div><div class="nx-today-header-actions"><div id="nx-alert-trigger-slot"></div></div></div>`;
   const suppLoggedToday = (state.supplementLogs||[]).find(s=>dayKey(s.date)===today);
   // Phase 2B: compact, read-only daily orientation using the existing occurrence engine.
@@ -1785,6 +1791,9 @@ function homeView() {
     if (hasDoseHistory && !isCompoundRelevantToday(getDoseStatus(name, record))) return [];
     return getDayOccurrences(record, today).filter(slot => slot.status !== "paused");
   });
+  // Extra logged doses are history, not newly activated schedule slots.
+  const additionalRecordedCount=recordedInactiveToday.reduce((sum,[,record])=>
+    sum+(record.doses||[]).filter(d=>doseDayFor(record,d)===today).length,0);
   const scheduledCount = todaySlots.length;
   const takenCount = todaySlots.filter(slot => slot.status === "taken").length;
   const pendingCount = todaySlots.filter(slot => ["overdue", "due_now", "due_later_today", "upcoming"].includes(slot.status)).length;
@@ -1799,6 +1808,7 @@ function homeView() {
     ${scheduledCount ? `<div class="nexus-today-track" role="progressbar" aria-label="Scheduled doses logged" aria-valuemin="0" aria-valuemax="${scheduledCount}" aria-valuenow="${takenCount}"><div style="width:${progressPct}%"></div></div>` : ``}
     
   </section>`;
+  if(additionalRecordedCount)html+=`<div class="nx-today-offschedule-history" role="status" style="margin:0 0 12px;font-size:12px;color:var(--t3)">＋ ${additionalRecordedCount} dose${additionalRecordedCount===1?"":"s"} recorded today for paused or inactive compounds · See Completed</div>`;
   html+=`<div class="nexus-today-actions nexus-today-actions-b4"><button type="button" id="today-log-dose" class="nexus-today-action-primary">＋ Log dose</button><button type="button" class="${todayLog?"editdaily":"qa-daily"} nexus-today-action-secondary" data-id="${todayLog?todayLog.id:""}">${todayLog?"Edit check-in":"＋ New check-in"}</button></div>`;
   html+=`<section aria-label="Daily check-in status" class="nx-hybrid-checkin"><span class="nx-hybrid-checkin-symbol" aria-hidden="true">${todayLog?"✓":"○"}</span><span style="flex:1;min-width:0"><strong style="font-size:14px;color:var(--t1)">Daily check-in</strong><span style="display:block;margin-top:4px;font-size:12px;color:var(--t3)">${todayLog?"Completed · "+(mood?esc(mood.label):"Recorded"):"Not completed today"}</span></span><button type="button" class="${todayLog?"editdaily":"qa-daily"} nx-hybrid-checkin-cta" data-id="${todayLog?todayLog.id:""}">${todayLog?"Edit":"Check in"}</button></section>`;
   html+=nxQuickAccessView();
@@ -1951,9 +1961,9 @@ function homeView() {
   // Combo logging is now a visible option inside Today’s Log dose action.
   // COMPOUND CARDS — every view routes through the SAME compact-card component
   // (renderCompoundCardCompact), so there's one place that fixes/breaks, not several.
-  if (homeViewKey==="today") html += renderSinceLastVisit() + renderTodayCompoundSection(started);
+  if (homeViewKey==="today") html += renderSinceLastVisit() + renderTodayCompoundSection(visibleToday);
   else if (homeViewKey==="active") html += renderActiveFullView(started);
-  else if (homeViewKey==="completed") html += renderCompletedFullView(started);
+  else if (homeViewKey==="completed") html += renderCompletedFullView(visibleToday);
   else html += renderAllFullView(started, notStarted, paused);
   html += todayAttentionHtml; // hidden modal remains available without occupying Today layout
   // Daily tracking uses real dated records; the activity selection only changes the
