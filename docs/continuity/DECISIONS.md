@@ -1,3 +1,7 @@
+## 2026-11-06 — Prepared nasal save: no false success or actionable LIVE controls
+- Screenshot feedback: user tapped Confirm & save for prepared Oxytocin nasal dose with no saved result. Production intentionally has NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED=false. Do not remove gate or silently route to unsafe/uncertain writers. UI-only approved-target corrective hypothesis is to disclose unavailable LIVE nasal logging before form entry and hide the nonfunctional save CTA, plus show DEMO planner failure inline. PR147 is separate from PR146 calculator and does not authorize LIVE nasal enablement or release.
+- Review figures (4 sprays, nominal 200mcg, estimated 8.60mL) are hypothetical; never claim a record or inventory debit until verified persisted. Preserve existing history and backups. Physical iPhone user acceptance and separate explicit merge/deploy approval required.
+
 ## 2026-11-05 — Combo Dose header must inherit DS2 form typography
 - User feedback: Dose Log title at top did not match approved UI design system and typography. Retain wording DOSE LOG / Combo dose but apply standard DS2 modal hierarchy: subtle 11px eyebrow, DM Sans 23px title (21px at 320px) and consistent 48px outlined SVG close. Scope to Combo Dose; preserve content, stepper, calculator and storage. Targeted corrective design request, not release permission.
 
