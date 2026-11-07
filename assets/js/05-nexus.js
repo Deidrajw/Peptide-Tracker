@@ -1264,8 +1264,30 @@ function nexusNasalDoseModal(name,occTime){
    btn.disabled=false;return;
   }
   closeModal();render();
+  // Legacy per-vial metadata can be lazily backfilled *only in memory* while
+  // rendering Stash/Today. Capture exactly that post-save rendering result.
+  // Never ignore a real subsequent persistent edit, another saved operation,
+  // or a stale competing tab just to make Undo appear successful.
+  const nasalUndoRenderSupplies=JSON.stringify(state.supplies||[]);
+  const nasalUndoSavedRaw=_demoActive?null:nexusWriter().expected();
   showUndoToast(name+" sprays logged · Undo",async()=>{
    try{
+    if(!_demoActive&&typeof nasalUndoSavedRaw==="string"&&
+       nexusWriter().expected()===nasalUndoSavedRaw&&
+       JSON.stringify(state.supplies||[])===nasalUndoRenderSupplies){
+      const durable=JSON.parse(nasalUndoSavedRaw);
+      const exceptSupplies=value=>{
+       const copy={...value};delete copy.supplies;
+       for(const key of Object.keys(copy))if(key.startsWith("_"))delete copy[key];
+       return JSON.stringify(copy);
+      };
+      // Only reconcile an unchanged render-time supplies representation.
+      // Real inventory edits, historical changes and other persistent writes
+      // remain subject to the strict exact-snapshot writer rejection.
+      if(exceptSupplies(state)===exceptSupplies(durable)&&
+         JSON.stringify(state.supplies||[])!==JSON.stringify(durable.supplies||[]))
+       state={...state,supplies:durable.supplies};
+    }
     const undo={transactionId:tx.id,reversalId:"spray-undo-"+uid(),compound:name,doseId:tx.doseId,sourceId:b.id};
     if(_demoActive){const r=NexusPreparedDoseTransaction.reverseDose(state,undo);state=r.next;}
     else await nexusCommitPreparedNasalOperation({type:"reverse",tx:undo});
