@@ -1,5 +1,5 @@
-Session-first Combo Dose, exact-vial details and DS2 refinements
-- Simpler Combo Dose logging: Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.
-- Clear mg/mcg entry with strict inventory accounting: Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.
-- View preparation details for the selected physical vial: Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.
-- Consistent dose header, selection chevrons and field spacing: Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.
+Guarded prepared nasal spray logging, exact-bottle debit and Undo, and approved iPhone UX
+- Log a verified prepared nasal spray dose: Review exact prepared bottle and whole spray count, then save a linked administration, prepared stock debit and immutable ledger under a shared Web Lock with optimistic stale-state protection and readback-confirmed storage.
+- Restore the exact prepared bottle on Undo: Undo reverses the original spray transaction, restores only the prepared bottle balance and removes its exact history dose without recrediting or re-debiting original physical vials. Stale/edited/repeated reversals fail closed.
+- Protect existing saved records in concurrent tabs: Canonical durable comparison ignores temporary rendering fields but blocks unsaved persistent changes, stale tabs, invalid sources, insufficient balances and unverified writes.
+- Preserve previously accepted search and calculator experiences: Keep the single aligned 44px search-clear button, syringe-size recovery, and independent read-only theoretical nasal calculator without redesigning approved DS2 screens.
