@@ -44,3 +44,11 @@ assert.ok(blendSource.indexOf('trigger.oninput=()=>{queryActive=true;')>=0 &&
   blendSource.indexOf('nexusWireSearchClear(trigger,()=>{'),
   "Blend picker query state must update before shared clear visibility");
 console.log("PASS: accessible query clear source contracts for Supplements, Combo, Stash, Logs, Protocol and Discover and selected-value comboboxes");
+
+// Screenshot regression: native WebKit/Blink type=search X must not be shown
+// beside Nexus's own 44px accessible clear control; other search fields retain
+// their native affordance until explicitly wired to the shared helper.
+const globalCss=fs.readFileSync("assets/css/nexus.css","utf8");
+assert.match(globalCss,/\.nx-search-clear-wrap input\[type="search"\]::-webkit-search-cancel-button/);
+assert.match(globalCss,/\.nx-search-clear-wrap input\[type="search"\]::-webkit-search-decoration/);
+assert.match(globalCss,/-webkit-appearance:\s*none;/);
