@@ -13,6 +13,8 @@ try{
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof buildDemoState==='function'&&typeof reconCalcView==='function');
+  // Complete the initial UI overlay before interacting with the injected fictional calculator fixture.
+  if(await page.locator('#ob-skip').isVisible()) await page.locator('#ob-skip').click();
   await page.evaluate(t=>{
    state=buildDemoState('weight_loss');state.profile.onboardingDone=true;
    document.documentElement.dataset.theme=t;
