@@ -52,6 +52,18 @@ try {
    assert.match(await page.locator('#nx-spray-save-error').innerText(),/Nothing was saved/i);
    assert.equal(await page.locator('#nx-spray-save').isEnabled(),true,
     'User should be able to edit and retry after validation');
+   // Repair ONLY fictional ledger metadata and retry the exact same entry.
+   // A valid DEMO planner save must complete atomically, not remain stuck.
+   await page.evaluate(()=>{state.formulationStocks[0].transactions=[];});
+   await page.locator('#nx-spray-save').click();
+   assert.equal(await page.locator('#nx-spray-confirm').count(),0,
+    'Valid fictional confirmation should close after save');
+   assert.equal(await page.evaluate(()=>state.formulationStocks[0].remainingMl),8.6,
+    'Valid DEMO spray save must debit prepared bottle volume exactly once');
+   assert.equal(await page.evaluate(()=>
+     (state.customPeptides['Fictional Compound A']?.doses||[]).some(x=>x.method==='Nasal'&&x.sprayCount===4)
+       ||(state.peptides['Fictional Compound A']?.doses||[]).some(x=>x.method==='Nasal'&&x.sprayCount===4)),true,
+    'Valid DEMO save must create a matching fictional historical dose');
   }
   assert.equal(await page.evaluate(()=>JSON.stringify(state.formulationStocks)),before,
    'Rejected or gated dose must not change prepared inventory');
