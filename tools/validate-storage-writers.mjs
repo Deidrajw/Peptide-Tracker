@@ -98,8 +98,26 @@ if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
   throw Error('Prepared nasal runtime bypasses exclusive transaction execution boundary');
-for(const lock of ['NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false','NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false']){
- if(!runtime.includes(lock))throw Error('Unapproved live stock transfer enablement: '+lock);
+// Nasal release candidate #151 is explicitly authorised for development by
+// the user's GO on 2026-11-07. This is NOT authority to merge or deploy.
+// Require a literal checked-in approval scope, and never unlock the unrelated
+// preparation transfer controls. Continue enforcing every shared-writer rule.
+if(!runtime.includes('NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false'))
+ throw Error('Unapproved physical preparation transfer gate change');
+const nasalEnabled=runtime.includes('NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true');
+const nasalDisabled=runtime.includes('NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false');
+if(nasalEnabled===nasalDisabled)throw Error('Prepared nasal gate must be explicit and unique');
+if(nasalEnabled){
+ const authorization=JSON.parse(fs.readFileSync('release/nasal-live-candidate-authorization.json','utf8'));
+ if(authorization.issue!==148||authorization.draft_pr!==151||
+    authorization.permission!=='development-only-not-merge-or-deploy'||
+    authorization.verified_writer_sha!=='fc74181c91d68377ccac293a668ceb084ea4bda2')
+  throw Error('Missing scoped nasal LIVE candidate authorization');
+ if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(')||
+    !runtime.includes('const serialized=writer.expected();')||
+    !runtime.includes('const result=await globalThis.NexusPreparedDoseTransaction.executeExclusive(')||
+    !runtime.includes('if(persistent(state)!==persistent(durable))'))
+  throw Error('Enabled nasal LIVE requires canonical durable Web-Locked transaction with persistence mismatch rejection');
 }
 const coordinator=fs.readFileSync('assets/js/nexus-write-coordinator.js','utf8');
 if(/\b(?:saveLegacy|removeLegacy)\s*[:(,}]/.test(coordinator))throw Error('Unlocked coordinator API still exposed');
