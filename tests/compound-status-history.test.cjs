@@ -1,0 +1,49 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const coordinator=require('../assets/js/nexus-write-coordinator.js');
+const root=fs.readFileSync('assets/js/01-nexus.js','utf8');
+const ui=fs.readFileSync('assets/js/12-nexus.js','utf8');
+const card=fs.readFileSync('assets/js/08-nexus.js','utf8');
+const a=root.indexOf('function nexusPlanScopedStateChange(snapshot,operation){');
+const b=root.indexOf('async function nexusCommitScopedStateChange(operation)',a);
+assert.ok(a>=0&&b>a);
+const script=root.slice(a,b)+';this.plan=nexusPlanScopedStateChange;';
+const ctx={JSON,Error,Array,Set,Object,Number,String,Date,dayKey:v=>String(v).slice(0,10)};
+vm.runInNewContext(script,ctx);
+const fixture=()=>({peptides:{'Example A':{status:'active',doses:[{id:1,dose:'10',date:'2026-11-05'}]}},
+customPeptides:{},supplies:[{id:'kit-1',remainingMg:42}],protocols:[{id:'proto-1',status:'in_progress'}],
+settings:{},dailyLogs:[]});
+const change={kind:'compound-status',name:'Example A',builtin:true,from:'active',to:'paused',at:'2026-11-05T23:11:12.000Z'};
+const original=fixture();
+const paused=ctx.plan(original,change).next;
+assert.equal(original.peptides['Example A'].status,'active','planner must not mutate input');
+assert.equal(paused.peptides['Example A'].status,'paused');
+assert.equal(paused.peptides['Example A'].pausedAt,change.at);
+assert.equal(paused.peptides['Example A'].statusHistory.length,1);
+assert.equal(paused.peptides['Example A'].statusHistory[0].source,'manual-confirmed');
+assert.deepEqual(JSON.parse(JSON.stringify(paused.supplies)),original.supplies);
+assert.deepEqual(JSON.parse(JSON.stringify(paused.protocols)),original.protocols);
+assert.deepEqual(JSON.parse(JSON.stringify(paused.peptides['Example A'].doses)),original.peptides['Example A'].doses);
+assert.throws(()=>ctx.plan(paused,change),/Compound status changed/);
+const resume={...change,from:'paused',to:'active',at:'2026-11-06T01:01:11.000Z'};
+const resumed=ctx.plan(paused,resume).next;
+assert.equal(resumed.peptides['Example A'].status,'active');
+assert.equal(resumed.peptides['Example A'].statusHistory.length,2);
+assert.equal(resumed.peptides['Example A'].resumedAt,resume.at);
+assert.throws(()=>ctx.plan(paused,{...change,to:'paused',from:'active',at:'bad'}),/Valid status change timestamp/);
+assert.throws(()=>ctx.plan(resumed,change),/Duplicate status event/);
+const c=coordinator.create({read:()=>JSON.stringify(original),write:()=>{},lock:(_name,fn)=>fn(),initialSnapshot:JSON.stringify(original)});
+assert.equal(typeof c.transaction,'function');
+assert.ok(ui.includes('if(!confirm(message))return;'), 'Pause requires positive confirmation');
+assert.ok(ui.includes('kind:"compound-status"'), 'Pause/resume must use scoped durable status writer');
+assert.ok(!ui.includes('tgt[n].status="paused";if(!await nexusCommitCurrentState()'), 'Legacy non-audited pause forbidden');
+assert.ok(!ui.includes('tgt[n].status="active";if(!await nexusCommitCurrentState()'), 'Legacy non-audited resume forbidden');
+assert.ok(card.includes('<button class="resumepep" data-name="${esc(name)}" style="flex:1'), 'Expanded paused Resume must use resumepep');
+assert.ok(card.includes('nxCompoundStatusHistoryHTML(data)'), 'Status history visible in compound cards');
+assert.ok(root.includes('clearSaveWarningAfterVerifiedWrite()'), 'Verified save must dismiss stale global warning');
+// Reminder cards must use dailyModal's existing-record lookup. Calling
+// todayLogSheet() without its required log previously crashed iOS Safari.
+assert.ok(ui.includes('else if(type==="checkin"){ dailyModal(); }'), 'Reminder check-in routes through safe dailyModal');
+assert.ok(!ui.includes('else if(type==="checkin"){ todayLogSheet(); }'), 'Reminder must not call sheet without a record');
+console.log('PASS: fictional pause confirmation contract, immutable dated status audit, resume, dose/stock/protocol preservation and UI wiring');
