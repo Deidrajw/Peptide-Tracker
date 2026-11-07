@@ -1,3 +1,6 @@
+## 2026-11-06 — PR147 nonproduction safety-gate notice verified in local fictional browser, NOT RELEASED
+- Original source 93c51883 six GitHub standard workflows SUCCESS, artifact #13560332059 official 549-entry archive with CRC-clean 26-file LIVE and source-matched complete isolated standalone/offline DEMO. Local Chromium 8/8 full-app 320/390 dark/light scenarios verify blocked LIVE notice, DEMO inline failed-save feedback, valid fictional recovery and correct prepared inventory-only debit. Expanded exact-head CI and physical iPhone still pending. No merge/deploy, no change to LIVE nasal writer gate, no user data migration or records touched.
+
 ## 2026-11-06 — PR147 nasal save unavailability disclosure, UNRELEASED
 - Draft PR147 from production main a0482abc; app 05-nexus.js correction b7b39712, regression test e450f125, CI wiring 93c51883. In LIVE show unavailable notice rather than a guaranteed-failure Confirm & save; in DEMO surface planner errors inline. LIVE writer flag remains OFF, no migration, inventory changes, dosing record, merge, deployment or clinical certification. QA/artifacts and iPhone review pending. Version remains production v0.9.25-beta.1.
 
