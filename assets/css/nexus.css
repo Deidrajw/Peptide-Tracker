@@ -2702,3 +2702,16 @@ body #app .nexus-week-card.nx-today-text-disclosure .nexus-quiet-toggle::after {
   appearance: none;
   display: none;
 }
+
+/* PR146: preserve an actual 44px hit region for symptom search clear in constrained modal layouts. */
+body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
+  box-sizing: border-box;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-width: none;
+  max-height: none;
+  flex: none;
+  padding: 0 !important;
+}
