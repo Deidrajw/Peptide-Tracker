@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 selected-value picker candidate qualified via previous source tests; expanded runtime regression unreleased
+- Six workflows green at fb0d71c7, official artifact #13551470487 downloaded and CRC/parity checked (549 outer; 26 LIVE; 3,173,283 byte complete isolated DEMO). Targeted runtime regressions for Vial Kit/Other Forms (9529fbc0) and Blend composition (4a912ba0) are now committed but latest CI and source-matched full packages not verified. No source version bump, merge, Cloudflare deploy, real user data write or physical iPhone acceptance.
+
 ## 2026-11-06 — PR143 selection-aware X visibility candidate; NOT RELEASED
 - After qualifying source 1757060c, app code changed in JS03/07/10 to explicitly remove display:grid when selection is committed, preserving actual selected compound. Source test 9d151ae0 added; latest CI/browser proof and matching new-version artifact pending. Prior artifact #13534380863 is valid for preceding source only, not latest app changes. No data migration or Cloudflare deployment, no merge approval.
 
