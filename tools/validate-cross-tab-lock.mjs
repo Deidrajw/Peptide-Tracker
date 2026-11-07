@@ -621,14 +621,16 @@ try{
      const result=await nexusCommitCurrentState();
      return {result,durable:localStorage.getItem(STORE_KEY),
        memory:JSON.stringify(state),blocked:nexusWriter().status().blocked,
-       alert:!!document.querySelector("#nexus-storage-warning")};
+       alert:!!document.querySelector("#nx-validation-message"),
+       storageAlert:!!document.querySelector("#nexus-storage-warning")};
    });
    assert.equal(rejected.result,false,"Stale legacy-handler save must reject");
    assert.equal(rejected.durable,changed.durable,"Stale save must not overwrite durable fresh settings");
    assert.equal(rejected.memory,baseline.memory,"Rejected legacy optimistic change must roll back to last verified snapshot");
    assert.equal(rejected.blocked,true,"Stale writer must remain blocked until reload");
-   assert.equal(rejected.alert,true,"Rejected save must visibly warn user");
-   console.log("PASS: actual two-tab stale legacy handler rolls back in-memory optimistic change; durable settings preserved and warning shown");
+   assert.equal(rejected.alert,true,"Rejected save must show actionable validation feedback");
+   assert.equal(rejected.storageAlert,false,"Stale-tab conflict must not falsely claim device storage failed");
+   console.log("PASS: actual two-tab stale legacy handler rolls back; safe toast shown without false device storage banner");
  }
  // Failure on actual Storage.setItem must not be acknowledged as a saved
  // change or leave an unsaved optimistic mutation in app state.

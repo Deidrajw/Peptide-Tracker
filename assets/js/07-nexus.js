@@ -303,19 +303,21 @@ function supplyModal(existing, presetName, forceVials=false) {
     const options=[...originalSelect.options].filter(o=>o.value).map(o=>({name:o.textContent,value:o.value}));
     input.value=originalSelect.selectedOptions[0]?.value?originalSelect.selectedOptions[0].textContent:"";
     if(existing){input.readOnly=true;input.setAttribute("aria-label","Compound (locked for existing kit)");}
+    let lastChosen={value:originalSelect.value,label:input.value},queryActive=false;
+    const rememberChosen=()=>{lastChosen={value:originalSelect.value,label:input.value};queryActive=false;const x=combo.querySelector(".nx-search-clear");if(x){x.hidden=true;x.style.display="none";}};
     const closeList=()=>{list.hidden=true;input.setAttribute("aria-expanded","false");};
     const showOptions=()=>{
       if(existing)return;
       const q=input.value.toLowerCase().trim();
       const filtered=options.filter(o=>o.name.toLowerCase().includes(q)).slice(0,5);
       list.replaceChildren();
-      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.setAttribute("aria-selected",String(input.value.trim().toLocaleLowerCase()===o.name.toLocaleLowerCase()));b.textContent=o.name;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;input.focus({preventScroll:true});closeList();};list.appendChild(b);});
+      filtered.forEach(o=>{const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.setAttribute("aria-selected",String(input.value.trim().toLocaleLowerCase()===o.name.toLocaleLowerCase()));b.textContent=o.name;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));input.value=o.name;rememberChosen();input.focus({preventScroll:true});closeList();};list.appendChild(b);});
       const browse=document.createElement("button");browse.type="button";browse.className="nx-kit-browse-all";
       browse.textContent="View all compounds";
       browse.onpointerdown=e=>e.preventDefault();
       browse.onclick=()=>{closeList();nexusBrowseAllCompounds(m,options,o=>{
         originalSelect.value=o.value;originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
-        input.value=o.name;
+        input.value=o.name;rememberChosen();
       });};
       list.appendChild(browse);
       if(q && !options.some(o=>o.name.trim().toLocaleLowerCase()===q.toLocaleLowerCase())){
@@ -330,13 +332,18 @@ function supplyModal(existing, presetName, forceVials=false) {
           if(!duplicate){const opt=document.createElement("option");opt.value=name;opt.textContent=name;originalSelect.appendChild(opt);options.push({name,value:name});}
           originalSelect.value=chosen;
           originalSelect.dispatchEvent(new Event("change",{bubbles:true}));
-          input.value=chosen;input.focus({preventScroll:true});closeList();
+          input.value=chosen;rememberChosen();input.focus({preventScroll:true});closeList();
         };
         list.appendChild(create);
       }
       list.hidden=false;input.setAttribute("aria-expanded","true");
     };
-    input.onfocus=showOptions;input.oninput=()=>{originalSelect.value="";showOptions();};input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
+    input.onfocus=showOptions;input.oninput=()=>{queryActive=true;originalSelect.value="";showOptions();};
+    if(!existing)nexusWireSearchClear(input,()=>{
+      originalSelect.value=lastChosen.value;input.value=lastChosen.label;
+      queryActive=false;closeList();
+    },"Clear vial compound search",{isQuery:()=>queryActive});
+    input.onkeydown=e=>{if(e.key==="Escape"){closeList();return;}if(e.key==="ArrowDown"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.focus();}else if(e.key==="Enter"&&!list.hidden){e.preventDefault();list.querySelector('[role="option"]')?.click();}};
     list.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();closeList();input.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const bs=[...list.querySelectorAll('[role="option"]')],i=bs.indexOf(document.activeElement);bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
     combo.addEventListener("focusout",()=>{requestAnimationFrame(()=>{if(!combo.contains(document.activeElement))closeList();});});
   }
@@ -1872,7 +1879,10 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
   // top of peptideCardHTML's own card, which was creating the card-inside-a-card look.
   if (isExpanded) return peptideCardHTML(name, data, {showCollapseChevron:true, view});
 
-  if (status === "paused") {
+  // A paused compound's actual saved dose remains a normal history card in
+  // Today/Completed; the pause only suppresses prospective scheduling.
+  const hasRecordedDoseToday=(data.doses||[]).some(dose=>doseDayFor(data,dose)===localDate());
+  if (status === "paused" && !((view==="today"||view==="completed")&&hasRecordedDoseToday)) {
     return `<div class="card nx-compound-card" style="padding:14px 16px;margin-bottom:8px;border-color:#F9C87D33;opacity:0.85">
       <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
         <div style="width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0"></div>
@@ -1976,8 +1986,10 @@ function renderTodayCompoundSection(started) {
   started.forEach(pair=>{
     const [n,d] = pair;
     const cat = isCompoundRelevantToday(getDoseStatus(n,d));
-    if (cat==="needs_action") needsAction.push(pair);
-    else if (cat==="completed") completed.push(pair);
+    const recordedToday=(d.doses||[]).some(dose=>doseDayFor(d,dose)===localDate());
+    if (recordedToday && d.status!=="active") completed.push(pair);
+    else if (cat==="needs_action") needsAction.push(pair);
+    else if (cat==="completed" || recordedToday) completed.push(pair);
   });
   // Sort Due/Needs Action by actual dose-INSTANCE urgency, not compound order — this is
   // what makes the top of Today read as "what do I need to do next" instead of a static

@@ -2341,13 +2341,27 @@ async function nexusCommitPreparedNasalOperation(operation) {
   if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
   if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
   const writer=nexusWriter();
-  // A single gated execution boundary owns the exact-source planner,
-  // exclusive lock and verified readback. No UI can reach this until the
-  // separate cross-tab legacy-writer migration is fully accepted.
+  // Rendering may add transient root _UI fields. The prepared engine must use
+  // canonical durable bytes rather than an in-memory render snapshot, but it
+  // must NOT silently discard unsaved persistent inventory/history changes.
+  const serialized=writer.expected();
+  if(typeof serialized!=="string")throw Error("Durable prepared stock unavailable; reload before saving");
+  const durable=JSON.parse(serialized);
+  const persistent=value=>{
+    const copy={...value};
+    for(const key of Object.keys(copy))if(key.startsWith("_"))delete copy[key];
+    return JSON.stringify(copy);
+  };
+  if(persistent(state)!==persistent(durable))
+    throw Error("Unsaved persistent changes are pending; reload before saving prepared stock");
+  const transient=Object.fromEntries(Object.entries(state).filter(([key])=>key.startsWith("_")));
+  // The shared writer checks these exact expected bytes inside the Web Lock;
+  // a stale tab can never be rebased onto another tab's updated inventory.
   const result=await globalThis.NexusPreparedDoseTransaction.executeExclusive(
-    writer,state,operation,{enabled:true}
+    writer,durable,operation,{enabled:true}
   );
-  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  state={...result.next,...transient};
+  _nexusLastSavedSnapshot=writer.expected();
   return result;
 }
 
@@ -3016,6 +3030,7 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
   search.onfocus=()=>{state._symPickerBrowseOpen=true;draw()};
   search.onclick=()=>{state._symPickerBrowseOpen=true;draw()};
   search.oninput=()=>{state._symPickerBrowseOpen=true;draw()};
+  nexusWireSearchClear(search,()=>{state._symPickerBrowseOpen=false;draw()},"Clear symptom search");
   search.onkeydown=e=>{if(e.key==="Escape"){state._symPickerBrowseOpen=false;draw();search.blur()}
     if(e.key==="ArrowDown"){state._symPickerBrowseOpen=true;draw();const first=results.querySelector(".nx-sym-add");if(first){e.preventDefault();first.focus()}}};
   draw();
