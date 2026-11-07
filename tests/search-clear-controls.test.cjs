@@ -36,4 +36,11 @@ for (const [path,label] of [
   assert.match(source,/if\(x\)\{x\.hidden=true;x\.style\.display="none";\}/,path+": selected compound leaves clear X visible");
   assert.match(source,/\{isQuery:\(\)=>queryActive\}/,path+": selected value not distinguished from search query");
 }
+// Browser event order matters: the Blend picker must set queryActive before the
+// shared helper's input event listener tests options.isQuery().
+const blendSource=fs.readFileSync("assets/js/03-nexus.js","utf8");
+assert.ok(blendSource.indexOf('trigger.oninput=()=>{queryActive=true;')>=0 &&
+  blendSource.indexOf('trigger.oninput=()=>{queryActive=true;')<
+  blendSource.indexOf('nexusWireSearchClear(trigger,()=>{'),
+  "Blend picker query state must update before shared clear visibility");
 console.log("PASS: accessible query clear source contracts for Supplements, Combo, Stash, Logs, Protocol and Discover and selected-value comboboxes");
