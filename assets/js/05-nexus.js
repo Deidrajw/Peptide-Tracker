@@ -1186,6 +1186,20 @@ function nexusNasalDoseModal(name,occTime){
   c.method==="Nasal"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
  const unit=cfg(name).unit;
  if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
+ // LIVE prepared-stock administration is still safety-gated. Do not offer an
+ // apparently actionable Confirm & save control that can never succeed.
+ // Fictional DEMO may continue to exercise the pure planner without live writes.
+ if(!_demoActive&&!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED){
+  const notice=openModal('<section class="nx-dose-form nx-nasal-save-gate" role="status">'+
+   '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Nasal dose logging unavailable</h2><p class="nx-dose-subtitle">'+esc(name)+'</p></div><button type="button" id="x" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
+   '<p class="nx-dose-untracked-note" role="alert">Saving prepared nasal spray doses is temporarily disabled while Nexus completes inventory-write safety checks. No dose or bottle balance has been changed.</p>'+
+   '<p class="hint">Your prepared bottle remains in Stash. This restriction is separate from the read-only nasal calculator.</p>'+
+   '<button type="button" id="nx-nasal-gate-close" class="btn-primary" style="width:100%;min-height:48px">Close</button></section>',"#A78BFA");
+  notice.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-shared-dose-sheet");
+  notice.querySelector("#x").onclick=closeModal;
+  notice.querySelector("#nx-nasal-gate-close").onclick=closeModal;
+  return;
+ }
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
   '<div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">NASAL · PREPARED STOCK</div><h2 class="nx-dose-title">Log a dose</h2><div class="nx-dose-subtitle">'+esc(name)+'</div></div><button type="button" id="x" class="nx-dose-close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>'+
   '<div id="nx-spray-entry-fields" class="nx-form-log-entry"><label class="field-label" for="nx-spray-date">DATE & TIME</label><input class="inp" type="datetime-local" id="nx-spray-date" value="'+esc(occTime||localDatetime())+'">'+
@@ -1195,7 +1209,7 @@ function nexusNasalDoseModal(name,occTime){
   '<p id="nx-spray-preview" class="nx-dose-untracked-note" role="status"></p>'+
   '<label class="field-label" for="nx-spray-notes">NOTES · OPTIONAL</label><textarea class="inp" id="nx-spray-notes" rows="2"></textarea>'+
   '<button type="button" id="nx-spray-review" class="btn-primary" style="min-height:48px;width:100%">Review spray count</button></div>'+
-  '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
+  '<section id="nx-spray-confirm" hidden><p id="nx-spray-summary" role="status"></p><button id="nx-spray-back" type="button" class="nx-dose-back">Edit details</button><p id="nx-spray-save-error" role="alert" hidden style="margin:10px 0;color:var(--t1);background:#D9777718;border:1px solid #D97777;border-radius:10px;padding:12px;font-size:13px;line-height:1.5"></p><button id="nx-spray-save" type="button" class="btn-primary">Confirm & save</button></section>'+
   '<p class="hint">Recorded values are nominal. Nexus cannot verify spray output, product stability or suitability.</p></div>',"#A78BFA");
  m.classList.add("nx-form-log-sheet","nx-shared-form-sheet","nx-shared-dose-sheet");
  m.querySelector("#x").onclick=closeModal;
@@ -1213,6 +1227,7 @@ function nexusNasalDoseModal(name,occTime){
  };
  source.onchange=refresh;qty.oninput=refresh;refresh();
  m.querySelector("#nx-spray-review").onclick=()=>{
+  const feedback=m.querySelector("#nx-spray-save-error");if(feedback)feedback.hidden=true;
   if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
    showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
   }
@@ -1245,7 +1260,11 @@ function nexusNasalDoseModal(name,occTime){
    if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}
    else result=await nexusCommitPreparedNasalOperation({type:"dose",tx});
   }catch(error){console.error("Prepared nasal dose blocked",error);
-   showErrorBanner(_demoActive?"Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":"Live nasal logging is unavailable until inventory saving is fully protected. Nothing saved.");
+   const feedback=m.querySelector("#nx-spray-save-error");
+   if(feedback){feedback.textContent=_demoActive
+    ?"Unable to save this fictional entry. The prepared bottle, its history or the available balance could not be verified. Nothing was saved."
+    :"Live nasal logging is unavailable until inventory saving is fully protected. Nothing saved.";
+    feedback.hidden=false;feedback.scrollIntoView({block:"nearest"});}
    btn.disabled=false;return;
   }
   closeModal();render();

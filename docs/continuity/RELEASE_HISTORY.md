@@ -1,3 +1,9 @@
+## 2026-11-06 — PR147 nonproduction safety-gate notice verified in local fictional browser, NOT RELEASED
+- Original source 93c51883 six GitHub standard workflows SUCCESS, artifact #13560332059 official 549-entry archive with CRC-clean 26-file LIVE and source-matched complete isolated standalone/offline DEMO. Local Chromium 8/8 full-app 320/390 dark/light scenarios verify blocked LIVE notice, DEMO inline failed-save feedback, valid fictional recovery and correct prepared inventory-only debit. Expanded exact-head CI and physical iPhone still pending. No merge/deploy, no change to LIVE nasal writer gate, no user data migration or records touched.
+
+## 2026-11-06 — PR147 nasal save unavailability disclosure, UNRELEASED
+- Draft PR147 from production main a0482abc; app 05-nexus.js correction b7b39712, regression test e450f125, CI wiring 93c51883. In LIVE show unavailable notice rather than a guaranteed-failure Confirm & save; in DEMO surface planner errors inline. LIVE writer flag remains OFF, no migration, inventory changes, dosing record, merge, deployment or clinical certification. QA/artifacts and iPhone review pending. Version remains production v0.9.25-beta.1.
+
 ## 2026-11-05 — v0.9.25-beta.1 official post-release QA and packages VERIFIED
 - Full post-release CI #42132318868 SUCCESS, source 1eb093cb, version v0.9.25-beta.1. GitHub artifact #13464777105 independently downloaded: 549-member outer ZIP CRC PASS; 26-member LIVE ZIP CRC PASS with ordered 01-12 scripts and declared manifest membership; isolated standalone fictional full-app DEMO and offline demo index exact byte-equality; isolated storage/net access guards present; 8/8 browser viewport/theme result entries PASS. Distinct online-font QA DEMO included, loaded font faces not confirmed.
 - Source parity at Cloudflare production #42132318807 and GitHub Pages integrity #42132318774 SUCCESS for 1eb093cb; docs-only main Cloudflare #42132773345 SUCCESS. Documentation-only commits do not alter app source. No app version bump or new release from this evidence update.
@@ -368,12 +374,12 @@
 - Earlier Chromium/WebKit on pre-correction source failed count 6 instead of 5; newest exact-head five-workflow suite not yet fully verified. No source/bottle ledger implementation changed, historical E2E remains source-specific PASS at `66959ba7`. Existing app version unchanged, no production storage migration or live writes. P0 BLOCKING, LIVE nasal OFF, PR124 draft/unmerged/undeployed, device UAT incomplete.
 
 ## 2026-11-01 — PR124 DS2 CSS-only corrective candidate, UNRELEASED
-- Commit `2b19a5de` shared form header/48px close/compact review geometry CSS on draft development branch. No JS, accounting, storage schema, production migration, version promotion or release. All 16 physical UI corrections INCOMPLETE; current-code CI/visual/iPhone not verified. Historical fictional Oxytocin browser PASS remains pinned to `66959ba7`. P0 BLOCKING; both LIVE nasal gates OFF; no merge/deploy.
+- Commit `2b19a5de` shared form header/48px close/compact review geometry CSS on draft development branch. No JS, accounting, storage schema, production migration, version promotion or release. All 16 physical UI corrections INCOMPLETE; current-code CI/visual/iPhone not verified. Historical fictional Fictional Compound A browser PASS remains pinned to `66959ba7`. P0 BLOCKING; both LIVE nasal gates OFF; no merge/deploy.
 
-## 2026-11-01 — Draft PR124 fictional Oxytocin E2E verified, NOT RELEASED
-- Exact app/test SHA `66959ba7`: Chromium/build #41351301441, WebKit #41351301343, writer/mobile/nested SUCCESS. Fictional Oxytocin kit→single nasal preparation transfer→linked bottle→2-spray dose test PASS, verified original source and destination ledger. Candidate artifact #13101324932 downloaded, nested ZIP CRCs and LIVE 26-file manifest and standalone/full-app DEMO parity PASS; build label v0.9.20-beta unchanged. No user data migrated, merge, production deployment, live nasal enablement or physical iPhone acceptance. Original 16 DS2 requests not complete; P0 release hold remains.
+## 2026-11-01 — Draft PR124 fictional Fictional Compound A E2E verified, NOT RELEASED
+- Exact app/test SHA `66959ba7`: Chromium/build #41351301441, WebKit #41351301343, writer/mobile/nested SUCCESS. Fictional Fictional Compound A kit→single nasal preparation transfer→linked bottle→2-spray dose test PASS, verified original source and destination ledger. Candidate artifact #13101324932 downloaded, nested ZIP CRCs and LIVE 26-file manifest and standalone/full-app DEMO parity PASS; build label v0.9.20-beta unchanged. No user data migrated, merge, production deployment, live nasal enablement or physical iPhone acceptance. Original 16 DS2 requests not complete; P0 release hold remains.
 
-## 2026-11-01 — PR124 Oxytocin E2E candidate, UNRELEASED
+## 2026-11-01 — PR124 Fictional Compound A E2E candidate, UNRELEASED
 - Test commits 9dcc7c6a and bd68be8e provide exact fictional Add Kit to prepared-container Log Dose regression. Matching WebKit run 41350297385 SUCCESS, writer/mobile/nested SUCCESS, Chromium 41350297420 pending. No merge, deployment, live nasal enablement, personal-data changes or physical acceptance. UX 16-item checklist remains unresolved.
 
 ## 2026-11-01 — PR124 post-iPhone corrective source through dd4949ab; NOT RELEASED
