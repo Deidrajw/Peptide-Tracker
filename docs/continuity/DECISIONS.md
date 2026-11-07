@@ -1,3 +1,6 @@
+## 2026-11-07 — Nasal handler writer qualification does not authorize live gate flip
+- PR150 exact-source six-suite CI PASS at fc74181c for canonical prepared writer, actual browser two-tab handler save/reversal with fictional test-only script flag substitution, and protected UI. NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED remains FALSE in release-source JS. The test-only gate substitution must never enter LIVE source. Approval for enabling actual user-facing spray saving, merging, or deploying remains separate; physical iPhone and VoiceOver not accepted for this work. Existing source vial accounting remains exact and may never be double-debited.
+
 ## 2026-11-07 — Canonical prepared nasal handler state boundary
 - A prepared nasal operation must use shared writer.expected() durable state, never transient render-only _UI properties as CAS bytes. Reject any difference in persistent fields rather than silently rebase or overwrite. Preserve top-level transient fields only following exclusive readback-confirmed success. Tests may alter a single script flag exclusively inside isolated fictional browser fixture; checked-in LIVE and deployed flags must remain OFF. This is engineering qualification, not authorization to release spray logging.
 

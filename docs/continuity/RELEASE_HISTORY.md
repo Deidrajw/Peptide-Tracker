@@ -1,3 +1,6 @@
+## 2026-11-07 — PR150 nasal app-handler engineering CI qualified (NO RELEASE)
+- Current candidate source fc74181c, draft PR150 unmerged/undeployed; application writer correction 72410ab5. GitHub workflows full 42348955146, pinned 42348955375, WebKit 42348955148, mobile 42348955254, writer 42348955246, nested 42348955167 all SUCCESS. Official build artifact 13564694441, manifest exact fc74181c, ZIP CRC and 26-file LIVE parity PASS, full fictional DEMO byte-equal offline HTML, 8/8 browser matrix PASS. Production nasal gate FALSE, no data migration/user-write or publication; Cloudflare draft-code parity unverified/false as expected. Physical iPhone/VoiceOver and clinical validation NOT TESTED. Internal version remains v0.9.25-beta.1; no new public release.
+
 ## 2026-11-07 — Draft PR150 nasal handler writer correction, NOT RELEASED
 - Scoped application code 72410ab5 replaces in-memory snapshot CAS with canonical durable comparison for prepared nasal execution, keeping the gate OFF. Test-only Node VM and test-script routed Chromium two-tab app-handler cases at fc74181c; exact-head full CI and matching artifacts pending. No release version change, schema migration, real data write, production update, merge or deployment. Independently accepted iPhone UI remains protected.
 
