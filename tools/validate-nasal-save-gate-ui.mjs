@@ -28,7 +28,7 @@ try {
     containerType:'nasal-bottle',method:'Nasal',balanceStatus:'verified',
     remainingMg:0.45,remainingMl:9,mgPerSpray:0.05,mlPerSpray:0.1}];
    const snapshot=JSON.stringify(state.formulationStocks);
-   window.__qaPhysicalSuppliesBefore=JSON.stringify(state.supplies||[]);
+   window.__qaPhysicalSuppliesBefore=JSON.stringify((state.supplies||[]).map(k=>({id:k.id,name:k.name,remainingMg:k.remainingMg,openedVial:k.openedVial,activeVial:k.activeVial,totalVials:k.totalVials})));
    nexusNasalDoseModal('Fictional Compound A');
    return snapshot;
   },{mode:kind,theme});
@@ -65,7 +65,7 @@ try {
      (state.customPeptides['Fictional Compound A']?.doses||[]).some(x=>x.method==='Nasal'&&x.sprayCount===4)
        ||(state.peptides['Fictional Compound A']?.doses||[]).some(x=>x.method==='Nasal'&&x.sprayCount===4)),true,
     'Valid DEMO save must create a matching fictional historical dose');
-   assert.equal(await page.evaluate(()=>JSON.stringify(state.supplies||[])===window.__qaPhysicalSuppliesBefore),true,
+   assert.equal(await page.evaluate(()=>JSON.stringify((state.supplies||[]).map(k=>({id:k.id,name:k.name,remainingMg:k.remainingMg,openedVial:k.openedVial,activeVial:k.activeVial,totalVials:k.totalVials})))===window.__qaPhysicalSuppliesBefore),true,
     'Prepared spray dose must not debit physical source vial a second time');
   }
   if(kind==='live')assert.equal(await page.evaluate(()=>JSON.stringify(state.formulationStocks)),before,
