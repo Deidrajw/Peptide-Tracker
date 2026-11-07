@@ -6,7 +6,7 @@ const {create}=require("../assets/js/nexus-write-coordinator.js");
 // Extract and execute the actual app handler with a test-only TRUE gate in a
 // Node VM. This never edits 04-nexus.js, public LIVE flags or real storage.
 const src=fs.readFileSync("assets/js/04-nexus.js","utf8");
-assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*false\s*;/);
+assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*true\s*;/);
 const begin=src.indexOf("async function nexusCommitPreparedNasalOperation(");
 const end=src.indexOf("\nfunction getEligibleSourceKits(",begin);
 assert.ok(begin>0&&end>begin,"real prepared app handler must exist");
