@@ -5,8 +5,10 @@ assert.match(appSource,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = fals
  "General transfers must remain independently gated");
 assert.match(appSource,/const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;/,
  "Recorded nasal preparation has its own enabled release gate");
-assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/,
- "Prepared-dose writes must remain independently gated");
+const candidate=JSON.parse(fs.readFileSync(require("node:path").join(__dirname,"../release/release.json"),"utf8"));
+const nasalReady=candidate.version==="v0.9.26-beta.1"&&candidate.changes.some(c=>c.key==="prepared-nasal-live");
+assert.match(appSource,new RegExp("const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = "+(nasalReady?"true":"false")+";"),
+ "Prepared-dose gate must match explicitly scoped release candidate");
 
 // UI entry points must reference only the recorded-preparation switch.
 for(const moduleName of ["09-nexus.js","10-nexus.js"]){

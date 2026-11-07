@@ -140,7 +140,11 @@ try{
    }catch(e){error=e.message}
    return {error,sameState:before===JSON.stringify(state),sameDurable:durable===localStorage.getItem(STORE_KEY)};
  });
- assert.match(disabled.error,/disabled pending shared-writer/,"Prepared nasal must remain release-gated in actual app runtime");
+ // An unreviewed operation must never save in either configuration:
+ // OFF rejects by feature gate; candidate ON rejects missing source fingerprint.
+ const candidateEnabled=await a.evaluate(()=>NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED);
+ assert.match(disabled.error,candidateEnabled?/not verified at review/:/disabled pending shared-writer/,
+  "Actual nasal runtime must reject unreviewed operation without a storage write");
  assert.equal(disabled.sameState,true,"Gated prepared nasal operation mutated live state");
  assert.equal(disabled.sameDurable,true,"Gated prepared nasal operation wrote saved stock");
  await a.locator('[data-kit-form="capsule-bottle"]').click();
