@@ -3353,7 +3353,7 @@ function nexusWireSearchClear(input, onClear, label, options={}) {
   const clear=document.createElement("button");
   clear.type="button";clear.className="nx-search-clear";
   clear.setAttribute("aria-label",label||"Clear search");
-  clear.innerHTML='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  clear.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>';
   // A quiet 17px DS2 glyph inside an accessible 44px hit area. No extra button chrome.
   clear.style.cssText="position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;height:44px;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center;border:0;border-radius:0;box-shadow:none;background:transparent;color:var(--t4);cursor:pointer";
 
