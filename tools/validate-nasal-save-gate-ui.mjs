@@ -5,7 +5,7 @@ import {chromium} from 'playwright';
 const version=JSON.parse(fs.readFileSync('release/release.json','utf8')).version;
 const demo=path.resolve('dist/Nexus_'+version+'_FULL_DEMO.html');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
-const fixture=()=>({id:'fictional-oxytocin-bottle',compound:'Fictional Compound A',
+const fixture=()=>({id:'fictional-container-a',compound:'Fictional Compound A',
  containerType:'nasal-bottle',method:'Nasal',balanceStatus:'verified',
  remainingMg:0.45,remainingMl:9,mgPerSpray:0.05,mlPerSpray:0.1});
 // Browsers: production-shaped gate and isolated fictional DEMO error both
@@ -24,7 +24,7 @@ try {
    // The offline full-app DEMO is a fictional in-memory app; LIVE is a test
    // page with injected fictional state and no interaction with personal data.
    if(mode==='live')_demoActive=false;
-   state.formulationStocks=[{id:'fictional-oxytocin-bottle',compound:'Fictional Compound A',
+   state.formulationStocks=[{id:'fictional-container-a',compound:'Fictional Compound A',
     containerType:'nasal-bottle',method:'Nasal',balanceStatus:'verified',
     remainingMg:0.45,remainingMl:9,mgPerSpray:0.05,mlPerSpray:0.1}];
    const snapshot=JSON.stringify(state.formulationStocks);
