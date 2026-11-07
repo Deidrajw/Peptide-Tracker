@@ -47,8 +47,23 @@ function showSaveWarning() {
   warning.id = 'nexus-storage-warning';
   warning.setAttribute('role', 'alert');
   warning.style.cssText = 'position:fixed;z-index:99999;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));padding:14px 16px;border-radius:12px;background:#702626;color:#fff;box-shadow:0 6px 25px #0007;font:600 14px/1.5 system-ui,sans-serif';
-  warning.textContent = 'Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
+  const copy=document.createElement('span');
+  copy.textContent='Changes could not be saved on this device. Check browser storage and export a backup before closing the app.';
+  copy.style.cssText='display:block;padding-right:42px';
+  const dismiss=document.createElement('button');
+  dismiss.type='button';
+  dismiss.setAttribute('aria-label','Dismiss storage warning');
+  dismiss.style.cssText='position:absolute;right:8px;top:8px;min-width:44px;min-height:44px;border:1px solid #ffffff66;border-radius:10px;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer';
+  dismiss.innerHTML='<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  dismiss.onclick=()=>{warning.remove();_saveWarningShown=false;};
+  warning.append(copy,dismiss);
   document.body.appendChild(warning);
+}
+// A successful verified write resolves a previous save-error notice.
+function clearSaveWarningAfterVerifiedWrite() {
+  const banner=document.getElementById("nexus-storage-warning");
+  if(banner)banner.remove();
+  _saveWarningShown=false;
 }
 // All durable application state writes share one exclusive Web Lock and one
 // storage key. The retired synchronous gateway is forbidden by CI. Reviewed
@@ -111,7 +126,9 @@ async function nexusCommitCurrentState(){
    if(typeof _nexusLastSavedSnapshot==="string")state=JSON.parse(_nexusLastSavedSnapshot);
   }catch(restoreError){console.error("Nexus last verified snapshot could not be restored",restoreError)}
   console.error("Nexus reviewed legacy transaction rejected",error);
-  showSaveWarning();
+  if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(error?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(error?.message||"")))showSaveWarning();
+  else if(typeof showErrorBanner==="function")
+    showErrorBanner("Save blocked: the current state could not be verified. Reload and review your data before retrying.");
   return false;
  }
 }
@@ -124,7 +141,28 @@ function nexusPlanScopedStateChange(snapshot,operation){
  const fail=message=>{throw Error(message)};
  if(!snapshot||!operation||typeof operation!=="object")fail("Scoped save requires a complete state and operation");
  const next=JSON.parse(JSON.stringify(snapshot));
- if(operation.kind==="setting"){
+ if(operation.kind==="compound-status"){
+  const {name,builtin,from,to,at}=operation;
+  if(typeof name!=="string"||!name.trim()||name.length>180||typeof builtin!=="boolean")
+    fail("Exact compound identifier required");
+  if(!["active","paused"].includes(from)||!["active","paused"].includes(to)||from===to)
+    fail("Valid compound status transition required");
+  if(typeof at!=="string"||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(at)||!Number.isFinite(Date.parse(at)))
+    fail("Valid status change timestamp required");
+  const bucket=builtin?"peptides":"customPeptides";
+  const record=next[bucket]?.[name];
+  if(!record||typeof record!=="object"||(record.status||"active")!==from)
+    fail("Compound status changed; reopen and review before retrying");
+  if(record.statusHistory!=null&&!Array.isArray(record.statusHistory))
+    fail("Existing compound status history needs reconciliation");
+  const history=record.statusHistory||[];
+  if(history.length>=1000)fail("Status history limit reached; export before changing");
+  if(history.some(x=>x?.at===at&&x?.to===to))fail("Duplicate status event");
+  record.status=to;
+  if(to==="paused")record.pausedAt=at;
+  else record.resumedAt=at;
+  record.statusHistory=history.concat([{at,from,to,source:"manual-confirmed"}]);
+ }else if(operation.kind==="setting"){
   const allowed=["nexusApiKey","phaseRemindersEnabled","nxUsageEnabled","nxUsageCounts","measureUnit","weightUnit","dayRolloverHour","todayTrackingActivities","recentDiscoverViews","supplementTemplates","remindersEnabled","lastNotifyDate"];
   if(!allowed.includes(operation.key))fail("Setting not allowed in scoped writer");
   if(operation.key==="remindersEnabled"&&typeof operation.value!=="boolean")fail("Invalid notification toggle");
@@ -242,10 +280,13 @@ async function nexusCommitScopedStateChange(operation){
   // exclusive lock. Another tab's edits can never be silently rebased.
   const result=await writer.transaction(durable,snapshot=>nexusPlanScopedStateChange(snapshot,operation));
   state={...result.next,...transient};_nexusLastSavedSnapshot=writer.expected();
+  if(typeof clearSaveWarningAfterVerifiedWrite==="function")clearSaveWarningAfterVerifiedWrite();
   return true;
  }catch(error){
   console.error("Scoped state save rejected",error);
-  showSaveWarning();
+  if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(error?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(error?.message||"")))showSaveWarning();
+  else if(typeof showErrorBanner==="function")
+    showErrorBanner("Changes were not saved because the current saved state could not be verified. Review the latest data before retrying.");
   return false;
  }
 }
@@ -283,7 +324,8 @@ async function nexusCommitUntrackedDose(name,dose,editing){
     return true;
   }catch(e){
     console.error("Nexus exclusive untracked dose save failed",e);
-    showSaveWarning();
+    if(["QuotaExceededError","SecurityError","NotAllowedError"].includes(e?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(e?.message||"")))showSaveWarning();
+    else if(typeof showErrorBanner==="function")showErrorBanner("Dose was not saved. Check the saved history and source before retrying.");
     return false;
   }
 }
@@ -363,20 +405,52 @@ function nexusPlanBackedPhysicalDose(snapshot,entry){
   if(reschedule)reschedule.doseId=dose.id;
   return {next,dose:record.doses[record.doses.length-1],allocations};
 }
+let _nexusBackedPhysicalDoseFailure="";
+function nexusBackedDoseStorageError(error){
+  // CAS conflicts and planner rejections are NOT evidence that device storage failed.
+  const code=String(error?.name||"");
+  const message=String(error?.message||"");
+  return ["QuotaExceededError","SecurityError","NotAllowedError"].includes(code)||
+    /Storage readback mismatch|Storage adapter required|Unable to preserve pre-upgrade state|quota|localStorage|storage write failed/i.test(message);
+}
+function nexusBackedDoseFailureMessage(error){
+  const message=String(error?.message||"");
+  if(/Saved data changed|prior write was uncertain|Writes blocked until reloaded/i.test(message))
+    return "Saved data changed or an earlier save is uncertain. No dose was saved. Keep your backup and reload before checking the exact vial.";
+  if(/Inventory operation already pending/i.test(message))
+    return "Another save is still pending. Nothing was saved. Keep this draft and check the recorded history before retrying.";
+  if(/Duplicate dose ID/i.test(message))
+    return "This dose already has a saved record ID. Nothing was added. Check today's history to avoid a duplicate.";
+  if(/Insufficient exact vial balance|Open migrated vial required|Unidentified physical vial|Incompatible physical kit|Vial formulation incompatible/i.test(message))
+    return "The exact selected vial could not be verified for this entry. No dose was saved. Review the source vial and its preparation before retrying.";
+  if(nexusBackedDoseStorageError(error))
+    return "Device storage could not confirm this write. Nothing was confirmed saved. Export a backup and check browser storage.";
+  return "This dose could not be verified or saved. Check the source and saved history before retrying. ("+message+")";
+}
 async function nexusCommitBackedPhysicalDose(entry){
+  _nexusBackedPhysicalDoseFailure="";
   try{
     if(_demoActive){
       const result=nexusPlanBackedPhysicalDose(state,entry);
       state=result.next;return result;
     }
     const writer=nexusWriter();
-    const result=await writer.transaction(state,prior=>nexusPlanBackedPhysicalDose(prior,entry));
+    // UI navigation, opened forms and filters can change transient state without
+    // a durable write. Do not compare that working UI object byte-for-byte with
+    // storage. The coordinator still performs exact CAS+lock+readback against
+    // its own last verified snapshot, rejecting real cross-tab changes.
+    const expected=writer.expected();
+    if(typeof expected!=="string")throw Error("Verified saved state unavailable");
+    const durable=JSON.parse(expected);
+    const result=await writer.transaction(durable,prior=>nexusPlanBackedPhysicalDose(prior,entry));
     state=result.next;
     _nexusLastSavedSnapshot=writer.expected();
+    if(typeof clearSaveWarningAfterVerifiedWrite==="function")clearSaveWarningAfterVerifiedWrite();
     return result;
   }catch(e){
     console.error("Nexus exclusive physical dose failed",e);
-    if(!_demoActive)showSaveWarning();
+    _nexusBackedPhysicalDoseFailure=nexusBackedDoseFailureMessage(e);
+    if(!_demoActive&&nexusBackedDoseStorageError(e))showSaveWarning();
     return null;
   }
 }
@@ -449,7 +523,8 @@ async function nexusCommitBackedDoseChange(entry){
     state=result.next;_nexusLastSavedSnapshot=writer.expected();return result;
   }catch(e){
     console.error("Nexus exclusive backed dose correction rejected",e);
-    if(!_demoActive)showSaveWarning();
+    if(!_demoActive&&(["QuotaExceededError","SecurityError","NotAllowedError"].includes(e?.name)||/Storage readback mismatch|Storage adapter required|quota|localStorage|storage write failed/i.test(String(e?.message||""))))showSaveWarning();
+    else if(typeof showErrorBanner==="function")showErrorBanner("Correction was not saved. The exact original source or saved state could not be verified.");
     return null;
   }
 }
