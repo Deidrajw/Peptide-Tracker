@@ -1,3 +1,7 @@
+## 2026-11-06 — PR149 nasal LIVE preflight partial mitigation; not full writer acceptance
+- Test source tests/nasal-live-gate-preflight.test.cjs extracts real 05-nexus.js nasal dose modal handler, invokes with fictional state and disabled LIVE gate, asserts warning before modal opens and no writes; also checks guarded enabled and demo routes still reach original source eligibility validation. Registered in build workflow. CI execution NOT YET VERIFIED at checkpoint.
+- Preserve NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED=false. Do not mark LIVE dose save, bottle deduction, history, undo or two-tab writer tests PASS. These remain BLOCKED by Issue #148/PR142. UI acceptance PR146 5/5 user PASS previously recorded; no new iPhone testing on PR149. Full-app source-matched DEMO/LIVE and CI pending.
+
 ## 2026-11-05 — v0.9.25-beta.1 post-release exact-source suite closure
 - SUCCESS full build/browser #42132318868, source 1eb093cb, official artifact #13464777105; 8/8 browser matrix (LIVE/DEMO 320/390 dark/light) PASS. Outer 549-entry ZIP CRC PASS, LIVE 26-entry ZIP CRC PASS, ordered numbered scripts/manifest source SHA PASS, complete isolated DEMO and offline byte parity PASS. Cloudflare source/version parity #42132318807 SUCCESS; docs-only current-head parity #42132773345 SUCCESS. Earlier PR source six exact-source workflows PASS.
 - Not evidence of actual download of DM Sans/Fraunces/DM Mono, physical Safari/VoiceOver/Dynamic Type, or independent clinical calculator certification; record those as NOT TESTED. No migration or user data access.
