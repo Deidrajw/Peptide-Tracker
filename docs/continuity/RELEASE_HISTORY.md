@@ -1,3 +1,7 @@
+## 2026-11-06 — Draft PR149 (Issue #148) fail-closed nasal LIVE warning, NOT RELEASED
+- Branch fix/p0-nasal-logging-preflight-20261106 from main a0482abc, JS05 app commit 8f91a043, test 6c43004f, workflow 514069ba. Before offering an unsavable LIVE nasal log form, show explicit unavailable notice; differentiated failure reasons, preserve existing protected writer and nasal LIVE flag OFF. App storage and data impact: NONE intended; no migration.
+- GitHub CI exact-head, official full-app fictional DEMO/LIVE ZIP, physical iPhone review, actual writer-safe nasal spray/undo remain pending. Draft PR149 separate from draft PR146 accepted UX and draft PR142 P0 reliability. No merge/deployment.
+
 ## 2026-11-05 — v0.9.25-beta.1 official post-release QA and packages VERIFIED
 - Full post-release CI #42132318868 SUCCESS, source 1eb093cb, version v0.9.25-beta.1. GitHub artifact #13464777105 independently downloaded: 549-member outer ZIP CRC PASS; 26-member LIVE ZIP CRC PASS with ordered 01-12 scripts and declared manifest membership; isolated standalone fictional full-app DEMO and offline demo index exact byte-equality; isolated storage/net access guards present; 8/8 browser viewport/theme result entries PASS. Distinct online-font QA DEMO included, loaded font faces not confirmed.
 - Source parity at Cloudflare production #42132318807 and GitHub Pages integrity #42132318774 SUCCESS for 1eb093cb; docs-only main Cloudflare #42132773345 SUCCESS. Documentation-only commits do not alter app source. No app version bump or new release from this evidence update.
