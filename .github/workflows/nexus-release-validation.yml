@@ -52,6 +52,7 @@ jobs:
           node --check assets/js/nexus-write-coordinator.js
           node tests/write-coordinator.test.cjs
           node tests/nasal-live-gate-preflight.test.cjs
+          node --check tools/validate-nasal-live-preflight-ui.mjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
           node tools/validate-ux-consistency.mjs
@@ -122,6 +123,7 @@ jobs:
           node tools/validate-trust-ui.mjs
           node tools/validate-formulation-stock.mjs
           node tools/validate-retrospective-nasal.mjs
+          node tools/validate-nasal-live-preflight-ui.mjs
           node tools/validate-release.mjs
           node tools/validate-checkin.mjs
           node tools/validate-protocol-design.mjs
