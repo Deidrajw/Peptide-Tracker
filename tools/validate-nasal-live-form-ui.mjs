@@ -20,15 +20,18 @@ try{
     // Match the persisted v2 kit schema. A deliberately incomplete legacy
     // kit is tested separately; a render-time migration must not be mistaken
     // for a nasal Undo failure on a normal, previously saved source.
-    fixture.supplies.push({id:'test-kit',name:'Fictional Spray QA',activeKit:true,
+    // Exclude unrelated sample kits whose legacy metadata is intentionally
+    // incomplete. Only this fully persisted synthetic v2 vial is relevant to
+    // the prepared nasal dose and must not be repaired by a render.
+    fixture.supplies=[{id:'test-kit',name:'Fictional Spray QA',activeKit:true,
       vialMg:24,totalVials:1,openedVials:1,_vialsBackfilled:true,
       _vialsRepaired:true,_vialsSeqOrderRepaired:true,
       vials:[{id:'test-vial',status:'open',remainingMg:24,vialMg:24,
-        sequenceNumber:1,intendedUse:'nasal-source',reconDate:'2026-11-01T12:00:00'}]});
-    fixture.formulationStocks=fixture.formulationStocks||[];
-    fixture.formulationStocks.push({id:'test-bottle',compound:'Fictional Spray QA',
+        sequenceNumber:1,intendedUse:'nasal-source',reconDate:'2026-11-01T12:00:00'}]}];
+    fixture.preparedDoses=[];
+    fixture.formulationStocks=[{id:'test-bottle',compound:'Fictional Spray QA',
       containerType:'nasal-bottle',method:'Nasal',remainingMg:4,remainingMl:2,
-      mgPerSpray:.1,mlPerSpray:.05,transactions:[]});
+      mgPerSpray:.1,mlPerSpray:.05,transactions:[]}];
     fixture.customPeptides=fixture.customPeptides||{};
     fixture.customPeptides['Fictional Spray QA']={status:'active',enabled:true,unit:'mg',route:'Nasal',doses:[]};
     localStorage.setItem(key,JSON.stringify(fixture));
