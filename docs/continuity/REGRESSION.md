@@ -1,3 +1,10 @@
+## 2026-11-06 — PR146 combined regression qualification (PENDING)
+- Search: one painted X at 320/390 in Chromium/WebKit dark/light; 44x44 clear target, 16px SVG, query-only restoration while preserving selected supplements/compounds.
+- Injection: 1200mg/6mL/400mg requires 2mL, blocks 1mL and permits selector change to 3mL without altering entered amount; no unsafe draw guidance when blocked.
+- Nasal: explicit final volume/confirmed mass/pump calibrated volume, mg/mcg parity, fail-closed invalid inputs, theoretical totals, no app/storage/inventory/dose writes and LIVE nasal gates OFF.
+- Protected: dose, Combo, Check-In, histories, Stash, calendar, P0 writer, 320/390 light/dark, offline fictional isolation, full-app artifacts, iPhone/VoiceOver.
+- Results: all integrated GitHub suite outcomes, artifact parity and real-device acceptance NOT TESTED/PENDING at documentation checkpoint; earlier branch-local passes cannot qualify PR146.
+
 ## 2026-11-06 — One-X Stash browser screenshot PASS locally; WebKit suite PASS, Chromium full pending
 - User screenshot duplicated native browser X + custom control. CSS scoped .nx-search-clear-wrap ::-webkit-search-cancel-button/decoration suppression and thinner 16/1.6 SVG applied. Previous full DEMO reconstructed with exact GitHub CSS+JS05 blob SHAs and full 26-member LIVE ZIP integrity. Actual local Chromium Playwright set_content 320/390 × light/dark 4/4: Stash search field one custom clear action, 44×44 target, SVG size/stroke correct, clear empties typed dsip, disappears after clearing, zero JS exceptions. Inspected 390-dark visual screenshot with one painted X. WebKit CI #42326501026 SUCCESS on screenshot-fix source; full Chromium #42326501031 was in progress. Standalone local preview does not equal physical Safari/VoiceOver acceptance; screenshot acceptance remains PENDING user review. Calculator PR136/144 unrelated to PR143 candidate and still not delivered.
 
