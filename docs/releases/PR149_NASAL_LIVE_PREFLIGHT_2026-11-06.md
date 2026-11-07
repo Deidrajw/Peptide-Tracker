@@ -24,3 +24,7 @@ Clinical nasal administration suitability, actual calibrated spray delivery, and
 ## Release status
 Proposed and coded only on draft PR149, unmerged and undeployed. No production data touched. No permission to merge or deploy.
 Next action: verify CI and artifacts for PR149 partial step, then coordinate PR142 and shared writer acceptance for guarded LIVE prepared nasal logging on a subsequent safely qualified change.
+
+## Added explicit two-tab transaction safety experiment
+- Test-only tools/validate-nasal-exclusive-writer.mjs (commit 96f92367) uses two actual Chromium tabs on local fictional storage under a shared Web Lock. It exercises the existing prepared-nasal engine's executeExclusive behind a **test-only enabled parameter**, not the product LIVE gate: expect exactly one accepted prepared bottle debit and one stale-tab rejection, no second debit from original physical vial, single dose history and ledger, exact reversal, rejected duplicate reversal. Registered in build CI at 2fc34a11.
+- This controlled engine test is NOT permission to change NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED=false. The full app still needs actual SAVE handler, historical view, quota, stale tab, offline DEMO, iPhone and mixed-writer reconciliation qualification. Exact-head result PENDING.
