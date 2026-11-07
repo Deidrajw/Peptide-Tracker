@@ -17,8 +17,14 @@ try{
     if(document.querySelector('.modal'))closeModal();
     const fixture=buildDemoState('weight_loss');
     fixture.profile.onboardingDone=true;
+    // Match the persisted v2 kit schema. A deliberately incomplete legacy
+    // kit is tested separately; a render-time migration must not be mistaken
+    // for a nasal Undo failure on a normal, previously saved source.
     fixture.supplies.push({id:'test-kit',name:'Fictional Spray QA',activeKit:true,
-      vials:[{id:'test-vial',status:'open',remainingMg:24,intendedUse:'nasal-source'}]});
+      vialMg:24,totalVials:1,openedVials:1,_vialsBackfilled:true,
+      _vialsRepaired:true,_vialsSeqOrderRepaired:true,
+      vials:[{id:'test-vial',status:'open',remainingMg:24,vialMg:24,
+        sequenceNumber:1,intendedUse:'nasal-source',reconDate:'2026-11-01T12:00:00'}]});
     fixture.formulationStocks=fixture.formulationStocks||[];
     fixture.formulationStocks.push({id:'test-bottle',compound:'Fictional Spray QA',
       containerType:'nasal-bottle',method:'Nasal',remainingMg:4,remainingMl:2,
