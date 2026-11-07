@@ -1,3 +1,6 @@
+## 2026-11-06 — PR146 integration preview candidate (UNRELEASED)
+- Branch integration/pr143-search-pr136-pr144-calculators-20261106, draft PR146, base main a0482abc. Application merge da36a628, combined QA workflow 24524cf2; new branch only. PR143 search, PR136 syringe capacity recovery and PR144 nasal theoretical read-only mode included in integrated code. No release/version change, no production migration or records touched, nasal LIVE OFF. Integrated CI/artifacts and iPhone/VoiceOver pending; NOT released or deployed.
+
 ## 2026-11-06 — PR143 one-X corrected complete preview prepared, NOT RELEASED
 - Local reconstructed full-app standalone fictional DEMO (3,173,769 bytes) and 26-file LIVE ZIP from prior 8aba source plus exact GitHub CSS SHA 7bc54e85892c566be1c298b48e42be0b45ab8f98 and JS05 SHA 204f18b50aef3f4217c955ae030166f981345020. Source/ZIP integrity passed; local Chromium 320/390 × light/dark Stash input clear tests 4/4 and one X screenshot visually inspected; WebKit #42326501026 SUCCESS, final full-build pending. PREVIEW only; no app data/migration or deployment. Calculator PR136 and stacked nasal PR144 remain unmerged and not included; pending independent QA and integration preview.
 
