@@ -1,3 +1,8 @@
+## Verified QA checkpoint
+- Original candidate source 93c51883: six GitHub standard workflows SUCCESS, including full-build #42337431621. GitHub artifact #13560332059 verified: 549 CRC-clean outer members; 26-file root-correct LIVE package, 12 numbered scripts, CRC PASS; complete fictional standalone DEMO 3,169,462 bytes equals offline ZIP index byte-for-byte.
+- Local full-app Chromium QA 8/8 (320/390, dark/light, gated-live and fictional DEMO states): LIVE notice/Close 44px, no false save CTA or inventory writes; DEMO invalid source inline failure; corrected fictional source successful dose and bottle decrement; no second source-kit debit or page errors. This is NOT physical Safari or clinical safety testing.
+- Dedicated expanded CI at subsequent test-only commits still PENDING. App/source bytes remain unchanged. PR147 remains unmerged/undeployed; LIVE nasal administration cannot be saved from production.
+
 # Nexus — PR147 nasal prepared-stock save feedback (nonproduction)
 Date: November 6, 2026 (Toronto); production baseline v0.9.25-beta.1 at GitHub main a0482abc42060ad4b31108538a207bf983df90d7.
 Branch: fix/nasal-dose-save-gate-feedback-20261106; draft PR #147; NOT MERGED OR DEPLOYED.
