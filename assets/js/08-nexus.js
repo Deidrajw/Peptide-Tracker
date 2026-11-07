@@ -11,6 +11,14 @@ function nxCompoundMenuIcon(kind) {
   };
   return '<svg class="nx-compound-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[kind]||"")+'</svg>';
 }
+function nxCompoundStatusHistoryHTML(data) {
+  const records=Array.isArray(data.statusHistory)?data.statusHistory:[];
+  if(!records.length)return data.status==="paused"
+    ?'<div class="nx-status-history-empty" style="font-size:11px;color:var(--t4);margin:12px 0">This pause predates recorded status history; its date is unknown.</div>'
+    :"";
+  return '<details class="nx-compound-status-history" style="margin:12px 0;border-top:1px solid var(--border-sub);padding-top:8px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:12px;color:var(--t3)">Status history ('+records.length+')</summary>'+
+    records.slice().reverse().map(item=>'<div style="padding:7px 0;font-size:12px;color:var(--t3)">'+esc(fmtDT(item.at))+' · '+esc(item.from==='paused'?'Paused':'Active')+' → '+esc(item.to==='paused'?'Paused':'Active')+'</div>').join('')+'</details>';
+}
 function peptideCardHTML(name, data, opts={}) {
   const c = cfg(name);
   const status = data.status || "active";
@@ -31,9 +39,10 @@ function peptideCardHTML(name, data, opts={}) {
         <span style="display:block;margin-top:2px;color:var(--t5)">${doses.length} dose${doses.length===1?"":"s"} logged · history in Trends</span>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="pausepep" data-name="${esc(name)}" style="flex:1;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600">▶ Resume</button>
+        <button class="resumepep" data-name="${esc(name)}" style="flex:1;min-height:44px;background:#F9C87D18;border:1px solid #F9C87D44;color:#F9C87D;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600">▶ Resume</button>
         <button class="histtoggle" data-name="${esc(name)}" style="background:transparent;color:var(--t4);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:12px">History (${doses.length})</button>
       </div>
+      ${nxCompoundStatusHistoryHTML(data)}
       <div class="histbox" data-name="${esc(name)}" style="display:none;margin-top:14px;border-top:1px solid var(--border-sub);padding-top:12px">
         ${doses.slice(0,6).map(d=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface-2)"><div style="width:2px;align-self:stretch;background:#F9C87D33;border-radius:2px"></div><div style="flex:1;min-width:0"><span style="font-size:12px;color:var(--t3)">${fmtDT(d.date)}</span>${d.sprayCount?` <span style="color:#F9C87D">${esc(d.sprayCount)} spray${d.sprayCount===1?"":"s"}</span> <span style="color:var(--t5);font-size:11px">(${esc(d.dose)} ${c.unit})</span>`:d.dose?` <span style="color:#F9C87D">${esc(d.dose)} ${c.unit}</span>`:""}</div></div>`).join("")}
       </div>
@@ -277,6 +286,7 @@ function peptideCardHTML(name, data, opts={}) {
         </div>`}
       </div>
     </div>
+    ${nxCompoundStatusHistoryHTML(data)}
     <div class="histbox nx-dose-history" data-name="${esc(name)}" style="display:none;margin-top:16px;border-top:1px solid var(--border-sub);padding-top:14px">
       <div class="nx-dose-history-title"><strong>${doses.length} recorded doses</strong><span>Newest first</span></div>
       ${doses.map((d,i)=>`<div class="nx-dose-history-record ${i>=5?"nx-dose-history-extra":""}" style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface-2);align-items:flex-start"><div style="width:2px;align-self:stretch;background:${c.color}44;border-radius:2px"></div><div class="doseretro" data-name="${esc(name)}" data-id="${d.id}" style="flex:1;min-width:0;cursor:pointer"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px"><span style="font-size:12px;color:var(--t2)">${fmtDT(d.date)}</span>${d.dose?`<span style="font-size:11px;color:${c.color}">${esc(d.dose)} ${c.unit}</span>`:""}${d.site?`<span style="font-size:10px;color:var(--t4)">${esc(d.site)}</span>`:""}</div>${d.notes?`<div style="font-size:11px;color:var(--t4);font-style:italic">${esc(d.notes)}</div>`:""}${d.allocations&&d.allocations.length>1?`<div style="font-size:10px;color:#A78BFA;margin-top:3px">Source: ${d.allocations.length} vials · ${d.allocations.map(a=>{const k=state.supplies.find(s=>s.id===a.kitId);return `${a.amount}${c.unit}${k?" ("+(k.activeKit?"current":"other")+")":""}`;}).join(", ")}</div>`:""}${d.syringeId?`<button class="view-syringe" data-syringe="${d.syringeId}" style="display:block;font-size:10px;color:#A78BFA;margin-top:3px;background:transparent;border:none;padding:0">💉 Mixed syringe · ${(()=>{const pd=(state.preparedDoses||[]).find(p=>p.id===d.syringeId);return pd?getSyringeComponents(pd).length:"?";})()} compounds · View details ›</button>`:""}</div><button class="nx-history-reaction" type="button" data-name="${esc(name)}" data-id="${d.id}" aria-label="Record reaction for ${esc(name)} dose" style="min-height:44px;min-width:44px;color:var(--t2);font-size:11px;font-weight:650;border:1px solid var(--border);border-radius:8px;padding:8px">Reaction${(d.reactions||[]).length?` (${d.reactions.length})`:""}</button><button class="editdose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t4);font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 7px;flex-shrink:0;min-width:38px;text-align:center">Edit</button><button class="deldose" data-name="${esc(name)}" data-id="${d.id}" style="color:var(--t5);font-size:13px;flex-shrink:0">✕</button></div>`).join("")}
