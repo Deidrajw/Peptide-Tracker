@@ -3,7 +3,7 @@ Date: November 6, 2026 (Toronto); production baseline v0.9.25-beta.1 at GitHub m
 Branch: fix/nasal-dose-save-gate-feedback-20261106; draft PR #147; NOT MERGED OR DEPLOYED.
 
 ## Screenshot issue
-The Oxytocin Log a dose confirmation offered “Confirm & save”, showing four nominal sprays, 200.00 mcg and a hypothetical 8.60 mL post-entry bottle balance. In LIVE app source, NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED is explicitly false. The save handler therefore throws on every attempt; the existing global error banner can be missed in a long scrolled sheet. Displayed projected inventory is NOT a confirmed transaction.
+The Fictional Compound A Log a dose confirmation offered “Confirm & save”, showing four nominal sprays, 200.00 mcg and a hypothetical 8.60 mL post-entry bottle balance. In LIVE app source, NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED is explicitly false. The save handler therefore throws on every attempt; the existing global error banner can be missed in a long scrolled sheet. Displayed projected inventory is NOT a confirmed transaction.
 
 ## Targeted changes
 - Add early LIVE preflight to nexusNasalDoseModal so disabled nasal logging shows a visible, closeable notice, with no fake Review or Confirm & save CTA.
