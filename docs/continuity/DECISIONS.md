@@ -1,3 +1,7 @@
+## 2026-11-06 — User rejects double search X and calculator omissions in iPhone screenshots
+- One clear action per search input is required; native type=search WebKit/Blink X must not coexist with Nexus's own accessible 44px clear control. Prefer ONE quieter thin-outline 16px/1.6 muted X over previous heavy/double icon, with unchanged field proportions/lavender focus. This is a targeted corrective candidate, NOT visual acceptance yet. Avoid general native search suppression where no custom clear exists.
+- User reiterates injection calculator recovery and separate nasal calculator must be delivered, not just roadmap items. PR136 and PR144 already code these on different draft branches; green PR143 QA cannot be used to claim those features delivered. Preserve syringe capacity safety guard, no invented volume/injection instruction on overflow; keep nasal LIVE gates OFF. Integration/release requires exact-source cross-branch reconciliation, preview and explicit approval.
+
 ## 2026-11-06 — PR143 completed automated picker qualification; no release decision
 - Vial Kit, Other Forms and Blend selected-value comboboxes preserve canonical compound on query-only clear. The 17px/1.8 SVG on 44px target is hidden after a selection and appears only on active search. Previously approved DS2 unchanged. Six exact-head suites and complete candidate verified on 8aba617b; this is QA evidence, not new user approval to merge/deploy. Physical iPhone acceptance remains necessary. Multi-compound protocol redesign Issue #145 remains separately deferred.
 
