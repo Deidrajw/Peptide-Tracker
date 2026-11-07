@@ -1,3 +1,7 @@
+## 2026-11-06 — PR143 picker clear completed in QA candidate; NOT RELEASED
+- Version remains v0.9.25-beta.1, source/manifest 8aba617b1ffceb0cd35f4db1efdbcb245df53367, PR143 draft/unmerged. All six GitHub CI suites SUCCESS (full #42319758434, WebKit #42319758282, pinned #42319758156, mobile #42319758135, nested #42319758134, writer #42319758287). Direct selected compound Vial Kit, Other Forms and Blend keyboard/query/clear tests included; Blend 8/8 PASS; standard full browser 8/8 PASS.
+- Official artifact #13553685265 independently verified: 549 CRC-clean outer members, 26 CRC-clean LIVE files, matching manifest SHA/version and complete standalone 3,173,373-byte fictional offline-isolated DEMO matching offline ZIP. No production deployment, data migration, merge or physical iPhone acceptance. Upcoming next action physical iPhone review. Issue #145 deferred.
+
 ## 2026-11-06 — PR143 Blend search handler sequencing corrected; NOT RELEASED
 - Added selected-value runtime coverage for vial, other forms and Blend; observed WebKit #42319205139 SUCCESS for vial/formulation. Fixed Blend queryActive event handler order in JS03 at 88fcf9c6, guarded by test 29d8fc9b. Latest app source differs from previous artifact #13551470487 and requires new full source-matched LIVE/DEMO verification and six-suite CI. No merge/deploy/data migration.
 
