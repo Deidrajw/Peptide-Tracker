@@ -436,6 +436,7 @@ function comboDoseModal() {
     else if(empty)empty.remove();
   };
   comboSearch.oninput=filterChoices;
+  nexusWireSearchClear(comboSearch,filterChoices,"Clear combo compound search");
   comboList.onclick=e=>{
     const btn=e.target.closest(".combo-compound-toggle");
     if(!btn)return;
@@ -1182,6 +1183,12 @@ function nexusCapsuleDoseModal(name,occTime){
 /* Form-aware prepared spray entry. Real prepared stock use remains gated;
    DEMO invokes the already audited pure planner on fictional state only. */
 function nexusNasalDoseModal(name,occTime){
+ // Do not invite a LIVE save when the protected prepared-dose writer is gated.
+ // This check occurs before a modal is opened or any draft/stock can be modified.
+ if(!_demoActive&&!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED){
+  showErrorBanner("Nasal spray dose logging is not enabled in this version. No dose or bottle deduction was saved. Prepared bottle inventory remains available in Stash.");
+  return;
+ }
  const bottles=(state.formulationStocks||[]).filter(c=>c.compound===name&&c.containerType==="nasal-bottle"&&
   c.method==="Nasal"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
  const unit=cfg(name).unit;
@@ -1201,6 +1208,7 @@ function nexusNasalDoseModal(name,occTime){
  m.querySelector("#x").onclick=closeModal;
  const source=m.querySelector("#nx-spray-source"),qty=m.querySelector("#nx-spray-count"),
   date=m.querySelector("#nx-spray-date"),box=m.querySelector("#nx-spray-confirm");
+ let reviewedSource=null;
  const current=()=>bottles.find(x=>String(x.id)===source.value);
  const valid=()=>{
   const b=current(),n=Number(qty.value);
@@ -1217,6 +1225,10 @@ function nexusNasalDoseModal(name,occTime){
    showErrorBanner("Review bottle, amount and date; no entry was saved.");return;
   }
   const b=current(),n=Number(qty.value);
+  // Preserve exact reviewed source characteristics, not merely a bottle ID.
+  // Any concurrent preparation, correction or recalibration invalidates review.
+  reviewedSource={id:String(b.id),remainingMg:b.remainingMg,remainingMl:b.remainingMl,
+    mgPerSpray:b.mgPerSpray,mlPerSpray:b.mlPerSpray,transactionCount:(b.transactions||[]).length};
   m.querySelector("#nx-spray-summary").innerHTML=
     '<div class="nx-shared-review-title">Check prepared spray entry</div>'+
     '<dl class="nx-shared-review-grid">'+
@@ -1230,22 +1242,31 @@ function nexusNasalDoseModal(name,occTime){
     '</dl><p class="nx-shared-review-footnote">Recorded spray values are nominal. Nothing saved yet.</p>';
   box.hidden=false;m.querySelector("#nx-spray-entry-fields").hidden=true;
  };
- m.querySelector("#nx-spray-back").onclick=()=>{box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
+ m.querySelector("#nx-spray-back").onclick=()=>{reviewedSource=null;box.hidden=true;m.querySelector("#nx-spray-entry-fields").hidden=false;};
  m.querySelector("#nx-spray-save").onclick=async()=>{
-  if(!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
+  if(!reviewedSource||!valid()||!date.value||!Number.isFinite(new Date(date.value).getTime())){
    showErrorBanner("Source or amount changed; nothing saved.");return;
   }
   const b=current(),n=Number(qty.value),btn=m.querySelector("#nx-spray-save");
   if(btn.disabled)return;btn.disabled=true;
   const tx={id:"spray-dose-"+uid(),doseId:String(uid()),compound:name,sourceId:b.id,
    sprays:n,method:"Nasal",sourceKind:"formulation-container",trackingMode:"backed",
-   nativeUnit:unit,date:date.value,notes:m.querySelector("#nx-spray-notes").value};
+   nativeUnit:unit,date:date.value,notes:m.querySelector("#nx-spray-notes").value,
+   expectedSource:{...reviewedSource}};
   let result;
   try{
    if(_demoActive){result=NexusPreparedDoseTransaction.planDose(state,tx);state=result.next;}
    else result=await nexusCommitPreparedNasalOperation({type:"dose",tx});
   }catch(error){console.error("Prepared nasal dose blocked",error);
-   showErrorBanner(_demoActive?"Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":"Live nasal logging is unavailable until inventory saving is fully protected. Nothing saved.");
+   showErrorBanner(_demoActive?
+    "Could not record this spray entry. Check the prepared bottle and available balance; nothing saved.":
+    /disabled pending|safety.gated|unavailable/i.test(String(error?.message||""))?
+      "Nasal spray dose logging is not enabled in this version. Nothing saved.":
+    /changed|stale|reload|lock|concurrent|snapshot/i.test(String(error?.message||""))?
+      "Saved inventory changed or could not be verified. Reload before trying again. Nothing saved.":
+    /quota|storage|readback|persist/i.test(String(error?.message||""))?
+      "Nasal dose could not be verified in device storage. Nothing was confirmed saved; reload and check your history.":
+      "Unable to verify the prepared bottle or dose. Nothing saved. Review the bottle in Stash.");
    btn.disabled=false;return;
   }
   closeModal();render();
@@ -1613,6 +1634,17 @@ function doseModal(name, existing, occTime, formChoice) {
       if(Number(input.value)>0&&Number.isFinite(Number(input.value)))clearStaleAmountError();
     }));
   reviewButton.onclick=()=>{
+    // Mobile input events, autofill and intermediate form redraws can leave
+    // the canonical hidden mass stale even when a visible amount is present.
+    // Reconcile from the user-visible entry using the SAME validated unit
+    // conversion as the input handler before invoking all normal review gates.
+    const visibleAmount=m.querySelector("#nx-dose-entered");
+    const canonicalAmount=m.querySelector("#dose");
+    if(visibleAmount&&canonicalAmount){
+      const enteredUnit=m.querySelector("#nx-dose-unit")?.value||c.unit;
+      const converted=nexusUseMassValue(visibleAmount.value,enteredUnit,c.unit);
+      canonicalAmount.value=visibleAmount.value!==""&&converted!==null?String(Number(converted.toPrecision(12))):"";
+    }
     const amount=Number(doseVal("dose"));
     const date=doseVal("date");
     if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date and time before reviewing.");return;}
@@ -2211,7 +2243,7 @@ function doseModal(name, existing, occTime, formChoice) {
         });
       }finally{saveButton.disabled=false;}
       if(!result){
-        showErrorBanner("Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open, export a backup and reload before retrying.");
+        showErrorBanner(_nexusBackedPhysicalDoseFailure||"Exact vial, amount or saved state could not be verified. No dose was committed. Keep this draft open and check history before retrying.");
         return;
       }
       closeModal();render();
@@ -3337,6 +3369,32 @@ function nexusConfigureCheckinSheet(modal, actionIds) {
   if(!footer.children.length)footer.remove();
 }
 
+// Search clear affordance: UI-only, does not mutate selected items or stored logs.
+// Reuse across check-in and supplement modal, with a 44px target for iPhone.
+function nexusWireSearchClear(input, onClear, label, options={}) {
+  if (!input || input.parentElement?.classList.contains("nx-search-clear-wrap")) return;
+  const wrapper=document.createElement("span");
+  wrapper.className="nx-search-clear-wrap";
+  wrapper.style.cssText="position:relative;display:block;width:100%;margin-bottom:10px";
+  input.parentNode.insertBefore(wrapper,input);
+  wrapper.appendChild(input);
+  input.style.marginBottom="0";
+  input.style.width="100%";
+  input.style.paddingRight="52px";
+  const clear=document.createElement("button");
+  clear.type="button";clear.className="nx-search-clear";
+  clear.setAttribute("aria-label",label||"Clear search");
+  clear.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  // A quiet 17px DS2 glyph inside an accessible 44px hit area. No extra button chrome.
+  clear.style.cssText="position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;height:44px;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center;border:0;border-radius:0;box-shadow:none;background:transparent;color:var(--t4);cursor:pointer";
+
+  wrapper.append(clear);
+  const refresh=()=>{const show=!!input.value && (typeof options.isQuery!=="function" || options.isQuery());clear.hidden=!show;clear.style.display=show?"grid":"none";};
+  input.addEventListener("input",refresh);
+  clear.onclick=()=>{input.value="";onClear?.();refresh();(input.isConnected?input:(input.id?document.getElementById(input.id):null))?.focus();};
+  refresh();
+}
+
 // ─── Daily check-in modal ────────────────────────────────────────────────────
 function todayLogSheet(log) {
   const mood = MOODS.find(m=>m.v===log.mood);
@@ -3657,7 +3715,7 @@ function dailyModal(existing, prefillDate) {
       suppSearch.value="";suppDropdownOpen=false;renderSuppSearch();
     });
   };
-  if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};renderSuppSearch();}
+  if(suppSearch){suppSearch.oninput=()=>{suppDropdownOpen=true;renderSuppSearch();};nexusWireSearchClear(suppSearch,()=>{suppDropdownOpen=false;renderSuppSearch();},"Clear supplement search");renderSuppSearch();}
   nexusWireSupplementShortcuts(m,()=>m.querySelector("#date").value,suppTaken2,()=>{suppSelectionTouched=true;suppSelectedOpen=true;renderSuppSearch();});
   const suppDateInput=m.querySelector("#date");
   if(suppDateInput)suppDateInput.addEventListener("change",()=>{
@@ -3735,7 +3793,7 @@ function supplementModal(prefillDate) {
       input.value="";dropdownOpen=false;paint();
     });
   };
-  input.oninput=()=>{dropdownOpen=true;paint();};paint();
+  input.oninput=()=>{dropdownOpen=true;paint();};nexusWireSearchClear(input,()=>{dropdownOpen=false;paint();},"Clear supplement search");paint();
   nexusWireSupplementShortcuts(modal,()=>today,taken,()=>{selectedOpen=true;paint();});
   modal.querySelector("#suppsave").onclick=async()=>{
     state.supplementLogs=state.supplementLogs.filter(l=>dayKey(l.date)!==today);

@@ -67,6 +67,15 @@
     const s=container(next,tx.compound,tx.sourceId);
     const history=entryFor(next,tx.compound,{create:true,unit:tx.nativeUnit});
     const original=container(snapshot,tx.compound,tx.sourceId);
+    // LIVE review pins the specific bottle balance, calibration and ledger.
+    // An edit after review must fail closed rather than log a different dose.
+    if(tx.expectedSource){
+      const expected=tx.expectedSource;
+      const keys=["remainingMg","remainingMl","mgPerSpray","mlPerSpray"];
+      if(!same(expected.id,s.id)||keys.some(k=>!finite(expected[k])||expected[k]!==s[k])||
+         !Number.isSafeInteger(expected.transactionCount)||expected.transactionCount!==s.transactions.length)
+        fail("Prepared bottle changed since review; reopen the dose form");
+    }
     const mg=round(tx.sprays*s.mgPerSpray),ml=round(tx.sprays*s.mlPerSpray);
     if(!positive(mg)||!positive(ml))fail("Invalid dose conversion");
     if(mg>s.remainingMg+EPS||ml>s.remainingMl+EPS)fail("Insufficient prepared stock");

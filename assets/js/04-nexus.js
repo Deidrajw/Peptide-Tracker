@@ -2331,23 +2331,39 @@ async function nexusCommitRecordedNasalPreparation(input) {
   return result;
 }
 
-// PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
-// but live controls remain disabled until every state writer shares the same
-// cross-tab transaction coordination. Never silently bypass this release gate.
-const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
+// Prepared nasal LIVE logging release candidate. Every stock/history change
+// is committed through the shared exclusive writer with durable readback.
+// Enable only on this unmerged release branch until full QA and approval.
+const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true;
 async function nexusCommitPreparedNasalOperation(operation) {
   if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
     throw Error("Prepared nasal logging is disabled pending shared-writer cross-tab acceptance");
   if(_demoActive)throw Error("Prepared stock transactions unavailable in demo mode");
   if(!globalThis.NexusPreparedDoseTransaction)throw Error("Prepared transaction engine unavailable");
+  if(operation?.type==="dose"&&!operation.tx?.expectedSource)
+    throw Error("Prepared bottle was not verified at review; reopen the dose form");
   const writer=nexusWriter();
-  // A single gated execution boundary owns the exact-source planner,
-  // exclusive lock and verified readback. No UI can reach this until the
-  // separate cross-tab legacy-writer migration is fully accepted.
+  // Rendering may add transient root _UI fields. The prepared engine must use
+  // canonical durable bytes rather than an in-memory render snapshot, but it
+  // must NOT silently discard unsaved persistent inventory/history changes.
+  const serialized=writer.expected();
+  if(typeof serialized!=="string")throw Error("Durable prepared stock unavailable; reload before saving");
+  const durable=JSON.parse(serialized);
+  const persistent=value=>{
+    const copy={...value};
+    for(const key of Object.keys(copy))if(key.startsWith("_"))delete copy[key];
+    return JSON.stringify(copy);
+  };
+  if(persistent(state)!==persistent(durable))
+    throw Error("Unsaved persistent changes are pending; reload before saving prepared stock");
+  const transient=Object.fromEntries(Object.entries(state).filter(([key])=>key.startsWith("_")));
+  // The shared writer checks these exact expected bytes inside the Web Lock;
+  // a stale tab can never be rebased onto another tab's updated inventory.
   const result=await globalThis.NexusPreparedDoseTransaction.executeExclusive(
-    writer,state,operation,{enabled:true}
+    writer,durable,operation,{enabled:true}
   );
-  state=result.next;_nexusLastSavedSnapshot=writer.expected();
+  state={...result.next,...transient};
+  _nexusLastSavedSnapshot=writer.expected();
   return result;
 }
 
@@ -2871,7 +2887,7 @@ function showUndoToast(message, undoFn) {
   toastRemaining=6000;
   toastEl = h(`<div style="position:fixed;left:16px;right:16px;bottom:86px;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px #0006">
     <span style="font-size:12.5px;color:var(--t1)">${esc(message)}</span>
-    <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;padding:4px 6px">UNDO</button>
+    <button id="undo-btn" style="flex-shrink:0;font-size:12px;font-weight:700;color:#7DF9C0;background:transparent;border:none;min-height:44px;min-width:48px;padding:8px 10px">UNDO</button>
   </div>`);
   toastEl.querySelector("#undo-btn").onclick = () => { clearTimeout(toastTimer); toastEl.remove(); toastEl=null; undoFn(); };
   document.body.appendChild(toastEl);
@@ -3016,6 +3032,7 @@ function wireSymptomPicker(container, selected, color, onUpdate) {
   search.onfocus=()=>{state._symPickerBrowseOpen=true;draw()};
   search.onclick=()=>{state._symPickerBrowseOpen=true;draw()};
   search.oninput=()=>{state._symPickerBrowseOpen=true;draw()};
+  nexusWireSearchClear(search,()=>{state._symPickerBrowseOpen=false;draw()},"Clear symptom search");
   search.onkeydown=e=>{if(e.key==="Escape"){state._symPickerBrowseOpen=false;draw();search.blur()}
     if(e.key==="ArrowDown"){state._symPickerBrowseOpen=true;draw();const first=results.querySelector(".nx-sym-add");if(first){e.preventDefault();first.focus()}}};
   draw();

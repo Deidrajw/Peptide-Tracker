@@ -11,7 +11,11 @@ const from="const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;";
 assert.ok(application.includes(from),"Preparation-only release gate must be enabled in candidate");
 const testOnly=application;
 assert.match(testOnly,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/);
-assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/);
+const manifest=JSON.parse(fs.readFileSync("release/release.json","utf8"));
+const candidate=manifest.version==="v0.9.26-beta.1"&&
+ manifest.changes.some(c=>c.key==="prepared-nasal-live");
+assert.match(testOnly,new RegExp("const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = "+(candidate?"true":"false")+";"),
+ "LIVE nasal gate must match the explicitly approved release candidate");
 (async()=>{
  const browser=await chromium.launch({headless:true});
  try{

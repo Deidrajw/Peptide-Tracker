@@ -98,9 +98,30 @@ if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
   throw Error('Prepared nasal runtime bypasses exclusive transaction execution boundary');
-for(const lock of ['NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false','NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false']){
- if(!runtime.includes(lock))throw Error('Unapproved live stock transfer enablement: '+lock);
-}
+// Keep generic transfers forbidden. Nasal LIVE is permitted only for the
+// explicitly named Issue148 release candidate, with reviewed-source fingerprint,
+// canonical Web-Lock/CAS/readback, and a source-matched release manifest.
+// Do NOT silently relax this assertion for other releases.
+if(!runtime.includes('NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false'))
+ throw Error('Unapproved generic preparation transfer enablement');
+const release=JSON.parse(fs.readFileSync('release/release.json','utf8'));
+const nasalCandidate=release.version==='v0.9.26-beta.1'&&
+ release.changes?.some(x=>x.key==='prepared-nasal-live');
+if(nasalCandidate){
+ if(!runtime.includes('NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true')||
+    !runtime.includes('operation.tx?.expectedSource')||
+    !runtime.includes('const serialized=writer.expected()')||
+    !runtime.includes('writer,durable,operation,{enabled:true}')||
+    !runtime.includes('state={...result.next,...transient}'))
+   throw Error('LIVE nasal enablement is missing its canonical exact-source writer guards');
+ const dose=fs.readFileSync('assets/js/05-nexus.js','utf8');
+ const prepared=fs.readFileSync('assets/js/nexus-prepared-dose-transaction.js','utf8');
+ if(!dose.includes('expectedSource:{...reviewedSource}')||
+    !dose.includes('reviewedSource={id:String(b.id)')||
+    !prepared.includes('Prepared bottle changed since review; reopen the dose form'))
+   throw Error('LIVE nasal source fingerprint and ledger guard incomplete');
+}else if(!runtime.includes('NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false'))
+ throw Error('Unapproved live nasal enablement outside explicit release candidate');
 const coordinator=fs.readFileSync('assets/js/nexus-write-coordinator.js','utf8');
 if(/\b(?:saveLegacy|removeLegacy)\s*[:(,}]/.test(coordinator))throw Error('Unlocked coordinator API still exposed');
 for(const file of files){

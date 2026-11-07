@@ -15,7 +15,17 @@ try {
   const page=await ctx.newPage();const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(kind==='live'?'http://127.0.0.1:8777/':'file://'+demo,{waitUntil:'domcontentloaded'});
+  // Await the actual asynchronous startup migration+render before installing a
+  // fictional modal. Otherwise a late onboarding render can erase #x after
+  // comboDoseModal() returns and produce a false 30-second CI timeout.
+  await page.waitForFunction(()=>{
+    const app=document.getElementById('app');
+    return typeof comboDoseModal==='function'&&app&&
+      !app.textContent.includes('LOADING…')&&
+      (typeof nexusWriter!=='function'||!nexusWriter().status().inFlight);
+  },null,{timeout:15000});
   await page.evaluate(theme=>{
+    if(document.querySelector('#ob-wrap'))closeModal();
     state=buildDemoState('weight_loss');
     state.profile.onboardingDone=true;
     state.peptides={};state.customPeptides={};

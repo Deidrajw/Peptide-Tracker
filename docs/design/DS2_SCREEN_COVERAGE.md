@@ -1,3 +1,6 @@
+## 2026-11-07 — Prepared nasal LIVE log flow (release candidate only)
+- Existing approved DS2 dose form/review layout retained. One exact prepared-bottle selection and whole-spray entry, clear separate review and user confirmation, explicit in-app source/calibration change error. Existing shared Undo toast target increased to 44px for iPhone without changing screen hierarchy. Full 320/390 light/dark and physical iPhone acceptance still pending; PR152 unmerged.
+
 ## 2026-11-05 — PR135 Combo Dose modal header correction
 - Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
 

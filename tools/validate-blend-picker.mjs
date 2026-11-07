@@ -40,6 +40,26 @@ try {
   ensure(await pg.locator('.combo-preset-chip').count()===1,'Saved favourite missing');
   await pg.locator('#nx-combo-preset-select').selectOption('p');
   ensure(await pg.locator('.combo-compound-toggle[aria-checked="true"]').count()===2,'Existing favourite selection not retained');
+  // Blend composition's search text and selected compound are different states.
+  // A query-only X must never clear the authoritative selected ingredient.
+  await pg.evaluate(()=>{closeModal();addBlendKitModal(null)});
+  const firstBlend=pg.locator('.comp-row').first();
+  const blendInput=firstBlend.locator('.nx-blend-compound-trigger');
+  await blendInput.fill('Retatrutide');
+  const retatrutide=firstBlend.locator('.nx-blend-compound-option').filter({hasText:'Retatrutide'}).first();
+  ensure(await retatrutide.count()===1,'Blend compound suggestion not present');
+  await retatrutide.click();
+  const chosen=await pg.locator('.comp-row').first().locator('.comp-select').inputValue();
+  ensure(chosen==='Retatrutide','Blend selected compound lost');
+  const chosenClear=pg.locator('.comp-row').first().locator('.nx-search-clear');
+  ensure(!(await chosenClear.isVisible()),'Selected blend ingredient must not show clear-query X');
+  await pg.locator('.comp-row').first().locator('.nx-blend-compound-trigger').fill('NAD');
+  const queryClear=pg.locator('.comp-row').first().locator('.nx-search-clear');
+  ensure(await queryClear.isVisible(),'Blend typed search must show clear X');
+  await queryClear.click();
+  ensure(!(await pg.locator('.comp-row').first().locator('.nx-search-clear').isVisible()),'Blend X remained after query clear');
+  ensure(await pg.locator('.comp-row').first().locator('.comp-select').inputValue()==='Retatrutide','Blend clear lost canonical selected compound');
+  ensure(await pg.locator('.comp-row').first().locator('.nx-blend-compound-trigger').inputValue()==='Retatrutide','Blend clear failed to restore chosen label');
   await pg.evaluate(()=>{closeModal();tab='home';render();document.querySelectorAll('.modal-bg').forEach(x=>x.remove())});
   const summary=pg.locator('details.app-detail').filter({has:pg.locator('summary', {hasText:'Needs attention'})}).first();
   if(await summary.count()) {
