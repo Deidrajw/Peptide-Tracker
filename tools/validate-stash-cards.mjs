@@ -66,7 +66,17 @@ try{
 
 
     const card=id=>page.locator('.nx-kit-card[data-kit-id="'+id+'"]');
-    ensure(await card(99001).count()===1,'Sealed standard kit missing');
+    // Preserve the strict Stash assertion; report the actual render state on failure.
+    if(await card(99001).count()!==1){
+      const diagnostic=await page.evaluate(()=>({
+        sub:state._stashSub,filter:state._stashFilter,group:state._stashGroup,
+        search:state._stashSearch,
+        kitIds:(state.supplies||[]).map(s=>({id:s.id,name:s.name,vials:s.vials?.length})),
+        visibleKitIds:[...document.querySelectorAll('.nx-kit-card')].map(el=>el.dataset.kitId),
+        pageText:document.body.innerText.slice(0,500)
+      }));
+      throw Error('Sealed standard kit missing: '+JSON.stringify({kind,width,theme,diagnostic}));
+    }
     ensure(await card(99002).count()===1,'Open standard kit missing');
     ensure(await card(99003).count()===1,'Sealed blend kit missing');
     ensure(await card(99001).locator('.nx-kit-compact-context').innerText().then(x=>x.includes('0 open')),'Sealed kit must identify zero open vials');

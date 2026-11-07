@@ -1,7 +1,7 @@
 name: Nexus build and parity QA
 on:
   push:
-    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104']
+    branches: ['release/**', main, 'docs/v0924-iphone-acceptance-ds2-reconcile-20261104', 'integration/pr143-search-pr136-pr144-calculators-20261106']
     # PR132 scoped QA branch trigger
   pull_request:
     branches: [main]
@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs; do node --check "$file"; done
+          for file in assets/js/*-nexus.js tools/build-release.mjs tools/validate-release.mjs tools/validate-checkin.mjs tools/validate-protocol-design.mjs tools/validate-vial-safety.mjs tools/audit-measurement-math.mjs tools/validate-logdose-ui.mjs tools/validate-combo-picker.mjs tools/validate-stash-actions.mjs tools/validate-stash-cards.mjs tools/validate-chevron-unification.mjs tools/validate-blend-picker.mjs tools/validate-stash-panels.mjs tools/validate-plans-hierarchy.mjs tools/validate-recon-safety.mjs tools/validate-trust-ui.mjs tools/validate-formulation-stock.mjs tools/validate-ux-consistency.mjs tools/validate-search-clear-ui.mjs tools/validate-calculator-recovery-ui.mjs tools/validate-nasal-readonly-ui.mjs; do node --check "$file"; done
           test "$(find assets/js -maxdepth 1 -name '*-nexus.js' | wc -l)" -eq 12
           grep -q 'nexus-disclosures.css' index.html
           grep -q 'nexus-contrast.css' index.html
@@ -53,6 +53,8 @@ jobs:
           node tests/write-coordinator.test.cjs
           node tools/validate-storage-writers.mjs
           node tools/validate-recon-safety.mjs
+          node tests/search-clear-controls.test.cjs
+          node tests/nasal-calculator-readonly.test.cjs
           node tools/validate-ux-consistency.mjs
       - name: Gate stale release notes against changed application source
         shell: bash
@@ -126,6 +128,9 @@ jobs:
           node tools/validate-protocol-design.mjs
           node tools/validate-vial-safety.mjs
           node tools/validate-logdose-ui.mjs
+          node tools/validate-search-clear-ui.mjs
+          node tools/validate-calculator-recovery-ui.mjs
+          node tools/validate-nasal-readonly-ui.mjs
           node tools/validate-save-ack-ui.mjs
           node tools/validate-combo-picker.mjs
           node tools/validate-stash-actions.mjs

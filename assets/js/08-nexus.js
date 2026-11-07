@@ -933,7 +933,7 @@ function learnContent() {
     </div>`:""}
     <div style="position:relative;margin-bottom:10px">
       <input id="disc-search" class="inp" placeholder="🔍  Search by name, alias, or use…" value="${esc(state._discoverSearch||"")}" style="width:100%;padding-right:${state._discoverSearch?"36px":"14px"}">
-      ${state._discoverSearch?`<button id="disc-clear" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:15px;line-height:1;padding:4px">✕</button>`:""}
+      ${state._discoverSearch?`<button id="disc-clear" type="button" aria-label="Clear Discover search" style="position:absolute;right:0;top:0;min-width:44px;min-height:44px;height:100%;display:flex;align-items:center;justify-content:center;color:var(--t4);border:0;background:transparent;cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`:""}
     </div>
     <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px">
       ${CATS.map(c=>`<button class="disc-filter" data-cat="${c}" style="padding:4px 10px;border-radius:99px;font-size:11px;background:${af===c||(!af&&c==="All")?"var(--surface-3)":"transparent"};border:1px solid ${af===c||(!af&&c==="All")?"var(--border)":"var(--border-sub)"};color:${af===c||(!af&&c==="All")?"var(--t1)":"var(--t4)"}">${c}</button>`).join("")}
