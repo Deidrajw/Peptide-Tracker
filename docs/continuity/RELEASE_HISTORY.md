@@ -1,3 +1,6 @@
+## 2026-11-06 — PR143 Blend search handler sequencing corrected; NOT RELEASED
+- Added selected-value runtime coverage for vial, other forms and Blend; observed WebKit #42319205139 SUCCESS for vial/formulation. Fixed Blend queryActive event handler order in JS03 at 88fcf9c6, guarded by test 29d8fc9b. Latest app source differs from previous artifact #13551470487 and requires new full source-matched LIVE/DEMO verification and six-suite CI. No merge/deploy/data migration.
+
 ## 2026-11-06 — PR143 selected-value picker candidate qualified via previous source tests; expanded runtime regression unreleased
 - Six workflows green at fb0d71c7, official artifact #13551470487 downloaded and CRC/parity checked (549 outer; 26 LIVE; 3,173,283 byte complete isolated DEMO). Targeted runtime regressions for Vial Kit/Other Forms (9529fbc0) and Blend composition (4a912ba0) are now committed but latest CI and source-matched full packages not verified. No source version bump, merge, Cloudflare deploy, real user data write or physical iPhone acceptance.
 
