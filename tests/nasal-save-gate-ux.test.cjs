@@ -26,7 +26,7 @@ const fakeModal={
  querySelector(){return {onclick:null};}
 };
 const sandbox={
- state:{formulationStocks:[{id:'fictional-bottle',compound:'Oxytocin',containerType:'nasal-bottle',
+ state:{formulationStocks:[{id:'fictional-bottle',compound:'Fictional Compound A',containerType:'nasal-bottle',
   method:'Nasal',balanceStatus:'verified',remainingMg:0.45,remainingMl:9,mgPerSpray:0.05,mlPerSpray:0.1}]},
  cfg(){return {unit:'mcg'};},
  _demoActive:false,
@@ -36,7 +36,7 @@ const sandbox={
  openModal(x){shown++;html=x;return fakeModal;},
  closeModal(){}
 };
-vm.runInNewContext(fn+'\nnexusNasalDoseModal("Oxytocin")',sandbox,{timeout:1500});
+vm.runInNewContext(fn+'\nnexusNasalDoseModal("Fictional Compound A")',sandbox,{timeout:1500});
 assert.equal(shown,1,'Blocked LIVE user should receive exactly one notice');
 assert.match(html,/Nasal dose logging unavailable/);
 assert.match(html,/No dose or bottle balance has been changed/);
