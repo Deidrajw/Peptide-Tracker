@@ -130,8 +130,8 @@ try{
    _nexusSharedWriter=null;
    supplyModal(null,null);
  });
- // Real UI runtime must reject the prepared nasal path while the shared
- // synchronous writer migration is incomplete, without altering fictional stock.
+ // Real enabled runtime must fail closed on a malformed prepared dose with no
+ // state or inventory writes, even though the release-candidate flag is ON.
  const disabled=await a.evaluate(async()=>{
    const before=JSON.stringify(state),durable=localStorage.getItem(STORE_KEY);
    let error="";
@@ -140,7 +140,7 @@ try{
    }catch(e){error=e.message}
    return {error,sameState:before===JSON.stringify(state),sameDurable:durable===localStorage.getItem(STORE_KEY)};
  });
- assert.match(disabled.error,/disabled pending shared-writer/,"Prepared nasal must remain release-gated in actual app runtime");
+ assert.match(disabled.error,/Prepared transaction requires nasal inventory-backed use/,"Enabled nasal runtime must reject malformed transaction before any write");
  assert.equal(disabled.sameState,true,"Gated prepared nasal operation mutated live state");
  assert.equal(disabled.sameDurable,true,"Gated prepared nasal operation wrote saved stock");
  await a.locator('[data-kit-form="capsule-bottle"]').click();
