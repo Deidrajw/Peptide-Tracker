@@ -1037,13 +1037,14 @@ function addBlendKitModal(blendNameOrKit) {
       const open=()=>{popup.hidden=false;trigger.setAttribute("aria-expanded","true");render();};
       trigger.value=sel.value?label():"";
       lastChosen={value:sel.value,label:trigger.value,compound:composition[+sel.dataset.i]?.compound||""};
+      trigger.onfocus=open;
+      // Update queryActive before the shared input listener computes clear-X visibility.
+      trigger.oninput=()=>{queryActive=true;sel.value="";composition[+sel.dataset.i].compound="";open();};
       nexusWireSearchClear(trigger,()=>{
         sel.value=lastChosen.value;trigger.value=lastChosen.label;
         composition[+sel.dataset.i].compound=lastChosen.compound;
         queryActive=false;close();
       },"Clear blend compound search",{isQuery:()=>queryActive});
-      trigger.onfocus=open;
-      trigger.oninput=()=>{queryActive=true;sel.value="";composition[+sel.dataset.i].compound="";open();};
       trigger.onkeydown=e=>{if(e.key==="Escape"){close();trigger.blur();}if(e.key==="ArrowDown"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.focus();}if(e.key==="Enter"&&!popup.hidden){e.preventDefault();results.querySelector("button")?.click();}};
       results.onkeydown=e=>{if(e.key==="Escape"){close();trigger.focus();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const buttons=[...results.querySelectorAll("button")],i=buttons.indexOf(document.activeElement);buttons[Math.max(0,Math.min(buttons.length-1,i+(e.key==="ArrowDown"?1:-1)))]?.focus();}};
       wrapper.addEventListener("focusout",()=>requestAnimationFrame(()=>{if(!wrapper.contains(document.activeElement))close();}));
