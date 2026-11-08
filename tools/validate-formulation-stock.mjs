@@ -253,6 +253,19 @@ try {
   await page.locator('#nx-form-volume').fill('7');
   await page.locator('#nx-form-mg').fill('10');
   await page.locator('#nx-form-save').click();
+  // A saved nasal bottle remains on its original ID while we complete pump setup.
+  await page.locator('.nx-form-edit').nth(1).click();
+  await page.locator('#nx-manage-edit').click();
+  await page.locator('#nx-form-pump').fill('0.1');
+  await page.locator('#nx-form-save').click();
+  const nasalConfigured=await page.evaluate(()=>{
+    const item=state.formulationStocks.find(x=>x.containerType==='nasal-bottle');
+    return {id:item?.id,pump:item?.mlPerSpray,mg:item?.mgPerSpray,transactions:item?.transactions?.length};
+  });
+  assert.equal(nasalConfigured.pump,0.1,'Nasal pump setup did not persist');
+  assert.ok(Math.abs(nasalConfigured.mg-(10/7)*0.1)<1e-7,
+    'Nasal nominal conversion incorrect: '+JSON.stringify(nasalConfigured));
+  assert.equal(nasalConfigured.transactions,1,'Existing bottle edit must retain one adjustment transaction');
   await page.locator('.nx-form-edit').first().click();
   await page.locator('#nx-manage-edit').click();
   await page.locator('#nx-form-count').fill('27');
