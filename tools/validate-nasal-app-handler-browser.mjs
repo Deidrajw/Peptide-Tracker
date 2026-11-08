@@ -1,22 +1,15 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-// TEST-ONLY Chromium route rewrites the one OFF constant in a private browser
-// context. Checked-in LIVE source and deployed app always keep the gate OFF.
+// Fictional same-origin Chromium coverage of the actual candidate-enabled LIVE handler.
+// No interception or modification of the checked-in release source.
 const url='http://127.0.0.1:8777/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 try{
  const context=await browser.newContext();
- await context.route('**/assets/js/04-nexus.js',async route=>{
-  const response=await route.fetch();
-  const original=await response.text();
-  const off='const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;';
-  assert.equal(original.split(off).length,2,'Require exactly one production gate OFF statement');
-  await route.fulfill({response,body:original.replace(off,'const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true; /* FICTIONAL CI ONLY */')});
- });
  const a=await context.newPage(),b=await context.newPage(),errors=[];
  for(const page of [a,b])page.on('pageerror',err=>errors.push(err.message));
  await Promise.all([a.goto(url,{waitUntil:'domcontentloaded'}),b.goto(url,{waitUntil:'domcontentloaded'})]);
- await Promise.all([a.waitForFunction(()=>typeof nexusCommitPreparedNasalOperation==='function'&&typeof buildDemoState==='function'),b.waitForFunction(()=>typeof nexusCommitPreparedNasalOperation==='function'&&typeof buildDemoState==='function')]);
+ await Promise.all([a.waitForFunction(()=>typeof nexusCommitPreparedNasalOperation==='function'&&typeof buildDemoState==='function'&&NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED===true),b.waitForFunction(()=>typeof nexusCommitPreparedNasalOperation==='function'&&typeof buildDemoState==='function'&&NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED===true)]);
  const fixture=await a.evaluate(()=>{
   const f=buildDemoState('weight_loss');
   f.profile.onboardingDone=true;
