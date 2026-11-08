@@ -131,6 +131,7 @@
   if(matches.length!==1)fail("Unique exact capsule source required");
   const stock=matches[0];
   if(stock.containerType!=="capsule-bottle"||stock.method!=="Oral"||stock.compound!==tx.compound)fail("Capsule source mismatch");
+  if(stock.status==="finished")fail("Finished capsule container cannot supply a new dose");
   if(!Number.isSafeInteger(stock.remainingCount)||stock.remainingCount<tx.count)fail("Insufficient capsule stock");
   if(!finite(stock.mgPerCapsule)||stock.mgPerCapsule<=0||!Array.isArray(stock.transactions))fail("Invalid capsule strength or ledger");
   const mg=Math.round(stock.mgPerCapsule*tx.count*1e6)/1e6;
