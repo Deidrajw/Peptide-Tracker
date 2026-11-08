@@ -1,3 +1,8 @@
+## 2026-11-08 — Other Forms typographic correction, exact-code 5/6 PASS
+- Source 8eae810d: mobile #42499373776 PASS, shared writer #42499373653 PASS, DS2 nested #42499373623 PASS, pinned Chromium #42499373602 PASS, WebKit #42499373685 PASS. Full build/parity #42499373645 IN PROGRESS, NOT PASS.
+- CSS/DOM geometry regression checks 10px kicker, <=21px title, 14px buttons, >=48px button height, no overflow on browser workflow. Functional Other Forms Edit/Adjust, nominal calibration and independent history remain protected. Physical iPhone final typography, Dynamic Type, VoiceOver NOT TESTED.
+- Previous full build at malformed initial patch failed because missing div closer caused title node lookup to throw; this was fixed at 8eae810d and must not be hidden.
+
 ## 2026-11-08 — PR154 typography visual regression (NEW TEST, PENDING)
 - Confirm Other Forms Manage sheet has actual shared modal classes, accessible close, 10px DS2 kicker, 19–21px title, 13px subtitle, 12px supporting text, 14px action labels, 48px minimum targets, and no horizontal overflow at 320/390 in light/dark. Preserve actual Manage → Edit and existing calibration/Finish/Reopen/Delete guarded behaviour. Browser assertion committed at 39c70702; execution not yet verified.
 - Prior 2cc03fe8 6/6 successful baseline applies only to pre-typography source. No physical iPhone typography acceptance or source-matched new full-app DEMO/LIVE packages claimed.
