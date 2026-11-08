@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 full QA and artifacts qualified, NOT RELEASED
+- App/test SHA 2cc03fe8, main baseline 96fb4804, draft PR154. All six CI SUCCESS: build 42458849568, WebKit 42458849569, pinned Chromium 42458849579, mobile 42458849911, writer 42458849591, DS2 nested 42458849605. Official artifact #13609391052 manifest matches app source and v0.9.26-beta.1; 549-member outer ZIP CRC PASS; 26-file LIVE ZIP CRC PASS, root index/ordered modules; 3,201,119-byte isolated full-app DEMO exactly matches offline ZIP index.
+- Other Forms management, calibrated nasal setup, status and deletion guards, archived-compound picker support, no kit deletion implicit archive; no destructive migrations/real user-data change. Cloudflare parity unverified and physical iPhone/VoiceOver not accepted. No merge or deployment claimed.
+
 ## 2026-11-08 — PR154 candidate test checkpoint, UNMERGED/UNDEPLOYED
 - Source 2cc03fe8 from main 96fb4804 on draft PR154, version remains declared v0.9.26-beta.1 until new release metadata is approved. Changes include Other Forms edit/finish/reopen/history/guarded delete, nasal pump setup, real exact-source writer state rebasing, hard finished-source dose guards, removal of hidden kit-deletion archival.
 - 5/6 exact-app CI SUCCESS (mobile 42458849911, nested 42458849605, shared writer 42458849591, Chromium 42458849579, WebKit 42458849569); build/parity 42458849568 still running. Previous test failures were outdated assertions and fixed before this run. No claim of compiled full-app artifact parity, primary-host deployment or physical iPhone.
