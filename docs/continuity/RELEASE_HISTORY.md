@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 typography candidate engineering qualified (NOT MERGED/DEPLOYED)
+- Application source SHA 8eae810d, source version v0.9.26-beta.1 (not yet new published version). Full six CI SUCCESS: full build 42499373645, pinned Chromium 42499373602, WebKit 42499373685, writer 42499373653, mobile 42499373776, nested 42499373623. Official artifact 13625227252 manifest exact 8eae810d; outer ZIP 549 entries CRC PASS; LIVE ZIP 26 source files CRC PASS; full fictional standalone DEMO 3,203,594 bytes equals offline ZIP index.html and isolated-storage manifest.
+- Scoped DS2 fix: shared-sheet classes, corrected heading markup, tighter typography and actions; preservations of Semax calibration, guarded Other Forms management and exact-source writer. No migration or production data change. PR remains draft, Cloudflare not verified on candidate, physical iPhone/VoiceOver pending.
+
 ## 2026-11-08 — PR154 typography follow-up (NOT RELEASED)
 - User screenshot of Other Forms manager revealed missing shared modal styling. Development candidate JS 929696e9, CSS efcb1440, regression 39c70702; scoped visual change only. Prior 2cc03fe8 6/6 CI and packages are historical and do not qualify this new code. New-source CI/DEMO/LIVE verification pending. Physical iPhone typography acceptance and primary deployment not verified.
 
