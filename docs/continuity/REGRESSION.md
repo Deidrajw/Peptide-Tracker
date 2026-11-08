@@ -1,3 +1,8 @@
+## 2026-11-08 — PR154 corrected Other Forms typography FULL CI PASS and artifact integrity
+- At exact source 8eae810d: PASS six workflows build 42499373645, pinned Chromium 42499373602, WebKit 42499373685, shared writer 42499373653, mobile 42499373776, nested DS2 42499373623. New browser DOM/geometry asserts DS2 kicker/title/button type scale, >=48px action height and no overflow, plus protected functional formulation operations. Full-build eight LIVE/DEMO × 320/390 × light/dark PASS.
+- Independent artifact #13625227252 review: 549 outer ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS and ordered modules; standalone full app isolated DEMO byte equal offline DEMO index.html, both verified. No actual user-backup fixture or production storage.
+- NOT TESTED: post-fix physical iPhone typography, Safari touch/scroll/accessibility, VoiceOver/Dynamic Type, clinical pump verification. NOT VERIFIED: candidate production Cloudflare parity; PR154 unmerged.
+
 ## 2026-11-08 — Other Forms typographic correction, exact-code 5/6 PASS
 - Source 8eae810d: mobile #42499373776 PASS, shared writer #42499373653 PASS, DS2 nested #42499373623 PASS, pinned Chromium #42499373602 PASS, WebKit #42499373685 PASS. Full build/parity #42499373645 IN PROGRESS, NOT PASS.
 - CSS/DOM geometry regression checks 10px kicker, <=21px title, 14px buttons, >=48px button height, no overflow on browser workflow. Functional Other Forms Edit/Adjust, nominal calibration and independent history remain protected. Physical iPhone final typography, Dynamic Type, VoiceOver NOT TESTED.
