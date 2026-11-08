@@ -99,6 +99,43 @@ try{
       !protocolAlerts.plannedOverdue.length && protocolAlerts.unchanged,
       "Protocol pause/completion/future/non-destructive reminder regression: "+JSON.stringify(protocolAlerts));
 
+    // Issue #155 — real app modal actions, fictional local fixture, mocked save acknowledgement.
+    // Production state / browser storage is never written by this scoped handoff test.
+    const renewal=await page.evaluate(async()=>{
+      const previous=state;
+      const originalCommit=nexusCommitCurrentState;
+      let commits=0;
+      try {
+        state=JSON.parse(JSON.stringify(previous));
+        const old={id:"qa-finished-reta",name:"Previous Reta",status:"completed",
+          startDate:addDays(localDate(),-60),compounds:[{name:"Retatrutide",
+            route:"SubQ",phases:[{type:"dose",durationWeeks:4,dose:1}]}]};
+        state.protocols=[old];
+        state.protocolDoseFollowupAcknowledged={};
+        nexusCommitCurrentState=async()=>{commits++;await Promise.resolve();return true;};
+        const dose={id:"qa-reta-dose",date:localDate(),asNeeded:false};
+        const opened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-new")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const builder=document.querySelector("#proto-builder-wrap");
+        const renewalVisible=!!builder&&!!document.querySelector(".nx-proto-stack-selected");
+        const preselected=!!builder?.textContent.includes("Retatrutide");
+        const newNeverPersisted=state.protocols.length===1&&state.protocols[0].id===old.id;
+        closeModal();
+        state.protocolDoseFollowupAcknowledged={};
+        const updateOpened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-update")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const editVisible=!!document.querySelector("#proto-builder-wrap")?.textContent.includes("Edit Protocol");
+        const oldUnchanged=JSON.stringify(state.protocols[0])===JSON.stringify(old);
+        closeModal();
+        return {opened,renewalVisible,preselected,newNeverPersisted,updateOpened,editVisible,oldUnchanged,commits};
+      } finally {nexusCommitCurrentState=originalCommit;state=previous;closeModal();}
+    });
+    check(renewal.opened&&renewal.renewalVisible&&renewal.preselected&&renewal.newNeverPersisted&&
+      renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===2,
+      "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
+
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
