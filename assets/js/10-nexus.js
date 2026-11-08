@@ -2375,7 +2375,13 @@ function nexusManageFormulationModal(id){
      if(_demoActive){
        const result=globalThis.NexusFormulationStock[action](state,input);state=result.next;
      }else{
-       const result=await writer.transaction(state,snapshot=>{
+       const raw=localStorage.getItem(STORE_KEY);
+       if(!raw)throw Error("Saved inventory unavailable");
+       const saved=JSON.parse(raw);
+       if(JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[])||
+          JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[]))
+         throw Error("Inventory changed in another view. Reload before trying again.");
+       const result=await writer.transaction(saved,snapshot=>{
          const current=(snapshot.formulationStocks||[]).find(c=>String(c.id)===String(item.id));
          if(JSON.stringify(current)!==old)throw Error("Container changed in another tab. Reload before trying again.");
          return globalThis.NexusFormulationStock[action](snapshot,input);
