@@ -457,7 +457,8 @@ try {
   assert.equal(after.stock[0].remainingCount,27);
   assert.equal(after.stock[0].transactions[0].before.remainingCount,30);
   assert.equal(after.stock[1].remainingMl,7);
-  assert.equal(after.stock[1].mgPerSpray,null);
+  assert.equal(after.stock[1].mlPerSpray,0.1);
+  assert.ok(Math.abs(after.stock[1].mgPerSpray-(10/7)*0.1)<1e-7,'Nasal calibration should be retained');
 
   // Form-specific capsule logging: an independent stocked compound with no
   // protocol gets its own dose history, while the physical vial ledger and
