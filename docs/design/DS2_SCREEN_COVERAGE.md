@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 Other Forms management (CODED, not released)
+- Stash → Other Forms now uses one clear Manage action for nasal spray, capsule, raw powder and topical records. Shared management bottom sheet offers Edit Setup/Adjust, history, Finish/Reopen and safe Delete for unused association-free records. Existing DS2 kit/card hierarchy preserved rather than redesigned.
+- Corrected iPhone picker path: Manage → Edit rather than pre-change direct Adjust. Pump calibration field with nominal caution and retained exact stock ID on save. 44px manage action; full 320/390 WebKit/Chromium QA PASS at source 2cc03fe8, but physical iPhone/VoiceOver not accepted. Release pending complete build/artifact QA.
+
 ## 2026-11-05 — PR135 Combo Dose modal header correction
 - Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
 
