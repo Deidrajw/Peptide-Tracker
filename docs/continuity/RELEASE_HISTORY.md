@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 candidate test checkpoint, UNMERGED/UNDEPLOYED
+- Source 2cc03fe8 from main 96fb4804 on draft PR154, version remains declared v0.9.26-beta.1 until new release metadata is approved. Changes include Other Forms edit/finish/reopen/history/guarded delete, nasal pump setup, real exact-source writer state rebasing, hard finished-source dose guards, removal of hidden kit-deletion archival.
+- 5/6 exact-app CI SUCCESS (mobile 42458849911, nested 42458849605, shared writer 42458849591, Chromium 42458849579, WebKit 42458849569); build/parity 42458849568 still running. Previous test failures were outdated assertions and fixed before this run. No claim of compiled full-app artifact parity, primary-host deployment or physical iPhone.
+
 ## 2026-11-08 — Other Forms lifecycle/Semax repair (DEVELOPMENT ONLY, not released)
 - Branch fix/other-forms-management-semax-20261108 from verified main 96fb4804; target follows existing v0.9.26-beta.1 release without claiming a new published version. Proposed changes: pump calibration and non-destructive source repair, Manage actions, Finish/Reopen, guarded Delete, finished-source logging guard, removal of automatic archival on kit deletion. No schema migration, no imported real data, existing history protected.
 - CI, standalone full-app DEMO, exact-release LIVE ZIP, deployment and physical iPhone acceptance INCOMPLETE until independently verified; GitHub main and primary Cloudflare production unchanged by this branch.
