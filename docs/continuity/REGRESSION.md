@@ -1,3 +1,8 @@
+## 2026-11-08 — PR154 5/6 exact-head QA, build pending
+- PASS at app/test source 2cc03fe8: mobile #42458849911, nested #42458849605, shared writer #42458849591, Chromium pinned #42458849579, WebKit formulation #42458849569. Pure fictional Other Forms regression is loaded by tools/validate-formulation-stock.mjs: unconfigured nasal no invented conversion, nominal setup, archived-compound use, exact spray debit, Undo, status, protected deletion.
+- Earlier WebKit/build/pinned failures at prior heads were stale old Adjust-direct UX and stale expected null nominal dose. Fixed test path to Manage → Edit and expected configured pump. User backup remains strictly read-only, no real data in CI/source.
+- PENDING build/parity #42458849568, exact artifact inspection, 320/390 screenshots specifically for new management sheet (not separately visually reviewed), physical iPhone/VoiceOver. Do not claim all regression PASSED.
+
 ## 2026-11-08 — Other Forms/Semax new regression cases (AWAITING EXECUTION)
 - Test: unconfigured archived Semax nasal bottle remains undiscoverable; after entering pump 0.1 mL on existing ID with 10 mg/10 mL, nominal mgPerSpray 0.1, source becomes Log Dose eligible without changing compound status or creating a second container.
 - Test: zero or invalid pump specification rejected; finished nasal/capsule sources excluded from picker and form chooser; direct prepared nasal engine also rejects finished source; Reopen retains calibration, balances and history.
