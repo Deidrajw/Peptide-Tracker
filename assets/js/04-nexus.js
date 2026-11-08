@@ -2788,7 +2788,7 @@ function todayLogDosePicker() {
   // administered-dose selector. A separately usable capsule, spray or vial
   // still permits the same compound to be logged.
   const usableForms=(state.formulationStocks||[]).filter(f=>f.compound&&(
-    (f.containerType==="capsule-bottle"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
+    (f.containerType==="capsule-bottle"&&f.status!=="finished"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
     (f.containerType==="nasal-bottle"&&f.status!=="finished"&&Number(f.remainingMg)>0&&Number(f.remainingMl)>0&&
       Number(f.mgPerSpray)>0&&Number(f.mlPerSpray)>0)));
   const formStockNames=usableForms.map(f=>f.compound);
