@@ -1,3 +1,6 @@
+## 2026-11-08 — PR154 typography follow-up (NOT RELEASED)
+- User screenshot of Other Forms manager revealed missing shared modal styling. Development candidate JS 929696e9, CSS efcb1440, regression 39c70702; scoped visual change only. Prior 2cc03fe8 6/6 CI and packages are historical and do not qualify this new code. New-source CI/DEMO/LIVE verification pending. Physical iPhone typography acceptance and primary deployment not verified.
+
 ## 2026-11-08 — PR154 full QA and artifacts qualified, NOT RELEASED
 - App/test SHA 2cc03fe8, main baseline 96fb4804, draft PR154. All six CI SUCCESS: build 42458849568, WebKit 42458849569, pinned Chromium 42458849579, mobile 42458849911, writer 42458849591, DS2 nested 42458849605. Official artifact #13609391052 manifest matches app source and v0.9.26-beta.1; 549-member outer ZIP CRC PASS; 26-file LIVE ZIP CRC PASS, root index/ordered modules; 3,201,119-byte isolated full-app DEMO exactly matches offline ZIP index.
 - Other Forms management, calibrated nasal setup, status and deletion guards, archived-compound picker support, no kit deletion implicit archive; no destructive migrations/real user-data change. Cloudflare parity unverified and physical iPhone/VoiceOver not accepted. No merge or deployment claimed.
