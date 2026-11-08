@@ -7,7 +7,7 @@ assert.match(appSource,/const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;/,
  "Recorded nasal preparation has its own enabled release gate");
 assert.match(appSource,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true;/,
  "Approved development candidate must explicitly enable prepared-dose writes");
-assert.match(appSource,/NexusPreparedDoseTransaction.executeExclusive\\(/,
+assert.match(appSource,/NexusPreparedDoseTransaction.executeExclusive\(/,
  "Prepared-dose writes must retain exclusive transactional execution");
 
 // UI entry points must reference only the recorded-preparation switch.
