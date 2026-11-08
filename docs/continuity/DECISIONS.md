@@ -1,3 +1,6 @@
+## 2026-11-08 — PR154 user release authorization
+- User explicitly approved the corrected Other Forms typography and directed deploy now. Approval applies to reviewed PR154 functionality and non-destructive release; preserve all previously accepted features and saved data. No automatic Semax archival reversal or personal backup changes. Proceed with authorized merge after green CI; independently verify the primary Cloudflare host before labeling deployed. VoiceOver/Dynamic Type remain untested.
+
 ## 2026-11-08 — Other Forms typography follows approved DS2, no redesign
 - User confirmed Other Forms management actions work in iPhone preview but flagged typography as inconsistent. Preserve functional workflow; add shared modal classes and narrowly scoped DS2 typography, consistent iPhone action target geometry and compact vertical rhythm. Do not modify inventory calculations or destructive guards for this visual correction.
 
