@@ -1075,7 +1075,7 @@ function wireBody() {
   });
   document.querySelectorAll(".delsupply").forEach(b=>b.onclick=()=>confirmAction("Delete this kit?",async()=>{
     const s=state.supplies.find(x=>x.id===+b.dataset.id);
-    if(s){const othersExist=state.supplies.filter(x=>x.id!==+b.dataset.id&&x.name===s.name).length>0;if(!othersExist){if(state.peptides[s.name])state.peptides[s.name].status="archived";else if(state.customPeptides[s.name])state.customPeptides[s.name].status="archived";}}
+    if(s){ /* Deleting a kit does not archive a tracked compound. */ }
     state.supplies=state.supplies.filter(x=>x.id!==+b.dataset.id);if(!await nexusCommitCurrentState())return;render();
   }));
   // calendar
