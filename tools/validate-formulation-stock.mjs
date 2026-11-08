@@ -253,6 +253,7 @@ try {
   await page.locator('#nx-form-mg').fill('10');
   await page.locator('#nx-form-save').click();
   await page.locator('.nx-form-edit').first().click();
+  await page.locator('#nx-manage-edit').click();
   await page.locator('#nx-form-count').fill('27');
   await page.locator('#nx-form-save').click();
   const editForm=await page.locator('.nx-form-stock-editor').count();
