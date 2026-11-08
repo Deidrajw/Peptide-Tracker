@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 user-approved merge; production parity BLOCKED
+- Final candidate visual test-head b1abc8d0 six CI workflows SUCCESS: full #42500863687, WebKit #42500863663, Chromium #42500863662, mobile #42500863698, writer #42500863702, DS2 #42500863701. Dedicated 320/390 light/dark screenshots inspected. Main merge be704ea9 verified containing approved management modal. Exact-source 26-file LIVE and fictional full-app DEMO packages validated earlier and preserved.
+- Post-merge production GET index/JS/CSS: BLOCKED by resolver/cache; Cloudflare source parity NOT TESTED, Cloudflare deployment NOT VERIFIED. VoiceOver/Dynamic Type and real spray delivery NOT TESTED. Historical real user data remains untouched by release tooling.
+
 ## 2026-11-08 — PR154 final screenshot-test suite PASS, user typography approval
 - At test-only SHA b1abc8d0 (same app JS/CSS as 8eae810d), ALL SIX CI SUCCESS: full build 42500863687, WebKit 42500863663, pinned Chromium 42500863662, mobile 42500863698, shared writer 42500863702, nested DS2 42500863701. WebKit screenshot artifact 13624709030 includes 320/390 light/dark LIVE/DEMO target sheet captures; visual inspection found compact hierarchy, readable 48px controls, no visible clipping. User explicit approval of typography and deployment on Nov 8.
 - Physical Safari flow beyond earlier functional acceptance, VoiceOver, Dynamic Type and independent clinical calibration are not newly tested. No real-user storage or records were accessed. Release awaits verified merge and served Cloudflare content.
