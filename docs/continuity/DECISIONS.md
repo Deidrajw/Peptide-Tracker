@@ -1,3 +1,6 @@
+## 2026-11-08 — PR154 explicitly approved for release and merged
+- User approved revised DS2 Other Forms typography and requested immediate deploy. PR154 squash merged as be704ea9 after final six-suite CI green. This approval does not change personal Semax status or automatically edit inventory; existing bottle may be calibrated through Edit setup. No destructive migration, live import or overwrites. External Cloudflare publication remains contingent on independent verification, not inferred from merge.
+
 ## 2026-11-08 — PR154 user release authorization
 - User explicitly approved the corrected Other Forms typography and directed deploy now. Approval applies to reviewed PR154 functionality and non-destructive release; preserve all previously accepted features and saved data. No automatic Semax archival reversal or personal backup changes. Proceed with authorized merge after green CI; independently verify the primary Cloudflare host before labeling deployed. VoiceOver/Dynamic Type remain untested.
 
