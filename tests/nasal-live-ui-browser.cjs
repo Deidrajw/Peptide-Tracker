@@ -11,7 +11,7 @@ const from="const NEXUS_RECORDED_NASAL_PREPARATION_ENABLED = true;";
 assert.ok(application.includes(from),"Preparation-only release gate must be enabled in candidate");
 const testOnly=application;
 assert.match(testOnly,/const NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false;/);
-assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;/);
+assert.match(testOnly,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true;/);
 (async()=>{
  const browser=await chromium.launch({headless:true});
  try{
