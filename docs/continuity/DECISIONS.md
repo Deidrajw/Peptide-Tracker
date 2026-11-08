@@ -1,3 +1,6 @@
+## 2026-11-08 — Approved Issue #155 renewal direction (development only)
+- User approved proposed Reta post-dose protocol renewal: Start New must open a distinct, unsaved draft with the triggering compound preselected; existing protocol and logged history remain intact. Do not silently copy previous dose or activate automatically; require explicit schedule/dose review, preserve Cancel. Update Existing opens current protocol editor. Fix async reminder save/modal race and acknowledge failed saves visibly. Approval is for implementation/design direction, not merge/deploy.
+
 ## 2026-11-08 — PR154 explicitly approved for release and merged
 - User approved revised DS2 Other Forms typography and requested immediate deploy. PR154 squash merged as be704ea9 after final six-suite CI green. This approval does not change personal Semax status or automatically edit inventory; existing bottle may be calibrated through Edit setup. No destructive migration, live import or overwrites. External Cloudflare publication remains contingent on independent verification, not inferred from merge.
 
