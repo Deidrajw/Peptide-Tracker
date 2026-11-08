@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 typography visual regression (NEW TEST, PENDING)
+- Confirm Other Forms Manage sheet has actual shared modal classes, accessible close, 10px DS2 kicker, 19–21px title, 13px subtitle, 12px supporting text, 14px action labels, 48px minimum targets, and no horizontal overflow at 320/390 in light/dark. Preserve actual Manage → Edit and existing calibration/Finish/Reopen/Delete guarded behaviour. Browser assertion committed at 39c70702; execution not yet verified.
+- Prior 2cc03fe8 6/6 successful baseline applies only to pre-typography source. No physical iPhone typography acceptance or source-matched new full-app DEMO/LIVE packages claimed.
+
 ## 2026-11-08 — PR154 exact-code six-suite SUCCESS; artifact CRC verified
 - PASS: Full build/parity #42458849568, WebKit #42458849569, pinned Chromium #42458849579, mobile forms #42458849911, shared writer #42458849591, nested DS2 #42458849605 at app/test SHA 2cc03fe8. Browser QA 8/8 LIVE/DEMO x light/dark x 320/390 PASS; dedicated fictional Other Forms engine regression import and browser pump-edit regression pass.
 - PASS: Official artifact #13609391052 outer 549/549 and LIVE 26/26 ZIP CRC, build manifest source_commit EXACT 2cc03fe8, standalone demo byte equality to offline ZIP root index; isolated ephemeral demo.
