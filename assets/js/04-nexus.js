@@ -2334,7 +2334,7 @@ async function nexusCommitRecordedNasalPreparation(input) {
 // PR124 prepared-source writer boundary. Pure planner + ledger tests may run,
 // but live controls remain disabled until every state writer shares the same
 // cross-tab transaction coordination. Never silently bypass this release gate.
-const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false;
+const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true;
 async function nexusCommitPreparedNasalOperation(operation) {
   if(!NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED)
     throw Error("Prepared nasal logging is disabled pending shared-writer cross-tab acceptance");
