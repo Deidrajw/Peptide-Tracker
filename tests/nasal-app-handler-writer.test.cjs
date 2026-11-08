@@ -3,10 +3,10 @@ const fs=require("node:fs");
 const vm=require("node:vm");
 const prepared=require("../assets/js/nexus-prepared-dose-transaction.js");
 const {create}=require("../assets/js/nexus-write-coordinator.js");
-// Extract and execute the actual app handler with a test-only TRUE gate in a
-// Node VM. This never edits 04-nexus.js, public LIVE flags or real storage.
+// Extract the actual application handler in a fictional Node VM. The release
+// candidate flag is enabled; the sandbox never touches browser storage.
 const src=fs.readFileSync("assets/js/04-nexus.js","utf8");
-assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*false\s*;/);
+assert.match(src,/const NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED\s*=\s*true\s*;/);
 const begin=src.indexOf("async function nexusCommitPreparedNasalOperation(");
 const end=src.indexOf("\nfunction getEligibleSourceKits(",begin);
 assert.ok(begin>0&&end>begin,"real prepared app handler must exist");
@@ -69,5 +69,5 @@ function context(start,{enabled=true,write}={}){
  await assert.rejects(quota.run(tx(6)),/quota/);
  assert.equal(quota.sandbox.state.formulationStocks[0].remainingMg,4);
  assert.equal(quota.writer.status().blocked,true);
- console.log("PASS real nasal app handler: default-off, transient UI, exact durable writer, stale/persistent rejection, bottle debit, history, exact undo, no double vial debit, quota rollback");
+ console.log("PASS real nasal app handler: candidate-enabled and simulated OFF protection, transient UI, exact durable writer, stale/persistent rejection, bottle debit, history, exact undo, no double vial debit, quota rollback");
 })().catch(e=>{console.error(e);process.exitCode=1});
