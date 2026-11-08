@@ -1,3 +1,8 @@
+## 2026-11-08 — Other Forms lifecycle and archived-compound decoupling
+- Preserve existing formulation container IDs, dose history, ledger and balances during pump calibration. User confirmed actual pump volume 0.1 mL for their existing Semax bottle; never insert personal data or assumed concentrations into production source.
+- Compound tracking status and owned inventory are independent. Do not automatically archive compounds on kit deletion; do not silently unarchive user records. A properly prepared, verified nasal source can appear in Log Dose without an active schedule or active tracking status. Incomplete nasal configuration must be corrected through Stash, never guessed from volume.
+- Other Forms management: Edit/Adjust, transaction history, Finish/Reopen, Delete only when no history/associations. Block new dose from finished stock within UI and transaction planner. Do not destructively rewrite administered dose history.
+
 ## 2026-11-07 — Versioned release-candidate only for nasal live enablement
 - Keep publication unverified until independently verified Cloudflare deployment. New prepared-nasal LIVE candidate uses v0.9.26-beta.1 and explicit notes for the only newly enabled administration method. Leave generic preparation transfers OFF, no destructive data migration and preserve full app DS2 PR146 approved UI, PR142 writer corrections and protected historical accounts. Strict readiness test must not be bypassed by treating development as production. Merge/deployment requires separate approval.
 
