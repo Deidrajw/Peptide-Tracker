@@ -1,3 +1,8 @@
+## 2026-11-08 — PR154 exact-code six-suite SUCCESS; artifact CRC verified
+- PASS: Full build/parity #42458849568, WebKit #42458849569, pinned Chromium #42458849579, mobile forms #42458849911, shared writer #42458849591, nested DS2 #42458849605 at app/test SHA 2cc03fe8. Browser QA 8/8 LIVE/DEMO x light/dark x 320/390 PASS; dedicated fictional Other Forms engine regression import and browser pump-edit regression pass.
+- PASS: Official artifact #13609391052 outer 549/549 and LIVE 26/26 ZIP CRC, build manifest source_commit EXACT 2cc03fe8, standalone demo byte equality to offline ZIP root index; isolated ephemeral demo.
+- NOT TESTED: physical iPhone touch and VoiceOver/Dynamic Type; independent nominal spray delivery calibration. NOT VERIFIED: primary Cloudflare deployment/version; PR still draft/unmerged. No actual backup imported into app and no production data modified.
+
 ## 2026-11-08 — PR154 5/6 exact-head QA, build pending
 - PASS at app/test source 2cc03fe8: mobile #42458849911, nested #42458849605, shared writer #42458849591, Chromium pinned #42458849579, WebKit formulation #42458849569. Pure fictional Other Forms regression is loaded by tools/validate-formulation-stock.mjs: unconfigured nasal no invented conversion, nominal setup, archived-compound use, exact spray debit, Undo, status, protected deletion.
 - Earlier WebKit/build/pinned failures at prior heads were stale old Adjust-direct UX and stale expected null nominal dose. Fixed test path to Manage → Edit and expected configured pump. User backup remains strictly read-only, no real data in CI/source.
