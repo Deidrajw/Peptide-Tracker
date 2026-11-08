@@ -1,3 +1,9 @@
+## 2026-11-08 — Issue #155 protocol renewal development candidate (NOT MERGED)
+- Verified main baseline 1c6007fce7ea25a68ec29f480f3b4d6ede46477c, release declared v0.9.26-beta.1. User APPROVED direction to preselect triggering Reta compound without changing prior protocol/history, not approval to merge/deploy.
+- Branch fix/protocol-renewal-followup-20261108: application fix e17ee6a3 awaits post-dose reminder acknowledgement before entering either builder, and supplies new draft with selected compound and empty dose rather than cloning previous protocol. Browser fixture regression added 021edcf2 to existing 320/390 light/dark LIVE/isolated-DEMO protocol validation script. CI evidence and artifact exact-source verification PENDING at this checkpoint.
+- No production data import, migration, live writes, merge or deployment. Primary Cloudflare previous PR154 user-confirmed deployment, exact source parity remains UNVERIFIED. Physical iPhone/VoiceOver NOT TESTED for this fix.
+- ONE NEXT ACTION: qualify #155 exact-head full app browser/CI and isolated LIVE/DEMO packages; fix failures before asking for merge/deploy approval.
+
 ## 2026-11-08 — PR154 CLOUDFLARE DEPLOYMENT USER-CONFIRMED; INDEPENDENT PARITY STILL BLOCKED
 - User explicitly reported "it was deployed" after approved PR154 squash merge be704ea977d6ebe44340d4c0cb6610507cb3f97c. Record PRIMARY CLOUDFLARE DEPLOYMENT AS USER-CONFIRMED, not tool independently verified. App declared version v0.9.26-beta.1; current main before documentation update a3d3e2e7822566f2d600ea486956935f4e9a9dab.
 - Independent GET attempted again for https://nexuspeplog.pages.dev/ and assets/js/10-nexus.js and assets/css/nexus.css; tooling returned cache miss/inaccessible URL. Live source/asset hash parity is UNVERIFIED. Do not imply user data changed. Six premerge CI suites passed; physical typography accepted, VoiceOver and Dynamic Type not tested.
