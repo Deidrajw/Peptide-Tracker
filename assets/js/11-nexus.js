@@ -847,11 +847,19 @@ function stackComplexity(compounds) {
   return {label:"High",color:"#ff7c7c",score:4};
 }
 
-function protocolBuilderModal(existing) {
+function protocolBuilderModal(existing, renewalCompound) {
   let proto = existing ? JSON.parse(JSON.stringify(existing)) : {
     id:uid(), name:"", goalId:"", goal:"", status:"draft", startDate:localDate(),
     compounds:[], schedule:{type:"Weekly",days:[6],dosesPerDay:1,times:["08:00"]}, notes:""
   };
+
+  // A post-dose renewal is a NEW unsaved plan, never a clone of a completed protocol.
+  // Only the compound is carried forward; the user must explicitly review all scheduling
+  // and dosing fields before activating, and historical records stay untouched.
+  if(!existing && renewalCompound) {
+    proto.name = renewalCompound + " — New Protocol";
+    proto.compounds = [{name:renewalCompound,route:"SubQ",unit:cfg(renewalCompound)?.unit||"mg",multiPhase:false,phases:[{type:"dose",durationWeeks:4,dose:""}]}];
+  }
 
   // Unlike the Mixed Syringe / Combo Dose compound pickers, blends belong here — a
   // protocol's stack is just "what am I taking," and a blend (KLOW, GLOW, etc.) is one
@@ -860,7 +868,7 @@ function protocolBuilderModal(existing) {
   // ever showed up for someone who'd already added it to Stash (picked up via
   // customPeptides as a side effect) rather than being a real, always-available option.
   const ALL_COMPOUNDS = [...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(l=>l.name),...Object.keys(state.customPeptides||{})])].sort();
-  let step = existing ? 2 : 0; // skip goal/template if editing
+  let step = existing || renewalCompound ? 2 : 0; // renewal starts at the preselected Stack; no template overwrites
   const STEPS = existing
     ? ["Stack","Schedule","Phases","Review"]
     : ["Goal","Template","Stack","Schedule","Phases","Review"];
@@ -924,6 +932,7 @@ function protocolBuilderModal(existing) {
         <button class="pb-crem" data-idx="${i}" type="button" aria-label="Remove ${esc(c.name)}" style="color:var(--t5);font-size:13px">✕</button>
       </div>`).join("");
       return prog+
+      (renewalCompound ? `<div class="hint" role="status" style="margin-bottom:12px">New protocol for ${esc(renewalCompound)}. Your previous protocol and logged doses are unchanged. Review the compound, schedule and dose before saving.</div>` : "")+
       (proto.compounds.length?`
         ${cx.score>=3?`<div style="background:${cx.color}12;border:1px solid ${cx.color}33;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:11px;color:${cx.color}">Stack complexity: <b>${cx.label}</b>${cx.score>=4?" — consider isolating effects":""}</div>`:""}
         ${selCards}
@@ -1402,11 +1411,29 @@ function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
     <button type="button" id="nexus-followup-new" class="btn-primary" style="min-height:48px;margin-top:10px;background:var(--surface-2);color:var(--t1)">Start a new protocol</button>
     <button type="button" id="nexus-followup-dismiss" style="min-height:48px;width:100%;margin-top:10px;color:var(--t2)">Not now · Don't remind me for this protocol</button>
   </section>`,"#A78BFA");
-  const dismiss=async(showReaction=true)=>{state.protocolDoseFollowupAcknowledged=state.protocolDoseFollowupAcknowledged||{};state.protocolDoseFollowupAcknowledged[key]=new Date().toISOString();if(!await nexusCommitCurrentState())return;closeModal();if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);};
-  m.querySelector("#x").onclick=dismiss;
-  m.querySelector("#nexus-followup-dismiss").onclick=dismiss;
-  m.querySelector("#nexus-followup-update").onclick=()=>{dismiss(false);protocolBuilderModal(chosen.p);};
-  m.querySelector("#nexus-followup-new").onclick=()=>{dismiss(false);protocolBuilderModal();};
+  let followupPending=false;
+  const dismiss=async(showReaction=true)=>{
+    if(followupPending)return false;
+    followupPending=true;
+    const prior=state.protocolDoseFollowupAcknowledged||{};
+    state.protocolDoseFollowupAcknowledged={...prior,[key]:new Date().toISOString()};
+    try {
+      if(!await nexusCommitCurrentState()){
+        state.protocolDoseFollowupAcknowledged=prior;
+        return false;
+      }
+      closeModal();
+      if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);
+      return true;
+    } finally {followupPending=false;}
+  };
+  const transition=async(openBuilder)=>{
+    if(await dismiss(false))openBuilder();
+  };
+  m.querySelector("#x").onclick=()=>{void dismiss();};
+  m.querySelector("#nexus-followup-dismiss").onclick=()=>{void dismiss();};
+  m.querySelector("#nexus-followup-update").onclick=()=>{void transition(()=>protocolBuilderModal(chosen.p));};
+  m.querySelector("#nexus-followup-new").onclick=()=>{void transition(()=>protocolBuilderModal(undefined,name));};
   return true;
 }
 function protocolCountdownSummary(p) {
