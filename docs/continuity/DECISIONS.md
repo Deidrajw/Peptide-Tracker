@@ -1,3 +1,6 @@
+## 2026-11-08 — Other Forms typography follows approved DS2, no redesign
+- User confirmed Other Forms management actions work in iPhone preview but flagged typography as inconsistent. Preserve functional workflow; add shared modal classes and narrowly scoped DS2 typography, consistent iPhone action target geometry and compact vertical rhythm. Do not modify inventory calculations or destructive guards for this visual correction.
+
 ## 2026-11-08 — PR154 management scope refinement
 - User requested implementing all Other Forms repairs in one coordinated update. This authorizes development work, not destructive rewrites of uploaded data. The native Other Forms entry uses Manage → Edit Setup / Adjust rather than the old immediate Adjust action. Tests must exercise this path, and stored calibrated bottles remain independent of tracking status.
 - A finished container is hidden from selection and rejected by both independent dose planners; finished inventory may be reopened with history. Writer changes use a persisted exact snapshot for all status/deletion mutations; no direct localStorage mutation or automatic archival.
