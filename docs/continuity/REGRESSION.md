@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 dedicated Other Forms screenshot CI evidence
+- Test-only b1abc8d0: WebKit #42500863663 PASS and pinned Chromium #42500863662 PASS, with 8 independent LIVE/DEMO × 320/390 × light/dark management sheet screenshot targets each; WebKit official #13624709030, 16 management screenshots and ZIP CRC PASS. Inspected 320/390 light/dark target-sheet evidence: no visible clipping, natural heading wrap on 320, consistent compact DS2 type and action layout.
+- New-head writer #42500863702 PASS, nested #42500863701 PASS, mobile #42500863698 PASS; build/parity #42500863687 IN PROGRESS at checkpoint. Physical iPhone UI/VoiceOver still NOT TESTED. Full viewport animation-frame capture may precede sheet's fully rendered frame; individual target screenshots should be used for visual comparison.
+
 ## 2026-11-08 — PR154 dedicated management-modal visual captures (IN PROGRESS)
 - Test-only b1abc8d0 adds Other Forms Manage captures after opening a fictional nasal form on 320/390 light/dark, LIVE/DEMO, including viewport clipping/foreground assertions and screenshot targets. Current run pending; prior 8eae810d 6/6 CI remains valid for unchanged app source but not evidence that newly added screenshots passed.
 - Real-device screenshot/typography acceptance and VoiceOver still NOT TESTED; do not merge or deploy without explicit approval.
