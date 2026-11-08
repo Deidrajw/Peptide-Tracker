@@ -2354,13 +2354,14 @@ function nexusManageFormulationModal(id){
  if(!item)return showErrorBanner("Container no longer exists. Refresh Stash.");
  const done=item.status==="finished";
  const tx=(item.transactions||[]);
- const m=openModal(`<section class="nx-form-stock-editor nx-shared-inventory-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OTHER FORMS</div><h2 class="nx-dose-title">Manage ${esc(item.compound)}</h2><p class="nx-dose-subtitle">${esc(item.containerType.replace(/-/g," "))} · ${done?"Finished":"Active"}</p></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div>
+ const m=openModal(`<section class="nx-form-stock-editor nx-shared-inventory-sheet nx-other-form-manage-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OTHER FORMS</div<h2 class="nx-dose-title">Manage ${esc(item.compound)}</h2><p class="nx-dose-subtitle">${esc(item.containerType.replace(/-/g," "))} · ${done?"Finished":"Active"}</p></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div>
  <p class="hint">${item.containerType==="nasal-bottle"?(item.mlPerSpray?"Nominal "+esc(String(item.mgPerSpray*1000))+" mcg per spray · "+esc(String(item.mlPerSpray))+" mL per spray":"Spray setup incomplete: enter the measured pump volume to enable logging."):"Container balance and activity"}</p>
  <p class="hint">Recorded history: ${tx.length} transaction${tx.length===1?"":"s"}. ${tx.length?"Deletion locked to protect historical records.":"Unused containers can be deleted after confirmation."}</p>
  <button id="nx-manage-edit" type="button" class="btn-primary" style="width:100%;min-height:48px">Edit setup / adjust balance</button>
  <button id="nx-manage-status" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary">${done?"Reopen container":"Mark container finished"}</button>
  <button id="nx-manage-history" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary">View transaction history</button>
  <button id="nx-manage-delete" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary" ${tx.length?"disabled":""}>Delete unused container</button></section>`,"#A78BFA");
+ m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal","nx-other-form-management-modal");
  m.querySelector("#x").onclick=closeModal;
  m.querySelector("#nx-manage-edit").onclick=()=>{closeModal();nexusAddFormulationModal(item.containerType,item.id);};
  m.querySelector("#nx-manage-history").onclick=()=>{
