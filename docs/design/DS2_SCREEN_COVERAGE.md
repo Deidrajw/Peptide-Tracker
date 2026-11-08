@@ -1,3 +1,6 @@
+## 2026-11-08 — PR154 Other Forms typography exact-source verified (development only)
+- Source 8eae810d uses the approved shared modal surface, corrected closing tag, scoped DS2 type scale (10px eyebrow, 21/19px title, 13px subtitle, 12px explanatory, 14px buttons, min 48px action targets). All six GitHub test workflows PASS including WebKit iPhone emulation and 320/390 light/dark; independent full-app fictional DEMO/LIVE artifact matched exact source, 26-file LIVE CRC PASS. Post-correction user physical iPhone visual acceptance remains outstanding; do not interpret browser simulation as actual iPhone approval.
+
 ## 2026-11-08 — PR154 Stash Other Forms Manage typography correction (UNRELEASED)
 - Physical iPhone screenshot identified management modal using unstyled default typography due omission of shared-form class. Corrected to approved DS2 shared sheet header plus narrowly scoped 10px kicker, 21/19px title, 13px status, 12px explanatory text, 14px actions and >=48px buttons. The functioning inventory operations remain unchanged. Added 320/390 browser regression assertion; final CI and post-correction iPhone visual acceptance pending.
 
