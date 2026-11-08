@@ -1607,11 +1607,7 @@ function manageKitMenu(kitId) {
     else if(id==="delete") confirmAction("Delete this kit? This can't be undone.",async()=>{
       const kit=state.supplies.find(x=>x.id===kitId);
       if(kit){
-        const othersExist=state.supplies.some(x=>x.id!==kitId&&x.name===kit.name);
-        if(!othersExist){
-          if(state.peptides[kit.name])state.peptides[kit.name].status="archived";
-          else if(state.customPeptides[kit.name])state.customPeptides[kit.name].status="archived";
-        }
+        // Inventory deletion must never change independently managed tracking status.
       }
       state.supplies=state.supplies.filter(x=>x.id!==kitId);
       if(!await nexusCommitCurrentState())return;render();
@@ -2792,8 +2788,8 @@ function todayLogDosePicker() {
   // administered-dose selector. A separately usable capsule, spray or vial
   // still permits the same compound to be logged.
   const usableForms=(state.formulationStocks||[]).filter(f=>f.compound&&(
-    (f.containerType==="capsule-bottle"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
-    (f.containerType==="nasal-bottle"&&Number(f.remainingMg)>0&&Number(f.remainingMl)>0&&
+    (f.containerType==="capsule-bottle"&&f.status!=="finished"&&Number(f.remainingCount)>0&&Number(f.mgPerCapsule)>0)||
+    (f.containerType==="nasal-bottle"&&f.status!=="finished"&&Number(f.remainingMg)>0&&Number(f.remainingMl)>0&&
       Number(f.mgPerSpray)>0&&Number(f.mlPerSpray)>0)));
   const formStockNames=usableForms.map(f=>f.compound);
   const unpreparedNames=new Set((state.formulationStocks||[])

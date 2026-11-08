@@ -1,3 +1,46 @@
+## 2026-11-08 — PR154 final screenshot-test suite PASS, user typography approval
+- At test-only SHA b1abc8d0 (same app JS/CSS as 8eae810d), ALL SIX CI SUCCESS: full build 42500863687, WebKit 42500863663, pinned Chromium 42500863662, mobile 42500863698, shared writer 42500863702, nested DS2 42500863701. WebKit screenshot artifact 13624709030 includes 320/390 light/dark LIVE/DEMO target sheet captures; visual inspection found compact hierarchy, readable 48px controls, no visible clipping. User explicit approval of typography and deployment on Nov 8.
+- Physical Safari flow beyond earlier functional acceptance, VoiceOver, Dynamic Type and independent clinical calibration are not newly tested. No real-user storage or records were accessed. Release awaits verified merge and served Cloudflare content.
+
+## 2026-11-08 — PR154 dedicated Other Forms screenshot CI evidence
+- Test-only b1abc8d0: WebKit #42500863663 PASS and pinned Chromium #42500863662 PASS, with 8 independent LIVE/DEMO × 320/390 × light/dark management sheet screenshot targets each; WebKit official #13624709030, 16 management screenshots and ZIP CRC PASS. Inspected 320/390 light/dark target-sheet evidence: no visible clipping, natural heading wrap on 320, consistent compact DS2 type and action layout.
+- New-head writer #42500863702 PASS, nested #42500863701 PASS, mobile #42500863698 PASS; build/parity #42500863687 IN PROGRESS at checkpoint. Physical iPhone UI/VoiceOver still NOT TESTED. Full viewport animation-frame capture may precede sheet's fully rendered frame; individual target screenshots should be used for visual comparison.
+
+## 2026-11-08 — PR154 dedicated management-modal visual captures (IN PROGRESS)
+- Test-only b1abc8d0 adds Other Forms Manage captures after opening a fictional nasal form on 320/390 light/dark, LIVE/DEMO, including viewport clipping/foreground assertions and screenshot targets. Current run pending; prior 8eae810d 6/6 CI remains valid for unchanged app source but not evidence that newly added screenshots passed.
+- Real-device screenshot/typography acceptance and VoiceOver still NOT TESTED; do not merge or deploy without explicit approval.
+
+## 2026-11-08 — PR154 corrected Other Forms typography FULL CI PASS and artifact integrity
+- At exact source 8eae810d: PASS six workflows build 42499373645, pinned Chromium 42499373602, WebKit 42499373685, shared writer 42499373653, mobile 42499373776, nested DS2 42499373623. New browser DOM/geometry asserts DS2 kicker/title/button type scale, >=48px action height and no overflow, plus protected functional formulation operations. Full-build eight LIVE/DEMO × 320/390 × light/dark PASS.
+- Independent artifact #13625227252 review: 549 outer ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS and ordered modules; standalone full app isolated DEMO byte equal offline DEMO index.html, both verified. No actual user-backup fixture or production storage.
+- NOT TESTED: post-fix physical iPhone typography, Safari touch/scroll/accessibility, VoiceOver/Dynamic Type, clinical pump verification. NOT VERIFIED: candidate production Cloudflare parity; PR154 unmerged.
+
+## 2026-11-08 — Other Forms typographic correction, exact-code 5/6 PASS
+- Source 8eae810d: mobile #42499373776 PASS, shared writer #42499373653 PASS, DS2 nested #42499373623 PASS, pinned Chromium #42499373602 PASS, WebKit #42499373685 PASS. Full build/parity #42499373645 IN PROGRESS, NOT PASS.
+- CSS/DOM geometry regression checks 10px kicker, <=21px title, 14px buttons, >=48px button height, no overflow on browser workflow. Functional Other Forms Edit/Adjust, nominal calibration and independent history remain protected. Physical iPhone final typography, Dynamic Type, VoiceOver NOT TESTED.
+- Previous full build at malformed initial patch failed because missing div closer caused title node lookup to throw; this was fixed at 8eae810d and must not be hidden.
+
+## 2026-11-08 — PR154 typography visual regression (NEW TEST, PENDING)
+- Confirm Other Forms Manage sheet has actual shared modal classes, accessible close, 10px DS2 kicker, 19–21px title, 13px subtitle, 12px supporting text, 14px action labels, 48px minimum targets, and no horizontal overflow at 320/390 in light/dark. Preserve actual Manage → Edit and existing calibration/Finish/Reopen/Delete guarded behaviour. Browser assertion committed at 39c70702; execution not yet verified.
+- Prior 2cc03fe8 6/6 successful baseline applies only to pre-typography source. No physical iPhone typography acceptance or source-matched new full-app DEMO/LIVE packages claimed.
+
+## 2026-11-08 — PR154 exact-code six-suite SUCCESS; artifact CRC verified
+- PASS: Full build/parity #42458849568, WebKit #42458849569, pinned Chromium #42458849579, mobile forms #42458849911, shared writer #42458849591, nested DS2 #42458849605 at app/test SHA 2cc03fe8. Browser QA 8/8 LIVE/DEMO x light/dark x 320/390 PASS; dedicated fictional Other Forms engine regression import and browser pump-edit regression pass.
+- PASS: Official artifact #13609391052 outer 549/549 and LIVE 26/26 ZIP CRC, build manifest source_commit EXACT 2cc03fe8, standalone demo byte equality to offline ZIP root index; isolated ephemeral demo.
+- NOT TESTED: physical iPhone touch and VoiceOver/Dynamic Type; independent nominal spray delivery calibration. NOT VERIFIED: primary Cloudflare deployment/version; PR still draft/unmerged. No actual backup imported into app and no production data modified.
+
+## 2026-11-08 — PR154 5/6 exact-head QA, build pending
+- PASS at app/test source 2cc03fe8: mobile #42458849911, nested #42458849605, shared writer #42458849591, Chromium pinned #42458849579, WebKit formulation #42458849569. Pure fictional Other Forms regression is loaded by tools/validate-formulation-stock.mjs: unconfigured nasal no invented conversion, nominal setup, archived-compound use, exact spray debit, Undo, status, protected deletion.
+- Earlier WebKit/build/pinned failures at prior heads were stale old Adjust-direct UX and stale expected null nominal dose. Fixed test path to Manage → Edit and expected configured pump. User backup remains strictly read-only, no real data in CI/source.
+- PENDING build/parity #42458849568, exact artifact inspection, 320/390 screenshots specifically for new management sheet (not separately visually reviewed), physical iPhone/VoiceOver. Do not claim all regression PASSED.
+
+## 2026-11-08 — Other Forms/Semax new regression cases (AWAITING EXECUTION)
+- Test: unconfigured archived Semax nasal bottle remains undiscoverable; after entering pump 0.1 mL on existing ID with 10 mg/10 mL, nominal mgPerSpray 0.1, source becomes Log Dose eligible without changing compound status or creating a second container.
+- Test: zero or invalid pump specification rejected; finished nasal/capsule sources excluded from picker and form chooser; direct prepared nasal engine also rejects finished source; Reopen retains calibration, balances and history.
+- Test: deletion allowed only for unused association-free containers; no deletion of administered capsule/nasal ledgers or prepared histories; concurrent tab edit must reject stale snapshot; no writes to physical vial stock; history and Undo remain intact.
+- Test: kit deletion never archives tracked compound; remaining Check-In, Combo Dose, Today, Calendar, Protocol and Stash flows unchanged.
+- Evidence: source changes committed to development branch; tests not run yet, no automated browser or physical iPhone PASS may be claimed.
+
 ## 2026-11-08 — Approved PR153 merge; latest CI green, host/device gaps
 - PASS: 9257eb17 6/6 exact-head GitHub CI (#42455588958 mobile, #42455588907 writer, #42455588899 build, #42455588883 nested, #42455588942 WebKit, #42455588893 pinned Chromium); merged PR153 at 4f2611b284cb3950ab45cb43c1a3934ab165ba70. Protected fictional two-tab nasal bottle debit, history, Undo, physical vial unchanged, stale reject and storage failure remain CI-covered. INCOMPLETE: post-merge production HTTP parity could not be checked (DNS/cache failures); physical iPhone Safari/VoiceOver/Dynamic Type pending. Demo personal-backup bottle decrement previously reported PASS and must not be re-requested; no real user storage changed.
 

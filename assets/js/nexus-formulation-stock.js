@@ -27,7 +27,15 @@
    if(!finite(input.volumeMl)||input.volumeMl<0)fail("Invalid bottle volume");
    if(!finite(input.quantityMg)||input.quantityMg<0)fail("Invalid nasal quantity");
    entry.remainingMl=input.volumeMl;entry.remainingMg=input.quantityMg;
-   entry.mgPerSpray=null; // Never infer a spray conversion from volume.
+   entry.mgPerSpray=null; // No conversion until pump specification is supplied.
+   entry.mlPerSpray=null;
+   if(input.mlPerSpray!=null) {
+    if(!finite(input.mlPerSpray)||input.mlPerSpray<=0)fail("Positive mL per spray required");
+    if(entry.remainingMl<=0||entry.remainingMg<=0)fail("Cannot calibrate an empty bottle");
+    entry.mlPerSpray=input.mlPerSpray;
+    entry.mgPerSpray=Math.round((entry.remainingMg/entry.remainingMl)*input.mlPerSpray*1e9)/1e9;
+    if(!finite(entry.mgPerSpray)||entry.mgPerSpray<=0)fail("Invalid nominal spray amount");
+   }
   }
   return entry;
  }
@@ -52,7 +60,7 @@
   if(read()!==serialized)fail("Inventory save verification failed");
   return result;
  }
- function edit(snapshot,{id,remainingCount,remainingMl,remainingMg,transactionId}){
+ function edit(snapshot,{id,remainingCount,remainingMl,remainingMg,mlPerSpray,status,transactionId}){
   if(!snapshot||!Array.isArray(snapshot.formulationStocks))fail("Formulation inventory unavailable");
   if(typeof transactionId!=="string"||!transactionId.trim())fail("Adjustment ID required");
   if(snapshot.formulationStocks.some(x=>(x.transactions||[]).some(t=>t.id===transactionId)))fail("Duplicate adjustment ID");
@@ -72,10 +80,26 @@
    before={remainingMl:item.remainingMl};item.remainingMl=remainingMl;after={remainingMl};
   }else if(item.containerType==="nasal-bottle"){
    if(!finite(remainingMl)||remainingMl<0||!finite(remainingMg)||remainingMg<0)fail("Invalid nasal balance");
-   before={remainingMl:item.remainingMl,remainingMg:item.remainingMg};
-   item.remainingMl=remainingMl;item.remainingMg=remainingMg;after={remainingMl,remainingMg};
+   before={remainingMl:item.remainingMl,remainingMg:item.remainingMg,mlPerSpray:item.mlPerSpray??null,mgPerSpray:item.mgPerSpray??null};
+   item.remainingMl=remainingMl;item.remainingMg=remainingMg;
+   if(mlPerSpray!==undefined){
+    if(!finite(mlPerSpray)||mlPerSpray<=0)fail("Positive pump volume required");
+    item.mlPerSpray=mlPerSpray;
+   }
+   if(item.mlPerSpray!=null){
+    if(!finite(item.mlPerSpray)||item.mlPerSpray<=0)fail("Invalid pump volume");
+    item.mgPerSpray=item.remainingMl>0&&item.remainingMg>0
+     ?Math.round((item.remainingMg/item.remainingMl)*item.mlPerSpray*1e9)/1e9:null;
+   }
+   after={remainingMl,remainingMg,mlPerSpray:item.mlPerSpray??null,mgPerSpray:item.mgPerSpray??null};
   }else fail("Unsupported container");
-  const entry={id:transactionId,kind:"inventory-adjustment",before,after};
+  if(status!==undefined){
+   if(!["active","finished"].includes(status))fail("Unsupported container status");
+   before.status=item.status||"active";
+   item.status=status;
+   after.status=status;
+  }
+  const entry={id:transactionId,kind:status!==undefined?"container-status-change":"inventory-adjustment",before,after};
   item.transactions=Array.isArray(item.transactions)?item.transactions:[];
   item.transactions.push(entry);
   return {next,stock:item,event:entry};
@@ -107,6 +131,7 @@
   if(matches.length!==1)fail("Unique exact capsule source required");
   const stock=matches[0];
   if(stock.containerType!=="capsule-bottle"||stock.method!=="Oral"||stock.compound!==tx.compound)fail("Capsule source mismatch");
+  if(stock.status==="finished")fail("Finished capsule container cannot supply a new dose");
   if(!Number.isSafeInteger(stock.remainingCount)||stock.remainingCount<tx.count)fail("Insufficient capsule stock");
   if(!finite(stock.mgPerCapsule)||stock.mgPerCapsule<=0||!Array.isArray(stock.transactions))fail("Invalid capsule strength or ledger");
   const mg=Math.round(stock.mgPerCapsule*tx.count*1e6)/1e6;
@@ -149,5 +174,18 @@
   return {next,event:inverse};
  }
 
- return {create,add,commitAdd,edit,commitEdit,planCapsuleDose,reverseCapsuleDose};
+ function remove(snapshot,{id}={}){
+  if(!snapshot||!Array.isArray(snapshot.formulationStocks))fail("Formulation inventory unavailable");
+  const stock=snapshot.formulationStocks.find(c=>String(c.id)===String(id));
+  if(!stock)fail("Unknown container");
+  if((stock.transactions||[]).length)fail("Container has history; finish it instead of deleting");
+  const history=[...Object.values(snapshot.peptides||{}),...Object.values(snapshot.customPeptides||{})]
+   .flatMap(p=>p.doses||[]);
+  if(history.some(d=>String(d.sourceContainerId)===String(id)))fail("Dose history references this container");
+  if(JSON.stringify(snapshot.preparedDoses||[]).includes(String(id)))fail("Prepared history references this container");
+  const next=JSON.parse(JSON.stringify(snapshot));
+  next.formulationStocks=next.formulationStocks.filter(c=>String(c.id)!==String(id));
+  return {next,removed:stock};
+ }
+ return {create,add,commitAdd,edit,commitEdit,remove,planCapsuleDose,reverseCapsuleDose};
 });

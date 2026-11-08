@@ -1,3 +1,4 @@
+import './test-other-forms-management.cjs'; // Pure fictional inventory lifecycle regression runs in every form browser suite.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium,webkit} from 'playwright';
@@ -252,7 +253,39 @@ try {
   await page.locator('#nx-form-volume').fill('7');
   await page.locator('#nx-form-mg').fill('10');
   await page.locator('#nx-form-save').click();
+  // A saved nasal bottle remains on its original ID while we complete pump setup.
+  await page.locator('.nx-form-edit').nth(1).click();
+  await captureVisual('other-forms-manage','.modal .nx-other-form-manage-sheet');
+  // DS2 management typography and touch density must match the existing form system.
+  const manageStyle=await page.locator('.nx-other-form-manage-sheet').evaluate(el=>{
+    const title=el.querySelector('.nx-dose-title');
+    const kicker=el.querySelector('.nx-dose-kicker');
+    const button=el.querySelector('#nx-manage-edit');
+    const rect=button.getBoundingClientRect();
+    return {title:parseFloat(getComputedStyle(title).fontSize),
+      kicker:parseFloat(getComputedStyle(kicker).fontSize),
+      button:parseFloat(getComputedStyle(button).fontSize),
+      target:rect.height,buttonWidth:rect.width,
+      overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
+  });
+  assert.ok(manageStyle.title>=19&&manageStyle.title<=21,'Management title should use DS2 scale: '+JSON.stringify(manageStyle));
+  assert.equal(manageStyle.kicker,10,'Management kicker must match DS2');
+  assert.equal(manageStyle.button,14,'Management actions must use 14px typography');
+  assert.ok(manageStyle.target>=48,'Management actions need 48px targets');
+  assert.equal(manageStyle.overflow,false,'Management modal must not overflow viewport');
+  await page.locator('#nx-manage-edit').click();
+  await page.locator('#nx-form-pump').fill('0.1');
+  await page.locator('#nx-form-save').click();
+  const nasalConfigured=await page.evaluate(()=>{
+    const item=state.formulationStocks.find(x=>x.containerType==='nasal-bottle');
+    return {id:item?.id,pump:item?.mlPerSpray,mg:item?.mgPerSpray,transactions:item?.transactions?.length};
+  });
+  assert.equal(nasalConfigured.pump,0.1,'Nasal pump setup did not persist');
+  assert.ok(Math.abs(nasalConfigured.mg-(10/7)*0.1)<1e-7,
+    'Nasal nominal conversion incorrect: '+JSON.stringify(nasalConfigured));
+  assert.equal(nasalConfigured.transactions,1,'Existing bottle edit must retain one adjustment transaction');
   await page.locator('.nx-form-edit').first().click();
+  await page.locator('#nx-manage-edit').click();
   await page.locator('#nx-form-count').fill('27');
   await page.locator('#nx-form-save').click();
   const editForm=await page.locator('.nx-form-stock-editor').count();
@@ -442,7 +475,8 @@ try {
   assert.equal(after.stock[0].remainingCount,27);
   assert.equal(after.stock[0].transactions[0].before.remainingCount,30);
   assert.equal(after.stock[1].remainingMl,7);
-  assert.equal(after.stock[1].mgPerSpray,null);
+  assert.equal(after.stock[1].mlPerSpray,0.1);
+  assert.ok(Math.abs(after.stock[1].mgPerSpray-(10/7)*0.1)<1e-7,'Nasal calibration should be retained');
 
   // Form-specific capsule logging: an independent stocked compound with no
   // protocol gets its own dose history, while the physical vial ledger and

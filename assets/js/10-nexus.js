@@ -7,9 +7,11 @@ function nexusRenderOtherFormCards(){
       ?`${x.remainingCount} capsules · ${x.mgPerCapsule} mg each`
       :x.containerType==="nasal-bottle" ?`${x.remainingMl} mL · ${x.remainingMg} mg`
       :x.containerType==="raw-powder" ?`${x.remainingMg} mg`:`${x.remainingMl} mL`;
+    const finished=x.status==="finished";
+    const needsSetup=x.containerType==="nasal-bottle"&&(!Number(x.mlPerSpray)||!Number(x.mgPerSpray));
     return `<div class="nx-other-stock-row" data-formulation-id="${esc(String(x.id))}">
-      <div class="nx-kit-heading"><span class="nx-other-stock-info"><strong>${esc(x.compound)}</strong><span>${esc(typeNames[x.containerType]||"Other package")} · ${esc(amount)}</span></span>
-      <button type="button" class="nx-form-edit nx-other-stock-adjust" data-formulation-edit="${esc(String(x.id))}" aria-label="Adjust ${esc(x.compound)} stock">Adjust</button></div>
+      <div class="nx-kit-heading"><span class="nx-other-stock-info"><strong>${esc(x.compound)}</strong><span>${esc(typeNames[x.containerType]||"Other package")} · ${esc(amount)}${finished?" · Finished":needsSetup?" · Spray setup needed":""}</span></span>
+      <button type="button" class="nx-form-edit nx-other-stock-adjust" data-formulation-manage="${esc(String(x.id))}" aria-label="Manage ${esc(x.compound)} container" style="min-height:44px;min-width:72px">Manage ···</button></div>
     </div>`;
   }).join("");
   return packageCards || (nexusStashSearchTerm.trim() ? '<p class="nx-stash-other-empty" role="status">No matching forms. Try a different search or clear the search field.</p>' : '<p class="nx-stash-other-empty">No other forms added yet.</p>');
@@ -2199,6 +2201,7 @@ function nexusAddFormulationModal(type,existingId=null){
      topical?`<label class="field-label" for="nx-form-volume">${existing?"VOLUME REMAINING":"VOLUME"} (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
      `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
       <label class="field-label" for="nx-form-mg">${existing?"AMOUNT REMAINING":"AMOUNT"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
+    ${(!oral&&!raw&&!topical)?`<label class="field-label" for="nx-form-pump">PUMP VOLUME (mL PER SPRAY)</label><input id="nx-form-pump" class="inp" type="number" min="0.001" step="any" value="${existing?.mlPerSpray??""}" placeholder="e.g. 0.1"><p class="hint">Use the pump specification. Nexus calculates a nominal amount per spray from the recorded concentration. Leave blank if unknown; dosing will remain unavailable until configured.</p>`:""}
     <p class="hint">${oral?"Capsules are tracked by whole count and labelled strength, separately from vial stock.":raw?"Raw powder remains separate from prepared-vial inventory.":topical?"Topical volume is tracked separately from injectable inventory.":"Spray figures are nominal; this entry does not verify pump delivery or route suitability."}</p>
     <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
@@ -2310,6 +2313,9 @@ function nexusAddFormulationModal(type,existingId=null){
         if(rawVolume.trim()===""||rawMg.trim()==="")throw Error("Enter volume and amount");
         if(existing){input.remainingMl=Number(rawVolume);input.remainingMg=Number(rawMg);}
         else {input.volumeMl=Number(rawVolume);input.quantityMg=Number(rawMg);}
+        const pump=m.querySelector("#nx-form-pump").value.trim();
+        if(pump)input.mlPerSpray=Number(pump);
+        else if(existing?.mlPerSpray!=null)input.mlPerSpray=existing.mlPerSpray;
       }
       const operation=existing?"edit":"add",commit=existing?"commitEdit":"commitAdd";
       if(_demoActive){
@@ -2341,6 +2347,56 @@ function nexusAddFormulationModal(type,existingId=null){
     }catch(e){showErrorBanner("Container not saved: "+e.message);}
     finally{if(saveButton.isConnected)saveButton.disabled=false;}
   };
+}
+// Container actions intentionally preserve exact-source history; no direct localStorage writes.
+function nexusManageFormulationModal(id){
+ const item=(state.formulationStocks||[]).find(x=>String(x.id)===String(id));
+ if(!item)return showErrorBanner("Container no longer exists. Refresh Stash.");
+ const done=item.status==="finished";
+ const tx=(item.transactions||[]);
+ const m=openModal(`<section class="nx-form-stock-editor nx-shared-inventory-sheet nx-other-form-manage-sheet"><div class="nx-dose-head nx-shared-sheet-header"><div><div class="nx-dose-kicker">STASH · OTHER FORMS</div><h2 class="nx-dose-title">Manage ${esc(item.compound)}</h2><p class="nx-dose-subtitle">${esc(item.containerType.replace(/-/g," "))} · ${done?"Finished":"Active"}</p></div><button type="button" id="x" class="nx-dose-close" aria-label="Close">✕</button></div>
+ <p class="hint">${item.containerType==="nasal-bottle"?(item.mlPerSpray?"Nominal "+esc(String(item.mgPerSpray*1000))+" mcg per spray · "+esc(String(item.mlPerSpray))+" mL per spray":"Spray setup incomplete: enter the measured pump volume to enable logging."):"Container balance and activity"}</p>
+ <p class="hint">Recorded history: ${tx.length} transaction${tx.length===1?"":"s"}. ${tx.length?"Deletion locked to protect historical records.":"Unused containers can be deleted after confirmation."}</p>
+ <button id="nx-manage-edit" type="button" class="btn-primary" style="width:100%;min-height:48px">Edit setup / adjust balance</button>
+ <button id="nx-manage-status" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary">${done?"Reopen container":"Mark container finished"}</button>
+ <button id="nx-manage-history" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary">View transaction history</button>
+ <button id="nx-manage-delete" type="button" style="width:100%;min-height:48px;margin-top:8px" class="btn-secondary" ${tx.length?"disabled":""}>Delete unused container</button></section>`,"#A78BFA");
+ m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal","nx-other-form-management-modal");
+ m.querySelector("#x").onclick=closeModal;
+ m.querySelector("#nx-manage-edit").onclick=()=>{closeModal();nexusAddFormulationModal(item.containerType,item.id);};
+ m.querySelector("#nx-manage-history").onclick=()=>{
+   const previous=[...tx].reverse().map(t=>`<li style="margin:9px 0"><strong>${esc(t.kind||"record")}</strong> · ${esc(t.date||t.id||"")}</li>`).join("")||"<li>No transactions yet.</li>";
+   const panel=openModal(`<section class="nx-form-stock-editor"><h2>Container history</h2><p>${esc(item.compound)}</p><ul>${previous}</ul><button type="button" id="x" class="btn-primary">Close</button></section>`,"#A78BFA");
+   panel.querySelector("#x").onclick=closeModal;
+ };
+ async function mutate(action,input){
+   const writer=nexusWriter();
+   const old=JSON.stringify((state.formulationStocks||[]).find(c=>String(c.id)===String(item.id)));
+   try{
+     if(_demoActive){
+       const result=globalThis.NexusFormulationStock[action](state,input);state=result.next;
+     }else{
+       const raw=localStorage.getItem(STORE_KEY);
+       if(!raw)throw Error("Saved inventory unavailable");
+       const saved=JSON.parse(raw);
+       if(JSON.stringify(saved.formulationStocks||[])!==JSON.stringify(state.formulationStocks||[])||
+          JSON.stringify(saved.supplies||[])!==JSON.stringify(state.supplies||[]))
+         throw Error("Inventory changed in another view. Reload before trying again.");
+       const result=await writer.transaction(saved,snapshot=>{
+         const current=(snapshot.formulationStocks||[]).find(c=>String(c.id)===String(item.id));
+         if(JSON.stringify(current)!==old)throw Error("Container changed in another tab. Reload before trying again.");
+         return globalThis.NexusFormulationStock[action](snapshot,input);
+       });
+       state=result.next;_nexusLastSavedSnapshot=writer.expected();
+     }
+     closeModal();state._stashSub="other";render();
+   }catch(error){showErrorBanner("No changes saved: "+error.message);}
+ }
+ m.querySelector("#nx-manage-status").onclick=()=>mutate("edit",{
+   id:item.id,transactionId:"status-"+uid(),status:done?"active":"finished",
+   remainingCount:item.remainingCount,remainingMg:item.remainingMg,remainingMl:item.remainingMl
+ });
+ m.querySelector("#nx-manage-delete").onclick=()=>confirmAction("Delete this unused container? This cannot be undone.",()=>mutate("remove",{id:item.id}));
 }
 // Stash preparation planning: a reversible UI flow around non-transferring
 // metadata. Deliberately NO stock movement, bottle creation, or dosing math.
@@ -2425,6 +2481,8 @@ document.addEventListener("click",e=>{
 document.addEventListener("click",e=>{
   if(e.target.closest?.("#nx-add-capsules"))nexusAddFormulationModal("capsule-bottle");
   if(e.target.closest?.("#nx-add-nasal"))nexusAddFormulationModal("nasal-bottle");
+  const manage=e.target.closest?.("[data-formulation-manage]");
+  if(manage){nexusManageFormulationModal(manage.dataset.formulationManage);return;}
   const edit=e.target.closest?.("[data-formulation-edit]");
   if(edit){const stock=(state.formulationStocks||[]).find(x=>String(x.id)===edit.dataset.formulationEdit);if(stock)nexusAddFormulationModal(stock.containerType,stock.id);}
 });

@@ -1190,7 +1190,7 @@ function nexusNasalDoseModal(name,occTime){
   return;
  }
  const bottles=(state.formulationStocks||[]).filter(c=>c.compound===name&&c.containerType==="nasal-bottle"&&
-  c.method==="Nasal"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
+  c.method==="Nasal"&&c.status!=="finished"&&c.balanceStatus!=="unverified"&&c.remainingMg>0&&c.remainingMl>0&&c.mgPerSpray>0&&c.mlPerSpray>0);
  const unit=cfg(name).unit;
  if(!bottles.length||!["mg","mcg"].includes(unit)){showErrorBanner("No verified prepared nasal bottle for this compound.");return;}
  const m=openModal('<div class="nx-dose-form nx-prepared-spray-entry">'+
@@ -1276,8 +1276,8 @@ function nexusNasalDoseModal(name,occTime){
 }
 
 function nexusChoosePhysicalForm(name,occTime){
- const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.remainingCount>0);
- const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.balanceStatus!=="unverified"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
+ const capsules=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="capsule-bottle"&&x.status!=="finished"&&x.remainingCount>0);
+ const nasal=(state.formulationStocks||[]).some(x=>x.compound===name&&x.containerType==="nasal-bottle"&&x.status!=="finished"&&x.balanceStatus!=="unverified"&&x.remainingMg>0&&x.remainingMl>0&&x.mgPerSpray>0&&x.mlPerSpray>0);
  const nasalSourceOnly=(state.supplies||[]).some(k=>k.name===name&&(k.vials||[]).some(v=>
    ["open","active"].includes(v.status)&&getVialRemainingMg(k,v)>0&&
    ["nasal-source","Nasal"].includes(v.intendedUse)));

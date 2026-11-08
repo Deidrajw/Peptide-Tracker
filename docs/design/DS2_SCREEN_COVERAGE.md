@@ -1,3 +1,13 @@
+## 2026-11-08 — PR154 Other Forms typography exact-source verified (development only)
+- Source 8eae810d uses the approved shared modal surface, corrected closing tag, scoped DS2 type scale (10px eyebrow, 21/19px title, 13px subtitle, 12px explanatory, 14px buttons, min 48px action targets). All six GitHub test workflows PASS including WebKit iPhone emulation and 320/390 light/dark; independent full-app fictional DEMO/LIVE artifact matched exact source, 26-file LIVE CRC PASS. Post-correction user physical iPhone visual acceptance remains outstanding; do not interpret browser simulation as actual iPhone approval.
+
+## 2026-11-08 — PR154 Stash Other Forms Manage typography correction (UNRELEASED)
+- Physical iPhone screenshot identified management modal using unstyled default typography due omission of shared-form class. Corrected to approved DS2 shared sheet header plus narrowly scoped 10px kicker, 21/19px title, 13px status, 12px explanatory text, 14px actions and >=48px buttons. The functioning inventory operations remain unchanged. Added 320/390 browser regression assertion; final CI and post-correction iPhone visual acceptance pending.
+
+## 2026-11-08 — PR154 Other Forms management (CODED, not released)
+- Stash → Other Forms now uses one clear Manage action for nasal spray, capsule, raw powder and topical records. Shared management bottom sheet offers Edit Setup/Adjust, history, Finish/Reopen and safe Delete for unused association-free records. Existing DS2 kit/card hierarchy preserved rather than redesigned.
+- Corrected iPhone picker path: Manage → Edit rather than pre-change direct Adjust. Pump calibration field with nominal caution and retained exact stock ID on save. 44px manage action; full 320/390 WebKit/Chromium QA PASS at source 2cc03fe8, but physical iPhone/VoiceOver not accepted. Release pending complete build/artifact QA.
+
 ## 2026-11-05 — PR135 Combo Dose modal header correction
 - Form header typography mismatch traced to Combo modal lacking .nx-dose-form heading scope. Scoped class/header CSS JS 06e957d1/CSS 12e9a828 matches DS2 modal hierarchy. Local Chromium 320/390 light/dark 4/4 computed-style/geometry and close interaction PASS. Requires live-font and physical Safari/VoiceOver acceptance before release.
 

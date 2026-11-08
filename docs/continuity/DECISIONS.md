@@ -1,3 +1,18 @@
+## 2026-11-08 — PR154 user release authorization
+- User explicitly approved the corrected Other Forms typography and directed deploy now. Approval applies to reviewed PR154 functionality and non-destructive release; preserve all previously accepted features and saved data. No automatic Semax archival reversal or personal backup changes. Proceed with authorized merge after green CI; independently verify the primary Cloudflare host before labeling deployed. VoiceOver/Dynamic Type remain untested.
+
+## 2026-11-08 — Other Forms typography follows approved DS2, no redesign
+- User confirmed Other Forms management actions work in iPhone preview but flagged typography as inconsistent. Preserve functional workflow; add shared modal classes and narrowly scoped DS2 typography, consistent iPhone action target geometry and compact vertical rhythm. Do not modify inventory calculations or destructive guards for this visual correction.
+
+## 2026-11-08 — PR154 management scope refinement
+- User requested implementing all Other Forms repairs in one coordinated update. This authorizes development work, not destructive rewrites of uploaded data. The native Other Forms entry uses Manage → Edit Setup / Adjust rather than the old immediate Adjust action. Tests must exercise this path, and stored calibrated bottles remain independent of tracking status.
+- A finished container is hidden from selection and rejected by both independent dose planners; finished inventory may be reopened with history. Writer changes use a persisted exact snapshot for all status/deletion mutations; no direct localStorage mutation or automatic archival.
+
+## 2026-11-08 — Other Forms lifecycle and archived-compound decoupling
+- Preserve existing formulation container IDs, dose history, ledger and balances during pump calibration. User confirmed actual pump volume 0.1 mL for their existing Semax bottle; never insert personal data or assumed concentrations into production source.
+- Compound tracking status and owned inventory are independent. Do not automatically archive compounds on kit deletion; do not silently unarchive user records. A properly prepared, verified nasal source can appear in Log Dose without an active schedule or active tracking status. Incomplete nasal configuration must be corrected through Stash, never guessed from volume.
+- Other Forms management: Edit/Adjust, transaction history, Finish/Reopen, Delete only when no history/associations. Block new dose from finished stock within UI and transaction planner. Do not destructively rewrite administered dose history.
+
 ## 2026-11-07 — Versioned release-candidate only for nasal live enablement
 - Keep publication unverified until independently verified Cloudflare deployment. New prepared-nasal LIVE candidate uses v0.9.26-beta.1 and explicit notes for the only newly enabled administration method. Leave generic preparation transfers OFF, no destructive data migration and preserve full app DS2 PR146 approved UI, PR142 writer corrections and protected historical accounts. Strict readiness test must not be bypassed by treating development as production. Merge/deployment requires separate approval.
 

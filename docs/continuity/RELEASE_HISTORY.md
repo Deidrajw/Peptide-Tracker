@@ -1,3 +1,26 @@
+## 2026-11-08 — PR154 USER-APPROVED RELEASE, MERGE/DEPLOY VERIFICATION PENDING
+- User explicit "yes, approved, and deploy now" for Semax / Other Forms management and revised typography; app version source currently v0.9.26-beta.1 pending post-merge release metadata reconciliation. Qualified application SHA 8eae810d; final screenshot test b1abc8d0; six latest GitHub workflows SUCCESS (build 42500863687, WebKit 42500863663, Chromium 42500863662, mobile 42500863698, writer 42500863702, DS2 42500863701). Non-destructive correction, no personal-data writes/migration, historical records retained.
+- Exact-source isolated DEMO and LIVE full-app packages already qualified from app SHA 8eae810d. Deployment is not established until merge SHA plus independent Cloudflare parity inspection; no false published-state assertion.
+
+## 2026-11-08 — PR154 typography candidate engineering qualified (NOT MERGED/DEPLOYED)
+- Application source SHA 8eae810d, source version v0.9.26-beta.1 (not yet new published version). Full six CI SUCCESS: full build 42499373645, pinned Chromium 42499373602, WebKit 42499373685, writer 42499373653, mobile 42499373776, nested 42499373623. Official artifact 13625227252 manifest exact 8eae810d; outer ZIP 549 entries CRC PASS; LIVE ZIP 26 source files CRC PASS; full fictional standalone DEMO 3,203,594 bytes equals offline ZIP index.html and isolated-storage manifest.
+- Scoped DS2 fix: shared-sheet classes, corrected heading markup, tighter typography and actions; preservations of Semax calibration, guarded Other Forms management and exact-source writer. No migration or production data change. PR remains draft, Cloudflare not verified on candidate, physical iPhone/VoiceOver pending.
+
+## 2026-11-08 — PR154 typography follow-up (NOT RELEASED)
+- User screenshot of Other Forms manager revealed missing shared modal styling. Development candidate JS 929696e9, CSS efcb1440, regression 39c70702; scoped visual change only. Prior 2cc03fe8 6/6 CI and packages are historical and do not qualify this new code. New-source CI/DEMO/LIVE verification pending. Physical iPhone typography acceptance and primary deployment not verified.
+
+## 2026-11-08 — PR154 full QA and artifacts qualified, NOT RELEASED
+- App/test SHA 2cc03fe8, main baseline 96fb4804, draft PR154. All six CI SUCCESS: build 42458849568, WebKit 42458849569, pinned Chromium 42458849579, mobile 42458849911, writer 42458849591, DS2 nested 42458849605. Official artifact #13609391052 manifest matches app source and v0.9.26-beta.1; 549-member outer ZIP CRC PASS; 26-file LIVE ZIP CRC PASS, root index/ordered modules; 3,201,119-byte isolated full-app DEMO exactly matches offline ZIP index.
+- Other Forms management, calibrated nasal setup, status and deletion guards, archived-compound picker support, no kit deletion implicit archive; no destructive migrations/real user-data change. Cloudflare parity unverified and physical iPhone/VoiceOver not accepted. No merge or deployment claimed.
+
+## 2026-11-08 — PR154 candidate test checkpoint, UNMERGED/UNDEPLOYED
+- Source 2cc03fe8 from main 96fb4804 on draft PR154, version remains declared v0.9.26-beta.1 until new release metadata is approved. Changes include Other Forms edit/finish/reopen/history/guarded delete, nasal pump setup, real exact-source writer state rebasing, hard finished-source dose guards, removal of hidden kit-deletion archival.
+- 5/6 exact-app CI SUCCESS (mobile 42458849911, nested 42458849605, shared writer 42458849591, Chromium 42458849579, WebKit 42458849569); build/parity 42458849568 still running. Previous test failures were outdated assertions and fixed before this run. No claim of compiled full-app artifact parity, primary-host deployment or physical iPhone.
+
+## 2026-11-08 — Other Forms lifecycle/Semax repair (DEVELOPMENT ONLY, not released)
+- Branch fix/other-forms-management-semax-20261108 from verified main 96fb4804; target follows existing v0.9.26-beta.1 release without claiming a new published version. Proposed changes: pump calibration and non-destructive source repair, Manage actions, Finish/Reopen, guarded Delete, finished-source logging guard, removal of automatic archival on kit deletion. No schema migration, no imported real data, existing history protected.
+- CI, standalone full-app DEMO, exact-release LIVE ZIP, deployment and physical iPhone acceptance INCOMPLETE until independently verified; GitHub main and primary Cloudflare production unchanged by this branch.
+
 ## 2026-11-08 — v0.9.26-beta.1 PR153 MERGED, PRODUCTION DEPLOYMENT UNVERIFIED
 - User approved merge/deploy; PR153 marked review-ready, all six exact-head CI at 9257eb17 SUCCESS (#42455588958/#42455588907/#42455588899/#42455588883/#42455588942/#42455588893); GitHub squash merge SUCCESS 4f2611b284cb3950ab45cb43c1a3934ab165ba70. Main index version v0.9.26-beta.1, candidate prepared nasal admin ON, generic transfers OFF; single prepared bottle debit + history, exact source Undo, protected PR150 shared writer and PR146 DS2. No migration or real data access; physical iPhone Safari and VoiceOver not tested. Primary Cloudflare version/hash verification BLOCKED (DNS/cache resolution), deployment status INCOMPLETE/UNVERIFIED, despite successful GitHub merge. Previous release still last independently verified production; do not mislabel merged candidate as primary-host deployed.
 

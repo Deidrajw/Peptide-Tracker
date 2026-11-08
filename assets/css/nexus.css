@@ -2715,3 +2715,52 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
   flex: none;
   padding: 0 !important;
 }
+
+/* PR154 iPhone feedback: Other Forms manager uses the approved DS2 sheet
+   type scale and compact action rhythm. Scope to this one management sheet. */
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet{
+  display:flex;flex-direction:column;gap:0;min-width:0;
+  font-family:"DM Sans",sans-serif;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet .nx-dose-head{
+  margin:0 0 15px!important;gap:12px;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet .nx-dose-kicker{
+  font-size:10px!important;line-height:1.4;letter-spacing:.12em;
+  margin:0 0 5px!important;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet .nx-dose-title{
+  font-size:21px!important;line-height:1.22!important;letter-spacing:-.025em;
+  font-weight:700;margin:0!important;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet .nx-dose-subtitle{
+  font-size:13px!important;line-height:1.45;margin:5px 0 0!important;
+  color:var(--t2);
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet>.hint{
+  font-size:12px!important;line-height:1.5!important;color:var(--t3);
+  margin:0 0 10px!important;overflow-wrap:anywhere;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet :is(#nx-manage-edit,#nx-manage-status,#nx-manage-history,#nx-manage-delete){
+  display:flex;align-items:center;justify-content:center;
+  width:100%!important;min-height:48px!important;
+  padding:11px 14px!important;margin:0 0 8px!important;
+  border-radius:12px!important;font-family:"DM Sans",sans-serif!important;
+  font-size:14px!important;line-height:1.35!important;
+  font-weight:650!important;letter-spacing:0!important;
+  white-space:normal!important;text-align:center;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet #nx-manage-delete{
+  margin-bottom:0!important;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet :is(#nx-manage-edit,#nx-manage-status,#nx-manage-history,#nx-manage-delete):focus-visible{
+  outline:3px solid var(--accent,#A78BFA);outline-offset:2px;
+}
+.modal.nx-other-form-management-modal .nx-other-form-manage-sheet #nx-manage-delete:disabled{
+  opacity:.48;cursor:not-allowed;
+}
+@media(max-width:350px){
+  .modal.nx-other-form-management-modal .nx-other-form-manage-sheet .nx-dose-title{
+    font-size:19px!important;
+  }
+}
