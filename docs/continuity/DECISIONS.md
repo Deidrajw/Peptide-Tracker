@@ -1,3 +1,6 @@
+## 2026-11-07 — Versioned release-candidate only for nasal live enablement
+- Keep publication unverified until independently verified Cloudflare deployment. New prepared-nasal LIVE candidate uses v0.9.26-beta.1 and explicit notes for the only newly enabled administration method. Leave generic preparation transfers OFF, no destructive data migration and preserve full app DS2 PR146 approved UI, PR142 writer corrections and protected historical accounts. Strict readiness test must not be bypassed by treating development as production. Merge/deployment requires separate approval.
+
 ## 2026-11-07 — User authorizes development toward actual LIVE nasal logging
 - User confirmed successful nasal logging in isolated DEMO with real backup imported and observed bottle decrement; wants actual production feature. Proceed with release-candidate ON flag on separate draft PR153, based on qualified PR150 writer and UI integration. This is approval to build/validate candidate, not authorization for destructive migration, unapproved merge or deployment. Preserve source-specific Web Lock, canonical CAS/readback, single prepared bottle debit, historical record + Undo, physical vial unaffected and protected PR146 accepted UI. Generic preparation transfer control remains OFF. Do not import a DEMO backup into LIVE or store real records in repository.
 

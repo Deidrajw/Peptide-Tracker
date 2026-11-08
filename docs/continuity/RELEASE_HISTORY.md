@@ -1,3 +1,6 @@
+## 2026-11-07 — v0.9.26-beta.1 PR153 CANDIDATE CREATED (NOT RELEASED)
+- At 44a9f5ae prepared nasal administration ON in unmerged branch only; root title and canonical release notes versioned v0.9.26-beta.1, publication unverified; preserve generic transfer OFF. Exact-head CI pending after correcting prior obsolete OFF assertions and stale version. No artifact, merge, deployed version, production migration or live data touched. User already verified DEMO nasal deduction, but not live persistence or real iPhone ON candidate.
+
 ## 2026-11-07 — PR153 nasal LIVE enablement candidate, NOT MERGED/DEPLOYED
 - Branch release/nasal-live-enablement-candidate-20261107 derived PR150 8c3a2808, candidate source 974f7187 switches prepared nasal administration flag ON; generic transfers OFF. Updates test assertions to qualified ON behavior. Prior 6/6 evidence PR150 at fc74181c DOES NOT establish candidate ON release validation. Initial PR153 full/writer runs failed stale OFF assertions, corrected; new exact-head full six-suite runs PENDING. User's real-data DEMO logging+bottle decrease observed, not proof of live durability. No published version, production write, data migration, Cloudflare change or merge.
 
