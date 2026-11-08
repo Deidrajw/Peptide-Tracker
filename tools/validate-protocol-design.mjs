@@ -112,8 +112,16 @@ try{
             route:"SubQ",phases:[{type:"dose",durationWeeks:4,dose:1}]}]};
         state.protocols=[old];
         state.protocolDoseFollowupAcknowledged={};
-        nexusCommitCurrentState=async()=>{commits++;await Promise.resolve();return true;};
         const dose={id:"qa-reta-dose",date:localDate(),asNeeded:false};
+        nexusCommitCurrentState=async()=>{commits++;return false;};
+        const failOpened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-new")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const failurePreserved=!!document.querySelector("#nexus-followup-new")&&
+          !document.querySelector("#proto-builder-wrap")&&
+          !state.protocolDoseFollowupAcknowledged["qa-finished-reta|Retatrutide"];
+        closeModal();
+        nexusCommitCurrentState=async()=>{commits++;await Promise.resolve();return true;};
         const opened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
         document.querySelector("#nexus-followup-new")?.click();
         await new Promise(resolve=>setTimeout(resolve,20));
@@ -129,11 +137,11 @@ try{
         const editVisible=!!document.querySelector("#proto-builder-wrap")?.textContent.includes("Edit Protocol");
         const oldUnchanged=JSON.stringify(state.protocols[0])===JSON.stringify(old);
         closeModal();
-        return {opened,renewalVisible,preselected,newNeverPersisted,updateOpened,editVisible,oldUnchanged,commits};
+        return {failOpened,failurePreserved,opened,renewalVisible,preselected,newNeverPersisted,updateOpened,editVisible,oldUnchanged,commits};
       } finally {nexusCommitCurrentState=originalCommit;state=previous;closeModal();}
     });
-    check(renewal.opened&&renewal.renewalVisible&&renewal.preselected&&renewal.newNeverPersisted&&
-      renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===2,
+    check(renewal.failOpened&&renewal.failurePreserved&&renewal.opened&&renewal.renewalVisible&&renewal.preselected&&renewal.newNeverPersisted&&
+      renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===3,
       "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
 
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
