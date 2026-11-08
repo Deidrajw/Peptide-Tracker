@@ -1,5 +1,4 @@
-Session-first Combo Dose, exact-vial details and DS2 refinements
-- Simpler Combo Dose logging: Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.
-- Clear mg/mcg entry with strict inventory accounting: Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.
-- View preparation details for the selected physical vial: Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.
-- Consistent dose header, selection chevrons and field spacing: Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.
+Prepared nasal dose logging with verified exact-bottle inventory and protected UI
+- Log prepared nasal sprays using the exact verified bottle: Enable nasal dose review and confirmation on eligible prepared stock; atomically record an administration, exact bottle balance and source ledger, and offer exact-source Undo without debiting the original vial twice.
+- Protected cross-tab nasal inventory persistence: All prepared spray administrations and reversals use the shared exclusive writer, canonical saved snapshot, stale-tab refusal, write-readback verification and no speculative success on storage failure.
+- Retain approved search, calculator and backed-dose corrections: Preserve PR146 single clear-X search, injectable syringe overflow recovery and read-only theoretical nasal calculator, alongside PR142 backed-dose history/writer reliability.
