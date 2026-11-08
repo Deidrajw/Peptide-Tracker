@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 management scope refinement
+- User requested implementing all Other Forms repairs in one coordinated update. This authorizes development work, not destructive rewrites of uploaded data. The native Other Forms entry uses Manage → Edit Setup / Adjust rather than the old immediate Adjust action. Tests must exercise this path, and stored calibrated bottles remain independent of tracking status.
+- A finished container is hidden from selection and rejected by both independent dose planners; finished inventory may be reopened with history. Writer changes use a persisted exact snapshot for all status/deletion mutations; no direct localStorage mutation or automatic archival.
+
 ## 2026-11-08 — Other Forms lifecycle and archived-compound decoupling
 - Preserve existing formulation container IDs, dose history, ledger and balances during pump calibration. User confirmed actual pump volume 0.1 mL for their existing Semax bottle; never insert personal data or assumed concentrations into production source.
 - Compound tracking status and owned inventory are independent. Do not automatically archive compounds on kit deletion; do not silently unarchive user records. A properly prepared, verified nasal source can appear in Log Dose without an active schedule or active tracking status. Incomplete nasal configuration must be corrected through Stash, never guessed from volume.
