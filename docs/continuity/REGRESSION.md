@@ -1,3 +1,10 @@
+## 2026-11-08 — Other Forms/Semax new regression cases (AWAITING EXECUTION)
+- Test: unconfigured archived Semax nasal bottle remains undiscoverable; after entering pump 0.1 mL on existing ID with 10 mg/10 mL, nominal mgPerSpray 0.1, source becomes Log Dose eligible without changing compound status or creating a second container.
+- Test: zero or invalid pump specification rejected; finished nasal/capsule sources excluded from picker and form chooser; direct prepared nasal engine also rejects finished source; Reopen retains calibration, balances and history.
+- Test: deletion allowed only for unused association-free containers; no deletion of administered capsule/nasal ledgers or prepared histories; concurrent tab edit must reject stale snapshot; no writes to physical vial stock; history and Undo remain intact.
+- Test: kit deletion never archives tracked compound; remaining Check-In, Combo Dose, Today, Calendar, Protocol and Stash flows unchanged.
+- Evidence: source changes committed to development branch; tests not run yet, no automated browser or physical iPhone PASS may be claimed.
+
 ## 2026-11-08 — Approved PR153 merge; latest CI green, host/device gaps
 - PASS: 9257eb17 6/6 exact-head GitHub CI (#42455588958 mobile, #42455588907 writer, #42455588899 build, #42455588883 nested, #42455588942 WebKit, #42455588893 pinned Chromium); merged PR153 at 4f2611b284cb3950ab45cb43c1a3934ab165ba70. Protected fictional two-tab nasal bottle debit, history, Undo, physical vial unchanged, stale reject and storage failure remain CI-covered. INCOMPLETE: post-merge production HTTP parity could not be checked (DNS/cache failures); physical iPhone Safari/VoiceOver/Dynamic Type pending. Demo personal-backup bottle decrement previously reported PASS and must not be re-requested; no real user storage changed.
 
