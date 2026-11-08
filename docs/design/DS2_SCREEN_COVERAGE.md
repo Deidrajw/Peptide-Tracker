@@ -1,3 +1,6 @@
+## 2026-11-08 — PR154 Stash Other Forms Manage typography correction (UNRELEASED)
+- Physical iPhone screenshot identified management modal using unstyled default typography due omission of shared-form class. Corrected to approved DS2 shared sheet header plus narrowly scoped 10px kicker, 21/19px title, 13px status, 12px explanatory text, 14px actions and >=48px buttons. The functioning inventory operations remain unchanged. Added 320/390 browser regression assertion; final CI and post-correction iPhone visual acceptance pending.
+
 ## 2026-11-08 — PR154 Other Forms management (CODED, not released)
 - Stash → Other Forms now uses one clear Manage action for nasal spray, capsule, raw powder and topical records. Shared management bottom sheet offers Edit Setup/Adjust, history, Finish/Reopen and safe Delete for unused association-free records. Existing DS2 kit/card hierarchy preserved rather than redesigned.
 - Corrected iPhone picker path: Manage → Edit rather than pre-change direct Adjust. Pump calibration field with nominal caution and retained exact stock ID on save. 44px manage action; full 320/390 WebKit/Chromium QA PASS at source 2cc03fe8, but physical iPhone/VoiceOver not accepted. Release pending complete build/artifact QA.
