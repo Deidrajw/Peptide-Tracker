@@ -1,3 +1,7 @@
+## 2026-11-08 — PR154 dedicated management-modal visual captures (IN PROGRESS)
+- Test-only b1abc8d0 adds Other Forms Manage captures after opening a fictional nasal form on 320/390 light/dark, LIVE/DEMO, including viewport clipping/foreground assertions and screenshot targets. Current run pending; prior 8eae810d 6/6 CI remains valid for unchanged app source but not evidence that newly added screenshots passed.
+- Real-device screenshot/typography acceptance and VoiceOver still NOT TESTED; do not merge or deploy without explicit approval.
+
 ## 2026-11-08 — PR154 corrected Other Forms typography FULL CI PASS and artifact integrity
 - At exact source 8eae810d: PASS six workflows build 42499373645, pinned Chromium 42499373602, WebKit 42499373685, shared writer 42499373653, mobile 42499373776, nested DS2 42499373623. New browser DOM/geometry asserts DS2 kicker/title/button type scale, >=48px action height and no overflow, plus protected functional formulation operations. Full-build eight LIVE/DEMO × 320/390 × light/dark PASS.
 - Independent artifact #13625227252 review: 549 outer ZIP members CRC PASS; 26-file LIVE ZIP CRC PASS and ordered modules; standalone full app isolated DEMO byte equal offline DEMO index.html, both verified. No actual user-backup fixture or production storage.
