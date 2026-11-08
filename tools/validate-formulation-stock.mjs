@@ -255,6 +255,23 @@ try {
   await page.locator('#nx-form-save').click();
   // A saved nasal bottle remains on its original ID while we complete pump setup.
   await page.locator('.nx-form-edit').nth(1).click();
+  // DS2 management typography and touch density must match the existing form system.
+  const manageStyle=await page.locator('.nx-other-form-manage-sheet').evaluate(el=>{
+    const title=el.querySelector('.nx-dose-title');
+    const kicker=el.querySelector('.nx-dose-kicker');
+    const button=el.querySelector('#nx-manage-edit');
+    const rect=button.getBoundingClientRect();
+    return {title:parseFloat(getComputedStyle(title).fontSize),
+      kicker:parseFloat(getComputedStyle(kicker).fontSize),
+      button:parseFloat(getComputedStyle(button).fontSize),
+      target:rect.height,buttonWidth:rect.width,
+      overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+2};
+  });
+  assert.ok(manageStyle.title>=19&&manageStyle.title<=21,'Management title should use DS2 scale: '+JSON.stringify(manageStyle));
+  assert.equal(manageStyle.kicker,10,'Management kicker must match DS2');
+  assert.equal(manageStyle.button,14,'Management actions must use 14px typography');
+  assert.ok(manageStyle.target>=48,'Management actions need 48px targets');
+  assert.equal(manageStyle.overflow,false,'Management modal must not overflow viewport');
   await page.locator('#nx-manage-edit').click();
   await page.locator('#nx-form-pump').fill('0.1');
   await page.locator('#nx-form-save').click();
