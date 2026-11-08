@@ -1,3 +1,4 @@
+import './test-other-forms-management.cjs'; // Pure fictional inventory lifecycle regression runs in every form browser suite.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium,webkit} from 'playwright';
