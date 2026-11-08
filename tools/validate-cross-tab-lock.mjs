@@ -130,8 +130,8 @@ try{
    _nexusSharedWriter=null;
    supplyModal(null,null);
  });
- // Real UI runtime must reject the prepared nasal path while the shared
- // synchronous writer migration is incomplete, without altering fictional stock.
+ // Candidate-enabled runtime must reject malformed prepared nasal operations
+ // before touching fictional stock or saved history.
  const disabled=await a.evaluate(async()=>{
    const before=JSON.stringify(state),durable=localStorage.getItem(STORE_KEY);
    let error="";
@@ -140,9 +140,9 @@ try{
    }catch(e){error=e.message}
    return {error,sameState:before===JSON.stringify(state),sameDurable:durable===localStorage.getItem(STORE_KEY)};
  });
- assert.match(disabled.error,/disabled pending shared-writer/,"Prepared nasal must remain release-gated in actual app runtime");
- assert.equal(disabled.sameState,true,"Gated prepared nasal operation mutated live state");
- assert.equal(disabled.sameDurable,true,"Gated prepared nasal operation wrote saved stock");
+ assert.match(disabled.error,/Prepared transaction requires nasal inventory-backed use/,"Enabled nasal handler must reject invalid transaction without write");
+ assert.equal(disabled.sameState,true,"Invalid prepared nasal operation mutated live state");
+ assert.equal(disabled.sameDurable,true,"Invalid prepared nasal operation wrote saved stock");
  await a.locator('[data-kit-form="capsule-bottle"]').click();
  await a.locator('#nx-form-name').fill('Fictional Exclusive Capsule');
  await a.locator('#nx-form-count').fill('12');
@@ -621,14 +621,16 @@ try{
      const result=await nexusCommitCurrentState();
      return {result,durable:localStorage.getItem(STORE_KEY),
        memory:JSON.stringify(state),blocked:nexusWriter().status().blocked,
-       alert:!!document.querySelector("#nexus-storage-warning")};
+       alert:!!document.querySelector("#nx-validation-message"),
+       storageAlert:!!document.querySelector("#nexus-storage-warning")};
    });
    assert.equal(rejected.result,false,"Stale legacy-handler save must reject");
    assert.equal(rejected.durable,changed.durable,"Stale save must not overwrite durable fresh settings");
    assert.equal(rejected.memory,baseline.memory,"Rejected legacy optimistic change must roll back to last verified snapshot");
    assert.equal(rejected.blocked,true,"Stale writer must remain blocked until reload");
-   assert.equal(rejected.alert,true,"Rejected save must visibly warn user");
-   console.log("PASS: actual two-tab stale legacy handler rolls back in-memory optimistic change; durable settings preserved and warning shown");
+   assert.equal(rejected.alert,true,"Rejected save must show actionable validation feedback");
+   assert.equal(rejected.storageAlert,false,"Stale-tab conflict must not falsely claim device storage failed");
+   console.log("PASS: actual two-tab stale legacy handler rolls back; safe toast shown without false device storage banner");
  }
  // Failure on actual Storage.setItem must not be acknowledged as a saved
  // change or leave an unsaved optimistic mutation in app state.

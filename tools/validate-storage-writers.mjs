@@ -98,9 +98,18 @@ if(!runtime.includes('NexusPreparedDoseTransaction.executeExclusive(') ||
    runtime.includes('NexusPreparedDoseTransaction.planDose(snapshot,') ||
    runtime.includes('NexusPreparedDoseTransaction.reverseDose(snapshot,'))
   throw Error('Prepared nasal runtime bypasses exclusive transaction execution boundary');
-for(const lock of ['NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false','NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = false']){
- if(!runtime.includes(lock))throw Error('Unapproved live stock transfer enablement: '+lock);
-}
+// This release branch intentionally enables ONLY prepared nasal administration.
+// Preserve the unrelated generic-transfer gate OFF. Require a verified durable
+// snapshot, rejection of unsaved persistent changes, exclusive writer and readback.
+if(!runtime.includes('NEXUS_PREPARATION_TRANSFER_CONTROLS_ENABLED = false'))
+ throw Error('Unapproved generic preparation transfer enablement');
+if(!runtime.includes('NEXUS_PREPARED_NASAL_ADMINISTRATION_ENABLED = true')||
+   !runtime.includes('const serialized=writer.expected();')||
+   !runtime.includes('if(persistent(state)!==persistent(durable))')||
+   !runtime.includes('NexusPreparedDoseTransaction.executeExclusive(')||
+   !runtime.includes('state={...result.next,...transient};')||
+   !runtime.includes('_nexusLastSavedSnapshot=writer.expected();'))
+ throw Error('Prepared nasal enablement requires canonical exclusive CAS and readback');
 const coordinator=fs.readFileSync('assets/js/nexus-write-coordinator.js','utf8');
 if(/\b(?:saveLegacy|removeLegacy)\s*[:(,}]/.test(coordinator))throw Error('Unlocked coordinator API still exposed');
 for(const file of files){

@@ -1,43 +1,36 @@
 {
-  "version": "v0.9.25-beta.1",
+  "version": "v0.9.26-beta.1",
   "channel": "beta",
   "publicationStatus": "unverified",
   "publishedAt": null,
-  "title": "Session-first Combo Dose, exact-vial details and DS2 refinements",
+  "title": "Prepared nasal dose logging with verified exact-bottle inventory and protected UI",
   "changes": [
     {
-      "key": "combo-3-step",
-      "title": "Simpler Combo Dose logging",
-      "detail": "Choose multiple compounds, enter shared session details once, work through focused compound dose/source fields, and confirm on a dedicated Review step.",
-      "screen": "Today / Log Dose / Combo Dose",
+      "key": "nasal-live-guarded",
+      "title": "Log prepared nasal sprays using the exact verified bottle",
+      "detail": "Enable nasal dose review and confirmation on eligible prepared stock; atomically record an administration, exact bottle balance and source ledger, and offer exact-source Undo without debiting the original vial twice.",
+      "screen": "Today / Log Dose / Stash / Calendar",
       "kind": "feature"
     },
     {
-      "key": "combo-unit-parity",
-      "title": "Clear mg/mcg entry with strict inventory accounting",
-      "detail": "Switch display units without changing entered mass, retain native historical unit representation and audit entered amount/unit, and reject strict vial shortfalls including 1 mcg cases.",
-      "screen": "Today / Log Dose / Combo Dose",
+      "key": "nasal-shared-writer",
+      "title": "Protected cross-tab nasal inventory persistence",
+      "detail": "All prepared spray administrations and reversals use the shared exclusive writer, canonical saved snapshot, stale-tab refusal, write-readback verification and no speculative success on storage failure.",
+      "screen": "Log Dose / Stash / History",
       "kind": "safety"
     },
     {
-      "key": "exact-vial-preparation",
-      "title": "View preparation details for the selected physical vial",
-      "detail": "Read preparation details from the exact physical vial or vial-ID-matched recon history without borrowing unrelated kit defaults; Stash vial detail is read-only.",
-      "screen": "Stash / Combo Dose",
+      "key": "protected-ui-integration",
+      "title": "Retain approved search, calculator and backed-dose corrections",
+      "detail": "Preserve PR146 single clear-X search, injectable syringe overflow recovery and read-only theoretical nasal calculator, alongside PR142 backed-dose history/writer reliability.",
+      "screen": "Check-In / Supplements / Calculator / Today",
       "kind": "improvement"
-    },
-    {
-      "key": "combo-ds2-polish",
-      "title": "Consistent dose header, selection chevrons and field spacing",
-      "detail": "Apply the approved DS2 DM Sans form heading, accessible close target and visible outline chevrons to unit, source and shared administration selectors with more breathing room.",
-      "screen": "Today / Log Dose / Combo Dose",
-      "kind": "fix"
     }
   ],
-  "dataImpact": "No destructive migration or overwrite of existing production localStorage (peptide-tracker-html-v1). No automatic rewrite of old dose records, saved history, kit records, Check-Ins or inventory. New Combo Dose records retain the established native numeric dose format plus optional enteredAmount/enteredUnit audit metadata. Successful logged doses only debit eligible exact vial sources through the existing guarded exclusive writer. Demo data remains entirely isolated.",
+  "dataImpact": "No destructive migration, import, automatic rewrite, or overwrite of existing production localStorage (peptide-tracker-html-v1). Only explicitly confirmed eligible LIVE prepared-nasal administrations atomically add the dose and exact-bottle ledger transaction and debit that prepared bottle; verified Undo reverses the same original event. Original physical source vials must not be deducted again. Other existing history, protocols, Check-Ins, Stash and inventory remain untouched. DEMO remains isolated.",
   "limitations": [
     "Prepared-dose use delegates to the established prepared-syringe confirmation flow; unsupported administration-method and multi-source combinations fail closed rather than inventing new physical transactions.",
-    "LIVE nasal administration and generic preparation transfers remain OFF; previously approved recorded preparation flow remains unchanged.",
+    "The prepared nasal administration gate is ON only in this unmerged release candidate, not on deployed production. Generic preparation transfers remain OFF. Physical iPhone, VoiceOver, and independent clinical pump calibration acceptance remain pending.",
     "The full offline DEMO intentionally uses fallback fonts. LIVE source preserves external DM Sans/Fraunces/DM Mono import; actual online font-file rendering and VoiceOver/Dynamic Type were not independently accepted in this release session.",
     "Automated vial-source and measurement regressions passed; synthetic calculator diagnostics do not establish independent clinical certification.",
     "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed.",
