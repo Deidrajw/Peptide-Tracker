@@ -1,3 +1,6 @@
+## 2026-11-09 — Pre-release QA checkpoint only, NOT DEPLOYED
+- PR158 app source through 2571534f, regression 833cb687, docs QA trigger dc7bd693, main 1c6007fc. Five CI workflows SUCCESS (WebKit, mobile, pinned Chromium, writer, DS2). Full build 42584147975 browser stage IN PROGRESS; final exact-source release artifacts and physical iPhone acceptance incomplete. Version not bumped; no migration, merge, deployment or live data changes.
+
 ## 2026-11-09 — Issue157 correction + Start Now candidate not released
 - App changes latest at 2571534f, test at 833cb687, documentation QA trigger dc7bd693. Implemented simplified advanced phases, date mode restoration, DS2 errors, and Start Now with confirmed calendar date, optional Log Dose and old-compound-history baseline. Initial predecessor build 42583099722 FAIL on Start Now historical data gating; corrected, new six-suite runs 42584147975/42584147840/42584147856/42584147869/42584148090/42584147839 ongoing except mobile PASS and writer partial PASS at observation. Exact-source FULL-APP DEMO/LIVE ZIP and physical iPhone acceptance not yet verified. No production writes, migration, merge, deploy, or version bump; user authorized development only.
 
