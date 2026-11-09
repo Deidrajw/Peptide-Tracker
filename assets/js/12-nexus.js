@@ -353,9 +353,23 @@ function wireBody() {
   };
   const np=$("#new-protocol"); if(np) np.onclick=()=>protocolBuilderModal();
   const esp=$("#empty-setup-protocol"); if(esp) esp.onclick=()=>{tab="protocols";render();window.scrollTo(0,0);};
-  document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=async()=>{
-    const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p){p.status="active";if(!await nexusCommitCurrentState())return;renderBody();}
+  document.querySelectorAll(".proto-start-now").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id,compound=b.dataset.name;
+    const p=state.protocols?.find(x=>String(x.id)===String(id));
+    if(!p||!["draft","planned"].includes(p.status)||hasDoses(p)||!(p.compounds||[]).length)return;
+    const today=localDate();
+    confirmAction("Start "+p.name+" today ("+today+")? This activates the protocol and sets its start date to today. You can log the first dose afterward; existing history will not change.",async()=>{
+      const current=state.protocols?.find(x=>String(x.id)===String(id));
+      if(!current||!["draft","planned"].includes(current.status)||hasDoses(current))return;
+      current.startDate=localDate();current.status="active";
+      // Apply the start date to schedule consumers, not logged dose history.
+      syncProtocolToCompoundData(current);
+      if(!await nexusCommitCurrentState())return;
+      renderBody();
+      confirmAction("Protocol started today. Would you like to log a dose now?",()=>{
+        doseModal(compound);
+      },{confirmLabel:"Log Dose",cancelLabel:"Not now",tone:"success"});
+    },{confirmLabel:"Start now",cancelLabel:"Cancel",tone:"success"});
   });
   document.querySelectorAll(".proto-pause").forEach(b=>b.onclick=async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
