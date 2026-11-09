@@ -1040,7 +1040,7 @@ function protocolBuilderModal(existing, renewalCompound) {
 
     if(curStep()==="Review") {
       const totalWeeks=Math.max(1,...proto.compounds.map(c=>((c.phases||[]).reduce((a,p)=>a+(p.durationWeeks||4),0))||8));
-      const gantt=proto.compounds.map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:totalWeeks}]).map(ph=>`<div style="flex:${ph.durationWeeks||4};background:${ph.type==="dose"?"#A78BFA":"#444"};height:10px;border-radius:2px"></div>`).join(""); return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span style="font-size:9px;color:var(--t4);width:60px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:2px">${bars}</div><span style="font-size:9px;color:var(--t5);flex-shrink:0">${totalWeeks}w</span></div>`;}).join("");
+      const gantt=proto.compounds.map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:totalWeeks}]).map(ph=>`<div style="flex:${ph.durationWeeks||4};background:${ph.type==="dose"?"#A78BFA":"#444"};height:10px;border-radius:2px"></div>`).join(""); return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span class="nx-pb-gantt-label" style="width:72px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:2px">${bars}</div><span class="nx-pb-gantt-weeks" style="flex-shrink:0">${totalWeeks}w</span></div>`;}).join("");
       const cx=stackComplexity(proto.compounds);
       const interactions=getInteractions(proto.compounds);
       const dosesPerWeek=proto.schedule.dosesPerDay*(proto.schedule.days?.length||1);
@@ -1053,10 +1053,10 @@ function protocolBuilderModal(existing, renewalCompound) {
         ${(state.plans?.goals||[]).map(g=>`<option value="${esc(String(g.id))}"${String(proto.linkedGoalId||"")===String(g.id)?" selected":""}>${esc(g.name)}</option>`).join("")}
       </select>
       <div class="nx-muted" style="font-size:11px;margin-bottom:14px">This links an existing goal for context. It doesn't change the protocol's purpose, dosing schedule or dose history.</div>
-      <div style="background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div class="nx-pb-phase-timeline" style="background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px">
         <div class="nx-pb-phase-timeline-label">Phase timeline</div>
         ${gantt||"<div style='color:var(--t5);font-size:11px'>No compounds added.</div>"}
-        <div style="display:flex;gap:10px;margin-top:6px"><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#A78BFA;border-radius:2px"></div><span style="font-size:9px;color:var(--t4)">Active</span></div><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#444;border-radius:2px"></div><span style="font-size:9px;color:var(--t4)">Rest</span></div></div>
+        <div class="nx-pb-timeline-legend" style="display:flex;gap:10px;margin-top:8px"><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#A78BFA;border-radius:2px"></div><span>Active</span></div><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#444;border-radius:2px"></div><span>Rest</span></div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
         <div style="background:var(--surface-2);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:var(--t4)">COMPOUNDS</div><div style="font-size:14px;font-weight:700;color:var(--t1)">${proto.compounds.length}</div></div>
