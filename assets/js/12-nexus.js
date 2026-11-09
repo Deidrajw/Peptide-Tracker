@@ -364,6 +364,13 @@ function wireBody() {
       current.startDate=localDate();current.status="active";
       // Apply the start date to schedule consumers, not logged dose history.
       syncProtocolToCompoundData(current);
+      // The standard single-phase Weeks path updates cadence but historically
+      // does not assign startDate. Start Now must anchor BOTH the protocol and
+      // the actual Today scheduling source to the confirmed calendar day.
+      for(const c of current.compounds||[]){
+        const record=(PEPTIDES[c.name]?state.peptides:state.customPeptides)?.[c.name];
+        if(record)record.startDate=current.startDate;
+      }
       if(!await nexusCommitCurrentState())return;
       renderBody();
       confirmAction("Protocol started today. Would you like to log a dose now?",()=>{
