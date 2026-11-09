@@ -18,6 +18,8 @@ if(!supplySource.includes('class="nx-supply-planner-heading">Supply Planner</spa
   throw Error('Supply Planner heading must use plain DS2 typography without emoji');
 if(!ds2Css.includes('.nx-pb-phase-timeline-label')||!ds2Css.includes('.nx-supply-planner-heading'))
   throw Error('Scoped DS2 typography missing for protocol and Supply Planner');
+if(!protocolSource.includes('class="nx-pb-timeline-legend"')||!protocolSource.includes('class="nx-pb-gantt-label"')||!ds2Css.includes('.nx-pb-phase-timeline .nx-pb-gantt-label'))
+  throw Error('DS2 phase timeline labels and legend must use readable scoped styles');
 
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 function check(pass,message){if(!pass)throw Error(message)}
