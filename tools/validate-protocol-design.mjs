@@ -204,12 +204,13 @@ try{
           dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
         const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
         document.querySelector("#pb-next")?.click();
+        const reviewExact=document.querySelector(".nx-phase-review-end")?.textContent.includes("2027-01-01")===true;
         document.querySelector("#pb-save-draft")?.click();
         await new Promise(resolve=>setTimeout(resolve,25));
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,reviewExact,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
