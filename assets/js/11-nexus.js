@@ -1412,9 +1412,9 @@ function getProtocolPhaseInfo(p, c) {
   if (idx===-1) return { done:true, phases:phaseDates };
   const cur = phaseDates[idx];
   const next = phaseDates[idx+1] || null;
-  const weeksElapsed = Math.max(0,(new Date(today+"T12:00")-new Date(cur.startDate+"T12:00"))/(7*86400000));
+  const weeksElapsed = Math.max(0,nexusCalendarDaysBetween(cur.startDate,today)/7);
   const weekInPhase = Math.floor(weeksElapsed)+1;
-  const daysLeft = Math.max(0, Math.round((new Date(cur.endDate+"T12:00")-new Date(today+"T12:00"))/86400000));
+  const daysLeft = Math.max(0,nexusCalendarDaysBetween(today,cur.endDate));
   return { index:idx, isRest: cur.type!=="dose", weekInPhase, totalWeeks: Math.ceil(nexusPhaseDurationDays(cur)/7), daysLeft, current:cur, next, phases:phaseDates, isPaused: p.status==="paused" };
 }
 
