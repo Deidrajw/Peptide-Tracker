@@ -2797,3 +2797,76 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 @media (max-width: 350px) {
   .nx-pb-phase-timeline .nx-pb-gantt-label { width: 62px !important; }
 }
+
+/* Issue #157 — progressive, exact-date protocol phase controls; scoped to builder. */
+#proto-builder-wrap .nx-phase-start-field,
+#proto-builder-wrap .nx-phase-heading {
+  margin-bottom: 14px;
+}
+#proto-builder-wrap .nx-phase-start-field .inp,
+#proto-builder-wrap .pb-phase-end {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin-top: 6px;
+  font: 500 15px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-heading strong {
+  display: block;
+  color: var(--t1);
+  font: 700 18px/1.35 'DM Sans', system-ui, sans-serif;
+  letter-spacing: -.02em;
+}
+#proto-builder-wrap .nx-phase-heading .hint,
+#proto-builder-wrap .nx-phase-start-field .hint,
+#proto-builder-wrap .nx-phase-date-hint {
+  margin: 6px 0 0;
+  color: var(--t3);
+  font: 400 12px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-advanced-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+  color: var(--t2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-sub);
+  border-radius: 10px;
+  font: 600 13px/1.3 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-duration-toggle {
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  margin: 8px 0;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+#proto-builder-wrap .pb-duration-mode {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--t3);
+  font: 600 13px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .pb-duration-mode[aria-pressed="true"] {
+  color: var(--t1);
+  background: var(--surface-3);
+  border-color: #A78BFA;
+}
+#proto-builder-wrap .nx-phase-date-label {
+  display: block;
+  color: var(--t2);
+  font: 600 13px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-week-controls .nx-pb-stepper {
+  min-width: 44px;
+  min-height: 44px;
+}
