@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue #155 supplemental fictional iPhone preview, NOT A RELEASE
+- Created separate local complete full-app DEMO HTML and offline ZIP with fictional-only Test Reta renewal launcher; NOT added to LIVE source or GitHub Actions release artifacts. Static syntax/isolation/CRC verified, local browser navigation BLOCKED; no iPhone acceptance yet. Unchanged qualified application source 3b3a0ae0, no version bump, production modification, merge or deploy.
+
 ## 2026-11-08 — Issue #155 PR156 candidate qualified 6/6, NOT MERGED OR RELEASED
 - Version remains v0.9.26-beta.1 (no public bump). Draft PR156 app/test source 3b3a0ae0 after canonical failed-ack rollback correction, 6/6 workflows SUCCESS: 42558271659, 42558271648, 42558271815, 42558271574, 42558271806, 42558271622. Full-app browser protocol 8/8 LIVE/DEMO × 320/390 × light/dark PASS. Official artifact #13648003897 manifest exact 3b3a0ae0, outer ZIP 565 CRC PASS, LIVE 26 files CRC PASS, full standalone isolated fictional demo byte-equal offline ZIP root; index/CSS/JS01/JS11 git hashes match. No migrations, user records, production writes, merge or deployment. Physical Safari and Cloudflare parity incomplete; separate release approval required.
 
