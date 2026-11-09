@@ -511,7 +511,7 @@ function getProtocolRemainingRequirement(proto, comp) {
     if (ph.type!=="dose") return {...ph, doses:0, mg:0};
     const weeksRemaining = i===0
       ? Math.max(0,(new Date(ph.endDate+"T12:00")-new Date(localDate()+"T12:00"))/(7*86400000))
-      : (ph.durationWeeks||4);
+      : (nexusPhaseDurationDays(ph)/7);
     const doses = Math.round(weeksRemaining*freqPerWeek(ph.schedule));
     const mg = doseToMg(ph.dose, cUnit)*doses;
     totalMg += mg; totalDoses += doses;
@@ -1395,7 +1395,7 @@ function buildReminders() {
           const prevIsRest = prev.type!=="dose", curIsRest = cur.type!=="dose";
           const idBase = `ptransition_${proto.id}_${comp.name}_${cur.startDate}`;
           if (!prevIsRest && curIsRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins today`,`Your active dosing ends. No doses will be scheduled during this rest period.`,c2.color,"protocol|"+comp.name,"View Protocol");
-          else if (prevIsRest && !curIsRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes today`,`Next phase: ${cur.dose||"—"} ${c2.unit} · ${cur.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
+          else if (prevIsRest && !curIsRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes today`,`Next phase: ${cur.dose||"—"} ${c2.unit} · ${(nexusPhaseDurationDays(cur)/7).toFixed(1)} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+1} today`,`New dose: ${cur.dose||"—"} ${c2.unit}`,c2.color,"protocol|"+comp.name,"View Protocol");
           return; // today's message takes priority — don't also fire a forward-looking one for the same compound today
         }
@@ -1417,7 +1417,7 @@ function buildReminders() {
         const idBase = `ptransition_${proto.id}_${comp.name}_${next.startDate}`;
         if (daysUntil===1) {
           if (enteringRest) r(idBase,"phase",2,"⏸",`${comp.name} rest phase begins tomorrow`,`Your active dosing ends tomorrow.`,c2.color,"protocol|"+comp.name,"View Protocol");
-          else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${next.durationWeeks||4} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
+          else if (exitingRest) r(idBase,"phase",2,"▶",`${comp.name} dosing resumes tomorrow`,`Next phase: ${next.dose||"—"} ${c2.unit} · ${(nexusPhaseDurationDays(next)/7).toFixed(1)} weeks`,c2.color,"protocol|"+comp.name,"View Protocol");
           else r(idBase,"phase",2,"📈",`${comp.name} enters Phase ${info.index+2} tomorrow`,`Your dose changes from ${cur.dose||"—"} to ${next.dose||"—"} ${c2.unit}.`,c2.color,"protocol|"+comp.name,"View Protocol");
         } else if (daysUntil===3 || daysUntil===7) {
           const changeDesc = describeChange();
@@ -1534,7 +1534,7 @@ function exportICSWithTimePicker(name) {
       // schedule that never changes.
       let cursor = p.startDate;
       blocks = p.phases.map((ph,pi)=>{
-        const durDays = Math.round((ph.durationWeeks||4)*7);
+        const durDays = nexusPhaseDurationDays(ph);
         const phaseStart = cursor;
         const isLast = pi===p.phases.length-1;
         const phaseEnd = isLast ? null : addDays(cursor, durDays-1);
