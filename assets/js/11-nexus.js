@@ -875,6 +875,9 @@ function protocolBuilderModal(existing, renewalCompound) {
 
   const curStep = () => STEPS[step];
   let advancedPhaseOptions=!!existing&&proto.compounds.some(c=>c.multiPhase||(c.phases||[]).length>1);
+  // Transient builder-only preference: switching to Weeks must not discard a user's
+  // exact date. Never serialize this cache or alter old saved protocol records.
+  const exactDateModeCache=new WeakMap();
   const phaseDuration = ph => nexusPhaseDurationDays(ph);
   const phaseStartFor = (c,pi) => (c.phases||[]).slice(0,pi).reduce((day,ph)=>addDays(day,phaseDuration(ph)),proto.startDate||localDate());
   const phaseLastDay = (c,pi) => addDays(phaseStartFor(c,pi),phaseDuration(c.phases[pi])-1);
@@ -1152,8 +1155,20 @@ function protocolBuilderModal(existing, renewalCompound) {
     });
     m.querySelectorAll(".pb-duration-mode").forEach(b=>b.onclick=()=>{
       const ci=+b.dataset.ci,pi=+b.dataset.pi,c=proto.compounds[ci],ph=c?.phases?.[pi];if(!ph)return;
-      if(b.dataset.mode==="weeks"){delete ph.durationDays;delete ph.endOnDate;}
-      else {const first=phaseStartFor(c,pi);applyExactEnd(ph,first,addDays(first,phaseDuration(ph)-1));}
+      if(b.dataset.mode==="weeks"){
+        if(ph.endOnDate){
+          exactDateModeCache.set(ph,ph.endOnDate);
+          // An exact 32-day range should offer 5 whole weeks, not silently fall
+          // back to the older default of 4. Weeks remains an integer-week model.
+          ph.durationWeeks=Math.max(1,Math.ceil(phaseDuration(ph)/7));
+          delete ph.durationDays;delete ph.endOnDate;
+        }
+      } else if(!ph.endOnDate) {
+        const first=phaseStartFor(c,pi);
+        const remembered=exactDateModeCache.get(ph);
+        const lastDay=remembered&&remembered>=first?remembered:addDays(first,phaseDuration(ph)-1);
+        applyExactEnd(ph,first,lastDay);
+      }
       rebuildModal();
     });
     m.querySelectorAll(".pb-phase-end").forEach(b=>b.onchange=()=>{
@@ -1162,6 +1177,7 @@ function protocolBuilderModal(existing, renewalCompound) {
       if(!applyExactEnd(ph,phaseStartFor(c,pi),b.value)){
         b.setCustomValidity("Choose a last day on or after this phase starts");b.reportValidity();return;
       }
+      exactDateModeCache.set(ph,ph.endOnDate);
       b.setCustomValidity("");rebuildModal();
     });
     m.querySelectorAll(".pb-multiphase").forEach(cb=>cb.onchange=()=>{const ci=+cb.dataset.ci;proto.compounds[ci].multiPhase=cb.checked;if(!proto.compounds[ci].phases||proto.compounds[ci].phases.length<1)proto.compounds[ci].phases=[{type:"dose",durationWeeks:4,dose:""}];rebuildModal();});
