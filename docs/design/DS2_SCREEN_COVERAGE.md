@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 approved Duration & changes progressive disclosure (CANDIDATE)
+- Protocol Builder > Phases now has prominent start date, segmented Weeks / End on date controls for a single phase, exact inclusive last-day date picker and approx duration, advanced toggle hiding multi-phase and per-phase schedule controls by default (existing multiple-phase editor expanded on edit). DS2 DM Sans type, scoped controls and >=44px buttons, 320px/390px required. Retains full editor controls/old records and date-specific phase durations separately. Actual screenshots and physical iPhone acceptance NOT TESTED; pause/resume, attribution and date boundaries must be qualified before release. Not merged/deployed.
+
 ## 2026-11-08 — Issue155 Phase Timeline legibility refinement
 - PR156 targeted emoji removal + semantic DS2 heading at Review > Phase Timeline and Stash > Planner, plus 11px Active/Rest legend, compound labels and tabular week text, narrow viewport label width. Scoped CSS only, no nested cards or model changes; test source checks added. New-head browser/visual testing and real iPhone acceptance pending. Exact-date and broader Phases redesign in #157 remains proposal, NOT CODED.
 
