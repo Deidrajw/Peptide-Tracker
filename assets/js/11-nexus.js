@@ -875,6 +875,9 @@ function protocolBuilderModal(existing, renewalCompound) {
 
   const curStep = () => STEPS[step];
   let advancedPhaseOptions=!!existing&&proto.compounds.some(c=>c.multiPhase||(c.phases||[]).length>1);
+  let pendingPhaseRemoval=null;
+  let builderInlineError="";
+  function showBuilderIssue(message){builderInlineError=message;const el=document.getElementById("pb-inline-error");if(el){el.textContent=message;el.hidden=!message;}const cancel=document.getElementById("pb-remove-cancel");if(cancel)cancel.hidden=!pendingPhaseRemoval;}
   // Transient builder-only preference: switching to Weeks must not discard a user's
   // exact date. Never serialize this cache or alter old saved protocol records.
   const exactDateModeCache=new WeakMap();
@@ -892,6 +895,8 @@ function protocolBuilderModal(existing, renewalCompound) {
     if(count) count.textContent = (step+1)+"/"+STEPS.length;
     const b = document.getElementById("proto-builder-body");
     if(b) b.innerHTML=buildStep();
+    const issue=document.getElementById("pb-inline-error");if(issue){issue.textContent=builderInlineError;issue.hidden=!builderInlineError;}
+    const cancel=document.getElementById("pb-remove-cancel");if(cancel)cancel.hidden=!pendingPhaseRemoval;
     const nav=document.getElementById("proto-builder-nav");
     if(nav) nav.innerHTML=buildNav();
     wireStep();
@@ -1002,21 +1007,18 @@ function protocolBuilderModal(existing, renewalCompound) {
 
     if(curStep()==="Duration & changes") {
       if(!proto.compounds.length) return prog+`<div style="text-align:center;padding:20px;color:var(--t4)">Add compounds in the Stack step first.</div>`;
-      return prog+`<div class="nx-phase-start-field"><label class="field-label" for="pb-protocol-start">START DATE</label><input id="pb-protocol-start" class="inp" type="date" value="${esc(proto.startDate||localDate())}"><p class="hint">All phases start from this date. Previously logged doses are unchanged.</p></div><div class="nx-phase-heading"><strong>Duration & changes</strong><p class="hint">Choose a duration in weeks or an exact last day. More phases are optional.</p></div><button id="pb-advanced-toggle" type="button" class="nx-phase-advanced-toggle" aria-expanded="${advancedPhaseOptions}">${advancedPhaseOptions?"Hide advanced phase options":"Advanced phase options"} <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${advancedPhaseOptions?180:0}deg)"><path d="m6 9 6 6 6-6"/></svg></button>`+proto.compounds.map((c,ci)=>`
+      return prog+`<div class="nx-phase-start-field"><label class="field-label" for="pb-protocol-start">START DATE</label><input id="pb-protocol-start" class="inp" type="date" value="${esc(proto.startDate||localDate())}"><p class="hint">All phases start from this date. Previously logged doses are unchanged.</p></div><div class="nx-phase-heading"><strong>Duration & changes</strong><p class="hint">Choose a duration in weeks or an exact last day. More phases are optional.</p></div><p id="pb-inline-error" role="alert" class="nx-pb-inline-error" ${builderInlineError?"":"hidden"}>${esc(builderInlineError)}</p><button id="pb-remove-cancel" class="nx-pb-inline-cancel" type="button" ${pendingPhaseRemoval?"":"hidden"}>Cancel phase removal</button><button id="pb-advanced-toggle" type="button" class="nx-phase-advanced-toggle" aria-expanded="${advancedPhaseOptions}">${advancedPhaseOptions?"Hide additional phases":"Additional phases"} <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${advancedPhaseOptions?180:0}deg)"><path d="m6 9 6 6 6-6"/></svg></button>`+proto.compounds.map((c,ci)=>`
       <div style="margin-bottom:14px;padding:12px;background:var(--surface-2);border-radius:10px">
         <div style="font-size:12px;font-weight:600;color:#A78BFA;margin-bottom:8px">${esc(c.name)} · ${esc(c.route||"SubQ")}</div>
-        <div class="nx-phase-advanced-only" style="display:${advancedPhaseOptions?"flex":"none"};align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:12px;color:var(--t3)">Multiple phases (changes or rest periods)</span>
-          <label style="position:relative;display:inline-block;width:38px;height:22px"><input type="checkbox" class="pb-multiphase" data-ci="${ci}" ${c.multiPhase?"checked":""} style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${c.multiPhase?"#A78BFA":"var(--border)"};border-radius:11px;transition:.2s"></span></label>
-        </div>
-        ${(c.phases||[{type:"dose",durationWeeks:4,dose:""}]).map((ph,pi)=>`
+        ${!advancedPhaseOptions&&(c.phases||[]).length>1?`<p class="nx-pb-phase-summary">${(c.phases||[]).length} phases configured · Expand Additional phases to review</p>`:""}
+        ${(c.phases||[{type:"dose",durationWeeks:4,dose:""}]).map((ph,pi)=>(!advancedPhaseOptions&&pi>0)?"":`
         <div style="background:var(--surface-3);border-radius:8px;padding:9px;margin-bottom:5px">
-          <div style="display:${advancedPhaseOptions?"flex":"none"};gap:5px;margin-bottom:7px">
+          <div style="display:${advancedPhaseOptions&&(pi>0||ph.type==="rest")?"flex":"none"};gap:5px;margin-bottom:7px">
             <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="dose" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="dose"?"#A78BFA22":"transparent"};border:1px solid ${ph.type==="dose"?"#A78BFA":"var(--border)"};color:${ph.type==="dose"?"#A78BFA":"var(--t4)"}">Dose</button>
             <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="rest" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="rest"?"#F9C87D22":"transparent"};border:1px solid ${ph.type==="rest"?"#F9C87D":"var(--border)"};color:${ph.type==="rest"?"#F9C87D":"var(--t4)"}">Rest</button>
-            ${pi>0?`<button class="pb-phrem" data-ci="${ci}" data-pi="${pi}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);color:var(--t5);font-size:11px">✕</button>`:""}
+            ${pi>0?`<button type="button" class="pb-phrem" data-ci="${ci}" data-pi="${pi}" aria-label="Remove phase ${pi+1}" style="min-height:44px;padding:6px 10px;border-radius:8px;border:1px solid var(--border);color:var(--t2);font-size:12px">Remove</button>`:""}
           </div>
-          <div class="nx-phase-duration-toggle" role="group" aria-label="Duration method" style="display:${!c.multiPhase&&(c.phases||[]).length===1?"flex":"none"}"><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="weeks" aria-pressed="${!ph.endOnDate}">Weeks</button><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="date" aria-pressed="${!!ph.endOnDate}">End on date</button></div>
+          <div class="nx-phase-duration-toggle" role="group" aria-label="Duration method" style="display:flex"><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="weeks" aria-pressed="${!ph.endOnDate}">Weeks</button><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="date" aria-pressed="${!!ph.endOnDate}">End on date</button></div>
           <div class="nx-phase-week-controls" style="display:${ph.endOnDate?"none":"flex"};align-items:center;gap:8px;margin-bottom:6px">
             <span style="font-size:12px;color:var(--t3);flex:1">Duration (weeks)</span>
             <button type="button" class="pb-phdec nx-pb-stepper" aria-label="Decrease phase duration" data-ci="${ci}" data-pi="${pi}">−</button>
@@ -1048,7 +1050,7 @@ function protocolBuilderModal(existing, renewalCompound) {
             </div>`;
           })() : ""}
         </div>`).join("")}
-        ${c.multiPhase&&advancedPhaseOptions?`<button class="pb-addphase" data-ci="${ci}" style="width:100%;padding:6px;border-radius:7px;border:1px dashed var(--border-sub);color:#A78BFA;font-size:11px;margin-top:4px">+ Add Phase</button>`:""}
+        ${advancedPhaseOptions?`<p class="nx-pb-phase-summary">Add a change in dose, schedule or a rest period.</p><button class="pb-addphase" data-ci="${ci}" style="width:100%;min-height:44px;padding:10px;border-radius:9px;border:1px dashed var(--border-sub);color:#A78BFA;font-size:13px;margin-top:4px">+ Add Phase</button>`:""}
       </div>`).join("");
     }
 
@@ -1180,13 +1182,24 @@ function protocolBuilderModal(existing, renewalCompound) {
       exactDateModeCache.set(ph,ph.endOnDate);
       b.setCustomValidity("");rebuildModal();
     });
-    m.querySelectorAll(".pb-multiphase").forEach(cb=>cb.onchange=()=>{const ci=+cb.dataset.ci;proto.compounds[ci].multiPhase=cb.checked;if(!proto.compounds[ci].phases||proto.compounds[ci].phases.length<1)proto.compounds[ci].phases=[{type:"dose",durationWeeks:4,dose:""}];rebuildModal();});
+
     m.querySelectorAll(".pb-ptype").forEach(b=>b.onclick=()=>{const ci=+b.dataset.ci,pi=+b.dataset.pi;if(proto.compounds[ci]?.phases?.[pi])proto.compounds[ci].phases[pi].type=b.dataset.t;rebuildModal();});
     m.querySelectorAll(".pb-phdec").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph&&ph.durationWeeks>1){ph.durationWeeks--;delete ph.durationDays;delete ph.endOnDate;}rebuildModal();});
     m.querySelectorAll(".pb-phinc").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph){ph.durationWeeks=(ph.durationWeeks||4)+1;delete ph.durationDays;delete ph.endOnDate;}rebuildModal();});
     m.querySelectorAll(".pb-phdose").forEach(b=>b.oninput=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph)ph.dose=b.value;});
-    m.querySelectorAll(".pb-addphase").forEach(b=>b.onclick=()=>{const c=proto.compounds[+b.dataset.ci];if(c){if(!c.phases)c.phases=[];c.phases.push({type:"dose",durationWeeks:4,dose:""});rebuildModal();}});
-    m.querySelectorAll(".pb-phrem").forEach(b=>b.onclick=()=>{const c=proto.compounds[+b.dataset.ci];if(c?.phases){c.phases.splice(+b.dataset.pi,1);rebuildModal();}});
+    m.querySelectorAll(".pb-addphase").forEach(b=>b.onclick=()=>{const c=proto.compounds[+b.dataset.ci];if(c){if(!c.phases)c.phases=[];c.phases.push({type:"dose",durationWeeks:4,dose:""});c.multiPhase=c.phases.length>1;pendingPhaseRemoval=null;rebuildModal();}});
+    m.querySelectorAll(".pb-phrem").forEach(b=>b.onclick=()=>{
+      const ci=+b.dataset.ci,pi=+b.dataset.pi,c=proto.compounds[ci];if(!c?.phases?.[pi]||pi===0)return;
+      const key=ci+":"+pi;
+      if(pendingPhaseRemoval!==key){
+        pendingPhaseRemoval=key;
+        showBuilderIssue("Remove phase "+(pi+1)+"? Future schedules may change after saving. Existing logged doses stay intact. Tap Confirm to remove.");
+        b.textContent="Confirm";b.setAttribute("aria-label","Confirm removal of phase "+(pi+1));return;
+      }
+      c.phases.splice(pi,1);c.multiPhase=c.phases.length>1;
+      pendingPhaseRemoval=null;showBuilderIssue("");rebuildModal();
+    });
+    m.querySelector("#pb-remove-cancel")?.addEventListener("click",()=>{pendingPhaseRemoval=null;showBuilderIssue("");rebuildModal();});
     // Per-phase schedule override — a phase can change BOTH dose and cadence (e.g.
     // Placenta's loading phase is daily/2x while maintenance is weekly). Toggling on
     // seeds the phase's schedule from the compound's Step 4 schedule, so it starts as a
