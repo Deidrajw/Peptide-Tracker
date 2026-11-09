@@ -1578,7 +1578,7 @@ function nexusPhaseDurationDays(phase) {
   return Math.round((phase?.durationWeeks||4)*7);
 }
 function nexusCalendarDaysBetween(a,b){
-  const date=/^\\d{4}-\\d{2}-\\d{2}$/;
+  const date=/^\d{4}-\d{2}-\d{2}$/;
   if(!date.test(String(a||""))||!date.test(String(b||"")))return NaN;
   const start=Date.parse(a+"T12:00:00Z"),end=Date.parse(b+"T12:00:00Z");
   if(!Number.isFinite(start)||!Number.isFinite(end))return NaN;
