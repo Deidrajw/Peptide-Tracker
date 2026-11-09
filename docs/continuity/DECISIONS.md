@@ -1,3 +1,8 @@
+## 2026-11-09 — User physical QA of Issue157 and pending UX choices
+- User reported date mode switch FAIL in PR158 previously qualified app 44ce0c24: Weeks defaulted 4w and switching back lost chosen exact end. Preserve explicit end date across a mode roundtrip in unsaved builder, maintain separate weeks semantics; narrow safe fix authorized by bug report and coded on draft.
+- User reported inconsistent native invalid-date alert appearance and confusing advanced hierarchy: Dose/Rest exposed simply by expansion, Weeks/End on date disappears when multiple phases selected; disabling multi-phase left a second phase present. These are review findings, not permission to destructively delete existing phases. Show a coherent essential/optional hierarchy; require explicit confirmation for removal of saved phases, leave historical doses intact. No approved final redesign yet.
+- User requests 'Start Now' such that protocol effective start date is today, unlike existing Log First Dose which only opens doseModal. Product decision pending: recommend separate Start Now action for not-yet-started protocols; never silently rewrite start of existing active/historical protocols. No merge/deploy authorization.
+
 ## 2026-11-09 — Issue157 qualification does not grant release authority
 - Official exact-head PR158 GitHub QA and artifacts verified after prior pending state. Approved Weeks/End on date and advanced disclosure unchanged. PR158 remains stacked draft on PR156; user gave no approval to merge/deploy. Physical iPhone/VoiceOver acceptance remains outstanding. Preserve all old week-duration protocols and user records; no automatic migration.
 
