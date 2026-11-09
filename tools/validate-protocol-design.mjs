@@ -180,6 +180,13 @@ try{
         const lastDay=getEffectiveSchedule(comp,"2027-01-01");
         const nextDay=getEffectiveSchedule(comp,"2027-01-02");
         const stopsAfter=(!lastDay.isRest)&&nextDay.isRest===true&&nextDay.endedByDate===true;
+        state.protocols.push(p);
+        comp.protocolScheduleId=p.id;
+        p.pauseDaysAccumulated=2;
+        const pausedShift=(getEffectiveSchedule(comp,"2027-01-03").isRest!==true)&&getEffectiveSchedule(comp,"2027-01-04").endedByDate===true;
+        p.status="paused";p.pausedAt="2026-12-12T12:00:00";
+        const pausedStops=getEffectiveSchedule(comp,"2026-12-13").pausedByProtocol===true;
+        p.status="active";delete p.pausedAt;p.pauseDaysAccumulated=0;
         nexusCommitCurrentState=async()=>true;
         protocolBuilderModal(undefined,"Retatrutide");
         document.querySelector("#pb-next")?.click();
@@ -202,7 +209,7 @@ try{
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,dstSafe,stopsAfter,phaseUI,advancedUI,invalidGuard,exactUI,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
