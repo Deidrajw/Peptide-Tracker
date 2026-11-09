@@ -363,6 +363,12 @@ function wireBody() {
       const current=state.protocols?.find(x=>String(x.id)===String(id));
       if(!current||!["draft","planned"].includes(current.status)||!current.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return;
       current.startDate=localDate();current.status="active";
+      // Existing compound history belongs to older protocols; never interpret
+      // those records as the first dose of the newly started protocol.
+      current.nexusStartNowBaseline=Object.fromEntries((current.compounds||[]).map(c=>{
+        const record=(PEPTIDES[c.name]?state.peptides:state.customPeptides)?.[c.name];
+        return [c.name,(record?.doses||[]).length];
+      }));
       // Apply the start date to schedule consumers, not logged dose history.
       syncProtocolToCompoundData(current);
       // The standard single-phase Weeks path updates cadence but historically
