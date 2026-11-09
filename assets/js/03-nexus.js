@@ -1622,7 +1622,7 @@ function getPhaseSpan(data, dateStr) {
         startDay: addDays(start, cursor),
         // First day AFTER this phase. null for the final phase: getCompoundPhase holds on
         // the last phase indefinitely rather than running off the end, so nothing follows it.
-        nextStartDay: isLast ? null : addDays(start, cursor+durDays),
+        nextStartDay: isLast && phases[i].durationDays==null ? null : addDays(start, cursor+durDays),
         weekInPhase: Math.min(Math.floor(Math.max(0, daysIn-cursor)/7)+1, Math.max(1, Math.round(durDays/7))),
         totalWeeks: Math.max(1, Math.round(durDays/7)),
       };
@@ -1686,6 +1686,15 @@ function syncProtocolToCompoundData(proto) {
 }
 
 function getEffectiveSchedule(data, dateStr) {
+  // Explicit calendar-end phases have an actual final planned day; never
+  // silently continue generating scheduled doses past it. Old week-only
+  // protocols retain the legacy maintenance-after-final-phase behaviour.
+  const phases=data.phases||[],final=phases[phases.length-1];
+  if(final?.durationDays!=null && data.startDate){
+    const endExclusive=addDays(data.startDate,phases.reduce((n,ph)=>n+nexusPhaseDurationDays(ph),0));
+    if(dayKey(dateStr||localDate())>=endExclusive)
+      return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:final,isRest:true,endedByDate:true};
+  }
   const ph = getCompoundPhase(data, dateStr);
   if (ph && ph.isRest) {
     // A rest phase generates NO occurrences at all — dosesPerDay:0 propagates cleanly
