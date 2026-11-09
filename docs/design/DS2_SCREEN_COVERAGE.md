@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue #155 Phase Review / Stash Planner DS2 typography repair (candidate)
+- PR156 replaces literal graph emoji in Protocol Builder Review > Phase Timeline and Stash > Planner with clean DS2 semantic headings. Scoped DM Sans label/headline styles in nexus.css, with source-guard assertions. No changes to stock arithmetic or saved protocols. User still considering deeper Phases editor visual hierarchy, and wants end-on-date input; date persistence/model change NOT IMPLEMENTED. Fresh exact-source browser CI, 320/390 dark/light, and physical iPhone visuals NOT VERIFIED after this code patch.
+
 ## 2026-11-08 — PR154 Other Forms typography exact-source verified (development only)
 - Source 8eae810d uses the approved shared modal surface, corrected closing tag, scoped DS2 type scale (10px eyebrow, 21/19px title, 13px subtitle, 12px explanatory, 14px buttons, min 48px action targets). All six GitHub test workflows PASS including WebKit iPhone emulation and 320/390 light/dark; independent full-app fictional DEMO/LIVE artifact matched exact source, 26-file LIVE CRC PASS. Post-correction user physical iPhone visual acceptance remains outstanding; do not interpret browser simulation as actual iPhone approval.
 
