@@ -163,6 +163,43 @@ try{
       renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===3,
       "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
 
+    // Issue #157: exact end on calendar date, inclusive final day and
+    // fully isolated builder UI; legacy week-only protocols stay unchanged.
+    const calendarMode=await page.evaluate(async()=>{
+      const before=state,originalCommit=nexusCommitCurrentState;
+      try{
+        state=JSON.parse(JSON.stringify(before));
+        const historical=JSON.stringify(state.peptides?.Retatrutide?.doses||[]);
+        const c={name:"Retatrutide",route:"SubQ",unit:"mg",multiPhase:false,phases:[{type:"dose",durationWeeks:4,durationDays:32,endOnDate:"2027-01-01",dose:"1"}]};
+        const p={id:"qa-date-bound",status:"active",name:"QA exact last day",startDate:"2026-12-01",schedule:{type:"Weekly",days:[2],dosesPerDay:1,times:["08:00"]},compounds:[c]};
+        const info=getProtocolPhaseInfo(p,c);
+        const exactBoundary=info?.phases?.[0]?.endDate==="2027-01-02" && nexusPhaseDurationDays(c.phases[0])===32;
+        const oldPhase=nexusPhaseDurationDays({durationWeeks:4})===28;
+        const comp={startDate:"2026-12-01",scheduleDays:7,dosesPerDay:1,phases:[{durationWeeks:4,durationDays:32,endOnDate:"2027-01-01",dose:"1"}]};
+        const lastDay=getEffectiveSchedule(comp,"2027-01-01");
+        const nextDay=getEffectiveSchedule(comp,"2027-01-02");
+        const stopsAfter=(!lastDay.isRest)&&nextDay.isRest===true&&nextDay.endedByDate===true;
+        nexusCommitCurrentState=async()=>true;
+        protocolBuilderModal(undefined,"Retatrutide");
+        document.querySelector("#pb-next")?.click();
+        document.querySelector("#pb-next")?.click();
+        const phaseUI=!!document.querySelector("#pb-protocol-start")&&!!document.querySelector(".nx-phase-duration-toggle")&&!!document.querySelector("#pb-advanced-toggle");
+        const start=document.querySelector("#pb-protocol-start");
+        if(start){start.value="2026-12-01";start.dispatchEvent(new Event("change",{bubbles:true}));}
+        document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+        const dateInput=document.querySelector(".pb-phase-end");
+        if(dateInput){dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
+        const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
+        document.querySelector("#pb-next")?.click();
+        document.querySelector("#pb-save-draft")?.click();
+        await new Promise(resolve=>setTimeout(resolve,25));
+        const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
+        const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
+        const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
+        return {exactBoundary,oldPhase,stopsAfter,phaseUI,exactUI,persisted,historySafe};
+      }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
+    });
+    check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
