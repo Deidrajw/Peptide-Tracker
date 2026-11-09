@@ -169,6 +169,7 @@ try{
       const previous=state,originalCommit=nexusCommitCurrentState,previousTab=tab;
       try{
         state=JSON.parse(JSON.stringify(previous));
+        state._protocolStatusFilter="all";
         state.protocols=[{id:"qa-start-now",name:"QA Start Now",status:"planned",
           startDate:"2027-02-01",schedule:{type:"Weekly",days:[1],dosesPerDay:1,times:["08:00"]},
           compounds:[{name:"Retatrutide",route:"SubQ",unit:"mg",multiPhase:false,
@@ -190,6 +191,7 @@ try{
         const activated=state.protocols[0].status==="active"&&
           state.protocols[0].startDate===localDate()&&saves===1;
         const schedulerAnchored=state.peptides?.Retatrutide?.startDate===localDate();
+        const oldHistoryNotFirstDose=state.protocols[0].status==="active"&&state.protocols[0].nexusStartNowBaseline?.Retatrutide===(state.peptides?.Retatrutide?.doses||[]).length;
         const offered=!!document.querySelector("#ca-ok")&&
           document.querySelector(".modal")?.textContent.includes("log a dose");
         document.querySelector("#ca-cancel")?.click();
@@ -197,7 +199,7 @@ try{
         const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
         state.protocols[0].status="draft";state.protocols[0].compounds[0].phases[0].dose="";renderBody();
         const incompleteGuard=!document.querySelector(".proto-start-now")&&!!document.querySelector(".proto-finish-setup");
-        return {visible,confirmation,cancellation,activated,schedulerAnchored,offered,noDose,noStock,incompleteGuard};
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,offered,noDose,noStock,incompleteGuard};
       }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
     });
     check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
