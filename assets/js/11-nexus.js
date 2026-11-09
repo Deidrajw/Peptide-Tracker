@@ -1855,7 +1855,7 @@ function protocolsView() {
       <div class="nx-proto-compact-progress"><span>${esc(countdown.detail)}</span><strong>${esc(countdown.label)}</strong></div>
       ${timelinePct!==null?`<div class="nx-proto-compact-track" role="progressbar" aria-label="Planned protocol timeline elapsed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${timelinePct}"><span style="width:${timelinePct}%"></span></div>`:""}
       ${needsFirstDose&&fc?`<div class="nexus-protocol-start">
-        <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
+        <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Protocol is active. You can record the first dose whenever you are ready.</div></div>
         <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">Log first dose</button>
       </div>`:""}
       ${(p.status==="draft"||p.status==="planned")&&!hasDoses(p)&&fc&&startReady?`<button type="button" class="proto-start-now nx-proto-firstlog-action" data-id="${p.id}" data-name="${esc(fc)}" style="width:100%;min-height:48px;margin-top:10px">Start now</button><div class="nexus-protocol-muted" style="margin-top:6px">Sets today as the start date. Logging your first dose is optional.</div>`:(p.status==="draft"||p.status==="planned")&&!hasDoses(p)&&fc?`<button type="button" class="proto-finish-setup nx-proto-firstlog-action" data-id="${p.id}" style="width:100%;min-height:48px;margin-top:10px">Finish setup</button><div class="nexus-protocol-muted" style="margin-top:6px">Add a dose to the protocol before starting.</div>`:""}
