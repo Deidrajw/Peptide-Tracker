@@ -8,6 +8,17 @@ const results=[];
 if(!fs.existsSync(demo))throw Error('Missing full app DEMO artifact');
 if(!fs.readFileSync('assets/js/11-nexus.js','utf8').includes('nx-proto-firstlog-action'))throw Error('DS2 first-log action missing');
 if(!fs.readFileSync('assets/css/nexus-hybrid-preview.css','utf8').includes('.nx-proto-firstlog-action'))throw Error('DS2 first-log lavender styling missing');
+
+const protocolSource=fs.readFileSync('assets/js/11-nexus.js','utf8');
+const supplySource=fs.readFileSync('assets/js/09-nexus.js','utf8');
+const ds2Css=fs.readFileSync('assets/css/nexus.css','utf8');
+if(!protocolSource.includes('class="nx-pb-phase-timeline-label">Phase timeline</div>')||protocolSource.includes('📊 PHASE TIMELINE'))
+  throw Error('Protocol phase timeline heading must use plain DS2 label');
+if(!supplySource.includes('class="nx-supply-planner-heading">Supply Planner</span>')||supplySource.includes('📊 SUPPLY PLANNER'))
+  throw Error('Supply Planner heading must use plain DS2 typography without emoji');
+if(!ds2Css.includes('.nx-pb-phase-timeline-label')||!ds2Css.includes('.nx-supply-planner-heading'))
+  throw Error('Scoped DS2 typography missing for protocol and Supply Planner');
+
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 function check(pass,message){if(!pass)throw Error(message)}
 try{
