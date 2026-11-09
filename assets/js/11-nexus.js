@@ -1054,7 +1054,7 @@ function protocolBuilderModal(existing, renewalCompound) {
       </select>
       <div class="nx-muted" style="font-size:11px;margin-bottom:14px">This links an existing goal for context. It doesn't change the protocol's purpose, dosing schedule or dose history.</div>
       <div style="background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px">
-        <div class="mono" style="font-size:9px;color:var(--t4);letter-spacing:1.5px;margin-bottom:8px">📊 PHASE TIMELINE</div>
+        <div class="nx-pb-phase-timeline-label">Phase timeline</div>
         ${gantt||"<div style='color:var(--t5);font-size:11px'>No compounds added.</div>"}
         <div style="display:flex;gap:10px;margin-top:6px"><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#A78BFA;border-radius:2px"></div><span style="font-size:9px;color:var(--t4)">Active</span></div><div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:#444;border-radius:2px"></div><span style="font-size:9px;color:var(--t4)">Rest</span></div></div>
       </div>
