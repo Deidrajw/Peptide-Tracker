@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue #157 coded exact-date and DS2 phases candidate; NOT RELEASED
+- Branch feature/protocol-duration-end-date-20261109, stacked draft PR158 against unmerged PR156; app source a29cc0bb candidate, version remains v0.9.26-beta.1. Added simple Duration & changes and exact inclusive calendar-end with optional durationDays; protected legacy week-only data/history, scoped DS2 styling, date-backed pause-aware effective schedule and Today cutoff, Review date confirmation. No data migration, production writes, merge or deployment. Six-suite exact-head CI, LIVE/isolated full-app DEMO artifacts and real-iPhone acceptance still PENDING. User approval only for development/design.
+
 ## 2026-11-09 — Issue157 date-backed duration development only, NOT RELEASED
 - Approved UX implemented on stacked feature/protocol-duration-end-date-20261109 (parent PR156 head 0c5536b1, main 1c6007fc). Candidate JS/CSS, browser regression, no version bump, data migration, merge/deploy or personal storage write. No claims of CI/browser pass yet. Date-precise inclusive last day and advanced disclosure require cross-consumer, paused-protocol and iPhone validation. Draft stacked PR pending; version source remains v0.9.26-beta.1.
 
