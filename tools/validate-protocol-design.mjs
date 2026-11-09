@@ -163,6 +163,42 @@ try{
       renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===3,
       "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
 
+    // Approved Start Now: no write on cancel, today on explicit confirmation,
+    // dose log optional and no mutation of existing historical doses/stock.
+    const startNow=await page.evaluate(async()=>{
+      const previous=state,originalCommit=nexusCommitCurrentState,previousTab=tab;
+      try{
+        state=JSON.parse(JSON.stringify(previous));
+        state.protocols=[{id:"qa-start-now",name:"QA Start Now",status:"planned",
+          startDate:"2027-02-01",schedule:{type:"Weekly",days:[1],dosesPerDay:1,times:["08:00"]},
+          compounds:[{name:"Retatrutide",route:"SubQ",unit:"mg",multiPhase:false,
+            phases:[{type:"dose",durationWeeks:4,dose:"1"}]}]}];
+        const beforeDoses=JSON.stringify(state.peptides?.Retatrutide?.doses||[]);
+        const beforeSupplies=JSON.stringify(state.supplies||[]);
+        let saves=0;nexusCommitCurrentState=async()=>{saves++;return true;};
+        tab="protocols";renderBody();
+        const button=document.querySelector(".proto-start-now");
+        const visible=!!button&&button.textContent.toLowerCase().includes("start now");
+        button?.click();
+        const confirmation=!!document.querySelector("#ca-ok")&&
+          document.querySelector(".modal")?.textContent.includes("sets its start date");
+        document.querySelector("#ca-cancel")?.click();
+        const cancellation=state.protocols[0].status==="planned"&&saves===0;
+        document.querySelector(".proto-start-now")?.click();
+        document.querySelector("#ca-ok")?.click();
+        await new Promise(resolve=>setTimeout(resolve,35));
+        const activated=state.protocols[0].status==="active"&&
+          state.protocols[0].startDate===localDate()&&saves===1;
+        const offered=!!document.querySelector("#ca-ok")&&
+          document.querySelector(".modal")?.textContent.includes("log a dose");
+        document.querySelector("#ca-cancel")?.click();
+        const noDose=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===beforeDoses;
+        const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
+        return {visible,confirmation,cancellation,activated,offered,noDose,noStock};
+      }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
+    });
+    check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
+
     // Issue #157: exact end on calendar date, inclusive final day and
     // fully isolated builder UI; legacy week-only protocols stay unchanged.
     const calendarMode=await page.evaluate(async()=>{
