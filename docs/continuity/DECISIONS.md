@@ -1,3 +1,7 @@
+## 2026-11-09 — User approved Issue157 simpler date/phase design for development
+- Approved layout: start date, Weeks / End on date selection, exact chosen last day (inclusive), approximate weeks and Advanced phase options disclosure. Avoid making every user configure multi-phase escalation or per-phase schedule overrides. Keep saved legacy weeks untouched and preserve compound history.
+- Explicit permission covers design implementation only. PR156 renewal fix and prior DS2 approvals remain protected; make #157 a separate stacked draft PR. Do not merge/deploy, change user data, or silently convert exact date to a rounded week. Model consumers must be verified across Today/Calendar/Supplies/Alerts, including pause/resume and time-zone boundaries.
+
 ## 2026-11-08 — Separate targeted DS2 repair from Phase model redesign
 - User requested removal of literal graph emoji in Review Phase Timeline and Stash Planner and matching DS2 typography. Implement narrow scoped heading, legend and label fixes in draft PR156; do not alter accepted workflow/model. Date-based exact end and broader Phases simplification tracked in Issue #157, preview before approving any model migration. Current integer durationWeeks cannot be silently rounded while promising Jan 1 exactly.
 
