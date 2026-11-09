@@ -874,6 +874,15 @@ function protocolBuilderModal(existing, renewalCompound) {
     : ["Goal","Template","Stack","Schedule","Phases","Review"];
 
   const curStep = () => STEPS[step];
+  let advancedPhaseOptions=!!existing&&proto.compounds.some(c=>c.multiPhase||(c.phases||[]).length>1);
+  const phaseDuration = ph => nexusPhaseDurationDays(ph);
+  const phaseStartFor = (c,pi) => (c.phases||[]).slice(0,pi).reduce((day,ph)=>addDays(day,phaseDuration(ph)),proto.startDate||localDate());
+  const phaseLastDay = (c,pi) => addDays(phaseStartFor(c,pi),phaseDuration(c.phases[pi])-1);
+  const applyExactEnd = (ph,start,lastDay) => {
+    const days=nexusCalendarDaysBetween(start,lastDay)+1;
+    if(!Number.isInteger(days)||days<1||days>36500)return false;
+    ph.durationDays=days; ph.endOnDate=lastDay; return true;
+  };
 
   function rebuildModal() {
     const count = document.getElementById("proto-builder-count");
@@ -1039,8 +1048,8 @@ function protocolBuilderModal(existing, renewalCompound) {
     }
 
     if(curStep()==="Review") {
-      const totalWeeks=Math.max(1,...proto.compounds.map(c=>((c.phases||[]).reduce((a,p)=>a+(p.durationWeeks||4),0))||8));
-      const gantt=proto.compounds.map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:totalWeeks}]).map(ph=>`<div style="flex:${ph.durationWeeks||4};background:${ph.type==="dose"?"#A78BFA":"#444"};height:10px;border-radius:2px"></div>`).join(""); return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span class="nx-pb-gantt-label" style="width:72px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:2px">${bars}</div><span class="nx-pb-gantt-weeks" style="flex-shrink:0">${totalWeeks}w</span></div>`;}).join("");
+      const totalWeeks=Math.max(1,...proto.compounds.map(c=>Math.ceil((c.phases||[]).reduce((a,p)=>a+phaseDuration(p),0)/7)||8));
+      const gantt=proto.compounds.map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:totalWeeks}]).map(ph=>`<div style="flex:${phaseDuration(ph)};background:${ph.type==="dose"?"#A78BFA":"#444"};height:10px;border-radius:2px"></div>`).join(""); return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span class="nx-pb-gantt-label" style="width:72px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:2px">${bars}</div><span class="nx-pb-gantt-weeks" style="flex-shrink:0">${totalWeeks}w</span></div>`;}).join("");
       const cx=stackComplexity(proto.compounds);
       const interactions=getInteractions(proto.compounds);
       const dosesPerWeek=proto.schedule.dosesPerDay*(proto.schedule.days?.length||1);
@@ -1359,9 +1368,9 @@ function getProtocolPhaseInfo(p, c) {
   const today = (p.status==="paused" && p.pausedAt) ? dayKey(p.pausedAt) : localDate();
   let cursorDate = effectiveStartDate;
   const phaseDates = c.phases.map(ph=>{
-    const dur = ph.durationWeeks||4;
+    const dur = nexusPhaseDurationDays(ph);
     const start = cursorDate;
-    const end = addDays(cursorDate, Math.round(dur*7));
+    const end = addDays(cursorDate, dur);
     cursorDate = end;
     return { ...ph, startDate:start, endDate:end };
   });
@@ -1373,7 +1382,7 @@ function getProtocolPhaseInfo(p, c) {
   const weeksElapsed = Math.max(0,(new Date(today+"T12:00")-new Date(cur.startDate+"T12:00"))/(7*86400000));
   const weekInPhase = Math.floor(weeksElapsed)+1;
   const daysLeft = Math.max(0, Math.round((new Date(cur.endDate+"T12:00")-new Date(today+"T12:00"))/86400000));
-  return { index:idx, isRest: cur.type!=="dose", weekInPhase, totalWeeks: cur.durationWeeks||4, daysLeft, current:cur, next, phases:phaseDates, isPaused: p.status==="paused" };
+  return { index:idx, isRest: cur.type!=="dose", weekInPhase, totalWeeks: Math.ceil(nexusPhaseDurationDays(cur)/7), daysLeft, current:cur, next, phases:phaseDates, isPaused: p.status==="paused" };
 }
 
 // Phase-aware timeline summary: use existing pause-aware phase dates, never
