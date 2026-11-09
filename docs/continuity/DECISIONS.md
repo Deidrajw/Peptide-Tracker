@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue #155 premerge qualification, no release authority
+- The user approved the renewal UX direction only. Retatrutide preselection is a convenience, not a copied dose/schedule or medical recommendation; manually review all new protocol settings. Eight fictional browser variants and six CI workflows support a review candidate, but do not authorize merging, Cloudflare deployment or changing saved personal records. User physical iPhone review and separate release authorization remain pending.
+
 ## 2026-11-08 — Approved Issue #155 renewal direction (development only)
 - User approved proposed Reta post-dose protocol renewal: Start New must open a distinct, unsaved draft with the triggering compound preselected; existing protocol and logged history remain intact. Do not silently copy previous dose or activate automatically; require explicit schedule/dose review, preserve Cancel. Update Existing opens current protocol editor. Fix async reminder save/modal race and acknowledge failed saves visibly. Approval is for implementation/design direction, not merge/deploy.
 
