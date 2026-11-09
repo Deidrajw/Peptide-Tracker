@@ -1590,7 +1590,7 @@ function getCompoundPhase(data, dateStr) {
   if (!phases || !phases.length) return null;
   const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
-  const daysIn = Math.floor((new Date(dayKey(dateStr)+"T00:00:00").getTime() - new Date(start+"T00:00:00").getTime())/86400000);
+  const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
   let cursor = 0;
   for (const ph of phases) {
@@ -1610,7 +1610,7 @@ function getPhaseSpan(data, dateStr) {
   if (!phases || !phases.length) return null;
   const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
-  const daysIn = Math.floor((new Date(dayKey(dateStr)+"T00:00:00").getTime() - new Date(start+"T00:00:00").getTime())/86400000);
+  const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
   let cursor = 0;
   for (let i=0; i<phases.length; i++) {
