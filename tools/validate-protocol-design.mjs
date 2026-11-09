@@ -221,8 +221,9 @@ try{
       document.querySelector("#pb-next")?.click();
       document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
     });
-    const phaseGeometry=await page.locator("#proto-builder-wrap").evaluate(el=>({client:el.clientWidth,scroll:el.scrollWidth}));
+    const phaseGeometry=await page.locator("#proto-builder-wrap").evaluate(el=>({client:el.clientWidth,scroll:el.scrollWidth,targets:[...el.querySelectorAll(".pb-phase-end,.pb-duration-mode,.pb-phdose,#pb-advanced-toggle")].map(n=>({kind:n.className,h:n.getBoundingClientRect().height}))}));
     check(phaseGeometry.scroll<=phaseGeometry.client+3,"Issue157 phase form overflows at "+width+": "+JSON.stringify(phaseGeometry));
+    check(phaseGeometry.targets.every(x=>x.h>=44),"Issue157 phase control under 44px: "+JSON.stringify(phaseGeometry.targets));
     await page.screenshot({path:"dist/issue157-duration-"+kind+"-"+theme+"-"+width+".png"});
     await page.evaluate(()=>closeModal());
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
