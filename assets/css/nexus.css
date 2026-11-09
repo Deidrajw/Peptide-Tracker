@@ -2913,3 +2913,16 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
   font-size: 12px;
   line-height: 1.45;
 }
+
+/* Issue157: interactive phase fields retain iPhone-sized touch geometry. */
+#proto-builder-wrap .pb-phdose,
+#proto-builder-wrap .pb-ph-time,
+#proto-builder-wrap .pb-ptype,
+#proto-builder-wrap .pb-addphase,
+#proto-builder-wrap .pb-phrem,
+#proto-builder-wrap .pb-ph-sched,
+#proto-builder-wrap .pb-ph-day {
+  min-height: 44px;
+}
+#proto-builder-wrap .pb-ph-day { min-width: 34px; }
+#proto-builder-wrap .pb-addphase { font: 600 13px 'DM Sans', system-ui, sans-serif; }
