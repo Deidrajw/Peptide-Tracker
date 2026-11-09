@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue155 Phase Timeline legibility refinement
+- PR156 targeted emoji removal + semantic DS2 heading at Review > Phase Timeline and Stash > Planner, plus 11px Active/Rest legend, compound labels and tabular week text, narrow viewport label width. Scoped CSS only, no nested cards or model changes; test source checks added. New-head browser/visual testing and real iPhone acceptance pending. Exact-date and broader Phases redesign in #157 remains proposal, NOT CODED.
+
 ## 2026-11-08 — Issue #155 Phase Review / Stash Planner DS2 typography repair (candidate)
 - PR156 replaces literal graph emoji in Protocol Builder Review > Phase Timeline and Stash > Planner with clean DS2 semantic headings. Scoped DM Sans label/headline styles in nexus.css, with source-guard assertions. No changes to stock arithmetic or saved protocols. User still considering deeper Phases editor visual hierarchy, and wants end-on-date input; date persistence/model change NOT IMPLEMENTED. Fresh exact-source browser CI, 320/390 dark/light, and physical iPhone visuals NOT VERIFIED after this code patch.
 
