@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 date-backed duration development only, NOT RELEASED
+- Approved UX implemented on stacked feature/protocol-duration-end-date-20261109 (parent PR156 head 0c5536b1, main 1c6007fc). Candidate JS/CSS, browser regression, no version bump, data migration, merge/deploy or personal storage write. No claims of CI/browser pass yet. Date-precise inclusive last day and advanced disclosure require cross-consumer, paused-protocol and iPhone validation. Draft stacked PR pending; version source remains v0.9.26-beta.1.
+
 ## 2026-11-08 — Issue #155 typography candidate amended; PR156 remains NOT RELEASED
 - User iPhone feedback accepted renewal flow via launcher, asked end-date option / simpler phase UI and reported graph emojis. Focused JS09/JS11/CSS typography correction and test guards committed through 9557cc8d; no version bump, migration or live writes. Issue #157 tracks date model and advanced phases redesign separately. Latest app/test CI and exact-source packages not yet verified; no merge/deploy or physical reacceptance.
 
