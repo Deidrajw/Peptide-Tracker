@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 release candidate artifact qualified, NOT RELEASED
+- v0.9.26-beta.1 candidate PR158 44ce0c24 stacked on draft PR156, main 1c6007fc. Six exact-head GitHub CI SUCCESS, full browser protocol matrix 8/8, official artifact 13652462685 inspected: outer 573 ZIP entries CRC PASS, LIVE 26 files CRC PASS, DEMO HTML exact offline ZIP root equality, four Git blob SHA source matches. Tests are fictional automated browser, physical iPhone/VoiceOver/16-point manual NOT ACCEPTED; Cloudflare parity unverified. No migration, real storage writes, merge or deployment. 
+
 ## 2026-11-09 — Issue #157 coded exact-date and DS2 phases candidate; NOT RELEASED
 - Branch feature/protocol-duration-end-date-20261109, stacked draft PR158 against unmerged PR156; app source a29cc0bb candidate, version remains v0.9.26-beta.1. Added simple Duration & changes and exact inclusive calendar-end with optional durationDays; protected legacy week-only data/history, scoped DS2 styling, date-backed pause-aware effective schedule and Today cutoff, Review date confirmation. No data migration, production writes, merge or deployment. Six-suite exact-head CI, LIVE/isolated full-app DEMO artifacts and real-iPhone acceptance still PENDING. User approval only for development/design.
 
