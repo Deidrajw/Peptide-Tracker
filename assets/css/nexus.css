@@ -2870,3 +2870,18 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
   min-width: 44px;
   min-height: 44px;
 }
+
+/* Date-backed compound phase editor: exact date is read-only here, not rounded to weeks. */
+.nx-phase-date-readonly {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 3px;
+  padding: 7px 9px;
+  color: var(--t2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-sub);
+  border-radius: 7px;
+  font: 600 12px/1.4 'DM Sans', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
