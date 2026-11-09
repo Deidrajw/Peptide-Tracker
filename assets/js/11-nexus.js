@@ -999,29 +999,31 @@ function protocolBuilderModal(existing, renewalCompound) {
 
     if(curStep()==="Phases") {
       if(!proto.compounds.length) return prog+`<div style="text-align:center;padding:20px;color:var(--t4)">Add compounds in the Stack step first.</div>`;
-      return prog+proto.compounds.map((c,ci)=>`
+      return prog+`<div class="nx-phase-start-field"><label class="field-label" for="pb-protocol-start">START DATE</label><input id="pb-protocol-start" class="inp" type="date" value="${esc(proto.startDate||localDate())}"><p class="hint">All phases start from this date. Previously logged doses are unchanged.</p></div><div class="nx-phase-heading"><strong>Duration & changes</strong><p class="hint">Choose a duration in weeks or an exact last day. More phases are optional.</p></div><button id="pb-advanced-toggle" type="button" class="nx-phase-advanced-toggle" aria-expanded="${advancedPhaseOptions}">${advancedPhaseOptions?"Hide advanced phase options":"Advanced phase options"} <span aria-hidden="true">${advancedPhaseOptions?"⌃":"⌄"}</span></button>`+proto.compounds.map((c,ci)=>`
       <div style="margin-bottom:14px;padding:12px;background:var(--surface-2);border-radius:10px">
         <div style="font-size:12px;font-weight:600;color:#A78BFA;margin-bottom:8px">${esc(c.name)} · ${esc(c.route||"SubQ")}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:11px;color:var(--t4)">Multi-phase (escalation)</span>
+        <div class="nx-phase-advanced-only" style="display:${advancedPhaseOptions?"flex":"none"};align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--t3)">Multiple phases (changes or rest periods)</span>
           <label style="position:relative;display:inline-block;width:38px;height:22px"><input type="checkbox" class="pb-multiphase" data-ci="${ci}" ${c.multiPhase?"checked":""} style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${c.multiPhase?"#A78BFA":"var(--border)"};border-radius:11px;transition:.2s"></span></label>
         </div>
         ${(c.phases||[{type:"dose",durationWeeks:4,dose:""}]).map((ph,pi)=>`
         <div style="background:var(--surface-3);border-radius:8px;padding:9px;margin-bottom:5px">
-          <div style="display:flex;gap:5px;margin-bottom:7px">
+          <div style="display:${advancedPhaseOptions?"flex":"none"};gap:5px;margin-bottom:7px">
             <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="dose" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="dose"?"#A78BFA22":"transparent"};border:1px solid ${ph.type==="dose"?"#A78BFA":"var(--border)"};color:${ph.type==="dose"?"#A78BFA":"var(--t4)"}">Dose</button>
             <button class="pb-ptype nx-pb-type" data-ci="${ci}" data-pi="${pi}" data-t="rest" style="flex:1;padding:4px;border-radius:6px;font-size:11px;background:${ph.type==="rest"?"#F9C87D22":"transparent"};border:1px solid ${ph.type==="rest"?"#F9C87D":"var(--border)"};color:${ph.type==="rest"?"#F9C87D":"var(--t4)"}">Rest</button>
             ${pi>0?`<button class="pb-phrem" data-ci="${ci}" data-pi="${pi}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);color:var(--t5);font-size:11px">✕</button>`:""}
           </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:11px;color:var(--t4);flex:1">Duration (weeks)</span>
+          <div class="nx-phase-duration-toggle" role="group" aria-label="Duration method" style="display:${!c.multiPhase&&(c.phases||[]).length===1?"flex":"none"}"><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="weeks" aria-pressed="${!ph.endOnDate}">Weeks</button><button type="button" class="pb-duration-mode" data-ci="${ci}" data-pi="${pi}" data-mode="date" aria-pressed="${!!ph.endOnDate}">End on date</button></div>
+          <div class="nx-phase-week-controls" style="display:${ph.endOnDate?"none":"flex"};align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--t3);flex:1">Duration (weeks)</span>
             <button type="button" class="pb-phdec nx-pb-stepper" aria-label="Decrease phase duration" data-ci="${ci}" data-pi="${pi}">−</button>
             <span style="font-size:13px;font-weight:600;min-width:24px;text-align:center">${ph.durationWeeks||4}w</span>
             <button type="button" class="pb-phinc nx-pb-stepper" aria-label="Increase phase duration" data-ci="${ci}" data-pi="${pi}">+</button>
           </div>
+          ${ph.endOnDate?`<label class="nx-phase-date-label" for="pb-phase-end-${ci}-${pi}">Last planned day</label><input type="date" id="pb-phase-end-${ci}-${pi}" class="pb-phase-end inp" data-ci="${ci}" data-pi="${pi}" min="${phaseStartFor(c,pi)}" value="${esc(ph.endOnDate)}"><p class="nx-phase-date-hint">About ${(phaseDuration(ph)/7).toFixed(1)} weeks · selected day is included. Pausing may extend the effective schedule.</p>`:`<p class="nx-phase-date-hint">Projected last day: ${phaseLastDay(c,pi)}</p>`}
           ${ph.type==="dose"?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input class="pb-phdose inp" data-ci="${ci}" data-pi="${pi}" type="number" placeholder="Amount" value="${ph.dose||""}" style="flex:1;height:34px;padding:0 10px"><span style="font-size:11px;color:var(--t4)">${c.unit||cfg(c.name)?.unit||"mg"}</span></div>`:"<div style='font-size:11px;color:var(--t4);margin-bottom:8px'>Rest — no dosing</div>"}
-          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid var(--border-sub)">
-            <span style="font-size:10px;color:var(--t4)">Different schedule for this phase</span>
+          <div style="display:${advancedPhaseOptions?"flex":"none"};align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid var(--border-sub)">
+            <span style="font-size:12px;color:var(--t3)">Different schedule for this phase</span>
             <label style="position:relative;display:inline-block;width:32px;height:18px"><input type="checkbox" class="pb-ph-sched-toggle" data-ci="${ci}" data-pi="${pi}" ${ph.schedule?"checked":""} style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${ph.schedule?"#A78BFA":"var(--border)"};border-radius:9px;transition:.2s"></span></label>
           </div>
           ${ph.schedule ? (()=>{
@@ -1043,7 +1045,7 @@ function protocolBuilderModal(existing, renewalCompound) {
             </div>`;
           })() : ""}
         </div>`).join("")}
-        ${c.multiPhase?`<button class="pb-addphase" data-ci="${ci}" style="width:100%;padding:6px;border-radius:7px;border:1px dashed var(--border-sub);color:#A78BFA;font-size:11px;margin-top:4px">+ Add Phase</button>`:""}
+        ${c.multiPhase&&advancedPhaseOptions?`<button class="pb-addphase" data-ci="${ci}" style="width:100%;padding:6px;border-radius:7px;border:1px dashed var(--border-sub);color:#A78BFA;font-size:11px;margin-top:4px">+ Add Phase</button>`:""}
       </div>`).join("");
     }
 
