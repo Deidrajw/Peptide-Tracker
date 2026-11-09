@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 user-approved follow-up coded, unreleased
+- PR158 stacked draft (temporarily QA-retargeted to main), no production release. Changes through source/test 3beb273e: date-mode roundtrip, simplified advanced phases, confirmed phase removal, inline DS2 validation, explicit Start Now with persisted today start and optional Log Dose, protected existing dose history. Main 1c6007fc, parent draft PR156 0c5536b1. Full six current-head CI, exact-source full-app DEMO/LIVE bundle and physical iPhone acceptance INCOMPLETE. No migration, live import, merge or deployment.
+
 ## 2026-11-09 — Issue157 user review corrective candidate, NOT RELEASED
 - User iPhone findings on PR158 app source 44ce0c24: 6/8 PASS, 1 FAIL (duration mode roundtrip) and 1 NOT TESTED, with phase UI and alert concerns. Draft branch source fix d120ba99, test 14553de8, preserving end date across toggle via transient cache and 32d→5w preview; no storage migration, user data writes, release merge or deploy. Six-suite current-head CI and new exact-source DEMO/LIVE INCOMPLETE. Advanced-phase and Start Now UX decisions pending.
 
