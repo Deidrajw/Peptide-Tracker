@@ -1675,6 +1675,7 @@ function syncProtocolToCompoundData(proto) {
       t.phases = c.phases.map(ph => ({
         durationWeeks: ph.durationWeeks||4,
         ...(ph.durationDays!=null?{durationDays:ph.durationDays}:{}),
+        ...(ph.endOnDate?{endOnDate:ph.endOnDate}:{}),
         dose: ph.type==="rest" ? "" : (ph.dose||""),
         isRest: ph.type==="rest",
         schedule: ph.schedule ? convertBuilderSchedule(ph.schedule) : { scheduleWeekdays:base.scheduleWeekdays, scheduleDays:base.scheduleDays, dosesPerDay:base.dosesPerDay, times:base.times },
