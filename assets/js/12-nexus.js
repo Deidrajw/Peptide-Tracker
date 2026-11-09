@@ -745,7 +745,7 @@ function wireBody() {
   });
   document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); if(!await nexusCommitCurrentState())return; render(); });
-  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4);delete t.phases[+inp.dataset.pi].durationDays;delete t.phases[+inp.dataset.pi].endOnDate; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); if(!await nexusCommitCurrentState())return; });
   document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=async()=>{
