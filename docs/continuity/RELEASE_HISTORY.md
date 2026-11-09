@@ -1,3 +1,6 @@
+## 2026-11-09 — Approved follow-up refined; QA/release still INCOMPLETE
+- Source through 12a32d1e, tests through 0507d3b5, on stacked draft PR158. Exact original user-approved UI flows coded, no migration or personal data changes. Added incomplete draft Finish setup and actual scheduler start date/optional logging wording. Six CI suites triggered (mobile success, others pending at last observation); latest exact-source artifact not verified; physical acceptance pending. PR base restored to PR156; no merge/deploy.
+
 ## 2026-11-09 — Issue157 user-approved follow-up coded, unreleased
 - PR158 stacked draft (temporarily QA-retargeted to main), no production release. Changes through source/test 3beb273e: date-mode roundtrip, simplified advanced phases, confirmed phase removal, inline DS2 validation, explicit Start Now with persisted today start and optional Log Dose, protected existing dose history. Main 1c6007fc, parent draft PR156 0c5536b1. Full six current-head CI, exact-source full-app DEMO/LIVE bundle and physical iPhone acceptance INCOMPLETE. No migration, live import, merge or deployment.
 
