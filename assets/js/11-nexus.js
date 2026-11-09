@@ -1819,6 +1819,7 @@ function protocolsView() {
   const protoCard = (p) => {
     const sc = STATUS_CFG[p.status] || STATUS_CFG.draft;
     const needsFirstDose = p.status === "active" && !hasDoses(p);
+    const startReady=Array.isArray(p.compounds)&&p.compounds.length>0&&p.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0));
     const fc = (p.compounds||[])[0]?.name;
     const compounds = p.compounds||[];
     const names = compounds.map(c=>c.name).filter(Boolean);
@@ -1857,7 +1858,7 @@ function protocolsView() {
         <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Logging activates tracking and forecasts</div></div>
         <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">Log first dose</button>
       </div>`:""}
-      ${(p.status==="draft"||p.status==="planned")&&!hasDoses(p)&&fc?`<button type="button" class="proto-start-now nx-proto-firstlog-action" data-id="${p.id}" data-name="${esc(fc)}" style="width:100%;min-height:48px;margin-top:10px">Start now</button><div class="nexus-protocol-muted" style="margin-top:6px">Sets today as the start date. Logging your first dose is optional.</div>`:""}
+      ${(p.status==="draft"||p.status==="planned")&&!hasDoses(p)&&fc&&startReady?`<button type="button" class="proto-start-now nx-proto-firstlog-action" data-id="${p.id}" data-name="${esc(fc)}" style="width:100%;min-height:48px;margin-top:10px">Start now</button><div class="nexus-protocol-muted" style="margin-top:6px">Sets today as the start date. Logging your first dose is optional.</div>`:(p.status==="draft"||p.status==="planned")&&!hasDoses(p)&&fc?`<button type="button" class="proto-finish-setup nx-proto-firstlog-action" data-id="${p.id}" style="width:100%;min-height:48px;margin-top:10px">Finish setup</button><div class="nexus-protocol-muted" style="margin-top:6px">Add a dose to the protocol before starting.</div>`:""}
     </div>`;
   };
 
