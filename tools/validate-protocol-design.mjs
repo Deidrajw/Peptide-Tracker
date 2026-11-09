@@ -213,6 +213,17 @@ try{
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
+    // Visual proof from the actual full app, not a feature-only mockup.
+    await page.evaluate(()=>{
+      protocolBuilderModal(undefined,"Retatrutide");
+      document.querySelector("#pb-next")?.click();
+      document.querySelector("#pb-next")?.click();
+      document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+    });
+    const phaseGeometry=await page.locator("#proto-builder-wrap").evaluate(el=>({client:el.clientWidth,scroll:el.scrollWidth}));
+    check(phaseGeometry.scroll<=phaseGeometry.client+3,"Issue157 phase form overflows at "+width+": "+JSON.stringify(phaseGeometry));
+    await page.screenshot({path:"dist/issue157-duration-"+kind+"-"+theme+"-"+width+".png"});
+    await page.evaluate(()=>closeModal());
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 
