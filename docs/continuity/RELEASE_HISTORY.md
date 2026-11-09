@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 user review corrective candidate, NOT RELEASED
+- User iPhone findings on PR158 app source 44ce0c24: 6/8 PASS, 1 FAIL (duration mode roundtrip) and 1 NOT TESTED, with phase UI and alert concerns. Draft branch source fix d120ba99, test 14553de8, preserving end date across toggle via transient cache and 32d→5w preview; no storage migration, user data writes, release merge or deploy. Six-suite current-head CI and new exact-source DEMO/LIVE INCOMPLETE. Advanced-phase and Start Now UX decisions pending.
+
 ## 2026-11-09 — Issue157 release candidate artifact qualified, NOT RELEASED
 - v0.9.26-beta.1 candidate PR158 44ce0c24 stacked on draft PR156, main 1c6007fc. Six exact-head GitHub CI SUCCESS, full browser protocol matrix 8/8, official artifact 13652462685 inspected: outer 573 ZIP entries CRC PASS, LIVE 26 files CRC PASS, DEMO HTML exact offline ZIP root equality, four Git blob SHA source matches. Tests are fictional automated browser, physical iPhone/VoiceOver/16-point manual NOT ACCEPTED; Cloudflare parity unverified. No migration, real storage writes, merge or deployment. 
 
