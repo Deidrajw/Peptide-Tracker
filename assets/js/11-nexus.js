@@ -1765,7 +1765,14 @@ function protocolsView() {
     completed:{label:"Completed",color:"var(--t4)",  bg:"var(--surface-2)"},
     archived: {label:"Archived", color:"var(--t5)",  bg:"var(--surface-2)"},
   };
-  const hasDoses=(p)=>(p.compounds||[]).some(c=>{const pd=state.peptides[c.name]||state.customPeptides[c.name];return pd?.doses?.length>0;});
+  const hasDoses=(p)=>(p.compounds||[]).some(c=>{
+    const pd=state.peptides[c.name]||state.customPeptides[c.name];
+    const count=(pd?.doses||[]).length;
+    // Start Now records the previous count as a *baseline*, not as this
+    // protocol's own first dose. Other/older protocols retain legacy logic.
+    const baseline=p.nexusStartNowBaseline?.[c.name];
+    return Number.isInteger(baseline)?count>baseline:count>0;
+  });
   protos.forEach(p=>{if(p.status==="active"&&hasDoses(p))p.status="in_progress";});
   const filter=state._protocolStatusFilter||"all";
   const filterGroups={
