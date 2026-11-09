@@ -1,3 +1,6 @@
+## 2026-11-09 — Issue157 correction + Start Now candidate not released
+- App changes latest at 2571534f, test at 833cb687, documentation QA trigger dc7bd693. Implemented simplified advanced phases, date mode restoration, DS2 errors, and Start Now with confirmed calendar date, optional Log Dose and old-compound-history baseline. Initial predecessor build 42583099722 FAIL on Start Now historical data gating; corrected, new six-suite runs 42584147975/42584147840/42584147856/42584147869/42584148090/42584147839 ongoing except mobile PASS and writer partial PASS at observation. Exact-source FULL-APP DEMO/LIVE ZIP and physical iPhone acceptance not yet verified. No production writes, migration, merge, deploy, or version bump; user authorized development only.
+
 ## 2026-11-09 — Approved follow-up refined; QA/release still INCOMPLETE
 - Source through 12a32d1e, tests through 0507d3b5, on stacked draft PR158. Exact original user-approved UI flows coded, no migration or personal data changes. Added incomplete draft Finish setup and actual scheduler start date/optional logging wording. Six CI suites triggered (mobile success, others pending at last observation); latest exact-source artifact not verified; physical acceptance pending. PR base restored to PR156; no merge/deploy.
 
