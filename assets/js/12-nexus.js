@@ -357,11 +357,11 @@ function wireBody() {
   document.querySelectorAll(".proto-start-now").forEach(b=>b.onclick=()=>{
     const id=b.dataset.id,compound=b.dataset.name;
     const p=state.protocols?.find(x=>String(x.id)===String(id));
-    if(!p||!["draft","planned"].includes(p.status)||hasDoses(p)||!(p.compounds||[]).length||!p.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return;
+    if(!p||!["draft","planned"].includes(p.status)||!(p.compounds||[]).length||!p.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return;
     const today=localDate();
     confirmAction("Start "+p.name+" today ("+today+")? This activates the protocol and sets its start date to today. You can log the first dose afterward; existing history will not change.",async()=>{
       const current=state.protocols?.find(x=>String(x.id)===String(id));
-      if(!current||!["draft","planned"].includes(current.status)||hasDoses(current)||!current.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return;
+      if(!current||!["draft","planned"].includes(current.status)||!current.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return;
       current.startDate=localDate();current.status="active";
       // Apply the start date to schedule consumers, not logged dose history.
       syncProtocolToCompoundData(current);
