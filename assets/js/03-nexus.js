@@ -1670,7 +1670,7 @@ function syncProtocolToCompoundData(proto) {
     t.dosesPerDay = base.dosesPerDay;
     t.times = base.times;
 
-    if (c.multiPhase && c.phases && c.phases.length) {
+    if ((c.multiPhase || c.phases?.some(ph=>ph.durationDays!=null)) && c.phases && c.phases.length) {
       t.startDate = proto.startDate || localDate();
       t.phases = c.phases.map(ph => ({
         durationWeeks: ph.durationWeeks||4,
