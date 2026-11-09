@@ -1585,10 +1585,22 @@ function nexusCalendarDaysBetween(a,b){
   return Math.round((end-start)/86400000);
 }
 
+// Date-backed compound schedule source is explicit; never guess an owner when
+// multiple plans contain the same compound. Legacy schedules are unchanged.
+function nexusLinkedDateProtocol(data){
+  if(data?.protocolScheduleId==null)return null;
+  return (state.protocols||[]).find(p=>String(p.id)===String(data.protocolScheduleId))||null;
+}
+function nexusPhaseEffectiveStart(data){
+  const start=data.startDate;
+  const source=nexusLinkedDateProtocol(data);
+  const pausedDays=Math.max(0,Number(source?.pauseDaysAccumulated)||0);
+  return start&&pausedDays?addDays(start,pausedDays):start;
+}
 function getCompoundPhase(data, dateStr) {
   const phases = data.phases;
   if (!phases || !phases.length) return null;
-  const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
+  const start = nexusPhaseEffectiveStart(data) || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
   const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
@@ -1608,7 +1620,7 @@ function getCompoundPhase(data, dateStr) {
 function getPhaseSpan(data, dateStr) {
   const phases = data.phases;
   if (!phases || !phases.length) return null;
-  const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
+  const start = nexusPhaseEffectiveStart(data) || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
   const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
@@ -1672,6 +1684,8 @@ function syncProtocolToCompoundData(proto) {
 
     if ((c.multiPhase || c.phases?.some(ph=>ph.durationDays!=null)) && c.phases && c.phases.length) {
       t.startDate = proto.startDate || localDate();
+      if(c.phases.some(ph=>ph.durationDays!=null))t.protocolScheduleId=proto.id;
+      else delete t.protocolScheduleId;
       t.phases = c.phases.map(ph => ({
         durationWeeks: ph.durationWeeks||4,
         ...(ph.durationDays!=null?{durationDays:ph.durationDays}:{}),
@@ -1681,18 +1695,21 @@ function syncProtocolToCompoundData(proto) {
         schedule: ph.schedule ? convertBuilderSchedule(ph.schedule) : { scheduleWeekdays:base.scheduleWeekdays, scheduleDays:base.scheduleDays, dosesPerDay:base.dosesPerDay, times:base.times },
       }));
     } else if (t.phases) {
+      delete t.protocolScheduleId;
       t.phases = []; // protocol no longer multi-phase — don't leave a stale phase list behind
     }
   });
 }
 
 function getEffectiveSchedule(data, dateStr) {
+  const linked=nexusLinkedDateProtocol(data);
+  if(linked?.status==="paused")return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,pausedByProtocol:true};
   // Explicit calendar-end phases have an actual final planned day; never
   // silently continue generating scheduled doses past it. Old week-only
   // protocols retain the legacy maintenance-after-final-phase behaviour.
   const phases=data.phases||[],final=phases[phases.length-1];
   if(final?.durationDays!=null && data.startDate){
-    const endExclusive=addDays(data.startDate,phases.reduce((n,ph)=>n+nexusPhaseDurationDays(ph),0));
+    const endExclusive=addDays(nexusPhaseEffectiveStart(data),phases.reduce((n,ph)=>n+nexusPhaseDurationDays(ph),0));
     if(dayKey(dateStr||localDate())>=endExclusive)
       return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:final,isRest:true,endedByDate:true};
   }
