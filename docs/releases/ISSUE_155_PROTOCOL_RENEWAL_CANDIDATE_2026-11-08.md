@@ -1,3 +1,6 @@
+## Safety correction after initial QA
+At JS11 40ff3fe3, a rejected reminder acknowledgement no longer reapplies its stale before-write acknowledgement map over the canonical writer-restored state. Test 78d0bc71 models the real restoration behaviour. Prior 0acde94c six-suite CI and artifact are baseline only; modified code is not yet qualified until fresh exact-head CI and packages pass.
+
 # Nexus — Protocol renewal follow-up candidate (Issue #155)
 
 **Status:** Coded on draft PR #156 only; not merged or deployed. **Version:** No new release version; baseline v0.9.26-beta.1. **Main baseline:** 1c6007fce7ea25a68ec29f480f3b4d6ede46477c.
