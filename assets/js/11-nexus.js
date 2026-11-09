@@ -1139,10 +1139,34 @@ function protocolBuilderModal(existing, renewalCompound) {
     m.querySelectorAll(".pb-dpdec").forEach(b=>b.onclick=()=>{const s=getS(b.dataset.ci);if(s.dosesPerDay>1)s.dosesPerDay--;if(proto._sameSchedule!==false)proto.compounds.forEach(c=>c.schedule=JSON.parse(JSON.stringify(proto.schedule)));rebuildModal();});
     m.querySelectorAll(".pb-dpinc").forEach(b=>b.onclick=()=>{const s=getS(b.dataset.ci);if(s.dosesPerDay<4)s.dosesPerDay++;if(proto._sameSchedule!==false)proto.compounds.forEach(c=>c.schedule=JSON.parse(JSON.stringify(proto.schedule)));rebuildModal();});
     m.querySelectorAll(".pb-time").forEach(b=>b.oninput=()=>{const s=getS(b.dataset.ci);s.times[+b.dataset.i]=b.value;});
+    m.querySelector("#pb-advanced-toggle")?.addEventListener("click",()=>{advancedPhaseOptions=!advancedPhaseOptions;rebuildModal();});
+    m.querySelector("#pb-protocol-start")?.addEventListener("change",e=>{
+      const next=e.target.value;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(next)){e.target.setCustomValidity("Choose a valid start date");e.target.reportValidity();return;}
+      const dates=proto.compounds.flatMap(c=>(c.phases||[]).filter(ph=>ph.endOnDate).map(ph=>ph.endOnDate));
+      if(dates.some(end=>end<next)){e.target.setCustomValidity("The start must be on or before every planned end date");e.target.reportValidity();return;}
+      e.target.setCustomValidity("");proto.startDate=next;
+      proto.compounds.forEach(c=>(c.phases||[]).forEach((ph,pi)=>{if(ph.endOnDate)applyExactEnd(ph,phaseStartFor(c,pi),ph.endOnDate);}));
+      rebuildModal();
+    });
+    m.querySelectorAll(".pb-duration-mode").forEach(b=>b.onclick=()=>{
+      const ci=+b.dataset.ci,pi=+b.dataset.pi,c=proto.compounds[ci],ph=c?.phases?.[pi];if(!ph)return;
+      if(b.dataset.mode==="weeks"){delete ph.durationDays;delete ph.endOnDate;}
+      else {const first=phaseStartFor(c,pi);applyExactEnd(ph,first,addDays(first,phaseDuration(ph)-1));}
+      rebuildModal();
+    });
+    m.querySelectorAll(".pb-phase-end").forEach(b=>b.onchange=()=>{
+      const ci=+b.dataset.ci,pi=+b.dataset.pi,c=proto.compounds[ci],ph=c?.phases?.[pi];
+      if(!ph)return;
+      if(!applyExactEnd(ph,phaseStartFor(c,pi),b.value)){
+        b.setCustomValidity("Choose a last day on or after this phase starts");b.reportValidity();return;
+      }
+      b.setCustomValidity("");rebuildModal();
+    });
     m.querySelectorAll(".pb-multiphase").forEach(cb=>cb.onchange=()=>{const ci=+cb.dataset.ci;proto.compounds[ci].multiPhase=cb.checked;if(!proto.compounds[ci].phases||proto.compounds[ci].phases.length<1)proto.compounds[ci].phases=[{type:"dose",durationWeeks:4,dose:""}];rebuildModal();});
     m.querySelectorAll(".pb-ptype").forEach(b=>b.onclick=()=>{const ci=+b.dataset.ci,pi=+b.dataset.pi;if(proto.compounds[ci]?.phases?.[pi])proto.compounds[ci].phases[pi].type=b.dataset.t;rebuildModal();});
-    m.querySelectorAll(".pb-phdec").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph&&ph.durationWeeks>1)ph.durationWeeks--;rebuildModal();});
-    m.querySelectorAll(".pb-phinc").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph)ph.durationWeeks=(ph.durationWeeks||4)+1;rebuildModal();});
+    m.querySelectorAll(".pb-phdec").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph&&ph.durationWeeks>1){ph.durationWeeks--;delete ph.durationDays;delete ph.endOnDate;}rebuildModal();});
+    m.querySelectorAll(".pb-phinc").forEach(b=>b.onclick=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph){ph.durationWeeks=(ph.durationWeeks||4)+1;delete ph.durationDays;delete ph.endOnDate;}rebuildModal();});
     m.querySelectorAll(".pb-phdose").forEach(b=>b.oninput=()=>{const ph=proto.compounds[+b.dataset.ci]?.phases?.[+b.dataset.pi];if(ph)ph.dose=b.value;});
     m.querySelectorAll(".pb-addphase").forEach(b=>b.onclick=()=>{const c=proto.compounds[+b.dataset.ci];if(c){if(!c.phases)c.phases=[];c.phases.push({type:"dose",durationWeeks:4,dose:""});rebuildModal();}});
     m.querySelectorAll(".pb-phrem").forEach(b=>b.onclick=()=>{const c=proto.compounds[+b.dataset.ci];if(c?.phases){c.phases.splice(+b.dataset.pi,1);rebuildModal();}});
@@ -1192,6 +1216,13 @@ function protocolBuilderModal(existing, renewalCompound) {
   }
 
   async function saveProto(status){
+    // Validate every exact end before mutating app state or showing save success.
+    for(const c of proto.compounds)for(let pi=0;pi<(c.phases||[]).length;pi++){
+      const ph=c.phases[pi];if(!ph.endOnDate)continue;
+      if(!applyExactEnd(ph,phaseStartFor(c,pi),ph.endOnDate)){
+        showErrorBanner("End date must be on or after the phase start. Nothing was saved.");return;
+      }
+    }
     if(!proto.name.trim()){proto.name=proto.goal||"New Protocol";}
     proto.status=status;
     if(!state.protocols)state.protocols=[];
