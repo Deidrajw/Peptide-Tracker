@@ -189,12 +189,13 @@ try{
         await new Promise(resolve=>setTimeout(resolve,35));
         const activated=state.protocols[0].status==="active"&&
           state.protocols[0].startDate===localDate()&&saves===1;
+        const schedulerAnchored=state.peptides?.Retatrutide?.startDate===localDate();
         const offered=!!document.querySelector("#ca-ok")&&
           document.querySelector(".modal")?.textContent.includes("log a dose");
         document.querySelector("#ca-cancel")?.click();
         const noDose=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===beforeDoses;
         const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
-        return {visible,confirmation,cancellation,activated,offered,noDose,noStock};
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,offered,noDose,noStock};
       }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
     });
     check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
