@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue #155 typography candidate amended; PR156 remains NOT RELEASED
+- User iPhone feedback accepted renewal flow via launcher, asked end-date option / simpler phase UI and reported graph emojis. Focused JS09/JS11/CSS typography correction and test guards committed through 9557cc8d; no version bump, migration or live writes. Issue #157 tracks date model and advanced phases redesign separately. Latest app/test CI and exact-source packages not yet verified; no merge/deploy or physical reacceptance.
+
 ## 2026-11-08 — Issue #155 DS2 targeted refinement candidate, NOT RELEASED
 - User reported physical iPhone ready Stash Log Dose/Undo PASS and Start New/Update Existing functioning via isolated launcher; optional reaction prompt first, Cancel/Not Now and protected cases not accepted. Draft PR156 source changes: Phase Timeline and Supply Planner chart emojis removed; scoped approved DS2 typography; regression test updated. No version bump, migration, real stored data modification, merge or deployment. New app source requires fresh CI and matched full-app artifacts; do not reuse historical 3b3a0ae0 downloads as latest. Exact-date phase planner and overall phases redesign NOT CODED pending UI/date semantics preview.
 
