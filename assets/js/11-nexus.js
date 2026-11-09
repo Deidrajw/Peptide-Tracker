@@ -1573,7 +1573,7 @@ function phaseRoadmapModal(protocolId, compoundName, returnToDetails=false) {
        const isCurrent=Boolean(ph.startDate && ph.endDate && today>=ph.startDate && today<ph.endDate);
        const stateLabel=isPast?"Completed":isCurrent?(info?.isPaused?"Paused here":"Current"):"Upcoming";
        const label=ph.type==="dose"?"Dosing":"Rest";
-       const duration=Number(ph.durationWeeks)||4;
+       const duration=Math.ceil(nexusPhaseDurationDays(ph)/7);
        return `<div class="nx-phase-timeline-row ${isCurrent?"is-current":isPast?"is-past":"is-upcoming"}">
          <div class="nx-phase-timeline-rail" aria-hidden="true"><span class="nx-phase-timeline-dot">${isPast?"✓":isCurrent?"●":""}</span>${i<phases.length-1?'<span class="nx-phase-timeline-line"></span>':""}</div>
          <div class="nx-phase-timeline-content">
@@ -1756,7 +1756,7 @@ function protocolsView() {
   const planned=visibleProtos.filter(p=>p.status==="planned");
   const drafts=protos.filter(p=>p.status==="draft");
   const done=visibleProtos.filter(p=>["completed","archived"].includes(p.status));
-  const miniGantt=(p)=>{const tw=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+(ph.durationWeeks||4),0))||8));return(p.compounds||[]).map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:tw}]).map((ph,pi)=>`<div class="phase-bar-seg" data-proto="${p.id}" data-comp="${esc(c.name)}" data-phase="${pi}" style="flex:${ph.durationWeeks||4};background:${ph.type==="dose"?"#A78BFA":"#333"};height:6px;border-radius:2px;cursor:pointer"></div>`).join("");return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:9px;color:var(--t5);width:55px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:1px">${bars}</div></div>`;}).join("");};
+  const miniGantt=(p)=>{const tw=Math.max(1,...(p.compounds||[]).map(c=>Math.ceil((c.phases||[]).reduce((a,ph)=>a+nexusPhaseDurationDays(ph),0)/7)||8));return(p.compounds||[]).map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:tw}]).map((ph,pi)=>`<div class="phase-bar-seg" data-proto="${p.id}" data-comp="${esc(c.name)}" data-phase="${pi}" style="flex:${nexusPhaseDurationDays(ph)};background:${ph.type==="dose"?"#A78BFA":"#333"};height:6px;border-radius:2px;cursor:pointer"></div>`).join("");return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:9px;color:var(--t5);width:55px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:1px">${bars}</div></div>`;}).join("");};
   const compoundPhaseStatus = getProtocolPhaseInfo; // kept as an alias — same calls below, same function now
   const to12h = (hhmm) => {
     if (!hhmm) return null;
@@ -1802,7 +1802,7 @@ function protocolsView() {
     const timelineElapsed=timelineTotal!==null?Math.max(0,Math.min(timelineTotal,Math.round((new Date(timelineDay+"T12:00")-new Date(effectiveStart+"T12:00"))/86400000))):null;
     const timelinePct=timelineTotal!==null?Math.round(timelineElapsed/timelineTotal*100):null;
     const phaseInfo=compounds.length ? compoundPhaseStatus(p,compounds[0]) : null;
-    const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+(Number(ph.durationWeeks)||4),0);
+    const totalPhaseWeeks=(compounds[0]?.phases||[]).reduce((n,ph)=>n+nexusPhaseDurationDays(ph)/7,0);
     const phaseWeek=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.weekInPhase)?phaseInfo.weekInPhase:null;
     const phaseTotal=phaseInfo&&!phaseInfo.done&&Number.isFinite(phaseInfo.totalWeeks)?phaseInfo.totalWeeks:null;
     const firstCompoundData=fc?allPeptides()[fc]:null;
