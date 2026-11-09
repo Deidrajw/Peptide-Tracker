@@ -195,7 +195,9 @@ try{
         document.querySelector("#ca-cancel")?.click();
         const noDose=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===beforeDoses;
         const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
-        return {visible,confirmation,cancellation,activated,schedulerAnchored,offered,noDose,noStock};
+        state.protocols[0].status="draft";state.protocols[0].compounds[0].phases[0].dose="";renderBody();
+        const incompleteGuard=!document.querySelector(".proto-start-now")&&!!document.querySelector(".proto-finish-setup");
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,offered,noDose,noStock,incompleteGuard};
       }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
     });
     check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
