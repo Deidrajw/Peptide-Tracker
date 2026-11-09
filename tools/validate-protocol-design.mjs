@@ -175,6 +175,7 @@ try{
         const info=getProtocolPhaseInfo(p,c);
         const exactBoundary=info?.phases?.[0]?.endDate==="2027-01-02" && nexusPhaseDurationDays(c.phases[0])===32;
         const oldPhase=nexusPhaseDurationDays({durationWeeks:4})===28;
+        const dstSafe=nexusCalendarDaysBetween("2027-03-13","2027-03-15")===2;
         const comp={startDate:"2026-12-01",scheduleDays:7,dosesPerDay:1,phases:[{durationWeeks:4,durationDays:32,endOnDate:"2027-01-01",dose:"1"}]};
         const lastDay=getEffectiveSchedule(comp,"2027-01-01");
         const nextDay=getEffectiveSchedule(comp,"2027-01-02");
@@ -184,11 +185,16 @@ try{
         document.querySelector("#pb-next")?.click();
         document.querySelector("#pb-next")?.click();
         const phaseUI=!!document.querySelector("#pb-protocol-start")&&!!document.querySelector(".nx-phase-duration-toggle")&&!!document.querySelector("#pb-advanced-toggle");
+        document.querySelector("#pb-advanced-toggle")?.click();
+        const advancedUI=document.querySelector(".nx-phase-advanced-only")?.style.display==="flex";
+        document.querySelector("#pb-advanced-toggle")?.click();
         const start=document.querySelector("#pb-protocol-start");
         if(start){start.value="2026-12-01";start.dispatchEvent(new Event("change",{bubbles:true}));}
         document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
         const dateInput=document.querySelector(".pb-phase-end");
-        if(dateInput){dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
+        let invalidGuard=false;
+        if(dateInput){dateInput.value="2026-11-30";dateInput.dispatchEvent(new Event("change",{bubbles:true}));invalidGuard=!!dateInput.validationMessage;
+          dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
         const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
         document.querySelector("#pb-next")?.click();
         document.querySelector("#pb-save-draft")?.click();
@@ -196,7 +202,7 @@ try{
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,stopsAfter,phaseUI,exactUI,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,phaseUI,advancedUI,invalidGuard,exactUI,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
