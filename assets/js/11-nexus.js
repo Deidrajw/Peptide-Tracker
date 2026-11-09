@@ -1145,13 +1145,13 @@ function protocolBuilderModal(existing, renewalCompound) {
     m.querySelectorAll(".pb-dpdec").forEach(b=>b.onclick=()=>{const s=getS(b.dataset.ci);if(s.dosesPerDay>1)s.dosesPerDay--;if(proto._sameSchedule!==false)proto.compounds.forEach(c=>c.schedule=JSON.parse(JSON.stringify(proto.schedule)));rebuildModal();});
     m.querySelectorAll(".pb-dpinc").forEach(b=>b.onclick=()=>{const s=getS(b.dataset.ci);if(s.dosesPerDay<4)s.dosesPerDay++;if(proto._sameSchedule!==false)proto.compounds.forEach(c=>c.schedule=JSON.parse(JSON.stringify(proto.schedule)));rebuildModal();});
     m.querySelectorAll(".pb-time").forEach(b=>b.oninput=()=>{const s=getS(b.dataset.ci);s.times[+b.dataset.i]=b.value;});
-    m.querySelector("#pb-advanced-toggle")?.addEventListener("click",()=>{advancedPhaseOptions=!advancedPhaseOptions;rebuildModal();});
+    m.querySelector("#pb-advanced-toggle")?.addEventListener("click",()=>{advancedPhaseOptions=!advancedPhaseOptions;pendingPhaseRemoval=null;showBuilderIssue("");rebuildModal();});
     m.querySelector("#pb-protocol-start")?.addEventListener("change",e=>{
       const next=e.target.value;
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(next)){e.target.setCustomValidity("Choose a valid start date");e.target.reportValidity();return;}
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(next)){showBuilderIssue("Choose a valid start date.");return;}
       const dates=proto.compounds.flatMap(c=>(c.phases||[]).filter(ph=>ph.endOnDate).map(ph=>ph.endOnDate));
-      if(dates.some(end=>end<next)){e.target.setCustomValidity("The start must be on or before every planned end date");e.target.reportValidity();return;}
-      e.target.setCustomValidity("");proto.startDate=next;
+      if(dates.some(end=>end<next)){showBuilderIssue("Start date must be on or before the planned ending. Nothing was saved.");return;}
+      showBuilderIssue("");proto.startDate=next;
       proto.compounds.forEach(c=>(c.phases||[]).forEach((ph,pi)=>{if(ph.endOnDate)applyExactEnd(ph,phaseStartFor(c,pi),ph.endOnDate);}));
       rebuildModal();
     });
@@ -1177,10 +1177,10 @@ function protocolBuilderModal(existing, renewalCompound) {
       const ci=+b.dataset.ci,pi=+b.dataset.pi,c=proto.compounds[ci],ph=c?.phases?.[pi];
       if(!ph)return;
       if(!applyExactEnd(ph,phaseStartFor(c,pi),b.value)){
-        b.setCustomValidity("Choose a last day on or after this phase starts");b.reportValidity();return;
+        showBuilderIssue("Last planned day must be on or after the phase starts. Nothing was saved.");return;
       }
       exactDateModeCache.set(ph,ph.endOnDate);
-      b.setCustomValidity("");rebuildModal();
+      showBuilderIssue("");rebuildModal();
     });
 
     m.querySelectorAll(".pb-ptype").forEach(b=>b.onclick=()=>{const ci=+b.dataset.ci,pi=+b.dataset.pi;if(proto.compounds[ci]?.phases?.[pi])proto.compounds[ci].phases[pi].type=b.dataset.t;rebuildModal();});
@@ -1247,6 +1247,7 @@ function protocolBuilderModal(existing, renewalCompound) {
 
   async function saveProto(status){
     // Validate every exact end before mutating app state or showing save success.
+    if(pendingPhaseRemoval){showBuilderIssue("Finish or cancel phase removal before saving.");return;}
     for(const c of proto.compounds)for(let pi=0;pi<(c.phases||[]).length;pi++){
       const ph=c.phases[pi];if(!ph.endOnDate)continue;
       if(!applyExactEnd(ph,phaseStartFor(c,pi),ph.endOnDate)){
