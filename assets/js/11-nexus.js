@@ -1415,13 +1415,14 @@ function nexusPostProtocolDoseFollowup(name,dose,offerReactionAfter=false){
   const dismiss=async(showReaction=true)=>{
     if(followupPending)return false;
     followupPending=true;
-    const prior=state.protocolDoseFollowupAcknowledged||{};
-    state.protocolDoseFollowupAcknowledged={...prior,[key]:new Date().toISOString()};
+    state.protocolDoseFollowupAcknowledged={
+      ...(state.protocolDoseFollowupAcknowledged||{}),
+      [key]:new Date().toISOString()
+    };
     try {
-      if(!await nexusCommitCurrentState()){
-        state.protocolDoseFollowupAcknowledged=prior;
-        return false;
-      }
+      // nexusCommitCurrentState restores the last verified canonical state on a
+      // rejected/uncertain LIVE write. Never reapply a stale pre-write snapshot.
+      if(!await nexusCommitCurrentState())return false;
       closeModal();
       if(showReaction&&offerReactionAfter)nexusPostDoseReactionPrompt(name,dose.id);
       return true;
