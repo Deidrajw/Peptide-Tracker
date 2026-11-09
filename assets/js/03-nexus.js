@@ -1570,6 +1570,21 @@ function isWeekdaySchedule(data) { return data.scheduleType==="weekdays" && Arra
 // override BOTH the dose-amount progression AND the schedule cadence/occurrence
 // structure. Compounds with no data.phases behave exactly as before — fully backward
 // compatible for every existing single-schedule compound.
+// Optional exact calendar duration, restricted to a positive number of whole days.
+// Legacy protocols with durationWeeks alone behave exactly as before.
+function nexusPhaseDurationDays(phase) {
+  const days=Number(phase?.durationDays);
+  if(phase?.durationDays!=null && Number.isInteger(days) && days>=1 && days<=36500)return days;
+  return Math.round((phase?.durationWeeks||4)*7);
+}
+function nexusCalendarDaysBetween(a,b){
+  const date=/^\\d{4}-\\d{2}-\\d{2}$/;
+  if(!date.test(String(a||""))||!date.test(String(b||"")))return NaN;
+  const start=Date.parse(a+"T12:00:00Z"),end=Date.parse(b+"T12:00:00Z");
+  if(!Number.isFinite(start)||!Number.isFinite(end))return NaN;
+  return Math.round((end-start)/86400000);
+}
+
 function getCompoundPhase(data, dateStr) {
   const phases = data.phases;
   if (!phases || !phases.length) return null;
@@ -1579,7 +1594,7 @@ function getCompoundPhase(data, dateStr) {
   if (daysIn < 0) return null;
   let cursor = 0;
   for (const ph of phases) {
-    const durDays = Math.round((ph.durationWeeks||4)*7);
+    const durDays = nexusPhaseDurationDays(ph);
     if (daysIn < cursor+durDays) return ph;
     cursor += durDays;
   }
@@ -1599,7 +1614,7 @@ function getPhaseSpan(data, dateStr) {
   if (daysIn < 0) return null;
   let cursor = 0;
   for (let i=0; i<phases.length; i++) {
-    const durDays = Math.round((phases[i].durationWeeks||4)*7);
+    const durDays = nexusPhaseDurationDays(phases[i]);
     const isLast = i === phases.length-1;
     if (daysIn < cursor+durDays || isLast) {
       return {
@@ -1659,6 +1674,7 @@ function syncProtocolToCompoundData(proto) {
       t.startDate = proto.startDate || localDate();
       t.phases = c.phases.map(ph => ({
         durationWeeks: ph.durationWeeks||4,
+        ...(ph.durationDays!=null?{durationDays:ph.durationDays}:{}),
         dose: ph.type==="rest" ? "" : (ph.dose||""),
         isRest: ph.type==="rest",
         schedule: ph.schedule ? convertBuilderSchedule(ph.schedule) : { scheduleWeekdays:base.scheduleWeekdays, scheduleDays:base.scheduleDays, dosesPerDay:base.dosesPerDay, times:base.times },
