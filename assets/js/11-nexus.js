@@ -1064,6 +1064,7 @@ function protocolBuilderModal(existing, renewalCompound) {
         ${(state.plans?.goals||[]).map(g=>`<option value="${esc(String(g.id))}"${String(proto.linkedGoalId||"")===String(g.id)?" selected":""}>${esc(g.name)}</option>`).join("")}
       </select>
       <div class="nx-muted" style="font-size:11px;margin-bottom:14px">This links an existing goal for context. It doesn't change the protocol's purpose, dosing schedule or dose history.</div>
+      ${proto.compounds.flatMap(c=>(c.phases||[]).filter(ph=>ph.endOnDate).map(ph=>`<div class="nx-phase-review-end"><span>LAST PLANNED DAY · ${esc(c.name)}</span><strong>${esc(ph.endOnDate)}</strong><small>Selected day included · ${(nexusPhaseDurationDays(ph)/7).toFixed(1)} weeks approx.</small></div>`)).join("")}
       <div class="nx-pb-phase-timeline" style="background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px">
         <div class="nx-pb-phase-timeline-label">Phase timeline</div>
         ${gantt||"<div style='color:var(--t5);font-size:11px'>No compounds added.</div>"}
