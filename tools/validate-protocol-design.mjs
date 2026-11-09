@@ -193,14 +193,27 @@ try{
         document.querySelector("#pb-next")?.click();
         const phaseUI=!!document.querySelector("#pb-protocol-start")&&!!document.querySelector(".nx-phase-duration-toggle")&&!!document.querySelector("#pb-advanced-toggle");
         document.querySelector("#pb-advanced-toggle")?.click();
-        const advancedUI=document.querySelector(".nx-phase-advanced-only")?.style.display==="flex";
+        const advancedUI=!!document.querySelector(".pb-addphase")&&!!document.querySelector(".pb-duration-mode");
+        document.querySelector("#pb-advanced-toggle")?.click();
+        // Additional phases must never hide the core Weeks/End-on-date selector.
+        document.querySelector("#pb-advanced-toggle")?.click();
+        document.querySelector(".pb-addphase")?.click();
+        const durationWithSecondPhase=!!document.querySelector(".pb-duration-mode[data-mode=weeks]");
+        const secondPhaseVisible=!!document.querySelector(".pb-phrem");
+        document.querySelector(".pb-phrem")?.click();
+        const removeConfirmation=!!document.querySelector("#pb-remove-cancel")&&!document.querySelector("#pb-remove-cancel").hidden;
+        document.querySelector("#pb-remove-cancel")?.click();
+        const phasePreservedAfterCancel=!!document.querySelector(".pb-phrem");
+        document.querySelector(".pb-phrem")?.click();
+        document.querySelector(".pb-phrem")?.click();
+        const removalLeavesSingle=!document.querySelector(".pb-phrem");
         document.querySelector("#pb-advanced-toggle")?.click();
         const start=document.querySelector("#pb-protocol-start");
         if(start){start.value="2026-12-01";start.dispatchEvent(new Event("change",{bubbles:true}));}
         document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
         const dateInput=document.querySelector(".pb-phase-end");
         let invalidGuard=false;
-        if(dateInput){dateInput.value="2026-11-30";dateInput.dispatchEvent(new Event("change",{bubbles:true}));invalidGuard=!!dateInput.validationMessage;
+        if(dateInput){dateInput.value="2026-11-30";dateInput.dispatchEvent(new Event("change",{bubbles:true}));invalidGuard=/Last planned day must be on or after/.test(document.querySelector("#pb-inline-error")?.textContent||"");
           dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
         const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
         // User-reported Issue157 regression: a 32-day date switched to Weeks
@@ -217,7 +230,7 @@ try{
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,durationWithSecondPhase,secondPhaseVisible,removeConfirmation,phasePreservedAfterCancel,removalLeavesSingle,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
