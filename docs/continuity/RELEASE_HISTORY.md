@@ -1,3 +1,6 @@
+## 2026-11-08 — Issue #155 candidate safety refinement, NOT RELEASED
+- After prior 0acde94c six-suite success, amended JS11 at 40ff3fe3 to avoid stale state rollback following nexusCommitCurrentState canonical restoration on failed acknowledgement. Browser test updated at 78d0bc71. Latest release candidate remains unmerged draft PR156; no version bump, migration, production write or deployment. Fresh exact-head CI/artifacts PENDING; previous artifacts are historical only and not current app source.
+
 ## 2026-11-08 — Issue #155 PR156 engineering QUALIFIED, not released
 - Branch fix/protocol-renewal-followup-20261108, candidate app source at 0acde94c: post-dose protocol renewal dismissal awaited before modal navigation, fresh unsaved selected-compound builder, no prior dose/schedule cloning, no activation or migration. Six CI workflows SUCCESS: 42514989279/42514989276/42514989168/42514989165/42514989207/42514989320. Protocol browser matrix 8/8 LIVE/DEMO × 320/390 × both themes PASS. Official full-app artifact #13631009374: outer ZIP 565 CRC PASS, 26-file LIVE ZIP CRC PASS, full standalone fictional isolated DEMO and matching offline ZIP; index/CSS/JS11/JS12 git hashes exact. No new published version; baseline v0.9.26-beta.1. Not merged/deployed; physical iPhone/VoiceOver and Cloudflare candidate parity not established. No real saved records modified.
 
