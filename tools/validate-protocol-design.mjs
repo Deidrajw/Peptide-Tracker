@@ -203,6 +203,13 @@ try{
         if(dateInput){dateInput.value="2026-11-30";dateInput.dispatchEvent(new Event("change",{bubbles:true}));invalidGuard=!!dateInput.validationMessage;
           dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
         const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
+        // User-reported Issue157 regression: a 32-day date switched to Weeks
+        // must suggest 5 weeks and returning to date must restore Jan 1.
+        document.querySelector(".pb-duration-mode[data-mode=weeks]")?.click();
+        const weeksOnSwitch=document.querySelector(".nx-phase-week-controls")?.textContent.includes("5w")===true;
+        const weeksModel=document.querySelector(".pb-duration-mode[data-mode=weeks]")?.getAttribute("aria-pressed")==="true";
+        document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+        const restoredEnd=document.querySelector(".pb-phase-end")?.value==="2027-01-01";
         document.querySelector("#pb-next")?.click();
         const reviewExact=document.querySelector(".nx-phase-review-end")?.textContent.includes("2027-01-01")===true;
         document.querySelector("#pb-save-draft")?.click();
@@ -210,7 +217,7 @@ try{
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,reviewExact,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
