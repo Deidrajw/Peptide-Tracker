@@ -113,13 +113,19 @@ try{
         state.protocols=[old];
         state.protocolDoseFollowupAcknowledged={};
         const dose={id:"qa-reta-dose",date:localDate(),asNeeded:false};
-        nexusCommitCurrentState=async()=>{commits++;return false;};
+        // Model real nexusCommitCurrentState rejection: it restores a canonical
+        // durable snapshot. The follow-up must not overwrite that recovered data.
+        nexusCommitCurrentState=async()=>{commits++;
+          state.protocolDoseFollowupAcknowledged={persistedOther:"safe"};
+          return false;
+        };
         const failOpened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
         document.querySelector("#nexus-followup-new")?.click();
         await new Promise(resolve=>setTimeout(resolve,20));
         const failurePreserved=!!document.querySelector("#nexus-followup-new")&&
           !document.querySelector("#proto-builder-wrap")&&
-          !state.protocolDoseFollowupAcknowledged["qa-finished-reta|Retatrutide"];
+          !state.protocolDoseFollowupAcknowledged["qa-finished-reta|Retatrutide"]&&
+          state.protocolDoseFollowupAcknowledged.persistedOther==="safe";
         closeModal();
         nexusCommitCurrentState=async()=>{commits++;await Promise.resolve();return true;};
         const opened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
