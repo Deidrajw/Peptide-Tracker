@@ -2926,3 +2926,34 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 }
 #proto-builder-wrap .pb-ph-day { min-width: 34px; }
 #proto-builder-wrap .pb-addphase { font: 600 13px 'DM Sans', system-ui, sans-serif; }
+
+/* Issue157: consistent, accessible feedback and optional phases; no nested switch. */
+#proto-builder-wrap .nx-pb-inline-error:not([hidden]) {
+  display: block;
+  margin: 8px 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #D7A760;
+  border-radius: 10px;
+  color: var(--t1);
+  background: var(--surface-2);
+  font: 500 13px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-pb-inline-cancel:not([hidden]) {
+  display: block;
+  min-height: 44px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-sub);
+  border-radius: 10px;
+  color: var(--t2);
+  background: var(--surface-2);
+  font: 600 13px/1.35 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-pb-phase-summary {
+  margin: 8px 0 10px;
+  color: var(--t3);
+  font: 400 12px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .pb-phrem,
+#proto-builder-wrap .pb-addphase { font-family: 'DM Sans',system-ui,sans-serif; }
