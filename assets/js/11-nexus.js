@@ -870,8 +870,8 @@ function protocolBuilderModal(existing, renewalCompound) {
   const ALL_COMPOUNDS = [...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(l=>l.name),...Object.keys(state.customPeptides||{})])].sort();
   let step = existing || renewalCompound ? 2 : 0; // renewal starts at the preselected Stack; no template overwrites
   const STEPS = existing
-    ? ["Stack","Schedule","Phases","Review"]
-    : ["Goal","Template","Stack","Schedule","Phases","Review"];
+    ? ["Stack","Schedule","Duration & changes","Review"]
+    : ["Goal","Template","Stack","Schedule","Duration & changes","Review"];
 
   const curStep = () => STEPS[step];
   let advancedPhaseOptions=!!existing&&proto.compounds.some(c=>c.multiPhase||(c.phases||[]).length>1);
@@ -997,7 +997,7 @@ function protocolBuilderModal(existing, renewalCompound) {
       }`;
     }
 
-    if(curStep()==="Phases") {
+    if(curStep()==="Duration & changes") {
       if(!proto.compounds.length) return prog+`<div style="text-align:center;padding:20px;color:var(--t4)">Add compounds in the Stack step first.</div>`;
       return prog+`<div class="nx-phase-start-field"><label class="field-label" for="pb-protocol-start">START DATE</label><input id="pb-protocol-start" class="inp" type="date" value="${esc(proto.startDate||localDate())}"><p class="hint">All phases start from this date. Previously logged doses are unchanged.</p></div><div class="nx-phase-heading"><strong>Duration & changes</strong><p class="hint">Choose a duration in weeks or an exact last day. More phases are optional.</p></div><button id="pb-advanced-toggle" type="button" class="nx-phase-advanced-toggle" aria-expanded="${advancedPhaseOptions}">${advancedPhaseOptions?"Hide advanced phase options":"Advanced phase options"} <span aria-hidden="true">${advancedPhaseOptions?"⌃":"⌄"}</span></button>`+proto.compounds.map((c,ci)=>`
       <div style="margin-bottom:14px;padding:12px;background:var(--surface-2);border-radius:10px">
