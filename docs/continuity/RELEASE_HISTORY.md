@@ -1,3 +1,6 @@
+## 2026-11-10 — Issue157 redesigned candidate five workflows passed, NOT RELEASED
+- Main 1c6007fc; draft stacked PR158 on draft PR156; app code cd641e77, focused browser and DS2 tests e5bb1302, docs checkpoint thereafter. New phase timeline, separate focused phase editing, safe remove dialog, Start Now for eligible future-active protocols, Scheduled status coherence, DS2 CTA and iPhone target sizing. No migration, production write, merge or deploy. DS2 earlier FAIL on test mismatch/button CSS corrected; latest DS2/mobile/writer/WebKit/pinned Chromium PASS, full build 42913078182 pending. Exact-source DEMO/LIVE artifacts, physical iPhone, production host parity all incomplete. Release candidate only.
+
 ## 2026-11-10 — Issue157 post-iPhone UX correction coded, NOT RELEASED
 - Development branch PR158 (stacked on PR156 except temporary QA base trigger), main 1c6007fc. User-approved focused timeline and lifecycle correction coded via b90b6bb7/6a4df729/cb98f95e/fb6004ba/b663642f, regression source through 47a8ce73. Source package, six CI final outcome, exact-source FULL-APP DEMO/LIVE and physical iPhone acceptance NOT VERIFIED. Data impact: no migration, no production write; explicit Start Now changes date/schedule only after confirmation, existing logged doses preserved. No merge/deploy authorization.
 
