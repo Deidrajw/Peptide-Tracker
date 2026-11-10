@@ -3004,3 +3004,22 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 #proto-builder-wrap .nx-pb-timeline-row:focus-visible,
 #proto-builder-wrap .pb-phase-done:focus-visible,
 #proto-builder-wrap .nx-pb-remove-trigger:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+
+/* Planned/future protocol primary Start Now: match the accepted DS2 lavender CTA. */
+.nx2-page--protocols .proto-start-now,
+.nx2-page--protocols .proto-finish-setup{
+  display:block;width:100%;min-height:48px;padding:12px 18px;
+  border:1px solid transparent;border-radius:12px;
+  background:#C6A6F2;color:#21172E;
+  font:700 14px/1.4 'DM Sans',system-ui,sans-serif;
+  text-align:center;cursor:pointer;
+}
+.nx2-page--protocols .proto-start-now:focus-visible,
+.nx2-page--protocols .proto-finish-setup:focus-visible{
+  outline:2px solid #A78BFA;outline-offset:3px;
+}
+#proto-builder-wrap .pb-phdose{min-height:44px;height:44px!important}
+#proto-builder-wrap .pb-ph-sched,#proto-builder-wrap .pb-ph-day{
+  min-height:44px;min-width:44px;font-size:12px!important
+}
+#proto-builder-wrap .pb-ph-time{min-height:44px;height:44px!important}
