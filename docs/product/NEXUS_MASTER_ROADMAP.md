@@ -1,3 +1,6 @@
+## 2026-11-10 — Issue157 user-approved follow-up to duration and protocol lifecycle (PR158 draft)
+- User accepted compact timeline and focused single-phase editor with safe remove confirmation, and requested Start Now availability for future-active/no-attributed-dose protocols with consistent status and schedule. Changes coded in PR158, remain separate from future #145 protocol-first multi-compound discovery; do not silently modify existing logs, inventory or protocol start dates. Six-suite current-source CI and fresh full-app isolated DEMO/LIVE candidate pending; physical iPhone acceptance outstanding. No release authorization.
+
 ## 2026-11-09 — Issue #157 Duration & changes approved, stacked candidate
 - User approved Weeks / End on date mode with real exact last day and advanced phase disclosure; candidate implemented on feature/protocol-duration-end-date-20261109 based on draft PR156. Old durationWeeks remains supported; optional durationDays is the new exact calendar representation, not approximate rounding. Full system/regression and iPhone acceptance required, especially pause behaviour and actual dose end day. Separate from future multi-compound protocol-first UX Issue145. No release authorization or deployment.
 
