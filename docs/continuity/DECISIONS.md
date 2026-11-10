@@ -1,3 +1,6 @@
+## 2026-11-10 — Issue157 qualification and release gate reaffirmed
+- Official exact-source PR158 candidate passed all six CI workflows; source-matched full-app isolated DEMO and complete LIVE ZIP independently verified. This is NOT physical iPhone UX/VoiceOver sign-off, nor release authorization. Hold PR158 as stacked draft on PR156 until targeted real iPhone acceptance (including prior-history Start Now and Jan2 end cutoff), then request separate explicit merge/deploy approval. Never use production records or backups as QA fixtures.
+
 ## 2026-11-09 — Correct Start Now identity in presence of historic compound doses
 - Product decision approved: starting a NEW protocol must not be blocked simply because the SAME compound had doses in a completed/other protocol. Earlier global hasDoses counted any compound records; now Start Now eligibility uses new protocol draft/planned lifecycle, and records a compact baseline of prior compound dose counts upon confirmed activation. For baseline-marked protocol status, only subsequent dose-count increases qualify the new first-dose transition; existing unmarked legacy protocol behaviour remains untouched. This does not migrate or modify dose records. Future source-linked event IDs may improve resilience to deletion/edits; protected historical logs remain stable. No merge/deploy authorization.
 
