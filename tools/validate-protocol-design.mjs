@@ -200,7 +200,24 @@ try{
         const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
         state.protocols[0].status="draft";state.protocols[0].compounds[0].phases[0].dose="";renderBody();
         const incompleteGuard=!document.querySelector(".proto-start-now")&&!!document.querySelector(".proto-finish-setup");
-        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,explicitlyStarted,offered,noDose,noStock,incompleteGuard};
+        // User-reported physical iPhone failure: an active protocol whose
+        // planned start remains in the future must display Start Now (not
+        // Log First Dose or contradictory In Progress / Not started).
+        state.protocols[0].status="active";
+        state.protocols[0].startDate=addDays(localDate(),20);
+        state.protocols[0].compounds[0].phases[0].dose="1";
+        delete state.protocols[0].nexusStartedAt;
+        delete state.protocols[0].nexusStartNowBaseline;
+        renderBody();
+        const futureAction=!!document.querySelector(".proto-start-now")&&!document.querySelector(".proto-log-first");
+        const futureStatus=!!document.querySelector(".nx-card-status")?.textContent.includes("Scheduled");
+        const futureSummary=document.querySelector(".nx-proto-compact-progress")?.textContent||"";
+        const futureConsistent=futureSummary.includes("Scheduled")&&!futureSummary.includes("Not started");
+        document.querySelector(".proto-start-now")?.click();
+        const futureStartConfirmation=!!document.querySelector("#ca-ok");
+        document.querySelector("#ca-cancel")?.click();
+        const futureCancelPreserves=state.protocols[0].startDate===addDays(localDate(),20)&&state.protocols[0].status==="active";
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,explicitlyStarted,offered,noDose,noStock,incompleteGuard,futureAction,futureStatus,futureConsistent,futureStartConfirmation,futureCancelPreserves};
       }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
     });
     check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
