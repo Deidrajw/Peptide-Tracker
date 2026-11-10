@@ -390,16 +390,16 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      target.startDate=new Date(Date.now()-86400000).toISOString().slice(0,10);
      render();
    });
-   const btn=page.locator('.nx2-page--protocols .proto-log-first');
+   const btn=page.locator('.nx2-page--protocols .proto-start-now');
    await btn.waitFor({state:'visible',timeout:4000});
    const styles=await btn.evaluate(el=>{
      const s=getComputedStyle(el);
      return {text:el.textContent.trim(),background:s.backgroundColor,radius:s.borderRadius,shadow:s.boxShadow};
    });
-   if(styles.text!=='Log first dose'||styles.background!=='rgb(198, 166, 242)')
-      throw Error('Protocol first-log CTA mismatch '+JSON.stringify(styles));
+   if(styles.text!=='Start now'||styles.background!=='rgb(198, 166, 242)')
+      throw Error('Protocol Start Now CTA mismatch '+JSON.stringify(styles));
    await page.screenshot({path:path.join(out,`${width}-${theme}-protocol-first-log.png`),fullPage:true,animations:'disabled'});
-   evidence.push({screen:'protocol-first-log',width,theme,overflow:false,buttons:[{id:'protocol-first-log',className:'proto-log-first',text:styles.text,background:styles.background,radius:styles.radius,shadow:styles.shadow,disabled:false,visible:true}],error:null});
+   evidence.push({screen:'protocol-first-log',width,theme,overflow:false,buttons:[{id:'protocol-first-log',className:'proto-start-now',text:styles.text,background:styles.background,radius:styles.radius,shadow:styles.shadow,disabled:false,visible:true}],error:null});
  } catch(err){evidence.push({screen:'protocol-first-log',width,theme,overflow:false,buttons:[],error:String(err)});}
  finally{
    await page.evaluate(()=>{
