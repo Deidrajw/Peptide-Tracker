@@ -16,7 +16,7 @@ Development: draft PR #158 feature/protocol-duration-end-date-20261109, stacked 
 
 ## Evidence and limitations
 - Earlier six-suite CI qualified superseded app source dc7bd693, but user rejected physical iPhone phase UX and reported missing Start now/status contradiction.
-- New code browser QA suites, exact-source full-app DEMO HTML and LIVE ZIP: pending new head qualification at document creation; do not use historical artifacts as proof.
+- Source cd641e77 passed six GitHub workflows, including 8/8 full-app LIVE/DEMO at 320px/390px and light/dark. Official artifact #13808244054 passed CRC; latest app commit dcc59f98 differs only by one Pause All count/transaction parity statement. Standalone full-app DEMO, offline DEMO ZIP and complete LIVE ZIP were reconstructed for dcc59 source; ZIP integrity, standalone/offline byte identity and five GitHub blob SHA comparisons all PASS. Latest exact-source six-suite CI run #42915482597 (plus five related workflows) IN PROGRESS, not yet qualified. Do not present previous 6/6 as new-current-source 6/6.
 - Full iPhone and VoiceOver/Dynamic Type acceptance: NOT TESTED on new changes. Production Cloudflare parity: NOT VERIFIED. Calculator-safety release blockers remain governed by existing regression docs.
 
 RELEASE STATUS: coded on draft PR; unmerged, undeployed, no production writes, no approval to merge/deploy. Next gate is exact-source six-suite CI and isolated full-app DEMO/LIVE verification, then focused physical iPhone acceptance and separate explicit release approval.
