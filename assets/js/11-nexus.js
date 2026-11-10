@@ -1793,11 +1793,16 @@ function protocolsView() {
     // A future-dated plan must not appear In Progress due to unrelated doses.
     if(p.status==="active"&&p.startDate<=localDate()&&hasDoses(p))p.status="in_progress";
   });
+  // This classification is presentation-only: an old future-dated active
+  // record remains scheduled until the user explicitly starts it, even if
+  // compound history from another protocol exists.
+  const futurePending=p=>["active","in_progress"].includes(p.status)&&
+    !!p.startDate&&p.startDate>localDate()&&!p.nexusStartedAt&&!hasDoses(p);
   const filter=state._protocolStatusFilter||"all";
   const filterGroups={
     all:()=>true,
-    not_started:p=>["draft","planned","active"].includes(p.status),
-    in_progress:p=>p.status==="in_progress",
+    not_started:p=>futurePending(p)||["draft","planned","active"].includes(p.status),
+    in_progress:p=>p.status==="in_progress"&&!futurePending(p),
     paused:p=>p.status==="paused",
     completed:p=>p.status==="completed",
     archived:p=>p.status==="archived"
@@ -1805,12 +1810,12 @@ function protocolsView() {
   const matchesFilter=filterGroups[filter]||filterGroups.all;
   const visibleProtos=protos.filter(matchesFilter);
   const filters=[["all","All"],["not_started","Not started"],["in_progress","In progress"],["paused","Paused"],["completed","Completed"],["archived","Archived"]];
-  const bulkCanPause=protos.filter(p=>["active","in_progress"].includes(p.status)).length;
+  const bulkCanPause=protos.filter(p=>["active","in_progress"].includes(p.status)&&!futurePending(p)).length;
   const bulkCanResume=protos.filter(p=>p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt).length;
   const bulkActions=(bulkCanPause||bulkCanResume)?`<div class="nx-protocol-bulk-actions" aria-label="Protocol schedule controls">${bulkCanPause?`<button type="button" id="nx-pause-all-protocols" class="nx-protocol-bulk-btn">Pause all protocols <span>${bulkCanPause}</span></button>`:""}${bulkCanResume?`<button type="button" id="nx-resume-all-protocols" class="nx-protocol-bulk-btn nx-protocol-bulk-resume">Resume all paused by this action <span>${bulkCanResume}</span></button>`:""}</div>`:"";
   const filterBar='<div class="nx-protocol-filter-row" role="group" aria-label="Filter protocols by status" style="display:flex;gap:7px;overflow-x:auto;padding:3px 0 10px;scrollbar-width:none;max-width:100%">'+filters.map(([key,label])=>'<button type="button" class="nx-protocol-filter" data-status="'+key+'" aria-pressed="'+(filter===key)+'" style="min-height:44px;padding:8px 10px;white-space:nowrap;flex:0 0 auto;border-radius:999px;border:1px solid '+(filter===key?'#A78BFA':'var(--border)')+';background:'+(filter===key?'#A78BFA22':'var(--surface-2)')+';color:'+(filter===key?'#A78BFA':'var(--t3)')+';font-size:12px;font-weight:650">'+label+'</button>').join('')+'</div>';
-  const live=visibleProtos.filter(p=>["active","in_progress","paused"].includes(p.status));
-  const planned=visibleProtos.filter(p=>p.status==="planned");
+  const live=visibleProtos.filter(p=>["active","in_progress","paused"].includes(p.status)&&!futurePending(p));
+  const planned=visibleProtos.filter(p=>p.status==="planned"||futurePending(p));
   const drafts=protos.filter(p=>p.status==="draft");
   const done=visibleProtos.filter(p=>["completed","archived"].includes(p.status));
   const miniGantt=(p)=>{const tw=Math.max(1,...(p.compounds||[]).map(c=>Math.ceil((c.phases||[]).reduce((a,ph)=>a+nexusPhaseDurationDays(ph),0)/7)||8));return(p.compounds||[]).map(c=>{const bars=(c.phases||[{type:"dose",durationWeeks:tw}]).map((ph,pi)=>`<div class="phase-bar-seg" data-proto="${p.id}" data-comp="${esc(c.name)}" data-phase="${pi}" style="flex:${nexusPhaseDurationDays(ph)};background:${ph.type==="dose"?"#A78BFA":"#333"};height:6px;border-radius:2px;cursor:pointer"></div>`).join("");return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:9px;color:var(--t5);width:55px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span><div style="flex:1;display:flex;gap:1px">${bars}</div></div>`;}).join("");};
