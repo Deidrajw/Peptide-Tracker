@@ -386,6 +386,9 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
      if(!target)throw Error('Fictional Retatrutide protocol missing');
      window.__ds2PriorDoses=state.peptides.Retatrutide.doses;
      state.peptides.Retatrutide.doses=[];
+     // Fully configured fictional dosing phase makes Start Now eligible.
+     window.__ds2PriorProtocolPhases=JSON.parse(JSON.stringify(target.compounds));
+     target.compounds.forEach(c=>(c.phases||[]).forEach(ph=>{if(ph.type!=='rest'&&!(Number(ph.dose)>0))ph.dose=1;}));
      target.status='active';
      target.startDate=new Date(Date.now()-86400000).toISOString().slice(0,10);
      render();
@@ -404,6 +407,7 @@ for(const width of [320,390]) for(const theme of ['light','dark']){
  finally{
    await page.evaluate(()=>{
       if(window.__ds2PriorDoses){state.peptides.Retatrutide.doses=window.__ds2PriorDoses;delete window.__ds2PriorDoses;}
+      if(window.__ds2PriorProtocolPhases){const p=state.protocols?.find(x=>(x.compounds||[]).some(c=>c.name==='Retatrutide'));if(p)p.compounds=window.__ds2PriorProtocolPhases;delete window.__ds2PriorProtocolPhases;}
       render();
    });
  }
