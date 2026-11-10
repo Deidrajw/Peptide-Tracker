@@ -1530,7 +1530,10 @@ function protocolCountdownSummary(p) {
   if(p.status==="paused") return {label:"Paused",detail:"Countdown resumes with protocol"};
   const days=Math.max(0,Math.round((new Date(latest+"T12:00")-new Date(localDate()+"T12:00"))/86400000));
   if(entries.every(info=>info.done)) return {label:"0 days",detail:"Schedule elapsed · not automatically completed"};
-  if(entries.every(info=>info.notStartedYet)) return {label:"Not started",detail:"Scheduled end "+fmtDate(addDays(latest,-1))};
+  if(entries.every(info=>info.notStartedYet)) {
+    if(p.nexusStartedAt)return {label:"Active",detail:"Started "+fmtDate(p.nexusStartedAt)+" · next scheduled phase pending"};
+    return {label:"Scheduled",detail:"Starts "+fmtDate(p.startDate||localDate())+" · ends "+fmtDate(addDays(latest,-1))};
+  }
   return {label:days+" "+(days===1?"day":"days"),detail:"Until scheduled end · "+fmtDate(addDays(latest,-1))};
 }
 
@@ -1777,14 +1780,19 @@ function protocolsView() {
     archived: {label:"Archived", color:"var(--t5)",  bg:"var(--surface-2)"},
   };
   const hasDoses=(p)=>(p.compounds||[]).some(c=>{
-    const pd=state.peptides[c.name]||state.customPeptides[c.name];
-    const count=(pd?.doses||[]).length;
-    // Start Now records the previous count as a *baseline*, not as this
-    // protocol's own first dose. Other/older protocols retain legacy logic.
+    const pd=state.peptides[c.name]||state.customPeptides[c.name],doses=pd?.doses||[];
+    // Preserve previous-compound history: counts only increase AFTER a Start Now
+    // baseline; for older protocols never use doses before the protocol start.
     const baseline=p.nexusStartNowBaseline?.[c.name];
-    return Number.isInteger(baseline)?count>baseline:count>0;
+    if(Number.isInteger(baseline))return doses.length>baseline;
+    const start=p.startDate;
+    if(!start)return false;
+    return doses.some(d=>{const date=String(d.date||"").slice(0,10);return /^\\d{4}-\\d{2}-\\d{2}$/.test(date)&&date>=start&&date<=localDate();});
   });
-  protos.forEach(p=>{if(p.status==="active"&&hasDoses(p))p.status="in_progress";});
+  protos.forEach(p=>{
+    // A future-dated plan must not appear In Progress due to unrelated doses.
+    if(p.status==="active"&&p.startDate<=localDate()&&hasDoses(p))p.status="in_progress";
+  });
   const filter=state._protocolStatusFilter||"all";
   const filterGroups={
     all:()=>true,
@@ -1835,8 +1843,12 @@ function protocolsView() {
     return `<div style="font-size:10px;color:${accentColor};margin-top:3px;padding-left:2px">${bits.join("  ·  ")}</div>${nextLine}`;
   };
   const protoCard = (p) => {
-    const sc = STATUS_CFG[p.status] || STATUS_CFG.draft;
-    const needsFirstDose = p.status === "active" && !hasDoses(p);
+    const futureStart=!!p.startDate&&p.startDate>localDate();
+    const loggedForThisProtocol=hasDoses(p);
+    const alreadyExplicitlyStarted=!!p.nexusStartedAt;
+    const startEligible=["draft","planned","active","in_progress"].includes(p.status)&&!alreadyExplicitlyStarted&&!loggedForThisProtocol;
+    const sc = futureStart&&!alreadyExplicitlyStarted&&!loggedForThisProtocol ? {label:"Scheduled",color:"#8AB4FF"} : STATUS_CFG[p.status] || STATUS_CFG.draft;
+    const needsFirstDose = !futureStart && p.status==="active" && !loggedForThisProtocol && !startEligible;
     const startReady=Array.isArray(p.compounds)&&p.compounds.length>0&&p.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0));
     const fc = (p.compounds||[])[0]?.name;
     const compounds = p.compounds||[];
@@ -1876,7 +1888,7 @@ function protocolsView() {
         <div style="flex:1;min-width:0"><div class="nx-proto-firstlog-title">Ready for first log</div><div class="nexus-protocol-muted">Protocol is active. You can record the first dose whenever you are ready.</div></div>
         <button class="proto-log-first nx-proto-firstlog-action" data-name="${esc(fc)}">Log first dose</button>
       </div>`:""}
-      ${(p.status==="draft"||p.status==="planned")&&fc&&startReady?`<button type="button" class="proto-start-now nx-proto-firstlog-action" data-id="${p.id}" data-name="${esc(fc)}" style="width:100%;min-height:48px;margin-top:10px">Start now</button><div class="nexus-protocol-muted" style="margin-top:6px">Sets today as the start date. Logging your first dose is optional.</div>`:(p.status==="draft"||p.status==="planned")&&fc?`<button type="button" class="proto-finish-setup nx-proto-firstlog-action" data-id="${p.id}" style="width:100%;min-height:48px;margin-top:10px">Finish setup</button><div class="nexus-protocol-muted" style="margin-top:6px">Add a dose to the protocol before starting.</div>`:""}
+      ${startEligible&&fc&&startReady?`<button type="button" class="proto-start-now nx-proto-firstlog-action" data-id="${p.id}" data-name="${esc(fc)}" style="width:100%;min-height:48px;margin-top:10px">Start now</button><div class="nexus-protocol-muted" style="margin-top:6px">Sets today as the start date. Logging your first dose is optional.</div>`:(p.status==="draft"||p.status==="planned")&&fc?`<button type="button" class="proto-finish-setup nx-proto-firstlog-action" data-id="${p.id}" style="width:100%;min-height:48px;margin-top:10px">Finish setup</button><div class="nexus-protocol-muted" style="margin-top:6px">Add a dose to the protocol before starting.</div>`:""}
     </div>`;
   };
 
