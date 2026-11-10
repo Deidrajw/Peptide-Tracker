@@ -192,6 +192,7 @@ try{
           state.protocols[0].startDate===localDate()&&saves===1;
         const schedulerAnchored=state.peptides?.Retatrutide?.startDate===localDate();
         const oldHistoryNotFirstDose=state.protocols[0].status==="active"&&state.protocols[0].nexusStartNowBaseline?.Retatrutide===(state.peptides?.Retatrutide?.doses||[]).length;
+        const explicitlyStarted=state.protocols[0].nexusStartedAt===localDate();
         const offered=!!document.querySelector("#ca-ok")&&
           document.querySelector(".modal")?.textContent.includes("log a dose");
         document.querySelector("#ca-cancel")?.click();
@@ -199,7 +200,7 @@ try{
         const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
         state.protocols[0].status="draft";state.protocols[0].compounds[0].phases[0].dose="";renderBody();
         const incompleteGuard=!document.querySelector(".proto-start-now")&&!!document.querySelector(".proto-finish-setup");
-        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,offered,noDose,noStock,incompleteGuard};
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,explicitlyStarted,offered,noDose,noStock,incompleteGuard};
       }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
     });
     check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
@@ -234,20 +235,19 @@ try{
         document.querySelector("#pb-next")?.click();
         const phaseUI=!!document.querySelector("#pb-protocol-start")&&!!document.querySelector(".nx-phase-duration-toggle")&&!!document.querySelector("#pb-advanced-toggle");
         document.querySelector("#pb-advanced-toggle")?.click();
-        const advancedUI=!!document.querySelector(".pb-addphase")&&!!document.querySelector(".pb-duration-mode");
-        document.querySelector("#pb-advanced-toggle")?.click();
-        // Additional phases must never hide the core Weeks/End-on-date selector.
-        document.querySelector("#pb-advanced-toggle")?.click();
+        const advancedUI=!!document.querySelector(".nx-pb-timeline")&&!!document.querySelector(".pb-addphase")&&
+          !document.querySelector(".pb-duration-mode")&&!!document.querySelector(".pb-phase-edit");
         document.querySelector(".pb-addphase")?.click();
         const durationWithSecondPhase=!!document.querySelector(".pb-duration-mode[data-mode=weeks]");
-        const secondPhaseVisible=!!document.querySelector(".pb-phrem");
+        const secondPhaseVisible=document.querySelectorAll(".nx-pb-timeline-row").length===2;
+        const phaseEditorFocused=!!document.querySelector(".nx-pb-editor-heading")&&!!document.querySelector(".pb-phase-kind");
         document.querySelector(".pb-phrem")?.click();
-        const removeConfirmation=!!document.querySelector("#pb-remove-cancel")&&!document.querySelector("#pb-remove-cancel").hidden;
+        const removeConfirmation=!!document.querySelector(".nx-pb-remove-panel")&&!!document.querySelector("#pb-remove-confirm");
         document.querySelector("#pb-remove-cancel")?.click();
-        const phasePreservedAfterCancel=!!document.querySelector(".pb-phrem");
+        const phasePreservedAfterCancel=document.querySelectorAll(".nx-pb-timeline-row").length===2;
         document.querySelector(".pb-phrem")?.click();
-        document.querySelector(".pb-phrem")?.click();
-        const removalLeavesSingle=!document.querySelector(".pb-phrem");
+        document.querySelector("#pb-remove-confirm")?.click();
+        const removalLeavesSingle=document.querySelectorAll(".nx-pb-timeline-row").length===1;
         document.querySelector("#pb-advanced-toggle")?.click();
         const start=document.querySelector("#pb-protocol-start");
         if(start){start.value="2026-12-01";start.dispatchEvent(new Event("change",{bubbles:true}));}
@@ -271,7 +271,7 @@ try{
         const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
         const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
         const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
-        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,durationWithSecondPhase,secondPhaseVisible,removeConfirmation,phasePreservedAfterCancel,removalLeavesSingle,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,durationWithSecondPhase,secondPhaseVisible,phaseEditorFocused,removeConfirmation,phasePreservedAfterCancel,removalLeavesSingle,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
       }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
     });
     check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
