@@ -1,3 +1,6 @@
+## 2026-11-10 — Physical iPhone QA acceptance is not release authorization
+- User-reported physical iPhone QA: seven PASS (phase editor, Start Now, status, duration, Jan 1/2 boundary, inventory, protected app) and historical same-compound isolation NOT TESTED. Maintain previously approved focused timeline and lifecycle behavior without redesign. Release remains gated on focused same-compound history scenario and separate explicit merge/deploy approval; testing submission alone is not that approval. No overwrite or migration of personal records.
+
 ## 2026-11-10 — Current-source candidate packaging and guard preservation
 - Full PR158 code path from user-approved phase timeline and Start Now is retained; no additional design approval required. One-line preservation of Pause All badge/transaction eligibility count was made after earlier six-green source cd641, resulting in current app source dcc59. Full-app DEMO and LIVE ZIP were reconstructed from the official six-green artifact and independently source-blob-verified for five critical files. This is packaging validation, not six-green claim for dcc59. Physical iPhone sign-off and merge/deploy authorization remain separate and outstanding. Protect all historical logs, inventory, pauses, and fixed prior UI.
 
