@@ -1,3 +1,6 @@
+## 2026-11-11 — Issue157 engineering & iPhone accepted (UNRELEASED)
+- PR158 stacked on draft PR156; final application source dcc59f98; six exact-app-source GitHub workflows individually SUCCESS at docs-only descendant 2c0d5f92; official full-app LIVE/isolated DEMO artifact #13809602041 source/ZIP checked. User-reported physical iPhone regression 8/8 PASS, including same-compound historical preservation. Await separate explicit merge/deploy authorization; main unchanged, Cloudflare candidate parity unverified. No need to redo Issue157 approved UI. Future protocol-first multi-compound UX #145 remains a distinct priority after authorized release handling.
+
 ## 2026-11-10 — Issue157 user-approved follow-up to duration and protocol lifecycle (PR158 draft)
 - User accepted compact timeline and focused single-phase editor with safe remove confirmation, and requested Start Now availability for future-active/no-attributed-dose protocols with consistent status and schedule. Changes coded in PR158, remain separate from future #145 protocol-first multi-compound discovery; do not silently modify existing logs, inventory or protocol start dates. Six-suite current-source CI and fresh full-app isolated DEMO/LIVE candidate pending; physical iPhone acceptance outstanding. No release authorization.
 
