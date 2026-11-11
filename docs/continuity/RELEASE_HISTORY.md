@@ -2159,3 +2159,9 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 
 ## 2026-11-10 — Issue #157 physical iPhone QA checkpoint (NOT RELEASED)
 - User-reported 7/8 PASS: compact phase editing/removal, Start Now, consistent lifecycle status, date-mode persistence, Jan 1 inclusion/Jan 2 exclusion, inventory preservation, and protected Today/Calendar/Check-In/Stash/dose history. Older same-compound history isolation NOT TESTED; no claim of full user acceptance or independent verification. PR #158 stacked draft on #156; no merge/deploy authorized, no production data or schema changed. Next: fictional-history isolation test, then explicit release decision.
+
+## 2026-11-11 — User confirms all eight Issue #157 iPhone regression checks tested and passed
+- User followed prior explicit 7 PASS / 1 NOT TESTED report with "everything is tested". Interpret this as confirmation that the remaining **older same-compound history** check is now PASS, producing **8/8 user-reported physical iPhone regression PASS**: phase editor, Start Now, protocol status, duration mode, Jan 1/Jan 2 boundary, history isolation, inventory, and protected Today/Calendar/Check-In/Stash/dose history.
+- This is user-reported hands-on functional acceptance, not an independent inspection of personal data or VoiceOver/Dynamic Type/accessibility certification, and not permission to merge or deploy. Previously qualified artifact #13809602041 remains candidate; latest code source dcc59f98, latest previous PR docs head 27e2b623. PR #158 remains draft stacked on unmerged #156. Protect records, historical logs, inventory and approved design. No production writes or migration.
+- ONE NEXT ACTION: reconcile final GitHub workflow/release-readiness gates, then request **separate explicit authorization** for ordered PR #156 and #158 merge and production deployment. Do not treat testing confirmation as release authorization.
+
