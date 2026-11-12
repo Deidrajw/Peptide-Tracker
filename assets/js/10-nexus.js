@@ -364,10 +364,13 @@ function stashView() {
                const an=Number(a.sequenceNumber),bn=Number(b.sequenceNumber);
                const av=Number.isFinite(an)&&an>0?an:Number.MAX_SAFE_INTEGER;
                const bv=Number.isFinite(bn)&&bn>0?bn:Number.MAX_SAFE_INTEGER;
-               if(av!==bv) return av-bv;
+               // When one side lacks a saved sequence, chronological order is
+               // the safest stable fallback; otherwise respect established IDs.
+               if(av!==Number.MAX_SAFE_INTEGER&&bv!==Number.MAX_SAFE_INTEGER&&av!==bv) return av-bv;
                const ad=a.reconDate?Date.parse(a.reconDate):NaN;
                const bd=b.reconDate?Date.parse(b.reconDate):NaN;
                if(Number.isFinite(ad)&&Number.isFinite(bd)&&ad!==bd) return ad-bd;
+               if(av!==bv) return av-bv;
                return vialList.indexOf(a)-vialList.indexOf(b);
              });
              // Legacy blends can have _vialsBackfilled=true but no sequenceNumber.
