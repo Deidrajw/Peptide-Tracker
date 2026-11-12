@@ -14,8 +14,9 @@ state.protocols.push({id:2,status:'in_progress',startDate:'2026-11-01',compounds
 assert.equal(fn(fake),null,'newer active protocol supersedes old completed');
 state.protocols.pop();
 assert.ok(src03.includes('if(nexusCompletedProtocolForData(data)&&dayKey(dateStr||localDate())>=localDate())'),'future slots suppressed');
+assert.ok(src03.includes('!(nexusCompletedProtocolForData(data)&&dk>=localDate())'),'future pending reschedules suppressed without deleting records');
 assert.ok(src04.includes('if(nexusCompletedProtocolForData(data)) return null;'),'next due stops');
 assert.ok(src07.includes('status:"protocol_completed"'),'status is explicitly completed');
 assert.ok(src07.includes('doseStatus.status==="protocol_completed" ? "Completed"'),'Today card badge cannot default back to Upcoming');
 assert.ok(!src03.includes('p.status="completed"'),'read-only logic does not auto-complete');
-console.log('PASS: seven read-only completion linkage/source guards');
+console.log('PASS: eight read-only completion linkage/source guards');
