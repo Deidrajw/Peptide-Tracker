@@ -1,3 +1,10 @@
+## 2026-11-12 — PR162 corrected full-app fictional Stash interactions (actual Chromium browser)
+- PASS 4/4 (320/390 x dark/light): Deadpool historical blend vial display labels Vial 1 Finished and Vial 2 Open, despite missing sequenceNumber and reverse record order; open ledger balance 21 mg.
+- PASS 4/4 (320/390 x dark/light): Retatrutide Kit 2 has 6 sealed, 0 open; healthy stock and no opened-vial expiry; expiryDaysLeft null and stashExpiryMs Infinity. No JS page exceptions (4/4).
+- PASS 1/1 (Chromium 390): after completing second **fictional-only** vial prerequisite, actual Open Vial > Injectable > Log Reconstitution created third vial with sequenceNumber 3; prior vial IDs unchanged.
+- Targeted full-app QA edition (not source-identical fixture to official candidate) retains isolated memory and network-disabled safety. Offline ZIP CRC/index byte-equivalence PASS. Additional evidence: docs/qa/PR162_STASH_TARGETED_BROWSER_ACCEPTANCE_2026-11-12.md.
+- NOT TESTED: targeted physical iPhone acceptance; ephemeral DEMO reload persistence; VoiceOver/Dynamic Type. Previous iPhone 4 PASS/2 FAIL belongs to stale package 76402b84, not corrected 9ec970f8. Production untouched; PR162 and PR160 separate unmerged drafts.
+
 ## 2026-11-11 — PR162 corrected source QA, candidate still awaiting real iPhone acceptance
 - PASS: 6/6 GitHub suites for app SHA 9ec970f8; full build #43156329589, pinned Chromium #43156329577, WebKit #43156329484, mobile #43156329574, writer #43156329555, nested DS2 #43156329505. Independent artifact #13915889162 outer 573/573 CRC, LIVE 26/26 CRC, full-app standalone/offline DEMO byte equality, Git blob JS03/JS09/JS10 exact, official 8/8 320/390 light/dark LIVE/DEMO browser records PASS.
 - PASS (local targeted fictional source test): sealed-only kit ignores stale historical kit reconDate, current open vial expiry triggers expiring state, historic legacy blends display Vial 1 and Vial 2 in chronological order, source guards for next vial number. Nine assertions, with next-vial creation confirmed at code guard level only; persisted ledger and live transaction NOT TESTED.
