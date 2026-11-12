@@ -1,3 +1,12 @@
+## 2026-11-11 — Open-vial expiry regression cases (candidate, execution pending)
+- [NOT TESTED] Active Retatrutide-like kit with two empty, one transferred, six sealed, historic kit reconDate > 28 days: card Healthy, expiry null, not in Expiring filter/attention/sort, no recon reminder and no stale Amino/Intel warning.
+- [NOT TESTED] Separate active 20mg kit with 16mg open and reconDate 3 days ago: no false expiry; its own timer remains.
+- [NOT TESTED] Open vial at day 23–28 shows Expiring and its own reminder; overdue open vial remains flagged.
+- [NOT TESTED] Two simultaneously open vials use earliest genuine vial expiry; finished/empty/transferred vials excluded.
+- [NOT TESTED] All dose allocations, inventory totals, past reconstitution timestamps, saved backup and production localStorage unchanged.
+- [NOT TESTED] Full app at iPhone 320/390, light/dark, all navigation/Check-In/Log Dose/Calendar/Protocols/Stash and keyboard/sheet interactions; real iPhone/VoiceOver separate.
+- Test file tests/stash-open-vial-expiry.test.cjs, workflow stash-open-vial-expiry.yml; no execution result claimed until CI confirmed.
+
 ## 2026-11-11 — PR159 release and Cloudflare source parity evidence
 - PASS: PR159 merged into main as 2e83a692fdd7c69816453859a3dafa22d64eba4a; independent 16/16 production Cloudflare exact-byte comparison to 2e83a692 PASS GitHub network runner 43135298228 (local premerge main 8be7ef2e comparison 43135196976 PASS). Original app source fb69a064 7/7 test workflows PASS, 20/20 local primary-navigation fictional browser samples, 4/4 More > Edit targets interaction, official artifact #13907005604 CRC outer 573/573, full LIVE 26/26, isolated DEMO byte equality and exact patched Git blob PASS.
 - POST-RELEASE NOT INDIVIDUALLY TESTED: physical iPhone VoiceOver names/focus, Dynamic Type, keyboard/safe-area, 320px Calendar 40px-wide seven-column day-cell accessibility; user's "everything is fine" is general feedback, not per-case evidence. No user data migration or production localStorage writes performed by release tooling. Protected Check-In, Today, Calendar, Plans/Protocols, Stash, writer and inventory math covered by CI but physical acceptance of this scoped change is not independently observed.
