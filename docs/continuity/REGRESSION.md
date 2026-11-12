@@ -1,3 +1,7 @@
+## 2026-11-11 — PR159 user feedback acceptance qualification
+- User response after seeing five physical-iPhone checklist cases and official fictional DEMO: "everything is fine." Record as USER-REPORTED NO ISSUES, but not a 5/5 per-case Pass: device, OS, browser, individual VoiceOver spoken labels/focus, Dynamic Type, More button and Calendar 320px touch outcomes were not specifically enumerated. Their statuses remain NOT DOCUMENTED for physical QA. Automated 7/7 CI, 20-route fictional Chromium and 4/4 tap interactions retain independent PASS.
+- No merge/deploy approval conveyed. Existing current main, localStorage and records protected.
+
 ## 2026-11-11 — PR159 official artifact and CI gates closed, physical accessibility pending
 - PASS: source fb69a064 official GitHub CI 7/7 (writer #43132744616, DS2 global #43132744662, nested #43132744629, pinned browser #43132744818, mobile #43132744496, WebKit #43132744533, full build #43132744517). Official artifact #13907005604 downloaded/CRC verified outer 573 entries, embedded exact 26-file LIVE ZIP, in-memory isolated 3,230,139-byte DEMO matching offline ZIP index, exact JS10 Git blob 727881b8. Source manifest commit fb69a064. Local 16-file pages smoke PASS. Undeployed candidate vs primary CSS/JS differences are expected; official candidate Cloudflare JSON verified=false at JS10; do not call deployment verified.
 - PASS: prior local read-only browser primary-route 20/20 without page error/overflow/unnamed visible buttons, More Edit targets 4/4 target sheet interactions and 44px geometry in 320/390 both themes.
