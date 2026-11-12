@@ -57,5 +57,18 @@ assert.equal(runtime.computeKitStatus(mixed).statusKey,'expiring', 'earliest ope
 const transferred={...kit, vials:[{status:'transferred',remainingMg:0,reconDate:relative(-60)},sealed()]};
 assert.equal(runtime.stashExpiryMs(transferred),Infinity,'transferred history cannot expire sealed stock');
 
+
+// Depleted-but-still-open legacy vials must NOT control badge, expiry sort,
+// or the soonest-usable-vial date. No production data or migration involved.
+const depleted = {name:'Fictional depleted open',activeKit:true,expiryDays:28,
+  vials:[{status:'open',remainingMg:0,reconDate:relative(-50)},sealed()]};
+assert.equal(runtime.stashExpiryMs(depleted), Infinity, 'depleted open vial cannot expire sealed stock');
+assert.equal(runtime.computeKitStatus(depleted).expiryDaysLeft, null, 'depleted open vial has no expiry timer');
+const otherOpen={name:'Fictional mixed open balances',activeKit:true,expiryDays:28,
+  vials:[{status:'open',remainingMg:0,reconDate:relative(-50)}, {status:'open',remainingMg:8,reconDate:relative(-3)}]};
+assert.equal(runtime.computeKitStatus(otherOpen).statusKey,'healthy', 'depleted historical open cannot override usable open vial expiry');
+assert.ok(runtime.stashExpiryMs(otherOpen) > Date.now(), 'expiry follows usable open vial instead of depleted old vial');
+assert.match(source,/function stashExpiryMs\(s\)[\s\S]*?ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'badge and sorting exclude depleted open vials as reminders already do');
+
 assert.match(source,/ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'reminders check individual open vial with material');
-console.log('PASS: 8 focused fictional open-vial expiry assertions; source logic exercised; no production data');
+console.log('PASS: focused fictional open-vial expiry assertions including zero-balance open vials; source logic exercised; no production data');
