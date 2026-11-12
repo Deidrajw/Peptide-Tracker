@@ -2797,3 +2797,229 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 @media (max-width: 350px) {
   .nx-pb-phase-timeline .nx-pb-gantt-label { width: 62px !important; }
 }
+
+/* Issue #157 — progressive, exact-date protocol phase controls; scoped to builder. */
+#proto-builder-wrap .nx-phase-start-field,
+#proto-builder-wrap .nx-phase-heading {
+  margin-bottom: 14px;
+}
+#proto-builder-wrap .nx-phase-start-field .inp,
+#proto-builder-wrap .pb-phase-end {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin-top: 6px;
+  font: 500 15px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-heading strong {
+  display: block;
+  color: var(--t1);
+  font: 700 18px/1.35 'DM Sans', system-ui, sans-serif;
+  letter-spacing: -.02em;
+}
+#proto-builder-wrap .nx-phase-heading .hint,
+#proto-builder-wrap .nx-phase-start-field .hint,
+#proto-builder-wrap .nx-phase-date-hint {
+  margin: 6px 0 0;
+  color: var(--t3);
+  font: 400 12px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-advanced-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+  color: var(--t2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-sub);
+  border-radius: 10px;
+  font: 600 13px/1.3 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-duration-toggle {
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  margin: 8px 0;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+#proto-builder-wrap .pb-duration-mode {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--t3);
+  font: 600 13px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .pb-duration-mode[aria-pressed="true"] {
+  color: var(--t1);
+  background: var(--surface-3);
+  border-color: #A78BFA;
+}
+#proto-builder-wrap .nx-phase-date-label {
+  display: block;
+  color: var(--t2);
+  font: 600 13px 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-week-controls .nx-pb-stepper {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Date-backed compound phase editor: exact date is read-only here, not rounded to weeks. */
+.nx-phase-date-readonly {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 3px;
+  padding: 7px 9px;
+  color: var(--t2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-sub);
+  border-radius: 7px;
+  font: 600 12px/1.4 'DM Sans', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+#proto-builder-wrap .nx-phase-review-end {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--border-sub);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-phase-review-end span {
+  color: var(--t3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+#proto-builder-wrap .nx-phase-review-end strong {
+  color: var(--t1);
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+#proto-builder-wrap .nx-phase-review-end small {
+  color: var(--t3);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Issue157: interactive phase fields retain iPhone-sized touch geometry. */
+#proto-builder-wrap .pb-phdose,
+#proto-builder-wrap .pb-ph-time,
+#proto-builder-wrap .pb-ptype,
+#proto-builder-wrap .pb-addphase,
+#proto-builder-wrap .pb-phrem,
+#proto-builder-wrap .pb-ph-sched,
+#proto-builder-wrap .pb-ph-day {
+  min-height: 44px;
+}
+#proto-builder-wrap .pb-ph-day { min-width: 34px; }
+#proto-builder-wrap .pb-addphase { font: 600 13px 'DM Sans', system-ui, sans-serif; }
+
+/* Issue157: consistent, accessible feedback and optional phases; no nested switch. */
+#proto-builder-wrap .nx-pb-inline-error:not([hidden]) {
+  display: block;
+  margin: 8px 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #D7A760;
+  border-radius: 10px;
+  color: var(--t1);
+  background: var(--surface-2);
+  font: 500 13px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-pb-inline-cancel:not([hidden]) {
+  display: block;
+  min-height: 44px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-sub);
+  border-radius: 10px;
+  color: var(--t2);
+  background: var(--surface-2);
+  font: 600 13px/1.35 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .nx-pb-phase-summary {
+  margin: 8px 0 10px;
+  color: var(--t3);
+  font: 400 12px/1.5 'DM Sans', system-ui, sans-serif;
+}
+#proto-builder-wrap .pb-phrem,
+#proto-builder-wrap .pb-addphase { font-family: 'DM Sans',system-ui,sans-serif; }
+
+/* Issue 157: compact, deliberate phase timeline/editor (approved 2026-11-10). */
+#proto-builder-wrap .nx-pb-timeline{display:grid;gap:9px;margin:12px 0}
+#proto-builder-wrap .nx-pb-timeline-row{
+  display:flex;align-items:center;gap:12px;width:100%;min-height:62px;
+  padding:11px 12px;text-align:left;color:var(--t1);background:var(--surface-3);
+  border:1px solid var(--border-sub);border-radius:13px;cursor:pointer
+}
+#proto-builder-wrap .nx-pb-timeline-num{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:28px;height:28px;border-radius:50%;background:rgba(167,139,250,.16);
+  color:#A78BFA;font:700 12px/1 'DM Sans',system-ui,sans-serif
+}
+#proto-builder-wrap .nx-pb-timeline-info{display:grid;gap:3px;flex:1;min-width:0}
+#proto-builder-wrap .nx-pb-timeline-info strong{font:600 13px/1.35 'DM Sans',system-ui,sans-serif}
+#proto-builder-wrap .nx-pb-timeline-info small{color:var(--t3);font:400 12px/1.45 'DM Sans',system-ui,sans-serif}
+#proto-builder-wrap .nx-pb-editor-heading{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 16px;
+  font:700 15px/1.4 'DM Sans',system-ui,sans-serif;color:var(--t1)
+}
+#proto-builder-wrap .pb-phase-done{
+  min-height:44px;padding:10px 14px;border:1px solid var(--border-sub);
+  border-radius:10px;background:var(--surface-2);color:var(--t2);font-weight:600
+}
+#proto-builder-wrap .pb-phase-kind{min-height:48px;margin:7px 0 12px}
+#proto-builder-wrap .nx-pb-remove-trigger{
+  display:block;min-height:44px;width:100%;margin-top:16px;padding:10px 14px;
+  border:1px solid var(--border-sub);border-radius:10px;background:transparent;
+  color:var(--t3);font:600 13px/1.4 'DM Sans',system-ui,sans-serif
+}
+#proto-builder-wrap .nx-pb-remove-panel{
+  margin-top:12px;padding:14px;border-radius:13px;border:1px solid var(--border);
+  background:var(--surface-2);color:var(--t1)
+}
+#proto-builder-wrap .nx-pb-remove-panel strong{font-size:14px}
+#proto-builder-wrap .nx-pb-remove-panel p{margin:8px 0 13px;color:var(--t3);font-size:12px;line-height:1.55}
+#proto-builder-wrap .nx-pb-remove-panel>div{display:flex;gap:8px}
+#proto-builder-wrap .nx-pb-remove-panel button{
+  flex:1;min-height:44px;border-radius:10px;border:1px solid var(--border);
+  color:var(--t1);background:var(--surface-3);font-size:12px;font-weight:600
+}
+#proto-builder-wrap .nx-pb-remove-panel #pb-remove-confirm{
+  color:var(--t1);border-color:#D7A760;background:rgba(215,167,96,.15)
+}
+#proto-builder-wrap .nx-pb-timeline-row:focus-visible,
+#proto-builder-wrap .pb-phase-done:focus-visible,
+#proto-builder-wrap .nx-pb-remove-trigger:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+
+/* Planned/future protocol primary Start Now: match the accepted DS2 lavender CTA. */
+.nx2-page--protocols .proto-start-now,
+.nx2-page--protocols .proto-finish-setup{
+  display:block;width:100%;min-height:48px;padding:12px 18px;
+  border:1px solid transparent;border-radius:12px;
+  background:#C6A6F2;color:#21172E;
+  font:700 14px/1.4 'DM Sans',system-ui,sans-serif;
+  text-align:center;cursor:pointer;
+}
+.nx2-page--protocols .proto-start-now:focus-visible,
+.nx2-page--protocols .proto-finish-setup:focus-visible{
+  outline:2px solid #A78BFA;outline-offset:3px;
+}
+#proto-builder-wrap .pb-phdose{min-height:44px;height:44px!important}
+#proto-builder-wrap .pb-ph-sched,#proto-builder-wrap .pb-ph-day{
+  min-height:44px;min-width:44px;font-size:12px!important
+}
+#proto-builder-wrap .pb-ph-time{min-height:44px;height:44px!important}

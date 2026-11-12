@@ -163,6 +163,147 @@ try{
       renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===3,
       "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
 
+    // Approved Start Now: no write on cancel, today on explicit confirmation,
+    // dose log optional and no mutation of existing historical doses/stock.
+    const startNow=await page.evaluate(async()=>{
+      const previous=state,originalCommit=nexusCommitCurrentState,previousTab=tab;
+      try{
+        state=JSON.parse(JSON.stringify(previous));
+        state._protocolStatusFilter="all";
+        state.protocols=[{id:"qa-start-now",name:"QA Start Now",status:"planned",
+          startDate:"2027-02-01",schedule:{type:"Weekly",days:[1],dosesPerDay:1,times:["08:00"]},
+          compounds:[{name:"Retatrutide",route:"SubQ",unit:"mg",multiPhase:false,
+            phases:[{type:"dose",durationWeeks:4,dose:"1"}]}]}];
+        const beforeDoses=JSON.stringify(state.peptides?.Retatrutide?.doses||[]);
+        const beforeSupplies=JSON.stringify(state.supplies||[]);
+        let saves=0;nexusCommitCurrentState=async()=>{saves++;return true;};
+        tab="protocols";renderBody();
+        const button=document.querySelector(".proto-start-now");
+        const visible=!!button&&button.textContent.toLowerCase().includes("start now");
+        button?.click();
+        const confirmation=!!document.querySelector("#ca-ok")&&
+          document.querySelector(".modal")?.textContent.includes("sets its start date");
+        document.querySelector("#ca-cancel")?.click();
+        const cancellation=state.protocols[0].status==="planned"&&saves===0;
+        document.querySelector(".proto-start-now")?.click();
+        document.querySelector("#ca-ok")?.click();
+        await new Promise(resolve=>setTimeout(resolve,35));
+        const activated=state.protocols[0].status==="active"&&
+          state.protocols[0].startDate===localDate()&&saves===1;
+        const schedulerAnchored=state.peptides?.Retatrutide?.startDate===localDate();
+        const oldHistoryNotFirstDose=state.protocols[0].status==="active"&&state.protocols[0].nexusStartNowBaseline?.Retatrutide===(state.peptides?.Retatrutide?.doses||[]).length;
+        const explicitlyStarted=state.protocols[0].nexusStartedAt===localDate();
+        const offered=!!document.querySelector("#ca-ok")&&
+          document.querySelector(".modal")?.textContent.includes("log a dose");
+        document.querySelector("#ca-cancel")?.click();
+        const noDose=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===beforeDoses;
+        const noStock=JSON.stringify(state.supplies||[])===beforeSupplies;
+        state.protocols[0].status="draft";state.protocols[0].compounds[0].phases[0].dose="";renderBody();
+        const incompleteGuard=!document.querySelector(".proto-start-now")&&!!document.querySelector(".proto-finish-setup");
+        // User-reported physical iPhone failure: an active protocol whose
+        // planned start remains in the future must display Start Now (not
+        // Log First Dose or contradictory In Progress / Not started).
+        state.protocols[0].status="active";
+        state.protocols[0].startDate=addDays(localDate(),20);
+        state.protocols[0].compounds[0].phases[0].dose="1";
+        delete state.protocols[0].nexusStartedAt;
+        delete state.protocols[0].nexusStartNowBaseline;
+        renderBody();
+        const futureAction=!!document.querySelector(".proto-start-now")&&!document.querySelector(".proto-log-first");
+        const futureStatus=!!document.querySelector(".nx-card-status")?.textContent.includes("Scheduled");
+        const futureSummary=document.querySelector(".nx-proto-compact-progress")?.textContent||"";
+        const futureConsistent=futureSummary.includes("Scheduled")&&!futureSummary.includes("Not started");
+        document.querySelector(".proto-start-now")?.click();
+        const futureStartConfirmation=!!document.querySelector("#ca-ok");
+        document.querySelector("#ca-cancel")?.click();
+        const futureCancelPreserves=state.protocols[0].startDate===addDays(localDate(),20)&&state.protocols[0].status==="active";
+        return {visible,confirmation,cancellation,activated,schedulerAnchored,oldHistoryNotFirstDose,explicitlyStarted,offered,noDose,noStock,incompleteGuard,futureAction,futureStatus,futureConsistent,futureStartConfirmation,futureCancelPreserves};
+      }finally{nexusCommitCurrentState=originalCommit;state=previous;tab=previousTab;closeModal();renderBody();}
+    });
+    check(Object.values(startNow).every(Boolean),"Approved Start Now confirmation/dose-optional regression: "+JSON.stringify(startNow));
+
+    // Issue #157: exact end on calendar date, inclusive final day and
+    // fully isolated builder UI; legacy week-only protocols stay unchanged.
+    const calendarMode=await page.evaluate(async()=>{
+      const before=state,originalCommit=nexusCommitCurrentState;
+      try{
+        state=JSON.parse(JSON.stringify(before));
+        const historical=JSON.stringify(state.peptides?.Retatrutide?.doses||[]);
+        const c={name:"Retatrutide",route:"SubQ",unit:"mg",multiPhase:false,phases:[{type:"dose",durationWeeks:4,durationDays:32,endOnDate:"2027-01-01",dose:"1"}]};
+        const p={id:"qa-date-bound",status:"active",name:"QA exact last day",startDate:"2026-12-01",schedule:{type:"Weekly",days:[2],dosesPerDay:1,times:["08:00"]},compounds:[c]};
+        const info=getProtocolPhaseInfo(p,c);
+        const exactBoundary=info?.phases?.[0]?.endDate==="2027-01-02" && nexusPhaseDurationDays(c.phases[0])===32;
+        const oldPhase=nexusPhaseDurationDays({durationWeeks:4})===28;
+        const dstSafe=nexusCalendarDaysBetween("2027-03-13","2027-03-15")===2;
+        const comp={startDate:"2026-12-01",scheduleDays:7,dosesPerDay:1,phases:[{durationWeeks:4,durationDays:32,endOnDate:"2027-01-01",dose:"1"}]};
+        const lastDay=getEffectiveSchedule(comp,"2027-01-01");
+        const nextDay=getEffectiveSchedule(comp,"2027-01-02");
+        const stopsAfter=(!lastDay.isRest)&&nextDay.isRest===true&&nextDay.endedByDate===true;
+        state.protocols.push(p);
+        comp.protocolScheduleId=p.id;
+        p.pauseDaysAccumulated=2;
+        const pausedShift=(getEffectiveSchedule(comp,"2027-01-03").isRest!==true)&&getEffectiveSchedule(comp,"2027-01-04").endedByDate===true;
+        p.status="paused";p.pausedAt="2026-12-12T12:00:00";
+        const pausedStops=getEffectiveSchedule(comp,"2026-12-13").pausedByProtocol===true;
+        p.status="active";delete p.pausedAt;p.pauseDaysAccumulated=0;
+        nexusCommitCurrentState=async()=>true;
+        protocolBuilderModal(undefined,"Retatrutide");
+        document.querySelector("#pb-next")?.click();
+        document.querySelector("#pb-next")?.click();
+        const phaseUI=!!document.querySelector("#pb-protocol-start")&&!!document.querySelector(".nx-phase-duration-toggle")&&!!document.querySelector("#pb-advanced-toggle");
+        document.querySelector("#pb-advanced-toggle")?.click();
+        const advancedUI=!!document.querySelector(".nx-pb-timeline")&&!!document.querySelector(".pb-addphase")&&
+          !document.querySelector(".pb-duration-mode")&&!!document.querySelector(".pb-phase-edit");
+        document.querySelector(".pb-addphase")?.click();
+        const durationWithSecondPhase=!!document.querySelector(".pb-duration-mode[data-mode=weeks]");
+        const secondPhaseVisible=document.querySelectorAll(".nx-pb-timeline-row").length===2;
+        const phaseEditorFocused=!!document.querySelector(".nx-pb-editor-heading")&&!!document.querySelector(".pb-phase-kind");
+        document.querySelector(".pb-phrem")?.click();
+        const removeConfirmation=!!document.querySelector(".nx-pb-remove-panel")&&!!document.querySelector("#pb-remove-confirm");
+        document.querySelector("#pb-remove-cancel")?.click();
+        const phasePreservedAfterCancel=document.querySelectorAll(".nx-pb-timeline-row").length===2;
+        document.querySelector(".pb-phrem")?.click();
+        document.querySelector("#pb-remove-confirm")?.click();
+        const removalLeavesSingle=document.querySelectorAll(".nx-pb-timeline-row").length===1;
+        document.querySelector("#pb-advanced-toggle")?.click();
+        const start=document.querySelector("#pb-protocol-start");
+        if(start){start.value="2026-12-01";start.dispatchEvent(new Event("change",{bubbles:true}));}
+        document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+        const dateInput=document.querySelector(".pb-phase-end");
+        let invalidGuard=false;
+        if(dateInput){dateInput.value="2026-11-30";dateInput.dispatchEvent(new Event("change",{bubbles:true}));invalidGuard=/Last planned day must be on or after/.test(document.querySelector("#pb-inline-error")?.textContent||"");
+          dateInput.value="2027-01-01";dateInput.dispatchEvent(new Event("change",{bubbles:true}));}
+        const exactUI=!!document.querySelector(".pb-phase-end")&&document.querySelector(".nx-phase-date-hint")?.textContent.includes("weeks");
+        // User-reported Issue157 regression: a 32-day date switched to Weeks
+        // must suggest 5 weeks and returning to date must restore Jan 1.
+        document.querySelector(".pb-duration-mode[data-mode=weeks]")?.click();
+        const weeksOnSwitch=document.querySelector(".nx-phase-week-controls")?.textContent.includes("5w")===true;
+        const weeksModel=document.querySelector(".pb-duration-mode[data-mode=weeks]")?.getAttribute("aria-pressed")==="true";
+        document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+        const restoredEnd=document.querySelector(".pb-phase-end")?.value==="2027-01-01";
+        document.querySelector("#pb-next")?.click();
+        const reviewExact=document.querySelector(".nx-phase-review-end")?.textContent.includes("2027-01-01")===true;
+        document.querySelector("#pb-save-draft")?.click();
+        await new Promise(resolve=>setTimeout(resolve,25));
+        const saved=state.protocols.find(x=>x.name==="Retatrutide — New Protocol");
+        const persisted=!!saved&&saved.startDate==="2026-12-01"&&saved.compounds[0].phases[0].durationDays===32&&saved.compounds[0].phases[0].endOnDate==="2027-01-01";
+        const historySafe=JSON.stringify(state.peptides?.Retatrutide?.doses||[])===historical;
+        return {exactBoundary,oldPhase,dstSafe,stopsAfter,pausedShift,pausedStops,phaseUI,advancedUI,durationWithSecondPhase,secondPhaseVisible,phaseEditorFocused,removeConfirmation,phasePreservedAfterCancel,removalLeavesSingle,invalidGuard,exactUI,weeksOnSwitch,weeksModel,restoredEnd,reviewExact,persisted,historySafe};
+      }finally{nexusCommitCurrentState=originalCommit;state=before;closeModal();}
+    });
+    check(Object.values(calendarMode).every(Boolean),"Issue157 exact day/date builder: "+JSON.stringify(calendarMode));
+    // Visual proof from the actual full app, not a feature-only mockup.
+    await page.evaluate(()=>{
+      protocolBuilderModal(undefined,"Retatrutide");
+      document.querySelector("#pb-next")?.click();
+      document.querySelector("#pb-next")?.click();
+      document.querySelector(".pb-duration-mode[data-mode=date]")?.click();
+    });
+    const phaseGeometry=await page.locator("#proto-builder-wrap").evaluate(el=>({client:el.clientWidth,scroll:el.scrollWidth,targets:[...el.querySelectorAll(".pb-phase-end,.pb-duration-mode,.pb-phdose,#pb-advanced-toggle")].map(n=>({kind:n.className,h:n.getBoundingClientRect().height}))}));
+    check(phaseGeometry.scroll<=phaseGeometry.client+3,"Issue157 phase form overflows at "+width+": "+JSON.stringify(phaseGeometry));
+    check(phaseGeometry.targets.every(x=>x.h>=44),"Issue157 phase control under 44px: "+JSON.stringify(phaseGeometry.targets));
+    await page.screenshot({path:"dist/issue157-duration-"+kind+"-"+theme+"-"+width+".png"});
+    await page.evaluate(()=>closeModal());
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.
 

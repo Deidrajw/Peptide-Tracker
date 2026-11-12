@@ -1,3 +1,6 @@
+## Separate approved Issue157 stacked candidate (not part of Issue155 release)
+- User approved simplified Duration & changes UX and exact end date for development. Independent stacked branch feature/protocol-duration-end-date-20261109 based on PR156 head 0c5536b1; this file's original PR156 release metadata remains unchanged. Issue157 is NOT yet CI-qualified, merged, deployed or approved for release. Preserve original protocol renewal acceptance and full-app isolation.
+
 ## Late candidate UI refinement (new exact-head requalification required)
 - At app/test commits 69962583/20e9cb30/7824c74f/9557cc8d, removed graph emojis from Stash Supply Planner and Protocol Builder Review Phase Timeline; aligned scoped DM Sans typography and readable label/legend sizes. Source assertions cover labels and style. No stored phase schedule, dose calculations or inventory changed. New exact-source full app CI/browser/Demo/LIVE packages PENDING, physical reacceptance of visuals PENDING. Date-based ending and broader phase redesign are separate proposal Issue #157; no implementation of date model or migration. PR156 remains draft, unmerged, undeployed.
 

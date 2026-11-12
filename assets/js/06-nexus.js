@@ -330,7 +330,7 @@ function nexusRoute(input, priorTopic) {
   if (/closest to finish|finishing first|which protocol.*(end|finish|done)/.test(q)) {
     if (!activeProtocols.length) return say("No active protocols yet.", ["Help me build my first protocol"]);
     const withRemaining = activeProtocols.map(p=>{
-      const totalWeeks=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+(ph.durationWeeks||4),0))||8));
+      const totalWeeks=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+nexusPhaseDurationDays(ph)/7,0))||8));
       const weeksElapsed = p.startDate ? Math.floor(daysSince(p.startDate)/7) : 0;
       return {name:p.name, remaining: Math.max(0,totalWeeks-weeksElapsed)};
     }).sort((a,b)=>a.remaining-b.remaining);
@@ -341,7 +341,7 @@ function nexusRoute(input, priorTopic) {
   if (/how many weeks|weeks remain|weeks left/.test(q)) {
     if (!activeProtocols.length) return say("No active protocols yet.", ["Help me build my first protocol"]);
     const lines = activeProtocols.map(p=>{
-      const totalWeeks=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+(ph.durationWeeks||4),0))||8));
+      const totalWeeks=Math.max(1,...(p.compounds||[]).map(c=>((c.phases||[]).reduce((a,ph)=>a+nexusPhaseDurationDays(ph)/7,0))||8));
       const weeksElapsed = p.startDate ? Math.floor(daysSince(p.startDate)/7) : 0;
       const remaining=Math.max(0,totalWeeks-weeksElapsed);
       return `**${p.name}**: ${remaining} week${remaining===1?"":"s"} remaining (of ${totalWeeks})`;
@@ -673,7 +673,7 @@ function nexusRoute(input, priorTopic) {
     const curIdx = pd.phases.indexOf(curPhase);
     if (!curPhase) return say(`${phaseMatch}'s protocol hasn't started yet based on its start date.`);
     let cursor = pd.startDate;
-    for (let i=0;i<=curIdx;i++) cursor = addDays(cursor, Math.round((pd.phases[i].durationWeeks||4)*7));
+    for (let i=0;i<=curIdx;i++) cursor = addDays(cursor, nexusPhaseDurationDays(pd.phases[i]));
     const transitionDate = cursor;
     const nextPhase = pd.phases[curIdx+1] || null;
     const c2 = cfg(phaseMatch);

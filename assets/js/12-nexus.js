@@ -353,9 +353,52 @@ function wireBody() {
   };
   const np=$("#new-protocol"); if(np) np.onclick=()=>protocolBuilderModal();
   const esp=$("#empty-setup-protocol"); if(esp) esp.onclick=()=>{tab="protocols";render();window.scrollTo(0,0);};
-  document.querySelectorAll(".proto-activate").forEach(b=>b.onclick=async()=>{
-    const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
-    if(p){p.status="active";if(!await nexusCommitCurrentState())return;renderBody();}
+  document.querySelectorAll(".proto-finish-setup").forEach(b=>b.onclick=()=>{const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));if(p)protocolBuilderModal(p);});
+  const canStartProtocolNow=p=>{
+    if(!p||!["draft","planned","active","in_progress"].includes(p.status)||p.nexusStartedAt)return false;
+    if(!(p.compounds||[]).length||!p.compounds.every(c=>(c.phases||[]).some(ph=>ph.type!=="rest"&&Number(ph.dose)>0)))return false;
+    // A prior compound dose does not start this new protocol. Never redate a
+    // protocol with a dose on/after its own planned start.
+    return p.compounds.every(c=>{
+      const record=(PEPTIDES[c.name]?state.peptides:state.customPeptides)?.[c.name];
+      if(Number.isInteger(p.nexusStartNowBaseline?.[c.name]))
+        return (record?.doses||[]).length<=p.nexusStartNowBaseline[c.name];
+      return !(record?.doses||[]).some(d=>{
+        const date=String(d.date||"").slice(0,10);
+        return /^\d{4}-\d{2}-\d{2}$/.test(date)&&date>=p.startDate&&date<=localDate();
+      });
+    });
+  };
+  document.querySelectorAll(".proto-start-now").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id,compound=b.dataset.name;
+    const p=state.protocols?.find(x=>String(x.id)===String(id));
+    if(!canStartProtocolNow(p))return;
+    const today=localDate();
+    confirmAction("Start "+p.name+" today ("+today+")? This activates the protocol and sets its start date to today. You can log the first dose afterward; existing history will not change.",async()=>{
+      const current=state.protocols?.find(x=>String(x.id)===String(id));
+      if(!canStartProtocolNow(current))return;
+      current.startDate=localDate();current.nexusStartedAt=current.startDate;current.status="active";
+      // Existing compound history belongs to older protocols; never interpret
+      // those records as the first dose of the newly started protocol.
+      current.nexusStartNowBaseline=Object.fromEntries((current.compounds||[]).map(c=>{
+        const record=(PEPTIDES[c.name]?state.peptides:state.customPeptides)?.[c.name];
+        return [c.name,(record?.doses||[]).length];
+      }));
+      // Apply the start date to schedule consumers, not logged dose history.
+      syncProtocolToCompoundData(current);
+      // The standard single-phase Weeks path updates cadence but historically
+      // does not assign startDate. Start Now must anchor BOTH the protocol and
+      // the actual Today scheduling source to the confirmed calendar day.
+      for(const c of current.compounds||[]){
+        const record=(PEPTIDES[c.name]?state.peptides:state.customPeptides)?.[c.name];
+        if(record)record.startDate=current.startDate;
+      }
+      if(!await nexusCommitCurrentState())return;
+      renderBody();
+      confirmAction("Protocol started today. Would you like to log a dose now?",()=>{
+        doseModal(compound);
+      },{confirmLabel:"Log Dose",cancelLabel:"Not now",tone:"success"});
+    },{confirmLabel:"Start now",cancelLabel:"Cancel",tone:"success"});
   });
   document.querySelectorAll(".proto-pause").forEach(b=>b.onclick=async()=>{
     const p=state.protocols?.find(x=>String(x.id)===String(b.dataset.id));
@@ -745,7 +788,7 @@ function wireBody() {
   });
   document.querySelectorAll(".phase-startdate").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.startDate=inp.value; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-remove").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases.splice(+b.dataset.pi,1); if(!await nexusCommitCurrentState())return; render(); });
-  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4); if(!await nexusCommitCurrentState())return; render(); });
+  document.querySelectorAll(".phase-duration").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].durationWeeks=Math.max(1,parseFloat(inp.value)||4);delete t.phases[+inp.dataset.pi].durationDays;delete t.phases[+inp.dataset.pi].endOnDate; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-rest-toggle").forEach(b=>b.onclick=async()=>{ const t=getTgt(b.dataset.name); t.phases[+b.dataset.pi].isRest = b.dataset.rest==="1"; if(!await nexusCommitCurrentState())return; render(); });
   document.querySelectorAll(".phase-dose").forEach(inp=>inp.onchange=async()=>{ const t=getTgt(inp.dataset.name); t.phases[+inp.dataset.pi].dose=inp.value.trim(); if(!await nexusCommitCurrentState())return; });
   document.querySelectorAll(".phase-freq-btn").forEach(b=>b.onclick=async()=>{

@@ -1570,16 +1570,43 @@ function isWeekdaySchedule(data) { return data.scheduleType==="weekdays" && Arra
 // override BOTH the dose-amount progression AND the schedule cadence/occurrence
 // structure. Compounds with no data.phases behave exactly as before — fully backward
 // compatible for every existing single-schedule compound.
+// Optional exact calendar duration, restricted to a positive number of whole days.
+// Legacy protocols with durationWeeks alone behave exactly as before.
+function nexusPhaseDurationDays(phase) {
+  const days=Number(phase?.durationDays);
+  if(phase?.durationDays!=null && Number.isInteger(days) && days>=1 && days<=36500)return days;
+  return Math.round((phase?.durationWeeks||4)*7);
+}
+function nexusCalendarDaysBetween(a,b){
+  const date=/^\d{4}-\d{2}-\d{2}$/;
+  if(!date.test(String(a||""))||!date.test(String(b||"")))return NaN;
+  const start=Date.parse(a+"T12:00:00Z"),end=Date.parse(b+"T12:00:00Z");
+  if(!Number.isFinite(start)||!Number.isFinite(end))return NaN;
+  return Math.round((end-start)/86400000);
+}
+
+// Date-backed compound schedule source is explicit; never guess an owner when
+// multiple plans contain the same compound. Legacy schedules are unchanged.
+function nexusLinkedDateProtocol(data){
+  if(data?.protocolScheduleId==null)return null;
+  return (state.protocols||[]).find(p=>String(p.id)===String(data.protocolScheduleId))||null;
+}
+function nexusPhaseEffectiveStart(data){
+  const start=data.startDate;
+  const source=nexusLinkedDateProtocol(data);
+  const pausedDays=Math.max(0,Number(source?.pauseDaysAccumulated)||0);
+  return start&&pausedDays?addDays(start,pausedDays):start;
+}
 function getCompoundPhase(data, dateStr) {
   const phases = data.phases;
   if (!phases || !phases.length) return null;
-  const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
+  const start = nexusPhaseEffectiveStart(data) || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
-  const daysIn = Math.floor((new Date(dayKey(dateStr)+"T00:00:00").getTime() - new Date(start+"T00:00:00").getTime())/86400000);
+  const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
   let cursor = 0;
   for (const ph of phases) {
-    const durDays = Math.round((ph.durationWeeks||4)*7);
+    const durDays = nexusPhaseDurationDays(ph);
     if (daysIn < cursor+durDays) return ph;
     cursor += durDays;
   }
@@ -1593,13 +1620,13 @@ function getCompoundPhase(data, dateStr) {
 function getPhaseSpan(data, dateStr) {
   const phases = data.phases;
   if (!phases || !phases.length) return null;
-  const start = data.startDate || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
+  const start = nexusPhaseEffectiveStart(data) || (data.doses&&data.doses.length ? dayKey([...data.doses].sort((a,b)=>new Date(a.date)-new Date(b.date))[0].date) : null);
   if (!start) return null;
-  const daysIn = Math.floor((new Date(dayKey(dateStr)+"T00:00:00").getTime() - new Date(start+"T00:00:00").getTime())/86400000);
+  const daysIn = nexusCalendarDaysBetween(start,dayKey(dateStr));
   if (daysIn < 0) return null;
   let cursor = 0;
   for (let i=0; i<phases.length; i++) {
-    const durDays = Math.round((phases[i].durationWeeks||4)*7);
+    const durDays = nexusPhaseDurationDays(phases[i]);
     const isLast = i === phases.length-1;
     if (daysIn < cursor+durDays || isLast) {
       return {
@@ -1607,7 +1634,7 @@ function getPhaseSpan(data, dateStr) {
         startDay: addDays(start, cursor),
         // First day AFTER this phase. null for the final phase: getCompoundPhase holds on
         // the last phase indefinitely rather than running off the end, so nothing follows it.
-        nextStartDay: isLast ? null : addDays(start, cursor+durDays),
+        nextStartDay: isLast && phases[i].durationDays==null ? null : addDays(start, cursor+durDays),
         weekInPhase: Math.min(Math.floor(Math.max(0, daysIn-cursor)/7)+1, Math.max(1, Math.round(durDays/7))),
         totalWeeks: Math.max(1, Math.round(durDays/7)),
       };
@@ -1655,21 +1682,37 @@ function syncProtocolToCompoundData(proto) {
     t.dosesPerDay = base.dosesPerDay;
     t.times = base.times;
 
-    if (c.multiPhase && c.phases && c.phases.length) {
+    if ((c.multiPhase || c.phases?.some(ph=>ph.durationDays!=null)) && c.phases && c.phases.length) {
       t.startDate = proto.startDate || localDate();
+      if(c.phases.some(ph=>ph.durationDays!=null))t.protocolScheduleId=proto.id;
+      else delete t.protocolScheduleId;
       t.phases = c.phases.map(ph => ({
         durationWeeks: ph.durationWeeks||4,
+        ...(ph.durationDays!=null?{durationDays:ph.durationDays}:{}),
+        ...(ph.endOnDate?{endOnDate:ph.endOnDate}:{}),
         dose: ph.type==="rest" ? "" : (ph.dose||""),
         isRest: ph.type==="rest",
         schedule: ph.schedule ? convertBuilderSchedule(ph.schedule) : { scheduleWeekdays:base.scheduleWeekdays, scheduleDays:base.scheduleDays, dosesPerDay:base.dosesPerDay, times:base.times },
       }));
     } else if (t.phases) {
+      delete t.protocolScheduleId;
       t.phases = []; // protocol no longer multi-phase — don't leave a stale phase list behind
     }
   });
 }
 
 function getEffectiveSchedule(data, dateStr) {
+  const linked=nexusLinkedDateProtocol(data);
+  if(linked?.status==="paused")return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,pausedByProtocol:true};
+  // Explicit calendar-end phases have an actual final planned day; never
+  // silently continue generating scheduled doses past it. Old week-only
+  // protocols retain the legacy maintenance-after-final-phase behaviour.
+  const phases=data.phases||[],final=phases[phases.length-1];
+  if(final?.durationDays!=null && data.startDate){
+    const endExclusive=addDays(nexusPhaseEffectiveStart(data),phases.reduce((n,ph)=>n+nexusPhaseDurationDays(ph),0));
+    if(dayKey(dateStr||localDate())>=endExclusive)
+      return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:final,isRest:true,endedByDate:true};
+  }
   const ph = getCompoundPhase(data, dateStr);
   if (ph && ph.isRest) {
     // A rest phase generates NO occurrences at all — dosesPerDay:0 propagates cleanly
