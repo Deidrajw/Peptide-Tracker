@@ -73,6 +73,23 @@ assert.ok(runtime.stashExpiryMs(otherOpen) > Date.now(), 'expiry follows usable 
 assert.match(source,/function stashExpiryMs\(s\)[\s\S]*?ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'badge and sorting exclude depleted open vials as reminders already do');
 
 
+// Evaluate the card's ACTUAL source selection against the user's screenshot case,
+// not just a separate computeKitStatus() helper.
+const cardSource = source.match(/const activeVialForCard = s\\.isBlend \\? getActiveVial\\(s\\) :[\\s\\S]*?getActiveVial\\(s\\)\\);/)?.[0];
+assert.ok(cardSource, 'production Stash card selection expression must be extractable');
+function selectedCardVial(kit) {
+  return vm.runInNewContext(cardSource + '\\nactiveVialForCard', {
+    s: kit,
+    ensureKitVials: runtime.ensureKitVials,
+    getActiveVial: runtime.getActiveVial,
+    getVialRemainingMg: runtime.getVialRemainingMg,
+    Number
+  });
+}
+assert.equal(selectedCardVial(otherOpen).remainingMg, 8, 'rendered card selects second OPEN vial with 8 mg');
+assert.equal(selectedCardVial(depleted).remainingMg, 0, 'no usable OPEN vial: original empty fallback remains');
+assert.equal(selectedCardVial({...otherOpen,isBlend:true}).remainingMg,0, 'blend source selection remains untouched');
+
 // The rendered card must select the same usable non-blend vial as status/expiry.
 // Prevent the historical zero-balance OPEN record from driving 0mg / Empty UI.
 assert.match(source,/const activeVialForCard = s\.isBlend \? getActiveVial\(s\)\s*:\s*\(ensureKitVials\(s\)\.find\(v=>\["open","active"\]\.includes\(v\.status\) && Number\(getVialRemainingMg\(s,v\)\)>0\) \|\| getActiveVial\(s\)\)/, 'Stash card uses usable OPEN source for non-blend kit');
