@@ -1701,8 +1701,23 @@ function syncProtocolToCompoundData(proto) {
   });
 }
 
+// Read-only protocol association: the most recently started matching protocol
+// controls whether recurring SCHEDULES are finished. Never change compound status
+// or suppress a newer active protocol using the same compound.
+function nexusCompletedProtocolForData(data) {
+  const matching=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>
+    (state.peptides[c.name]||state.customPeptides?.[c.name])===data));
+  if(!matching.length)return null;
+  const newest=[...matching].sort((a,b)=>String(b.startDate||"").localeCompare(String(a.startDate||""))||Number(b.id||0)-Number(a.id||0))[0];
+  return newest?.status==="completed"?newest:null;
+}
 function getEffectiveSchedule(data, dateStr) {
   const linked=nexusLinkedDateProtocol(data);
+  // A protocol explicitly marked Complete cannot keep producing future dose
+  // obligations just because the compound's standalone status remains active.
+  // Past dates stay intact, preserving historical calendar/dose associations.
+  if(nexusCompletedProtocolForData(data)&&dayKey(dateStr||localDate())>=localDate())
+    return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,completedByProtocol:true};
   if(linked?.status==="paused")return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,pausedByProtocol:true};
   // Explicit calendar-end phases have an actual final planned day; never
   // silently continue generating scheduled doses past it. Old week-only
