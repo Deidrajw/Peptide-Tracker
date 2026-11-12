@@ -163,7 +163,8 @@ function stashView() {
 
     // ── Current reconstituted vial ─────────────────────────────────────────────
     const sCompUnit = cfg(s.name)?.unit || "mg";
-    const currentReconDate = s.reconDate || null;
+    // Kit-level reconDate is historical metadata; an unopened kit must not inherit
+    // an expired/expiring warning from a previously finished vial.
     // Both now read through the same canonical functions every other screen this session
     // was wired to — getActiveVial/getVialRemainingMg already handle a v2-migrated kit
     // correctly (remainingMg direct) and a not-yet-migrated one correctly (history-
@@ -173,6 +174,7 @@ function stashView() {
     // value — exactly the kind of second formula capable of quietly disagreeing with the
     // real number once a kit is migrated.
     const activeVialForCard = getActiveVial(s);
+    const currentReconDate = activeVialForCard?.reconDate || null;
     const vialRem = activeVialForCard ? (s.isBlend ? getBlendOpenVialRemainingMg(s) : getVialRemainingMg(s, activeVialForCard)) : null;
     const activeCapacityMg = activeVialForCard ? Number(activeVialForCard.vialMg||s.vialMg) : 0;
     const vialPct = activeCapacityMg>0 && vialRem!=null ? Math.max(0,Math.min(100,Math.round(vialRem/activeCapacityMg*100))) : null;
@@ -185,8 +187,9 @@ function stashView() {
     const shotsEst = (shotsRaw!=null && shotsRaw<=500) ? shotsRaw : null;
 
     // ── Expiry (also serves as the "reconstitute soon" signal — same underlying date, no duplicate calc) ──
-    const expiryDate = currentReconDate&&s.expiryDays ? addDays(currentReconDate, s.expiryDays) : null;
-    const expiryMs = expiryDate ? new Date(expiryDate).getTime() - Date.now() : null;
+    const activeExpiryDays = activeVialForCard?.expiryDays || s.expiryDays;
+    const expiryTimestamp = stashExpiryMs(s);
+    const expiryMs = Number.isFinite(expiryTimestamp) ? expiryTimestamp - Date.now() : null;
     const expiryDaysLeft = expiryMs !== null ? Math.ceil(expiryMs/86400000) : null;
     const expLabel = expiryDaysLeft===null?null:expiryDaysLeft<0?`Expired ${Math.abs(expiryDaysLeft)}d ago`:expiryDaysLeft===0?"Expires today":`Expires in ${expiryDaysLeft}d`;
 
@@ -362,14 +365,34 @@ function stashView() {
                const an=Number(a.sequenceNumber),bn=Number(b.sequenceNumber);
                const av=Number.isFinite(an)&&an>0?an:Number.MAX_SAFE_INTEGER;
                const bv=Number.isFinite(bn)&&bn>0?bn:Number.MAX_SAFE_INTEGER;
-               return av-bv||String(a.id||"").localeCompare(String(b.id||""));
+               // When one side lacks a saved sequence, chronological order is
+               // the safest stable fallback; otherwise respect established IDs.
+               if(av!==Number.MAX_SAFE_INTEGER&&bv!==Number.MAX_SAFE_INTEGER&&av!==bv) return av-bv;
+               const ad=a.reconDate?Date.parse(a.reconDate):NaN;
+               const bd=b.reconDate?Date.parse(b.reconDate):NaN;
+               if(Number.isFinite(ad)&&Number.isFinite(bd)&&ad!==bd) return ad-bd;
+               if(av!==bv) return av-bv;
+               return vialList.indexOf(a)-vialList.indexOf(b);
+             });
+             // Legacy blends can have _vialsBackfilled=true but no sequenceNumber.
+             // Supply a deterministic, collision-free display label without changing
+             // vial IDs, saved records, or claiming a data migration occurred.
+             const usedNumbers=new Set(ordered.map(v=>Number(v.sequenceNumber)).filter(n=>Number.isInteger(n)&&n>0));
+             const displayNumbers=new Map();
+             let nextAvailable=1;
+             ordered.forEach(v=>{
+               const existing=Number(v.sequenceNumber);
+               if(Number.isInteger(existing)&&existing>0){displayNumbers.set(v.id,existing);return;}
+               while(usedNumbers.has(nextAvailable)) nextAvailable++;
+               displayNumbers.set(v.id,nextAvailable);
+               usedNumbers.add(nextAvailable++);
              });
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
               const wasTransferredToBottle=v.intendedUse==="nasal-source"&&rem<=0.000001&&
                 (state.formulationStocks||[]).some(b=>b.containerType==="nasal-bottle"&&
                   b.recordedPreparation&&String(b.sourceVialId)===String(v.id)&&Number(b.remainingMg)>0);
-              const num=v.sequenceNumber||"—";
+              const num=displayNumbers.get(v.id)||"—";
               return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${wasTransferredToBottle?"Transferred":isActive?"Open":"Finished"}</span></div>
@@ -526,7 +549,7 @@ function computeKitStatus(s) {
   const kitRemMg = getKitRemainingMg(s);
   const vialPct = (av && av.expectedMg) ? (vialRem/av.expectedMg*100) : null;
   const expiryMs = stashExpiryMs(s);
-  const expiryDaysLeft = expiryMs<9999999999999 ? Math.round((expiryMs-Date.now())/86400000) : null;
+  const expiryDaysLeft = Number.isFinite(expiryMs) ? Math.ceil((expiryMs-Date.now())/86400000) : null;
   let statusKey;
   if (s.kitStatus==="done") statusKey="done";
   else if (!s.activeKit) statusKey="stored";
@@ -561,8 +584,13 @@ function stashRemPct(s, aps) {
   return Math.max(0, Math.min(100, getKitRemainingMg(s)/ownedMg*100));
 }
 function stashExpiryMs(s) {
-  if(!s.reconDate||!s.expiryDays) return 9999999999999;
-  return new Date(addDays(s.reconDate,s.expiryDays)).getTime();
+  // Beyond-use dates belong to individual OPEN vials, never the kit's historical
+  // reconDate. Keep sealed, empty, finished and transferred vial history intact.
+  // Among multiple open vials, surface the soonest expiry for safety.
+  const dates = ensureKitVials(s).filter(v=>["open","active"].includes(v.status) && v.reconDate)
+    .map(v=>new Date(addDays(v.reconDate, Number(v.expiryDays)||Number(s.expiryDays)||28)).getTime())
+    .filter(Number.isFinite);
+  return dates.length ? Math.min(...dates) : Infinity;
 }
 
 // ─── Reconstitution calculator ────────────────────────────────────────────────
@@ -1439,15 +1467,15 @@ function buildReminders() {
   // ${s.id}), so once the kit is excluded here the specific alert simply stops
   // regenerating on the next render — no separate invalidation step needed.
   state.supplies.forEach(s=>{
-    if(!s.reconDate) return; // never reconstituted — a sealed/stored kit has no expiry clock running
-    if(s.kitStatus==="done") return; // explicitly retired (used up / bad batch / other) via Mark Done
-    if(!s.activeKit) return; // not the currently in-use vial for this compound
-    if(getKitRemainingMg(s)<=0) return; // depleted — nothing left to expire, regardless of kitStatus bookkeeping
-    const age=Math.floor(daysSince(s.reconDate)||0);
-    const limit=s.expiryDays||30;
+    if(s.kitStatus==="done" || !s.activeKit || getKitRemainingMg(s)<=0) return;
     const c=cfg(s.name);
-    if(age>=limit) r(`vial_expired_${s.id}`,"recon",0,"🚫",`${s.name} vial expired`,`Reconstituted ${age}d ago (${limit}-day limit) — discard and open a fresh vial`,c.color,"stash","Go to Stash");
-    else if(age>=limit-5) r(`vial_expiring_${s.id}`,"recon",1,"⏰",`${s.name} vial expires in ${limit-age}d`,`Reconstituted ${age}d ago — ${limit}-day limit approaching`,c.color,"stash","Go to Stash");
+    ensureKitVials(s).filter(v=>["open","active"].includes(v.status) && v.reconDate && Number(getVialRemainingMg(s,v))>0)
+      .forEach(v=>{
+        const age=Math.floor(daysSince(v.reconDate)||0);
+        const limit=Number(v.expiryDays)||Number(s.expiryDays)||28;
+        if(age>=limit) r(`vial_expired_${s.id}_${v.id}`,"recon",0,"🚫",`${s.name} vial expired`,`Reconstituted ${age}d ago (${limit}-day limit) — review this open vial`,c.color,"stash","Go to Stash");
+        else if(age>=limit-5) r(`vial_expiring_${s.id}_${v.id}`,"recon",1,"⏰",`${s.name} vial expires in ${limit-age}d`,`Reconstituted ${age}d ago — ${limit}-day limit approaching`,c.color,"stash","Go to Stash");
+      });
   });
 
   // Supply reminders — same terminal-state guard as expiry above, explicit rather than
