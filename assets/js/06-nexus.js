@@ -383,8 +383,8 @@ function nexusRoute(input, priorTopic) {
 
   if (/what expires next|expiring|expiry/.test(q)) {
     if (!kits.length) return say("No kits in Stash yet.");
-    const withExp = kits.filter(k=>k.reconDate&&k.expiryDays).map(k=>({name:k.name, days:Math.ceil((new Date(addDays(k.reconDate,k.expiryDays)).getTime()-Date.now())/86400000)})).sort((a,b)=>a.days-b.days);
-    if (!withExp.length) return say("No kits have both a recon date and expiry window set, so nothing to compare.");
+    const withExp = kits.map(k=>({name:k.name, expiryMs:stashExpiryMs(k)})).filter(k=>Number.isFinite(k.expiryMs)).map(k=>({name:k.name, days:Math.ceil((k.expiryMs-Date.now())/86400000)})).sort((a,b)=>a.days-b.days);
+    if (!withExp.length) return say("No open vials have a recorded reconstitution date and expiry window, so nothing to compare.");
     const next=withExp[0];
     return say(`**${next.name}** expires soonest — in ${next.days} day${next.days===1?"":"s"}.\n\n${withExp.slice(1,4).map(k=>`${k.name}: ${k.days}d`).join("\n")}`, ["Which compounds are running low?"]);
   }
