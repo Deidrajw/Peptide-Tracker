@@ -1,3 +1,6 @@
+## 2026-11-11 — PR160 qualified draft candidate, NOT RELEASED
+- Head 61e70a04, main b4c83c06; app version still v0.9.26-beta.1; no live deployment or new release declaration. Six exact-head workflows SUCCESS, full release artifact #13908139210 downloaded, outer 573-entry and LIVE 26-entry CRC PASS; full-app isolated standalone DEMO and versioned LIVE ZIP available. Changes: Stash expiry limited to currently open vial date and per-vial expiryDays, historical blend vial display numbering and next-open continuity. Data impact: no existing-record migration, preserved history and IDs. Physical iPhone / VoiceOver pending; approval required before merge/deploy.
+
 ## 2026-11-11 — Stash expiry and legacy blend labels development checkpoint — development only, NOT RELEASED
 - Branch fix/stash-expiry-vial-labels-20261111 source commit 05ab87cb proposes Stash expiry scope and legacy blend vial labels. Version unchanged v0.9.26-beta.1. No migration, no production data writes. Tests/browser checks/full-app artifacts and Cloudflare deployment not qualified. User approval required for merge/deploy.
 
