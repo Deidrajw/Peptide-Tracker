@@ -1,3 +1,7 @@
+## 2026-11-11 — PR161 expanded CI evidence
+- [PASS] Source checkpoint e3ba5d3: WebKit workflow 43146454662 SUCCESS; pinned browser regression 43146454693 SUCCESS. Previously successful expiry 43146454668, mobile 43146454667, nested 43146454698, writer 43146454729 remain SUCCESS. These are CI outcomes, not independent physical iPhone findings.
+- [IN PROGRESS, NOT PASS] full build/browser/parity 43146454670; [NOT TESTED] independent full-app ZIP/DEMO integrity check, real iPhone/VoiceOver, live deployment.
+
 ## 2026-11-11 — PR161 first CI results (source e3ba5d3; candidate unmerged)
 - [PASS — GitHub automated] Fictional open-vial expiry source-extracted Node regression, run 43146454668 SUCCESS. Covers sealed-only historical date, separate open vial, near expiry, overdue, finished/transferred and multi-open earliest expiry, with no user data.
 - [PASS — GitHub automated] Mobile form regression 43146454667, nested navigation 43146454698, inventory writer safety 43146454729 all SUCCESS at same application source.
