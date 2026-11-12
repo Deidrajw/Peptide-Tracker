@@ -1,3 +1,6 @@
+## 2026-11-11 — PR162 protocol completion correction, DRAFT NOT RELEASED
+- Branch fix/completed-protocol-upcoming-20261111, app corrections JS03/04/07 through 1ff58ca4, regression head 1df3e343, base main b4c83c06. Explicitly completed protocol no future regular or rescheduled occurrences, nextDueDate=null, Today Completed badge, historical logs intact. Newer active same compound wins; in_progress Reta not auto-completed. No migration or production data changes. Three exact-source CI suites pass; remaining suites/standalone full-app artifacts/iPhone acceptance pending. App version unchanged v0.9.26-beta.1; no merge, no Cloudflare deployment.
+
 ## 2026-11-11 — Completed protocol Upcoming candidate, UNRELEASED
 - Development branch fix/completed-protocol-upcoming-20261111 from main b4c83c06. Three small source corrections JS03/04/07 plus fictional regression. Version remains v0.9.26-beta.1, not merged/deployed, user data untouched. Full QA/artifacts/iPhone pending. PR160 independent.
 
