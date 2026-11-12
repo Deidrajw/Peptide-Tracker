@@ -1,3 +1,7 @@
+## 2026-11-11 — PR161 six source CI suites successful; full build pending
+- Source checkpoint e3ba5d3bed7cb19b75700ca4868b643ff6f253014: exact seven-workflow candidate CI six SUCCESS: expiry 43146454668, mobile 43146454667, nested DS2 43146454698, writer 43146454729, WebKit 43146454662, pinned browser 43146454693. Full build/parity 43146454670 IN PROGRESS in 320/390 light/dark browser step at latest verification; do NOT represent as passed.
+- Draft PR161 remains unmerged/unreleased; v0.9.26-beta.1 unchanged. No production data touched. Artifact download/independent matching and physical iPhone NOT VERIFIED. ONE NEXT ACTION: confirm final build outcome and inspect official full-app artifact source/CRC/demo isolation before iPhone acceptance.
+
 ## 2026-11-11 — PR161 QA checkpoint (DRAFT, NO RELEASE)
 - PR #161 https://github.com/Deidrajw/Peptide-Tracker/pull/161 is draft, branch fix/stash-open-vial-expiry-20261111, docs-only head 47388f593b08f70080233c551bef4cd50eed408d at checkpoint. Main verified b4c83c06; no merge, deployment, user-data modification or version bump.
 - Exact application-source workflow set on code-equivalent PR commit e3ba5d3: focused open-vial expiry 43146454668 SUCCESS; mobile forms 43146454667 SUCCESS; DS2 nested navigation 43146454698 SUCCESS; shared inventory writer safety 43146454729 SUCCESS. Full build 43146454670, WebKit 43146454662, pinned Chromium 43146454693 IN PROGRESS at last check. Do not label in-progress as passed. Source unchanged by subsequent documentation-only commit.
