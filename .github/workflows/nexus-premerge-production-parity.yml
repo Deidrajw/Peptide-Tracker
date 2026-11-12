@@ -14,13 +14,13 @@ jobs:
       - name: Checkout fixed production main baseline
         uses: actions/checkout@v4
         with:
-          ref: 5e4f08acdf80b434d53a1b51308cc57b2f9beffb
+          ref: 4129b0027413ae587d8e4e7745a9d2e652fc2592
           persist-credentials: false
       - name: Check baseline SHA and verify verifier locally
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "5e4f08acdf80b434d53a1b51308cc57b2f9beffb"
+          test "$(git rev-parse HEAD)" = "4129b0027413ae587d8e4e7745a9d2e652fc2592"
           python3 tools/verify-pages.py --smoke --output dist/parity-smoke.json
       - name: Compare primary Cloudflare raw bytes to deployed-main source
         shell: bash
