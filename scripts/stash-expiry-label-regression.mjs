@@ -15,7 +15,8 @@ assert.equal(fn(old),9999999999999,'sealed-only kit ignores historical reconstit
 const opened={...old,vials:[{status:'open',reconDate:'2026-11-05'}]};
 assert.equal(fn(opened),Date.parse('2026-12-03T00:00:00.000Z'),'open vial controls expiry');
 assert.equal(fn({...opened,vials:[{status:'open',reconDate:null}]}),9999999999999,'missing date does not imply expired');
+assert.equal(fn({...opened,vials:[{status:'open',reconDate:'2026-11-05',expiryDays:7}]}),Date.parse('2026-11-12T00:00:00.000Z'),'vial-specific expiry overrides kit default');
 assert.ok(src.includes('const currentReconDate = activeVialForCard?.reconDate || null;'),'card uses same open-vial date');
 assert.ok(src.includes('const num=displayNumbers.get(v.id)||"—";'),'vial number uses display fallback');
 assert.ok(src.includes('while(usedNumbers.has(nextAvailable)) nextAvailable++;'),'fallback avoids existing numbers');
-console.log('PASS stash expiry/status source and legacy display label guards (6 assertions)');
+console.log('PASS stash expiry/status source and legacy display label guards (7 assertions)');
