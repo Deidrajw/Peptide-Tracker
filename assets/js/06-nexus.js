@@ -111,7 +111,8 @@ function buildAminoContext() {
       // chat could tell you a kit still held material that was actually given away,
       // wasted, or already drawn into a syringe. One formula, everywhere.
       const rem = getKitRemainingMg(s) + getPreparedRemainingMg(s.name, s.id);
-      const exp=s.reconDate&&s.expiryDays?Math.ceil((new Date(addDays(s.reconDate,s.expiryDays)).getTime()-Date.now())/86400000):null;
+      const expiryMs=stashExpiryMs(s);
+      const exp=Number.isFinite(expiryMs)?Math.ceil((expiryMs-Date.now())/86400000):null;
       return `${s.name}: ${rem.toFixed(1)}mg left${exp!==null?", vial expires "+exp+"d":""}`;
     }).join("; ")||"none"}`,
     `RECENT CHECK-INS: ${[...state.dailyLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,7).map(l=>{
@@ -440,7 +441,8 @@ function nexusRoute(input, priorTopic) {
     // real vial number the instant material was pre-drawn into a syringe.
     const lines = kits.map(s=>{
       const rem = getKitRemainingMg(s);
-      const exp=s.reconDate&&s.expiryDays?Math.ceil((new Date(addDays(s.reconDate,s.expiryDays)).getTime()-Date.now())/86400000):null;
+      const expiryMs=stashExpiryMs(s);
+      const exp=Number.isFinite(expiryMs)?Math.ceil((expiryMs-Date.now())/86400000):null;
       return `**${s.name}**: ${rem.toFixed(1)} mg remaining (${s.totalVials} vials × ${s.vialMg}mg)${exp!==null?`, vial expires in ${exp}d`:""}`;
     });
     return say(lines.join("\n"), ["Which compounds are running low?","What expires next?"]);
