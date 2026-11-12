@@ -163,7 +163,8 @@ function stashView() {
 
     // ── Current reconstituted vial ─────────────────────────────────────────────
     const sCompUnit = cfg(s.name)?.unit || "mg";
-    const currentReconDate = s.reconDate || null;
+    // Kit-level reconDate is historical metadata; an unopened kit must not inherit
+    // an expired/expiring warning from a previously finished vial.
     // Both now read through the same canonical functions every other screen this session
     // was wired to — getActiveVial/getVialRemainingMg already handle a v2-migrated kit
     // correctly (remainingMg direct) and a not-yet-migrated one correctly (history-
@@ -173,6 +174,7 @@ function stashView() {
     // value — exactly the kind of second formula capable of quietly disagreeing with the
     // real number once a kit is migrated.
     const activeVialForCard = getActiveVial(s);
+    const currentReconDate = activeVialForCard?.reconDate || null;
     const vialRem = activeVialForCard ? (s.isBlend ? getBlendOpenVialRemainingMg(s) : getVialRemainingMg(s, activeVialForCard)) : null;
     const activeCapacityMg = activeVialForCard ? Number(activeVialForCard.vialMg||s.vialMg) : 0;
     const vialPct = activeCapacityMg>0 && vialRem!=null ? Math.max(0,Math.min(100,Math.round(vialRem/activeCapacityMg*100))) : null;
@@ -362,14 +364,31 @@ function stashView() {
                const an=Number(a.sequenceNumber),bn=Number(b.sequenceNumber);
                const av=Number.isFinite(an)&&an>0?an:Number.MAX_SAFE_INTEGER;
                const bv=Number.isFinite(bn)&&bn>0?bn:Number.MAX_SAFE_INTEGER;
-               return av-bv||String(a.id||"").localeCompare(String(b.id||""));
+               if(av!==bv) return av-bv;
+               const ad=a.reconDate?Date.parse(a.reconDate):NaN;
+               const bd=b.reconDate?Date.parse(b.reconDate):NaN;
+               if(Number.isFinite(ad)&&Number.isFinite(bd)&&ad!==bd) return ad-bd;
+               return vialList.indexOf(a)-vialList.indexOf(b);
+             });
+             // Legacy blends can have _vialsBackfilled=true but no sequenceNumber.
+             // Supply a deterministic, collision-free display label without changing
+             // vial IDs, saved records, or claiming a data migration occurred.
+             const usedNumbers=new Set(ordered.map(v=>Number(v.sequenceNumber)).filter(n=>Number.isInteger(n)&&n>0));
+             const displayNumbers=new Map();
+             let nextAvailable=1;
+             ordered.forEach(v=>{
+               const existing=Number(v.sequenceNumber);
+               if(Number.isInteger(existing)&&existing>0){displayNumbers.set(v.id,existing);return;}
+               while(usedNumbers.has(nextAvailable)) nextAvailable++;
+               displayNumbers.set(v.id,nextAvailable);
+               usedNumbers.add(nextAvailable++);
              });
             const renderVial=v=>{
               const rem=getVialRemainingMg(s,v),isActive=["active","open"].includes(v.status);
               const wasTransferredToBottle=v.intendedUse==="nasal-source"&&rem<=0.000001&&
                 (state.formulationStocks||[]).some(b=>b.containerType==="nasal-bottle"&&
                   b.recordedPreparation&&String(b.sourceVialId)===String(v.id)&&Number(b.remainingMg)>0);
-              const num=v.sequenceNumber||"—";
+              const num=displayNumbers.get(v.id)||"—";
               return `<div class="nx-kit-list-row nx-kit-vial-row" style="flex-wrap:wrap;gap:8px">
                 <div class="nx-kit-list-copy">
                   <div class="nx-kit-list-top"><strong>Vial ${num}</strong><span class="nx-kit-list-status">${wasTransferredToBottle?"Transferred":isActive?"Open":"Finished"}</span></div>
@@ -561,8 +580,10 @@ function stashRemPct(s, aps) {
   return Math.max(0, Math.min(100, getKitRemainingMg(s)/ownedMg*100));
 }
 function stashExpiryMs(s) {
-  if(!s.reconDate||!s.expiryDays) return 9999999999999;
-  return new Date(addDays(s.reconDate,s.expiryDays)).getTime();
+  const active=getActiveVial(s);
+  if(!active?.reconDate||!s.expiryDays) return 9999999999999;
+  const ms=new Date(addDays(active.reconDate,s.expiryDays)).getTime();
+  return Number.isFinite(ms)?ms:9999999999999;
 }
 
 // ─── Reconstitution calculator ────────────────────────────────────────────────
