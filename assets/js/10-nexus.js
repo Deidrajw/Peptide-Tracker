@@ -187,7 +187,8 @@ function stashView() {
     const shotsEst = (shotsRaw!=null && shotsRaw<=500) ? shotsRaw : null;
 
     // ── Expiry (also serves as the "reconstitute soon" signal — same underlying date, no duplicate calc) ──
-    const expiryDate = currentReconDate&&s.expiryDays ? addDays(currentReconDate, s.expiryDays) : null;
+    const activeExpiryDays = activeVialForCard?.expiryDays || s.expiryDays;
+    const expiryDate = currentReconDate&&activeExpiryDays ? addDays(currentReconDate, activeExpiryDays) : null;
     const expiryMs = expiryDate ? new Date(expiryDate).getTime() - Date.now() : null;
     const expiryDaysLeft = expiryMs !== null ? Math.ceil(expiryMs/86400000) : null;
     const expLabel = expiryDaysLeft===null?null:expiryDaysLeft<0?`Expired ${Math.abs(expiryDaysLeft)}d ago`:expiryDaysLeft===0?"Expires today":`Expires in ${expiryDaysLeft}d`;
@@ -584,8 +585,9 @@ function stashRemPct(s, aps) {
 }
 function stashExpiryMs(s) {
   const active=getActiveVial(s);
-  if(!active?.reconDate||!s.expiryDays) return 9999999999999;
-  const ms=new Date(addDays(active.reconDate,s.expiryDays)).getTime();
+  const expiryDays=active?.expiryDays || s.expiryDays;
+  if(!active?.reconDate||!expiryDays) return 9999999999999;
+  const ms=new Date(addDays(active.reconDate,expiryDays)).getTime();
   return Number.isFinite(ms)?ms:9999999999999;
 }
 
