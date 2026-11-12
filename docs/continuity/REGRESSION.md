@@ -1,3 +1,8 @@
+## 2026-11-12 — PR162 depleted OPEN vial expiry: prepatch reproducible FAIL, patched source PASS, browser pending
+- Prepatch actual source JS10 f20c4c90 fictional Node VM: zero-remaining OPEN plus sealed stock produced stale expiry (-30 days) FAIL; zero-remaining old OPEN plus usable newer OPEN selected stale old expiry and status Empty FAIL. Sealed-only and usable-only controls PASS.
+- Patched actual source JS10 c00cdd52: depleted OPEN excluded by stashExpiryMs as already excluded by reminders; computeKitStatus chooses usable OPEN preferentially. Four isolated fictional scenarios now PASS expiryDate/status checks; JS syntax check PASS. Source blob GitHub parity verified. tests/stash-open-vial-expiry.test.cjs expanded with five assertions, GitHub exact-head results outstanding.
+- Local Chromium file and localhost navigation BLOCKED by administrator; do not record a Pass. Official six workflows were launched (writer/mobile PASS observed; rest pending). Updated postpatch physical iPhone NOT TESTED. Previous two Stash iPhone PASS are prior source. No production data writes.
+
 ## 2026-11-12 — PR160/PR162 source reconciliation review (no new browser QA)
 - PASS source inspection: JS09 same blob 6f4e6ff4 for PR160 and PR162; JS03/04/06/07/08 identical main→PR160, changed only PR162; JS10 four targeted differences (per-open-vial expiry aggregation/reminders) against PR160. Document docs/qa/PR160_PR162_SOURCE_RECONCILIATION_2026-11-12.md.
 - NOT TESTED / edge-case hypothesis: zero-remaining yet open/active vial with old reconDate could yield card expiry while reminder filters it out. Add fictional exact-source UI + reminder test before release. Multi-open-vial different dates and reload persistence need dedicated checks too.
