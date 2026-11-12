@@ -1,3 +1,9 @@
+## 2026-11-11 — PR162 corrected source QA, candidate still awaiting real iPhone acceptance
+- PASS: 6/6 GitHub suites for app SHA 9ec970f8; full build #43156329589, pinned Chromium #43156329577, WebKit #43156329484, mobile #43156329574, writer #43156329555, nested DS2 #43156329505. Independent artifact #13915889162 outer 573/573 CRC, LIVE 26/26 CRC, full-app standalone/offline DEMO byte equality, Git blob JS03/JS09/JS10 exact, official 8/8 320/390 light/dark LIVE/DEMO browser records PASS.
+- PASS (local targeted fictional source test): sealed-only kit ignores stale historical kit reconDate, current open vial expiry triggers expiring state, historic legacy blends display Vial 1 and Vial 2 in chronological order, source guards for next vial number. Nine assertions, with next-vial creation confirmed at code guard level only; persisted ledger and live transaction NOT TESTED.
+- NOT TESTED on corrected candidate: user iPhone Deadpool numbered legacy vials and next Vial 3, Retatrutide Kit 2 sealed-only expiry, open-vial countdown; VoiceOver/Dynamic Type/clinical measurement validation. Prior iPhone 4 PASS/2 FAIL recorded below pertains to OLD artifact 76402b84, not corrected SHA.
+- BLOCKED: candidate production merge/deploy (explicit approval missing); production parity JSON verified=false is expected while draft app source differs from current host. No production user data access or writes.
+
 ## 2026-11-11 — PR162 candidate #13914849410 physical iPhone regression (user-reported)
 | Check | Result | Evidence / qualification |
 |---|---|---|
