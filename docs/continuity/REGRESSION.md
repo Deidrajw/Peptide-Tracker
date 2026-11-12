@@ -1,3 +1,9 @@
+## 2026-11-12 — PR163 integrated FULL-APP DEMO physical iPhone user acceptance checkpoint
+- USER-REPORTED PHYSICAL IPHONE PASS: Stash two OPEN vials, first depleted 0mg and later usable 8mg. Prior bug (card Empty / 0mg) did not recur in user's consolidated PR163 DEMO check.
+- USER-REPORTED PHYSICAL IPHONE PASS: Navigation. User confirmed manual navigation PASS; do not extrapolate this to VoiceOver, Dynamic Type, every modal, or persisted production data.
+- NOT TESTED by user: Completed protocol Upcoming/history (future recurrence suppression and historical retention). GitHub automated regression previously PASSED on exact-head b9dda345; user manual protocol acceptance is still OPEN.
+- These are user-provided test results, NOT permission to merge/deploy. Production storage, actual saved-data cross-reload, accessibility acceptance and Cloudflare postmerge byte parity remain NOT TESTED. One next acceptance action: manually check completed-protocol Upcoming/history in isolated iPhone DEMO.
+
 ## 2026-11-12 — Consolidated PR163 exact-head automated test RESULTS, RELEASE DRAFT
 - PASS GitHub source ed5617d3 (six independent workflow conclusions SUCCESS): pinned Chromium #43286267827, WebKit #43286267830, mobile #43286267905, shared writer #43286268271, DS2 nested #43286267854, full build #43286267836. Full build includes JS syntax/source, release-readiness gate, updated read-only Stash/Protocol regression entrypoints, 320/390 dark/light LIVE+DEMO browser QA; QA JSON 8/8 PASS.
 - PASS official artifact #13976191744: outer archive 573 CRC PASS; nested LIVE 26 files CRC PASS and exact manifest paths; standalone FULL DEMO 3,235,110 bytes equal offline ZIP index; blob source integrity JS03 dab17570, JS09 6f4e6ff4, JS10 19486960, index 7a44c6a7 PASS. Demo fictional ephemeral memory/sync disabled.
