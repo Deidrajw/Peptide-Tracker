@@ -587,7 +587,7 @@ function stashExpiryMs(s) {
   // Beyond-use dates belong to individual OPEN vials, never the kit's historical
   // reconDate. Keep sealed, empty, finished and transferred vial history intact.
   // Among multiple open vials, surface the soonest expiry for safety.
-  const dates = ensureKitVials(s).filter(v=>["open","active"].includes(v.status) && v.reconDate)
+  const dates = ensureKitVials(s).filter(v=>["open","active"].includes(v.status) && v.reconDate && Number(getVialRemainingMg(s,v))>0)
     .map(v=>new Date(addDays(v.reconDate, Number(v.expiryDays)||Number(s.expiryDays)||28)).getTime())
     .filter(Number.isFinite);
   return dates.length ? Math.min(...dates) : Infinity;
