@@ -1,3 +1,6 @@
+## 2026-11-12 — PR162 corrected Stash physical acceptance, no release authorization
+- User-reported corrected isolated full-app iPhone QA final result: **Deadpool vial numbering PASS; Retatrutide Kit 2 expiry PASS**. Supersedes earlier partial Deadpool PASS / Reta NOT TESTED. No design change requested. Keep previously accepted historical vial-number display, next-open Vial 3 source ID policy, and open-vial-only expiry; protect historical records and saved inventory. PR160 remains independently drafted; do not silently merge PR160 or PR162. Functional acceptance is not permission to merge/deploy or evidence of VoiceOver/Dynamic Type/cross-reload persistence.
+
 ## 2026-11-12 — PR162 targeted fixture acceptance method (testing only)
 - User's old-build iPhone Stash Fail remains a blocker until new candidate retest. Approved design or source behaviour is NOT revised; create isolated fictional full-app QA fixture edition from exact corrected candidate rather than modifying records or bundling a Stash-only mockup. Preserve PR160 independently unmerged. Confirm Deadpool historic vial labels without mutating saved sequence numbers; new Vial 3 assigned only on explicit Open Vial transaction. Sealed-only stock must not inherit previously finished vial countdown. Browser PASS is not physical iPhone acceptance; no merge/deploy without user approval.
 
