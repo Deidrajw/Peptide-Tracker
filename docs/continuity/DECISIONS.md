@@ -1,3 +1,8 @@
+## 2026-11-12 — Approved consolidated release STRATEGY only
+- User selected one consolidated PR160+PR162 candidate; explicitly withheld merge/deploy approval. Preserve both independent draft PRs until explicit later release disposition approval; do not close them silently.
+- Resolve shared code in favour of PR162's already-tested superset: JS09 same source as PR160; JS10 newer per-vial expiry/reminders and non-blend usable-open Stash card selection. Retain old sequence IDs and history; do not overwrite PR162 with PR160's older helper. Integrated history may use a two-parent DEV commit without moving main.
+- No UI redesign, schema migration, data overwrite or other new feature was authorized. Require exact-head QA and independent Cloudflare parity after any separately approved release.
+
 ## 2026-11-12 — Corrected Stash card accepted on iPhone; merge/deployment still withheld
 - User explicitly confirmed the latest fictional full-app iPhone Two Open Vials QA result is correct, reversing the prior failed card 0mg/Empty display despite Vial 2 8mg. Preserve narrow non-blend card selector preference for usable OPEN/ACTIVE and unchanged blend-specific ledger handling, vial IDs, historical dose allocations and saved data. User has not authorized branch consolidation, merging PR160/PR162 or production deployment. PR160-first sequential integration remains recommendation only; no inferred approval from functional acceptance.
 
