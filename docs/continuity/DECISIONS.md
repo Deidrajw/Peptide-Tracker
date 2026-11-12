@@ -1,3 +1,6 @@
+## 2026-11-12 — Corrected Stash card accepted on iPhone; merge/deployment still withheld
+- User explicitly confirmed the latest fictional full-app iPhone Two Open Vials QA result is correct, reversing the prior failed card 0mg/Empty display despite Vial 2 8mg. Preserve narrow non-blend card selector preference for usable OPEN/ACTIVE and unchanged blend-specific ledger handling, vial IDs, historical dose allocations and saved data. User has not authorized branch consolidation, merging PR160/PR162 or production deployment. PR160-first sequential integration remains recommendation only; no inferred approval from functional acceptance.
+
 ## 2026-11-12 — Correct card source inconsistency, preserve canonical vial data
 - User's fictional iPhone screenshot demonstrates card status/balance can contradict expanded Vials data when first OPEN vial is empty and later OPEN vial has 8mg. Treat as a regression blocker; patch only non-blend card selection to prefer eligible usable open source, preserving getVialRemainingMg ledger, previous empty fallback, and blend-specific source accounting. No automatic finish or mutation of historical OPEN vial or vial IDs. Do not portray synthetic source-level PASS as user iPhone or GitHub browser PASS. Keep PR160 separate, no merge/deploy without approval.
 
