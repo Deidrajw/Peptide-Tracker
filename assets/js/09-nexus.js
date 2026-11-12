@@ -1840,7 +1840,8 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
   if(s.isBlend && (!getSealedVials(s).length || getActiveVial(s))) { showErrorBanner(getActiveVial(s)?"Finish the open vial before opening another.":"No sealed vials remain."); return; }
   const today = localDate();
   // Label the actual next physical vial, including when a sibling remains open.
-  const vialNum = Math.max(0,...(s.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
+  const priorOpenedCount=(s.vials||[]).filter(v=>v.status!=="sealed"&&v.status!=="transferred").length;
+  const vialNum = Math.max(priorOpenedCount,...(s.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
   const m = openModal(`
     <div class="nx-dose-head nx-shared-sheet-header">
       <div><div class="nx-dose-kicker">STASH · OPEN VIAL</div><h2 class="nx-dose-title">Open ${selectedForm==="nasal-source"?"nasal source":"injectable"} vial</h2><div class="nx-dose-subtitle">Vial ${vialNum} · ${esc(s.name)}</div></div>
@@ -1922,6 +1923,11 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
     if(entry.isBlend){
       const sealed=getSealedVials(entry);if(!sealed.length||getActiveVial(entry)){showErrorBanner("No available sealed vial to open.");return;}
       const vial=sealed[0],notes=m.querySelector("#rvn").value.trim();
+      // New blend vial identity follows all historical opened vials, including
+      // older records without sequenceNumber. No old vial data or dose log changes.
+      if(!vial.sequenceNumber) vial.sequenceNumber=Math.max(
+        (entry.vials||[]).filter(v=>v.status!=="sealed"&&v.status!=="transferred").length,
+        ...(entry.vials||[]).map(v=>Number(v.sequenceNumber)||0))+1;
       vial.status="open";vial.intendedUse=m.querySelector("#rv-purpose").value;vial.reconDate=reconTimestamp;vial.bacMl=newBac;vial.expiryDays=expiryDays;vial.notes=notes;
       // Immutable recipe for this physical vial; later kit edits cannot rewrite it.
       if(!Array.isArray(vial.composition) && Array.isArray(entry.composition))
