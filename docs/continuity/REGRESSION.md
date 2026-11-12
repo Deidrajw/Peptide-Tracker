@@ -1,3 +1,9 @@
+## 2026-11-12 — PR162 corrected isolated full-app Stash user iPhone results: 2/2 PASS
+- PASS (user-reported physical iPhone): Deadpool legacy vial numbering on corrected fictional full-app candidate.
+- PASS (user-reported physical iPhone): Retatrutide Kit 2 sealed-only stale opened-vial expiry on corrected fictional full-app candidate. User's latest Pass supersedes a preceding Not Tested submission. Device/iOS/VoiceOver details not supplied; do not assert them.
+- Historical user iPhone PASS retained from older candidate 76402b84: Placenta completed, Reta in progress, completed Reta, Historical Calendar. Combined user reports cover 6 distinct checks, **across older and corrected candidates**. Existing earlier 2 FAIL is historical old-build evidence, not current corrected-candidate status.
+- Automated focused full-app Chromium 320/390 light/dark and synthetic next-Vial-3 transaction previously PASS for corrected source 9ec970f8; GitHub six CI PASS. Real-device next-vial transaction, reload persistence, VoiceOver/Dynamic Type and clinical validation still NOT TESTED unless separately reported. No production data access, no merge/deploy approval, PR160 remains separate.
+
 ## 2026-11-12 — PR162 corrected full-app fictional Stash interactions (actual Chromium browser)
 - PASS 4/4 (320/390 x dark/light): Deadpool historical blend vial display labels Vial 1 Finished and Vial 2 Open, despite missing sequenceNumber and reverse record order; open ledger balance 21 mg.
 - PASS 4/4 (320/390 x dark/light): Retatrutide Kit 2 has 6 sealed, 0 open; healthy stock and no opened-vial expiry; expiryDaysLeft null and stashExpiryMs Infinity. No JS page exceptions (4/4).
