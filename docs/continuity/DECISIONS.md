@@ -1,3 +1,6 @@
+## 2026-11-12 — PR162 targeted fixture acceptance method (testing only)
+- User's old-build iPhone Stash Fail remains a blocker until new candidate retest. Approved design or source behaviour is NOT revised; create isolated fictional full-app QA fixture edition from exact corrected candidate rather than modifying records or bundling a Stash-only mockup. Preserve PR160 independently unmerged. Confirm Deadpool historic vial labels without mutating saved sequence numbers; new Vial 3 assigned only on explicit Open Vial transaction. Sealed-only stock must not inherit previously finished vial countdown. Browser PASS is not physical iPhone acceptance; no merge/deploy without user approval.
+
 ## 2026-11-11 — Protocol completion vs phase schedule policy (development)
 - Explicitly completed protocol must not keep generating future due/upcoming reminders just because compound status remains active. Preserve past calendar and dose history, allow newer active same-compound protocols. Existing week-only final phase continuation remains intact for not-yet-completed protocols: do not silently auto-complete in_progress Reta from phase end. No production data migration.
 
