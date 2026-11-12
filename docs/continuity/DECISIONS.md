@@ -1,3 +1,6 @@
+## 2026-11-11 — PR159 limited accessibility release approved and executed
+- User explicitly approved merge/deploy of PR159 after successful automated gates. Keep scope limited to 44px More Edit targets, DS2 regression guard and documentation; do not silently enlarge the 320px Calendar seven-column day cells or redesign previously approved screens. Main app release commit 2e83a692 and 16/16 independent Cloudflare byte parity PASS workflow 43135298228. User reported "everything is fine" but did not enumerate individual VoiceOver/Dynamic Type results; treat as general feedback only. No personal data migration, no browser test accepted as physical accessibility test. Existing declared app version v0.9.26-beta.1 retained pending an explicitly planned version bump.
+
 ## 2026-11-11 — Accessibility remediation remains narrow and non-destructive
 - After Issue157 release, prioritize measured accessibility improvements before redesigns. Allow scoped 42px-to-44px More Edit targets correction with DS2 regression guard in draft PR159; this is development work, not release approval. Preserve current Calendar 7-column grid while evaluating 320px 40px-wide cells and VoiceOver touch behaviour on actual iPhone; do not force global min-width 44px that breaks 320px layout. No protocol, inventory, calculator or localStorage change.
 
