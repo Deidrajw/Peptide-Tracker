@@ -1093,9 +1093,10 @@ function compoundIntelView(name) {
   const depletionDate = weeksRem!=null ? addDays(localDate(), Math.round(weeksRem*7)) : null;
 
   // Reconstitution age
-  const reconDate = activeKit?.reconDate;
+  const openVial = activeKit ? getActiveVial(activeKit) : null;
+  const reconDate = openVial?.reconDate || null;
   const reconAge = reconDate ? Math.floor(daysSince(reconDate)) : null;
-  const expiryDays = activeKit?.expiryDays || 30;
+  const expiryDays = Number(openVial?.expiryDays)||Number(activeKit?.expiryDays)||28;
 
   // What to track
   const trackItems = c.returnSymptoms || (COMPOUND_SYMPTOMS[name]?.symptoms?.slice(0,6)) || [];
