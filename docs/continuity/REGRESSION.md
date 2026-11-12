@@ -1,3 +1,18 @@
+## 2026-11-11 — PR162 candidate #13914849410 physical iPhone regression (user-reported)
+| Check | Result | Evidence / qualification |
+|---|---|---|
+| Placenta completed | PASS | User physical iPhone, packaged app 76402b84 |
+| Retatrutide in progress | PASS | User physical iPhone, packaged app 76402b84 |
+| Completed Reta | PASS | User physical iPhone, packaged app 76402b84 |
+| Historical Calendar | PASS | User physical iPhone, packaged app 76402b84 |
+| Deadpool existing opened vials numbered 1/2 and next new vial 3 | FAIL | Tested artifact has pre-PR160 JS09/JS10; newer branch not iPhone tested |
+| Retatrutide Kit 2 six sealed / zero open without stale opened-vial expiry | FAIL | Tested artifact has pre-PR160 JS10; newer branch not iPhone tested |
+| Latest PR162 head 9ec970f8 browser WebKit & build | NOT TESTED | In progress at earlier observation; must fetch final run verdict and new exact-head artifact |
+| Latest PR162 head physical iPhone | NOT TESTED | Retest only with new exact-head isolated full-app DEMO |
+| VoiceOver, Dynamic Type, calculation clinical safety | NOT TESTED | Do not infer from functional check results |
+
+Root-cause evidence: tested 76402b84 JS09 blob 08c661bf and JS10 blob 727881b8 match pre-fix main b4c83c06, whereas independent PR160 head 006dc03a contains JS09 6f4e6ff4 and JS10 e5048337. PR162 head 9ec970f8 includes JS09 6f4e6ff4 and JS10 f20c4c90. Integrity/source checks of a pre-fix package do not certify cross-PR feature acceptance. PR160 remains separate draft, no merge/deploy authorization. All tests use fictional QA records except user-reported hands-on iPhone observations; no user data write.
+
 ## 2026-11-11 — PR162 source-validated release package independent checks
 - PASS GitHub artifact #13914849410 candidate pre-browser; outer ZIP 9/9 CRC, LIVE package 26/26 CRC, offline DEMO ZIP 2/2 CRC, root index, manifest path list match, source_commit 76402b84. Compared JS03/04/07 Git blob SHA with authenticated GitHub file blobs: EXACT match all 3. Node syntax PASS 3/3. DEMO static isolation guards present (ephemeral localStorage/sessionStorage, disabled fetch/XMLHttpRequest, fictional fixture). Executed extracted actual JS03 effective-schedule helper on synthetic completed/active/newer-active fixture, plus source checks of JS04/07 and reschedules: 10/10 PASS.
 - Official run #43155107880 browser step IN PROGRESS after candidate upload; existing 3 exact-head CI suites writer, mobile, DS2 SUCCESS; pinned/WebKit/full build pending at last read. Local Chromium navigation failed ERR_BLOCKED_BY_ADMINISTRATOR; do not report browser pass. Physical iPhone, VoiceOver, release deployment NOT TESTED. No personal data writes.
