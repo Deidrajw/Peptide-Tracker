@@ -1617,6 +1617,8 @@ function restingStatus(data, today, lastDose, resumesOn) {
 }
 
 function getDoseStatus(name, data) {
+  const completedProtocol=nexusCompletedProtocolForData(data);
+  if(completedProtocol) return {status:"protocol_completed",label:"Protocol completed",color:"var(--t4)",showLogBtn:false,left:null,nextDueMs:null,nextDueStr:null,lastDoseMs:(data.doses||[]).length?Math.max(...data.doses.map(d=>new Date(d.date).getTime()).filter(Number.isFinite)):null,protocolId:completedProtocol.id,protocolName:completedProtocol.name};
   const today = localDate();
   const nowMs = Date.now();
   const graceMs = (state.settings.graceHours||3)*3600000;
