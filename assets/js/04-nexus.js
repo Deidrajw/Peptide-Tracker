@@ -52,6 +52,9 @@ function getMostRecentReschedule(data) {
 }
 
 function nextDueDate(data) {
+  // No recurring future due date after an explicit protocol completion.
+  // Historical logs, skips and one-off recordings remain untouched.
+  if(nexusCompletedProtocolForData(data)) return null;
   const sorted = [...(data.doses||[])].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const last = sorted[sorted.length-1];
   const skips = data.skips||[];
