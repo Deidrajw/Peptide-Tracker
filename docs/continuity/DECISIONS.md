@@ -1,3 +1,7 @@
+## 2026-11-11 — Expiry is per open vial, not historical kit
+- Product correctness: sealed-only kits must not display reconstitution-expiry warnings merely because a prior vial was opened. Retain kit.reconDate and per-vial history for audit, dose attribution and calculations; never clear or rewrite records as a cosmetic fix. Open/active vials with real reconstitution dates remain eligible for beyond-use warnings, including several open vials (earliest date wins). Manufacturer sealed expiry is a separate future field and must never be silently inferred from an opened-vial countdown.
+- Implement narrowly on development branch; no merge/deploy approval. Preserve approved DS2 design and all inventory writer protections.
+
 ## 2026-11-11 — PR159 limited accessibility release approved and executed
 - User explicitly approved merge/deploy of PR159 after successful automated gates. Keep scope limited to 44px More Edit targets, DS2 regression guard and documentation; do not silently enlarge the 320px Calendar seven-column day cells or redesign previously approved screens. Main app release commit 2e83a692 and 16/16 independent Cloudflare byte parity PASS workflow 43135298228. User reported "everything is fine" but did not enumerate individual VoiceOver/Dynamic Type results; treat as general feedback only. No personal data migration, no browser test accepted as physical accessibility test. Existing declared app version v0.9.26-beta.1 retained pending an explicitly planned version bump.
 
