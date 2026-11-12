@@ -2186,3 +2186,10 @@ fb05e322 and 5f0be242 CSS normalize Stash Add/Save and reaction Save/Open gradie
 - RELEASE STATE: Host reachable, but independent CURRENT main byte parity and postmerge release source parity method not yet established; user's authorization says STOP ON BLOCKER. No mark-ready, no merge, no deploy. Need a verifier capable of comparing raw bytes/hashes against exact deployed expected commit (for example official GitHub Actions tools/verify-pages.py triggered for the appropriate production baseline), then conditional release sequence PR156 -> PR158 and post-deploy parity. No user data changes.
 - ONE NEXT ACTION: enable exact-byte primary-host parity verification (read-only) before merging; do not equate HTTP 200 with source match.
 
+
+## 2026-11-11 — Issue157 release parity runbook added; release still gated
+- Rechecked main via compare: 1c6007fce7ea25a68ec29f480f3b4d6ede46477c. Parent PR156 draft 0c5536b1, child PR158 draft 3433bd86 (before docs change), correctly stacked and behind 0. Application source unchanged dcc59f98.
+- Persisted docs/qa/ISSUE157_RELEASE_PARITY_GATE_2026-11-11.md at 4dae6db8. Defines 16-file exact raw byte/sha256 check against CURRENT deployed main first, then separately after ordered authorized PR156 and PR158 merge, using existing tools/verify-pages.py. Explains that TinyFish 16/16 HTTP 200 is availability only; old candidate-vs-production CSS mismatch is expected premerge. Stops on any failing P0/writer/math/parity check; never treats GitHub merge as deployment or clinical math as certified safety.
+- **RELEASE BLOCKER UNRESOLVED:** no successful 16-file raw-byte parity run against the currently deployed main; existing GitHub workflow test checked an undeployed synthetic merge, and no accessible workflow dispatch/reliable raw-byte fetch was established in this session. No PR merge, deployment, production data write or migration. User's conditional approval remains recorded.
+- ONE NEXT ACTION: execute the new runbook from a network-capable GitHub Actions runner with the checked-out current main; inspect signed-off 16-file JSON parity, then only if all gates pass resume PR156 -> PR158 ordered release.
+
