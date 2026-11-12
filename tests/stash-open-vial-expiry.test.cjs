@@ -75,10 +75,10 @@ assert.match(source,/function stashExpiryMs\(s\)[\s\S]*?ensureKitVials\(s\)\.fil
 
 // Evaluate the card's ACTUAL source selection against the user's screenshot case,
 // not just a separate computeKitStatus() helper.
-const cardSource = source.match(/const activeVialForCard = s\\.isBlend \\? getActiveVial\\(s\\) :[\\s\\S]*?getActiveVial\\(s\\)\\);/)?.[0];
+const cardSource = source.match(/const activeVialForCard = s\.isBlend \? getActiveVial\(s\) :[\s\S]*?getActiveVial\(s\)\);/)?.[0];
 assert.ok(cardSource, 'production Stash card selection expression must be extractable');
 function selectedCardVial(kit) {
-  return vm.runInNewContext(cardSource + '\\nactiveVialForCard', {
+  return vm.runInNewContext(cardSource + '\nactiveVialForCard', {
     s: kit,
     ensureKitVials: runtime.ensureKitVials,
     getActiveVial: runtime.getActiveVial,
