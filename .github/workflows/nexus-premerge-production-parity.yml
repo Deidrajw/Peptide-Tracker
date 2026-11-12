@@ -1,0 +1,40 @@
+name: Nexus pre-release exact-byte Cloudflare parity gate
+on:
+  push:
+    branches:
+      - qa/production-byte-parity-gate-20261111
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-current-main:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout fixed production main baseline
+        uses: actions/checkout@v4
+        with:
+          ref: 1c6007fce7ea25a68ec29f480f3b4d6ede46477c
+          persist-credentials: false
+      - name: Check baseline SHA and verify verifier locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "1c6007fce7ea25a68ec29f480f3b4d6ede46477c"
+          python3 tools/verify-pages.py --smoke --output dist/parity-smoke.json
+      - name: Compare primary Cloudflare raw bytes to deployed-main source
+        shell: bash
+        run: |
+          set -euo pipefail
+          GITHUB_SHA="$(git rev-parse HEAD)" python3 tools/verify-pages.py \
+            --base https://nexuspeplog.pages.dev/ \
+            --attempts 2 --interval 10 \
+            --output dist/parity-production-main.json
+      - name: Upload both evidence reports (even on failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-premerge-parity-current-main
+          path: dist/parity-*.json
+          if-no-files-found: warn
+          retention-days: 30
