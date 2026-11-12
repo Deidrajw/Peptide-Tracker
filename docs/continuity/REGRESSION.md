@@ -1,3 +1,7 @@
+## 2026-11-11 — PR162 active test checkpoint
+- PASS direct V8: JS03/04/07 syntax, completed-protocol identity returns completed, newer same-compound in_progress supersedes it, completed future/today effective schedule has zero slots, historical date retains cadence, in_progress retains cadence. Source guards: nextDueDate=null, Today badge Completed not generic Upcoming, pending future reschedule chains suppressed without deleting records; synthetic script present at head 1df3e343. No user data written.
+- CI at code head 1df3e343: mobile form, writer safety, DS2 nested SUCCESS; full build/parity, pinned browser, WebKit IN PROGRESS. Full application candidate build and required-file stages succeeded but artifact not downloaded/independently verified. Physical iPhone, VoiceOver, 320/390 changed-flow browser, calculator safety qualification NOT TESTED. Do not confuse generic browser QA with Placenta/Reta-specific E2E; targeted source guards are partial only.
+
 ## 2026-11-11 — Completed protocol Upcoming candidate tests
 - Placenta Prime completed with active compound: future Today/Upcoming/Calendar expected slots cease; past recorded doses, skips and calendar history remain. Newer in_progress same-compound protocol supersedes completed older one. In-progress Retatrutide with 16-week legacy phases does not auto-complete; explicit manual completion must stop reminders. No backup writes. Source test script added; full browser and physical iPhone NOT TESTED at checkpoint. Protect Writer P0, Log Dose, Check-In, Protocol editor, DS2.
 
