@@ -1,3 +1,6 @@
+## 2026-11-12 — PR162 depleted OPEN vial consistency patch, UNRELEASED
+- Existing JS10 source f20c4c90 reproduced stale expiry for depleted historical OPEN and false Empty status when a newer usable OPEN existed. Narrow no-migration JS10 changes d8dd615d, regression test 18f7aff4, patched JS10 blob c00cdd52; local fictional source VM checks PASS, syntax PASS. Official patched-head six CI suites in progress at documentation time. Supplemental 26-file source ZIP/full-app isolated fictional DEMO locally created, NOT official exact-head GitHub release artifact; browser navigation BLOCKED, real iPhone postpatch NOT TESTED. See docs/qa/PR162_ZERO_REMAINING_OPEN_VIAL_FIX_2026-11-12.md. Both PR162 and PR160 remain draft, unmerged/undeployed; version unchanged v0.9.26-beta.1, no data migration.
+
 ## 2026-11-12 — PR160/PR162 source reconciliation documented, NOT RELEASED
 - Source reconciliation of main b4c83c06, PR160 006dc03a, PR162 baseline c6e85028 confirms overlapping JS09 identity and newer per-vial expiry implementation in PR162 JS10. No app changes, no version bump, no user storage modifications, no additional iPhone or browser test executed in reconciliation step. Potential zero-remaining open-vial discrepancy requires synthetic QA. Both PRs draft/unmerged, Cloudflare unchanged. Detailed review docs/qa/PR160_PR162_SOURCE_RECONCILIATION_2026-11-12.md.
 
