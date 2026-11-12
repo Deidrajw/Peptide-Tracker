@@ -1,3 +1,6 @@
+## 2026-11-11 — Follow-up per-vial expiry handling (draft)
+- Commit 52ec7cb1: Stash card and shared expiry sorting/filtering prefer the active vial's expiryDays when present, falling back to kit expiryDays. Separate active-vial `reconDate` continues to gate all opened-vial expiry warnings. Synthetic regression extended. New exact-source CI pending; prior successes must not be used to certify this commit.
+
 ## 2026-11-11 — Stash next-vial continuity follow-up (draft)
 - Additional code commits d7439cea (JS09): new blend vial preview and confirmed sequenceNumber account for legacy opened-vial count, including records whose backfill flags are set but sequenceNumber missing; 19435c03 (JS10): mixed numbered/unnumbered opened vials sort chronologically, preserving saved numbers and IDs. This adds sequenceNumber only to newly opened blend vials during an explicit normal open transaction, not to historic vials. Historical blend balances continue deriving from dose/waste ledger; no automatic balance rewrite.
 - CI from earlier source SHA is NOT final qualification; re-run against latest source. One next action remains end-to-end exact-source QA and demo/live packaging before release decision.
