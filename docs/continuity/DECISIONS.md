@@ -1,3 +1,8 @@
+## 2026-11-12 — PR163 consolidated engineering QA cleared; RELEASE CONSENT STILL REQUIRED
+- The user approved integrated development, not merger/deployment. Preserve draft PR160, PR162 and PR163 as unmerged pending explicit release approval.
+- Integrated app JS03/JS09/JS10 matches accepted PR162 source; PR160 JS09 label logic preserved, PR162's newer JS10 per-vial expiry/reminders and usable OPEN card selector protected. New synthetic regression script replaces obsolete PR160 expectations; no app UI/business rule redesign.
+- Six GitHub workflows and official release artifacts passed on ed5617d3, but Cloudflare primary production parity after a merger, physical integrated-candidate iPhone verification, VoiceOver/Dynamic Type and real stored data reload remain distinct gates; never infer merge/deploy authorization from QA.
+
 ## 2026-11-12 — PR163 consolidated release CI gates wired (UNRELEASED)
 - Integrated branch CI commit c52f4f28 adds three automated fictional-source regression entrypoints to existing `Nexus build and parity QA` syntax/source step: `scripts/stash-expiry-label-regression.mjs`, `tests/stash-open-vial-expiry.test.cjs`, `scripts/protocol-completion-upcoming-regression.mjs`. These prevent PR160 legacy test expectations silently bypassing PR162's changed per-vial semantics. Previous local reconstruction 11/11 Stash assertions PASS, but this exact workflow-head pass remains PENDING until official GitHub run finishes.
 - No application code, user data, production storage, release authorization, main branch, PR160 or PR162 modified. Draft PR163 only. ONE NEXT ACTION: verify six exact-head workflow outcomes and official full-app artifact before qualification.
