@@ -62,6 +62,10 @@ jobs:
           node tests/search-clear-controls.test.cjs
           node tests/nasal-calculator-readonly.test.cjs
           node tools/validate-ux-consistency.mjs
+          # Consolidated PR160/PR162 source-only fictional release guards.
+          node scripts/stash-expiry-label-regression.mjs
+          node tests/stash-open-vial-expiry.test.cjs
+          node scripts/protocol-completion-upcoming-regression.mjs
       - name: Gate stale release notes against changed application source
         shell: bash
         run: |
