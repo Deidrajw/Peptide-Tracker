@@ -173,7 +173,11 @@ function stashView() {
     // history filtered by date, entirely independent of the vial's own authoritative
     // value — exactly the kind of second formula capable of quietly disagreeing with the
     // real number once a kit is migrated.
-    const activeVialForCard = getActiveVial(s);
+    // Match expiry/status selection: a historically OPEN vial with zero balance
+    // must not override another usable OPEN vial in this same kit.
+    // Keep blend-source selection unchanged because it has its own ledger.
+    const activeVialForCard = s.isBlend ? getActiveVial(s) :
+      (ensureKitVials(s).find(v=>["open","active"].includes(v.status) && Number(getVialRemainingMg(s,v))>0) || getActiveVial(s));
     const currentReconDate = activeVialForCard?.reconDate || null;
     const vialRem = activeVialForCard ? (s.isBlend ? getBlendOpenVialRemainingMg(s) : getVialRemainingMg(s, activeVialForCard)) : null;
     const activeCapacityMg = activeVialForCard ? Number(activeVialForCard.vialMg||s.vialMg) : 0;
