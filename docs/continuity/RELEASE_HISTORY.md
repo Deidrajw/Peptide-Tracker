@@ -1,3 +1,6 @@
+## 2026-11-11 — PR162 source-validated candidate packaged, NOT RELEASED
+- Draft PR162 workflow commit 76402b84, app source JS03/04/07 unchanged since 1ff58ca4. Original product version v0.9.26-beta.1 unchanged. GitHub artifact #13914849410: complete standalone full-app fictional isolated DEMO HTML, offline DEMO ZIP and 26-entry LIVE ZIP. Outer 9/9 and LIVE 26/26 CRC and 3/3 Git blobs matched GitHub; focused fictional read-only source assertions 10/10 PASS. No physical iPhone or final browser-QA acceptance; CI browser phase pending; unmerged/undeployed. Historical records/doses and storage unchanged, no migration. PR160 Stash fix remains draft/unmerged.
+
 ## 2026-11-11 — PR162 protocol completion correction, DRAFT NOT RELEASED
 - Branch fix/completed-protocol-upcoming-20261111, app corrections JS03/04/07 through 1ff58ca4, regression head 1df3e343, base main b4c83c06. Explicitly completed protocol no future regular or rescheduled occurrences, nextDueDate=null, Today Completed badge, historical logs intact. Newer active same compound wins; in_progress Reta not auto-completed. No migration or production data changes. Three exact-source CI suites pass; remaining suites/standalone full-app artifacts/iPhone acceptance pending. App version unchanged v0.9.26-beta.1; no merge, no Cloudflare deployment.
 
