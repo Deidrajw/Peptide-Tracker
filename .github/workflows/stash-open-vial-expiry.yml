@@ -1,0 +1,27 @@
+name: Stash open-vial expiry regression
+on:
+  push:
+    branches:
+      - fix/stash-open-vial-expiry-20261111
+  pull_request:
+    paths:
+      - 'assets/js/06-nexus.js'
+      - 'assets/js/08-nexus.js'
+      - 'assets/js/10-nexus.js'
+      - 'tests/stash-open-vial-expiry.test.cjs'
+      - '.github/workflows/stash-open-vial-expiry.yml'
+jobs:
+  open-vial-expiry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax verification
+        run: |
+          node --check assets/js/06-nexus.js
+          node --check assets/js/08-nexus.js
+          node --check assets/js/10-nexus.js
+      - name: Fictional open-vial expiry regression
+        run: node tests/stash-open-vial-expiry.test.cjs
