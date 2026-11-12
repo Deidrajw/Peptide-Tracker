@@ -67,6 +67,8 @@ assert.equal(runtime.computeKitStatus(depleted).expiryDaysLeft, null, 'depleted 
 const otherOpen={name:'Fictional mixed open balances',activeKit:true,expiryDays:28,
   vials:[{status:'open',remainingMg:0,reconDate:relative(-50)}, {status:'open',remainingMg:8,reconDate:relative(-3)}]};
 assert.equal(runtime.computeKitStatus(otherOpen).statusKey,'healthy', 'depleted historical open cannot override usable open vial expiry');
+assert.equal(runtime.computeKitStatus(otherOpen).vialRem,8, 'status tracks remaining of usable open vial, not zero-balance legacy first vial');
+
 assert.ok(runtime.stashExpiryMs(otherOpen) > Date.now(), 'expiry follows usable open vial instead of depleted old vial');
 assert.match(source,/function stashExpiryMs\(s\)[\s\S]*?ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'badge and sorting exclude depleted open vials as reminders already do');
 
