@@ -8,6 +8,19 @@ const results=[];
 if(!fs.existsSync(demo))throw Error('Missing full app DEMO artifact');
 if(!fs.readFileSync('assets/js/11-nexus.js','utf8').includes('nx-proto-firstlog-action'))throw Error('DS2 first-log action missing');
 if(!fs.readFileSync('assets/css/nexus-hybrid-preview.css','utf8').includes('.nx-proto-firstlog-action'))throw Error('DS2 first-log lavender styling missing');
+
+const protocolSource=fs.readFileSync('assets/js/11-nexus.js','utf8');
+const supplySource=fs.readFileSync('assets/js/09-nexus.js','utf8');
+const ds2Css=fs.readFileSync('assets/css/nexus.css','utf8');
+if(!protocolSource.includes('class="nx-pb-phase-timeline-label">Phase timeline</div>')||protocolSource.includes('📊 PHASE TIMELINE'))
+  throw Error('Protocol phase timeline heading must use plain DS2 label');
+if(!supplySource.includes('class="nx-supply-planner-heading">Supply Planner</span>')||supplySource.includes('📊 SUPPLY PLANNER'))
+  throw Error('Supply Planner heading must use plain DS2 typography without emoji');
+if(!ds2Css.includes('.nx-pb-phase-timeline-label')||!ds2Css.includes('.nx-supply-planner-heading'))
+  throw Error('Scoped DS2 typography missing for protocol and Supply Planner');
+if(!protocolSource.includes('class="nx-pb-timeline-legend"')||!protocolSource.includes('class="nx-pb-gantt-label"')||!ds2Css.includes('.nx-pb-phase-timeline .nx-pb-gantt-label'))
+  throw Error('DS2 phase timeline labels and legend must use readable scoped styles');
+
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 function check(pass,message){if(!pass)throw Error(message)}
 try{
@@ -98,6 +111,57 @@ try{
       protocolAlerts.plannedStart.some(x=>x.includes("Phase 1 starts today")) &&
       !protocolAlerts.plannedOverdue.length && protocolAlerts.unchanged,
       "Protocol pause/completion/future/non-destructive reminder regression: "+JSON.stringify(protocolAlerts));
+
+    // Issue #155 — real app modal actions, fictional local fixture, mocked save acknowledgement.
+    // Production state / browser storage is never written by this scoped handoff test.
+    const renewal=await page.evaluate(async()=>{
+      const previous=state;
+      const originalCommit=nexusCommitCurrentState;
+      let commits=0;
+      try {
+        state=JSON.parse(JSON.stringify(previous));
+        const old={id:"qa-finished-reta",name:"Previous Reta",status:"completed",
+          startDate:addDays(localDate(),-60),compounds:[{name:"Retatrutide",
+            route:"SubQ",phases:[{type:"dose",durationWeeks:4,dose:1}]}]};
+        state.protocols=[old];
+        state.protocolDoseFollowupAcknowledged={};
+        const dose={id:"qa-reta-dose",date:localDate(),asNeeded:false};
+        // Model real nexusCommitCurrentState rejection: it restores a canonical
+        // durable snapshot. The follow-up must not overwrite that recovered data.
+        nexusCommitCurrentState=async()=>{commits++;
+          state.protocolDoseFollowupAcknowledged={persistedOther:"safe"};
+          return false;
+        };
+        const failOpened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-new")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const failurePreserved=!!document.querySelector("#nexus-followup-new")&&
+          !document.querySelector("#proto-builder-wrap")&&
+          !state.protocolDoseFollowupAcknowledged["qa-finished-reta|Retatrutide"]&&
+          state.protocolDoseFollowupAcknowledged.persistedOther==="safe";
+        closeModal();
+        nexusCommitCurrentState=async()=>{commits++;await Promise.resolve();return true;};
+        const opened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-new")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const builder=document.querySelector("#proto-builder-wrap");
+        const renewalVisible=!!builder&&!!document.querySelector(".nx-proto-stack-selected");
+        const preselected=!!builder?.textContent.includes("Retatrutide");
+        const newNeverPersisted=state.protocols.length===1&&state.protocols[0].id===old.id;
+        closeModal();
+        state.protocolDoseFollowupAcknowledged={};
+        const updateOpened=nexusPostProtocolDoseFollowup("Retatrutide",dose,false);
+        document.querySelector("#nexus-followup-update")?.click();
+        await new Promise(resolve=>setTimeout(resolve,20));
+        const editVisible=!!document.querySelector("#proto-builder-wrap")?.textContent.includes("Edit Protocol");
+        const oldUnchanged=JSON.stringify(state.protocols[0])===JSON.stringify(old);
+        closeModal();
+        return {failOpened,failurePreserved,opened,renewalVisible,preselected,newNeverPersisted,updateOpened,editVisible,oldUnchanged,commits};
+      } finally {nexusCommitCurrentState=originalCommit;state=previous;closeModal();}
+    });
+    check(renewal.failOpened&&renewal.failurePreserved&&renewal.opened&&renewal.renewalVisible&&renewal.preselected&&renewal.newNeverPersisted&&
+      renewal.updateOpened&&renewal.editVisible&&renewal.oldUnchanged&&renewal.commits===3,
+      "Protocol follow-up async/new/edit regression: "+JSON.stringify(renewal));
 
     // Today 2.0 smoke: use the exact app's state and handlers, never fixture-only HTML.
     await page.evaluate(()=>{render();closeModal();}); // Dismiss fictional onboarding overlay before Today interaction smoke.

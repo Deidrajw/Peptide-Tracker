@@ -248,7 +248,7 @@ function supplyPlannerModal(initialTab) {
 
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span class="mono" style="font-size:13px;color:#C9A0FF;letter-spacing:1.5px">📊 SUPPLY PLANNER</span>
+      <span class="nx-supply-planner-heading">Supply Planner</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">

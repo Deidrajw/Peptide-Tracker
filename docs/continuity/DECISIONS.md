@@ -1,3 +1,16 @@
+## 2026-11-08 — Separate targeted DS2 repair from Phase model redesign
+- User requested removal of literal graph emoji in Review Phase Timeline and Stash Planner and matching DS2 typography. Implement narrow scoped heading, legend and label fixes in draft PR156; do not alter accepted workflow/model. Date-based exact end and broader Phases simplification tracked in Issue #157, preview before approving any model migration. Current integer durationWeeks cannot be silently rounded while promising Jan 1 exactly.
+
+## 2026-11-08 — User iPhone review and date/phase design boundaries
+- User confirmed ready-to-log Reta/GHK-Cu Stash fixture and fictional Reta dose/Undo worked on physical iPhone. New and Update Existing post-dose protocol flows worked after QA launcher, and activation/saving appeared to work. Earlier Fail selections reflected navigation via separate reaction prompt, not demonstrated functional failure. Do not conflate reaction recording with completed-protocol reminder; keep both flows protected. Cancel/Not Now, VoiceOver and full protected grouped acceptance remain unverified.
+- User explicitly requested removal of Phase Timeline and Supply Planner graph emojis and alignment with Design System 2.0 typography; targeted fix authorized. User wants date-based protocol ending and raised concerns about phases hierarchy, but did NOT approve a complete phases redesign or changes to existing saved phase math. Preview model-dependent date exactness and simplified phase hierarchy; do not silently convert an exact calendar end to an inaccurate rounded-week schedule.
+
+## 2026-11-08 — Issue #155 premerge qualification, no release authority
+- The user approved the renewal UX direction only. Retatrutide preselection is a convenience, not a copied dose/schedule or medical recommendation; manually review all new protocol settings. Eight fictional browser variants and six CI workflows support a review candidate, but do not authorize merging, Cloudflare deployment or changing saved personal records. User physical iPhone review and separate release authorization remain pending.
+
+## 2026-11-08 — Approved Issue #155 renewal direction (development only)
+- User approved proposed Reta post-dose protocol renewal: Start New must open a distinct, unsaved draft with the triggering compound preselected; existing protocol and logged history remain intact. Do not silently copy previous dose or activate automatically; require explicit schedule/dose review, preserve Cancel. Update Existing opens current protocol editor. Fix async reminder save/modal race and acknowledge failed saves visibly. Approval is for implementation/design direction, not merge/deploy.
+
 ## 2026-11-08 — PR154 explicitly approved for release and merged
 - User approved revised DS2 Other Forms typography and requested immediate deploy. PR154 squash merged as be704ea9 after final six-suite CI green. This approval does not change personal Semax status or automatically edit inventory; existing bottle may be calibrated through Edit setup. No destructive migration, live import or overwrites. External Cloudflare publication remains contingent on independent verification, not inferred from merge.
 

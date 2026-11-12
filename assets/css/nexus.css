@@ -2764,3 +2764,36 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
     font-size:19px!important;
   }
 }
+
+/* Issue #155 — scoped DS2 headings: no decorative emoji or global typography reset. */
+.nx-pb-phase-timeline-label {
+  color: var(--t3);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  line-height: 1.4;
+  margin-bottom: 9px;
+}
+.nx-supply-planner-heading {
+  color: var(--t1);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.3;
+}
+
+.nx-pb-phase-timeline .nx-pb-gantt-label,
+.nx-pb-phase-timeline .nx-pb-gantt-weeks,
+.nx-pb-phase-timeline .nx-pb-timeline-legend {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.nx-pb-phase-timeline .nx-pb-gantt-label,
+.nx-pb-phase-timeline .nx-pb-timeline-legend { color: var(--t3); }
+.nx-pb-phase-timeline .nx-pb-gantt-weeks { color: var(--t2); font-variant-numeric: tabular-nums; }
+@media (max-width: 350px) {
+  .nx-pb-phase-timeline .nx-pb-gantt-label { width: 62px !important; }
+}
