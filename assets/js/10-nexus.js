@@ -544,7 +544,7 @@ function getProtocolRemainingRequirement(proto, comp) {
 }
 
 function computeKitStatus(s) {
-  const av = getActiveVial(s);
+  const av = ensureKitVials(s).find(v=>["open","active"].includes(v.status) && Number(getVialRemainingMg(s,v))>0) || getActiveVial(s);
   const vialRem = av ? getVialRemainingMg(s, av) : null;
   const kitRemMg = getKitRemainingMg(s);
   const vialPct = (av && av.expectedMg) ? (vialRem/av.expectedMg*100) : null;
