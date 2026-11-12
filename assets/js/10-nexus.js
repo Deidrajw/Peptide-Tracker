@@ -2126,7 +2126,7 @@ function renderProfileTabContent() {
   </section>
   <section class="nx-panel"><div class="nx-kicker">Your goals</div><div class="nx-panel-title">Personal targets</div>
     <p class="nx-muted" style="margin:0 0 12px">${goalNames.length?`${goalNames.length} target${goalNames.length===1?"":"s"} configured: ${goalNames.join(", ")}. View changes and trends in Body Progress.`:"No personal targets set yet. Add them in your profile."}</p>
-    <button id="editprofile2" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;min-height:42px;padding:9px 13px;color:var(--t1);font-size:13px;font-weight:650">${goalNames.length?"Edit targets":"Set targets"}</button>
+    <button id="editprofile2" style="background:var(--surface-2);border:1px solid var(--border-sub);border-radius:10px;min-height:44px;padding:9px 13px;color:var(--t1);font-size:13px;font-weight:650">${goalNames.length?"Edit targets":"Set targets"}</button>
   </section>
   ${p.protocolNotes?`<section class="nx-panel"><details><summary style="font-size:14px;font-weight:650;color:var(--t1);cursor:pointer">Protocol notes</summary><div class="nx-muted" style="white-space:pre-wrap;margin-top:10px">${esc(p.protocolNotes)}</div></details></section>`:""}
   <section class="nx-panel"><div class="nx-panel-title">Your tracking journey</div><p class="nx-muted" style="margin:0 0 10px">Past protocols and milestones are available on demand.</p><details><summary style="cursor:pointer;font-size:13px;font-weight:650;color:var(--t3);min-height:35px">Show timeline</summary><div style="margin-top:12px">${protocolTimeline()}</div></details></section>`;
