@@ -72,5 +72,10 @@ assert.equal(runtime.computeKitStatus(otherOpen).vialRem,8, 'status tracks remai
 assert.ok(runtime.stashExpiryMs(otherOpen) > Date.now(), 'expiry follows usable open vial instead of depleted old vial');
 assert.match(source,/function stashExpiryMs\(s\)[\s\S]*?ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'badge and sorting exclude depleted open vials as reminders already do');
 
+
+// The rendered card must select the same usable non-blend vial as status/expiry.
+// Prevent the historical zero-balance OPEN record from driving 0mg / Empty UI.
+assert.match(source,/const activeVialForCard = s\.isBlend \? getActiveVial\(s\)\s*:\s*\(ensureKitVials\(s\)\.find\(v=>\["open","active"\]\.includes\(v\.status\) && Number\(getVialRemainingMg\(s,v\)\)>0\) \|\| getActiveVial\(s\)\)/, 'Stash card uses usable OPEN source for non-blend kit');
+
 assert.match(source,/ensureKitVials\(s\)\.filter\(v=>\["open","active"\]\.includes\(v\.status\) && v\.reconDate && Number\(getVialRemainingMg\(s,v\)\)>0\)/, 'reminders check individual open vial with material');
 console.log('PASS: focused fictional open-vial expiry assertions including zero-balance open vials; source logic exercised; no production data');
