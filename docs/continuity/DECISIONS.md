@@ -1,3 +1,6 @@
+## 2026-11-11 — Stash expiry and legacy blend labels development checkpoint — non-destructive UI policy
+- Keep sealed-stock manufacturer expiry distinct from current opened-vial beyond-use countdown. Historical kit reconDate must not trigger the latter when no vial is open; preserve any independent sealed-stock expiry warnings. Legacy blend vial numbering should be display-only unless a separate audited data repair is explicitly approved. Do not rewrite existing IDs, deductions or historic dose transactions. No merge or deployment authorized.
+
 ## 2026-11-11 — PR159 limited accessibility release approved and executed
 - User explicitly approved merge/deploy of PR159 after successful automated gates. Keep scope limited to 44px More Edit targets, DS2 regression guard and documentation; do not silently enlarge the 320px Calendar seven-column day cells or redesign previously approved screens. Main app release commit 2e83a692 and 16/16 independent Cloudflare byte parity PASS workflow 43135298228. User reported "everything is fine" but did not enumerate individual VoiceOver/Dynamic Type results; treat as general feedback only. No personal data migration, no browser test accepted as physical accessibility test. Existing declared app version v0.9.26-beta.1 retained pending an explicitly planned version bump.
 
