@@ -1,3 +1,8 @@
+## 2026-11-12 — PR160/PR162 source reconciliation review (no new browser QA)
+- PASS source inspection: JS09 same blob 6f4e6ff4 for PR160 and PR162; JS03/04/06/07/08 identical main→PR160, changed only PR162; JS10 four targeted differences (per-open-vial expiry aggregation/reminders) against PR160. Document docs/qa/PR160_PR162_SOURCE_RECONCILIATION_2026-11-12.md.
+- NOT TESTED / edge-case hypothesis: zero-remaining yet open/active vial with old reconDate could yield card expiry while reminder filters it out. Add fictional exact-source UI + reminder test before release. Multi-open-vial different dates and reload persistence need dedicated checks too.
+- Previously documented corrected 2/2 iPhone Stash PASS and older-candidate 4/4 protocol/Calendar PASS remain unchanged; do not treat as a new test run. Both PRs remain drafts; release approval absent.
+
 ## 2026-11-12 — PR162 corrected isolated full-app Stash user iPhone results: 2/2 PASS
 - PASS (user-reported physical iPhone): Deadpool legacy vial numbering on corrected fictional full-app candidate.
 - PASS (user-reported physical iPhone): Retatrutide Kit 2 sealed-only stale opened-vial expiry on corrected fictional full-app candidate. User's latest Pass supersedes a preceding Not Tested submission. Device/iOS/VoiceOver details not supplied; do not assert them.
