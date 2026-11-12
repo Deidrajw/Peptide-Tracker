@@ -1,3 +1,7 @@
+## 2026-11-12 — PR163 consolidated release CI gates wired (UNRELEASED)
+- Integrated branch CI commit c52f4f28 adds three automated fictional-source regression entrypoints to existing `Nexus build and parity QA` syntax/source step: `scripts/stash-expiry-label-regression.mjs`, `tests/stash-open-vial-expiry.test.cjs`, `scripts/protocol-completion-upcoming-regression.mjs`. These prevent PR160 legacy test expectations silently bypassing PR162's changed per-vial semantics. Previous local reconstruction 11/11 Stash assertions PASS, but this exact workflow-head pass remains PENDING until official GitHub run finishes.
+- No application code, user data, production storage, release authorization, main branch, PR160 or PR162 modified. Draft PR163 only. ONE NEXT ACTION: verify six exact-head workflow outcomes and official full-app artifact before qualification.
+
 ## 2026-11-12 — Approved consolidated release STRATEGY only
 - User selected one consolidated PR160+PR162 candidate; explicitly withheld merge/deploy approval. Preserve both independent draft PRs until explicit later release disposition approval; do not close them silently.
 - Resolve shared code in favour of PR162's already-tested superset: JS09 same source as PR160; JS10 newer per-vial expiry/reminders and non-blend usable-open Stash card selection. Retain old sequence IDs and history; do not overwrite PR162 with PR160's older helper. Integrated history may use a two-parent DEV commit without moving main.
