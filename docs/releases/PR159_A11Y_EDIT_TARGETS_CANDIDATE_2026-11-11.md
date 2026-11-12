@@ -1,3 +1,8 @@
+## Final candidate QA qualification — 2026-11-11 (still DRAFT/UNRELEASED)
+- Official source fb69a064 seven GitHub workflows 7/7 SUCCESS (writer, global DS2, nested, pinned Chromium, mobile, WebKit, full build). Official build #43132744517 artifact #13907005604 independently extracted: outer ZIP 573/573 CRC; exact 26-member LIVE ZIP 26/26 CRC; full standalone fictional DEMO 3,230,139 bytes; offline index byte-identical. Manifest source fb69a064, ephemeral in-memory demo/no live sync, JS10 Git SHA matches patch. Local 16-file source smoke PASS; Cloudflare-to-candidate parity verified=false by design before merge.
+- Functional change: More Edit targets min-height 42px -> 44px, only JS10 and DS2 global test guard. Local Chromium 20/20 primary routes no JS errors/overflow/unnamed controls, targeted More button 4/4 sheet interactions PASS across 320/390 and light/dark. Calendar 320px seven-column cells 40px wide are still measured review item, not approved redesign.
+- Data impact: none, no migrations, no live writes or import; protect Stash, Protocols, Today, Calendar, Check-In, history, source accounting, saved localStorage. Not tested: physical VoiceOver, Dynamic Type, keyboard/safe areas, Calendar narrow touch. No claim of independent clinical calculator validation. Release status: DRAFT PR159, not merged, not deployed. Next: physical-device acceptance and explicit release approval.
+
 # PR159 — Draft accessibility touch-target correction
 Version: candidate based on v0.9.26-beta.1; no new version or deployment.
 GitHub baseline main: 8be7ef2ea9125d69d21a9b6d0a053f678c362d38.
