@@ -1,3 +1,7 @@
+## 2026-11-11 — PR162 source-validated release package independent checks
+- PASS GitHub artifact #13914849410 candidate pre-browser; outer ZIP 9/9 CRC, LIVE package 26/26 CRC, offline DEMO ZIP 2/2 CRC, root index, manifest path list match, source_commit 76402b84. Compared JS03/04/07 Git blob SHA with authenticated GitHub file blobs: EXACT match all 3. Node syntax PASS 3/3. DEMO static isolation guards present (ephemeral localStorage/sessionStorage, disabled fetch/XMLHttpRequest, fictional fixture). Executed extracted actual JS03 effective-schedule helper on synthetic completed/active/newer-active fixture, plus source checks of JS04/07 and reschedules: 10/10 PASS.
+- Official run #43155107880 browser step IN PROGRESS after candidate upload; existing 3 exact-head CI suites writer, mobile, DS2 SUCCESS; pinned/WebKit/full build pending at last read. Local Chromium navigation failed ERR_BLOCKED_BY_ADMINISTRATOR; do not report browser pass. Physical iPhone, VoiceOver, release deployment NOT TESTED. No personal data writes.
+
 ## 2026-11-11 — PR162 latest exact-head CI continuation
 - PASS current head c4ab6205: mobile form #43153993646, writer safety #43153993538, DS2 nested #43153993774, WebKit #43153993560, pinned browser #43153993592. Release build #43153993626: JS/source/build/required file stages passed, browser QA still IN PROGRESS, no final artifact found. This does not establish affected Placenta/Reta real-device acceptance; physical iPhone, VoiceOver, source/package parity and independent app deployment NOT TESTED. No personal data writes.
 
