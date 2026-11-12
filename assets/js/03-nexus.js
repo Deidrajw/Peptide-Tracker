@@ -1957,7 +1957,9 @@ function getDayOccurrences(data, dayStr) {
   // reschedule's originalDate) is stale history, not a still-pending occurrence — without
   // this check, an old reschedule record could resurrect itself as a phantom dose
   // indefinitely, on a compound that's been dosing normally ever since.
-  (data.reschedules||[]).filter(r=>dayKey(r.newDate)===dk).forEach(r=>{
+  // Completing a protocol also retires still-pending future reschedule chains.
+  // Their records stay in history; they are not turned into new Upcoming slots.
+  (data.reschedules||[]).filter(r=>dayKey(r.newDate)===dk && !(nexusCompletedProtocolForData(data)&&dk>=localDate())).forEach(r=>{
     // A legacy date-only newDate has no real clock time to recover — use the compound's
     // OWN configured/inferred time-of-day instead of inventing one via timezone-shifted
     // date parsing (the exact bug behind the phantom 8 PM).
