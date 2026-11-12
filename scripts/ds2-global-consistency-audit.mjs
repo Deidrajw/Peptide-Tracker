@@ -87,7 +87,7 @@ for(const width of [320,390])for(const theme of ['light','dark']){
         const extra=screen==='Settings reminders'?['enablerem','disablerem']:
           screen==='Settings phasereminders'?['enablephaserem','disablephaserem']:
           screen==='Stash'?['qa-addkit']:
-          screen==='Profile'?['timeline-toggle']:
+          screen==='Profile'?['timeline-toggle','editprofile2']:
           screen==='Learn'?['ls-guides','ls-mixing','ls-calc']:[];
         for(const id of extra){
           const el=document.getElementById(id);
