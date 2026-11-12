@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
           GITHUB_SHA="$(git rev-parse HEAD)" python3 tools/verify-pages.py \
             --base https://nexuspeplog.pages.dev/ \
-            --attempts 2 --interval 10 \
+            --attempts 12 --interval 12 \
             --output dist/parity-production-main.json
       - name: Upload both evidence reports (even on failure)
         if: always()
