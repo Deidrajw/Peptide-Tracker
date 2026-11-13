@@ -53,7 +53,10 @@ async function openDose(page){
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
   if(await modal.locator('#nx-dose-review-open').isVisible())await modal.locator('#nx-dose-review-open').click();
-  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
+  // Review preflight now disables confirmation for incomplete/overdrawn inventory.
+  // Browser regression must assert no write instead of waiting to click disabled UI.
+  if(await modal.locator('#save').isVisible()&&await modal.locator('#save').isEnabled())
+    await modal.locator('#save').click();
   const prompt=page.locator('.nx-reaction-invite');
   if(await prompt.count()){
     ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
@@ -775,7 +778,13 @@ try {
     await setDose(page,7);
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-panel').innerText().then(x=>x.includes('Not enough in current vial')),'Shortfall UI not visible');
-    let before=await stateSnapshot(page);await clickSave(page);let after=await stateSnapshot(page);
+    let before=await stateSnapshot(page);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('#save').isDisabled(),'Shortage must disable Confirm at Review');
+    ensure((await page.locator('#nx-dose-review-rows').innerText()).includes('Resolve inventory before confirming'),
+      'Shortage must be explained before Confirm');
+    await clickSave(page);
+    let after=await stateSnapshot(page);
     ensure(after.entries.length===0,'UNDERALLOCATED_FORM_SAVED_PARTIAL_DOSE: 7 mg recorded despite only 6.5 mg open');
     ensure(JSON.stringify(after.kits)===JSON.stringify(before.kits),'Rejected entry altered source stock');
     verified.push('insufficient open stock and invalid amounts cannot log partial dose');
@@ -804,7 +813,10 @@ try {
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Vial used'),'Multi-vial Review omits selected physical source summary');
+    ensure(splitReview.includes('Exact inventory sources')&&splitReview.includes('Total allocated'),
+      'Multi-vial Review must disclose both source rows and exact total');
+    ensure((splitReview.match(/Vial 1/g)||[]).length>=2,
+      'Multi-vial Review must include both physical source entries');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
     await clickSave(page);
