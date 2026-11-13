@@ -2233,12 +2233,40 @@ function nexusAddFormulationModal(type,existingId=null){
      topical?`<label class="field-label" for="nx-form-volume">${existing?"VOLUME REMAINING":"VOLUME"} (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}">`:
      `<label class="field-label" for="nx-form-volume">VOLUME REMAINING (mL)</label><input id="nx-form-volume" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMl:""}" placeholder="Bottle contents">
       <label class="field-label" for="nx-form-mg">${existing?"AMOUNT REMAINING":"AMOUNT"} (mg)</label><input id="nx-form-mg" class="inp" type="number" min="0" step="any" value="${existing?existing.remainingMg:""}" placeholder="Known amount">`}
-    ${(!oral&&!raw&&!topical)?`<label class="field-label" for="nx-form-pump">PUMP VOLUME (mL PER SPRAY)</label><input id="nx-form-pump" class="inp" type="number" min="0.001" step="any" value="${existing?.mlPerSpray??""}" placeholder="e.g. 0.1"><p class="hint">Use the pump specification. Nexus calculates a nominal amount per spray from the recorded concentration. Leave blank if unknown; dosing will remain unavailable until configured.</p>`:""}
+    ${(!oral&&!raw&&!topical)?`<label class="field-label" for="nx-form-pump">PUMP VOLUME (mL PER SPRAY)</label><input id="nx-form-pump" class="inp" type="number" min="0.001" step="any" value="${existing?.mlPerSpray??""}" placeholder="e.g. 0.1"><p class="hint">Enter the pump manufacturer's specified mL per spray. Nexus uses it to calculate the nominal amount per spray.</p><p id="nx-form-pump-warning" class="hint" role="status" style="display:none;color:var(--nx-warning,#b45309);font-weight:600">Pump volume missing. You can save this bottle to Stash, but it will not be available for nasal dose logging until you add mL per spray.</p>`:""}
     <p class="hint">${oral?"Capsules are tracked by whole count and labelled strength, separately from vial stock.":raw?"Raw powder remains separate from prepared-vial inventory.":topical?"Topical volume is tracked separately from injectable inventory.":"Spray figures are nominal; this entry does not verify pump delivery or route suitability."}</p>
+    <div id="nx-form-pump-confirm" role="alertdialog" aria-labelledby="nx-form-pump-confirm-heading" aria-describedby="nx-form-pump-confirm-detail" style="display:none;padding:12px;border-radius:12px;background:var(--surface-2,var(--nx-card-bg,#f5f5f5));margin:12px 0">
+      <strong id="nx-form-pump-confirm-heading">Pump volume is missing</strong>
+      <p id="nx-form-pump-confirm-detail" class="hint">Your nasal bottle can be saved in Stash, but you won't be able to log sprays until you add the pump's mL per spray. This does not delete the bottle.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="nx-form-pump-add" class="btn-secondary" style="min-height:44px;flex:1">Add pump volume</button><button type="button" id="nx-form-pump-save-anyway" class="btn-primary" style="min-height:44px;flex:1">Save to Stash anyway</button></div>
+    </div>
     <button type="button" id="nx-form-save" class="btn-primary">${existing?"Save adjustment":"Save container"}</button>
   </section>`, "#A78BFA");
   m.classList.add("nx-shared-form-sheet","nx-shared-inventory-modal");
   m.querySelector("#x").onclick=closeModal;
+  const pumpField=!oral&&!raw&&!topical?m.querySelector("#nx-form-pump"):null;
+  const pumpWarning=m.querySelector("#nx-form-pump-warning");
+  const pumpConfirm=m.querySelector("#nx-form-pump-confirm");
+  const saveFormButton=m.querySelector("#nx-form-save");
+  let allowSaveWithoutPump=false;
+  function refreshPumpWarning(){
+    if(!pumpField)return;
+    const missing=!pumpField.value.trim();
+    if(pumpWarning)pumpWarning.style.display=missing?"block":"none";
+    if(!missing){allowSaveWithoutPump=false;if(pumpConfirm)pumpConfirm.style.display="none";}
+  }
+  if(pumpField){
+    pumpField.addEventListener("input",refreshPumpWarning);
+    refreshPumpWarning();
+    m.querySelector("#nx-form-pump-add").onclick=()=>{
+      pumpConfirm.style.display="none";allowSaveWithoutPump=false;
+      pumpField.focus();
+    };
+    m.querySelector("#nx-form-pump-save-anyway").onclick=()=>{
+      allowSaveWithoutPump=true;pumpConfirm.style.display="none";
+      saveFormButton.click();
+    };
+  }
   // Native datalist results were unreliable in iPhone browsers: provide visible tap choices.
   const compoundInput=m.querySelector("#nx-form-name"),matchList=m.querySelector("#nx-form-match-list");
   const candidates=[...new Set([...Object.keys(PEPTIDES),...LIBRARY.map(x=>x.name),...Object.keys(state.customPeptides||{}),...(state.supplies||[]).map(x=>x.name),...(state.formulationStocks||[]).map(x=>x.compound)].filter(Boolean))].sort();
@@ -2323,6 +2351,11 @@ function nexusAddFormulationModal(type,existingId=null){
   m.querySelector("#nx-form-save").onclick=async()=>{
     const saveButton=m.querySelector("#nx-form-save");
     if(saveButton.disabled)return;
+    if(pumpField&&!pumpField.value.trim()&&!allowSaveWithoutPump){
+      if(pumpConfirm){pumpConfirm.style.display="block";m.querySelector("#nx-form-pump-add")?.focus();}
+      return;
+    }
+    allowSaveWithoutPump=false;
     saveButton.disabled=true;
     try{
       if(!globalThis.NexusFormulationStock)throw Error("Formulation inventory unavailable");
