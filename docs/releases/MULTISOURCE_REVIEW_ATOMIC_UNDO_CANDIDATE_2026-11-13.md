@@ -1,3 +1,9 @@
+## FINAL QA update — November 13, 2026 (NOT A DEPLOYMENT)
+- App/test source e02a8fe338485cb3dd5c1e933ded98e8d1dffa68. Six exact-code-source GitHub Actions workflows SUCCESS: full build/browser 43384267995, shared writer 43384267993, DS2 nested 43384268096, mobile 43384267985, pinned browser 43384268045, formulation WebKit 43384267983.
+- Final full artifact #14017808892 (outer 573-entry ZIP CRC PASS; nested 26-file LIVE ZIP CRC PASS, root index.html; isolated fictional full-app DEMO). Manifest source SHA e02a8fe3; browser 8/8, dose end-to-end 8/8 (264 recorded verifications), with same-kit multi-source dose Undo and stale two-tab writer tests supported by individual regression evidence.
+- Previous CI build and DS2 failures were resolved by adding fail-closed legacy validation before the new planner and updating old tests to check the new blocked-confirm behaviour. Final status is six-suite PASS; no physical iPhone or accessibility acceptance.
+- Candidate release metadata still says v0.9.27-beta.3; new published version not assigned. No migration or destructive storage write. Draft PR169 remains unmerged and undeployed, pending user testing and separate release approval.
+
 # Nexus — Multi-Source Review + Atomic Undo (Development Candidate)
 **Source:** main b3a67ec48f5ba982abff042048e30a9549d83467, released version v0.9.27-beta.3.
 **Candidate:** UNRELEASED; no new published version. User approved implementation on separate branch but expressly prohibited merge/deployment without a subsequent separate approval.
