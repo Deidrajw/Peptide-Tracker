@@ -1,3 +1,11 @@
+
+## 2026-11-13 — continued secondary navigation audit (same full-app fictional source)
+- Local Chromium/Playwright on official isolated full-app DEMO from artifact #14010642307, GitHub main b3a67ec4, v0.9.27-beta.3. **36/36** secondary route/theme/width renders (320/390 light/dark) with zero page errors or document-level horizontal overflow: More → Trends, Plans, Nexus, Profile, Settings, Supplements, Backup & Restore, Dose Alerts and Data Management.
+- **24/24** controlled UI interactions PASS at 320/390: Plans Goals/Research/Shopping; Nexus Ask/Journal/Learn/Explore; Supplements search matches/no-results/reset; Profile timeline expand. **6/6** fictional supplement add/remove/JS checks PASS at 320/390 (8→9→8 items), removal needs native window.confirm accepted. First automated removal was auto-dismissed by test harness, **not an app defect**.
+- New measured a11y review candidates: Profile Show timeline <summary> 35px high; Supplements search 42px high (both under desired 44–48px). Not proven WCAG failures; test keyboard/focus on physical device. Nexus Ask has deep prompt list ahead of input on 320px; suggested UX improvement to consider, not a confirmed functional defect. Plans layout relatively clear; avoid unnecessary redesign.
+- **NOT TESTED:** submitted AI requests, backup/restore/import/export, destructive settings actions, full dose math/Undo, real iPhone, VoiceOver/Dynamic Type, clinical safety. Local evidence: Nexus_UIUX_Audit_Continuation_2026-11-13.md and Nexus_UIUX_Secondary_Evidence_2026-11-13.zip (36 screenshots, 3 JSON evidence files), delivered in conversation, not committed.
+- NEXT: isolated fictional Log Dose full transaction, single/multi-vial debit and Undo assertions; no code change, merge, deploy or real user data access.
+
 ## 2026-11-13 UTC — VISUAL AUDIT EVIDENCE (no feature release)
 - PASS: Main SHA b3a67ec4 manifest matched official source artifact #14010642307; outer CRC PASS, 26-file LIVE ZIP CRC PASS; isolated fictional full app Chromium snapshots 20 primary × (width/theme) and 26 additional populated route/modal snapshots at 320/390, no JS page errors and no document-level horizontal overflow.
 - Calendar 320px seven-column buttons ~40px wide; prior clipping concern NOT REPRODUCED. This is a tap-area limitation to investigate, not declared a browser regression failure.
