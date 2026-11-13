@@ -1,3 +1,9 @@
+## 2026-11-12 — SEMAX nasal form missing picker, reported; development regression
+- PASS user manual iPhone PR163 completed protocol (Upcoming suppression/history preserved), completing three targeted PR163 cases. Source application JS matches previously qualified PR163; not VoiceOver/real data reload.
+- CONFIRMED input fixture from PRIVATE user-supplied backup, READ ONLY: Semax is archived peptide with zero doses and has valid inventory object nasal-bottle 10mL/10mg; pump volume and mg/spray missing. Today picker formStockNames omits uncalibrated bottles and allPeptides archived excludes Semax. Expected: discoverable with explicit setup-required state; no administration option or inventory mutation until configured. Backup never placed in GitHub or shared DEMO.
+- Local Node VM isolated actual-picker function five scenarios PASS: archived missing pump -> existing editor, active missing pump -> editor instead of legacy dose, calibrated bottle -> normal path, other calibrated stock remains listed, finished nasal stock not listed for setup. JS04 syntax PASS. GitHub automated test scripts/nasal-picker-setup-regression.cjs integrated into build workflow. GitHub CI PENDING after initial development commits; no new iPhone acceptance yet.
+- PROTECTED: compiled shared writer, native iPhone picker, dose-only mode, history, inventory; calibration/mg-per-spray cannot be guessed. No user-data rewrite or production live copy.
+
 ## 2026-11-12 — PR163 integrated FULL-APP DEMO physical iPhone user acceptance checkpoint
 - USER-REPORTED PHYSICAL IPHONE PASS: Stash two OPEN vials, first depleted 0mg and later usable 8mg. Prior bug (card Empty / 0mg) did not recur in user's consolidated PR163 DEMO check.
 - USER-REPORTED PHYSICAL IPHONE PASS: Navigation. User confirmed manual navigation PASS; do not extrapolate this to VoiceOver, Dynamic Type, every modal, or persisted production data.
