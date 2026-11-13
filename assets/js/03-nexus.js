@@ -1701,8 +1701,23 @@ function syncProtocolToCompoundData(proto) {
   });
 }
 
+// Read-only protocol association: the most recently started matching protocol
+// controls whether recurring SCHEDULES are finished. Never change compound status
+// or suppress a newer active protocol using the same compound.
+function nexusCompletedProtocolForData(data) {
+  const matching=(state.protocols||[]).filter(p=>(p.compounds||[]).some(c=>
+    (state.peptides[c.name]||state.customPeptides?.[c.name])===data));
+  if(!matching.length)return null;
+  const newest=[...matching].sort((a,b)=>String(b.startDate||"").localeCompare(String(a.startDate||""))||Number(b.id||0)-Number(a.id||0))[0];
+  return newest?.status==="completed"?newest:null;
+}
 function getEffectiveSchedule(data, dateStr) {
   const linked=nexusLinkedDateProtocol(data);
+  // A protocol explicitly marked Complete cannot keep producing future dose
+  // obligations just because the compound's standalone status remains active.
+  // Past dates stay intact, preserving historical calendar/dose associations.
+  if(nexusCompletedProtocolForData(data)&&dayKey(dateStr||localDate())>=localDate())
+    return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,completedByProtocol:true};
   if(linked?.status==="paused")return {scheduleWeekdays:null,scheduleDays:data.scheduleDays||7,dosesPerDay:0,times:null,doseAmounts:null,phase:null,isRest:true,pausedByProtocol:true};
   // Explicit calendar-end phases have an actual final planned day; never
   // silently continue generating scheduled doses past it. Old week-only
@@ -1942,7 +1957,9 @@ function getDayOccurrences(data, dayStr) {
   // reschedule's originalDate) is stale history, not a still-pending occurrence — without
   // this check, an old reschedule record could resurrect itself as a phantom dose
   // indefinitely, on a compound that's been dosing normally ever since.
-  (data.reschedules||[]).filter(r=>dayKey(r.newDate)===dk).forEach(r=>{
+  // Completing a protocol also retires still-pending future reschedule chains.
+  // Their records stay in history; they are not turned into new Upcoming slots.
+  (data.reschedules||[]).filter(r=>dayKey(r.newDate)===dk && !(nexusCompletedProtocolForData(data)&&dk>=localDate())).forEach(r=>{
     // A legacy date-only newDate has no real clock time to recover — use the compound's
     // OWN configured/inferred time-of-day instead of inventing one via timezone-shifted
     // date parsing (the exact bug behind the phantom 8 PM).

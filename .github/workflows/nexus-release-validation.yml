@@ -62,6 +62,10 @@ jobs:
           node tests/search-clear-controls.test.cjs
           node tests/nasal-calculator-readonly.test.cjs
           node tools/validate-ux-consistency.mjs
+          # Consolidated PR160/PR162 source-only fictional release guards.
+          node scripts/stash-expiry-label-regression.mjs
+          node tests/stash-open-vial-expiry.test.cjs
+          node scripts/protocol-completion-upcoming-regression.mjs
       - name: Gate stale release notes against changed application source
         shell: bash
         run: |
@@ -119,6 +123,16 @@ jobs:
           assert '<link rel="stylesheet" href="assets/css/' not in s
           print('ZIP and standalone complete-source DEMO including browser-openable package PASS')
           PY
+      # Candidate artifact is not a release approval. Upload immediately after
+      # source/structure validation so slow browser QA cannot strand the full-app
+      # DEMO and LIVE package. Final test verdict remains a separate requirement.
+      - name: Upload source-validated candidate before browser QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-source-validated-candidate
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
       - name: Browser QA at 320/390 and dark/light
         shell: bash
         run: |

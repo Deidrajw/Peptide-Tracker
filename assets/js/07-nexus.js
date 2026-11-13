@@ -1617,6 +1617,8 @@ function restingStatus(data, today, lastDose, resumesOn) {
 }
 
 function getDoseStatus(name, data) {
+  const completedProtocol=nexusCompletedProtocolForData(data);
+  if(completedProtocol) return {status:"protocol_completed",label:"Protocol completed",color:"var(--t4)",showLogBtn:false,left:null,nextDueMs:null,nextDueStr:null,lastDoseMs:(data.doses||[]).length?Math.max(...data.doses.map(d=>new Date(d.date).getTime()).filter(Number.isFinite)):null,protocolId:completedProtocol.id,protocolName:completedProtocol.name};
   const today = localDate();
   const nowMs = Date.now();
   const graceMs = (state.settings.graceHours||3)*3600000;
@@ -1922,7 +1924,7 @@ function renderCompoundCardCompact(name, data, view, isUpNext) {
 
   const nextDateLabel = doseStatus.nextDueStr ? fmtShort(doseStatus.nextDueStr) : (doseStatus.status==="taken_today" ? "Completed today" : "Not scheduled");
   const lastDateLabel = last ? fmtShort(dayKey(new Date(last.date).getTime())) : "No recorded dose";
-  const dueBadge = doseStatus.status==="overdue" ? "Overdue" : doseStatus.status==="taken_today" ? "Logged" : doseStatus.status==="due_now" || doseStatus.status==="due_later_today" ? "Due today" : doseStatus.status==="rescheduled" ? "Rescheduled" : doseStatus.status==="skipped" ? "Skipped" : "Upcoming";
+  const dueBadge = doseStatus.status==="protocol_completed" ? "Completed" : doseStatus.status==="overdue" ? "Overdue" : doseStatus.status==="taken_today" ? "Logged" : doseStatus.status==="due_now" || doseStatus.status==="due_later_today" ? "Due today" : doseStatus.status==="rescheduled" ? "Rescheduled" : doseStatus.status==="skipped" ? "Skipped" : "Upcoming";
   return `<div class="card nx-compound-card" style="margin-bottom:9px;${isUpNext?`box-shadow:0 0 0 1px ${statusColor}33`:""}">
     <div class="compound-compact-tap nx-compound-header" data-name="${esc(name)}" data-view="${esc(view)}" role="button" tabindex="0" aria-expanded="false" aria-label="View details for ${esc(name)}" style="cursor:pointer">
       <div class="nx-card-top"><div>
