@@ -253,6 +253,10 @@ try {
   await page.locator('#nx-form-volume').fill('7');
   await page.locator('#nx-form-mg').fill('10');
   await page.locator('#nx-form-save').click();
+  // Incomplete pump volume now requires explicit consent before saving inventory.
+  assert.equal(await page.locator('#nx-form-pump-confirm').isVisible(),true,
+    'Nasal form must explain pump-volume consequences before incomplete save');
+  await page.locator('#nx-form-pump-save-anyway').click();
   // A saved nasal bottle remains on its original ID while we complete pump setup.
   await page.locator('.nx-form-edit').nth(1).click();
   await captureVisual('other-forms-manage','.modal .nx-other-form-manage-sheet');
