@@ -482,12 +482,17 @@ try { for(const mode of ['live','demo'])for(const width of [320,390])for(const t
  ensure(protoHeader,'Protocol title/status/ellipsis visual parity failed');
 
  ensure(errors.length===0,'Exceptions: '+errors.join('; '));
- // Actual hard reload: the unpublished draft must not reopen a release notice.
- // This runs only on isolated localhost LIVE and offline fictional DEMO contexts.
+ // A published release may prompt an eligible LIVE browser after hard reload.
+ // A fictional isolated DEMO must NEVER prompt; an unpublished release must be silent.
  await page.reload({waitUntil:'domcontentloaded'});
- const reloadGate=await page.evaluate(()=>NEXUS_RELEASE.publicationStatus!=='published' &&
-   !shouldShowPublishedRelease() && !document.querySelector('#nx-release-dismiss'));
- ensure(reloadGate,'Unpublished release unexpectedly prompted after hard reload');
- results.push({mode,width,theme,status:'PASS',unpublishedHardReload:'PASS'});await ctx.close();
+ const reloadGate=await page.evaluate(()=>{
+   const eligible=shouldShowPublishedRelease();
+   const shown=!!document.querySelector('#nx-release-dismiss');
+   if(isDemoMode())return !eligible && !shown;
+   if(NEXUS_RELEASE.publicationStatus==='published')return shown===eligible;
+   return !eligible && !shown;
+ });
+ ensure(reloadGate,'Release prompt after reload must match published eligibility and DEMO isolation');
+ results.push({mode,width,theme,status:'PASS',publicationAwareHardReload:'PASS'});await ctx.close();
 }}finally{await browser.close()}
 fs.writeFileSync('dist/Nexus_'+VERSION+'_PLANS_QA.json',JSON.stringify({version:VERSION,results},null,2));console.log('Plans hierarchy QA PASS: '+results.length);
