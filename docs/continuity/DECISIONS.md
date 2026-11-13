@@ -1,3 +1,7 @@
+## 2026-11-12 — Uncalibrated nasal inventory must be discoverable, not falsely loggable
+- Store inventory independently of active/archived protocol status. An existing nasal spray with positive stock but unknown pump volume is a 'Setup required' state, not missing data or a ready-to-administer source. Select in Today Log Dose opens the EXISTING Stash bottle editor. User must enter measured/labelled pump volume; Nexus must not invent it or silently unarchive a protocol/compound, convert to SubQ, or deduct inventory. No import or migration. Existing prepared nasal live-writer feature gate remains as verified in current code; no gate change is approved here.
+- User's PR163 manual iPhone protocol PASS only accepts that test; no merge/deploy authorization. Implement nasal picker correction on a separate stacked branch rather than altering PR163 qualified app without renewed test.
+
 ## 2026-11-12 — PR163 consolidated engineering QA cleared; RELEASE CONSENT STILL REQUIRED
 - The user approved integrated development, not merger/deployment. Preserve draft PR160, PR162 and PR163 as unmerged pending explicit release approval.
 - Integrated app JS03/JS09/JS10 matches accepted PR162 source; PR160 JS09 label logic preserved, PR162's newer JS10 per-vial expiry/reminders and usable OPEN card selector protected. New synthetic regression script replaces obsolete PR160 expectations; no app UI/business rule redesign.
