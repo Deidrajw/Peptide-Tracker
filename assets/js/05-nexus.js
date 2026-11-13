@@ -1849,6 +1849,25 @@ function doseModal(name, existing, occTime, formChoice) {
       if (akVial && akRemaining > 0.001) rows = [{kitId:ak.id, vialId:akVial.id, mg:Math.round(Math.min(neededMg, akRemaining)*100)/100}];
       else if (ak) rows = [{kitId:ak.id, mg:0}];
     }
+    // An additional physical source may be a *second vial in the same kit*.
+    // Never de-duplicate by kit ID: exact (kitId,vialId) is the source identity.
+    const availableNextSources=()=>eligibleSources.filter(({kit,vial})=>
+      kit.activeKit&&["open","active"].includes(vial.status)&&
+      getVialRemainingMg(kit,vial)>0.001&&
+      !rows.some(r=>String(r.kitId)===String(kit.id)&&String(r.vialId)===String(vial.id)));
+    const addExactSource=source=>{
+      if(!source)return;
+      const stillAvailable=availableNextSources().find(({kit,vial})=>
+        String(kit.id)===String(source.kit.id)&&String(vial.id)===String(source.vial.id));
+      if(!stillAvailable){
+        showErrorBanner("The exact open vial changed. Recheck sources; nothing was saved.");return;
+      }
+      const missing=neededMg-rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
+      const take=Math.min(getVialRemainingMg(stillAvailable.kit,stillAvailable.vial),missing);
+      if(take<=0)return;
+      rows.push({kitId:stillAvailable.kit.id,vialId:stillAvailable.vial.id,mg:Math.round(take*100)/100});
+      renderAllocPanel();
+    };
     const totalAllocated = rows.reduce((a,r)=>a+(parseFloat(r.mg)||0),0);
     const remaining = Math.round((neededMg-totalAllocated)*100)/100;
     const totalUsableAllKits = otherKitsWithStock().reduce((a,s)=>a+getKitRemainingMg(s),0) + rows.reduce((sum,r)=>{ const k=state.supplies.find(s=>s.id===r.kitId); return sum; },0);
@@ -1899,8 +1918,10 @@ function doseModal(name, existing, occTime, formChoice) {
         </div>
         ${remaining>0.01 ? `<div class="nx-shortfall-step">Step 2 · Resolve the remaining amount</div>` : ""}
         ${remaining>0.01 ? (
-          otherKitsWithStock().filter(k=>!rows.some(r=>r.kitId===k.id)).length
-            ? `<button id="alloc-add-kit" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">+ Use another open vial</button>`
+          availableNextSources().length
+            ? (availableNextSources().length===1
+              ? `<button id="alloc-add-kit" type="button" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px;min-height:44px">+ Use another open vial</button>`
+              : `<div class="nx-extra-source-options" role="group" aria-label="Choose another exact open vial">${availableNextSources().map(({kit,vial})=>`<button type="button" class="alloc-select-source" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:44px;margin-top:8px;padding:10px;text-align:left;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">${esc(kit.name)} · Vial ${esc(String(vial.sequenceNumber??"?"))} · ${fmt(getVialRemainingMg(kit,vial))} ${c.unit} available</button>`).join("")}</div>`)
             : (totalCapacity + 0.01 < neededMg
                 ? `<div style="margin-top:10px;font-size:11px;color:#FF7C7C">Only ${fmt(totalCapacity)}${c.unit} total usable inventory exists for ${esc(name)} — open a new vial to cover the remaining ${fmt(neededMg-totalCapacity)}${c.unit}.</div>`
                 : "")
@@ -1942,23 +1963,12 @@ function doseModal(name, existing, occTime, formChoice) {
       }, () => doseModal(name));
     });
     const addKitBtn = panel.querySelector("#alloc-add-kit");
-    if (addKitBtn) addKitBtn.onclick = () => {
-      const nextKit = otherKitsWithStock().filter(k=>!rows.some(r=>String(r.kitId)===String(k.id)))[0];
-      if (!nextKit)return;
-      // An additional KIT is not an additional physical SOURCE. The exclusive
-      // writer requires the exact vial ID; do not hand it an unpinned kit row.
-      const compatible=eligibleSources.filter(x=>String(x.kit.id)===String(nextKit.id)&&
-        ["open","active"].includes(x.vial.status)&&getVialRemainingMg(x.kit,x.vial)>0.001);
-      if(compatible.length!==1){
-        showErrorBanner("Choose and verify the exact open vial for this additional kit in Stash. No stock or history was changed.");
-        return;
-      }
-      const source=compatible[0];
-      const take=Math.min(getVialRemainingMg(source.kit,source.vial),remaining);
-      if(take<=0)return;
-      rows.push({kitId:nextKit.id,vialId:source.vial.id,mg:Math.round(take*100)/100});
-      renderAllocPanel();
-    };
+    if(addKitBtn)addKitBtn.onclick=()=>addExactSource(availableNextSources()[0]);
+    panel.querySelectorAll(".alloc-select-source").forEach(button=>button.onclick=()=>{
+      const source=availableNextSources().find(({kit,vial})=>
+        String(kit.id)===button.dataset.kit&&String(vial.id)===button.dataset.vial);
+      addExactSource(source);
+    });
     const openNewBtn = panel.querySelector("#alloc-open-new");
     if (openNewBtn) openNewBtn.onclick = () => {
       // Preserve everything about this in-progress dose, then hand off to Reconstitute —
