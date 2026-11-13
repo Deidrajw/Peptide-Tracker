@@ -27,3 +27,8 @@
 - Physical iPhone UX and accessibility; separate explicit permission for merge/deploy; independently verify primary Cloudflare after merge.
 
 **Status: CODED, LOCAL TESTED, PR/CI PENDING. NOT MERGED OR DEPLOYED.**
+## Follow-up exact-source qualification — 2026-11-13
+- Candidate source `e02a8fe338485cb3dd5c1e933ded98e8d1dffa68` extends selection to two *different open vials within one kit*, keyed by physical vial ID; never reuses a kit-level default to guess another source. Multi-candidate cases render explicit choices. User's original implementation approval covers targeted multi-source Log Dose recovery; merge/deploy still withheld.
+- Official source-qualified GitHub artifact #14017607635: complete FULL APP fictional isolated DEMO and 26-file LIVE ZIP, outer + nested CRC PASS. Local 320/390 light/dark exact-source Chromium 4/4 confirms same-kit split 1+2=3mg with one dose, two distinct source records, Undo restores both balances and removes dose; no page errors.
+- **PASS 5/6 workflow groups** on e02a8fe3: writer #43384267993 (including persisted two-tab exclusive multi-source Undo), mobile #43384267985, nested DS2 #43384268096, WebKit #43384267983, pinned browser #43384268045. Build/browser #43384267995 IN PROGRESS at last verification, NOT PASS. Browser history includes prior failure #43383023454 on old test trying to click newly disabled shortage Confirm; corrected test asserts no-write and disabled Confirm. No new release version or production change.
+- Still required: final build/browser workflow, independent final artifact validation, physical iPhone UX, VoiceOver/Dynamic Type and separate explicit merge/deploy approval. Clinical math certification not implied.
