@@ -1,3 +1,7 @@
+## 2026-11-12 — PR164 pump-volume warning revised, NOT RELEASED
+- Declared app version unchanged v0.9.26-beta.1; stacked draft PR164 pending. User requested a prompt at nasal-spray creation rather than separate setup. JS10 inline missing-pump warning + on-sheet save confirmation, JS04 "Pump volume missing" picker status; preserve incomplete stock save, no dose writes or unarchive/migration. Test source and CI guards added.
+- Existing user personal backup remained read-only and private. Official exact-head six-suite QA, final LIVE/DEMO build and new iPhone acceptance NOT VERIFIED at documentation time. No merge/deployment or production data modification.
+
 ## 2026-11-12 — SEMAX nasal-picker discovery fix in separate development branch, NOT RELEASED
 - New separate fix/semax-incomplete-nasal-picker-20261112 based on PR163 baa082b5. Declared UI version remains v0.9.26-beta.1. Exact user data backup analyzed read-only; no production writes/migration; private backup never committed.
 - Target JS04 change 8e551be0 surfaces uncalibrated positive-stock nasal bottles as 'Spray setup required' in Today Log Dose; selection opens existing bottle stock editor. Pre-existing formula/spray conversion validation remains strict, no nasal gate change, no auto log. Added fictional VM test fa3da93a and CI hookup 07ed6d2c; local five case VM and syntax PASS; official CI/artifacts PENDING. Do not merge/deploy.
