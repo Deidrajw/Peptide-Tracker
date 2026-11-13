@@ -1,3 +1,6 @@
+## 2026-11-13 — UNRELEASED PR169 QA follow-up (not a production release)
+- GitHub candidate e02a8fe3, source-validated artifact #14017607635 matches manifest and CRC. Same-kit 320/390 light/dark 4/4 real full-app fictional browser scenarios PASS, exact split/save/Undo; GitHub two-tab multi-source Undo race PASS. 5/6 GitHub workflow groups SUCCESS and full build/browser #43384267995 IN PROGRESS at last check. No merge, deploy, new production version, migration or real data access. Physical iPhone/VoiceOver not tested; release approval separately required.
+
 ## 2026-11-13 — UNRELEASED PR169 additional same-kit source protection (NO DEPLOY)
 - Coded exact second open-vial selection within the SAME kit on draft PR169; source e02a8fe3; local source-exact fictional 320/390 Save/Undo and GitHub persisted two-tab writer PASS. Official full-app fictional candidate/LIVE ZIP artifact #14017607635 independently CRC verified. 3/6 workflow groups success at this checkpoint, 3 running; no production release, new version assignment or user data migration. Separate explicit merge/deploy approval still required.
 
