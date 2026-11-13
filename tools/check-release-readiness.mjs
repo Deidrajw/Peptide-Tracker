@@ -39,7 +39,17 @@ function validate(manifest,previous,changed,strict){
   if(appChanges.length && previous){
     const sameNotes=noteFingerprint(manifest)===noteFingerprint(previous);
     const sameVersion=manifest.version===previous.version;
-    if(sameNotes || sameVersion){
+    // A verified publication updates only generated in-app release metadata.
+    // It is not a second feature release, but all other app-source changes
+    // must still advance the canonical version and release notes.
+    const verifiedPublicationFinalization=sameNotes && sameVersion &&
+      appChanges.length===1 && appChanges[0]==='assets/js/02-nexus.js' &&
+      previous.publication?.status==='unverified' &&
+      manifest.publication?.status==='published' &&
+      typeof manifest.publication?.commit==='string' &&
+      /^[a-f0-9]{40}$/.test(manifest.publication.commit) &&
+      !!Date.parse(manifest.publication?.publishedAt||'');
+    if((sameNotes || sameVersion) && !verifiedPublicationFinalization){
       const message='App source changed ('+appChanges.length+' files), but '+
         (sameNotes?'release notes are unchanged':'release version was not advanced')+
         '. Update canonical version, headline, changes and data impact before release.';
@@ -88,7 +98,13 @@ function test(){
     [validate(prev,prev,['assets/css/nexus.css'],false).warnings.length>0,'draft warning'],
     [validate(prev,prev,['docs/continuity/PROJECT_STATE.md'],true).issues.length===0,'docs-only accepted'],
     [validate({...m,changes:[{key:'a',title:'Short'}]},prev,['index.html'],true).issues.length>0,'incomplete item blocked'],
-    [validate({...m,publication:{status:'published'}},prev,[],true).issues.length>0,'false published status blocked']
+    [validate({...m,publication:{status:'published'}},prev,[],true).issues.length>0,'false published status blocked'],
+    [validate({...m,publication:{status:'published',publishedAt:'2026-11-13T04:21:56Z',commit:'a'.repeat(40)}},
+      {...m,publication:{status:'unverified'}},['assets/js/02-nexus.js'],true).issues.length===0,
+      'verified publication-only JS02 generated metadata allowed'],
+    [validate({...m,publication:{status:'published',publishedAt:'2026-11-13T04:21:56Z',commit:'a'.repeat(40)}},
+      {...m,publication:{status:'unverified'}},['assets/js/04-nexus.js'],true).issues.length>0,
+      'publication change cannot disguise application changes']
   ];
   for(const [passed,label] of checks)if(!passed)throw Error('FAIL '+label);
   console.log('Release readiness tests PASS '+checks.length+'/'+checks.length);
