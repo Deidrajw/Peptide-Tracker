@@ -1,3 +1,6 @@
+## 2026-11-13 — PR169 same-kit dual open-vial Review, candidate only
+- Previous exact-vial UI prevented selecting a second open vial from the same kit. Candidate e02a8fe3 offers the second physical vial without guessing kit defaults; Review retains approved DS2 stacked source rows at 320/390 and exact projected balances. Fictional browser 320/390 valid two-vial dose and Undo PASS; missing allocation disabled Confirm. Same-kit and persisted two-tab regressions now in GitHub tests. Physical iPhone/VoiceOver/Dynamic Type not tested, no merge/deploy authority.
+
 ## 2026-11-13 — Exact-source PR169 candidate QA checkpoint (UNMERGED)
 - Main production remains b3a67ec4 / v0.9.27-beta.3. User authorised implementation only, not merge/deploy. Draft PR169 code source 25b3ddb446696c5abcd652750463cad299bd2fcb; branch fix/multisource-dose-review-atomic-undo-20261113.
 - Official GitHub build #43383023454 produced source-validated candidate artifact #14017571954. Independently downloaded: outer ZIP 9 entries CRC PASS, embedded LIVE ZIP 26 files CRC PASS with root index.html; build manifest source SHA **25b3ddb4**. This is a development candidate carrying the old published version label, **NOT a new release or primary deployment**.
