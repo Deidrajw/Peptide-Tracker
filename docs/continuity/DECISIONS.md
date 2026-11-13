@@ -1,3 +1,7 @@
+## 2026-11-12 — User accepted PR164 save-only nasal warning on physical iPhone; NOT release approval
+- Final approved UX evidence: user manually marked hidden-on-open PASS, compact styling PASS, both save-confirmation actions PASS, notes None. The warning must display ONLY after a blank Save, not while form opens, in DS2 secondary text styling. This physical acceptance does not authorize merge/deploy or waive VoiceOver/Dynamic Type.
+- Qualifying source e33ee298 six GitHub suites PASS, final official artifact #14008723923 independently verified. QA-only PR166 closed without merge. Keep PR164 and PR163 drafts until distinct explicit production release instruction; no data migration, unarchive, nasal pump defaulting, or gate change.
+
 ## 2026-11-12 — Do not show nasal pump warning on opening the inventory editor
 - Per explicit user UI feedback and supplied screenshot, nasal Add/Adjust opens cleanly even with blank pump volume. Display an accessible, compact DS2 confirmation ONLY when the user presses Save container/Save adjustment while mL-per-spray is blank; do not show an eager orange inline message or an oversized headline. Use existing theme text tokens, heading 14px, explanatory copy 13px, minimum 48px actions with vertical layout on 320px. Maintain choices Add pump volume or Save to Stash anyway, preserving stock if unspecified and keeping nasal dose source ineligible until nominal calibration supplied. Do not change medical/dose calculation code or production data. PR164 remains draft/unmerged.
 
