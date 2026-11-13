@@ -323,6 +323,33 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  assert.equal(split.dose.allocations[0].amount,1000);
  assert.equal(split.dose.allocations[1].amount,1500);
  assert.equal(fixture().supplies[0].vials[0].remainingMg,10);
+ // New records carry post-save checkpoints; multi-source Undo must restore
+ // both exact vials AND one history entry in a single all-or-none planner.
+ const splitUndoInput={name:"Sample A",doseId:"d-1",operation:"undo",nativeUnit:"mcg",builtin:true};
+ const splitSource=fixture();splitSource.supplies[0].vialMg=10;
+ const backedSplit=planning.plan(splitSource,{...one,steps:[{kitId:"K1",vialId:"V1",mg:1},{kitId:"K1",vialId:"V2",mg:1.5}]});
+ const reversedSplit=planning.planChange(backedSplit.next,splitUndoInput);
+ assert.equal(reversedSplit.next.supplies[0].vials[0].remainingMg,10);
+ assert.equal(reversedSplit.next.supplies[0].vials[1].remainingMg,8);
+ assert.equal(reversedSplit.next.peptides["Sample A"].doses.length,0);
+ assert.equal(reversedSplit.next.nexusDoseAudit.at(-1).sources.length,2);
+ assert.throws(()=>planning.planChange(reversedSplit.next,splitUndoInput),/missing|already reversed/i);
+ const multiReject=(label,mutate,matcher)=>{
+   const input=JSON.parse(JSON.stringify(backedSplit.next));
+   mutate(input);
+   const unchanged=JSON.stringify(input);
+   assert.throws(()=>planning.planChange(input,splitUndoInput),matcher,label);
+   assert.equal(JSON.stringify(input),unchanged,label+" must not modify even one original source");
+ };
+ multiReject("missing original vial",n=>n.supplies[0].vials.splice(1,1),/unavailable/);
+ multiReject("changed first balance",n=>n.supplies[0].vials[0].remainingMg=5,/balance|state changed/);
+ multiReject("changed second route",n=>n.supplies[0].vials[1].intendedUse="Oral",/formulation/);
+ multiReject("duplicate allocation",n=>n.peptides["Sample A"].doses[0].allocations[1].vialId="V1",/Duplicate physical/);
+ multiReject("changed capacity",n=>n.supplies[0].vialMg=1,/capacity/);
+ multiReject("legacy no checkpoints",n=>delete n.peptides["Sample A"].doses[0].allocations[1].afterRemainingMg,/Unsupported historic/);
+ multiReject("invalid source mass",n=>n.peptides["Sample A"].doses[0].dose="4000",/do not match/);
+ multiReject("newer dose",n=>n.peptides["Sample A"].doses.push({...firstDose,id:"newer"}),/latest dose/);
+ console.log("PASS: multi-vial Undo exact sources and fail-closed missing/stale/legacy/duplicate/capacity/route/amount/latest checks");
  const double=fixture();double.peptides["Sample A"].doses.push(firstDose);
  assert.throws(()=>planning.plan(double,one),/Duplicate dose ID/);
  const beforeBackedDemo=physical,demo=buildScope(physical,null,true);
