@@ -30,11 +30,11 @@ function check(forms,active=false){
 }
 const partial={id:"form-semax",compound:"Semax",method:"Nasal",containerType:"nasal-bottle",remainingMl:10,remainingMg:10,mgPerSpray:null};
 const complete={...partial,mlPerSpray:.1,mgPerSpray:.1};
-let x=check([partial]);assert.match(x.html,/Semax · Spray setup required/);
+let x=check([partial]);assert.match(x.html,/Semax · Pump volume missing/);
 let r=x.select("Semax");assert.deepEqual(r.editor,["nasal-bottle","form-semax"]);assert.equal(r.doseCalls,0);
 x=check([partial],true);r=x.select("Semax");assert.ok(r.editor);assert.equal(r.doseCalls,0);
-x=check([complete]);assert.doesNotMatch(x.html,/Spray setup required/);r=x.select("Semax");assert.equal(r.editor,null);assert.equal(r.doseCalls,1);
+x=check([complete]);assert.doesNotMatch(x.html,/Pump volume missing/);r=x.select("Semax");assert.equal(r.editor,null);assert.equal(r.doseCalls,1);
 x=check([partial,{id:"ox",compound:"Oxytocin",method:"Nasal",containerType:"nasal-bottle",remainingMl:9,remainingMg:4.5,mlPerSpray:.1,mgPerSpray:.05}]);
-assert.match(x.html,/Oxytocin/);assert.match(x.html,/Semax · Spray setup required/);
-x=check([{...partial,status:"finished"}]);assert.doesNotMatch(x.html,/Spray setup required/);
+assert.match(x.html,/Oxytocin/);assert.match(x.html,/Semax · Pump volume missing/);
+x=check([{...partial,status:"finished"}]);assert.doesNotMatch(x.html,/Pump volume missing/);
 console.log("PASS 5 fictional nasal-picker regressions: archived/active unconfigured, configured, other stock, finished");
