@@ -349,6 +349,32 @@ const tx={id:"T1",doseId:"D1",compound:"Sample A",method:"Nasal",trackingMode:"b
  multiReject("legacy no checkpoints",n=>delete n.peptides["Sample A"].doses[0].allocations[1].afterRemainingMg,/Unsupported historic/);
  multiReject("invalid source mass",n=>n.peptides["Sample A"].doses[0].dose="4000",/do not match/);
  multiReject("newer dose",n=>n.peptides["Sample A"].doses.push({...firstDose,id:"newer"}),/latest dose/);
+
+ // Persisted two-tab multi-source Undo is an exact-once exclusive transaction:
+ // one tab succeeds, another stale tab cannot refund the same two vials twice.
+ let multiRaw=JSON.stringify(backedSplit.next),multiChain=Promise.resolve(),multiWrites=0;
+ const multiLock=(_name,fn)=>{const p=multiChain.then(fn);multiChain=p.catch(()=>{});return p};
+ const multiAdapter={read:()=>multiRaw,write:v=>{multiRaw=v;multiWrites++},
+   lock:multiLock};
+ const tabM1=buildScope(multiRaw,create({...multiAdapter,initialSnapshot:multiRaw}));
+ const tabM2=buildScope(multiRaw,create({...multiAdapter,initialSnapshot:multiRaw}));
+ const [firstMultiUndo,secondMultiUndo]=await Promise.all([
+   tabM1.change(splitUndoInput),tabM2.change(splitUndoInput)]);
+ assert.ok(firstMultiUndo,"first tab must commit verified two-vial reversal");
+ assert.equal(secondMultiUndo,null,"second stale tab must not refund twice");
+ assert.equal(multiWrites,1,"exactly one durable two-vial reversal transaction");
+ const persistedMulti=JSON.parse(multiRaw);
+ assert.equal(persistedMulti.peptides["Sample A"].doses.length,0);
+ assert.equal(persistedMulti.supplies[0].vials[0].remainingMg,10);
+ assert.equal(persistedMulti.supplies[0].vials[1].remainingMg,8);
+ assert.equal(persistedMulti.nexusDoseAudit.at(-1).sources.length,2);
+ assert.equal(tabM2.scope.state.supplies[0].vials[0].remainingMg,9,
+   "stale second tab must retain original in-memory inventory");
+ const duplicatedMulti=buildScope(multiRaw,create({...multiAdapter,initialSnapshot:multiRaw}));
+ assert.equal(await duplicatedMulti.change(splitUndoInput),null,
+   "later duplicate reversal cannot restore inventory again");
+ assert.equal(multiWrites,1);
+ console.log("PASS: persisted exclusive two-tab multi-vial Undo, single durable write, stale rejection, no double refund");
  console.log("PASS: multi-vial Undo exact sources and fail-closed missing/stale/legacy/duplicate/capacity/route/amount/latest checks");
  const double=fixture();double.peptides["Sample A"].doses.push(firstDose);
  assert.throws(()=>planning.plan(double,one),/Duplicate dose ID/);
