@@ -66,6 +66,7 @@ jobs:
           node scripts/stash-expiry-label-regression.mjs
           node tests/stash-open-vial-expiry.test.cjs
           node scripts/protocol-completion-upcoming-regression.mjs
+          node scripts/nasal-picker-setup-regression.cjs
       - name: Gate stale release notes against changed application source
         shell: bash
         run: |
