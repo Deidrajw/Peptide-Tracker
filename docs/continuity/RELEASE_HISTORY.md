@@ -1,3 +1,8 @@
+## 2026-11-12 — SEMAX nasal-picker discovery fix in separate development branch, NOT RELEASED
+- New separate fix/semax-incomplete-nasal-picker-20261112 based on PR163 baa082b5. Declared UI version remains v0.9.26-beta.1. Exact user data backup analyzed read-only; no production writes/migration; private backup never committed.
+- Target JS04 change 8e551be0 surfaces uncalibrated positive-stock nasal bottles as 'Spray setup required' in Today Log Dose; selection opens existing bottle stock editor. Pre-existing formula/spray conversion validation remains strict, no nasal gate change, no auto log. Added fictional VM test fa3da93a and CI hookup 07ed6d2c; local five case VM and syntax PASS; official CI/artifacts PENDING. Do not merge/deploy.
+- PR163 completed-protocol physical-iPhone test now USER-REPORTED PASS, as are Stash and navigation. PR163 remains draft/unmerged/undeployed.
+
 ## 2026-11-12 — PR163 consolidated candidate AUTOMATED QUALIFICATION PASSED; not merged/deployed
 - Version remains v0.9.26-beta.1. Candidate branch integration/pr160-pr162-consolidated-20261112, tested commit ed5617d3. User chose PR160+PR162 consolidation but expressly did NOT approve merge or deployment. Main b4c83c06 untouched; PR160, PR162 and PR163 open drafts.
 - All SIX exact-head GitHub suites SUCCESS: #43286267827 Chromium, #43286267830 WebKit, #43286267905 mobile, #43286268271 writer, #43286267854 nested DS2, #43286267836 full build/browser. Official source archive #13976191744 independently extracted: outer CRC 573/573, LIVE 26/26 exact manifest files, JS03/09/10 Git blobs matched, complete standalone fictional ephemeral DEMO bytes identical to offline ZIP root. Browser QA 8/8 and synthetic math 80/80 PASS, NOT clinical validation.
