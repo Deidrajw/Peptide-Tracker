@@ -10,7 +10,7 @@ function nexusRenderOtherFormCards(){
     const finished=x.status==="finished";
     const needsSetup=x.containerType==="nasal-bottle"&&(!Number(x.mlPerSpray)||!Number(x.mgPerSpray));
     return `<div class="nx-other-stock-row" data-formulation-id="${esc(String(x.id))}">
-      <div class="nx-kit-heading"><span class="nx-other-stock-info"><strong>${esc(x.compound)}</strong><span>${esc(typeNames[x.containerType]||"Other package")} · ${esc(amount)}${finished?" · Finished":needsSetup?" · Spray setup needed":""}</span></span>
+      <div class="nx-kit-heading"><span class="nx-other-stock-info"><strong>${esc(x.compound)}</strong><span>${esc(typeNames[x.containerType]||"Other package")} · ${esc(amount)}${finished?" · Finished":needsSetup?" · Pump volume missing":""}</span></span>
       <button type="button" class="nx-form-edit nx-other-stock-adjust" data-formulation-manage="${esc(String(x.id))}" aria-label="Manage ${esc(x.compound)} container" style="min-height:44px;min-width:72px">Manage ···</button></div>
     </div>`;
   }).join("");
