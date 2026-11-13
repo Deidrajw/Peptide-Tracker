@@ -1,3 +1,6 @@
+## 2026-11-13 — UNRELEASED PR169 additional same-kit source protection (NO DEPLOY)
+- Coded exact second open-vial selection within the SAME kit on draft PR169; source e02a8fe3; local source-exact fictional 320/390 Save/Undo and GitHub persisted two-tab writer PASS. Official full-app fictional candidate/LIVE ZIP artifact #14017607635 independently CRC verified. 3/6 workflow groups success at this checkpoint, 3 running; no production release, new version assignment or user data migration. Separate explicit merge/deploy approval still required.
+
 ## 2026-11-13 — UNRELEASED development candidate: multi-source Review and atomic Undo
 - Approved to code only; candidate on fix/multisource-dose-review-atomic-undo-20261113, main remains b3a67ec4 / v0.9.27-beta.3, primary Cloudflare unchanged. JS01/JS05/CSS targeted changes and release notes proposed; new exact-source allocation checkpoints additive, no migration or overwrite. Local fictional Chromium 320/390 scenario and negative planner tests PASS; exact GitHub branch CI and release artifact pending. Not merged, not deployed, real iPhone/VoiceOver NOT TESTED. No release version assigned or published; previous release history unaffected.
 
