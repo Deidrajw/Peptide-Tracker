@@ -1585,7 +1585,9 @@ function doseModal(name, existing, occTime, formChoice) {
   // Source preview uses the same canonical mg amounts as exclusive save.
   // Invalid drafts stay editable, but Confirm must be disabled.
   const doseReviewSourcePlan=()=>{
-    if(isEdit||isUntracked||editingUntracked||isBlend||selectedSource!=="fresh")return null;
+    // Confirmed mid-draw rows use the existing protected finish-vial flow.
+    // This preview must not block their separate ledger reconciliation path.
+    if(rows.some(r=>r.finished)||isEdit||isUntracked||editingUntracked||isBlend||selectedSource!=="fresh")return null;
     const kit=activeKit(),vial=kit?activeVial():null;
     const requiredMg=doseToMg(Number(doseVal("dose")),c.unit);
     const plan=rows.length?rows.filter(r=>Number(r.mg)>0)
