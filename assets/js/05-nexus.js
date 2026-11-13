@@ -1582,29 +1582,79 @@ function doseModal(name, existing, occTime, formChoice) {
   let doseReviewActive=false;
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const reviewRow=(label,value)=>'<div class="nx-dose-confirm-row"><span>'+esc(String(label))+'</span><strong>'+esc(String(value??"Not set"))+'</strong></div>';
+  // Source preview uses the same canonical mg amounts as exclusive save.
+  // Invalid drafts stay editable, but Confirm must be disabled.
+  const doseReviewSourcePlan=()=>{
+    if(isEdit||isUntracked||editingUntracked||isBlend||selectedSource!=="fresh")return null;
+    const kit=activeKit(),vial=kit?activeVial():null;
+    const requiredMg=doseToMg(Number(doseVal("dose")),c.unit);
+    const plan=rows.length?rows.filter(r=>Number(r.mg)>0)
+      :kit&&vial?[{kitId:kit.id,vialId:vial.id,mg:requiredMg}]:[];
+    const errors=[],sources=[],seen=new Set();
+    let allocated=0;
+    if(!Number.isFinite(requiredMg)||requiredMg<=0)errors.push("Enter a valid dose amount.");
+    if(!plan.length)errors.push("Select an eligible open vial.");
+    for(const step of plan){
+      const k=(state.supplies||[]).find(x=>String(x.id)===String(step.kitId));
+      const v=(k?.vials||[]).find(x=>String(x.id)===String(step.vialId));
+      const mg=Number(step.mg),key=String(step.kitId)+":"+String(step.vialId);
+      if(!Number.isFinite(mg)||mg<=0||Math.abs(mg*100-Math.round(mg*100))>0.00001){
+        errors.push("Check the amount allocated to each vial.");continue;
+      }
+      allocated+=mg;
+      if(seen.has(key)){errors.push("The same vial was selected twice.");continue;}
+      seen.add(key);
+      if(step.finished||!k||!v||k.name!==name||k.isBlend||!k.activeKit||
+         !["open","active"].includes(v.status)){
+        errors.push("A source is no longer eligible. Recheck the exact vial.");continue;
+      }
+      const method=v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
+        (k.preparationMethod||k.administrationMethod||k.route);
+      if(!nexusPhysicalVialCompatible(method,m.querySelector("#nx-dose-method")?.value||initialMethod))
+        errors.push("A source does not match the recorded administration method.");
+      const available=getVialRemainingMg(k,v);
+      if(!Number.isFinite(available)||mg>available+0.000001)
+        errors.push("A selected vial does not contain the amount allocated to it.");
+      sources.push({kit:k,vial:v,mg,available});
+    }
+    if(allocated+0.001<requiredMg)
+      errors.push("Short by "+mgToUnit(requiredMg-allocated,c.unit).toFixed(2)+" "+c.unit+". Add another source or reduce the amount.");
+    else if(allocated>requiredMg+0.001)
+      errors.push("Sources exceed the requested dose by "+mgToUnit(allocated-requiredMg,c.unit).toFixed(2)+" "+c.unit+".");
+    return {valid:!errors.length,errors,sources,allocated,requiredMg};
+  };
   const updateDoseReview=()=>{
-    const kit=activeKit();
-    const vial=kit?activeVial():null;
+    const kit=activeKit(),vial=kit?activeVial():null;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
     const sourceLabel=(isUntracked||editingUntracked)?"Untracked · No inventory deduction":selectedSource==="fresh"
       ?(vial?(kit.name+" · Vial "+(vial.sequenceNumber||"?")):"Source not selected")
       :(prepared?"Prepared dose":"Prepared source");
-    const usedMg=doseToMg(Number(doseVal("dose")),c.unit);
-    const remaining=vial?getVialRemainingMg(kit,vial):null;
+    const plan=doseReviewSourcePlan();
+    const fmt=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
     review.querySelector("#nx-dose-review-amount").textContent=(m.querySelector("#nx-dose-entered")?.value||doseVal("dose"))+" "+(m.querySelector("#nx-dose-unit")?.value||c.unit);
     review.querySelector("#nx-dose-review-compound").textContent=name;
-    review.querySelector("#nx-dose-review-rows").innerHTML=
-      reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
+    const standard=reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
       reviewRow("Method",m.querySelector("#nx-dose-method")?.value||initialMethod)+
-      (["SubQ","IM"].includes(m.querySelector("#nx-dose-method")?.value)?reviewRow("Administration site",doseVal("site")||"Not recorded"):"")+
-      reviewRow("Vial used",isEdit?"Original source retained":sourceLabel)+
-      (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
-        ?reviewRow("Vial remaining after save",mgToUnit(Math.max(0,remaining-usedMg),c.unit).toFixed(2)+" "+c.unit):"")+
+      (["SubQ","IM"].includes(m.querySelector("#nx-dose-method")?.value)?reviewRow("Administration site",doseVal("site")||"Not recorded"):"");
+    const sourceRows=plan?
+      '<div class="nx-dose-allocation-summary"><strong>Exact inventory sources</strong>'+plan.sources.map(item=>
+        reviewRow(item.kit.name+" · Vial "+(item.vial.sequenceNumber||"?"),
+          fmt(item.mg)+" used · "+fmt(item.available)+" → "+fmt(Math.max(0,item.available-item.mg))+" left")
+      ).join("")+reviewRow("Total allocated",fmt(plan.allocated)+" of "+fmt(plan.requiredMg))+"</div>":
+      reviewRow("Vial used",isEdit?"Original source retained":sourceLabel);
+    const warning=plan&&!plan.valid?
+      '<div class="nx-dose-allocation-warning" role="alert">'+
+        "<strong>Resolve inventory before confirming</strong><p>"+esc(plan.errors.join(" "))+"</p>"+
+        "<p>Use Edit details to correct the amount or select another source. Nothing has been saved.</p></div>":"";
+    review.querySelector("#nx-dose-review-rows").innerHTML=standard+sourceRows+warning+
       (m.querySelector("#nx-dose-as-needed")?.checked?reviewRow("Protocol","Independent log"):"");
+    saveButton.disabled=!!plan&&!plan.valid;
+    saveButton.setAttribute("aria-disabled",String(saveButton.disabled));
   };
   const showDoseReview=(on)=>{
     doseReviewActive=on;
     if(on)updateDoseReview();
+    else {saveButton.disabled=false;saveButton.setAttribute("aria-disabled","false");}
     doseScroll.hidden=on;
     review.hidden=!on;
     reviewButton.hidden=on;
