@@ -3054,3 +3054,12 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+/* Multi-source Log Dose Review: scoped Design System 2.0 presentation. */
+.nx2-dose-modal .nx-dose-allocation-summary{margin-top:12px;padding:12px 14px;border:1px solid var(--border-sub);background:var(--surface);border-radius:12px}
+.nx2-dose-modal .nx-dose-allocation-summary>strong{display:block;font-size:13px;color:var(--t1);margin-bottom:7px}
+.nx2-dose-modal .nx-dose-allocation-summary .nx-dose-confirm-row:last-child{border-bottom:none}
+.nx2-dose-modal .nx-dose-allocation-warning{margin:12px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-amber,#F9C87D);border-radius:12px;color:var(--t1)}
+.nx2-dose-modal .nx-dose-allocation-warning strong{font-size:13px}
+.nx2-dose-modal .nx-dose-allocation-warning p{font-size:13px;line-height:1.5;margin:6px 0 0;color:var(--t2)}
+.nx2-dose-modal #save:disabled{opacity:.45;cursor:not-allowed}
