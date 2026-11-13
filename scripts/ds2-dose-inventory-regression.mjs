@@ -41,7 +41,14 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
  await page.locator('#nx-dose-review-open').click();
  await page.locator('#nx-dose-review-rows').waitFor({state:'visible'});
  const review=await page.locator('.nx-dose-review-stage').innerText();
- await page.locator('#save').click();
+ const confirmationDisabled=await page.locator('#save').isDisabled();
+ if(shouldSave){
+   if(confirmationDisabled)throw Error('Valid fictional dose incorrectly blocked at Review');
+   await page.locator('#save').click();
+ }else{
+   if(!confirmationDisabled||!review.includes('Resolve inventory before confirming'))
+     throw Error('Insufficient fictional dose must show shortage and disable Confirm before saving');
+ }
  const after=await page.evaluate(({kitId,vialId})=>{
    const kit=state.supplies.find(k=>String(k.id)===String(kitId));
    const vial=(kit?.vials||[]).find(v=>String(v.id)===String(vialId));
@@ -52,7 +59,7 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
    ? after.count===initial.count+1 && Math.abs(after.remaining-(10-amount))<0.02
    : after.count===initial.count && Math.abs(after.remaining-10)<0.02;
  results.push({name,amountMg:amount,before:initial,after:{count:after.count,remaining:after.remaining,demo:after.demo},
-   reviewWarns:review.includes('Inventory review required'),success});
+   reviewWarns:review.includes('Resolve inventory before confirming'),confirmationDisabled,success});
  if(!after.demo || !success)throw Error(name+' transaction violated expected fictitious dose/inventory invariants: '+JSON.stringify(results.at(-1)));
  await ctx.close();
 }
