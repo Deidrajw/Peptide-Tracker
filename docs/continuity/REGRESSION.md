@@ -1,3 +1,8 @@
+## 2026-11-13 — PR169 new exact-source same-kit / two-tab QA evidence
+- PASS real same-origin writer test in GitHub workflow #43384267993, source e02a8fe3: exclusive two-tab Undo races with same original multi-source dose; exactly one durable reversal and two exact refunds, stale tab rejected; second Undo prevented. Additional missing/incompatible/over-capacity/duplicate/legacy/mismatched allocation tests PASS.
+- PASS actual isolated fictional FULL APP DEMO Chromium 320/390 source e02a8fe3 same-kit two open vials: select exact vials 4 and 8, Review 1+2=3mg, save changes source balances 1→0/5→3 and one dose, Undo restores 0→1/3→5 and removes dose; no page exceptions.
+- PASS artifact #14017607635 outer and 26-file nested LIVE ZIP CRC; candidate manifest matches e02a8fe3. PASS branch writer/mobile/nested CI, other three workflows pending as checked. No independent clinical calibration or physical iPhone/VoiceOver acceptance. Earlier failed build check #43383023454 preserved; outdated test click now asserts disabled button/no save.
+
 ## 2026-11-13 — Exact-source PR169 candidate QA checkpoint (UNMERGED)
 - Main production remains b3a67ec4 / v0.9.27-beta.3. User authorised implementation only, not merge/deploy. Draft PR169 code source 25b3ddb446696c5abcd652750463cad299bd2fcb; branch fix/multisource-dose-review-atomic-undo-20261113.
 - Official GitHub build #43383023454 produced source-validated candidate artifact #14017571954. Independently downloaded: outer ZIP 9 entries CRC PASS, embedded LIVE ZIP 26 files CRC PASS with root index.html; build manifest source SHA **25b3ddb4**. This is a development candidate carrying the old published version label, **NOT a new release or primary deployment**.
