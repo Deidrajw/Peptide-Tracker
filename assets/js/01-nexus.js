@@ -396,7 +396,11 @@ function nexusPlanBackedPhysicalDose(snapshot,entry){
     vial.remainingMg=Math.round((vial.remainingMg-mg)*100)/100;
     if(vial.remainingMg<=0.01){vial.remainingMg=0;vial.status="empty";}
     const amount=nativeUnit==="mcg"?mg*1000:mg;
-    allocations.push({kitId:kit.id,vialId:vial.id,amount});
+    // Committed alongside the dose: an exact post-transaction checkpoint for
+    // fail-closed multi-source recovery. Historical doses without it are never guessed.
+    allocations.push({kitId:kit.id,vialId:vial.id,amount,
+      beforeRemainingMg:Math.round((vial.remainingMg+mg)*100)/100,
+      afterRemainingMg:vial.remainingMg,afterStatus:vial.status});
     total+=mg;
   }
   if(Math.abs(total-expectedMassMg)>0.001)fail("Source allocation must match dose");
@@ -456,6 +460,74 @@ async function nexusCommitBackedPhysicalDose(entry){
 }
 
 
+
+/* Multi-source backed-dose Undo, exact source, all-or-nothing.
+ * Validate every original source in a deep-cloned snapshot BEFORE restoring any.
+ * The existing caller commits the result under the exclusive CAS/readback writer.
+ */
+function nexusPlanUndoMultiSourceBackedDose(snapshot,entry){
+  const fail=m=>{throw Error(m)};
+  const {name,doseId,nativeUnit,builtin}=entry;
+  if(!name||doseId==null||!["mg","mcg"].includes(nativeUnit))fail("Valid exact dose and mass unit required");
+  const next=JSON.parse(JSON.stringify(snapshot));
+  const record=next[builtin?"peptides":"customPeptides"]?.[name];
+  const index=record?.doses?.findIndex(d=>String(d.id)===String(doseId))??-1;
+  if(index<0)fail("Original dose missing or already reversed");
+  if(index!==record.doses.length-1)fail("Only the latest dose can be reversed");
+  const old=record.doses[index];
+  if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
+     !Array.isArray(old.allocations)||old.allocations.length<2)
+    fail("Unsupported multi-source historical record");
+  if(!["SubQ","IM","Oral","Topical","Other"].includes(old.method))fail("Unsupported administration route");
+  const expectedMg=nativeUnit==="mcg"?Number(old.dose)/1000:Number(old.dose);
+  if(!Number.isFinite(expectedMg)||expectedMg<=0)fail("Invalid original dose mass");
+  const seen=new Set(),restorations=[];
+  let totalMg=0;
+  for(const a of old.allocations){
+    if(a.kitId==null||a.vialId==null)fail("Original exact source missing");
+    const key=String(a.kitId)+":"+String(a.vialId);
+    if(seen.has(key))fail("Duplicate physical source");
+    seen.add(key);
+    const massMg=nativeUnit==="mcg"?Number(a.amount)/1000:Number(a.amount);
+    if(!Number.isFinite(massMg)||massMg<=0||Math.abs(massMg*100-Math.round(massMg*100))>0.00001)
+      fail("Invalid original allocation precision");
+    const kit=(next.supplies||[]).find(k=>String(k.id)===String(a.kitId));
+    const vial=(kit?.vials||[]).find(v=>String(v.id)===String(a.vialId));
+    if(!kit||kit.name!==name||kit.isBlend||!vial||
+       !["open","active","empty"].includes(vial.status))fail("Original vial unavailable");
+    const route=vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:
+      (kit.preparationMethod||kit.administrationMethod||kit.route);
+    if(!nexusPhysicalVialCompatible(route,old.method))fail("Original vial formulation changed");
+    const before=Number(a.beforeRemainingMg),after=Number(a.afterRemainingMg);
+    if(!Number.isFinite(before)||!Number.isFinite(after)||
+       Math.abs(before-after-massMg)>0.000001||
+       !Number.isFinite(vial.remainingMg)||Math.abs(vial.remainingMg-after)>0.000001||
+       !["open","active","empty"].includes(a.afterStatus)||vial.status!==a.afterStatus)
+      fail("Original source balance or state changed since dose; no reversal");
+    const capacity=Number(vial.vialMg||kit.vialMg);
+    if(!Number.isFinite(capacity)||capacity<=0||before>capacity+0.000001||before<0)
+      fail("Vial restoration exceeds recorded capacity");
+    restorations.push({kit,vial,before,after,massMg});
+    totalMg+=massMg;
+  }
+  if(Math.abs(totalMg-expectedMg)>0.001)fail("Original allocations do not match dose");
+  // All checks passed; only now mutate the clone. Any subsequent transaction
+  // failure leaves the authoritative saved state and every vial unchanged.
+  for(const x of restorations){
+    x.vial.remainingMg=x.before;
+    if(x.vial.status==="empty"&&x.before>0.01)x.vial.status="open";
+  }
+  record.doses.splice(index,1);
+  (record.reschedules||[]).forEach(r=>{if(String(r.doseId)===String(old.id))r.doseId=null});
+  next.nexusDoseAudit=next.nexusDoseAudit||[];
+  next.nexusDoseAudit.push({id:String(doseId)+":undo-multi:"+String(next.nexusDoseAudit.length+1),
+    doseId:old.id,compound:name,operation:"undo",sources:restorations.map(x=>({
+      kitId:x.kit.id,vialId:x.vial.id,beforeMg:x.after,afterMg:x.before,
+      restoredMg:x.massMg})),previousDose:JSON.parse(JSON.stringify(old))});
+  return {next,operation:"undo",dose:null,sources:restorations.map(x=>({
+    kitId:x.kit.id,vialId:x.vial.id,remainingMg:x.vial.remainingMg}))};
+}
+
 /* PR124 backed-dose correction boundary. Corrections are scoped to a recorded
  * exact physical source. Old prepared/blend/unknown-source histories fail closed.
  * No vial substitution or automatic historical source attribution is allowed.
@@ -471,6 +543,8 @@ function nexusPlanBackedDoseChange(snapshot,entry){
   const index=record?.doses?.findIndex(d=>String(d.id)===String(doseId))??-1;
   if(index<0)fail("Original dose missing");
   const old=record.doses[index];
+  if(operation==="undo"&&Array.isArray(old.allocations)&&old.allocations.length>=2)
+    return nexusPlanUndoMultiSourceBackedDose(snapshot,entry);
   if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
      !Array.isArray(old.allocations)||old.allocations.length!==1)fail("Unsupported historic source: review manually");
   if(index!==record.doses.length-1)fail("Only the most recent dose can be corrected through this safety path");
