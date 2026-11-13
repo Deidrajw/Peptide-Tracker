@@ -828,6 +828,41 @@ try {
     ensure(Math.abs(split.kits[0].remaining[0])<.01 &&
       Math.abs(split.kits[1].remaining[0]-2.5)<.01,'Two-source inventory math wrong');
     verified.push('actual UI multi-vial selection & one dose record');
+    // C2: TWO open physical vials in ONE kit must be independently selectable
+    // by exact vial ID. This must not require creating a duplicate kit.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(9200,1);
+      const second={...JSON.parse(JSON.stringify(kit.vials[0])),
+        id:19201,sequenceNumber:2,status:'open',remainingMg:5};
+      kit.vials.push(second);kit.openedVials=2;
+      state.supplies=[kit];
+    });
+    await openDose(page);await setDose(page,3);await page.waitForTimeout(550);
+    await page.locator('#toggle-multi').click();
+    ensure(await page.locator('#alloc-add-kit').count()===1,
+      'Second open vial in SAME KIT not offered as exact additional source');
+    await page.locator('#alloc-add-kit').click();
+    const sameKitReviewButton=page.locator('#nx-dose-review-open');
+    await sameKitReviewButton.click();
+    const sameKitReview=await page.locator('#nx-dose-review-rows').innerText();
+    ensure(sameKitReview.includes('Vial 1')&&sameKitReview.includes('Vial 2'),
+      'Same-kit dual open vial Review omits an exact physical source');
+    ensure(await page.locator('#save').isEnabled(),
+      'Correct same-kit dual open vial allocation erroneously blocked');
+    await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
+    const sameKitSaved=await stateSnapshot(page);
+    ensure(sameKitSaved.entries[0].allocations?.length===2,
+      'Same-kit dual open source save lost distinct physical vial attribution');
+    ensure(String(sameKitSaved.entries[0].allocations[0].vialId)!==
+      String(sameKitSaved.entries[0].allocations[1].vialId),
+      'Same-kit source rows incorrectly collapsed to one vial');
+    ensure(Math.abs(sameKitSaved.kits[0].remaining[0])<0.01&&
+      Math.abs(sameKitSaved.kits[0].remaining[1]-3)<0.01,
+      'Same-kit two-vial exact allocation balances incorrect');
+    verified.push('same-kit dual open vial selection and exact two-source debit');
+
 
     // D: Recording a prepared syringe changes prepared remaining count,
     // never deducts the source vial again.
