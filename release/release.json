@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.26-beta.1",
+  "version": "v0.9.27-beta.1",
   "channel": "beta",
   "publication": {
     "status": "unverified",
@@ -9,42 +9,48 @@
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "a0482abc42060ad4b31108538a207bf983df90d7",
-    "pullRequest": 153,
-    "mergedAppCommit": "fe51ace9bc9fd82ed78072038f335917e995562c"
+    "baselineMainCommit": "b4c83c06ccf447bd88ba4c45d788c41eed2f32d4",
+    "pullRequest": 164,
+    "mergedAppCommit": "0c0adc85884c4ef11fa88000e4d20ac484536951"
   },
-  "headline": "Prepared nasal dose logging with verified exact-bottle inventory and protected UI",
+  "headline": "Completed-protocol history safeguards, Stash vial accuracy, and discoverable nasal spray inventory",
   "changes": [
     {
-      "key": "nasal-live-guarded",
-      "title": "Log prepared nasal sprays using the exact verified bottle",
-      "detail": "Enable nasal dose review and confirmation on eligible prepared stock; atomically record an administration, exact bottle balance and source ledger, and offer exact-source Undo without debiting the original vial twice.",
-      "screen": "Today / Log Dose / Stash / Calendar",
-      "kind": "feature"
-    },
-    {
-      "key": "nasal-shared-writer",
-      "title": "Protected cross-tab nasal inventory persistence",
-      "detail": "All prepared spray administrations and reversals use the shared exclusive writer, canonical saved snapshot, stale-tab refusal, write-readback verification and no speculative success on storage failure.",
-      "screen": "Log Dose / Stash / History",
+      "key": "protocol-completion-upcoming",
+      "title": "Stop future Upcoming entries for completed protocols",
+      "detail": "Explicitly completed protocols no longer create future Upcoming occurrences or due reminders, while preserving past logged doses, attributed history and subsequently active protocol records.",
+      "screen": "Today / Protocols / Calendar",
       "kind": "safety"
     },
     {
-      "key": "protected-ui-integration",
-      "title": "Retain approved search, calculator and backed-dose corrections",
-      "detail": "Preserve PR146 single clear-X search, injectable syringe overflow recovery and read-only theoretical nasal calculator, alongside PR142 backed-dose history/writer reliability.",
-      "screen": "Check-In / Supplements / Calculator / Today",
+      "key": "stash-open-vial-accuracy",
+      "title": "Show the correct usable vial and source details in Stash",
+      "detail": "Preserve blend vial numbering and sealed-only expiry, choose the earliest usable OPEN vial expiry correctly, exclude depleted OPEN vials from next usable stock, and show the remaining 8mg OPEN vial instead of an Empty 0mg card.",
+      "screen": "Stash / Inventory / Dose sources",
       "kind": "improvement"
+    },
+    {
+      "key": "nasal-missing-pump-discovery",
+      "title": "Make existing nasal spray inventory discoverable in Log Dose",
+      "detail": "When an archived compound has a saved nasal bottle with remaining stock but no specified pump mL per spray, list it as Pump volume missing and open the original Stash bottle editor; never create a replacement bottle or fall back to a fabricated administration.",
+      "screen": "Today / Log Dose / Stash",
+      "kind": "improvement"
+    },
+    {
+      "key": "nasal-pump-save-only-warning",
+      "title": "Explain missing pump volume only when saving an incomplete nasal bottle",
+      "detail": "Open the Add or Adjust nasal spray form without a persistent warning. On blank-pump Save, show a compact theme-aware confirmation with Add pump volume and Save to Stash anyway. No automatic pump estimate, dose log, inventory debit or protocol status change.",
+      "screen": "Stash / Add nasal spray / Adjust nasal spray",
+      "kind": "safety"
     }
   ],
-  "dataImpact": "No destructive migration, import, automatic rewrite, or overwrite of existing production localStorage (peptide-tracker-html-v1). Only explicitly confirmed eligible LIVE prepared-nasal administrations atomically add the dose and exact-bottle ledger transaction and debit that prepared bottle; verified Undo reverses the same original event. Original physical source vials must not be deducted again. Other existing history, protocols, Check-Ins, Stash and inventory remain untouched. DEMO remains isolated.",
+  "dataImpact": "No destructive migration, automatic rewrite, import, unarchive, dose creation, or overwrite of existing browser localStorage (peptide-tracker-html-v1). Historical protocols, logs, vial numbers, exact-source ledger and inventory are preserved. Explicit future user actions continue to use the existing guarded save/writer and dose-confirmation paths; saving an uncalibrated nasal bottle preserves Stash inventory but does not enable dose logging. Isolated full-app DEMO has fictional in-memory state and no live sync.",
   "limitations": [
-    "Prepared-dose use delegates to the established prepared-syringe confirmation flow; unsupported administration-method and multi-source combinations fail closed rather than inventing new physical transactions.",
-    "The prepared nasal administration gate is ON only in this unmerged release candidate, not on deployed production. Generic preparation transfers remain OFF. Physical iPhone, VoiceOver, and independent clinical pump calibration acceptance remain pending.",
-    "The full offline DEMO intentionally uses fallback fonts. LIVE source preserves external DM Sans/Fraunces/DM Mono import; actual online font-file rendering and VoiceOver/Dynamic Type were not independently accepted in this release session.",
-    "Automated vial-source and measurement regressions passed; synthetic calculator diagnostics do not establish independent clinical certification.",
-    "Product UI reviewed through user-provided iPhone screenshots and user approval; no separate physical VoiceOver audit is claimed.",
-    "Release metadata is reconciled after merge; app source parity was independently verified at squash merge fe51ace9 before metadata publication."
+    "Existing nasal spray bottles without a known pump mL-per-spray remain ineligible for nominal spray-dose calculations; users may add measured or documented specifications in their original Stash bottle. Pump output is not clinically calibrated by Nexus.",
+    "The existing protected nasal administration writer gate and safeguards are unchanged. Unsupported prepared formulations or source combinations remain blocked; no clinical calculator certification is claimed.",
+    "Physical iPhone usability checks were reported PASS for the PR163 Stash/navigation/completed protocol behaviours and the PR164 missing-pump warning timing/styling/actions. VoiceOver and Dynamic Type were not separately accepted.",
+    "User data is stored in the browser; backups remain recommended. No user production dataset was accessed or modified by release engineering.",
+    "New version production parity and publication metadata are verified after the approved merge/deployment, not inferred from GitHub merge success alone."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
