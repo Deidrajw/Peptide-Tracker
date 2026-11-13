@@ -478,6 +478,11 @@ function nexusPlanUndoMultiSourceBackedDose(snapshot,entry){
   if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
      !Array.isArray(old.allocations)||old.allocations.length<2)
     fail("Unsupported multi-source historical record");
+  // This is an additive checkpoint on newly saved physical doses. An older
+  // multi-source history cannot be reconstructed safely from kit totals.
+  if(!old.allocations.every(a=>Number.isFinite(a.beforeRemainingMg)&&
+       Number.isFinite(a.afterRemainingMg)&&["open","active","empty"].includes(a.afterStatus)))
+    fail("Unsupported historic source: recovery checkpoints missing");
   if(!["SubQ","IM","Oral","Topical","Other"].includes(old.method))fail("Unsupported administration route");
   const expectedMg=nativeUnit==="mcg"?Number(old.dose)/1000:Number(old.dose);
   if(!Number.isFinite(expectedMg)||expectedMg<=0)fail("Invalid original dose mass");
