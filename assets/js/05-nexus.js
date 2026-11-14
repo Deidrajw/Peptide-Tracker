@@ -1504,7 +1504,7 @@ function doseModal(name, existing, occTime, formChoice) {
     </details>
     </section>
     <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked?"display:none":""}">
-      <div class="nx-dose-section-title">Select your vial source</div>
+      <div class="nx-dose-section-title">Which vial did you use?</div>
       <p class="nx-dose-guidance">Choose the exact open vial used for this dose. Multiple vials still create one dose record; stock changes only after final confirmation.</p>
       ${!isUntracked && !isEdit && eligibleSources.length>1 && selectedSource==="fresh" ? `<button type="button" id="toggle-multi" class="nx-multi-vial-toggle" aria-pressed="${multiMode}">${multiMode?"✓ Using multiple vials · choose amounts below":"+ Use more than one vial"}</button>` : ""}
       <div id="alloc-panel" style="margin-bottom:14px"></div>
