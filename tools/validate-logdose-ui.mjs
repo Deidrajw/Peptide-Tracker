@@ -49,6 +49,10 @@ async function openDose(page){
   // Distinct-vial no-default behaviour is asserted separately in formulation QA.
   const choices=page.locator('.kit-opt');
   if(await choices.count()>1){
+    // The user must enter a valid amount before advancing from Dose details.
+    // Supply a hypothetical test amount; individual cases below overwrite it.
+    const entry=page.locator('#nx-dose-entered');
+    if(!Number(await entry.inputValue()))await entry.fill('1');
     await page.locator('#nx-dose-review-open').click();
     await page.locator('.nx-dose-source-exception').waitFor({state:'visible'});
     await choices.first().click();
