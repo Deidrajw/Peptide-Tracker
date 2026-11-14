@@ -1921,14 +1921,14 @@ function doseModal(name, existing, occTime, formChoice) {
 
     panel.innerHTML = `
       <div class="nx-allocation-card" style="background:${shortBy>0.001?"#F9C87D11":"var(--surface-2)"};border:1px solid ${shortBy>0.001?"#F9C87D33":"var(--border-sub)"};border-radius:10px;padding:12px 14px">
-        ${shortBy>0.001?`<div class="nx-shortfall-eyebrow">Inventory resolution</div><div class="nx-allocation-heading" role="status">Not enough in current vial</div><p class="nx-shortfall-intro">Review your dose allocation below. You can use another available vial or open a sealed vial without losing this entry.</p>
+        ${shortBy>0.001?`<div class="nx-shortfall-eyebrow">Use a second vial</div><div class="nx-allocation-heading" role="status">Not enough in current vial</div><p class="nx-shortfall-intro">Choose an additional vial below to cover the dose. Your entry stays here, and nothing is deducted yet.</p>
         <div class="nx-allocation-summary" aria-label="Vial availability">
           <div class="nx-allocation-metric"><small>Dose needed</small><strong>${fmt(neededMg)} ${c.unit}</strong></div>
           <div class="nx-allocation-metric"><small>Open vial</small><strong>${fmt(akRemaining)} ${c.unit}</strong></div>
           <div class="nx-allocation-metric"><small>Short by</small><strong style="color:#F9C87D">${fmt(shortBy)} ${c.unit}</strong></div>
         </div>`
-        : `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Sources for this dose</div>`}
-        <div class="nx-shortfall-step">Step 1 · Review sources and amounts</div>
+        : `<div style="font-size:13px;color:var(--t2);margin-bottom:10px">Your selected vials and amounts</div>`}
+        <div class="nx-shortfall-step">How much will you use from each vial?</div>
         <div class="nx-shortfall-progress" role="progressbar" aria-label="Dose amount allocated" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0)))}"><div style="width:${Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0))}%"></div></div>
         <div class="nx-shortfall-status" aria-live="polite">${remaining>0.01?`${fmt(remaining)} ${c.unit} still needs a source.`:remaining < -0.01?`Allocation exceeds the requested dose by ${fmt(Math.abs(remaining))} ${c.unit}.`:`✓ Allocation matches the requested dose.`}</div>
         <div id="alloc-rows">
@@ -1967,7 +1967,7 @@ function doseModal(name, existing, occTime, formChoice) {
                 ? `<div style="margin-top:10px;font-size:11px;color:#FF7C7C">Only ${fmt(totalCapacity)}${c.unit} total usable inventory exists for ${esc(name)} — open a new vial to cover the remaining ${fmt(neededMg-totalCapacity)}${c.unit}.</div>`
                 : "")
         ) : ""}
-        <button id="alloc-open-new" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">+ Open a sealed vial</button>
+        ${remaining>0.01?`<button id="alloc-open-new" style="width:100%;min-height:44px;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">+ Open another sealed vial</button>`:""}
       </div>`;
 
     panel.querySelectorAll(".alloc-mg-input").forEach(inp=>inp.oninput=()=>{ rows[+inp.dataset.i].mg = doseToMg(inp.value, c.unit); debouncedRenderAllocPanel(); });
