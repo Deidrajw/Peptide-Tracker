@@ -112,6 +112,12 @@ try {
       'Legacy vial balance obscured or misrepresented as zero');
     ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
       'Unlabelled vial incorrectly called insufficient inventory');
+    // The guided physical-dose flow presents legacy vial method confirmation
+    // on Step 2 (Select vials), not on the initial Dose details screen.
+    await setDose(page,1.25);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await unlabelled.first().isVisible(),
+      'Legacy vial method confirmation must be visible on guided source step');
     await unlabelled.first().click();
     const afterConfirm=await page.evaluate(()=>({
       method:state.supplies[0].vials[0].intendedUse,
