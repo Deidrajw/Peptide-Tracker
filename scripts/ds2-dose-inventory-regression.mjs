@@ -131,6 +131,7 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
  await page.locator('#nx-dose-unit').selectOption('mcg');
  if(Number(await page.locator('#nx-dose-entered').inputValue())!==250)throw Error('mg to mcg roundtrip failed');
  await page.locator('#nx-dose-review-open').click();
+ await page.locator('#nx-dose-review-open').click();
  await page.locator('#save').click();
  const backedAfter=await page.evaluate(({kitId,vialId})=>{
    const k=state.supplies.find(k=>k.id===kitId),v=k.vials.find(v=>v.id===vialId);
