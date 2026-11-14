@@ -1482,9 +1482,7 @@ function doseModal(name, existing, occTime, formChoice) {
     `}
     ${!isUntracked && !isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isUntracked && !isEdit && eligibleSources.length ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
     ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
-    <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD · THIS DOSE</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
       ${selectableMethods.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
@@ -1505,9 +1503,12 @@ function doseModal(name, existing, occTime, formChoice) {
       </div>
     </details>
     </section>
-    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":unlabelledOpenSources.length?"Confirm your vial":"Dose source"}</div>
-    ${!isEdit && !preparedBatches.length && eligibleSources.length===0 && unlabelledOpenSources.length===0 ? `<div class="nx-dose-source-readout" role="status"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>No verified open vial</strong><small>Check Stash for an open vial compatible with ${esc(initialMethod)}. No inventory will be deducted without a verified source.</small></div></div>` : ""}
+    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked?"display:none":""}">
+      <div class="nx-dose-section-title">Select your vial source</div>
+      <p class="nx-dose-guidance">Choose the exact open vial used for this dose. Multiple vials still create one dose record; stock changes only after final confirmation.</p>
+      ${!isUntracked && !isEdit && eligibleSources.length>1 && selectedSource==="fresh" ? `<button type="button" id="toggle-multi" class="nx-multi-vial-toggle" aria-pressed="${multiMode}">${multiMode?"✓ Using multiple vials · choose amounts below":"+ Use more than one vial"}</button>` : ""}
+      <div id="alloc-panel" style="margin-bottom:14px"></div>
+    ${!isEdit && !preparedBatches.length && eligibleSources.length===0 && unlabelledOpenSources.length===0 ? `<div class="nx-dose-source-readout" role="status"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>No eligible vial for ${esc(initialMethod)}</strong><small>Vials may be empty, sealed, or assigned to another administration method. Check Stash; no dose or inventory change has occurred.</small></div></div>` : ""}
     ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
       <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">This vial has no saved administration method. Confirm it once; inventory changes only when you save the dose.</p>
       ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
@@ -1547,8 +1548,8 @@ function doseModal(name, existing, occTime, formChoice) {
   `, c.color);
   // Apply the existing responsive/accessible dose modal rules to EVERY normal entry.
   m.classList.add("nx2-dose-modal");
-  // Single-screen dose entry: keep source allocation, drafts, calculations and
-  // the authoritative #save inventory checks unchanged. Review is optional.
+  // Three-step guided physical Log Dose: Details -> Vials -> Review.
+  // Non-physical/edit/prepared/blend workflows retain their existing guarded path.
   const doseScroll=m.querySelector(".nx-dose-scroll");
   const doseFooter=m.querySelector(".nx-dose-footer");
   const doseHead=m.querySelector(".nx-dose-head");
@@ -1579,6 +1580,14 @@ function doseModal(name, existing, occTime, formChoice) {
   backButton.textContent="‹  Edit details";
   backButton.hidden=true;
   reviewButton.insertAdjacentElement("beforebegin",backButton);
+  const guidedSources=!isEdit&&!isUntracked&&!isBlend&&!isNasal&&selectedSource==="fresh";
+  const detailsStage=m.querySelector('[aria-label="Administration details"]');
+  const sourceStage=m.querySelector('.nx-dose-source-exception');
+  const flowIndicator=document.createElement('div');
+  flowIndicator.className='nx-dose-guided-progress';
+  flowIndicator.setAttribute('role','status');
+  fixedDoseHeader.append(flowIndicator);
+  let guidedStep=1;
   let doseReviewActive=false;
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const reviewRow=(label,value)=>'<div class="nx-dose-confirm-row"><span>'+esc(String(label))+'</span><strong>'+esc(String(value??"Not set"))+'</strong></div>';
@@ -1655,19 +1664,31 @@ function doseModal(name, existing, occTime, formChoice) {
   };
   const showDoseReview=(on)=>{
     doseReviewActive=on;
+    if(on)guidedStep=3;
     if(on)updateDoseReview();
     else {saveButton.disabled=false;saveButton.setAttribute("aria-disabled","false");}
     doseScroll.hidden=on;
+    if(!on && guidedSources){
+      detailsStage.style.display=guidedStep===1?"":"none";
+      sourceStage.style.display=guidedStep===2?"":"none";
+      if(guidedStep===2){
+        sourceStage.scrollIntoView?.({block:"start"});
+      }
+    }
     review.hidden=!on;
     reviewButton.hidden=on;
-    backButton.hidden=!on;
+    backButton.hidden=!on && !(guidedSources && guidedStep===2);
     saveButton.hidden=!on;
     reviewButton.setAttribute("aria-expanded",String(on));
-    fixedDoseHeader.querySelector(".nx-dose-kicker").textContent=on?"STEP 2 OF 2":(isEdit?"EDIT ENTRY":"STEP 1 OF 2");
-    fixedDoseHeader.querySelector(".nx-dose-title").textContent=on?"Review & confirm":(isEdit?"Edit dose":"Log a dose");
+    fixedDoseHeader.querySelector(".nx-dose-kicker").textContent=guidedSources?`STEP ${guidedStep} OF 3`:(on?"STEP 2 OF 2":(isEdit?"EDIT ENTRY":"STEP 1 OF 2"));
+    fixedDoseHeader.querySelector(".nx-dose-title").textContent=guidedSources?(guidedStep===1?"Dose details":guidedStep===2?"Select vials":"Review & confirm"):(on?"Review & confirm":(isEdit?"Edit dose":"Log a dose"));
+    flowIndicator.textContent=guidedSources?`${guidedStep} / 3 · ${guidedStep===1?"Dose details":guidedStep===2?"Select vials":"Review"}`:"";
+    reviewButton.textContent=guidedSources?(guidedStep===1?"Continue to vials":"Review dose"):(isEdit?"Review changes":"Review dose");
+    backButton.textContent=guidedSources&&guidedStep===2?"‹ Back to dose details":"‹ Edit vial selection";
     const note=doseFooter.querySelector(".nx-dose-review-note");
     if(note)note.textContent=on?"Check your entry, then confirm once.":"Your entry stays here until you review and save.";
     if(on)review.querySelector("#nx-dose-review-title")?.focus?.();
+    else if(guidedSources)doseScroll.scrollTop=0;
   };
   // Clear only the stale missing-amount warning once input is corrected.
   // Do not hide independent source, allocation or failed-save errors.
@@ -1695,6 +1716,12 @@ function doseModal(name, existing, occTime, formChoice) {
     const date=doseVal("date");
     if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date and time before reviewing.");return;}
     if(!Number.isFinite(amount)||amount<=0){showErrorBanner("Enter an amount greater than zero before reviewing.");return;}
+    if(guidedSources && guidedStep===1){
+      guidedStep=2;
+      showDoseReview(false);
+      renderAllocPanel();
+      return;
+    }
     // Do not infer a vial when more than one physical source exists.
     // The authoritative save path still verifies inventory and allocation.
     if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&needsKitPicker&&!selectedPhysicalSource()){
@@ -1711,7 +1738,10 @@ function doseModal(name, existing, occTime, formChoice) {
     clearStaleAmountError();
     showDoseReview(true);
   };
-  backButton.onclick=()=>showDoseReview(false);
+  backButton.onclick=()=>{
+    if(guidedSources)guidedStep=doseReviewActive?2:1;
+    showDoseReview(false);
+  };
   showDoseReview(false);
   m.querySelector("#x").onclick = closeModal;
   const setupButton=m.querySelector("#nx-dose-use-setup");
@@ -1829,7 +1859,7 @@ function doseModal(name, existing, occTime, formChoice) {
     // dose. Never present that stale amount as a real shortage once the chosen
     // exact vial is known to cover the entire dose. Locked/confirmed draws are
     // retained for proper multi-vial reconciliation.
-    if (!lockedDraw && akVial && shortBy<=0.001 && rows.length<=1) {
+    if (!multiMode && !lockedDraw && akVial && shortBy<=0.001 && rows.length<=1) {
       rows=[];multiMode=false;panel.innerHTML="";
       const toggle=m.querySelector("#toggle-multi");
       if(toggle)toggle.textContent="+ Use multiple vials";
@@ -1916,8 +1946,8 @@ function doseModal(name, existing, occTime, formChoice) {
           <span style="font-size:11px;color:var(--t4)">Total: <b style="color:${Math.abs(remaining)<0.01?"#7DF9C0":"var(--t2)"}">${fmt(totalAllocated)}${c.unit}</b> / ${fmt(neededMg)}${c.unit}</span>
           ${Math.abs(remaining)<0.01?`<span style="font-size:11px;color:#7DF9C0">✓ Matches dose</span>`:remaining>0?`<span style="font-size:11px;color:#F9C87D">${fmt(remaining)}${c.unit} still needed</span>`:`<span style="font-size:11px;color:#FF7C7C">${fmt(Math.abs(remaining))}${c.unit} over</span>`}
         </div>
-        ${remaining>0.01 ? `<div class="nx-shortfall-step">Step 2 · Resolve the remaining amount</div>` : ""}
-        ${remaining>0.01 ? (
+        ${remaining>0.01 ? `<div class="nx-shortfall-step">Choose another vial to complete this dose</div>` : ""}
+        ${(remaining>0.01 || multiMode) ? (
           availableNextSources().length
             ? (availableNextSources().length===1
               ? `<button id="alloc-add-kit" type="button" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px;min-height:44px">+ Use another open vial</button>`
@@ -2124,7 +2154,14 @@ function doseModal(name, existing, occTime, formChoice) {
     refreshBlendBreakdown();
   }
   const toggleBtn = m.querySelector("#toggle-multi");
-  if (toggleBtn) toggleBtn.onclick = () => { multiMode = !multiMode; if(!multiMode) rows=[]; toggleBtn.textContent = multiMode?"− Use a single vial instead":"+ Use multiple vials"; renderAllocPanel(); };
+  if (toggleBtn) toggleBtn.onclick = () => {
+    multiMode = !multiMode;
+    if(!multiMode)rows=[];
+    toggleBtn.setAttribute("aria-pressed",String(multiMode));
+    toggleBtn.textContent = multiMode?"✓ Using multiple vials · choose amounts below":"+ Use more than one vial";
+    renderAllocPanel();
+    if(multiMode)m.querySelector("#alloc-panel")?.scrollIntoView?.({block:"nearest"});
+  };
   renderAllocPanel();
 
   m.querySelector("#save").onclick = async () => {
