@@ -1019,7 +1019,7 @@ try {
   await page.evaluate(()=>doseModal('Fictional Source Selector'));
   assert.equal(await page.locator('.nx-dose-source-readout').count(),0,
     'Two verified open vials must not show a redundant Fresh from vial readout');
-  assert.ok((await page.locator('.nx-dose-source-exception').innerText()).includes('Which vial did you use?'),
+  assert.ok((await page.locator('.nx-dose-source-exception').textContent()).includes('Which vial did you use?'),
     'Multiple-vial choice requires a direct question');
   assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
     'SubQ should offer an optional injection-site field');
@@ -1074,6 +1074,10 @@ try {
   await page.evaluate(()=>{closeModal();doseModal('Fictional Source Selector');});
   assert.equal(Number(await page.locator('#nx-dose-entered').inputValue()),1.5,
     'Returning to the dose should restore the unsaved amount');
+  // Step 1 keeps administration method available; Step 2 reveals exact sources.
+  await page.locator('#nx-dose-review-open').click();
+  assert.equal(await page.locator('.nx-dose-source-exception').isVisible(),true,
+    'Guided vial-selection step must be visible after Continue to vials');
   const physicalChoices=page.locator('.kit-opt[data-kit="992211"]');
   assert.equal(await physicalChoices.count(),2,'Two vials in same kit must have separate source choices');
   assert.deepEqual(await physicalChoices.evaluateAll(items=>items.map(b=>b.dataset.vial)),['source-a','source-b']);
