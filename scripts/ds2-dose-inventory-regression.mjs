@@ -39,6 +39,12 @@ for(const [name,amount,shouldSave] of [['insufficient',300,false],['valid',2,tru
  await page.locator((await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose').dispatchEvent('input');
  await page.waitForTimeout(650);
  await page.locator('#nx-dose-review-open').click();
+ // Backed physical logging now opens a dedicated vial-selection step first.
+ if(await page.locator('#nx-dose-guided-stage').count()){
+   await page.locator('#nx-dose-review-open').click();
+ }else if((await page.locator('#nx-dose-review-open').textContent())?.includes('Review dose')){
+   await page.locator('#nx-dose-review-open').click();
+ }
  await page.locator('#nx-dose-review-rows').waitFor({state:'visible'});
  const review=await page.locator('.nx-dose-review-stage').innerText();
  const confirmationDisabled=await page.locator('#save').isDisabled();
