@@ -3094,3 +3094,6 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 .nx2-dose-modal .nx-dose-scroll>.nx-dose-section[style*="display: none"]{display:none!important}
 
 /* PR169 guided-flow regression rerun: source style unchanged; scenario tests updated. */
+
+/* Guided vial amount explanations should wrap comfortably on narrow iPhones. */
+.nx2-dose-modal .nx-dose-source-exception .nx-allocation-help{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
