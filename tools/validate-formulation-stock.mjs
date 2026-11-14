@@ -1142,6 +1142,7 @@ try {
     'One eligible Oral vial must appear as available stock');
   await page.locator('#nx-dose-entered').fill('1');
   await page.locator('#nx-dose-review-open').click();
+  await page.locator('#nx-dose-review-open').click();
   await page.locator('#save').click();
   const oralResult=await page.evaluate(()=>{
     const injection=state.supplies.find(x=>x.id===992211);
