@@ -1893,8 +1893,19 @@ function doseModal(name, existing, occTime, formChoice) {
         showErrorBanner("The exact open vial changed. Recheck sources; nothing was saved.");return;
       }
       const missing=neededMg-rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
-      const take=Math.min(getVialRemainingMg(stillAvailable.kit,stillAvailable.vial),missing);
-      if(take<=0)return;
+      const available=getVialRemainingMg(stillAvailable.kit,stillAvailable.vial);
+      let take=Math.min(available,missing);
+      // If the first vial covers the dose, selecting another vial must still
+      // visibly add a second source without changing the total requested dose.
+      if(take<=0.001 && multiMode && !rows.some(r=>r.finished)){
+        const donor=rows.find(r=>Number(r.mg)>0.02);
+        const transfer=donor?Math.min(available,Math.round(Number(donor.mg)*50)/100):0;
+        if(donor&&transfer>0.001&&Number(donor.mg)-transfer>0.001){
+          donor.mg=Math.round((Number(donor.mg)-transfer)*100)/100;
+          take=transfer;
+        }
+      }
+      if(take<=0.001)return;
       rows.push({kitId:stillAvailable.kit.id,vialId:stillAvailable.vial.id,mg:Math.round(take*100)/100});
       renderAllocPanel();
     };
