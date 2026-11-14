@@ -246,7 +246,7 @@ try {
     await setDose(page,4);
     await page.locator('#nx-dose-review-open').click();
     ensure(await page.locator('.nx-dose-source-exception').isVisible(),
-      'Guided Step 2 must expose Confirm draw's exact vial selector');
+      "Guided Step 2 must expose the exact vial selector for Confirm draw");
     await page.locator('.kit-opt[data-vial="38888"]').click();
     // The shipped dose editor intentionally debounces allocation rendering by
     // 500 ms while typing. Wait for that existing behaviour rather than asserting
