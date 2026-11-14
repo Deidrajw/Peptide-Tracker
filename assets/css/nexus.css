@@ -3054,3 +3054,46 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+/* Multi-source Log Dose Review: scoped Design System 2.0 presentation. */
+.nx2-dose-modal .nx-dose-allocation-summary{margin-top:12px;padding:12px 14px;border:1px solid var(--border-sub);background:var(--surface);border-radius:12px}
+.nx2-dose-modal .nx-dose-allocation-summary>strong{display:block;font-size:13px;color:var(--t1);margin-bottom:7px}
+.nx2-dose-modal .nx-dose-allocation-summary .nx-dose-confirm-row:last-child{border-bottom:none}
+.nx2-dose-modal .nx-dose-allocation-warning{margin:12px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-amber,#F9C87D);border-radius:12px;color:var(--t1)}
+.nx2-dose-modal .nx-dose-allocation-warning strong{font-size:13px}
+.nx2-dose-modal .nx-dose-allocation-warning p{font-size:13px;line-height:1.5;margin:6px 0 0;color:var(--t2)}
+.nx2-dose-modal #save:disabled{opacity:.45;cursor:not-allowed}
+
+/* Hybrid Review's immediate-child flex selector must not squeeze this nested card. */
+.modal.nx2-dose-modal #nx-dose-review-rows>div.nx-dose-allocation-summary,
+.modal.nx2-dose-modal #nx-dose-review-rows>div.nx-dose-allocation-warning{
+  display:block!important;width:100%;min-width:0;box-sizing:border-box
+}
+.modal.nx2-dose-modal .nx-dose-allocation-summary .nx-dose-confirm-row{
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px
+}
+.modal.nx2-dose-modal .nx-dose-allocation-summary .nx-dose-confirm-row span{
+  flex:none;width:100%;line-height:1.4
+}
+.modal.nx2-dose-modal .nx-dose-allocation-summary .nx-dose-confirm-row strong{
+  display:block;width:100%;max-width:100%;text-align:left;overflow-wrap:break-word;
+  font-variant-numeric:tabular-nums;line-height:1.45
+}
+.modal.nx2-dose-modal #nx-dose-review-rows>div.nx-dose-allocation-summary .nx-dose-confirm-row strong{
+  text-align:left!important;max-width:100%!important;width:100%!important
+}
+
+/* PR169 guided Log Dose source selection; scoped, accessible and iPhone-safe. */
+.nx2-dose-modal .nx-dose-guided-progress{font-size:12px;line-height:1.4;color:var(--t2);padding:0 20px 12px;font-weight:650}
+.nx2-dose-modal .nx-dose-guidance{font-size:13px;line-height:1.5;color:var(--t2);margin:0 0 14px}
+.nx2-dose-modal .nx-dose-source-exception{border-top:0;padding-top:8px;margin-top:0}
+.nx2-dose-modal .nx-dose-source-exception .nx-multi-vial-toggle{min-height:48px;width:100%;margin:12px 0;text-align:left}
+.nx2-dose-modal .nx-dose-source-exception .nx-alloc-row{flex-wrap:wrap;align-items:center}
+.nx2-dose-modal .nx-dose-source-exception .alloc-mg-input{min-height:44px!important;width:90px!important}
+.nx2-dose-modal .nx-dose-source-exception .alloc-remove{min-width:44px;min-height:44px}
+.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[style*="display: none"]{display:none!important}
+
+/* PR169 guided-flow regression rerun: source style unchanged; scenario tests updated. */
+
+/* Guided vial amount explanations should wrap comfortably on narrow iPhones. */
+.nx2-dose-modal .nx-dose-source-exception .nx-allocation-help{font-size:12px;line-height:1.5;overflow-wrap:anywhere}

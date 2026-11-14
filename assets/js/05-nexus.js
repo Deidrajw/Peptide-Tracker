@@ -1482,9 +1482,7 @@ function doseModal(name, existing, occTime, formChoice) {
     `}
     ${!isUntracked && !isEdit && eligibleSources.length===1 && !preparedBatches.length && !unlabelledOpenSources.length ? `<div id="nx-dose-inventory-status" role="status" class="nx-dose-stock-status"><span aria-hidden="true">✓</span> Stock available <small>${mgToUnit(getVialRemainingMg(eligibleSources[0].kit,eligibleSources[0].vial),c.unit).toFixed(2)} ${esc(c.unit)} remaining</small></div>`:""}
     ${isBlend?`<div id="nx-blend-dose-breakdown" style="font-size:11px;line-height:1.6;color:var(--t3);margin:2px 0 12px" aria-live="polite"></div>`:""}
-    ${!isUntracked && !isEdit && eligibleSources.length ? `<button id="toggle-multi" class="nx-multi-vial-toggle">${multiMode?"Use one vial instead":"Use multiple vials · advanced"}</button>` : ""}
     ${isUntracked?`<div class="nx-dose-untracked-note" role="status">Doses only · No inventory will be deducted.</div>`:""}
-    <div id="alloc-panel" style="margin-bottom:14px"></div>
     <div class="field-label" id="nx-method-label">ADMINISTRATION METHOD · THIS DOSE</div>
     <div class="nx-method-grid" role="group" aria-labelledby="nx-method-label">
       ${selectableMethods.map(method=>`<button type="button" class="nx-method-option${method===initialMethod?" is-selected":""}" data-admin-method="${method}" aria-pressed="${method===initialMethod}">${method}</button>`).join("")}
@@ -1505,9 +1503,12 @@ function doseModal(name, existing, occTime, formChoice) {
       </div>
     </details>
     </section>
-    <section class="nx-dose-section nx-dose-source-exception" aria-label="Source choices when needed" style="${isEdit||isUntracked||(!preparedBatches.length&&eligibleSources.length===1&&!unlabelledOpenSources.length)?"display:none":""}">
-      <div class="nx-dose-section-title">${eligibleSources.length>1?"Which vial did you use?":preparedBatches.length?"Choose dose source":unlabelledOpenSources.length?"Confirm your vial":"Dose source"}</div>
-    ${!isEdit && !preparedBatches.length && eligibleSources.length===0 && unlabelledOpenSources.length===0 ? `<div class="nx-dose-source-readout" role="status"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>No verified open vial</strong><small>Check Stash for an open vial compatible with ${esc(initialMethod)}. No inventory will be deducted without a verified source.</small></div></div>` : ""}
+    <section class="nx-dose-section nx-dose-source-exception" aria-label="Select physical vial sources" style="${isEdit||isUntracked?"display:none":""}">
+      <div class="nx-dose-section-title">Which vial did you use?</div>
+      <p class="nx-dose-guidance">Choose the exact open vial used for this dose. Multiple vials still create one dose record; stock changes only after final confirmation.</p>
+      ${!isUntracked && !isEdit && eligibleSources.length>1 && selectedSource==="fresh" ? `<button type="button" id="toggle-multi" class="nx-multi-vial-toggle" aria-pressed="${multiMode}">${multiMode?"✓ Using multiple vials · choose amounts below":"+ Use more than one vial"}</button>` : ""}
+      <div id="alloc-panel" style="margin-bottom:14px"></div>
+    ${!isEdit && !preparedBatches.length && eligibleSources.length===0 && unlabelledOpenSources.length===0 ? `<div class="nx-dose-source-readout" role="status"><span class="nx-dose-source-dot" aria-hidden="true"></span><div><strong>No eligible vial for ${esc(initialMethod)}</strong><small>Vials may be empty, sealed, or assigned to another administration method. Check Stash; no dose or inventory change has occurred.</small></div></div>` : ""}
     ${!isEdit && unlabelledOpenSources.length ? `<div class="nx-dose-source-legacy" role="group" aria-label="Confirm administration method for an open vial" style="margin:10px 0 16px;padding:14px;border:1px solid var(--border-sub);border-radius:12px;background:var(--surface-2)">
       <p style="font-size:12px;line-height:1.55;color:var(--t3);margin:0 0 10px">This vial has no saved administration method. Confirm it once; inventory changes only when you save the dose.</p>
       ${unlabelledOpenSources.map(({kit,vial})=>`<button type="button" class="nx-confirm-legacy-vial" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:48px;margin:4px 0;padding:10px 12px;text-align:left;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--t1)">
@@ -1547,8 +1548,8 @@ function doseModal(name, existing, occTime, formChoice) {
   `, c.color);
   // Apply the existing responsive/accessible dose modal rules to EVERY normal entry.
   m.classList.add("nx2-dose-modal");
-  // Single-screen dose entry: keep source allocation, drafts, calculations and
-  // the authoritative #save inventory checks unchanged. Review is optional.
+  // Three-step guided physical Log Dose: Details -> Vials -> Review.
+  // Non-physical/edit/prepared/blend workflows retain their existing guarded path.
   const doseScroll=m.querySelector(".nx-dose-scroll");
   const doseFooter=m.querySelector(".nx-dose-footer");
   const doseHead=m.querySelector(".nx-dose-head");
@@ -1579,43 +1580,115 @@ function doseModal(name, existing, occTime, formChoice) {
   backButton.textContent="‹  Edit details";
   backButton.hidden=true;
   reviewButton.insertAdjacentElement("beforebegin",backButton);
+  const guidedSources=!isEdit&&!isUntracked&&!isBlend&&!isNasal&&selectedSource==="fresh";
+  const detailsStage=m.querySelector('[aria-label="Administration details"]');
+  const sourceStage=m.querySelector('.nx-dose-source-exception');
+  const flowIndicator=document.createElement('div');
+  flowIndicator.className='nx-dose-guided-progress';
+  flowIndicator.setAttribute('role','status');
+  fixedDoseHeader.append(flowIndicator);
+  let guidedStep=1;
   let doseReviewActive=false;
   const doseVal=id=>m.querySelector("#"+id)?.value||"";
   const reviewRow=(label,value)=>'<div class="nx-dose-confirm-row"><span>'+esc(String(label))+'</span><strong>'+esc(String(value??"Not set"))+'</strong></div>';
+  // Source preview uses the same canonical mg amounts as exclusive save.
+  // Invalid drafts stay editable, but Confirm must be disabled.
+  const doseReviewSourcePlan=()=>{
+    // Confirmed mid-draw rows use the existing protected finish-vial flow.
+    // This preview must not block their separate ledger reconciliation path.
+    if(rows.some(r=>r.finished)||isEdit||isUntracked||editingUntracked||isBlend||selectedSource!=="fresh")return null;
+    const kit=activeKit(),vial=kit?activeVial():null;
+    const requiredMg=doseToMg(Number(doseVal("dose")),c.unit);
+    const plan=rows.length?rows.filter(r=>Number(r.mg)>0)
+      :kit&&vial?[{kitId:kit.id,vialId:vial.id,mg:requiredMg}]:[];
+    const errors=[],sources=[],seen=new Set();
+    let allocated=0;
+    if(!Number.isFinite(requiredMg)||requiredMg<=0)errors.push("Enter a valid dose amount.");
+    if(!plan.length)errors.push("Select an eligible open vial.");
+    for(const step of plan){
+      const k=(state.supplies||[]).find(x=>String(x.id)===String(step.kitId));
+      const v=(k?.vials||[]).find(x=>String(x.id)===String(step.vialId));
+      const mg=Number(step.mg),key=String(step.kitId)+":"+String(step.vialId);
+      if(!Number.isFinite(mg)||mg<=0||Math.abs(mg*100-Math.round(mg*100))>0.00001){
+        errors.push("Check the amount allocated to each vial.");continue;
+      }
+      allocated+=mg;
+      if(seen.has(key)){errors.push("The same vial was selected twice.");continue;}
+      seen.add(key);
+      if(step.finished||!k||!v||k.name!==name||k.isBlend||!k.activeKit||
+         !["open","active"].includes(v.status)){
+        errors.push("A source is no longer eligible. Recheck the exact vial.");continue;
+      }
+      const method=v.intendedUse&&v.intendedUse!=="undecided"?v.intendedUse:
+        (k.preparationMethod||k.administrationMethod||k.route);
+      if(!nexusPhysicalVialCompatible(method,m.querySelector("#nx-dose-method")?.value||initialMethod))
+        errors.push("A source does not match the recorded administration method.");
+      const available=getVialRemainingMg(k,v);
+      if(!Number.isFinite(available)||mg>available+0.000001)
+        errors.push("A selected vial does not contain the amount allocated to it.");
+      sources.push({kit:k,vial:v,mg,available});
+    }
+    if(allocated+0.001<requiredMg)
+      errors.push("Short by "+mgToUnit(requiredMg-allocated,c.unit).toFixed(2)+" "+c.unit+". Add another source or reduce the amount.");
+    else if(allocated>requiredMg+0.001)
+      errors.push("Sources exceed the requested dose by "+mgToUnit(allocated-requiredMg,c.unit).toFixed(2)+" "+c.unit+".");
+    return {valid:!errors.length,errors,sources,allocated,requiredMg};
+  };
   const updateDoseReview=()=>{
-    const kit=activeKit();
-    const vial=kit?activeVial():null;
+    const kit=activeKit(),vial=kit?activeVial():null;
     const prepared=preparedBatches.find(p=>p.id===selectedSource);
     const sourceLabel=(isUntracked||editingUntracked)?"Untracked · No inventory deduction":selectedSource==="fresh"
       ?(vial?(kit.name+" · Vial "+(vial.sequenceNumber||"?")):"Source not selected")
       :(prepared?"Prepared dose":"Prepared source");
-    const usedMg=doseToMg(Number(doseVal("dose")),c.unit);
-    const remaining=vial?getVialRemainingMg(kit,vial):null;
+    const plan=doseReviewSourcePlan();
+    const fmt=mg=>mgToUnit(mg,c.unit).toFixed(2)+" "+c.unit;
     review.querySelector("#nx-dose-review-amount").textContent=(m.querySelector("#nx-dose-entered")?.value||doseVal("dose"))+" "+(m.querySelector("#nx-dose-unit")?.value||c.unit);
     review.querySelector("#nx-dose-review-compound").textContent=name;
-    review.querySelector("#nx-dose-review-rows").innerHTML=
-      reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
+    const standard=reviewRow("Date & time",new Date(doseVal("date")).toString()!=="Invalid Date"?new Date(doseVal("date")).toLocaleString():doseVal("date"))+
       reviewRow("Method",m.querySelector("#nx-dose-method")?.value||initialMethod)+
-      (["SubQ","IM"].includes(m.querySelector("#nx-dose-method")?.value)?reviewRow("Administration site",doseVal("site")||"Not recorded"):"")+
-      reviewRow("Vial used",isEdit?"Original source retained":sourceLabel)+
-      (selectedSource==="fresh"&&!isEdit&&vial&&remaining!=null
-        ?reviewRow("Vial remaining after save",mgToUnit(Math.max(0,remaining-usedMg),c.unit).toFixed(2)+" "+c.unit):"")+
+      (["SubQ","IM"].includes(m.querySelector("#nx-dose-method")?.value)?reviewRow("Administration site",doseVal("site")||"Not recorded"):"");
+    const sourceRows=plan?
+      '<div class="nx-dose-allocation-summary"><strong>Exact inventory sources</strong>'+plan.sources.map(item=>
+        reviewRow(item.kit.name+" · Vial "+(item.vial.sequenceNumber||"?"),
+          fmt(item.mg)+" used · "+fmt(item.available)+" → "+fmt(Math.max(0,item.available-item.mg))+" left")
+      ).join("")+reviewRow("Total allocated",fmt(plan.allocated)+" of "+fmt(plan.requiredMg))+"</div>":
+      reviewRow("Vial used",isEdit?"Original source retained":sourceLabel);
+    const warning=plan&&!plan.valid?
+      '<div class="nx-dose-allocation-warning" role="alert">'+
+        "<strong>Resolve inventory before confirming</strong><p>"+esc(plan.errors.join(" "))+"</p>"+
+        "<p>Use Edit details to correct the amount or select another source. Nothing has been saved.</p></div>":"";
+    review.querySelector("#nx-dose-review-rows").innerHTML=standard+sourceRows+warning+
       (m.querySelector("#nx-dose-as-needed")?.checked?reviewRow("Protocol","Independent log"):"");
+    saveButton.disabled=!!plan&&!plan.valid;
+    saveButton.setAttribute("aria-disabled",String(saveButton.disabled));
   };
   const showDoseReview=(on)=>{
     doseReviewActive=on;
+    if(on)guidedStep=3;
     if(on)updateDoseReview();
+    else {saveButton.disabled=false;saveButton.setAttribute("aria-disabled","false");}
     doseScroll.hidden=on;
+    if(!on && guidedSources){
+      detailsStage.style.display=guidedStep===1?"":"none";
+      sourceStage.style.display=guidedStep===2?"":"none";
+      if(guidedStep===2){
+        sourceStage.scrollIntoView?.({block:"start"});
+      }
+    }
     review.hidden=!on;
     reviewButton.hidden=on;
-    backButton.hidden=!on;
+    backButton.hidden=!on && !(guidedSources && guidedStep===2);
     saveButton.hidden=!on;
     reviewButton.setAttribute("aria-expanded",String(on));
-    fixedDoseHeader.querySelector(".nx-dose-kicker").textContent=on?"STEP 2 OF 2":(isEdit?"EDIT ENTRY":"STEP 1 OF 2");
-    fixedDoseHeader.querySelector(".nx-dose-title").textContent=on?"Review & confirm":(isEdit?"Edit dose":"Log a dose");
+    fixedDoseHeader.querySelector(".nx-dose-kicker").textContent=guidedSources?`STEP ${guidedStep} OF 3`:(on?"STEP 2 OF 2":(isEdit?"EDIT ENTRY":"STEP 1 OF 2"));
+    fixedDoseHeader.querySelector(".nx-dose-title").textContent=guidedSources?(guidedStep===1?"Dose details":guidedStep===2?"Select vials":"Review & confirm"):(on?"Review & confirm":(isEdit?"Edit dose":"Log a dose"));
+    flowIndicator.textContent=guidedSources?`${guidedStep} / 3 · ${guidedStep===1?"Dose details":guidedStep===2?"Select vials":"Review"}`:"";
+    reviewButton.textContent=guidedSources?(guidedStep===1?"Continue to vials":"Review dose"):(isEdit?"Review changes":"Review dose");
+    backButton.textContent=guidedSources&&guidedStep===2?"‹ Back to dose details":"‹ Edit vial selection";
     const note=doseFooter.querySelector(".nx-dose-review-note");
     if(note)note.textContent=on?"Check your entry, then confirm once.":"Your entry stays here until you review and save.";
     if(on)review.querySelector("#nx-dose-review-title")?.focus?.();
+    else if(guidedSources)doseScroll.scrollTop=0;
   };
   // Clear only the stale missing-amount warning once input is corrected.
   // Do not hide independent source, allocation or failed-save errors.
@@ -1643,6 +1716,12 @@ function doseModal(name, existing, occTime, formChoice) {
     const date=doseVal("date");
     if(!date||!Number.isFinite(new Date(date).getTime())){showErrorBanner("Choose a valid date and time before reviewing.");return;}
     if(!Number.isFinite(amount)||amount<=0){showErrorBanner("Enter an amount greater than zero before reviewing.");return;}
+    if(guidedSources && guidedStep===1){
+      guidedStep=2;
+      showDoseReview(false);
+      renderAllocPanel();
+      return;
+    }
     // Do not infer a vial when more than one physical source exists.
     // The authoritative save path still verifies inventory and allocation.
     if(!isUntracked&&!isEdit&&selectedSource==="fresh"&&needsKitPicker&&!selectedPhysicalSource()){
@@ -1659,7 +1738,10 @@ function doseModal(name, existing, occTime, formChoice) {
     clearStaleAmountError();
     showDoseReview(true);
   };
-  backButton.onclick=()=>showDoseReview(false);
+  backButton.onclick=()=>{
+    if(guidedSources)guidedStep=doseReviewActive?2:1;
+    showDoseReview(false);
+  };
   showDoseReview(false);
   m.querySelector("#x").onclick = closeModal;
   const setupButton=m.querySelector("#nx-dose-use-setup");
@@ -1731,7 +1813,7 @@ function doseModal(name, existing, occTime, formChoice) {
       (String(r.kitId)===String(selectedKitId) && String(r.vialId)===String(selectedVialId)));
     // A provisional row from the previous choice is not a confirmed draw.
     // Selecting another fully sufficient vial must clear its stale shortfall.
-    if (!rows.some(r=>r.finished) && rows.length<=1) { rows=[]; multiMode=false; }
+    if (!rows.some(r=>r.finished) && rows.length<=1) { rows=[]; /* preserve the explicit multi-vial choice when switching the first source */ }
     renderAllocPanel();
   });
 
@@ -1777,7 +1859,7 @@ function doseModal(name, existing, occTime, formChoice) {
     // dose. Never present that stale amount as a real shortage once the chosen
     // exact vial is known to cover the entire dose. Locked/confirmed draws are
     // retained for proper multi-vial reconciliation.
-    if (!lockedDraw && akVial && shortBy<=0.001 && rows.length<=1) {
+    if (!multiMode && !lockedDraw && akVial && shortBy<=0.001 && rows.length<=1) {
       rows=[];multiMode=false;panel.innerHTML="";
       const toggle=m.querySelector("#toggle-multi");
       if(toggle)toggle.textContent="+ Use multiple vials";
@@ -1797,6 +1879,36 @@ function doseModal(name, existing, occTime, formChoice) {
       if (akVial && akRemaining > 0.001) rows = [{kitId:ak.id, vialId:akVial.id, mg:Math.round(Math.min(neededMg, akRemaining)*100)/100}];
       else if (ak) rows = [{kitId:ak.id, mg:0}];
     }
+    // An additional physical source may be a *second vial in the same kit*.
+    // Never de-duplicate by kit ID: exact (kitId,vialId) is the source identity.
+    const availableNextSources=()=>eligibleSources.filter(({kit,vial})=>
+      kit.activeKit&&["open","active"].includes(vial.status)&&
+      getVialRemainingMg(kit,vial)>0.001&&
+      !rows.some(r=>String(r.kitId)===String(kit.id)&&String(r.vialId)===String(vial.id)));
+    const addExactSource=source=>{
+      if(!source)return;
+      const stillAvailable=availableNextSources().find(({kit,vial})=>
+        String(kit.id)===String(source.kit.id)&&String(vial.id)===String(source.vial.id));
+      if(!stillAvailable){
+        showErrorBanner("The exact open vial changed. Recheck sources; nothing was saved.");return;
+      }
+      const missing=neededMg-rows.reduce((sum,r)=>sum+(Number(r.mg)||0),0);
+      const available=getVialRemainingMg(stillAvailable.kit,stillAvailable.vial);
+      let take=Math.min(available,missing);
+      // If the first vial covers the dose, selecting another vial must still
+      // visibly add a second source without changing the total requested dose.
+      if(take<=0.001 && multiMode && !rows.some(r=>r.finished)){
+        const donor=rows.find(r=>Number(r.mg)>0.02);
+        const transfer=donor?Math.min(available,Math.round(Number(donor.mg)*50)/100):0;
+        if(donor&&transfer>0.001&&Number(donor.mg)-transfer>0.001){
+          donor.mg=Math.round((Number(donor.mg)-transfer)*100)/100;
+          take=transfer;
+        }
+      }
+      if(take<=0.001)return;
+      rows.push({kitId:stillAvailable.kit.id,vialId:stillAvailable.vial.id,mg:Math.round(take*100)/100});
+      renderAllocPanel();
+    };
     const totalAllocated = rows.reduce((a,r)=>a+(parseFloat(r.mg)||0),0);
     const remaining = Math.round((neededMg-totalAllocated)*100)/100;
     const totalUsableAllKits = otherKitsWithStock().reduce((a,s)=>a+getKitRemainingMg(s),0) + rows.reduce((sum,r)=>{ const k=state.supplies.find(s=>s.id===r.kitId); return sum; },0);
@@ -1809,14 +1921,14 @@ function doseModal(name, existing, occTime, formChoice) {
 
     panel.innerHTML = `
       <div class="nx-allocation-card" style="background:${shortBy>0.001?"#F9C87D11":"var(--surface-2)"};border:1px solid ${shortBy>0.001?"#F9C87D33":"var(--border-sub)"};border-radius:10px;padding:12px 14px">
-        ${shortBy>0.001?`<div class="nx-shortfall-eyebrow">Inventory resolution</div><div class="nx-allocation-heading" role="status">Not enough in current vial</div><p class="nx-shortfall-intro">Review your dose allocation below. You can use another available vial or open a sealed vial without losing this entry.</p>
+        ${shortBy>0.001?`<div class="nx-shortfall-eyebrow">Use a second vial</div><div class="nx-allocation-heading" role="status">Not enough in current vial</div><p class="nx-shortfall-intro">Choose an additional vial below to cover the dose. Your entry stays here, and nothing is deducted yet.</p>
         <div class="nx-allocation-summary" aria-label="Vial availability">
           <div class="nx-allocation-metric"><small>Dose needed</small><strong>${fmt(neededMg)} ${c.unit}</strong></div>
           <div class="nx-allocation-metric"><small>Open vial</small><strong>${fmt(akRemaining)} ${c.unit}</strong></div>
           <div class="nx-allocation-metric"><small>Short by</small><strong style="color:#F9C87D">${fmt(shortBy)} ${c.unit}</strong></div>
         </div>`
-        : `<div style="font-size:11px;color:var(--t4);margin-bottom:10px">Sources for this dose</div>`}
-        <div class="nx-shortfall-step">Step 1 · Review sources and amounts</div>
+        : `<div style="font-size:13px;color:var(--t2);margin-bottom:10px">Your selected vials and amounts</div>`}
+        <div class="nx-shortfall-step">How much will you use from each vial?</div>
         <div class="nx-shortfall-progress" role="progressbar" aria-label="Dose amount allocated" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0)))}"><div style="width:${Math.max(0,Math.min(100,neededMg>0?totalAllocated/neededMg*100:0))}%"></div></div>
         <div class="nx-shortfall-status" aria-live="polite">${remaining>0.01?`${fmt(remaining)} ${c.unit} still needs a source.`:remaining < -0.01?`Allocation exceeds the requested dose by ${fmt(Math.abs(remaining))} ${c.unit}.`:`✓ Allocation matches the requested dose.`}</div>
         <div id="alloc-rows">
@@ -1845,15 +1957,17 @@ function doseModal(name, existing, occTime, formChoice) {
           <span style="font-size:11px;color:var(--t4)">Total: <b style="color:${Math.abs(remaining)<0.01?"#7DF9C0":"var(--t2)"}">${fmt(totalAllocated)}${c.unit}</b> / ${fmt(neededMg)}${c.unit}</span>
           ${Math.abs(remaining)<0.01?`<span style="font-size:11px;color:#7DF9C0">✓ Matches dose</span>`:remaining>0?`<span style="font-size:11px;color:#F9C87D">${fmt(remaining)}${c.unit} still needed</span>`:`<span style="font-size:11px;color:#FF7C7C">${fmt(Math.abs(remaining))}${c.unit} over</span>`}
         </div>
-        ${remaining>0.01 ? `<div class="nx-shortfall-step">Step 2 · Resolve the remaining amount</div>` : ""}
-        ${remaining>0.01 ? (
-          otherKitsWithStock().filter(k=>!rows.some(r=>r.kitId===k.id)).length
-            ? `<button id="alloc-add-kit" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">+ Use another open vial</button>`
+        ${remaining>0.01 ? `<div class="nx-shortfall-step">Choose another vial to complete this dose</div>` : ""}
+        ${(remaining>0.01 || multiMode) ? (
+          availableNextSources().length
+            ? (availableNextSources().length===1
+              ? `<button id="alloc-add-kit" type="button" style="width:100%;margin-top:10px;padding:9px;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px;min-height:44px">+ Use another open vial</button>`
+              : `<div class="nx-extra-source-options" role="group" aria-label="Choose another exact open vial">${availableNextSources().map(({kit,vial})=>`<button type="button" class="alloc-select-source" data-kit="${esc(String(kit.id))}" data-vial="${esc(String(vial.id))}" style="width:100%;min-height:44px;margin-top:8px;padding:10px;text-align:left;border-radius:8px;background:var(--surface-3);border:1px solid var(--border);color:var(--t2);font-size:12px">${esc(kit.name)} · Vial ${esc(String(vial.sequenceNumber??"?"))} · ${fmt(getVialRemainingMg(kit,vial))} ${c.unit} available</button>`).join("")}</div>`)
             : (totalCapacity + 0.01 < neededMg
                 ? `<div style="margin-top:10px;font-size:11px;color:#FF7C7C">Only ${fmt(totalCapacity)}${c.unit} total usable inventory exists for ${esc(name)} — open a new vial to cover the remaining ${fmt(neededMg-totalCapacity)}${c.unit}.</div>`
                 : "")
         ) : ""}
-        <button id="alloc-open-new" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">+ Open a sealed vial</button>
+        ${remaining>0.01?`<button id="alloc-open-new" style="width:100%;min-height:44px;margin-top:8px;padding:10px;border-radius:9px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color};font-size:12px;font-weight:600">+ Open another sealed vial</button>`:""}
       </div>`;
 
     panel.querySelectorAll(".alloc-mg-input").forEach(inp=>inp.oninput=()=>{ rows[+inp.dataset.i].mg = doseToMg(inp.value, c.unit); debouncedRenderAllocPanel(); });
@@ -1890,23 +2004,12 @@ function doseModal(name, existing, occTime, formChoice) {
       }, () => doseModal(name));
     });
     const addKitBtn = panel.querySelector("#alloc-add-kit");
-    if (addKitBtn) addKitBtn.onclick = () => {
-      const nextKit = otherKitsWithStock().filter(k=>!rows.some(r=>String(r.kitId)===String(k.id)))[0];
-      if (!nextKit)return;
-      // An additional KIT is not an additional physical SOURCE. The exclusive
-      // writer requires the exact vial ID; do not hand it an unpinned kit row.
-      const compatible=eligibleSources.filter(x=>String(x.kit.id)===String(nextKit.id)&&
-        ["open","active"].includes(x.vial.status)&&getVialRemainingMg(x.kit,x.vial)>0.001);
-      if(compatible.length!==1){
-        showErrorBanner("Choose and verify the exact open vial for this additional kit in Stash. No stock or history was changed.");
-        return;
-      }
-      const source=compatible[0];
-      const take=Math.min(getVialRemainingMg(source.kit,source.vial),remaining);
-      if(take<=0)return;
-      rows.push({kitId:nextKit.id,vialId:source.vial.id,mg:Math.round(take*100)/100});
-      renderAllocPanel();
-    };
+    if(addKitBtn)addKitBtn.onclick=()=>addExactSource(availableNextSources()[0]);
+    panel.querySelectorAll(".alloc-select-source").forEach(button=>button.onclick=()=>{
+      const source=availableNextSources().find(({kit,vial})=>
+        String(kit.id)===button.dataset.kit&&String(vial.id)===button.dataset.vial);
+      addExactSource(source);
+    });
     const openNewBtn = panel.querySelector("#alloc-open-new");
     if (openNewBtn) openNewBtn.onclick = () => {
       // Preserve everything about this in-progress dose, then hand off to Reconstitute —
@@ -2062,7 +2165,14 @@ function doseModal(name, existing, occTime, formChoice) {
     refreshBlendBreakdown();
   }
   const toggleBtn = m.querySelector("#toggle-multi");
-  if (toggleBtn) toggleBtn.onclick = () => { multiMode = !multiMode; if(!multiMode) rows=[]; toggleBtn.textContent = multiMode?"− Use a single vial instead":"+ Use multiple vials"; renderAllocPanel(); };
+  if (toggleBtn) toggleBtn.onclick = () => {
+    multiMode = !multiMode;
+    if(!multiMode)rows=[];
+    toggleBtn.setAttribute("aria-pressed",String(multiMode));
+    toggleBtn.textContent = multiMode?"✓ Using multiple vials · choose amounts below":"+ Use more than one vial";
+    renderAllocPanel();
+    if(multiMode)m.querySelector("#alloc-panel")?.scrollIntoView?.({block:"nearest"});
+  };
   renderAllocPanel();
 
   m.querySelector("#save").onclick = async () => {

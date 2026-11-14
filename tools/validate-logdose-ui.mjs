@@ -48,12 +48,26 @@ async function openDose(page){
   // product requires a tap when multiple eligible physical vials are available.
   // Distinct-vial no-default behaviour is asserted separately in formulation QA.
   const choices=page.locator('.kit-opt');
-  if(await choices.count()>1)await choices.first().click();
+  if(await choices.count()>1){
+    // The user must enter a valid amount before advancing from Dose details.
+    // Supply a hypothetical test amount; individual cases below overwrite it.
+    const entry=page.locator('#nx-dose-entered');
+    if(!Number(await entry.inputValue()))await entry.fill('1');
+    await page.locator('#nx-dose-review-open').click();
+    await page.locator('.nx-dose-source-exception').waitFor({state:'visible'});
+    await choices.first().click();
+  }
 }
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
-  if(await modal.locator('#nx-dose-review-open').isVisible())await modal.locator('#nx-dose-review-open').click();
-  if(await modal.locator('#save').isVisible())await modal.locator('#save').click();
+  // A newly created physical dose now has Details -> Vials -> Review.
+  // Protected edit/prepared/untracked paths still enter Review directly.
+  for(let step=0;step<2&&await modal.locator('#nx-dose-review-open').isVisible();step++)
+    await modal.locator('#nx-dose-review-open').click();
+  // Review preflight now disables confirmation for incomplete/overdrawn inventory.
+  // Browser regression must assert no write instead of waiting to click disabled UI.
+  if(await modal.locator('#save').isVisible()&&await modal.locator('#save').isEnabled())
+    await modal.locator('#save').click();
   const prompt=page.locator('.nx-reaction-invite');
   if(await prompt.count()){
     ensure(await prompt.locator('#nx-reaction-later').isVisible(),'Post-dose invitation cannot be skipped');
@@ -106,6 +120,12 @@ try {
       'Legacy vial balance obscured or misrepresented as zero');
     ensure(!(await page.locator('#alloc-panel').innerText()).includes('Not enough in current vial'),
       'Unlabelled vial incorrectly called insufficient inventory');
+    // The guided physical-dose flow presents legacy vial method confirmation
+    // on Step 2 (Select vials), not on the initial Dose details screen.
+    await setDose(page,1.25);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await unlabelled.first().isVisible(),
+      'Legacy vial method confirmation must be visible on guided source step');
     await unlabelled.first().click();
     const afterConfirm=await page.evaluate(()=>({
       method:state.supplies[0].vials[0].intendedUse,
@@ -207,6 +227,9 @@ try {
       doseModal('Retatrutide');
     });
     ensure(await page.locator('.kit-opt').count()===2,'Expected explicit choice of two open vials');
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-source-exception').isVisible(),
+      'Guided Step 2 must reveal the exact physical vial choices');
     await page.locator('.kit-opt[data-vial="39998"]').click();
     ensure(!(await page.locator('#alloc-panel').innerText()).includes('still needs a source'),
       'Stale provisional source allocation falsely reports shortage against sufficient vial');
@@ -228,8 +251,11 @@ try {
     });
     ensure(await page.locator('.kit-opt').count()===2,
       'Multiple open vials not exposed as exact physical sources');
-    await page.locator('.kit-opt[data-vial="38888"]').click();
     await setDose(page,4);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-source-exception').isVisible(),
+      "Guided Step 2 must expose the exact vial selector for Confirm draw");
+    await page.locator('.kit-opt[data-vial="38888"]').click();
     // The shipped dose editor intentionally debounces allocation rendering by
     // 500 ms while typing. Wait for that existing behaviour rather than asserting
     // against the stale first-render panel.
@@ -502,7 +528,7 @@ try {
     ensure(await fixedHeader.count()===1,'Dose title and mode switch are not in fixed header');
     ensure(await fixedHeader.locator('.nx-dose-head > #x').count()===1,
       'Close control escaped fixed header (invalid modal HTML nesting)');
-    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Source choices when needed"]').count()===1 &&
+    ensure(await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Select physical vial sources"]').count()===1 &&
       await page.locator('.nx2-dose-modal .nx-dose-scroll > .nx-dose-section[aria-label="Administration details"]').count()===1,
       'Dose sections escaped scrolling body (invalid modal HTML nesting)');
     const layout=await page.locator('.nx2-dose-modal').evaluate(modal=>{
@@ -605,6 +631,11 @@ try {
     await captureDose('Focused');
     visualEvidence.Focused.focusState=focusState;
     await page.waitForTimeout(650);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-source-exception').isVisible() &&
+      await page.locator('.nx-dose-review-stage').isHidden(),
+      'Step 2 must show physical vial selection before Review');
+    await captureDose('Vials');
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     await captureDose('Review');
@@ -775,7 +806,13 @@ try {
     await setDose(page,7);
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-panel').innerText().then(x=>x.includes('Not enough in current vial')),'Shortfall UI not visible');
-    let before=await stateSnapshot(page);await clickSave(page);let after=await stateSnapshot(page);
+    let before=await stateSnapshot(page);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('#save').isDisabled(),'Shortage must disable Confirm at Review');
+    ensure((await page.locator('#nx-dose-review-rows').innerText()).includes('Resolve inventory before confirming'),
+      'Shortage must be explained before Confirm');
+    await clickSave(page);
+    let after=await stateSnapshot(page);
     ensure(after.entries.length===0,'UNDERALLOCATED_FORM_SAVED_PARTIAL_DOSE: 7 mg recorded despite only 6.5 mg open');
     ensure(JSON.stringify(after.kits)===JSON.stringify(before.kits),'Rejected entry altered source stock');
     verified.push('insufficient open stock and invalid amounts cannot log partial dose');
@@ -804,7 +841,10 @@ try {
     await page.locator('#nx-dose-review-open').click();
     await page.waitForFunction(()=>document.querySelector('#nx-dose-review-compound')?.textContent?.includes('Retatrutide'));
     const splitReview=await page.locator('#nx-dose-review-rows').innerText();
-    ensure(splitReview.includes('Vial used'),'Multi-vial Review omits selected physical source summary');
+    ensure(splitReview.includes('Exact inventory sources')&&splitReview.includes('Total allocated'),
+      'Multi-vial Review must disclose both source rows and exact total');
+    ensure((splitReview.match(/Vial 1/g)||[]).length>=2,
+      'Multi-vial Review must include both physical source entries');
     ensure(!splitReview.includes('Kit 9104')&&!splitReview.includes('Kit 9105'),'Primary multi-vial Review should not expose raw kit IDs');
     ensure(!splitReview.includes('9104')&&!splitReview.includes('9105'),'Raw kit identifiers must be hidden on review');
     await clickSave(page);
@@ -816,6 +856,41 @@ try {
     ensure(Math.abs(split.kits[0].remaining[0])<.01 &&
       Math.abs(split.kits[1].remaining[0]-2.5)<.01,'Two-source inventory math wrong');
     verified.push('actual UI multi-vial selection & one dose record');
+    // C2: TWO open physical vials in ONE kit must be independently selectable
+    // by exact vial ID. This must not require creating a duplicate kit.
+    await seed(page,theme);
+    await page.evaluate(()=>{
+      const kit=window.__fixtureKit(9200,1);
+      const second={...JSON.parse(JSON.stringify(kit.vials[0])),
+        id:19201,sequenceNumber:2,status:'open',remainingMg:5};
+      kit.vials.push(second);kit.openedVials=2;
+      state.supplies=[kit];
+    });
+    await openDose(page);await setDose(page,3);await page.waitForTimeout(550);
+    await page.locator('#toggle-multi').click();
+    ensure(await page.locator('#alloc-add-kit').count()===1,
+      'Second open vial in SAME KIT not offered as exact additional source');
+    await page.locator('#alloc-add-kit').click();
+    const sameKitReviewButton=page.locator('#nx-dose-review-open');
+    await sameKitReviewButton.click();
+    const sameKitReview=await page.locator('#nx-dose-review-rows').innerText();
+    ensure(sameKitReview.includes('Vial 1')&&sameKitReview.includes('Vial 2'),
+      'Same-kit dual open vial Review omits an exact physical source');
+    ensure(await page.locator('#save').isEnabled(),
+      'Correct same-kit dual open vial allocation erroneously blocked');
+    await clickSave(page);
+    await page.waitForFunction(()=>state.peptides.Retatrutide.doses.length===1,null,{timeout:5000});
+    const sameKitSaved=await stateSnapshot(page);
+    ensure(sameKitSaved.entries[0].allocations?.length===2,
+      'Same-kit dual open source save lost distinct physical vial attribution');
+    ensure(String(sameKitSaved.entries[0].allocations[0].vialId)!==
+      String(sameKitSaved.entries[0].allocations[1].vialId),
+      'Same-kit source rows incorrectly collapsed to one vial');
+    ensure(Math.abs(sameKitSaved.kits[0].remaining[0])<0.01&&
+      Math.abs(sameKitSaved.kits[0].remaining[1]-3)<0.01,
+      'Same-kit two-vial exact allocation balances incorrect');
+    verified.push('same-kit dual open vial selection and exact two-source debit');
+
 
     // D: Recording a prepared syringe changes prepared remaining count,
     // never deducts the source vial again.
@@ -854,6 +929,9 @@ try {
     await page.locator('#site').selectOption({index:1});
     const selectedSite=await page.locator('#site').inputValue();
     await page.waitForTimeout(650);
+    await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-source-exception').isVisible(),
+      'Open sealed vial handoff must start from guided vial source stage');
     ensure(await page.locator('#alloc-open-new').count()===1,'Open sealed vial action missing');
     await page.locator('#alloc-open-new').click();
     const draft=await stateSnapshot(page);
@@ -996,19 +1074,27 @@ try {
     ensure(await page.locator('.nx-dose-scroll').isVisible(),
       'Step 1 entry should be visible before Review');
     await page.locator('#nx-dose-review-open').click();
+    ensure(await page.locator('.nx-dose-review-stage').isHidden() &&
+      await page.locator('.nx-dose-source-exception').isVisible(),
+      'Step 2 must show exact vial selection, not skip directly to Review');
+    await page.locator('#nx-dose-review-open').click();
     ensure(await page.locator('.nx-dose-review-stage').isVisible(),
-      'Review must appear only after requesting Step 2');
+      'Review must appear only after completing the source selection stage');
     ensure(await page.locator('.nx-dose-scroll').isHidden(),
-      'Step 1 form leaked into Step 2');
+      'Dose fields leaked into final Review');
     ensure(await page.locator('#nx-dose-review-amount').innerText()==='5 mg',
       'Review did not reflect newly entered valid amount');
     ensure(await page.locator('#nx-dose-review-rows .nx-dose-confirm-row').count()>=3,
       'Second-step review detail rows missing');
     await page.locator('#nx-dose-review-back').click();
-    ensure(await page.locator('.nx-dose-review-stage').isHidden(),
-      'Review remained visible after returning to Step 1');
-    ensure(await page.locator('.nx-dose-scroll').isVisible(),
-      'Step 1 missing after Edit details');
+    ensure(await page.locator('.nx-dose-review-stage').isHidden() &&
+      await page.locator('.nx-dose-source-exception').isVisible(),
+      'Review Back must return to the exact-vial selection step');
+    await page.locator('#nx-dose-review-back').click();
+    ensure(await page.locator('.nx-dose-scroll').isVisible() &&
+      await page.locator('.nx-dose-source-exception').isHidden(),
+      'Second Back must return to dose details without losing the draft');
+    await page.locator('#nx-dose-review-open').click();
     await page.locator('#nx-dose-review-open').click();
     const spacing=await page.evaluate(()=>{
       const hero=document.querySelector('.nx-dose-confirm-hero').getBoundingClientRect();
@@ -1019,7 +1105,7 @@ try {
     ensure(await page.evaluate(()=>state.supplies[0].vials[0].remainingMg)===9,
       'Review without Confirm mutated an injectable vial');
     await page.evaluate(()=>closeModal());
-    verified.push('live validation, exact Log Dose font/colour/size parity, isolated Step 1/2 and no write before confirm');
+    verified.push('live validation, exact Log Dose font/colour/size parity, guided Steps 1/2/3 and no write before confirm');
     await seed(page,theme);
     await page.evaluate(()=>{
       const kit=window.__fixtureKit(952,9);

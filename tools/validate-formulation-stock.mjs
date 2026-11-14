@@ -1019,7 +1019,7 @@ try {
   await page.evaluate(()=>doseModal('Fictional Source Selector'));
   assert.equal(await page.locator('.nx-dose-source-readout').count(),0,
     'Two verified open vials must not show a redundant Fresh from vial readout');
-  assert.ok((await page.locator('.nx-dose-source-exception').innerText()).includes('Which vial did you use?'),
+  assert.ok((await page.locator('.nx-dose-source-exception').textContent()).includes('Which vial did you use?'),
     'Multiple-vial choice requires a direct question');
   assert.equal(await page.locator('#nx-dose-site-field').isVisible(),true,
     'SubQ should offer an optional injection-site field');
@@ -1074,12 +1074,30 @@ try {
   await page.evaluate(()=>{closeModal();doseModal('Fictional Source Selector');});
   assert.equal(Number(await page.locator('#nx-dose-entered').inputValue()),1.5,
     'Returning to the dose should restore the unsaved amount');
+  // Step 1 keeps administration method available; Step 2 reveals exact sources.
+  await page.locator('#nx-dose-review-open').click();
+  assert.equal(await page.locator('.nx-dose-source-exception').isVisible(),true,
+    'Guided vial-selection step must be visible after Continue to vials');
   const physicalChoices=page.locator('.kit-opt[data-kit="992211"]');
   assert.equal(await physicalChoices.count(),2,'Two vials in same kit must have separate source choices');
   assert.deepEqual(await physicalChoices.evaluateAll(items=>items.map(b=>b.dataset.vial)),['source-a','source-b']);
   assert.equal(await physicalChoices.evaluateAll(items=>items.filter(b=>b.getAttribute('aria-pressed')==='true').length),0,'Ambiguous kit/vial source must not be preselected');
   await physicalChoices.nth(1).click();
   assert.equal(await physicalChoices.nth(1).getAttribute('aria-pressed'),'true','Explicit source selection must mark only chosen vial');
+  // Guided Step 2 must visibly respond to multi-vial selection even when the
+  // first vial alone can cover the complete dose. The new source must appear
+  // as an editable second row without touching saved inventory.
+  await page.locator('#toggle-multi').click();
+  assert.equal(await page.locator('#toggle-multi').getAttribute('aria-pressed'),'true',
+    'Explicit multi-vial choice must stay active');
+  assert.equal(await page.locator('.alloc-mg-input').count(),1,
+    'Multi-vial mode must immediately show its first source amount');
+  await page.locator('#alloc-add-kit').click();
+  assert.equal(await page.locator('.alloc-mg-input').count(),2,
+    'Choosing another open vial must add a second exact source, even if first alone covers dose');
+  await page.locator('#toggle-multi').click();
+  assert.equal(await page.locator('#toggle-multi').getAttribute('aria-pressed'),'false',
+    'Returning to single vial must close optional allocation controls');
   const untouchedSources=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg));
   assert.deepEqual(untouchedSources,[7,10],'Selecting a vial must not debit either balance');
   await page.evaluate(()=>{
@@ -1137,6 +1155,7 @@ try {
   assert.equal(await page.locator('#nx-dose-inventory-status').isVisible(),true,
     'One eligible Oral vial must appear as available stock');
   await page.locator('#nx-dose-entered').fill('1');
+  await page.locator('#nx-dose-review-open').click();
   await page.locator('#nx-dose-review-open').click();
   await page.locator('#save').click();
   const oralResult=await page.evaluate(()=>{
