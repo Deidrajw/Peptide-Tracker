@@ -52,7 +52,10 @@ async function openDose(page){
 }
 async function clickSave(page){
   const modal=page.locator('.nx2-dose-modal');
-  if(await modal.locator('#nx-dose-review-open').isVisible())await modal.locator('#nx-dose-review-open').click();
+  // A newly created physical dose now has Details -> Vials -> Review.
+  // Protected edit/prepared/untracked paths still enter Review directly.
+  for(let step=0;step<2&&await modal.locator('#nx-dose-review-open').isVisible();step++)
+    await modal.locator('#nx-dose-review-open').click();
   // Review preflight now disables confirmation for incomplete/overdrawn inventory.
   // Browser regression must assert no write instead of waiting to click disabled UI.
   if(await modal.locator('#save').isVisible()&&await modal.locator('#save').isEnabled())
