@@ -3092,3 +3092,5 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 .nx2-dose-modal .nx-dose-source-exception .alloc-mg-input{min-height:44px!important;width:90px!important}
 .nx2-dose-modal .nx-dose-source-exception .alloc-remove{min-width:44px;min-height:44px}
 .nx2-dose-modal .nx-dose-scroll>.nx-dose-section[style*="display: none"]{display:none!important}
+
+/* PR169 guided-flow regression rerun: source style unchanged; scenario tests updated. */
