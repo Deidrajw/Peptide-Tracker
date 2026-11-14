@@ -1813,7 +1813,7 @@ function doseModal(name, existing, occTime, formChoice) {
       (String(r.kitId)===String(selectedKitId) && String(r.vialId)===String(selectedVialId)));
     // A provisional row from the previous choice is not a confirmed draw.
     // Selecting another fully sufficient vial must clear its stale shortfall.
-    if (!rows.some(r=>r.finished) && rows.length<=1) { rows=[]; multiMode=false; }
+    if (!rows.some(r=>r.finished) && rows.length<=1) { rows=[]; /* preserve the explicit multi-vial choice when switching the first source */ }
     renderAllocPanel();
   });
 
