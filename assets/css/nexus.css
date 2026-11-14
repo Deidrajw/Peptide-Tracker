@@ -3082,3 +3082,13 @@ body .modal .nx-sym-picker .nx-search-clear-wrap > button.nx-search-clear {
 .modal.nx2-dose-modal #nx-dose-review-rows>div.nx-dose-allocation-summary .nx-dose-confirm-row strong{
   text-align:left!important;max-width:100%!important;width:100%!important
 }
+
+/* PR169 guided Log Dose source selection; scoped, accessible and iPhone-safe. */
+.nx2-dose-modal .nx-dose-guided-progress{font-size:12px;line-height:1.4;color:var(--t2);padding:0 20px 12px;font-weight:650}
+.nx2-dose-modal .nx-dose-guidance{font-size:13px;line-height:1.5;color:var(--t2);margin:0 0 14px}
+.nx2-dose-modal .nx-dose-source-exception{border-top:0;padding-top:8px;margin-top:0}
+.nx2-dose-modal .nx-dose-source-exception .nx-multi-vial-toggle{min-height:48px;width:100%;margin:12px 0;text-align:left}
+.nx2-dose-modal .nx-dose-source-exception .nx-alloc-row{flex-wrap:wrap;align-items:center}
+.nx2-dose-modal .nx-dose-source-exception .alloc-mg-input{min-height:44px!important;width:90px!important}
+.nx2-dose-modal .nx-dose-source-exception .alloc-remove{min-width:44px;min-height:44px}
+.nx2-dose-modal .nx-dose-scroll>.nx-dose-section[style*="display: none"]{display:none!important}
