@@ -41,7 +41,19 @@ async function stateSnapshot(page){return page.evaluate(()=>({
   prepared:state.preparedDoses.map(p=>({...p})),
   draft:state._pendingDoseDraft
 }));}
-async function setDose(page,amount){const sel=(await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose';await page.locator(sel).fill(String(amount));}
+async function setDose(page,amount){
+  const sel=(await page.locator('#nx-dose-entered').count())?'#nx-dose-entered':'#dose';
+  const input=page.locator(sel);
+  const onVials=await page.locator('.nx-dose-source-exception').isVisible().catch(()=>false);
+  if(!(await input.isVisible())){
+    await page.locator('#nx-dose-review-back').click();
+    if(!(await input.isVisible()))await page.locator('#nx-dose-review-back').click();
+  }
+  await input.fill(String(amount));
+  // Preserve the test user's chosen source stage for positive amounts only.
+  // Invalid values must remain on Details and fail validation before continuing.
+  if(onVials&&Number(amount)>0)await page.locator('#nx-dose-review-open').click();
+}
 async function openDose(page){
   await page.evaluate(()=>doseModal('Retatrutide'));
   // This legacy regression intentionally starts with the first source. The current
@@ -804,6 +816,8 @@ try {
         invalid.kits[1].remaining[0]===5,'Invalid amount '+amount+' was saved or changed inventory');
     }
     await setDose(page,7);
+    if(!(await page.locator('.nx-dose-source-exception').isVisible()))
+      await page.locator('#nx-dose-review-open').click();
     await page.waitForTimeout(650);
     ensure(await page.locator('#alloc-panel').innerText().then(x=>x.includes('Not enough in current vial')),'Shortfall UI not visible');
     let before=await stateSnapshot(page);
