@@ -1084,6 +1084,20 @@ try {
   assert.equal(await physicalChoices.evaluateAll(items=>items.filter(b=>b.getAttribute('aria-pressed')==='true').length),0,'Ambiguous kit/vial source must not be preselected');
   await physicalChoices.nth(1).click();
   assert.equal(await physicalChoices.nth(1).getAttribute('aria-pressed'),'true','Explicit source selection must mark only chosen vial');
+  // Guided Step 2 must visibly respond to multi-vial selection even when the
+  // first vial alone can cover the complete dose. The new source must appear
+  // as an editable second row without touching saved inventory.
+  await page.locator('#toggle-multi').click();
+  assert.equal(await page.locator('#toggle-multi').getAttribute('aria-pressed'),'true',
+    'Explicit multi-vial choice must stay active');
+  assert.equal(await page.locator('.alloc-mg-input').count(),1,
+    'Multi-vial mode must immediately show its first source amount');
+  await page.locator('#alloc-add-kit').click();
+  assert.equal(await page.locator('.alloc-mg-input').count(),2,
+    'Choosing another open vial must add a second exact source, even if first alone covers dose');
+  await page.locator('#toggle-multi').click();
+  assert.equal(await page.locator('#toggle-multi').getAttribute('aria-pressed'),'false',
+    'Returning to single vial must close optional allocation controls');
   const untouchedSources=await page.evaluate(()=>state.supplies.find(k=>k.id===992211).vials.map(v=>v.remainingMg));
   assert.deepEqual(untouchedSources,[7,10],'Selecting a vial must not debit either balance');
   await page.evaluate(()=>{
