@@ -1,3 +1,10 @@
+## 2026-11-15 — PR172 exact-source test status update
+- PASS dedicated fictional blend combo + BAC source regression #43748385052 at app source a588e97d; repeated blend ledger allocations and ledgerId, live source VM exercise, stale blend remainingMg ignored, exception rollback and per-vial BAC source checks.
+- PASS shared writer #43748385085; mobile forms #43748385089; DS2 nested #43748385103.
+- NOT TESTED/IN PROGRESS full browser/build #43748385094, pinned Chromium #43748385091, WebKit #43748385095 at documentation time. Original initial candidate 11cb8c passed all seven, but exact final app-source workflows remain distinct pending conclusions.
+- PASS source package validation candidate #14175207169: 26-file LIVE CRC, ordered 12 JS, full-app HTML equals offline demo ZIP; purely fictional in-memory storage.
+- BLOCKED historical Deadpool stock reconciliation: existing vial status EMPTY; six combo doses have zero/null allocations. Requires explicit physical-record verification; no inferred auto corrections. Physical iPhone and accessibility NOT TESTED; merge/deploy NOT AUTHORIZED.
+
 ## 2026-11-15 — ISSUES #170/#171 proposed regression, UNRELEASED
 - NOT TESTED CI: fictional consecutive 3mg blend combo entries keep 30mg physical vial OPEN until exact ledger consumed, each allocation has nonzero amount and ledgerId, backed dose isBlendDose true, no ordinary remainingMg overwrite.
 - NOT TESTED CI: stale historical blend remainingMg field does not alter ledger-calculated usable balance; forced post-ledger exception restores entire snapshot; unmatched sources fail closed.
