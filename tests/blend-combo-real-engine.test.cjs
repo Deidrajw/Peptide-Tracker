@@ -20,14 +20,13 @@ const context={
   getActiveVial:kit=>kit.vials.find(v=>["open","active"].includes(v.status))||null,
   getSealedVials:kit=>kit.vials.filter(v=>v.status==="sealed"),
   kitSealedVialsV2:kit=>kit.vials.filter(v=>v.status==="sealed"),
-  migrateKitToV2:kit=>{assert(!kit.isBlend,"Blend must bypass ordinary vial migration");},
   getEligibleSourceKits:name=>state.supplies.filter(k=>k.name===name)
     .flatMap(kit=>kit.vials.filter(v=>["open","active"].includes(v.status)).map(vial=>({kit,vial})))
 };
 vm.createContext(context);
 for(const name of ["getBlendKitRemainingMg","getBlendOpenVialRemainingMg"])
   vm.runInContext(get(name,src3),context);
-for(const name of ["getVialRemainingMg","consumeCompoundInventory","planAndApplyComboDoses"])
+for(const name of ["migrateKitToV2","getVialRemainingMg","consumeCompoundInventory","planAndApplyComboDoses"])
   vm.runInContext(get(name,src4),context);
 for(const legacy of [false,true]){
   state.supplies=[{
