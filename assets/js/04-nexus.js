@@ -1481,7 +1481,7 @@ function vialActionsMenu(kitId, vialId) {
     ${canSetMethod?`<button id="va-method" class="nx-vial-menu-action" type="button">Set administration method<small>Identify how this specific vial will be used</small></button>`:""}
     ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
     ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
-    <button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date, BAC water amount, or notes</div></button>
+${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date or BAC water amount without changing doses</div></button>`:""}
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
@@ -1491,7 +1491,8 @@ function vialActionsMenu(kitId, vialId) {
   if(methodAction)methodAction.onclick=()=>{closeModal();nexusStashSetLegacyVialMethod(kitId,vialId);};
   const planAction=m.querySelector("#va-plan");
   if(planAction)planAction.onclick=()=>{closeModal();nexusCreateLinkedPreparation(kitId,vialId);};
-  m.querySelector("#va-edit").onclick = () => { closeModal(); editVialReconModal(kitId, vialId); };
+  const reconAction=m.querySelector("#va-edit");
+  if(reconAction)reconAction.onclick=()=>{closeModal();editVialReconModal(kitId,vialId);};
   m.querySelector("#va-adjust").onclick = () => { closeModal(); adjustVialRemainingModal(kitId, vialId); };
   const reopenBtn = m.querySelector("#va-reopen");
   if (reopenBtn) reopenBtn.onclick = () => { closeModal(); reopenVialModal(kitId, vialId); };
@@ -2122,6 +2123,8 @@ function editVialReconModal(kitId, vialId) {
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
   const c = cfg(s.name);
   const isActiveVial = vial.status==="active"||vial.status==="open";
+  const canCorrectPreparation=isActiveVial||vial.status==="empty"||vial.status==="finished";
+  if(!canCorrectPreparation){showErrorBanner("Only a previously reconstituted vial can have its preparation corrected.");return;}
   const recordedRecon=(s.reconHistory||[]).filter(r=>String(r.vialId)===String(vial.id))
     .sort((a,b)=>String(b.editedAt||b.date||"").localeCompare(String(a.editedAt||a.date||"")))[0]||{};
   const exactBac=vial.bacMl??recordedRecon.bacMl;
@@ -2133,8 +2136,8 @@ function editVialReconModal(kitId, vialId) {
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
     <label class="field-label">RECONSTITUTION DATE</label>
-    <input id="ev-date" type="date" class="inp" value="${dayKey(vial.reconDate)}" style="margin-bottom:14px">
-    ${isActiveVial?`<label class="field-label">BAC WATER ADDED (mL)</label>
+    <input id="ev-date" type="date" class="inp" value="${dayKey(vial.reconDate||recordedRecon.date)}" style="margin-bottom:14px">
+    ${canCorrectPreparation?`<label class="field-label">BAC WATER ADDED (mL)</label>
     <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(displayedBac??"")}" style="margin-bottom:5px">
     ${!hasExactBac?'<p style="font-size:12px;color:var(--t3);line-height:1.5;margin:0 0 14px">Kit default only — not verified for this vial. Save only if it matches what you actually added.</p>':'<div style="margin-bottom:14px"></div>'}`:""}
     <button id="ev-save" class="btn-primary" style="background:${c.color}">Save Changes</button>
@@ -2143,7 +2146,7 @@ function editVialReconModal(kitId, vialId) {
   m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate) || !Number.isFinite(new Date(newDate).getTime())) {showErrorBanner("Enter a valid reconstitution date.");return;}
-    if (isActiveVial) {
+    if (canCorrectPreparation) {
       const bacInput=m.querySelector("#ev-bac");
       const actualBac=bacInput?Number(bacInput.value):NaN;
       if(!Number.isFinite(actualBac)||actualBac<=0) {
@@ -2152,12 +2155,14 @@ function editVialReconModal(kitId, vialId) {
       // Explicit per-vial correction: preserve existing history and link the
       // new evidence to the same physical vial rather than overwriting other vials.
       vial.bacMl=actualBac;
-      s.reconDate=newDate;
-      s.bacMl=actualBac;
+      // A finished vial is historical: never repoint the kit's current
+      // reconstitution date or its default dilution to this old vial.
+      if(isActiveVial){s.reconDate=newDate;s.bacMl=actualBac;}
       s.reconHistory=s.reconHistory||[];
       s.reconHistory.push({
         id:uid(),vialId:vial.id,date:newDate,bacMl:actualBac,
-        editedAt:new Date().toISOString(),kind:"preparation-correction"
+        editedAt:new Date().toISOString(),kind:"preparation-correction",
+        vialStatusAtCorrection:vial.status
       });
     }
     vial.reconDate=newDate;
