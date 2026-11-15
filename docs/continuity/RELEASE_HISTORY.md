@@ -1,3 +1,8 @@
+## 2026-11-15 — PR172 expanded regression and historical BAC fix, UNRELEASED
+- On draft PR172, application JS04 0d747c67 broadens explicit BAC correction to finished historical vials without changing inventory or current kit metadata. Actual-engine test aa7ab8e2 / harness correction 1482347b, actual modal test 7e0229e3, workflow 935f2313. No release version bump or deployment, main remains b3a67ec, production v0.9.27-beta.3.
+- Prior complete exact-head cabed448 seven workflow families SUCCESS and final artifact #14175294218 573-entry outer CRC / LIVE 26 CRC and fiction-only offline full-app DEMO. The later 935f source has new CI pending. Earlier stronger test first failed because harness assumed migration function cannot be invoked for blends, not an app failure; fixed to run actual migration bypass.
+- No data migration, hidden correction of historical six unledgered Deadpool dose entries, or physical-remaining assertion. User backup never committed. Final package and iPhone acceptance for current change NOT COMPLETE.
+
 ## 2026-11-15 — PR172 exact-source candidate evidence (NO RELEASE)
 - Draft PR #172 https://github.com/Deidrajw/Peptide-Tracker/pull/172 on branch fix/blend-combo-vial-ledger-bac-details-20261115. App source SHA a588e97d; no merge, no new version, no Cloudflare change. Main b3a67ec and v0.9.27-beta.3 remain live.
 - Exact source fictional blend test #43748385052 SUCCESS; writer #43748385085 SUCCESS; mobile #43748385089 SUCCESS; DS2 #43748385103 SUCCESS; final WebKit #43748385095 / Chromium #43748385091 / full build/browser #43748385094 ongoing at documentation time. Artifact #14175207169 verified 26-file LIVE, isolated full-app HTML/ZIP, CRC and manifest SHA. Physical iPhone, VoiceOver, user production reload NOT TESTED.
