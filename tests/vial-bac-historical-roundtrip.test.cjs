@@ -42,6 +42,7 @@ async function edit(id,date,bac){
  assert(modal.controls?.["#ev-save"]?.onclick,"Save handler missing");
  await modal.controls["#ev-save"].onclick();
 }
+async function main(){
 assert.match(view("finished-1"),/kit default: 2 mL \(unverified\)/);
 const before={status:kit.vials[0].status,remainingMg:kit.vials[0].remainingMg,
   reconDate:kit.reconDate,bacMl:kit.bacMl};
@@ -67,3 +68,6 @@ context.editVialReconModal(kit.id,"sealed-3");
 assert.equal(JSON.stringify(kit),previous);
 assert.match(errors.at(-1),/previously reconstituted/);
 console.log("PASS exact-vial historical BAC modal round trip without reopening, balance changes, or kit default overwrite");
+
+}
+main().catch(err=>{console.error(err);process.exitCode=1;});
