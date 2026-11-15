@@ -2130,13 +2130,15 @@ function editVialReconModal(kitId, vialId) {
   const exactBac=vial.bacMl??recordedRecon.bacMl;
   const hasExactBac=Number.isFinite(Number(exactBac))&&Number(exactBac)>0;
   const displayedBac=hasExactBac?exactBac:s.bacMl;
+  const recordedDate=vial.reconDate||recordedRecon.date||"";
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">EDIT RECONSTITUTION</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
     <label class="field-label">RECONSTITUTION DATE</label>
-    <input id="ev-date" type="date" class="inp" value="${dayKey(vial.reconDate||recordedRecon.date)}" style="margin-bottom:14px">
+    <input id="ev-date" type="date" class="inp" value="${recordedDate?dayKey(recordedDate):""}" style="margin-bottom:6px">
+    ${!isActiveVial?'<p style="font-size:12px;color:var(--t3);margin:0 0 14px">Unknown historical date? Leave it blank rather than guessing.</p>':'<div style="margin-bottom:14px"></div>'}
     ${canCorrectPreparation?`<label class="field-label">BAC WATER ADDED (mL)</label>
     <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(displayedBac??"")}" style="margin-bottom:5px">
     ${!hasExactBac?'<p style="font-size:12px;color:var(--t3);line-height:1.5;margin:0 0 14px">Kit default only — not verified for this vial. Save only if it matches what you actually added.</p>':'<div style="margin-bottom:14px"></div>'}`:""}
@@ -2145,7 +2147,7 @@ function editVialReconModal(kitId, vialId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate) || !Number.isFinite(new Date(newDate).getTime())) {showErrorBanner("Enter a valid reconstitution date.");return;}
+    if((!newDate&&isActiveVial)||(newDate&&(!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!Number.isFinite(new Date(newDate).getTime())))){showErrorBanner("Enter a valid date for an open vial, or leave an unknown historical date blank.");return;}
     if (canCorrectPreparation) {
       const bacInput=m.querySelector("#ev-bac");
       const actualBac=bacInput?Number(bacInput.value):NaN;
@@ -2160,12 +2162,12 @@ function editVialReconModal(kitId, vialId) {
       if(isActiveVial){s.reconDate=newDate;s.bacMl=actualBac;}
       s.reconHistory=s.reconHistory||[];
       s.reconHistory.push({
-        id:uid(),vialId:vial.id,date:newDate,bacMl:actualBac,
+        id:uid(),vialId:vial.id,date:newDate||null,bacMl:actualBac,
         editedAt:new Date().toISOString(),kind:"preparation-correction",
         vialStatusAtCorrection:vial.status
       });
     }
-    vial.reconDate=newDate;
+    if(newDate)vial.reconDate=newDate;
     if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
