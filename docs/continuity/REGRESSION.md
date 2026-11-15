@@ -1,3 +1,8 @@
+## 2026-11-15 — PR169 browser follow-up; protected Stash multi-vial QA still pending
+- PASS GitHub run #43667876230 Save-ack test in 8 LIVE/DEMO configurations: exclusive write rejection leaves modal open, no false success, no inventory/history mutation. PASS Log Dose 264-flow suite.
+- FAIL same run later at tools/validate-stash-actions.mjs:179: legacy test expected #toggle-multi before entering guided Vials stage, with only one eligible fictional vial; conditional control not rendered.
+- Corrected TEST ONLY at 00f4687e: add second eligible GHK-Cu fictional vial; go to Vials after 1mg Details entry; assert #toggle-multi is visible before measuring CSS. NOT TESTED on new commit until exact-head CI reruns. No physical iPhone/VoiceOver/Dynamic Type acceptance; no clinical calculator validation.
+
 ## 2026-11-14 — Fictional full-app guided dose browser evidence (DRAFT, UNDEPLOYED)
 - Exact app/test source 550c6b89; prior main b3a67ec4 and published v0.9.27-beta.3 unchanged. Latest PR169 draft branch continuity docs remain unmerged.
 - Downloaded official artifact #14135744937: source manifest 550c6b89; outer ZIP CRC PASS; 26-file LIVE ZIP CRC PASS; generic standalone DEMO and its offline index byte-identical/CRC PASS. Recreated tailored complete full-app QA HTML with fictional same-kit Vial4 1mg and Vial8 5mg, no production writes or real imports; tailored offline zip CRC PASS. Fixed **QA fixture only**: vial sequence migration was renumbering hypothetical Vial4 to 9; explicit synthetic _vialsSeqOrderRepaired flag now preserves exact intended identities. No production source changed.
