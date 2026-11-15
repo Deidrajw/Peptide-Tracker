@@ -3314,49 +3314,25 @@ async function quickLogDose(name, occTime) {
   // remainingMg unchanged while administeredMg went up, breaking the ledger balance by
   // exactly the dose amount. Now routes through the same engine as every other dose path.
   let allocations = null, kitId = activeKit ? activeKit.id : null;
-  const isBlendQuickLog=!!activeKit?.isBlend;
   if (activeKit) {
     const cc = cfg(name);
     const neededMg = doseToMg(lastDoseAmt, cc.unit);
-    if(isBlendQuickLog){
-      const vial=getActiveVial(activeKit);
-      const remaining=vial?getBlendOpenVialRemainingMg(activeKit):0;
-      if(!vial||!Number.isFinite(remaining)||remaining+0.0001<neededMg){
-        doseModal(name,null,occTime);return;
-      }
-      // Premixed blends have a separate doseLog ledger. A quick action must
-      // debit that ledger exactly once and retain the ledger ID for safe Undo.
-      const result=consumeCompoundInventory({
-        kit:activeKit,amountMg:neededMg,reason:"administered",transactionId:uid()
-      });
-      if(!result.committed||result.allocations.length!==1||
-          String(result.allocations[0].vialId)!==String(vial.id)){
-        showErrorBanner("Blend vial balance changed. Nothing was logged.");return;
-      }
-      const recorded=result.allocations[0];
-      allocations=[{kitId:recorded.kitId,vialId:recorded.vialId,
-        amount:mgToUnit(recorded.amountMg,cc.unit),ledgerId:recorded.ledgerId}];
-      kitId=null;
-    }else{
-      migrateKitToV2(activeKit);
-      // Quick Log must not infer a physical source when two vials are open in one kit.
-      if((activeKit.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&getVialRemainingMg(activeKit,v)>0.01).length>1){
-        doseModal(name,null,occTime);return;
-      }
-      const vial = kitOpenVialV2(activeKit);
-      // No open vial (or insufficient balance) must use the full source picker.
-      if (!vial || vial.remainingMg + 0.01 < neededMg) { doseModal(name, null, occTime); return; }
-      const take = Math.min(neededMg, vial.remainingMg);
-      vial.remainingMg = Math.round((vial.remainingMg-take)*100)/100;
-      if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; vial.status = "empty"; }
-      allocations = [{ kitId: activeKit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) }];
-      kitId = null;
+    migrateKitToV2(activeKit);
+    // Quick Log must not infer a physical source when two vials are open in one kit.
+    if((activeKit.vials||[]).filter(v=>(v.status==="open"||v.status==="active")&&getVialRemainingMg(activeKit,v)>0.01).length>1){
+      doseModal(name,null,occTime);return;
     }
+    const vial = kitOpenVialV2(activeKit);
+    // No open vial at all (needs reconstituting) is treated the same as "not enough" —
+    // both need the full flow to resolve properly, not a silent unaccounted quick-log.
+    if (!vial || vial.remainingMg + 0.01 < neededMg) { doseModal(name, null, occTime); return; }
+    const take = Math.min(neededMg, vial.remainingMg);
+    vial.remainingMg = Math.round((vial.remainingMg-take)*100)/100;
+    if (vial.remainingMg <= 0.01) { vial.remainingMg = 0; vial.status = "empty"; }
+    allocations = [{ kitId: activeKit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) }];
+    kitId = null;
   }
-  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:suggestedSite,
-    asNeeded:doseHistory[0]?.asNeeded===true, symptoms:[], notes:"", escalation:false,
-    ...(isBlendQuickLog?{isBlendDose:true,blendSource:activeKit.id}:{}),
-    kitId, allocations: allocations||undefined };
+  const dose = { id:uid(), date:occTime||localDatetime(), dose:lastDoseAmt, site:suggestedSite, asNeeded:doseHistory[0]?.asNeeded===true, symptoms:[], notes:"", escalation:false, kitId, allocations: allocations||undefined };
   const builtin = !!PEPTIDES[name];
   const tgt = builtin ? state.peptides : state.customPeptides;
   if (!tgt[name]) tgt[name] = { enabled:true, scheduleDays:cfg(name).defaultSchedule, doses:[] };
@@ -3365,9 +3341,8 @@ async function quickLogDose(name, occTime) {
   if (fulfilled) fulfilled.doseId = dose.id;
   if(!await nexusCommitCurrentState()){showErrorBanner("Quick dose could not be saved. Export a backup and reload before retrying.");return;} render();
   showUndoToast(`${name} logged · ${dose.dose} ${cfg(name).unit}`, async () => {
-    // Fail closed if the source ledger can no longer reverse this dose.
-    if(reverseDoseInventoryEffect(dose)===false)return;
     tgt[name].doses = tgt[name].doses.filter(d=>d.id!==dose.id);
+    reverseDoseInventoryEffect(dose);
     if (fulfilled) fulfilled.doseId = null;
     if(!await nexusCommitCurrentState())return;render();
   });
