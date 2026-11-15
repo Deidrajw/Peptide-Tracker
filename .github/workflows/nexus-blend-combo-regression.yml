@@ -5,6 +5,7 @@ on:
       - 'assets/js/04-nexus.js'
       - 'tests/blend-combo-vial-integrity.test.cjs'
       - 'tests/blend-combo-real-engine.test.cjs'
+      - 'tests/vial-bac-historical-roundtrip.test.cjs'
       - '.github/workflows/nexus-blend-combo-regression.yml'
   workflow_dispatch:
 jobs:
@@ -21,3 +22,4 @@ jobs:
         run: |
           node tests/blend-combo-vial-integrity.test.cjs
           node tests/blend-combo-real-engine.test.cjs
+          node tests/vial-bac-historical-roundtrip.test.cjs
