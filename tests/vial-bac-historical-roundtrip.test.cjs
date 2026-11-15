@@ -16,7 +16,8 @@ const kit={id:"fictional-kit",name:"Fictional peptide",vialMg:30,bacMl:2,
     reconDate:"2026-11-03",remainingMg:0},
     {id:"current-2",status:"open",vialMg:30,
     reconDate:"2026-11-14",remainingMg:21},
-    {id:"sealed-3",status:"sealed",vialMg:30,remainingMg:30}]};
+    {id:"sealed-3",status:"sealed",vialMg:30,remainingMg:30},
+    {id:"unknown-date-4",status:"empty",vialMg:30,remainingMg:0}]};
 const state={supplies:[kit]};const errors=[];
 const context={
  state,uid:()=>String(++counter),cfg:()=>({color:"#aabbcc"}),
@@ -63,6 +64,14 @@ assert.equal(kit.vials[1].bacMl,1.5);
 assert.equal(kit.bacMl,1.5);
 assert.equal(kit.vials[0].bacMl,3,"editing current must not rewrite historical vial");
 assert.equal(kit.reconHistory.length,2);
+// No historical date exists, and BAC confirmation must not invent one.
+await edit("unknown-date-4","","2.4");
+assert.equal(kit.vials[3].bacMl,2.4);
+assert.equal(kit.vials[3].reconDate,undefined);
+assert.equal(kit.vials[3].status,"empty");
+assert.equal(kit.vials[3].remainingMg,0);
+assert.equal(kit.reconHistory.at(-1).date,null);
+assert.equal(kit.bacMl,1.5,"closed historical correction cannot change current kit");
 const previous=JSON.stringify(kit);
 context.editVialReconModal(kit.id,"sealed-3");
 assert.equal(JSON.stringify(kit),previous);
