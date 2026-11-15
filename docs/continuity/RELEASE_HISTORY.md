@@ -1,3 +1,7 @@
+## 2026-11-15 — PR169 guided multi-vial Log Dose QA-only follow-up, UNRELEASED
+- Development-only test fix 00f4687e updates Stash action regression to follow guided Details → Vials and supply two eligible fictional sources. Previous 77b49cf six-suite result 5/6 PASS; full browser #43667876230 failed at legacy selector, following Save-ack 8/8 PASS. New exact-head qualification and official source artifacts PENDING.
+- Main/primary production last independently recorded b3a67ec4 / v0.9.27-beta.3. No application JS/CSS changes for this QA fix, no migration, no live data modifications, no merge or deployment authorization; physical iPhone acceptance outstanding.
+
 ## 2026-11-14 — PR169 latest exact-code artifacts and CI checkpoint (DRAFT, NO RELEASE)
 - Main baseline b3a67ec48f5ba982abff042048e30a9549d83467, published v0.9.27-beta.3; PR169 draft/unmerged, user authorised development of guided Details → Vials → Review ONLY, no merge/deploy.
 - Coded app unchanged since 95a91a18; latest test fix 550c6b89b0a99b4b2f8c57f3ed61c435b3421248 returns to visible Details before entering invalid/changed hypothetical doses. Existing writer, fail-closed, physical exact-vial source and atomic Undo remain untouched.
