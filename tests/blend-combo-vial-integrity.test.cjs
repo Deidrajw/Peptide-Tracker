@@ -73,7 +73,7 @@ state.supplies[1].vials[0].remainingMg=7;
 const originalGet=context.getVialRemainingMg;
 let count=0;
 context.getVialRemainingMg=(kit,vial)=>{
-  if(kit.isBlend&&++count>2)throw Error("stale ledger");
+  if(kit.isBlend&&++count>3)throw Error("stale ledger");
   return originalGet(kit,vial);
 };
 res=logCombo();
