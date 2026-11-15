@@ -1,3 +1,9 @@
+## 2026-11-15 — PR172 historical-vial BAC and actual-engine regression (CURRENT)
+- PASS at cabed448 seven full GitHub QA workflow families; source-specific legacy artifact #14175294218. PASS actual real blend engine test after harness correction #43762652119 at source 1482347b.
+- NEW NOT YET FULLY QUALIFIED at source 935f2313: actual engine runs getBlendKitRemainingMg/getBlendOpenVialRemainingMg, migrateKitToV2, consumeCompoundInventory and planAndApplyComboDoses under both premix accounting modes, repeated doses, real ledgerId and exact empty transition. New VM DOM shim executes actual View Vial + Edit Reconstitution for previously EMPTY vial, confirms saved exact-vial BAC and appended history without reopening, changing remainingMg or kit defaults; verifies OPEN record edits and rejection of SEALED edit.
+- Historical QA blocker: prior experimental run #43762480052 FAILED because mock migration helper rejected a call instead of skipping blends; harness corrected and real engine test #43762652119 PASS. Final seven-suite CI on 935f2313 still PENDING. Physical iPhone/VoiceOver/production reload NOT TESTED. No clinical validation asserted.
+- Read-only backup showed 58/61 nonsealed vials with only kit BAC defaults, so no bulk retroactive confirmation allowed. Separate Deadpool historic ledger reconciliation BLOCKED until physical/source confirmation. No production writes.
+
 ## 2026-11-15 — PR172 exact-source test status update
 - PASS dedicated fictional blend combo + BAC source regression #43748385052 at app source a588e97d; repeated blend ledger allocations and ledgerId, live source VM exercise, stale blend remainingMg ignored, exception rollback and per-vial BAC source checks.
 - PASS shared writer #43748385085; mobile forms #43748385089; DS2 nested #43748385103.
