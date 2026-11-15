@@ -174,8 +174,24 @@ try{
   ensure(recorded?.testResultAttachment?.name==='fictional-lab.pdf'&&recorded.testResultAttachment.dataUrl.startsWith('data:application/pdf;base64,'),'Blend attachment not persisted');
   ensure(await page.locator('.nx-kit-card .nx-kit-test-download').count()>=1,'Kit Details do not expose saved attachment');
   await page.evaluate(()=>{state.supplies=state.supplies.filter(x=>x.name!=='QA Fixture Blend');render();});
-  // iPhone regression: legacy ID rule must not collapse secondary multi-vial padding.
-  await page.evaluate(()=>{closeModal();const kit=state.supplies.find(k=>k.name==='GHK-Cu');kit.vials.find(v=>v.status==='open').intendedUse='SubQ';doseModal('GHK-Cu');});
+  // iPhone regression: check the multi-vial button where the approved
+  // guided flow now presents it, using TWO eligible fictional physical vials.
+  // The button is deliberately absent with only one eligible vial.
+  await page.evaluate(()=>{
+    closeModal();
+    const kit=state.supplies.find(k=>k.name==='GHK-Cu');
+    kit.vials.find(v=>v.status==='open').intendedUse='SubQ';
+    const second=kit.vials.find(v=>v.id===88912);
+    second.status='open';second.intendedUse='SubQ';
+    second.remainingMg=50;second.reconDate='2026-10-20T12:00:00';
+    doseModal('GHK-Cu');
+  });
+  await page.locator('#nx-dose-entered').fill('1');
+  await page.locator('#nx-dose-review-open').click();
+  ensure(await page.locator('.nx-dose-source-exception').isVisible(),
+    'Guided Log Dose did not show the Vials stage');
+  ensure(await page.locator('#toggle-multi').isVisible(),
+    'Two eligible fictional vials did not expose multi-vial selection');
   const multi=await page.locator('#toggle-multi').evaluate(el=>{
     const s=getComputedStyle(el),r=el.getBoundingClientRect();
     return {top:parseFloat(s.paddingTop),bottom:parseFloat(s.paddingBottom),

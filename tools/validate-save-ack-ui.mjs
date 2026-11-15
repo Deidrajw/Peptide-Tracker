@@ -47,6 +47,12 @@ try{
   const visibleBeforeReview=await page.locator("#nx-dose-entered").inputValue();
   if(visibleBeforeReview!=="1")throw Error("Visible dose amount changed before review: "+JSON.stringify({width,theme,mode,visibleBeforeReview}));
   await page.locator("#nx-dose-review-open").click();
+  // Guided physical-vial logging has an intermediate Vials stage. The first
+  // Continue opens exact-source selection; the second opens final Review.
+  // Test the real user path rather than assuming the old one-step layout.
+  if(await page.locator(".nx-dose-source-exception").isVisible()){
+    await page.locator("#nx-dose-review-open").click();
+  }
   // Review must expose Confirm Log. Diagnose a rejected review rather than
   // waiting 30 seconds for an intentionally hidden control.
   if(!(await page.locator("#save").isVisible())){
