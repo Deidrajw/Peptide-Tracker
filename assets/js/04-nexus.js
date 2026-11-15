@@ -2142,7 +2142,7 @@ function editVialReconModal(kitId, vialId) {
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
-    vial.reconDate = newDate;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate) || !Number.isFinite(new Date(newDate).getTime())) {showErrorBanner("Enter a valid reconstitution date.");return;}
     if (isActiveVial) {
       const bacInput=m.querySelector("#ev-bac");
       const actualBac=bacInput?Number(bacInput.value):NaN;
@@ -2160,6 +2160,7 @@ function editVialReconModal(kitId, vialId) {
         editedAt:new Date().toISOString(),kind:"preparation-correction"
       });
     }
+    vial.reconDate=newDate;
     if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
