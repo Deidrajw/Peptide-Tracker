@@ -3200,7 +3200,12 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
     const hasSealedBackup = kitForAction ? ensureKitVials(kitForAction).some(v=>v.status==="sealed") : false;
     return { ok:false, shortfall: { name: shortfall.name, doseVal: shortfall.doseVal, unit: cc.unit, have, noOpenVial, kitId: kitForAction?.id ?? null, hasSealedBackup } };
   }
-  const doses = plan.map(p=>{
+  // All source movements are one in-memory transaction. A failed blend ledger
+  // check must restore the complete stock snapshot, not leave an earlier
+  // compound debited while the UI reports that nothing was saved.
+  const beforeStock = JSON.parse(JSON.stringify(state.supplies||[]));
+  let doses;
+  try { doses = plan.map(p=>{
     const cc = cfg(p.name);
     let allocations;
     if (p.eligible.length) {
@@ -3211,14 +3216,37 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       allocations = [];
       for (const {kit, vial} of p.eligible) {
         if (remaining <= (method?0.0000005:0.001)) break;
-        const take = Math.min(remaining, vial.remainingMg);
-        // For new staged mg/mcg flows retain six decimal mg precision so even
-        // 1mcg (0.001mg) actually leaves the vial; do not round it away.
-        vial.remainingMg = method
-          ? Math.round((vial.remainingMg-take)*1000000)/1000000
-          : Math.round((vial.remainingMg-take)*100)/100;
-        if (vial.remainingMg <= (method?0.0000005:0.01)) { vial.remainingMg = 0; vial.status = "empty"; }
-        allocations.push({ kitId: kit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) });
+        const available = getVialRemainingMg(kit, vial);
+        const take = Math.min(remaining, available);
+        if (!Number.isFinite(take) || take <= 0) throw Error("Invalid exact vial balance; combo dose not saved.");
+        if (kit.isBlend) {
+          // A premixed blend uses its own vial-specific doseLog. It MUST NOT be
+          // debited through v2 remainingMg, which can be absent or stale on a
+          // historical blend. That mismatch previously saved null/zero allocations
+          // and could mark a nonempty vial empty.
+          const result = consumeCompoundInventory({
+            kit, amountMg:take, reason:"administered", transactionId:comboId
+          });
+          if (!result.committed || result.allocations.length !== 1 ||
+              String(result.allocations[0].vialId) !== String(vial.id)) {
+            throw Error("Blend vial ledger changed; combo dose not saved.");
+          }
+          const entry = result.allocations[0];
+          allocations.push({
+            kitId:entry.kitId, vialId:entry.vialId,
+            amount:mgToUnit(entry.amountMg,cc.unit), ledgerId:entry.ledgerId
+          });
+        } else {
+          // For staged mg/mcg flows retain six-decimal mg precision.
+          vial.remainingMg = method
+            ? Math.round((vial.remainingMg-take)*1000000)/1000000
+            : Math.round((vial.remainingMg-take)*100)/100;
+          if (vial.remainingMg <= (method?0.0000005:0.01)) {
+            vial.remainingMg = 0; vial.status = "empty";
+          }
+          allocations.push({ kitId:kit.id, vialId:vial.id,
+            amount:mgToUnit(take,cc.unit) });
+        }
         remaining -= take;
       }
     }
@@ -3227,9 +3255,14 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       ...(method?{enteredUnit:p.enteredUnit,enteredAmount:String(p.enteredValue)}:{}),
       ...(method?{method,trackingMode:p.tracked?"backed":"untracked"}:{}),
       comboAdministration:grouping==="mixed"?"mixed_syringe":"separate_injection",
+      ...(p.eligible.some(e=>e.kit.isBlend)?{isBlendDose:true,blendSource:p.eligible.find(e=>e.kit.isBlend).kit.id}:{}),
       symptoms: symptoms.map(s=>({...s})), notes, escalation:false,
       kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
   });
+  } catch (error) {
+    state.supplies = beforeStock;
+    return {ok:false,error:error.message||"Source ledger changed; nothing was saved."};
+  }
   return { ok:true, doses };
 }
 
