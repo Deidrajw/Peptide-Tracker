@@ -1,3 +1,7 @@
+## 2026-11-15 — Historical BAC without historical date (PR172 draft)
+- A prior EMPTY/FINISHED vial may have actual BAC amount confirmed individually even if the historical reconstitution date is unknown. Preserve date as unknown, do not require/fabricate one, never reopen vial, adjust remaining balance, or rewrite current kit BAC/reconstitution date. Open vials still require a date. Sealed/transferred ineligible.
+- Show unverified kit default distinctly from per-vial and linked-history BAC. Private backup read-only pattern (58/61 kit-only) does NOT authorize automatic historical backfill. Preserve old entries. No release approval or production correction consent.
+
 ## 2026-11-15 — Historical per-vial BAC correction allowed without inventory effects (PR172 draft)
 - User requested historical vial BAC display consistency. Read-only November 15 backup has many prior reconstituted vials with kit-only defaults; no evidence that every prior vial used the current kit default. Never bulk backfill as confirmed.
 - For ACTIVE/OPEN and EMPTY/FINISHED vials, Edit Reconstitution may explicitly record the actual per-vial BAC amount and append linked history. For EMPTY/FINISHED, preserve vial status, remaining amount, current kit BAC default and kit active reconDate; only historical preparation metadata may change. Sealed or transferred vials cannot acquire historical prep data through the action.
