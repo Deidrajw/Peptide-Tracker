@@ -1436,6 +1436,8 @@ function viewVialPreparationModal(kitId,vialId) {
     .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
   const entry=history[0]||{};
   const water=vial.bacMl??entry.bacMl;
+  const waterIsExact=Number.isFinite(Number(water))&&Number(water)>0;
+  const kitWater=Number(kit.bacMl);
   const date=vial.reconDate||entry.date;
   const notes=vial.notes||entry.notes;
   const amount=vial.vialMg??kit.vialMg;
@@ -1452,7 +1454,7 @@ function viewVialPreparationModal(kitId,vialId) {
       </div>
       ${row("Status",vial.status==="open"||vial.status==="active"?"Open":vial.status||"Not recorded")}
       ${row("Nominal vial amount",Number.isFinite(amountNumber)&&amountNumber>0?amountNumber+" mg":"Not recorded")}
-      ${row("BAC water added",Number.isFinite(waterNumber)&&waterNumber>0?waterNumber+" mL":"Not recorded for this vial")}
+      ${row("BAC water added",waterIsExact?waterNumber+" mL":Number.isFinite(kitWater)&&kitWater>0?"Not recorded for this vial · kit default: "+kitWater+" mL (unverified)":"Not recorded for this vial")}
       ${row("Reconstituted",date?fmtDate(date):"Not recorded")}
       ${row("Form",vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Not recorded for this vial")}
       ${row("Current remaining",typeof getVialRemainingMg==="function"?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Not available")}
@@ -2120,6 +2122,11 @@ function editVialReconModal(kitId, vialId) {
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
   const c = cfg(s.name);
   const isActiveVial = vial.status==="active"||vial.status==="open";
+  const recordedRecon=(s.reconHistory||[]).filter(r=>String(r.vialId)===String(vial.id))
+    .sort((a,b)=>String(b.editedAt||b.date||"").localeCompare(String(a.editedAt||a.date||"")))[0]||{};
+  const exactBac=vial.bacMl??recordedRecon.bacMl;
+  const hasExactBac=Number.isFinite(Number(exactBac))&&Number(exactBac)>0;
+  const displayedBac=hasExactBac?exactBac:s.bacMl;
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">EDIT RECONSTITUTION</span>
@@ -2128,7 +2135,8 @@ function editVialReconModal(kitId, vialId) {
     <label class="field-label">RECONSTITUTION DATE</label>
     <input id="ev-date" type="date" class="inp" value="${dayKey(vial.reconDate)}" style="margin-bottom:14px">
     ${isActiveVial?`<label class="field-label">BAC WATER ADDED (mL)</label>
-    <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(s.bacMl||"")}" style="margin-bottom:14px">`:""}
+    <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(displayedBac??"")}" style="margin-bottom:5px">
+    ${!hasExactBac?'<p style="font-size:12px;color:var(--t3);line-height:1.5;margin:0 0 14px">Kit default only — not verified for this vial. Save only if it matches what you actually added.</p>':'<div style="margin-bottom:14px"></div>'}`:""}
     <button id="ev-save" class="btn-primary" style="background:${c.color}">Save Changes</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
@@ -2136,9 +2144,21 @@ function editVialReconModal(kitId, vialId) {
     const newDate = m.querySelector("#ev-date").value;
     vial.reconDate = newDate;
     if (isActiveVial) {
-      s.reconDate = newDate;
-      const bacInput = m.querySelector("#ev-bac");
-      if (bacInput) s.bacMl = parseFloat(bacInput.value)||s.bacMl;
+      const bacInput=m.querySelector("#ev-bac");
+      const actualBac=bacInput?Number(bacInput.value):NaN;
+      if(!Number.isFinite(actualBac)||actualBac<=0) {
+        showErrorBanner("Enter the BAC water amount actually added to this vial.");return;
+      }
+      // Explicit per-vial correction: preserve existing history and link the
+      // new evidence to the same physical vial rather than overwriting other vials.
+      vial.bacMl=actualBac;
+      s.reconDate=newDate;
+      s.bacMl=actualBac;
+      s.reconHistory=s.reconHistory||[];
+      s.reconHistory.push({
+        id:uid(),vialId:vial.id,date:newDate,bacMl:actualBac,
+        editedAt:new Date().toISOString(),kind:"preparation-correction"
+      });
     }
     if(!await nexusCommitCurrentState())return;closeModal();render();
   };
