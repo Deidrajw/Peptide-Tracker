@@ -4,6 +4,7 @@ on:
     paths:
       - 'assets/js/04-nexus.js'
       - 'tests/blend-combo-vial-integrity.test.cjs'
+      - 'tests/blend-combo-real-engine.test.cjs'
       - '.github/workflows/nexus-blend-combo-regression.yml'
   workflow_dispatch:
 jobs:
@@ -17,4 +18,6 @@ jobs:
       - name: Check application JS syntax
         run: node --check assets/js/04-nexus.js
       - name: Fictional blend and vial BAC integrity regression
-        run: node tests/blend-combo-vial-integrity.test.cjs
+        run: |
+          node tests/blend-combo-vial-integrity.test.cjs
+          node tests/blend-combo-real-engine.test.cjs
