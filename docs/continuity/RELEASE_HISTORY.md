@@ -1,3 +1,8 @@
+## 2026-11-15 — PR172 exact-source candidate evidence (NO RELEASE)
+- Draft PR #172 https://github.com/Deidrajw/Peptide-Tracker/pull/172 on branch fix/blend-combo-vial-ledger-bac-details-20261115. App source SHA a588e97d; no merge, no new version, no Cloudflare change. Main b3a67ec and v0.9.27-beta.3 remain live.
+- Exact source fictional blend test #43748385052 SUCCESS; writer #43748385085 SUCCESS; mobile #43748385089 SUCCESS; DS2 #43748385103 SUCCESS; final WebKit #43748385095 / Chromium #43748385091 / full build/browser #43748385094 ongoing at documentation time. Artifact #14175207169 verified 26-file LIVE, isolated full-app HTML/ZIP, CRC and manifest SHA. Physical iPhone, VoiceOver, user production reload NOT TESTED.
+- Scope unchanged: blend combo ledger and exact per-vial BAC edits, no migration. Historical Deadpool inventory mismatch unresolved, no automated correction of 6 unledgered doses.
+
 ## 2026-11-15 — UNRELEASED candidate for Issues #170/#171
 - No version advancement, merge or deployment. Branch fix/blend-combo-vial-ledger-bac-details-20261115 based on main b3a67ec; code d86c5715/dd4fab89/cad8a60b, test 8824831d, CI wiring a8a8101a. Previous published v0.9.27-beta.3 unchanged.
 - Candidate changes: blend combo records actual source-ledger debits and ledger identifiers rather than ordinary vial remainingMg, with rollback on failure; explicit per-vial BAC edit and linked correction history, kit-default-as-unverified detail. Screens: Log Dose Combo, Stash Vial Details, Edit Reconstitution.
