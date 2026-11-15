@@ -81,6 +81,6 @@ assert.equal(res.ok,false);
 assert.equal(JSON.stringify(state.supplies),JSON.stringify(JSON.parse(beforeFailure).map((k,i)=>i===1?{...k,vials:[{...k.vials[0],remainingMg:7}]}:k)),"on failure stock snapshot is restored");
 const after=fs.readFileSync("assets/js/04-nexus.js","utf8");
 assert.match(after,/vial\.bacMl=actualBac/,"exact vial BAC correction persisted");
-assert.match(after,/vialId:vial\.id,date:newDate,bacMl:actualBac/,"BAC correction linked to physical vial");
+assert.match(after,/vialId:vial\.id,date:newDate\\|\\|null,bacMl:actualBac/,"BAC correction linked to physical vial");
 assert.match(after,/kit default:.*unverified/,"legacy display identifies unverified kit value");
 console.log("PASS fictional repeated blend combos, exact ledger allocations, rollback and per-vial BAC source checks");
