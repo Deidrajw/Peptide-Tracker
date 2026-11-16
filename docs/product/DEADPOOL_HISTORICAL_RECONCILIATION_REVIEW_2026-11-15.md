@@ -1,3 +1,12 @@
+## 2026-11-16 — Development-authorised safe prototype (NOT RELEASED)
+- User explicitly authorized planning and development of BOTH review and user-confirmed correction. **No merge/deploy and no automatic inventory repair were authorized.**
+- Experimental unmounted module: `assets/js/nexus-historical-reconciliation.js`. Functions `review`, `prepare` and `applyToClone` operate on explicitly supplied state and return a clone; they cannot save to app storage or change existing physical balances, statuses, canonical dose allocations or blend `doseLog`.
+- This is **Stage A only**: review records and produce confirmed *annotations* of exact source evidence, not a verified stock correction. Unresolved source evidence is preserved. The module does not yet integrate with UI or persistent exclusive writer. It requires a verified backup and typed confirmation even for its cloned annotation result.
+- `tests/historical-deadpool-reconciliation.cjs` uses fictional data; dedicated GitHub Actions workflow `historical-deadpool-reconciliation.yml` checks syntax, no-write isolation and tests. An initial workflow failure resulted from a static grep matching the WORD `localStorage` inside a comment, despite 8/8 Node assertions passing; this comment was edited and the workflow needs rerun before marking all-green.
+- **Stage B still REQUIRED**: source-exact UI and controlled persistence adapter, independently user-reviewed per-dose evidence, verified physical balance method, hardened atomic preflight/rollback, independent recovery, multi-tab race/Undo, manual iPhone, and full-app isolated DEMO/LIVE candidate. Do not expose unsafe stock mutation or inject this module into production `index.html` before safeguards pass.
+- Proposed UI: Stash > physical vial > Historical discrepancy > Inspect events > Source evidence > Review before/after > Confirm. A stock balance must remain UNKNOWN unless independently validated; a dose-source annotation is not a physical stock debit.
+- Protect PR #169; its multi-source Undo design is separate.
+
 # Historical Deadpool vial reconciliation — review-first specification
 
 Status: DESIGN / READ-ONLY INVESTIGATION ONLY. No application implementation or historical data mutation approved.
