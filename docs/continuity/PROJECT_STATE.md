@@ -1,3 +1,10 @@
+## 2026-11-16 — User corrected scope: recurring Deadpool auto-finish is the primary P0 bug
+- USER REPORT: real Deadpool physical vial repeatedly changes to Finished/EMPTY unexpectedly, requiring manual Reopen. User explicitly rejects a visible/manual historical correction workflow as the solution.
+- PRIMARY OBJECTIVE: diagnose the automatic empty/status transition and source-of-truth accounting; stop incorrect automatic finishing in ordinary Log Dose / Combo Dose / prepared/reopen paths, preserving data. No new user-facing correction action required.
+- Main source inspected: 04-nexus.js consumeCompoundInventory blend branch appends doseLog and sets vial.status="empty" if getBlendOpenVialRemainingMg(kit)<=0.01; other finish pathways and historical status conflicts also exist. This is a suspected trigger, NOT confirmed root cause. Establish failing fictional reproduction and differentiate genuine depletion versus false depletion/double debit.
+- Stage B physical-stock correction module from PR173 remains UNMOUNTED and feature OFF, and must not become user-facing as substitute for bug fix. PR169 remains untouched. No automatic repair of past data, no merge/deploy.
+- ONE NEXT ACTION: write source-targeted fictional reproduction for repeated Deadpool false auto-finish; isolate cause before any UI or correction workflow work.
+
 ## 2026-11-16 — Stage B gated correction prototype, NOT INTEGRATED / NOT RELEASED
 - Main confirmed a722465cb6f9adbf8009038e45bc87d5913a438e, primary v0.9.27-beta.4 previously Cloudflare verified. PR173 still draft and unmerged. Separate PR169 open and untouched.
 - Exact source 4d7704de: eight GitHub CI workflows confirmed SUCCESS, including build/browser #43820637421, WebKit #43820637499, pinned #43820637446, mobile #43820637430, writer #43820637563, dedicated reconciliation #43820637528, blend/BAC #43820637423, DS2 #43820637629. Build artifact entries #14204269286 and #14204267046 exist; exact nested ZIP content parity and complete isolated DEMO/LIVE were NOT independently downloaded/inspected this session.
