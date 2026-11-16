@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 historical-shaped real Combo replay
+- tests/blend-combo-real-engine.test.cjs now uses fictional stale remainingMg=0 + partial ledger, actual planAndApplyComboDoses, JSON persisted/reloaded inventory and second day dose; asserts physical vial stays open, canonical ledger 9+3+3, no independent v2 debit. Test update at 2f8593a5. Dedicated false-empty #43866609617 PASS and blend/BAC #43866609086 PASS; six other exact-head workflows were running on last check. This is real source function testing with fictional data, NOT a full interactive browser click-through or physical-device acceptance. Prepare rollover source guard 443b041c PASS in dedicated test.
+
 ## 2026-11-16 — PR174 Prepare Dose rollover and latest exact-source CI
 - Added fictional source guard against premature generic finishVial() via Prepare Dose > Open New Vial, code 3ba7044b test 443b041c. At 443b041c four verified CI PASS: dedicated false-empty #43865875449, blend/BAC #43865875831, mobile #43865875730, writer #43865875652. Browser/WebKit/pinned/DS2 in progress at checkpoint; do not claim full PASS yet. No physical iPhone and no true private-data replay. Existing exact-vial next-day JSON simulation remains separate from browser click-through.
 
