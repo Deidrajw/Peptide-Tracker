@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 follow-up, NOT A RELEASE
+- JS03 664a367c date-only historical source ambiguity fail-closed; fictional next-day JSON reload regression test 88772223. Eight earlier suites PASS at 517019c4; refreshed branch head CI not yet verified. Draft, unmerged, no deployment, no real user data repairs; production v0.9.27-beta.4 prior parity.
+
 ## 2026-11-16 — PR174 draft false Deadpool auto-empty guard (NOT A RELEASE)
 - main a722465c; branch fix/deadpool-blend-auto-empty-20261116, PR174 draft/unmerged/undeployed. JS03 4449285b and JS04 c3329014 provide same-vial ledger depletion gate for automatic blend status, test 3cb3e95f, CI workflow c2cea995. Exact-head CI pending; user-data migration none, private data untouched. No standalone full-app DEMO or LIVE ZIP created/verified and no actual iPhone acceptance. Production release remains v0.9.27-beta.4 (previous parity evidence only).
 
