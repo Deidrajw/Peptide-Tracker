@@ -1,5 +1,5 @@
 /* Nexus historical physical-vial reconciliation — draft, deliberately NOT loaded by index.html.
- * Pure analysis/proposal engine. Never reads/writes localStorage or commits inventory.
+ * Pure analysis/proposal engine. Has no storage I/O or inventory commit side effects.
  * Only individually reviewed observations are recorded; physical balances and historical
  * canonical dose/ledger entries remain unchanged. Real inventory repair is a separate gate.
  */
