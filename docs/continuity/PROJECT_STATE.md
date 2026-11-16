@@ -1,3 +1,11 @@
+## 2026-11-16 — PR174 legacy Prepare Dose premature finish guard; QA progressing
+- Reverified main a722465cb6f9adbf8009038e45bc87d5913a438e, draft PR174 open, PR169/PR173 open and untouched. Primary Cloudflare could NOT be freshly fetched (cache miss), prior published v0.9.27-beta.4 remains last independently verified production.
+- Source 3ba7044b stops Prepare Dose > Open New Vial legacy rollover from calling generic finishVial() on a currently open premixed blend before the corresponding physical ledger withdrawal is committed. It blocks only this exceptional preparation flow, with error and zero inventory mutation; normal Log Dose/Combo Dose remain unchanged. Fictional exact-source guard test committed 443b041c.
+- At 443b041c GitHub CI: Deadpool false-empty #43865875449 SUCCESS, blend/BAC #43865875831 SUCCESS, mobile #43865875730 SUCCESS, shared writer #43865875652 SUCCESS. Full browser/build, WebKit, pinned QA and DS2 were in progress at last check. All eight previously PASS at 88772223, which is an earlier, not final code checkpoint.
+- Known unresolved: a globally exhausted legacy kit cap can still block new doses although exact-vial status remains open; do NOT invent stock or auto-repair historical records. Historical blend mixed-preparation paths still need consistency audit. No user data changed, no release.
+- Artifacts: GitHub CI build may produce release candidate; standalone full-app DEMO and exact-source LIVE ZIP not independently obtained / inspected in this session. Physical iPhone/VoiceOver not tested.
+- ONE NEXT ACTION: finish exact-head CI and audit mixed-syringe legacy blend path, then qualify a safe full-app test/delivery without deploying.
+
 ## 2026-11-16 — PR174 second inventory writer safeguarded (latest source 33b30b27)
 - Verified baseline main a722465c; PR174 independent, draft/unmerged/undeployed, production previously Cloudflare-qualified v0.9.27-beta.4; user backup never imported or committed.
 - At prior app/test SHA 517019c4 all 8 GitHub CI suites PASS. At 88772223 after legacy attribution/reload regression five suites PASS (dedicated, blend/BAC, mobile, writer, DS2) and browser/build/WebKit/pinned IN PROGRESS when last verified.
