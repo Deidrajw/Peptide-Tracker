@@ -1,3 +1,6 @@
+## 2026-11-16 — PR173 development prototype; UNRELEASED
+- Draft PR173 on separate branch contains historical recon review/annotation pure module and isolated fictional regression test, new dedicated workflow, and documentation; no app index integration, no version change, no LIVE/DEMO package, no migration, no inventory repair, no merge/deploy. Previous production remains v0.9.27-beta.4. Initial 8/8 tests passed but CI overall failed a comment-only grep and was corrected for rerun; do not treat this as a qualified release.
+
 ## 2026-11-15 Toronto — Documentation-only draft; NOT A RELEASE
 - Branch docs/deadpool-historical-reconciliation-review-20261115 at baseline a722465c: historical Deadpool user-review spec only; no application code, version bump, migration, merge or deploy. No new QA assertion or production storage write. v0.9.27-beta.4 remains current published version per previous independent verification.
 
