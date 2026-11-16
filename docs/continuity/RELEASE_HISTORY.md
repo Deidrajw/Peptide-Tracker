@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 full-app candidate artifact prepared (NOT RELEASED)
+- Source 2f8593a5, GitHub QA artifact #14226290921; isolated standalone full-app DEMO HTML, offline demo ZIP and complete 26-file LIVE candidate ZIP independently downloaded/CRC/source-checked; matching release notes generated. Seven exact-source CI workflow families success; full build/browser still in progress. Production v0.9.27-beta.4 unchanged; PR174 draft/unmerged, no real data mutation, no deployment or real iPhone acceptance.
+
 ## 2026-11-16 — PR174 historical-shape regression checkpoint (NOT A RELEASE)
 - Code 3ba7044b and test commits 443b041c, 2f8593a5. No merge/deploy/version change/data migration. Latest two exact-head suites dedicated Deadpool and blend/BAC SUCCESS; other CI pending; mixed syringe and full demo/LIVE artifacts incomplete; physical iPhone not accepted. Last verified published version v0.9.27-beta.4.
 
