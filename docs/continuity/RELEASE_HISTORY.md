@@ -1,3 +1,8 @@
+## 2026-11-15 — PR172 unmerged BAC-default confirmed save and demo menu fix
+- JS09 f5276a17: standard vial opens now persist displayed BAC to openedVial.bacMl, plus vial-linked reconHistory, whether user changes it or not. Existing blend path already persisted exact BAC. JS04 ba869231 labels exact BAC "Recorded for this vial". No change to saved production user data, no migration, no release authorization.
+- Fictional full-app demo rebuilt with numeric kit/vial IDs for Deadpool and BPC-157; original fixture used string IDs, incompatible with JS12 ellipsis numeric handler. User had tested combo scenario PASS, ellipses failure reported and fixture corrected; no new physical retest result yet.
+- New source regression tests/CI 362004f8, 53bf628a; first test assertion failure #43797973214 fixed 60bda7b1; dedicated CI #43798106884 PASS at code ba869231, broader QA in progress. Release version remains v0.9.27-beta.3; PR172 DRAFT, not merged/deployed.
+
 ## 2026-11-15 — PR172 candidate d3389f97 NOT RELEASED
 - Changes: deadpool premixed Combo Dose proper ledger allocations/Undo identity; per-vial BAC View/Edit including finished historical vials and unknown dates; no automatic migration, stock repair, or other protocol changes.
 - Source SHA d3389f97, draft PR172, version remains v0.9.27-beta.3, main b3a67ec. PASS 6 of 7 CI families by current check: blend/BAC #43763300982, mobile #43763300986, shared writer #43763301067, DS2 #43763301000, Chromium #43763301048, WebKit #43763301078. Full build/browser #43763300987 IN PROGRESS at writing, not PASS. Candidate full-app LIVE 26-file ZIP, fictional standalone/offline DEMO validated against GitHub source artifact #14180558605.

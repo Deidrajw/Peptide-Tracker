@@ -1,3 +1,8 @@
+## 2026-11-15 — New data-confirmation and fixture regression
+- PASS dedicated GitHub blend/BAC test #43798106884 on JS04/JS09 code ba869231, includes static source guard that ordinary reconstitution confirms displayed default on exact physical vial and appends linked history. This is source-level, not full UI browser evidence.
+- Demo fixture bug identified: preloaded Deadpool/BPC-157 kit/vial IDs strings vs JS12 ellipsis handler numeric coercion. Fictional full-app scenario rebuilt with numeric IDs, ledger and linked history references preserved. Local HTML inline JS parse PASS and offline ZIP CRC PASS. Actual Chromium navigation through revised preview BLOCKED by container environment, NOT TESTED, user retest needed. Existing real user backup untouched.
+- NOT TESTED new iPhone ellipsis/BAC workflow; broader CI exact head ba869231 browser/WebKit etc in progress at time of evidence. No production rollout.
+
 ## 2026-11-15 — User-reported Deadpool test-ready demo acceptance
 - USER-REPORTED PASS: user tested the fictional Deadpool combination-dose scenario in the special test-ready FULL-APP DEMO and responded "okay it worked." This supports the reported scenario's behaviour; user did not specify device or itemize each observation, so do NOT infer physical iPhone acceptance, exact dose/balance values confirmed individually, VoiceOver, or BAC history tested. Demo fixture included opened premixed Deadpool vial, prior ledger withdrawals and BPC-157 companion dose. Scenario-only test, not production data.
 - BAC-water historical edit scenario: NOT USER-TESTED. Previously reported historical Deadpool real-data mismatch remains unresolved; no live data changed. PR172 remains draft, unmerged, undeployed; user has not granted release approval.

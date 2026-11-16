@@ -1,3 +1,7 @@
+## 2026-11-15 — Confirmed default counts as confirmed BAC for newly opened vial
+- Product decision from user: displayed kit BAC amount becomes *actual recorded BAC for that physical vial* upon Log Reconstitution, even if the user leaves the default untouched. Changing amount before confirmation records changed value. This is distinct from historic kit defaults on previously opened vials where there is no exact per-vial evidence; those remain clearly unverified and should not be silently backfilled.
+- Preserve per-vial history and source identity (vial.bacMl + kit.reconHistory with vialId) for both premixed blend and standard kits, and use user-facing "Recorded for this vial" label for exact source value. Implementation on PR172 JS09 f5276a17 + JS04 ba869231. Demo fixture string IDs were a testing-only construction bug, corrected in separate fictional HTML; no production migration.
+
 ## 2026-11-15 — Historical BAC without historical date (PR172 draft)
 - A prior EMPTY/FINISHED vial may have actual BAC amount confirmed individually even if the historical reconstitution date is unknown. Preserve date as unknown, do not require/fabricate one, never reopen vial, adjust remaining balance, or rewrite current kit BAC/reconstitution date. Open vials still require a date. Sealed/transferred ineligible.
 - Show unverified kit default distinctly from per-vial and linked-history BAC. Private backup read-only pattern (58/61 kit-only) does NOT authorize automatic historical backfill. Preserve old entries. No release approval or production correction consent.
