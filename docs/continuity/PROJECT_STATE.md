@@ -1,3 +1,8 @@
+## 2026-11-15 — Deadpool fictional scenario user feedback
+- User replied "okay it worked" after using the specific Deadpool test-ready full-app demo with fictional premixed kit and repeatable combo-dose scenario. Record **user-reported scenario PASS** only, not confirmed physical iPhone model, all individual dose assertions or live personal-data repair. Special test-ready fixture is a separate demo from generic profile; no production data writes.
+- Remaining: user confirmation of historical BAC-water editing scenario, physical iPhone acceptance if not yet tested on iPhone, historical Deadpool balance reconciliation, final exact-head CI evidence, explicit approval before merge/deploy. PR172 remains DRAFT, main published v0.9.27-beta.3 unchanged.
+- ONE NEXT ACTION: confirm BAC historical-vial correction via fictional demo; then reconcile outstanding release gates without changing user's real data.
+
 ## 2026-11-15 — PR172 historical BAC source and QA checkpoint (DRAFT / UNMERGED)
 - GitHub main verified b3a67ec48f5ba982abff042048e30a9549d83467; production remains v0.9.27-beta.3. PR172 branch fix/blend-combo-vial-ledger-bac-details-20261115 application source d3389f974cf977382d108cd9f7b325027505224f. Separate draft PR169 open; no overlapping JS source edits (PR169 JS01/JS05, PR172 JS04), integration not accepted.
 - Deadpool blend Combo Dose corrected to use exact blend ledger and Undo-linked allocations. Real-engine tests exercise migrateKitToV2 bypass, both blend inventory models, repeated deductions and true depletion. Historical six zero/null allocations (14mg) and 9mg ledger entries in user's backup remain untouched and require physical verification.
