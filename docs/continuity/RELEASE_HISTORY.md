@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 actual browser next-day regression & full-app candidate verified (NOT A RELEASE)
+- Application source 2f8593a5, test head 4e839c3d, PR174 draft/unmerged/undeployed, main a722465c. New dedicated real UI Playwright fictional test PASS 8/8 variants at #43932192342; durable local storage/reload and next-day exact-vial logging established. Prior app-source 8/8 CI families SUCCESS. Downloaded and verified complete source-matched LIVE ZIP (26 files), standalone fictional full-app DEMO and offline DEMO CRC/byte parity via GitHub artifact #14226647150. Files materialized this session. No data migration, private data, personal inventory fix, real iPhone acceptance or deployment. Release approval still required; primary production last verified v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 fully green exact-source CI, UNRELEASED
 - Main a722465c; app source 2f8593a5; draft PR174 not merged/deployed. Eight exact-source CI families SUCCESS including build/browser 320/390 light/dark #43866609053. Existing full-app LIVE/fictional DEMO candidate artifacts documented and GitHub workflow uploaded; no new independently downloadable sandbox copy in this session. User local data untouched, no automatic historical correction, no iPhone acceptance, no production change. Production last verified v0.9.27-beta.4.
 
