@@ -1,3 +1,7 @@
+## 2026-11-16 — Development-only approval for BOTH historical workflows
+- User: “Proceed with planning and development of both historical Deadpool reconciliation review and a user-confirmed correction workflow. No automatic repair. Do not merge or deploy without separate approval.”
+- Scope now explicitly includes developing source review and user-confirmed correction, but is NOT permission to change real saved data, make unverified physical stock assertions, or deploy. The unmounted draft module only produces reviewed source annotations on a clone, leaving canonical inventory and dose ledger unmodified. Any actual inventory repair must use independently confirmed physical evidence, backup, atomic protection and separate release signoff. PR169 independent.
+
 ## 2026-11-15 Toronto — Historical Deadpool reconciliation design boundary (PROPOSED, NOT APPROVED)
 - Documented preferred read-only evidence review with individual dose identities, duplicate detection, unknown-state support and no assumption that 9 mg ledger + 14 mg missing allocations are additive. This is a recommendation, not an approved product change or user consent to alter personal data.
 - No automatic inventory repair or reopening. Any future correction requires explicit user review of physical sources, before/after impact, fresh backup and separately authorized write. Preserve independent PR169.
