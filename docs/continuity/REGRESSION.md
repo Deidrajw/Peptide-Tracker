@@ -1,3 +1,6 @@
+## 2026-11-16 — Draft PR174 latest head QA
+- All eight CI suites at 517019c4 SUCCESS, including browser/WebKit and build. New JS03 664a367c and test 88772223: fictional unassigned-date ledger must not auto-finish current vial, serialized inventory reload and next-day dose path; latest updated tests CI PENDING/NOT VERIFIED. Browser-only synthetic suite is not a real iPhone test. Historical stock audit and full-app DEMO/LIVE artifact parity INCOMPLETE.
+
 ## 2026-11-16 — PR174 exact-source CI follow-up after VM harness fix
 - Source/test commit 517019c4d76df83b664b144633310efb08a79aab: dedicated fictional false EMPTY suite #43858951607 SUCCESS; existing blend/BAC real-engine #43858951522 SUCCESS; mobile #43858951550 SUCCESS. Shared-writer, build/browser, WebKit, pinned browser and DS2 were IN PROGRESS on last inspection; results not asserted. Initial source c2cea995 blend/BAC #43858738275 FAILED because test VM stub did not import the newly added predicate, not a shipping-browser failure. Fixed harness with exact original app function at 517019c4. No real-data correction.
 
