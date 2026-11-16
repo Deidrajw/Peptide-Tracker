@@ -1,3 +1,9 @@
+## 2026-11-16 — PR174 second inventory writer safeguarded (latest source 33b30b27)
+- Verified baseline main a722465c; PR174 independent, draft/unmerged/undeployed, production previously Cloudflare-qualified v0.9.27-beta.4; user backup never imported or committed.
+- At prior app/test SHA 517019c4 all 8 GitHub CI suites PASS. At 88772223 after legacy attribution/reload regression five suites PASS (dedicated, blend/BAC, mobile, writer, DS2) and browser/build/WebKit/pinned IN PROGRESS when last verified.
+- At ad276e66 added same exact-vial ledger depletion guard to explicit blend partial outflow path in JS03, to avoid a second route finishing a vial when global kit cap alone reaches zero. At 33b30b27 source assertion added. New exact-head CI pending/unverified. Still no automatic refill/reopen or historical change.
+- ONE NEXT ACTION: finish exact-source CI qualification (33b30b27) and test complete previous-dose/reload/next-day UI plus real-world missing-source case without injecting private data. Complete full-app demo/live artifacts and iPhone acceptance before release approval; PR169 and PR173 untouched.
+
 ## 2026-11-16 — PR174 follow-up: exact-vial attribution safety and next-day fictional reload
 - main verified a722465cb6f9adbf8009038e45bc87d5913a438e; v0.9.27-beta.4 remains previous production parity checkpoint, not reverified live this session. PR174 draft/unmerged/undeployed; PR169/PR173 left untouched.
 - At code/test SHA 517019c4d76df83b664b144633310efb08a79aab, all EIGHT CI suites verified SUCCESS (dedicated Deadpool, blend/BAC, Chromium/pinned, WebKit, full build/parity, mobile, writer, DS2). This is completed automated evidence, not physical iPhone acceptance.
