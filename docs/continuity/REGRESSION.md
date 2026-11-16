@@ -1,3 +1,6 @@
+## 2026-11-15 — PR172 release gate
+- User-reported fictional Deadpool combo and corrected demo vial ellipses/BAC confirmation: PASS (device unspecified; not real production data). Exact source pre-release 000fae51: all seven GitHub workflows SUCCESS, including browser 320/390 light/dark. v0.9.27-beta.4 generated metadata + full release candidate tests pending on new commit; deployed Cloudflare parity NOT TESTED. Old historic stock reconciliation BLOCKED without user verification.
+
 ## 2026-11-15 — New data-confirmation and fixture regression
 - PASS dedicated GitHub blend/BAC test #43798106884 on JS04/JS09 code ba869231, includes static source guard that ordinary reconstitution confirms displayed default on exact physical vial and appends linked history. This is source-level, not full UI browser evidence.
 - Demo fixture bug identified: preloaded Deadpool/BPC-157 kit/vial IDs strings vs JS12 ellipsis handler numeric coercion. Fictional full-app scenario rebuilt with numeric IDs, ledger and linked history references preserved. Local HTML inline JS parse PASS and offline ZIP CRC PASS. Actual Chromium navigation through revised preview BLOCKED by container environment, NOT TESTED, user retest needed. Existing real user backup untouched.

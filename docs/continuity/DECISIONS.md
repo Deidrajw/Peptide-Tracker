@@ -1,3 +1,6 @@
+## 2026-11-15 — User approved PR172-specific release
+- User explicitly requested deployment after confirming corrected fictional Deadpool/BPC-157 menus and BAC-water behaviour. Authorizes deploying tested PR172 fixes through normal gated merge/verification, not unrelated PR169 or automatic stock data reconciliation. New version v0.9.27-beta.4, publication unverified until Cloudflare parity.
+
 ## 2026-11-15 — Confirmed default counts as confirmed BAC for newly opened vial
 - Product decision from user: displayed kit BAC amount becomes *actual recorded BAC for that physical vial* upon Log Reconstitution, even if the user leaves the default untouched. Changing amount before confirmation records changed value. This is distinct from historic kit defaults on previously opened vials where there is no exact per-vial evidence; those remain clearly unverified and should not be silently backfilled.
 - Preserve per-vial history and source identity (vial.bacMl + kit.reconHistory with vialId) for both premixed blend and standard kits, and use user-facing "Recorded for this vial" label for exact source value. Implementation on PR172 JS09 f5276a17 + JS04 ba869231. Demo fixture string IDs were a testing-only construction bug, corrected in separate fictional HTML; no production migration.

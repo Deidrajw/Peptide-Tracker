@@ -1,3 +1,6 @@
+## 2026-11-15 — v0.9.27-beta.4 PREPARED / UNPUBLISHED
+- User authorized PR172 release after fictional demo acceptance; candidate updates canonical version/notes/generated release metadata and JS02. Seven previous source-head suites PASS at 000fae51; candidate version/head QA pending. Never claim deployed from merge alone. No schema/storage migration, PR169 remains draft. Exact Cloudflare parity and independent acceptance required before publishing metadata.
+
 ## 2026-11-15 — PR172 unmerged BAC-default confirmed save and demo menu fix
 - JS09 f5276a17: standard vial opens now persist displayed BAC to openedVial.bacMl, plus vial-linked reconHistory, whether user changes it or not. Existing blend path already persisted exact BAC. JS04 ba869231 labels exact BAC "Recorded for this vial". No change to saved production user data, no migration, no release authorization.
 - Fictional full-app demo rebuilt with numeric kit/vial IDs for Deadpool and BPC-157; original fixture used string IDs, incompatible with JS12 ellipsis numeric handler. User had tested combo scenario PASS, ellipses failure reported and fixture corrected; no new physical retest result yet.

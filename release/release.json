@@ -1,56 +1,49 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.27-beta.3",
+  "version": "v0.9.27-beta.4",
   "channel": "beta",
   "publication": {
-    "status": "published",
-    "publishedAt": "2026-11-13T04:21:56Z",
-    "commit": "6bc0996499170733aebe27407cbef8d521acc843",
+    "status": "unverified",
+    "publishedAt": null,
+    "commit": null,
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "b4c83c06ccf447bd88ba4c45d788c41eed2f32d4",
-    "pullRequest": 164,
-    "mergedAppCommit": "0c0adc85884c4ef11fa88000e4d20ac484536951"
+    "baselineMainCommit": "b3a67ec48f5ba982abff042048e30a9549d83467",
+    "pullRequest": 172,
+    "mergedAppCommit": null
   },
-  "headline": "Completed-protocol history safeguards, Stash vial accuracy, and discoverable nasal spray inventory",
+  "headline": "Reliable premixed-blend combination doses and accurate per-vial BAC-water records",
   "changes": [
     {
-      "key": "protocol-completion-upcoming",
-      "title": "Stop future Upcoming entries for completed protocols",
-      "detail": "Explicitly completed protocols no longer create future Upcoming occurrences or due reminders, while preserving past logged doses, attributed history and subsequently active protocol records.",
-      "screen": "Today / Protocols / Calendar",
-      "kind": "safety"
+      "key": "blend-combo-ledger",
+      "title": "Prevent premature empty vials when logging premixed-blend combinations",
+      "detail": "Combination-dose logs now debit the blend's exact physical vial ledger, retain positive source allocations and undo identity, and roll back staged inventory if source confirmation fails.",
+      "screen": "Log Dose / Stash / History",
+      "kind": "fix"
     },
     {
-      "key": "stash-open-vial-accuracy",
-      "title": "Show the correct usable vial and source details in Stash",
-      "detail": "Preserve blend vial numbering and sealed-only expiry, choose the earliest usable OPEN vial expiry correctly, exclude depleted OPEN vials from next usable stock, and show the remaining 8mg OPEN vial instead of an Empty 0mg card.",
-      "screen": "Stash / Inventory / Dose sources",
+      "key": "vial-bac-confirmation",
+      "title": "Record confirmed BAC water on the physical vial",
+      "detail": "Tapping Log Reconstitution confirms the amount shown, including an unchanged default. New standard and blend vial records retain their own exact BAC water and linked preparation history.",
+      "screen": "Stash / Open vial / Vial details",
+      "kind": "fix"
+    },
+    {
+      "key": "historical-bac-correction",
+      "title": "Safely correct historical vial preparation records",
+      "detail": "Finished-vial BAC amounts can be explicitly confirmed without reopening stock, changing remaining amounts or fabricating an unknown date. Kit defaults stay labelled unverified when exact historical evidence is absent.",
+      "screen": "Stash / Vial details / Edit reconstitution",
       "kind": "improvement"
-    },
-    {
-      "key": "nasal-missing-pump-discovery",
-      "title": "Make existing nasal spray inventory discoverable in Log Dose",
-      "detail": "When an archived compound has a saved nasal bottle with remaining stock but no specified pump mL per spray, list it as Pump volume missing and open the original Stash bottle editor; never create a replacement bottle or fall back to a fabricated administration.",
-      "screen": "Today / Log Dose / Stash",
-      "kind": "improvement"
-    },
-    {
-      "key": "nasal-pump-save-only-warning",
-      "title": "Explain missing pump volume only when saving an incomplete nasal bottle",
-      "detail": "Open the Add or Adjust nasal spray form without a persistent warning. On blank-pump Save, show a compact theme-aware confirmation with Add pump volume and Save to Stash anyway. No automatic pump estimate, dose log, inventory debit or protocol status change.",
-      "screen": "Stash / Add nasal spray / Adjust nasal spray",
-      "kind": "safety"
     }
   ],
-  "dataImpact": "No destructive migration, automatic rewrite, import, unarchive, dose creation, or overwrite of existing browser localStorage (peptide-tracker-html-v1). Historical protocols, logs, vial numbers, exact-source ledger and inventory are preserved. Explicit future user actions continue to use the existing guarded save/writer and dose-confirmation paths; saving an uncalibrated nasal bottle preserves Stash inventory but does not enable dose logging. Isolated full-app DEMO has fictional in-memory state and no live sync.",
+  "dataImpact": "No automatic migration, backfill, repair or overwrite of saved dose history, inventory, current protocols, or browser localStorage (peptide-tracker-html-v1). Future explicit Log Reconstitution actions save the chosen BAC amount on the exact vial and append linked history. Historical Deadpool records marked empty despite missing source allocations are NOT silently restored or modified. Isolated full-app DEMO uses fictional in-memory data with no live writes or sync.",
   "limitations": [
-    "Existing nasal spray bottles without a known pump mL-per-spray remain ineligible for nominal spray-dose calculations; users may add measured or documented specifications in their original Stash bottle. Pump output is not clinically calibrated by Nexus.",
-    "The existing protected nasal administration writer gate and safeguards are unchanged. Unsupported prepared formulations or source combinations remain blocked; no clinical calculator certification is claimed.",
-    "Physical iPhone usability checks were reported PASS for the PR163 Stash/navigation/completed protocol behaviours and the PR164 missing-pump warning timing/styling/actions. VoiceOver and Dynamic Type were not separately accepted.",
-    "User data is stored in the browser; backups remain recommended. No user production dataset was accessed or modified by release engineering.",
-    "New version production parity and publication metadata are verified after the approved merge/deployment, not inferred from GitHub merge success alone."
+    "Existing historical vial records with only kit-level BAC values remain unverified until the user explicitly confirms the actual amount; old dates are never invented.",
+    "Existing Deadpool combo records with missing exact vial allocations cannot be safely backfilled automatically; reconciliation requires user review of physical stock and records.",
+    "PR #169 multi-source Log Dose changes remain an independent, unmerged draft and are excluded from this release.",
+    "Physical iPhone testing: user reported the corrected fictional Deadpool combo and vial-menu/BAC-confirmation scenarios worked. VoiceOver, Dynamic Type and live-data reload were not separately verified.",
+    "After merging, primary Cloudflare production source parity must be independently verified; a successful merge or GitHub Pages result alone is insufficient."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
