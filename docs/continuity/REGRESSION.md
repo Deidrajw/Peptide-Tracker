@@ -1,3 +1,9 @@
+## 2026-11-16 — Draft PR173 stage B correction QA (NOT RELEASED)
+- Read-only source 4d7704de GitHub eight workflow families SUCCESS, including full browser/WebKit/pinned/mobile/writer/blend/DS2/dedicated. No physical iPhone acceptance.
+- Experimental stage B assertions under tests/physical-stock-correction.cjs: OFF gate, evidence, capacity, duplicate ledger, backup verification before writes, exclusive writer, stale/failed writes, audit and separately confirmed rollback. Tests committed, current CI pending; do not label PASS.
+- CRITICAL BLOCK: canonical blend ledger mode must reject remainingMg-only stock correction; test asserts fail-closed. No physical correction production UI; no real-data repair; no release.
+- Regression requirements remain: multi-tab race, failed readback, interrupted restore, real ledger correction, exact historical dose/Undo, 320/390 light/dark, complete DEMO/LIVE, iPhone/VoiceOver and calculation-safety gate.
+
 ## 2026-11-16 — Stash historical reader test extension (PENDING)
 - 4d7704de adds assertions for the actual Stash review button, reader script order and no save calls, plus customPeptides historical lookup. Execution NOT YET VERIFIED. Previously 8 fictional pure-engine cases PASS on dc89a16b dedicated workflow. New screen visual and physical-iPhone acceptance NOT TESTED; no stock repair approval.
 
