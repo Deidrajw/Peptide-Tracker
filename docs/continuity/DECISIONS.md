@@ -1,3 +1,7 @@
+## 2026-11-15 Toronto — Historical Deadpool reconciliation design boundary (PROPOSED, NOT APPROVED)
+- Documented preferred read-only evidence review with individual dose identities, duplicate detection, unknown-state support and no assumption that 9 mg ledger + 14 mg missing allocations are additive. This is a recommendation, not an approved product change or user consent to alter personal data.
+- No automatic inventory repair or reopening. Any future correction requires explicit user review of physical sources, before/after impact, fresh backup and separately authorized write. Preserve independent PR169.
+
 ## 2026-11-16 — Approved PR172 release completed; preserve user-data boundaries
 - User approved deployment only of PR172 after confirming fictional Deadpool combo and repaired vial ellipses/BAC flow. Version v0.9.27-beta.4 was merged at 3a77b4f0 and verified on Cloudflare 16/16 at publication SHA 7876dc0f (#43800872866 SUCCESS), following initial app SHA parity #43800686509 SUCCESS.
 - No approval to alter real Deadpool historical records, correct disputed remaining amounts, or merge separate draft PR169. Future historical corrections must be explicit, individually confirmed and non-destructive; recorded kit BAC defaults at Log Reconstitution count as user confirmation of actual amount.
