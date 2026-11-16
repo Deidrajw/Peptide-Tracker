@@ -20,7 +20,7 @@
     return kits[0];
   }
   function getDoses(data,kit){
-    const peptide=data.peptides?.[kit.name]||data.compounds?.[kit.name];
+    const peptide=data.peptides?.[kit.name]||data.customPeptides?.[kit.name]||data.compounds?.[kit.name];
     return Array.isArray(peptide?.doses)?peptide.doses:[];
   }
   function review(data,kitId){
