@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 outflow path hardened, exact-head validation pending
+- Same-vial exhaustion predicate now gates both blend dose writer (04-nexus.js) and partial outflow writer (03-nexus.js); fictional source test verifies second guard. Latest code/test SHA 33b30b27 tests not yet CI-qualified. All eight CI suites passed at earlier code SHA 517019c4. Five passed at 88772223, three browser/build groups still running at inspection. Real iPhone, demo/live source integrity, actual prior corrupted storage and physical stock NOT TESTED.
+
 ## 2026-11-16 — Draft PR174 latest head QA
 - All eight CI suites at 517019c4 SUCCESS, including browser/WebKit and build. New JS03 664a367c and test 88772223: fictional unassigned-date ledger must not auto-finish current vial, serialized inventory reload and next-day dose path; latest updated tests CI PENDING/NOT VERIFIED. Browser-only synthetic suite is not a real iPhone test. Historical stock audit and full-app DEMO/LIVE artifact parity INCOMPLETE.
 
