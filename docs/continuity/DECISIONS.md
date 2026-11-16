@@ -1,3 +1,6 @@
+## 2026-11-16 — PR173 mounted read-only inspector is not stock-repair consent
+- Development-only source reader integrated into premixed vial actions for QA. It may show uncertain historical records and copy a summary; does not save source assignments or modify inventory. Existing Adjust Remaining Amount and Reopen Vial remain separate older actions, never invoked by the review screen. Future physical-stock corrections still require explicit independently verified user evidence, controlled transactional writer and separate deployment approval. No approval to merge PR173 or PR169.
+
 ## 2026-11-16 — Development-only approval for BOTH historical workflows
 - User: “Proceed with planning and development of both historical Deadpool reconciliation review and a user-confirmed correction workflow. No automatic repair. Do not merge or deploy without separate approval.”
 - Scope now explicitly includes developing source review and user-confirmed correction, but is NOT permission to change real saved data, make unverified physical stock assertions, or deploy. The unmounted draft module only produces reviewed source annotations on a clone, leaving canonical inventory and dose ledger unmodified. Any actual inventory repair must use independently confirmed physical evidence, backup, atomic protection and separate release signoff. PR169 independent.
