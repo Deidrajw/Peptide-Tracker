@@ -1,3 +1,6 @@
+## 2026-11-16 — Unattributed historical records cannot automatically finish specific vial
+- Design safeguard: only vial-specific ledger withdrawals/waste justify automatic premixed status=EMPTY. Date-only records are uncertain and must not be silently assumed to be from the current vial. No automatic reopening or stock credit; user rejects visible correction wizard as routine solution. Separate from any independently verified historical reconciliation.
+
 ## 2026-11-16 — Recurring Deadpool false finish: invisible safeguard rather than manual correction UI
 - User explicitly wants no click, repair wizard, or visible correction for a vial that repeatedly becomes Finished before the next day's dose. Focus on fixing the writer/accounting path. Historical records and actual physical stock remain unknown; do NOT automatically reopen, restore calculated remainingMg, or rewrite private records.
 - Independent draft PR174 isolates one code safety property: kit-wide ledger cap alone cannot automatically retire a specific premixed vial without verified depletion of its own physical-vial ledger. This is a candidate safeguard, NOT proof of the original real-world trigger or release approval. PR169 and PR173 stay separate.
