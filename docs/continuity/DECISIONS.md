@@ -1,3 +1,8 @@
+## 2026-11-16 — Historical stock correction staged safety boundary
+- PR173 read-only historical review is separate from any physical stock mutation. User authorized development, not deployment or personal-data adjustment.
+- Stage B correction stays NOT LOADED and DEFAULT OFF. Require real independent evidence, current-state compare, externally verified durable backup, exclusive writer, auditable before/after, separate rollback confirmation. Never rewrite original dose history to reconcile totals.
+- Ledger-mode premixed blend inventory must not be “fixed” by remainingMg-only changes. Block this until canonical ledger-aware transactional design is validated. PR169 remains independent, unchanged.
+
 ## 2026-11-16 — PR173 mounted read-only inspector is not stock-repair consent
 - Development-only source reader integrated into premixed vial actions for QA. It may show uncertain historical records and copy a summary; does not save source assignments or modify inventory. Existing Adjust Remaining Amount and Reopen Vial remain separate older actions, never invoked by the review screen. Future physical-stock corrections still require explicit independently verified user evidence, controlled transactional writer and separate deployment approval. No approval to merge PR173 or PR169.
 
