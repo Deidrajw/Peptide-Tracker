@@ -1,3 +1,7 @@
+## 2026-11-16 — Historical Deadpool pure-engine QA; no release
+- GitHub #43815937115: syntax PASS, eight fictional Node assertions PASS, static no-write guard FAIL due to matching a harmless comment containing 'localStorage'; corrected at 2348b7f8; final workflow verdict pending.
+- Covered: unknown physical remainder, exact source ID, duplicate ledger ID, zero/null allocation, no ledger backfill, immutable input, explicit backup and typed confirmation, stale-state refusal, invalid IDs, unsupported amount observations, clone-only annotation. **NOT TESTED:** production UI, live save/undo, physical balance reconciliation, real private records, 320/390 browser, iPhone, VoiceOver, full-app demo/live artifact. Physical corrections BLOCKED.
+
 ## 2026-11-15 Toronto — Deadpool historical review proposed checks (NOT TESTED)
 - Read-only inspect/cancel/export does not mutate state/storage; duplicate/unknown sources remain unknown; never add 9 mg ledger and 14 mg unattributed dose totals without transaction overlap review; sealed/empty/unknown/date-null display; correct exact physical vial IDs; 320/390 light/dark and a11y; PR169 separation. All new review checks **NOT TESTED**, no UI implemented. Production inventory repair **BLOCKED** pending physical user verification and explicit separate approval.
 
