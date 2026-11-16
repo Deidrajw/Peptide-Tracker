@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 additional exact-source changes (UNRELEASED)
+- Code 664a367c date-only missing-vial attribution fail-closed; test 88772223 next-day save/reload; code ad276e66 partial blend outflow same-vial guard; test 33b30b27. All eight CI tests PASS at earlier source 517019c4 only; latest head CI not yet verified. No release, data migration, physical repair, iPhone acceptance or deployment. Production previously verified v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 follow-up, NOT A RELEASE
 - JS03 664a367c date-only historical source ambiguity fail-closed; fictional next-day JSON reload regression test 88772223. Eight earlier suites PASS at 517019c4; refreshed branch head CI not yet verified. Draft, unmerged, no deployment, no real user data repairs; production v0.9.27-beta.4 prior parity.
 
