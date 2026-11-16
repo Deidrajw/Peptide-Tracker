@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 Prepare Dose rollover and latest exact-source CI
+- Added fictional source guard against premature generic finishVial() via Prepare Dose > Open New Vial, code 3ba7044b test 443b041c. At 443b041c four verified CI PASS: dedicated false-empty #43865875449, blend/BAC #43865875831, mobile #43865875730, writer #43865875652. Browser/WebKit/pinned/DS2 in progress at checkpoint; do not claim full PASS yet. No physical iPhone and no true private-data replay. Existing exact-vial next-day JSON simulation remains separate from browser click-through.
+
 ## 2026-11-16 — PR174 outflow path hardened, exact-head validation pending
 - Same-vial exhaustion predicate now gates both blend dose writer (04-nexus.js) and partial outflow writer (03-nexus.js); fictional source test verifies second guard. Latest code/test SHA 33b30b27 tests not yet CI-qualified. All eight CI suites passed at earlier code SHA 517019c4. Five passed at 88772223, three browser/build groups still running at inspection. Real iPhone, demo/live source integrity, actual prior corrupted storage and physical stock NOT TESTED.
 
