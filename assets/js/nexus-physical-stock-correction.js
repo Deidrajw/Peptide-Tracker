@@ -18,6 +18,9 @@
   const matches=snapshot.supplies.filter(k=>same(k.id,input.kitId)&&k.isBlend===true);
   if(matches.length!==1)fail("Exact blend kit required");
   const kit=matches[0],vials=(kit.vials||[]).filter(v=>same(v.id,input.vialId));
+  // Ledger-mode blends derive physical stock from doseLog, not remainingMg.
+  // Never present a field-only edit as a correction to the authoritative balance.
+  if(kit.blendInventoryMode==="ledger")fail("Ledger-mode physical correction requires separate canonical ledger integration");
   if(vials.length!==1)fail("Exact vial required");
   const vial=vials[0];
   if(!["open","active","empty","finished"].includes(vial.status))fail("Status not eligible for correction");
