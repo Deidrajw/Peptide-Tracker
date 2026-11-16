@@ -1,3 +1,6 @@
+## 2026-11-16 — Automatic blend vial finish consistency
+- Premixed blend dose withdrawal and partial physical outflow may each retire a vial only with exact-vial ledger evidence; kit-wide estimate alone does not prove physical vial exhaustion. Do not auto-reopen or modify historical user records, and do not make a user-facing correction wizard the routine fix. Draft PR174 only, awaiting QA and explicit release approval.
+
 ## 2026-11-16 — Unattributed historical records cannot automatically finish specific vial
 - Design safeguard: only vial-specific ledger withdrawals/waste justify automatic premixed status=EMPTY. Date-only records are uncertain and must not be silently assumed to be from the current vial. No automatic reopening or stock credit; user rejects visible correction wizard as routine solution. Separate from any independently verified historical reconciliation.
 
