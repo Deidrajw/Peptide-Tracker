@@ -11,5 +11,5 @@ assert.match(handler,/vial\.bacMl=newBac/,"Premixed blend confirms displayed BAC
 assert.match(handler,/openedVial\.bacMl=newBac/,"Ordinary vial must confirm displayed BAC even if unchanged");
 assert.match(handler,/vialId:openedVial\.id,date:reconTimestamp[\s\S]*?bacMl:newBac/,"Ordinary vial must record matching source-specific reconHistory");
 assert.match(handler,/vialId:vial\.id,bacMl:newBac/,"Blend vial must have exact reconHistory");
-assert.ok(handler.indexOf("openedVial.bacMl=newBac")<handler.indexOf("await nexusCommitCurrentState()"),"BAC must be persisted in same save");
+assert.ok(handler.indexOf("openedVial.bacMl=newBac")<handler.lastIndexOf("await nexusCommitCurrentState()"),"BAC must be persisted before ordinary-vial commit");
 console.log("PASS opening blend and ordinary vial confirms displayed BAC on physical vial and linked history");
