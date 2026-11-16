@@ -1,3 +1,6 @@
+## 2026-11-16 — Prepare Dose rollover cannot bypass physical blend ledger
+- For premixed blends, do not allow generic legacy Prepare Dose > Open New Vial action to retire the current vial before the actual preparation/withdrawal is committed in the single physical blend ledger. Block exceptional action without mutation rather than infer amount or force a visible manual recovery workflow. Normal daily Log Dose and Combo Dose are protected. PR174 draft, no merge/deploy consent.
+
 ## 2026-11-16 — Automatic blend vial finish consistency
 - Premixed blend dose withdrawal and partial physical outflow may each retire a vial only with exact-vial ledger evidence; kit-wide estimate alone does not prove physical vial exhaustion. Do not auto-reopen or modify historical user records, and do not make a user-facing correction wizard the routine fix. Draft PR174 only, awaiting QA and explicit release approval.
 
