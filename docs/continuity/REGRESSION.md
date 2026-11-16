@@ -1,3 +1,8 @@
+## 2026-11-16 UTC — v0.9.27-beta.4 verified release evidence
+- PASS premerge all seven exact-source QA families at c4bad1ea including full browser 320/390 light/dark #43799595215, WebKit #43799595191, Chromium #43799595178, mobile #43799595212, DS2 #43799595173, shared writer #43799595172 and blend/BAC #43799595200.
+- PASS primary Cloudflare version + 16/16 byte exact files #43800686509 against merge SHA 3a77b4f09873d4eb0b6f22f74c260c0abcc40976. PASS GitHub Pages integrity #43800686517 and deployment #43800686294. Postmerge full browser #43800686654 in progress at checkpoint; JS02 publication metadata-only parity pending fresh verification.
+- USER-REPORTED PASS fictional Deadpool combo and both vial menus / BAC default confirmation. No real device named; VoiceOver, Dynamic Type, production-data historical repair NOT TESTED. Existing user data untouched.
+
 ## 2026-11-15 — PR172 release gate
 - User-reported fictional Deadpool combo and corrected demo vial ellipses/BAC confirmation: PASS (device unspecified; not real production data). Exact source pre-release 000fae51: all seven GitHub workflows SUCCESS, including browser 320/390 light/dark. v0.9.27-beta.4 generated metadata + full release candidate tests pending on new commit; deployed Cloudflare parity NOT TESTED. Old historic stock reconciliation BLOCKED without user verification.
 

@@ -1,8 +1,8 @@
 {
   "version": "v0.9.27-beta.4",
   "channel": "beta",
-  "publicationStatus": "unverified",
-  "publishedAt": null,
+  "publicationStatus": "published",
+  "publishedAt": "2026-11-16T03:52:37Z",
   "title": "Reliable premixed-blend combination doses and accurate per-vial BAC-water records",
   "changes": [
     {

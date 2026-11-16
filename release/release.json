@@ -3,15 +3,15 @@
   "version": "v0.9.27-beta.4",
   "channel": "beta",
   "publication": {
-    "status": "unverified",
-    "publishedAt": null,
-    "commit": null,
+    "status": "published",
+    "publishedAt": "2026-11-16T03:52:37Z",
+    "commit": "3a77b4f09873d4eb0b6f22f74c260c0abcc40976",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
     "baselineMainCommit": "b3a67ec48f5ba982abff042048e30a9549d83467",
     "pullRequest": 172,
-    "mergedAppCommit": null
+    "mergedAppCommit": "3a77b4f09873d4eb0b6f22f74c260c0abcc40976"
   },
   "headline": "Reliable premixed-blend combination doses and accurate per-vial BAC-water records",
   "changes": [

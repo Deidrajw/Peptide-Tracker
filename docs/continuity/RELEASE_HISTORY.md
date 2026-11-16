@@ -1,3 +1,7 @@
+## 2026-11-16 UTC — v0.9.27-beta.4 MERGED and PRIMARY CLOUDFARE VERIFIED
+- Approved PR172 merge SHA 3a77b4f09873d4eb0b6f22f74c260c0abcc40976; Cloudflare byte parity workflow #43800686509 SUCCESS matching 16/16 production entry files; GitHub Pages integrity #43800686517 SUCCESS and Pages publish #43800686294 SUCCESS. v0.9.27-beta.4 published after verification. Release metadata-only finalization uses existing narrowly permitted JS02 publication exception, pending post-finalization Cloudflare parity.
+- Changes: correct premixed Deadpool Combo Dose ledger/Undo; explicit same-vial BAC on Log Reconstitution including unchanged default; historical-vial BAC correction, unknown dates preserved, correct "Recorded for this vial" label. No destructive migration or historical dose rewriting. PR169 remains separate draft; existing Deadpool incorrectly empty historical vial needs explicit reconciliation. User-reported fictional test acceptance PASS; physical hardware unspecified.
+
 ## 2026-11-15 — v0.9.27-beta.4 PREPARED / UNPUBLISHED
 - User authorized PR172 release after fictional demo acceptance; candidate updates canonical version/notes/generated release metadata and JS02. Seven previous source-head suites PASS at 000fae51; candidate version/head QA pending. Never claim deployed from merge alone. No schema/storage migration, PR169 remains draft. Exact Cloudflare parity and independent acceptance required before publishing metadata.
 
