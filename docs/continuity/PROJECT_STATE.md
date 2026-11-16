@@ -1,3 +1,7 @@
+## 2026-11-16 — Added mounted-review wiring assertions (CI PENDING)
+- Latest application/test SHA 4d7704de864f5dc8799cc69074e4aec85ead5c4f adds two fictional regression assertions for the exact Stash review action and customPeptides history. Current full app source otherwise unchanged from dc89a16b. New-source CI outcome NOT VERIFIED; earlier dc89a16b dedicated no-write, blend/BAC, shared writer, mobile and DS2 SUCCESS; full browser/WebKit/pinned still running at last check. No merge/deploy.
+- ONE NEXT ACTION: verify 4d7704de exact-head CI and full demo/LIVE artifact, then test 320/390 review sheet and design user-confirmed physical stock correction with complete rollback.
+
 ## 2026-11-16 — PR173 read-only Stash review integration (DRAFT, UNMERGED)
 - Main independently verified at a722465cb6f9adbf8009038e45bc87d5913a438e; previously production-parity qualified v0.9.27-beta.4 remains live. PR169 remains independent and untouched.
 - PR173 now mounts an isolated read-only historical review reader before JS04, adds an entry to premixed Vial Actions menu, and shows recorded status, ledger entries and missing-source dose entries with physical remainder marked UNKNOWN. Copy summary is the only action; no inventory writer, no source-assignment save, no auto repair. Exact UI source latest app commit dc89a16bd091a5413116d712071e841cc35a0c55.
