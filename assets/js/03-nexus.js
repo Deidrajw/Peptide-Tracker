@@ -1433,7 +1433,9 @@ function blendLogOutflowModal(kitId) {
       current.wasteLog.push({id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
         mg,type,reason:"Blend outflow",status:"active",vialId:v.id,outflowKind:"blend_open_partial"});
       if(current.blendInventoryMode==="legacy-v2")v.remainingMg=Math.max(0,Number(v.remainingMg)-mg);
-      if(getBlendOpenVialRemainingMg(current)<=0.01){
+      // A kit-wide cap may reach zero due to older unattributed outflow.
+      // Retire this specific vial only when its own physical ledger confirms.
+      if(getBlendOpenVialRemainingMg(current)<=0.01 && isBlendVialLedgerDepleted(current,v)){
         v.status="empty";current.emptyVials=(current.emptyVials||0)+1;
         current.reconDate=null;current.activeKit=false;
       }
