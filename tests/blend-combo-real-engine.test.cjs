@@ -24,7 +24,7 @@ const context={
     .flatMap(kit=>kit.vials.filter(v=>["open","active"].includes(v.status)).map(vial=>({kit,vial})))
 };
 vm.createContext(context);
-for(const name of ["getBlendKitRemainingMg","getBlendOpenVialRemainingMg"])
+for(const name of ["getBlendKitRemainingMg","getBlendOpenVialRemainingMg","isBlendVialLedgerDepleted"])
   vm.runInContext(get(name,src3),context);
 for(const name of ["migrateKitToV2","getVialRemainingMg","consumeCompoundInventory","planAndApplyComboDoses"])
   vm.runInContext(get(name,src4),context);
