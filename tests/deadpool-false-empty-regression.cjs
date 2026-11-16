@@ -11,6 +11,8 @@ function extract(src,name) {
   return src.slice(start,end+2);
 }
 const names03=['getBlendKitRemainingMg','getBlendOpenVialRemainingMg','isBlendVialLedgerDepleted'];
+assert.match(src03,/getBlendOpenVialRemainingMg\(current\)<=0\.01 && isBlendVialLedgerDepleted\(current,v\)/,
+  'partial outflow must not mark a vial empty from kit cap alone');
 const names04=['consumeCompoundInventory'];
 const sandbox={
  Math,Number,Date,String,JSON,console,
