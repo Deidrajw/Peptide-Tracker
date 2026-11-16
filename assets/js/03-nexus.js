@@ -1337,12 +1337,19 @@ function isBlendVialLedgerDepleted(kit, vial) {
   const date=vial.reconDate||kit.reconDate;
   // Unattributed entries without a reliable opening date are unknown, not zero.
   if(!date) return false;
-  const doseEntries=(kit.doseLog||[]).filter(d=>d.vialId!=null
-    ? String(d.vialId)===String(vial.id)
-    : Number.isFinite(new Date(d.date).getTime()) && new Date(d.date)>=new Date(date));
+  // A date-only event is NOT proof of which physical vial was drawn from.
+  // It can still affect a separate kit-wide estimate, but cannot retire an
+  // exact vial. Unknown attribution fails closed instead of guessing.
+  const ambiguousDose=(kit.doseLog||[]).some(d=>d.vialId==null &&
+    (!Number.isFinite(new Date(d.date).getTime()) || new Date(d.date)>=new Date(date)));
+  const ambiguousWaste=(kit.wasteLog||[]).some(w=>w.status!=="reversed"&&w.vialId==null &&
+    (!Number.isFinite(new Date(w.loggedAt||w.date).getTime()) ||
+      new Date(w.loggedAt||w.date)>=new Date(date)));
+  if(ambiguousDose||ambiguousWaste) return false;
+  const doseEntries=(kit.doseLog||[]).filter(d=>d.vialId!=null &&
+    String(d.vialId)===String(vial.id));
   const wasteEntries=(kit.wasteLog||[]).filter(w=>w.status!=="reversed" &&
-    (w.vialId!=null ? String(w.vialId)===String(vial.id) :
-      (w.loggedAt ? new Date(w.loggedAt) : safeDate(w.date))>=safeDate(date)));
+    w.vialId!=null && String(w.vialId)===String(vial.id));
   const correctionEntries=(kit.balanceCorrections||[]).filter(c=>c.status!=="reversed"&&String(c.vialId)===String(vial.id));
   const all=[...doseEntries.map(x=>Number(x.totalMgDrawn)),...wasteEntries.map(x=>Number(x.mg)),...correctionEntries.map(x=>Number(x.mg))];
   if(all.some(x=>!Number.isFinite(x)||x<0))return false;
