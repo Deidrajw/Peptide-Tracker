@@ -1,3 +1,6 @@
+## 2026-11-16 — Prior bug versus unproven recurrence
+- Historical Deadpool backup contains stale zero remainingMg alongside partial same-vial ledger; consistent with the pre-v0.9.27-beta.4 Combo Dose write issue already addressed in PR172. No timestamp of actual transition, so do not assert live bug persisted after deployment. Exact-vial non-destructive safety guards on draft PR174 remain additive protection. Preserve historical records, do not auto-correct balances or misrepresent true physical on-hand stock.
+
 ## 2026-11-16 — Prepare Dose rollover cannot bypass physical blend ledger
 - For premixed blends, do not allow generic legacy Prepare Dose > Open New Vial action to retire the current vial before the actual preparation/withdrawal is committed in the single physical blend ledger. Block exceptional action without mutation rather than infer amount or force a visible manual recovery workflow. Normal daily Log Dose and Combo Dose are protected. PR174 draft, no merge/deploy consent.
 
