@@ -1,3 +1,7 @@
+## 2026-11-16 — Real-browser fictional next-day validation does not authorize release or history repair
+- User's reported Deadpool next-day false finish is addressed by additive exact-vial safeguards in draft PR174. Actual browser test through normal Log Dose and exclusive localStorage persistence passed for fictional historical-shape inventory, including full reload and next-day dose. This is evidence of tested workflow, NOT proof that original real-data incident happened under current deployed version.
+- Personal stock stays unknown; no forced reopening, no historical ledger backfill, no silent inventory restoration, no extra correction UI. A separate physical iPhone acceptance and explicit merge/deploy authorization remain required.
+
 ## 2026-11-16 — Prior bug versus unproven recurrence
 - Historical Deadpool backup contains stale zero remainingMg alongside partial same-vial ledger; consistent with the pre-v0.9.27-beta.4 Combo Dose write issue already addressed in PR172. No timestamp of actual transition, so do not assert live bug persisted after deployment. Exact-vial non-destructive safety guards on draft PR174 remain additive protection. Preserve historical records, do not auto-correct balances or misrepresent true physical on-hand stock.
 
