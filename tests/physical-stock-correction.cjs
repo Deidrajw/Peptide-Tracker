@@ -2,7 +2,7 @@ const assert=require("node:assert/strict");
 const {plan,commit,rollbackPlan,rollback}=require("../assets/js/nexus-physical-stock-correction.js");
 const {create}=require("../assets/js/nexus-write-coordinator.js");
 const clone=x=>JSON.parse(JSON.stringify(x));
-function fixture(){return {supplies:[{id:101,name:"Fictional Blend",isBlend:true,blendInventoryMode:"ledger",
+function fixture(){return {supplies:[{id:101,name:"Fictional Blend",isBlend:true,blendInventoryMode:"vial",
  vials:[{id:501,status:"empty",remainingMg:0,vialMg:30}],
  doseLog:[{id:801,vialId:501,totalMgDrawn:9,date:"2026-10-01"}]}],
  peptides:{"Fictional Blend":{doses:[{id:901,dose:14,allocations:[{kitId:101,amount:0,vialId:null}]}]}}};}
@@ -22,6 +22,7 @@ const auth={confirmed:true,confirmationText:"CORRECT PHYSICAL STOCK"};
 const rollbackAuth={confirmationText:"ROLL BACK STOCK CORRECTION"};
 const tests=[];
 function test(name,fn){tests.push({name,fn})}
+test("ledger-mode blend correction remains blocked",()=>{const f=fixture();f.supplies[0].blendInventoryMode="ledger";assert.throws(()=>plan(f,input()),/canonical ledger integration/)});
 test("feature OFF rejects planning",()=>assert.throws(()=>plan(fixture(),{...input(),enabled:false}),/gate OFF/));
 test("plan is read-only and does not infer remaining from ledger",()=>{
  const f=fixture(),before=JSON.stringify(f),p=plan(f,input());assert.equal(JSON.stringify(f),before);
