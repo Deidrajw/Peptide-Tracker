@@ -1,3 +1,40 @@
+## 2026-11-15 — PR172 release gate
+- User-reported fictional Deadpool combo and corrected demo vial ellipses/BAC confirmation: PASS (device unspecified; not real production data). Exact source pre-release 000fae51: all seven GitHub workflows SUCCESS, including browser 320/390 light/dark. v0.9.27-beta.4 generated metadata + full release candidate tests pending on new commit; deployed Cloudflare parity NOT TESTED. Old historic stock reconciliation BLOCKED without user verification.
+
+## 2026-11-15 — New data-confirmation and fixture regression
+- PASS dedicated GitHub blend/BAC test #43798106884 on JS04/JS09 code ba869231, includes static source guard that ordinary reconstitution confirms displayed default on exact physical vial and appends linked history. This is source-level, not full UI browser evidence.
+- Demo fixture bug identified: preloaded Deadpool/BPC-157 kit/vial IDs strings vs JS12 ellipsis handler numeric coercion. Fictional full-app scenario rebuilt with numeric IDs, ledger and linked history references preserved. Local HTML inline JS parse PASS and offline ZIP CRC PASS. Actual Chromium navigation through revised preview BLOCKED by container environment, NOT TESTED, user retest needed. Existing real user backup untouched.
+- NOT TESTED new iPhone ellipsis/BAC workflow; broader CI exact head ba869231 browser/WebKit etc in progress at time of evidence. No production rollout.
+
+## 2026-11-15 — User-reported Deadpool test-ready demo acceptance
+- USER-REPORTED PASS: user tested the fictional Deadpool combination-dose scenario in the special test-ready FULL-APP DEMO and responded "okay it worked." This supports the reported scenario's behaviour; user did not specify device or itemize each observation, so do NOT infer physical iPhone acceptance, exact dose/balance values confirmed individually, VoiceOver, or BAC history tested. Demo fixture included opened premixed Deadpool vial, prior ledger withdrawals and BPC-157 companion dose. Scenario-only test, not production data.
+- BAC-water historical edit scenario: NOT USER-TESTED. Previously reported historical Deadpool real-data mismatch remains unresolved; no live data changed. PR172 remains draft, unmerged, undeployed; user has not granted release approval.
+
+## 2026-11-15 — PR172 exact source d3389f97 regression checkpoint
+- PASS dedicated blend/BAC test #43763300982: actual JS03/JS04 blend accounting and Combo Dose engine in both accounting modes, correct ledger ID, repeated draw/no early empty, exact depletion, real migration bypass; actual view/edit handlers with fake DOM and fictional vials: historical EMPTY retains status/amount, avoids kit default overwrite; OPEN updates exact vial; SEALED rejects; unknown historical date kept null.
+- PASS pinned Chromium #43763301048, WebKit #43763301078, mobile #43763300986, shared writer #43763301067, DS2 #43763301000. Full build/browser #43763300987 IN PROGRESS, not PASS. Artifact #14180558605 manifest d3389f97, outer CRC and 26-file LIVE CRC PASS, isolated fictional complete DEMO HTML equals offline ZIP.
+- Earlier harness FAIL #43762480052 rejected harmless migration invocation; fixed by executing real bypass. Older source expectation FAIL #43763232475 assumed nonempty date; corrected for unknown history. Neither represents current PASS.
+- NOT TESTED physical iPhone, VoiceOver/Dynamic Type, production reload; user private historical Deadpool data reconciliation BLOCKED until user confirms physical/source facts. No data mutation.
+
+## 2026-11-15 — PR172 historical-vial BAC and actual-engine regression (CURRENT)
+- PASS at cabed448 seven full GitHub QA workflow families; source-specific legacy artifact #14175294218. PASS actual real blend engine test after harness correction #43762652119 at source 1482347b.
+- NEW NOT YET FULLY QUALIFIED at source 935f2313: actual engine runs getBlendKitRemainingMg/getBlendOpenVialRemainingMg, migrateKitToV2, consumeCompoundInventory and planAndApplyComboDoses under both premix accounting modes, repeated doses, real ledgerId and exact empty transition. New VM DOM shim executes actual View Vial + Edit Reconstitution for previously EMPTY vial, confirms saved exact-vial BAC and appended history without reopening, changing remainingMg or kit defaults; verifies OPEN record edits and rejection of SEALED edit.
+- Historical QA blocker: prior experimental run #43762480052 FAILED because mock migration helper rejected a call instead of skipping blends; harness corrected and real engine test #43762652119 PASS. Final seven-suite CI on 935f2313 still PENDING. Physical iPhone/VoiceOver/production reload NOT TESTED. No clinical validation asserted.
+- Read-only backup showed 58/61 nonsealed vials with only kit BAC defaults, so no bulk retroactive confirmation allowed. Separate Deadpool historic ledger reconciliation BLOCKED until physical/source confirmation. No production writes.
+
+## 2026-11-15 — PR172 exact-source test status update
+- PASS dedicated fictional blend combo + BAC source regression #43748385052 at app source a588e97d; repeated blend ledger allocations and ledgerId, live source VM exercise, stale blend remainingMg ignored, exception rollback and per-vial BAC source checks.
+- PASS shared writer #43748385085; mobile forms #43748385089; DS2 nested #43748385103.
+- NOT TESTED/IN PROGRESS full browser/build #43748385094, pinned Chromium #43748385091, WebKit #43748385095 at documentation time. Original initial candidate 11cb8c passed all seven, but exact final app-source workflows remain distinct pending conclusions.
+- PASS source package validation candidate #14175207169: 26-file LIVE CRC, ordered 12 JS, full-app HTML equals offline demo ZIP; purely fictional in-memory storage.
+- BLOCKED historical Deadpool stock reconciliation: existing vial status EMPTY; six combo doses have zero/null allocations. Requires explicit physical-record verification; no inferred auto corrections. Physical iPhone and accessibility NOT TESTED; merge/deploy NOT AUTHORIZED.
+
+## 2026-11-15 — ISSUES #170/#171 proposed regression, UNRELEASED
+- NOT TESTED CI: fictional consecutive 3mg blend combo entries keep 30mg physical vial OPEN until exact ledger consumed, each allocation has nonzero amount and ledgerId, backed dose isBlendDose true, no ordinary remainingMg overwrite.
+- NOT TESTED CI: stale historical blend remainingMg field does not alter ledger-calculated usable balance; forced post-ledger exception restores entire snapshot; unmatched sources fail closed.
+- NOT TESTED browser: same-kit two-open disambiguation; single blend dose/Undo; combo blend+ordinary; blend prepared draws, insufficiency, exact source, history and date; Stash per-vial BAC details and Edit round-trip at 320px/390px light/dark.
+- NOT TESTED physical iPhone and VoiceOver. Production backup recovery and deployed parity not attempted. No safety/calculator certification implied. No personal backup in repository.
+
 ## 2026-11-12 Toronto / 2026-11-13 UTC — PR163+PR164 post-merge production verification
 - PASS GitHub PR163 merge 06d08689, PR164 merge 0c0adc85, main source published 3d97b3f9. PASS Cloudflare exact raw-byte file parity 16/16 run #43365574769 for https://nexuspeplog.pages.dev/ v0.9.27-beta.3. PASS Pages deployment run #43365573772 and independent Pages integrity #43365574922; PASS main mobile regression #43365574778. PRE-MERGE PASS PR164 six exact-source workflows at e33ee298: full build #43361922866, Chromium #43361922880, WebKit #43361922858, mobile #43361923024, shared writer #43361922891, DS2 nested #43361922984; user-reported focused physical iPhone PR163 and PR164 checks PASS, not VoiceOver/Dynamic Type.
 - INTERMEDIATE FAILURES preserved: first postmerge 0c0adc and sequential version/index commit failed strict stale release-note gate; later 7c637825 notes/title gate PASS but generated in-app notes were stale; corrected atomic generated metadata at 6bc09964 and publication finalization at 3d97b3f9. Full exact-head GitHub browser build #43365574713 IN PROGRESS at time of this note, not verified PASS. Final official artifact pending; source-validated #14009554770 LIVE 26 CRC PASS, fictional isolated full-app DEMO.

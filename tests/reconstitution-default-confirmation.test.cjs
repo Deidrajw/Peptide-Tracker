@@ -1,0 +1,15 @@
+"use strict";
+const fs=require("node:fs"),assert=require("node:assert/strict");
+const source=fs.readFileSync("assets/js/09-nexus.js","utf8");
+const start=source.indexOf('m.querySelector("#rvsave").onclick = async () => {');
+assert(start>=0,"Missing canonical Log Reconstitution save handler");
+const end=source.indexOf('\n  };',start);
+assert(end>start,"Missing save handler end");
+const handler=source.slice(start,end);
+assert.match(handler,/Number\.isFinite\(newBac\)\|\|newBac<=0/,"BAC must be validated before logging");
+assert.match(handler,/vial\.bacMl=newBac/,"Premixed blend confirms displayed BAC on physical vial");
+assert.match(handler,/openedVial\.bacMl=newBac/,"Ordinary vial must confirm displayed BAC even if unchanged");
+assert.match(handler,/vialId:openedVial\.id,date:reconTimestamp[\s\S]*?bacMl:newBac/,"Ordinary vial must record matching source-specific reconHistory");
+assert.match(handler,/vialId:vial\.id,bacMl:newBac/,"Blend vial must have exact reconHistory");
+assert.ok(handler.indexOf("openedVial.bacMl=newBac")<handler.lastIndexOf("await nexusCommitCurrentState()"),"BAC must be persisted before ordinary-vial commit");
+console.log("PASS opening blend and ordinary vial confirms displayed BAC on physical vial and linked history");

@@ -1951,6 +1951,16 @@ function openNewVialModal(supplyId, onDone, selectedForm=null) {
       // kits here — multiple can now be open at once, by explicit confirmation above.
       const openedVial=activateVial(entry, reconTimestamp, isNaN(newBac)?entry.bacMl:newBac, m.querySelector("#rvn").value);
       openedVial.intendedUse=m.querySelector("#rv-purpose").value;
+      // Tapping Log Reconstitution is explicit confirmation of the displayed
+      // BAC water amount, including an unchanged kit default. Save the value
+      // against this physical vial, not only the kit template.
+      openedVial.bacMl=newBac;
+      openedVial.expiryDays=expiryDays;
+      entry.reconHistory=entry.reconHistory||[];
+      entry.reconHistory.push({
+        id:uid(),vialId:openedVial.id,date:reconTimestamp,
+        bacMl:newBac,notes:m.querySelector("#rvn").value,expiryDays
+      });
       if(!await nexusCommitCurrentState())return;closeModal();render();
       // When another vial in this kit is already open, the first-open lookup is
       // ambiguous. Resume against the exact vial just opened, preserving its ID.

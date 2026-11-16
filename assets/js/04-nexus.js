@@ -1436,6 +1436,8 @@ function viewVialPreparationModal(kitId,vialId) {
     .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
   const entry=history[0]||{};
   const water=vial.bacMl??entry.bacMl;
+  const waterIsExact=Number.isFinite(Number(water))&&Number(water)>0;
+  const kitWater=Number(kit.bacMl);
   const date=vial.reconDate||entry.date;
   const notes=vial.notes||entry.notes;
   const amount=vial.vialMg??kit.vialMg;
@@ -1452,7 +1454,7 @@ function viewVialPreparationModal(kitId,vialId) {
       </div>
       ${row("Status",vial.status==="open"||vial.status==="active"?"Open":vial.status||"Not recorded")}
       ${row("Nominal vial amount",Number.isFinite(amountNumber)&&amountNumber>0?amountNumber+" mg":"Not recorded")}
-      ${row("BAC water added",Number.isFinite(waterNumber)&&waterNumber>0?waterNumber+" mL":"Not recorded for this vial")}
+      ${row("BAC water added",waterIsExact?waterNumber+" mL · Recorded for this vial":Number.isFinite(kitWater)&&kitWater>0?"Not recorded for this vial · kit default: "+kitWater+" mL (unverified)":"Not recorded for this vial")}
       ${row("Reconstituted",date?fmtDate(date):"Not recorded")}
       ${row("Form",vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Not recorded for this vial")}
       ${row("Current remaining",typeof getVialRemainingMg==="function"?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Not available")}
@@ -1479,7 +1481,7 @@ function vialActionsMenu(kitId, vialId) {
     ${canSetMethod?`<button id="va-method" class="nx-vial-menu-action" type="button">Set administration method<small>Identify how this specific vial will be used</small></button>`:""}
     ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
     ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
-    <button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date, BAC water amount, or notes</div></button>
+${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date or BAC water amount without changing doses</div></button>`:""}
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
@@ -1489,7 +1491,8 @@ function vialActionsMenu(kitId, vialId) {
   if(methodAction)methodAction.onclick=()=>{closeModal();nexusStashSetLegacyVialMethod(kitId,vialId);};
   const planAction=m.querySelector("#va-plan");
   if(planAction)planAction.onclick=()=>{closeModal();nexusCreateLinkedPreparation(kitId,vialId);};
-  m.querySelector("#va-edit").onclick = () => { closeModal(); editVialReconModal(kitId, vialId); };
+  const reconAction=m.querySelector("#va-edit");
+  if(reconAction)reconAction.onclick=()=>{closeModal();editVialReconModal(kitId,vialId);};
   m.querySelector("#va-adjust").onclick = () => { closeModal(); adjustVialRemainingModal(kitId, vialId); };
   const reopenBtn = m.querySelector("#va-reopen");
   if (reopenBtn) reopenBtn.onclick = () => { closeModal(); reopenVialModal(kitId, vialId); };
@@ -2120,26 +2123,51 @@ function editVialReconModal(kitId, vialId) {
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
   const c = cfg(s.name);
   const isActiveVial = vial.status==="active"||vial.status==="open";
+  const canCorrectPreparation=isActiveVial||vial.status==="empty"||vial.status==="finished";
+  if(!canCorrectPreparation){showErrorBanner("Only a previously reconstituted vial can have its preparation corrected.");return;}
+  const recordedRecon=(s.reconHistory||[]).filter(r=>String(r.vialId)===String(vial.id))
+    .sort((a,b)=>String(b.editedAt||b.date||"").localeCompare(String(a.editedAt||a.date||"")))[0]||{};
+  const exactBac=vial.bacMl??recordedRecon.bacMl;
+  const hasExactBac=Number.isFinite(Number(exactBac))&&Number(exactBac)>0;
+  const displayedBac=hasExactBac?exactBac:s.bacMl;
+  const recordedDate=vial.reconDate||recordedRecon.date||"";
   const m = openModal(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span class="mono" style="font-size:13px;color:${c.color};letter-spacing:1.5px">EDIT RECONSTITUTION</span>
       <button id="x" style="color:var(--t4);font-size:18px">✕</button>
     </div>
     <label class="field-label">RECONSTITUTION DATE</label>
-    <input id="ev-date" type="date" class="inp" value="${dayKey(vial.reconDate)}" style="margin-bottom:14px">
-    ${isActiveVial?`<label class="field-label">BAC WATER ADDED (mL)</label>
-    <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(s.bacMl||"")}" style="margin-bottom:14px">`:""}
+    <input id="ev-date" type="date" class="inp" value="${recordedDate?dayKey(recordedDate):""}" style="margin-bottom:6px">
+    ${!isActiveVial?'<p style="font-size:12px;color:var(--t3);margin:0 0 14px">Unknown historical date? Leave it blank rather than guessing.</p>':'<div style="margin-bottom:14px"></div>'}
+    ${canCorrectPreparation?`<label class="field-label">BAC WATER ADDED (mL)</label>
+    <input id="ev-bac" type="number" step="0.1" class="inp" value="${esc(displayedBac??"")}" style="margin-bottom:5px">
+    ${!hasExactBac?'<p style="font-size:12px;color:var(--t3);line-height:1.5;margin:0 0 14px">Kit default only — not verified for this vial. Save only if it matches what you actually added.</p>':'<div style="margin-bottom:14px"></div>'}`:""}
     <button id="ev-save" class="btn-primary" style="background:${c.color}">Save Changes</button>
   `, c.color);
   m.querySelector("#x").onclick = closeModal;
   m.querySelector("#ev-save").onclick = async () => {
     const newDate = m.querySelector("#ev-date").value;
-    vial.reconDate = newDate;
-    if (isActiveVial) {
-      s.reconDate = newDate;
-      const bacInput = m.querySelector("#ev-bac");
-      if (bacInput) s.bacMl = parseFloat(bacInput.value)||s.bacMl;
+    if((!newDate&&isActiveVial)||(newDate&&(!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!Number.isFinite(new Date(newDate).getTime())))){showErrorBanner("Enter a valid date for an open vial, or leave an unknown historical date blank.");return;}
+    if (canCorrectPreparation) {
+      const bacInput=m.querySelector("#ev-bac");
+      const actualBac=bacInput?Number(bacInput.value):NaN;
+      if(!Number.isFinite(actualBac)||actualBac<=0) {
+        showErrorBanner("Enter the BAC water amount actually added to this vial.");return;
+      }
+      // Explicit per-vial correction: preserve existing history and link the
+      // new evidence to the same physical vial rather than overwriting other vials.
+      vial.bacMl=actualBac;
+      // A finished vial is historical: never repoint the kit's current
+      // reconstitution date or its default dilution to this old vial.
+      if(isActiveVial){s.reconDate=newDate;s.bacMl=actualBac;}
+      s.reconHistory=s.reconHistory||[];
+      s.reconHistory.push({
+        id:uid(),vialId:vial.id,date:newDate||null,bacMl:actualBac,
+        editedAt:new Date().toISOString(),kind:"preparation-correction",
+        vialStatusAtCorrection:vial.status
+      });
     }
+    if(newDate)vial.reconDate=newDate;
     if(!await nexusCommitCurrentState())return;closeModal();render();
   };
 }
@@ -3200,7 +3228,12 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
     const hasSealedBackup = kitForAction ? ensureKitVials(kitForAction).some(v=>v.status==="sealed") : false;
     return { ok:false, shortfall: { name: shortfall.name, doseVal: shortfall.doseVal, unit: cc.unit, have, noOpenVial, kitId: kitForAction?.id ?? null, hasSealedBackup } };
   }
-  const doses = plan.map(p=>{
+  // All source movements are one in-memory transaction. A failed blend ledger
+  // check must restore the complete stock snapshot, not leave an earlier
+  // compound debited while the UI reports that nothing was saved.
+  const beforeStock = JSON.parse(JSON.stringify(state.supplies||[]));
+  let doses;
+  try { doses = plan.map(p=>{
     const cc = cfg(p.name);
     let allocations;
     if (p.eligible.length) {
@@ -3211,14 +3244,37 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       allocations = [];
       for (const {kit, vial} of p.eligible) {
         if (remaining <= (method?0.0000005:0.001)) break;
-        const take = Math.min(remaining, vial.remainingMg);
-        // For new staged mg/mcg flows retain six decimal mg precision so even
-        // 1mcg (0.001mg) actually leaves the vial; do not round it away.
-        vial.remainingMg = method
-          ? Math.round((vial.remainingMg-take)*1000000)/1000000
-          : Math.round((vial.remainingMg-take)*100)/100;
-        if (vial.remainingMg <= (method?0.0000005:0.01)) { vial.remainingMg = 0; vial.status = "empty"; }
-        allocations.push({ kitId: kit.id, vialId: vial.id, amount: mgToUnit(take, cc.unit) });
+        const available = getVialRemainingMg(kit, vial);
+        const take = Math.min(remaining, available);
+        if (!Number.isFinite(take) || take <= 0) throw Error("Invalid exact vial balance; combo dose not saved.");
+        if (kit.isBlend) {
+          // A premixed blend uses its own vial-specific doseLog. It MUST NOT be
+          // debited through v2 remainingMg, which can be absent or stale on a
+          // historical blend. That mismatch previously saved null/zero allocations
+          // and could mark a nonempty vial empty.
+          const result = consumeCompoundInventory({
+            kit, amountMg:take, reason:"administered", transactionId:comboId
+          });
+          if (!result.committed || result.allocations.length !== 1 ||
+              String(result.allocations[0].vialId) !== String(vial.id)) {
+            throw Error("Blend vial ledger changed; combo dose not saved.");
+          }
+          const entry = result.allocations[0];
+          allocations.push({
+            kitId:entry.kitId, vialId:entry.vialId,
+            amount:mgToUnit(entry.amountMg,cc.unit), ledgerId:entry.ledgerId
+          });
+        } else {
+          // For staged mg/mcg flows retain six-decimal mg precision.
+          vial.remainingMg = method
+            ? Math.round((vial.remainingMg-take)*1000000)/1000000
+            : Math.round((vial.remainingMg-take)*100)/100;
+          if (vial.remainingMg <= (method?0.0000005:0.01)) {
+            vial.remainingMg = 0; vial.status = "empty";
+          }
+          allocations.push({ kitId:kit.id, vialId:vial.id,
+            amount:mgToUnit(take,cc.unit) });
+        }
         remaining -= take;
       }
     }
@@ -3227,9 +3283,14 @@ function planAndApplyComboDoses(items, date, site, notes, comboId, symptoms=[], 
       ...(method?{enteredUnit:p.enteredUnit,enteredAmount:String(p.enteredValue)}:{}),
       ...(method?{method,trackingMode:p.tracked?"backed":"untracked"}:{}),
       comboAdministration:grouping==="mixed"?"mixed_syringe":"separate_injection",
+      ...(p.eligible.some(e=>e.kit.isBlend)?{isBlendDose:true,blendSource:p.eligible.find(e=>e.kit.isBlend).kit.id}:{}),
       symptoms: symptoms.map(s=>({...s})), notes, escalation:false,
       kitId: (p.eligible.length&&!allocations)?p.eligible[0].kit.id:null, allocations, comboId } };
   });
+  } catch (error) {
+    state.supplies = beforeStock;
+    return {ok:false,error:error.message||"Source ledger changed; nothing was saved."};
+  }
   return { ok:true, doses };
 }
 
