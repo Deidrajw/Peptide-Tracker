@@ -1,3 +1,7 @@
+## 2026-11-16 — Approved PR172 release completed; preserve user-data boundaries
+- User approved deployment only of PR172 after confirming fictional Deadpool combo and repaired vial ellipses/BAC flow. Version v0.9.27-beta.4 was merged at 3a77b4f0 and verified on Cloudflare 16/16 at publication SHA 7876dc0f (#43800872866 SUCCESS), following initial app SHA parity #43800686509 SUCCESS.
+- No approval to alter real Deadpool historical records, correct disputed remaining amounts, or merge separate draft PR169. Future historical corrections must be explicit, individually confirmed and non-destructive; recorded kit BAC defaults at Log Reconstitution count as user confirmation of actual amount.
+
 ## 2026-11-15 — User approved PR172-specific release
 - User explicitly requested deployment after confirming corrected fictional Deadpool/BPC-157 menus and BAC-water behaviour. Authorizes deploying tested PR172 fixes through normal gated merge/verification, not unrelated PR169 or automatic stock data reconciliation. New version v0.9.27-beta.4, publication unverified until Cloudflare parity.
 
