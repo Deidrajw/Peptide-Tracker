@@ -1,3 +1,7 @@
+## 2026-11-16 — Recurring Deadpool false finish: invisible safeguard rather than manual correction UI
+- User explicitly wants no click, repair wizard, or visible correction for a vial that repeatedly becomes Finished before the next day's dose. Focus on fixing the writer/accounting path. Historical records and actual physical stock remain unknown; do NOT automatically reopen, restore calculated remainingMg, or rewrite private records.
+- Independent draft PR174 isolates one code safety property: kit-wide ledger cap alone cannot automatically retire a specific premixed vial without verified depletion of its own physical-vial ledger. This is a candidate safeguard, NOT proof of the original real-world trigger or release approval. PR169 and PR173 stay separate.
+
 ## 2026-11-16 — Approved PR172 release completed; preserve user-data boundaries
 - User approved deployment only of PR172 after confirming fictional Deadpool combo and repaired vial ellipses/BAC flow. Version v0.9.27-beta.4 was merged at 3a77b4f0 and verified on Cloudflare 16/16 at publication SHA 7876dc0f (#43800872866 SUCCESS), following initial app SHA parity #43800686509 SUCCESS.
 - No approval to alter real Deadpool historical records, correct disputed remaining amounts, or merge separate draft PR169. Future historical corrections must be explicit, individually confirmed and non-destructive; recorded kit BAC defaults at Log Reconstitution count as user confirmation of actual amount.
