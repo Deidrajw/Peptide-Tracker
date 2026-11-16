@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 historical-shape regression checkpoint (NOT A RELEASE)
+- Code 3ba7044b and test commits 443b041c, 2f8593a5. No merge/deploy/version change/data migration. Latest two exact-head suites dedicated Deadpool and blend/BAC SUCCESS; other CI pending; mixed syringe and full demo/LIVE artifacts incomplete; physical iPhone not accepted. Last verified published version v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 expanded writer guard (NOT RELEASED)
 - Unmerged draft PR174, production last verified v0.9.27-beta.4. Code 3ba7044b and regression 443b041c block generic legacy Prepare Dose rollover from retiring a premixed vial before ledger commitment. Early CI four PASS, four in-progress; no production data writes, migration, full-app DEMO/LIVE parity verification, iPhone acceptance or deployment.
 
