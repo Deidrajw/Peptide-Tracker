@@ -1,3 +1,6 @@
+## 2026-11-16 — Stash historical reader test extension (PENDING)
+- 4d7704de adds assertions for the actual Stash review button, reader script order and no save calls, plus customPeptides historical lookup. Execution NOT YET VERIFIED. Previously 8 fictional pure-engine cases PASS on dc89a16b dedicated workflow. New screen visual and physical-iPhone acceptance NOT TESTED; no stock repair approval.
+
 ## 2026-11-16 — PR173 mounted historical review regression checkpoint
 - PASS dedicated no-write #43820109611, blend/BAC #43820109590, shared writer #43820109586 and mobile form #43820109603 at app head dc89a16b; status of full builder, WebKit, DS2 and pinned browser PENDING at this checkpoint. Node scenario uses fictional 8-case source tests. Actual new Stash review click-through and narrow-width visuals **NOT TESTED**. Automated existing suite is not acceptance of newly added screen.
 - FAIL initial full builder #43819927904 and WebKit #43819927794: relative reader script omitted by build-release JS array, corrected at 89bdc630; pass after correction not asserted without final result.
