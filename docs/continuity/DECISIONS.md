@@ -1,3 +1,10 @@
+## 2026-11-16 — User corrected scope: recurring Deadpool auto-finish is the primary P0 bug
+- USER REPORT: real Deadpool physical vial repeatedly changes to Finished/EMPTY unexpectedly, requiring manual Reopen. User explicitly rejects a visible/manual historical correction workflow as the solution.
+- PRIMARY OBJECTIVE: diagnose the automatic empty/status transition and source-of-truth accounting; stop incorrect automatic finishing in ordinary Log Dose / Combo Dose / prepared/reopen paths, preserving data. No new user-facing correction action required.
+- Main source inspected: 04-nexus.js consumeCompoundInventory blend branch appends doseLog and sets vial.status="empty" if getBlendOpenVialRemainingMg(kit)<=0.01; other finish pathways and historical status conflicts also exist. This is a suspected trigger, NOT confirmed root cause. Establish failing fictional reproduction and differentiate genuine depletion versus false depletion/double debit.
+- Stage B physical-stock correction module from PR173 remains UNMOUNTED and feature OFF, and must not become user-facing as substitute for bug fix. PR169 remains untouched. No automatic repair of past data, no merge/deploy.
+- ONE NEXT ACTION: write source-targeted fictional reproduction for repeated Deadpool false auto-finish; isolate cause before any UI or correction workflow work.
+
 ## 2026-11-16 — Historical stock correction staged safety boundary
 - PR173 read-only historical review is separate from any physical stock mutation. User authorized development, not deployment or personal-data adjustment.
 - Stage B correction stays NOT LOADED and DEFAULT OFF. Require real independent evidence, current-state compare, externally verified durable backup, exclusive writer, auditable before/after, separate rollback confirmation. Never rewrite original dose history to reconcile totals.
