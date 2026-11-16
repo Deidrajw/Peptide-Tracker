@@ -1454,7 +1454,7 @@ function viewVialPreparationModal(kitId,vialId) {
       </div>
       ${row("Status",vial.status==="open"||vial.status==="active"?"Open":vial.status||"Not recorded")}
       ${row("Nominal vial amount",Number.isFinite(amountNumber)&&amountNumber>0?amountNumber+" mg":"Not recorded")}
-      ${row("BAC water added",waterIsExact?waterNumber+" mL":Number.isFinite(kitWater)&&kitWater>0?"Not recorded for this vial · kit default: "+kitWater+" mL (unverified)":"Not recorded for this vial")}
+      ${row("BAC water added",waterIsExact?waterNumber+" mL · Recorded for this vial":Number.isFinite(kitWater)&&kitWater>0?"Not recorded for this vial · kit default: "+kitWater+" mL (unverified)":"Not recorded for this vial")}
       ${row("Reconstituted",date?fmtDate(date):"Not recorded")}
       ${row("Form",vial.intendedUse&&vial.intendedUse!=="undecided"?vial.intendedUse:"Not recorded for this vial")}
       ${row("Current remaining",typeof getVialRemainingMg==="function"?getVialRemainingMg(kit,vial).toFixed(2)+" mg":"Not available")}
