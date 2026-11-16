@@ -52,4 +52,20 @@ assert.equal(sandbox.getBlendOpenVialRemainingMg(partial),18);
 const unknown=kit([]);
 unknown.vials[0].reconDate=null;unknown.reconDate=null;
 assert.equal(sandbox.isBlendVialLedgerDepleted(unknown,unknown.vials[0]),false,'unknown history must not certify depletion');
-console.log('PASS: fictional blend same-vial empty safeguards, normal depletion, kit-cap mismatch, unknown history');
+// A legacy entry with only a timestamp cannot certify the physical source.
+const unattributed=kit([{mg:29,vial:null}]);
+assert.equal(sandbox.isBlendVialLedgerDepleted(unattributed,unattributed.vials[0]),false);
+assert.equal(sandbox.consumeCompoundInventory({kit:unattributed,amountMg:1,reason:'administered'}).committed,true);
+assert.equal(unattributed.vials[0].status,'open','legacy unassigned draw must not finish exact vial');
+assert.equal(unattributed.emptyVials,0);
+// Next-day reload, without a browser mock: serialise/restore the actual persisted
+// inventory representation and confirm another genuine 3mg dose remains available.
+let nextDay=JSON.parse(JSON.stringify(kit([{mg:9,vial:'fictional-open'}])));
+assert.equal(sandbox.consumeCompoundInventory({kit:nextDay,amountMg:3,reason:'administered'}).committed,true);
+nextDay=JSON.parse(JSON.stringify(nextDay));
+assert.equal(sandbox.getActiveVial(nextDay).status,'open','reload must retain OPEN');
+assert.equal(sandbox.getBlendOpenVialRemainingMg(nextDay),18);
+assert.equal(sandbox.consumeCompoundInventory({kit:nextDay,amountMg:3,reason:'administered'}).committed,true,'following day dose accepted');
+assert.equal(nextDay.vials[0].status,'open');
+assert.equal(sandbox.getBlendOpenVialRemainingMg(nextDay),15);
+console.log('PASS: fictional exact-vial ledger, unattributed-draw safeguard, normal depletion and next-day JSON reload');
