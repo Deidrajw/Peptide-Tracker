@@ -1,0 +1,24 @@
+name: Deadpool false-empty regression
+on:
+  pull_request:
+    paths:
+      - 'assets/js/03-nexus.js'
+      - 'assets/js/04-nexus.js'
+      - 'tests/deadpool-false-empty-regression.cjs'
+      - '.github/workflows/deadpool-false-empty-regression.yml'
+  workflow_dispatch:
+jobs:
+  fictional-ledger-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax
+        run: |
+          node --check assets/js/03-nexus.js
+          node --check assets/js/04-nexus.js
+          node --check tests/deadpool-false-empty-regression.cjs
+      - name: Exact-source fictional blend regression
+        run: node tests/deadpool-false-empty-regression.cjs
