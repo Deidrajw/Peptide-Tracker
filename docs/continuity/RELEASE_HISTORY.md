@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 expanded writer guard (NOT RELEASED)
+- Unmerged draft PR174, production last verified v0.9.27-beta.4. Code 3ba7044b and regression 443b041c block generic legacy Prepare Dose rollover from retiring a premixed vial before ledger commitment. Early CI four PASS, four in-progress; no production data writes, migration, full-app DEMO/LIVE parity verification, iPhone acceptance or deployment.
+
 ## 2026-11-16 — PR174 additional exact-source changes (UNRELEASED)
 - Code 664a367c date-only missing-vial attribution fail-closed; test 88772223 next-day save/reload; code ad276e66 partial blend outflow same-vial guard; test 33b30b27. All eight CI tests PASS at earlier source 517019c4 only; latest head CI not yet verified. No release, data migration, physical repair, iPhone acceptance or deployment. Production previously verified v0.9.27-beta.4.
 
