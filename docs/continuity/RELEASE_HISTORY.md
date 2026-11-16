@@ -1,3 +1,7 @@
+## 2026-11-16 — PR173 experimental Stage B checkpoint (NOT A RELEASE)
+- Production remains v0.9.27-beta.4 / main a722465c; no PR173 merge, Cloudflare deployment, data migration or changes to personal saved records.
+- Source 4d7704de eight workflow family successes verified, GitHub build artifacts present but not downloaded for byte inspection. New branch commits aef3da0d (prototype), 5648635f (fictional tests), ee376b1a (workflow), 78d67fbf (ledger fail-closed), 2cb00954 (updated tests). New tests awaiting CI. No LIVE/DEMO matching new Stage B branch verified; no physical iPhone acceptance. Release blocked.
+
 ## 2026-11-16 — PR173 UI candidate, still UNRELEASED
 - Development head dc89a16b adds read-only premixed Vial Actions > Review historical vial records via engine module and script ordering, and includes new script in build tool. User data and production untouched. Initial CI release-build and WebKit failures from missing demo packaging corrected in subsequent code; latest full QA pending. No production version change, physical stock migration, merge or Cloudflare deployment.
 
