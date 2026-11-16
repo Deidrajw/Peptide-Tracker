@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 fully green exact-source CI, UNRELEASED
+- Main a722465c; app source 2f8593a5; draft PR174 not merged/deployed. Eight exact-source CI families SUCCESS including build/browser 320/390 light/dark #43866609053. Existing full-app LIVE/fictional DEMO candidate artifacts documented and GitHub workflow uploaded; no new independently downloadable sandbox copy in this session. User local data untouched, no automatic historical correction, no iPhone acceptance, no production change. Production last verified v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 full-app candidate artifact prepared (NOT RELEASED)
 - Source 2f8593a5, GitHub QA artifact #14226290921; isolated standalone full-app DEMO HTML, offline demo ZIP and complete 26-file LIVE candidate ZIP independently downloaded/CRC/source-checked; matching release notes generated. Seven exact-source CI workflow families success; full build/browser still in progress. Production v0.9.27-beta.4 unchanged; PR174 draft/unmerged, no real data mutation, no deployment or real iPhone acceptance.
 
