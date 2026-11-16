@@ -1,3 +1,8 @@
+## 2026-11-16 — PR173 mounted historical review regression checkpoint
+- PASS dedicated no-write #43820109611, blend/BAC #43820109590, shared writer #43820109586 and mobile form #43820109603 at app head dc89a16b; status of full builder, WebKit, DS2 and pinned browser PENDING at this checkpoint. Node scenario uses fictional 8-case source tests. Actual new Stash review click-through and narrow-width visuals **NOT TESTED**. Automated existing suite is not acceptance of newly added screen.
+- FAIL initial full builder #43819927904 and WebKit #43819927794: relative reader script omitted by build-release JS array, corrected at 89bdc630; pass after correction not asserted without final result.
+- BLOCKED real inventory repair: no physical measurement proof, no approved live persistence, no undo/recovery acceptance; PR169 remains separate.
+
 ## 2026-11-16 — Historical Deadpool pure-engine QA; no release
 - GitHub #43815937115: syntax PASS, eight fictional Node assertions PASS, static no-write guard FAIL due to matching a harmless comment containing 'localStorage'; corrected at 2348b7f8; final workflow verdict pending.
 - Covered: unknown physical remainder, exact source ID, duplicate ledger ID, zero/null allocation, no ledger backfill, immutable input, explicit backup and typed confirmation, stale-state refusal, invalid IDs, unsupported amount observations, clone-only annotation. **NOT TESTED:** production UI, live save/undo, physical balance reconciliation, real private records, 320/390 browser, iPhone, VoiceOver, full-app demo/live artifact. Physical corrections BLOCKED.
