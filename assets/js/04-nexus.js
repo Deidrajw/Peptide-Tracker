@@ -1554,7 +1554,7 @@ function nexusReviewHistoricalBlendVial(kitId,vialId){
       "Ledger IDs: "+(ledger.map(e=>String(e.id)).join(", ")||"none"),
       "Dose IDs: "+(entries.map(d=>String(d.id)+(d.sourceUncertain?" (unresolved)":"")).join(", ")||"none"),
       "No inventory changes performed"
-    ].join("\\n");
+    ].join("\n");
     try{if(!navigator.clipboard?.writeText)throw Error("Clipboard not supported");await navigator.clipboard.writeText(text);}
     catch{showErrorBanner("Could not copy review summary. No records were changed.");}
   };
