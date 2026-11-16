@@ -1324,6 +1324,34 @@ function getBlendOpenVialRemainingMg(kit) {
     (Number(open.vialMg)||Number(kit.vialMg)||0)+corrected-consumed-wasted));
 }
 
+// A global kit cap is NOT evidence that this particular physical vial is empty.
+// Historical kit-level outflows may be unattributed or belong to another vial.
+// This independent check is used ONLY to decide whether an automatic status
+// transition is justified; it never credits or restores physical inventory.
+function isBlendVialLedgerDepleted(kit, vial) {
+  if(!kit?.isBlend || !vial) return false;
+  if(kit.blendInventoryMode==="legacy-v2")
+    return Number.isFinite(Number(vial.remainingMg)) && Number(vial.remainingMg)<=0.01;
+  const capacity=Number(vial.vialMg ?? vial.expectedMg ?? kit.vialMg);
+  if(!Number.isFinite(capacity)||capacity<=0) return false;
+  const date=vial.reconDate||kit.reconDate;
+  // Unattributed entries without a reliable opening date are unknown, not zero.
+  if(!date) return false;
+  const doseEntries=(kit.doseLog||[]).filter(d=>d.vialId!=null
+    ? String(d.vialId)===String(vial.id)
+    : Number.isFinite(new Date(d.date).getTime()) && new Date(d.date)>=new Date(date));
+  const wasteEntries=(kit.wasteLog||[]).filter(w=>w.status!=="reversed" &&
+    (w.vialId!=null ? String(w.vialId)===String(vial.id) :
+      (w.loggedAt ? new Date(w.loggedAt) : safeDate(w.date))>=safeDate(date)));
+  const correctionEntries=(kit.balanceCorrections||[]).filter(c=>c.status!=="reversed"&&String(c.vialId)===String(vial.id));
+  const all=[...doseEntries.map(x=>Number(x.totalMgDrawn)),...wasteEntries.map(x=>Number(x.mg)),...correctionEntries.map(x=>Number(x.mg))];
+  if(all.some(x=>!Number.isFinite(x)||x<0))return false;
+  const consumed=doseEntries.reduce((n,x)=>n+Number(x.totalMgDrawn),0);
+  const wasted=wasteEntries.reduce((n,x)=>n+Number(x.mg),0);
+  const corrected=correctionEntries.reduce((n,x)=>n+Number(x.mg),0);
+  return capacity+corrected-consumed-wasted<=0.01;
+}
+
 // Balance correction: the vial physically held MORE of the existing blend than
 // originally estimated. No material is transferred, no sealed vial is consumed,
 // and no constituent-dose event is created. Original formulation is unchanged.
