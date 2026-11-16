@@ -1,3 +1,6 @@
+## 2026-11-16 — PR173 UI candidate, still UNRELEASED
+- Development head dc89a16b adds read-only premixed Vial Actions > Review historical vial records via engine module and script ordering, and includes new script in build tool. User data and production untouched. Initial CI release-build and WebKit failures from missing demo packaging corrected in subsequent code; latest full QA pending. No production version change, physical stock migration, merge or Cloudflare deployment.
+
 ## 2026-11-16 — PR173 development prototype; UNRELEASED
 - Draft PR173 on separate branch contains historical recon review/annotation pure module and isolated fictional regression test, new dedicated workflow, and documentation; no app index integration, no version change, no LIVE/DEMO package, no migration, no inventory repair, no merge/deploy. Previous production remains v0.9.27-beta.4. Initial 8/8 tests passed but CI overall failed a comment-only grep and was corrected for rerun; do not treat this as a qualified release.
 
