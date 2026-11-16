@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - 'assets/js/nexus-historical-reconciliation.js'
+      - 'assets/js/04-nexus.js'
+      - 'index.html'
       - 'tests/historical-deadpool-reconciliation.cjs'
       - '.github/workflows/historical-deadpool-reconciliation.yml'
 jobs:
@@ -21,10 +23,12 @@ jobs:
       - name: Syntax validation
         run: |
           node --check assets/js/nexus-historical-reconciliation.js
+          node --check assets/js/04-nexus.js
           node --check tests/historical-deadpool-reconciliation.cjs
       - name: Run fictional-data no-write regression
         run: node tests/historical-deadpool-reconciliation.cjs
-      - name: Assert feature remains unmounted and no storage writer is present
+      - name: Assert reader loads before Stash, with no reconciliation writer
         run: |
-          ! grep -q 'nexus-historical-reconciliation.js' index.html
+          node -e 'const s=require("fs").readFileSync("index.html","utf8");if(s.indexOf("nexus-historical-reconciliation.js")<0||s.indexOf("nexus-historical-reconciliation.js")>s.indexOf("04-nexus.js"))process.exit(1)'
           ! grep -E 'localStorage|saveState\(|nexusCommitCurrentState\(|fetch\(' assets/js/nexus-historical-reconciliation.js
+          ! grep -E 'nexusCommitCurrentState\(|nexusWriter\(|saveState\(|localStorage.setItem\(' <(sed -n '/function nexusReviewHistoricalBlendVial(/,/^\/\/ Kit-level maintenance actions/p' assets/js/04-nexus.js)
