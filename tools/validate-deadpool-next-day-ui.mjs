@@ -36,7 +36,10 @@ async function log(page,date,expected){
   await page.evaluate(()=>{document.querySelectorAll('.modal-bg').forEach(x=>x.remove());doseModal('Fictional Premix')});
   ensure(await page.locator('.nx2-dose-modal').count()===1,'Actual Log Dose sheet missing');
   await page.locator('#date').fill(date);
-  await page.locator('#dose').fill('3');
+  const entered=page.locator('#nx-dose-entered');
+  ensure(await entered.isVisible(),'Visible dose-entry control missing');
+  await entered.fill('3');
+  await page.waitForFunction(()=>Number(document.querySelector('#dose')?.value)===3,null,{timeout:5000});
   await page.locator('#nx-dose-review-open').click();
   ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review screen missing');
   await page.locator('.nx2-dose-modal #save').click();
