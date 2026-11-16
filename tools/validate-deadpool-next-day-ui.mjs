@@ -43,10 +43,17 @@ async function log(page,date,expected){
   await page.locator('#nx-dose-review-open').click();
   ensure(await page.locator('.nx-dose-review-stage').isVisible(),'Review screen missing');
   await page.locator('.nx2-dose-modal #save').click();
-  await page.waitForFunction(expected=>{
+  // Wait for the asynchronous exclusive writer's LOCALSTORAGE readback, not
+  // the optimistic in-memory ledger mutation preceding the awaited commit.
+  await page.waitForFunction(({expected,key})=>{
     const k=state.supplies.find(x=>x.id===9101);
-    return k?.doseLog?.length===expected;
-  },expected,{timeout:15000});
+    let persisted;
+    try{persisted=JSON.parse(localStorage.getItem(key)||'null')}catch{return false}
+    return k?.doseLog?.length===expected &&
+      persisted?.supplies?.find(x=>x.id===9101)?.doseLog?.length===expected &&
+      persisted?.customPeptides?.['Fictional Premix']?.doses?.length===expected-1-
+        (k.doseLog.some(x=>x.vialId==null)?1:0);
+  },{expected,key},{timeout:15000});
   const result=await page.evaluate(key=>{
     const k=state.supplies.find(x=>x.id===9101);
     const persisted=JSON.parse(localStorage.getItem(key));
