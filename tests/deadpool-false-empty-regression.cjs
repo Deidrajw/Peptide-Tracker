@@ -3,6 +3,13 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const src03=fs.readFileSync('assets/js/03-nexus.js','utf8');
 const src04=fs.readFileSync('assets/js/04-nexus.js','utf8');
+const src05=fs.readFileSync('assets/js/05-nexus.js','utf8');
+// The shared Prepare Dose > Open New Vial path historically called finishVial()
+// on premixed blends before recording the physical withdrawal.
+const rollover=src05.slice(src05.indexOf('const openNewBtn = panel.querySelector("#palloc-open-new")'));
+assert.match(rollover.slice(0,1450),/if\(\(state\.supplies\|\|\[\]\)\.some\(k=>k\.isBlend&&k\.name===name/);
+assert.ok(rollover.indexOf('showErrorBanner("Finish saving the current blend preparation')<
+  rollover.indexOf('const draftRows = rows.map'), 'Blend must exit before legacy finishVial rollover');
 function extract(src,name) {
   const start=src.indexOf('function '+name+'(');
   assert.ok(start>=0,'Missing production function '+name);
