@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 exact-source CI follow-up after VM harness fix
+- Source/test commit 517019c4d76df83b664b144633310efb08a79aab: dedicated fictional false EMPTY suite #43858951607 SUCCESS; existing blend/BAC real-engine #43858951522 SUCCESS; mobile #43858951550 SUCCESS. Shared-writer, build/browser, WebKit, pinned browser and DS2 were IN PROGRESS on last inspection; results not asserted. Initial source c2cea995 blend/BAC #43858738275 FAILED because test VM stub did not import the newly added predicate, not a shipping-browser failure. Fixed harness with exact original app function at 517019c4. No real-data correction.
+
 ## 2026-11-16 — P0 false Deadpool auto-empty safeguard in independent draft PR174
 - Verified main a722465cb6f9adbf8009038e45bc87d5913a438e, production remains v0.9.27-beta.4 based on previous Cloudflare parity; no fresh primary-host byte parity in this session. Branch fix/deadpool-blend-auto-empty-20261116, draft PR174, independent PR169 and PR173 unchanged/unmerged.
 - USER SYMPTOM: following a previous dose, next day's Deadpool logging is blocked by already-Finished vial; exact transition moment unknown. Private 2026-11-15 backup READ ONLY confirms status=empty / remainingMg=0 while kit.activeKit=true / emptyVials=0; true on-hand amount not independently established. No private backup included in repository.
