@@ -25,6 +25,12 @@ jobs:
           node --check assets/js/nexus-historical-reconciliation.js
           node --check assets/js/04-nexus.js
           node --check tests/historical-deadpool-reconciliation.cjs
+      - name: Stage B correction module syntax (NOT mounted in app)
+        run: |
+          node --check assets/js/nexus-physical-stock-correction.js
+          node --check tests/physical-stock-correction.cjs
+      - name: Fictional gated correction and rollback assertions
+        run: node tests/physical-stock-correction.cjs
       - name: Run fictional-data no-write regression
         run: node tests/historical-deadpool-reconciliation.cjs
       - name: Assert reader loads before Stash, with no reconciliation writer
