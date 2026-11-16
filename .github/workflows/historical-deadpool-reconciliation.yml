@@ -1,0 +1,30 @@
+name: Historical Deadpool reconciliation (no-write)
+on:
+  push:
+    branches:
+      - docs/deadpool-historical-reconciliation-review-20261115
+  pull_request:
+    paths:
+      - 'assets/js/nexus-historical-reconciliation.js'
+      - 'tests/historical-deadpool-reconciliation.cjs'
+      - '.github/workflows/historical-deadpool-reconciliation.yml'
+jobs:
+  isolated-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax validation
+        run: |
+          node --check assets/js/nexus-historical-reconciliation.js
+          node --check tests/historical-deadpool-reconciliation.cjs
+      - name: Run fictional-data no-write regression
+        run: node tests/historical-deadpool-reconciliation.cjs
+      - name: Assert feature remains unmounted and no storage writer is present
+        run: |
+          ! grep -q 'nexus-historical-reconciliation.js' index.html
+          ! grep -E 'localStorage|saveState\(|nexusCommitCurrentState\(|fetch\(' assets/js/nexus-historical-reconciliation.js
