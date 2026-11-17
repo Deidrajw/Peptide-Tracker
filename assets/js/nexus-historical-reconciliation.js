@@ -41,7 +41,9 @@
         kitId:a.kitId,vialId:a.vialId??null,ledgerId:a.ledgerId??null,
         amount:a.amount??null
       }));
-      const sourceKnown=allocations.some(a=>a.vialId!=null&&a.ledgerId!=null&&finitePositive(Number(a.amount)));
+      // A single missing or mismatched physical source makes the whole historical dose uncertain.
+      const sourceKnown=allocations.length>0&&allocations.every(a=>a.vialId!=null&&a.ledgerId!=null&&
+        finitePositive(Number(a.amount))&&ledger.some(e=>same(e.id,a.ledgerId)&&same(e.vialId,a.vialId)));
       return {id:d.id,date:d.date??null,dose:d.dose??null,allocations,
         sourceKnown,sourceUncertain:!sourceKnown,existingReview:copy(d.historicalSourceReview||null)};
     });
