@@ -3,15 +3,15 @@
   "version": "v0.9.27-beta.5",
   "channel": "beta",
   "publication": {
-    "status": "pending",
-    "publishedAt": null,
-    "commit": null,
+    "status": "published",
+    "publishedAt": "2026-11-17T06:49:09Z",
+    "commit": "597d262d3f631ba51da02f4d4534f0f254b6e148",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
     "baselineMainCommit": "a722465cb6f9adbf8009038e45bc87d5913a438e",
     "pullRequest": 174,
-    "mergedAppCommit": null
+    "mergedAppCommit": "597d262d3f631ba51da02f4d4534f0f254b6e148"
   },
   "headline": "Safeguard exact premixed-vial status during daily dose logging",
   "changes": [
@@ -43,7 +43,7 @@
     "Root cause of the user's specific earlier historical event cannot be established without physical/source evidence; the safeguard is preventative.",
     "Separate draft PRs #169 (multi-source Undo) and #173 (historical record review) are excluded.",
     "User-reported iPhone UX acceptance 6/6; VoiceOver and real historical private-data recovery not tested.",
-    "Publication pending independent Cloudflare primary-host source parity following merge."
+    "Primary Cloudflare production passed 16/16 exact file parity at merged commit 597d262d3f631ba51da02f4d4534f0f254b6e148 (workflow #44033882596); publication-metadata parity requires subsequent verification."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
