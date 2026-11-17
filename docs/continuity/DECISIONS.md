@@ -1,3 +1,6 @@
+## 2026-11-17 — Historical review stays source-evidence-only and unmerged
+- Preserve current v0.9.27-beta.5 PR174 safeguards while inspecting past data. A historical dose has verified source linkage only when every allocation has a positive amount, exact vial and existing ledger ID. Missing or mismatched rows remain unresolved; the physical amount is always Unknown without independent verification. Review UI and Copy do not save to production storage. Experimental Stage B correction remains unmounted/disabled. New PR173 candidate is development-only; no release consent or PR169 merge.
+
 ## 2026-11-17 — Preserve released PR174 safeguards while continuing PR173 read-only development
 - PR173 development continues on updated main source as an unmerged draft. A historical dose is confirmed source-linked only when every relevant allocation contains a positive amount and exact existing vial/ledger match; partial/unmatched sources remain unresolved. Review screen is for inspection and copy only. No historical Deadpool balance correction or stock status write is authorized. Experimental correction engine must remain unmounted and disabled. PR169 separate.
 
