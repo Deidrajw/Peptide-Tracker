@@ -82,4 +82,12 @@ t("customPeptides historical dose records are inspected",()=>{
   f.customPeptides=f.peptides;delete f.peptides;
   assert.deepEqual(review(f,101).unresolved,[901]);
 });
+t("partial and missing-ledger attribution never claims verified source",()=>{
+ const f=fixture();
+ f.peptides.Deadpool.doses[1].allocations.push({kitId:101,vialId:null,ledgerId:null,amount:0});
+ assert.deepEqual(review(f,101).unresolved,[901,902]);
+ f.peptides.Deadpool.doses[1].allocations=[{kitId:101,vialId:501,ledgerId:999,amount:2}];
+ assert.deepEqual(review(f,101).unresolved,[901,902]);
+ assert.equal(review(f,101).physicalRemainingMg,null);
+});
 console.log("PASS "+count+" isolated reconciliation assertions");
