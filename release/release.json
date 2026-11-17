@@ -1,49 +1,49 @@
 {
   "schemaVersion": 1,
-  "version": "v0.9.27-beta.4",
+  "version": "v0.9.27-beta.5",
   "channel": "beta",
   "publication": {
     "status": "published",
-    "publishedAt": "2026-11-16T03:52:37Z",
-    "commit": "3a77b4f09873d4eb0b6f22f74c260c0abcc40976",
+    "publishedAt": "2026-11-17T06:49:09Z",
+    "commit": "597d262d3f631ba51da02f4d4534f0f254b6e148",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "b3a67ec48f5ba982abff042048e30a9549d83467",
-    "pullRequest": 172,
-    "mergedAppCommit": "3a77b4f09873d4eb0b6f22f74c260c0abcc40976"
+    "baselineMainCommit": "a722465cb6f9adbf8009038e45bc87d5913a438e",
+    "pullRequest": 174,
+    "mergedAppCommit": "597d262d3f631ba51da02f4d4534f0f254b6e148"
   },
-  "headline": "Reliable premixed-blend combination doses and accurate per-vial BAC-water records",
+  "headline": "Safeguard exact premixed-vial status during daily dose logging",
   "changes": [
     {
-      "key": "blend-combo-ledger",
-      "title": "Prevent premature empty vials when logging premixed-blend combinations",
-      "detail": "Combination-dose logs now debit the blend's exact physical vial ledger, retain positive source allocations and undo identity, and roll back staged inventory if source confirmation fails.",
-      "screen": "Log Dose / Stash / History",
+      "key": "same-vial-auto-finish",
+      "title": "Prevent premature Finished status for premixed vials",
+      "detail": "Automatic vial depletion now requires verified same-vial dose, waste or correction evidence, rather than kit-wide balance alone. Unattributed older entries cannot retire a specific open vial.",
+      "screen": "Stash / Today / Log Dose / Combo Dose",
       "kind": "fix"
     },
     {
-      "key": "vial-bac-confirmation",
-      "title": "Record confirmed BAC water on the physical vial",
-      "detail": "Tapping Log Reconstitution confirms the amount shown, including an unchanged default. New standard and blend vial records retain their own exact BAC water and linked preparation history.",
-      "screen": "Stash / Open vial / Vial details",
+      "key": "prepare-rollover-guard",
+      "title": "Protect open premixed vials during preparation",
+      "detail": "Generic Prepare Dose rollover cannot retire an active premixed vial before physical-ledger commitment; it fails closed without changing inventory.",
+      "screen": "Prepare Dose / Stash",
       "kind": "fix"
     },
     {
-      "key": "historical-bac-correction",
-      "title": "Safely correct historical vial preparation records",
-      "detail": "Finished-vial BAC amounts can be explicitly confirmed without reopening stock, changing remaining amounts or fabricating an unknown date. Kit defaults stay labelled unverified when exact historical evidence is absent.",
-      "screen": "Stash / Vial details / Edit reconstitution",
-      "kind": "improvement"
+      "key": "next-day-validation",
+      "title": "Validate repeated dose logging across days",
+      "detail": "Fictional automated browser checks cover dose, durable save/readback, reload and next-day dose at 320px and 390px in light and dark modes, including historical unattributed entries.",
+      "screen": "Log Dose / Review / History",
+      "kind": "test"
     }
   ],
-  "dataImpact": "No automatic migration, backfill, repair or overwrite of saved dose history, inventory, current protocols, or browser localStorage (peptide-tracker-html-v1). Future explicit Log Reconstitution actions save the chosen BAC amount on the exact vial and append linked history. Historical Deadpool records marked empty despite missing source allocations are NOT silently restored or modified. Isolated full-app DEMO uses fictional in-memory data with no live writes or sync.",
+  "dataImpact": "No migration, automatic reopening, historical Deadpool inventory reconciliation, correction or stock credit. Existing saved records and localStorage key peptide-tracker-html-v1 are retained. Future ordinary user-confirmed dose logs continue to write normally. Fictional DEMO remains isolated, without live writes/import/sync.",
   "limitations": [
-    "Existing historical vial records with only kit-level BAC values remain unverified until the user explicitly confirms the actual amount; old dates are never invented.",
-    "Existing Deadpool combo records with missing exact vial allocations cannot be safely backfilled automatically; reconciliation requires user review of physical stock and records.",
-    "PR #169 multi-source Log Dose changes remain an independent, unmerged draft and are excluded from this release.",
-    "Physical iPhone testing: user reported the corrected fictional Deadpool combo and vial-menu/BAC-confirmation scenarios worked. VoiceOver, Dynamic Type and live-data reload were not separately verified.",
-    "After merging, primary Cloudflare production source parity must be independently verified; a successful merge or GitHub Pages result alone is insufficient."
+    "Already-finished historical Deadpool vials and unverified physical remainder remain unchanged; separate user-approved review required before any correction.",
+    "Root cause of the user's specific earlier historical event cannot be established without physical/source evidence; the safeguard is preventative.",
+    "Separate draft PRs #169 (multi-source Undo) and #173 (historical record review) are excluded.",
+    "User-reported iPhone UX acceptance 6/6; VoiceOver and real historical private-data recovery not tested.",
+    "Primary Cloudflare production passed 16/16 exact file parity at merged commit 597d262d3f631ba51da02f4d4534f0f254b6e148 (workflow #44033882596); publication-metadata parity requires subsequent verification."
   ],
   "privacyChanged": false,
   "permissionsChanged": false

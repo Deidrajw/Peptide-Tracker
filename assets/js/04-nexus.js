@@ -969,7 +969,10 @@ function consumeCompoundInventory({ kit, amountMg, reason, transactionId, vialId
       kit.doseLog.push({id:ledgerId,date:localDatetime(),totalMgDrawn:take,vialId:vial.id,
         kind:reason||"prepared",transactionId:id});
       allocations.push({kitId:kit.id,vialId:vial.id,amountMg:take,ledgerId});
-      if(getBlendOpenVialRemainingMg(kit)<=0.01){
+      // Never auto-finish from a depleted kit-level aggregate alone. An
+      // unrelated or unattributed historical outflow can exhaust the aggregate
+      // cap while the exact opened vial still has ledger-accounted material.
+      if(getBlendOpenVialRemainingMg(kit)<=0.01 && isBlendVialLedgerDepleted(kit,vial)){
         vial.status="empty";kit.emptyVials=(kit.emptyVials||0)+1;kit.reconDate=null;
       }
       /* Domain-only mutation; awaiting exclusive commit is the responsibility of the owning UI transaction. */
@@ -1501,7 +1504,6 @@ ${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" styl
   if (reopenBtn) reopenBtn.onclick = () => { closeModal(); reopenVialModal(kitId, vialId); };
   m.querySelector("#va-undo").onclick = () => { closeModal(); undoReconstitutionModal(kitId, vialId); };
 }
-
 
 /* Historical premixed-vial discrepancy inspector.
  * This UI is deliberately READ ONLY. Source evidence, balance corrections,

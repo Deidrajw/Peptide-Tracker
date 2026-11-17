@@ -1,15 +1,46 @@
-## 2026-11-16 — PR173 experimental Stage B checkpoint (NOT A RELEASE)
-- Production remains v0.9.27-beta.4 / main a722465c; no PR173 merge, Cloudflare deployment, data migration or changes to personal saved records.
-- Source 4d7704de eight workflow family successes verified, GitHub build artifacts present but not downloaded for byte inspection. New branch commits aef3da0d (prototype), 5648635f (fictional tests), ee376b1a (workflow), 78d67fbf (ledger fail-closed), 2cb00954 (updated tests). New tests awaiting CI. No LIVE/DEMO matching new Stage B branch verified; no physical iPhone acceptance. Release blocked.
+## 2026-11-17 — PR173 integrated development candidate (NOT A RELEASE)
+- Read-only historical Stash review candidate rebased/integrated from published main v0.9.27-beta.5. PR174 fixes retained; partial source evidence hardened. No version bump, no merge/deploy/Cloudflare update, no private data writes or migration. CI/new full-app artifacts and physical acceptance PENDING. Separate draft PR169 untouched.
 
-## 2026-11-16 — PR173 UI candidate, still UNRELEASED
-- Development head dc89a16b adds read-only premixed Vial Actions > Review historical vial records via engine module and script ordering, and includes new script in build tool. User data and production untouched. Initial CI release-build and WebKit failures from missing demo packaging corrected in subsequent code; latest full QA pending. No production version change, physical stock migration, merge or Cloudflare deployment.
+## 2026-11-17 — v0.9.27-beta.5 FINAL PUBLICATION source verified
+- Primary Cloudflare user-visible manifest returned published status and PR174 merge SHA 597d262d3f631ba51da02f4d4534f0f254b6e148. Exact app source parity SUCCESS 16/16 #44033882596 at merge SHA, and SUCCESS 16/16 #44034237308 at final metadata/doc SHA c665a89f, zero errors both. GitHub Pages deploy/integrity SUCCESS at merge SHA. Docs-only final checkpoint follows and does not change app bytes. Historic Deadpool stock untouched, drafts #169/#173 unmerged.
 
-## 2026-11-16 — PR173 development prototype; UNRELEASED
-- Draft PR173 on separate branch contains historical recon review/annotation pure module and isolated fictional regression test, new dedicated workflow, and documentation; no app index integration, no version change, no LIVE/DEMO package, no migration, no inventory repair, no merge/deploy. Previous production remains v0.9.27-beta.4. Initial 8/8 tests passed but CI overall failed a comment-only grep and was corrected for rerun; do not treat this as a qualified release.
+## 2026-11-17 — v0.9.27-beta.5 MERGED and PRIMARY DEPLOYED (app source VERIFIED)
+- Authorized PR174 merge 597d262d3f631ba51da02f4d4534f0f254b6e148. Cloudflare exact app entry-file parity 16/16 SUCCESS #44033882596, zero errors. GitHub Pages deploy #44033880266 and integrity #44033882525 SUCCESS. Publication metadata changed to published after source verification, requires separate final SHA Cloudflare parity.
+- Changed screens/flows: Today / Log Dose / Combo Dose / Prepare Dose / Stash; automatic premixed-vial finished state requires same-physical-vial evidence, independent of misleading kit-wide cap or unattributed historical rows. Historical records or inventory NOT reconciled, reopened, written or migrated. PR169/173 excluded. User-reported physical iPhone UX 6/6, premerge 9/9 CI after full-build Combo picker timeout retry; historical real-data accuracy/VoiceOver unverified. Full-app candidate artifacts premerge source-qualified.
 
-## 2026-11-15 Toronto — Documentation-only draft; NOT A RELEASE
-- Branch docs/deadpool-historical-reconciliation-review-20261115 at baseline a722465c: historical Deadpool user-review spec only; no application code, version bump, migration, merge or deploy. No new QA assertion or production storage write. v0.9.27-beta.4 remains current published version per previous independent verification.
+## 2026-11-17 — v0.9.27-beta.5 CANDIDATE / USER RELEASE APPROVAL RECEIVED / NOT YET DEPLOYED
+- PR174 protective fixes: prevent kit-wide-only automatic premixed vial finish, protect partial outflow/Prepare Dose rollover, fictional next-day actual browser regression 8/8, previous test SHA 4e839c3d nine CI SUCCESS, iPhone UX user-reported 6/6. Release candidate generated notes/manifest/index/JS02; final candidate-head CI and Cloudflare source parity PENDING.
+- Historical Deadpool inventory unchanged; no migration, balance backfill or reopening. PR169/173 drafts untouched. Published production remains verified v0.9.27-beta.4 until independent deployment checks pass. VoiceOver and physical historical accuracy unverified.
+
+## 2026-11-17 — PR174 iPhone UX acceptance recorded; DRAFT NOT RELEASED
+- User-reported 6/6 fictional full-app iPhone UX checks PASS, including light/dark, navigation, Log Dose and source display. At test SHA 4e839c3d CI 9/9 SUCCESS (full build #43932192210), real browser next-day 8/8 fictional configurations PASS. App source remains 2f8593a5. No deploy or merger, no physical stock/history repair; VoiceOver and real historical case not independently tested. Explicit merge/deploy approval pending. Last verified live release v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 exact test head fully CI-qualified; draft UNRELEASED
+- Source 2f8593a5, test commit 4e839c3d, all 9 workflow families SUCCESS (including browser build #43932192210, functional next-day #43932192342). Complete fictional DEMO HTML, offline zip and 26-file LIVE candidate CRC validated. No deployment, no merge, no personal data changes or automatic historical correction; physical iPhone acceptance pending. Production prior verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 actual browser next-day regression & full-app candidate verified (NOT A RELEASE)
+- Application source 2f8593a5, test head 4e839c3d, PR174 draft/unmerged/undeployed, main a722465c. New dedicated real UI Playwright fictional test PASS 8/8 variants at #43932192342; durable local storage/reload and next-day exact-vial logging established. Prior app-source 8/8 CI families SUCCESS. Downloaded and verified complete source-matched LIVE ZIP (26 files), standalone fictional full-app DEMO and offline DEMO CRC/byte parity via GitHub artifact #14226647150. Files materialized this session. No data migration, private data, personal inventory fix, real iPhone acceptance or deployment. Release approval still required; primary production last verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 fully green exact-source CI, UNRELEASED
+- Main a722465c; app source 2f8593a5; draft PR174 not merged/deployed. Eight exact-source CI families SUCCESS including build/browser 320/390 light/dark #43866609053. Existing full-app LIVE/fictional DEMO candidate artifacts documented and GitHub workflow uploaded; no new independently downloadable sandbox copy in this session. User local data untouched, no automatic historical correction, no iPhone acceptance, no production change. Production last verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 full-app candidate artifact prepared (NOT RELEASED)
+- Source 2f8593a5, GitHub QA artifact #14226290921; isolated standalone full-app DEMO HTML, offline demo ZIP and complete 26-file LIVE candidate ZIP independently downloaded/CRC/source-checked; matching release notes generated. Seven exact-source CI workflow families success; full build/browser still in progress. Production v0.9.27-beta.4 unchanged; PR174 draft/unmerged, no real data mutation, no deployment or real iPhone acceptance.
+
+## 2026-11-16 — PR174 historical-shape regression checkpoint (NOT A RELEASE)
+- Code 3ba7044b and test commits 443b041c, 2f8593a5. No merge/deploy/version change/data migration. Latest two exact-head suites dedicated Deadpool and blend/BAC SUCCESS; other CI pending; mixed syringe and full demo/LIVE artifacts incomplete; physical iPhone not accepted. Last verified published version v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 expanded writer guard (NOT RELEASED)
+- Unmerged draft PR174, production last verified v0.9.27-beta.4. Code 3ba7044b and regression 443b041c block generic legacy Prepare Dose rollover from retiring a premixed vial before ledger commitment. Early CI four PASS, four in-progress; no production data writes, migration, full-app DEMO/LIVE parity verification, iPhone acceptance or deployment.
+
+## 2026-11-16 — PR174 additional exact-source changes (UNRELEASED)
+- Code 664a367c date-only missing-vial attribution fail-closed; test 88772223 next-day save/reload; code ad276e66 partial blend outflow same-vial guard; test 33b30b27. All eight CI tests PASS at earlier source 517019c4 only; latest head CI not yet verified. No release, data migration, physical repair, iPhone acceptance or deployment. Production previously verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 follow-up, NOT A RELEASE
+- JS03 664a367c date-only historical source ambiguity fail-closed; fictional next-day JSON reload regression test 88772223. Eight earlier suites PASS at 517019c4; refreshed branch head CI not yet verified. Draft, unmerged, no deployment, no real user data repairs; production v0.9.27-beta.4 prior parity.
+
+## 2026-11-16 — PR174 draft false Deadpool auto-empty guard (NOT A RELEASE)
+- main a722465c; branch fix/deadpool-blend-auto-empty-20261116, PR174 draft/unmerged/undeployed. JS03 4449285b and JS04 c3329014 provide same-vial ledger depletion gate for automatic blend status, test 3cb3e95f, CI workflow c2cea995. Exact-head CI pending; user-data migration none, private data untouched. No standalone full-app DEMO or LIVE ZIP created/verified and no actual iPhone acceptance. Production release remains v0.9.27-beta.4 (previous parity evidence only).
 
 ## 2026-11-16 UTC — v0.9.27-beta.4 RELEASE VERIFIED / PUBLISHED
 - Authorized by user after fictional user-reported PASS. PR172 merged to main app SHA 3a77b4f09873d4eb0b6f22f74c260c0abcc40976. Publication metadata finalized SHA 7876dc0fbe4752ad0f7cf084d29c857dc102e303; production Cloudflare 16/16 exact byte parity at both SHAs: workflow #43800686509 (app merged SHA) and #43800872866 (final publication metadata). GitHub Pages integrity #43800872793 and deployment #43800872426 SUCCESS. Premerge seven suite source CI PASS; postmerge Chrome/browser checks distinct and not claimed if still running.
