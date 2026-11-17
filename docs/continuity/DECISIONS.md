@@ -1,3 +1,6 @@
+## 2026-11-17 — Explicit release approval for PR174 only
+- User authorizes final-gated merge/deployment of PR174 exact-vial automatic-finish safeguards. This approval does NOT authorize changes to old personal Deadpool inventory, automatic reconciliation, reopening/credit, or merging PR169/PR173. Versioned release candidate v0.9.27-beta.5 has pending publication status until independent production verification. Preserve old records.
+
 ## 2026-11-17 — User physical iPhone acceptance of PR174 fictional full-app DEMO
 - User reported PASS on six iPhone UX checks: navigation, Log Dose readability, Review/Confirm accessibility, vial source/remaining clarity, no overflow/trapped scrolling, both themes. Mark as user-reported physical iPhone UI acceptance; do not claim VoiceOver or persistent browser-reload acceptance on standalone in-memory DEMO.
 - Acceptance of testing is NOT approval to merge/deploy or alter personal historical stock. Exact-vial safeguards remain additive, no automatic data correction or new manual recovery flow. Explicit separate release authorization remains required.
