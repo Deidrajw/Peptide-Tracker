@@ -1,3 +1,7 @@
+## 2026-11-16 — PR174 final exact-head CI all NINE GREEN
+- Commit 4e839c3d: 9/9 GitHub Actions runs SUCCESS including build #43932192210 and next-day real UI Playwright #43932192342; 8/8 fictional browser configurations PASS. ZIP check independent in current container: LIVE 26 files, demo ZIP 2 files, all CRC PASS; full-app standalone HTML present and tested by prior CI. Test-mode data stays synthetic.
+- STILL NOT TESTED: physical iPhone Safari and VoiceOver; real private backup repair/physical remaining; primary-host postmerge parity (not applicable while PR draft). No release consent.
+
 ## 2026-11-16 — Downloaded exact Playwright evidence and 8/9 current CI success
 - New browser evidence artifact #14259791093 from run #43932192342 downloaded and ZIP CRC validated. Eight rows all PASS; each uses real local app form and durable storage, before/after reload. First synthetic ordinary case: 21 -> 18 -> 15 mg calculated; a synthetic historical unattributed row case: 20 -> 17 -> 14 mg; neither finished the open vial. These numbers are fictional fixtures, NOT the user's physical amount.
 - At newest test commit 4e839c3d, eight CI families PASS (including new browser, mobile, blend/BAC, writer, DS2, pinned browser, WebKit and Deadpool); full build/parity workflow #43932192210 was IN PROGRESS on inspection. Current app source remains 2f8593a5, previously eight workflows GREEN. Cloudflare new candidate intentionally undeployed, live version fresh fetch not verified (cache miss).
