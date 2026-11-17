@@ -1,3 +1,6 @@
+## 2026-11-17 — PR173 read-only integration candidate, NOT RELEASED
+- Draft PR173 integrated with published v0.9.27-beta.5 main through merge commit ffcc9a78 and new review test head fb4cd5e3. No production version change or Cloudflare deployment, no stock or historical migration. Real fictional historical review browser 8/8 PASS at #44088543040; seven other QA families PASS and three broader suites running at latest checkpoint. Source-validated LIVE/full-app DEMO candidate uploaded #44088543519, but final browser QA outcome pending. Physical iPhone new-screen acceptance/VoiceOver not tested. PR169 untouched.
+
 ## 2026-11-17 — PR173 integrated development candidate (NOT A RELEASE)
 - Read-only historical Stash review candidate rebased/integrated from published main v0.9.27-beta.5. PR174 fixes retained; partial source evidence hardened. No version bump, no merge/deploy/Cloudflare update, no private data writes or migration. CI/new full-app artifacts and physical acceptance PENDING. Separate draft PR169 untouched.
 
