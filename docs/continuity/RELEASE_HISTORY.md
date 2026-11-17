@@ -1,3 +1,7 @@
+## 2026-11-17 — v0.9.27-beta.5 CANDIDATE / USER RELEASE APPROVAL RECEIVED / NOT YET DEPLOYED
+- PR174 protective fixes: prevent kit-wide-only automatic premixed vial finish, protect partial outflow/Prepare Dose rollover, fictional next-day actual browser regression 8/8, previous test SHA 4e839c3d nine CI SUCCESS, iPhone UX user-reported 6/6. Release candidate generated notes/manifest/index/JS02; final candidate-head CI and Cloudflare source parity PENDING.
+- Historical Deadpool inventory unchanged; no migration, balance backfill or reopening. PR169/173 drafts untouched. Published production remains verified v0.9.27-beta.4 until independent deployment checks pass. VoiceOver and physical historical accuracy unverified.
+
 ## 2026-11-17 — PR174 iPhone UX acceptance recorded; DRAFT NOT RELEASED
 - User-reported 6/6 fictional full-app iPhone UX checks PASS, including light/dark, navigation, Log Dose and source display. At test SHA 4e839c3d CI 9/9 SUCCESS (full build #43932192210), real browser next-day 8/8 fictional configurations PASS. App source remains 2f8593a5. No deploy or merger, no physical stock/history repair; VoiceOver and real historical case not independently tested. Explicit merge/deploy approval pending. Last verified live release v0.9.27-beta.4.
 
