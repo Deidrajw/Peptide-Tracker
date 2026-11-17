@@ -1,3 +1,6 @@
+## 2026-11-17 — PR174 release candidate gate
+- PASS previously at test SHA 4e839c3d: nine workflow families, dedicated browser 8/8 fictional persisted/reload/next-day scenarios; user-reported iPhone UX 6/6. New versioned candidate-head CI IN PROGRESS / NOT YET PASS at time of release preparation. Historical Deadpool personal inventory/physical stock, VoiceOver NOT TESTED; must not invent acceptance. Cloudflare parity NOT TESTED until merged deploy. PR169/173 excluded.
+
 ## 2026-11-17 — User-reported physical iPhone acceptance 6/6
 - PASS user-reported, actual iPhone: full-app demo navigation; Log Dose visible/legible; Review/Confirm accessible; vial source/remaining understandable; no horizontal overflow/double scroll; dark and light themes. Physical user testing, NOT automated; device details not recorded, VoiceOver NOT TESTED, full persisted storage reload in memory-only DEMO NOT TESTED. Dedicated real-browser persisted next-day simulation already PASS 8/8 at workflow #43932192342.
 - At PR174 test source 4e839c3d all 9 GitHub CI workflows complete SUCCESS including final release artifacts #43932192210; code application SHA 2f8593a5 unchanged by subsequent tests/docs. No real-data mutation, release not approved, primary Cloudflare parity remains previous-release evidence only.
