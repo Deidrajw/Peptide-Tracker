@@ -1,3 +1,6 @@
+## 2026-11-17 — PR173 latest package qualified structurally; NOT PUBLISHED
+- Candidate artifact #14331095462 downloaded and independently verified against release source structure: 27-file LIVE ZIP CRC PASS, two-entry offline fictional DEMO ZIP byte-equal to standalone HTML, experimental stock-correction module excluded. Nine source-head workflows PASS; full-browser suite #44088543519 still ongoing at checkpoint. PR173 remains open draft with no new version or production changes; PR169 separate.
+
 ## 2026-11-17 — PR173 read-only integration candidate, NOT RELEASED
 - Draft PR173 integrated with published v0.9.27-beta.5 main through merge commit ffcc9a78 and new review test head fb4cd5e3. No production version change or Cloudflare deployment, no stock or historical migration. Real fictional historical review browser 8/8 PASS at #44088543040; seven other QA families PASS and three broader suites running at latest checkpoint. Source-validated LIVE/full-app DEMO candidate uploaded #44088543519, but final browser QA outcome pending. Physical iPhone new-screen acceptance/VoiceOver not tested. PR169 untouched.
 
