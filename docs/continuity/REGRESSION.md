@@ -1,3 +1,6 @@
+## 2026-11-17 — Final Cloudflare release parity accepted
+- PASS primary v0.9.27-beta.5 at merged SHA #44033882596 16/16 exact files and final publication metadata SHA #44034237308 16/16 exact files. Published manifest separately fetched live from primary host, matching PR174 merge SHA. Prior released 9/9 CI with one recoverable Combo picker test-harness locator timeout before successful rerun; physical iPhone user-reported 6/6. No historical inventory mutation or private on-hand verification. No VoiceOver evidence. PR169/PR173 drafts preserved.
+
 ## 2026-11-17 — PR174 released source verification and outstanding tests
 - PASS premerge final versioned source aafe065f: nine workflow families after full-build #44031160987 initial Combo Dose locator '#x' timeout failed and targeted job rerun SUCCESS. PASS dedicated real-browser 8 fictional next-day persistence/reload configurations and user-reported six physical iPhone UI checks. PASS merged app Cloudflare source parity 16/16 #44033882596, GitHub Pages deploy/integrity. NOT TESTED VoiceOver, real private-data historical correction and physical Deadpool remaining stock (do not modify). Final publication metadata parity pending separate exact-head test. PR169/173 not merged.
 
