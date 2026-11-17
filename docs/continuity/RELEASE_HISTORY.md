@@ -1,3 +1,6 @@
+## 2026-11-17 — PR174 iPhone UX acceptance recorded; DRAFT NOT RELEASED
+- User-reported 6/6 fictional full-app iPhone UX checks PASS, including light/dark, navigation, Log Dose and source display. At test SHA 4e839c3d CI 9/9 SUCCESS (full build #43932192210), real browser next-day 8/8 fictional configurations PASS. App source remains 2f8593a5. No deploy or merger, no physical stock/history repair; VoiceOver and real historical case not independently tested. Explicit merge/deploy approval pending. Last verified live release v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 exact test head fully CI-qualified; draft UNRELEASED
 - Source 2f8593a5, test commit 4e839c3d, all 9 workflow families SUCCESS (including browser build #43932192210, functional next-day #43932192342). Complete fictional DEMO HTML, offline zip and 26-file LIVE candidate CRC validated. No deployment, no merge, no personal data changes or automatic historical correction; physical iPhone acceptance pending. Production prior verified v0.9.27-beta.4.
 
