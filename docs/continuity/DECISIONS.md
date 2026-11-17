@@ -1,3 +1,7 @@
+## 2026-11-17 — User physical iPhone acceptance of PR174 fictional full-app DEMO
+- User reported PASS on six iPhone UX checks: navigation, Log Dose readability, Review/Confirm accessibility, vial source/remaining clarity, no overflow/trapped scrolling, both themes. Mark as user-reported physical iPhone UI acceptance; do not claim VoiceOver or persistent browser-reload acceptance on standalone in-memory DEMO.
+- Acceptance of testing is NOT approval to merge/deploy or alter personal historical stock. Exact-vial safeguards remain additive, no automatic data correction or new manual recovery flow. Explicit separate release authorization remains required.
+
 ## 2026-11-16 — Real-browser fictional next-day validation does not authorize release or history repair
 - User's reported Deadpool next-day false finish is addressed by additive exact-vial safeguards in draft PR174. Actual browser test through normal Log Dose and exclusive localStorage persistence passed for fictional historical-shape inventory, including full reload and next-day dose. This is evidence of tested workflow, NOT proof that original real-data incident happened under current deployed version.
 - Personal stock stays unknown; no forced reopening, no historical ledger backfill, no silent inventory restoration, no extra correction UI. A separate physical iPhone acceptance and explicit merge/deploy authorization remain required.
