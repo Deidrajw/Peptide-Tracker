@@ -1,3 +1,6 @@
+## 2026-11-17 — PR174 released source verification and outstanding tests
+- PASS premerge final versioned source aafe065f: nine workflow families after full-build #44031160987 initial Combo Dose locator '#x' timeout failed and targeted job rerun SUCCESS. PASS dedicated real-browser 8 fictional next-day persistence/reload configurations and user-reported six physical iPhone UI checks. PASS merged app Cloudflare source parity 16/16 #44033882596, GitHub Pages deploy/integrity. NOT TESTED VoiceOver, real private-data historical correction and physical Deadpool remaining stock (do not modify). Final publication metadata parity pending separate exact-head test. PR169/173 not merged.
+
 ## 2026-11-17 — PR174 release candidate gate
 - PASS previously at test SHA 4e839c3d: nine workflow families, dedicated browser 8/8 fictional persisted/reload/next-day scenarios; user-reported iPhone UX 6/6. New versioned candidate-head CI IN PROGRESS / NOT YET PASS at time of release preparation. Historical Deadpool personal inventory/physical stock, VoiceOver NOT TESTED; must not invent acceptance. Cloudflare parity NOT TESTED until merged deploy. PR169/173 excluded.
 
