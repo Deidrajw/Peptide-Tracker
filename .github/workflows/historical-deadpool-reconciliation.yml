@@ -9,6 +9,7 @@ on:
       - 'assets/js/04-nexus.js'
       - 'index.html'
       - 'tests/historical-deadpool-reconciliation.cjs'
+      - 'tools/validate-historical-review-ui.mjs'
       - '.github/workflows/historical-deadpool-reconciliation.yml'
 jobs:
   isolated-review:
@@ -38,3 +39,23 @@ jobs:
           node -e 'const s=require("fs").readFileSync("index.html","utf8");if(s.indexOf("nexus-historical-reconciliation.js")<0||s.indexOf("nexus-historical-reconciliation.js")>s.indexOf("04-nexus.js"))process.exit(1)'
           ! grep -E 'localStorage|saveState\(|nexusCommitCurrentState\(|fetch\(' assets/js/nexus-historical-reconciliation.js
           ! grep -E 'nexusCommitCurrentState\(|nexusWriter\(|saveState\(|localStorage.setItem\(' <(sed -n '/function nexusReviewHistoricalBlendVial(/,/^\/\/ Kit-level maintenance actions/p' assets/js/04-nexus.js)
+
+      - name: Build exact-source full-app LIVE and isolated DEMO
+        run: node tools/build-release.mjs
+      - name: Install browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Start isolated local preview server
+        run: |
+          python3 -m http.server 8777 --bind 127.0.0.1 >/tmp/nexus-review-http.log 2>&1 &
+          sleep 2
+      - name: Read-only actual Stash review UI in fictional full app
+        run: node tools/validate-historical-review-ui.mjs
+      - name: Upload fictional review UI results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-review-browser-evidence
+          path: dist/historical-review-browser-QA.json
+          if-no-files-found: ignore
