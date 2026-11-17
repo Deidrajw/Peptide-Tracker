@@ -1,3 +1,7 @@
+## 2026-11-17 — User-reported physical iPhone acceptance 6/6
+- PASS user-reported, actual iPhone: full-app demo navigation; Log Dose visible/legible; Review/Confirm accessible; vial source/remaining understandable; no horizontal overflow/double scroll; dark and light themes. Physical user testing, NOT automated; device details not recorded, VoiceOver NOT TESTED, full persisted storage reload in memory-only DEMO NOT TESTED. Dedicated real-browser persisted next-day simulation already PASS 8/8 at workflow #43932192342.
+- At PR174 test source 4e839c3d all 9 GitHub CI workflows complete SUCCESS including final release artifacts #43932192210; code application SHA 2f8593a5 unchanged by subsequent tests/docs. No real-data mutation, release not approved, primary Cloudflare parity remains previous-release evidence only.
+
 ## 2026-11-16 — PR174 final exact-head CI all NINE GREEN
 - Commit 4e839c3d: 9/9 GitHub Actions runs SUCCESS including build #43932192210 and next-day real UI Playwright #43932192342; 8/8 fictional browser configurations PASS. ZIP check independent in current container: LIVE 26 files, demo ZIP 2 files, all CRC PASS; full-app standalone HTML present and tested by prior CI. Test-mode data stays synthetic.
 - STILL NOT TESTED: physical iPhone Safari and VoiceOver; real private backup repair/physical remaining; primary-host postmerge parity (not applicable while PR draft). No release consent.
