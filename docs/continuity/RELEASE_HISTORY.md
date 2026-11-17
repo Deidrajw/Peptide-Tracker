@@ -1,3 +1,6 @@
+## 2026-11-16 — PR174 exact test head fully CI-qualified; draft UNRELEASED
+- Source 2f8593a5, test commit 4e839c3d, all 9 workflow families SUCCESS (including browser build #43932192210, functional next-day #43932192342). Complete fictional DEMO HTML, offline zip and 26-file LIVE candidate CRC validated. No deployment, no merge, no personal data changes or automatic historical correction; physical iPhone acceptance pending. Production prior verified v0.9.27-beta.4.
+
 ## 2026-11-16 — PR174 actual browser next-day regression & full-app candidate verified (NOT A RELEASE)
 - Application source 2f8593a5, test head 4e839c3d, PR174 draft/unmerged/undeployed, main a722465c. New dedicated real UI Playwright fictional test PASS 8/8 variants at #43932192342; durable local storage/reload and next-day exact-vial logging established. Prior app-source 8/8 CI families SUCCESS. Downloaded and verified complete source-matched LIVE ZIP (26 files), standalone fictional full-app DEMO and offline DEMO CRC/byte parity via GitHub artifact #14226647150. Files materialized this session. No data migration, private data, personal inventory fix, real iPhone acceptance or deployment. Release approval still required; primary production last verified v0.9.27-beta.4.
 
