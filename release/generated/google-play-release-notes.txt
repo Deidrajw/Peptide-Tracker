@@ -1,4 +1,4 @@
-Reliable premixed-blend combination doses and accurate per-vial BAC-water records
-- Prevent premature empty vials when logging premixed-blend combinations: Combination-dose logs now debit the blend's exact physical vial ledger, retain positive source allocations and undo identity, and roll back staged inventory if source confirmation fails.
-- Record confirmed BAC water on the physical vial: Tapping Log Reconstitution confirms the amount shown, including an unchanged default. New standard and blend vial records retain their own exact BAC water and linked preparation history.
-- Safely correct historical vial preparation records: Finished-vial BAC amounts can be explicitly confirmed without reopening stock, changing remaining amounts or fabricating an unknown date. Kit defaults stay labelled unverified when exact historical evidence is absent.
+Safeguard exact premixed-vial status during daily dose logging
+- Prevent premature Finished status for premixed vials: Automatic vial depletion now requires verified same-vial dose, waste or correction evidence, rather than kit-wide balance alone. Unattributed older entries cannot retire a specific open vial.
+- Protect open premixed vials during preparation: Generic Prepare Dose rollover cannot retire an active premixed vial before physical-ledger commitment; it fails closed without changing inventory.
+- Validate repeated dose logging across days: Fictional automated browser checks cover dose, durable save/readback, reload and next-day dose at 320px and 390px in light and dark modes, including historical unattributed entries.

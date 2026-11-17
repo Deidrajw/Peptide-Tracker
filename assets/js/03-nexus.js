@@ -1324,6 +1324,41 @@ function getBlendOpenVialRemainingMg(kit) {
     (Number(open.vialMg)||Number(kit.vialMg)||0)+corrected-consumed-wasted));
 }
 
+// A global kit cap is NOT evidence that this particular physical vial is empty.
+// Historical kit-level outflows may be unattributed or belong to another vial.
+// This independent check is used ONLY to decide whether an automatic status
+// transition is justified; it never credits or restores physical inventory.
+function isBlendVialLedgerDepleted(kit, vial) {
+  if(!kit?.isBlend || !vial) return false;
+  if(kit.blendInventoryMode==="legacy-v2")
+    return Number.isFinite(Number(vial.remainingMg)) && Number(vial.remainingMg)<=0.01;
+  const capacity=Number(vial.vialMg ?? vial.expectedMg ?? kit.vialMg);
+  if(!Number.isFinite(capacity)||capacity<=0) return false;
+  const date=vial.reconDate||kit.reconDate;
+  // Unattributed entries without a reliable opening date are unknown, not zero.
+  if(!date) return false;
+  // A date-only event is NOT proof of which physical vial was drawn from.
+  // It can still affect a separate kit-wide estimate, but cannot retire an
+  // exact vial. Unknown attribution fails closed instead of guessing.
+  const ambiguousDose=(kit.doseLog||[]).some(d=>d.vialId==null &&
+    (!Number.isFinite(new Date(d.date).getTime()) || new Date(d.date)>=new Date(date)));
+  const ambiguousWaste=(kit.wasteLog||[]).some(w=>w.status!=="reversed"&&w.vialId==null &&
+    (!Number.isFinite(new Date(w.loggedAt||w.date).getTime()) ||
+      new Date(w.loggedAt||w.date)>=new Date(date)));
+  if(ambiguousDose||ambiguousWaste) return false;
+  const doseEntries=(kit.doseLog||[]).filter(d=>d.vialId!=null &&
+    String(d.vialId)===String(vial.id));
+  const wasteEntries=(kit.wasteLog||[]).filter(w=>w.status!=="reversed" &&
+    w.vialId!=null && String(w.vialId)===String(vial.id));
+  const correctionEntries=(kit.balanceCorrections||[]).filter(c=>c.status!=="reversed"&&String(c.vialId)===String(vial.id));
+  const all=[...doseEntries.map(x=>Number(x.totalMgDrawn)),...wasteEntries.map(x=>Number(x.mg)),...correctionEntries.map(x=>Number(x.mg))];
+  if(all.some(x=>!Number.isFinite(x)||x<0))return false;
+  const consumed=doseEntries.reduce((n,x)=>n+Number(x.totalMgDrawn),0);
+  const wasted=wasteEntries.reduce((n,x)=>n+Number(x.mg),0);
+  const corrected=correctionEntries.reduce((n,x)=>n+Number(x.mg),0);
+  return capacity+corrected-consumed-wasted<=0.01;
+}
+
 // Balance correction: the vial physically held MORE of the existing blend than
 // originally estimated. No material is transferred, no sealed vial is consumed,
 // and no constituent-dose event is created. Original formulation is unchanged.
@@ -1398,7 +1433,9 @@ function blendLogOutflowModal(kitId) {
       current.wasteLog.push({id:uid(),date:localDate(),loggedAt:new Date().toISOString(),
         mg,type,reason:"Blend outflow",status:"active",vialId:v.id,outflowKind:"blend_open_partial"});
       if(current.blendInventoryMode==="legacy-v2")v.remainingMg=Math.max(0,Number(v.remainingMg)-mg);
-      if(getBlendOpenVialRemainingMg(current)<=0.01){
+      // A kit-wide cap may reach zero due to older unattributed outflow.
+      // Retire this specific vial only when its own physical ledger confirms.
+      if(getBlendOpenVialRemainingMg(current)<=0.01 && isBlendVialLedgerDepleted(current,v)){
         v.status="empty";current.emptyVials=(current.emptyVials||0)+1;
         current.reconDate=null;current.activeKit=false;
       }

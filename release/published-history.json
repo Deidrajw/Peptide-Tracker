@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "releases": [
     {
+      "version": "v0.9.27-beta.4",
+      "publishedAt": "2026-11-16T03:52:37Z",
+      "title": "Reliable premixed-blend combination doses and accurate per-vial BAC-water records",
+      "sourceCommit": "3a77b4f09873d4eb0b6f22f74c260c0abcc40976",
+      "verification": "Cloudflare 16/16 exact source parity; workflow #43800872866",
+      "changes": [
+        {
+          "title": "Prevent premature empty vials when logging premixed-blend combinations",
+          "detail": "Combination-dose logs now debit the blend's exact physical vial ledger, retain positive source allocations and undo identity, and roll back staged inventory if source confirmation fails."
+        },
+        {
+          "title": "Record confirmed BAC water on the physical vial",
+          "detail": "Tapping Log Reconstitution confirms the amount shown, including an unchanged default. New standard and blend vial records retain their own exact BAC water and linked preparation history."
+        },
+        {
+          "title": "Safely correct historical vial preparation records",
+          "detail": "Finished-vial BAC amounts can be explicitly confirmed without reopening stock, changing remaining amounts or fabricating an unknown date. Kit defaults stay labelled unverified when exact historical evidence is absent."
+        }
+      ],
+      "dataImpact": "No automatic migration, backfill, repair or overwrite of saved dose history, inventory, current protocols, or browser localStorage (peptide-tracker-html-v1). Future explicit Log Reconstitution actions save the chosen BAC amount on the exact vial and append linked history. Historical Deadpool records marked empty despite missing source allocations are NOT silently restored or modified. Isolated full-app DEMO uses fictional in-memory data with no live writes or sync."
+    },
+    {
       "version": "v0.9.19-beta",
       "publishedAt": "2026-10-25",
       "title": "Blend logging and iPhone refinements",

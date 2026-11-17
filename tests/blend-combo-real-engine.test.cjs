@@ -24,7 +24,7 @@ const context={
     .flatMap(kit=>kit.vials.filter(v=>["open","active"].includes(v.status)).map(vial=>({kit,vial})))
 };
 vm.createContext(context);
-for(const name of ["getBlendKitRemainingMg","getBlendOpenVialRemainingMg"])
+for(const name of ["getBlendKitRemainingMg","getBlendOpenVialRemainingMg","isBlendVialLedgerDepleted"])
   vm.runInContext(get(name,src3),context);
 for(const name of ["migrateKitToV2","getVialRemainingMg","consumeCompoundInventory","planAndApplyComboDoses"])
   vm.runInContext(get(name,src4),context);
@@ -65,6 +65,41 @@ for(const legacy of [false,true]){
   assert.equal(kit.doseLog.reduce((n,x)=>n+x.totalMgDrawn,0),30);
   assert.equal(log(1).ok,false,"A finished vial must not silently reopen");
 }
+// Reproduce a fictional version of the historical contradiction: an older
+// generic stock path stored remainingMg=0 even though premixed doseLog shows
+// only 9mg withdrawn. Reopening must allow real ledger-based Combo logging,
+// and the saved/reloaded vial must not falsely finish on the next day.
+state.supplies=[{
+  id:"K-historical",name:"Fictional premixed blend",isBlend:true,
+  totalVials:2,openedVials:1,emptyVials:0,vialMg:30,
+  reconDate:"2026-11-06T10:00",activeKit:true,
+  doseLog:[{id:"D-old",date:"2026-11-10T10:00",vialId:"V-historical",totalMgDrawn:9}],
+  wasteLog:[],
+  vials:[{id:"V-historical",status:"open",remainingMg:0,vialMg:30,reconDate:"2026-11-06T10:00"},
+         {id:"V-sealed",status:"sealed",remainingMg:30,vialMg:30}]
+},{
+  id:"K-standard",name:"Fictional standard vial",vialMg:10,
+  vials:[{id:"V-standard",status:"open",remainingMg:10}]
+}];
+const historical=state.supplies[0];
+assert.equal(context.getBlendOpenVialRemainingMg(historical),21);
+const historicalFirst=context.planAndApplyComboDoses([
+  {name:historical.name,doseVal:"3"},{name:"Fictional standard vial",doseVal:"1"}
+],"2026-11-15T10:00","Abdomen","",String(id++),[],{method:"SubQ",grouping:"mixed"});
+assert.equal(historicalFirst.ok,true,historicalFirst.error||"historical blend source must use ledger");
+assert.equal(historical.vials[0].status,"open");
+assert.equal(context.getBlendOpenVialRemainingMg(historical),18);
+const stored=JSON.parse(JSON.stringify(state.supplies));
+state.supplies=stored;
+const afterReload=state.supplies[0];
+assert.equal(afterReload.vials[0].status,"open");
+const historicalNext=context.planAndApplyComboDoses([
+  {name:afterReload.name,doseVal:"3"},{name:"Fictional standard vial",doseVal:"1"}
+],"2026-11-16T10:00","Abdomen","",String(id++),[],{method:"SubQ",grouping:"mixed"});
+assert.equal(historicalNext.ok,true,historicalNext.error||"next-day combo must not re-finish");
+assert.equal(afterReload.vials[0].status,"open");
+assert.equal(context.getBlendOpenVialRemainingMg(afterReload),15);
+assert.equal(afterReload.doseLog.length,3);
 assert.match(src4,/canCorrectPreparation=isActiveVial\|\|vial.status==="empty"\|\|vial.status==="finished"/);
 assert.match(src4,/if\(isActiveVial\)\{s.reconDate=newDate;s.bacMl=actualBac;\}/);
 assert.match(src4,/vial.bacMl=actualBac/);

@@ -2999,6 +2999,17 @@ function prepareDosesModal(name) {
     };
     const openNewBtn = panel.querySelector("#palloc-open-new");
     if (openNewBtn) openNewBtn.onclick = () => {
+      // Blends use the dedicated physical vial doseLog. The legacy preparation
+      // rollover below calls finishVial() BEFORE the parent prepared transaction
+      // is saved, so it can mark a blend EMPTY without its required ledger entry.
+      // Do not mutate status or open a second vial until that exact current draw
+      // has been saved through consumeCompoundInventory(). No extra UI for normal
+      // daily Log Dose / Combo Dose; this guards an exceptional preparation path.
+      if((state.supplies||[]).some(k=>k.isBlend&&k.name===name &&
+        (k.vials||[]).some(v=>["open","active"].includes(v.status)))){
+        showErrorBanner("Finish saving the current blend preparation before opening another vial. No stock was changed.");
+        return;
+      }
       const draftRows = rows.map(r2=>({...r2}));
       // Every not-yet-finished row for the kit we're about to open a new vial in must be
       // settled first — pinned (if it wasn't already) and finished if its amount drains

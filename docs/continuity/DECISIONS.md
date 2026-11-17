@@ -1,3 +1,30 @@
+## 2026-11-17 — Explicit release approval for PR174 only
+- User authorizes final-gated merge/deployment of PR174 exact-vial automatic-finish safeguards. This approval does NOT authorize changes to old personal Deadpool inventory, automatic reconciliation, reopening/credit, or merging PR169/PR173. Versioned release candidate v0.9.27-beta.5 has pending publication status until independent production verification. Preserve old records.
+
+## 2026-11-17 — User physical iPhone acceptance of PR174 fictional full-app DEMO
+- User reported PASS on six iPhone UX checks: navigation, Log Dose readability, Review/Confirm accessibility, vial source/remaining clarity, no overflow/trapped scrolling, both themes. Mark as user-reported physical iPhone UI acceptance; do not claim VoiceOver or persistent browser-reload acceptance on standalone in-memory DEMO.
+- Acceptance of testing is NOT approval to merge/deploy or alter personal historical stock. Exact-vial safeguards remain additive, no automatic data correction or new manual recovery flow. Explicit separate release authorization remains required.
+
+## 2026-11-16 — Real-browser fictional next-day validation does not authorize release or history repair
+- User's reported Deadpool next-day false finish is addressed by additive exact-vial safeguards in draft PR174. Actual browser test through normal Log Dose and exclusive localStorage persistence passed for fictional historical-shape inventory, including full reload and next-day dose. This is evidence of tested workflow, NOT proof that original real-data incident happened under current deployed version.
+- Personal stock stays unknown; no forced reopening, no historical ledger backfill, no silent inventory restoration, no extra correction UI. A separate physical iPhone acceptance and explicit merge/deploy authorization remain required.
+
+## 2026-11-16 — Prior bug versus unproven recurrence
+- Historical Deadpool backup contains stale zero remainingMg alongside partial same-vial ledger; consistent with the pre-v0.9.27-beta.4 Combo Dose write issue already addressed in PR172. No timestamp of actual transition, so do not assert live bug persisted after deployment. Exact-vial non-destructive safety guards on draft PR174 remain additive protection. Preserve historical records, do not auto-correct balances or misrepresent true physical on-hand stock.
+
+## 2026-11-16 — Prepare Dose rollover cannot bypass physical blend ledger
+- For premixed blends, do not allow generic legacy Prepare Dose > Open New Vial action to retire the current vial before the actual preparation/withdrawal is committed in the single physical blend ledger. Block exceptional action without mutation rather than infer amount or force a visible manual recovery workflow. Normal daily Log Dose and Combo Dose are protected. PR174 draft, no merge/deploy consent.
+
+## 2026-11-16 — Automatic blend vial finish consistency
+- Premixed blend dose withdrawal and partial physical outflow may each retire a vial only with exact-vial ledger evidence; kit-wide estimate alone does not prove physical vial exhaustion. Do not auto-reopen or modify historical user records, and do not make a user-facing correction wizard the routine fix. Draft PR174 only, awaiting QA and explicit release approval.
+
+## 2026-11-16 — Unattributed historical records cannot automatically finish specific vial
+- Design safeguard: only vial-specific ledger withdrawals/waste justify automatic premixed status=EMPTY. Date-only records are uncertain and must not be silently assumed to be from the current vial. No automatic reopening or stock credit; user rejects visible correction wizard as routine solution. Separate from any independently verified historical reconciliation.
+
+## 2026-11-16 — Recurring Deadpool false finish: invisible safeguard rather than manual correction UI
+- User explicitly wants no click, repair wizard, or visible correction for a vial that repeatedly becomes Finished before the next day's dose. Focus on fixing the writer/accounting path. Historical records and actual physical stock remain unknown; do NOT automatically reopen, restore calculated remainingMg, or rewrite private records.
+- Independent draft PR174 isolates one code safety property: kit-wide ledger cap alone cannot automatically retire a specific premixed vial without verified depletion of its own physical-vial ledger. This is a candidate safeguard, NOT proof of the original real-world trigger or release approval. PR169 and PR173 stay separate.
+
 ## 2026-11-16 — Approved PR172 release completed; preserve user-data boundaries
 - User approved deployment only of PR172 after confirming fictional Deadpool combo and repaired vial ellipses/BAC flow. Version v0.9.27-beta.4 was merged at 3a77b4f0 and verified on Cloudflare 16/16 at publication SHA 7876dc0f (#43800872866 SUCCESS), following initial app SHA parity #43800686509 SUCCESS.
 - No approval to alter real Deadpool historical records, correct disputed remaining amounts, or merge separate draft PR169. Future historical corrections must be explicit, individually confirmed and non-destructive; recorded kit BAC defaults at Log Reconstitution count as user confirmation of actual amount.

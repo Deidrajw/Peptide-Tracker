@@ -1,3 +1,37 @@
+## 2026-11-17 — v0.9.27-beta.5 CANDIDATE / USER RELEASE APPROVAL RECEIVED / NOT YET DEPLOYED
+- PR174 protective fixes: prevent kit-wide-only automatic premixed vial finish, protect partial outflow/Prepare Dose rollover, fictional next-day actual browser regression 8/8, previous test SHA 4e839c3d nine CI SUCCESS, iPhone UX user-reported 6/6. Release candidate generated notes/manifest/index/JS02; final candidate-head CI and Cloudflare source parity PENDING.
+- Historical Deadpool inventory unchanged; no migration, balance backfill or reopening. PR169/173 drafts untouched. Published production remains verified v0.9.27-beta.4 until independent deployment checks pass. VoiceOver and physical historical accuracy unverified.
+
+## 2026-11-17 — PR174 iPhone UX acceptance recorded; DRAFT NOT RELEASED
+- User-reported 6/6 fictional full-app iPhone UX checks PASS, including light/dark, navigation, Log Dose and source display. At test SHA 4e839c3d CI 9/9 SUCCESS (full build #43932192210), real browser next-day 8/8 fictional configurations PASS. App source remains 2f8593a5. No deploy or merger, no physical stock/history repair; VoiceOver and real historical case not independently tested. Explicit merge/deploy approval pending. Last verified live release v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 exact test head fully CI-qualified; draft UNRELEASED
+- Source 2f8593a5, test commit 4e839c3d, all 9 workflow families SUCCESS (including browser build #43932192210, functional next-day #43932192342). Complete fictional DEMO HTML, offline zip and 26-file LIVE candidate CRC validated. No deployment, no merge, no personal data changes or automatic historical correction; physical iPhone acceptance pending. Production prior verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 actual browser next-day regression & full-app candidate verified (NOT A RELEASE)
+- Application source 2f8593a5, test head 4e839c3d, PR174 draft/unmerged/undeployed, main a722465c. New dedicated real UI Playwright fictional test PASS 8/8 variants at #43932192342; durable local storage/reload and next-day exact-vial logging established. Prior app-source 8/8 CI families SUCCESS. Downloaded and verified complete source-matched LIVE ZIP (26 files), standalone fictional full-app DEMO and offline DEMO CRC/byte parity via GitHub artifact #14226647150. Files materialized this session. No data migration, private data, personal inventory fix, real iPhone acceptance or deployment. Release approval still required; primary production last verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 fully green exact-source CI, UNRELEASED
+- Main a722465c; app source 2f8593a5; draft PR174 not merged/deployed. Eight exact-source CI families SUCCESS including build/browser 320/390 light/dark #43866609053. Existing full-app LIVE/fictional DEMO candidate artifacts documented and GitHub workflow uploaded; no new independently downloadable sandbox copy in this session. User local data untouched, no automatic historical correction, no iPhone acceptance, no production change. Production last verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 full-app candidate artifact prepared (NOT RELEASED)
+- Source 2f8593a5, GitHub QA artifact #14226290921; isolated standalone full-app DEMO HTML, offline demo ZIP and complete 26-file LIVE candidate ZIP independently downloaded/CRC/source-checked; matching release notes generated. Seven exact-source CI workflow families success; full build/browser still in progress. Production v0.9.27-beta.4 unchanged; PR174 draft/unmerged, no real data mutation, no deployment or real iPhone acceptance.
+
+## 2026-11-16 — PR174 historical-shape regression checkpoint (NOT A RELEASE)
+- Code 3ba7044b and test commits 443b041c, 2f8593a5. No merge/deploy/version change/data migration. Latest two exact-head suites dedicated Deadpool and blend/BAC SUCCESS; other CI pending; mixed syringe and full demo/LIVE artifacts incomplete; physical iPhone not accepted. Last verified published version v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 expanded writer guard (NOT RELEASED)
+- Unmerged draft PR174, production last verified v0.9.27-beta.4. Code 3ba7044b and regression 443b041c block generic legacy Prepare Dose rollover from retiring a premixed vial before ledger commitment. Early CI four PASS, four in-progress; no production data writes, migration, full-app DEMO/LIVE parity verification, iPhone acceptance or deployment.
+
+## 2026-11-16 — PR174 additional exact-source changes (UNRELEASED)
+- Code 664a367c date-only missing-vial attribution fail-closed; test 88772223 next-day save/reload; code ad276e66 partial blend outflow same-vial guard; test 33b30b27. All eight CI tests PASS at earlier source 517019c4 only; latest head CI not yet verified. No release, data migration, physical repair, iPhone acceptance or deployment. Production previously verified v0.9.27-beta.4.
+
+## 2026-11-16 — PR174 follow-up, NOT A RELEASE
+- JS03 664a367c date-only historical source ambiguity fail-closed; fictional next-day JSON reload regression test 88772223. Eight earlier suites PASS at 517019c4; refreshed branch head CI not yet verified. Draft, unmerged, no deployment, no real user data repairs; production v0.9.27-beta.4 prior parity.
+
+## 2026-11-16 — PR174 draft false Deadpool auto-empty guard (NOT A RELEASE)
+- main a722465c; branch fix/deadpool-blend-auto-empty-20261116, PR174 draft/unmerged/undeployed. JS03 4449285b and JS04 c3329014 provide same-vial ledger depletion gate for automatic blend status, test 3cb3e95f, CI workflow c2cea995. Exact-head CI pending; user-data migration none, private data untouched. No standalone full-app DEMO or LIVE ZIP created/verified and no actual iPhone acceptance. Production release remains v0.9.27-beta.4 (previous parity evidence only).
+
 ## 2026-11-16 UTC — v0.9.27-beta.4 RELEASE VERIFIED / PUBLISHED
 - Authorized by user after fictional user-reported PASS. PR172 merged to main app SHA 3a77b4f09873d4eb0b6f22f74c260c0abcc40976. Publication metadata finalized SHA 7876dc0fbe4752ad0f7cf084d29c857dc102e303; production Cloudflare 16/16 exact byte parity at both SHAs: workflow #43800686509 (app merged SHA) and #43800872866 (final publication metadata). GitHub Pages integrity #43800872793 and deployment #43800872426 SUCCESS. Premerge seven suite source CI PASS; postmerge Chrome/browser checks distinct and not claimed if still running.
 - Feature changes: premixed Deadpool blend combo exact physical dose ledger and Undo-safe allocation; ordinary Log Reconstitution records shown BAC including unchanged defaults against exact vial/history; finished vial BAC correction with unknown date allowed, zero inventory mutation; exact source Details wording. User-confirmed fictional demo Dose + Deadpool/BPC menus and BAC behavior. Data impact: no schema migration or historical repair, no production user storage writes by release engineering. Existing mismatched Deadpool historical ledger and EMPTY flag remain uncorrected. PR169 remains open and separate.
