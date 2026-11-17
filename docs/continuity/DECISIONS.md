@@ -1,3 +1,6 @@
+## 2026-11-17 — PR174 release authorized and shipped, but historical stock correction prohibited
+- Explicit user merge/deployment approval applied to PR174 only; verified primary Cloudflare source parity 16/16 at merge SHA 597d262d (#44033882596). Publication metadata updated on main after verified deployment. Preserve immutable historical Deadpool inventory and dose evidence; no silent reopening, inferred remaining stock, backfill or migration. PR169/PR173 untouched. Other approvals are not implied.
+
 ## 2026-11-17 — Explicit release approval for PR174 only
 - User authorizes final-gated merge/deployment of PR174 exact-vial automatic-finish safeguards. This approval does NOT authorize changes to old personal Deadpool inventory, automatic reconciliation, reopening/credit, or merging PR169/PR173. Versioned release candidate v0.9.27-beta.5 has pending publication status until independent production verification. Preserve old records.
 
