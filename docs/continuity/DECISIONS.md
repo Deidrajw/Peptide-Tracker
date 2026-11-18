@@ -1,3 +1,6 @@
+## 2026-11-18 — PR173 iPhone review uses separate fixture, no inventory correction
+- Approved-source behaviour stays unchanged; create a dedicated fictional FULL_APP_DEMO fixture with one historical premixed-vial example for physical device review, separate from standard release demo and production. Do not insert any private historical records, infer remaining quantity, or enable experimental stock-correction engine. Exact app navigation is Stash > [blend kit] > Details > Vials > vial ellipsis > Review historical vial records; 'View vial' itself displays separate preparation details. No merge or release consent inferred. Old menu can normalize in-memory kit shape; test no-write contract against state after menu and against storage before menu.
+
 ## 2026-11-17 — Historical review stays source-evidence-only and unmerged
 - Preserve current v0.9.27-beta.5 PR174 safeguards while inspecting past data. A historical dose has verified source linkage only when every allocation has a positive amount, exact vial and existing ledger ID. Missing or mismatched rows remain unresolved; the physical amount is always Unknown without independent verification. Review UI and Copy do not save to production storage. Experimental Stage B correction remains unmounted/disabled. New PR173 candidate is development-only; no release consent or PR169 merge.
 
