@@ -29,9 +29,13 @@ try{
     document.documentElement.dataset.theme=theme;
     const beforeState=JSON.stringify(state);
     const beforeStorage=localStorage.getItem('peptide-tracker-html-v1');
-    nexusReviewHistoricalBlendVial(1777,1888);
+    vialActionsMenu(1777,1888);
     return {beforeState,beforeStorage};
   },theme);
+  const menuAction=page.locator('#va-history-review');
+  ensure(await menuAction.isVisible(),'Review missing from actual Vial Actions menu');
+  ensure(await menuAction.evaluate(el=>el.getBoundingClientRect().height)>=44,'Vial Actions review target below 44px');
+  await menuAction.click();
   const review=page.locator('.nx-historical-vial-review');
   await review.waitFor({state:'visible'});
   ensure((await review.innerText()).includes('Physical remainder'),'Physical remainder missing');
@@ -58,4 +62,4 @@ try{
 }finally{await browser.close()}
 fs.mkdirSync('dist',{recursive:true});
 fs.writeFileSync('dist/historical-review-browser-QA.json',JSON.stringify(results,null,2));
-console.log('PASS '+results.length+' fictional full-app historical review sessions; no writes');
+console.log('PASS '+results.length+' fictional full-app Vial Actions -> historical review sessions; no writes');
