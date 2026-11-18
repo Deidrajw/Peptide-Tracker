@@ -1,3 +1,6 @@
+## 2026-11-18 — PR173 QA continuation and physical-preview candidate (NOT A RELEASE)
+- Verified main and Cloudflare manifest still published v0.9.27-beta.5. PR173 draft continues unchanged app bytes at fb4cd5e3; dedicated menu-path test correction 0e4286b3, last full CI #44377511088 pending at checkpoint (original 10/10 integration green on fb4cd5e3, browser #44088543519 SUCCESS). Independent GitHub source artifact #14331362010 LIVE 27 CRC PASS, offline/full-demo byte equality PASS, stageB unmounted. Separate 100% fictional historical review full-app HTML and offline ZIP created for iPhone; local browser 4/4 320/390 light/dark actual Stash navigation PASS, but physical iPhone/VoiceOver NOT TESTED. No data migration/write, PR169 untouched, no merge/deploy.
+
 ## 2026-11-17 — PR173 latest package qualified structurally; NOT PUBLISHED
 - Candidate artifact #14331095462 downloaded and independently verified against release source structure: 27-file LIVE ZIP CRC PASS, two-entry offline fictional DEMO ZIP byte-equal to standalone HTML, experimental stock-correction module excluded. Nine source-head workflows PASS; full-browser suite #44088543519 still ongoing at checkpoint. PR173 remains open draft with no new version or production changes; PR169 separate.
 
