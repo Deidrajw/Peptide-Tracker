@@ -27,10 +27,10 @@ try{
       vials:[{id:1888,status:'empty',sequenceNumber:1,remainingMg:0,finishedAt:null}],
       doseLog:[{id:1999,vialId:1888,totalMgDrawn:9,date:'2026-11-09'}]}];
     document.documentElement.dataset.theme=theme;
-    const beforeState=JSON.stringify(state);
     const beforeStorage=localStorage.getItem('peptide-tracker-html-v1');
     vialActionsMenu(1777,1888);
-    return {beforeState,beforeStorage};
+    const afterMenuState=JSON.stringify(state);
+    return {afterMenuState,beforeStorage};
   },theme);
   const menuAction=page.locator('#va-history-review');
   ensure(await menuAction.isVisible(),'Review missing from actual Vial Actions menu');
@@ -53,7 +53,7 @@ try{
   await page.locator('#nx-history-copy').click();
   await page.locator('#nx-history-close').click();
   const after=await page.evaluate(()=>({afterState:JSON.stringify(state),afterStorage:localStorage.getItem('peptide-tracker-html-v1')}));
-  ensure(initial.beforeState===after.afterState,'Opening or closing review changed app state');
+  ensure(initial.afterMenuState===after.afterState,'Review changed app state beyond existing Vial Actions menu normalization');
   ensure(initial.beforeStorage===after.afterStorage,'Review modified localStorage');
   ensure(errors.length===0,'Review browser error '+errors.join('; '));
   results.push({kind,width,theme,status:'PASS',geometry,recordCount:3,physicalRemaining:'unknown',noWrite:true});
