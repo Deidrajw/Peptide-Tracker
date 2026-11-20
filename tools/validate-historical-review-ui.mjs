@@ -56,6 +56,24 @@ try{
   ensure(initial.afterMenuState===after.afterState,'Review changed app state beyond existing Vial Actions menu normalization');
   ensure(initial.beforeStorage===after.afterStorage,'Review modified localStorage');
   ensure(errors.length===0,'Review browser error '+errors.join('; '));
+  // Clean history should not offer a routine inspection action.
+  await page.evaluate(()=>{
+    state.peptides['Fictional Blend'].doses=[{id:9010,date:'2026-11-13',dose:2,
+      blendSource:1777,allocations:[{kitId:1777,vialId:1888,ledgerId:1999,amount:2}]}];
+    vialActionsMenu(1777,1888);
+  });
+  ensure(await page.locator('#va-history-review').count()===0,'Clean vial exposed historical troubleshooting');
+  await page.locator('#x').click();
+  // Unknown kit-level records must not accuse an unrelated vial in a multi-vial kit.
+  await page.evaluate(()=>{
+    state.supplies[0].vials.push({id:1889,status:'empty',sequenceNumber:2,remainingMg:0});
+    state.peptides['Fictional Blend'].doses=[{id:9011,date:'2026-11-14',dose:1,
+      blendSource:1777,allocations:[]}];
+    vialActionsMenu(1777,1889);
+  });
+  ensure(await page.locator('#va-history-review').count()===0,'Unrelated vial falsely flagged');
+  await page.locator('#x').click();
+
   results.push({kind,width,theme,status:'PASS',geometry,recordCount:3,physicalRemaining:'unknown',noWrite:true});
   await ctx.close();
  }
