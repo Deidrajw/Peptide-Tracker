@@ -1,3 +1,6 @@
+## 2026-11-20 — PR173 contextual UX qualified candidate (UNRELEASED)
+- No published release/version change; draft PR173 app dfd199a2, test 778df503, baseline/main c551d363 and primary published v0.9.27-beta.5. Full build #44687765715 SUCCESS and exact-source downloadable final artifact #14607762270 (LIVE ZIP 27 CRC PASS; isolated full app standalone/offline demo CRC and parity PASS). Synthetic browser 8/8 PASS, dedicated historical no-write PASS, seven other CI workflows PASS; WebKit first attempt FAIL, rerun pending; physical iPhone and VoiceOver NOT TESTED. No historical stock update, automatic recovery, migration, merge or deploy; PR169 preserved.
+
 ## 2026-11-20 — PR173 contextual presentation candidate (UNRELEASED)
 - Draft branch docs/deadpool-historical-reconciliation-review-20261115: UX source dfd199a2, test 778df503. Shows historical read-only review contextually rather than for every blend vial. No new release version; production remains previously verified v0.9.27-beta.5 at main c551d363. No schema migration, data writes, reconciliation, merge or deploy. New-head CI, full-app DEMO/LIVE artifacts and physical iPhone UAT pending.
 
