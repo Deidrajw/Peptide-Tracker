@@ -1,3 +1,6 @@
+## 2026-11-20 — Approved contextual PR173 development QA qualified, release still needs approval
+- Invisible-first inventory UX remains scoped to contextual Vial Actions read-only inspection and non-invasive evidence; completed 10/10 automated workflow families after WebKit retry. Existing historical stock and allocations must not be silently corrected, and user development approval is not approval to merge or deploy. Physical iPhone acceptance remains required before any release decision.
+
 ## 2026-11-20 — Approved invisible-first historical inventory UX on PR173 (development only)
 - Approval applies to changing the draft PR173 presentation, NOT to merge, deploy, automatic inventory reconciliation or historical rewrites. Keep pure read-only investigation; in Vial Actions show contextual “Inventory needs review” only for unresolved dose evidence involving the exact vial, or a finished/empty single-vial kit with unresolved history. Do not mark each vial in a multi-vial kit based only on unassigned kit-wide history. Fully linked history gets no routine review CTA. Physical remaining is Unknown unless independently confirmed. Preserve released PR174 exact-vial guards and independent draft PR169; feature must not silently alter records.
 
