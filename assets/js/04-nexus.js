@@ -1468,6 +1468,23 @@ function viewVialPreparationModal(kitId,vialId) {
   m.querySelector("#nx-vial-prep-close").onclick=closeModal;
 }
 
+// Contextual, read-only historical review eligibility. Never infer physical stock.
+// An unattributed kit-wide dose is not evidence against every vial in a multi-vial kit.
+function nexusHistoricalVialNeedsReview(kit,vial){
+  if(!kit?.isBlend||!vial||!globalThis.NexusHistoricalReconciliation)return false;
+  try{
+    const report=globalThis.NexusHistoricalReconciliation.review(state,kit.id);
+    const uncertain=report.entries.filter(d=>d.sourceUncertain);
+    if(!uncertain.length)return false;
+    const directlyRelated=uncertain.some(d=>d.allocations.some(a=>
+      String(a.vialId)===String(vial.id)));
+    const onlyVial=(report.vials.length===1&&
+      String(report.vials[0].id)===String(vial.id));
+    const finished=vial.status==="finished"||vial.status==="empty";
+    return directlyRelated||(onlyVial&&finished);
+  }catch{return false;} // Never mislabel an unverified reading as a confirmed discrepancy.
+}
+
 function vialActionsMenu(kitId, vialId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
@@ -1485,7 +1502,7 @@ function vialActionsMenu(kitId, vialId) {
     ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
     ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
 ${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date or BAC water amount without changing doses</div></button>`:""}
-    ${s.isBlend?`<button id="va-history-review" type="button" style="display:block;width:100%;text-align:left;min-height:48px;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Review historical vial records<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Inspect physical ledger and missing dose sources · no inventory changes</div></button>`:""}
+    ${nexusHistoricalVialNeedsReview(s,vial)?`<button id="va-history-review" type="button" style="display:block;width:100%;text-align:left;min-height:48px;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Inventory needs review<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Some earlier dose sources need confirmation · no inventory changes</div></button>`:""}
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
