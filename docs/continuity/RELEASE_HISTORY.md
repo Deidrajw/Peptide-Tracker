@@ -1,3 +1,6 @@
+## 2026-11-20 — PR173 contextual presentation candidate (UNRELEASED)
+- Draft branch docs/deadpool-historical-reconciliation-review-20261115: UX source dfd199a2, test 778df503. Shows historical read-only review contextually rather than for every blend vial. No new release version; production remains previously verified v0.9.27-beta.5 at main c551d363. No schema migration, data writes, reconciliation, merge or deploy. New-head CI, full-app DEMO/LIVE artifacts and physical iPhone UAT pending.
+
 ## 2026-11-18 — PR173 QA continuation and physical-preview candidate (NOT A RELEASE)
 - Verified main and Cloudflare manifest still published v0.9.27-beta.5. PR173 draft continues unchanged app bytes at fb4cd5e3; dedicated menu-path test correction 0e4286b3, last full CI #44377511088 pending at checkpoint (original 10/10 integration green on fb4cd5e3, browser #44088543519 SUCCESS). Independent GitHub source artifact #14331362010 LIVE 27 CRC PASS, offline/full-demo byte equality PASS, stageB unmounted. Separate 100% fictional historical review full-app HTML and offline ZIP created for iPhone; local browser 4/4 320/390 light/dark actual Stash navigation PASS, but physical iPhone/VoiceOver NOT TESTED. No data migration/write, PR169 untouched, no merge/deploy.
 
