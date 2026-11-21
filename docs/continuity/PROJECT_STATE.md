@@ -1,3 +1,7 @@
+## 2026-11-21 — User reports background-first demo looks fine (limited acceptance)
+- User response to updated complete fictional PR173 demo: "everythings fine." Record as overall positive user-reported feedback with no issue raised. User did not supply per-case Pass/Fail responses, device/browser confirmation, or VoiceOver evidence: **do not claim 6/6 physical iPhone or accessibility PASS** from this message.
+- Code-qualified source 6b2b956f CI 10/10 previously PASS; draft PR173 remains unmerged/undeployed and data untouched. No release authorization. ONE NEXT ACTION: obtain explicit release decision only after required formal device/QA gates, or continue next approved roadmap task without treating silence as consent.
+
 ## 2026-11-21 — PR173 background-first exact-code QA 10/10 PASS; iPhone acceptance outstanding
 - Verified main c551d363; primary published v0.9.27-beta.5 (previously verified). PR173 draft and unmerged, PR169 preserved. New app/test SHA 6b2b956fee1a80184ac9080191b05fc1e7689f84.
 - 10/10 exact-head workflow families SUCCESS: historical no-write #44867330567, Deadpool false-empty #44867330519, next-day #44867330515, blend/BAC #44867330536, writer #44867330546, mobile #44867330522, WebKit #44867330513, DS2 #44867330523, pinned browser #44867330512, full build/browser #44867330572. LIVE/DEMO 320/390 light/dark browser 8/8 PASS.
