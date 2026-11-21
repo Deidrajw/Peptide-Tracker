@@ -473,8 +473,6 @@ function nexusPlanUndoMultiSourceBackedDose(snapshot,entry){
   if(index<0)fail("Original dose missing or already reversed");
   if(index!==record.doses.length-1)fail("Only the latest dose can be reversed");
   const old=record.doses[index];
-  if(operation==="undo"&&Array.isArray(old.allocations)&&old.allocations.length>=2)
-    return nexusPlanUndoMultiSourceBackedDose(snapshot,entry);
   if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
      !Array.isArray(old.allocations)||old.allocations.length<2)
     fail("Unsupported multi-source historical record");
@@ -548,6 +546,8 @@ function nexusPlanBackedDoseChange(snapshot,entry){
   const index=record?.doses?.findIndex(d=>String(d.id)===String(doseId))??-1;
   if(index<0)fail("Original dose missing");
   const old=record.doses[index];
+  if(operation==="undo"&&Array.isArray(old.allocations)&&old.allocations.length>=2)
+    return nexusPlanUndoMultiSourceBackedDose(snapshot,entry);
   if(old.trackingMode!=="backed"||old.isBlendDose||old.fromPreparedId||
      !Array.isArray(old.allocations)||old.allocations.length!==1)fail("Unsupported historic source: review manually");
   if(index!==record.doses.length-1)fail("Only the most recent dose can be corrected through this safety path");
