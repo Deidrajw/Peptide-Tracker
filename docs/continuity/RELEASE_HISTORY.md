@@ -1,3 +1,7 @@
+## 2026-11-20 — PR173 background-first redesign candidate, UNRELEASED
+- User directed background-first historical discrepancy UX and no routine audit steps. Draft code de3e583e removed historical review CTA/modal from Vial Actions; retained pure evidence reader for internal use with missing source and physical stock fail-closed. Browser/unit test source a0a9d10c, 7ca82119 updates expected behaviour. Release version/primary production remain v0.9.27-beta.5, main c551d363; PR174 published and PR169 draft preserved.
+- Data impact: NONE (no migration, stock correction, dose history edits, backfill or writes); experimental physical-stock correction module unmounted. No new release approval. New exact-head CI, live/demo artifact parity, physical iPhone and VoiceOver acceptance PENDING as of this entry.
+
 ## 2026-11-20 — PR173 contextual review fully automated-QA qualified, NOT RELEASED
 - Exact code dfd199a2, tests 778df503, production unchanged published v0.9.27-beta.5, main c551d363. All 10 workflow families completed successfully after WebKit retry (#44687765722 first failed and retry succeeded); full release build #44687765715 SUCCESS. GitHub final exact-source artifact #14607762270 downloaded and CRC verified: 27-file LIVE, full standalone fictional demo, byte-equal offline demo. No database/storage migration, no historical physical stock changes, no merge/deploy. Physical iPhone/VoiceOver acceptance pending. PR169 preserved, PR174 published safeguards protected.
 
