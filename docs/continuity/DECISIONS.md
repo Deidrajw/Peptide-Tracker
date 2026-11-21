@@ -1,3 +1,7 @@
+## 2026-11-21 — PR169 source-safe integration direction after beta.6
+- Continue previously approved development-only 3-step Log Dose (Dose details → Select exact physical vials → Review) and all-or-nothing multi-source Undo. Do not merge PR169's old app files wholesale: branch diverged 231 behind/87 ahead from beta.6 main; released PR174 false-empty/BAC and PR173 background-first history safeguards take precedence.
+- Do not force a review/audit of old inventory. Automatically handle routine one-source selection, ask for source choices only when needed for current dose, show exact projected amount per source, and block uncertain source commits. Historical uncheckpointed allocations remain unresolved and are not credited/reopened silently. No new user decision required to begin integration, but new design deviations or release require separate approval.
+
 ## 2026-11-15 — Guided multi-vial UI remains approved; repair historical tests, not product UI
 - PR169 retains approved three-step Details → Vials → Review design; #toggle-multi is intentionally visible only with multiple eligible physical vial sources on Vials step. Historical Stash QA must establish those prerequisites instead of forcing the control into Details or showing irrelevant options for single-vial dosing. No UI redesign, application write changes, data migration, merge or deployment approved. Test-only repair at 00f4687e; results pending.
 
