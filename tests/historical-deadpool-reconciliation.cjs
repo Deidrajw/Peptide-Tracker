@@ -61,21 +61,17 @@ t("duplicate physical ledger ids fail closed",()=>{
   const f=fixture();f.supplies[0].doseLog.push({...f.supplies[0].doseLog[0]});
   assert.throws(()=>review(f,101),/Duplicate/);
 });
-t("Stash review UI is wired and contains no save controls",()=>{
+t("historical evidence is internal; no routine user-facing Stash audit task",()=>{
   const fs=require("node:fs");
   const ui=fs.readFileSync(require("node:path").join(__dirname,"../assets/js/04-nexus.js"),"utf8");
   const html=fs.readFileSync(require("node:path").join(__dirname,"../index.html"),"utf8");
-  const start=ui.indexOf("function nexusReviewHistoricalBlendVial(");
-  const end=ui.indexOf("// Kit-level maintenance actions",start);
-  assert.ok(start>0&&end>start);
-  const body=ui.slice(start,end);
-  assert.match(ui,/id="va-history-review"/);
-  assert.match(ui,/nexusReviewHistoricalBlendVial\(kitId,vialId\)/);
-  assert.match(body,/Physical remainder/);
-  assert.match(body,/Unknown/);
-  assert.doesNotMatch(body,/nexusWriter\(|nexusCommitCurrentState\(|localStorage\.setItem\(|saveState\(/);
+  assert.doesNotMatch(ui,/va-history-review|nexusReviewHistoricalBlendVial|Inventory needs review/);
   assert.ok(html.indexOf("nexus-historical-reconciliation.js")>=0);
   assert.ok(html.indexOf("nexus-historical-reconciliation.js")<html.indexOf("04-nexus.js"));
+  const f=fixture(),before=JSON.stringify(f),r=review(f,101);
+  assert.deepEqual(r.unresolved,[901]);
+  assert.equal(r.physicalRemainingMg,null);
+  assert.equal(JSON.stringify(f),before);
 });
 t("customPeptides historical dose records are inspected",()=>{
   const f=fixture();
