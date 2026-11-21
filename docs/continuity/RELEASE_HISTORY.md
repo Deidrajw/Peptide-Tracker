@@ -1,3 +1,10 @@
+## 2026-11-21 — PR175 guided Log Dose beta.6 integration development only
+- Published beta.6 unchanged. Draft PR175 code: JS01 checkpoint/atomic Undo 8e541acb, dispatcher fix 907b6430, JS05 guided Details/Vials/Review 6a3738f3, scoped CSS 21a5df0f, five regression files through a384ce10. Original PR169 remains draft and unmerged.
+- First CI at 8e541acb failed coordinator test; fixed-head source validation passed in #44880718515; fully integrated guided UI current-source CI NOT VERIFIED as of entry. No version bump, production data writes, migration or release. Complete final artifact/physical iPhone acceptance pending.
+
+## 2026-11-21 — PR175 multi-source Undo integration development slice (UNRELEASED)
+- Beta.6 production unchanged. Draft PR175 based on 657ad6a8 includes JS01 checkpoint and clone-only atomic multi-source Undo planner code 8e541acb and fictional two-tab regression addition f5f9d017, ported from stale PR169. Current exact-head CI NOT VERIFIED; guided UI JS05 NOT PORTED; complete demo/live artifacts NOT BUILT. No production data, schema migration, release manifest change, merge or deployment.
+
 ## 2026-11-21 — v0.9.27-beta.6 FINAL PUBLICATION parity VERIFIED
 - Cloudflare independently served published manifest v0.9.27-beta.6 with PR173 merge commit 169cf617. Final publication metadata/main checkpoint 31906707a32a0c7f18cb50600ef179cae35b66a6 verified at workflow #44879888719, 16/16 exact app file SHA256 equality, zero errors, evidence artifact #14698050003 at 2026-11-21T07:21:48.530Z. Earlier PR merge parity #44879719038 also 16/16; Pages integrity #44879888730 SUCCESS. Documentation-only final note follows.
 - User-approved and iPhone accepted Stash/Vial Actions and Log Dose, beta.6 no routine historical audit prompts; internal fail-closed no-write source diagnostic. No saved data correction, physical amount inference, inventory modification or PR169 release. VoiceOver not tested.

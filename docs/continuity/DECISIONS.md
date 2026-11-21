@@ -1,3 +1,11 @@
+## 2026-11-21 — PR175 approved guided source-selection development
+- PR169 earlier approved Details → Vials → Review and exact multi-source Undo development. PR175 ports those scoped changes to current beta.6, preserving approved DS2 and automatic one-verified-vial selection where appropriate. Avoid unnecessary manual historical audits, retain native units, and fail closed for stale/unknown old allocations.
+- This does not authorize PR175 merge/deploy, physical inventory reconciliation, old dose history rewrite, or changes to existing published PR174/PR173 safeguards. Full new-source CI and iPhone acceptance remain mandatory.
+
+## 2026-11-21 — PR175 clean integration approach to approved PR169
+- Existing PR169 design approval remains development-only: guided Log Dose Details → Select vials → Review, exact multi-source writer and atomic Undo. Create modern draft PR175 from beta.6 rather than merge 231-behind old PR169 source. First slice modifies JS01 writer only, with synthetic 2-tab tests. Not permission to merge/deploy or rewrite historical records.
+- Preserve auto-selection of one exact compatible open vial and no routine audit tasks. Show source selection only when required; fail closed on stale/unknown allocations. Old missing Undo checkpoints are never inferred. Keep PR174/PR173 safeguards and data.
+
 ## 2026-11-21 — PR173 released as background-first UX under scoped consent
 - User authorized PR173 release and confirmed physical iPhone Stash/Vial Actions and Log Dose worked in isolated full-app demo. Merged app commit 169cf617; Cloudflare 16/16 exact merged-file parity #44879719038 PASS.
 - No approval for automatic stock corrections, historical inventory reconciliation, migration, rewriting old doses, or PR169. Pure historical evidence reader keeps uncertainty; physical remaining is Unknown unless separately verified. No new automatic exception handler/prompt was implemented. Separate final published-metadata parity required. VoiceOver not tested.
