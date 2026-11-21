@@ -1,3 +1,7 @@
+## 2026-11-21 — PR169 beta.6 integration risk audit (NO NEW RELEASE)
+- Verified main 657ad6a8 / published v0.9.27-beta.6 after PR173. Draft PR169 code 2de7024a remains unmerged, divergent (231 commits behind, 87 ahead), targeting JS01 dose writer, JS05 guided UI, CSS and regression tests. Prior local/branch QA does not demonstrate safe integration with released Deadpool/BAC fixes.
+- Only assessment/continuity updated; no application code changes, user data changes, migration, exact-source LIVE/DEMO artifacts or deployment. Future integration must be requalified from current main and independently released on approval.
+
 ## 2026-11-15 — PR169 guided multi-vial Log Dose QA-only follow-up, UNRELEASED
 - Development-only test fix 00f4687e updates Stash action regression to follow guided Details → Vials and supply two eligible fictional sources. Previous 77b49cf six-suite result 5/6 PASS; full browser #43667876230 failed at legacy selector, following Save-ack 8/8 PASS. New exact-head qualification and official source artifacts PENDING.
 - Main/primary production last independently recorded b3a67ec4 / v0.9.27-beta.3. No application JS/CSS changes for this QA fix, no migration, no live data modifications, no merge or deployment authorization; physical iPhone acceptance outstanding.
