@@ -1,3 +1,6 @@
+## 2026-11-21 — PR173 release authorization recorded; NOT MERGED / NOT DEPLOYED
+- User replied "let's go" when offered PR173 release/deployment. Explicit release intent recognized, but physical iPhone UAT not independently attributable to reported "everythings fine"; mandatory gate unresolved. Draft release manifest remains v0.9.27-beta.5 (published PR174), not a unique candidate. No new release version, branch merge, Cloudflare verification or production data modification. Next: clarify device UAT, stage new version, run candidate QA, gated merge and independently verify deployment. PR169 and historical vial data protected.
+
 ## 2026-11-21 — PR173 informal user acceptance noted; unreleased
 - User reports "everythings fine" regarding background-first test candidate. This is qualitative approval of experience, not six individual physical iPhone test results or authorization to release. Draft PR173 unchanged in app source; production v0.9.27-beta.5 unchanged; no merge/deploy/data reconciliation.
 
