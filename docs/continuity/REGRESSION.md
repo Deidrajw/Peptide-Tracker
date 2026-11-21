@@ -1,3 +1,8 @@
+## 2026-11-21 — PR173 beta.6 iPhone acceptance CONFIRMED (scoped); versioned QA PENDING
+- USER-REPORTED PASS: real physical iPhone, updated complete fictional PR173 demo, Stash/Vial Actions and Log Dose worked without issues. No individual reports for 6-case matrix, VoiceOver or real-data stock; do not infer PASS.
+- Previous code beta.5 source 6b2b956f automation 10/10 PASS. Beta.6 pending-publication candidate updates release/release.json, archive, generated metadata, app title; exact versioned-head CI and final full-app artifact parity **PENDING** here.
+- Safeguard no historical balance write or experimental stock correction; PR169 independent. No new release deployment until CI and independent Cloudflare parity.
+
 ## 2026-11-21 — PR173 release-gate review after authorization
 - PASS: prior exact app-source 6b2b956f 10/10 automated workflow families, browser full-app 8/8, exact-source isolated demo/LIVE artifact integrity. NOT TESTED / BLOCKED for release: explicit physical iPhone Safari validation of clean Stash/Vial Actions and protected Log Dose, individual checklist results, VoiceOver; user only reported general "everythings fine" without device attribution. VoiceOver not automatically a release blocker unless required separately; do not count as PASS.
 - Release manifest still identifies old v0.9.27-beta.5 published PR174; new versioning, pending publication metadata and final exact-head QA required. PR173 approved conditionally but not merged/deployed, real inventory untouched.
