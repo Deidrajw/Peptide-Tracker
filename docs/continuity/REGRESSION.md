@@ -1,3 +1,7 @@
+## 2026-11-21 — PR173 release-gate review after authorization
+- PASS: prior exact app-source 6b2b956f 10/10 automated workflow families, browser full-app 8/8, exact-source isolated demo/LIVE artifact integrity. NOT TESTED / BLOCKED for release: explicit physical iPhone Safari validation of clean Stash/Vial Actions and protected Log Dose, individual checklist results, VoiceOver; user only reported general "everythings fine" without device attribution. VoiceOver not automatically a release blocker unless required separately; do not count as PASS.
+- Release manifest still identifies old v0.9.27-beta.5 published PR174; new versioning, pending publication metadata and final exact-head QA required. PR173 approved conditionally but not merged/deployed, real inventory untouched.
+
 ## 2026-11-21 — PR173 user demo feedback (overall positive, case results unspecified)
 - USER-REPORTED: "everythings fine" on follow-up to the background-first fictional full-app DEMO checklist. No defects identified in message. Individual six checklist outcomes, tested device, Safari, dark/light and VoiceOver **NOT REPORTED**, hence **NOT TESTED / NOT CONFIRMED** individually. Existing automated 10/10 PASS remains independent evidence; no release decision or data mutation.
 
