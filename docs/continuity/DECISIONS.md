@@ -1,3 +1,7 @@
+## 2026-11-21 — PR173 released as background-first UX under scoped consent
+- User authorized PR173 release and confirmed physical iPhone Stash/Vial Actions and Log Dose worked in isolated full-app demo. Merged app commit 169cf617; Cloudflare 16/16 exact merged-file parity #44879719038 PASS.
+- No approval for automatic stock corrections, historical inventory reconciliation, migration, rewriting old doses, or PR169. Pure historical evidence reader keeps uncertainty; physical remaining is Unknown unless separately verified. No new automatic exception handler/prompt was implemented. Separate final published-metadata parity required. VoiceOver not tested.
+
 ## 2026-11-21 — PR173 user physical iPhone acceptance and scoped release consent
 - User confirmed that the updated PR173 demo was tested on physical iPhone; Stash/Vial Actions and Log Dose both worked without issue. This is user-reported acceptance of these two protected flows, not proof of VoiceOver or other unreported cases.
 - Previous "let's go" is explicit permission for a gated PR173 merge/release, provided exact-version automated QA and integrity checks pass. Version candidate v0.9.27-beta.6 staged with publication=pending; archive prior beta.5 history. No consent for modifying previous Deadpool history/inventory, auto-reconciliation, destructive migration or PR169. Production evidence separate from a successful merge.
