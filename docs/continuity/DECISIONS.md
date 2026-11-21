@@ -1,3 +1,7 @@
+## 2026-11-21 — Background-first PR173 qualification excludes automatic stock repair
+- User authorized removal of routine historical audit tasks, not auto-reopening, stock reconciliation, data migration or merge/deploy. Exact app-source 6b2b956f has 10/10 CI and verified isolated full-app artifact; the pure reader remains internal. No new background auto-repair or action-blocking prompt is implemented.
+- Preserve exact source and per-vial BAC records, unknown physical remainder, released PR174 safeguards, and separate PR169 draft. Future exception prompt is warranted only at a genuinely blocked operation needing facts Nexus cannot know and requires separate implementation/testing/approval.
+
 ## 2026-11-20 — User-approved PR173 background-first UX supersedes contextual audit CTA
 - Explicit decision: keep routine historical discrepancy analysis invisible. Nexus must not require a user to open Stash, review historical records, copy an audit or certify automated tracking. Ask only for genuine missing real-world information at the moment an important action cannot safely proceed.
 - Supersedes the earlier 2026-11-20 contextual "Inventory needs review" design. Draft PR173 removes routine UI entry/modal; pure read-only evidence analysis retained internally. Automatic background reconciliation, automatic stock correction, existing-history mutation, silent opening or stock restoration remain prohibited and are **not implemented**.
