@@ -1,3 +1,35 @@
+## 2026-11-21 — PR173 user physical iPhone acceptance and scoped release consent
+- User confirmed that the updated PR173 demo was tested on physical iPhone; Stash/Vial Actions and Log Dose both worked without issue. This is user-reported acceptance of these two protected flows, not proof of VoiceOver or other unreported cases.
+- Previous "let's go" is explicit permission for a gated PR173 merge/release, provided exact-version automated QA and integrity checks pass. Version candidate v0.9.27-beta.6 staged with publication=pending; archive prior beta.5 history. No consent for modifying previous Deadpool history/inventory, auto-reconciliation, destructive migration or PR169. Production evidence separate from a successful merge.
+
+## 2026-11-21 — Explicit PR173 release authorization is CONDITIONAL on gates
+- User answered "let's go" to final release approval/deployment question. This authorizes PR173 release once documented requirements are met, not immediate bypass of required iPhone QA nor any historic stock write. No permission for PR169, automatic stock correction, historical inventory reconciliation, destructive migration, or unreviewed feature.
+- Since device-specific acceptance was not recorded and current manifest remains published v0.9.27-beta.5 for prior PR174, release withheld pending iPhone acceptance, distinct versioned candidate preparation and exact-source QA. Keep PR173 draft/unmerged until evidence.
+
+## 2026-11-21 — Background-first PR173 qualification excludes automatic stock repair
+- User authorized removal of routine historical audit tasks, not auto-reopening, stock reconciliation, data migration or merge/deploy. Exact app-source 6b2b956f has 10/10 CI and verified isolated full-app artifact; the pure reader remains internal. No new background auto-repair or action-blocking prompt is implemented.
+- Preserve exact source and per-vial BAC records, unknown physical remainder, released PR174 safeguards, and separate PR169 draft. Future exception prompt is warranted only at a genuinely blocked operation needing facts Nexus cannot know and requires separate implementation/testing/approval.
+
+## 2026-11-20 — User-approved PR173 background-first UX supersedes contextual audit CTA
+- Explicit decision: keep routine historical discrepancy analysis invisible. Nexus must not require a user to open Stash, review historical records, copy an audit or certify automated tracking. Ask only for genuine missing real-world information at the moment an important action cannot safely proceed.
+- Supersedes the earlier 2026-11-20 contextual "Inventory needs review" design. Draft PR173 removes routine UI entry/modal; pure read-only evidence analysis retained internally. Automatic background reconciliation, automatic stock correction, existing-history mutation, silent opening or stock restoration remain prohibited and are **not implemented**.
+- Unknown historical physical remainder stays Unknown; incomplete or mismatch allocations are not trusted. Existing released PR174 same-vial Deadpool guards and BAC behaviour remain unchanged. PR169 independently drafted and untouched. This is development direction approval only: **no merge, release, deployment, destructive migration or user-data correction approval**.
+
+## 2026-11-20 — Approved contextual PR173 development QA qualified, release still needs approval
+- Invisible-first inventory UX remains scoped to contextual Vial Actions read-only inspection and non-invasive evidence; completed 10/10 automated workflow families after WebKit retry. Existing historical stock and allocations must not be silently corrected, and user development approval is not approval to merge or deploy. Physical iPhone acceptance remains required before any release decision.
+
+## 2026-11-20 — Approved invisible-first historical inventory UX on PR173 (development only)
+- Approval applies to changing the draft PR173 presentation, NOT to merge, deploy, automatic inventory reconciliation or historical rewrites. Keep pure read-only investigation; in Vial Actions show contextual “Inventory needs review” only for unresolved dose evidence involving the exact vial, or a finished/empty single-vial kit with unresolved history. Do not mark each vial in a multi-vial kit based only on unassigned kit-wide history. Fully linked history gets no routine review CTA. Physical remaining is Unknown unless independently confirmed. Preserve released PR174 exact-vial guards and independent draft PR169; feature must not silently alter records.
+
+## 2026-11-18 — PR173 iPhone review uses separate fixture, no inventory correction
+- Approved-source behaviour stays unchanged; create a dedicated fictional FULL_APP_DEMO fixture with one historical premixed-vial example for physical device review, separate from standard release demo and production. Do not insert any private historical records, infer remaining quantity, or enable experimental stock-correction engine. Exact app navigation is Stash > [blend kit] > Details > Vials > vial ellipsis > Review historical vial records; 'View vial' itself displays separate preparation details. No merge or release consent inferred. Old menu can normalize in-memory kit shape; test no-write contract against state after menu and against storage before menu.
+
+## 2026-11-17 — Historical review stays source-evidence-only and unmerged
+- Preserve current v0.9.27-beta.5 PR174 safeguards while inspecting past data. A historical dose has verified source linkage only when every allocation has a positive amount, exact vial and existing ledger ID. Missing or mismatched rows remain unresolved; the physical amount is always Unknown without independent verification. Review UI and Copy do not save to production storage. Experimental Stage B correction remains unmounted/disabled. New PR173 candidate is development-only; no release consent or PR169 merge.
+
+## 2026-11-17 — Preserve released PR174 safeguards while continuing PR173 read-only development
+- PR173 development continues on updated main source as an unmerged draft. A historical dose is confirmed source-linked only when every relevant allocation contains a positive amount and exact existing vial/ledger match; partial/unmatched sources remain unresolved. Review screen is for inspection and copy only. No historical Deadpool balance correction or stock status write is authorized. Experimental correction engine must remain unmounted and disabled. PR169 separate.
+
 ## 2026-11-17 — PR174 release authorized and shipped, but historical stock correction prohibited
 - Explicit user merge/deployment approval applied to PR174 only; verified primary Cloudflare source parity 16/16 at merge SHA 597d262d (#44033882596). Publication metadata updated on main after verified deployment. Preserve immutable historical Deadpool inventory and dose evidence; no silent reopening, inferred remaining stock, backfill or migration. PR169/PR173 untouched. Other approvals are not implied.
 

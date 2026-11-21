@@ -1,49 +1,48 @@
 {
-  "schemaVersion": 1,
-  "version": "v0.9.27-beta.5",
+  "version": "v0.9.27-beta.6",
   "channel": "beta",
   "publication": {
-    "status": "published",
-    "publishedAt": "2026-11-17T06:49:09Z",
-    "commit": "597d262d3f631ba51da02f4d4534f0f254b6e148",
+    "status": "pending",
+    "publishedAt": null,
+    "commit": null,
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
-    "baselineMainCommit": "a722465cb6f9adbf8009038e45bc87d5913a438e",
-    "pullRequest": 174,
-    "mergedAppCommit": "597d262d3f631ba51da02f4d4534f0f254b6e148"
+    "baselineMainCommit": "c551d363e3b16eeb038579ff6bf864b677d0dc1e",
+    "pullRequest": 173,
+    "mergedAppCommit": null
   },
-  "headline": "Safeguard exact premixed-vial status during daily dose logging",
+  "headline": "Keep historical blend inventory diagnostics in the background",
   "changes": [
     {
-      "key": "same-vial-auto-finish",
-      "title": "Prevent premature Finished status for premixed vials",
-      "detail": "Automatic vial depletion now requires verified same-vial dose, waste or correction evidence, rather than kit-wide balance alone. Unattributed older entries cannot retire a specific open vial.",
-      "screen": "Stash / Today / Log Dose / Combo Dose",
-      "kind": "fix"
+      "key": "background-first-historical-reader",
+      "title": "Remove routine historical inventory audit from Vial Actions",
+      "detail": "Historical blend source evidence is assessed internally without showing an Inventory needs review task or asking users to manually audit old dose records.",
+      "screen": "Stash / Vial Actions",
+      "kind": "ux"
     },
     {
-      "key": "prepare-rollover-guard",
-      "title": "Protect open premixed vials during preparation",
-      "detail": "Generic Prepare Dose rollover cannot retire an active premixed vial before physical-ledger commitment; it fails closed without changing inventory.",
-      "screen": "Prepare Dose / Stash",
-      "kind": "fix"
+      "key": "fail-closed-source-evidence",
+      "title": "Preserve unknown historical physical amounts",
+      "detail": "Missing or mismatched source allocations remain unresolved; the read-only evidence engine never infers physical stock, reopens vials, rewrites historical doses or changes balances.",
+      "screen": "Stash / Inventory / Dose history",
+      "kind": "safety"
     },
     {
-      "key": "next-day-validation",
-      "title": "Validate repeated dose logging across days",
-      "detail": "Fictional automated browser checks cover dose, durable save/readback, reload and next-day dose at 320px and 390px in light and dark modes, including historical unattributed entries.",
-      "screen": "Log Dose / Review / History",
+      "key": "protected-regressions",
+      "title": "Retain Deadpool and BAC-water accounting safeguards",
+      "detail": "The released exact-vial automatic-finish and per-vial BAC-water workflows remain unchanged and passed fictional full-app, writer, mobile, WebKit and next-day regression checks.",
+      "screen": "Stash / Log Dose / Prepare Dose",
       "kind": "test"
     }
   ],
-  "dataImpact": "No migration, automatic reopening, historical Deadpool inventory reconciliation, correction or stock credit. Existing saved records and localStorage key peptide-tracker-html-v1 are retained. Future ordinary user-confirmed dose logs continue to write normally. Fictional DEMO remains isolated, without live writes/import/sync.",
+  "dataImpact": "No migration, automatic stock correction, historical inventory reconciliation, reattribution, vial reopening or overwrite. Existing localStorage key peptide-tracker-html-v1 and records preserved. Ordinary user-confirmed doses continue to log as before. Isolated full-app DEMO uses fictional in-memory data with no production sync/import/writes.",
   "limitations": [
-    "Already-finished historical Deadpool vials and unverified physical remainder remain unchanged; separate user-approved review required before any correction.",
-    "Root cause of the user's specific earlier historical event cannot be established without physical/source evidence; the safeguard is preventative.",
-    "Separate draft PRs #169 (multi-source Undo) and #173 (historical record review) are excluded.",
-    "User-reported iPhone UX acceptance 6/6; VoiceOver and real historical private-data recovery not tested.",
-    "Primary Cloudflare production passed 16/16 exact file parity at merged commit 597d262d3f631ba51da02f4d4534f0f254b6e148 (workflow #44033882596); publication-metadata parity requires subsequent verification."
+    "Read-only diagnostic evidence is internal; no automatic stock-repair or on-demand exception prompt system is introduced.",
+    "Unknown physical vial contents cannot be established by incomplete historic logs; already-finished historical vials remain untouched.",
+    "PR169 multi-source Review/Undo remains a separate unmerged draft.",
+    "User confirmed physical iPhone review of Stash/Vial Actions and Log Dose with no issues. VoiceOver and real historical physical-stock accuracy were not tested.",
+    "Publication pending; primary Cloudflare exact merged-source parity must be independently verified after approved merge."
   ],
   "privacyChanged": false,
   "permissionsChanged": false

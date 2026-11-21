@@ -1468,6 +1468,11 @@ function viewVialPreparationModal(kitId,vialId) {
   m.querySelector("#nx-vial-prep-close").onclick=closeModal;
 }
 
+// Background-first historical inventory design (PR173): do not add a routine
+// "needs review" task to Vial Actions. The pure NexusHistoricalReconciliation
+// evidence reader remains available for internal diagnostics and for a future
+// explicitly gated, action-blocking exception; it does not write inventory.
+// Unknown historical physical stock is never inferred or silently restored.
 function vialActionsMenu(kitId, vialId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;

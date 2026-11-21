@@ -1,4 +1,4 @@
-Safeguard exact premixed-vial status during daily dose logging
-- Prevent premature Finished status for premixed vials: Automatic vial depletion now requires verified same-vial dose, waste or correction evidence, rather than kit-wide balance alone. Unattributed older entries cannot retire a specific open vial.
-- Protect open premixed vials during preparation: Generic Prepare Dose rollover cannot retire an active premixed vial before physical-ledger commitment; it fails closed without changing inventory.
-- Validate repeated dose logging across days: Fictional automated browser checks cover dose, durable save/readback, reload and next-day dose at 320px and 390px in light and dark modes, including historical unattributed entries.
+Keep historical blend inventory diagnostics in the background
+- Remove routine historical inventory audit from Vial Actions: Historical blend source evidence is assessed internally without showing an Inventory needs review task or asking users to manually audit old dose records.
+- Preserve unknown historical physical amounts: Missing or mismatched source allocations remain unresolved; the read-only evidence engine never infers physical stock, reopens vials, rewrites historical doses or changes balances.
+- Retain Deadpool and BAC-water accounting safeguards: The released exact-vial automatic-finish and per-vial BAC-water workflows remain unchanged and passed fictional full-app, writer, mobile, WebKit and next-day regression checks.

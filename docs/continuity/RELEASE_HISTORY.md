@@ -1,3 +1,45 @@
+## 2026-11-21 — PR173 v0.9.27-beta.6 PENDING RELEASE CANDIDATE, NOT YET DEPLOYED
+- Explicit user-approved gated PR173 release. Physical iPhone user reported Stash/Vial Actions and Log Dose PASS on updated isolated full-app demo; VoiceOver and historical real inventory unknown.
+- New release/release.json publication pending, version v0.9.27-beta.6, PR173 source baseline main c551d363. Archived prior published v0.9.27-beta.5 in release/published-history.json, regenerated in-app metadata and mobile release texts, root index title.
+- Data impact NONE: no migration, old dose rewrite, inventory restock, historical vial reopening, correction, or localStorage alteration. Pure internal evidence reader retained; no new background correction/exception prompt. PR169 draft and published PR174 safeguarded.
+- Prior app-source 6b2b956f 10/10 CI does NOT substitute for final versioned QA. Exact candidate-head workflow runs, final exact-source DEMO/LIVE artifacts, merge commit and primary Cloudflare parity still pending; do not report release published before independent verification.
+
+## 2026-11-21 — PR173 release authorization recorded; NOT MERGED / NOT DEPLOYED
+- User replied "let's go" when offered PR173 release/deployment. Explicit release intent recognized, but physical iPhone UAT not independently attributable to reported "everythings fine"; mandatory gate unresolved. Draft release manifest remains v0.9.27-beta.5 (published PR174), not a unique candidate. No new release version, branch merge, Cloudflare verification or production data modification. Next: clarify device UAT, stage new version, run candidate QA, gated merge and independently verify deployment. PR169 and historical vial data protected.
+
+## 2026-11-21 — PR173 informal user acceptance noted; unreleased
+- User reports "everythings fine" regarding background-first test candidate. This is qualitative approval of experience, not six individual physical iPhone test results or authorization to release. Draft PR173 unchanged in app source; production v0.9.27-beta.5 unchanged; no merge/deploy/data reconciliation.
+
+## 2026-11-21 — PR173 background-first QA-qualified development candidate, UNRELEASED
+- User-approved removal of routine historical-review Stash action completed in code/test SHA 6b2b956f. Exact 10/10 CI SUCCESS including #44867330572 final full build and #44867330567 historical no-write; downloaded artifact #14692628846 independently CRC-checked 573 outer ZIP entries, 27 LIVE files, full isolated standalone DEMO 3,256,544 bytes, byte-identical two-file offline demo. Browser 8/8 (LIVE/DEMO, 320/390, light/dark).
+- Main v0.9.27-beta.5 c551d363 unchanged. PR173 remains draft and unmerged; PR169 untouched and released PR174 protected. No user inventory, history, physical stock, backfill, migration, production storage, merge or deployment writes. No new automatic stock repair or context exception UX wired. Physical iPhone/VoiceOver NOT TESTED, no release authorization.
+- Exact release app source 6b2b956f; subsequent continuity-only commits do not represent a new app code QA source.
+
+## 2026-11-20 — PR173 background-first redesign candidate, UNRELEASED
+- User directed background-first historical discrepancy UX and no routine audit steps. Draft code de3e583e removed historical review CTA/modal from Vial Actions; retained pure evidence reader for internal use with missing source and physical stock fail-closed. Browser/unit test source a0a9d10c, 7ca82119 updates expected behaviour. Release version/primary production remain v0.9.27-beta.5, main c551d363; PR174 published and PR169 draft preserved.
+- Data impact: NONE (no migration, stock correction, dose history edits, backfill or writes); experimental physical-stock correction module unmounted. No new release approval. New exact-head CI, live/demo artifact parity, physical iPhone and VoiceOver acceptance PENDING as of this entry.
+
+## 2026-11-20 — PR173 contextual review fully automated-QA qualified, NOT RELEASED
+- Exact code dfd199a2, tests 778df503, production unchanged published v0.9.27-beta.5, main c551d363. All 10 workflow families completed successfully after WebKit retry (#44687765722 first failed and retry succeeded); full release build #44687765715 SUCCESS. GitHub final exact-source artifact #14607762270 downloaded and CRC verified: 27-file LIVE, full standalone fictional demo, byte-equal offline demo. No database/storage migration, no historical physical stock changes, no merge/deploy. Physical iPhone/VoiceOver acceptance pending. PR169 preserved, PR174 published safeguards protected.
+
+## 2026-11-20 — PR173 contextual UX qualified candidate (UNRELEASED)
+- No published release/version change; draft PR173 app dfd199a2, test 778df503, baseline/main c551d363 and primary published v0.9.27-beta.5. Full build #44687765715 SUCCESS and exact-source downloadable final artifact #14607762270 (LIVE ZIP 27 CRC PASS; isolated full app standalone/offline demo CRC and parity PASS). Synthetic browser 8/8 PASS, dedicated historical no-write PASS, seven other CI workflows PASS; WebKit first attempt FAIL, rerun pending; physical iPhone and VoiceOver NOT TESTED. No historical stock update, automatic recovery, migration, merge or deploy; PR169 preserved.
+
+## 2026-11-20 — PR173 contextual presentation candidate (UNRELEASED)
+- Draft branch docs/deadpool-historical-reconciliation-review-20261115: UX source dfd199a2, test 778df503. Shows historical read-only review contextually rather than for every blend vial. No new release version; production remains previously verified v0.9.27-beta.5 at main c551d363. No schema migration, data writes, reconciliation, merge or deploy. New-head CI, full-app DEMO/LIVE artifacts and physical iPhone UAT pending.
+
+## 2026-11-18 — PR173 QA continuation and physical-preview candidate (NOT A RELEASE)
+- Verified main and Cloudflare manifest still published v0.9.27-beta.5. PR173 draft continues unchanged app bytes at fb4cd5e3; dedicated menu-path test correction 0e4286b3, last full CI #44377511088 pending at checkpoint (original 10/10 integration green on fb4cd5e3, browser #44088543519 SUCCESS). Independent GitHub source artifact #14331362010 LIVE 27 CRC PASS, offline/full-demo byte equality PASS, stageB unmounted. Separate 100% fictional historical review full-app HTML and offline ZIP created for iPhone; local browser 4/4 320/390 light/dark actual Stash navigation PASS, but physical iPhone/VoiceOver NOT TESTED. No data migration/write, PR169 untouched, no merge/deploy.
+
+## 2026-11-17 — PR173 latest package qualified structurally; NOT PUBLISHED
+- Candidate artifact #14331095462 downloaded and independently verified against release source structure: 27-file LIVE ZIP CRC PASS, two-entry offline fictional DEMO ZIP byte-equal to standalone HTML, experimental stock-correction module excluded. Nine source-head workflows PASS; full-browser suite #44088543519 still ongoing at checkpoint. PR173 remains open draft with no new version or production changes; PR169 separate.
+
+## 2026-11-17 — PR173 read-only integration candidate, NOT RELEASED
+- Draft PR173 integrated with published v0.9.27-beta.5 main through merge commit ffcc9a78 and new review test head fb4cd5e3. No production version change or Cloudflare deployment, no stock or historical migration. Real fictional historical review browser 8/8 PASS at #44088543040; seven other QA families PASS and three broader suites running at latest checkpoint. Source-validated LIVE/full-app DEMO candidate uploaded #44088543519, but final browser QA outcome pending. Physical iPhone new-screen acceptance/VoiceOver not tested. PR169 untouched.
+
+## 2026-11-17 — PR173 integrated development candidate (NOT A RELEASE)
+- Read-only historical Stash review candidate rebased/integrated from published main v0.9.27-beta.5. PR174 fixes retained; partial source evidence hardened. No version bump, no merge/deploy/Cloudflare update, no private data writes or migration. CI/new full-app artifacts and physical acceptance PENDING. Separate draft PR169 untouched.
+
 ## 2026-11-17 — v0.9.27-beta.5 FINAL PUBLICATION source verified
 - Primary Cloudflare user-visible manifest returned published status and PR174 merge SHA 597d262d3f631ba51da02f4d4534f0f254b6e148. Exact app source parity SUCCESS 16/16 #44033882596 at merge SHA, and SUCCESS 16/16 #44034237308 at final metadata/doc SHA c665a89f, zero errors both. GitHub Pages deploy/integrity SUCCESS at merge SHA. Docs-only final checkpoint follows and does not change app bytes. Historic Deadpool stock untouched, drafts #169/#173 unmerged.
 
