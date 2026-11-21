@@ -2,15 +2,15 @@
   "version": "v0.9.27-beta.6",
   "channel": "beta",
   "publication": {
-    "status": "pending",
-    "publishedAt": null,
-    "commit": null,
+    "status": "published",
+    "publishedAt": "2026-11-21T07:19:54Z",
+    "commit": "169cf617bd5e9750df6ed4c8fc8f69b3bc9454e2",
     "webUrl": "https://nexuspeplog.pages.dev/"
   },
   "source": {
     "baselineMainCommit": "c551d363e3b16eeb038579ff6bf864b677d0dc1e",
     "pullRequest": 173,
-    "mergedAppCommit": null
+    "mergedAppCommit": "169cf617bd5e9750df6ed4c8fc8f69b3bc9454e2"
   },
   "headline": "Keep historical blend inventory diagnostics in the background",
   "changes": [
@@ -42,7 +42,7 @@
     "Unknown physical vial contents cannot be established by incomplete historic logs; already-finished historical vials remain untouched.",
     "PR169 multi-source Review/Undo remains a separate unmerged draft.",
     "User confirmed physical iPhone review of Stash/Vial Actions and Log Dose with no issues. VoiceOver and real historical physical-stock accuracy were not tested.",
-    "Publication pending; primary Cloudflare exact merged-source parity must be independently verified after approved merge."
+    "Cloudflare primary exact merged-source parity verified 16/16 at commit 169cf617bd5e9750df6ed4c8fc8f69b3bc9454e2 (workflow #44879719038); publication metadata parity requires separate final verification."
   ],
   "privacyChanged": false,
   "permissionsChanged": false
