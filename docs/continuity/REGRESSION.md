@@ -1,3 +1,7 @@
+## 2026-11-21 — PR175 new beta.6 source writer/Undo tests (PENDING CI)
+- Test source f5f9d017 adds split backed 2-vial 1+1.5mg / mcg native allocations, exact checkpoint debit, all-or-nothing restore, missing/duplicate/stale/route/capacity/amount/legacy-checkpoint rejection with no input mutations, and two-tab exclusive writer one-write stale rejection. This is not a completed CI PASS until exact current-head workflows report success.
+- Must protect single-vial Undo/edit, Deadpool exact-vial false-finish, per-vial BAC, PR173 read-only historical evidence, prepared/blend/nasal/untracked and current storage key. 320/390 full-app Chromium/WebKit, UI/UX, physical iPhone and VoiceOver NOT TESTED on PR175. No merge/deploy authorization.
+
 ## 2026-11-21 — FINAL Cloudflare postpublication source-parity PASS
 - PASS beta.6 PRIMARY https://nexuspeplog.pages.dev/ live manifest status published and merge commit 169cf617; postpublication main 31906707 exact app-file parity workflow #44879888719 SUCCESS, evidence #14698050003 independently checked: 16/16 matched SHA256, zero errors, verified at 2026-11-21T07:21:48.530Z. Earlier merge-source parity #44879719038 also PASS. GitHub Pages integrity #44879888730 PASS. No claim of new physical stock accuracy or VoiceOver. PR169 remains untouched.
 
