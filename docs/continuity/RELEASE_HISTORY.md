@@ -1,3 +1,8 @@
+## 2026-11-21 — Nexus v0.9.27-beta.6 PUBLISHED (PR173)
+- Merged PR173 at 169cf617bd5e9750df6ed4c8fc8f69b3bc9454e2 after user approval and physical iPhone Stash/Log Dose user-reported PASS. Exact versioned candidate 34b69393 10/10 CI PASS, 8/8 LIVE/DEMO browser; artifact #14697283339 outer 573 CRC PASS, LIVE ZIP 27 files, isolated complete full-app demo and offline zip byte equal.
+- Cloudflare primary beta.6 exact 16/16 application file SHA256 parity at merge commit #44879719038 SUCCESS (evidence #14697755043), GitHub Pages integrity #44879719088 SUCCESS. Canonical manifest publication PUBLISHED at verified time 2026-11-21T07:19:54Z; runtime generated metadata updated. Need separately verify newer postpublication main SHA source parity.
+- Change: Stash historical inventory review CTA/modal removed, read-only diagnostic engine internal, unresolved physical stock remains Unknown. Preserve released PR174 same-vial Deadpool false-finish and BAC water protections. No historical inventory correction, migration, stock write or experimental correction module enabled. PR169 untouched. VoiceOver and personal physical historical stock not tested.
+
 ## 2026-11-21 — PR173 v0.9.27-beta.6 PENDING RELEASE CANDIDATE, NOT YET DEPLOYED
 - Explicit user-approved gated PR173 release. Physical iPhone user reported Stash/Vial Actions and Log Dose PASS on updated isolated full-app demo; VoiceOver and historical real inventory unknown.
 - New release/release.json publication pending, version v0.9.27-beta.6, PR173 source baseline main c551d363. Archived prior published v0.9.27-beta.5 in release/published-history.json, regenerated in-app metadata and mobile release texts, root index title.
