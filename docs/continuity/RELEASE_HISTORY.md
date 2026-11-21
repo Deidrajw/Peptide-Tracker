@@ -1,3 +1,9 @@
+## 2026-11-21 — PR173 v0.9.27-beta.6 PENDING RELEASE CANDIDATE, NOT YET DEPLOYED
+- Explicit user-approved gated PR173 release. Physical iPhone user reported Stash/Vial Actions and Log Dose PASS on updated isolated full-app demo; VoiceOver and historical real inventory unknown.
+- New release/release.json publication pending, version v0.9.27-beta.6, PR173 source baseline main c551d363. Archived prior published v0.9.27-beta.5 in release/published-history.json, regenerated in-app metadata and mobile release texts, root index title.
+- Data impact NONE: no migration, old dose rewrite, inventory restock, historical vial reopening, correction, or localStorage alteration. Pure internal evidence reader retained; no new background correction/exception prompt. PR169 draft and published PR174 safeguarded.
+- Prior app-source 6b2b956f 10/10 CI does NOT substitute for final versioned QA. Exact candidate-head workflow runs, final exact-source DEMO/LIVE artifacts, merge commit and primary Cloudflare parity still pending; do not report release published before independent verification.
+
 ## 2026-11-21 — PR173 release authorization recorded; NOT MERGED / NOT DEPLOYED
 - User replied "let's go" when offered PR173 release/deployment. Explicit release intent recognized, but physical iPhone UAT not independently attributable to reported "everythings fine"; mandatory gate unresolved. Draft release manifest remains v0.9.27-beta.5 (published PR174), not a unique candidate. No new release version, branch merge, Cloudflare verification or production data modification. Next: clarify device UAT, stage new version, run candidate QA, gated merge and independently verify deployment. PR169 and historical vial data protected.
 
