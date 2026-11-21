@@ -1,3 +1,6 @@
+## 2026-11-21 — PR173 informal user acceptance noted; unreleased
+- User reports "everythings fine" regarding background-first test candidate. This is qualitative approval of experience, not six individual physical iPhone test results or authorization to release. Draft PR173 unchanged in app source; production v0.9.27-beta.5 unchanged; no merge/deploy/data reconciliation.
+
 ## 2026-11-21 — PR173 background-first QA-qualified development candidate, UNRELEASED
 - User-approved removal of routine historical-review Stash action completed in code/test SHA 6b2b956f. Exact 10/10 CI SUCCESS including #44867330572 final full build and #44867330567 historical no-write; downloaded artifact #14692628846 independently CRC-checked 573 outer ZIP entries, 27 LIVE files, full isolated standalone DEMO 3,256,544 bytes, byte-identical two-file offline demo. Browser 8/8 (LIVE/DEMO, 320/390, light/dark).
 - Main v0.9.27-beta.5 c551d363 unchanged. PR173 remains draft and unmerged; PR169 untouched and released PR174 protected. No user inventory, history, physical stock, backfill, migration, production storage, merge or deployment writes. No new automatic stock repair or context exception UX wired. Physical iPhone/VoiceOver NOT TESTED, no release authorization.
