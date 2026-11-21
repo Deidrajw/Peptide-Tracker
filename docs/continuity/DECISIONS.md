@@ -1,3 +1,7 @@
+## 2026-11-21 — Explicit PR173 release authorization is CONDITIONAL on gates
+- User answered "let's go" to final release approval/deployment question. This authorizes PR173 release once documented requirements are met, not immediate bypass of required iPhone QA nor any historic stock write. No permission for PR169, automatic stock correction, historical inventory reconciliation, destructive migration, or unreviewed feature.
+- Since device-specific acceptance was not recorded and current manifest remains published v0.9.27-beta.5 for prior PR174, release withheld pending iPhone acceptance, distinct versioned candidate preparation and exact-source QA. Keep PR173 draft/unmerged until evidence.
+
 ## 2026-11-21 — Background-first PR173 qualification excludes automatic stock repair
 - User authorized removal of routine historical audit tasks, not auto-reopening, stock reconciliation, data migration or merge/deploy. Exact app-source 6b2b956f has 10/10 CI and verified isolated full-app artifact; the pure reader remains internal. No new background auto-repair or action-blocking prompt is implemented.
 - Preserve exact source and per-vial BAC records, unknown physical remainder, released PR174 safeguards, and separate PR169 draft. Future exception prompt is warranted only at a genuinely blocked operation needing facts Nexus cannot know and requires separate implementation/testing/approval.
