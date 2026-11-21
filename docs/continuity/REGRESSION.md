@@ -1,3 +1,6 @@
+## 2026-11-21 — PR173 user demo feedback (overall positive, case results unspecified)
+- USER-REPORTED: "everythings fine" on follow-up to the background-first fictional full-app DEMO checklist. No defects identified in message. Individual six checklist outcomes, tested device, Safari, dark/light and VoiceOver **NOT REPORTED**, hence **NOT TESTED / NOT CONFIRMED** individually. Existing automated 10/10 PASS remains independent evidence; no release decision or data mutation.
+
 ## 2026-11-21 — PR173 background-first exact-source regression PASS (physical device outstanding)
 - PASS source 6b2b956f, 10/10 workflow families SUCCESS: no-write #44867330567, false-empty #44867330519, next-day #44867330515, blend/BAC #44867330536, writer #44867330546, mobile #44867330522, WebKit #44867330513, DS2 #44867330523, pinned #44867330512, build/browser #44867330572.
 - PASS independently downloaded artifact #14692628846: outer ZIP 573 CRC PASS, 27-file LIVE CRC PASS, complete isolated demo HTML 3,256,544 bytes, two-entry offline demo CRC PASS and byte parity; reader loaded before JS04, physical-stock correction unmounted, no CTA/modal references in LIVE or DEMO. Browser matrix 8/8 PASS (LIVE/DEMO, 320/390, dark/light). Synthetic internal reader keeps uncertain sources unresolved, true physical remaining null, does not write storage.
