@@ -1,3 +1,8 @@
+## 2026-11-20 — User-approved PR173 background-first UX supersedes contextual audit CTA
+- Explicit decision: keep routine historical discrepancy analysis invisible. Nexus must not require a user to open Stash, review historical records, copy an audit or certify automated tracking. Ask only for genuine missing real-world information at the moment an important action cannot safely proceed.
+- Supersedes the earlier 2026-11-20 contextual "Inventory needs review" design. Draft PR173 removes routine UI entry/modal; pure read-only evidence analysis retained internally. Automatic background reconciliation, automatic stock correction, existing-history mutation, silent opening or stock restoration remain prohibited and are **not implemented**.
+- Unknown historical physical remainder stays Unknown; incomplete or mismatch allocations are not trusted. Existing released PR174 same-vial Deadpool guards and BAC behaviour remain unchanged. PR169 independently drafted and untouched. This is development direction approval only: **no merge, release, deployment, destructive migration or user-data correction approval**.
+
 ## 2026-11-20 — Approved contextual PR173 development QA qualified, release still needs approval
 - Invisible-first inventory UX remains scoped to contextual Vial Actions read-only inspection and non-invasive evidence; completed 10/10 automated workflow families after WebKit retry. Existing historical stock and allocations must not be silently corrected, and user development approval is not approval to merge or deploy. Physical iPhone acceptance remains required before any release decision.
 
