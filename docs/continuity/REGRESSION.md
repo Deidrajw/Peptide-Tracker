@@ -1,3 +1,8 @@
+## 2026-11-21 — PR169 integration acceptance matrix (NOT TESTED against beta.6)
+- Must PASS on new-main source before any PR169 release: exact matched physical source allocations; source amount and projected remaining shown at Review; unavailable/insufficient source blocks confirm; multi-source 3mg split 1+2 persists both vial debits, exclusive write readback and exact atomic Undo of both sources; stale, missing, duplicate, changed status, and old uncheckpointed allocations fail closed without changes. Test no partial credit on any rejected reversal.
+- Protect current beta.6 same-vial Deadpool premature-finish, per-vial confirmed BAC, Combo, single-source Undo, prepared, nasal gates OFF, Check-In/Calendar and storage/recovery. Need actual Chromium real two-tab, full app LIVE/DEMO 320/390 light/dark, WebKit, 44px tap targets, input/scroll geometry, backed-dose writer test and physical iPhone verification. All CURRENT INTEGRATION cases NOT TESTED; historical PR169 CI evidence not transferrable to current main.
+- Production v0.9.27-beta.6 / main 657ad6a8 verified; PR169 head 2de7024a based on b3a67ec4. No merge/deployment approval.
+
 ## 2026-11-15 — PR169 browser follow-up; protected Stash multi-vial QA still pending
 - PASS GitHub run #43667876230 Save-ack test in 8 LIVE/DEMO configurations: exclusive write rejection leaves modal open, no false success, no inventory/history mutation. PASS Log Dose 264-flow suite.
 - FAIL same run later at tools/validate-stash-actions.mjs:179: legacy test expected #toggle-multi before entering guided Vials stage, with only one eligible fictional vial; conditional control not rendered.
