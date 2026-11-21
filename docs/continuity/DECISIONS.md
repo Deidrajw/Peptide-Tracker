@@ -1,3 +1,7 @@
+## 2026-11-21 — PR173 user physical iPhone acceptance and scoped release consent
+- User confirmed that the updated PR173 demo was tested on physical iPhone; Stash/Vial Actions and Log Dose both worked without issue. This is user-reported acceptance of these two protected flows, not proof of VoiceOver or other unreported cases.
+- Previous "let's go" is explicit permission for a gated PR173 merge/release, provided exact-version automated QA and integrity checks pass. Version candidate v0.9.27-beta.6 staged with publication=pending; archive prior beta.5 history. No consent for modifying previous Deadpool history/inventory, auto-reconciliation, destructive migration or PR169. Production evidence separate from a successful merge.
+
 ## 2026-11-21 — Explicit PR173 release authorization is CONDITIONAL on gates
 - User answered "let's go" to final release approval/deployment question. This authorizes PR173 release once documented requirements are met, not immediate bypass of required iPhone QA nor any historic stock write. No permission for PR169, automatic stock correction, historical inventory reconciliation, destructive migration, or unreviewed feature.
 - Since device-specific acceptance was not recorded and current manifest remains published v0.9.27-beta.5 for prior PR174, release withheld pending iPhone acceptance, distinct versioned candidate preparation and exact-source QA. Keep PR173 draft/unmerged until evidence.
