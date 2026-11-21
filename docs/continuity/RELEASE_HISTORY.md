@@ -1,3 +1,7 @@
+## 2026-11-21 — v0.9.27-beta.6 FINAL PUBLICATION parity VERIFIED
+- Cloudflare independently served published manifest v0.9.27-beta.6 with PR173 merge commit 169cf617. Final publication metadata/main checkpoint 31906707a32a0c7f18cb50600ef179cae35b66a6 verified at workflow #44879888719, 16/16 exact app file SHA256 equality, zero errors, evidence artifact #14698050003 at 2026-11-21T07:21:48.530Z. Earlier PR merge parity #44879719038 also 16/16; Pages integrity #44879888730 SUCCESS. Documentation-only final note follows.
+- User-approved and iPhone accepted Stash/Vial Actions and Log Dose, beta.6 no routine historical audit prompts; internal fail-closed no-write source diagnostic. No saved data correction, physical amount inference, inventory modification or PR169 release. VoiceOver not tested.
+
 ## 2026-11-21 — Nexus v0.9.27-beta.6 PUBLISHED (PR173)
 - Merged PR173 at 169cf617bd5e9750df6ed4c8fc8f69b3bc9454e2 after user approval and physical iPhone Stash/Log Dose user-reported PASS. Exact versioned candidate 34b69393 10/10 CI PASS, 8/8 LIVE/DEMO browser; artifact #14697283339 outer 573 CRC PASS, LIVE ZIP 27 files, isolated complete full-app demo and offline zip byte equal.
 - Cloudflare primary beta.6 exact 16/16 application file SHA256 parity at merge commit #44879719038 SUCCESS (evidence #14697755043), GitHub Pages integrity #44879719088 SUCCESS. Canonical manifest publication PUBLISHED at verified time 2026-11-21T07:19:54Z; runtime generated metadata updated. Need separately verify newer postpublication main SHA source parity.
