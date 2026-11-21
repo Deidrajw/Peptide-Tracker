@@ -1468,23 +1468,11 @@ function viewVialPreparationModal(kitId,vialId) {
   m.querySelector("#nx-vial-prep-close").onclick=closeModal;
 }
 
-// Contextual, read-only historical review eligibility. Never infer physical stock.
-// An unattributed kit-wide dose is not evidence against every vial in a multi-vial kit.
-function nexusHistoricalVialNeedsReview(kit,vial){
-  if(!kit?.isBlend||!vial||!globalThis.NexusHistoricalReconciliation)return false;
-  try{
-    const report=globalThis.NexusHistoricalReconciliation.review(state,kit.id);
-    const uncertain=report.entries.filter(d=>d.sourceUncertain);
-    if(!uncertain.length)return false;
-    const directlyRelated=uncertain.some(d=>d.allocations.some(a=>
-      String(a.vialId)===String(vial.id)));
-    const onlyVial=(report.vials.length===1&&
-      String(report.vials[0].id)===String(vial.id));
-    const finished=vial.status==="finished"||vial.status==="empty";
-    return directlyRelated||(onlyVial&&finished);
-  }catch{return false;} // Never mislabel an unverified reading as a confirmed discrepancy.
-}
-
+// Background-first historical inventory design (PR173): do not add a routine
+// "needs review" task to Vial Actions. The pure NexusHistoricalReconciliation
+// evidence reader remains available for internal diagnostics and for a future
+// explicitly gated, action-blocking exception; it does not write inventory.
+// Unknown historical physical stock is never inferred or silently restored.
 function vialActionsMenu(kitId, vialId) {
   const s = state.supplies.find(x=>x.id===kitId); if(!s) return;
   const vial = ensureKitVials(s).find(v=>v.id===vialId); if(!vial) return;
@@ -1502,7 +1490,6 @@ function vialActionsMenu(kitId, vialId) {
     ${isOpen?`<button id="va-plan" class="nx-vial-menu-action" type="button">${hasPreparationPlan?"View preparation plan":"Plan preparation"}<small>${hasPreparationPlan?"Review or edit your saved plan":"Optional planning only — inventory stays unchanged"}</small></button>`:""}
     ${isOpen?`<div class="nx-vial-menu-divider" role="separator"></div>`:""}
 ${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Edit reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Correct the date or BAC water amount without changing doses</div></button>`:""}
-    ${nexusHistoricalVialNeedsReview(s,vial)?`<button id="va-history-review" type="button" style="display:block;width:100%;text-align:left;min-height:48px;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Inventory needs review<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Some earlier dose sources need confirmation · no inventory changes</div></button>`:""}
     <button id="va-adjust" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-sub);margin-bottom:8px;font-size:13px;color:var(--t1);font-weight:600">Adjust remaining amount<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Set this vial's true remaining amount directly, with a logged reason</div></button>
     ${isFinished?`<button id="va-reopen" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:${c.color}0d;border:1px solid ${c.color}33;margin-bottom:8px;font-size:13px;color:${c.color};font-weight:600">Reopen vial<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Marked finished too early — restore it to active, keeping its history</div></button>`:""}
     <button id="va-undo" style="display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;background:#ff7c7c0d;border:1px solid #ff7c7c33;font-size:13px;color:#ff7c7c;font-weight:600">Undo reconstitution<div style="font-size:11px;color:var(--t4);font-weight:400;margin-top:2px">Never actually opened this vial — return it to sealed</div></button>
@@ -1514,69 +1501,10 @@ ${vial.status!=="sealed"&&vial.status!=="transferred"?`<button id="va-edit" styl
   if(planAction)planAction.onclick=()=>{closeModal();nexusCreateLinkedPreparation(kitId,vialId);};
   const reconAction=m.querySelector("#va-edit");
   if(reconAction)reconAction.onclick=()=>{closeModal();editVialReconModal(kitId,vialId);};
-  const historyAction=m.querySelector("#va-history-review");
-  if(historyAction)historyAction.onclick=()=>{closeModal();nexusReviewHistoricalBlendVial(kitId,vialId);};
   m.querySelector("#va-adjust").onclick = () => { closeModal(); adjustVialRemainingModal(kitId, vialId); };
   const reopenBtn = m.querySelector("#va-reopen");
   if (reopenBtn) reopenBtn.onclick = () => { closeModal(); reopenVialModal(kitId, vialId); };
   m.querySelector("#va-undo").onclick = () => { closeModal(); undoReconstitutionModal(kitId, vialId); };
-}
-
-/* Historical premixed-vial discrepancy inspector.
- * This UI is deliberately READ ONLY. Source evidence, balance corrections,
- * and inventory changes are never written from this screen. An unresolved
- * source must remain unknown rather than being assigned by kit name or date.
- */
-function nexusReviewHistoricalBlendVial(kitId,vialId){
-  const kit=(state.supplies||[]).find(k=>String(k.id)===String(kitId));
-  if(!kit?.isBlend){showErrorBanner("Historical review is available for premixed vial kits.");return;}
-  const vial=(kit.vials||[]).find(v=>String(v.id)===String(vialId));
-  if(!vial){showErrorBanner("The selected physical vial is unavailable.");return;}
-  if(!globalThis.NexusHistoricalReconciliation){
-    showErrorBanner("Historical review tools are unavailable.");return;
-  }
-  let report;
-  try{report=globalThis.NexusHistoricalReconciliation.review(state,kit.id);}
-  catch(e){showErrorBanner("Historical review blocked: "+String(e.message||e));return;}
-  const entries=report.entries.filter(d=>d.sourceUncertain||
-    d.allocations.some(a=>String(a.vialId)===String(vial.id)));
-  const ledger=report.ledger.filter(e=>String(e.vialId)===String(vial.id));
-  const list=(records,formatter,empty)=>records.length?records.map(formatter).join(""):`<p style="color:var(--t4);font-size:12px">${empty}</p>`;
-  const row=(title,detail,badge)=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border-sub);padding:12px 0"><div style="min-width:0"><strong style="font-size:13px;overflow-wrap:anywhere">${esc(title)}</strong><div style="font-size:12px;color:var(--t4);margin-top:3px;overflow-wrap:anywhere">${esc(detail)}</div></div><span style="flex:none;font-size:11px;color:var(--t3)">${esc(badge)}</span></div>`;
-  const m=openModal(`
-    <section class="nx-historical-vial-review" aria-label="Historical vial review" style="max-width:100%;overflow-wrap:anywhere">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-        <div><span class="nx-dose-kicker">STASH · READ-ONLY REVIEW</span><h2 class="nx-dose-title" style="margin:5px 0 4px;font-size:19px">${esc(kit.name)} · Vial ${esc(String(vial.sequenceNumber||vial.vialNumber||"—"))}</h2>
-        <p class="nx-dose-subtitle" style="margin:0">Review records before considering any correction</p></div>
-        <button id="nx-history-close" type="button" aria-label="Close historical review" style="min-width:44px;min-height:44px;background:transparent;border:0;color:var(--t2)">×</button>
-      </div>
-      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--surface-2);padding:12px;border-radius:12px"><div style="font-size:11px;color:var(--t4)">Recorded status</div><strong style="font-size:16px">${esc(String(vial.status||"Unknown"))}</strong></div>
-        <div style="background:var(--surface-2);padding:12px;border-radius:12px"><div style="font-size:11px;color:var(--t4)">Physical remainder</div><strong style="font-size:16px">Unknown</strong></div>
-      </div>
-      <p style="font-size:12px;color:var(--t3);line-height:1.55;margin:14px 0">Recorded balance: ${vial.remainingMg==null?"Not recorded":esc(String(vial.remainingMg))+" mg"} (unverified). Historical ledger entries and unidentified allocations may overlap. No balance is inferred.</p>
-      <h3 style="font-size:14px;margin:18px 0 4px">Physical ledger entries</h3>
-      ${list(ledger,e=>row("Ledger "+String(e.id), (e.date||"Date unknown")+" · "+(e.amountMg==null?"Amount unknown":e.amountMg+" mg"),"Recorded"),"No ledger entries for this vial.")}
-      <h3 style="font-size:14px;margin:18px 0 4px">Historical dose entries</h3>
-      ${list(entries,d=>row("Dose "+String(d.id), (d.date||"Date unknown")+" · "+(d.dose??"Amount unknown")+" (dose units) · "+(d.sourceUncertain?"Exact vial not established":"Linked source"),d.sourceUncertain?"Unresolved":"Recorded"),"No matching or unresolved historical doses.")}
-      <p style="font-size:12px;color:var(--t4);line-height:1.55;margin:14px 0">This screen does not reopen an empty vial, alter original logs, assign missing sources, or change stock. Physical evidence and separate confirmation are required for a correction.</p>
-      <button id="nx-history-copy" type="button" class="btn-primary" style="min-height:48px;width:100%">Copy review summary</button>
-    </section>
-  `,cfg(kit.name).color);
-  m.querySelector("#nx-history-close").onclick=closeModal;
-  m.querySelector("#nx-history-copy").onclick=async()=>{
-    const text=[
-      "Nexus historical vial review (read-only)",
-      "Kit: "+kit.name+" · Vial "+String(vial.sequenceNumber||vial.vialNumber||vial.id),
-      "Recorded status: "+String(vial.status||"unknown"),
-      "Physical remainder: unknown",
-      "Ledger IDs: "+(ledger.map(e=>String(e.id)).join(", ")||"none"),
-      "Dose IDs: "+(entries.map(d=>String(d.id)+(d.sourceUncertain?" (unresolved)":"")).join(", ")||"none"),
-      "No inventory changes performed"
-    ].join("\n");
-    try{if(!navigator.clipboard?.writeText)throw Error("Clipboard not supported");await navigator.clipboard.writeText(text);}
-    catch{showErrorBanner("Could not copy review summary. No records were changed.");}
-  };
 }
 
 // Kit-level maintenance actions (finish vial, log outflow, finish kit, delete kit) — these
