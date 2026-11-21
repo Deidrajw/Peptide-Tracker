@@ -1,3 +1,8 @@
+## 2026-11-21 — PR173 released; merged-source parity PASS, final metadata parity outstanding
+- PASS 10/10 beta.6 candidate workflows at 34b69393 including #44878460910 full browser, #44878460614 false-empty, #44878460619 next-day dose, #44878460689 BAC, #44878460638 writer, #44878460728 historical no-write, #44878460720 mobile, #44878460700 DS2, #44878460669 WebKit and #44878460659 pinned browser. Final artifact #14697283339 CRC 573 outer/27 LIVE/2 offline with byte parity. Experimental stock-correction unmounted.
+- PASS user-reported physical iPhone Stash/Vial Actions and Log Dose. Other checklist cases/VoiceOver NOT TESTED. PASS Cloudflare 16/16 exact application source at merged SHA 169cf617 workflow #44879719038 (evidence #14697755043), zero errors; Pages integrity #44879719088 SUCCESS.
+- Following publication metadata commits, newest main exact file parity NOT YET CONFIRMED. No production personal data checked/changed. Physical historical remaining unknown. No new background auto-repair, PR169 draft untouched.
+
 ## 2026-11-21 — PR173 beta.6 iPhone acceptance CONFIRMED (scoped); versioned QA PENDING
 - USER-REPORTED PASS: real physical iPhone, updated complete fictional PR173 demo, Stash/Vial Actions and Log Dose worked without issues. No individual reports for 6-case matrix, VoiceOver or real-data stock; do not infer PASS.
 - Previous code beta.5 source 6b2b956f automation 10/10 PASS. Beta.6 pending-publication candidate updates release/release.json, archive, generated metadata, app title; exact versioned-head CI and final full-app artifact parity **PENDING** here.
