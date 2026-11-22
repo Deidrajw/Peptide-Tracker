@@ -1,0 +1,35 @@
+name: Nexus feature or UX idea
+description: Capture an idea for discussion before implementation
+title: "idea(area): "
+labels: []
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options: [Today, Calendar, Protocol / Plans, Stash / Supplies, Log Dose, Check-In, Settings / More, Across app, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What user problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed experience / ideas
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives, tradeoffs and design decisions
+  - type: textarea
+    id: safety
+    attributes:
+      label: Existing features and data that must be protected
+  - type: textarea
+    id: approval
+    attributes:
+      label: Approval, prototype and success criteria
+      description: Unapproved ideas are Discovery, not ready for coding or release
