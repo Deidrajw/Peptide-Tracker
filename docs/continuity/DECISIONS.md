@@ -1,3 +1,8 @@
+## 2026-11-22 — Approved development organization, NOT merge or release
+- User explicitly approved Nexus Development Control Centre setup in existing GitHub environment: audit existing issues, PRs, Projects and continuity; create organized tracking on a separate branch. User explicitly prohibited merge/deploy without separate approval.
+- Adopt GitHub issues as canonical work-item IDs, draft PRs as implementation records, four existing continuity documents plus a lightweight `WORKSTREAMS.md` as cross-chat coordination. Each ChatGPT conversation is an independent workspace; do not imply native live chat synchronization.
+- A proposed GitHub Projects board and custom fields require independent configuration and verification; the connected GitHub action set does not expose Projects management, so board status remains unknown. Preserve prior DS2, P0 safety, historical data, PR169 and active PR175.
+
 ## 2026-11-21 — PR173 released as background-first UX under scoped consent
 - User authorized PR173 release and confirmed physical iPhone Stash/Vial Actions and Log Dose worked in isolated full-app demo. Merged app commit 169cf617; Cloudflare 16/16 exact merged-file parity #44879719038 PASS.
 - No approval for automatic stock corrections, historical inventory reconciliation, migration, rewriting old doses, or PR169. Pure historical evidence reader keeps uncertainty; physical remaining is Unknown unless separately verified. No new automatic exception handler/prompt was implemented. Separate final published-metadata parity required. VoiceOver not tested.
