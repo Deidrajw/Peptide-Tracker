@@ -1,3 +1,6 @@
+## 2026-11-26 — #177 scoped candidate, not release approval
+- Keep shared lock/CAS/readback unchanged; use verified durable snapshot in bulk handler, validate target IDs/status/markers, distinguish stale/pending/validation errors from storage failure, clear warning only after verified LIVE write. Allow render-only active→in_progress promotion for pause eligibility while preserving durable original status. No schema migration or design change. Individual handler unchanged pending testing; no merge/deploy.
+
 ## 2026-11-21 — PR173 released as background-first UX under scoped consent
 - User authorized PR173 release and confirmed physical iPhone Stash/Vial Actions and Log Dose worked in isolated full-app demo. Merged app commit 169cf617; Cloudflare 16/16 exact merged-file parity #44879719038 PASS.
 - No approval for automatic stock corrections, historical inventory reconciliation, migration, rewriting old doses, or PR169. Pure historical evidence reader keeps uncertainty; physical remaining is Unknown unless separately verified. No new automatic exception handler/prompt was implemented. Separate final published-metadata parity required. VoiceOver not tested.

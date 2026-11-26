@@ -1722,12 +1722,21 @@ async function nexusBulkProtocolAction(direction) {
     :p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt);
   if(!eligible.length)return false;
   const targetIds=new Set(eligible.map(p=>String(p.id)));
+  if(targetIds.size!==eligible.length){showErrorBanner("Protocol identifiers could not be verified. Review your saved protocols before retrying.");return false;}
+  const expectedTargets=new Map(eligible.map(p=>[String(p.id),{status:p.status,pausedAt:p.pausedAt??null,bulkFrom:p.nexusBulkPausedFrom??null}]));
   const updatedAt=localDatetime();
   const mutate=prior=>{
     const next=JSON.parse(JSON.stringify(prior));
     const current=(next.protocols||[]).filter(p=>targetIds.has(String(p.id)));
-    if(current.length!==targetIds.size)throw Error("Protocol list changed. Reload before retrying.");
+    if(current.length!==targetIds.size||new Set(current.map(p=>String(p.id))).size!==targetIds.size)throw Error("Protocol list changed. Reload before retrying.");
+    const durableEligible=(next.protocols||[]).filter(p=>direction==="pause"?["active","in_progress"].includes(p.status):p.status==="paused"&&p.nexusBulkPausedFrom&&p.pausedAt);
+    if(durableEligible.length!==targetIds.size||durableEligible.some(p=>!targetIds.has(String(p.id))))throw Error("Eligible protocols changed. Reload before retrying.");
     for(const p of current){
+      const expected=expectedTargets.get(String(p.id));
+      // Rendering may promote an active protocol to in_progress without saving.
+      // Both are pause-eligible; retain its verified durable original status.
+      const statusMatches=p.status===expected.status||(direction==="pause"&&p.status==="active"&&expected.status==="in_progress");
+      if(!statusMatches||(p.pausedAt??null)!==expected.pausedAt||(p.nexusBulkPausedFrom??null)!==expected.bulkFrom)throw Error("Protocol status changed. Reload before retrying.");
       if(direction==="pause"){
         if(!["active","in_progress"].includes(p.status))throw Error("One protocol is no longer active.");
         p.nexusBulkPausedFrom=p.status;
@@ -1753,15 +1762,25 @@ async function nexusBulkProtocolAction(direction) {
       state=mutate(state);
     }else{
       const writer=nexusWriter();
-      const result=await writer.transaction(state,prior=>({next:mutate(prior)}));
+      const raw=writer.expected();
+      if(typeof raw!=="string")throw Error("No verified saved protocol state. Reload before retrying.");
+      const before=JSON.parse(raw);
+      const result=await writer.transaction(before,prior=>({next:mutate(prior)}));
       state=result.next;
       _nexusLastSavedSnapshot=writer.expected();
+      clearSaveWarningAfterVerifiedWrite();
     }
     renderBody();
     return true;
   }catch(error){
     console.error("Nexus bulk protocol action rejected",error);
-    showSaveWarning();
+    if(!_demoActive&&nexusBackedDoseStorageError(error))showSaveWarning();
+    else if(typeof showErrorBanner==="function"){
+      const message=String(error?.message||"");
+      showErrorBanner(/operation already pending/i.test(message)
+        ?"Another save is in progress. No protocol change was confirmed. Check the current status before retrying."
+        :"Protocol changes were not confirmed saved. Review your latest records and reload before retrying.");
+    }
     return false;
   }
 }

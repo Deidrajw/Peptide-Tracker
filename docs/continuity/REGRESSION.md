@@ -1,3 +1,6 @@
+## 2026-11-26 — #177 bulk pause isolated harness evidence
+- Pinned main false CAS reproduced after changing only _protocolStatusFilter; zero writes, incorrect red storage warning. Candidate f732152a: 11/11 controlled JS cases pass: clean, filter drift, render promotion, quota, readback, external stale, simulated pending, resume, target drift, demo no-write, duplicate IDs. Fixture doses/inventory, individually paused and completed records preserved. Pending adapter simulated, not actual concurrent Web Lock. Tests not yet persisted as executable repository suite. Browser 320/390 light/dark, individual pause/resume, Today/Calendar, actual concurrent lock, full artifact parity, iPhone/VoiceOver NOT TESTED. No clinical safety certification.
+
 ## 2026-11-21 — FINAL Cloudflare postpublication source-parity PASS
 - PASS beta.6 PRIMARY https://nexuspeplog.pages.dev/ live manifest status published and merge commit 169cf617; postpublication main 31906707 exact app-file parity workflow #44879888719 SUCCESS, evidence #14698050003 independently checked: 16/16 matched SHA256, zero errors, verified at 2026-11-21T07:21:48.530Z. Earlier merge-source parity #44879719038 also PASS. GitHub Pages integrity #44879888730 PASS. No claim of new physical stock accuracy or VoiceOver. PR169 remains untouched.
 
