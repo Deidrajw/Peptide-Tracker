@@ -1,3 +1,8 @@
+## 2026-11-26 — Nexus GitHub Project established, workflow refinements pending
+- Implemented approved standalone organizational board at https://github.com/users/Deidrajw/projects/1, linked to Peptide-Tracker; retained PR176 as separate unmerged docs-only work.
+- Adopt real Board + Bugs / Ideas & UX / Active work / Releases views, Priority/Area/Workstream single-select metadata. Ideas & UX currently filters GitHub Type=Feature; treat this as an interim classification, NOT approval to implement ideas. Built-in Todo and new Inbox coexist; new issues may remain Todo pending manual triage. Seven older open issues still need membership verification.
+- Do not automatically promote issues or authorize releases from board status. Preserve explicit human approval for merge/deploy, PR175/PR169 independence, DS2 and all app/data safeguards. No change to previous approved design decisions.
+
 ## 2026-11-22 — Approved development organization, NOT merge or release
 - User explicitly approved Nexus Development Control Centre setup in existing GitHub environment: audit existing issues, PRs, Projects and continuity; create organized tracking on a separate branch. User explicitly prohibited merge/deploy without separate approval.
 - Adopt GitHub issues as canonical work-item IDs, draft PRs as implementation records, four existing continuity documents plus a lightweight `WORKSTREAMS.md` as cross-chat coordination. Each ChatGPT conversation is an independent workspace; do not imply native live chat synchronization.
