@@ -1,5 +1,13 @@
 # Nexus Development Control Centre — GitHub Operating Model
 
+## Live configuration checkpoint — 2026-11-26
+**Board created:** https://github.com/users/Deidrajw/projects/1 (owner Deidrajw, default repository Deidrajw/Peptide-Tracker verified linked). This supersedes the original 2026-11-22 proposal-only status below without changing its rationale.
+**Verified via signed-in GitHub browser:** Board layout, added Status options (Inbox, Triage, Ready, In progress, Review / QA, Release ready, Released, Blocked; original Todo/In Progress/Done preserved), Priority/Area/Workstream single-select fields with proposed options. Four saved Board views: Bugs `type:Bug`; Ideas & UX `type:Feature` (NOT yet specific to unapproved ideas); Active work `In progress OR Review / QA OR Blocked`; Releases `Release ready OR Released`. Built-in Type field exists but original seven-value product taxonomy not verified configured. Some statuses duplicate GitHub defaults: cleanup requires careful verification that cards will not be orphaned.
+**Membership:** tool reported 18 project items; confirmed issue #48/#148/#157/#170/#171 and PR #175/#176 present. Older open issues #109/#112/#138/#139/#140/#141/#145 NOT confirmed imported, despite ambiguous bulk picker. Do not advertise complete backlog migration. Newly added items retain Todo until properly triaged.
+**Next:** verify/import missing issues by exact URL; refine Type/idea discovery semantics; triage project fields and status options with no alteration of underlying issue/PR content. PR #176 remains draft and requires separate merge approval. No production app code or data changes.
+
+
+
 **Proposal implemented as repository documentation on a separate branch, 2026-11-22.** This does NOT mean a GitHub Projects board was created. Connected GitHub actions available in this session cannot administer Projects V2, and existing board configuration has not been verified.
 
 ## Purpose and source of truth
