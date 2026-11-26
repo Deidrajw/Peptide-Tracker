@@ -1,3 +1,8 @@
+## 2026-11-26 — Control Centre usable; all audited issues linked
+- All 12 baseline open issues were verified in Project #1, with #109/#112/#141 newly attached; #138/#139/#140/#145 already members. Historical issues preserved; do not close them merely because they appear on the board.
+- Chosen pragmatic classification: use existing GitHub native Type Bug and Feature; Ideas & UX view is inclusive of proposals and features, and an issue is never approved simply because it appears there. Maintain explicit proposal/approval and release states. Keep default Todo and other built-in status values rather than destructively cleaning them without further review.
+- Separate Nexus chats can start now and must record changes on GitHub explicitly; no native automatic chat synchronization exists. New-chat startup reads PR176 workstream registry until user separately authorizes merge. No merge/deploy approval has been granted.
+
 ## 2026-11-26 — Nexus GitHub Project established, workflow refinements pending
 - Implemented approved standalone organizational board at https://github.com/users/Deidrajw/projects/1, linked to Peptide-Tracker; retained PR176 as separate unmerged docs-only work.
 - Adopt real Board + Bugs / Ideas & UX / Active work / Releases views, Priority/Area/Workstream single-select metadata. Ideas & UX currently filters GitHub Type=Feature; treat this as an interim classification, NOT approval to implement ideas. Built-in Todo and new Inbox coexist; new issues may remain Todo pending manual triage. Seven older open issues still need membership verification.
