@@ -1,0 +1,41 @@
+name: Nexus bug report
+description: Report a bug while protecting user data and existing workflows
+title: "bug(area): "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "Do not paste private health records, API keys, or unredacted backups. Describe the issue with fictional examples where possible."
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected screen
+      options: [Today, Calendar, Protocol / Plans, Stash / Supplies, Log Dose, Check-In, Settings / More, Platform / Data, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened?
+      description: Actual behaviour and reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen?
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Version, device and browser (if known)
+  - type: textarea
+    id: regression
+    attributes:
+      label: Protected behaviours, data impact and relevant issue/PR
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks / evidence
+      description: Mark tests not run as NOT TESTED

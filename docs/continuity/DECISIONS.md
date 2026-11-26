@@ -1,3 +1,18 @@
+## 2026-11-26 — Control Centre usable; all audited issues linked
+- All 12 baseline open issues were verified in Project #1, with #109/#112/#141 newly attached; #138/#139/#140/#145 already members. Historical issues preserved; do not close them merely because they appear on the board.
+- Chosen pragmatic classification: use existing GitHub native Type Bug and Feature; Ideas & UX view is inclusive of proposals and features, and an issue is never approved simply because it appears there. Maintain explicit proposal/approval and release states. Keep default Todo and other built-in status values rather than destructively cleaning them without further review.
+- Separate Nexus chats can start now and must record changes on GitHub explicitly; no native automatic chat synchronization exists. New-chat startup reads PR176 workstream registry until user separately authorizes merge. No merge/deploy approval has been granted.
+
+## 2026-11-26 — Nexus GitHub Project established, workflow refinements pending
+- Implemented approved standalone organizational board at https://github.com/users/Deidrajw/projects/1, linked to Peptide-Tracker; retained PR176 as separate unmerged docs-only work.
+- Adopt real Board + Bugs / Ideas & UX / Active work / Releases views, Priority/Area/Workstream single-select metadata. Ideas & UX currently filters GitHub Type=Feature; treat this as an interim classification, NOT approval to implement ideas. Built-in Todo and new Inbox coexist; new issues may remain Todo pending manual triage. Seven older open issues still need membership verification.
+- Do not automatically promote issues or authorize releases from board status. Preserve explicit human approval for merge/deploy, PR175/PR169 independence, DS2 and all app/data safeguards. No change to previous approved design decisions.
+
+## 2026-11-22 — Approved development organization, NOT merge or release
+- User explicitly approved Nexus Development Control Centre setup in existing GitHub environment: audit existing issues, PRs, Projects and continuity; create organized tracking on a separate branch. User explicitly prohibited merge/deploy without separate approval.
+- Adopt GitHub issues as canonical work-item IDs, draft PRs as implementation records, four existing continuity documents plus a lightweight `WORKSTREAMS.md` as cross-chat coordination. Each ChatGPT conversation is an independent workspace; do not imply native live chat synchronization.
+- A proposed GitHub Projects board and custom fields require independent configuration and verification; the connected GitHub action set does not expose Projects management, so board status remains unknown. Preserve prior DS2, P0 safety, historical data, PR169 and active PR175.
+
 ## 2026-11-21 — PR173 released as background-first UX under scoped consent
 - User authorized PR173 release and confirmed physical iPhone Stash/Vial Actions and Log Dose worked in isolated full-app demo. Merged app commit 169cf617; Cloudflare 16/16 exact merged-file parity #44879719038 PASS.
 - No approval for automatic stock corrections, historical inventory reconciliation, migration, rewriting old doses, or PR169. Pure historical evidence reader keeps uncertainty; physical remaining is Unknown unless separately verified. No new automatic exception handler/prompt was implemented. Separate final published-metadata parity required. VoiceOver not tested.
