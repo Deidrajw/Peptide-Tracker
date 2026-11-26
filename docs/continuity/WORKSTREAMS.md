@@ -1,5 +1,12 @@
 # Nexus — Active Workstream Registry
 
+## 2026-11-26 — Backlog audit closed; starting new chats
+The live GitHub Project [Nexus — Product & Development](https://github.com/users/Deidrajw/projects/1) now contains **all 12 open issues found in the audit**: #48, #109, #112, #138, #139, #140, #141, #145, #148, #157, #170, #171. Issue sidebars confirmed the seven formerly unverified members; #109/#112/#141 were added, others already linked. Existing PRs #175/#176 remain separate, unmerged and preserved. Cards are not yet all triaged by Priority/Area/Workstream; never treat Todo as release readiness.
+
+**New-chat default:** read latest main and continuity files; until PR176 is merged read WORKSTREAMS on `ops/nexus-development-control-centre-20261122`; inspect Project #1 and the relevant issue/PR; search for duplicates before creating; add the appropriate issue to Project #1; record accurate status and cross-stream dependencies; never merge/deploy without specific approval. Discussion can proceed immediately; don't wait for perfect board metadata. Main app priority remains PR175 exact-head QA.
+
+
+
 ## 2026-11-26 — Live GitHub Project coordination
 Board: https://github.com/users/Deidrajw/projects/1 — actual owner-linked GitHub Projects V2 board, saved Board/Bugs/Ideas & UX/Active work/Releases views, Priority/Area/Workstream fields. Project count reported 18. Confirmed issues #48, #148, #157, #170, #171 and PRs #175, #176 are members. Older open issues #109, #112, #138, #139, #140, #141, #145 **not yet verified as board members**; import by direct issue links without duplication. GitHub issues/PRs remain the persistent record; other chats must refresh current state, not assume their drafts are synchronized. New items initially appear as Todo and require intentional triage. PR176 remains DRAFT, NO MERGE/DEPLOY.
 
