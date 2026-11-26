@@ -1,5 +1,10 @@
 # Nexus — Active Workstream Registry
 
+## 2026-11-26 — Live GitHub Project coordination
+Board: https://github.com/users/Deidrajw/projects/1 — actual owner-linked GitHub Projects V2 board, saved Board/Bugs/Ideas & UX/Active work/Releases views, Priority/Area/Workstream fields. Project count reported 18. Confirmed issues #48, #148, #157, #170, #171 and PRs #175, #176 are members. Older open issues #109, #112, #138, #139, #140, #141, #145 **not yet verified as board members**; import by direct issue links without duplication. GitHub issues/PRs remain the persistent record; other chats must refresh current state, not assume their drafts are synchronized. New items initially appear as Todo and require intentional triage. PR176 remains DRAFT, NO MERGE/DEPLOY.
+
+
+
 **Established:** 2026-11-22. **Status:** proposed control-centre branch; no merge/deploy authorization.
 **Verified main at setup:** `657ad6a8f1de534f337c74420bb5f45d89bc2e6a`.
 **Primary production:** v0.9.27-beta.6, last independently verified by documented 2026-11-21 Cloudflare parity evidence; not rechecked live this session.
