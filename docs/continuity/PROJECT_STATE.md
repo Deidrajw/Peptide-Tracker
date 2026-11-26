@@ -1,3 +1,8 @@
+## 2026-11-26 — Issue #177 bulk protocol persistence candidate (DRAFT PR178)
+- Baseline main `657ad6a8f1de534f337c74420bb5f45d89bc2e6a`; last documented primary v0.9.27-beta.6, not reverified live. Branch `fix/177-protocol-pause-persistence`, code `f732152a131457bf5a05e7d754455266dcc5228b`, [draft PR178](https://github.com/Deidrajw/Peptide-Tracker/pull/178). No merge/deploy.
+- Bulk handler corrected; 11/11 isolated JS scenarios passed. Individual pause/resume unchanged, browser/CI/full-app artifacts/iPhone pending. Related PR142/156/158/175 must reconcile overlapping files. No production data change. Project board membership unverified.
+- ONE NEXT for #177: persist repeatable regression tests and investigate individual-pause sequence; then full exact-source QA. Existing PR175 remains independent.
+
 ## 2026-11-21 — FINAL beta.6 Cloudflare publication verified at postpublication main
 - After PR173 merge 169cf617 and published metadata updates, latest verified main checkpoint 31906707a32a0c7f18cb50600ef179cae35b66a6 independently passed Cloudflare production source parity **16/16 exact files, zero errors** in workflow #44879888719; downloaded evidence artifact #14698050003, checkedAt 2026-11-21T07:21:48.530Z. Primary live manifest explicitly PUBLISHED v0.9.27-beta.6 / merge commit 169cf617; live title beta.6. GitHub Pages integrity #44879888730 SUCCESS; GitHub Pages deployment workflow may complete independently.
 - Release v0.9.27-beta.6 LIVE on primary; automated premerge 10/10, user-reported physical iPhone acceptance Stash/Vial Actions + Log Dose. VoiceOver and real historical stock not verified. No historical inventory writes, migration, background repair or PR169 merge.
